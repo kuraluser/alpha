@@ -190,6 +190,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
           Optional.ofNullable(port.getCountry())
               .ifPresent(item -> portDetail.setCountryName(port.getCountry().getName()));
+          Optional.ofNullable(port.getCountry())
+          		.ifPresent(item -> portDetail.setCountryId(port.getCountry().getId()));
 
           if (!port.getBerthInfoSet().isEmpty()) {
             Optional<BigDecimal> minDraftOfBerths =

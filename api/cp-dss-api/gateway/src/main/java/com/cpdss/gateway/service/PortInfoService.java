@@ -66,6 +66,7 @@ public class PortInfoService {
     PortDetails portDetails = new PortDetails();
     List<PortDetail> portsList = portReply.getPortsList();
     portDetails.setCountry(portsList.get(0).getCountryName());
+    portDetails.setCountryId(portsList.get(0).getCountryId());
     portDetails.setDensityOfWater(
         portsList.get(0).getWaterDensity().isEmpty()
             ? null
@@ -77,6 +78,7 @@ public class PortInfoService {
     portDetails.setPortCode(portsList.get(0).getCode());
     portDetails.setPortId(portsList.get(0).getId());
     portDetails.setPortName(portsList.get(0).getName());
+    portDetails.setTimezoneId(portsList.get(0).getTimezoneId());
     portDetails.setTimezone(portsList.get(0).getTimezone());
     portDetails.setTimezoneAbbreviation(portsList.get(0).getTimezoneAbbreviation());
     portDetails.setTimezoneOffsetVal(portsList.get(0).getTimezoneOffsetVal());

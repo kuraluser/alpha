@@ -5869,6 +5869,13 @@ public final class PortInfo {
      * @return The bytes for maxPermissibleDraft.
      */
     com.google.protobuf.ByteString getMaxPermissibleDraftBytes();
+
+    /**
+     * <code>int64 countryId = 32;</code>
+     *
+     * @return The countryId.
+     */
+    long getCountryId();
   }
   /** Protobuf type {@code PortDetail} */
   public static final class PortDetail extends com.google.protobuf.GeneratedMessageV3
@@ -6160,6 +6167,11 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 maxPermissibleDraft_ = s;
+                break;
+              }
+            case 256:
+              {
+                countryId_ = input.readInt64();
                 break;
               }
             default:
@@ -7224,6 +7236,17 @@ public final class PortInfo {
       }
     }
 
+    public static final int COUNTRYID_FIELD_NUMBER = 32;
+    private long countryId_;
+    /**
+     * <code>int64 countryId = 32;</code>
+     *
+     * @return The countryId.
+     */
+    public long getCountryId() {
+      return countryId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -7331,6 +7354,9 @@ public final class PortInfo {
       if (!getMaxPermissibleDraftBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 31, maxPermissibleDraft_);
       }
+      if (countryId_ != 0L) {
+        output.writeInt64(32, countryId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -7433,6 +7459,9 @@ public final class PortInfo {
       if (!getMaxPermissibleDraftBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(31, maxPermissibleDraft_);
       }
+      if (countryId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(32, countryId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -7480,6 +7509,7 @@ public final class PortInfo {
       if (!getTideHeightFrom().equals(other.getTideHeightFrom())) return false;
       if (!getTideHeightTo().equals(other.getTideHeightTo())) return false;
       if (!getMaxPermissibleDraft().equals(other.getMaxPermissibleDraft())) return false;
+      if (getCountryId() != other.getCountryId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -7555,6 +7585,8 @@ public final class PortInfo {
       hash = (53 * hash) + getTideHeightTo().hashCode();
       hash = (37 * hash) + MAXPERMISSIBLEDRAFT_FIELD_NUMBER;
       hash = (53 * hash) + getMaxPermissibleDraft().hashCode();
+      hash = (37 * hash) + COUNTRYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCountryId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7760,6 +7792,8 @@ public final class PortInfo {
 
         maxPermissibleDraft_ = "";
 
+        countryId_ = 0L;
+
         return this;
       }
 
@@ -7826,6 +7860,7 @@ public final class PortInfo {
         result.tideHeightFrom_ = tideHeightFrom_;
         result.tideHeightTo_ = tideHeightTo_;
         result.maxPermissibleDraft_ = maxPermissibleDraft_;
+        result.countryId_ = countryId_;
         onBuilt();
         return result;
       }
@@ -8022,6 +8057,9 @@ public final class PortInfo {
         if (!other.getMaxPermissibleDraft().isEmpty()) {
           maxPermissibleDraft_ = other.maxPermissibleDraft_;
           onChanged();
+        }
+        if (other.getCountryId() != 0L) {
+          setCountryId(other.getCountryId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -10461,6 +10499,39 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         maxPermissibleDraft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long countryId_;
+      /**
+       * <code>int64 countryId = 32;</code>
+       *
+       * @return The countryId.
+       */
+      public long getCountryId() {
+        return countryId_;
+      }
+      /**
+       * <code>int64 countryId = 32;</code>
+       *
+       * @param value The countryId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCountryId(long value) {
+
+        countryId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 countryId = 32;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCountryId() {
+
+        countryId_ = 0L;
         onChanged();
         return this;
       }
@@ -19516,7 +19587,7 @@ public final class PortInfo {
           + "\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001("
           + "\003\022\027\n\017loadableStudyId\030\004 \001(\003\"6\n\025PortReques"
           + "tWithPaging\022\016\n\006offset\030\001 \001(\003\022\r\n\005limit\030\002 \001"
-          + "(\003\"\244\005\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 "
+          + "(\003\"\267\005\n\nPortDetail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 "
           + "\001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014waterDensity\030\004 \001(\t\022"
           + "\020\n\010maxDraft\030\005 \001(\t\022\023\n\013maxAirDraft\030\006 \001(\t\022\031"
           + "\n\021averageTideHeight\030\007 \001(\t\022\022\n\ntideHeight\030"
@@ -19533,46 +19604,47 @@ public final class PortInfo {
           + "\003lon\030\033 \001(\t\022\"\n\014berthDetails\030\034 \003(\0132\014.Berth"
           + "Detail\022\026\n\016tideHeightFrom\030\035 \001(\t\022\024\n\014tideHe"
           + "ightTo\030\036 \001(\t\022\033\n\023maxPermissibleDraft\030\037 \001("
-          + "\t\"P\n\tPortReply\022\'\n\016responseStatus\030\001 \001(\0132\017"
-          + ".ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDet"
-          + "ail\".\n\033GetPortInfoByCargoIdRequest\022\017\n\007ca"
-          + "rgoId\030\001 \001(\003\"`\n\031GetPortInfoByCargoIdReply"
-          + "\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatu"
-          + "s\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\"\022\n\020PortEmp"
-          + "tyRequest\"S\n\010Timezone\022\n\n\002id\030\001 \001(\003\022\020\n\010tim"
-          + "ezone\030\002 \001(\t\022\023\n\013offsetValue\030\003 \001(\t\022\024\n\014abbr"
-          + "eviation\030\004 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016re"
-          + "sponseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\tt"
-          + "imezones\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdReque"
-          + "st\022\016\n\006portId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022"
-          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
-          + "\022\034\n\006berths\030\002 \003(\0132\014.BerthDetail\"\200\003\n\013Berth"
-          + "Detail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rlo"
-          + "adingInfoId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001("
-          + "\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001"
-          + "(\t\022\032\n\022seaDraftLimitation\030\006 \001(\t\022\032\n\022airDra"
-          + "ftLimitation\030\007 \001(\t\022\031\n\021maxManifoldHeight\030"
-          + "\010 \001(\t\022 \n\030regulationAndRestriction\030\t \001(\t\022"
-          + "\016\n\006maxLoa\030\n \001(\t\022\020\n\010maxDraft\030\013 \001(\t\022\030\n\020lin"
-          + "eDisplacement\030\r \001(\t\022\026\n\016hoseConnection\030\016 "
-          + "\001(\t\022\016\n\006maxDwt\030\017 \001(\t\022\013\n\003ukc\030\020 \001(\t\022\027\n\017bert"
-          + "hDatumDepth\030\021 \001(\t2\334\004\n\017PortInfoService\022)\n"
-          + "\013GetPortInfo\022\014.PortRequest\032\n.PortReply\"\000"
-          + "\022R\n\024GetPortInfoByCargoId\022\034.GetPortInfoBy"
-          + "CargoIdRequest\032\032.GetPortInfoByCargoIdRep"
-          + "ly\"\000\022B\n\024GetPortInfoByPortIds\022\034.GetPortIn"
-          + "foByPortIdsRequest\032\n.PortReply\"\000\022G\n\031GetP"
-          + "ortInfoDetailsForAlgo\022\034.GetPortInfoByPor"
-          + "tIdsRequest\032\n.PortReply\"\000\0225\n\013GetTimezone"
-          + "\022\021.PortEmptyRequest\032\021.TimezoneResponse\"\000"
-          + "\022;\n\023GetPortInfoByPaging\022\026.PortRequestWit"
-          + "hPaging\032\n.PortReply\"\000\022?\n\027GetBerthDetails"
-          + "ByPortId\022\016.PortIdRequest\032\022.BerthInfoResp"
-          + "onse\"\000\022D\n\025GetCargoInfoByPortIds\022\034.GetPor"
-          + "tInfoByPortIdsRequest\032\013.CargoInfos\"\000\022B\n\027"
-          + "GetLoadingPlanBerthData\022\020.BerthIdsReques"
-          + "t\032\025.LoadingAlgoBerthDataB\036\n\032com.cpdss.co"
-          + "mmon.generatedP\000b\006proto3"
+          + "\t\022\021\n\tcountryId\030  \001(\003\"P\n\tPortReply\022\'\n\016res"
+          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\032\n\005po"
+          + "rts\030\002 \003(\0132\013.PortDetail\".\n\033GetPortInfoByC"
+          + "argoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPor"
+          + "tInfoByCargoIdReply\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.Po"
+          + "rtDetail\"\022\n\020PortEmptyRequest\"S\n\010Timezone"
+          + "\022\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offset"
+          + "Value\030\003 \001(\t\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020Tim"
+          + "ezoneResponse\022\'\n\016responseStatus\030\001 \001(\0132\017."
+          + "ResponseStatus\022\034\n\ttimezones\030\002 \003(\0132\t.Time"
+          + "zone\"\037\n\rPortIdRequest\022\016\n\006portId\030\001 \001(\003\"Z\n"
+          + "\021BerthInfoResponse\022\'\n\016responseStatus\030\001 \001"
+          + "(\0132\017.ResponseStatus\022\034\n\006berths\030\002 \003(\0132\014.Be"
+          + "rthDetail\"\200\003\n\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n"
+          + "\006portId\030\002 \001(\003\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016"
+          + "maxShipChannel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022"
+          + "\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022seaDraftLimitat"
+          + "ion\030\006 \001(\t\022\032\n\022airDraftLimitation\030\007 \001(\t\022\031\n"
+          + "\021maxManifoldHeight\030\010 \001(\t\022 \n\030regulationAn"
+          + "dRestriction\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010ma"
+          + "xDraft\030\013 \001(\t\022\030\n\020lineDisplacement\030\r \001(\t\022\026"
+          + "\n\016hoseConnection\030\016 \001(\t\022\016\n\006maxDwt\030\017 \001(\t\022\013"
+          + "\n\003ukc\030\020 \001(\t\022\027\n\017berthDatumDepth\030\021 \001(\t2\334\004\n"
+          + "\017PortInfoService\022)\n\013GetPortInfo\022\014.PortRe"
+          + "quest\032\n.PortReply\"\000\022R\n\024GetPortInfoByCarg"
+          + "oId\022\034.GetPortInfoByCargoIdRequest\032\032.GetP"
+          + "ortInfoByCargoIdReply\"\000\022B\n\024GetPortInfoBy"
+          + "PortIds\022\034.GetPortInfoByPortIdsRequest\032\n."
+          + "PortReply\"\000\022G\n\031GetPortInfoDetailsForAlgo"
+          + "\022\034.GetPortInfoByPortIdsRequest\032\n.PortRep"
+          + "ly\"\000\0225\n\013GetTimezone\022\021.PortEmptyRequest\032\021"
+          + ".TimezoneResponse\"\000\022;\n\023GetPortInfoByPagi"
+          + "ng\022\026.PortRequestWithPaging\032\n.PortReply\"\000"
+          + "\022?\n\027GetBerthDetailsByPortId\022\016.PortIdRequ"
+          + "est\032\022.BerthInfoResponse\"\000\022D\n\025GetCargoInf"
+          + "oByPortIds\022\034.GetPortInfoByPortIdsRequest"
+          + "\032\013.CargoInfos\"\000\022B\n\027GetLoadingPlanBerthDa"
+          + "ta\022\020.BerthIdsRequest\032\025.LoadingAlgoBerthD"
+          + "ataB\036\n\032com.cpdss.common.generatedP\000b\006pro"
+          + "to3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -19672,6 +19744,7 @@ public final class PortInfo {
               "TideHeightFrom",
               "TideHeightTo",
               "MaxPermissibleDraft",
+              "CountryId",
             });
     internal_static_PortReply_descriptor = getDescriptor().getMessageTypes().get(8);
     internal_static_PortReply_fieldAccessorTable =

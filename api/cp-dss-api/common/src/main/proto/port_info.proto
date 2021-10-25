@@ -106,6 +106,7 @@ message PortDetail {
 	string tideHeightFrom = 29;
 	string tideHeightTo = 30;
 	string maxPermissibleDraft = 31;
+	int64 countryId = 32;
 }
 
 message PortReply {
