@@ -41,6 +41,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoStage;
 import com.cpdss.gateway.domain.loadingplan.sequence.Eduction;
+import com.cpdss.gateway.domain.loadingplan.sequence.EductionOperation;
 import com.cpdss.gateway.domain.loadingplan.sequence.Event;
 import com.cpdss.gateway.domain.loadingplan.sequence.FlowRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlan;
@@ -118,7 +119,7 @@ public class LoadingSequenceService {
     Set<TankCategory> cargoTankCategories = new LinkedHashSet<TankCategory>();
     Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
     List<CargoStage> cargoStages = new ArrayList<CargoStage>();
-
+    List<EductionOperation> ballastEduction = new ArrayList<EductionOperation>();
     inititalizeStabilityParams(stabilityParams);
 
     PortDetail portDetail = getPortInfo(reply.getPortId());
@@ -265,6 +266,8 @@ public class LoadingSequenceService {
                 }
               });
       loadingRates.addAll(loadingSequence.getLoadingRatesList());
+
+      buildEduction(loadingSequence, portEta, ballastEduction);
     }
 
     if (gravityList.size() > 0) {
@@ -301,6 +304,33 @@ public class LoadingSequenceService {
                     ballast -> vesselTankDetails.indexOf(vesselTankMap.get(ballast.getId()))))
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
+    response.setBallastEduction(ballastEduction);
+  }
+
+  /**
+   * @param loadingSequence
+   * @param portEta
+   * @param ballastEduction
+   */
+  private void buildEduction(
+      LoadingSequence loadingSequence, Long portEta, List<EductionOperation> ballastEductions) {
+    EductorOperation eductorOperation = loadingSequence.getEductorOperation();
+    EductionOperation ballastEduction = new EductionOperation();
+    if (!eductorOperation.getPumpsUsed().isEmpty()) {
+      ballastEduction.setPumpSelected(
+          List.of(eductorOperation.getPumpsUsed().split(",")).stream()
+              .map(pumpId -> Long.valueOf(pumpId))
+              .collect(Collectors.toList()));
+    }
+    if (!eductorOperation.getTanksUsed().isEmpty()) {
+      ballastEduction.setTanks(
+          List.of(eductorOperation.getTanksUsed().split(",")).stream()
+              .map(tankId -> Long.valueOf(tankId))
+              .collect(Collectors.toList()));
+    }
+    ballastEduction.setTimeEnd(portEta + (eductorOperation.getEndTime() * 60 * 1000));
+    ballastEduction.setTimeStart(portEta + (eductorOperation.getStartTime() * 60 * 1000));
+    ballastEductions.add(ballastEduction);
   }
 
   /**
@@ -1270,13 +1300,13 @@ public class LoadingSequenceService {
       Eduction eduction,
       com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
           sequenceBuilder) {
-    if (eduction != null) {
+    if ((eduction != null) && (eduction.getTimeStart() != null)) {
       EductorOperation.Builder eductorBuilder = EductorOperation.newBuilder();
       eductorBuilder.setEndTime(
           StringUtils.isEmpty(eduction.getTimeEnd()) ? 0 : Integer.valueOf(eduction.getTimeEnd()));
       if (eduction.getPumpSelected() != null) {
         eductorBuilder.setPumpsUsed(
-            eduction.getPumpSelected().stream().collect(Collectors.joining(",")));
+            eduction.getPumpSelected().keySet().stream().collect(Collectors.joining(",")));
       }
       if (eduction.getTank() != null) {
         eductorBuilder.setTanksUsed(

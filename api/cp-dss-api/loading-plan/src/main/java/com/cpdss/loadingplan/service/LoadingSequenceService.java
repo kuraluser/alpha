@@ -6,6 +6,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply.Builder;
@@ -17,6 +18,7 @@ import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.entity.BallastOperation;
 import com.cpdss.loadingplan.entity.CargoLoadingRate;
 import com.cpdss.loadingplan.entity.DeballastingRate;
+import com.cpdss.loadingplan.entity.EductionOperation;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.LoadingPlanCommingleDetails;
@@ -29,6 +31,7 @@ import com.cpdss.loadingplan.entity.LoadingSequenceStabilityParameters;
 import com.cpdss.loadingplan.repository.BallastOperationRepository;
 import com.cpdss.loadingplan.repository.CargoLoadingRateRepository;
 import com.cpdss.loadingplan.repository.DeballastingRateRepository;
+import com.cpdss.loadingplan.repository.EductionOperationRepository;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanBallastDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingPlanCommingleDetailsRepository;
@@ -63,6 +66,7 @@ public class LoadingSequenceService {
   @Autowired LoadingPlanStowageDetailsRepository stowageDetailsRepository;
   @Autowired LoadingSequenceStabiltyParametersRepository loadingSequenceStabilityParamsRepository;
   @Autowired LoadingPlanCommingleDetailsRepository commingleDetailsRepository;
+  @Autowired EductionOperationRepository eductionOperationRepository;
 
   @GrpcClient("loadableStudyService")
   LoadableStudyServiceBlockingStub loadableStudyGrpcService;
@@ -190,8 +194,32 @@ public class LoadingSequenceService {
               portWiseDetailsRepository.findByLoadingSequenceAndIsActiveTrueOrderById(
                   loadingSequence);
           buildLoadingPlanPortWiseDetails(sequenceBuilder, loadingPlanPortWiseDetails);
+          EductionOperation eductionOperation =
+              eductionOperationRepository.findByLoadingSequenceAndIsActiveTrue(loadingSequence);
+          buildEductionOperations(sequenceBuilder, eductionOperation);
           builder.addLoadingSequences(sequenceBuilder.build());
         });
+  }
+
+  /**
+   * @param sequenceBuilder
+   * @param eductionOperation
+   */
+  private void buildEductionOperations(
+      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence.Builder
+          sequenceBuilder,
+      EductionOperation eductionOperation) {
+    log.info(
+        "Populating eduction operation, tanks: {}, pumps: {}",
+        eductionOperation.getTanksUsed(),
+        eductionOperation.getEductorsUsed());
+    EductorOperation.Builder builder = EductorOperation.newBuilder();
+    Optional.ofNullable(eductionOperation.getEductorsUsed()).ifPresent(builder::setPumpsUsed);
+    Optional.ofNullable(eductionOperation.getEndTime()).ifPresent(builder::setEndTime);
+    Optional.ofNullable(eductionOperation.getId()).ifPresent(builder::setId);
+    Optional.ofNullable(eductionOperation.getStartTime()).ifPresent(builder::setStartTime);
+    Optional.ofNullable(eductionOperation.getTanksUsed()).ifPresent(builder::setTanksUsed);
+    sequenceBuilder.setEductorOperation(builder.build());
   }
 
   private void buildBallastOperations(
