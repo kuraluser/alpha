@@ -917,7 +917,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       errorMessages: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
         'duplicateAbbrevation': 'DISCHARGE_STUDY_ABBREVIATION_ALREADY_USED_ERROR',
-        'alphabetsOnly': 'CARGO_NOMINATION_FIELD_ALPHABETS_ONLY_ERROR',
+        'alphaNumericOnly': 'CARGO_NOMINATION_FIELD_ALPHA_NUMERIC_ONLY_ERROR',
         'maxlength': 'CARGO_NOMINATION_FIELD_ABBREVIATION_MAX_LENGTH_ERROR'
       }
     },
@@ -968,7 +968,10 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       fieldType: DATATABLE_FIELD_TYPE.NUMBER,
       fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_API',
       errorMessages: {
-        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'min': 'DISCHARGE_STUDY_API_MIN_ERROR',
+        'max': 'DISCHARGE_STUDY_API_MAX_ERROR'
       }
     },
     {
@@ -977,7 +980,10 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       fieldType: DATATABLE_FIELD_TYPE.NUMBER,
       fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_TEMP',
       errorMessages: {
-        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'min': 'DISCHARGE_STUDY_TEMPERATURE_MIN_ERROR',
+        'max': 'DISCHARGE_STUDY_TEMPERATURE_MAX_ERROR'
       }
     }
   ]
