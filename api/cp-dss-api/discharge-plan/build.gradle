@@ -4,6 +4,7 @@ ext{
     dbName = System.getenv('DB_NAME') ?: ""
     dbUser = System.getenv('DB_USER') ?: ""
     dbPassword = System.getenv('DB_PASSWORD') ?: ""
+    algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
 }
 
 appConfig {
@@ -27,7 +28,7 @@ appConfig {
 			replicas = 1
 			rollbackOnUpdateFailure = true
 		}
-		environment = ['DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword]
+		environment = ['DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'ALGO_BASE_URL': algoBaseURL, 'ATTACHMENT_ROOT_PATH': '/data']
 		labels = ["Key1":"testLabel"]
 	}
 }

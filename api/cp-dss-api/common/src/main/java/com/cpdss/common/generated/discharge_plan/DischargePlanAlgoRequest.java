@@ -14,6 +14,7 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
 
   private DischargePlanAlgoRequest() {
     requestAsJsonString_ = "";
+    processId_ = "";
   }
 
   @java.lang.Override
@@ -66,6 +67,13 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
               java.lang.String s = input.readStringRequireUtf8();
 
               requestAsJsonString_ = s;
+              break;
+            }
+          case 26:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              processId_ = s;
               break;
             }
           default:
@@ -162,6 +170,41 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
     }
   }
 
+  public static final int PROCESSID_FIELD_NUMBER = 3;
+  private volatile java.lang.Object processId_;
+  /**
+   * <code>string processId = 3;</code>
+   *
+   * @return The processId.
+   */
+  public java.lang.String getProcessId() {
+    java.lang.Object ref = processId_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      processId_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string processId = 3;</code>
+   *
+   * @return The bytes for processId.
+   */
+  public com.google.protobuf.ByteString getProcessIdBytes() {
+    java.lang.Object ref = processId_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      processId_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -182,6 +225,9 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
     if (!getRequestAsJsonStringBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, requestAsJsonString_);
     }
+    if (!getProcessIdBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, processId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -196,6 +242,9 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
     }
     if (!getRequestAsJsonStringBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, requestAsJsonString_);
+    }
+    if (!getProcessIdBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, processId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -218,6 +267,7 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
       if (!getResponseStatus().equals(other.getResponseStatus())) return false;
     }
     if (!getRequestAsJsonString().equals(other.getRequestAsJsonString())) return false;
+    if (!getProcessId().equals(other.getProcessId())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -235,6 +285,8 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
     }
     hash = (37 * hash) + REQUESTASJSONSTRING_FIELD_NUMBER;
     hash = (53 * hash) + getRequestAsJsonString().hashCode();
+    hash = (37 * hash) + PROCESSID_FIELD_NUMBER;
+    hash = (53 * hash) + getProcessId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -383,6 +435,8 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
       }
       requestAsJsonString_ = "";
 
+      processId_ = "";
+
       return this;
     }
 
@@ -418,6 +472,7 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
         result.responseStatus_ = responseStatusBuilder_.build();
       }
       result.requestAsJsonString_ = requestAsJsonString_;
+      result.processId_ = processId_;
       onBuilt();
       return result;
     }
@@ -476,6 +531,10 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
       }
       if (!other.getRequestAsJsonString().isEmpty()) {
         requestAsJsonString_ = other.requestAsJsonString_;
+        onChanged();
+      }
+      if (!other.getProcessId().isEmpty()) {
+        processId_ = other.processId_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -699,6 +758,82 @@ public final class DischargePlanAlgoRequest extends com.google.protobuf.Generate
       checkByteStringIsUtf8(value);
 
       requestAsJsonString_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object processId_ = "";
+    /**
+     * <code>string processId = 3;</code>
+     *
+     * @return The processId.
+     */
+    public java.lang.String getProcessId() {
+      java.lang.Object ref = processId_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        processId_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string processId = 3;</code>
+     *
+     * @return The bytes for processId.
+     */
+    public com.google.protobuf.ByteString getProcessIdBytes() {
+      java.lang.Object ref = processId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        processId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string processId = 3;</code>
+     *
+     * @param value The processId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setProcessId(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      processId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string processId = 3;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearProcessId() {
+
+      processId_ = getDefaultInstance().getProcessId();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string processId = 3;</code>
+     *
+     * @param value The bytes for processId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setProcessIdBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      processId_ = value;
       onChanged();
       return this;
     }

@@ -33,4 +33,17 @@ public interface DischargePlanAlgoRequestOrBuilder
    * @return The bytes for requestAsJsonString.
    */
   com.google.protobuf.ByteString getRequestAsJsonStringBytes();
+
+  /**
+   * <code>string processId = 3;</code>
+   *
+   * @return The processId.
+   */
+  java.lang.String getProcessId();
+  /**
+   * <code>string processId = 3;</code>
+   *
+   * @return The bytes for processId.
+   */
+  com.google.protobuf.ByteString getProcessIdBytes();
 }

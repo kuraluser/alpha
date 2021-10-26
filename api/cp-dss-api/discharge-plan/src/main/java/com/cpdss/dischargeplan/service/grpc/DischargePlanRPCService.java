@@ -15,10 +15,13 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReque
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
+import com.cpdss.dischargeplan.domain.algo.DischargingInformationAlgoResponse;
 import com.cpdss.dischargeplan.entity.BillOfLadding;
 import com.cpdss.dischargeplan.entity.DischargePlanCommingleDetails;
+import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
@@ -38,11 +41,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @GrpcService
@@ -74,6 +80,11 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   private PortDischargingPlanStowageDetailsRepository portDischargingPlanStowageDetailsRepository;
 
   @Autowired private DischargeInformationBuilderService dischargeInformationBuilderService;
+
+  @Autowired RestTemplate restTemplate;
+
+  @Value(value = "${algo.planGenerationUrl}")
+  private String planGenerationUrl;
 
   @Override
   public void dischargePlanSynchronization(
@@ -121,15 +132,35 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       this.dischargePlanAlgoService.buildDischargeInformation(request, algoRequest);
 
       // Save Above JSON In LS json data Table
+      dischargePlanAlgoService.saveDischargingInformationRequestJson(
+          algoRequest, request.getDischargeInfoId());
       ObjectMapper objectMapper = new ObjectMapper();
       String ss = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoRequest);
       builder.setRequestAsJsonString(ss);
       log.info("algo request payload - {}", ss);
-
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargeInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      if (dischargeInformation == null) {
+        throw new GenericServiceException(
+            "Could not find discharge information " + request.getDischargeInfoId(),
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
       // Call To Algo End Point for Loading
-
+      DischargingInformationAlgoResponse response =
+          restTemplate.postForObject(
+              planGenerationUrl, algoRequest, DischargingInformationAlgoResponse.class);
       // Set Loading Status
-
+      Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+          dischargePlanAlgoService.getDischargingInformationStatus(
+              DischargePlanConstants.DISCHARGING_INFORMATION_PROCESSING_STARTED_ID);
+      dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
+      dischargeInformation.setIsDischargingPlanGenerated(false);
+      dischargeInformation.setIsDischargingSequenceGenerated(false);
+      dischargeInformationService.save(dischargeInformation);
+      dischargePlanAlgoService.createDischargingInformationAlgoStatus(
+          dischargeInformation, response.getProcessId(), dischargingInfoStatusOpt.get(), null);
+      builder.setProcessId(response.getProcessId());
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(
