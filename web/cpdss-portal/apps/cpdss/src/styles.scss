@@ -3013,6 +3013,22 @@ textarea{
   font-size: 1.5em;
 }
 
+.sequence-stripping {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  padding: 0px 10px;
+}
+
+.sequence-gravity {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  padding: 0px 10px;
+}
+
 .cow-legend {
   .list-group-item {
     background: none;
