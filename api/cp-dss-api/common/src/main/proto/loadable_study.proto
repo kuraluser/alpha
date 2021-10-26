@@ -656,6 +656,8 @@ message LoadableQuantityCargoDetails {
 	 int64 dscargoNominationId = 34;
 	 int64 blFigure = 35;
 	 int64 shipFigure = 36;
+	 bool ifProtested = 37;
+	 bool isCommingled = 38;
 }
 
 message COWDetail {

@@ -736,7 +736,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setId(lqcd.getId());
       cargoDetails.setMaxDischargingRate(this.getLoadingRateFromVesselService(vesselId));
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
-      cargoDetails.setTimeRequiredForDischarging(lqcd.getTimeRequiredForLoading());
+      cargoDetails.setTimeRequiredForDischarging(lqcd.getTimeRequiredForDischarging());
 
       // Set Loading port Names in Cargo To Be Discharge
       if (!lqcd.getLoadingPortsList().isEmpty()) {
@@ -756,6 +756,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         cargoDetails.setBlFigure(new BigDecimal(lqcd.getCargoNominationQuantity()));
       }
       cargoDetails.setDischargeCargoNominationId(lqcd.getDscargoNominationId());
+      cargoDetails.setIsCommingledDischarge(lqcd.getIsCommingled());
+      cargoDetails.setProtested(lqcd.getIfProtested());
 
       // these are not needed now informed by ui team. if it is needed in future can un comment this
       // code

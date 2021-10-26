@@ -686,6 +686,9 @@ public class SynopticServiceUtils {
           Optional.ofNullable(var1.getTimeRequiredForDischarging())
               .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
 
+          Optional.ofNullable(var1.getIsCommingled()).ifPresent(builder1::setIsCommingled);
+          Optional.ofNullable(var1.getIfProtested()).ifPresent(builder1::setIfProtested);
+
           try {
             this.setLoadingPortNameFromCargoOperation(
                 var1.getCargoId(), var1.getCargoNominationId(), builder1);

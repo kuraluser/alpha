@@ -397,9 +397,11 @@ public class LoadablePatternService {
           savePatternDetails(request, loadableStudyOpt, requestType, false);
 
       // Update pattern Ids
-      request =
-          updatePatternIdAlgoObj(
-              loadableStudyOpt.get().getId(), request, loadablePatterns, requestType);
+      if (enableCommunication && !env.equals("ship")) {
+        request =
+            updatePatternIdAlgoObj(
+                loadableStudyOpt.get().getId(), request, loadablePatterns, requestType);
+      }
 
       if (request.getHasLodicator()) {
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
@@ -2266,7 +2268,8 @@ public class LoadablePatternService {
           loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningType(
               loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),
               CONFIRMED_STATUS_ID,
-              true, loadablePatternOpt.get().getLoadableStudy().getPlanningTypeXId());
+              true,
+              loadablePatternOpt.get().getLoadableStudy().getPlanningTypeXId());
       if (!loadablePatternConfirmedOpt.isEmpty()) {
         log.info("changing status of other confirmed plan to plan generated");
         loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
