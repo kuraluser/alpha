@@ -38,6 +38,7 @@ export class NewVoyagePopupComponent implements OnInit {
   startDateTimeZone: ITimeZone;
   endDateTimeZone: ITimeZone;
   createVoyageDateFormat: string;
+  datePlaceHolder: string;
 
   constructor(private fb: FormBuilder, private router: Router,
     private voyageApiService: VoyageService,
@@ -46,10 +47,13 @@ export class NewVoyagePopupComponent implements OnInit {
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.date = new Date();
     this.errorMessages = this.voyageApiService.setValidationErrorMessage();
     this.createVoyageDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings.dateFormat);
+    const dtFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat };
+    const translationKeys = await this.translateService.get(['EXAMPLE']).toPromise();
+    this.datePlaceHolder = translationKeys['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(this.date, dtFormatOpts);
 
     this.getVesselInfo();
     this.getTimeZoneList();

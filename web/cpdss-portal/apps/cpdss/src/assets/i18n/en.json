@@ -114,6 +114,7 @@
   "VIEW": "View",
   "DUPLICATE": "Duplicate",
   "CANCEL": "Cancel",
+  "EXAMPLE": "eg: ",
   "NEW_VOYAGE_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED": "Special characters are not allowed",
   "NEW_VOYAGE_POPUP_CHARACTER_LIMIT": "Maximum allowed character length is 10",
   "VESSEL_INFO_IMO": "IMO",

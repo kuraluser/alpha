@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
-import { ValueObject, ISubTotal, IMonth } from '../../../shared/models/common.model';
+import { ValueObject, ISubTotal, IMonth, IDateTimeFormatOptions } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
 import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
@@ -729,8 +729,14 @@ export class LoadableStudyDetailsTransformationService {
  */
   async getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): Promise<IDataTableColumn[]> {
     const minDate = new Date();
-    const translatedMessages = await this.translateService.get(['PORT_MAX_AIR_DRAFT_MIN_ERROR']).toPromise();
-    const minAirDraftMessage = translatedMessages['PORT_MAX_AIR_DRAFT_MIN_ERROR'] + this.getMinAirDraft().toFixed(2)
+    const nextDate = new Date(minDate.getTime() + (24 * 60 * 60 * 1000));
+    const translatedMessages = await this.translateService.get(['PORT_MAX_AIR_DRAFT_MIN_ERROR', 'EXAMPLE']).toPromise();
+    const minAirDraftMessage = translatedMessages['PORT_MAX_AIR_DRAFT_MIN_ERROR'] + this.getMinAirDraft().toFixed(2);
+    const etaEtdFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat };
+    const etaEtdPlaceHolder = translatedMessages['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(minDate, etaEtdFormatOpts);
+    const laycanFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat.split(' ')[0] };
+    const laycanPlaceHolder = translatedMessages['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(minDate, laycanFormatOpts) + ' - ' + this.timeZoneTransformationService.formatDateTime(nextDate, laycanFormatOpts);
+
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -819,7 +825,8 @@ export class LoadableStudyDetailsTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.DATERANGE,
         filter: false,
         minDate: minDate,
-        fieldPlaceholder: 'CHOOSE_LAY_CAN',
+        fieldPlaceholder: laycanPlaceHolder,
+        readonlyInput: false,
         fieldClass: 'lay-can',
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         fieldHeaderTooltipIcon: 'pi-info-circle',
@@ -879,7 +886,8 @@ export class LoadableStudyDetailsTransformationService {
           filterType: DATATABLE_FILTER_TYPE.DATE,
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
           filterField: 'eta.value',
-          fieldPlaceholder: 'CHOOSE_ETA',
+          fieldPlaceholder: etaEtdPlaceHolder,
+          readonlyInput: false,
           dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
           minDate: minDate,
           fieldClass: 'eta',
@@ -902,7 +910,8 @@ export class LoadableStudyDetailsTransformationService {
           filterType: DATATABLE_FILTER_TYPE.DATE,
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
           filterField: 'etd.value',
-          fieldPlaceholder: 'CHOOSE_ETD',
+          fieldPlaceholder: etaEtdPlaceHolder,
+          readonlyInput: false,
           minDate: minDate,
           dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
           fieldClass: 'etd',

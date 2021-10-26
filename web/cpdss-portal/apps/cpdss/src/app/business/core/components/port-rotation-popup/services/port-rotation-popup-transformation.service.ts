@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../../../shared/components/datatable/datatable.model';
-import { ValueObject } from '../../../../../shared/models/common.model';
+import { IDateTimeFormatOptions, ValueObject } from '../../../../../shared/models/common.model';
 import { IPermission } from '../../../../../shared/models/user-profile.model';
 import { AppConfigurationService } from '../../../../../shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from '../../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
@@ -8,6 +8,7 @@ import { IPortAllDropdownData } from '../../../../cargo-planning/models/cargo-pl
 import { IPortRotationValueObject } from '../port-rotation-popup.model';
 import { IOperations, IPort, IPortList, OPERATIONS } from '../../../../core/models/common.model';
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Transformation Service for Port rotation pop up module
@@ -18,7 +19,10 @@ import * as moment from 'moment';
 @Injectable()
 export class PortRotationPopupTransformationService {
 
-  constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
+  constructor(
+    private timeZoneTransformationService: TimeZoneTransformationService,
+    private translateService: TranslateService
+  ) { }
 
 
 
@@ -28,8 +32,15 @@ export class PortRotationPopupTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof PortRotationPopupTransformationService
  */
-  getPortDatatableColumns(): IDataTableColumn[] {
+  async getPortDatatableColumns(): Promise<IDataTableColumn[]> {
     const minDate = new Date();
+    const nextDate = new Date(minDate.getTime() + (24 * 60 * 60 * 1000));
+    const translatedMessages = await this.translateService.get(['EXAMPLE']).toPromise();
+    const etaEtdFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat };
+    const etaEtdPlaceHolder = translatedMessages['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(minDate, etaEtdFormatOpts);
+    const laycanFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat.split(' ')[0] };
+    const laycanPlaceHolder = translatedMessages['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(minDate, laycanFormatOpts) + ' - ' + this.timeZoneTransformationService.formatDateTime(nextDate, laycanFormatOpts);
+
     return [
       {
         field: 'slNo',
@@ -99,8 +110,9 @@ export class PortRotationPopupTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.DATERANGE,
         filter: false,
         minDate: minDate,
-        fieldPlaceholder: 'CHOOSE_LAY_CAN',
+        fieldPlaceholder: laycanPlaceHolder,
         fieldClass: 'lay-can',
+        readonlyInput: false,
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         fieldHeaderTooltipIcon: 'pi-info-circle',
         fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
@@ -120,7 +132,8 @@ export class PortRotationPopupTransformationService {
         filterType: DATATABLE_FILTER_TYPE.DATE,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'eta.value',
-        fieldPlaceholder: 'CHOOSE_ETA',
+        fieldPlaceholder: etaEtdPlaceHolder,
+        readonlyInput: false,
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         minDate: minDate,
         fieldClass: 'eta',
@@ -143,7 +156,8 @@ export class PortRotationPopupTransformationService {
         filterType: DATATABLE_FILTER_TYPE.DATE,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'etd.value',
-        fieldPlaceholder: 'CHOOSE_ETD',
+        fieldPlaceholder: etaEtdPlaceHolder,
+        readonlyInput: false,
         minDate: minDate,
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         fieldClass: 'etd',
