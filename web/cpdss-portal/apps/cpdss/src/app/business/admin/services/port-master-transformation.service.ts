@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FIELD_TYPE, DATATABLE_ACTION } from '../../../shared/components/datatable/datatable.model';
 import { AdminModule } from '../admin.module';
 
+
 /**
  * Service for transformation of port list data
  * @export
@@ -15,7 +16,6 @@ export class PortMasterTransformationService {
 
   berthFomDetails: any;
   selectedPortLocation: { lat: number, lon: number }
-
   constructor() {
   }
 
@@ -182,7 +182,7 @@ export class PortMasterTransformationService {
       berthName: {
         'required': 'PORTMASTER_BERTH_NAME'
       },
-      berthDepth: {
+      maxShipDepth: {
         'required': 'PORTMASTER_BERTH_DEPTH_REQUIRED'
       },
       maxLoa: {
@@ -259,16 +259,16 @@ export class PortMasterTransformationService {
 
       },
       {
-        field: 'berthDepth',
+        field: 'maxShipDepth',
         header: 'PORTMASTER_BERTH_DEPTH',
         filter: true,
         filterPlaceholder: '',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'berthDepth',
+        filterField: 'maxShipDepth',
         sortable: true,
-        sortField: 'berthDepth',
+        sortField: 'maxShipDepth',
         editable: true
       },
       {
