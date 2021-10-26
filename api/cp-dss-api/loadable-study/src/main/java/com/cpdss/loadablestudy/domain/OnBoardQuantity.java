@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -10,8 +11,12 @@ public class OnBoardQuantity {
   private Long portId;
   private Long tankId;
   private Long cargoId;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String volume; // volumeInM3
+
   private String plannedArrivalWeight;
   private String api;
   private String colorCode;
+  private String temperature;
 }

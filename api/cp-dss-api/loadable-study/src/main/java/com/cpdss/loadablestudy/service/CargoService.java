@@ -13,6 +13,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.ApiTempHistorySpecification;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.entity.ApiTempHistory;
+import com.cpdss.loadablestudy.entity.CommingleColour;
 import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
@@ -53,6 +54,7 @@ public class CargoService {
   @Autowired private VoyageService voyageService;
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private CargoNominationRepository cargoNominationRepository;
+  @Autowired private CommingleColourRepository commingleColourRepository;
 
   public LoadableStudy.CargoHistoryReply.Builder getAllCargoHistory(
       LoadableStudy.CargoHistoryRequest request,
@@ -239,8 +241,6 @@ public class CargoService {
     commingleCargos.forEach(
         commingleCargo -> {
           com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
-              new com.cpdss.loadablestudy.domain.CommingleCargo();
-          commingleCargoDto =
               modelMapper.map(commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
           commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
           commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
@@ -252,6 +252,7 @@ public class CargoService {
               null != commingleCargo.getCargo2Pct()
                   ? commingleCargo.getCargo2Pct().toString()
                   : null);
+          commingleCargoDto.setCommingleColour(commingleCargo.getCommingleColour());
           loadableStudy.getCommingleCargos().add(commingleCargoDto);
         });
   }
@@ -482,7 +483,11 @@ public class CargoService {
             : null);
     commingleCargoEntity.setIsActive(true);
     commingleCargoEntity.setIsSlopOnly(requestRecord.getSlopOnly());
-    commingleCargoEntity.setAbbreviation(COMMINGLE + counter.incrementAndGet());
+    String abbreviation = COMMINGLE + counter.incrementAndGet();
+    commingleCargoEntity.setAbbreviation(abbreviation);
+    Optional<CommingleColour> commingleColour =
+        this.commingleColourRepository.findByAbbreviationAndIsActive(abbreviation, true);
+    commingleCargoEntity.setCommingleColour(commingleColour.get().getCommingleColour());
     return commingleCargoEntity;
   }
 

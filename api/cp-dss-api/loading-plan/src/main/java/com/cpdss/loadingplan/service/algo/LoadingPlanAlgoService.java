@@ -725,7 +725,9 @@ public class LoadingPlanAlgoService {
         savedLoadingSequence, sequence.getLoadingPlanPortWiseDetailsList());
     saveCargoLoadingRates(savedLoadingSequence, sequence.getLoadingRatesList());
     saveBallastPumps(savedLoadingSequence, sequence.getBallastOperationsList());
-    saveEductorOperations(savedLoadingSequence, sequence.getEductorOperation());
+    if (sequence.getEductorOperation().getEndTime() != 0) {
+      saveEductorOperations(savedLoadingSequence, sequence.getEductorOperation());
+    }
   }
 
   /**

@@ -1393,7 +1393,12 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     response.setVesselName(vesselDetaildInfoReply.getVesselName());
     response.setImoNumber(vesselDetaildInfoReply.getImoNumber());
     response.setCountryFlagUrl("assets/images/flags/japan.png");
-    response.setVesselImageUrl("assets/images/vessels/" + vesselName.toLowerCase() + "/" + vesselName.toLowerCase() + ".jpg");
+    response.setVesselImageUrl(
+        "assets/images/vessels/"
+            + vesselName.toLowerCase()
+            + "/"
+            + vesselName.toLowerCase()
+            + ".jpg");
     setGeneralVesselInformation(vesselDetaildInfoReply, response);
     setVesselDimensionInfo(vesselDetaildInfoReply, response);
     VesselDraftDisplacementResponse draftResponse = new VesselDraftDisplacementResponse();
@@ -1459,44 +1464,45 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
 
   /**
    * Set vessel bunker, ballast, cargo tank layout datas
+   *
    * @param tanksList
    * @param response
    * @return
    */
-  private List<List<VesselTankInformation>> setVesselTankLayoutDetails(List<VesselTankInfo> tanksList, VesselDetailedInfoResponse response) {
-	  
-	  List<List<VesselTankInformation>> tanks = new ArrayList<>();
-	  List<VesselTankInformation> tankGroup = null;
-	  Map<Integer, List<VesselTankInformation>> tankInfoMap = new HashMap<>();
-	  for(VesselTankInfo tankDetail:tanksList) {
-		  if(tankInfoMap.get(tankDetail.getTankGroup())==null) {
-			  tankGroup = new ArrayList<>();
-		  }else {
-			  tankGroup = tankInfoMap.get(tankDetail.getTankGroup());
-		  }
-		  VesselTankInformation tank = new VesselTankInformation();
-		  tank.setCategoryId(tankDetail.getTankCategoryId());
-		  tank.setCategoryName(tankDetail.getTankCategoryName());
-		  tank.setDensity(tankDetail.getDensity());
-		  tank.setFrameNumberFrom(tankDetail.getFrameNumberFrom());
-		  tank.setFrameNumberTo(tankDetail.getFrameNumberTo());
-		  tank.setFullCapacityCubm(tankDetail.getFullCapacityCubm());
-		  tank.setGroup(tankDetail.getTankGroup());
-		  tank.setId(tankDetail.getTankId());
-		  tank.setName(tankDetail.getTankName());
-		  tank.setOrder(tankDetail.getTankOrder());
-		  tank.setShortName(tankDetail.getShortName());
-		  tank.setSlopTank(tankDetail.getIsSlopTank());
-		  tankGroup.add(tank);
-		  tankInfoMap.put(tankDetail.getTankGroup(), tankGroup);
-	  }
-	  for (Map.Entry<Integer, List<VesselTankInformation>> entry : tankInfoMap.entrySet()) {
-		  
-		  List<VesselTankInformation> list = entry.getValue();
-		  Collections.sort(list, Comparator.comparing(VesselTankInformation::getOrder));
-		  tanks.add(list);
-	  }
-	  return tanks;
-	  
+  private List<List<VesselTankInformation>> setVesselTankLayoutDetails(
+      List<VesselTankInfo> tanksList, VesselDetailedInfoResponse response) {
+
+    List<List<VesselTankInformation>> tanks = new ArrayList<>();
+    List<VesselTankInformation> tankGroup = null;
+    Map<Integer, List<VesselTankInformation>> tankInfoMap = new HashMap<>();
+    for (VesselTankInfo tankDetail : tanksList) {
+      if (tankInfoMap.get(tankDetail.getTankGroup()) == null) {
+        tankGroup = new ArrayList<>();
+      } else {
+        tankGroup = tankInfoMap.get(tankDetail.getTankGroup());
+      }
+      VesselTankInformation tank = new VesselTankInformation();
+      tank.setCategoryId(tankDetail.getTankCategoryId());
+      tank.setCategoryName(tankDetail.getTankCategoryName());
+      tank.setDensity(tankDetail.getDensity());
+      tank.setFrameNumberFrom(tankDetail.getFrameNumberFrom());
+      tank.setFrameNumberTo(tankDetail.getFrameNumberTo());
+      tank.setFullCapacityCubm(tankDetail.getFullCapacityCubm());
+      tank.setGroup(tankDetail.getTankGroup());
+      tank.setId(tankDetail.getTankId());
+      tank.setName(tankDetail.getTankName());
+      tank.setOrder(tankDetail.getTankOrder());
+      tank.setShortName(tankDetail.getShortName());
+      tank.setSlopTank(tankDetail.getIsSlopTank());
+      tankGroup.add(tank);
+      tankInfoMap.put(tankDetail.getTankGroup(), tankGroup);
+    }
+    for (Map.Entry<Integer, List<VesselTankInformation>> entry : tankInfoMap.entrySet()) {
+
+      List<VesselTankInformation> list = entry.getValue();
+      Collections.sort(list, Comparator.comparing(VesselTankInformation::getOrder));
+      tanks.add(list);
+    }
+    return tanks;
   }
 }

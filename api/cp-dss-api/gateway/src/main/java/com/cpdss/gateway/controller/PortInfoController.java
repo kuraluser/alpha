@@ -8,11 +8,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.PortDetailResponse;
 import com.cpdss.gateway.service.InstructionService;
 import com.cpdss.gateway.service.PortInfoService;
-
-import lombok.extern.log4j.Log4j2;
-
 import javax.validation.constraints.Min;
-
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +28,7 @@ public class PortInfoController {
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
   @Autowired InstructionService instructionService;
-  
+
   @Autowired PortInfoService portInfoService;
 
   @GetMapping("/port-instructions")
@@ -52,9 +49,10 @@ public class PortInfoController {
           e);
     }
   }
-  
+
   /**
    * Get port master details with berth information for the requested port id.
+   *
    * @param portId
    * @param headers
    * @return PortDetailResponse
@@ -62,11 +60,12 @@ public class PortInfoController {
    */
   @GetMapping("/portInfo/{portId}")
   public PortDetailResponse getPortDetailsByPortId(
-		  @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
-		  @RequestHeader HttpHeaders headers)
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long portId,
+      @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      return this.portInfoService.getPortInformationByPortId(portId, headers.getFirst(CORRELATION_ID_HEADER));
+      return this.portInfoService.getPortInformationByPortId(
+          portId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching getPortInformationByPortId", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

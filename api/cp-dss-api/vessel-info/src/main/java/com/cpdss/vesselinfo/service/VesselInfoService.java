@@ -32,9 +32,9 @@ import com.cpdss.common.generated.VesselInfo.UllageDetails;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselDetail;
+import com.cpdss.common.generated.VesselInfo.VesselDetail.Builder;
 import com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply;
 import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
-import com.cpdss.common.generated.VesselInfo.VesselDetail.Builder;
 import com.cpdss.common.generated.VesselInfo.VesselIdResponse;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselParticulars;
@@ -183,7 +183,6 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   public static final String BALLAST_CENTER_TANK = "CENTER";
   public static final String BALLAST_REAR_TANK = "REAR";
   public static final String DATE_FORMAT = "dd-MM-yyyy";
-
 
   private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID);
@@ -2767,118 +2766,137 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     responseObserver.onNext(builder.build());
     responseObserver.onCompleted();
   }
-  
-  /**
-   * Get vessel informations for the requested vessel id
-   */
-  @Override
-	public void getVesselDetaildInformation(VesselIdRequest request,
-			StreamObserver<VesselDetaildInfoReply> responseObserver) {
-	  com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply.Builder response = 
-			  VesselDetaildInfoReply.newBuilder();
-	  try {
-		  Vessel vessel = vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
-		  response.setVesselId(vessel.getId());
-		  response.setVesselName(vessel.getName());
-		  response.setVesselType(vessel.getTypeOfShip());
-		  response.setBuilder(vessel.getBuilder());
-		  response.setBreadthMoulded(vessel.getBreadthMolded().longValue());
-		  response.setClass_(vessel.getClass1());
-		  response.setDateOfDelivery(new SimpleDateFormat(DATE_FORMAT).format(vessel.getDateOfDelivery()));
-		  response.setDateOfKeelLaid(new SimpleDateFormat(DATE_FORMAT).format(vessel.getDateKeelLaid()));
-		  response.setDateOfLaunch(new SimpleDateFormat(DATE_FORMAT).format(vessel.getDateOfLaunching()));
-		  response.setDepthMoulded(vessel.getDepthMolded().doubleValue());
-		  if(vessel.getDesignedLoaddraft()!=null)
-			  response.setDesignedLoadDraft(vessel.getDesignedLoaddraft().doubleValue());
-		  if(vessel.getDraftFullLoadSummer()!=null)
-			  response.setDraftFullLoad(vessel.getDraftFullLoadSummer().doubleValue());
-		  response.setImoNumber(vessel.getImoNumber());
-		  response.setLengthBetweenPerpendiculars(vessel.getLengthBetweenPerpendiculars().longValue());
-		  response.setLengthOverall(vessel.getLengthOverall().longValue());
-		  response.setNavigationArea(vessel.getNavigationArea());
-		  response.setOfficialNumber(vessel.getOfficialNumber());
-		  response.setRegisterLength(vessel.getRegisterLength().longValue());
-		  response.setSignalLetter(vessel.getSignalLetter());
-		  if(vessel.getThicknessOfKeelplate()!=null)
-			  response.setThicknessOfKeelPlate(vessel.getThicknessOfKeelplate().doubleValue());
-		  if(vessel.getThicknessOfUpperDeckStringerPlate()!=null)
-			  response.setThicknessOfUpperDeck(vessel.getThicknessOfUpperDeckStringerPlate().doubleValue());
-		  if(vessel.getThicknessOfKeelplate()!=null && vessel.getThicknessOfUpperDeckStringerPlate()!=null && vessel.getDepthMolded()!=null) {
-			  Double totalDepth = vessel.getDepthMolded().doubleValue() + 
-					  vessel.getThicknessOfKeelplate().doubleValue() + vessel.getThicknessOfUpperDeckStringerPlate().doubleValue();
-			  response.setTotalDepth(totalDepth);
-		  }		 
-		  getTankDetailsForTheVessel(response, vessel);
-		  response.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
-	  }catch(Exception e) {
-		  log.error("Exception when fetching vessel information", e);
-		  response.setResponseStatus(
-	             ResponseStatus.newBuilder()
-	                 .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-	                 .setMessage(null != e.getMessage() ? e.getMessage() : "")
-	                 .setStatus(FAILED)
-	                 .build());
-	   }finally {
-	        responseObserver.onNext(response.build());
-	        responseObserver.onCompleted();
-	   }  
-		
-	}
-  
-  /**
-   * Get vessel bunker, ballast and cargo tank details
-   */
-  private void getTankDetailsForTheVessel(com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply.Builder response,
-		  Vessel vessel) {
-	  com.cpdss.common.generated.VesselInfo.VesselTankInfo.Builder tankInfoBuilder = VesselTankInfo.newBuilder();
-	  List<Long> tankCategoryIds = new ArrayList<>(Arrays.asList(CARGO_TANK_CATEGORY_ID,FRESH_WATER_TANK_CATEGORY_ID,
-			  FUEL_OIL_TANK_CATEGORY_ID,DIESEL_OIL_TANK_CATEGORY_ID,FUEL_VOID_TANK_CATEGORY_ID,
-			  FRESH_WATER_VOID_TANK_CATEGORY_ID,BALLAST_VOID_TANK_CATEGORY_ID,BALLAST_TANK_CATEGORY_ID));
-	  List<TankCategory> tankCategoryEntities = new ArrayList<>();
-	    tankCategoryIds.forEach(
-	        tankCategoryId ->
-	            tankCategoryEntities.add(this.tankCategoryRepository.getOne(tankCategoryId)));
-	    List<VesselTank> vesselTanks =
-	            this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
-	                vessel, tankCategoryEntities, true);
-	    vesselTanks.forEach(vesselTank -> vesselTank.setTankOrder(Optional.ofNullable(vesselTank.getTankOrder()).orElse(0)));
-	    Collections.sort(
-	    		vesselTanks, Comparator.comparing(VesselTank::getTankOrder));
-	    for(VesselTank tank:vesselTanks) {
-	    	if(tank.getDensity()!=null)
-	    		tankInfoBuilder.setDensity(tank.getDensity().doubleValue());
-	    	tankInfoBuilder.setFrameNumberFrom(tank.getFrameNumberFrom());
-	    	tankInfoBuilder.setFrameNumberTo(tank.getFrameNumberTo());
-	    	if(tank.getFullCapacityCubm()!=null)
-	    		tankInfoBuilder.setFullCapacityCubm(tank.getFullCapacityCubm().doubleValue());
-	    	tankInfoBuilder.setIsSlopTank(tank.getIsSlopTank()==null?false:tank.getIsSlopTank());
-	    	tankInfoBuilder.setShortName(tank.getShortName());
-	    	tankInfoBuilder.setTankCategoryId(tank.getTankCategory().getId());
-	    	tankInfoBuilder.setTankCategoryName(tank.getTankCategory().getName());
-	    	tankInfoBuilder.setTankGroup(tank.getTankGroup()==null?0:tank.getTankGroup());
-	    	tankInfoBuilder.setTankId(tank.getId());
-	    	tankInfoBuilder.setTankName(tank.getTankName());
-	    	tankInfoBuilder.setTankOrder(tank.getTankOrder()==null?0:tank.getTankOrder());
 
-	    	if(tank.getTankCategory().getId()==FRESH_WATER_TANK_CATEGORY_ID ||
-	    			tank.getTankCategory().getId()==FRESH_WATER_VOID_TANK_CATEGORY_ID) {
-	    		response.addBunkerRearTanks(tankInfoBuilder);}
-	    	if(tank.getTankCategory().getId()==FUEL_OIL_TANK_CATEGORY_ID ||
-	    			tank.getTankCategory().getId()==FUEL_VOID_TANK_CATEGORY_ID || 
-	    			tank.getTankCategory().getId() == DIESEL_OIL_TANK_CATEGORY_ID) {
-	    		response.addBunkerTanks(tankInfoBuilder);}
-	    	if(tank.getTankCategory().getId()==BALLAST_TANK_CATEGORY_ID 
-	    			&& tank.getTankPositionCategory().equals(BALLAST_FRONT_TANK)) {
-	    		response.addBallastFrontTanks(tankInfoBuilder);}
-	    	if((tank.getTankCategory().getId()==BALLAST_TANK_CATEGORY_ID || tank.getTankCategory().getId()==BALLAST_VOID_TANK_CATEGORY_ID) 
-	    			&& tank.getTankPositionCategory().equals(BALLAST_CENTER_TANK)) {
-	    		response.addBallastCenterTanks(tankInfoBuilder);}
-	    	if(tank.getTankCategory().getId()==BALLAST_TANK_CATEGORY_ID 
-	    			&& tank.getTankPositionCategory().equals(BALLAST_REAR_TANK)) {
-	    		response.addBallastRearTanks(tankInfoBuilder);}
-	    	if(tank.getTankCategory().getId()==CARGO_TANK_CATEGORY_ID) {
-	    		response.addCargoTanks(tankInfoBuilder);
-	    	}
-	    }
+  /** Get vessel informations for the requested vessel id */
+  @Override
+  public void getVesselDetaildInformation(
+      VesselIdRequest request, StreamObserver<VesselDetaildInfoReply> responseObserver) {
+    com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply.Builder response =
+        VesselDetaildInfoReply.newBuilder();
+    try {
+      Vessel vessel = vesselRepository.findByIdAndIsActive(request.getVesselId(), true);
+      response.setVesselId(vessel.getId());
+      response.setVesselName(vessel.getName());
+      response.setVesselType(vessel.getTypeOfShip());
+      response.setBuilder(vessel.getBuilder());
+      response.setBreadthMoulded(vessel.getBreadthMolded().longValue());
+      response.setClass_(vessel.getClass1());
+      response.setDateOfDelivery(
+          new SimpleDateFormat(DATE_FORMAT).format(vessel.getDateOfDelivery()));
+      response.setDateOfKeelLaid(
+          new SimpleDateFormat(DATE_FORMAT).format(vessel.getDateKeelLaid()));
+      response.setDateOfLaunch(
+          new SimpleDateFormat(DATE_FORMAT).format(vessel.getDateOfLaunching()));
+      response.setDepthMoulded(vessel.getDepthMolded().doubleValue());
+      if (vessel.getDesignedLoaddraft() != null)
+        response.setDesignedLoadDraft(vessel.getDesignedLoaddraft().doubleValue());
+      if (vessel.getDraftFullLoadSummer() != null)
+        response.setDraftFullLoad(vessel.getDraftFullLoadSummer().doubleValue());
+      response.setImoNumber(vessel.getImoNumber());
+      response.setLengthBetweenPerpendiculars(vessel.getLengthBetweenPerpendiculars().longValue());
+      response.setLengthOverall(vessel.getLengthOverall().longValue());
+      response.setNavigationArea(vessel.getNavigationArea());
+      response.setOfficialNumber(vessel.getOfficialNumber());
+      response.setRegisterLength(vessel.getRegisterLength().longValue());
+      response.setSignalLetter(vessel.getSignalLetter());
+      if (vessel.getThicknessOfKeelplate() != null)
+        response.setThicknessOfKeelPlate(vessel.getThicknessOfKeelplate().doubleValue());
+      if (vessel.getThicknessOfUpperDeckStringerPlate() != null)
+        response.setThicknessOfUpperDeck(
+            vessel.getThicknessOfUpperDeckStringerPlate().doubleValue());
+      if (vessel.getThicknessOfKeelplate() != null
+          && vessel.getThicknessOfUpperDeckStringerPlate() != null
+          && vessel.getDepthMolded() != null) {
+        Double totalDepth =
+            vessel.getDepthMolded().doubleValue()
+                + vessel.getThicknessOfKeelplate().doubleValue()
+                + vessel.getThicknessOfUpperDeckStringerPlate().doubleValue();
+        response.setTotalDepth(totalDepth);
+      }
+      getTankDetailsForTheVessel(response, vessel);
+      response.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when fetching vessel information", e);
+      response.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(null != e.getMessage() ? e.getMessage() : "")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(response.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /** Get vessel bunker, ballast and cargo tank details */
+  private void getTankDetailsForTheVessel(
+      com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply.Builder response,
+      Vessel vessel) {
+    com.cpdss.common.generated.VesselInfo.VesselTankInfo.Builder tankInfoBuilder =
+        VesselTankInfo.newBuilder();
+    List<Long> tankCategoryIds =
+        new ArrayList<>(
+            Arrays.asList(
+                CARGO_TANK_CATEGORY_ID,
+                FRESH_WATER_TANK_CATEGORY_ID,
+                FUEL_OIL_TANK_CATEGORY_ID,
+                DIESEL_OIL_TANK_CATEGORY_ID,
+                FUEL_VOID_TANK_CATEGORY_ID,
+                FRESH_WATER_VOID_TANK_CATEGORY_ID,
+                BALLAST_VOID_TANK_CATEGORY_ID,
+                BALLAST_TANK_CATEGORY_ID));
+    List<TankCategory> tankCategoryEntities = new ArrayList<>();
+    tankCategoryIds.forEach(
+        tankCategoryId ->
+            tankCategoryEntities.add(this.tankCategoryRepository.getOne(tankCategoryId)));
+    List<VesselTank> vesselTanks =
+        this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
+            vessel, tankCategoryEntities, true);
+    vesselTanks.forEach(
+        vesselTank ->
+            vesselTank.setTankOrder(Optional.ofNullable(vesselTank.getTankOrder()).orElse(0)));
+    Collections.sort(vesselTanks, Comparator.comparing(VesselTank::getTankOrder));
+    for (VesselTank tank : vesselTanks) {
+      if (tank.getDensity() != null) tankInfoBuilder.setDensity(tank.getDensity().doubleValue());
+      tankInfoBuilder.setFrameNumberFrom(tank.getFrameNumberFrom());
+      tankInfoBuilder.setFrameNumberTo(tank.getFrameNumberTo());
+      if (tank.getFullCapacityCubm() != null)
+        tankInfoBuilder.setFullCapacityCubm(tank.getFullCapacityCubm().doubleValue());
+      tankInfoBuilder.setIsSlopTank(tank.getIsSlopTank() == null ? false : tank.getIsSlopTank());
+      tankInfoBuilder.setShortName(tank.getShortName());
+      tankInfoBuilder.setTankCategoryId(tank.getTankCategory().getId());
+      tankInfoBuilder.setTankCategoryName(tank.getTankCategory().getName());
+      tankInfoBuilder.setTankGroup(tank.getTankGroup() == null ? 0 : tank.getTankGroup());
+      tankInfoBuilder.setTankId(tank.getId());
+      tankInfoBuilder.setTankName(tank.getTankName());
+      tankInfoBuilder.setTankOrder(tank.getTankOrder() == null ? 0 : tank.getTankOrder());
+
+      if (tank.getTankCategory().getId() == FRESH_WATER_TANK_CATEGORY_ID
+          || tank.getTankCategory().getId() == FRESH_WATER_VOID_TANK_CATEGORY_ID) {
+        response.addBunkerRearTanks(tankInfoBuilder);
+      }
+      if (tank.getTankCategory().getId() == FUEL_OIL_TANK_CATEGORY_ID
+          || tank.getTankCategory().getId() == FUEL_VOID_TANK_CATEGORY_ID
+          || tank.getTankCategory().getId() == DIESEL_OIL_TANK_CATEGORY_ID) {
+        response.addBunkerTanks(tankInfoBuilder);
+      }
+      if (tank.getTankCategory().getId() == BALLAST_TANK_CATEGORY_ID
+          && tank.getTankPositionCategory().equals(BALLAST_FRONT_TANK)) {
+        response.addBallastFrontTanks(tankInfoBuilder);
+      }
+      if ((tank.getTankCategory().getId() == BALLAST_TANK_CATEGORY_ID
+              || tank.getTankCategory().getId() == BALLAST_VOID_TANK_CATEGORY_ID)
+          && tank.getTankPositionCategory().equals(BALLAST_CENTER_TANK)) {
+        response.addBallastCenterTanks(tankInfoBuilder);
+      }
+      if (tank.getTankCategory().getId() == BALLAST_TANK_CATEGORY_ID
+          && tank.getTankPositionCategory().equals(BALLAST_REAR_TANK)) {
+        response.addBallastRearTanks(tankInfoBuilder);
+      }
+      if (tank.getTankCategory().getId() == CARGO_TANK_CATEGORY_ID) {
+        response.addCargoTanks(tankInfoBuilder);
+      }
+    }
   }
 }

@@ -49,7 +49,7 @@
                     <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_TANK' | translate }}</label>
                     <div>
                     <p-multiSelect id="tank_dropdown" styleClass="form-control" [options]="tank" appendTo="body"
-                        formControlName="tank"  optionLabel="name"
+                        formControlName="tank"  optionLabel="shortName"
                         resetFilterOnHide="true"  defaultLabel="{{'DISCHARGE_STUDY_TANK_PLACEHOLDER' | translate}}" [readonly]="!editMode" [filter]="true"
                         (onChange)="onChange($event,'tank',portIndex)"></p-multiSelect>
                     </div>

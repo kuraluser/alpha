@@ -41,9 +41,11 @@ message LoadingAlgoBerthData {
 	ResponseStatus responseStatus = 1;
 	int64 portId = 2;
 	int64 berthId = 3;
-	string controllingDepth = 4;
-	string underKeelClearance = 5;
-	string seawaterDensity = 6;
+	string portControllingDepth = 4;
+	string portUKC = 5;
+	string portSeawaterDensity = 6;
+	string berthUKC = 7;
+
 }
 
 message CargoInfos {
@@ -104,6 +106,7 @@ message PortDetail {
 	string tideHeightFrom = 29;
 	string tideHeightTo = 30;
 	string maxPermissibleDraft = 31;
+	int64 countryId = 32;
 }
 
 message PortReply {

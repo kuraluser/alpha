@@ -388,7 +388,8 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       } else if (this.selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_ALGO_PROCESSING || this.selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED || this.selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING) {
         this.isGenerateClicked = true;
       }
-      this.dischargeStudyDetailsTransformationService.setPortValidity(this.selectedDischargeStudy.isPortsComplete);
+      const isPortsComplete = this.selectedDischargeStudy?.ohqPorts?.length && this.selectedDischargeStudy.isPortsComplete ? true : false;
+      this.dischargeStudyDetailsTransformationService.setPortValidity(isPortsComplete);
       this.dischargeStudyDetailsTransformationService.setOHQValidity(this.selectedDischargeStudy?.ohqPorts ?? []);
       this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(this.selectedDischargeStudy?.isDischargeStudyComplete);
     } else {

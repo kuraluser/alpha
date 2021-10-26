@@ -1687,9 +1687,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
 
     if (ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
-      loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
+      loadableStudy.setLoadOnTopForSlopTank(loadableStudyOpt.get().getLoadOnTop());
     } else {
-      loadableStudy.setLoadOnTop(false);
+      loadableStudy.setLoadOnTopForSlopTank(false);
     }
     Optional<Long> dischargeCargoId =
         ofNullable(loadableStudyOpt.get().getDischargeCargoNominationId());

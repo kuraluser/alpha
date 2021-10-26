@@ -28,4 +28,9 @@ public interface LoadableStudyCommunicationStatusRepository
   @Query(
       "UPDATE LoadableStudyCommunicationStatus LS SET LS.communicationStatus = ?1 WHERE referenceId = ?2 ")
   public void updateLoadableStudyCommunicationStatus(String communicationStatus, Long referenceId);
+
+  // Get recent message
+  Optional<LoadableStudyCommunicationStatus>
+      findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
+          Long referenceId, String messageType);
 }

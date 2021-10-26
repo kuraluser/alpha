@@ -642,10 +642,6 @@ public class DischargePlanAlgoService {
               .map(
                   var -> {
                     BerthDetails dto = new BerthDetails();
-                    Optional.ofNullable(
-                            this.getBerthNameByPortIdAndBerthId(
-                                var.getDischargingInformation().getPortXid(), var.getBerthXid()))
-                        .ifPresent(dto::setBerthName);
                     Optional.ofNullable(var.getId()).ifPresent(dto::setDischargeBerthId);
                     Optional.ofNullable(var.getDischargingInformation().getId())
                         .ifPresent(dto::setDischargeInfoId);
@@ -664,6 +660,16 @@ public class DischargePlanAlgoService {
                     Optional.ofNullable(var.getIsAirPurge()).ifPresent(dto::setAirPurge);
                     Optional.ofNullable(var.getLineContentDisplacement())
                         .ifPresent(dto::setLineDisplacement);
+
+                    // Call 1 to Port info, set value from berth table
+                    // Setting berth name and ukc
+                    this.getBerthDetailsByPortIdAndBerthId(
+                        var.getDischargingInformation().getPortXid(), var.getBerthXid(), dto);
+
+                    // Call 2 to Port info, set value from port table
+                    if (dto.getUkc() == null) {
+                      this.getPortInfoIntoBerthData(var.getBerthXid(), dto);
+                    }
                     return dto;
                   })
               .collect(Collectors.toList()));
@@ -671,7 +677,7 @@ public class DischargePlanAlgoService {
     return berthDetails;
   }
 
-  private String getBerthNameByPortIdAndBerthId(Long portXid, Long berthXid) {
+  private void getBerthDetailsByPortIdAndBerthId(Long portXid, Long berthXid, BerthDetails bd) {
     try {
       PortInfo.PortIdRequest.Builder idRequest = PortInfo.PortIdRequest.newBuilder();
       PortInfo.BerthInfoResponse response =
@@ -680,17 +686,20 @@ public class DischargePlanAlgoService {
           "Get berth Name ({}) from port service - status {}",
           berthXid,
           response.getResponseStatus().getStatus());
-      if (response.getResponseStatus().getStatus().equals(DischargePlanConstants.SUCCESS)) {
-        return response.getBerthsList().stream()
-            .filter(v -> v.getId() == berthXid)
-            .map(PortInfo.BerthDetail::getBerthName)
-            .findFirst()
-            .get();
+      if (!DischargePlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
+        log.error("Failed to get berth details by Port id - {}", response);
+      }
+      var berthData =
+          response.getBerthsList().stream().filter(v -> v.getId() == berthXid).findFirst();
+      if (berthData.isPresent()) {
+        bd.setBerthName(berthData.get().getBerthName());
+        if (!berthData.get().getUkc().isEmpty()) {
+          bd.setUkc(berthData.get().getUkc());
+        }
       }
     } catch (Exception e) {
-
+      e.printStackTrace();
     }
-    return null;
   }
 
   private void buildOnBoardQuantities(
@@ -1467,5 +1476,20 @@ public class DischargePlanAlgoService {
     }
     dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
         request.getLoadableStudystatusId(), request.getProcesssId());
+  }
+
+  /** If Berth table don't have UKC data, then it will get data from Port */
+  private void getPortInfoIntoBerthData(Long berthId, BerthDetails berthDetails) {
+    PortInfo.LoadingAlgoBerthData portReply =
+        this.portInfoServiceBlockingStub.getLoadingPlanBerthData(
+            PortInfo.BerthIdsRequest.newBuilder().addBerthIds(berthId).build());
+    if (portReply != null && portReply.getResponseStatus().getStatus().equals("SUCCESS")) {
+      if (!portReply.getPortUKC().isEmpty()) { // If berth UKC not available
+        berthDetails.setUkc(portReply.getPortUKC());
+        log.info("Setting UKC from port Info Table");
+      } else {
+        log.error("Setting UKC from port Info Table - Failed, Data - {}", portReply);
+      }
+    }
   }
 }

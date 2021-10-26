@@ -32,4 +32,6 @@ public class CommingleCargo {
   private Long cargoNomination1Id;
 
   private Long cargoNomination2Id;
+
+  private String commingleColour;
 }

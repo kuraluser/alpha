@@ -304,13 +304,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         ullage: dataObj?.ullage,
         quantity: dataObj?.quantity,
         id: dataObj?.id,
-        color: dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        color: dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
         abbreviation: dataObj.abbreviation,
         y: tankIndex,
-        pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
-        borderColor: dataObj?.id === 'stripping' ? '#bebebe' : null,
-        borderWidth: dataObj?.id === 'stripping' ? 1 : 0,
-        borderRadius: dataObj?.id === 'stripping' ? 5 : 0,
+        pointWidth: dataObj?.id?.includes('stripping') ? 40 : 6,
+        borderColor: dataObj?.id?.includes('stripping') ? '#bebebe' : null,
+        borderWidth: dataObj?.id?.includes('stripping') ? 1 : 0,
+        borderRadius: dataObj?.id?.includes('stripping') ? 5 : 0,
       });
     });
     this.cargoSequenceChartSeries = [{
@@ -359,14 +359,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               verticalAlign: 'bottom',
               color: '#666666',
               formatter: function () {
-                return !this.point?.options?.className && this.point?.options?.id !== 'stripping' ? this.point?.ullage : undefined;
+                return !this.point?.options?.className && !this.point?.options?.id?.includes('stripping') ? this.point?.ullage : undefined;
               }
             },
             {
               enabled: true,
               color: '#666666',
               formatter: function () {
-                return this.point?.options?.id === 'stripping' ? LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'] : undefined;
+                return this.point?.options?.id?.includes('stripping') ? LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'] : undefined;
               },
               animation: {
                 defer: 6000
@@ -725,12 +725,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         pumpName: LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories[pumpIndex].pumpName,
         rate: dataObj?.rate?.toFixed(),
         id: dataObj?.id,
-        color: dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        color: dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
         y: pumpIndex,
-        pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
-        borderColor: dataObj?.id === 'stripping' ? '#bebebe' : null,
-        borderWidth: dataObj?.id === 'stripping' ? 1 : 0,
-        borderRadius: dataObj?.id === 'stripping' ? 5 : 0,
+        pointWidth: dataObj?.id?.includes('stripping') ? 40 : 6,
+        borderColor: dataObj?.id?.includes('stripping') ? '#bebebe' : null,
+        borderWidth: dataObj?.id?.includes('stripping') ? 1 : 0,
+        borderRadius: dataObj?.id?.includes('stripping') ? 5 : 0,
       });
     });
     this.cargoPumpSequenceChartSeries = [{
@@ -954,13 +954,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         sounding: dataObj?.sounding,
         quantity: dataObj?.quantity,
         id: dataObj?.id,
-        color: dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        color: dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
         abbreviation: 'Ballast',
         y: tankIndex,
-        pointWidth: dataObj?.id === 'stripping' ? 40 : 6,
-        borderColor: dataObj?.id === 'stripping' ? '#bebebe' : null,
-        borderWidth: dataObj?.id === 'stripping' ? 1 : 0,
-        borderRadius: dataObj?.id === 'stripping' ? 5 : 0,
+        pointWidth: dataObj?.id?.includes('stripping') ? 40 : 6,
+        borderColor: dataObj?.id?.includes('stripping') ? '#bebebe' : null,
+        borderWidth: dataObj?.id?.includes('stripping') ? 1 : 0,
+        borderRadius: dataObj?.id?.includes('stripping') ? 5 : 0,
       });
     });
     this.ballastSequenceChartSeries = [{
@@ -1005,14 +1005,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               verticalAlign: 'bottom',
               color: '#666666',
               formatter: function () {
-                return this.point?.options?.id !== 'stripping' && !this.point?.options?.className ? this.point?.sounding : undefined;
+                return !this.point?.options?.id?.includes('stripping') && !this.point?.options?.className ? this.point?.sounding : undefined;
               }
             },
             {
               enabled: true,
               color: '#666666',
               formatter: function () {
-                return this.point?.options?.id === 'stripping' ? 'STRIPPING BY EDUCTOR' : undefined;
+                return this.point?.options?.id?.includes('stripping') ? LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'] : undefined;
               },
               animation: {
                 defer: 6000
@@ -1228,12 +1228,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         pumpName: LoadingDischargingSequenceChartComponent.sequenceData?.ballastPumpCategories[pumpIndex]?.pumpName,
         rate: dataObj?.rate?.toFixed(),
         id: dataObj?.id,
-        color: dataObj?.id?.includes('gravity') || dataObj?.id === 'stripping' ? '#f8f8f8' : dataObj.color,
+        color: dataObj?.id?.includes('gravity') || dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
         y: pumpIndex,
-        pointWidth: dataObj?.id?.includes('gravity') || dataObj?.id === 'stripping' ? 40 : 6,
-        borderColor: dataObj?.id?.includes('gravity') || dataObj?.id === 'stripping' ? '#bebebe' : null,
-        borderWidth: dataObj?.id?.includes('gravity') || dataObj?.id === 'stripping' ? 1 : 0,
-        borderRadius: dataObj?.id?.includes('gravity') || dataObj?.id === 'stripping' ? 5 : 0,
+        pointWidth: dataObj?.id?.includes('gravity') || dataObj?.id?.includes('stripping') ? 40 : 6,
+        borderColor: dataObj?.id?.includes('gravity') || dataObj?.id?.includes('stripping') ? '#bebebe' : null,
+        borderWidth: dataObj?.id?.includes('gravity') || dataObj?.id?.includes('stripping') ? 1 : 0,
+        borderRadius: dataObj?.id?.includes('gravity') || dataObj?.id?.includes('stripping') ? 5 : 0,
       });
     });
 
@@ -1281,7 +1281,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                 verticalAlign: 'bottom',
                 color: '#666666',
                 formatter: function () {
-                  return this.point?.options?.id !== 'stripping' && !this.point?.options?.className ? this.point?.sounding : undefined;
+                  return !this.point?.options?.id?.includes('stripping') && !this.point?.options?.className ? this.point?.sounding : undefined;
                 }
               },
               {
@@ -1715,7 +1715,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       }
 
       return series;
-    })];
+    }).filter(param => param)];
   }
 
   /**

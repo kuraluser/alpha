@@ -6,7 +6,7 @@ import { QUANTITY_UNIT, RATE_UNIT, ValueObject } from '../../../shared/models/co
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank, OPERATIONS } from '../../core/models/common.model';
-import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
+import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage, IBallastEduction, ITankData, ITank as ISequenceTank } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
 import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays, ITanksWashingWithDifferentCargo, ITanksWashingWithDifferentCargoResponse, ILoadedCargoResponse } from '../models/loading-discharging.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
@@ -719,6 +719,32 @@ export class LoadingDischargingTransformationService {
   }
 
   /**
+   * Set ballast eduction operation
+   *
+   * @param {IPumpData[]} ballastPumps
+   * @param {IPumpData} gravity
+   * @param {IPump[]} ballastPumpCategories
+   * @return {*}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setBallastEduction(ballasts: ITankData[], eduction: IBallastEduction[], ballastTankCategories: ISequenceTank[]) {
+    eduction?.forEach(item => {
+      item?.tanks?.forEach(tankId => {
+        const _tank = ballastTankCategories.find(tank => tank?.id === tankId);
+        const data: ITankData = {
+          tankId: tankId,
+          start: item.timeStart,
+          end: item.timeEnd,
+          id: "ballast-stripping-" + _tank.tankName // NB:- id must be unique
+        }
+        ballasts?.push(data);
+      });
+    });
+
+    return ballasts;
+  }
+
+  /**
    * Set ballast pumbp gravity operation
    *
    * @param {IPumpData[]} ballastPumps
@@ -861,7 +887,7 @@ export class LoadingDischargingTransformationService {
     sequenceData.stagePlotLines = this.setPlotLines(sequenceData?.stageTickPositions);
     sequenceData.tickPositions = this.setTickPositions(sequenceData?.minXAxisValue, sequenceData?.maxXAxisValue);
     sequenceData.cargoLoadingRates = this.setCargoLoadingRate(sequenceData?.stageTickPositions, sequenceData?.cargoLoadingRates);
-
+    sequenceData.ballasts = this.setBallastEduction(sequenceData?.ballasts, sequenceData?.ballastEduction, sequenceData.ballastTankCategories)
     return { ...sequenceData };
   }
 

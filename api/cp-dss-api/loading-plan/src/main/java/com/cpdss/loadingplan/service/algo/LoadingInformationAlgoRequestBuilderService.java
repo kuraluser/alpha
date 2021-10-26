@@ -684,14 +684,14 @@ public class LoadingInformationAlgoRequestBuilderService {
         this.portInfoServiceBlockingStub.getLoadingPlanBerthData(
             PortInfo.BerthIdsRequest.newBuilder().addBerthIds(berthId).build());
     if (portReply != null && portReply.getResponseStatus().getStatus().equals("SUCCESS")) {
-      if (!portReply.getControllingDepth().isEmpty()) {
-        berthDetails.setControllingDepth(portReply.getControllingDepth());
+      if (!portReply.getPortControllingDepth().isEmpty()) {
+        berthDetails.setControllingDepth(portReply.getPortControllingDepth());
       }
-      if (!portReply.getUnderKeelClearance().isEmpty()) {
-        berthDetails.setUnderKeelClearance(portReply.getUnderKeelClearance());
+      if (!portReply.getBerthUKC().isEmpty()) {
+        berthDetails.setUnderKeelClearance(portReply.getBerthUKC());
       }
-      if (!portReply.getSeawaterDensity().isEmpty()) {
-        berthDetails.setSeawaterDensity(portReply.getSeawaterDensity());
+      if (!portReply.getPortSeawaterDensity().isEmpty()) {
+        berthDetails.setSeawaterDensity(portReply.getPortSeawaterDensity());
       }
     }
     log.info("Get port berth data from port info - {}", portReply.getResponseStatus().getStatus());
