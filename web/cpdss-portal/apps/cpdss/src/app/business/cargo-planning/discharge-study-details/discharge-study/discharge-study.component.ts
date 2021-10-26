@@ -754,7 +754,7 @@ export class DischargeStudyComponent implements OnInit {
   * @memberof DischargeStudyComponent
   */
   updateDischargeCargoDetails(event: any, portDetails: any, feild: string) {
-    for (let i = event.index + 1; i < portDetails.length; i++) {
+    for (let i = event.index + 1; i <= portDetails.length; i++) {
       const findCardoIndex = portDetails[i].cargoDetail.findIndex((cargoDetails) => {
         if (cargoDetails.storedKey.value === event.data.storedKey.value) {
           return cargoDetails;
@@ -919,13 +919,16 @@ export class DischargeStudyComponent implements OnInit {
    * @memberof DischargeStudyComponent
   */
   async saveDischargeStudy() {
+    const isFormDirty = !this.dischargeStudyForm.dirty;
     const translationKeys = await this.translateService.get(['PORT','DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY','DISCHARGE_STUDY_SAVE_ERROR', 'DISCHARGE_STUDY_SAVE_NO_DATA_ERROR', 'DISCHARGE_STUDY_SAVE_WARNING_SUMMERY', 'DISCHARGE_STUDY_SAVE_WARNING', 'DISCHARGE_STUDY_SUCCESS', 'DISCHARGE_STUDY_SUCCESS_SUMMERY']).toPromise();
     this.checkFormFieldValidity();
     this.dischargeStudyForm.markAllAsTouched();
     this.dischargeStudyForm.markAsDirty();
 
-    if (!this.dischargeStudyForm.dirty && this.portDetails?.length !== 1) {
+    if (isFormDirty && this.portDetails?.length !== 1) {
       this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_SAVE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_SAVE_NO_DATA_ERROR'] });
+      const value = this.dischargeStudyForm.value;
+      this.dischargeStudyForm.reset(value);
       return;
     }
     if (this.dischargeStudyForm.valid) {
