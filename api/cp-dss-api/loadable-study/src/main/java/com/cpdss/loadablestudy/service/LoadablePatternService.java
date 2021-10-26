@@ -2263,10 +2263,10 @@ public class LoadablePatternService {
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
     } else {
       List<LoadablePattern> loadablePatternConfirmedOpt =
-          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningType(
               loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),
               CONFIRMED_STATUS_ID,
-              true);
+              true, loadablePatternOpt.get().getLoadableStudy().getPlanningTypeXId());
       if (!loadablePatternConfirmedOpt.isEmpty()) {
         log.info("changing status of other confirmed plan to plan generated");
         loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
