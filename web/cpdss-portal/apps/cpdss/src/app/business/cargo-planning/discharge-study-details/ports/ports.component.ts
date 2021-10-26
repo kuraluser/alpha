@@ -243,14 +243,22 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.hide();
       this.updateFormValidity(portListArray);
       if (this.portOrderValidation()) {
-        this.messageService.clear('isPortOrderValid');
-        const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-        this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+        this.isPortOrderValidToaster();
       }
     }, 500);
 
   }
 
+  /**
+     * Method to show toaster if port order is not correct
+     * @memberof PortsComponent
+     */
+  async isPortOrderValidToaster() {
+    this.messageService.clear('isPortOrderValid');
+    const translationKeys = await this.translateService.get(['DISCHARGE_STUDY_ADD_PORT', 'PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
+    const detail = !this.portsLists?.length ? translationKeys['DISCHARGE_STUDY_ADD_PORT'] : translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'];
+    this.messageService.add({ key: 'isPortOrderValid', severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: detail, sticky: true, closable: true });
+  }
 
   /**
   * Method for initializing ports row
@@ -540,9 +548,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     });
     this.portsLists = [...this.portsLists];
     if (this.portsForm.valid && this.portOrderValidation()) {
-      this.messageService.clear('isPortOrderValid');
-      const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-      this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+      this.isPortOrderValidToaster();
     } else if(!this.portOrderValidation()){
       this.messageService.clear('isPortOrderValid');
     }
@@ -616,9 +622,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         this.portsLists = [...this.portsLists];
         this.portsForm.updateValueAndValidity();
         if (this.portOrderValidation()) {
-          this.messageService.clear('isPortOrderValid');
-          const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-          this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+          this.isPortOrderValidToaster();
         } else {
           this.messageService.clear('isPortOrderValid');
         }
@@ -732,6 +736,8 @@ export class PortsComponent implements OnInit, OnDestroy {
       this.updateFormValidity(formArray)
       if (!this.portOrderValidation()) {
         this.messageService.clear('isPortOrderValid');
+      } else {
+        this.isPortOrderValidToaster();
       }
     }, 500);
   }
@@ -794,9 +800,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       const dropData = this.portsLists[event.dropIndex];
       this.portsLists.splice(event.dropIndex, 1);
       this.portsLists.splice(event.dragIndex, 0, dropData);
-      this.messageService.clear('isPortOrderValid');
-      const translationKeys = await this.translateService.get(['PORT_ROTATION_ERROR_DETAILS_REORDER', 'PORT_ROTATION_WARN']).toPromise();
-      this.messageService.add({ key: 'isPortOrderValid' , severity: 'warn', summary: translationKeys['PORT_ROTATION_WARN'], detail: translationKeys['PORT_ROTATION_ERROR_DETAILS_REORDER'], sticky: true, closable: true });
+      this.isPortOrderValidToaster();
       return;
     } else {
       this.messageService.clear('isPortOrderValid');
