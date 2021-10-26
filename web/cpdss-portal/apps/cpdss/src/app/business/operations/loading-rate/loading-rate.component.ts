@@ -182,16 +182,18 @@ export class LoadingRateComponent implements OnInit {
    
     const loadingRates = {...this.loadingRatesFormGroup.value};
     const keys = Object.keys(this.actualValues);
-    if(keys.includes(field))
-    {
-    this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
-    if (this.selectedConversion.id == 2) {    
-      this.actualValues[field].lastEditedUnit = 'BBLS';
-    }
-    else {
-      this.actualValues[field].lastEditedUnit = 'M3';
-    }
+    
     this.loadingRates [field]  = this.loadingRatesFormGroup?.value[field];
+    
+    if (keys.includes(field)) {
+      this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
+      if (this.selectedConversion.id == 2) {
+        this.actualValues[field].lastEditedUnit = 'BBLS';
+      } else {
+        this.actualValues[field].lastEditedUnit = 'M3';
+      }
+    }
+  
     for (let key in this.actualValues) {     
       if (this.actualValues[key].lastEditedUnit == 'BBLS') {
         if(this.actualValues[key]?.defaultValue !== "" && this.actualValues[key]?.defaultValue !== null)
@@ -201,11 +203,7 @@ export class LoadingRateComponent implements OnInit {
         loadingRates[key] = this.actualValues[key]?.defaultValue;
       }
     }
-   }
-   else{
-    this.loadingRates [field]  = this.loadingRatesFormGroup?.value[field];
-
-   }
+   
     this.loadingRateChange.emit(loadingRates);
   }
   

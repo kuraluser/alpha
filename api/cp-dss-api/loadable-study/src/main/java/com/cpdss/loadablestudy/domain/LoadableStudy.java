@@ -26,7 +26,7 @@ public class LoadableStudy {
   private String maxTempExpected;
   private String maxAirTemp;
   private String maxWaterTemp;
-  private Boolean loadOnTop;
+  private Boolean loadOnTopForSlopTank; // 'loadOnTop' was older name
   private Long cargoToBeDischargeFirstId;
   private LoadableQuantity loadableQuantity;
   private List<CommingleCargo> commingleCargos;

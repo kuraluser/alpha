@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "port_loadable_plan_commingle_details")
+@Table(name = "port_discharge_plan_commingle_details")
 @Getter
 @Setter
 @NoArgsConstructor

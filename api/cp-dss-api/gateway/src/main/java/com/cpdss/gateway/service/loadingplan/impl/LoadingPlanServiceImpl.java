@@ -1856,8 +1856,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               commingleDetail -> {
                 LoadablePlanCommingleDetails commingle = new LoadablePlanCommingleDetails();
                 commingle.setId(commingleDetail.getId());
+                commingle.setLoadingInformationId(commingleDetail.getLoadingInformationId());
                 commingle.setLoadablePatternId(commingleDetail.getLoadablePatternId());
                 commingle.setDischargePatternId(commingleDetail.getLoadablePatternId());
+                commingle.setCargoNomination1Id(commingleDetail.getCargoNomination1Id());
+                commingle.setCargoNomination2Id(commingleDetail.getCargoNomination2Id());
                 commingle.setTankId(commingleDetail.getTankId());
                 commingle.setQuantity(
                     commingleDetail.getQuantity().isEmpty()
@@ -1897,6 +1900,14 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     commingleDetail.getCargo2BblsDbs().isEmpty()
                         ? null
                         : Double.parseDouble(commingleDetail.getCargo2BblsDbs()));
+                commingle.setCargo1Bbls60f(
+                        commingleDetail.getCargo1Bbls60F().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getCargo1Bbls60F()));
+                commingle.setCargo2Bbls60f(
+                        commingleDetail.getCargo2Bbls60F().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getCargo2Bbls60F()));
                 commingle.setCargo1Lt(
                     commingleDetail.getCargo1Lt().isEmpty()
                         ? null
@@ -1952,6 +1963,31 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                     commingleDetail.getTimeRequiredForLoading().isEmpty()
                         ? null
                         : Double.parseDouble(commingleDetail.getTimeRequiredForLoading()));
+                commingle.setQuantity1MT(
+                        commingleDetail.getQuantity1MT().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getQuantity1MT()));
+                commingle.setQuantity2MT(
+                        commingleDetail.getQuantity2MT().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getQuantity2MT()));
+                commingle.setQuantity1M3(
+                        commingleDetail.getQuantity1M3().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getQuantity1M3()));
+                commingle.setQuantity2M3(
+                        commingleDetail.getQuantity2M3().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getQuantity2M3()));
+                commingle.setUllage1(
+                        commingleDetail.getUllage1().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getUllage1()));
+                commingle.setUllage2(
+                        commingleDetail.getUllage2().isEmpty()
+                                ? null
+                                : Double.parseDouble(commingleDetail.getUllage2()));
+                commingle.setColorCode(commingleDetail.getColorCode());
                 Optional<VesselInfo.VesselTankDetail> tankDetail =
                     sortedTankList.stream()
                         .filter(

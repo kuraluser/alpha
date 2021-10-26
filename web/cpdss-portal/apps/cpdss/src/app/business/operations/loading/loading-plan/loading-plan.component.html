@@ -7,9 +7,12 @@
                 </div>
             </div>
         </div>
-        <!-- it is needed later. <a type="button" class="download-icon ml-10 mr-10" (click)="downloadLoadingPlanTemplate()">{{'DOWNLOAD_TEMPLATE' | translate}}</a> --> 
+        
 
         <div class="col main-content-loading-and-discharging">
+            <div class="row pt-5 btn-wrapper">
+                <div class="col text-right"> <a type="button" (click)="downloadLoadingPlanTemplate()" class="btn btn-main"><span class="download-icon v-top mr-10" ></span>{{'DOWNLOAD_TEMPLATE' | translate}}</a> </div>
+            </div>
             <cpdss-portal-arrival-condition [permission]="permission" [operation]="OPERATIONS.LOADING" [vesselId]="vesselId" [portRotationId]="portRotationId" [loadingDischargingInfoId]="loadingInfoId" [cargos]="cargos" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingDischargingPlanData]="loadingPlanDetails"></cpdss-portal-arrival-condition>
             <cpdss-portal-departure-condition [permission]="permission" [operation]="OPERATIONS.LOADING" [vesselId]="vesselId" [portRotationId]="portRotationId" [loadingDischargingInfoId]="loadingInfoId" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingDischargingPlanData]="loadingPlanDetails" [cargos]="cargos"></cpdss-portal-departure-condition>
             <div class="row">

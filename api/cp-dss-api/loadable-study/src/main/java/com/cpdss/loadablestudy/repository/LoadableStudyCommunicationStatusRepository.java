@@ -33,4 +33,8 @@ public interface LoadableStudyCommunicationStatusRepository
   Optional<LoadableStudyCommunicationStatus>
       findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
           Long referenceId, String messageType);
+
+  List<LoadableStudyCommunicationStatus>
+      findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
+          final String communicationStatus, final String messageType);
 }

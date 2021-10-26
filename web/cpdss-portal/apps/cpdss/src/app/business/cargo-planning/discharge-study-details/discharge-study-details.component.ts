@@ -467,6 +467,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     this.tabPermission();
     this.selectedDischargeStudy = null;
     this.initSubsciptions();
+    this.messageService.clear('isPortOrderValid');
     this.router.navigate([`business/cargo-planning/discharge-study-details/${this.vesselId}/${this.voyageId}/0`]);
   }
 
@@ -526,6 +527,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
   */
   onDischargeStudyChange(event) {
     const dischargeStudyId = event.value.id;
+    this.messageService.clear('isPortOrderValid');
     this.router.navigate([`business/cargo-planning/discharge-study-details/${this.vesselId}/${this.voyageId}/${dischargeStudyId}`]);
   }
 

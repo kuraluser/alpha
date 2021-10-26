@@ -20,7 +20,7 @@
                             }}</label>
                     </div>
                     <div class="col-6">
-                        <input formControlName="portName" id="inputPortName" type="text" [(ngModel)]="selectedPortName"
+                        <input formControlName="portName" id="inputPortName" type="text"
                             [placeholder]="" maxlength="100" />
                     </div>
                     <cpdss-portal-validation-error [errors]="fieldError('portName')"
@@ -37,12 +37,12 @@
                     </div>
                     <div class="col-6">
                         <p-dropdown [options]="timeZoneList" id="dropDownTimeZone"
-                            placeholder="{{'PORT_MASTER_TIMEZONE' | translate}}" formControlName="portTimeZone"
+                            placeholder="{{'PORT_MASTER_TIMEZONE' | translate}}" formControlName="timeZone"
                             optionLabel="timezone" focusTrap>
                         </p-dropdown>
                     </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('portTimeZone')"
-                        [errorMessages]="errorMessages.portTimeZone">
+                    <cpdss-portal-validation-error [errors]="fieldError('timeZone')"
+                        [errorMessages]="errorMessages?.timeZone">
                     </cpdss-portal-validation-error>
                 </div>
             </div>
@@ -54,11 +54,11 @@
                             translate}}</label>
                     </div>
                     <div class="col-6">
-                        <input type="text" id="inputShiftDraft" formControlName="permissibleShipsAtDraft"
+                        <input type="text" id="inputShiftDraft" formControlName="maxPermissibleDraft"
                             [placeholder]="" />
                     </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('permissibleShipsAtDraft')"
-                        [errorMessages]="errorMessages.permissibleShipsAtDraft">
+                    <cpdss-portal-validation-error [errors]="fieldError('maxPermissibleDraft')"
+                        [errorMessages]="errorMessages.maxPermissibleDraft">
                     </cpdss-portal-validation-error>
                 </div>
             </div>
@@ -89,10 +89,10 @@
                             translate}}</label>
                     </div>
                     <div class="col-6">
-                        <input type="number" id="inputHighTide" formControlName="highTide" [placeholder]="" />
+                        <input type="number" id="inputHighTide" formControlName="tideHeightHigh" [placeholder]="" />
                     </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('highTide')"
-                        [errorMessages]="errorMessages.highTide">
+                    <cpdss-portal-validation-error [errors]="fieldError('tideHeightHigh')"
+                        [errorMessages]="errorMessages?.tideHeightHigh">
                     </cpdss-portal-validation-error>
                 </div>
             </div>
@@ -141,10 +141,10 @@
                             translate}}</label>
                     </div>
                     <div class="col-6">
-                        <input type="number" id="inputLowTide" formControlName="lowTide" [placeholder]="" />
+                        <input type="number" id="inputLowTide" formControlName="tideHeightLow" [placeholder]="" />
                     </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('lowTide')"
-                        [errorMessages]="errorMessages.lowTide">
+                    <cpdss-portal-validation-error [errors]="fieldError('tideHeightLow')"
+                        [errorMessages]="errorMessages?.tideHeightLow">
                     </cpdss-portal-validation-error>
                 </div>
             </div>
@@ -174,7 +174,7 @@
                             translate}}</label>
                     </div>
                     <div class="col-6">
-                        <input type="text" id="inputPosition" formControlName="position" [(ngModel)]="coordinates"
+                        <input type="text" id="inputPosition" formControlName="position" 
                             [placeholder]="" readonly />
                         <img src="" id="imgPosition" (click)="isVisible=!isVisible" alt="click here" class="ml-20">
                     </div>
@@ -188,5 +188,5 @@
 </form>
 <cpdss-portal-port-master-map *ngIf="isVisible" [isVisible]="isVisible" (coordinates)="setCoordinates($event)"
     (isModalOpen)="closeModal($event)"></cpdss-portal-port-master-map>
-<cpdss-portal-add-berth [existingBerthInfo]="existingBerthInfo" [isSaveClicked]="isSaveClicked">
+<cpdss-portal-add-berth *ngIf="existingBerthInfo" [existingBerthInfo]="existingBerthInfo" [isSaveClicked]="isSaveClicked">
 </cpdss-portal-add-berth>

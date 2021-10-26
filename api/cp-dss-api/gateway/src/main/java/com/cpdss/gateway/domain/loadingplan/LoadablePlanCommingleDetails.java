@@ -39,4 +39,13 @@ public class LoadablePlanCommingleDetails {
   private Double slopQuantity;
   private Double timeRequiredForLoading;
   private Double cargo1Percentage;
+  private Double quantity1MT;
+  private Double quantity2MT;
+  private Double quantity1M3;
+  private Double quantity2M3;
+  private Double ullage1;
+  private Double ullage2;
+  private String colorCode;
+  private Long cargoNomination1Id;
+  private Long cargoNomination2Id;
 }

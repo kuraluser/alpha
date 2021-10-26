@@ -34,7 +34,7 @@
             </cpdss-portal-port-rotation-ribbon>
         </div>
     </div>
-    <router-outlet *ngIf="vessel && selectedVoyage && [OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)"></router-outlet>
+    <router-outlet *ngIf="vessel && selectedVoyage && (OPERATIONS.LOADING === operationId || (OPERATIONS.DISCHARGING === operationId && selectedVoyage?.isDischargeStarted))"></router-outlet>
     <ng-container *ngIf="![OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId) && selectedVoyage">
         <div class="text-center pt-25">
         <div class="well-custom">

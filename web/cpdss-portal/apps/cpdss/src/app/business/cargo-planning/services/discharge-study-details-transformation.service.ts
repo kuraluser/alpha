@@ -5,7 +5,7 @@ import { v4 as uuid4 } from 'uuid';
 
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 
-import { ValueObject } from '../../../shared/models/common.model';
+import { IDateTimeFormatOptions, ValueObject } from '../../../shared/models/common.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { IVessel } from '../../core/models/vessel-details.model';
 import { TranslateService } from '@ngx-translate/core';
@@ -247,8 +247,12 @@ export class DischargeStudyDetailsTransformationService {
  */
   async getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, dischargeStudyStatusId: any, voyageStatusId: VOYAGE_STATUS): Promise<IDataTableColumn[]> {
     const minDate = new Date();
-    const translatedMessages = await this.translateService.get(['PORT_MAX_AIR_DRAFT_MIN_ERROR']).toPromise();
-    const minAirDraftMessage = translatedMessages['PORT_MAX_AIR_DRAFT_MIN_ERROR'] + this.getMinAirDraft().toFixed(2)
+    const nextDate = new Date(minDate.getTime() + (24 * 60 * 60 * 1000));
+    const translatedMessages = await this.translateService.get(['PORT_MAX_AIR_DRAFT_MIN_ERROR', 'EXAMPLE']).toPromise();
+    const minAirDraftMessage = translatedMessages['PORT_MAX_AIR_DRAFT_MIN_ERROR'] + this.getMinAirDraft().toFixed(2);
+    const etaEtdFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat };
+    const etaEtdPlaceHolder = translatedMessages['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(minDate, etaEtdFormatOpts);
+
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -379,7 +383,8 @@ export class DischargeStudyDetailsTransformationService {
           filterType: DATATABLE_FILTER_TYPE.DATE,
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
           filterField: 'eta.value',
-          fieldPlaceholder: 'CHOOSE_ETA',
+          fieldPlaceholder: etaEtdPlaceHolder,
+          readonlyInput: false,
           dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
           minDate: minDate,
           fieldClass: 'eta',
@@ -403,8 +408,9 @@ export class DischargeStudyDetailsTransformationService {
           filterType: DATATABLE_FILTER_TYPE.DATE,
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
           filterField: 'etd.value',
-          fieldPlaceholder: 'CHOOSE_ETD',
+          fieldPlaceholder: etaEtdPlaceHolder,
           minDate: minDate,
+          readonlyInput: false,
           dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
           fieldClass: 'etd',
           fieldHeaderTooltipIcon: 'pi-info-circle',

@@ -48,7 +48,7 @@ export class PortListingComponent implements OnInit {
    */
 
   onRowSelect(selectedPort) {
-    this.router.navigate([`/business/admin/port-listing/add-port/${selectedPort.data.portId}`]);
+    this.router.navigate([`/business/admin/port-listing/add-port/${selectedPort?.data?.id}`]);
   }
 
 }

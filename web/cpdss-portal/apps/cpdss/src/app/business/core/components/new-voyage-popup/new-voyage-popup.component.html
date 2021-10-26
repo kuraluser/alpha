@@ -47,7 +47,7 @@
                       <p-calendar appendTo="body" inputId="start_date" formControlName="start_date"
                         dateFormat="{{createVoyageDateFormat}}" #startDateTime [minDate]="date" showTime="true"
                         [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(startDateTime)"
-                        (onInput)="onDateSelect(startDateTime)" [readonlyInput]="true" focusTrap>
+                        (onInput)="onDateSelect(startDateTime)" [placeholder]="datePlaceHolder" focusTrap>
                         <p-footer>
                           <button class="btn btn-main" (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                             | translate}}</button>
@@ -97,7 +97,7 @@
                       <p-calendar appendTo="body" inputId="end_date" formControlName="end_date"
                         dateFormat="{{createVoyageDateFormat}}" #endDateTime [minDate]="date" showTime="true"
                         [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(endDateTime)"
-                        (onInput)="onDateSelect(endDateTime)" [readonlyInput]="true" focusTrap>
+                        (onInput)="onDateSelect(endDateTime)" [placeholder]="datePlaceHolder" focusTrap>
                         <p-footer>
                           <button class="btn btn-main" (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                             | translate}}</button>

@@ -381,8 +381,9 @@ public class CommunicationService {
   public void checkLoadableStudyStatus(Map<String, String> taskReqParams) {
     List<LoadableStudyCommunicationStatus> communicationStatusList =
         loadableStudyCommunicationStatusRepository
-            .findByCommunicationStatusOrderByCommunicationDateTimeASC(
-                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+            .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
+                MessageTypes.LOADABLESTUDY.getMessageType());
     if (!communicationStatusList.isEmpty()) {
       communicationStatusList
           .parallelStream()
@@ -396,7 +397,9 @@ public class CommunicationService {
                   request.setImoNumber(taskReqParams.get("ShipId"));
                   EnvoyWriter.WriterReply statusReply =
                       this.envoyWriterService.statusCheck(request.build());
-                  if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())) {
+                  if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())
+                      && !Integer.toString(HttpStatusCode.OK.value())
+                          .equals(statusReply.getStatusCode())) {
 
                     throw new GenericServiceException(
                         "Loadable pattern does not exist",

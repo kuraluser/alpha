@@ -197,7 +197,7 @@ public class LoadableStudyService {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
-  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 17L;
   private static final Long DISCHARGE_STUDY_RESULT_JSON_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
@@ -5349,6 +5349,7 @@ public class LoadableStudyService {
       objectMapper.writeValue(
           new File(this.rootFolder + "/json/patternValidateResult_" + loadablePatternId + ".json"),
           patternValidateResultRequest);
+      log.error("Inside Pattern validate");
       StatusReply reply =
           this.saveJson(
               loadablePatternId,

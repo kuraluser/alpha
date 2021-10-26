@@ -92,7 +92,6 @@ public class LoadableStudyServiceShore {
   @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
   @Autowired private LoadableQuantityService loadableQuantityService;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
-
   @Autowired private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
 
   @Autowired private LoadablePatternService loadablePatternService;
@@ -1358,7 +1357,10 @@ public class LoadableStudyServiceShore {
     entity.setActive(true);
     this.setCaseNo(entity);
     /*entity.setDischargeCargoId(loadableStudy.getD);*/
-    entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
+    entity.setLoadOnTop(
+        loadableStudy.getLoadOnTopForSlopTank() != null
+            ? loadableStudy.getLoadOnTopForSlopTank()
+            : null);
     entity.setIsCargoNominationComplete(true);
     entity.setIsDischargePortsComplete(true);
     entity.setIsObqComplete(true);
@@ -1583,7 +1585,10 @@ public class LoadableStudyServiceShore {
     entity.setActive(true);
     this.setCaseNo(entity);
     /*entity.setDischargeCargoId(loadableStudy.getD);*/
-    entity.setLoadOnTop(loadableStudy.getLoadOnTop() != null ? loadableStudy.getLoadOnTop() : null);
+    entity.setLoadOnTop(
+        loadableStudy.getLoadOnTopForSlopTank() != null
+            ? loadableStudy.getLoadOnTopForSlopTank()
+            : null);
     entity.setIsCargoNominationComplete(true);
     entity.setIsDischargePortsComplete(true);
     entity.setIsObqComplete(true);

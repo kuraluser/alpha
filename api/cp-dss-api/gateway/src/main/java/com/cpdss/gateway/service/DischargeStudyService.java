@@ -53,6 +53,7 @@ import com.cpdss.gateway.domain.PortWiseCargoResponse;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -197,7 +198,7 @@ public class DischargeStudyService {
       LoadingInformationSynopticalReply grpcReply, DischargeStudyResponse dischargeStudyResponse) {
     ModelMapper modelMapper = new ModelMapper();
 
-    dischargeStudyResponse.setBillOfLaddings(new ArrayList<>());
+    ArrayList<BillOfLadding> billOfLaddingValue = new ArrayList<>();
     grpcReply
         .getBillOfLaddingList()
         .forEach(
@@ -205,8 +206,10 @@ public class DischargeStudyService {
               BillOfLadding blfigure = new BillOfLadding();
               blfigure =
                   modelMapper.map(billOfLadding, com.cpdss.gateway.domain.BillOfLadding.class);
-              dischargeStudyResponse.getBillOfLaddings().add(blfigure);
+              billOfLaddingValue.add(blfigure);
             });
+    billOfLaddingValue.sort(Comparator.comparing(BillOfLadding::getCargoAbbrevation));
+    dischargeStudyResponse.setBillOfLaddings(billOfLaddingValue);
     return dischargeStudyResponse;
   }
 
@@ -541,6 +544,7 @@ public class DischargeStudyService {
                       : new BigDecimal(0));
               cargoNominations.add(cargoNomination);
             });
+    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
     portRotation.setCargoNominationList(cargoNominations);
   }
 

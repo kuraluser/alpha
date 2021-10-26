@@ -715,7 +715,7 @@ public class LoadingSequenceService {
                               Arrays.asList(
                                   portEta + (param.getTime() * 60 * 1000), param.getTrim())));
           stabilityParams.stream()
-              .filter(stabilityParam -> stabilityParam.getName().equals("gomValue"))
+              .filter(stabilityParam -> stabilityParam.getName().equals("gm"))
               .forEach(
                   gom ->
                       gom.getData()

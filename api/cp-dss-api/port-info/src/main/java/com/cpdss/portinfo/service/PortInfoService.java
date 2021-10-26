@@ -464,7 +464,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
                 .ifPresent(v -> builder.setPortSeawaterDensity(v.toString()));
           }
 
-          Optional.ofNullable(berthInfo.get().getUnderKeelClearance()).ifPresent(builder::setBerthUKC);
+          Optional.ofNullable(berthInfo.get().getUnderKeelClearance())
+              .ifPresent(builder::setBerthUKC);
         }
         ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
         responseStatus.setStatus(SUCCESS);
