@@ -854,6 +854,8 @@ public class LoadablePatternService {
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
       loadablePlanCommingleDetails.setTankShortName(
           loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
+      loadablePlanCommingleDetails.setCommingleColour(
+          loadableQuantityCommingleCargoDetailsList.get(i).getCommingleColour());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
       loadableQuantityCommingleCargoDetailsList
           .get(i)
@@ -1446,6 +1448,7 @@ public class LoadablePatternService {
                     .cargo2NominationId(it.getCargo2NominationId())
                     .portRotationXid(portRotationXid)
                     .tankName(it.getTankShortName())
+                    .commingleColour(it.getCommingleColour())
                     // .actualQuantity(it.getActualQuantity()!= null ? new
                     // BigDecimal(it.getActualQuantity()): null)
                     .build();

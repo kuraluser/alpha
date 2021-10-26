@@ -137,4 +137,7 @@ public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
 
   @Column(name = "short_name")
   private String tankShortName;
+
+  @Column(name = "commingle_colour")
+  private String commingleColour;
 }
