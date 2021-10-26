@@ -197,7 +197,7 @@ public class LoadingPlanAlgoService {
                   "loading_sequence",
                   "loading_plan_portwise_details"),
               processId,
-              "loading-plan-service",
+              MessageTypes.LOADINGPLAN.getMessageType(),
               loadingInfoOpt.get().getId());
 
       log.info("Json Array in Loading plan service: " + jsonArray.toString());
@@ -423,7 +423,7 @@ public class LoadingPlanAlgoService {
                     "loading_sequence_stability_parameters",
                     "loading_plan_stability_parameters"),
                 UUID.randomUUID().toString(),
-                "loading-plan-pattern-generation-service",
+                MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
                 loadingInfoOpt.get().getId());
         log.info("Json Array in After Algo call: " + jsonArray.toString());
         EnvoyWriter.WriterReply ewReply =

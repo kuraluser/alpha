@@ -37,12 +37,10 @@ public class TaskListener implements ExecuteTaskListener {
       if (taskName.contains("LOADING_PLAN_DOWNLOAD_RESULT")) {
         log.info("inside TaskName " + taskName);
         if (taskReqParams.get("env").equals("ship")) {
-          communicationService.getDataFromCommunication(
-              taskReqParams, MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+          communicationService.getDataFromCommunication(taskReqParams, MessageTypes.loadingShip);
         } else {
           log.info("inside taskReqParams " + taskReqParams.get("env"));
-          communicationService.getDataFromCommunication(
-              taskReqParams, MessageTypes.LOADINGPLAN.getMessageType());
+          communicationService.getDataFromCommunication(taskReqParams, MessageTypes.loadingShore);
         }
 
       } else if (taskName.contains("LOADING_DATA_UPDATE")) {

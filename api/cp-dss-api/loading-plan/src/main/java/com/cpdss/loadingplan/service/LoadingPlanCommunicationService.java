@@ -9,14 +9,17 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
+import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -40,6 +43,7 @@ public class LoadingPlanCommunicationService {
   @Autowired private LoadingDelayRepository loadingDelayRepository;
   @Autowired private LoadingMachineryInUseRepository loadingMachineryInUseRepository;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
+  @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
 
   @Autowired
   private PortLoadingPlanStabilityParametersRepository portLoadingPlanStabilityParametersRepository;
@@ -92,28 +96,33 @@ public class LoadingPlanCommunicationService {
   @Autowired private StageDurationRepository stageDurationRepository;
   @Autowired private LoadingInformationStatusRepository loadingInfoStatusRepository;
 
-  public void getDataFromCommunication(Map<String, String> taskReqParams, String messageType)
+  public void getDataFromCommunication(
+      Map<String, String> taskReqParams, EnumSet<MessageTypes> messageTypesEnum)
       throws GenericServiceException {
-    log.info("Inside getDataFromCommunication messageType : " + messageType);
-    try {
-      EnvoyReader.EnvoyReaderResultReply erReply =
-          getResultFromEnvoyReaderShore(taskReqParams, messageType);
-      if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+    log.info("Inside getDataFromCommunication messageTypes:" + messageTypesEnum);
+    for (MessageTypes messageType : messageTypesEnum) {
+      try {
+        String messageTypeGet = messageType.getMessageType();
+        log.info("Inside getDataFromCommunication messageType : " + messageType);
+        EnvoyReader.EnvoyReaderResultReply erReply =
+            getResultFromEnvoyReaderShore(taskReqParams, messageTypeGet);
+        if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+          throw new GenericServiceException(
+              "Failed to get Result from Communication Server for: " + messageTypeGet,
+              erReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+        }
+        if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
+          log.info("Data received from envoy reader for: " + messageType);
+          saveLoadingPlanIntoStagingTable(erReply);
+        }
+      } catch (GenericServiceException e) {
         throw new GenericServiceException(
-            "Failed to get Result from Communication Server for: " + messageType,
-            erReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+            e.getMessage(),
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            e);
       }
-      if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
-        log.info("Data received from envoy reader for: " + messageType);
-        saveLoadingPlanIntoStagingTable(erReply);
-      }
-    } catch (GenericServiceException e) {
-      throw new GenericServiceException(
-          e.getMessage(),
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          e);
     }
   }
 
@@ -221,10 +230,12 @@ public class LoadingPlanCommunicationService {
         List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList = null;
         List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
         List<BillOfLanding> billOfLandingList = null;
-
         loadingPlanStagingService.updateStatusForProcessId(
             processId, StagingStatus.IN_PROGRESS.getStatus());
         log.info("updated status to in_progress for processId:" + processId);
+        String processGroupId = null;
+        Integer arrivalDeparture =null;
+        processGroupId = entry.getValue().get(0).getProcessGroupId();
         for (DataTransferStage dataTransferStage : entry.getValue()) {
           Type listType = null;
           String dataTransferString = dataTransferStage.getData();
@@ -1156,6 +1167,7 @@ public class LoadingPlanCommunicationService {
             && portLoadingPlanCommingleDetailsList != null
             && !portLoadingPlanCommingleDetailsList.isEmpty()) {
           try {
+            arrivalDeparture = portLoadingPlanCommingleDetailsList.get(0).getConditionType();
             for (PortLoadingPlanCommingleDetails portLoadingPlanCommingleDetails :
                 portLoadingPlanCommingleDetailsList) {
               Long version = null;
@@ -1217,13 +1229,34 @@ public class LoadingPlanCommunicationService {
             processId, StagingStatus.COMPLETED.getStatus());
         log.info("updated status to completed for processId:" + processId);
         if (!env.equals("ship") && loadingInfo != null) {
-          log.info("Algo call started for LoadingPlan");
-          LoadingPlanModels.LoadingInfoAlgoRequest.Builder builder =
-              LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder();
-          builder.setLoadingInfoId(loadingInfo.getId());
-          LoadingPlanModels.LoadingInfoAlgoReply.Builder algoReplyBuilder =
-              LoadingPlanModels.LoadingInfoAlgoReply.newBuilder();
-          loadingPlanAlgoService.generateLoadingPlan(builder.build(), algoReplyBuilder);
+          if (processGroupId.equals(MessageTypes.LOADINGPLAN.getMessageType())) {
+            log.info("Algo call started for LoadingPlan");
+            LoadingPlanModels.LoadingInfoAlgoRequest.Builder builder =
+                LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder();
+            builder.setLoadingInfoId(loadingInfo.getId());
+            LoadingPlanModels.LoadingInfoAlgoReply.Builder algoReplyBuilder =
+                LoadingPlanModels.LoadingInfoAlgoReply.newBuilder();
+            loadingPlanAlgoService.generateLoadingPlan(builder.build(), algoReplyBuilder);
+          }
+          if (processGroupId.equals(MessageTypes.ULLAGE_UPDATE.getMessageType())) {
+            log.info("Algo call started for Update Ullage");
+            try {
+              LoadingPlanModels.UllageBillRequest.Builder builder =
+                  LoadingPlanModels.UllageBillRequest.newBuilder();
+              LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
+                  LoadingPlanModels.UpdateUllage.newBuilder();
+              updateUllageBuilder.setLoadingInformationId(loadingInfo.getId());
+              updateUllageBuilder.setArrivalDepartutre(arrivalDeparture);
+              builder.addUpdateUllage(updateUllageBuilder.build());
+              ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
+            } catch (InvocationTargetException | IllegalAccessException e) {
+              throw new GenericServiceException(
+                  e.getMessage(),
+                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                  HttpStatusCode.INTERNAL_SERVER_ERROR,
+                  e);
+            }
+          }
         }
       }
     }
