@@ -965,7 +965,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       } else {
         log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
         throw new GenericServiceException(
-            "Failed to save Loading Information",
+            "Failed to generate Loading Plan",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }

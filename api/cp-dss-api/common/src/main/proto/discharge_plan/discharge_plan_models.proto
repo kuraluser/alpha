@@ -345,6 +345,7 @@ message DischargingInstructionStatus{
 message DischargePlanAlgoRequest {
   ResponseStatus responseStatus = 1;
   string requestAsJsonString = 2;
+  string processId = 3;
 }
 
 message DischargingPlanSaveRequest {
