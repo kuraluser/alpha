@@ -445,7 +445,7 @@ public class DischargeInformationBuilderService {
     }
 
     // Discharging Info Case 2 - Stages
-    if (request.getDischargingStages() != null) {
+    if (request.getDischargeStages() != null) {
       Callable<DischargingInfoSaveResponse> t2 =
           () -> {
             builder.setDischargeStage(buildDischargingStage(request));
@@ -514,11 +514,11 @@ public class DischargeInformationBuilderService {
     }
 
     // Discharging Info Case 8 - post discharge stage
-    if (request.getPostDischargeStage() != null) {
+    if (request.getPostDischargeStageTime() != null) {
       Callable<DischargingInfoSaveResponse> t8 =
           () -> {
             builder.setPostDischargeStageTime(
-                buildPostDischargeStageDetails(request.getPostDischargeStage()));
+                buildPostDischargeStageDetails(request.getPostDischargeStageTime()));
             return dischargeInfoServiceStub.savePostDischargeStage(builder.build());
           };
       callableTasks.add(t8);
@@ -671,6 +671,10 @@ public class DischargeInformationBuilderService {
               .ifPresent(
                   maxManifoldHeight ->
                       builder.setMaxManifoldHeight(String.valueOf(maxManifoldHeight)));
+          Optional.ofNullable(berth.getMaxManifoldPressure())
+              .ifPresent(
+                  maxManifoldPressure ->
+                      builder.setMaxManifoldPressure(String.valueOf(maxManifoldPressure)));
           Optional.ofNullable(berth.getRegulationAndRestriction())
               .ifPresent(
                   restriction ->
@@ -758,22 +762,22 @@ public class DischargeInformationBuilderService {
         durationBuilder =
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder();
     StageOffsets.Builder offsetBuilder = StageOffsets.newBuilder();
-    if (request.getDischargingStages() != null) {
-      if (request.getDischargingStages().getStageDuration() != null) {
-        Optional.ofNullable(request.getDischargingStages().getStageDuration().getId())
+    if (request.getDischargeStages() != null) {
+      if (request.getDischargeStages().getStageDuration() != null) {
+        Optional.ofNullable(request.getDischargeStages().getStageDuration().getId())
             .ifPresent(durationBuilder::setId);
-        Optional.ofNullable(request.getDischargingStages().getStageDuration().getDuration())
+        Optional.ofNullable(request.getDischargeStages().getStageDuration().getDuration())
             .ifPresent(durationBuilder::setDuration);
       }
-      if (request.getDischargingStages().getStageOffset() != null) {
-        Optional.ofNullable(request.getDischargingStages().getStageOffset().getId())
+      if (request.getDischargeStages().getStageOffset() != null) {
+        Optional.ofNullable(request.getDischargeStages().getStageOffset().getId())
             .ifPresent(offsetBuilder::setId);
-        Optional.ofNullable(request.getDischargingStages().getStageOffset().getStageOffsetVal())
+        Optional.ofNullable(request.getDischargeStages().getStageOffset().getStageOffsetVal())
             .ifPresent(offsetBuilder::setStageOffsetVal);
       }
-      Optional.ofNullable(request.getDischargingStages().getTrackGradeSwitch())
+      Optional.ofNullable(request.getDischargeStages().getTrackGradeSwitch())
           .ifPresent(builder::setTrackGradeSwitch);
-      Optional.ofNullable(request.getDischargingStages().getTrackStartEndStage())
+      Optional.ofNullable(request.getDischargeStages().getTrackStartEndStage())
           .ifPresent(builder::setTrackStartEndStage);
     }
     builder.setDuration(durationBuilder.build());

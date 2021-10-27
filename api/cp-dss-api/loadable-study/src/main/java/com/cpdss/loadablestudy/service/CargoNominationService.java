@@ -127,9 +127,11 @@ public class CargoNominationService {
   public List<CargoNomination> saveDsichargeStudyCargoNominations(
       Long dischargeStudyId, Long loadableStudyId, Long portId, Long operationId)
       throws GenericServiceException {
-	  log.info("ds save API LS id :: "+loadableStudyId);
+    log.info("ds save API LS id :: " + loadableStudyId);
     List<CargoNomination> cargos = getCargoNominationByLoadableStudyId(loadableStudyId);
-    log.info("ds save API LS cargos :: "+ cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()));
+    log.info(
+        "ds save API LS cargos :: "
+            + cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()));
 
     List<CargoNomination> dischargeStudycargos = new ArrayList<>();
     // Fetching max quantity from Bill of Ladding
@@ -138,12 +140,19 @@ public class CargoNominationService {
         .parallelStream()
         .forEach(
             cargo -> {
-                CargoNomination newCargo = createDsCargoNomination(dischargeStudyId, cargo, portId, operationId);
-                log.info("ds save API DS cargo... cargo id ::  "+newCargo.getCargoXId() + " , abb::"+newCargo.getAbbreviation());
+              CargoNomination newCargo =
+                  createDsCargoNomination(dischargeStudyId, cargo, portId, operationId);
+              log.info(
+                  "ds save API DS cargo... cargo id ::  "
+                      + newCargo.getCargoXId()
+                      + " , abb::"
+                      + newCargo.getAbbreviation());
               dischargeStudycargos.add(newCargo);
             });
     List<CargoNomination> savedCargos = cargoNominationRepository.saveAll(dischargeStudycargos);
-    log.info("ds save API saved DS cargos :: "+ savedCargos.stream().map(CargoNomination::getId).collect(Collectors.toList()));
+    log.info(
+        "ds save API saved DS cargos :: "
+            + savedCargos.stream().map(CargoNomination::getId).collect(Collectors.toList()));
     return savedCargos;
   }
 
