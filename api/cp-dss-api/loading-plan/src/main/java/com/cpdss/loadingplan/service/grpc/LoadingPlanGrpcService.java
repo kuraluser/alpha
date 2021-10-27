@@ -122,7 +122,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     log.info("Inside saveLoadingPlan");
     LoadingPlanSaveResponse.Builder builder = LoadingPlanSaveResponse.newBuilder();
     try {
-      loadingPlanAlgoService.saveLoadingSequenceAndPlan(request);
+      loadingPlanAlgoService.saveLoadingSequenceAndPlan(builder, request);
       builder.setResponseStatus(
           ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
