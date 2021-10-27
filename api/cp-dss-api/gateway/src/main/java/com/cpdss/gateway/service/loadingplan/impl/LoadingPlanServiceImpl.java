@@ -1755,7 +1755,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                               : commingle.getTemperature().toString())
                       .setQuantityMT(
                           commingle.getQuantityMT() == null
-                              ? ""
+                              ? "0"
                               : commingle.getQuantityMT().toString())
                       .setFillingPercentage(
                           commingle.getFillingPercentage() == null
@@ -1797,7 +1797,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           commingle.getQuantity1M3() == null
                               ? ""
                               : commingle.getQuantity1M3().toString())
-                      .setQuantityMT(
+                      .setQuantity2M3(
                           commingle.getQuantity2M3() == null
                               ? ""
                               : commingle.getQuantity2M3().toString())
