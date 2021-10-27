@@ -129,7 +129,7 @@
 
               <div class="col-4 mb-5">
                 <p-dropdown *ngIf="editMode;else washingCargo" [options]="loadedCargos" optionLabel="abbreviation" placeholder="{{ 'DISCHARGING_COW_SELECT_CARGO'| translate }}"
-                  formControlName="washingCargo" styleClass="form-control" [showClear]="true" (onChange)="onWashingCargoChange($event, index)">
+                  formControlName="washingCargo" styleClass="form-control dropdown-closable" [showClear]="true" (onChange)="onWashingCargoChange($event, index)">
                   <ng-template pTemplate="selectedItem">
                     <span *ngIf="cargoDetails?.washingCargo">
                       <i class="color-rounded align-text-bottom mr-5"
@@ -225,28 +225,34 @@
       <div class="row">
         <div class="col">
           <div class="form-row">
-            <div class="col-auto error-icon-wrapper">
+            <div class="col-auto ">
               <label for="cow_option">{{ 'DISCHARGING_TRIM_MIN' | translate}}</label>
+              <div class="error-icon-wrapper pr-20">
               <input *ngIf="editMode;else cowTrimMin" type="text" cpdssPortalNumberDecimal formControlName="cowTrimMin"
                 class="form-control" (change)="onChange($event)" />
+                <cpdss-portal-validation-error [errors]="fieldError('cowTrimMin')"
+                [errorMessages]="errorMesages?.cowTrimMin">
+              </cpdss-portal-validation-error>
+              </div>
               <ng-template #cowTrimMin>
                 <br><span>{{cowDetailsFormControl?.cowTrimMin?.value}}</span>
               </ng-template>
-              <cpdss-portal-validation-error [errors]="fieldError('cowTrimMin')"
-                [errorMessages]="errorMesages?.cowTrimMin">
-              </cpdss-portal-validation-error>
+              
             </div>
 
-            <div class="col-auto error-icon-wrapper">
+            <div class="col-auto">
               <label for="cow_option">{{ 'DISCHARGING_TRIM_MAX' | translate}}</label>
+              <div class="error-icon-wrapper pr-20">
               <input *ngIf="editMode;else cowTrimMax" type="text" cpdssPortalNumberDecimal formControlName="cowTrimMax"
                 class="form-control" (change)="onChange($event)" />
+                <cpdss-portal-validation-error [errors]="fieldError('cowTrimMax')"
+                [errorMessages]="errorMesages?.cowTrimMax">
+              </cpdss-portal-validation-error>
+              </div>
               <ng-template #cowTrimMax>
                 <br><span>{{cowDetailsFormControl?.cowTrimMax?.value}}</span>
               </ng-template>
-              <cpdss-portal-validation-error [errors]="fieldError('cowTrimMax')"
-                [errorMessages]="errorMesages?.cowTrimMax">
-              </cpdss-portal-validation-error>
+              
             </div>
           </div>
         </div>
