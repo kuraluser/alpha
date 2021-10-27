@@ -576,7 +576,9 @@ public class DischargePlanController {
    * @return
    * @throws CommonRestException
    */
-  @PostMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/confirm-plan/{dischargePatternId}")
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/confirm-plan/{dischargePatternId}")
   public CommonResponse confirmPlan(
       @PathVariable Long dischargeStudyId,
       @PathVariable Long dischargePatternId,

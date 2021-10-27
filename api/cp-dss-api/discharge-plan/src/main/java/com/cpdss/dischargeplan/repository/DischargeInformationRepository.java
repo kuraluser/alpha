@@ -4,6 +4,8 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -67,4 +69,39 @@ public interface DischargeInformationRepository
   @Modifying
   @Query("UPDATE DischargeInformation li SET li.isDischargingPlanGenerated = ?2 WHERE id = ?1")
   void updateIsDischargingPlanGeneratedStatus(Long id, boolean status);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DischargeInformation SET startTime = ?1, finalTrim=?2 WHERE id = ?3")
+  void updateStartTimeAndFinalTrim(LocalTime startTime, BigDecimal finalTrim, Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DischargeInformation SET initialTrim = ?1, maximumTrim=?2 WHERE id = ?3")
+  void updateInitialTrimAndMaximumTrim(BigDecimal initialTrim, BigDecimal maximumTrim, Long id);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE DischargeInformation SET dischargeCommingleCargoSeparately = ?1, dischargeSlopTankFirst=?2 WHERE id = ?3")
+  void updateCommingledCargoAndSlopTankFirst(
+      Boolean dischargeCommingleCargoSeparately, Boolean dischargeSlopTankFirst, Long id);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE DischargeInformation SET isTrackStartEndStage = ?1, isTrackGradeSwitching=?2 WHERE id = ?3")
+  void updateIsTrackStartEndAndTrackGradeSwitching(
+      boolean trackStartEndStage, boolean trackGradeSwitch, Long id);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE DischargeInformation SET timeForFinalStripping = ?1, freshOilWashing=?2,timeForSlopDischarging = ?3, timeForDryCheck=?4 WHERE id = ?5")
+  void updateFinalStrippingAndFreshOilWashAndSlopDischargingAndTimeForDryCheck(
+      BigDecimal timeForFinalStripping,
+      BigDecimal freshOilWashing,
+      BigDecimal timeForSlopDischarging,
+      BigDecimal timeForDryCheck,
+      Long id);
 }
