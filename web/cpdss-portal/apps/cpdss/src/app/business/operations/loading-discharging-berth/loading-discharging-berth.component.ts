@@ -323,7 +323,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
 
     if (this.operation === OPERATIONS.DISCHARGING) {
       const additionalDetails = {
-        maxManifoldPressure: berthInfo?.maxManifoldPressure,
+        maxManifoldPressure: Number(berthInfo?.maxManifoldPressure),
         cargoCirculation: berthInfo?.cargoCirculation,
         airPurge: berthInfo?.airPurge
       }
