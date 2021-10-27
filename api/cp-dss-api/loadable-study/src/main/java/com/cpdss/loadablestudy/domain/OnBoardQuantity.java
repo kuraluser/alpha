@@ -12,7 +12,7 @@ public class OnBoardQuantity {
   private Long tankId;
   private Long cargoId;
 
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+ // @JsonInclude(JsonInclude.Include.NON_NULL)
   private String volume; // volumeInM3
 
   private String plannedArrivalWeight;

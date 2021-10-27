@@ -4,6 +4,7 @@ import { Observable, of} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { IPort, IPortsResponse } from '../../core/models/common.model';
+import { IPortsDetailsResponse } from '../models/port.model';
 
 
 
@@ -14,16 +15,13 @@ import { IPort, IPortsResponse } from '../../core/models/common.model';
  */
 
 @Injectable({
-  providedIn: AdminModule
+  providedIn: AdminModule,
 })
-
-
 export class PortMasterApiService {
-
   selectedPortLocation: any;
   private _ports: IPort[];
 
-  constructor(private commonApiService: CommonApiService) { }
+  constructor(private commonApiService: CommonApiService) {}
 
   /**
    * Method to get ports list
@@ -35,10 +33,12 @@ export class PortMasterApiService {
     if (this._ports) {
       return of(this._ports);
     } else {
-      return this.commonApiService.get<IPortsResponse>('ports').pipe(map((response) => {
-        this._ports = response?.ports;
-        return this._ports;
-      }));
+      return this.commonApiService.get<IPortsResponse>('ports').pipe(
+        map((response) => {
+          this._ports = response?.ports;
+          return this._ports;
+        })
+      );
     }
   }
   /**
@@ -48,8 +48,17 @@ export class PortMasterApiService {
    */
   async getCountryList() {
     return await [
-      { name: "India" },                 //TODO-has to be replaced with actual api call later
-      { name: "Australia" }
-    ]
+      { name: 'India' }, //TODO-has to be replaced with actual api call later
+      { name: 'Australia' },
+    ];
+  }
+
+  /**
+   * Method to get port details.
+   *
+   * @memberof PortMasterApiService
+   */
+  getPortDetailsById(portId: number) {
+    return this.commonApiService.get<IPortsDetailsResponse>(`portInfo/${portId}`);
   }
 }

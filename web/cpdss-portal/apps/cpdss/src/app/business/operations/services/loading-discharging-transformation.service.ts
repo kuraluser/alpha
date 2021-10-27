@@ -735,6 +735,9 @@ export class LoadingDischargingTransformationService {
           tankId: tankId,
           start: item.timeStart,
           end: item.timeEnd,
+          quantity: 0,
+          quantityMT: 0,
+          sounding: 0,
           id: "ballast-stripping-" + _tank.tankName // NB:- id must be unique
         }
         ballasts?.push(data);

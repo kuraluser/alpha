@@ -186,7 +186,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
-
+  private final long ALGO_RESPONSE_ID = 17L;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
@@ -2934,7 +2934,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       Object departureCondition = null;
       JsonData jsonData =
-          this.jsonDataService.getJsonData(request.getLoadableStudyId(), Long.valueOf(2));
+          this.jsonDataService.getJsonData(request.getLoadableStudyId(), ALGO_RESPONSE_ID);
       if (jsonData != null) {
         String algoJsonString = jsonData.getJsonData();
         LoadableStudyAlgoJson algoJson =

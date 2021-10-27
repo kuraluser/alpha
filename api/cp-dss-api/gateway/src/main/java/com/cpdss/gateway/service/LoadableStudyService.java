@@ -197,7 +197,7 @@ public class LoadableStudyService {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
-  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 17L;
   private static final Long DISCHARGE_STUDY_RESULT_JSON_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
@@ -3933,6 +3933,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     Optional.ofNullable(lqccd.getTankShortName()).ifPresent(builder::setTankShortName);
+    Optional.ofNullable(lqccd.getCommingleColour()).ifPresent(builder::setCommingleColour);
     Optional.ofNullable(lqccd.getToppingSequence())
         .ifPresent(
             toppingSequence -> {
@@ -5349,6 +5350,7 @@ public class LoadableStudyService {
       objectMapper.writeValue(
           new File(this.rootFolder + "/json/patternValidateResult_" + loadablePatternId + ".json"),
           patternValidateResultRequest);
+      log.error("Inside Pattern validate");
       StatusReply reply =
           this.saveJson(
               loadablePatternId,

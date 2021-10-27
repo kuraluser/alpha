@@ -234,6 +234,7 @@ public class LoadablePatternService {
 
   @Value("${cpdss.build.env}")
   private String env;
+
   /**
    * @param loadableStudy
    * @throws GenericServiceException
@@ -396,7 +397,11 @@ public class LoadablePatternService {
           savePatternDetails(request, loadableStudyOpt, requestType, false);
 
       // Update pattern Ids
-      request = updatePatternIdAlgoObj(loadableStudyOpt.get().getId(), request, loadablePatterns);
+      if (enableCommunication && !env.equals("ship")) {
+        request =
+            updatePatternIdAlgoObj(
+                loadableStudyOpt.get().getId(), request, loadablePatterns, requestType);
+      }
 
       if (request.getHasLodicator()) {
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
@@ -452,6 +457,7 @@ public class LoadablePatternService {
    * @param loadableStudyId loadableStudyId value
    * @param algoCallBackRequestObj Algo Callback request object
    * @param patterns list of saved patterns
+   * @param requestType
    * @return LoadablePatternAlgoRequest object
    * @throws GenericServiceException Exception on JSON conversion failure
    */
@@ -460,7 +466,8 @@ public class LoadablePatternService {
           long loadableStudyId,
           com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
               algoCallBackRequestObj,
-          List<LoadablePattern> patterns)
+          List<LoadablePattern> patterns,
+          String requestType)
           throws GenericServiceException {
 
     List<LoadablePlanDetails> loadablePlanDetailsList = new ArrayList<>();
@@ -481,11 +488,25 @@ public class LoadablePatternService {
             .clearLoadablePlanDetails()
             .addAllLoadablePlanDetails(loadablePlanDetailsList)
             .build();
+    JsonData jsonData = null;
+    if (requestType.equals(LOADABLE_STUDY)) {
+      jsonData =
+          jsonDataService.getJsonData(
+              loadableStudyId, LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+    } else {
+      jsonData =
+          jsonDataService.getJsonData(
+              loadableStudyId, LoadableStudiesConstants.DISCHARGE_STUDY_RESULT_JSON_ID);
+    }
 
-    JsonData jsonData =
-        jsonDataService.getJsonData(
-            loadableStudyId, LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
     // Update JSON data table with pattern id
+    if (jsonData == null) {
+      log.error("No json data found against pattern id {}", loadableStudyId);
+      throw new GenericServiceException(
+          "No json data found against pattern id " + loadableStudyId,
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
     try {
       jsonData.setJsonData(
           JsonFormat.printer().omittingInsignificantWhitespace().print(algoCallBackRequestObj));
@@ -555,7 +576,7 @@ public class LoadablePatternService {
       saveLoadableQuantityCommingleCargoPortwiseDetails(
           lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, displayOrder);
       if (requestType.equals(LOADABLE_STUDY)) {
-        // Saving stability for fully loaded condition at  LS
+        // Saving stability for fully loaded condition at LS
         saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
       }
 
@@ -563,7 +584,8 @@ public class LoadablePatternService {
       saveLoadablePlanBallastDetails(loadablePattern, lpd);
       // Saving stability parameter for all ports
       saveStabilityParameterForNonLodicator(request.getHasLodicator(), loadablePattern, lpd);
-      // TODO ROB details - Data is coming from OHQ - As of now decided to not save here.
+      // TODO ROB details - Data is coming from OHQ - As of now decided to not save
+      // here.
       if (requestType.equals(DICHARGE_STUDY)) {
         saveLoadableQuantityCargoDetails(
             lpd.getLoadablePlanPortWiseDetailsList(), loadablePattern, loadableStudyOpt.get());
@@ -705,7 +727,8 @@ public class LoadablePatternService {
       boolean hasLoadicator,
       boolean isShip) {
 
-    // Deactivate existing patterns for LS. Used for cases like feedback loop in loadicator case
+    // Deactivate existing patterns for LS. Used for cases like feedback loop in
+    // loadicator case
     Optional<LoadablePattern> lp =
         loadablePatternRepository.findOneByLoadableStudyAndCaseNumberAndIsActiveTrue(
             loadableStudy, lpd.getCaseNumber());
@@ -723,7 +746,8 @@ public class LoadablePatternService {
     // Ref: https://developers.google.com/protocol-buffers/docs/proto3#default
     loadablePattern.setId((0 == lpd.getLoadablePatternId()) ? null : lpd.getLoadablePatternId());
 
-    // Activate pattern in ship after communication without checking loadicator. On shore activate
+    // Activate pattern in ship after communication without checking loadicator. On
+    // shore activate
     // based on loadicator status.
     if (isShip) {
       loadablePattern.setIsActive(true);
@@ -830,6 +854,8 @@ public class LoadablePatternService {
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
       loadablePlanCommingleDetails.setTankShortName(
           loadableQuantityCommingleCargoDetailsList.get(i).getTankShortName());
+      loadablePlanCommingleDetails.setCommingleColour(
+          loadableQuantityCommingleCargoDetailsList.get(i).getCommingleColour());
       loadablePlanCommingleDetailsRepository.save(loadablePlanCommingleDetails);
       loadableQuantityCommingleCargoDetailsList
           .get(i)
@@ -1279,7 +1305,7 @@ public class LoadablePatternService {
     loadablePatternCargoDetails.setCargoNominationTemperature(
         new BigDecimal(lpsd.getTemperature()));
     loadablePatternCargoDetails.setFillingRatio(lpsd.getFillingRatio());
-    //    DS field
+    // DS field
     loadablePatternCargoDetails.setOnBoard(
         lpsd.getOnboard().isBlank() ? null : new BigDecimal(lpsd.getOnboard()));
     loadablePatternCargoDetails.setMaxTankVolume(
@@ -1422,6 +1448,7 @@ public class LoadablePatternService {
                     .cargo2NominationId(it.getCargo2NominationId())
                     .portRotationXid(portRotationXid)
                     .tankName(it.getTankShortName())
+                    .commingleColour(it.getCommingleColour())
                     // .actualQuantity(it.getActualQuantity()!= null ? new
                     // BigDecimal(it.getActualQuantity()): null)
                     .build();
@@ -2241,10 +2268,11 @@ public class LoadablePatternService {
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
     } else {
       List<LoadablePattern> loadablePatternConfirmedOpt =
-          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningType(
               loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),
               CONFIRMED_STATUS_ID,
-              true);
+              true,
+              loadablePatternOpt.get().getLoadableStudy().getPlanningTypeXId());
       if (!loadablePatternConfirmedOpt.isEmpty()) {
         log.info("changing status of other confirmed plan to plan generated");
         loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(

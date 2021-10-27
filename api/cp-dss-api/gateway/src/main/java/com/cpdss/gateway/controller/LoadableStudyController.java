@@ -730,8 +730,8 @@ public class LoadableStudyController {
       log.info(
           "saveLoadablePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       String requestJsonString = new ObjectMapper().writeValueAsString(requestJson);
-      LoadablePlanRequest loadablePlanRequest =
-          new ObjectMapper()
+      log.info("Writting in string from json using mapper");
+      LoadablePlanRequest loadablePlanRequest =    new ObjectMapper()
               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
               .readValue(requestJsonString, LoadablePlanRequest.class);
       return loadableStudyService.saveAlgoPatterns(

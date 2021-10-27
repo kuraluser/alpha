@@ -11,4 +11,6 @@ public class StatusCheckResponse {
   private String statusCode;
   private String eventUploadStatus;
   private String eventDownloadStatus;
+  private String message;
+  private String messageId;
 }

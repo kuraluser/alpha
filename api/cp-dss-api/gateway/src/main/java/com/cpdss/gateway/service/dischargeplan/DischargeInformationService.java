@@ -519,6 +519,38 @@ public class DischargeInformationService {
     return response;
   }
 
+  public LoadingInfoAlgoResponse generateDischargingPlan(Long vesselId, Long voyageId, Long infoId)
+      throws GenericServiceException {
+    log.info("Calling generateDischargingPlan of discharging-plan microservice via GRPC");
+    LoadingInfoAlgoResponse algoResponse = new LoadingInfoAlgoResponse();
+    try {
+      DischargeInformationRequest.Builder builder = DischargeInformationRequest.newBuilder();
+      builder.setDischargeInfoId(infoId);
+      builder.setVesselId(vesselId);
+      builder.setVoyageId(voyageId);
+      DischargePlanAlgoRequest response =
+          dischargePlanServiceBlockingStub.generateDischargePlan(builder.build());
+      if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
+        CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+        algoResponse.setProcessId(response.getProcessId());
+        algoResponse.setResponseStatus(successResponse);
+        return algoResponse;
+      } else {
+        log.error("Failed to generate Discharging Plan for Discharging Information {}", infoId);
+        throw new GenericServiceException(
+            "Failed to generate Discharging Plan",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } catch (Exception e) {
+      log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
+      throw new GenericServiceException(
+          "Failed to generate Loading Plan",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
   public LoadingPlanAlgoResponse saveDischargingPlan(
       Long vesselId,
       Long voyageId,

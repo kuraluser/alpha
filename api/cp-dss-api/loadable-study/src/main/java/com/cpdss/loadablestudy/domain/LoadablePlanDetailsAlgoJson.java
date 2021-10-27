@@ -12,6 +12,6 @@ public class LoadablePlanDetailsAlgoJson {
   private Long caseNumber;
   private List<LoadablePlanPortWiseDetailsAlgoJson> loadablePlanPortWiseDetails;
   private Object constraints;
-  private Double slopQuantity;
+  private Object slopQuantity;
   private Object stabilityParameters;
 }

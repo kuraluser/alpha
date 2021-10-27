@@ -17,7 +17,17 @@ declare module 'highcharts' {
     tankName?: string;
     pumpName?: string;
     sounding?: string;
+    shapeArgs?: IShapeArgs;
     highlight: (event: Highcharts.PointerEventObject) => void;
+  }
+
+  /**
+   * Overriding shape argument object in Point object
+   *
+   * @interface IShapeArgs
+   */
+  interface IShapeArgs {
+    width: number;
   }
 
   /**

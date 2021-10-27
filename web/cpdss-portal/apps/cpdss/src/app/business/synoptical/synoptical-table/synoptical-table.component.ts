@@ -79,6 +79,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   today = new Date();
   globalTimeZones: ITimeZone[];
   vesselLightWeight: number;
+  datePlaceHolder: string;
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -103,6 +104,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.today.setSeconds(0, 0);
     this.initActionSubscriptions();
     this.globalTimeZones = await this.timeZoneTransformationService.getTimeZoneList().toPromise();
+    const date = new Date();
+    const dtFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat };
+    const translationKeys = await this.translateService.get(['EXAMPLE']).toPromise();
+    this.datePlaceHolder = translationKeys['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(date, dtFormatOpts);
     this.synopticalService.onInitCompleted$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(completed => {

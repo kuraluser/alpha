@@ -33,6 +33,9 @@ public interface LoadingInformationRepository
   Optional<LoadingInformation> findByVesselXIdAndVoyageIdAndPortRotationXIdAndIsActiveTrue(
       Long var1, Long var2, Long var3);
 
+  Optional<LoadingInformation> findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
+          Long vesselId, Long loadablePatternId, Long portRotationId);
+
   @Transactional
   @Modifying
   @Query("UPDATE LoadingInformation SET loadingInformationStatus = ?1 WHERE id = ?2")
