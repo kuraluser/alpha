@@ -42,7 +42,7 @@ public class VesselPumpService {
     if (vessel != null) {
       Page<PumpType> pumpTypes = pumpTypeRepository.findAll(defaultPage);
       Page<VesselPumps> vesselPumps =
-          vesselPumpRepository.findAllByVesselAndIsActiveTrue(vessel, defaultPage);
+          vesselPumpRepository.findAllByVesselAndIsActiveTrueOrderById(vessel, defaultPage);
       Page<TankType> tankTypes = tankTypeRepository.findAll(defaultPage);
       List<VesselManifold> vesselManifolds =
           vesselManifoldRepository.findByVesselXidAndIsActiveTrue(vesselId);

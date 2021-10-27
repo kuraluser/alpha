@@ -282,7 +282,7 @@ public class LoadingSequenceService {
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTankMap, portEta, response);
     this.buildBallastPumpCategories(vesselId, response, ballastPumps);
-    this.removeEmptyBallasts(ballasts, ballastTankCategories);
+    this.removeEmptyBallasts(ballasts, ballastTankCategories, ballastEduction);
     this.removeEmptyCargos(cargos, cargoTankCategories);
 
     response.setCargos(cargos);
@@ -551,9 +551,12 @@ public class LoadingSequenceService {
   /**
    * @param ballasts
    * @param ballastTankCategories
+   * @param ballastEduction
    */
   private void removeEmptyBallasts(
-      List<Ballast> ballasts, Set<TankCategory> ballastTankCategories) {
+      List<Ballast> ballasts,
+      Set<TankCategory> ballastTankCategories,
+      List<EductionOperation> ballastEduction) {
     Set<Long> tankIds = ballasts.stream().map(Ballast::getTankId).collect(Collectors.toSet());
     tankIds.forEach(
         tankId -> {
@@ -563,6 +566,14 @@ public class LoadingSequenceService {
             ballasts.removeIf(ballast -> ballast.getTankId().equals(tankId));
             ballastTankCategories.removeIf(category -> category.getId().equals(tankId));
           }
+        });
+    // Remove educted ballasts
+    ballastEduction.forEach(
+        eduction -> {
+          ballasts.removeIf(
+              ballast ->
+                  (eduction.getTanks().contains(ballast.getTankId())
+                      && (ballast.getStart() >= eduction.getTimeEnd())));
         });
   }
 
