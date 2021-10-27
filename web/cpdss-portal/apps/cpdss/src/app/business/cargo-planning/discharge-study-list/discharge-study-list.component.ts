@@ -261,10 +261,7 @@ export class DischargeStudyListComponent implements OnInit {
       const dischargeStudyList = result?.dischargeStudies?.map(dischargeStudy => {
         dischargeStudy.createdDate = this.timeZoneTransformationService.formatDateTime(dischargeStudy.createdDate, dateFormatOptions);
         dischargeStudy.lastEdited = this.timeZoneTransformationService.formatDateTime(dischargeStudy.lastEdited, dateFormatOptions);
-        if (this.selectedVoyage.status !== "Active") {
-          dischargeStudy.isActionsEnabled = false;
-          dischargeStudy.isEditable = false;
-        }
+        dischargeStudy.isActionsEnabled = [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(dischargeStudy?.statusId) && [VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) ? true : false;
         return dischargeStudy;
       });
       dischargeStudyList?.length ? this.dischargeStudyList = [...dischargeStudyList] : this.dischargeStudyList = [];
