@@ -359,7 +359,7 @@ public class VoyageService {
       LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder) {
 
     List<Voyage> entityList =
-        this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(request.getVesselId(), true);
+    	this.voyageRepository.findByVesselXIdAndIsActiveOrderByCreatedDateTimeDesc(request.getVesselId(), true);
     for (Voyage entity : entityList) {
       LoadableStudy.VoyageDetail.Builder detailbuilder = LoadableStudy.VoyageDetail.newBuilder();
       detailbuilder.setId(entity.getId());
