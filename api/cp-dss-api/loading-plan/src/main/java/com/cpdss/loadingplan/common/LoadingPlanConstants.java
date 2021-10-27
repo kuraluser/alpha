@@ -36,6 +36,7 @@ public final class LoadingPlanConstants {
   public static final Long UPDATE_ULLAGE_VALIDATION_SUCCESS_ID = 13L;
   public static final Long UPDATE_ULLAGE_VALIDATION_FAILED_ID = 14L;
   public static final Long UPDATE_ULLAGE_VALIDATION_PENDING_ID = 16L;
+  public static final Long UPDATE_ULLAGE_LOADICATOR_VERIFICATION_STARTED_ID = 17L;
 
   // Loading Plan Conditions
   public static final Integer LOADING_PLAN_ARRIVAL_CONDITION_VALUE = 1;
