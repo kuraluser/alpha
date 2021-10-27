@@ -1,6 +1,6 @@
-<div class="row pt-10" *ngIf="form">
+<div class="row pt-10" *ngIf="form && cargoTobeLoadedDischargedForm">
   <div class="col ml-30 table-column-flexible-wrapper auto-layout" [formGroup]="form">
-    <cpdss-portal-datatable *ngIf="cargoTobeLoadedDischargedColumns && cargoTobeLoadedDischargedForm"
+    <cpdss-portal-datatable *ngIf="cargoTobeLoadedDischargedColumns && cargoTobeLoadedDischargedForm && listData && cargoTobeLoadedDischarged"
       [tableId]="'cargo_to_be_loaded_or_discharged'" [form]="cargoTobeLoadedDischargedForm"
       [columns]="cargoTobeLoadedDischargedColumns" [value]="cargoTobeLoadedDischarged" [scrollable]="false"
       [editMode]="editMode" [listData]="listData" (editComplete)="onEditComplete($event)">

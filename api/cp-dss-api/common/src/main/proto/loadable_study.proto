@@ -617,6 +617,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 int64 cargo1NominationId = 33;
 	 int64 cargo2NominationId = 34;
 	 string tankShortName = 35;
+	 string commingleColour = 36;
 }
 
 message LoadableQuantityCargoDetails {

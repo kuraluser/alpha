@@ -42,7 +42,7 @@
             <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_TOP_COW' | translate}}</label>
             <div class="col-7 error-icon-wrapper">
               <p-multiSelect *ngIf="editMode;else topCOWTanks" [options]="cargoTanks" optionLabel="shortName"
-                styleClass="form-control" formControlName="topCOWTanks" (onChange)="onChange($event)">
+                styleClass="form-control" formControlName="topCOWTanks" (onChange)="onChange($event)" id="topCOWTanks" appendTo="body" resetFilterOnHide="true" defaultLabel="{{'DISCHARGING_COW_SELECT_TANKS' | translate}}">
               </p-multiSelect>
               <ng-template #topCOWTanks>
                 <span>{{cowDetailsFormControl?.selectedTopCOWTanks?.value}}</span>
@@ -56,7 +56,7 @@
             <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_BOTTOM_COW' | translate}}</label>
             <div class="col-7 error-icon-wrapper">
               <p-multiSelect *ngIf="editMode;else bottomCOWTanks" [options]="cargoTanks" optionLabel="shortName"
-                styleClass="form-control" formControlName="bottomCOWTanks" (onChange)="onChange($event)">
+                styleClass="form-control" formControlName="bottomCOWTanks" (onChange)="onChange($event)" id="bottomCOWTanks" appendTo="body" resetFilterOnHide="true" defaultLabel="{{'DISCHARGING_COW_SELECT_TANKS' | translate}}">
               </p-multiSelect>
               <ng-template #bottomCOWTanks>
                 <span>{{cowDetailsFormControl?.selectedBottomCOWTanks?.value}}</span>
@@ -71,7 +71,7 @@
             <label for="cow_option" class="col-5 col-form-label">{{ 'DISCHARGING_ALL_COW' | translate}}</label>
             <div class="col-7 error-icon-wrapper">
               <p-multiSelect *ngIf="editMode;else allCOWTanks" [options]="cargoTanks" optionLabel="shortName"
-                styleClass="form-control" formControlName="allCOWTanks" (onChange)="onChange($event)">
+                styleClass="form-control" formControlName="allCOWTanks" (onChange)="onChange($event)" id="allCOWTanks" appendTo="body" resetFilterOnHide="true" defaultLabel="{{'DISCHARGING_COW_SELECT_TANKS' | translate}}">
               </p-multiSelect>
               <ng-template #allCOWTanks>
                 <span>{{cowDetailsFormControl?.selectedAllCOWTanks?.value}}</span>
@@ -120,7 +120,7 @@
 
               <div class="col-6 mb-5">
                 <p-multiSelect *ngIf="editMode;else selectedTanks" [options]="cargoDetails?.selectedTanks"
-                  optionLabel="shortName" styleClass="form-control" formControlName="tanks" (onChange)="onChange($event)">
+                  optionLabel="shortName" styleClass="form-control" formControlName="tanks" (onChange)="onChange($event)" id="tanks_{{index}}" appendTo="body" resetFilterOnHide="true" defaultLabel="{{'DISCHARGING_COW_SELECT_TANKS' | translate}}">
                 </p-multiSelect>
                 <ng-template #selectedTanks>
                   <span>{{joinDropOptionsToLabel(cargoDetails?.selectedTanks)}}</span>
@@ -128,7 +128,7 @@
               </div>
 
               <div class="col-4 mb-5">
-                <p-dropdown *ngIf="editMode;else washingCargo" [options]="loadedCargos" optionLabel="abbreviation"
+                <p-dropdown *ngIf="editMode;else washingCargo" [options]="loadedCargos" optionLabel="abbreviation" placeholder="{{ 'DISCHARGING_COW_SELECT_CARGO'| translate }}"
                   formControlName="washingCargo" styleClass="form-control" [showClear]="true" (onChange)="onWashingCargoChange($event, index)">
                   <ng-template pTemplate="selectedItem">
                     <span *ngIf="cargoDetails?.washingCargo">

@@ -67,7 +67,11 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   @Output() updateCargoToBeLoaded = new EventEmitter<ILoadedCargo[]>();
 
   get cargoTobeLoadedDischargedForm() {
-    return <FormGroup> this.form.get('cargoTobeLoadedDischarged');
+    return <FormGroup> this.form?.get('cargoTobeLoadedDischarged');
+  }
+
+  set cargoTobeLoadedDischargedForm(form: FormGroup) {
+    this.form?.setControl('cargoTobeLoadedDischarged', form);
   }
 
   cargoTobeLoadedDischargedColumns: IDataTableColumn[];
@@ -187,11 +191,18 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         slopQuantity: this.fb.control((<ValueObject<number>>cargo?.slopQuantity)?.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)]),
       })
     });
-    this.form = this.fb.group({
-      cargoTobeLoadedDischarged: this.fb.group({
+
+    if (this.form) {
+      this.cargoTobeLoadedDischargedForm = this.fb.group({
         dataTable: this.fb.array([...cargoToBeDischarged])
-      })
-    });
+      });
+    } else {
+      this.form = this.fb.group({
+        cargoTobeLoadedDischarged: this.fb.group({
+          dataTable: this.fb.array([...cargoToBeDischarged])
+        })
+      });
+    }
 
     this.form?.controls?.dischargeCommingledCargoSeparately?.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       const dataTableForm = <FormArray>this.cargoTobeLoadedDischargedForm?.get('dataTable');

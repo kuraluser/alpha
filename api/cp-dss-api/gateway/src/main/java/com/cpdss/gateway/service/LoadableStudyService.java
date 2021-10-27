@@ -3933,6 +3933,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     Optional.ofNullable(lqccd.getTankShortName()).ifPresent(builder::setTankShortName);
+    Optional.ofNullable(lqccd.getCommingleColour()).ifPresent(builder::setCommingleColour);
     Optional.ofNullable(lqccd.getToppingSequence())
         .ifPresent(
             toppingSequence -> {
