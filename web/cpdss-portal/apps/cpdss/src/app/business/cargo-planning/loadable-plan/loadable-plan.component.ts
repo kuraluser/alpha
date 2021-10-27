@@ -180,7 +180,7 @@ export class LoadablePlanComponent implements OnInit {
  */
   private swMessageHandler = async event => {
     let isValidStatus = false;
-    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS].includes(event.data.statusId)) {
+    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_SUCCESS, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE].includes(event.data.statusId)) {
       isValidStatus = true;
     }
     if (isValidStatus) {
@@ -198,6 +198,18 @@ export class LoadablePlanComponent implements OnInit {
         if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
           this.processingMessage();
           this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED;
+          this.validationPending = false;
+          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+        }
+      } else if (event.data.type === 'pattern-validation-communicated-to-shore' && this.router.url.includes('loadable-plan')) {
+        const urlsplit = this.router.url?.split('/');
+        let loadablePatternId;
+        if (urlsplit?.length) {
+          loadablePatternId = urlsplit[urlsplit.length - 1];
+        }
+        if (event.data.pattern?.loadablePatternId === this.loadablePatternId && (loadablePatternId && this.loadablePatternId === Number(loadablePatternId))) {
+          this.communicateShoreMessage();
+          this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE;
           this.validationPending = false;
           this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
         }
@@ -247,6 +259,17 @@ export class LoadablePlanComponent implements OnInit {
     this.messageService.clear("process");
     const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_INFO', 'LOADABLE_PATTERN_VALIDATION_STARTED']).toPromise();
     this.messageService.add({ severity: 'info', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_INFO'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_STARTED'], life: 1000, key: "process", closable: false });
+  }
+
+  /**
+   * Toast to show validating pattern communicated to shore
+   *
+   * @memberof LoadablePlanComponent
+   */
+  async communicateShoreMessage() {
+    this.messageService.clear("process");
+    const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_VALIDATION_INFO', 'LOADABLE_PATTERN_VALIDATION_COMMUNICATED_TO_SHORE']).toPromise();
+    this.messageService.add({ severity: 'info', summary: translationKeys['LOADABLE_PATTERN_VALIDATION_INFO'], detail: translationKeys['LOADABLE_PATTERN_VALIDATION_COMMUNICATED_TO_SHORE'], life: 1000, key: "process", closable: false });
   }
 
   /**
@@ -429,7 +452,7 @@ export class LoadablePlanComponent implements OnInit {
     this.loadablePatternValidationStatus = loadablePlanRes.loadablePatternStatusId;
     if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
       this.getAlgoErrorMessage(false);
-    } else if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED) {
+    } else if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED || this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE) {
       this.validationPending = false;
       this.listenEvents();
     }
