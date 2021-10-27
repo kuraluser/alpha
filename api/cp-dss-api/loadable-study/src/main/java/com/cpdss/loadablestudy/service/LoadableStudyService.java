@@ -186,6 +186,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
+
   private final long ALGO_RESPONSE_ID = 17L;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;

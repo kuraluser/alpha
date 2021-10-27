@@ -28,6 +28,7 @@ import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageTempDetails;
 import com.cpdss.dischargeplan.repository.BillOfLaddingRepository;
+import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.DischargePlanCommingleDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastTempDetailsRepository;
@@ -82,6 +83,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired private DischargeInformationBuilderService dischargeInformationBuilderService;
 
   @Autowired RestTemplate restTemplate;
+  @Autowired DischargeInformationRepository dischargeInformationRepository;
 
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
@@ -157,7 +159,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
       dischargeInformation.setIsDischargingPlanGenerated(false);
       dischargeInformation.setIsDischargingSequenceGenerated(false);
-      dischargeInformationService.save(dischargeInformation);
+      dischargeInformationRepository.save(dischargeInformation);
       dischargePlanAlgoService.createDischargingInformationAlgoStatus(
           dischargeInformation, response.getProcessId(), dischargingInfoStatusOpt.get(), null);
       builder.setProcessId(response.getProcessId());

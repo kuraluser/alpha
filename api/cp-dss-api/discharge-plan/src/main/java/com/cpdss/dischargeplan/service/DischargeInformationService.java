@@ -888,10 +888,6 @@ public class DischargeInformationService {
         id, isDischargingInfoComplete);
   }
 
-  public void save(DischargeInformation entity) {
-    dischargeInformationRepository.save(entity);
-  }
-
   public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo) {
     dischargeInformationRepository.updateDischargingPlanDetailsFromAlgo(
         id, dischargingPlanDetailsFromAlgo);

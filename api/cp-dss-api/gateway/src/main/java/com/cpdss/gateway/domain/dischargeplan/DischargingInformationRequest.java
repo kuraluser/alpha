@@ -31,9 +31,9 @@ public class DischargingInformationRequest {
   private List<ToppingOffSequence> toppingOffSequence;
 
   // re using the loading module
-  private LoadingStagesRequest dischargingStages;
+  private LoadingStagesRequest dischargeStages;
   private Boolean isDischargeInfoComplete; // validation logic at Front-end
   private CowPlan cowPlan;
-  private PostDischargeStage postDischargeStage;
+  private PostDischargeStage postDischargeStageTime;
   private PlannedCargo cargoToBeDischarged;
 }
