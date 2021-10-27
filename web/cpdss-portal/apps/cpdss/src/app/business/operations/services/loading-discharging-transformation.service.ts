@@ -386,6 +386,7 @@ export class LoadingDischargingTransformationService {
     _loadingDischargingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
 
     if (loadingDischargingDelay.cargoId) {
+      _loadingDischargingDelay.quantityMT = operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT;
       const loadableMT = this.quantityPipe.transform(operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
       _loadingDischargingDelay.quantity = new ValueObject<number>(Number(loadableMT), true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     } else {
@@ -608,14 +609,14 @@ export class LoadingDischargingTransformationService {
       {
         field: 'blFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_BL_FIGURE',
-        numberFormat: quantityNumberFormat,
+        numberType: 'quantity',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'shipFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SHIP_FIGURE',
-        numberFormat: quantityNumberFormat,
+        numberType: 'quantity',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
@@ -637,7 +638,6 @@ export class LoadingDischargingTransformationService {
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
-        numberFormat: quantityNumberFormat,
         errorMessages: {
           'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
           'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
@@ -983,10 +983,10 @@ export class LoadingDischargingTransformationService {
 
     // Updating post discharge time
     dischargingInformation.postDischargeStageTime = {
-      dryCheckTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.dryCheckTime) * 60 * 1000).format("HH:mm") ?? null,
-      slopDischargingTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.slopDischargingTime) * 60 * 1000).format("HH:mm") ?? null,
-      finalStrippingTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.finalStrippingTime) * 60 * 1000).format("HH:mm") ?? null,
-      freshOilWashingTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.freshOilWashingTime) * 60 * 1000).format("HH:mm") ?? null
+      dryCheckTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.dryCheckTime)) ?? null,
+      slopDischargingTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.slopDischargingTime)) ?? null,
+      finalStrippingTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.finalStrippingTime)) ?? null,
+      freshOilWashingTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.freshOilWashingTime)) ?? null
     };
 
     // Update discharging details
@@ -1130,14 +1130,14 @@ export class LoadingDischargingTransformationService {
     cowDetails.topCOWTanks = dischargingInformationResponse?.cowPlan?.topCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
     cowDetails.bottomCOWTanks = dischargingInformationResponse?.cowPlan?.bottomCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
 
-    cowDetails.cowEnd = moment.utc(Number(dischargingInformationResponse?.cowPlan?.cowEnd) * 60 * 1000).format("HH:mm") ?? null;
-    cowDetails.cowStart = moment.utc(Number(dischargingInformationResponse?.cowPlan?.cowStart) * 60 * 1000).format("HH:mm") ?? null;
-    cowDetails.totalDuration = dischargingInformationResponse?.cowPlan?.totalDuration ?? '00:00';
-    const totalDurationInMinutes = dischargingInformationResponse?.cowPlan?.totalDuration ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowPlan?.totalDuration) : null;
-    const startTimeInMinutes = dischargingInformationResponse?.cowPlan?.cowStart ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowPlan?.cowStart) : null;
-    const endTimeInMinutes = dischargingInformationResponse?.cowPlan?.cowEnd ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowPlan?.cowEnd) : null;
+    const totalDurationInMinutes = dischargingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.reduce((total, cargo) => total += Number(cargo?.timeRequiredForDischarging), 0) * 60;
+    cowDetails.totalDuration = this.convertMinutesToHHMM(totalDurationInMinutes) ?? '00:00';
+    cowDetails.cowEnd = this.convertMinutesToHHMM(Number(dischargingInformationResponse?.cowPlan?.cowEnd)) ?? null;
+    cowDetails.cowStart = this.convertMinutesToHHMM(Number(dischargingInformationResponse?.cowPlan?.cowStart)) ?? null;
+    const startTimeInMinutes = Number(dischargingInformationResponse?.cowPlan?.cowStart);
+    const endTimeInMinutes = Number(dischargingInformationResponse?.cowPlan?.cowEnd);
     const _duration = totalDurationInMinutes ? totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes : null;
-    cowDetails.cowDuration = moment.utc(_duration * 60 * 1000).format("HH:mm") ?? null;
+    cowDetails.cowDuration = this.convertMinutesToHHMM(Number(_duration)) ?? null;
 
     cowDetails.cowTrimMax = dischargingInformationResponse?.cowPlan?.cowTrimMax;
     cowDetails.cowTrimMin = dischargingInformationResponse?.cowPlan?.cowTrimMin;
@@ -1292,5 +1292,16 @@ export class LoadingDischargingTransformationService {
    */
   showUllageError(value) {
     this._showUllageErrorPopup.next(value)
+  }
+
+  /**
+   * Convert minutes to HH:MM format
+   *
+   * @param {number} minutes
+   * @return {*}  {string}
+   * @memberof LoadingDischargingTransformationService
+   */
+  convertMinutesToHHMM(minutes: number): string {
+    return `0${Math.floor(minutes / 60)}`.slice(-2) + ':' + ('0' + minutes % 60).slice(-2)
   }
 }

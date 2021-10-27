@@ -603,6 +603,7 @@ export interface ILoadingDischargingSequenceValueObject {
   duration: ValueObject<string>;
   cargo: ValueObject<ILoadedCargo>;
   quantity: ValueObject<number>;
+  quantityMT: number | string;
   isAdd: boolean;
   colorCode: string;
   sequenceNo?: ValueObject<number>;
