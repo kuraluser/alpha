@@ -134,6 +134,18 @@ public class UllageUpdateLoadicatorService {
     }
 
     String processId = UUID.randomUUID().toString();
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingPlanAlgoService.getLoadingInformationStatus(
+            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfoOpt.get(),
+        loadingInfoStatusOpt.get(),
+        request.getUpdateUllage(0).getArrivalDepartutre());
+    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+        loadingInfoOpt.get(),
+        processId,
+        loadingInfoStatusOpt.get(),
+        request.getUpdateUllage(0).getArrivalDepartutre());
     VesselInfo.VesselReply vesselReply =
         loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
     if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
@@ -148,18 +160,6 @@ public class UllageUpdateLoadicatorService {
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-      loadingPlanService.updateLoadingPlanStatus(
-          loadingInfoOpt.get(),
-          loadingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
-      loadingPlanAlgoService.createLoadingInformationAlgoStatus(
-          loadingInfoOpt.get(),
-          processId,
-          loadingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
       checkStabilityWithAlgo(
           loadingInfoOpt.get(),
           algoRequest,
@@ -225,20 +225,17 @@ public class UllageUpdateLoadicatorService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+    Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
-            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+            LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_VERIFICATION_STARTED_ID);
 
     loadingPlanService.updateLoadingPlanStatus(
         loadingInfoOpt.get(),
         loadingInfoStatusOpt.get(),
         request.getUpdateUllage(0).getArrivalDepartutre());
 
-    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
-        loadingInfoOpt.get(),
-        processId,
-        loadingInfoStatusOpt.get(),
-        request.getUpdateUllage(0).getArrivalDepartutre());
+    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+        loadingInfoOpt.get(), processId, loadicatorVerificationStatusOpt.get());
     return processId;
   }
 
