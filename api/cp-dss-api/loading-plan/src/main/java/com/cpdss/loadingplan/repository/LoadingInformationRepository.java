@@ -33,7 +33,8 @@ public interface LoadingInformationRepository
   Optional<LoadingInformation> findByVesselXIdAndVoyageIdAndPortRotationXIdAndIsActiveTrue(
       Long var1, Long var2, Long var3);
 
-  Optional<LoadingInformation> findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
+  Optional<LoadingInformation>
+      findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
           Long vesselId, Long loadablePatternId, Long portRotationId);
 
   @Transactional
