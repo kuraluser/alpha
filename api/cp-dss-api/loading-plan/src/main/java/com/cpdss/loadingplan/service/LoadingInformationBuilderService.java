@@ -359,6 +359,8 @@ public class LoadingInformationBuilderService {
               var1.getTrim(),
               var1.getBendingMoment(),
               var1.getShearingForce(),
+              var1.getFreeboard(),
+              var1.getManifoldHeight(),
               var1.getConditionType(),
               var1.getValueType()));
     }
@@ -372,6 +374,8 @@ public class LoadingInformationBuilderService {
       BigDecimal trim,
       BigDecimal bm,
       BigDecimal sf,
+      BigDecimal freeboard,
+      BigDecimal manifoldHeight,
       Integer conditionType,
       Integer valueType)
       throws GenericServiceException {
@@ -384,6 +388,8 @@ public class LoadingInformationBuilderService {
               .setTrim(trim != null ? trim.toString() : "")
               .setBm(bm != null ? bm.toString() : "")
               .setSf(sf != null ? sf.toString() : "")
+              .setFreeboard(freeboard != null ? freeboard.toString() : "")
+              .setManifoldHeight(manifoldHeight != null ? manifoldHeight.toString() : "")
               .setConditionType(conditionType != null ? conditionType : 0)
               .setValueType(valueType != null ? valueType : 0)
               .build();

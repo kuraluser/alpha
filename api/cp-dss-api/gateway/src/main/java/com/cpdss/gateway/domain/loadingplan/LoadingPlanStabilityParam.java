@@ -15,6 +15,8 @@ public class LoadingPlanStabilityParam {
   private String trim;
   private String bm;
   private String sf;
+  private String freeBoard;
+  private String manifoldHeight;
   private Integer conditionType;
   private Integer valueType;
 }
