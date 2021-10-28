@@ -30,7 +30,7 @@ public class CargoDischargingRate extends EntityDoc {
   @Column(name = "tank_xid")
   private Long tankXId;
 
-  @Column(name = "discharging_rate")
+  @Column(name = "loading_rate")
   private BigDecimal dischargingRate;
 
   @Column(name = "is_active")

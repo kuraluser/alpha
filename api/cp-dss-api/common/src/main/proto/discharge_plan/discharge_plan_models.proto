@@ -57,23 +57,7 @@ message DischargingPlanTankDetails {
   int32 valueType = 10;
   int64 id = 11;
 }
-message DischargingSequence {
-  int64 cargoNominationId = 1;
-  int32 startTime = 2;
-  int32 endTime = 3;
-  int64 portId = 4;
-  int32 sequenceNumber = 5;
-  string stageName = 6;
-  bool toLoadicator = 7;
-  repeated Valve cargoValves = 8;
-  repeated Valve ballastValves = 9;
-  repeated DischargingRate dischargingRates = 10;
-  repeated DeBallastingRate deBallastingRates = 11;
-  repeated LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 12;
-  string cargoDischargingRate1 = 13;
-  string cargoDischargingRate2 = 14;
-  repeated PumpOperation ballastOperations = 15;
-}
+
 message DischargingRate {
   string dischargingRate = 1;
   int64 tankId = 2;
@@ -377,6 +361,48 @@ message DischargeInfoStatusReply {
   int64 dischargeInfoStatusId = 2;
   string dischargeInfoStatusLastModifiedTime = 3;
   ResponseStatus responseStatus = 4;
+}
+
+message DischargeSequenceReply {
+  int64 vesselId = 1;
+  int64 voyageId = 2;
+  int64 dischargePatternId = 3;
+  int64 portId = 4;
+  string startDate = 5;
+  int32 interval = 6;
+  repeated DischargingSequence dischargeSequences = 7;
+  repeated LoadingPlanStabilityParameters dischargeSequenceStabilityParameters = 8;
+  ResponseStatus responseStatus = 9;
+  int64 portRotationId = 10;
+}
+message DischargingSequence {
+  int64 cargoNominationId = 1;
+  int32 startTime = 2;
+  int32 endTime = 3;
+  int64 portId = 4;
+  int32 sequenceNumber = 5;
+  string stageName = 6;
+  bool toLoadicator = 7;
+  repeated Valve cargoValves = 8;
+  repeated Valve ballastValves = 9;
+  repeated DischargingRate dischargingRates = 10;
+  repeated DeBallastingRate deBallastingRates = 11;
+  repeated DischargePlanPortWiseDetails dischargePlanPortWiseDetails = 12;
+  repeated LoadingPlanPortWiseDetails dischargingPlanPortWiseDetails = 13;
+  string cargoDischargingRate1 = 14;
+  string cargoDischargingRate2 = 15;
+  repeated PumpOperation ballastOperations = 16;
+  EductorOperation eductorOperation = 17;
+}
+
+message DischargePlanPortWiseDetails {
+  repeated DeBallastingRate deballastingRates = 1;
+  repeated LoadingPlanTankDetails dischargingPlanBallastDetails = 2;
+  repeated LoadingPlanTankDetails dischargingPlanRobDetails = 3;
+  LoadingPlanStabilityParameters dischargingPlanStabilityParameters = 4;
+  repeated LoadingPlanTankDetails dischargingPlanStowageDetails = 5;
+  int32 time = 6;
+  repeated LoadingPlanCommingleDetails dischargingPlanCommingleDetails = 7;
 }
 
 message DischargePlanStowageDetailsRequest{

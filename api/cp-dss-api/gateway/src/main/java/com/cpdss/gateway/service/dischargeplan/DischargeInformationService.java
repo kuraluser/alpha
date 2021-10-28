@@ -13,6 +13,7 @@ import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -30,6 +31,7 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.VesselInfoService;
@@ -665,5 +667,31 @@ public class DischargeInformationService {
     loadingInfoAlgoResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return loadingInfoAlgoResponse;
+  }
+
+  /**
+   * Discharging sequence
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws GenericServiceException
+   */
+  public LoadingSequenceResponse getDischargingSequence(Long vesselId, Long voyageId, Long infoId)
+      throws GenericServiceException {
+    LoadingSequenceRequest.Builder request = LoadingSequenceRequest.newBuilder();
+    request.setLoadingInfoId(infoId);
+    DischargeSequenceReply reply =
+        this.dischargePlanServiceBlockingStub.getDischargingSequences(request.build());
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to get dischargeSequence",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    LoadingSequenceResponse response = new LoadingSequenceResponse();
+    dischargingSequenceService.buildDischargingSequence(vesselId, reply, response);
+    return response;
   }
 }

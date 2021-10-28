@@ -662,7 +662,7 @@ public class LoadingSequenceService {
    * @param cargoLoadingRates
    * @param stageTickPositions
    */
-  private void updateCargoLoadingRateIntervals(
+  public void updateCargoLoadingRateIntervals(
       List<CargoLoadingRate> cargoLoadingRates, Set<Long> stageTickPositions) {
     cargoLoadingRates.forEach(
         cargoLoadingRate -> {
