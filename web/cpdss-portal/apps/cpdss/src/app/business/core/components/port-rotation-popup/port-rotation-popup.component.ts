@@ -69,7 +69,7 @@ export class PortRotationPopupComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
     this.portEtaEtdPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortTabEtaEtd'], false);
-    this.columns = this.portRotationPopupTransformationService.getPortDatatableColumns();
+    this.columns = await this.portRotationPopupTransformationService.getPortDatatableColumns();
     this.listData = await this.getDropdownData();
     this.getTimeZoneList();
     this.getPorts()

@@ -12,6 +12,9 @@ import org.springframework.data.jpa.repository.Query;
 public interface SynopticalTableLoadicatorDataRepository
     extends CommonCrudRepository<SynopticalTableLoadicatorData, Long> {
 
+  public SynopticalTableLoadicatorData findByloadablePatternIdAndSynopticalTableAndIsActive(
+      Long LoadablePatternId, SynopticalTable synopticalTable, boolean isActive);
+
   public SynopticalTableLoadicatorData findBySynopticalTableAndIsActive(
       SynopticalTable synopticalTable, boolean isActive);
 

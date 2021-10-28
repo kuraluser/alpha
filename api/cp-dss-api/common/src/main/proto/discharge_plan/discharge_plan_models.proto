@@ -329,6 +329,7 @@ message DischargingInstructionStatus{
 message DischargePlanAlgoRequest {
   ResponseStatus responseStatus = 1;
   string requestAsJsonString = 2;
+  string processId = 3;
 }
 
 message DischargingPlanSaveRequest {
@@ -404,4 +405,11 @@ message DischargePlanPortWiseDetails {
   repeated LoadingPlanCommingleDetails dischargingPlanCommingleDetails = 7;
 }
 
+message DischargePlanStowageDetailsRequest{
+  int64 lastLoadingPortRotationId = 1;
+}
 
+message DischargePlanStowageDetailsResponse {
+  ResponseStatus responseStatus = 1;
+  repeated LoadingPlanTankDetails dischargingPlanTankDetails = 2;
+}

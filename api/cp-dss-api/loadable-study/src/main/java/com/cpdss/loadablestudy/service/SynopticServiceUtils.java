@@ -397,6 +397,12 @@ public class SynopticServiceUtils {
           cargoEntity.setIsActive(true);
           cargoEntity.setOperationType(entity.getOperationType());
           cargoEntity.setPortRotationId(entity.getLoadableStudyPortRotation().getId());
+          Optional.ofNullable(cargoRecord.getApi())
+              .ifPresent(value -> cargoEntity.setApi(new BigDecimal(value)));
+          Optional.ofNullable(cargoRecord.getTemperature())
+              .ifPresent(value -> cargoEntity.setTemperature(new BigDecimal(value)));
+          Optional.ofNullable(cargoRecord.getUllage())
+              .ifPresent(value -> cargoEntity.setCorrectedUllage(new BigDecimal(value)));
           cargoEntity.setActualQuantity(
               isEmpty(cargoRecord.getActualWeight())
                   ? null
@@ -680,6 +686,9 @@ public class SynopticServiceUtils {
           Optional.ofNullable(var1.getTimeRequiredForDischarging())
               .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
 
+          Optional.ofNullable(var1.getIsCommingled()).ifPresent(builder1::setIsCommingled);
+          Optional.ofNullable(var1.getIfProtested()).ifPresent(builder1::setIfProtested);
+
           try {
             this.setLoadingPortNameFromCargoOperation(
                 var1.getCargoId(), var1.getCargoNominationId(), builder1);
@@ -824,7 +833,7 @@ public class SynopticServiceUtils {
         Optional.ofNullable(var1.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
         Optional.ofNullable(var1.getTimeRequiredForLoading())
             .ifPresent(builder1::setTimeRequiredForLoading);
-
+        Optional.ofNullable(var1.getLoadingRateM3Hr()).ifPresent(loadingRate -> builder1.setLoadingRateM3Hr(loadingRate.toString()));
         try {
           this.setLoadingPortNameFromCargoOperation(
               var1.getCargoXId(), var1.getCargoNominationId(), builder1);

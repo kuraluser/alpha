@@ -1,4 +1,4 @@
-<div class="row pt-20">
+<div class="row">
     <div class="col">
         <h5 class="text-uppercase heading-border">{{'LOADABLE_PLAN_ARRIVAL_CONDITION_HEADING'| translate}}</h5>
     </div>
@@ -67,6 +67,9 @@
                     <span class="badge-custom badge-info v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.loadingPlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.loadingPlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanArrStatusId]
                         | translate}}</span>
+                        <span class="badge-custom badge-info v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.loadingPlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS">{{'ULLAGE_UPDATE_PLAN_INPROGRESS'
+                        | translate}}</span>
                     <span class="badge-custom badge-muted v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.loadingPlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanArrStatusId]
                         | translate}}</span>
@@ -80,6 +83,9 @@
                         | translate}}</span>
                     <span class="badge-custom badge-info v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.dischargePlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.dischargePlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanArrStatusId]
+                        | translate}}</span>
+                    <span class="badge-custom badge-info v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.dischargePlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS">{{'ULLAGE_UPDATE_PLAN_INPROGRESS'
                         | translate}}</span>
                     <span class="badge-custom badge-muted v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.dischargePlanArrStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanArrStatusId]

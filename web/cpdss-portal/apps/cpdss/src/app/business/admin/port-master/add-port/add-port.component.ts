@@ -52,15 +52,15 @@ export class AddPortComponent implements OnInit {
    * @memberof AddPortComponent
    */
   async ngOnInit(): Promise<void> {
-    this.ngxSpinnerService.show();
-    this.timeZoneList = await this.getTimeZoneList();
-    this.countryList = await this.getCountryList();
-    this.setPortId();
+    this.portId = this.activatedRoute?.snapshot?.params?.portId;
+    this.createForm();
     if (this.portId) {
       this.setFormValues();
     }
-    this.errorMessages = this.portMasterTransformationService.setValidationErrorMessage();
-    this.createForm();
+    this.ngxSpinnerService.show();
+    this.timeZoneList = await this.getTimeZoneList();
+    this.countryList = await this.getCountryList();
+    this.errorMessages = this.portMasterTransformationService.setValidationErrorMessage();   
     this.ngxSpinnerService.hide();
   }
 
@@ -74,11 +74,11 @@ export class AddPortComponent implements OnInit {
     this.addPortDetailsForm = this.fb.group({
       'portName': ['', [Validators.required, Validators.maxLength(100)]],
       'portCode': ['', [Validators.required, Validators.maxLength(10)]],
-      'portTimeZone': ['', Validators.required],
+      'timeZone': ['', Validators.required],
       'country': ['', Validators.required],
-      'highTide': ['', [Validators.required, numberValidator(2, 2, false)]],
-      'lowTide': ['', [Validators.required, numberValidator(2, 2, false)]],
-      'permissibleShipsAtDraft': ['', [Validators.required, numberValidator(2, 2, false)]],
+      'tideHeightHigh': ['', [Validators.required, numberValidator(2, 2, false)]],
+      'tideHeightLow': ['', [Validators.required, numberValidator(2, 2, false)]],
+      'maxPermissibleDraft': ['', [Validators.required, numberValidator(2, 2, false)]],
       'densityOfWater': ['', [Validators.required, numberValidator(2, 4, false)]],
       'ambientTemperature': ['', [Validators.required, numberValidator(2, 2, false)]],
       'position': ['', Validators.maxLength(8)]
@@ -162,23 +162,24 @@ export class AddPortComponent implements OnInit {
   }
 
   /**
-   *Method to get portId;
-   *
-   * @memberof AddPortComponent
-   */
-  setPortId() {
-    this.portId = this.activatedRoute?.snapshot?.params?.portId;
-  }
-
-
-  /**
    * Method to set form values if it is a edit
    *
    * @memberof AddPortComponent
    */
-  setFormValues() {
-    this.selectedPortName = "RAS TANURA"; //Will be removed later when actual data is available
-    this.selectedPortTimeZone = this.timeZoneList[0];  //ToDo ..this logic has to be implemented based on the port id later.
+  async setFormValues() {
+    const data = await  this.portMasterApiService.getPortDetailsById(this.portId).toPromise();
+    this.existingBerthInfo = data.portDetails?.berthInfo;
+    this.addPortDetailsForm.get('portName').setValue(data?.portDetails?.portName);
+    this.addPortDetailsForm.get('maxPermissibleDraft').setValue(data?.portDetails?.maxPermissibleDraft);
+    this.addPortDetailsForm.get('densityOfWater').setValue(data?.portDetails?.densityOfWater);
+    this.addPortDetailsForm.get('maxPermissibleDraft').setValue(data?.portDetails?.maxPermissibleDraft);
+    this.addPortDetailsForm.get('ambientTemperature').setValue(data?.portDetails?.ambientTemperature);
+    this.addPortDetailsForm.get('portCode').setValue(data?.portDetails?.portCode);  
+    this.addPortDetailsForm.get('country').setValue({name:data?.portDetails?.country}); 
+    this.addPortDetailsForm.get('timeZone').setValue({timezone:data.portDetails.timezone}); 
+
+     
+    this.addPortDetailsForm.get('position').setValue(data?.portDetails.latitude + ' ' + data?.portDetails.longitude);   
   }
 
 

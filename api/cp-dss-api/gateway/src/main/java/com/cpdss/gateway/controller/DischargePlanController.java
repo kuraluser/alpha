@@ -577,7 +577,9 @@ public class DischargePlanController {
    * @return
    * @throws CommonRestException
    */
-  @PostMapping(value = "discharge-studies/{dischargeStudyId}/confirm-plan/{dischargePatternId}")
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/confirm-plan/{dischargePatternId}")
   public CommonResponse confirmPlan(
       @PathVariable Long dischargeStudyId,
       @PathVariable Long dischargePatternId,
@@ -1181,6 +1183,47 @@ public class DischargePlanController {
   }
 
   /**
+   * Generate discharging Plan API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/generate-discharging-plan")
+  public LoadingInfoAlgoResponse saveDischargePlan(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable Long vesselId,
+      @PathVariable Long voyageId,
+      @PathVariable Long infoId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Generate discharging Plan API for vessel {}, voyage {}, discharging information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return dischargeInformationService.generateDischargingPlan(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in Generate Discharging Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in Generate discharging Plan API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
    * Save discharging Sequence API
    *
    * @param headers
@@ -1249,7 +1292,7 @@ public class DischargePlanController {
           e);
     }
   }
-  
+
   /**
    * Get Discharging Sequence API
    *
@@ -1294,5 +1337,4 @@ public class DischargePlanController {
           e);
     }
   }
-
 }

@@ -558,6 +558,7 @@ message EductorOperation {
 
 message LoadingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
+  int64 portRotationId =2;
 }
 
 message LoadingInstructionRequest {
@@ -743,6 +744,15 @@ message LoadablePlanCommingleDetails{
  string slopQuantity = 32;
  string timeRequiredForLoading = 33;
  string cargo1Percentage = 34;
+ string quantity1MT = 35;
+ string quantity2MT = 36;
+ string quantity1M3 = 37;
+ string quantity2M3 = 38;
+ string ullage1 = 39;
+ string ullage2 = 40;
+ string colorCode = 41;
+ int64 cargoNomination1Id = 42;
+ int64 cargoNomination2Id = 43;
 }
 
 message LoadingSequenceRequest {

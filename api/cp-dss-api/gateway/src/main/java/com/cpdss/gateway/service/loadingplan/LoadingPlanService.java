@@ -35,7 +35,7 @@ public interface LoadingPlanService {
 
   LoadingPlanAlgoResponse saveLoadingPlan(
       Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest)
-      throws GenericServiceException;
+      throws GenericServiceException, Exception;
 
   LoadingPlanResponse getLoadingPlan(Long vesselId, Long voyageId, Long infoId, Long portRotationId)
       throws GenericServiceException;

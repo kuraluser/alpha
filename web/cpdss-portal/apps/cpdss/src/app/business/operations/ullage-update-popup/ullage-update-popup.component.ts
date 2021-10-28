@@ -52,6 +52,11 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
   portId: number;
 
+  allowedFiles = [
+    'xlsx',
+    'xls'
+  ];
+
   get selectedTankId(): number {
     return this.selectedTank?.tankId;
   }
@@ -184,9 +189,11 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       } else {
         data = await this.ullageUpdateApiService.getDischargePlanUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
       }
+
       data.portPlanStowageDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanStowageDetails : data.portDischargePlanStowageDetails;
       data.portPlanBallastDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanBallastDetails : data.portDischargePlanBallastDetails;
       data.portPlanRobDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanRobDetails : data.portDischargePlanRobDetails;
+
       if (data?.isPlannedValues) {
         data.portPlanStowageDetails?.map(item => {
           item.quantity = 0;
@@ -216,6 +223,35 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             this.gradeDropdown.push(item);
           }
         });
+      }
+
+      if (data.loadablePlanCommingleDetails?.length) {
+        const commingleStowages = [];
+        data.loadablePlanCommingleDetails?.map(item => {
+          data.portPlanStowageDetails?.map(stowage => {
+            if (Number(item.tankId) === Number(stowage.tankId)) {
+              stowage.isCommingleCargo = true;
+              stowage.quantity = data?.isPlannedValues ? 0 : item.quantity1MT;
+              stowage.quantityMT = data?.isPlannedValues ? 0 : item.quantity1MT;
+              stowage.actualWeight = data?.isPlannedValues ? 0 : item.quantity1MT;
+              stowage.api = data?.isPlannedValues ? 0 : item.api;
+              stowage.grade = item.grade;
+              stowage.temperature = data?.isPlannedValues ? 0 : item.temperature;
+              stowage.colorCode = AppConfigurationService.settings.commingleColor;
+              stowage.abbreviation = item.cargo1Abbreviation;
+              stowage.cargoNominationId = item.cargoNomination1Id;
+              stowage.ullage = item.ullage1;
+              commingleStowages.push(JSON.parse(JSON.stringify(stowage)));
+              commingleStowages[commingleStowages?.length - 1].cargoNominationId = item.cargoNomination2Id;
+              commingleStowages[commingleStowages?.length - 1].abbreviation = item.cargo2Abbreviation;
+              commingleStowages[commingleStowages?.length - 1].quantityMT = data?.isPlannedValues ? 0 : item.quantity2MT;
+              commingleStowages[commingleStowages?.length - 1].actualWeight = data?.isPlannedValues ? 0 : item.quantity2MT;
+              commingleStowages[commingleStowages?.length - 1].quantity = data?.isPlannedValues ? 0 : item.quantity2MT;
+              commingleStowages[commingleStowages?.length - 1].ullage = item.ullage2;
+            }
+          });
+        });
+        data.portPlanStowageDetails = [...data.portPlanStowageDetails, ...commingleStowages];
       }
 
       this.display = true;
@@ -258,6 +294,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.getBunkerTankFormGroup();
     this.updateCargoQuantiyData();
     this.validateBlFigTable();
+    this.checkFillingError();
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
     })
@@ -283,8 +320,66 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     if (this.showAs.id === 2) {
       this.updateCargoTanks();
     } else {
-      this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+      this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
     }
+  }
+
+  /**
+  * Method for combining commingle data
+  *
+  * @memberof UllageUpdatePopupComponent
+  */
+  combineCommingleCargoLayout(data) {
+    const nonCommingle = [], commingle = [];
+    data?.map(item => {
+      if (item.isCommingleCargo) {
+        commingle.push(item);
+      } else {
+        nonCommingle.push(item);
+      }
+    });
+    const combinedCommingleData = [];
+    if (commingle?.length) {
+      const distinctData = [];
+      const map = new Map();
+      commingle?.map(item => {
+        if (!map.has(item.tankId)) {
+          map.set(item.tankId, true);
+          distinctData.push(item);
+        }
+      });
+      distinctData?.map(item => {
+        let obj = JSON.parse(JSON.stringify(item));
+        obj.abbreviation = obj.grade;
+        const hasQuantity = [];
+        if (obj.actualWeight && obj.actualWeight > 0) {
+          hasQuantity.push(obj.cargoNominationId);
+        }
+        commingle?.map(com => {
+          if (com.tankId === item.tankId && item.cargoNominationId !== com.cargoNominationId) {
+            if ((obj.ullage && com.ullage && obj.ullage > com.ullage) || (!obj.ullage && com.ullage)) {
+              obj = JSON.parse(JSON.stringify(com));
+              obj.abbreviation = obj.grade;
+            }
+            if (com.actualWeight && com.actualWeight > 0) {
+              hasQuantity.push(com.cargoNominationId);
+            }
+          }
+        });
+        obj.cargoNominationId = this.selectedCargo.cargoNominationId;
+        if (hasQuantity?.length === 1) {
+          this.ullageResponseData.billOfLaddingList?.map(cargoItem => {
+            if (cargoItem.cargoNominationId === hasQuantity[0]) {
+              obj.colorCode = cargoItem.cargoColor;
+            }
+          });
+        } else {
+          obj.colorCode = AppConfigurationService.settings.commingleColor;
+        }
+        combinedCommingleData.push(obj);
+      });
+    }
+    return [...nonCommingle, ...combinedCommingleData];
   }
 
   /**
@@ -399,16 +494,41 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   async updateCargoTanks() {
     let fillingPercentageError = false;
     let tankName = null;
-    this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    const commingle = [];
+    this.ullageResponseData?.portPlanStowageDetails?.map(item => {
+      if (item.isCommingleCargo) {
+        commingle.push(item);
+      }
+    });
     this.cargoQuantityList.map(item => {
       const differenecPercentage = item.diffPercentage.mt;
       this.cargoTanks.map(tank => {
         tank.map(elem => {
           if (elem?.commodity && elem?.commodity['cargoNominationId'] === item.cargoNominationId && (!item.cargoLoaded || !item.cargoDischarged) && item.blFigure.mt) {
-            const changeInQty = (differenecPercentage / 100) * Number(elem.commodity.quantity);
-            elem.commodity.quantity = differenecPercentage >= 0 ? Number(elem.commodity.quantity) + changeInQty : Number(elem.commodity.quantity) - changeInQty;
+            let quantityData = 0;
+            if (elem.commodity.isCommingleCargo) {
+              const getCommingleCargos = commingle?.filter(comData => comData.tankId === elem.commodity.tankId);
+              if (getCommingleCargos?.length === 2) {
+                const cargoIndex = getCommingleCargos.findIndex(cc => cc.cargoNominationId === item.cargoNominationId);
+                if (cargoIndex > -1) {
+                  const firstCargo = cargoIndex === 0 ? getCommingleCargos[0] : getCommingleCargos[1];
+                  const secondCargo = cargoIndex === 0 ? getCommingleCargos[1] : getCommingleCargos[0];
+                  if (firstCargo.quantity > secondCargo.quantity) {
+                    quantityData = Number(firstCargo.quantity) - Number(secondCargo.quantity);
+                    quantityData = Number(quantityData.toFixed(2));
+                  } else {
+                    quantityData = firstCargo.quantity;
+                  }
+                }
+              }
+            } else {
+              quantityData = elem.commodity.quantity;
+            }
+            const changeInQty = (differenecPercentage / 100) * Number(quantityData);
+            elem.commodity.quantity = differenecPercentage >= 0 ? (Number(elem.commodity.quantity) + changeInQty) : (Number(elem.commodity.quantity) - Math.abs(changeInQty));
             elem.commodity.actualWeight = elem.commodity.quantity;
-            elem.commodity.volume = this.quantityPipe.transform(elem.commodity.actualWeight, this.currentQuantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, elem.commodity.api);
+            elem.commodity.volume = this.quantityPipe.transform(elem.commodity.actualWeight, this.currentQuantitySelectedUnit, QUANTITY_UNIT.OBSKL, elem.commodity.api, elem.commodity.temperature);
             elem.commodity.percentageFilled = this.ullageUpdatePopupTransformationService.getFillingPercentage(elem);
             if (Number(elem.commodity.percentageFilled) > 98.5 && !fillingPercentageError) {
               fillingPercentageError = true;
@@ -642,7 +762,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     if (selectedTab === TANKTYPE.BUNKER) {
       this.checkBunkerTankError();
     }
-    if(selectedTab === TANKTYPE.CARGO) {
+    if (selectedTab === TANKTYPE.CARGO) {
       this.validateBlFigTable();
     }
   }
@@ -666,7 +786,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   convertQuantityToSelectedUnit() {
     this.bunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerTanks, this.ullageResponseData?.portPlanRobDetails, this.status);
     this.rearBunkerTanks = this.ullageUpdatePopupTransformationService.formatBunkerTanks(this.ullageResponseData?.bunkerRearTanks, this.ullageResponseData?.portPlanRobDetails, this.status);
-    this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.rearBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastRearTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.centerBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastCenterTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
     this.frontBallastTanks = this.ullageUpdatePopupTransformationService.formatBallastTanks(this.ullageResponseData?.ballastFrontTanks, this.ullageResponseData?.portPlanBallastDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
@@ -742,7 +862,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   */
   checkFillingError() {
     const items: any = this.cargoTankForm.get('dataTable') as FormArray;
-    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
     items?.controls?.map(item => {
       cargoTanks?.map(el => {
         el?.map(tank => {
@@ -1193,7 +1313,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       correctedUllage: event.data.ullage.value,
       id: event.data.id,
       isBallast: false,
-      isCommingle: false,
+      isCommingle: event.data.isCommingleCargo ? true : false,
       sg: '',
       tankId: event.data.tankId,
       temperature: event.data.temperature.value
@@ -1249,7 +1369,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     }
     this.enableDisableBLFigure();
     setTimeout(() => {
-      this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+      this.cargoTanks = this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
       this.validateBlFigTable();
     });
 
@@ -1283,7 +1403,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           item.quantity.value = result.quantityMt;
           item.sounding.value = event.data.sounding.value;
           item.percentageFilled = result.fillingRatio;
-          item.correctedUllage =  result.correctedUllage;
+          item.correctedUllage = result.correctedUllage;
         }
       });
       const formControl = <FormControl>(<FormArray>this.ballastTankForm.get('dataTable')).at(event.index).get('quantity');
@@ -1462,7 +1582,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       ullageUpdList: [],
       billOfLandingListRemove: [],
       ballastUpdateList: [],
-      robUpdateList: []
+      robUpdateList: [],
+      commingleUpdateList: []
     }
     if (this.status === ULLAGE_STATUS.DEPARTURE) {
       this.blFigure.items.map(item => {
@@ -1505,40 +1626,69 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         });
       });
     }
-
+    const duplicate = [];
     this.ullageResponseData?.portPlanStowageDetails.map(item => {
-      data.ullageUpdList.push({
-        tankId: item.tankId?.toString(),
-        temperature: item.temperature?.toString(),
-        correctedUllage: item.correctedUllage?.toString(),
-        ullage: item.ullage?.toString(),
-        quantity: item.quantity?.toString(),
-        fillingPercentage: item.percentageFilled ? Number(item.percentageFilled) : '',
-        cargoNominationId: item.cargoNominationId ? Number(item.cargoNominationId) : '',
-        arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
-        actual_planned: 1,
-        correction_factor: item.correctionFactor?.toString(),
-        api: item.api ? Number(item.api) : '',
-        isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
-        port_xid: this.portId,
-        port_rotation_xid: this.portRotationId,
-        grade: '',
-        color_code: item.colorCode,
-        abbreviation: item.abbreviation,
-        cargoId: item.cargoId,
-        ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
-      });
+      if (!item.isCommingleCargo) {
+        data.ullageUpdList.push({
+          tankId: item.tankId?.toString(),
+          temperature: item.temperature?.toString(),
+          correctedUllage: item.correctedUllage?.toString(),
+          ullage: item.ullage?.toString(),
+          quantity: item.quantity?.toString(),
+          fillingPercentage: item.percentageFilled ? Number(item.percentageFilled) : '',
+          cargoNominationId: item.cargoNominationId ? Number(item.cargoNominationId) : '',
+          arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
+          actual_planned: 1,
+          correction_factor: item.correctionFactor?.toString(),
+          api: item.api ? Number(item.api) : '',
+          isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
+          port_xid: this.portId,
+          port_rotation_xid: this.portRotationId,
+          grade: '',
+          color_code: item.colorCode,
+          abbreviation: item.abbreviation,
+          cargoId: item.cargoId,
+          ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+        });
+      } else {
+        if (duplicate.indexOf(item.tankId) === -1) {
+          duplicate.push(item.tankId);
+          data.ullageUpdList.push({
+            tankId: item.tankId?.toString(),
+            temperature: 0,
+            correctedUllage: 0,
+            ullage: 0,
+            quantity: 0,
+            fillingPercentage: '',
+            cargoNominationId: '',
+            arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
+            actual_planned: 1,
+            correction_factor: 0,
+            api: 0,
+            isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
+            port_xid: this.portId,
+            port_rotation_xid: this.portRotationId,
+            grade: '',
+            color_code: '',
+            abbreviation: '',
+            cargoId: 0,
+            ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+          });
+        }
+      }
     });
 
-    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
     data.ullageUpdList?.map(item => {
-      cargoTanks?.map(el => {
-        el?.map(tank => {
-          if (Number(tank.id) === Number(item.tankId)) {
-            item.fillingPercentage = Number(tank?.commodity?.percentageFilled);
-          }
+      if (item.quantity) {
+        cargoTanks?.map(el => {
+          el?.map(tank => {
+            if (Number(tank.id) === Number(item.tankId)) {
+              item.fillingPercentage = Number(tank?.commodity?.percentageFilled);
+            }
+          });
         });
-      });
+      }
     });
 
     this.ballastQuantities.map(item => {
@@ -1625,7 +1775,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         });
       });
     });
-
+    data.commingleUpdateList = this.getCommigleSaveData();
     try {
       this.ngxSpinnerService.show();
       let result;
@@ -1662,6 +1812,76 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Method for setting commingle data save
+   * @param data
+   * @memberof UllageUpdatePopupComponent
+   */
+  getCommigleSaveData() {
+    const commingle: any = [];
+    const commingleUpdateList = [];
+    this.ullageResponseData?.portPlanStowageDetails?.map(item => {
+      if (item.isCommingleCargo) {
+        commingle.push(item);
+      }
+    });
+    const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+    this.ullageResponseData?.loadablePlanCommingleDetails?.map(item => {
+      const firstCargo = commingle?.filter(com => com.tankId === item.tankId && com.cargoNominationId === item.cargoNomination1Id);
+      const secondCargo = commingle?.filter(com => com.tankId === item.tankId && com.cargoNominationId === item.cargoNomination2Id);
+      let firstSelected = false;
+      let selectedCommingle = null, ignoredCommingle = null;
+      if (firstCargo?.length && secondCargo?.length) {
+        if (firstCargo[0].quantity > secondCargo[0].quantity) {
+          firstSelected = true;
+          selectedCommingle = firstCargo[0];
+          ignoredCommingle = secondCargo[0];
+        } else {
+          firstSelected = false;
+          selectedCommingle = secondCargo[0];
+          ignoredCommingle = firstCargo[0];
+        }
+      }
+      let fillingPertcentage = 0;
+      cargoTanks?.map(el => {
+        el?.map(tank => {
+          if (Number(tank.id) === Number(item.tankId)) {
+            fillingPertcentage = Number(tank?.commodity?.percentageFilled);
+          }
+        });
+      });
+      commingleUpdateList.push(
+        {
+          id: item.id,
+          tankId: item.tankId,
+          quantityMT: selectedCommingle.quantity,
+          quantityM3: '',
+          api: Number(selectedCommingle.api),
+          temperature: Number(selectedCommingle.temperature),
+          ullage: Number(selectedCommingle.ullage),
+          cargoNomination1Id: item.cargoNomination1Id,
+          cargoNomination2Id: item.cargoNomination2Id,
+          cargo1Id: item.cargo1Id,
+          cargo2Id: item.cargo2Id,
+          colorCode: AppConfigurationService.settings.commingleColor,
+          abbreviation: item.grade,
+          arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
+          actual_planned: 1,
+          loadingInformationId: item.loadingInformationId,
+          fillingPercentage: fillingPertcentage,
+          isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
+          quantity1MT: firstSelected ? Number((Number(firstCargo[0].quantity) - Number(secondCargo[0].quantity)).toFixed(2)) : firstCargo[0].quantity,
+          quantity2MT: !firstSelected ? Number((Number(secondCargo[0].quantity) - Number(firstCargo[0].quantity)).toFixed(2)) : secondCargo[0].quantity,
+          quantity1M3: '',
+          quantity2M3: '',
+          ullage1: Number(firstCargo[0].ullage),
+          ullage2: Number(secondCargo[0].ullage)
+        }
+      )
+    });
+    return commingleUpdateList;
+  }
+
+  /**
    * Method for file upload
    * @param event
    * @memberof UllageUpdatePopupComponent
@@ -1672,6 +1892,11 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     }
     const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_MESSAGE',
       'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR']).toPromise();
+    if (this.allowedFiles.indexOf(event.target?.files[0].name.split('.')[1]) < 0) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
+      this.file.nativeElement.value = '';
+      return;
+    }
     const formData: FormData = new FormData();
     formData.append('file', event.target.files[0]);
     formData.append('infoId', this.infoId?.toString());
@@ -1710,7 +1935,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.updateCargoQuantiyData();
         this.validateBlFigTable();
         this.enableDisableBLFigure();
-        this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.ullageResponseData?.portPlanStowageDetails, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
+        this.cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
         this.checkFillingError();
       }
     } catch (err) {

@@ -2136,9 +2136,7 @@ width: 50px !important;
   position: relative;
   .error-icon{
     position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
+    top: 6px;
     right: 0;
   }
 }
@@ -3013,6 +3011,22 @@ textarea{
   font-size: 1.5em;
 }
 
+.sequence-stripping {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  padding: 0px 10px;
+}
+
+.sequence-gravity {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  padding: 0px 10px;
+}
+
 .cow-legend {
   .list-group-item {
     background: none;
@@ -3160,4 +3174,20 @@ textarea{
 }
 .column-class.column-port{
   min-width: 165px!important;
+}
+
+
+  td.error-icon-wrapper{
+    padding-right: 20px!important;
+  }
+
+
+.rowspan-no-border td.pr-20{
+  padding-right: 20px!important;
+}
+
+.dropdown-closable.p-dropdown-clearable{
+  .p-dropdown-clear-icon{
+    right: 27px;
+  }
 }

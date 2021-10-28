@@ -52,8 +52,8 @@ export class LoadingPlanComponent implements OnInit {
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   errorMessage: IAlgoError[];
   errorPopUp = false;
-  loadingPlanDetailsTemp:ILoadingPlanDetails;
-  
+  loadingPlanDetailsTemp: ILoadingPlanDetails;
+
   readonly OPERATIONS = OPERATIONS;
 
 
@@ -81,7 +81,7 @@ export class LoadingPlanComponent implements OnInit {
     try {
       this.ngxSpinnerService.show();
       this.loadingPlanDetails = await this.loadingPlanApiService.getLoadingPlanDetails(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId).toPromise();
-      this.loadingPlanDetailsTemp = {...this.loadingPlanDetails};
+      this.loadingPlanDetailsTemp = { ...this.loadingPlanDetails };
       this.setCommingleCargo();
       this.toppingOffSequence = this.loadingPlanDetails?.loadingInformation?.toppingOffSequence;
       this.loadableQuantityCargoDetails = this.loadingPlanDetails?.loadingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails;
@@ -102,6 +102,8 @@ export class LoadingPlanComponent implements OnInit {
   */
   setCommingleCargo() {
     if (this.loadingPlanDetails?.planCommingleDetails?.length && this.loadingPlanDetails?.planStowageDetails?.length) {
+      const filterCommingle = this.loadingPlanDetails?.planCommingleDetails?.filter(item => item.valueType === 2);
+      this.loadingPlanDetails.planCommingleDetails = [...filterCommingle];
       this.loadingPlanDetails?.planCommingleDetails.map(item => {
         this.loadingPlanDetails?.planStowageDetails.map(plan => {
           if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType) {
@@ -168,7 +170,7 @@ export class LoadingPlanComponent implements OnInit {
   viewError(status) {
     this.errorPopUp = status;
   }
- 
+
 
   /**
    * Method to dowload byte array from and save as excel.
@@ -177,8 +179,8 @@ export class LoadingPlanComponent implements OnInit {
    */
 
   downloadLoadingPlanTemplate() {
-  this.ngxSpinnerService.show();
-  this.loadingPlanApiService.downloadLoadingPlanTemplate(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId,this.loadingPlanDetailsTemp).subscribe((result) => {
+    this.ngxSpinnerService.show();
+    this.loadingPlanApiService.downloadLoadingPlanTemplate(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId, this.loadingPlanDetailsTemp).subscribe((result) => {
       const blob = new Blob([result], { type: result.type })
       const fileurl = window.URL.createObjectURL(blob);
       saveAs(fileurl, 'Loading-Plan.xlsx');

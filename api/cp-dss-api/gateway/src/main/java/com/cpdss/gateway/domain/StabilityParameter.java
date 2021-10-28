@@ -14,6 +14,8 @@ public class StabilityParameter {
   private String heel;
   private String bendinMoment;
   private String shearForce;
+  private String freeboard;
+  private String manifoldHeight;
 
   // DS fields
   @JsonInclude(JsonInclude.Include.NON_NULL)

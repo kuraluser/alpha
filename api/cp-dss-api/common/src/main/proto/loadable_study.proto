@@ -466,6 +466,8 @@ message StabilityParameter {
 	string bendinMoment = 6;
 	string shearForce = 7;
 	string airDraft = 8; //DS field
+	string freeboard = 9;
+	string manifoldHeight = 10;
 }
 
 message LoadablePlanPortWiseDetails {
@@ -617,6 +619,7 @@ message LoadableQuantityCommingleCargoDetails {
 	 int64 cargo1NominationId = 33;
 	 int64 cargo2NominationId = 34;
 	 string tankShortName = 35;
+	 string commingleColour = 36;
 }
 
 message LoadableQuantityCargoDetails {
@@ -656,6 +659,9 @@ message LoadableQuantityCargoDetails {
 	 int64 dscargoNominationId = 34;
 	 int64 blFigure = 35;
 	 int64 shipFigure = 36;
+	 bool ifProtested = 37;
+	 bool isCommingled = 38;
+	 string loadingRateM3Hr = 39;
 }
 
 message COWDetail {
@@ -1065,6 +1071,7 @@ message OnBoardQuantityRequest{
 	int64 portId = 4;
 	int64 voyageId = 5;
 	int64 portRotationId = 6;
+	int64 planingType = 7; //Loadable Study Or Discharge Study
 }
 
 message OnBoardQuantityDetail{
@@ -1266,6 +1273,7 @@ message SynopticalCargoRecord{
 	int64 lpCargoDetailId = 16; // loadable_pattern_cargo_detail ID
 	int64 planQtyId = 17; // loadable_plan_quantity ID OR discharge_quantity_cargo_details ID
 	int32 planQtyCargoOrder = 18; // loading or discharging order
+	string ullage = 19;
 }
 
 message SynopticalOhqRecord{

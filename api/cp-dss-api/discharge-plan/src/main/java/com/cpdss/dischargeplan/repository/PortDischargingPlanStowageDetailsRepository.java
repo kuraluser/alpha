@@ -34,4 +34,8 @@ public interface PortDischargingPlanStowageDetailsRepository
   @Query(
       "UPDATE PortDischargingPlanStowageDetails SET isActive = false WHERE dischargingInformation.id = ?1")
   public void deleteByDischargingInformationId(Long loadingInfoId);
+
+  List<PortDischargingPlanStowageDetails>
+      findByPortRotationXIdAndConditionTypeAndValueTypeAndIsActive(
+          Long portRotationId, Integer conditionType, Integer valueType, Boolean isActive);
 }

@@ -17,7 +17,17 @@ declare module 'highcharts' {
     tankName?: string;
     pumpName?: string;
     sounding?: string;
+    shapeArgs?: IShapeArgs;
     highlight: (event: Highcharts.PointerEventObject) => void;
+  }
+
+  /**
+   * Overriding shape argument object in Point object
+   *
+   * @interface IShapeArgs
+   */
+  interface IShapeArgs {
+    width: number;
   }
 
   /**
@@ -105,9 +115,9 @@ export interface ITankData {
   start: number;
   end: number;
   ullage?: number;
-  quantityMT: number;
-  quantity: number;
-  color: string;
+  quantityMT?: number;
+  quantity?: number;
+  color?: string;
   rate?: number;
   id?: string;
   className?: string;
@@ -116,7 +126,7 @@ export interface ITankData {
   name?: string;
   cargoNominationId?: number;
   tankName?: string;
-  api: number;
+  api?: number;
 }
 
 /**
@@ -196,6 +206,7 @@ export interface ISequenceData {
   cargoLoadingRates: Array<ILoadingRate>;
   stabilityParams: IStabilityParam[];
   gravity?: IPumpData;
+  ballastEduction?: IBallastEduction[];
 }
 
 /**
@@ -269,4 +280,17 @@ export enum SEQUENCE_CHARTS {
   BALLAST_PUMP = "BALLAST_PUMP",
   FLOW_RATE = "FLOW_RATE",
   STABILITY_PARAMS = "STABILITY_PARAMS",
+}
+
+/**
+ * Interface for ballast eduction details
+ *
+ * @export
+ * @interface IBallastEduction
+ */
+export interface IBallastEduction {
+  timeStart: number;
+  timeEnd: number;
+  tanks: number[];
+  pumpSelected: number[];
 }

@@ -15,6 +15,8 @@ dependencies {
     api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
     api group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
 	compileOnly 'org.springframework.boot:spring-boot-starter-cache'
+	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
     
 }
 

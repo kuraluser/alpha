@@ -114,7 +114,6 @@ import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ProtocolStringList;
@@ -198,7 +197,7 @@ public class LoadableStudyService {
   private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm";
   private static final String ERROR_CODE_PREFIX = "ERR-RICO-";
 
-  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  private static final Long LOADABLE_STUDY_RESULT_JSON_ID = 17L;
   private static final Long DISCHARGE_STUDY_RESULT_JSON_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
@@ -2616,7 +2615,12 @@ public class LoadableStudyService {
    * @throws GenericServiceException
    */
   public OnBoardQuantityResponse getOnBoardQuantites(
-      Long vesselId, Long voyageId, Long loadableStudyId, Long portId, String correlationId)
+      Long vesselId,
+      Long voyageId,
+      Long loadableStudyId,
+      Long portId,
+      Long planingTypeId,
+      String correlationId)
       throws GenericServiceException {
     log.info("LoadableStudyService - getOnBoardQuantites, correlationId:{}", correlationId);
     log.debug(
@@ -2630,6 +2634,7 @@ public class LoadableStudyService {
             .setLoadableStudyId(loadableStudyId)
             .setVesselId(vesselId)
             .setPortId(portId)
+            .setPlaningType(planingTypeId)
             .build();
     OnBoardQuantityReply grpcReply = this.getOnBoardQuantites(request);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
@@ -3428,10 +3433,11 @@ public class LoadableStudyService {
    * @return AlgoPatternResponse
    */
   public AlgoPatternResponse saveAlgoPatterns(
-          LoadablePlanRequest loadablePlanRequest,
-          Long loadableStudiesId,
-          String requestType,
-          String correlationId, Object requestJson)
+      LoadablePlanRequest loadablePlanRequest,
+      Long loadableStudiesId,
+      String requestType,
+      String correlationId,
+      Object requestJson)
       throws GenericServiceException {
     log.info("Inside saveLoadablePatterns gateway service with correlationId : " + correlationId);
     ObjectMapper objectMapper = new ObjectMapper();
@@ -3448,9 +3454,7 @@ public class LoadableStudyService {
       String requestJsonString = objectMapper.writeValueAsString(requestJson);
       objectMapper.writeValue(
           new File(this.rootFolder + fileName + loadableStudiesId + ".json"), requestJsonString);
-      StatusReply reply =
-          this.saveJson(
-              loadableStudiesId, jsonTypeID, requestJsonString);
+      StatusReply reply = this.saveJson(loadableStudiesId, jsonTypeID, requestJsonString);
       if (!SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
@@ -3767,6 +3771,9 @@ public class LoadableStudyService {
     Optional.ofNullable(stabilityParameters.getTrim()).ifPresent(builder::setTrim);
 
     Optional.ofNullable(stabilityParameters.getAirDraft()).ifPresent(builder::setAirDraft);
+    Optional.ofNullable(stabilityParameters.getFreeboard()).ifPresent(builder::setFreeboard);
+    Optional.ofNullable(stabilityParameters.getManifoldHeight())
+        .ifPresent(builder::setManifoldHeight);
     return builder.build();
   }
 
@@ -3891,7 +3898,7 @@ public class LoadableStudyService {
                           .ifPresent(cowDetailBuilder::setWashType);
                       qunatityBuilder.addCowDetails(cowDetailBuilder.build());
                     }));
-
+    Optional.ofNullable(lpqcd.getLoadingRateM3Hr()).ifPresent(qunatityBuilder::setLoadingRateM3Hr);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -3929,6 +3936,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     Optional.ofNullable(lqccd.getTankShortName()).ifPresent(builder::setTankShortName);
+    Optional.ofNullable(lqccd.getCommingleColour()).ifPresent(builder::setCommingleColour);
     Optional.ofNullable(lqccd.getToppingSequence())
         .ifPresent(
             toppingSequence -> {
@@ -5345,6 +5353,7 @@ public class LoadableStudyService {
       objectMapper.writeValue(
           new File(this.rootFolder + "/json/patternValidateResult_" + loadablePatternId + ".json"),
           patternValidateResultRequest);
+      log.error("Inside Pattern validate");
       StatusReply reply =
           this.saveJson(
               loadablePatternId,

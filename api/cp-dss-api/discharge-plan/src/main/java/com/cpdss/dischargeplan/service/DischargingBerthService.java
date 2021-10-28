@@ -80,6 +80,10 @@ public class DischargingBerthService {
         StringUtils.isEmpty(berth.getMaxManifoldHeight())
             ? null
             : new BigDecimal(berth.getMaxManifoldHeight()));
+    dischargingBerthDetail.setMaxManifoldPressure(
+        StringUtils.isEmpty(berth.getMaxManifoldPressure())
+            ? null
+            : new BigDecimal(berth.getMaxManifoldPressure()));
     dischargingBerthDetail.setSeaDraftLimitation(
         StringUtils.isEmpty(berth.getSeaDraftLimitation())
             ? null

@@ -92,10 +92,10 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   private Boolean isActive;
 
   @Column(name = "is_commingled")
-  private Boolean isCommingled;
+  private Boolean isCommingled = false;
 
   @Column(name = "if_protested")
-  private Boolean ifProtested;
+  private Boolean ifProtested = false;
 
   @OneToMany(
       mappedBy = "dischargePatternQuantityCargoPortwiseDetails",

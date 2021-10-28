@@ -56,12 +56,16 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -134,6 +138,18 @@ public class UllageUpdateLoadicatorService {
     }
 
     String processId = UUID.randomUUID().toString();
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+        loadingPlanAlgoService.getLoadingInformationStatus(
+            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfoOpt.get(),
+        loadingInfoStatusOpt.get(),
+        request.getUpdateUllage(0).getArrivalDepartutre());
+    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+        loadingInfoOpt.get(),
+        processId,
+        loadingInfoStatusOpt.get(),
+        request.getUpdateUllage(0).getArrivalDepartutre());
     VesselInfo.VesselReply vesselReply =
         loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
     if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
@@ -148,18 +164,6 @@ public class UllageUpdateLoadicatorService {
       buildUllageEditLoadicatorAlgoRequest(
           loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
       saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-      loadingPlanService.updateLoadingPlanStatus(
-          loadingInfoOpt.get(),
-          loadingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
-      loadingPlanAlgoService.createLoadingInformationAlgoStatus(
-          loadingInfoOpt.get(),
-          processId,
-          loadingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
       checkStabilityWithAlgo(
           loadingInfoOpt.get(),
           algoRequest,
@@ -186,6 +190,13 @@ public class UllageUpdateLoadicatorService {
                 request.getUpdateUllage(0).getArrivalDepartutre(),
                 LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE,
                 true);
+    List<PortLoadingPlanCommingleTempDetails> tempCommingleDetails =
+        portLoadingPlanCommingleDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfoOpt.get().getId(),
+                request.getUpdateUllage(0).getArrivalDepartutre(),
+                true);
+
     Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
 
     cargoNominationIds.addAll(
@@ -207,12 +218,18 @@ public class UllageUpdateLoadicatorService {
     buildStowagePlanDetails(
         loadingInfoOpt.get(),
         tempStowageDetails,
+        tempCommingleDetails,
         cargoNomDetails,
         vesselReply,
         cargoReply,
         stowagePlanBuilder);
     buildCargoDetails(
-        loadingInfoOpt.get(), cargoNomDetails, tempStowageDetails, cargoReply, stowagePlanBuilder);
+        loadingInfoOpt.get(),
+        cargoNomDetails,
+        tempStowageDetails,
+        tempCommingleDetails,
+        cargoReply,
+        stowagePlanBuilder);
     buildBallastDetails(loadingInfoOpt.get(), tempBallastDetails, vesselReply, stowagePlanBuilder);
     buildRobDetails(loadingInfoOpt.get(), robDetails, vesselReply, stowagePlanBuilder);
     loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
@@ -225,21 +242,63 @@ public class UllageUpdateLoadicatorService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+    Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
         loadingPlanAlgoService.getLoadingInformationStatus(
-            LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+            LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_VERIFICATION_STARTED_ID);
 
     loadingPlanService.updateLoadingPlanStatus(
         loadingInfoOpt.get(),
         loadingInfoStatusOpt.get(),
         request.getUpdateUllage(0).getArrivalDepartutre());
 
-    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
-        loadingInfoOpt.get(),
-        processId,
-        loadingInfoStatusOpt.get(),
-        request.getUpdateUllage(0).getArrivalDepartutre());
+    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+        loadingInfoOpt.get(), processId, loadicatorVerificationStatusOpt.get());
     return processId;
+  }
+
+  /**
+   * @param commingleDetails
+   * @param loadingInformation
+   * @param cargoReply
+   * @param stowagePlanBuilder
+   */
+  @SuppressWarnings("unchecked")
+  private void buildLoadicatorCargoDetailsForCommingleCargo(
+      List<PortLoadingPlanCommingleTempDetails> commingleDetails,
+      LoadingInformation loadingInformation,
+      CargoReply cargoReply,
+      Builder stowagePlanBuilder) {
+    commingleDetails.stream()
+        .filter(
+            distinctByKeys(
+                PortLoadingPlanCommingleTempDetails::getCargoNomination1XId,
+                PortLoadingPlanCommingleTempDetails::getCargoNomination2XId))
+        .forEach(
+            commingle -> {
+              Loadicator.CargoInfo.Builder cargoBuilder = Loadicator.CargoInfo.newBuilder();
+              cargoBuilder.setCargoAbbrev(commingle.getGrade());
+              Optional.ofNullable(String.valueOf(commingle.getApi()))
+                  .ifPresent(cargoBuilder::setApi);
+              Optional.ofNullable(String.valueOf(commingle.getTemperature()))
+                  .ifPresent(cargoBuilder::setStandardTemp);
+              Optional.ofNullable(loadingInformation.getPortXId())
+                  .ifPresent(cargoBuilder::setPortId);
+              Optional.ofNullable(stowagePlanBuilder.getStowageId())
+                  .ifPresent(cargoBuilder::setStowageId);
+              stowagePlanBuilder.addCargoInfo(cargoBuilder.build());
+            });
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
+    final Map<List<?>, Boolean> seen = new ConcurrentHashMap<>();
+
+    return t -> {
+      final List<?> keys =
+          Arrays.stream(keyExtractors).map(ke -> ke.apply(t)).collect(Collectors.toList());
+
+      return seen.putIfAbsent(keys, Boolean.TRUE) == null;
+    };
   }
 
   /**
@@ -366,6 +425,7 @@ public class UllageUpdateLoadicatorService {
    * @param loadingInformation
    * @param cargoNomDetails
    * @param tempStowageDetails
+   * @param tempCommingleDetails
    * @param cargoReply
    * @param stowagePlanBuilder
    */
@@ -373,6 +433,7 @@ public class UllageUpdateLoadicatorService {
       LoadingInformation loadingInformation,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       List<PortLoadingPlanStowageTempDetails> tempStowageDetails,
+      List<PortLoadingPlanCommingleTempDetails> tempCommingleDetails,
       CargoReply cargoReply,
       Builder stowagePlanBuilder) {
     tempStowageDetails.stream()
@@ -404,6 +465,8 @@ public class UllageUpdateLoadicatorService {
                   .ifPresent(cargoBuilder::setStowageId);
               stowagePlanBuilder.addCargoInfo(cargoBuilder.build());
             });
+    buildLoadicatorCargoDetailsForCommingleCargo(
+        tempCommingleDetails, loadingInformation, cargoReply, stowagePlanBuilder);
   }
 
   /**
@@ -411,6 +474,7 @@ public class UllageUpdateLoadicatorService {
    *
    * @param loadingInformation
    * @param tempStowageDetails
+   * @param tempCommingleDetails
    * @param cargoNomDetails
    * @param vesselReply
    * @param cargoReply
@@ -419,6 +483,7 @@ public class UllageUpdateLoadicatorService {
   private void buildStowagePlanDetails(
       LoadingInformation loadingInformation,
       List<PortLoadingPlanStowageTempDetails> tempStowageDetails,
+      List<PortLoadingPlanCommingleTempDetails> tempCommingleDetails,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       VesselReply vesselReply,
       CargoReply cargoReply,
@@ -455,6 +520,50 @@ public class UllageUpdateLoadicatorService {
               }
               stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
             });
+    buildLoadicatorStowagePlanDetailsForCommingleCargo(
+        tempCommingleDetails, loadingInformation, cargoReply, vesselReply, stowagePlanBuilder);
+  }
+
+  /**
+   * @param commingleDetails
+   * @param loadingInformation
+   * @param cargoReply
+   * @param vesselReply
+   * @param stowagePlanBuilder
+   */
+  private void buildLoadicatorStowagePlanDetailsForCommingleCargo(
+      List<PortLoadingPlanCommingleTempDetails> commingleDetails,
+      LoadingInformation loadingInformation,
+      CargoReply cargoReply,
+      VesselReply vesselReply,
+      Builder stowagePlanBuilder) {
+    commingleDetails.forEach(
+        commingle -> {
+          Loadicator.StowageDetails.Builder stowageDetailsBuilder =
+              Loadicator.StowageDetails.newBuilder();
+          Optional.ofNullable(commingle.getTankId()).ifPresent(stowageDetailsBuilder::setTankId);
+
+          Optional.ofNullable(commingle.getQuantity())
+              .ifPresent(quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
+
+          Optional.ofNullable(loadingInformation.getPortXId())
+              .ifPresent(stowageDetailsBuilder::setPortId);
+          Optional.ofNullable(stowageDetailsBuilder.getStowageId())
+              .ifPresent(stowageDetailsBuilder::setStowageId);
+          Optional<VesselInfo.VesselTankDetail> tankDetail =
+              vesselReply.getVesselTanksList().stream()
+                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(commingle.getTankId()))
+                  .findAny();
+          if (tankDetail.isPresent()) {
+            Optional.ofNullable(tankDetail.get().getTankName())
+                .ifPresent(stowageDetailsBuilder::setTankName);
+            Optional.ofNullable(tankDetail.get().getShortName())
+                .ifPresent(stowageDetailsBuilder::setShortName);
+          }
+
+          stowageDetailsBuilder.setCargoName(commingle.getGrade());
+          stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
+        });
   }
 
   /**

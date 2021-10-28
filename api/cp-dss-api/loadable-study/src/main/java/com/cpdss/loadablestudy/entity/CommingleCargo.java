@@ -61,4 +61,7 @@ public class CommingleCargo extends EntityDoc {
 
   @Column(name = "abbreviation")
   private String abbreviation;
+
+  @Column(name = "commingle_colour")
+  private String commingleColour;
 }

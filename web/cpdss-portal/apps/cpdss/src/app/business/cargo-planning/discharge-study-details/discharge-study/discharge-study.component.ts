@@ -18,13 +18,13 @@ import { DischargeStudyDetailsApiService } from '../../services/discharge-study-
 
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 import { dischargeStudyColorValidator } from '../../directives/validator/discharge-study-color.directive';
-import { alphabetsOnlyValidator } from '../../directives/validator/cargo-nomination-alphabets-only.directive';
+
 import { dischargeStudyCargoQuantityValidator } from '../../directives/validator/discharge-study-cargo-quantity.directive';
 import { dischargeStudyAbbreviationValidator } from '../../directives/validator/discharge-study-abbreviation.directive';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
-import { dischargeStudyLoadableQuantity } from '../../directives/validator/discharge-study-loadable-quantity.directive'
 
 import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
+import { alphaNumericOnlyValidator } from '../../../core/directives/alpha-numeric-only-validator.directive';
 
 /**
  * Component class of discharge study screen
@@ -248,13 +248,13 @@ export class DischargeStudyComponent implements OnInit {
     const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
       color: this.fb.control(backLoading.color?.value ? backLoading.color?.value : null, [Validators.required, dischargeStudyColorValidator]),
-      abbreviation: this.fb.control(backLoading.abbreviation.value, [Validators.required, alphabetsOnlyValidator, Validators.maxLength(6), dischargeStudyAbbreviationValidator]),
+      abbreviation: this.fb.control(backLoading.abbreviation.value, [Validators.required, alphaNumericOnlyValidator, dischargeStudyAbbreviationValidator, Validators.maxLength(6)]),
       cargo: this.fb.control(backLoading?.cargo?.value ? backLoading.cargo?.value : null, [Validators.required]),
       bbls: this.fb.control(backLoading.bbls?.value ? backLoading.bbls?.value : null, []),
       kl: this.fb.control(backLoading.kl?.value ? backLoading.kl?.value : null, [Validators.required, numberValidator(quantityDecimal, null, false), Validators.min(min)]),
       mt: this.fb.control(backLoading.mt?.value ? backLoading.mt?.value : null, []),
-      api: this.fb.control(backLoading.api?.value ? backLoading.api?.value : null, [Validators.required, Validators.min(0), numberValidator(2, 3)]),
-      temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required, numberValidator(2, 3)]),
+      api: this.fb.control(backLoading.api?.value ? backLoading.api?.value : null, [Validators.required, Validators.min(8), Validators.max(99.99), numberValidator(2, 2)]),
+      temp: this.fb.control(backLoading.temp?.value ? backLoading.temp?.value : null, [Validators.required, Validators.min(40), Validators.max(160), numberValidator(2, 3)]),
       storedKey: this.fb.control(backLoading?.storedKey?.value)
     })
   }
@@ -531,7 +531,7 @@ export class DischargeStudyComponent implements OnInit {
                     field.markAsTouched();
                     field.markAsDirty();
                     const mode = this.getFormControl(portIndex, key, itemIndex, 'mode');
-                    if (this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode.value?.id === 1 && innerKey === 'kl')) {
+                    if (this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode?.value?.id === 1 && innerKey === 'kl')) {
                       item[innerKey].isEditMode = false;
                     } else {
                       item[innerKey].isEditMode = true;
@@ -592,7 +592,8 @@ export class DischargeStudyComponent implements OnInit {
           if (dischargeCargoDetails.storedKey.value === cargo.storedKey.value) {
             parentIndex = i;
             if (dischargeCargoDetails.mode.value.id === 2) {
-              totalBackLoadingKlValue = Number(dischargeCargoDetails.maxKl.value) - Number(dischargeCargoDetails.kl.value);
+              const kl = Number(dischargeCargoDetails.maxKl.value) - Number(dischargeCargoDetails.kl.value);
+              totalBackLoadingKlValue = Number(kl?.toFixed(3));
             } else {
               totalBackLoadingKlValue = Number(dischargeCargoDetails.maxKl.value) - Number(0);
               isAutoModeAvailable = true;
@@ -753,7 +754,7 @@ export class DischargeStudyComponent implements OnInit {
   * @memberof DischargeStudyComponent
   */
   updateDischargeCargoDetails(event: any, portDetails: any, feild: string) {
-    for (let i = event.index + 1; i < portDetails.length; i++) {
+    for (let i = event.index + 1; i <= portDetails.length; i++) {
       const findCardoIndex = portDetails[i].cargoDetail.findIndex((cargoDetails) => {
         if (cargoDetails.storedKey.value === event.data.storedKey.value) {
           return cargoDetails;
@@ -918,43 +919,31 @@ export class DischargeStudyComponent implements OnInit {
    * @memberof DischargeStudyComponent
   */
   async saveDischargeStudy() {
+    const isFormDirty = !this.dischargeStudyForm.dirty;
     const translationKeys = await this.translateService.get(['PORT','DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY','DISCHARGE_STUDY_SAVE_ERROR', 'DISCHARGE_STUDY_SAVE_NO_DATA_ERROR', 'DISCHARGE_STUDY_SAVE_WARNING_SUMMERY', 'DISCHARGE_STUDY_SAVE_WARNING', 'DISCHARGE_STUDY_SUCCESS', 'DISCHARGE_STUDY_SUCCESS_SUMMERY']).toPromise();
     this.checkFormFieldValidity();
     this.dischargeStudyForm.markAllAsTouched();
     this.dischargeStudyForm.markAsDirty();
 
-    if (!this.dischargeStudyForm.dirty && this.portDetails?.length !== 1) {
+    if (isFormDirty && this.portDetails?.length !== 1) {
       this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_SAVE_ERROR'], detail: translationKeys['DISCHARGE_STUDY_SAVE_NO_DATA_ERROR'] });
+      const value = this.dischargeStudyForm.value;
+      this.dischargeStudyForm.reset(value);
       return;
     }
     if (this.dischargeStudyForm.valid) {
-      let status;
-      this.portDetails.forEach((portDetail, portIndex) => {
-        for (const key in portDetail) {
-          if (Object.prototype.hasOwnProperty.call(portDetail, key)) {
-            if (key === 'backLoadingDetails') {
-              portDetail[key]?.forEach((item) => {
-                if (item.isAdd && !status) {
-                  status = true;
-                  this.messageService.add({
-                    severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
-                    detail: `${translationKeys['DISCHARGE_STUDY_SAVE_WARNING_SUMMERY']}`
-                  });
-                  return;
-                }
-              })
-            }
-          }
-        }
-      })
-      if (status) {
-        return;
-      }
       const isLoadableQuantityValid = this.validateLoadableQuantity();
-      if(isLoadableQuantityValid !== undefined) {
+      if (isLoadableQuantityValid.backLoadingIndex !== undefined) {
         this.messageService.add({
           severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
-          detail: `${translationKeys['PORT']} ${isLoadableQuantityValid + 1} ${translationKeys['DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY']}`
+          detail: `${translationKeys['DISCHARGE_STUDY_SAVE_WARNING_SUMMERY'] } ${isLoadableQuantityValid.backLoadingIndex+1}`
+        });
+        return;
+      } else if (isLoadableQuantityValid.invalidPort?.length) {
+        const portId = isLoadableQuantityValid.invalidPort[0];
+        this.messageService.add({
+          severity: 'warn', summary: translationKeys['DISCHARGE_STUDY_SAVE_WARNING'],
+          detail: `${translationKeys['PORT']} ${portId+1} ${translationKeys['DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY']}`
         });
         return;
       }
@@ -972,6 +961,12 @@ export class DischargeStudyComponent implements OnInit {
         this.dischargeStudyForm.reset(value);
         this.ngxSpinnerService.hide();
       }
+    } else {
+      setTimeout(() => {
+        if(document.querySelector('.error-icon')) {
+          document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth"});
+        }
+      })
     }
   }
 
@@ -981,35 +976,38 @@ export class DischargeStudyComponent implements OnInit {
    * @memberof DischargeStudyComponent
   */
   validateLoadableQuantity() {
-    let invalidPort;
+    const invalidPort = [];
+    let backLoadingIndex;
     this.portDetails.map((item, itemIndex) => {
-      let loadableQunatity = 0;
+      let loadableQuantity = 0;
       const backLoadingDetailsFormControls = item.backLoadingDetails;
       backLoadingDetailsFormControls.map((backLoadingItems) => {
+        if(backLoadingItems.isAdd) {
+          backLoadingIndex = itemIndex;
+        }
         if (backLoadingItems.mt) {
-          loadableQunatity += Number(backLoadingItems.mt.value);
+          loadableQuantity += Number(backLoadingItems.mt.value);
         }
       })
       const cargoDetails = item.cargoDetail;
       cargoDetails.map((cargoDetailsItems) => {
         const storedKey = cargoDetailsItems.storedKey.value;
-        // let parentData;
-        let maxQunatity;
+        let maxQuantity;
         for (let i = 0; i < this.portDetails.length; i++) {
-          if (maxQunatity === undefined) {
+          if (maxQuantity === undefined) {
             this.portDetails[i].cargoDetail.find((cargoDetailDetail, cargoIndex) => {
               if (cargoDetailDetail.storedKey.value === storedKey) {
-                maxQunatity = 0;
-                maxQunatity = this.quantityPipe.transform(cargoDetailDetail.maxKl.value,QUANTITY_UNIT.KL,QUANTITY_UNIT.MT,cargoDetailDetail.api.value,cargoDetailDetail.temp.value,-1);
-                maxQunatity -= cargoDetailDetail.mode['_value'].id === 2 ? Number(cargoDetailDetail.mt.value) : 0;
+                maxQuantity = 0;
+                maxQuantity = this.quantityPipe.transform(cargoDetailDetail.maxKl.value,QUANTITY_UNIT.KL,QUANTITY_UNIT.MT,cargoDetailDetail.api.value,cargoDetailDetail.temp.value,-1);
+                maxQuantity -= cargoDetailDetail.mode['_value'].id === 2 ? Number(cargoDetailDetail.mt.value) : 0;
                 return;
               }
             })
-            if (!maxQunatity) {
+            if (maxQuantity !== undefined) {
               this.portDetails[i].backLoadingDetails.find((backLoadingDetail, cargoIndex) => {
                 if (backLoadingDetail.storedKey.value === storedKey) {
-                  maxQunatity = 0;
-                  maxQunatity = backLoadingDetail.mt.value;
+                  maxQuantity = 0;
+                  maxQuantity = backLoadingDetail.mt.value;
                   return;
                 }
               })
@@ -1021,20 +1019,21 @@ export class DischargeStudyComponent implements OnInit {
               }
             })
             if(value) {
-              maxQunatity = maxQunatity - Number(value.mt.value);
+              const quantity = value.mode.value.id === 2 ? value.mt.value : 0;
+              maxQuantity = maxQuantity - Number(quantity);
             }
           }
           if(itemIndex === i) { 
-            loadableQunatity += maxQunatity;
+            loadableQuantity += maxQuantity;
             break;
           }
           }
         })
-        if(this.loadableQuantity < loadableQunatity) {
-          invalidPort = itemIndex;
+        if(this.loadableQuantity < loadableQuantity) {
+          invalidPort.push(itemIndex);
         }
     })
-    return invalidPort;
+    return {invalidPort: invalidPort , backLoadingIndex: backLoadingIndex};
   }
 
   /**

@@ -163,6 +163,14 @@ public class LoadicatorService {
           isEmpty(stabilityParameter.getShearForce())
               ? null
               : new BigDecimal(stabilityParameter.getShearForce()));
+      synopticalTableLoadicatorData.setFreeboard(
+          isEmpty(stabilityParameter.getFreeboard())
+              ? null
+              : new BigDecimal(stabilityParameter.getFreeboard()));
+      synopticalTableLoadicatorData.setManifoldHeight(
+          isEmpty(stabilityParameter.getManifoldHeight())
+              ? null
+              : new BigDecimal(stabilityParameter.getManifoldHeight()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
@@ -946,8 +954,9 @@ public class LoadicatorService {
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
         this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-        this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-            request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
+        this.loadableStudyCommunicationStatusRepository
+            .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
+                request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
     if (algoResponse.getFeedbackLoop() != null) {
       if (!request.getIsPattern()) {
         if (algoResponse.getFeedbackLoop()) {
@@ -1074,8 +1083,9 @@ public class LoadicatorService {
               loadablePatternId, type.get());
       if (jsonData != null && jsonData.getJsonData() != null) {
         Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
-            this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-                loadablePatternId, MessageTypes.VALIDATEPLAN.getMessageType());
+            this.loadableStudyCommunicationStatusRepository
+                .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
+                    loadablePatternId, MessageTypes.VALIDATEPLAN.getMessageType());
         PatternValidateResultRequest patternValidateResultRequest =
             new Gson().fromJson(jsonData.getJsonData(), PatternValidateResultRequest.class);
         LoadablePatternAlgoRequest loadablePatternAlgoRequest = new LoadablePatternAlgoRequest();
@@ -1543,6 +1553,10 @@ public class LoadicatorService {
     entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
     entity.setDeflection(
         isEmpty(result.getDeflection()) ? null : new BigDecimal(result.getDeflection()));
+    entity.setFreeboard(
+        isEmpty(result.getFreeboard()) ? null : new BigDecimal(result.getFreeboard()));
+    entity.setManifoldHeight(
+        isEmpty(result.getManifoldHeight()) ? null : new BigDecimal(result.getManifoldHeight()));
     return entity;
   }
 }

@@ -579,7 +579,6 @@ public class LoadicatorService {
           stowageDetailsBuilder.setCargoName(commingle.getAbbreviation());
           stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
         });
-    ;
   }
 
   public void buildStowagePlan(

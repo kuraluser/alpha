@@ -187,6 +187,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
+  private final long ALGO_RESPONSE_ID = 17L;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
@@ -542,7 +543,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           entity.setIsCargoNominationComplete(false);
           entity.setIsPortsComplete(false);
           entity.setIsOhqComplete(false);
-          entity.setIsObqComplete(true);
+          entity.setIsObqComplete(false);
           entity.setIsDischargePortsComplete(false);
         } else {
           listOfExistingLSRules = loadableStudyRuleService.getLoadableStudyRules(request);
@@ -1687,9 +1688,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 loadableStudy.setMaxWaterTemp(String.valueOf(maxWaterTemperature)));
 
     if (ofNullable(loadableStudyOpt.get().getLoadOnTop()).isPresent()) {
-      loadableStudy.setLoadOnTop(loadableStudyOpt.get().getLoadOnTop());
+      loadableStudy.setLoadOnTopForSlopTank(loadableStudyOpt.get().getLoadOnTop());
     } else {
-      loadableStudy.setLoadOnTop(false);
+      loadableStudy.setLoadOnTopForSlopTank(false);
     }
     Optional<Long> dischargeCargoId =
         ofNullable(loadableStudyOpt.get().getDischargeCargoNominationId());
@@ -2934,7 +2935,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       Object departureCondition = null;
       JsonData jsonData =
-          this.jsonDataService.getJsonData(request.getLoadableStudyId(), Long.valueOf(2));
+          this.jsonDataService.getJsonData(request.getLoadableStudyId(), ALGO_RESPONSE_ID);
       if (jsonData != null) {
         String algoJsonString = jsonData.getJsonData();
         LoadableStudyAlgoJson algoJson =

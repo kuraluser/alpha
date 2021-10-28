@@ -98,6 +98,7 @@ public class LoadableStudySchedulerService {
 
                       requestParam.put("ClientId", vesssel.getVesselName());
                       requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
+                      requestParam.put("env", environment);
                       properties.setTaskReqParam(requestParam);
                       if (scheduledTasks != null
                           && !scheduledTasks.contains(properties.getTaskName()))

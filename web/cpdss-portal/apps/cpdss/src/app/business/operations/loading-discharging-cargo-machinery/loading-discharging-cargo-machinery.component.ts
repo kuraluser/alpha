@@ -223,7 +223,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   */
   onUse(event, column, key: string, typeIndex: number, index: number) {
     column.isUsing = event.target.checked;
-    const formControl = this.field(this.getFormGroupName(key, typeIndex, index), 'capacity', key);
+    const formControl = this.field(this.getFormGroupName(key, typeIndex, index), 'capacity', key === 'cargoMachineryValues' ? 'cargoMachinery' : 'pumps');
 
     if (column?.isUsing) {
       const info = this.operation === OPERATIONS.LOADING ? { loadingInfoId: this.loadingInfoId } : { dischargeInfoId: this.dichargingInfoId };
@@ -237,7 +237,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
         ...info
       }
       this.machineryInUses.loadingDischargingMachinesInUses.push(machineInUse);
-      formControl.enable();
+      formControl?.enable();
     } else {
       const machineTypeId = column?.machineType ?? column?.machineTypeId;
       this.machineryInUses?.loadingDischargingMachinesInUses?.map(machineUse => {
@@ -245,7 +245,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
           machineUse.isUsing = false;
         }
       });
-      formControl.disable();
+      formControl?.disable();
     }
     this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);
     this.isMachineryValid(false);

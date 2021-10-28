@@ -86,6 +86,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   loadingDischargingDelayList: ILoadingDischargingDelays[];
   addInitialDelay = false;
   loadableQuantityCargoCount: number;
+  totalDuration: number;  totalMinutes: number;
 
   private _loadingDischargingSequences: ILoadingDischargingSequences;
   private _editable = true;
@@ -102,10 +103,6 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     private quantityDecimalService: QuantityDecimalService) { }
 
   async ngOnInit(): Promise<void> {
-    this.columns = this.loadingDischargingTransformationService.getLoadingDischargingDelayDatatableColumns(this.operation);
-    if(!this.editable){
-      this.columns.splice((this.columns.length - 1),1);
-    }
     await this.initiLoadingDischargingSequenceArray();
   }
 
@@ -115,6 +112,15 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   * @memberof LoadingDischargingManageSequenceComponent
   */
   async initiLoadingDischargingSequenceArray() {
+    this.totalDuration = 24;
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      this.totalDuration = this.loadableQuantityCargo?.reduce((total, cargo) => total += Number(cargo?.timeRequiredForDischarging), 0);
+    }
+
+    this.columns = this.loadingDischargingTransformationService.getLoadingDischargingDelayDatatableColumns(this.operation, this.totalDuration, this.translateService);
+    if (!this.editable) {
+      this.columns.splice((this.columns.length - 1), 1);
+    }
     this.listData = await this.getDropdownData();
     this.addInitialDelay = false;
     this.listData.reasonForDelays = this.loadingDischargingSequences.reasonForDelays;
@@ -243,10 +249,11 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   initLoadingDischargingSequenceFormGroup(loadingDischargingDelay: ILoadingDischargingSequenceValueObject, index: number, initialDelay: boolean) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal();
     const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
+    const [totalHours, totalMinutes] = this.totalDuration.toString()?.split('.').map((num, i) => i === 1 ? Number(num ?? 0) * 6 : Number(num));
     const formGroup =  this.fb.group({
       id: loadingDischargingDelay.id,
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
-      duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(24, 0)]),
+      duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(totalHours, totalMinutes)]),
       cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator()]),
       quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required, Validators.min(min), cargoQuantityValidator(), numberValidator(quantityDecimal, 7, false)] : [Validators.required]),
       colorCode: this.fb.control(loadingDischargingDelay.colorCode)
@@ -287,15 +294,19 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const index = event.index;
     const form = this.row(index);
     if (event.field === 'cargo') {
-      const loadableMT = this.quantityPipe.transform(event.data.cargo.value.loadableMT, this.prevQuantitySelectedUnit , this.currentQuantitySelectedUnit, event.data.cargo.value?.estimatedAPI , event.data.cargo.value?.estimatedTemp , -1);;
-      this.loadingDischargingDelays[index]['quantity'].value =  Number(loadableMT);
+      this.loadingDischargingDelays[index].quantityMT = event.data.cargo.value.loadableMT;
+      const quantity = this.quantityPipe.transform(event.data.cargo.value.loadableMT, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, event.data.cargo.value?.estimatedAPI, event.data.cargo.value?.estimatedTemp);
+      this.loadingDischargingDelays[index]['quantity'].value =  Number(quantity);
       this.loadingDischargingDelays[index]['colorCode'] = event.data.cargo.value.colorCode;
       this.updateField(index, 'quantity', this.loadingDischargingDelays[index]['quantity'].value);
       this.updateField(index, 'colorCode', event.data.cargo.value.colorCode);
-      this.updateFormValidity();
+    } else if (event.field === 'quantity') {
+      this.loadingDischargingDelays[index][event.field].value = event.data[event.field].value;
+      this.loadingDischargingDelays[index].quantityMT = this.quantityPipe.transform(event.data[event.field].value, this.currentQuantitySelectedUnit, QUANTITY_UNIT.MT, event.data.cargo.value?.estimatedAPI, event.data.cargo.value?.estimatedTemp, -1);
     } else {
       this.loadingDischargingDelays[index][event.field].value = event.data[event.field].value;
     }
+    this.updateFormValidity();
     if (form.valid) {
       const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargeInfoId, this.operation  , this.listData);
       this.updateLoadingDischargingDelays.emit(loadingDischargingDelaysList);
@@ -311,16 +322,17 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   updateFormValidity() {
     const formArray = (<FormArray>this.loadingDischargingSequenceForm.get('dataTable')).controls;
     formArray.forEach(async (row: FormGroup, index) => {
-      if (row.invalid && row.touched) {
-        const invalidFormControls = this.findInvalidControlsRecursive(row);
-        invalidFormControls.forEach((key) => {
-          const formControl = this.field(index, key);
-          formControl.updateValueAndValidity();
-          if (formControl.invalid) {
-            this.loadingDischargingDelays[index][key]['isEditMode'] = true;
-          }
-        });
-      }
+      const invalidFormControls = this.findInvalidControlsRecursive(row);
+      invalidFormControls.forEach((key) => {
+        const formControl = this.field(index, key);
+        formControl.updateValueAndValidity();
+        formControl.markAllAsTouched();
+        if (formControl.invalid) {
+          this.loadingDischargingDelays[index][key]['isEditMode'] = true;
+        } else {
+          this.loadingDischargingDelays[index][key]['isEditMode'] = false;
+        }
+      });
     })
   }
 
@@ -497,9 +509,9 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       }
       return false;
     } else if(this.operation === OPERATIONS.DISCHARGING) {
-      const totalQuantitySequence = dataTableControl?.value?.reduce((total, sequence) => total + Number(sequence.quantity), 0);
-      const totalLoadedQuantity = this.loadableQuantityCargo?.reduce((total, cargo) => total + Number(this.quantityPipe.transform(cargo.shipFigure, this.currentQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo.estimatedAPI, cargo.estimatedTemp)), 0);
-      if(totalLoadedQuantity !== totalQuantitySequence && showToaster) {
+      const totalQuantitySequence = this.loadingDischargingDelays?.reduce((total, sequence) => total + Number(sequence.quantityMT), 0);
+      const totalLoadedQuantity = this.listData.loadableQuantityCargo?.reduce((total, cargo) => total + Number(cargo.loadableMT), 0);
+      if (Math.round(totalLoadedQuantity) !== Math.round(totalQuantitySequence) && showToaster) {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR'], detail: translationKeys['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_QUANTITY_SUMMERY'] });
       } else {
         return true;

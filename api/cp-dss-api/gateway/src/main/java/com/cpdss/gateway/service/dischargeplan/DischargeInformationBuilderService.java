@@ -445,7 +445,7 @@ public class DischargeInformationBuilderService {
     }
 
     // Discharging Info Case 2 - Stages
-    if (request.getDischargingStages() != null) {
+    if (request.getDischargeStages() != null) {
       Callable<DischargingInfoSaveResponse> t2 =
           () -> {
             builder.setDischargeStage(buildDischargingStage(request));
@@ -514,11 +514,11 @@ public class DischargeInformationBuilderService {
     }
 
     // Discharging Info Case 8 - post discharge stage
-    if (request.getPostDischargeStage() != null) {
+    if (request.getPostDischargeStageTime() != null) {
       Callable<DischargingInfoSaveResponse> t8 =
           () -> {
             builder.setPostDischargeStageTime(
-                buildPostDischargeStageDetails(request.getPostDischargeStage()));
+                buildPostDischargeStageDetails(request.getPostDischargeStageTime()));
             return dischargeInfoServiceStub.savePostDischargeStage(builder.build());
           };
       callableTasks.add(t8);
@@ -582,25 +582,25 @@ public class DischargeInformationBuilderService {
 
     builder.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cowPlan.getCowOption()));
     builder.setDischargingInfoId(dischargingId);
-    if (cowPlan.getAllCow()!=null&&!cowPlan.getAllCow().isEmpty()) {
+    if (cowPlan.getAllCow() != null && !cowPlan.getAllCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.ALL_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getAllCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (cowPlan.getBottomCow()!=null&&!cowPlan.getBottomCow().isEmpty()) {
+    if (cowPlan.getBottomCow() != null && !cowPlan.getBottomCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.BOTTOM_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getBottomCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (cowPlan.getTopCow()!=null&&!cowPlan.getTopCow().isEmpty()) {
+    if (cowPlan.getTopCow() != null && !cowPlan.getTopCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.TOP_COW);
       cowTankBuilder.addAllTankIds(cowPlan.getTopCow());
       builder.addCowTankDetails(cowTankBuilder);
     }
-    if (cowPlan.getCargoCow()!=null&&!cowPlan.getCargoCow().isEmpty()) {
+    if (cowPlan.getCargoCow() != null && !cowPlan.getCargoCow().isEmpty()) {
       CowTankDetails.Builder cowTankBuilder = CowTankDetails.newBuilder();
       cowTankBuilder.setCowType(Common.COW_TYPE.CARGO);
       cowPlan.getCargoCow().stream()
@@ -671,6 +671,10 @@ public class DischargeInformationBuilderService {
               .ifPresent(
                   maxManifoldHeight ->
                       builder.setMaxManifoldHeight(String.valueOf(maxManifoldHeight)));
+          Optional.ofNullable(berth.getMaxManifoldPressure())
+              .ifPresent(
+                  maxManifoldPressure ->
+                      builder.setMaxManifoldPressure(String.valueOf(maxManifoldPressure)));
           Optional.ofNullable(berth.getRegulationAndRestriction())
               .ifPresent(
                   restriction ->
@@ -758,22 +762,22 @@ public class DischargeInformationBuilderService {
         durationBuilder =
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder();
     StageOffsets.Builder offsetBuilder = StageOffsets.newBuilder();
-    if (request.getDischargingStages() != null) {
-      if (request.getDischargingStages().getStageDuration() != null) {
-        Optional.ofNullable(request.getDischargingStages().getStageDuration().getId())
+    if (request.getDischargeStages() != null) {
+      if (request.getDischargeStages().getStageDuration() != null) {
+        Optional.ofNullable(request.getDischargeStages().getStageDuration().getId())
             .ifPresent(durationBuilder::setId);
-        Optional.ofNullable(request.getDischargingStages().getStageDuration().getDuration())
+        Optional.ofNullable(request.getDischargeStages().getStageDuration().getDuration())
             .ifPresent(durationBuilder::setDuration);
       }
-      if (request.getDischargingStages().getStageOffset() != null) {
-        Optional.ofNullable(request.getDischargingStages().getStageOffset().getId())
+      if (request.getDischargeStages().getStageOffset() != null) {
+        Optional.ofNullable(request.getDischargeStages().getStageOffset().getId())
             .ifPresent(offsetBuilder::setId);
-        Optional.ofNullable(request.getDischargingStages().getStageOffset().getStageOffsetVal())
+        Optional.ofNullable(request.getDischargeStages().getStageOffset().getStageOffsetVal())
             .ifPresent(offsetBuilder::setStageOffsetVal);
       }
-      Optional.ofNullable(request.getDischargingStages().getTrackGradeSwitch())
+      Optional.ofNullable(request.getDischargeStages().getTrackGradeSwitch())
           .ifPresent(builder::setTrackGradeSwitch);
-      Optional.ofNullable(request.getDischargingStages().getTrackStartEndStage())
+      Optional.ofNullable(request.getDischargeStages().getTrackStartEndStage())
           .ifPresent(builder::setTrackStartEndStage);
     }
     builder.setDuration(durationBuilder.build());

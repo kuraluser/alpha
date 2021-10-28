@@ -34,7 +34,7 @@
             </cpdss-portal-port-rotation-ribbon>
         </div>
     </div>
-    <router-outlet *ngIf="vessel && selectedVoyage && [OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId)"></router-outlet>
+    <router-outlet *ngIf="vessel && selectedVoyage && (OPERATIONS.LOADING === operationId || (OPERATIONS.DISCHARGING === operationId && selectedVoyage?.isDischargeStarted && selectedVoyage?.confirmedDischargeStudyId))"></router-outlet>
     <ng-container *ngIf="![OPERATIONS.LOADING , OPERATIONS.DISCHARGING].includes(operationId) && selectedVoyage">
         <div class="text-center pt-25">
         <div class="well-custom">
@@ -42,7 +42,7 @@
         </div>
     </div>
     </ng-container>
-    <ng-container *ngIf="OPERATIONS.DISCHARGING === operationId && !selectedVoyage?.isDischargeStarted">
+    <ng-container *ngIf="OPERATIONS.DISCHARGING === operationId && !selectedVoyage?.isDischargeStarted && !selectedVoyage?.confirmedDischargeStudyId">
       <div class="text-center pt-25">
         <div class="well-custom">
           <div class="text-info"><span class="icon-info-rounded">!</span> {{'DISCHARGING_PLAN_NOT_AVAILABLE' |

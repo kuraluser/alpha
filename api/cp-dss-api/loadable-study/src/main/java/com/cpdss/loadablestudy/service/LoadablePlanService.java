@@ -34,7 +34,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -482,7 +481,24 @@ public class LoadablePlanService {
                               true),
                       false,
                       loadablePattern.getId()));
-
+              arrivalCondition.setStabilityParameter(
+                  createStabilityParameters(
+                      synopticalTableRepository
+                          .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                              loadablePattern.getLoadableStudy().getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                              true),
+                      loadablePattern.getId()));
+              departureCondition.setStabilityParameter(
+                  createStabilityParameters(
+                      synopticalTableRepository
+                          .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                              loadablePattern.getLoadableStudy().getId(),
+                              portRotate.getId(),
+                              SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                              true),
+                      loadablePattern.getId()));
               portWiseDetails.setArrivalCondition(arrivalCondition);
               portWiseDetails.setDepartureCondition(departureCondition);
               loadablePlanPortWiseDetails.add(portWiseDetails);
@@ -563,12 +579,62 @@ public class LoadablePlanService {
                     true),
             true,
             loadablePattern.getId()));
-
+    arrivalCondition.setStabilityParameter(
+        createStabilityParameters(
+            synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                loadablePattern.getLoadableStudy().getId(),
+                lastLoadingRotationId,
+                SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
+                true),
+            loadablePattern.getId()));
+    departureCondition.setStabilityParameter(
+        createStabilityParameters(
+            synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                loadablePattern.getLoadableStudy().getId(),
+                lastLoadingRotationId,
+                SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
+                true),
+            loadablePattern.getId()));
     portWiseDetails.setArrivalCondition(arrivalCondition);
     portWiseDetails.setDepartureCondition(departureCondition);
     loadablePlanPortWiseDetails.add(portWiseDetails);
 
     loadabalePatternValidateRequest.setLoadablePlanPortWiseDetails(loadablePlanPortWiseDetails);
+  }
+
+  /**
+   * @param findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive
+   * @return
+   */
+  private StabilityParameter createStabilityParameters(
+      Optional<SynopticalTable> synopticalTableOpt, Long loadablePatternId) {
+    StabilityParameter stabilityParameterDto = new StabilityParameter();
+    if (synopticalTableOpt.isEmpty()) {
+      log.error("Could not find synoptical table for the port");
+    } else {
+      SynopticalTableLoadicatorData loadicatorData =
+          synopticalTableLoadicatorDataRepository
+              .findByloadablePatternIdAndSynopticalTableAndIsActive(
+                  loadablePatternId, synopticalTableOpt.get(), true);
+      Optional.ofNullable(loadicatorData.getBendingMoment())
+          .ifPresent(bm -> stabilityParameterDto.setBendinMoment(bm.toString()));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftAftPlanned())
+          .ifPresent(aftDraft -> stabilityParameterDto.setAfterDraft(aftDraft.toString()));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftFwdPlanned())
+          .ifPresent(fwdDraft -> stabilityParameterDto.setForwardDraft(fwdDraft.toString()));
+      Optional.ofNullable(loadicatorData.getCalculatedDraftMidPlanned())
+          .ifPresent(midDraft -> stabilityParameterDto.setMeanDraft(midDraft.toString()));
+      Optional.ofNullable(loadicatorData.getCalculatedTrimPlanned())
+          .ifPresent(trim -> stabilityParameterDto.setTrim(trim.toString()));
+      Optional.ofNullable(loadicatorData.getFreeboard())
+          .ifPresent(freeBoard -> stabilityParameterDto.setFreeboard(freeBoard.toString()));
+      Optional.ofNullable(loadicatorData.getManifoldHeight())
+          .ifPresent(
+              manifoldHeight -> stabilityParameterDto.setManifoldHeight(manifoldHeight.toString()));
+      Optional.ofNullable(loadicatorData.getShearingForce())
+          .ifPresent(sf -> stabilityParameterDto.setShearForce(sf.toString()));
+    }
+    return stabilityParameterDto;
   }
 
   /**

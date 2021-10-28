@@ -2,7 +2,6 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
-import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -11,9 +10,12 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest;
+import com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
@@ -56,8 +58,18 @@ public class OnBoardQuantityService {
 
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
 
+  @Autowired private CargoOperationRepository cargoOperationRepository;
+
+  @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
+
+  @Autowired private CargoNominationRepository cargoNominationRepository;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("dischargeInformationService")
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
+      dischargePlanServiceBlockingStub;
 
   public LoadableStudy.OnBoardQuantityReply.Builder saveOnBoardQuantity(
       LoadableStudy.OnBoardQuantityDetail request,
@@ -217,58 +229,102 @@ public class OnBoardQuantityService {
       LoadableStudy.OnBoardQuantityRequest request,
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
       Voyage voyage,
-      List<VesselInfo.VesselTankDetail> vesselTanksList) {
+      List<VesselInfo.VesselTankDetail> vesselTanksList)
+      throws GenericServiceException {
     List<OnBoardQuantity> obqEntities =
         this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
             loadableStudy, request.getPortId(), true);
-    List<CargoHistory> cargoHistories = null;
+    // List<CargoHistory> cargoHistories = null;
     List<LoadableStudy.OnBoardQuantityDetail> obqDetailList = new ArrayList<>();
     List<VesselInfo.VesselTankDetail> modifieableList = new ArrayList<>(vesselTanksList);
     List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailsList = null;
+    List<LoadingPlanModels.LoadingPlanTankDetails> dischargingPlanStowageBallastDetails = null;
     Collections.sort(
         modifieableList, Comparator.comparing(VesselInfo.VesselTankDetail::getTankDisplayOrder));
-    for (VesselInfo.VesselTankDetail tank : modifieableList) {
-      LoadableStudy.OnBoardQuantityDetail.Builder builder =
-          LoadableStudy.OnBoardQuantityDetail.newBuilder();
-      builder.setTankId(tank.getTankId());
-      builder.setTankName(tank.getShortName());
-      Optional<OnBoardQuantity> entityOpt =
-          obqEntities.stream().filter(e -> e.getTankId().equals(tank.getTankId())).findAny();
-      if (entityOpt.isPresent()) {
-        OnBoardQuantity entity = entityOpt.get();
-        builder.setId(entity.getId());
-        ofNullable(entity.getCargoId()).ifPresent(builder::setCargoId);
-        ofNullable(entity.getSounding()).ifPresent(item -> builder.setSounding(item.toString()));
-        ofNullable(entity.getPlannedArrivalWeight())
-            .ifPresent(item -> builder.setWeight(item.toString()));
-        ofNullable(entity.getActualArrivalWeight())
-            .ifPresent(item -> builder.setActualWeight(item.toString()));
-        ofNullable(entity.getVolume()).ifPresent(item -> builder.setVolume(item.toString()));
-        ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
-        ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
-        ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
-      } else {
-        // lazy loading the cargo history
-        if (null == cargoDetailsList) {
-          // cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
-          cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage);
+    List<OnBoardQuantity> onBoardQuantityEntityList = new ArrayList<>();
+    if (obqEntities == null || obqEntities.size() == 0) {
+      for (VesselInfo.VesselTankDetail tank : modifieableList) {
+        OnBoardQuantity onBoardQuantityEntity = new OnBoardQuantity();
+
+        // if planingType = 1 means save OBQ for loadable study
+        if (request.getPlaningType() == Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE) {
+          // lazy loading the cargo history
+          if (null == cargoDetailsList) {
+            // cargoHistories = this.findCargoHistoryForPrvsVoyage(voyage);
+            cargoDetailsList = this.findCargoDetailsForPrevVoyage(voyage);
+          }
+          Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargo =
+              cargoDetailsList.stream()
+                  .filter(var -> var.getTankId().equals(tank.getTankId()))
+                  .findAny();
+          if (lpCargo.isPresent()) {
+            Optional.ofNullable(lpCargo.get().getCargoId())
+                .ifPresent(onBoardQuantityEntity::setCargoId);
+            Optional.ofNullable(lpCargo.get().getColorCode())
+                .ifPresent(onBoardQuantityEntity::setColorCode);
+            Optional.ofNullable(lpCargo.get().getAbbreviation())
+                .ifPresent(onBoardQuantityEntity::setAbbreviation);
+            Optional.ofNullable(lpCargo.get().getApi())
+                .ifPresentOrElse(
+                    onBoardQuantityEntity::setDensity,
+                    () -> onBoardQuantityEntity.setDensity(new BigDecimal(0)));
+            Optional.ofNullable(lpCargo.get().getActualQuantity())
+                .ifPresentOrElse(
+                    onBoardQuantityEntity::setActualArrivalWeight,
+                    () -> onBoardQuantityEntity.setActualArrivalWeight(new BigDecimal(0)));
+            Optional.ofNullable(lpCargo.get().getTemperature())
+                .ifPresentOrElse(
+                    onBoardQuantityEntity::setTemperature,
+                    () -> onBoardQuantityEntity.setTemperature(new BigDecimal(0)));
+          }
         }
 
-        Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> lpCargo =
-            cargoDetailsList.stream()
-                .filter(var -> var.getTankId().equals(tank.getTankId()))
-                .findAny();
-        if (lpCargo.isPresent()) {
-          Optional.ofNullable(lpCargo.get().getCargoId()).ifPresent(builder::setCargoId);
-          Optional.ofNullable(lpCargo.get().getColorCode()).ifPresent(builder::setColorCode);
-          Optional.ofNullable(lpCargo.get().getAbbreviation()).ifPresent(builder::setAbbreviation);
-          Optional.ofNullable(lpCargo.get().getApi())
-              .ifPresent(v -> builder.setDensity(valueOf(v)));
-          Optional.ofNullable(lpCargo.get().getActualQuantity())
-              .ifPresent(v -> builder.setWeight(valueOf(v)));
-          Optional.ofNullable(lpCargo.get().getTemperature())
-              .ifPresent(v -> builder.setTemperature(valueOf(v)));
+        // if planingType = 2 means save OBQ for discharge plan
+        if (request.getPlaningType() == Common.PLANNING_TYPE.DISCHARGE_STUDY_VALUE) {
+          if (null == dischargingPlanStowageBallastDetails) {
+            dischargingPlanStowageBallastDetails =
+                this.findPortDischargingPlanStowageBallastDetailForPrevVoyage(voyage);
+          }
+          Optional<LoadingPlanModels.LoadingPlanTankDetails> dsCargo =
+              dischargingPlanStowageBallastDetails.stream()
+                  .filter(var -> var.getTankId() == (tank.getTankId()))
+                  .findAny();
+          if (dsCargo.isPresent()) {
+
+            Optional.ofNullable(dsCargo.get().getColorCode())
+                .ifPresent(onBoardQuantityEntity::setColorCode);
+            Optional.ofNullable(dsCargo.get().getAbbreviation())
+                .ifPresent(onBoardQuantityEntity::setAbbreviation);
+            Optional.ofNullable(dsCargo.get().getApi())
+                .ifPresentOrElse(
+                    api -> onBoardQuantityEntity.setDensity(new BigDecimal(api)),
+                    () -> onBoardQuantityEntity.setDensity(new BigDecimal(0)));
+            Optional.ofNullable(dsCargo.get().getTemperature())
+                .ifPresentOrElse(
+                    temp -> onBoardQuantityEntity.setTemperature(new BigDecimal(temp)),
+                    () -> onBoardQuantityEntity.setTemperature(new BigDecimal(0)));
+            Optional.ofNullable(dsCargo.get().getSounding())
+                .ifPresentOrElse(
+                    temp -> onBoardQuantityEntity.setSounding(new BigDecimal(temp)),
+                    () -> onBoardQuantityEntity.setSounding(new BigDecimal(0)));
+            Optional<Long> cargoNomination =
+                Optional.ofNullable(dsCargo.get().getCargoNominationId());
+            if (cargoNomination.isPresent()) {
+              Optional<CargoNomination> cargoNominationEntity =
+                  cargoNominationRepository.findByIdAndIsActive(cargoNomination.get(), true);
+              if (cargoNominationEntity.isPresent()) {
+                Optional.ofNullable(cargoNominationEntity.get().getCargoXId())
+                    .ifPresent(onBoardQuantityEntity::setCargoId);
+              }
+            }
+          }
         }
+
+        onBoardQuantityEntity.setIsActive(true);
+        onBoardQuantityEntity.setLoadableStudy(loadableStudy);
+        onBoardQuantityEntity.setPortId(request.getPortId());
+        Optional.ofNullable(tank.getTankId()).ifPresent(onBoardQuantityEntity::setTankId);
+        onBoardQuantityEntityList.add(onBoardQuantityEntity);
         /*
         Optional<CargoHistory> cargoHistoryOpt =
             cargoHistories.stream().filter(e -> e.getTankId().equals(tank.getTankId())).findAny();
@@ -281,7 +337,41 @@ public class OnBoardQuantityService {
           ofNullable(dto.getApi()).ifPresent(item -> builder.setDensity(valueOf(item)));
         }*/
       }
-      obqDetailList.add(builder.build());
+    }
+    if (onBoardQuantityEntityList.size() > 0) {
+      List<OnBoardQuantity> onBoardQuantityList =
+          onBoardQuantityRepository.saveAll(onBoardQuantityEntityList);
+      log.info("Onboard quantity saved successfully : " + onBoardQuantityList.size());
+      loadableStudyRepository.updateOBQStatusById(true, loadableStudy.getId());
+    }
+    // fetch saved OBQ from OBQ table for return response to front end
+    obqEntities =
+        this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            loadableStudy, request.getPortId(), true);
+    for (VesselInfo.VesselTankDetail tank : modifieableList) {
+      LoadableStudy.OnBoardQuantityDetail.Builder builder =
+          LoadableStudy.OnBoardQuantityDetail.newBuilder();
+      ofNullable(tank.getShortName()).ifPresent(builder::setTankName);
+      Optional<OnBoardQuantity> entityOpt =
+          obqEntities.stream().filter(e -> e.getTankId().equals(tank.getTankId())).findAny();
+      if (entityOpt.isPresent()) {
+        OnBoardQuantity entity = entityOpt.get();
+        builder.setId(entity.getId());
+        ofNullable(entity.getTankId()).ifPresent(builder::setTankId);
+        ofNullable(entity.getCargoId()).ifPresent(builder::setCargoId);
+        ofNullable(entity.getSounding()).ifPresent(item -> builder.setSounding(item.toString()));
+        ofNullable(entity.getPlannedArrivalWeight())
+            .ifPresent(item -> builder.setWeight(item.toString()));
+        ofNullable(entity.getActualArrivalWeight())
+            .ifPresent(item -> builder.setActualWeight(item.toString()));
+        ofNullable(entity.getVolume()).ifPresent(item -> builder.setVolume(item.toString()));
+        ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
+        ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
+        ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
+        ofNullable(entity.getTemperature())
+            .ifPresent(item -> builder.setTemperature(item.toString()));
+        obqDetailList.add(builder.build());
+      }
     }
     return obqDetailList;
   }
@@ -341,6 +431,68 @@ public class OnBoardQuantityService {
             return dep;
           }
         }
+      }
+    }
+    return new ArrayList<>();
+  }
+
+  /**
+   * StowageBallastDetail of Previous closed voyage's confirmed discharge study's
+   * 'PortDischargingPlanBallastDetails' details
+   *
+   * @param currentVoyage
+   * @return
+   * @throws GenericServiceException
+   */
+  private List<LoadingPlanModels.LoadingPlanTankDetails>
+      findPortDischargingPlanStowageBallastDetailForPrevVoyage(Voyage currentVoyage)
+          throws GenericServiceException {
+    if (currentVoyage.getVoyageStartDate() != null && currentVoyage.getVoyageEndDate() != null) {
+      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+      Voyage previousVoyage =
+          this.voyageRepository
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+                  currentVoyage.getVesselXId(), true, voyageStatus);
+      if (previousVoyage != null) {
+        Optional<LoadableStudyStatus> confirmedDSStatus =
+            loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
+
+        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedDS =
+            previousVoyage.getLoadableStudies().stream()
+                .filter(
+                    var ->
+                        (var.getLoadableStudyStatus()
+                            .getId()
+                            .equals(confirmedDSStatus.get().getId())))
+                .findFirst();
+        Long lastLoadingPort = 0L;
+        if (confirmedDS.isPresent()) {
+          lastLoadingPort =
+              loadableStudyPortRotationService.getLastPort(
+                  confirmedDS.get(),
+                  this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID));
+          if (lastLoadingPort != null && lastLoadingPort != 0L) {
+            DischargePlanStowageDetailsRequest.Builder builder =
+                DischargePlanStowageDetailsRequest.newBuilder();
+            builder.setLastLoadingPortRotationId(lastLoadingPort);
+            DischargePlanStowageDetailsResponse dischargePlanStowageBallastResponse =
+                dischargePlanServiceBlockingStub.dischargePlanStowageDetails(builder.build());
+            if (!SUCCESS.equals(
+                dischargePlanStowageBallastResponse.getResponseStatus().getStatus())) {
+              throw new GenericServiceException(
+                  "Failed to fetch dischargePlanStowageBallastResponse",
+                  dischargePlanStowageBallastResponse.getResponseStatus().getCode(),
+                  HttpStatusCode.valueOf(
+                      Integer.valueOf(
+                          dischargePlanStowageBallastResponse.getResponseStatus().getCode())));
+            }
+            return dischargePlanStowageBallastResponse.getDischargingPlanTankDetailsList();
+          }
+        }
+        log.info(
+            "Get On-Board-Quantity, previous voyage, DS id - {}, name - {}",
+            confirmedDS.get().getId(),
+            confirmedDS.get().getName());
       }
     }
     return new ArrayList<>();

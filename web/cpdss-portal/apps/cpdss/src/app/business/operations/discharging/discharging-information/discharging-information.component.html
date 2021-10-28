@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col text-right">
-    <button class="btn btn-main mr-10" id="save_discharging_information" [disabled]="!permission?.edit" (click)="saveDischargingInformationData()">
+    <button class="btn btn-main mr-10" id="save_discharging_information" [disabled]="!permission?.edit"
+      (click)="saveDischargingInformationData()">
       {{'DISCHARGING_INFORMATION_SAVE_BUTTON_LABEL' | translate}}
     </button>
   </div>
@@ -21,8 +22,7 @@
       </div>
       <div class="row pt-30">
         <div class="col">
-          <cpdss-portal-discharging-rates [editMode]="true"
-            [dischargeRates]="dischargingInformationData.dischargeRates"
+          <cpdss-portal-discharging-rates [editMode]="true" [dischargeRates]="dischargingInformationData.dischargeRates"
             (dischargingRateChange)="onDischargingRateChange($event)"></cpdss-portal-discharging-rates>
         </div>
       </div>
@@ -36,7 +36,8 @@
       </div>
       <div class="row">
         <div class="col pt-5">
-          <cpdss-portal-loading-discharging-cargo-machinery [dischargeInfoId]="dischargeInfoId" [operation]="OPERATIONS.DISCHARGING" [form]="dischargingInformationForm"
+          <cpdss-portal-loading-discharging-cargo-machinery [dischargeInfoId]="dischargeInfoId"
+            [operation]="OPERATIONS.DISCHARGING" [form]="dischargingInformationForm"
             [machineryInUses]="dischargingInformationData?.machineryInUses"
             (updatemachineryInUses)="onUpdateMachineryInUses($event)">
           </cpdss-portal-loading-discharging-cargo-machinery>
@@ -80,11 +81,13 @@
               </label>
             </div>
           </div>
-          <cpdss-portal-cargo-to-be-loaded-discharged *ngIf="dischargingInformationData?.cargoVesselTankDetails && cargos && listData"
-            [operation]="OPERATIONS.DISCHARGING" [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
+          <cpdss-portal-cargo-to-be-loaded-discharged
+            *ngIf="dischargingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails && cargos && listData && dischargingInformationForm && currentQuantitySelectedUnit"
+            [operation]="OPERATIONS.DISCHARGING" [form]="dischargingInformationForm"
+            [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
             [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-            [cargoVesselTankDetails]="dischargingInformationData?.cargoVesselTankDetails" [listData]="listData" (updateCargoToBeLoaded)="onCargoToBeDischargedChange($event)"
-            [form]="dischargingInformationForm">
+            [cargoVesselTankDetails]="dischargingInformationData?.cargoVesselTankDetails" [listData]="listData"
+            (updateCargoToBeLoaded)="onCargoToBeDischargedChange($event)">
           </cpdss-portal-cargo-to-be-loaded-discharged>
         </div>
       </div>
@@ -157,10 +160,12 @@
       </cpdss-portal-loading-discharging-manage-sequence>
       <div class="row">
         <div class="col">
-          <cpdss-portal-cow-plan *ngIf="dischargingInformationData?.cowDetails && dischargingInformationForm && listData"
+          <cpdss-portal-cow-plan
+            *ngIf="dischargingInformationData?.cowDetails && dischargingInformationForm && listData"
             [form]="dischargingInformationForm" [cowDetails]="dischargingInformationData?.cowDetails"
             [listData]="listData" [cargoTanks]="dischargingInformationData?.cargoTanks"
-            [loadedCargos]="dischargingInformationData?.loadedCargos" [editMode]="true" (updateCowPlan)="onCowPlanUpdate($event)">
+            [loadedCargos]="dischargingInformationData?.loadedCargos" [editMode]="true"
+            (updateCowPlan)="onCowPlanUpdate($event)">
           </cpdss-portal-cow-plan>
         </div>
       </div>
@@ -169,7 +174,8 @@
           <cpdss-portal-post-discharge-stage
             *ngIf="dischargingInformationData?.postDischargeStageTime && dischargingInformationForm" [editMode]="true"
             [postDischargeStageTime]="dischargingInformationData?.postDischargeStageTime"
-            [form]="dischargingInformationForm" (updatePostDischargeDetails)="onPostDischargeTimeUpdate($event)"></cpdss-portal-post-discharge-stage>
+            [form]="dischargingInformationForm" (updatePostDischargeDetails)="onPostDischargeTimeUpdate($event)">
+          </cpdss-portal-post-discharge-stage>
         </div>
       </div>
     </div>

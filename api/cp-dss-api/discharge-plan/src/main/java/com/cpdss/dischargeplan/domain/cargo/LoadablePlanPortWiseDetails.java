@@ -10,4 +10,6 @@ public class LoadablePlanPortWiseDetails {
   private Long portRotationId;
   private LoadablePatternDetails arrivalCondition;
   private LoadablePatternDetails departureCondition;
+  private Object seaWaterTemperature;
+  private Object ambientTemperature;
 }

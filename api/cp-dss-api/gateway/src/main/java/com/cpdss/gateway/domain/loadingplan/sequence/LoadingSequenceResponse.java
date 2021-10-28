@@ -29,4 +29,5 @@ public class LoadingSequenceResponse {
   private Set<Long> stageTickPositions;
   private List<StabilityParam> stabilityParams;
   private List<CargoStage> cargoStages;
+  private List<EductionOperation> ballastEduction;
 }

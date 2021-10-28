@@ -8,6 +8,7 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
@@ -109,6 +110,8 @@ import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,6 +124,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -198,6 +202,9 @@ public class DischargePlanAlgoService {
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
+
+  @Value("${loadingplan.attachment.rootFolder}")
+  private String rootFolder;
 
   public void buildDischargeInformation(
       DischargeInformationRequest request,
@@ -642,10 +649,6 @@ public class DischargePlanAlgoService {
               .map(
                   var -> {
                     BerthDetails dto = new BerthDetails();
-                    Optional.ofNullable(
-                            this.getBerthNameByPortIdAndBerthId(
-                                var.getDischargingInformation().getPortXid(), var.getBerthXid()))
-                        .ifPresent(dto::setBerthName);
                     Optional.ofNullable(var.getId()).ifPresent(dto::setDischargeBerthId);
                     Optional.ofNullable(var.getDischargingInformation().getId())
                         .ifPresent(dto::setDischargeInfoId);
@@ -664,6 +667,16 @@ public class DischargePlanAlgoService {
                     Optional.ofNullable(var.getIsAirPurge()).ifPresent(dto::setAirPurge);
                     Optional.ofNullable(var.getLineContentDisplacement())
                         .ifPresent(dto::setLineDisplacement);
+
+                    // Call 1 to Port info, set value from berth table
+                    // Setting berth name and ukc
+                    this.getBerthDetailsByPortIdAndBerthId(
+                        var.getDischargingInformation().getPortXid(), var.getBerthXid(), dto);
+
+                    // Call 2 to Port info, set value from port table
+                    if (dto.getUkc() == null) {
+                      this.getPortInfoIntoBerthData(var.getBerthXid(), dto);
+                    }
                     return dto;
                   })
               .collect(Collectors.toList()));
@@ -671,7 +684,7 @@ public class DischargePlanAlgoService {
     return berthDetails;
   }
 
-  private String getBerthNameByPortIdAndBerthId(Long portXid, Long berthXid) {
+  private void getBerthDetailsByPortIdAndBerthId(Long portXid, Long berthXid, BerthDetails bd) {
     try {
       PortInfo.PortIdRequest.Builder idRequest = PortInfo.PortIdRequest.newBuilder();
       PortInfo.BerthInfoResponse response =
@@ -680,17 +693,20 @@ public class DischargePlanAlgoService {
           "Get berth Name ({}) from port service - status {}",
           berthXid,
           response.getResponseStatus().getStatus());
-      if (response.getResponseStatus().getStatus().equals(DischargePlanConstants.SUCCESS)) {
-        return response.getBerthsList().stream()
-            .filter(v -> v.getId() == berthXid)
-            .map(PortInfo.BerthDetail::getBerthName)
-            .findFirst()
-            .get();
+      if (!DischargePlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
+        log.error("Failed to get berth details by Port id - {}", response);
+      }
+      var berthData =
+          response.getBerthsList().stream().filter(v -> v.getId() == berthXid).findFirst();
+      if (berthData.isPresent()) {
+        bd.setBerthName(berthData.get().getBerthName());
+        if (!berthData.get().getUkc().isEmpty()) {
+          bd.setUkc(berthData.get().getUkc());
+        }
       }
     } catch (Exception e) {
-
+      e.printStackTrace();
     }
-    return null;
   }
 
   private void buildOnBoardQuantities(
@@ -902,7 +918,7 @@ public class DischargePlanAlgoService {
       DischargeInformation dischargeInformation,
       String processId,
       DischargingInformationStatus dischargingInformationStatus,
-      int arrivalDepartutre) {
+      Integer arrivalDepartutre) {
     log.info(
         "Creating ALGO status for Loading Information {}, condition Type {}",
         dischargeInformation.getId(),
@@ -915,6 +931,46 @@ public class DischargePlanAlgoService {
     algoStatus.setProcessId(processId);
     algoStatus.setVesselXId(dischargeInformation.getVesselXid());
     dischargingInformationAlgoStatusRepository.save(algoStatus);
+  }
+
+  /**
+   * Saves the Loading Information ALGO Request JSON to DB.
+   *
+   * @param algoRequest
+   * @param loadingInfoId
+   * @throws GenericServiceException
+   */
+  public void saveDischargingInformationRequestJson(
+      DischargeInformationAlgoRequest algoRequest, Long dischargingInfoId)
+      throws GenericServiceException {
+    log.info("Saving Discharging Information ALGO request to Loadable study DB");
+    JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
+    jsonBuilder.setReferenceId(dischargingInfoId);
+    jsonBuilder.setJsonTypeId(DischargePlanConstants.DISCHARGE_INFORMATION_REQUEST_JSON_TYPE_ID);
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/dischargingInformationRequest_"
+                  + dischargingInfoId
+                  + ".json"),
+          algoRequest);
+      jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
+      this.loadableStudyService.saveJson(jsonBuilder.build());
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 
   public void saveDischargingSequenceAndPlan(DischargingPlanSaveRequest request)
@@ -1467,5 +1523,20 @@ public class DischargePlanAlgoService {
     }
     dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
         request.getLoadableStudystatusId(), request.getProcesssId());
+  }
+
+  /** If Berth table don't have UKC data, then it will get data from Port */
+  private void getPortInfoIntoBerthData(Long berthId, BerthDetails berthDetails) {
+    PortInfo.LoadingAlgoBerthData portReply =
+        this.portInfoServiceBlockingStub.getLoadingPlanBerthData(
+            PortInfo.BerthIdsRequest.newBuilder().addBerthIds(berthId).build());
+    if (portReply != null && portReply.getResponseStatus().getStatus().equals("SUCCESS")) {
+      if (!portReply.getPortUKC().isEmpty()) { // If berth UKC not available
+        berthDetails.setUkc(portReply.getPortUKC());
+        log.info("Setting UKC from port Info Table");
+      } else {
+        log.error("Setting UKC from port Info Table - Failed, Data - {}", portReply);
+      }
+    }
   }
 }

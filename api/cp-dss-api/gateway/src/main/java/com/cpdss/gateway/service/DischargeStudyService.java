@@ -53,6 +53,7 @@ import com.cpdss.gateway.domain.PortWiseCargoResponse;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -197,7 +198,7 @@ public class DischargeStudyService {
       LoadingInformationSynopticalReply grpcReply, DischargeStudyResponse dischargeStudyResponse) {
     ModelMapper modelMapper = new ModelMapper();
 
-    dischargeStudyResponse.setBillOfLaddings(new ArrayList<>());
+    ArrayList<BillOfLadding> billOfLaddingValue = new ArrayList<>();
     grpcReply
         .getBillOfLaddingList()
         .forEach(
@@ -205,8 +206,10 @@ public class DischargeStudyService {
               BillOfLadding blfigure = new BillOfLadding();
               blfigure =
                   modelMapper.map(billOfLadding, com.cpdss.gateway.domain.BillOfLadding.class);
-              dischargeStudyResponse.getBillOfLaddings().add(blfigure);
+              billOfLaddingValue.add(blfigure);
             });
+    billOfLaddingValue.sort(Comparator.comparing(BillOfLadding::getCargoAbbrevation));
+    dischargeStudyResponse.setBillOfLaddings(billOfLaddingValue);
     return dischargeStudyResponse;
   }
 
@@ -403,39 +406,39 @@ public class DischargeStudyService {
   public DischargeStudyCargoResponse getDischargeStudyCargoByVoyage(
       Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
       throws GenericServiceException {
-	  DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
-	    response.setDischargeStudyId(dischargeStudyId);
-	    response.setPortList(new ArrayList<>());
-  log.info(
-      "Inside getDischargeStudyCargoByVoyage gateway service with correlationId : "
-          + correlationId);
-  LoadableStudy.PortRotationRequest portRotationRequest =
-      LoadableStudy.PortRotationRequest.newBuilder().setLoadableStudyId(dischargeStudyId).build();
-  LoadableStudy.PortRotationReply portRotationReply =
-      loadableStudyService.getPortRotation(portRotationRequest);
-  if (SUCCESS.equals(portRotationReply.getResponseStatus().getStatus())) {
-      
-  LoadableStudy.CargoNominationRequest cargoNominationRequest =
-      LoadableStudy.CargoNominationRequest.newBuilder()
-          .setLoadableStudyId(dischargeStudyId)
-          .build();
-  LoadableStudy.CargoNominationReply cargoNominationReply =
-      loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
-  if (!SUCCESS.equals(cargoNominationReply.getResponseStatus().getStatus())) {
-    throw new GenericServiceException(
-        "failed to get Port Rotation",
-        cargoNominationReply.getResponseStatus().getCode(),
-        HttpStatusCode.valueOf(
-            Integer.valueOf(cargoNominationReply.getResponseStatus().getCode())));
+    DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
+    response.setDischargeStudyId(dischargeStudyId);
+    response.setPortList(new ArrayList<>());
+    log.info(
+        "Inside getDischargeStudyCargoByVoyage gateway service with correlationId : "
+            + correlationId);
+    LoadableStudy.PortRotationRequest portRotationRequest =
+        LoadableStudy.PortRotationRequest.newBuilder().setLoadableStudyId(dischargeStudyId).build();
+    LoadableStudy.PortRotationReply portRotationReply =
+        loadableStudyService.getPortRotation(portRotationRequest);
+    if (SUCCESS.equals(portRotationReply.getResponseStatus().getStatus())) {
+
+      LoadableStudy.CargoNominationRequest cargoNominationRequest =
+          LoadableStudy.CargoNominationRequest.newBuilder()
+              .setLoadableStudyId(dischargeStudyId)
+              .build();
+      LoadableStudy.CargoNominationReply cargoNominationReply =
+          loadableStudyServiceBlockingStub.getCargoNominationById(cargoNominationRequest);
+      if (!SUCCESS.equals(cargoNominationReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "failed to get Port Rotation",
+            cargoNominationReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(
+                Integer.valueOf(cargoNominationReply.getResponseStatus().getCode())));
+      }
+
+      response.setLoadableQuantity(new BigDecimal(portRotationReply.getLoadableQuantity()));
+      buildDischargeStudyCargoResponse(response, portRotationReply, cargoNominationReply);
+    }
+    response.setResponseStatus(
+        new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
   }
-  
-  response.setLoadableQuantity(new BigDecimal(portRotationReply.getLoadableQuantity()));
-  buildDischargeStudyCargoResponse(response, portRotationReply, cargoNominationReply);
-  }
-  response.setResponseStatus(
-      new CommonSuccessResponse(valueOf(HttpStatus.OK.value()), correlationId));
-  return response;
-}
 
   private void buildDischargeStudyCargoResponse(
       DischargeStudyCargoResponse response,
@@ -541,13 +544,14 @@ public class DischargeStudyService {
                       : new BigDecimal(0));
               cargoNominations.add(cargoNomination);
             });
+    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
     portRotation.setCargoNominationList(cargoNominations);
   }
 
   public PortWiseCargoResponse getCargosByPorts(Long dischargeStudyId, HttpHeaders headers)
       throws GenericServiceException {
-	  PortWiseCargoResponse response = new PortWiseCargoResponse();
-	    response.setPortWiseCorges(new ArrayList<>());
+    PortWiseCargoResponse response = new PortWiseCargoResponse();
+    response.setPortWiseCorges(new ArrayList<>());
     com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest.Builder
         request =
             com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest
@@ -556,28 +560,28 @@ public class DischargeStudyService {
     DishargeStudyCargoReply dischargeStudyPortWiseCargos =
         dischargeStudyOperationServiceBlockingStub.getDischargeStudyPortWiseCargos(request.build());
     if (SUCCESS.equals(dischargeStudyPortWiseCargos.getResponseStatus().getStatus())) {
-         
-    List<PortWiseCargo> portWiseCargos = new ArrayList<>();
 
-    dischargeStudyPortWiseCargos.getPortCargosList().stream()
-        .forEach(
-            portCargo -> {
-              PortWiseCargo portWiseResponse = new PortWiseCargo();
-              List<Cargo> cargos = new ArrayList<>();
-              List<DishargeStudyCargoDetail> cargosList = portCargo.getCargosList();
-              portWiseResponse.setPortId(portCargo.getPortId());
-              cargosList.forEach(
-                  detail -> {
-                    Cargo portWisecargo = new Cargo();
-                    portWisecargo.setAbbreviation(detail.getAbbreviation());
-                    portWisecargo.setId(detail.getId());
-                    portWisecargo.setName(detail.getCrudeType());
-                    cargos.add(portWisecargo);
-                  });
-              portWiseResponse.setCargos(cargos);
-              portWiseCargos.add(portWiseResponse);
-            });
-    response.setPortWiseCorges(portWiseCargos);
+      List<PortWiseCargo> portWiseCargos = new ArrayList<>();
+
+      dischargeStudyPortWiseCargos.getPortCargosList().stream()
+          .forEach(
+              portCargo -> {
+                PortWiseCargo portWiseResponse = new PortWiseCargo();
+                List<Cargo> cargos = new ArrayList<>();
+                List<DishargeStudyCargoDetail> cargosList = portCargo.getCargosList();
+                portWiseResponse.setPortId(portCargo.getPortId());
+                cargosList.forEach(
+                    detail -> {
+                      Cargo portWisecargo = new Cargo();
+                      portWisecargo.setAbbreviation(detail.getAbbreviation());
+                      portWisecargo.setId(detail.getId());
+                      portWisecargo.setName(detail.getCrudeType());
+                      cargos.add(portWisecargo);
+                    });
+                portWiseResponse.setCargos(cargos);
+                portWiseCargos.add(portWiseResponse);
+              });
+      response.setPortWiseCorges(portWiseCargos);
     }
     response.setResponseStatus(
         new CommonSuccessResponse(

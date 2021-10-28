@@ -197,16 +197,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.notificationSubscription.unsubscribe();
     }
   }
+
   /**
- * Get page permission
- *
- * @memberof NavbarComponent
- */
+   * Get page permission
+   *
+   * @param {*} menuList
+   * @memberof NavbarComponent
+   */
   getPagePermission(menuList) {
     this.menuList = []
     let list = [...menuList];
     const currentPage = this.router.url.split('business/')[1];
-    if (this.isShore && currentPage === 'fleet') {
+    if (this.isShore && (currentPage === 'fleet' || (currentPage.includes('admin') && localStorage.getItem('vesselId') === null))) {
       list = menuList.filter(menu => menu.isShoreActive);
     }
     list?.map((menuItem: IMenuItem, index) => {
