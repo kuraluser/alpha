@@ -10,4 +10,5 @@ public class LoadablePatternDetails {
   private List<LoadablePlanStowageDetails> loadablePlanStowageDetails;
   private List<LoadablePlanBallastDetails> loadablePlanBallastDetails;
   private List<LoadablePlanStowageDetails> loadablePlanCommingleDetails;
+  private StabilityParameter stabilityParameter;
 }

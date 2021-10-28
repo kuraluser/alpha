@@ -16,4 +16,6 @@ public class StabilityParameter {
   private String bm;
   private String sf;
   private String draft;
+  private String freeboard;
+  private String manifoldHeight;
 }

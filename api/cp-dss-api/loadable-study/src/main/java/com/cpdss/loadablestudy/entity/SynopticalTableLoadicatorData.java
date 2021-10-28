@@ -81,4 +81,10 @@ public class SynopticalTableLoadicatorData extends EntityDoc {
 
   @Column(name = "shearing_force")
   private BigDecimal shearingForce;
+
+  @Column(name = "freeboard")
+  private BigDecimal freeboard;
+
+  @Column(name = "manifold_height")
+  private BigDecimal manifoldHeight;
 }

@@ -1,10 +1,8 @@
 /* Licensed at AlphaOri Technologies */
-package com.cpdss.gateway.domain;
+package com.cpdss.loadingplan.domain.algo;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
-/** @Author jerin.g */
 @Data
 public class StabilityParameter {
   private String forwardDraft;
@@ -14,10 +12,9 @@ public class StabilityParameter {
   private String heel;
   private String bendinMoment;
   private String shearForce;
+  private String bm;
+  private String sf;
+  private String draft;
   private String freeboard;
   private String manifoldHeight;
-
-  // DS fields
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  private String airDraft;
 }

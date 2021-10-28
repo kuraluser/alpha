@@ -69,6 +69,7 @@ public class LoadableQuantityCargoDetails {
   private String cargoNominationQuantity;
   private String orderQuantity;
   private String maxLoadingRate = BigDecimal.ZERO.toString();
+  private String loadingRateM3Hr;
 
   // additional fields in DS
   private String dischargeMT;
