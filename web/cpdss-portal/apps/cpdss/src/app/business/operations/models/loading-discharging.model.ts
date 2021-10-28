@@ -56,46 +56,46 @@ export interface IDischargingInformationResponse {
   dischargeCommingledCargoSeparately?: boolean;
 }
 
-  /**
-   * Interface for discharging info post data
-   *
-   * @export
-   * @interface IDischargingInformationPostData
-   */
-  export interface IDischargingInformationPostData {
-    dischargeDetails: ILoadingDischargingDetails;
-    dischargeRates: IDischargingRates;
-    dischargeStages: ILoadingDischargingStages;
-    cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
-    dischargeInfoId: number;
-    synopticTableId: number;
-    isDischargeInfoComplete: boolean;
-    isDischargeInstructionsComplete: boolean,
-    isDischargeSequenceGenerated: boolean,
-    isDischargePlanGenerated: boolean
-    cowPlan: ICOWDetailsResponse;
-    postDischargeStageTime: IPostDischargeStageTime;
-    loadedCargos: ICargo[];
-    dischargeStudyName: string;
-    dischargeSlopTanksFirst?: boolean;
-    dischargeCommingledCargoSeparately?: boolean;
-    dischargingMachineries?: Array<IDischargingMachinesInUse>;
-    dischargingBerths: IBerth[];
-    dischargingDelays: ILoadingDischargingDelays[];
-    cargoToBeDischarged: ICargoToBeDischarged;
-  }
+/**
+ * Interface for discharging info post data
+ *
+ * @export
+ * @interface IDischargingInformationPostData
+ */
+export interface IDischargingInformationPostData {
+  dischargeDetails: ILoadingDischargingDetails;
+  dischargeRates: IDischargingRates;
+  dischargeStages: ILoadingDischargingStages;
+  cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
+  dischargeInfoId: number;
+  synopticTableId: number;
+  isDischargeInfoComplete: boolean;
+  isDischargeInstructionsComplete: boolean,
+  isDischargeSequenceGenerated: boolean,
+  isDischargePlanGenerated: boolean
+  cowPlan: ICOWDetailsResponse;
+  postDischargeStageTime: IPostDischargeStageTime;
+  loadedCargos: ICargo[];
+  dischargeStudyName: string;
+  dischargeSlopTanksFirst?: boolean;
+  dischargeCommingledCargoSeparately?: boolean;
+  dischargingMachineries?: Array<IDischargingMachinesInUse>;
+  dischargingBerths: IBerth[];
+  dischargingDelays: ILoadingDischargingDelays[];
+  cargoToBeDischarged: ICargoToBeDischarged;
+}
 
-  /**
-   * Interface for cargo to be discharged details
-   *
-   * @export
-   * @interface ICargoToBeDischarged
-   */
-  export interface ICargoToBeDischarged {
-    dischargeSlopTanksFirst?: boolean;
-    dischargeCommingledCargoSeparately?: boolean;
-    dischargeQuantityCargoDetails?: ILoadedCargoResponse[];
-  }
+/**
+ * Interface for cargo to be discharged details
+ *
+ * @export
+ * @interface ICargoToBeDischarged
+ */
+export interface ICargoToBeDischarged {
+  dischargeSlopTanksFirst?: boolean;
+  dischargeCommingledCargoSeparately?: boolean;
+  dischargeQuantityCargoDetails?: ILoadedCargoResponse[];
+}
 
 
 /**
@@ -826,6 +826,7 @@ export interface IPlanCommingleCargo {
   temperature: number;
   ullage: number;
   conditionType?: number;
+  valueType?: number;
 }
 
 /**
@@ -949,6 +950,7 @@ export interface ITankDetailsValueObject {
   sg?: number;
   percentageFilled?: number | string;
   fullCapacityCubm?: null | string;
+  isCommingleCargo?: boolean;
 }
 
 /**
@@ -974,7 +976,41 @@ export interface IUllageSaveDetails {
   billOfLandingListRemove: IBillOfLandingList[];
   ballastUpdateList: IBallastUpdateList[];
   robUpdateList: IRobUpdateList[];
-  isValidate: boolean
+  isValidate: boolean,
+  commingleUpdateList: IUllageCommingleList[];
+}
+
+/**
+* Interface for ullage commingle data
+*
+* @export
+* @interface IUllageCommingleList
+*/
+export interface IUllageCommingleList {
+  id: number;
+  tankId: number;
+  quantityMT: number;
+  quantityM3: number | string;
+  api: number;
+  temperature: number;
+  ullage: number;
+  cargoNomination1Id: number;
+  cargoNomination2Id: number;
+  cargo1Id: number;
+  cargo2Id: number;
+  colorCode: string;
+  abbreviation: string;
+  arrival_departutre: number;
+  actual_planned: number;
+  loadingInformationId: number;
+  fillingPercentage: number;
+  isUpdate: boolean;
+  quantity1MT: number;
+  quantity2MT: number;
+  quantity1M3: number | string;
+  quantity2M3: number | string;
+  ullage1: number;
+  ullage2: number;
 }
 
 /**
@@ -1011,14 +1047,14 @@ export interface IUllageUpdList {
   loadingInformationId?: number | string;
   dischargingInformationId?: number | string;
   tankId: number;
-  temperature: number;
-  correctedUllage: number;
-  quantity: number;
+  temperature: number | string;
+  correctedUllage: number | string;
+  quantity: number | string;
   fillingPercentage: number | string;
   cargoNominationId: number | string;
   arrival_departutre: number | string;
   actual_planned: number;
-  correction_factor: number;
+  correction_factor: number | string;
   api: number | string;
   isUpdate: boolean;
   port_xid?: string | number;
@@ -1288,7 +1324,8 @@ export enum ULLAGE_STATUS_TEXT {
   'ULLAGE_UPDATE_PLAN_INPROGRESS' = 12,
   'ULLAGE_UPDATE_PLAN_SUCCESS' = 13,
   'ULLAGE_UPDATE_PLAN_VALIDATION_FAILED' = 14,
-  'ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING' = 16
+  'ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING' = 16,
+  'ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS' = 17
 }
 
 /**
@@ -1302,7 +1339,8 @@ export enum ULLAGE_STATUS_VALUE {
   'IN_PROGRESS' = 12,
   'SUCCESS' = 13,
   'ERROR' = 14,
-  'VERIFICATION_PENDING' = 16
+  'VERIFICATION_PENDING' = 16,
+  'LOADICATOR_IN_PROGRESS' = 17
 }
 
 /**
