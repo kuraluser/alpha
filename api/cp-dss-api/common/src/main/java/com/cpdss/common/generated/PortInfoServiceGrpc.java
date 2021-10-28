@@ -455,6 +455,48 @@ public final class PortInfoServiceGrpc {
     return getGetLoadingPlanBerthDataMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.google.protobuf.Empty, com.cpdss.common.generated.PortInfo.CountryReply>
+      getGetAllCountriesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAllCountries",
+      requestType = com.google.protobuf.Empty.class,
+      responseType = com.cpdss.common.generated.PortInfo.CountryReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.protobuf.Empty, com.cpdss.common.generated.PortInfo.CountryReply>
+      getGetAllCountriesMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.protobuf.Empty, com.cpdss.common.generated.PortInfo.CountryReply>
+        getGetAllCountriesMethod;
+    if ((getGetAllCountriesMethod = PortInfoServiceGrpc.getGetAllCountriesMethod) == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetAllCountriesMethod = PortInfoServiceGrpc.getGetAllCountriesMethod) == null) {
+          PortInfoServiceGrpc.getGetAllCountriesMethod =
+              getGetAllCountriesMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.protobuf.Empty, com.cpdss.common.generated.PortInfo.CountryReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAllCountries"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.protobuf.Empty.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CountryReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetAllCountries"))
+                      .build();
+        }
+      }
+    }
+    return getGetAllCountriesMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static PortInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub> factory =
@@ -580,6 +622,15 @@ public final class PortInfoServiceGrpc {
           getGetLoadingPlanBerthDataMethod(), responseObserver);
     }
 
+    /** */
+    public void getAllCountries(
+        com.google.protobuf.Empty request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CountryReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetAllCountriesMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -645,6 +696,12 @@ public final class PortInfoServiceGrpc {
                       com.cpdss.common.generated.PortInfo.BerthIdsRequest,
                       com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData>(
                       this, METHODID_GET_LOADING_PLAN_BERTH_DATA)))
+          .addMethod(
+              getGetAllCountriesMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.google.protobuf.Empty, com.cpdss.common.generated.PortInfo.CountryReply>(
+                      this, METHODID_GET_ALL_COUNTRIES)))
           .build();
     }
   }
@@ -759,6 +816,17 @@ public final class PortInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getAllCountries(
+        com.google.protobuf.Empty request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CountryReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAllCountriesMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -835,6 +903,13 @@ public final class PortInfoServiceGrpc {
         com.cpdss.common.generated.PortInfo.BerthIdsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingPlanBerthDataMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.CountryReply getAllCountries(
+        com.google.protobuf.Empty request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAllCountriesMethod(), getCallOptions(), request);
     }
   }
 
@@ -926,6 +1001,14 @@ public final class PortInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadingPlanBerthDataMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.CountryReply>
+        getAllCountries(com.google.protobuf.Empty request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAllCountriesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_PORT_INFO = 0;
@@ -937,6 +1020,7 @@ public final class PortInfoServiceGrpc {
   private static final int METHODID_GET_BERTH_DETAILS_BY_PORT_ID = 6;
   private static final int METHODID_GET_CARGO_INFO_BY_PORT_IDS = 7;
   private static final int METHODID_GET_LOADING_PLAN_BERTH_DATA = 8;
+  private static final int METHODID_GET_ALL_COUNTRIES = 9;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1009,6 +1093,12 @@ public final class PortInfoServiceGrpc {
               (com.cpdss.common.generated.PortInfo.BerthIdsRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.PortInfo.LoadingAlgoBerthData>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ALL_COUNTRIES:
+          serviceImpl.getAllCountries(
+              (com.google.protobuf.Empty) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CountryReply>)
                   responseObserver);
           break;
         default:
@@ -1084,6 +1174,7 @@ public final class PortInfoServiceGrpc {
                       .addMethod(getGetBerthDetailsByPortIdMethod())
                       .addMethod(getGetCargoInfoByPortIdsMethod())
                       .addMethod(getGetLoadingPlanBerthDataMethod())
+                      .addMethod(getGetAllCountriesMethod())
                       .build();
         }
       }
