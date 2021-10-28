@@ -12,6 +12,7 @@ import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest;
+import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
@@ -365,24 +366,26 @@ public class CommunicationService {
    * Method to process Algo and update status
    *
    * @param loadableStudyEntity loadable study object
+   * @param messageId communication messageId value
    */
-  private void processAlgo(final LoadableStudy loadableStudyEntity) {
+  private void processAlgo(final LoadableStudy loadableStudyEntity, final String messageId) {
 
     // Get saved request JSON
-    Object algoRequestJson =
+    JsonData algoRequestJson =
         jsonDataService.getJsonData(
             loadableStudyEntity.getId(), LoadableStudiesConstants.LOADABLE_STUDY_REQUEST);
 
     // Call Algo and update response
     AlgoResponse algoResponse =
-        restTemplate.postForObject(loadableStudyUrl, algoRequestJson, AlgoResponse.class);
+        restTemplate.postForObject(
+            loadableStudyUrl, algoRequestJson.getJsonData(), AlgoResponse.class);
     log.info("LS Id: {}, Algo response: {}", loadableStudyEntity.getId(), algoResponse);
 
     loadablePatternService.updateProcessIdForLoadableStudy(
         Objects.requireNonNull(algoResponse).getProcessId(),
         loadableStudyEntity,
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
-        "",
+        messageId,
         !isShip());
 
     loadableStudyRepository.updateLoadableStudyStatus(
@@ -472,7 +475,7 @@ public class CommunicationService {
           loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
               CommunicationStatus.TIME_OUT.getId(), loadableStudy.getId());
           // Call fallback mechanism on timeout
-          processAlgo(loadableStudy);
+          processAlgo(loadableStudy, communicationStatusRow.getMessageUUID());
 
           loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
               CommunicationStatus.RETRY_AT_SOURCE.getId(), loadableStudy.getId());

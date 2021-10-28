@@ -234,8 +234,10 @@ public class EnvoyWriterService {
     statusCheckBuilder.setStatusCode(statusCheckResponse.getStatusCode());
     statusCheckBuilder.setMessage(statusCheckResponse.getMessage());
     statusCheckBuilder.setMessageId(statusCheckResponse.getMessageId());
-    statusCheckBuilder.setEventUploadStatus(statusCheckResponse.getEventUploadStatus());
-    statusCheckBuilder.setEventDownloadStatus(statusCheckResponse.getEventDownloadStatus());
+    Optional.ofNullable(statusCheckResponse.getEventUploadStatus())
+        .ifPresent(statusCheckBuilder::setEventUploadStatus);
+    Optional.ofNullable(statusCheckResponse.getEventDownloadStatus())
+        .ifPresent(statusCheckBuilder::setEventDownloadStatus);
     statusCheckBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 
