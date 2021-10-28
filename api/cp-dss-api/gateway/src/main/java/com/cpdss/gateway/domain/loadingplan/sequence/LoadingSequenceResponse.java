@@ -18,12 +18,14 @@ public class LoadingSequenceResponse {
   private List<Ballast> ballasts;
   private BallastPump gravity;
   private List<BallastPump> ballastPumps;
+  private List<BallastPump> cargoPumps;
   private List<CargoLoadingRate> cargoLoadingRates;
   private List<CargoLoadingRate> cargoDischargingRates;
   private List<FlowRate> flowRates;
   private List<TankCategory> cargoTankCategories;
   private List<TankCategory> ballastTankCategories;
   private List<PumpCategory> ballastPumpCategories;
+  private List<PumpCategory> cargoPumpCategories;
   private Set<Long> stageTickPositions;
   private List<StabilityParam> stabilityParams;
   private List<CargoStage> cargoStages;

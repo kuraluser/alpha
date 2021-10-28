@@ -177,7 +177,6 @@ public class DischargeStudyController {
       log.info("saveDischargePatterns : {}", getClientIp());
       log.info(
           "saveDischargePatterns API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
-      ObjectMapper objectMapper = new ObjectMapper();
       LoadablePlanRequest dischargePlanRequest =
           new ObjectMapper()
               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

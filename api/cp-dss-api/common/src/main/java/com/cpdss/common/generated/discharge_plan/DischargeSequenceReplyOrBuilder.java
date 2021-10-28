@@ -50,27 +50,27 @@ public interface DischargeSequenceReplyOrBuilder extends
   int getInterval();
 
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  java.util.List<com.cpdss.common.generated.discharge_plan.DischargeSequence> 
+  java.util.List<com.cpdss.common.generated.discharge_plan.DischargingSequence> 
       getDischargeSequencesList();
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  com.cpdss.common.generated.discharge_plan.DischargeSequence getDischargeSequences(int index);
+  com.cpdss.common.generated.discharge_plan.DischargingSequence getDischargeSequences(int index);
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
   int getDischargeSequencesCount();
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  java.util.List<? extends com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder> 
+  java.util.List<? extends com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder> 
       getDischargeSequencesOrBuilderList();
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder getDischargeSequencesOrBuilder(
+  com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder getDischargeSequencesOrBuilder(
       int index);
 
   /**

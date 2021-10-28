@@ -6,7 +6,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.DischargePlanPortWiseDetails;
-import com.cpdss.common.generated.discharge_plan.DischargeSequence;
+import com.cpdss.common.generated.discharge_plan.DischargingSequence;
 import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
 import com.cpdss.common.generated.discharge_plan.DischargingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
@@ -28,7 +28,6 @@ import com.cpdss.dischargeplan.entity.DischargingPlanPortWiseDetails;
 import com.cpdss.dischargeplan.entity.DischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.DischargingPlanStowageDetails;
-import com.cpdss.dischargeplan.entity.DischargingSequence;
 import com.cpdss.dischargeplan.entity.DischargingSequenceStabilityParameters;
 import com.cpdss.dischargeplan.repository.BallastOperationRepository;
 import com.cpdss.dischargeplan.repository.CargoDischargingRateRepository;
@@ -109,7 +108,7 @@ public class DischargingSequenceService {
 		builder.setPortId(dischargingInfoOpt.get().getPortXid());
 		builder.setDischargePatternId(dischargingInfoOpt.get().getDischargingPatternXid());
 		builder.setPortRotationId(dischargingInfoOpt.get().getPortRotationXid());
-		List<DischargingSequence> dischargingSequences = dischargingSequenceRepository
+		List<com.cpdss.dischargeplan.entity.DischargingSequence> dischargingSequences = dischargingSequenceRepository
 				.findByDischargeInformationAndIsActiveOrderBySequenceNumber(dischargingInfoOpt.get(), true);
 		buildDischargingSequences(dischargingSequences, builder);
 
@@ -149,14 +148,14 @@ public class DischargingSequenceService {
 		return reply.getPortRotationDetail().getEta();
 	}
 
-	private void buildDischargingSequences(List<DischargingSequence> dischargeSequences,
+	private void buildDischargingSequences(List<com.cpdss.dischargeplan.entity.DischargingSequence> dischargeSequences,
 			DischargeSequenceReply.Builder builder) {
 		dischargeSequences.forEach(dischargeSequence -> {
-			DischargeSequence.Builder sequenceBuilder = DischargeSequence.newBuilder();
+			com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder sequenceBuilder = com.cpdss.common.generated.discharge_plan.DischargingSequence.newBuilder();
 			Optional.ofNullable(dischargeSequence.getCargoDischargingRate1())
-					.ifPresent(rate1 -> sequenceBuilder.setCargoLoadingRate1(String.valueOf(rate1)));
+					.ifPresent(rate1 -> sequenceBuilder.setCargoDischargingRate1(String.valueOf(rate1)));
 			Optional.ofNullable(dischargeSequence.getCargoDischargingRate2())
-					.ifPresent(rate2 -> sequenceBuilder.setCargoLoadingRate2(String.valueOf(rate2)));
+					.ifPresent(rate2 -> sequenceBuilder.setCargoDischargingRate2(String.valueOf(rate2)));
 			Optional.ofNullable(dischargeSequence.getCargoNominationXId())
 					.ifPresent(sequenceBuilder::setCargoNominationId);
 			Optional.ofNullable(dischargeSequence.getEndTime()).ifPresent(sequenceBuilder::setEndTime);
@@ -174,6 +173,7 @@ public class DischargingSequenceService {
 					.findByDischargingSequenceAndIsActiveTrueOrderById(dischargeSequence);
 			buildCargoLoadingRates(sequenceBuilder, cargoDischargeRates);
 
+			//Includes both ballast and cargo pump details here
 			List<BallastOperation> ballastOperations = ballastOperationRepository
 					.findByDischargingSequenceAndIsActiveTrueOrderById(dischargeSequence);
 			buildBallastOperations(sequenceBuilder, ballastOperations);
@@ -185,7 +185,7 @@ public class DischargingSequenceService {
 		});
 	}
 
-	private void buildBallastOperations(DischargeSequence.Builder sequenceBuilder,
+	private void buildBallastOperations(DischargingSequence.Builder sequenceBuilder,
 			List<BallastOperation> ballastOperations) {
 		log.info("Populating Ballast Operations");
 		ballastOperations.forEach(ballastOp -> {
@@ -201,7 +201,7 @@ public class DischargingSequenceService {
 		});
 	}
 
-	private void buildLoadingPlanPortWiseDetails(DischargeSequence.Builder sequenceBuilder,
+	private void buildLoadingPlanPortWiseDetails(DischargingSequence.Builder sequenceBuilder,
 			List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails) {
 		log.info("Populating Portwise details");
 		dischargingPlanPortWiseDetails.forEach(portWiseDetails -> {
@@ -331,7 +331,7 @@ public class DischargingSequenceService {
 		});
 	}
 
-	private void buildCargoLoadingRates(DischargeSequence.Builder sequenceBuilder,
+	private void buildCargoLoadingRates(DischargingSequence.Builder sequenceBuilder,
 			List<CargoDischargingRate> cargoLoadingRates) {
 		cargoLoadingRates.forEach(rate -> {
 			DischargingRate.Builder builder = DischargingRate.newBuilder();
@@ -344,7 +344,7 @@ public class DischargingSequenceService {
 		});
 	}
 
-	private void buildDeBallastingRates(DischargeSequence.Builder sequenceBuilder,
+	private void buildDeBallastingRates(DischargingSequence.Builder sequenceBuilder,
 			List<DeballastingRate> deballastingRates) {
 		deballastingRates.forEach(rate -> {
 			DeBallastingRate.Builder builder = DeBallastingRate.newBuilder();

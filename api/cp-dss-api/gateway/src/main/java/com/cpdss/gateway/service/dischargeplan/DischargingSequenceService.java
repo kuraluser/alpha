@@ -21,7 +21,6 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.DischargePlanPortWiseDetails;
-import com.cpdss.common.generated.discharge_plan.DischargeSequence;
 import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest.Builder;
 import com.cpdss.common.generated.discharge_plan.DischargingRate;
@@ -55,6 +54,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.Pump;
 import com.cpdss.gateway.domain.loadingplan.sequence.PumpCategory;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,9 +83,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+/**
+ * @author sanalkumar.k
+ *
+ */
 @Slf4j
 @Service
 public class DischargingSequenceService {
+
+	private final Long cargoPumpType = 1L;
 
 	@GrpcClient("vesselInfoService")
 	private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -95,9 +101,12 @@ public class DischargingSequenceService {
 
 	@GrpcClient("portInfoService")
 	private PortInfoServiceBlockingStub portInfoGrpcService;
-	
+
 	@Autowired
 	LoadingSequenceService loadingSequenceService;
+
+	@Autowired
+	private LoadingPlanGrpcService loadingPlanGrpcService;
 
 	/**
 	 * @param dischargingPlanAlgoRequest
@@ -507,12 +516,14 @@ public class DischargingSequenceService {
 				.map(sequence -> sequence.getCargoNominationId()).collect(Collectors.toSet());
 		Map<Long, CargoNominationDetail> cargoNomDetails = this.getCargoNominationDetails(cargoNominationIds);
 
+		// Get ballast color details
 		List<LoadablePlanBallastDetails> ballastDetails = new ArrayList<>();
-		ballastDetails.addAll(dischargePlanGrpcService.fetchLoadablePlanBallastDetails(reply.getDischargePatternId(),
+		ballastDetails.addAll(loadingPlanGrpcService.fetchLoadablePlanBallastDetails(reply.getDischargePatternId(),
 				reply.getPortRotationId()));
+
 		List<Cargo> cargos = new ArrayList<Cargo>();
 		List<Ballast> ballasts = new ArrayList<Ballast>();
-		List<BallastPump> ballastPumps = new ArrayList<BallastPump>();
+		List<BallastPump> allPumps = new ArrayList<BallastPump>();
 		List<BallastPump> gravityList = new ArrayList<BallastPump>();
 		BallastPump gravity = new BallastPump();
 		List<CargoLoadingRate> cargoDischargeRates = new ArrayList<>();
@@ -546,7 +557,7 @@ public class DischargingSequenceService {
 		AtomicInteger stageNumber = new AtomicInteger();
 
 		log.info("Populating Discharging Sequences");
-		for (DischargeSequence dischargeSeq : reply.getDischargeSequencesList()) {
+		for (DischargingSequence dischargeSeq : reply.getDischargeSequencesList()) {
 			if (dischargeSeq.getStageName().equalsIgnoreCase("initialCondition")) {
 				start = dischargeSeq.getStartTime();
 			}
@@ -599,19 +610,20 @@ public class DischargingSequenceService {
 			Integer loadEnd = temp - (temp % (reply.getInterval() * 60)) + (reply.getInterval() * 60);
 			response.setMaxXAxisValue(portEta + (loadEnd * 60 * 1000));
 			response.setInterval(reply.getInterval());
-			// Adding cargo loading rates
-			this.buildCargoLoadingRates(dischargeSeq, portEta, stageTickPositions, cargoDischargeRates);
+			// Adding cargo loading rates TODO
+			this.buildCargoDischargeRates(dischargeSeq, portEta, stageTickPositions, cargoDischargeRates);
 
-			// Adding ballast pumps
+			// Getting all types of pump details in ballast pump list
 			dischargeSeq.getBallastOperationsList().forEach(operation -> {
-				BallastPump ballastPump = new BallastPump();
-				buildBallastPump(operation, portEta, ballastPump);
-				if (ballastPump.getPumpId() == 0L) {
-					gravityList.add(ballastPump);
+				BallastPump pump = new BallastPump();
+				buildBallastPump(operation, portEta, pump);
+				if (pump.getPumpId() == 0L) {
+					gravityList.add(pump);
 				} else {
-					ballastPumps.add(ballastPump);
+					allPumps.add(pump);
 				}
 			});
+
 			dischargeRates.addAll(dischargeSeq.getDischargingRatesList());
 		}
 
@@ -622,16 +634,18 @@ public class DischargingSequenceService {
 			gravity.setStart(gravityList.get(0).getStart());
 			gravity.setEnd(gravityList.get(gravityList.size() - 1).getEnd());
 		}
+
+		// Re using some methods in loading sequence here
 		loadingSequenceService.updateCargoLoadingRateIntervals(cargoDischargeRates, stageTickPositions);
 		this.buildStabilityParamSequence(reply, portEta, stabilityParams);
 		this.buildFlowRates(dischargeRates, vesselTankMap, portEta, response);
-		loadingSequenceService.buildBallastPumpCategories(vesselId, response, ballastPumps);
+		//Building cargo and ballast pumps details
+		this.buildPumpDetails(vesselId, response, allPumps);
 		loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories);
 		loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
 
 		response.setCargos(cargos);
 		response.setBallasts(ballasts);
-		response.setBallastPumps(ballastPumps);
 		response.setGravity(gravity);
 		response.setCargoDischargingRates(cargoDischargeRates);
 		response.setStageTickPositions(stageTickPositions);
@@ -645,10 +659,50 @@ public class DischargingSequenceService {
 		response.setCargoStages(cargoStages);
 
 	}
-	
 
-	private void buildFlowRates(List<DischargingRate> dischargingRate, Map<Long, VesselTankDetail> vesselTankMap, Long portEta,
-			LoadingSequenceResponse response) {
+	/**
+	 * Method to segregate different pumps and categories
+	 * 
+	 * @param vesselId
+	 * @param response
+	 * @param ballastPumps
+	 */
+	private void buildPumpDetails(Long vesselId, LoadingSequenceResponse response, List<BallastPump> ballastPumps) {
+		List<PumpCategory> ballastPumpCategories = new ArrayList<>();
+		List<PumpCategory> cargoPumpCategories = new ArrayList<>();
+		log.info("Populating ballast pumps and categories");
+		VesselIdRequest.Builder builder = VesselIdRequest.newBuilder();
+		builder.setVesselId(vesselId);
+		Set<Long> usedPumpIds = ballastPumps.stream().map(pump -> pump.getPumpId()).collect(Collectors.toSet());
+		VesselPumpsResponse pumpsResponse = vesselInfoGrpcService.getVesselPumpsByVesselId(builder.build());
+		if (pumpsResponse.getResponseStatus().getStatus().equals(GatewayConstants.SUCCESS)) {
+			pumpsResponse.getVesselPumpList().stream().filter(vesselPump -> usedPumpIds.contains(vesselPump.getId()))
+					.forEach(vesselPump -> {
+						PumpCategory pumpCategory = new PumpCategory();
+						pumpCategory.setId(vesselPump.getId());
+						pumpCategory.setPumpName(vesselPump.getPumpCode());
+						Optional<PumpType> pumpTypeOpt = pumpsResponse.getPumpTypeList().stream()
+								.filter(pumpType -> pumpType.getId() == vesselPump.getId()).findAny();
+						pumpTypeOpt.ifPresent(pumpType -> pumpCategory.setPumpType(pumpType.getName()));
+						pumpTypeOpt.ifPresent(pumpType -> pumpCategory.setId(pumpType.getId()));
+						if (pumpCategory.getId().equals(cargoPumpType)) {
+							cargoPumpCategories.add(pumpCategory);
+						} else {
+							ballastPumpCategories.add(pumpCategory);
+						}
+
+					});
+		}
+		response.setBallastPumpCategories(ballastPumpCategories);
+		response.setCargoPumpCategories(cargoPumpCategories);
+		response.setBallastPumps(ballastPumps.stream().filter(pump -> !pump.getPumpId().equals(cargoPumpType))
+				.collect(Collectors.toList()));
+		response.setCargoPumps(ballastPumps.stream().filter(pump -> pump.getPumpId().equals(cargoPumpType))
+				.collect(Collectors.toList()));
+	}
+
+	private void buildFlowRates(List<DischargingRate> dischargingRate, Map<Long, VesselTankDetail> vesselTankMap,
+			Long portEta, LoadingSequenceResponse response) {
 		log.info("Populating flow rates");
 		List<FlowRate> flowRates = new ArrayList<FlowRate>();
 		Set<Long> tankIdList = dischargingRate.stream().map(rate -> rate.getTankId()).collect(Collectors.toSet());
@@ -656,14 +710,14 @@ public class DischargingSequenceService {
 			FlowRate flowRate = new FlowRate();
 			Optional<VesselTankDetail> tankDetailOpt = Optional.ofNullable(vesselTankMap.get(tankId));
 			tankDetailOpt.ifPresent(tank -> flowRate.setTankName(tank.getShortName()));
-			flowRate.setData(dischargingRate
-					.stream().filter(rate -> rate.getTankId() == tankId).map(
-							item -> Arrays.asList(portEta + (item.getStartTime() * 60 * 1000),
-									StringUtils.isEmpty(item.getDischargingRate()) ? null
-											: new BigDecimal(item.getDischargingRate())))
-					.collect(Collectors.toList()));
-			Optional<DischargingRate> rateOpt = dischargingRate.stream()
-					.filter(rate -> rate.getTankId() == tankId)
+			flowRate.setData(
+					dischargingRate
+							.stream().filter(rate -> rate.getTankId() == tankId).map(
+									item -> Arrays.asList(portEta + (item.getStartTime() * 60 * 1000),
+											StringUtils.isEmpty(item.getDischargingRate()) ? null
+													: new BigDecimal(item.getDischargingRate())))
+							.collect(Collectors.toList()));
+			Optional<DischargingRate> rateOpt = dischargingRate.stream().filter(rate -> rate.getTankId() == tankId)
 					.sorted(Comparator.comparing(DischargingRate::getEndTime).reversed()).findFirst();
 
 			rateOpt.ifPresent(rate -> flowRate.getData()
@@ -675,7 +729,7 @@ public class DischargingSequenceService {
 		});
 		response.setFlowRates(flowRates);
 	}
-	
+
 	private void buildStabilityParamSequence(DischargeSequenceReply reply, Long portEta,
 			List<StabilityParam> stabilityParams) {
 		List<LoadingPlanStabilityParameters> params = reply.getDischargeSequenceStabilityParametersList();
@@ -699,22 +753,21 @@ public class DischargingSequenceService {
 		});
 	}
 
-
-	private void buildCargoLoadingRates(DischargeSequence dischargingSequence, Long portEta, Set<Long> stageTickPositions,
-			List<CargoLoadingRate> cargoLoadingRates) {
+	private void buildCargoDischargeRates(DischargingSequence dischargingSequence, Long portEta,
+			Set<Long> stageTickPositions, List<CargoLoadingRate> cargoDischargeRates) {
 		log.info("Adding cargo loading rate");
-		CargoLoadingRate cargoLoadingRate = new CargoLoadingRate();
-		cargoLoadingRate.setStartTime(portEta + (dischargingSequence.getStartTime() * 60 * 1000));
-		cargoLoadingRate.setEndTime(portEta + (dischargingSequence.getEndTime() * 60 * 1000));
+		CargoLoadingRate cargoDischargeRate = new CargoLoadingRate();
+		cargoDischargeRate.setStartTime(portEta + (dischargingSequence.getStartTime() * 60 * 1000));
+		cargoDischargeRate.setEndTime(portEta + (dischargingSequence.getEndTime() * 60 * 1000));
 		List<BigDecimal> rateList = new ArrayList<BigDecimal>();
-		if (!StringUtils.isEmpty(dischargingSequence.getCargoLoadingRate1())) {
-			rateList.add(new BigDecimal(dischargingSequence.getCargoLoadingRate1()));
+		if (!StringUtils.isEmpty(dischargingSequence.getCargoDischargingRate1())) {
+			rateList.add(new BigDecimal(dischargingSequence.getCargoDischargingRate1()));
 		}
-		if (!StringUtils.isEmpty(dischargingSequence.getCargoLoadingRate2())) {
-			rateList.add(new BigDecimal(dischargingSequence.getCargoLoadingRate2()));
+		if (!StringUtils.isEmpty(dischargingSequence.getCargoDischargingRate2())) {
+			rateList.add(new BigDecimal(dischargingSequence.getCargoDischargingRate2()));
 		}
-		cargoLoadingRate.setLoadingRates(rateList);
-		cargoLoadingRates.add(cargoLoadingRate);
+		cargoDischargeRate.setDischargingRates(rateList);
+		cargoDischargeRates.add(cargoDischargeRate);
 	}
 
 	private void addCommingleCargoStage(DischargePlanPortWiseDetails portWiseDetails,
@@ -939,7 +992,6 @@ public class DischargingSequenceService {
 		gom.setData(new ArrayList<>());
 		stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm, gom));
 	}
-
 
 	private Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
 			throws GenericServiceException {

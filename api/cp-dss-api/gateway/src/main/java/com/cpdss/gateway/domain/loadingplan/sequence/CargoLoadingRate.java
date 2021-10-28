@@ -11,4 +11,5 @@ public class CargoLoadingRate {
   private Long startTime;
   private Long endTime;
   private List<BigDecimal> loadingRates;
+  private List<BigDecimal> dischargingRates;
 }

@@ -85,11 +85,11 @@ private static final long serialVersionUID = 0L;
           }
           case 58: {
             if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-              dischargeSequences_ = new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.DischargeSequence>();
+              dischargeSequences_ = new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.DischargingSequence>();
               mutable_bitField0_ |= 0x00000001;
             }
             dischargeSequences_.add(
-                input.readMessage(com.cpdss.common.generated.discharge_plan.DischargeSequence.parser(), extensionRegistry));
+                input.readMessage(com.cpdss.common.generated.discharge_plan.DischargingSequence.parser(), extensionRegistry));
             break;
           }
           case 66: {
@@ -244,36 +244,36 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int DISCHARGESEQUENCES_FIELD_NUMBER = 7;
-  private java.util.List<com.cpdss.common.generated.discharge_plan.DischargeSequence> dischargeSequences_;
+  private java.util.List<com.cpdss.common.generated.discharge_plan.DischargingSequence> dischargeSequences_;
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  public java.util.List<com.cpdss.common.generated.discharge_plan.DischargeSequence> getDischargeSequencesList() {
+  public java.util.List<com.cpdss.common.generated.discharge_plan.DischargingSequence> getDischargeSequencesList() {
     return dischargeSequences_;
   }
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  public java.util.List<? extends com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder> 
+  public java.util.List<? extends com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder> 
       getDischargeSequencesOrBuilderList() {
     return dischargeSequences_;
   }
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
   public int getDischargeSequencesCount() {
     return dischargeSequences_.size();
   }
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  public com.cpdss.common.generated.discharge_plan.DischargeSequence getDischargeSequences(int index) {
+  public com.cpdss.common.generated.discharge_plan.DischargingSequence getDischargeSequences(int index) {
     return dischargeSequences_.get(index);
   }
   /**
-   * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+   * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
    */
-  public com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder getDischargeSequencesOrBuilder(
+  public com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder getDischargeSequencesOrBuilder(
       int index) {
     return dischargeSequences_.get(index);
   }
@@ -1123,22 +1123,22 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.util.List<com.cpdss.common.generated.discharge_plan.DischargeSequence> dischargeSequences_ =
+    private java.util.List<com.cpdss.common.generated.discharge_plan.DischargingSequence> dischargeSequences_ =
       java.util.Collections.emptyList();
     private void ensureDischargeSequencesIsMutable() {
       if (!((bitField0_ & 0x00000001) != 0)) {
-        dischargeSequences_ = new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.DischargeSequence>(dischargeSequences_);
+        dischargeSequences_ = new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.DischargingSequence>(dischargeSequences_);
         bitField0_ |= 0x00000001;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        com.cpdss.common.generated.discharge_plan.DischargeSequence, com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder, com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder> dischargeSequencesBuilder_;
+        com.cpdss.common.generated.discharge_plan.DischargingSequence, com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder, com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder> dischargeSequencesBuilder_;
 
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public java.util.List<com.cpdss.common.generated.discharge_plan.DischargeSequence> getDischargeSequencesList() {
+    public java.util.List<com.cpdss.common.generated.discharge_plan.DischargingSequence> getDischargeSequencesList() {
       if (dischargeSequencesBuilder_ == null) {
         return java.util.Collections.unmodifiableList(dischargeSequences_);
       } else {
@@ -1146,7 +1146,7 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public int getDischargeSequencesCount() {
       if (dischargeSequencesBuilder_ == null) {
@@ -1156,9 +1156,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public com.cpdss.common.generated.discharge_plan.DischargeSequence getDischargeSequences(int index) {
+    public com.cpdss.common.generated.discharge_plan.DischargingSequence getDischargeSequences(int index) {
       if (dischargeSequencesBuilder_ == null) {
         return dischargeSequences_.get(index);
       } else {
@@ -1166,10 +1166,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder setDischargeSequences(
-        int index, com.cpdss.common.generated.discharge_plan.DischargeSequence value) {
+        int index, com.cpdss.common.generated.discharge_plan.DischargingSequence value) {
       if (dischargeSequencesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1183,10 +1183,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder setDischargeSequences(
-        int index, com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder builderForValue) {
+        int index, com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder builderForValue) {
       if (dischargeSequencesBuilder_ == null) {
         ensureDischargeSequencesIsMutable();
         dischargeSequences_.set(index, builderForValue.build());
@@ -1197,9 +1197,9 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public Builder addDischargeSequences(com.cpdss.common.generated.discharge_plan.DischargeSequence value) {
+    public Builder addDischargeSequences(com.cpdss.common.generated.discharge_plan.DischargingSequence value) {
       if (dischargeSequencesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1213,10 +1213,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder addDischargeSequences(
-        int index, com.cpdss.common.generated.discharge_plan.DischargeSequence value) {
+        int index, com.cpdss.common.generated.discharge_plan.DischargingSequence value) {
       if (dischargeSequencesBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1230,10 +1230,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder addDischargeSequences(
-        com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder builderForValue) {
+        com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder builderForValue) {
       if (dischargeSequencesBuilder_ == null) {
         ensureDischargeSequencesIsMutable();
         dischargeSequences_.add(builderForValue.build());
@@ -1244,10 +1244,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder addDischargeSequences(
-        int index, com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder builderForValue) {
+        int index, com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder builderForValue) {
       if (dischargeSequencesBuilder_ == null) {
         ensureDischargeSequencesIsMutable();
         dischargeSequences_.add(index, builderForValue.build());
@@ -1258,10 +1258,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder addAllDischargeSequences(
-        java.lang.Iterable<? extends com.cpdss.common.generated.discharge_plan.DischargeSequence> values) {
+        java.lang.Iterable<? extends com.cpdss.common.generated.discharge_plan.DischargingSequence> values) {
       if (dischargeSequencesBuilder_ == null) {
         ensureDischargeSequencesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -1273,7 +1273,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder clearDischargeSequences() {
       if (dischargeSequencesBuilder_ == null) {
@@ -1286,7 +1286,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
     public Builder removeDischargeSequences(int index) {
       if (dischargeSequencesBuilder_ == null) {
@@ -1299,16 +1299,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder getDischargeSequencesBuilder(
+    public com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder getDischargeSequencesBuilder(
         int index) {
       return getDischargeSequencesFieldBuilder().getBuilder(index);
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder getDischargeSequencesOrBuilder(
+    public com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder getDischargeSequencesOrBuilder(
         int index) {
       if (dischargeSequencesBuilder_ == null) {
         return dischargeSequences_.get(index);  } else {
@@ -1316,9 +1316,9 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public java.util.List<? extends com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder> 
+    public java.util.List<? extends com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder> 
          getDischargeSequencesOrBuilderList() {
       if (dischargeSequencesBuilder_ != null) {
         return dischargeSequencesBuilder_.getMessageOrBuilderList();
@@ -1327,33 +1327,33 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder addDischargeSequencesBuilder() {
+    public com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder addDischargeSequencesBuilder() {
       return getDischargeSequencesFieldBuilder().addBuilder(
-          com.cpdss.common.generated.discharge_plan.DischargeSequence.getDefaultInstance());
+          com.cpdss.common.generated.discharge_plan.DischargingSequence.getDefaultInstance());
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder addDischargeSequencesBuilder(
+    public com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder addDischargeSequencesBuilder(
         int index) {
       return getDischargeSequencesFieldBuilder().addBuilder(
-          index, com.cpdss.common.generated.discharge_plan.DischargeSequence.getDefaultInstance());
+          index, com.cpdss.common.generated.discharge_plan.DischargingSequence.getDefaultInstance());
     }
     /**
-     * <code>repeated .DischargeSequence dischargeSequences = 7;</code>
+     * <code>repeated .DischargingSequence dischargeSequences = 7;</code>
      */
-    public java.util.List<com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder> 
+    public java.util.List<com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder> 
          getDischargeSequencesBuilderList() {
       return getDischargeSequencesFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        com.cpdss.common.generated.discharge_plan.DischargeSequence, com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder, com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder> 
+        com.cpdss.common.generated.discharge_plan.DischargingSequence, com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder, com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder> 
         getDischargeSequencesFieldBuilder() {
       if (dischargeSequencesBuilder_ == null) {
         dischargeSequencesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            com.cpdss.common.generated.discharge_plan.DischargeSequence, com.cpdss.common.generated.discharge_plan.DischargeSequence.Builder, com.cpdss.common.generated.discharge_plan.DischargeSequenceOrBuilder>(
+            com.cpdss.common.generated.discharge_plan.DischargingSequence, com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder, com.cpdss.common.generated.discharge_plan.DischargingSequenceOrBuilder>(
                 dischargeSequences_,
                 ((bitField0_ & 0x00000001) != 0),
                 getParentForChildren(),
