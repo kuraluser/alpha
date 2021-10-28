@@ -723,7 +723,12 @@ public class UllageUpdateLoadicatorService {
       PortLoadingPlanStabilityParameters stabilityParameters) {
     LoadicatorResult result = algoResponse.getLoadicatorResults().get(0);
     loadicatorService.buildPortStabilityParams(
-        loadingInformation, result, stabilityParameters, conditionType, valueType, Optional.empty());
+        loadingInformation,
+        result,
+        stabilityParameters,
+        conditionType,
+        valueType,
+        Optional.empty());
     portLoadingPlanStabilityParametersRepository.save(stabilityParameters);
   }
 
