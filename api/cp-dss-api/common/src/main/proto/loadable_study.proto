@@ -235,6 +235,7 @@ message DischargeQuantityCargoDetails {
 	bool isCommingled=1;
 	bool ifProtested=2;
 	int64 id=3;
+	string slopQuantity = 4;
 }
 
 message CowHistoryRequest {

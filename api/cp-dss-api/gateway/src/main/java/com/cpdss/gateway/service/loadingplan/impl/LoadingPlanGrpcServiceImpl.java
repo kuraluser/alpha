@@ -47,9 +47,13 @@ import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.utility.RuleUtility;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -496,6 +500,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
               detailBuilder.setId(cargo.getId());
               detailBuilder.setIfProtested(cargo.getProtested());
               detailBuilder.setIsCommingled(cargo.getIsCommingledDischarge());
+              Optional.ofNullable(cargo.getSlopQuantity()).ifPresent(detailBuilder::setSlopQuantity);
               builder.addCargoDetails(detailBuilder);
             });
 
