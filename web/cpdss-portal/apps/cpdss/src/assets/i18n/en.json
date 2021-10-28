@@ -2043,6 +2043,7 @@
   "ULLAGE_UPDATE_BLFIG_INFO_MESSAGE": "B/L figures can be entered only after entering the actuals",
   "ULLAGE_UPDATE_INVALID_ULLAGE_ERROR": "Invalid ullage value",
   "ULLAGE_UPDATE_INVALID_SOUNDING_ERROR": "Invalid sounding value",
+  "ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS": "Verification With Loadicator in progress",
   "FILE_REPOSITORY": "Files",
   "FILE_REPOSITORY_SL": "SL",
   "FILE_REPOSITORY_VOY_NO": "VOY NO.",

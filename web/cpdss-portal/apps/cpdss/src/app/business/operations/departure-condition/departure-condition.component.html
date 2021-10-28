@@ -59,6 +59,9 @@
                     <span class="badge-custom badge-info v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
                         | translate}}</span>
+                    <span class="badge-custom badge-info v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS">{{'ULLAGE_UPDATE_PLAN_INPROGRESS'
+                        | translate}}</span>
                     <span class="badge-custom badge-muted v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
                         | translate}}</span>
@@ -73,12 +76,17 @@
                     <span class="badge-custom badge-info v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_INPROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_GENERATED">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.dischargePlanDepStatusId]
                         | translate}}</span>
-                        <span class="badge-custom badge-muted v-middle mr-10"
+                    <span class="badge-custom badge-info v-middle mr-10"
+                        *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS">{{'ULLAGE_UPDATE_PLAN_INPROGRESS'
+                        | translate}}</span>
+                    <span class="badge-custom badge-muted v-middle mr-10"
                         *ngIf="loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_TEXT.ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING">{{ULLAGE_STATUS_TEXT[loadingDischargingPlanInfo?.loadingPlanDepStatusId]
                         | translate}}</span>
                 </ng-container>
 
-                <button [disabled]="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS" (click)="display = true" class="btn btn-main mr-5 mt-5"
+                <button
+                    [disabled]="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS"
+                    (click)="display = true" class="btn btn-main mr-5 mt-5"
                     id="departure_uptate_ullage">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_CARGO_UPDATE_ULLAGE' |
                     translate}}</button>
                 <button (click)="showError()"
@@ -109,6 +117,7 @@
 </div>
 
 <cpdss-portal-ullage-update-popup [vesselId]="vesselId" [permission]="permission"
-    [patternId]="operation === OPERATIONS.LOADING ? loadingDischargingPlanInfo?.loadablePatternId : loadingDischargingPlanInfo?.dischargePatternId" [portRotationId]="portRotationId"
-    [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation" [infoId]="loadingDischargingInfoId" *ngIf="display"
-    (closePopup)="closePopUp($event)"></cpdss-portal-ullage-update-popup>
+    [patternId]="operation === OPERATIONS.LOADING ? loadingDischargingPlanInfo?.loadablePatternId : loadingDischargingPlanInfo?.dischargePatternId"
+    [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation"
+    [infoId]="loadingDischargingInfoId" *ngIf="display" (closePopup)="closePopUp($event)">
+</cpdss-portal-ullage-update-popup>

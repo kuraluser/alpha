@@ -458,6 +458,7 @@ export class UllageUpdatePopupTransformationService {
     _tankDetails.isAdd = true;
     _tankDetails.actualPlanned = cargoTank.actualPlanned;
     _tankDetails.correctionFactor = cargoTank.correctionFactor;
+    _tankDetails.isCommingleCargo = cargoTank.isCommingleCargo;
     return _tankDetails;
   }
 
