@@ -370,10 +370,14 @@ public class DischargeInformationBuilderService {
       if (cowPlan.getTrimCowMin().isEmpty()) {
         String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MIN, false);
         var1.setCowTrimMin(val);
+      } else {
+        var1.setCowTrimMin(cowPlan.getTrimCowMin());
       }
       if (cowPlan.getTrimCowMax().isEmpty()) {
         String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MAX, true);
         var1.setCowTrimMax(val);
+      } else {
+        var1.setCowTrimMax(cowPlan.getTrimCowMax());
       }
 
       var topCow =
@@ -607,10 +611,15 @@ public class DischargeInformationBuilderService {
           .forEach(
               cargo -> {
                 CargoForCow.Builder cargoCow = CargoForCow.newBuilder();
-                cargoCow.setCargoId(cargo.getCargoId());
-                cargoCow.setCargoNominationId(cargo.getCargoNominationId());
-                cargoCow.setWashingCargoId(cargo.getWashingCargoId());
-                cargoCow.setWashingCargoNominationId(cargo.getWashingCargoNominationId());
+                cargoCow.setCargoId(cargo.getCargoId() == null ? 0 : cargo.getCargoId());
+                cargoCow.setCargoNominationId(
+                    cargo.getCargoNominationId() == null ? 0 : cargo.getCargoNominationId());
+                cargoCow.setWashingCargoId(
+                    cargo.getWashingCargoId() == null ? 0 : cargo.getWashingCargoId());
+                cargoCow.setWashingCargoNominationId(
+                    cargo.getWashingCargoNominationId() == null
+                        ? 0
+                        : cargo.getWashingCargoNominationId());
                 cargoCow.addAllTankIds(cargo.getTankIds());
                 cowTankBuilder.addCargoForCow(cargoCow);
               });

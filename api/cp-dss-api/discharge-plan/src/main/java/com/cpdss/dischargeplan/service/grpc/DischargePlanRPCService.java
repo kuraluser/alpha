@@ -166,6 +166,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       dischargePlanAlgoService.createDischargingInformationAlgoStatus(
           dischargeInformation, response.getProcessId(), dischargingInfoStatusOpt.get(), null);
       builder.setProcessId(response.getProcessId());
+      builder.setResponseStatus(
+          Common.ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(

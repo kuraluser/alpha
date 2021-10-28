@@ -11,7 +11,7 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/loadable-study" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="jib -PbuildEnv=local" />
+      <option name="scriptParameters" value="spotlessApply jib -PbuildEnv=local" />
       <option name="taskDescriptions">
         <list />
       </option>
