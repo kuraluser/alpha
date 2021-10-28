@@ -543,7 +543,7 @@ public class DischargeInformationRPCService
       if (!cowPlan.getTrimCowMin().isEmpty()) {
         cowPlanDetail.setCowMinTrim(new BigDecimal(cowPlan.getTrimCowMin()));
       }
-     cowPlanDetail.setCowOperationType(cowPlan.getCowOptionTypeValue());
+      cowPlanDetail.setCowOperationType(cowPlan.getCowOptionTypeValue());
       updateTanksDetails(cowPlan, cowPlanDetail);
       cowPlanDetailRepository.save(cowPlanDetail);
     }

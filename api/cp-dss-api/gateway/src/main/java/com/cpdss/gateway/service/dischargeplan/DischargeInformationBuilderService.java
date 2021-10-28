@@ -340,10 +340,10 @@ public class DischargeInformationBuilderService {
 
   private List<DischargingDelays> copy(List<LoadingDelays> loadingDelays) {
     List<DischargingDelays> delays = new ArrayList<>();
-    DischargingDelays dischargeDelay = new DischargingDelays();
     loadingDelays.stream()
         .forEach(
             delay -> {
+              DischargingDelays dischargeDelay = new DischargingDelays();
               BeanUtils.copyProperties(delay, dischargeDelay);
               dischargeDelay.setDischargeInfoId(delay.getLoadingInfoId());
               delays.add(dischargeDelay);
