@@ -1869,6 +1869,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 commingle.setDischargePatternId(commingleDetail.getLoadablePatternId());
                 commingle.setCargoNomination1Id(commingleDetail.getCargoNomination1Id());
                 commingle.setCargoNomination2Id(commingleDetail.getCargoNomination2Id());
+                commingle.setCargo1Id(commingleDetail.getCargo1Id());
+                commingle.setCargo2Id(commingleDetail.getCargo2Id());
                 commingle.setTankId(commingleDetail.getTankId());
                 commingle.setQuantity(
                     commingleDetail.getQuantity().isEmpty()

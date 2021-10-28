@@ -753,6 +753,8 @@ message LoadablePlanCommingleDetails{
  string colorCode = 41;
  int64 cargoNomination1Id = 42;
  int64 cargoNomination2Id = 43;
+ int64 cargo1Id = 44;
+ int64 cargo2Id = 45;
 }
 
 message LoadingSequenceRequest {
