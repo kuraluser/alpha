@@ -293,6 +293,7 @@ message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
 	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 	bool updateUllageForLoadingPlan = 3;
+	int64 vesselId = 4;
 }
 
 message UpdateUllageReply {

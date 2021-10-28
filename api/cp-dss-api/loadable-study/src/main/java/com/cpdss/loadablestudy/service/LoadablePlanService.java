@@ -3207,6 +3207,7 @@ public class LoadablePlanService {
     algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
     algoRequest.setApi(request.getLoadablePlanStowageDetails().getApi());
     algoRequest.setTemp(request.getLoadablePlanStowageDetails().getTemperature());
+    algoRequest.setVesselId(request.getVesselId());
     Optional<SynopticalTable> synopticalTableOpt =
         synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
             loadableStudyPortRotationService.getLastPortRotationId(
