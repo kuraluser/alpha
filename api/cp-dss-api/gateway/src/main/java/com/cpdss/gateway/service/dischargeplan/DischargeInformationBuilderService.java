@@ -625,6 +625,7 @@ public class DischargeInformationBuilderService {
               });
       builder.addCowTankDetails(cowTankBuilder);
     }
+    Optional.ofNullable(cowPlan.getCowOption()).ifPresent(builder::setCowOptionTypeValue);
     Optional.ofNullable(cowPlan.getCowDuration()).ifPresent(builder::setEstCowDuration);
     Optional.ofNullable(cowPlan.getCowEnd()).ifPresent(builder::setCowEndTime);
     Optional.ofNullable(cowPlan.getCowPercentage()).ifPresent(builder::setCowEndTime);

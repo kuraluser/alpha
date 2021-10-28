@@ -758,8 +758,9 @@ public class DischargeInformationBuilderService {
       case CARGO:
         {
           List<CowWithDifferentCargo> ls1 = new ArrayList<>(list); // cast from generic list
+          List<CowWithDifferentCargo> activeCowWithCargos = ls1.stream().filter(cow->cow.getIsActive()!=null&&cow.getIsActive()).collect(Collectors.toList());
           var gp1 =
-              ls1.stream()
+        		  activeCowWithCargos.stream()
                   .collect(
                       Collectors.groupingBy(CowWithDifferentCargo::getCargoXid)); // group by cargo
           for (Map.Entry<Long, List<CowWithDifferentCargo>> map1 : gp1.entrySet()) {
