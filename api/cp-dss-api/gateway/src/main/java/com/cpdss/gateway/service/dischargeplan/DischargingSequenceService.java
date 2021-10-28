@@ -816,8 +816,8 @@ public class DischargingSequenceService {
     this.buildFlowRates(dischargeRates, vesselTankMap, portEta, response);
     // Building cargo and ballast pumps details
     this.buildPumpDetails(vesselId, response, allPumps);
-    //loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories);
-//    loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
+    // loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories);
+    //    loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
