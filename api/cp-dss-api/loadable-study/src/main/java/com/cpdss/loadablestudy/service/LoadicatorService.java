@@ -1159,7 +1159,7 @@ public class LoadicatorService {
       JsonData patternJson =
           this.jsonDataService.getJsonData(
               loadableStudyOpt.get().getId(),
-              LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+              LoadableStudiesConstants.UPDATED_LOADABLE_STUDY_RESULT_JSON_ID);
       if (patternJson != null) {
         LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
             LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
