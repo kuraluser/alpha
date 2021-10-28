@@ -101,21 +101,14 @@ public class CommonController {
     try {
       // Get filters
       List<String> filterKeys =
-          Arrays.asList(
-              "voyageNumber", "fileName", "fileType", "section", "category", "createdDate");
+          Arrays.asList("voyageNumber", "fileName", "fileType", "section", "category", "createdDate");
 
       Map<String, String> filterParams =
           params.entrySet().stream()
               .filter(e -> filterKeys.contains(e.getKey()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       return fileRepoService.getFileRepoDetails(
-          pageSize,
-          pageNo,
-          sortBy,
-          orderBy,
-          filterParams,
-          headers.getFirst(CORRELATION_ID_HEADER),
-          filterKeys);
+          pageSize, pageNo, sortBy, orderBy, filterParams, headers.getFirst(CORRELATION_ID_HEADER), filterKeys);
 
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getting file repo details", e);
