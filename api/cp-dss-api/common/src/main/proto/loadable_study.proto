@@ -1275,6 +1275,9 @@ message SynopticalCargoRecord{
 	int64 planQtyId = 17; // loadable_plan_quantity ID OR discharge_quantity_cargo_details ID
 	int32 planQtyCargoOrder = 18; // loading or discharging order
 	string ullage = 19;
+	string actualApi = 20;	
+	string actualTemperature = 21;
+	
 }
 
 message SynopticalOhqRecord{

@@ -999,8 +999,8 @@ public class LoadingPlanService {
               SynopticalCargoRecord.Builder cargo = SynopticalCargoRecord.newBuilder();
               cargo.setActualWeight(stowage.getQuantity().toString());
               cargo.setTankId(stowage.getTankXId());
-              cargo.setApi(stowage.getApi().toString());
-              cargo.setTemperature(stowage.getTemperature().toString());
+              cargo.setActualApi(stowage.getApi().toString());
+              cargo.setActualTemperature(stowage.getTemperature().toString());
               cargo.setUllage(stowage.getUllage().toString());
               synopticalData.addCargo(cargo);
             });

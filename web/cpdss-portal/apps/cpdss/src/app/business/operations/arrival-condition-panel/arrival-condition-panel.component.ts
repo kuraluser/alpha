@@ -89,7 +89,7 @@ export class ArrivalConditionPanelComponent implements OnInit {
     this.arrivalConditionCargoInfo = [...commingleArray, ...this.arrivalConditionCargoInfo];
     let ballastQuantity = 0;
     this.loadingDischargingPlanData?.planBallastDetails?.map(item => {
-      if (item.conditionType === 1) {
+      if (item.conditionType === 1 && item.valueType === 2) {
         ballastQuantity += Number(item.quantityMT);
       }
     });
@@ -99,11 +99,11 @@ export class ArrivalConditionPanelComponent implements OnInit {
     let draftMValue = 0;
     let trimValue = 0;
     this.loadingDischargingPlanData?.planStabilityParams?.map(item => {
-      if (item.conditionType === 1) {
-        draftFValue += Number(item?.foreDraft);
-        draftAValue += Number(item?.aftDraft);
-        draftMValue += Number(item?.meanDraft);
-        trimValue += Number(item?.trim);
+      if (item.conditionType === 1 && item.valueType === 2) {
+        draftFValue = Number(item?.foreDraft);
+        draftAValue = Number(item?.aftDraft);
+        draftMValue = Number(item?.meanDraft);
+        trimValue = Number(item?.trim);
       }
     });
     this.draftFValue = Number(draftFValue.toFixed(2));

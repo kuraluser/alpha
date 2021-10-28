@@ -79,4 +79,13 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "max_tank_volume")
   private BigDecimal maxTankVolume;
+
+  @Column(name = "actual_api")
+  private BigDecimal actualApi;
+
+  @Column(name = "actual_temperature")
+  private BigDecimal actualTemperature;
+
+  @Column(name = "actual_rdg_ullage")
+  private BigDecimal actualRdgUllage;
 }
