@@ -1166,12 +1166,12 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
     Optional<LoadingInformation> loadingInfo =
-            this.loadingInformationRepository
-                    .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
-                            request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+        this.loadingInformationRepository
+            .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
+                request.getVesselId(), request.getPatternId(), request.getPortRotationId());
     List<PortLoadingPlanCommingleDetails> portWiseRobDetails =
         portLoadingPlanCommingleDetailsRepository.findByLoadingInformationAndIsActive(
-                loadingInfo.get(), true);
+            loadingInfo.get(), true);
     for (PortLoadingPlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
@@ -1182,12 +1182,12 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
     Optional<LoadingInformation> loadingInfo =
-            this.loadingInformationRepository
-                    .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
-                            request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+        this.loadingInformationRepository
+            .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
+                request.getVesselId(), request.getPatternId(), request.getPortRotationId());
     List<PortLoadingPlanCommingleTempDetails> portWiseRobDetails =
         portLoadingPlanCommingleTempDetailsRepository.findByLoadingInformationAndIsActive(
-                loadingInfo.get().getId(), true);
+            loadingInfo.get().getId(), true);
     for (PortLoadingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleTempDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));

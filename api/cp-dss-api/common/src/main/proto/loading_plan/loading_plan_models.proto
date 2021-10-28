@@ -497,6 +497,8 @@ message LoadingPlanStabilityParameters {
   string meanDraft = 10;
   string list = 11;
   string gomValue = 12;
+  string freeboard = 13;
+  string manifoldHeight = 14;
 }
 
 message LoadingPlanTankDetails {

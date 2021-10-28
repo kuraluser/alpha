@@ -1211,6 +1211,8 @@ public class LoadingSequenceService {
     Optional.ofNullable(value.getMeanDraft()).ifPresent(paramBuilder::setMeanDraft);
     Optional.ofNullable(value.getTrim()).ifPresent(paramBuilder::setTrim);
     Optional.ofNullable(value.getList()).ifPresent(paramBuilder::setList);
+    Optional.ofNullable(value.getFreeboard()).ifPresent(paramBuilder::setFreeboard);
+    Optional.ofNullable(value.getManifoldHeight()).ifPresent(paramBuilder::setManifoldHeight);
     paramBuilder.setConditionType(conditionType);
     builder.addPortLoadingPlanStabilityParameters(paramBuilder.build());
   }
