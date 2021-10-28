@@ -39,4 +39,6 @@ public class UpdateUllage {
   private boolean isCommingle;
 
   private String errMessage;
+
+  private Long vesselId;
 }

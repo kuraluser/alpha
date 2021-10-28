@@ -860,7 +860,10 @@ public class LoadableStudyController {
       log.info("updateUllage : {}", getClientIp());
       log.info("updateUllage API. correlationId: {} ", headers.getFirst(CORRELATION_ID_HEADER));
       return loadableStudyService.updateUllage(
-          updateUllageRequest, loadablePatternId, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId,
+          updateUllageRequest,
+          loadablePatternId,
+          headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in updateUllage ", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
