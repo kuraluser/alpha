@@ -12,18 +12,20 @@ import { IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE, DA
 export class FileRepositoryTransformationService {
 
   sectionList = [
-    { id: 1, label: 'Loadable Study' },
-    { id: 2, label: 'Loading' },
-    { id: 3, label: 'Discharge Study' },
-    { id: 4, label: 'Discharging' },
-    { id: 5, label: 'Bunkering' }
+    { id: 1, label: 'Any' },
+    { id: 2, label: 'Bunkering' },
+    { id: 3, label: 'Discharging' },
+    { id: 4, label: 'Discharge Study' },
+    { id: 5, label: 'Loadable Study' },
+    { id: 6, label: 'Loading' },
   ];
 
   category = [
-    { id: 1, label: 'Port' },
+    { id: 1, label: 'Any' },
     { id: 2, label: 'Cargo' },
-    { id: 3, label: 'Vessel' },
+    { id: 3, label: 'Port' },
     { id: 4, label: 'Process' },
+    { id: 5, label: 'Vessel' },
   ]
   constructor() { }
 
@@ -91,6 +93,10 @@ export class FileRepositoryTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'category',
         filterByServer: true
+      },
+      {
+        field: 'uploadType',
+        header: 'FILE_REPOSITORY_UPLOAD_TYPE'
       },
       {
         field: 'createdDate',

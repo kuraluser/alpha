@@ -2084,6 +2084,7 @@
   "FILE_REPOSITORY_DELETE_SUCCESS_LABEL": "Successfully Deleted",
   "FILE_REPOSITORY_INVALID_FILE": "Invalid file type",
   "FILE_REPOSITORY_FILE_SIZE_ERROR": "File size should be less than 1Mb",
+  "FILE_REPOSITORY_UPLOAD_TYPE": "Upload type",
   "LOADING_OPERATION_REGENARATE_INFO_MESSAGE": "If there is any change in loading information, loading rules, please regenerate the plan to get the updated figures.",
   "DISCHARGE_STUDY_PORTS_VIEW_PLAN_NOT_AVAILABLE": "PLAN NOT GENERATED FOR THE SELECTED VOYAGE SINCE NO DISCHARGE STUDY AVAILABLE.",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",

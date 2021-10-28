@@ -69,6 +69,7 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     if (value) {
       value?.map(item => {
         item.fileIcon = this.fileIcons[item.fileType];
+        item.uploadType = item.isSystemGenerated ? 'System' : 'Manual';
       })
     }
     this._fileRepoDetails = value ? value : [];
