@@ -666,13 +666,14 @@ public class DischargeInformationRPCService
                   .filter(tankId -> !savedTanks.contains(tankId))
                   .collect(Collectors.toList());
           // create the new ones
-          updateCargoCowWash(cowPlanDetail, newCargoWash, newTanksTOSave, newCowWashCargo);
+          createCargoCowWash(cowPlanDetail, newCargoWash, newTanksTOSave, newCowWashCargo);
+          updateCargoCowWash(newCargoWash, cowPlanDetail);
         });
 
     return newCowWashCargo;
   }
 
-  private void updateCargoCowWash(
+  private void createCargoCowWash(
       CowPlanDetail cowPlanDetail,
       CargoForCow newCargoWash,
       List<Long> tankIdsToSave,
@@ -691,6 +692,22 @@ public class DischargeInformationRPCService
           cowWithDifferentCargo.setTankXid(tankId);
           newCowWashCargo.add(cowWithDifferentCargo);
         });
+  }
+
+  private void updateCargoCowWash(CargoForCow newCargoWash, CowPlanDetail cowPlanDetail) {
+
+    cowPlanDetail
+        .getCowWithDifferentCargos()
+        .forEach(
+            cargoCow -> {
+              if (cargoCow.getCargoNominationXid().equals(newCargoWash.getCargoNominationId())
+                  && cargoCow.getIsActive()
+                  && newCargoWash.getTankIdsList().contains(cargoCow.getTankXid())) {
+                cargoCow.setCargoXid(newCargoWash.getCargoId());
+                cargoCow.setWashingCargoXid(newCargoWash.getWashingCargoId());
+                cargoCow.setWashingCargoNominationXid(newCargoWash.getWashingCargoNominationId());
+              }
+            });
   }
 
   private void saveDischargingInfoRates(
