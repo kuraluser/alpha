@@ -973,17 +973,26 @@ public class LoadicatorService {
    */
   private void savePortStabilityParams(
       LoadingInformation loadingInformation, LoadicatorAlgoResponse algoResponse) {
-    portLoadingPlanStabilityParametersRepository.deleteByLoadingInformationId(
-        loadingInformation.getId());
-    LoadicatorResult arrivalStabilityParameters = algoResponse.getLoadicatorResults().get(0);
-    LoadicatorResult departureStabilityParameters =
-        algoResponse.getLoadicatorResults().get(algoResponse.getLoadicatorResults().size() - 1);
     Optional<PortLoadingPlanStabilityParameters> oldArrStabilityOpt =
         portLoadingPlanStabilityParametersRepository
             .findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
                 loadingInformation.getId(),
                 LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE,
                 LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+
+    Optional<PortLoadingPlanStabilityParameters> oldDepStabilityOpt =
+        portLoadingPlanStabilityParametersRepository
+            .findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
+                loadingInformation.getId(),
+                LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE,
+                LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+
+    portLoadingPlanStabilityParametersRepository.deleteByLoadingInformationId(
+        loadingInformation.getId());
+    LoadicatorResult arrivalStabilityParameters = algoResponse.getLoadicatorResults().get(0);
+    LoadicatorResult departureStabilityParameters =
+        algoResponse.getLoadicatorResults().get(algoResponse.getLoadicatorResults().size() - 1);
+
     PortLoadingPlanStabilityParameters portArrStability = new PortLoadingPlanStabilityParameters();
     buildPortStabilityParams(
         loadingInformation,
@@ -993,12 +1002,7 @@ public class LoadicatorService {
         LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE,
         oldArrStabilityOpt);
     portLoadingPlanStabilityParametersRepository.save(portArrStability);
-    Optional<PortLoadingPlanStabilityParameters> oldDepStabilityOpt =
-        portLoadingPlanStabilityParametersRepository
-            .findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
-                loadingInformation.getId(),
-                LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE,
-                LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+
     PortLoadingPlanStabilityParameters portDepStability = new PortLoadingPlanStabilityParameters();
     buildPortStabilityParams(
         loadingInformation,
