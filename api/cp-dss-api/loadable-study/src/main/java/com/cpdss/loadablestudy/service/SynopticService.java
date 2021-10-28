@@ -764,23 +764,23 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
           ofNullable(tankDataOpt.get().getAbbreviation())
               .ifPresent(cargoBuilder::setCargoAbbreviation);
           ofNullable(tankDataOpt.get().getColorCode()).ifPresent(cargoBuilder::setColorCode);
-          if(tankDataOpt.get().getActualRdgUllage()!=null) {
-        	  cargoBuilder.setCorrectedUllage(valueOf(tankDataOpt.get().getActualRdgUllage()));
-          }else if(tankDataOpt.get().getCorrectedUllage()!=null) {
-        	  cargoBuilder.setCorrectedUllage(valueOf(tankDataOpt.get().getCorrectedUllage()));
+          if (tankDataOpt.get().getActualRdgUllage() != null) {
+            cargoBuilder.setCorrectedUllage(valueOf(tankDataOpt.get().getActualRdgUllage()));
+          } else if (tankDataOpt.get().getCorrectedUllage() != null) {
+            cargoBuilder.setCorrectedUllage(valueOf(tankDataOpt.get().getCorrectedUllage()));
           }
-          if(tankDataOpt.get().getActualApi()!=null) {
-        	  cargoBuilder.setApi(valueOf(tankDataOpt.get().getActualApi()));
-          }else if(tankDataOpt.get().getApi()!=null) {
-        	  cargoBuilder.setApi(valueOf(tankDataOpt.get().getApi()));
+          if (tankDataOpt.get().getActualApi() != null) {
+            cargoBuilder.setApi(valueOf(tankDataOpt.get().getActualApi()));
+          } else if (tankDataOpt.get().getApi() != null) {
+            cargoBuilder.setApi(valueOf(tankDataOpt.get().getApi()));
           }
-          
-          if(tankDataOpt.get().getActualTemperature()!=null) {
-        	  cargoBuilder.setTemperature(valueOf(tankDataOpt.get().getActualTemperature()));
-          }else if(tankDataOpt.get().getTemperature()!=null) {
-        	  cargoBuilder.setTemperature(valueOf(tankDataOpt.get().getTemperature()));
+
+          if (tankDataOpt.get().getActualTemperature() != null) {
+            cargoBuilder.setTemperature(valueOf(tankDataOpt.get().getActualTemperature()));
+          } else if (tankDataOpt.get().getTemperature() != null) {
+            cargoBuilder.setTemperature(valueOf(tankDataOpt.get().getTemperature()));
           }
-          
+
           ofNullable(tankDataOpt.get().getFillingRatio()).ifPresent(cargoBuilder::setFillingRatio);
         }
 
