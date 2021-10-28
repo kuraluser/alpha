@@ -5,6 +5,7 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -34,4 +35,8 @@ public interface PortLoadingPlanStabilityParametersRepository
       "UPDATE PortLoadingPlanStabilityParameters SET isActive = false WHERE loadingInformation.id = ?1 AND conditionType = ?2 AND valueType = ?3")
   public void deleteByLoadingInformationIdAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
+
+  public Optional<PortLoadingPlanStabilityParameters>
+      findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
+          Long loadingInformationId, Integer conditionType, Integer valueType);
 }
