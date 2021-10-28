@@ -4,7 +4,12 @@
       <option name="env">
         <map>
           <entry key="CONTAINER_NAME" value="loadicator-integration-container-ship" />
+          <entry key="DB_HOST" value="cpdssdbqa.chdo37r0lkuo.ap-southeast-1.rds.amazonaws.com" />
+          <entry key="DB_NAME" value="dev_ship_loadicator_communication_vlcc" />
+          <entry key="DB_PASSWORD" value="9VC6D1C0B1eyatg7BeIa0MN4d9" />
+          <entry key="DB_USER" value="cpdssuser" />
           <entry key="DEBUG_PORT_HOST" value="5094" />
+          <entry key="GRPC_PORT" value="8090" />
           <entry key="GRPC_PORT_HOST" value="9094" />
           <entry key="IMAGE_NAME" value="loadicator-integration-ship" />
           <entry key="SERVICE_NAME" value="loadicator-integration-service-ship" />
