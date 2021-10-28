@@ -1516,6 +1516,14 @@ public class LoadablePatternService {
         lpd.getStabilityParameters().getAirDraft().isBlank()
             ? null
             : new BigDecimal(lpd.getStabilityParameters().getAirDraft()));
+    stabilityParameter.setFreeboard(
+        lpd.getStabilityParameters().getFreeboard().isBlank()
+            ? null
+            : new BigDecimal(lpd.getStabilityParameters().getFreeboard()));
+    stabilityParameter.setManifoldHeight(
+        lpd.getStabilityParameters().getManifoldHeight().isBlank()
+            ? null
+            : new BigDecimal(lpd.getStabilityParameters().getManifoldHeight()));
     stabilityParameterRepository.save(stabilityParameter);
   }
 

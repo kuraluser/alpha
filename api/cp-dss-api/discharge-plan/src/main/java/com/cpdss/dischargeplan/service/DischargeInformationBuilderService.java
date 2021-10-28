@@ -603,7 +603,8 @@ public class DischargeInformationBuilderService {
         builder2.setId(source.getId());
         builder2.setDischargeInfoId(disEntity.getId());
         builder2.setDuration(source.getDuration().toString());
-        Optional.ofNullable(source.getQuantity()).ifPresent(value->builder2.setQuantity(value.toString()));
+        Optional.ofNullable(source.getQuantity())
+            .ifPresent(value -> builder2.setQuantity(value.toString()));
         Optional.ofNullable(source.getCargoXid())
             .ifPresent(builder2::setCargoId); // can empty of initial delay
         Optional.ofNullable(source.getCargoNominationXid())

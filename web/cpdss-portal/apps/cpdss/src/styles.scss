@@ -2136,9 +2136,7 @@ width: 50px !important;
   position: relative;
   .error-icon{
     position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
+    top: 6px;
     right: 0;
   }
 }
@@ -3176,4 +3174,20 @@ textarea{
 }
 .column-class.column-port{
   min-width: 165px!important;
+}
+
+
+  td.error-icon-wrapper{
+    padding-right: 20px!important;
+  }
+
+
+.rowspan-no-border td.pr-20{
+  padding-right: 20px!important;
+}
+
+.dropdown-closable.p-dropdown-clearable{
+  .p-dropdown-clear-icon{
+    right: 27px;
+  }
 }

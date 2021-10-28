@@ -645,6 +645,10 @@ public class LoadableQuantityService {
                       ? new BigDecimal(lqcd.getCargoNominationTemperature())
                       : new BigDecimal(0));
               loadablePlanQuantity.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
+              loadablePlanQuantity.setLoadingRateM3Hr(
+                  StringUtils.isEmpty(lqcd.getLoadingRateM3Hr())
+                      ? null
+                      : new BigDecimal(lqcd.getLoadingRateM3Hr()));
               loadablePlanQuantityRepository.save(loadablePlanQuantity);
               lqcd.getToppingOffSequencesList()
                   .forEach(

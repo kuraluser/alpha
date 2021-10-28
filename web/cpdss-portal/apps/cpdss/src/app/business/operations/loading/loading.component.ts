@@ -386,6 +386,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
           case ULLAGE_STATUS_VALUE.IN_PROGRESS:
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED"] });
             break;
+          case ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] });
+            break;
 
         }
 

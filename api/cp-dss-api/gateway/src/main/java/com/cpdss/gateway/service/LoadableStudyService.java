@@ -3771,6 +3771,9 @@ public class LoadableStudyService {
     Optional.ofNullable(stabilityParameters.getTrim()).ifPresent(builder::setTrim);
 
     Optional.ofNullable(stabilityParameters.getAirDraft()).ifPresent(builder::setAirDraft);
+    Optional.ofNullable(stabilityParameters.getFreeboard()).ifPresent(builder::setFreeboard);
+    Optional.ofNullable(stabilityParameters.getManifoldHeight())
+        .ifPresent(builder::setManifoldHeight);
     return builder.build();
   }
 
@@ -3895,7 +3898,7 @@ public class LoadableStudyService {
                           .ifPresent(cowDetailBuilder::setWashType);
                       qunatityBuilder.addCowDetails(cowDetailBuilder.build());
                     }));
-
+    Optional.ofNullable(lpqcd.getLoadingRateM3Hr()).ifPresent(qunatityBuilder::setLoadingRateM3Hr);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 

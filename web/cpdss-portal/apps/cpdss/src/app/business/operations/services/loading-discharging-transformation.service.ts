@@ -11,6 +11,7 @@ import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDis
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Transformation Service for Loading  and Discharging
@@ -265,7 +266,9 @@ export class LoadingDischargingTransformationService {
 * @returns {IDataTableColumn[]}
 * @memberof LoadingDischargingTransformationService
 */
-  getLoadingDischargingDelayDatatableColumns(operation: OPERATIONS): IDataTableColumn[] {
+  getLoadingDischargingDelayDatatableColumns(operation: OPERATIONS, totalDuration: number, translateService: TranslateService): IDataTableColumn[] {
+
+
     const columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -329,7 +332,7 @@ export class LoadingDischargingTransformationService {
         maskFormat: '99:99',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED',
-          'invalidDuration': 'LOADING_MANAGE_SEQUENCE_DURATION_MAX'
+          'invalidDuration': operation === OPERATIONS.LOADING ? 'LOADING_MANAGE_SEQUENCE_DURATION_MAX' : `${translateService.instant('DISCHARGING_MANAGE_SEQUENCE_DURATION_MAX')} ${totalDuration}Hrs`
         }
       },
       {
@@ -390,6 +393,7 @@ export class LoadingDischargingTransformationService {
       const loadableMT = this.quantityPipe.transform(operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
       _loadingDischargingDelay.quantity = new ValueObject<number>(Number(loadableMT), true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     } else {
+      _loadingDischargingDelay.quantityMT = loadingDischargingDelay?.quantity;
       _loadingDischargingDelay.quantity = new ValueObject<number>(loadingDischargingDelay?.quantity, true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     }
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
@@ -1204,13 +1208,13 @@ export class LoadingDischargingTransformationService {
       },
       cowTrimMin: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'min': 'Min',
-        'max': 'Max'
+        'min': 'DISCHARGING_COW_TRIM_MIN',
+        'max': 'DISCHARGING_COW_TRIM_MAX'
       },
       cowTrimMax: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'max': 'Max',
-        'min': 'Min'
+        'max': 'DISCHARGING_COW_TRIM_MIN',
+        'min': 'DISCHARGING_COW_TRIM_MIN'
       },
       cowStart: {
         'required': 'DISCHARGING_COW_REQUIRED',

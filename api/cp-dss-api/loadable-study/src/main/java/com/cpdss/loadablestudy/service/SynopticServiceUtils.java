@@ -833,7 +833,8 @@ public class SynopticServiceUtils {
         Optional.ofNullable(var1.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
         Optional.ofNullable(var1.getTimeRequiredForLoading())
             .ifPresent(builder1::setTimeRequiredForLoading);
-
+        Optional.ofNullable(var1.getLoadingRateM3Hr())
+            .ifPresent(loadingRate -> builder1.setLoadingRateM3Hr(loadingRate.toString()));
         try {
           this.setLoadingPortNameFromCargoOperation(
               var1.getCargoXId(), var1.getCargoNominationId(), builder1);

@@ -58,4 +58,10 @@ public class StabilityParameters extends EntityDoc {
   // DS field
   @Column(name = "air_draft")
   private BigDecimal airDraft;
+
+  @Column(name = "freeboard")
+  private BigDecimal freeboard;
+
+  @Column(name = "manifold_height")
+  private BigDecimal manifoldHeight;
 }
