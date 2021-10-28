@@ -240,14 +240,14 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
               stowage.colorCode = AppConfigurationService.settings.commingleColor;
               stowage.abbreviation = item.cargo1Abbreviation;
               stowage.cargoNominationId = item.cargoNomination1Id;
-              stowage.ullage = item.ullage1;
+              stowage.ullage = data?.isPlannedValues ? 0 : item.ullage1;
               commingleStowages.push(JSON.parse(JSON.stringify(stowage)));
               commingleStowages[commingleStowages?.length - 1].cargoNominationId = item.cargoNomination2Id;
               commingleStowages[commingleStowages?.length - 1].abbreviation = item.cargo2Abbreviation;
               commingleStowages[commingleStowages?.length - 1].quantityMT = data?.isPlannedValues ? 0 : item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].actualWeight = data?.isPlannedValues ? 0 : item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].quantity = data?.isPlannedValues ? 0 : item.quantity2MT;
-              commingleStowages[commingleStowages?.length - 1].ullage = item.ullage2;
+              commingleStowages[commingleStowages?.length - 1].ullage = data?.isPlannedValues ? 0 : item.ullage2;
             }
           });
         });
@@ -1316,7 +1316,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       isCommingle: event.data.isCommingleCargo ? true : false,
       sg: '',
       tankId: event.data.tankId,
-      temperature: event.data.temperature.value
+      temperature: event.data.temperature.value,
+      vesselId: this.vesselId
     };
 
     this.ngxSpinnerService.show();
@@ -1391,7 +1392,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       isBallast: true,
       sg: '1.025',
       tankId: event.data.tankId,
-      temperature: event.data.temperature.value
+      temperature: event.data.temperature.value,
+      vesselId: this.vesselId
     };
     this.ngxSpinnerService.show();
     const patternId = this.operation === OPERATIONS.LOADING ? event.data.loadablePatternId : event.data.dischargePatternId;
@@ -1922,6 +1924,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             result?.ullageReportResponse?.map(data => {
               if (data.tankId === item.tankId) {
                 item.quantity = data.weight;
+                item.actualWeight = data.weight;
                 item.ullage = data.ullageObserved;
                 item.correctedUllage = data.ullageObserved;
                 item.temperature = data.temperature;

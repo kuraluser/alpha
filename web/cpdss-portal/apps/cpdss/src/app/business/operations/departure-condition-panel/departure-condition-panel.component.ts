@@ -89,7 +89,7 @@ export class DepartureConditionPanelComponent implements OnInit {
     this.departureConditionCargoInfo = [...commingleArray, ...this.departureConditionCargoInfo];
     let ballastQuantity = 0;
     this.loadingDischargingPlanData?.planBallastDetails?.map(item => {
-      if (item.conditionType === 2) {
+      if (item.conditionType === 2 && item.valueType === 2) {
         ballastQuantity += Number(item.quantityMT);
       }
     });
@@ -99,11 +99,11 @@ export class DepartureConditionPanelComponent implements OnInit {
     let draftMValue = 0;
     let trimValue = 0;
     this.loadingDischargingPlanData?.planStabilityParams?.map(item => {
-      if (item.conditionType === 2) {
-        draftFValue += Number(item?.foreDraft);
-        draftAValue += Number(item?.aftDraft);
-        draftMValue += Number(item?.meanDraft);
-        trimValue += Number(item?.trim);
+      if (item.conditionType === 2 && item.valueType === 2) {
+        draftFValue = Number(item?.foreDraft);
+        draftAValue = Number(item?.aftDraft);
+        draftMValue = Number(item?.meanDraft);
+        trimValue = Number(item?.trim);
       }
     });
     this.draftFValue = Number(draftFValue.toFixed(2));
