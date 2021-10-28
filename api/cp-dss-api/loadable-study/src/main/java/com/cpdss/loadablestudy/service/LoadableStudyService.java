@@ -3033,7 +3033,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     cargoDetails.get(dischargeCargo.getId());
                 dischargeCargoDetail.setIsCommingled(dischargeCargo.getIsCommingled());
                 dischargeCargoDetail.setIfProtested(dischargeCargo.getIfProtested());
-                Optional.ofNullable(dischargeCargo.getSlopQuantity()).ifPresent(value->dischargeCargoDetail.setSlopQuantity(new BigDecimal(value)));
+                Optional.ofNullable(dischargeCargo.getSlopQuantity())
+                    .ifPresent(
+                        value -> dischargeCargoDetail.setSlopQuantity(new BigDecimal(value)));
               });
       dischargePatternQuantityCargoPortwiseRepository.saveAll(cargoDetailsToUpdate);
 

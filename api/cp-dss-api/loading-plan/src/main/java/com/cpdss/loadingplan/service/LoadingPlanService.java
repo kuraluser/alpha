@@ -999,8 +999,8 @@ public class LoadingPlanService {
               SynopticalCargoRecord.Builder cargo = SynopticalCargoRecord.newBuilder();
               cargo.setActualWeight(stowage.getQuantity().toString());
               cargo.setTankId(stowage.getTankXId());
-              cargo.setApi(stowage.getApi().toString());
-              cargo.setTemperature(stowage.getTemperature().toString());
+              cargo.setActualApi(stowage.getApi().toString());
+              cargo.setActualTemperature(stowage.getTemperature().toString());
               cargo.setUllage(stowage.getUllage().toString());
               synopticalData.addCargo(cargo);
             });
@@ -1166,12 +1166,12 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
     Optional<LoadingInformation> loadingInfo =
-            this.loadingInformationRepository
-                    .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
-                            request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+        this.loadingInformationRepository
+            .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
+                request.getVesselId(), request.getPatternId(), request.getPortRotationId());
     List<PortLoadingPlanCommingleDetails> portWiseRobDetails =
         portLoadingPlanCommingleDetailsRepository.findByLoadingInformationAndIsActive(
-                loadingInfo.get(), true);
+            loadingInfo.get(), true);
     for (PortLoadingPlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
@@ -1182,12 +1182,12 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
     Optional<LoadingInformation> loadingInfo =
-            this.loadingInformationRepository
-                    .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
-                            request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+        this.loadingInformationRepository
+            .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
+                request.getVesselId(), request.getPatternId(), request.getPortRotationId());
     List<PortLoadingPlanCommingleTempDetails> portWiseRobDetails =
         portLoadingPlanCommingleTempDetailsRepository.findByLoadingInformationAndIsActive(
-                loadingInfo.get().getId(), true);
+            loadingInfo.get().getId(), true);
     for (PortLoadingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleTempDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
