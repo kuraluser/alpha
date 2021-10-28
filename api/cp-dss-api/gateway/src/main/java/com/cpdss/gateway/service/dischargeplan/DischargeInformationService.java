@@ -23,6 +23,7 @@ import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInfoAlgoStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
@@ -531,7 +532,7 @@ public class DischargeInformationService {
       DischargePlanAlgoRequest response =
           dischargePlanServiceBlockingStub.generateDischargePlan(builder.build());
       if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
-        CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+        CommonSuccessResponse successResponse = new CommonSuccessResponse("200", "");
         algoResponse.setProcessId(response.getProcessId());
         algoResponse.setResponseStatus(successResponse);
         return algoResponse;
@@ -543,9 +544,10 @@ public class DischargeInformationService {
             HttpStatusCode.BAD_REQUEST);
       }
     } catch (Exception e) {
-      log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
+      log.error("Failed to generate Discharging Plan for Discharging Information {}", infoId);
+      e.printStackTrace();
       throw new GenericServiceException(
-          "Failed to generate Loading Plan",
+          "Failed to generate Discharging Plan",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -610,7 +612,7 @@ public class DischargeInformationService {
     return this.loadingPlanGrpcService.saveJson(jsonRequest);
   }
 
-  public LoadingInfoAlgoStatus dischargeInfoStatusCheck(
+  public DischargingInfoAlgoStatus dischargeInfoStatusCheck(
       Long vesselId, Long voyageId, Long infoId, String processId, Integer conditionType)
       throws GenericServiceException {
     DischargeInfoStatusRequest.Builder builder = DischargeInfoStatusRequest.newBuilder();
@@ -618,7 +620,7 @@ public class DischargeInformationService {
     builder.setProcessId(processId);
     builder.setConditionType(conditionType);
 
-    LoadingInfoAlgoStatus algoStatus = new LoadingInfoAlgoStatus();
+    DischargingInfoAlgoStatus algoStatus = new DischargingInfoAlgoStatus();
     var rpcRepay = dischargePlanServiceBlockingStub.dischargeInfoStatusCheck(builder.build());
     if (!SUCCESS.equals(rpcRepay.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -627,10 +629,10 @@ public class DischargeInformationService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    algoStatus.setLoadingInfoStatusId(rpcRepay.getDischargeInfoStatusId());
-    algoStatus.setLoadingInfoStatusLastModifiedTime(
+    algoStatus.setDischargingInfoStatusId(rpcRepay.getDischargeInfoStatusId());
+    algoStatus.setDischargingInfoStatusLastModifiedTime(
         rpcRepay.getDischargeInfoStatusLastModifiedTime());
-    algoStatus.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    algoStatus.setResponseStatus(new CommonSuccessResponse("200", ""));
     return algoStatus;
   }
 

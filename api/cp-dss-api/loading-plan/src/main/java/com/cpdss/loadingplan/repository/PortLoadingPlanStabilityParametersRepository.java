@@ -27,4 +27,11 @@ public interface PortLoadingPlanStabilityParametersRepository
   @Query(
       "UPDATE PortLoadingPlanStabilityParameters SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
+
+  @Modifying
+  @Transactional
+  @Query(
+      "UPDATE PortLoadingPlanStabilityParameters SET isActive = false WHERE loadingInformation.id = ?1 AND conditionType = ?2 AND valueType = ?3")
+  public void deleteByLoadingInformationIdAndConditionTypeAndValueType(
+      Long loadingInfoId, Integer conditionType, Integer valueType);
 }
