@@ -25,6 +25,7 @@ import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInfoAlgoStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
@@ -34,7 +35,6 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatusRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
@@ -1193,7 +1193,7 @@ public class DischargePlanController {
    */
   @PostMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/generate-discharging-plan")
-  public LoadingInfoAlgoResponse saveDischargePlan(
+  public LoadingInfoAlgoResponse generateDischargePlan(
       @RequestHeader HttpHeaders headers,
       @PathVariable Long vesselId,
       @PathVariable Long voyageId,
@@ -1265,7 +1265,7 @@ public class DischargePlanController {
   }
 
   @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-status")
-  public LoadingInfoAlgoStatus getDischargeInfoStatus(
+  public DischargingInfoAlgoStatus getDischargeInfoStatus(
       @RequestHeader HttpHeaders headers,
       @PathVariable Long vesselId,
       @PathVariable Long voyageId,
