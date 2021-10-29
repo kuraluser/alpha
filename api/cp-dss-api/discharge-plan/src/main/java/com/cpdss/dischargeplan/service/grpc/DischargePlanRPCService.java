@@ -38,6 +38,7 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParameters
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
 import com.cpdss.dischargeplan.service.*;
+import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
@@ -86,6 +87,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired RestTemplate restTemplate;
   @Autowired DischargeInformationRepository dischargeInformationRepository;
   @Autowired DischargingSequenceService dischargeSequenceService;
+
+  @Autowired LoadicatorService loadicatorService;
 
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
@@ -840,6 +843,30 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
     } catch (Exception e) {
       log.error("Exception when getDischargingSequences is called", e);
       e.printStackTrace();
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadicatorData(
+      DischargingInfoLoadicatorDataRequest request,
+      StreamObserver<DischargingInfoLoadicatorDataReply> responseObserver) {
+    DischargingInfoLoadicatorDataReply.Builder reply =
+        DischargingInfoLoadicatorDataReply.newBuilder();
+    try {
+      loadicatorService.getLoadicatorData(request, reply);
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when getting data from Loadicator", e);
       reply.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)

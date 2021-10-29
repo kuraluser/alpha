@@ -700,7 +700,6 @@ public class UllageUpdateLoadicatorService {
     portLoadingPlanStabilityParametersRepository
         .deleteByLoadingInformationIdAndConditionTypeAndValueType(
             loadingInformation.getId(), conditionType, valueType);
-    ;
     PortLoadingPlanStabilityParameters stabilityParameters =
         new PortLoadingPlanStabilityParameters();
     buildLoadingPlanStabilityParams(
