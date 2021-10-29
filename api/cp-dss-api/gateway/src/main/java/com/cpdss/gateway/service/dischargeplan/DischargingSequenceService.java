@@ -26,10 +26,12 @@ import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest.Buil
 import com.cpdss.common.generated.discharge_plan.DischargingRate;
 import com.cpdss.common.generated.discharge_plan.DischargingSequence;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequence;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -43,6 +45,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoStage;
+import com.cpdss.gateway.domain.loadingplan.sequence.EductionOperation;
 import com.cpdss.gateway.domain.loadingplan.sequence.Event;
 import com.cpdss.gateway.domain.loadingplan.sequence.FlowRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
@@ -652,7 +655,7 @@ public class DischargingSequenceService {
     Set<TankCategory> cargoTankCategories = new LinkedHashSet<TankCategory>();
     Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
     List<CargoStage> cargoStages = new ArrayList<CargoStage>();
-
+    List<EductionOperation> ballastEduction = new ArrayList<EductionOperation>();
     inititalizeStabilityParams(stabilityParams);
 
     PortDetail portDetail = getPortInfo(reply.getPortId());
@@ -693,6 +696,7 @@ public class DischargingSequenceService {
       }
 
       currentCargoNomId = dischargeSeq.getCargoNominationId();
+      buildEduction(dischargeSeq, portEta, ballastEduction);
       for (DischargePlanPortWiseDetails portWiseDetails :
           dischargeSeq.getDischargePlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
@@ -752,7 +756,9 @@ public class DischargingSequenceService {
                   portWiseDetails,
                   ballastDetails,
                   ballasts,
-                  ballastTankCategories);
+                  ballastTankCategories,
+                  dischargeSeq.getStageName(),
+                  ballastEduction);
         }
 
         addCargoStage(
@@ -816,8 +822,8 @@ public class DischargingSequenceService {
     this.buildFlowRates(dischargeRates, vesselTankMap, portEta, response);
     // Building cargo and ballast pumps details
     this.buildPumpDetails(vesselId, response, allPumps);
-    //loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories);
-//    loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
+    loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories,ballastEduction);
+    loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -839,6 +845,35 @@ public class DischargingSequenceService {
     response.setCargoStages(cargoStages);
   }
 
+  
+  /**
+   * @param loadingSequence
+   * @param portEta
+   * @param ballastEduction
+   */
+  private void buildEduction(
+	DischargingSequence dischargeSeq, Long portEta, List<EductionOperation> ballastEductions) {
+    EductorOperation eductorOperation = dischargeSeq.getEductorOperation();
+    if (eductorOperation.getEndTime() != 0) {
+      EductionOperation ballastEduction = new EductionOperation();
+      if (!eductorOperation.getPumpsUsed().isEmpty()) {
+        ballastEduction.setPumpSelected(
+            List.of(eductorOperation.getPumpsUsed().split(",")).stream()
+                .map(pumpId -> Long.valueOf(pumpId))
+                .collect(Collectors.toList()));
+      }
+      if (!eductorOperation.getTanksUsed().isEmpty()) {
+        ballastEduction.setTanks(
+            List.of(eductorOperation.getTanksUsed().split(",")).stream()
+                .map(tankId -> Long.valueOf(tankId))
+                .collect(Collectors.toList()));
+      }
+      ballastEduction.setTimeEnd(portEta + (eductorOperation.getEndTime() * 60 * 1000));
+      ballastEduction.setTimeStart(portEta + (eductorOperation.getStartTime() * 60 * 1000));
+      ballastEductions.add(ballastEduction);
+    }
+  }
+  
   /**
    * Method to segregate different pumps and categories
    *
@@ -1085,11 +1120,12 @@ public class DischargingSequenceService {
         cargo.setAbbreviation(cargoNomination.getAbbreviation());
         cargo.setCargoNominationId(cargoNomination.getId());
         cargo.setColor(cargoNomination.getColor());
+        cargo.setApi(
+                StringUtils.isEmpty(cargoNomination.getApi())
+                    ? null
+                    : new BigDecimal(cargoNomination.getApi()));
       }
-      cargo.setApi(
-          StringUtils.isEmpty(cargoNomination.getApi())
-              ? null
-              : new BigDecimal(cargoNomination.getApi()));
+     
       BigDecimal total =
           portWiseDetails.getDischargingPlanStowageDetailsList().stream()
               .filter(
@@ -1258,38 +1294,48 @@ public class DischargingSequenceService {
   }
 
   private Integer buildBallastSequence(
-      LoadingPlanTankDetails ballast,
-      Map<Long, VesselTankDetail> vesselTankMap,
-      Long portEta,
-      Integer start,
-      DischargePlanPortWiseDetails portWiseDetails,
-      List<LoadablePlanBallastDetails> ballastDetails,
-      List<Ballast> ballasts,
-      Set<TankCategory> ballastTankCategories) {
-    Ballast ballastDto = new Ballast();
-    Optional<VesselTankDetail> tankDetailOpt =
-        Optional.ofNullable(vesselTankMap.get(ballast.getTankId()));
-    Optional<LoadablePlanBallastDetails> ballastDetailsOpt =
-        ballastDetails.stream()
-            .filter(
-                details ->
-                    (details.getTankId() == ballast.getTankId())
-                        && !StringUtils.isEmpty(details.getColorCode()))
-            .findFirst();
-    Integer end = buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
-    TankCategory tankCategory = new TankCategory();
-    tankCategory.setId(ballast.getTankId());
-    tankDetailOpt.ifPresent(
-        tank -> {
-          ballastDto.setTankName(tank.getShortName());
-          tankCategory.setTankName(tank.getShortName());
-          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
-        });
-    ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
-    ballastTankCategories.add(tankCategory);
-    ballasts.add(ballastDto);
-    return end;
-  }
+	      LoadingPlanTankDetails ballast,
+	      Map<Long, VesselTankDetail> vesselTankMap,
+	      Long portEta,
+	      Integer start,
+	      DischargePlanPortWiseDetails portWiseDetails,
+	      List<LoadablePlanBallastDetails> ballastDetails,
+	      List<Ballast> ballasts,
+	      Set<TankCategory> ballastTankCategories,
+	      String stageName,
+	      List<EductionOperation> ballastEduction) {
+	    Ballast ballastDto = new Ballast();
+	    Optional<VesselTankDetail> tankDetailOpt =
+	        Optional.ofNullable(vesselTankMap.get(ballast.getTankId()));
+	    Optional<LoadablePlanBallastDetails> ballastDetailsOpt =
+	        ballastDetails.stream()
+	            .filter(
+	                details ->
+	                    (details.getTankId() == ballast.getTankId())
+	                        && !StringUtils.isEmpty(details.getColorCode()))
+	            .findFirst();
+	    Integer end =
+	        buildBallast(
+	            ballast,
+	            ballastDto,
+	            portEta,
+	            start,
+	            portWiseDetails.getTime(),
+	            stageName,
+	            ballastEduction);
+	    TankCategory tankCategory = new TankCategory();
+	    tankCategory.setId(ballast.getTankId());
+	    tankDetailOpt.ifPresent(
+	        tank -> {
+	          ballastDto.setTankName(tank.getShortName());
+	          tankCategory.setTankName(tank.getShortName());
+	          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
+	        });
+	    ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
+	    ballastTankCategories.add(tankCategory);
+	    ballasts.add(ballastDto);
+	    return end;
+	  }
 
   /** @param stabilityParams */
   private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
@@ -1386,20 +1432,30 @@ public class DischargingSequenceService {
   }
 
   private Integer buildBallast(
-      LoadingPlanTankDetails ballast,
-      Ballast ballastDto,
-      Long portEta,
-      Integer start,
-      Integer end) {
-    ballastDto.setQuantity(
-        StringUtils.isEmpty(ballast.getQuantity()) ? null : new BigDecimal(ballast.getQuantity()));
-    ballastDto.setSounding(
-        StringUtils.isEmpty(ballast.getSounding()) ? null : new BigDecimal(ballast.getSounding()));
-    ballastDto.setStart(portEta + (start * 60 * 1000));
-    ballastDto.setEnd(portEta + (end * 60 * 1000));
-    ballastDto.setTankId(ballast.getTankId());
-    return end;
-  }
+	      LoadingPlanTankDetails ballast,
+	      Ballast ballastDto,
+	      Long portEta,
+	      Integer start,
+	      Integer end,
+	      String stageName,
+	      List<EductionOperation> ballastEduction) {
+	    ballastDto.setQuantity(
+	        StringUtils.isEmpty(ballast.getQuantity()) ? null : new BigDecimal(ballast.getQuantity()));
+	    ballastDto.setSounding(
+	        StringUtils.isEmpty(ballast.getSounding()) ? null : new BigDecimal(ballast.getSounding()));
+	    ballastDto.setStart(portEta + (start * 60 * 1000));
+	    ballastDto.setEnd(portEta + (end * 60 * 1000));
+	    ballastDto.setTankId(ballast.getTankId());
+	    ballastEduction.forEach(
+	        eduction -> {
+	          if (stageName.equalsIgnoreCase("dischargingAtMaxRate")
+	              && eduction.getTanks().contains(ballastDto.getTankId())
+	              && (ballastDto.getEnd() > eduction.getTimeEnd())) {
+	            ballastDto.setEnd(eduction.getTimeEnd());
+	          }
+	        });
+	    return end;
+	  }
 
   private Integer buildCargo(
       LoadingPlanTankDetails stowage,
