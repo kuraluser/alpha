@@ -186,6 +186,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
+
   private final long ALGO_RESPONSE_ID = 17L;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
@@ -3032,6 +3033,9 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                     cargoDetails.get(dischargeCargo.getId());
                 dischargeCargoDetail.setIsCommingled(dischargeCargo.getIsCommingled());
                 dischargeCargoDetail.setIfProtested(dischargeCargo.getIfProtested());
+                Optional.ofNullable(dischargeCargo.getSlopQuantity())
+                    .ifPresent(
+                        value -> dischargeCargoDetail.setSlopQuantity(new BigDecimal(value)));
               });
       dischargePatternQuantityCargoPortwiseRepository.saveAll(cargoDetailsToUpdate);
 

@@ -67,7 +67,11 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   @Output() updateCargoToBeLoaded = new EventEmitter<ILoadedCargo[]>();
 
   get cargoTobeLoadedDischargedForm() {
-    return <FormGroup> this.form.get('cargoTobeLoadedDischarged');
+    return <FormGroup> this.form?.get('cargoTobeLoadedDischarged');
+  }
+
+  set cargoTobeLoadedDischargedForm(form: FormGroup) {
+    this.form?.setControl('cargoTobeLoadedDischarged', form);
   }
 
   cargoTobeLoadedDischargedColumns: IDataTableColumn[];
@@ -162,7 +166,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         cargo.shipFigure = shipFigure.toString();
 
         const slopQuantityObj = (<ValueObject<number>>cargo?.slopQuantity);
-        const slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(slopQuantityObj?.value?.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
+        const slopQuantity = cargo?.slopQuantityMT ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo.slopQuantityMT), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp) : 0;
         slopQuantityObj.value = slopQuantity;
 
         if (this.isDischargePlanGenerated) {
@@ -187,11 +191,18 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         slopQuantity: this.fb.control((<ValueObject<number>>cargo?.slopQuantity)?.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)]),
       })
     });
-    this.form = this.fb.group({
-      cargoTobeLoadedDischarged: this.fb.group({
+
+    if (this.form) {
+      this.cargoTobeLoadedDischargedForm = this.fb.group({
         dataTable: this.fb.array([...cargoToBeDischarged])
-      })
-    });
+      });
+    } else {
+      this.form = this.fb.group({
+        cargoTobeLoadedDischarged: this.fb.group({
+          dataTable: this.fb.array([...cargoToBeDischarged])
+        })
+      });
+    }
 
     this.form?.controls?.dischargeCommingledCargoSeparately?.valueChanges.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       const dataTableForm = <FormArray>this.cargoTobeLoadedDischargedForm?.get('dataTable');
@@ -233,6 +244,9 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   onEditComplete(event: IDataTableEvent) {
     if(this.operation === OPERATIONS.DISCHARGING) {
       this.cargoTobeLoadedDischarged[event?.index][event?.field].value = event?.data[event?.field]?.value;
+      if (event?.field === 'slopQuantity') {
+        this.cargoTobeLoadedDischarged[event?.index].slopQuantityMT = this.quantityPipe.transform(event?.data[event?.field]?.value, this.currentQuantitySelectedUnit, QUANTITY_UNIT.MT, event?.data?.estimatedAPI, event?.data?.estimatedTemp, -1).toString();
+      }
       this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischarged);
     }
   }

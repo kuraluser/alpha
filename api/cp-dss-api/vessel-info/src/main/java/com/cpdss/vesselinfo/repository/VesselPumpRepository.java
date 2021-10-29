@@ -10,4 +10,6 @@ import org.springframework.data.domain.Pageable;
 public interface VesselPumpRepository extends CommonCrudRepository<VesselPumps, Long> {
 
   Page<VesselPumps> findAllByVesselAndIsActiveTrue(Vessel vessel, Pageable pageable);
+
+  Page<VesselPumps> findAllByVesselAndIsActiveTrueOrderById(Vessel vessel, Pageable pageable);
 }

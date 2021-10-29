@@ -55,6 +55,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   }
   set portRotationId(portRotationId: number) {
     this._portRotationId = portRotationId;
+    this.dischargingInformationForm = null;
     this.getDischargingInformation()
   }
 
@@ -128,6 +129,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       const dischargingInformationResponse = await this.loadingDischargingInformationApiService.getDischargingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
       this.dischargingInformationData = this.loadingDischargingTransformationService.transformDischargingInformation(dischargingInformationResponse, this.listData);
       this.initFormArray(this.dischargingInformationData);
+      this.loadingDischargingTransformationService.setDischargingInformationValidity(dischargingInformationResponse?.isDischargeInstructionsComplete);
       // this.rulesService.dischargeInfoId.next(this.dischargingInformationData.dischargeInfoId);
       await this.updateGetData();
     }
@@ -156,9 +158,6 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       dischargeSlopTanksFirst: this.fb.control(dischargingInformationData?.dischargeSlopTanksFirst),
       dischargeCommingledCargoSeparately: this.fb.control(dischargingInformationData?.dischargeCommingledCargoSeparately),
       machinery: this.fb.group({}),
-      cargoTobeLoadedDischarged: this.fb.group({
-        dataTable: this.fb.array([])
-      }),
       cowDetails: this.fb.group({}),
       postDischargeStageTime: this.fb.group({})
     });
@@ -301,7 +300,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @memberof DischargingInformationComponent
    */
   onCargoToBeDischargedChange(event: ILoadedCargo[]) {
-    this.dischargingInformationPostData.cargoToBeDischarged = { ...this.dischargingInformationPostData?.cargoToBeDischarged, dischargeQuantityCargoDetails: this.loadingDischargingTransformationService.getCargoToBeDischargedAsValue(event, this.listData) };
+    this.dischargingInformationPostData.cargoToBeDischarged = { ...this.dischargingInformationPostData?.cargoToBeDischarged, dischargeQuantityCargoDetails: this.loadingDischargingTransformationService.getCargoToBeDischargedAsValue(event, this.listData, this.currentQuantitySelectedUnit) };
     this.hasUnSavedData = true;
   }
 
@@ -324,7 +323,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       topCow: event?.topCOWTanks?.map(tank => tank.id),
       bottomCow: event?.bottomCOWTanks?.map(tank => tank.id),
       allCow: event?.allCOWTanks?.map(tank => tank.id),
-      cargoCow: event?.tanksWashingWithDifferentCargo?.map(item => ({
+      cargoCow: event?.tanksWashingWithDifferentCargo?.filter(item => item?.washingCargo?.cargoNominationId && item?.tanks?.length).map(item => ({
         cargoId: item?.cargo?.id, cargoNominationId: item?.cargo?.cargoNominationId,
         tankIds: item?.tanks?.map(tank => tank.id),
         washingCargoId: item?.washingCargo?.id,
@@ -358,25 +357,30 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   async saveDischargingInformationData() {
-    this.manageSequenceComponent?.loadingDischargingSequenceForm?.markAsDirty();
-    this.manageSequenceComponent?.loadingDischargingSequenceForm?.markAllAsTouched();
-
-    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAsDirty();
     this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAllAsTouched();
+    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.updateValueAndValidity();
 
-    this.dischargeBerthComponent.berthDetailsForm?.markAsDirty();
+    this.dischargeBerthComponent.berthDetailsForm?.markAllAsTouched();
     this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
 
-    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAsDirty();
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAllAsTouched();
     this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
 
-    this.dischargingInformationForm.markAsDirty();
+    this.dischargingInformationForm.markAllAsTouched();
     this.dischargingInformationForm?.updateValueAndValidity();
 
-    this.dischargingInformationData.isDischargeInfoComplete = await this.checkIfValid() && this.dischargingInformationForm.valid;
+    const isValid = await this.checkIfValid();
+    this.dischargingInformationData.isDischargeInfoComplete = isValid && this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && !this.dischargeBerthComponent.berthDetailsForm?.invalid && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid;
     this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
 
-    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
+    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY', 'DISCHARGING_INFORMATION_INVALID_DATA']).toPromise();
+
+    if (!this.dischargingInformationData?.isDischargeInfoComplete) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_ERROR'], detail: translationKeys['DISCHARGING_INFORMATION_INVALID_DATA'] });
+      if (document.querySelector('.error-icon')) {
+        document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth" });
+      }
+    }
 
     if (this.dischargingInformationData.isDischargeInfoComplete) {
       if (this.hasUnSavedData) {
@@ -384,8 +388,6 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
         this.dischargingInformationPostData.isDischargeInfoComplete = true;
         const result: IDischargingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveDischargingInformation(this.vesselId, this.voyageId, this.dischargingInformationPostData).toPromise();
         if (result?.responseStatus?.status === '200') {
-          this.dischargingInformationData = this.loadingDischargingTransformationService.transformDischargingInformation(result?.dischargingInformation, this.listData);
-          await this.updateGetData();
           this.hasUnSavedData = false;
           this.messageService.add({ severity: 'success', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY'] });
         }

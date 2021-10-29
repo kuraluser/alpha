@@ -15,4 +15,5 @@ public class UllageUpdateRequest {
   private String api;
   private String temp;
   private String sg;
+  private Long vesselId;
 }

@@ -497,6 +497,8 @@ message LoadingPlanStabilityParameters {
   string meanDraft = 10;
   string list = 11;
   string gomValue = 12;
+  string freeboard = 13;
+  string manifoldHeight = 14;
 }
 
 message LoadingPlanTankDetails {
@@ -558,6 +560,7 @@ message EductorOperation {
 
 message LoadingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
+  int64 portRotationId =2;
 }
 
 message LoadingInstructionRequest {
@@ -752,6 +755,8 @@ message LoadablePlanCommingleDetails{
  string colorCode = 41;
  int64 cargoNomination1Id = 42;
  int64 cargoNomination2Id = 43;
+ int64 cargo1Id = 44;
+ int64 cargo2Id = 45;
 }
 
 message LoadingSequenceRequest {

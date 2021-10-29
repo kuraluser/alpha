@@ -19,6 +19,7 @@ public class FileRepoSpecification implements Specification<FileRepo> {
   @Override
   public Predicate toPredicate(
       Root<FileRepo> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+
     List<Predicate> predicates = new ArrayList<>();
     Path<Object> value = root.get(criteria.getKey());
     if (criteria.getOperation().equalsIgnoreCase("EQUALS")) {
@@ -36,7 +37,7 @@ public class FileRepoSpecification implements Specification<FileRepo> {
       predicates.add(
           builder.like(
               builder.lower(root.get(criteria.getKey()).as(String.class)),
-              "%" + criteria.getValue().toString() + "%"));
+              criteria.getValue().toString().toLowerCase()));
     }
     return builder.and(predicates.toArray(new Predicate[0]));
   }

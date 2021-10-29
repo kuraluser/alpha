@@ -46,9 +46,10 @@ service DischargePlanService{
   rpc GetDischargeUpdateUllageDetails (UpdateUllageDetailsRequest) returns (UpdateUllageDetailsResponse) {}
   rpc generateDischargePlan(DischargeInformationRequest) returns (DischargePlanAlgoRequest) {}
   rpc updateDischargeUllageDetails(UllageBillRequest) returns (UllageBillReply){}
-    rpc saveDischargingPlan(DischargingPlanSaveRequest) returns (DischargingPlanSaveResponse) {}
+  rpc saveDischargingPlan(DischargingPlanSaveRequest) returns (DischargingPlanSaveResponse) {}
   rpc dischargeInfoStatusCheck(DischargeInfoStatusRequest) returns (DischargeInfoStatusReply) {}
   rpc SaveDischargingPlanAlgoStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
+  rpc GetDischargingSequences(LoadingSequenceRequest) returns (DischargeSequenceReply) {}
   rpc dischargePlanStowageDetails(DischargePlanStowageDetailsRequest) returns (DischargePlanStowageDetailsResponse){}
 }
 

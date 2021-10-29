@@ -190,7 +190,8 @@ public class LoadableStudiesConstants {
   public static final String LOADABLE_STUDY_JSON_MODULE_NAME = "LOADABLE";
   public static final String DISCHARGE_STUDY_JSON_MODULE_NAME = "DISCHARGE";
   public static final Long DISCHARGE_STUDY_REQUEST = 11L;
-  public static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  public static final Long UPDATED_LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  public static final Long LOADABLE_STUDY_ALGO_RESULT_JSON_ID = 17L;
   public static final Long DISCHARGE_STUDY_RESULT_JSON_ID = 12L;
 
   public static final Long LOADABLE_STUDY_LOADICATOR_TYPE_ID = 1L;
@@ -199,4 +200,6 @@ public class LoadableStudiesConstants {
   public static final String LOADING_PORT = "LOADING";
   public static final String DISCHARGE_PORT = "DISCHARGE";
   public static final String INVALID_ULLAGE_OR_SOUNDING_VALUE = "INVALID_ULLAGE_OR_SOUNDING_VALUE";
+
+  public static final String CPDSS_BUILD_ENV_SHIP = "ship";
 }

@@ -11,6 +11,7 @@ import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDis
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Transformation Service for Loading  and Discharging
@@ -25,6 +26,7 @@ export class LoadingDischargingTransformationService {
   private _isDischargeStarted: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _unitChangeSource: Subject<boolean> = new Subject();
   public _loadingInstructionSource: Subject<boolean> = new Subject();
+  public _dischargingInstructionSource: Subject<boolean> = new Subject();
   public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
@@ -45,6 +47,7 @@ export class LoadingDischargingTransformationService {
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
   unitChange$ = this._unitChangeSource.asObservable();
   loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
+  dischargingInstructionValidity$ = this._dischargingInstructionSource.asObservable();
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
   tabChange$ = this._tabChangeSource.asObservable();
   validateUllageData$ = this._validateUllageData.asObservable();
@@ -114,6 +117,11 @@ export class LoadingDischargingTransformationService {
   /** Set loading instruction complete status */
   setLoadingInstructionValidity(value: boolean) {
     this._loadingInstructionSource.next(value);
+  }
+
+  /** Set discharging instruction complete status */
+  setDischargingInstructionValidity(value: boolean) {
+    this._dischargingInstructionSource.next(value);
   }
 
 
@@ -265,7 +273,9 @@ export class LoadingDischargingTransformationService {
 * @returns {IDataTableColumn[]}
 * @memberof LoadingDischargingTransformationService
 */
-  getLoadingDischargingDelayDatatableColumns(operation: OPERATIONS): IDataTableColumn[] {
+  getLoadingDischargingDelayDatatableColumns(operation: OPERATIONS, totalDuration: number, translateService: TranslateService): IDataTableColumn[] {
+
+
     const columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -329,7 +339,7 @@ export class LoadingDischargingTransformationService {
         maskFormat: '99:99',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED',
-          'invalidDuration': 'LOADING_MANAGE_SEQUENCE_DURATION_MAX'
+          'invalidDuration': operation === OPERATIONS.LOADING ? 'LOADING_MANAGE_SEQUENCE_DURATION_MAX' : `${translateService.instant('DISCHARGING_MANAGE_SEQUENCE_DURATION_MAX')} ${totalDuration}Hrs`
         }
       },
       {
@@ -386,9 +396,11 @@ export class LoadingDischargingTransformationService {
     _loadingDischargingDelay.duration = new ValueObject<string>(hourDuration + ':' + minuteDuration, true, isNewValue, false, true);
 
     if (loadingDischargingDelay.cargoId) {
+      _loadingDischargingDelay.quantityMT = operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT;
       const loadableMT = this.quantityPipe.transform(operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
       _loadingDischargingDelay.quantity = new ValueObject<number>(Number(loadableMT), true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     } else {
+      _loadingDischargingDelay.quantityMT = loadingDischargingDelay?.quantity;
       _loadingDischargingDelay.quantity = new ValueObject<number>(loadingDischargingDelay?.quantity, true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     }
     _loadingDischargingDelay.colorCode = cargoObj?.colorCode;
@@ -434,6 +446,7 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.loadingInfoId = infoId;
       } else {
         _loadingDischargingDelays.dischargeInfoId = infoId;
+        _loadingDischargingDelays.sequenceNo = Number(loadingValueObject?.sequenceNo.value);
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
@@ -608,14 +621,14 @@ export class LoadingDischargingTransformationService {
       {
         field: 'blFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_BL_FIGURE',
-        numberFormat: quantityNumberFormat,
+        numberType: 'quantity',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'shipFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SHIP_FIGURE',
-        numberFormat: quantityNumberFormat,
+        numberType: 'quantity',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
@@ -637,7 +650,6 @@ export class LoadingDischargingTransformationService {
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
-        numberFormat: quantityNumberFormat,
         errorMessages: {
           'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
           'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
@@ -983,10 +995,10 @@ export class LoadingDischargingTransformationService {
 
     // Updating post discharge time
     dischargingInformation.postDischargeStageTime = {
-      dryCheckTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.dryCheckTime) * 60 * 1000).format("HH:mm") ?? null,
-      slopDischargingTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.slopDischargingTime) * 60 * 1000).format("HH:mm") ?? null,
-      finalStrippingTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.finalStrippingTime) * 60 * 1000).format("HH:mm") ?? null,
-      freshOilWashingTime: moment.utc(Number(dischargingInformationResponse?.postDischargeStageTime?.freshOilWashingTime) * 60 * 1000).format("HH:mm") ?? null
+      dryCheckTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.dryCheckTime)) ?? null,
+      slopDischargingTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.slopDischargingTime)) ?? null,
+      finalStrippingTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.finalStrippingTime)) ?? null,
+      freshOilWashingTime: this.convertMinutesToHHMM(Number(dischargingInformationResponse?.postDischargeStageTime?.freshOilWashingTime)) ?? null
     };
 
     // Update discharging details
@@ -1052,7 +1064,7 @@ export class LoadingDischargingTransformationService {
    * @return {*}  {ILoadedCargoResponse[]}
    * @memberof LoadingDischargingTransformationService
    */
-  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData): ILoadedCargoResponse[] {
+  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData, currentQuantitySelectedUnit: QUANTITY_UNIT): ILoadedCargoResponse[] {
     const _dischargeQuantityCargoDetails: ILoadedCargoResponse[] = dischargeQuantityCargoDetails?.map(cargo => {
       const _cargo = <ILoadedCargoResponse>{};
       for (const key in cargo) {
@@ -1062,7 +1074,7 @@ export class LoadingDischargingTransformationService {
           } else if (key === 'isCommingledDischarge') {
             _cargo.isCommingledDischarge = cargo[key].value;
           } else if (key === 'slopQuantity') {
-            _cargo.slopQuantity = (<ValueObject>cargo[key]).value;
+            _cargo.slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform((<ValueObject>cargo[key]).value, currentQuantitySelectedUnit, QUANTITY_UNIT.MT, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
           } else {
             _cargo[key] = cargo[key];
           }
@@ -1095,6 +1107,7 @@ export class LoadingDischargingTransformationService {
             _cargo.isCommingledDischarge = new ValueObject<boolean>(_isCommingled, true, true, false);
           } else if (key === 'slopQuantity') {
             const _slopQuantity = Number(cargo.slopQuantity) ?? 0;
+            _cargo.slopQuantityMT = _slopQuantity.toString();
             _cargo.slopQuantity = new ValueObject<number>(_slopQuantity, true, true, false);
           } else if (key === 'shipFigure') {
             _cargo.loadableMT = cargo.shipFigure;
@@ -1130,14 +1143,14 @@ export class LoadingDischargingTransformationService {
     cowDetails.topCOWTanks = dischargingInformationResponse?.cowPlan?.topCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
     cowDetails.bottomCOWTanks = dischargingInformationResponse?.cowPlan?.bottomCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
 
-    cowDetails.cowEnd = moment.utc(Number(dischargingInformationResponse?.cowPlan?.cowEnd) * 60 * 1000).format("HH:mm") ?? null;
-    cowDetails.cowStart = moment.utc(Number(dischargingInformationResponse?.cowPlan?.cowStart) * 60 * 1000).format("HH:mm") ?? null;
-    cowDetails.totalDuration = dischargingInformationResponse?.cowPlan?.totalDuration ?? '00:00';
-    const totalDurationInMinutes = dischargingInformationResponse?.cowPlan?.totalDuration ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowPlan?.totalDuration) : null;
-    const startTimeInMinutes = dischargingInformationResponse?.cowPlan?.cowStart ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowPlan?.cowStart) : null;
-    const endTimeInMinutes = dischargingInformationResponse?.cowPlan?.cowEnd ? this.convertTimeStringToMinutes(dischargingInformationResponse?.cowPlan?.cowEnd) : null;
+    const totalDurationInMinutes = dischargingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.reduce((total, cargo) => total += Number(cargo?.timeRequiredForDischarging), 0) * 60;
+    cowDetails.totalDuration = this.convertMinutesToHHMM(totalDurationInMinutes) ?? '00:00';
+    cowDetails.cowEnd = this.convertMinutesToHHMM(Number(dischargingInformationResponse?.cowPlan?.cowEnd)) ?? null;
+    cowDetails.cowStart = this.convertMinutesToHHMM(Number(dischargingInformationResponse?.cowPlan?.cowStart)) ?? null;
+    const startTimeInMinutes = Number(dischargingInformationResponse?.cowPlan?.cowStart);
+    const endTimeInMinutes = Number(dischargingInformationResponse?.cowPlan?.cowEnd);
     const _duration = totalDurationInMinutes ? totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes : null;
-    cowDetails.cowDuration = moment.utc(_duration * 60 * 1000).format("HH:mm") ?? null;
+    cowDetails.cowDuration = this.convertMinutesToHHMM(Number(_duration)) ?? null;
 
     cowDetails.cowTrimMax = dischargingInformationResponse?.cowPlan?.cowTrimMax;
     cowDetails.cowTrimMin = dischargingInformationResponse?.cowPlan?.cowTrimMin;
@@ -1204,13 +1217,13 @@ export class LoadingDischargingTransformationService {
       },
       cowTrimMin: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'min': 'Min',
-        'max': 'Max'
+        'min': 'DISCHARGING_COW_TRIM_MIN',
+        'max': 'DISCHARGING_COW_TRIM_MAX'
       },
       cowTrimMax: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'max': 'Max',
-        'min': 'Min'
+        'max': 'DISCHARGING_COW_TRIM_MIN',
+        'min': 'DISCHARGING_COW_TRIM_MIN'
       },
       cowStart: {
         'required': 'DISCHARGING_COW_REQUIRED',
@@ -1292,5 +1305,16 @@ export class LoadingDischargingTransformationService {
    */
   showUllageError(value) {
     this._showUllageErrorPopup.next(value)
+  }
+
+  /**
+   * Convert minutes to HH:MM format
+   *
+   * @param {number} minutes
+   * @return {*}  {string}
+   * @memberof LoadingDischargingTransformationService
+   */
+  convertMinutesToHHMM(minutes: number): string {
+    return `0${Math.floor(minutes / 60)}`.slice(-2) + ':' + ('0' + minutes % 60).slice(-2)
   }
 }

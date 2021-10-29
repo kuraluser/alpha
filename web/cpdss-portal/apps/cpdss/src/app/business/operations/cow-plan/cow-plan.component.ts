@@ -95,8 +95,8 @@ export class CowPlanComponent implements OnInit {
       cowStart: this.fb.control(this.cowDetails?.cowStart, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
       cowEnd: this.fb.control(this.cowDetails?.cowEnd, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
       cowDuration: this.fb.control(this.cowDetails?.cowDuration),
-      cowTrimMin: this.fb.control(this.cowDetails?.cowTrimMin, [Validators.required, numberValidator(2, 1)]),
-      cowTrimMax: this.fb.control(this.cowDetails?.cowTrimMax, [Validators.required, numberValidator(2, 1)]),
+      cowTrimMin: this.fb.control(this.cowDetails?.cowTrimMin, [Validators.required, Validators.min(4), Validators.max(6), numberValidator(2, 1)]),
+      cowTrimMax: this.fb.control(this.cowDetails?.cowTrimMax, [Validators.required, Validators.min(4), Validators.max(6), numberValidator(2, 1)]),
       needFreshCrudeStorage: this.fb.control(this.cowDetails?.needFreshCrudeStorage),
       needFlushingOil: this.fb.control(this.cowDetails?.needFlushingOil),
     }));
@@ -199,7 +199,7 @@ export class CowPlanComponent implements OnInit {
     const startTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowStart.value);
     const endTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowEnd.value);
     const duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
-    this.cowDetailsForm.controls.cowDuration.setValue(moment.utc(duration * 60 * 1000).format("HH:mm"));
+    this.cowDetailsForm.controls.cowDuration.setValue(this.loadingDischargingTransformationService.convertMinutesToHHMM(duration));
     if (this.cowDetailsForm.controls?.cowStart.value) {
       this.cowDetailsForm.controls?.cowEnd.setValidators([Validators.required, durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
     } else{

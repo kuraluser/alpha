@@ -19,7 +19,6 @@ import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
@@ -1243,22 +1242,22 @@ public class LoadingPlanCommunicationService {
                 e.getMessage());
           }
         }
-        if(pyUser != null) {
+        if (pyUser != null) {
           try {
             pyUserRepository.save(pyUser);
             log.info("Saved PyUser:" + pyUser);
           } catch (ResourceAccessException e) {
             updateStatusInExceptionCase(
-                    idMap.get(LoadingPlanTables.PYUSER.getTable()),
-                    processId,
-                    retryStatus,
-                    e.getMessage());
+                idMap.get(LoadingPlanTables.PYUSER.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
           } catch (Exception e) {
             updateStatusInExceptionCase(
-                    idMap.get(LoadingPlanTables.PYUSER.getTable()),
-                    processId,
-                    StagingStatus.FAILED.getStatus(),
-                    e.getMessage());
+                idMap.get(LoadingPlanTables.PYUSER.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
           }
         }
         loadingPlanStagingService.updateStatusCompletedForProcessId(

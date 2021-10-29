@@ -163,6 +163,14 @@ public class LoadicatorService {
           isEmpty(stabilityParameter.getShearForce())
               ? null
               : new BigDecimal(stabilityParameter.getShearForce()));
+      synopticalTableLoadicatorData.setFreeboard(
+          isEmpty(stabilityParameter.getFreeboard())
+              ? null
+              : new BigDecimal(stabilityParameter.getFreeboard()));
+      synopticalTableLoadicatorData.setManifoldHeight(
+          isEmpty(stabilityParameter.getManifoldHeight())
+              ? null
+              : new BigDecimal(stabilityParameter.getManifoldHeight()));
       synopticalTableLoadicatorData.setActive(true);
       synopticalTableLoadicatorData.setSynopticalTable(synData.get());
       synopticalTableLoadicatorDataRepository.save(synopticalTableLoadicatorData);
@@ -1151,7 +1159,7 @@ public class LoadicatorService {
       JsonData patternJson =
           this.jsonDataService.getJsonData(
               loadableStudyOpt.get().getId(),
-              LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+              LoadableStudiesConstants.UPDATED_LOADABLE_STUDY_RESULT_JSON_ID);
       if (patternJson != null) {
         LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
             LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
@@ -1545,6 +1553,10 @@ public class LoadicatorService {
     entity.setShearingForce(isEmpty(result.getSf()) ? null : new BigDecimal(result.getSf()));
     entity.setDeflection(
         isEmpty(result.getDeflection()) ? null : new BigDecimal(result.getDeflection()));
+    entity.setFreeboard(
+        isEmpty(result.getFreeboard()) ? null : new BigDecimal(result.getFreeboard()));
+    entity.setManifoldHeight(
+        isEmpty(result.getManifoldHeight()) ? null : new BigDecimal(result.getManifoldHeight()));
     return entity;
   }
 }

@@ -3771,6 +3771,9 @@ public class LoadableStudyService {
     Optional.ofNullable(stabilityParameters.getTrim()).ifPresent(builder::setTrim);
 
     Optional.ofNullable(stabilityParameters.getAirDraft()).ifPresent(builder::setAirDraft);
+    Optional.ofNullable(stabilityParameters.getFreeboard()).ifPresent(builder::setFreeboard);
+    Optional.ofNullable(stabilityParameters.getManifoldHeight())
+        .ifPresent(builder::setManifoldHeight);
     return builder.build();
   }
 
@@ -3895,7 +3898,7 @@ public class LoadableStudyService {
                           .ifPresent(cowDetailBuilder::setWashType);
                       qunatityBuilder.addCowDetails(cowDetailBuilder.build());
                     }));
-
+    Optional.ofNullable(lpqcd.getLoadingRateM3Hr()).ifPresent(qunatityBuilder::setLoadingRateM3Hr);
     detailsBuilder.addLoadableQuantityCargoDetails(qunatityBuilder.build());
   }
 
@@ -4974,12 +4977,12 @@ public class LoadableStudyService {
    * @return RecalculateVolume
    */
   public UpdateUllage updateUllage(
-      UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
+      Long vesselId, UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
       throws GenericServiceException {
     log.info("Inside updateUllageRequest in gateway micro service");
 
     UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
-    buildUpdateUllageRequest(updateUllageRequest, loadablePatternId, grpcRequest);
+    buildUpdateUllageRequest(updateUllageRequest, loadablePatternId, vesselId, grpcRequest);
     UpdateUllageReply grpcReply = this.updateUllage(grpcRequest.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -5078,8 +5081,10 @@ public class LoadableStudyService {
   public void buildUpdateUllageRequest(
       UpdateUllage updateUllageRequest,
       Long loadablePatternId,
+      Long vesselId,
       com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.Builder grpcRequest) {
     grpcRequest.setLoadablePatternId(loadablePatternId);
+    grpcRequest.setVesselId(vesselId);
     com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
     builder.setId(updateUllageRequest.getId());
@@ -5103,6 +5108,7 @@ public class LoadableStudyService {
       Long loadablePatternId,
       com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.Builder grpcRequest) {
     grpcRequest.setLoadablePatternId(loadablePatternId);
+    grpcRequest.setVesselId(updateUllageRequest.getVesselId());
     com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
     builder.setId(updateUllageRequest.getId());

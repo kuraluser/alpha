@@ -910,8 +910,7 @@ public class LoadableStudyServiceShore {
     onBoardQuantityEntity.setLoadableStudy(loadableStudyEntity);
 
     // Set other details
-    onBoardQuantityEntity.setCargoId(
-        0 == onBoardQuantityReqObj.getCargoId() ? null : onBoardQuantityReqObj.getCargoId());
+    onBoardQuantityEntity.setCargoId(onBoardQuantityReqObj.getCargoId());
     onBoardQuantityEntity.setTankId(onBoardQuantityReqObj.getTankId());
     onBoardQuantityEntity.setPortId(onBoardQuantityReqObj.getPortId());
     onBoardQuantityEntity.setVolumeInM3(onBoardQuantityReqObj.getVolume());

@@ -11,6 +11,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TAN
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DICHARGE_STUDY;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_RESULT_JSON_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_ID;
@@ -29,6 +30,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_O
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.UPDATED_LOADABLE_STUDY_RESULT_JSON_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VALIDATED_CONDITIONS;
 import static java.util.Optional.ofNullable;
 
@@ -50,7 +52,6 @@ import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.CowTypeMaster;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
-import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
@@ -99,7 +100,6 @@ import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepositor
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
-import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -457,7 +457,7 @@ public class LoadablePatternService {
    * @param loadableStudyId loadableStudyId value
    * @param algoCallBackRequestObj Algo Callback request object
    * @param patterns list of saved patterns
-   * @param requestType
+   * @param requestType requestType value LS/DS
    * @return LoadablePatternAlgoRequest object
    * @throws GenericServiceException Exception on JSON conversion failure
    */
@@ -488,27 +488,19 @@ public class LoadablePatternService {
             .clearLoadablePlanDetails()
             .addAllLoadablePlanDetails(loadablePlanDetailsList)
             .build();
-    JsonData jsonData = null;
+    long jsonTypeId;
     if (requestType.equals(LOADABLE_STUDY)) {
-      jsonData =
-          jsonDataService.getJsonData(
-              loadableStudyId, LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+      // Saved modified data as new entry as Id 17 needs to be the actual Algo response
+      jsonTypeId = UPDATED_LOADABLE_STUDY_RESULT_JSON_ID;
     } else {
-      jsonData =
-          jsonDataService.getJsonData(
-              loadableStudyId, LoadableStudiesConstants.DISCHARGE_STUDY_RESULT_JSON_ID);
+      jsonTypeId = DISCHARGE_STUDY_RESULT_JSON_ID;
     }
 
     // Update JSON data table with pattern id
-    if (jsonData == null) {
-      log.error("No json data found against pattern id {}", loadableStudyId);
-      throw new GenericServiceException(
-          "No json data found against pattern id " + loadableStudyId,
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
     try {
-      jsonData.setJsonData(
+      jsonDataService.updateJsonData(
+          loadableStudyId,
+          jsonTypeId,
           JsonFormat.printer().omittingInsignificantWhitespace().print(algoCallBackRequestObj));
     } catch (InvalidProtocolBufferException e) {
       log.error(
@@ -522,8 +514,6 @@ public class LoadablePatternService {
           HttpStatusCode.INTERNAL_SERVER_ERROR,
           e);
     }
-    jsonDataRepository.save(jsonData);
-
     return algoCallBackRequestObj;
   }
 
@@ -1516,6 +1506,14 @@ public class LoadablePatternService {
         lpd.getStabilityParameters().getAirDraft().isBlank()
             ? null
             : new BigDecimal(lpd.getStabilityParameters().getAirDraft()));
+    stabilityParameter.setFreeboard(
+        lpd.getStabilityParameters().getFreeboard().isBlank()
+            ? null
+            : new BigDecimal(lpd.getStabilityParameters().getFreeboard()));
+    stabilityParameter.setManifoldHeight(
+        lpd.getStabilityParameters().getManifoldHeight().isBlank()
+            ? null
+            : new BigDecimal(lpd.getStabilityParameters().getManifoldHeight()));
     stabilityParameterRepository.save(stabilityParameter);
   }
 
@@ -1751,14 +1749,20 @@ public class LoadablePatternService {
       Long loadableStudyStatus,
       String messageId,
       boolean generatedFromShore) {
-    LoadableStudyAlgoStatus status = new LoadableStudyAlgoStatus();
-    status.setLoadableStudy(loadableStudy);
+
+    LoadableStudyAlgoStatus status =
+        loadableStudyAlgoStatusRepository
+            .findByLoadableStudyIdAndMessageIdAndIsActive(loadableStudy.getId(), messageId, true)
+            .orElse(new LoadableStudyAlgoStatus());
+
     status.setIsActive(true);
+    status.setLoadableStudy(loadableStudy);
     status.setLoadableStudyStatus(loadableStudyStatusRepository.getOne(loadableStudyStatus));
     status.setProcessId(processId);
     status.setVesselxid(loadableStudy.getVesselXId());
     status.setMessageId(messageId);
     status.setGeneratedFromShore(generatedFromShore);
+
     loadableStudyAlgoStatusRepository.save(status);
   }
 

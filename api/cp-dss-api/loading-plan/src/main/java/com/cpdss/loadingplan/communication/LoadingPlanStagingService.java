@@ -425,12 +425,12 @@ public class LoadingPlanStagingService extends StagingService {
           }
         case pyuser:
           {
-            if(pyUserId !=null) {
+            if (pyUserId != null) {
               Optional<PyUser> pyUser = pyUserRepository.findById(pyUserId);
               if (pyUser.isPresent()) {
                 object.add(pyUser.get());
                 addIntoProcessedList(
-                        array, object, processIdentifier, processId, processGroupId, processedList);
+                    array, object, processIdentifier, processId, processGroupId, processedList);
               }
             }
             break;

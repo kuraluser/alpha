@@ -140,6 +140,8 @@ public class DischargeInformationService {
     try {
       builder.setDischargeInfoId(disEntity.getId());
       builder.setSynopticTableId(disEntity.getSynopticTableXid());
+      Optional.ofNullable(disEntity.getDischargingInformationStatus())
+          .ifPresent(status -> builder.setDischargingInfoStatusId(status.getId()));
       log.info("Setting Discharge PK and Synoptic Id");
     } catch (Exception e) {
       log.error("Failed to set PK, Synoptic Id in response - {}", e.getMessage());
@@ -886,10 +888,6 @@ public class DischargeInformationService {
   public void updateIsDischargingInfoCompeteStatus(Long id, boolean isDischargingInfoComplete) {
     dischargeInformationRepository.updateDischargeInformationCompleteStatus(
         id, isDischargingInfoComplete);
-  }
-
-  public void save(DischargeInformation entity) {
-    dischargeInformationRepository.save(entity);
   }
 
   public void updateDischargingPlanDetailsFromAlgo(Long id, String dischargingPlanDetailsFromAlgo) {

@@ -25,6 +25,7 @@ import com.cpdss.gateway.domain.UploadTideDetailResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInfoAlgoStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
@@ -34,9 +35,9 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionsUpdateRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
 import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatusRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
@@ -576,7 +577,9 @@ public class DischargePlanController {
    * @return
    * @throws CommonRestException
    */
-  @PostMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/confirm-plan/{dischargePatternId}")
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/confirm-plan/{dischargePatternId}")
   public CommonResponse confirmPlan(
       @PathVariable Long dischargeStudyId,
       @PathVariable Long dischargePatternId,
@@ -1191,7 +1194,7 @@ public class DischargePlanController {
    */
   @PostMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/generate-discharging-plan")
-  public LoadingInfoAlgoResponse saveDischargePlan(
+  public LoadingInfoAlgoResponse generateDischargePlan(
       @RequestHeader HttpHeaders headers,
       @PathVariable Long vesselId,
       @PathVariable Long voyageId,
@@ -1263,7 +1266,7 @@ public class DischargePlanController {
   }
 
   @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-status")
-  public LoadingInfoAlgoStatus getDischargeInfoStatus(
+  public DischargingInfoAlgoStatus getDischargeInfoStatus(
       @RequestHeader HttpHeaders headers,
       @PathVariable Long vesselId,
       @PathVariable Long voyageId,
@@ -1285,6 +1288,51 @@ public class DischargePlanController {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
           HttpStatusCode.SERVICE_UNAVAILABLE,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get Discharging Sequence API
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/discharging-sequence")
+  public LoadingSequenceResponse getDischargeSequence(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get discharging Sequence api for vessel {}, voyage {}, loading information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return dischargeInformationService.getDischargingSequence(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      log.error("Exception in Get discharging Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Exception in Get discharging Sequence API");
+      e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
           e.getMessage(),
           e);
     }

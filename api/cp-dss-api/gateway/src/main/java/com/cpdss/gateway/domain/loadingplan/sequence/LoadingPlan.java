@@ -24,4 +24,6 @@ public class LoadingPlan {
   private String bendinMoment;
 
   private String shearForce;
+  private String freeboard;
+  private String manifoldHeight;
 }

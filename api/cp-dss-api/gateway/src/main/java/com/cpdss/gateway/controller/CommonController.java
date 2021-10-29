@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,6 +23,8 @@ import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +46,7 @@ public class CommonController {
   private static final String CORRELATION_ID_HEADER = "correlationId";
   @Autowired LoadingPlanService loadingPlanService;
   @Autowired FileRepoService fileRepoService;
+  @Autowired CacheManager cacheManager;
 
   /**
    * To import ullage report excel file
@@ -293,5 +297,30 @@ public class CommonController {
           e.getMessage(),
           e);
     }
+  }
+  
+  /**
+   * Delete api to clear the requested cache, this api is only for help the developers to clear the cache easily. 
+   * this is not part for the CPDSS Usecase.
+   * @param cacheName
+   */
+  @DeleteMapping("/clear-cache")
+  public void clearCache(@RequestParam(name = "cacheName", required = true) String cacheName) {
+	  
+	  if (cacheName.equalsIgnoreCase("all")){
+
+		for(String name:cacheManager.getCacheNames()){			  
+				  cacheManager.getCache(name).clear(); // clear cache by name
+		}
+	} else {
+		Collection<String> cacheNames = cacheManager.getCacheNames();
+		  cacheNames.forEach(item -> System.out.println(item));
+		if(cacheManager.getCache(cacheName) != null) {
+			//Cache cache = cacheManager.getCache("vesselDetails");
+			cacheManager.getCache(cacheName).clear(); // clear cache by name
+			  
+		  }
+	}
+	  
   }
 }

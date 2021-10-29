@@ -90,6 +90,8 @@ public class LoadingPlanBuilderService {
       var2.setMeanDraft(var1.getMeanDraft());
       var2.setAftDraft(var1.getAftDraft());
       var2.setTrim(var1.getTrim());
+      var2.setFreeBoard(var1.getFreeboard());
+      var2.setManifoldHeight(var1.getManifoldHeight());
       var2.setConditionType(var1.getConditionType());
       var2.setValueType(var1.getValueType());
       response.add(var2);

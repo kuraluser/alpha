@@ -390,6 +390,61 @@ public final class DischargePlanServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest,
+          com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>
+      getGetDischargingSequencesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetDischargingSequences",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargeSequenceReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest,
+          com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>
+      getGetDischargingSequencesMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest,
+            com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>
+        getGetDischargingSequencesMethod;
+    if ((getGetDischargingSequencesMethod =
+            DischargePlanServiceGrpc.getGetDischargingSequencesMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getGetDischargingSequencesMethod =
+                DischargePlanServiceGrpc.getGetDischargingSequencesMethod)
+            == null) {
+          DischargePlanServiceGrpc.getGetDischargingSequencesMethod =
+              getGetDischargingSequencesMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingSequenceRequest,
+                          com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetDischargingSequences"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingSequenceRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeSequenceReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier(
+                              "GetDischargingSequences"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargingSequencesMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest,
           com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
       getDischargePlanStowageDetailsMethod;
@@ -561,6 +616,16 @@ public final class DischargePlanServiceGrpc {
     }
 
     /** */
+    public void getDischargingSequences(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetDischargingSequencesMethod(), responseObserver);
+    }
+
+    /** */
     public void dischargePlanStowageDetails(
         com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest request,
         io.grpc.stub.StreamObserver<
@@ -624,6 +689,14 @@ public final class DischargePlanServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest,
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>(
                       this, METHODID_SAVE_DISCHARGING_PLAN_ALGO_STATUS)))
+          .addMethod(
+              getGetDischargingSequencesMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingSequenceRequest,
+                      com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>(
+                      this, METHODID_GET_DISCHARGING_SEQUENCES)))
           .addMethod(
               getDischargePlanStowageDetailsMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -734,6 +807,18 @@ public final class DischargePlanServiceGrpc {
     }
 
     /** */
+    public void getDischargingSequences(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetDischargingSequencesMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
     public void dischargePlanStowageDetails(
         com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest request,
         io.grpc.stub.StreamObserver<
@@ -812,6 +897,13 @@ public final class DischargePlanServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveDischargingPlanAlgoStatusMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargeSequenceReply getDischargingSequences(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetDischargingSequencesMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -905,6 +997,16 @@ public final class DischargePlanServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>
+        getDischargingSequences(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetDischargingSequencesMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse>
         dischargePlanStowageDetails(
             com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest request) {
@@ -920,7 +1022,8 @@ public final class DischargePlanServiceGrpc {
   private static final int METHODID_SAVE_DISCHARGING_PLAN = 4;
   private static final int METHODID_DISCHARGE_INFO_STATUS_CHECK = 5;
   private static final int METHODID_SAVE_DISCHARGING_PLAN_ALGO_STATUS = 6;
-  private static final int METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS = 7;
+  private static final int METHODID_GET_DISCHARGING_SEQUENCES = 7;
+  private static final int METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS = 8;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -987,6 +1090,14 @@ public final class DischargePlanServiceGrpc {
               (com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.LoadableStudy.AlgoStatusReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_DISCHARGING_SEQUENCES:
+          serviceImpl.getDischargingSequences(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargeSequenceReply>)
                   responseObserver);
           break;
         case METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS:
@@ -1070,6 +1181,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getSaveDischargingPlanMethod())
                       .addMethod(getDischargeInfoStatusCheckMethod())
                       .addMethod(getSaveDischargingPlanAlgoStatusMethod())
+                      .addMethod(getGetDischargingSequencesMethod())
                       .addMethod(getDischargePlanStowageDetailsMethod())
                       .build();
         }

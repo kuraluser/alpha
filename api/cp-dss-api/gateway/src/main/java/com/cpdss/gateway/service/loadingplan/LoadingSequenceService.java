@@ -160,6 +160,9 @@ public class LoadingSequenceService {
       }
 
       currentCargoNomId = loadingSequence.getCargoNominationId();
+
+      buildEduction(loadingSequence, portEta, ballastEduction);
+
       for (LoadingPlanPortWiseDetails portWiseDetails :
           loadingSequence.getLoadingPlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
@@ -219,7 +222,9 @@ public class LoadingSequenceService {
                   portWiseDetails,
                   ballastDetails,
                   ballasts,
-                  ballastTankCategories);
+                  ballastTankCategories,
+                  loadingSequence.getStageName(),
+                  ballastEduction);
         }
 
         addCargoStage(
@@ -266,8 +271,6 @@ public class LoadingSequenceService {
                 }
               });
       loadingRates.addAll(loadingSequence.getLoadingRatesList());
-
-      buildEduction(loadingSequence, portEta, ballastEduction);
     }
 
     if (gravityList.size() > 0) {
@@ -282,7 +285,7 @@ public class LoadingSequenceService {
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTankMap, portEta, response);
     this.buildBallastPumpCategories(vesselId, response, ballastPumps);
-    this.removeEmptyBallasts(ballasts, ballastTankCategories);
+    this.removeEmptyBallasts(ballasts, ballastTankCategories, ballastEduction);
     this.removeEmptyCargos(cargos, cargoTankCategories);
 
     response.setCargos(cargos);
@@ -551,9 +554,12 @@ public class LoadingSequenceService {
   /**
    * @param ballasts
    * @param ballastTankCategories
+   * @param ballastEduction
    */
   private void removeEmptyBallasts(
-      List<Ballast> ballasts, Set<TankCategory> ballastTankCategories) {
+      List<Ballast> ballasts,
+      Set<TankCategory> ballastTankCategories,
+      List<EductionOperation> ballastEduction) {
     Set<Long> tankIds = ballasts.stream().map(Ballast::getTankId).collect(Collectors.toSet());
     tankIds.forEach(
         tankId -> {
@@ -563,6 +569,14 @@ public class LoadingSequenceService {
             ballasts.removeIf(ballast -> ballast.getTankId().equals(tankId));
             ballastTankCategories.removeIf(category -> category.getId().equals(tankId));
           }
+        });
+    // Remove educted ballasts
+    ballastEduction.forEach(
+        eduction -> {
+          ballasts.removeIf(
+              ballast ->
+                  (eduction.getTanks().contains(ballast.getTankId())
+                      && (ballast.getStart() > eduction.getTimeEnd())));
         });
   }
 
@@ -648,7 +662,7 @@ public class LoadingSequenceService {
    * @param cargoLoadingRates
    * @param stageTickPositions
    */
-  private void updateCargoLoadingRateIntervals(
+  public void updateCargoLoadingRateIntervals(
       List<CargoLoadingRate> cargoLoadingRates, Set<Long> stageTickPositions) {
     cargoLoadingRates.forEach(
         cargoLoadingRate -> {
@@ -733,7 +747,9 @@ public class LoadingSequenceService {
       LoadingPlanPortWiseDetails portWiseDetails,
       List<LoadablePlanBallastDetails> ballastDetails,
       List<Ballast> ballasts,
-      Set<TankCategory> ballastTankCategories) {
+      Set<TankCategory> ballastTankCategories,
+      String stageName,
+      List<EductionOperation> ballastEduction) {
     Ballast ballastDto = new Ballast();
     Optional<VesselTankDetail> tankDetailOpt =
         Optional.ofNullable(vesselTankMap.get(ballast.getTankId()));
@@ -744,7 +760,15 @@ public class LoadingSequenceService {
                     (details.getTankId() == ballast.getTankId())
                         && !StringUtils.isEmpty(details.getColorCode()))
             .findFirst();
-    Integer end = buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime());
+    Integer end =
+        buildBallast(
+            ballast,
+            ballastDto,
+            portEta,
+            start,
+            portWiseDetails.getTime(),
+            stageName,
+            ballastEduction);
     TankCategory tankCategory = new TankCategory();
     tankCategory.setId(ballast.getTankId());
     tankDetailOpt.ifPresent(
@@ -967,7 +991,9 @@ public class LoadingSequenceService {
       Ballast ballastDto,
       Long portEta,
       Integer start,
-      Integer end) {
+      Integer end,
+      String stageName,
+      List<EductionOperation> ballastEduction) {
     ballastDto.setQuantity(
         StringUtils.isEmpty(ballast.getQuantity()) ? null : new BigDecimal(ballast.getQuantity()));
     ballastDto.setSounding(
@@ -975,6 +1001,14 @@ public class LoadingSequenceService {
     ballastDto.setStart(portEta + (start * 60 * 1000));
     ballastDto.setEnd(portEta + (end * 60 * 1000));
     ballastDto.setTankId(ballast.getTankId());
+    ballastEduction.forEach(
+        eduction -> {
+          if (stageName.equalsIgnoreCase("loadingAtMaxRate")
+              && eduction.getTanks().contains(ballastDto.getTankId())
+              && (ballastDto.getEnd() > eduction.getTimeEnd())) {
+            ballastDto.setEnd(eduction.getTimeEnd());
+          }
+        });
     return end;
   }
 
@@ -1177,6 +1211,8 @@ public class LoadingSequenceService {
     Optional.ofNullable(value.getMeanDraft()).ifPresent(paramBuilder::setMeanDraft);
     Optional.ofNullable(value.getTrim()).ifPresent(paramBuilder::setTrim);
     Optional.ofNullable(value.getList()).ifPresent(paramBuilder::setList);
+    Optional.ofNullable(value.getFreeboard()).ifPresent(paramBuilder::setFreeboard);
+    Optional.ofNullable(value.getManifoldHeight()).ifPresent(paramBuilder::setManifoldHeight);
     paramBuilder.setConditionType(conditionType);
     builder.addPortLoadingPlanStabilityParameters(paramBuilder.build());
   }

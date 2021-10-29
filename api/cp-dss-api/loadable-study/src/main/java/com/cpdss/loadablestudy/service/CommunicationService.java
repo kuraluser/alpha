@@ -12,6 +12,7 @@ import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest;
+import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
@@ -73,6 +74,9 @@ public class CommunicationService {
 
   @Value("${loadablestudy.communication.timelimit}")
   private Long timeLimit;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   public void getDataFromCommInShoreSide(
       Map<String, String> taskReqParams, EnumSet<MessageTypes> shore)
@@ -358,6 +362,36 @@ public class CommunicationService {
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
   }
 
+  /**
+   * Method to process Algo and update status
+   *
+   * @param loadableStudyEntity loadable study object
+   * @param messageId communication messageId value
+   */
+  private void processAlgo(final LoadableStudy loadableStudyEntity, final String messageId) {
+
+    // Get saved request JSON
+    JsonData algoRequestJson =
+        jsonDataService.getJsonData(
+            loadableStudyEntity.getId(), LoadableStudiesConstants.LOADABLE_STUDY_REQUEST);
+
+    // Call Algo and update response
+    AlgoResponse algoResponse =
+        restTemplate.postForObject(
+            loadableStudyUrl, algoRequestJson.getJsonData(), AlgoResponse.class);
+    log.info("LS Id: {}, Algo response: {}", loadableStudyEntity.getId(), algoResponse);
+
+    loadablePatternService.updateProcessIdForLoadableStudy(
+        Objects.requireNonNull(algoResponse).getProcessId(),
+        loadableStudyEntity,
+        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
+        messageId,
+        !isShip());
+
+    loadableStudyRepository.updateLoadableStudyStatus(
+        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
+  }
+
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
       Map<String, String> taskReqParams, MessageTypes messageType) {
     log.info("inside getResultFromEnvoyReaderShore ");
@@ -378,65 +412,75 @@ public class CommunicationService {
       loadablePatternService.saveLoadablePatternDetails(erReply.getPatternResultJson(), load);
   }
 
-  public void checkLoadableStudyStatus(Map<String, String> taskReqParams) {
-    List<LoadableStudyCommunicationStatus> communicationStatusList =
-        loadableStudyCommunicationStatusRepository
-            .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
-                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
-                MessageTypes.LOADABLESTUDY.getMessageType());
-    if (!communicationStatusList.isEmpty()) {
-      communicationStatusList
-          .parallelStream()
-          .forEach(
-              communicationStatusRow -> {
-                try {
-                  EnvoyWriter.EnvoyWriterRequest.Builder request =
-                      EnvoyWriter.EnvoyWriterRequest.newBuilder();
-                  request.setMessageId(communicationStatusRow.getMessageUUID());
-                  request.setClientId(taskReqParams.get("ClientId"));
-                  request.setImoNumber(taskReqParams.get("ShipId"));
-                  EnvoyWriter.WriterReply statusReply =
-                      this.envoyWriterService.statusCheck(request.build());
-                  if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())
-                      && !Integer.toString(HttpStatusCode.OK.value())
-                          .equals(statusReply.getStatusCode())) {
+  /**
+   * Method to check loadable study status and call ship algo on timeout
+   *
+   * @param taskReqParams map containing request params from task_req_param_attributes
+   */
+  public void checkLoadableStudyStatus(final Map<String, String> taskReqParams)
+      throws GenericServiceException {
 
-                    throw new GenericServiceException(
-                        "Loadable pattern does not exist",
-                        CommonErrorCodes.E_HTTP_BAD_REQUEST,
-                        HttpStatusCode.BAD_REQUEST);
-                  }
-                  Optional<LoadableStudy> loadableStudy =
-                      loadableStudyRepository.findByIdAndIsActive(
-                          communicationStatusRow.getReferenceId(), true);
+    // Status check only enabled for ship. Shore not implemented as retrial not done at shore
+    if (isShip()) {
 
-                  // TODO Code to be checked and refactored. Current version modified to proceed
-                  // only when LS is present as errors were being thrown
-                  if (loadableStudy.isPresent()) {
-                    if (!(statusReply.getEventDownloadStatus() != null
-                        && statusReply
-                            .getEventDownloadStatus()
-                            .equals(CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId()))) {
-                    } else {
-                      loadableStudyCommunicationStatusRepository
-                          .updateLoadableStudyCommunicationStatus(
-                              statusReply.getEventDownloadStatus(), loadableStudy.get().getId());
-                    }
-                    long start =
-                        Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime())
-                            .getTime();
-                    long end = start + timeLimit * 1000; // 60 seconds * 1000 ms/sec
-                    if (System.currentTimeMillis() > end) {
+      // Get loadable study messages in envoy-client
+      List<LoadableStudyCommunicationStatus> communicationStatusList =
+          loadableStudyCommunicationStatusRepository
+              .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
+                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
+                  MessageTypes.LOADABLESTUDY.getMessageType());
 
-                      loadableStudyCommunicationStatusRepository
-                          .updateLoadableStudyCommunicationStatus(
-                              CommunicationStatus.TIME_OUT.getId(), loadableStudy.get().getId());
-                    }
-                  }
-                } catch (GenericServiceException e) {
-                  e.printStackTrace();
-                }
-              });
+      for (LoadableStudyCommunicationStatus communicationStatusRow : communicationStatusList) {
+
+        // TODO call cancel API of envoy-client
+
+        // Get status from envoy-client
+        EnvoyWriter.EnvoyWriterRequest.Builder request =
+            EnvoyWriter.EnvoyWriterRequest.newBuilder();
+        request.setMessageId(communicationStatusRow.getMessageUUID());
+        request.setClientId(taskReqParams.get("ClientId"));
+        request.setImoNumber(taskReqParams.get("ShipId"));
+        EnvoyWriter.WriterReply statusReply = this.envoyWriterService.statusCheck(request.build());
+
+        // Check response status, code and message Id
+        if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())
+            || !Integer.toString(HttpStatusCode.OK.value()).equals(statusReply.getStatusCode())
+            || !communicationStatusRow.getMessageUUID().equals(statusReply.getMessageId())) {
+          log.error(
+              "Invalid response from envoy-writer for retrial. LS Id: {}, Message Id: {}, Response: {}",
+              communicationStatusRow.getReferenceId(),
+              communicationStatusRow.getMessageUUID(),
+              statusReply);
+          throw new GenericServiceException(
+              "Invalid response from envoy-writer for retrial. Message Id: "
+                  + communicationStatusRow.getMessageUUID(),
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+
+        LoadableStudy loadableStudy =
+            loadableStudyRepository
+                .findByIdAndIsActive(communicationStatusRow.getReferenceId(), true)
+                .orElseThrow(RuntimeException::new);
+
+        // Check timer and update timeout
+        long start = Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime()).getTime();
+        long end = start + timeLimit * 1000; // Convert time to ms
+        if (System.currentTimeMillis() > end) {
+          log.info(
+              "Timeout {} ms reached. Communication ignored. Generating at {}. LS Id: {}",
+              timeLimit,
+              env,
+              loadableStudy.getId());
+          loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
+              CommunicationStatus.TIME_OUT.getId(), loadableStudy.getId());
+          // Call fallback mechanism on timeout
+          processAlgo(loadableStudy, communicationStatusRow.getMessageUUID());
+
+          loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
+              CommunicationStatus.RETRY_AT_SOURCE.getId(), loadableStudy.getId());
+        }
+      }
     }
   }
 
@@ -495,5 +539,14 @@ public class CommunicationService {
     writerRequest.setMessageType(messageType);
     writerRequest.setImoNumber(vesselReply.getImoNumber());
     return this.envoyWriterService.getCommunicationServer(writerRequest.build());
+  }
+
+  /**
+   * Method to check whether the build env is ship or not
+   *
+   * @return true if the build env is ship and false otherwise
+   */
+  private boolean isShip() {
+    return CPDSS_BUILD_ENV_SHIP.equals(env);
   }
 }

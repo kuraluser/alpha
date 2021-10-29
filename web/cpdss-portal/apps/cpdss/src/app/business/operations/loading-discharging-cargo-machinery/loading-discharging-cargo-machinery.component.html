@@ -12,7 +12,7 @@
         </div>
         <div class="row">
           <div class="col pl-30 pr-30">
-            <p-table *ngIf="machineries[key]" [value]="machineries[key]" styleClass="body-header-row-span-table rowspan-no-border">
+            <p-table *ngIf="machineries[key]" [value]="machineries[key]" styleClass="body-header-row-span-table rowspan-no-border table-discharging-loading-sidebar">
               <ng-template pTemplate="colgroup">
                 <colgroup>
                   <col class="table-header-machinery">
@@ -50,7 +50,7 @@
                       </label>
                     </td>
                     <td>{{column[row.field]}}</td>
-                    <td [ngClass]="{'error-icon-wrapper' : column.isUsing }" *ngIf="key === 'pumpValues' && ![PUMP_TYPES.IG_PUMP, PUMP_TYPES.STRIP_EDUCTOR].includes(row.pumpTypeId)">
+                    <td class="pr-20" [ngClass]="{'error-icon-wrapper' : column.isUsing }" *ngIf="key === 'pumpValues' && ![PUMP_TYPES.IG_PUMP, PUMP_TYPES.STRIP_EDUCTOR].includes(row.pumpTypeId)">
                       <input type="text" cpdssPortalNumberDecimal [decimal]="false" [negative]="false" class="form-control" formControlName="capacity"
                         [attr.disabled]="column.isUsing ? null : true" (change)="onChange($event, column)">
                         <cpdss-portal-validation-error *ngIf="column.isUsing" [errors]="fieldError(getFormGroupName(key, rowIndex, i), 'capacity', 'pumps')" [errorMessages]="errorMessages?.capacity">

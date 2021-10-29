@@ -80,7 +80,7 @@
                     <div class="col">
                         <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                         (click)="addBackLoading(portIndex,'backLoadingDetails')"
-                        [ngClass]="{'disabled': (!permission?.add || !permission?.add === undefined)}">{{'ADD_BACK_LOADING'| translate}}</a>
+                        [ngClass]="{'disabled': (!permission?.add || !permission?.add === undefined) || !editMode}">{{'ADD_BACK_LOADING'| translate}}</a>
                     </div>
                 </div>
                 

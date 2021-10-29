@@ -704,7 +704,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setOrderQuantity(lqcd.getOrderedQuantity());
       cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
       cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
-      cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
+      //      cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
+      // Max Loading Rate from ALGO
+      cargoDetails.setMaxLoadingRate(lqcd.getLoadingRateM3Hr());
       // Set Loading port Names in Cargo To Be Discharge
       if (!lqcd.getLoadingPortsList().isEmpty()) {
         cargoDetails.setLoadingPorts(
@@ -874,7 +876,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         LoadableStudy.UpdateUllageRequest.newBuilder();
     grpcRequestToLS.setUpdateUllageForLoadingPlan(true); // to skip save to Temp table in LS
     this.loadableStudyService.buildUpdateUllageRequest(
-        updateUllage, activeVoyage.getPatternId(), grpcRequestToLS);
+        updateUllage, activeVoyage.getPatternId(), vesselId, grpcRequestToLS);
 
     // Call to LS for process
     LoadableStudy.UpdateUllageReply grpcReplyFromLS =

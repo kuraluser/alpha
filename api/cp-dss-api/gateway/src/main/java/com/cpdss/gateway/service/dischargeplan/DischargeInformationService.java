@@ -13,6 +13,7 @@ import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -23,12 +24,14 @@ import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
 import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInfoAlgoStatus;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
+import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.VesselInfoService;
@@ -94,7 +97,7 @@ public class DischargeInformationService {
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
-        "Get Loading Info, Active Voyage Number and Id {} ",
+        "Get Discharging Info, Active Voyage Number and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
@@ -126,7 +129,7 @@ public class DischargeInformationService {
     dischargeInformation.setDischargeCommingledCargoSeparately(
         disRpcReplay.getDischargeCommingledCargoSeparately());
     dischargeInformation.setIsDischargeInfoComplete(disRpcReplay.getIsDischargeInfoComplete());
-
+    dischargeInformation.setDischargeInfoStatusId(disRpcReplay.getDischargingInfoStatusId());
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
         vesselInfoService.getRulesByVesselIdAndSectionId(
@@ -461,7 +464,7 @@ public class DischargeInformationService {
   public DischargingInformationResponse saveDischargingInformation(
       DischargingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
-      log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
+      log.info("Calling saveDischargingInformation in discharging-plan microservice via GRPC");
       DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
       if (request.getDischargeDetails() != null) {
         // Updating synoptic table (time)
@@ -495,7 +498,7 @@ public class DischargeInformationService {
               response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", request.getDischargeInfoId());
+      log.error("Failed to save DischargingInformation {}", request.getDischargeInfoId());
       e.printStackTrace();
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       throw new GenericServiceException(
@@ -531,7 +534,7 @@ public class DischargeInformationService {
       DischargePlanAlgoRequest response =
           dischargePlanServiceBlockingStub.generateDischargePlan(builder.build());
       if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
-        CommonSuccessResponse successResponse = new CommonSuccessResponse("SUCCESS", "");
+        CommonSuccessResponse successResponse = new CommonSuccessResponse("200", "");
         algoResponse.setProcessId(response.getProcessId());
         algoResponse.setResponseStatus(successResponse);
         return algoResponse;
@@ -543,9 +546,10 @@ public class DischargeInformationService {
             HttpStatusCode.BAD_REQUEST);
       }
     } catch (Exception e) {
-      log.error("Failed to generate Loading Plan for Loading Information {}", infoId);
+      log.error("Failed to generate Discharging Plan for Discharging Information {}", infoId);
+      e.printStackTrace();
       throw new GenericServiceException(
-          "Failed to generate Loading Plan",
+          "Failed to generate Discharging Plan",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
@@ -610,7 +614,7 @@ public class DischargeInformationService {
     return this.loadingPlanGrpcService.saveJson(jsonRequest);
   }
 
-  public LoadingInfoAlgoStatus dischargeInfoStatusCheck(
+  public DischargingInfoAlgoStatus dischargeInfoStatusCheck(
       Long vesselId, Long voyageId, Long infoId, String processId, Integer conditionType)
       throws GenericServiceException {
     DischargeInfoStatusRequest.Builder builder = DischargeInfoStatusRequest.newBuilder();
@@ -618,7 +622,7 @@ public class DischargeInformationService {
     builder.setProcessId(processId);
     builder.setConditionType(conditionType);
 
-    LoadingInfoAlgoStatus algoStatus = new LoadingInfoAlgoStatus();
+    DischargingInfoAlgoStatus algoStatus = new DischargingInfoAlgoStatus();
     var rpcRepay = dischargePlanServiceBlockingStub.dischargeInfoStatusCheck(builder.build());
     if (!SUCCESS.equals(rpcRepay.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -627,10 +631,10 @@ public class DischargeInformationService {
           HttpStatusCode.BAD_REQUEST);
     }
 
-    algoStatus.setLoadingInfoStatusId(rpcRepay.getDischargeInfoStatusId());
-    algoStatus.setLoadingInfoStatusLastModifiedTime(
+    algoStatus.setDischargingInfoStatusId(rpcRepay.getDischargeInfoStatusId());
+    algoStatus.setDischargingInfoStatusLastModifiedTime(
         rpcRepay.getDischargeInfoStatusLastModifiedTime());
-    algoStatus.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    algoStatus.setResponseStatus(new CommonSuccessResponse("200", ""));
     return algoStatus;
   }
 
@@ -663,5 +667,31 @@ public class DischargeInformationService {
     loadingInfoAlgoResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return loadingInfoAlgoResponse;
+  }
+
+  /**
+   * Discharging sequence
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @return
+   * @throws GenericServiceException
+   */
+  public LoadingSequenceResponse getDischargingSequence(Long vesselId, Long voyageId, Long infoId)
+      throws GenericServiceException {
+    LoadingSequenceRequest.Builder request = LoadingSequenceRequest.newBuilder();
+    request.setLoadingInfoId(infoId);
+    DischargeSequenceReply reply =
+        this.dischargePlanServiceBlockingStub.getDischargingSequences(request.build());
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to get dischargeSequence",
+          reply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(reply.getResponseStatus().getCode())));
+    }
+    LoadingSequenceResponse response = new LoadingSequenceResponse();
+    dischargingSequenceService.buildDischargingSequence(vesselId, reply, response);
+    return response;
   }
 }

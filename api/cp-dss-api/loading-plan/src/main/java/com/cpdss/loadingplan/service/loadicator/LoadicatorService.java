@@ -579,7 +579,6 @@ public class LoadicatorService {
           stowageDetailsBuilder.setCargoName(commingle.getAbbreviation());
           stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
         });
-    ;
   }
 
   public void buildStowagePlan(
@@ -974,26 +973,44 @@ public class LoadicatorService {
    */
   private void savePortStabilityParams(
       LoadingInformation loadingInformation, LoadicatorAlgoResponse algoResponse) {
+    Optional<PortLoadingPlanStabilityParameters> oldArrStabilityOpt =
+        portLoadingPlanStabilityParametersRepository
+            .findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
+                loadingInformation.getId(),
+                LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE,
+                LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+
+    Optional<PortLoadingPlanStabilityParameters> oldDepStabilityOpt =
+        portLoadingPlanStabilityParametersRepository
+            .findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
+                loadingInformation.getId(),
+                LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE,
+                LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+
     portLoadingPlanStabilityParametersRepository.deleteByLoadingInformationId(
         loadingInformation.getId());
     LoadicatorResult arrivalStabilityParameters = algoResponse.getLoadicatorResults().get(0);
     LoadicatorResult departureStabilityParameters =
         algoResponse.getLoadicatorResults().get(algoResponse.getLoadicatorResults().size() - 1);
+
     PortLoadingPlanStabilityParameters portArrStability = new PortLoadingPlanStabilityParameters();
     buildPortStabilityParams(
         loadingInformation,
         arrivalStabilityParameters,
         portArrStability,
         LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE,
-        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE,
+        oldArrStabilityOpt);
     portLoadingPlanStabilityParametersRepository.save(portArrStability);
+
     PortLoadingPlanStabilityParameters portDepStability = new PortLoadingPlanStabilityParameters();
     buildPortStabilityParams(
         loadingInformation,
         departureStabilityParameters,
         portDepStability,
         LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE,
-        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE,
+        oldDepStabilityOpt);
     portLoadingPlanStabilityParametersRepository.save(portDepStability);
   }
 
@@ -1002,13 +1019,15 @@ public class LoadicatorService {
    * @param loadicatorResult
    * @param portStabilityParameters
    * @param conditionType
+   * @param oldStabilityOpt
    */
   public void buildPortStabilityParams(
       LoadingInformation loadingInformation,
       LoadicatorResult result,
       PortLoadingPlanStabilityParameters portStabilityParameters,
       Integer conditionType,
-      Integer valueType) {
+      Integer valueType,
+      Optional<PortLoadingPlanStabilityParameters> oldStabilityOpt) {
     portStabilityParameters.setAftDraft(
         StringUtils.isEmpty(result.getCalculatedDraftAftPlanned())
             ? null
@@ -1041,6 +1060,11 @@ public class LoadicatorService {
     portStabilityParameters.setConditionType(conditionType);
     portStabilityParameters.setPortRotationXId(loadingInformation.getPortRotationXId());
     portStabilityParameters.setValueType(valueType);
+    oldStabilityOpt.ifPresent(
+        stability -> {
+          portStabilityParameters.setFreeboard(stability.getFreeboard());
+          portStabilityParameters.setManifoldHeight(stability.getManifoldHeight());
+        });
   }
 
   private void deleteLoadingSequenceStabilityParameters(LoadingInformation loadingInformation) {

@@ -2,7 +2,10 @@
 package com.cpdss.loadingplan.entity;
 
 import javax.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "port_loadable_plan_commingle_details")

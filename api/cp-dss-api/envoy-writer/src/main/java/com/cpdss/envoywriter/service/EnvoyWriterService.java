@@ -215,9 +215,11 @@ public class EnvoyWriterService {
 
     ResponseEntity<String> result =
         restTemplate.getForEntity(statucCheckUrlBuilder(request), String.class);
+    log.debug("Status check response: {}", result);
 
     ObjectMapper mapper = new ObjectMapper();
 
+    // TODO remove StatusCheckResponse DTO and direct map to proto
     StatusCheckResponse statusCheckResponse =
         mapper.readValue(result.getBody(), StatusCheckResponse.class);
     buildStatusCheckResponse(statusCheckbuilder, statusCheckResponse);
@@ -230,6 +232,12 @@ public class EnvoyWriterService {
   private void buildStatusCheckResponse(
       Builder statusCheckBuilder, StatusCheckResponse statusCheckResponse) {
     statusCheckBuilder.setStatusCode(statusCheckResponse.getStatusCode());
+    statusCheckBuilder.setMessage(statusCheckResponse.getMessage());
+    statusCheckBuilder.setMessageId(statusCheckResponse.getMessageId());
+    Optional.ofNullable(statusCheckResponse.getEventUploadStatus())
+        .ifPresent(statusCheckBuilder::setEventUploadStatus);
+    Optional.ofNullable(statusCheckResponse.getEventDownloadStatus())
+        .ifPresent(statusCheckBuilder::setEventDownloadStatus);
     statusCheckBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 

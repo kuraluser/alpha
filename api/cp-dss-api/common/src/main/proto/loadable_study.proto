@@ -235,6 +235,7 @@ message DischargeQuantityCargoDetails {
 	bool isCommingled=1;
 	bool ifProtested=2;
 	int64 id=3;
+	string slopQuantity = 4;
 }
 
 message CowHistoryRequest {
@@ -292,6 +293,7 @@ message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
 	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 	bool updateUllageForLoadingPlan = 3;
+	int64 vesselId = 4;
 }
 
 message UpdateUllageReply {
@@ -466,6 +468,8 @@ message StabilityParameter {
 	string bendinMoment = 6;
 	string shearForce = 7;
 	string airDraft = 8; //DS field
+	string freeboard = 9;
+	string manifoldHeight = 10;
 }
 
 message LoadablePlanPortWiseDetails {
@@ -659,6 +663,7 @@ message LoadableQuantityCargoDetails {
 	 int64 shipFigure = 36;
 	 bool ifProtested = 37;
 	 bool isCommingled = 38;
+	 string loadingRateM3Hr = 39;
 }
 
 message COWDetail {
@@ -1271,6 +1276,9 @@ message SynopticalCargoRecord{
 	int64 planQtyId = 17; // loadable_plan_quantity ID OR discharge_quantity_cargo_details ID
 	int32 planQtyCargoOrder = 18; // loading or discharging order
 	string ullage = 19;
+	string actualApi = 20;	
+	string actualTemperature = 21;
+	
 }
 
 message SynopticalOhqRecord{

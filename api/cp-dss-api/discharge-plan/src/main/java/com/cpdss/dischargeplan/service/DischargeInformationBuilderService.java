@@ -603,7 +603,8 @@ public class DischargeInformationBuilderService {
         builder2.setId(source.getId());
         builder2.setDischargeInfoId(disEntity.getId());
         builder2.setDuration(source.getDuration().toString());
-        builder2.setQuantity(source.getQuantity().toString());
+        Optional.ofNullable(source.getQuantity())
+            .ifPresent(value -> builder2.setQuantity(value.toString()));
         Optional.ofNullable(source.getCargoXid())
             .ifPresent(builder2::setCargoId); // can empty of initial delay
         Optional.ofNullable(source.getCargoNominationXid())
@@ -612,6 +613,7 @@ public class DischargeInformationBuilderService {
             source.getDischargingDelayReasons().stream()
                 .map(DischargingDelayReason::getId)
                 .collect(Collectors.toList()));
+        Optional.ofNullable(source.getSequenceNo()).ifPresent(builder2::setSequenceNo);
         builder1.addDelays(builder2.build());
       }
       log.info("Setting Delay Reasons");
@@ -757,8 +759,12 @@ public class DischargeInformationBuilderService {
       case CARGO:
         {
           List<CowWithDifferentCargo> ls1 = new ArrayList<>(list); // cast from generic list
-          var gp1 =
+          List<CowWithDifferentCargo> activeCowWithCargos =
               ls1.stream()
+                  .filter(cow -> cow.getIsActive() != null && cow.getIsActive())
+                  .collect(Collectors.toList());
+          var gp1 =
+              activeCowWithCargos.stream()
                   .collect(
                       Collectors.groupingBy(CowWithDifferentCargo::getCargoXid)); // group by cargo
           for (Map.Entry<Long, List<CowWithDifferentCargo>> map1 : gp1.entrySet()) {

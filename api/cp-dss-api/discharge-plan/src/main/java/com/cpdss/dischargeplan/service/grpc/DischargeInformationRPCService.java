@@ -45,6 +45,7 @@ import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
 import com.cpdss.dischargeplan.repository.CowTankDetailRepository;
 import com.cpdss.dischargeplan.repository.CowWithDifferentCargoRepository;
 import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
+import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageDurationRepository;
 import com.cpdss.dischargeplan.repository.DischargeStageMinAmountRepository;
 import com.cpdss.dischargeplan.repository.DischargingDelayReasonRepository;
@@ -95,6 +96,7 @@ public class DischargeInformationRPCService
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
   @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
   @Autowired CowTankDetailRepository cowTankDetailRepository;
+  @Autowired DischargeInformationRepository dischargeInformationRepository;
 
   @Override
   public void getDischargeInformation(
@@ -263,9 +265,9 @@ public class DischargeInformationRPCService
             this.informationBuilderService.buildDischargingPlanTankStabilityMessage(
                 pdpStabilityList));
       } else {
-        log.error("Failed to fetch Loading Plan, Loading info Id is 0");
+        log.error("Failed to fetch Discharging Plan, Discharging info Id is 0");
         throw new GenericServiceException(
-            "Loading Info Id Is 0",
+            "Discharging Info Id Is 0",
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
@@ -306,7 +308,7 @@ public class DischargeInformationRPCService
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Loading information Berths")
+                  .setMessage("Successfully saved Discharging information Berths")
                   .setStatus(SUCCESS)
                   .build())
           .build();
@@ -330,7 +332,7 @@ public class DischargeInformationRPCService
       log.info("Request payload {}", Utils.toJson(request));
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
-      log.info("Save Loading Info, Delays Id {}", request.getDischargeInfoId());
+      log.info("Save Discharging Info, Delays Id {}", request.getDischargeInfoId());
       if (dischargingInformation != null) {
         dischargingDelayService.saveDischargingDelayList(
             request.getDischargeDelay(), dischargingInformation);
@@ -341,7 +343,7 @@ public class DischargeInformationRPCService
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Loading information Delays")
+                  .setMessage("Successfully saved Discharging information Delays")
                   .setStatus(SUCCESS)
                   .build())
           .build();
@@ -364,7 +366,7 @@ public class DischargeInformationRPCService
     try {
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
-      log.info("Save Loading Info, Machines Id {}", request.getDischargeInfoId());
+      log.info("Save Discharging Info, Machines Id {}", request.getDischargeInfoId());
       log.info("Request payload {}", Utils.toJson(request));
       if (dischargingInformation != null) {
         dischargingMachineryInUseService.saveDischargingMachineryList(
@@ -376,7 +378,7 @@ public class DischargeInformationRPCService
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Loading information Machinery")
+                  .setMessage("Successfully saved Discharging information Machinery")
                   .setStatus(SUCCESS)
                   .build())
           .build();
@@ -400,7 +402,7 @@ public class DischargeInformationRPCService
       log.info("Request payload {}", Utils.toJson(request));
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
-      log.info("Save Loading Info, Rates Id {}", request.getDischargeInfoId());
+      log.info("Save Discharging Info, Rates Id {}", request.getDischargeInfoId());
       if (dischargingInformation != null) {
         saveDischargingInfoRates(request.getDischargeRate(), builder);
         this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
@@ -410,7 +412,7 @@ public class DischargeInformationRPCService
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Loading information Rates")
+                  .setMessage("Successfully saved Discharging information Rates")
                   .setStatus(SUCCESS)
                   .build())
           .build();
@@ -434,7 +436,7 @@ public class DischargeInformationRPCService
       log.info("Request payload {}", Utils.toJson(request));
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
-      log.info("Save Loading Info, Rates Id {}", request.getDischargeInfoId());
+      log.info("Save Discharging Info, Rates Id {}", request.getDischargeInfoId());
       if (dischargingInformation != null) {
         saveCowPlanDetails(request.getCowPlan());
         this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
@@ -444,7 +446,7 @@ public class DischargeInformationRPCService
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Loading information Rates")
+                  .setMessage("Successfully saved Discharging information Rates")
                   .setStatus(SUCCESS)
                   .build())
           .build();
@@ -478,7 +480,7 @@ public class DischargeInformationRPCService
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Loading information Rates")
+                  .setMessage("Successfully saved Discharging information Rates")
                   .setStatus(SUCCESS)
                   .build())
           .build();
@@ -497,15 +499,13 @@ public class DischargeInformationRPCService
   private void savePostDischargeRate(
       PostDischargeStageTime postDischargeStageTime,
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation) {
-    dischargingInformation.setTimeForFinalStripping(
-        new BigDecimal(postDischargeStageTime.getFinalStripping()));
-    dischargingInformation.setFreshOilWashing(
-        new BigDecimal(postDischargeStageTime.getFreshOilWashing()));
-    dischargingInformation.setTimeForSlopDischarging(
-        new BigDecimal(postDischargeStageTime.getSlopDischarging()));
-    dischargingInformation.setTimeForDryCheck(
-        new BigDecimal(postDischargeStageTime.getTimeForDryCheck()));
-    dischargeInformationService.save(dischargingInformation);
+    dischargeInformationRepository
+        .updateFinalStrippingAndFreshOilWashAndSlopDischargingAndTimeForDryCheck(
+            new BigDecimal(postDischargeStageTime.getFinalStripping()),
+            new BigDecimal(postDischargeStageTime.getFreshOilWashing()),
+            new BigDecimal(postDischargeStageTime.getSlopDischarging()),
+            new BigDecimal(postDischargeStageTime.getTimeForDryCheck()),
+            dischargingInformation.getId());
   }
 
   private void saveCowPlanDetails(CowPlan cowPlan) {
@@ -523,26 +523,22 @@ public class DischargeInformationRPCService
       if (!cowPlan.getCowTankPercent().isEmpty()) {
         cowPlanDetail.setCowPercentage(new BigDecimal(cowPlan.getCowTankPercent()));
       }
-      if (!cowPlan.getCowWithCargoEnable()) {
-        cowPlanDetail.setWashTankWithDifferentCargo(cowPlan.getCowWithCargoEnable());
-      }
+      cowPlanDetail.setWashTankWithDifferentCargo(cowPlan.getCowWithCargoEnable());
 
       if (!cowPlan.getEstCowDuration().isEmpty()) {
         cowPlanDetail.setEstimatedCowDuration(new BigDecimal(cowPlan.getEstCowDuration()));
       }
 
-      if (!cowPlan.getNeedFlushingOil()) {
-        cowPlanDetail.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
-      }
-      if (!cowPlan.getNeedFreshCrudeStorage()) {
-        cowPlanDetail.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
-      }
+      cowPlanDetail.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
+      cowPlanDetail.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
+
       if (!cowPlan.getTrimCowMax().isEmpty()) {
         cowPlanDetail.setCowMaxTrim(new BigDecimal(cowPlan.getTrimCowMax()));
       }
       if (!cowPlan.getTrimCowMin().isEmpty()) {
         cowPlanDetail.setCowMinTrim(new BigDecimal(cowPlan.getTrimCowMin()));
       }
+      cowPlanDetail.setCowOperationType(cowPlan.getCowOptionTypeValue());
       updateTanksDetails(cowPlan, cowPlanDetail);
       cowPlanDetailRepository.save(cowPlanDetail);
     }
@@ -666,13 +662,14 @@ public class DischargeInformationRPCService
                   .filter(tankId -> !savedTanks.contains(tankId))
                   .collect(Collectors.toList());
           // create the new ones
-          updateCargoCowWash(cowPlanDetail, newCargoWash, newTanksTOSave, newCowWashCargo);
+          createCargoCowWash(cowPlanDetail, newCargoWash, newTanksTOSave, newCowWashCargo);
+          updateCargoCowWash(newCargoWash, cowPlanDetail);
         });
 
     return newCowWashCargo;
   }
 
-  private void updateCargoCowWash(
+  private void createCargoCowWash(
       CowPlanDetail cowPlanDetail,
       CargoForCow newCargoWash,
       List<Long> tankIdsToSave,
@@ -693,12 +690,28 @@ public class DischargeInformationRPCService
         });
   }
 
+  private void updateCargoCowWash(CargoForCow newCargoWash, CowPlanDetail cowPlanDetail) {
+
+    cowPlanDetail
+        .getCowWithDifferentCargos()
+        .forEach(
+            cargoCow -> {
+              if (cargoCow.getCargoNominationXid().equals(newCargoWash.getCargoNominationId())
+                  && cargoCow.getIsActive()
+                  && newCargoWash.getTankIdsList().contains(cargoCow.getTankXid())) {
+                cargoCow.setCargoXid(newCargoWash.getCargoId());
+                cargoCow.setWashingCargoXid(newCargoWash.getWashingCargoId());
+                cargoCow.setWashingCargoNominationXid(newCargoWash.getWashingCargoNominationId());
+              }
+            });
+  }
+
   private void saveDischargingInfoRates(
       DischargeRates source, DischargingInfoSaveResponse.Builder response) {
     com.cpdss.dischargeplan.entity.DischargeInformation var1 =
         dischargeInformationService.getDischargeInformation(source.getId());
     if (var1 != null) {
-      log.info("Save Loading Info, Set Loading Rates");
+      log.info("Save Discharging Info, Set Discharging Rates");
 
       if (!source.getMaxDischargeRate().isEmpty())
         var1.setMaxDischargingRate(new BigDecimal(source.getMaxDischargeRate()));
@@ -711,7 +724,7 @@ public class DischargeInformationRPCService
 
       if (!source.getMinBallastRate().isEmpty())
         var1.setMinBallastRate(new BigDecimal(source.getMinBallastRate()));
-      dischargeInformationService.save(var1);
+      dischargeInformationRepository.save(var1);
     }
   }
 
@@ -754,12 +767,16 @@ public class DischargeInformationRPCService
     com.cpdss.dischargeplan.entity.DischargeInformation dischargeInformation =
         dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
     if (dischargeInformation != null) {
-      buildDischargingInfoFromRpcMessage(request, dischargeInformation);
+      log.info("updating discharging info, update discharging Details");
+      updateDischargingInfoFromRpcMessage(request, dischargeInformation);
       Optional.ofNullable(request.getDischargeCommingledCargoSeparately())
           .ifPresent(dischargeInformation::setDischargeCommingleCargoSeparately);
       Optional.ofNullable(request.getDischargeSlopTanksFirst())
           .ifPresent(dischargeInformation::setDischargeSlopTankFirst);
-      dischargeInformationService.save(dischargeInformation);
+      dischargeInformationRepository.updateCommingledCargoAndSlopTankFirst(
+          dischargeInformation.getDischargeCommingleCargoSeparately(),
+          dischargeInformation.getDischargeSlopTankFirst(),
+          dischargeInformation.getId());
       dischargeInformationService.updateIsDischargingInfoCompeteStatus(
           dischargeInformation.getId(), request.getIsDischargingInfoComplete());
       return dischargeInformation;
@@ -769,7 +786,7 @@ public class DischargeInformationRPCService
     }
   }
 
-  public com.cpdss.dischargeplan.entity.DischargeInformation buildDischargingInfoFromRpcMessage(
+  public void updateDischargingInfoFromRpcMessage(
       DischargeInformation source, com.cpdss.dischargeplan.entity.DischargeInformation target) {
     // Set discharging Details
     if (source.getDischargeDetails() != null) {
@@ -781,7 +798,8 @@ public class DischargeInformationRPCService
       if (!source.getDischargeDetails().getTrimAllowed().getFinalTrim().isEmpty())
         target.setFinalTrim(
             new BigDecimal(source.getDischargeDetails().getTrimAllowed().getFinalTrim()));
-
+      dischargeInformationRepository.updateStartTimeAndFinalTrim(
+          target.getStartTime(), target.getFinalTrim(), target.getId());
       if (!source.getDischargeDetails().getTrimAllowed().getInitialTrim().isEmpty())
         target.setInitialTrim(
             new BigDecimal(source.getDischargeDetails().getTrimAllowed().getInitialTrim()));
@@ -789,8 +807,9 @@ public class DischargeInformationRPCService
       if (!source.getDischargeDetails().getTrimAllowed().getMaximumTrim().isEmpty())
         target.setMaximumTrim(
             new BigDecimal(source.getDischargeDetails().getTrimAllowed().getMaximumTrim()));
+      dischargeInformationRepository.updateInitialTrimAndMaximumTrim(
+          target.getInitialTrim(), target.getMaximumTrim(), target.getId());
     }
-    return target;
   }
 
   @Override
@@ -801,7 +820,7 @@ public class DischargeInformationRPCService
       log.info("Request payload {}", Utils.toJson(request));
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
-      log.info("Save Loading Info, Stages Id {}", request.getDischargeInfoId());
+      log.info("Save Discharging Info, Stages Id {}", request.getDischargeInfoId());
       if (dischargingInformation != null) {
         saveDischargingStages(request.getDischargeStage(), dischargingInformation);
         this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
@@ -811,7 +830,7 @@ public class DischargeInformationRPCService
       builder
           .setResponseStatus(
               ResponseStatus.newBuilder()
-                  .setMessage("Successfully saved Loading information Stages")
+                  .setMessage("Successfully saved Discharging information Stages")
                   .setStatus(SUCCESS)
                   .build())
           .build();
@@ -834,6 +853,10 @@ public class DischargeInformationRPCService
     if (dischargeStage != null) {
       dischargingInformation.setIsTrackStartEndStage(dischargeStage.getTrackStartEndStage());
       dischargingInformation.setIsTrackGradeSwitching(dischargeStage.getTrackGradeSwitch());
+      dischargeInformationRepository.updateIsTrackStartEndAndTrackGradeSwitching(
+          dischargeStage.getTrackStartEndStage(),
+          dischargeStage.getTrackGradeSwitch(),
+          dischargingInformation.getId());
       if (Optional.ofNullable(dischargeStage.getDuration().getId()).isPresent()
           && dischargeStage.getDuration().getId() != 0) {
         Optional<DischargingStagesDuration> stageDurationOpt =
@@ -854,7 +877,7 @@ public class DischargeInformationRPCService
           log.info("Offset Not found Id {}", dischargeStage.getOffset().getId());
         }
       }
-      dischargeInformationService.save(dischargingInformation);
+      dischargeInformationRepository.save(dischargingInformation);
     }
   }
 

@@ -19,6 +19,9 @@ public interface VoyageRepository
 
   public List<Voyage> findByVesselXIdAndIsActiveOrderByIdDesc(Long vesselXId, boolean isActive);
 
+  public List<Voyage> findByVesselXIdAndIsActiveOrderByCreatedDateTimeDesc(
+      Long vesselXId, boolean isActive);
+
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
 
   /*public Voyage

@@ -16,7 +16,6 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSync
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
-import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
@@ -26,13 +25,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -97,17 +97,6 @@ public class LoadingPlanService {
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired private LoadingPlanRuleService loadingPlanRuleService;
-  @Autowired private LoadingPlanCommunicationService communicationService;
-  @Autowired private LoadingPlanStagingService loadingPlanStagingService;
-
-  @Autowired
-  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
-
-  @Value("${cpdss.communication.enable}")
-  private boolean enableCommunication;
-
-  @Value("${cpdss.build.env}")
-  private String env;
 
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
@@ -843,8 +832,8 @@ public class LoadingPlanService {
    * Updates loading information status based on the condition i.e. Arrival / Departure.
    *
    * @param loadingInformationId
-   * @param arrivalDeparture
-   * @param statusId
+   * @param arrivalDepartutre
+   * @param updateUllageValidationPendingId
    * @throws GenericServiceException
    */
   private void updateLoadingPlanStatusForUllageUpdate(
@@ -1010,8 +999,8 @@ public class LoadingPlanService {
               SynopticalCargoRecord.Builder cargo = SynopticalCargoRecord.newBuilder();
               cargo.setActualWeight(stowage.getQuantity().toString());
               cargo.setTankId(stowage.getTankXId());
-              cargo.setApi(stowage.getApi().toString());
-              cargo.setTemperature(stowage.getTemperature().toString());
+              cargo.setActualApi(stowage.getApi().toString());
+              cargo.setActualTemperature(stowage.getTemperature().toString());
               cargo.setUllage(stowage.getUllage().toString());
               synopticalData.addCargo(cargo);
             });
@@ -1176,13 +1165,13 @@ public class LoadingPlanService {
   public void getPortWiseCommingleDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
-    List<PortLoadingPlanCommingleDetails> portWiseRobDetails =
-        portLoadingPlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
-            request.getPatternId());
     Optional<LoadingInformation> loadingInfo =
         this.loadingInformationRepository
             .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
                 request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+    List<PortLoadingPlanCommingleDetails> portWiseRobDetails =
+        portLoadingPlanCommingleDetailsRepository.findByLoadingInformationAndIsActive(
+            loadingInfo.get(), true);
     for (PortLoadingPlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
@@ -1192,13 +1181,13 @@ public class LoadingPlanService {
   public void getPortWiseCommingleTempDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
-    List<PortLoadingPlanCommingleTempDetails> portWiseRobDetails =
-        portLoadingPlanCommingleTempDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
-            request.getPatternId());
     Optional<LoadingInformation> loadingInfo =
         this.loadingInformationRepository
             .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
                 request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+    List<PortLoadingPlanCommingleTempDetails> portWiseRobDetails =
+        portLoadingPlanCommingleTempDetailsRepository.findByLoadingInformationAndIsActive(
+            loadingInfo.get().getId(), true);
     for (PortLoadingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleTempDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
@@ -1218,6 +1207,8 @@ public class LoadingPlanService {
     newBuilder.setLoadablePlanId(portWiseCommingleDetail.getLoadablePatternId());
     newBuilder.setCargoNomination1Id(portWiseCommingleDetail.getCargoNomination1XId());
     newBuilder.setCargoNomination2Id(portWiseCommingleDetail.getCargoNomination2XId());
+    newBuilder.setCargo1Id(portWiseCommingleDetail.getCargo1XId());
+    newBuilder.setCargo2Id(portWiseCommingleDetail.getCargo2XId());
     newBuilder.setGrade(
         portWiseCommingleDetail.getGrade() == null ? "" : portWiseCommingleDetail.getGrade());
     newBuilder.setColorCode(

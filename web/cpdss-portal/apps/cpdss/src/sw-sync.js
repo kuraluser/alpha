@@ -715,6 +715,10 @@
           sync.type = 'loadable-pattern-validation-started';
           sync.statusId = syncView?.loadableStudyStatusId;
           notifyClients(sync);
+        } else if (syncView?.loadableStudyStatusId === 23) {
+          sync.type = 'pattern-validation-communicated-to-shore';
+          sync.statusId = syncView?.loadableStudyStatusId;
+          notifyClients(sync);
         }
       }
       else if (syncView?.status === '401' || syncView?.status === '400') {

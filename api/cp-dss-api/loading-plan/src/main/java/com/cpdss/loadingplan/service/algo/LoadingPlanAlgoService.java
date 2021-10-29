@@ -15,6 +15,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRate;
@@ -355,10 +356,12 @@ public class LoadingPlanAlgoService {
   /**
    * Saves Loading sequence and Plan
    *
+   * @param builder
    * @param request
    * @throws GenericServiceException
    */
-  public void saveLoadingSequenceAndPlan(LoadingPlanSaveRequest request)
+  public void saveLoadingSequenceAndPlan(
+      LoadingPlanSaveResponse.Builder builder, LoadingPlanSaveRequest request)
       throws GenericServiceException {
     log.info(
         "Saving Loading plan and sequence of loading information {}", request.getLoadingInfoId());
@@ -371,6 +374,8 @@ public class LoadingPlanAlgoService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+    // Returning port rotationid for excel generation in gateway
+    builder.setPortRotationId(loadingInfoOpt.get().getPortRotationXId());
 
     loadingInformationRepository.updateLoadingPlanDetailsFromAlgo(
         loadingInfoOpt.get().getId(), request.getLoadingPlanDetailsFromAlgo());

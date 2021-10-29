@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class FileRepoService {
       List<String> filterKeys)
       throws GenericServiceException {
     FileRepoGetResponse response = new FileRepoGetResponse();
-    Pageable pageRequest = PageRequest.of(pageNo, pageSize);
+    Pageable pageRequest = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id"));
     Specification<FileRepo> specification = this.getFileRepoSpecification(filterParams, filterKeys);
     Page<FileRepo> fileRepoPage = this.fileRepoRepository.findAll(specification, pageRequest);
     log.info("Retrieved file repos : {}", fileRepoPage.toList().size());
@@ -70,8 +71,7 @@ public class FileRepoService {
   private Specification<FileRepo> getFileRepoSpecification(
       Map<String, String> filterParams, List<String> filterKeys) {
     Specification<FileRepo> specification =
-        Specification.where(
-            new FileRepoSpecification(new SearchCriteria("isActive", "EQUALS", Boolean.TRUE)));
+        new FileRepoSpecification(new SearchCriteria("isActive", "EQUALS", Boolean.TRUE));
     for (int i = 0; i < filterKeys.size(); i++) {
       String key = filterKeys.get(i);
       if (key.equalsIgnoreCase("createdDate") && null != filterParams.get(key)) {
@@ -83,7 +83,8 @@ public class FileRepoService {
         specification =
             specification.and(
                 new FileRepoSpecification(
-                    new SearchCriteria(key, "EQUALS", filterParams.get(key))));
+                    new SearchCriteria(
+                        key, "LIKE", "%" + filterParams.get(key).toString().toLowerCase() + "%")));
       }
     }
     ;

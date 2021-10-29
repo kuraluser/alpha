@@ -17,7 +17,7 @@
           <tr [formGroup]="postDischargeStageTimeForm">
             <td class="error-icon-wrapper">
               <p-inputMask *ngIf="editMode;else dryCheckTime" type="text" styleClass="form-control"
-                formControlName="dryCheckTime" mask="99:99" (onChange)="onChange($event)">
+                formControlName="dryCheckTime" mask="99:99" (onComplete)="onChange($event)">
               </p-inputMask>
               <ng-template #dryCheckTime>
                 <span>{{postDischargeStageTimeFormControl?.dryCheckTime?.value}}</span>
@@ -29,7 +29,7 @@
 
             <td class="error-icon-wrapper">
               <p-inputMask *ngIf="editMode;else slopDischargingTime" type="text" styleClass="form-control"
-                formControlName="slopDischargingTime" mask="99:99" (onChange)="onChange($event)">
+                formControlName="slopDischargingTime" mask="99:99" (onComplete)="onChange($event)">
               </p-inputMask>
               <ng-template #slopDischargingTime>
                 <span>{{postDischargeStageTimeFormControl?.slopDischargingTime?.value}}</span>
@@ -41,7 +41,7 @@
 
             <td class="error-icon-wrapper">
               <p-inputMask *ngIf="editMode;else finalStrippingTime" type="text" styleClass="form-control"
-                formControlName="finalStrippingTime" mask="99:99" (onChange)="onChange($event)">
+                formControlName="finalStrippingTime" mask="99:99" (onComplete)="onChange($event)">
               </p-inputMask>
               <ng-template #finalStrippingTime>
                 <span>{{postDischargeStageTimeFormControl?.finalStrippingTime?.value}}</span>
@@ -53,7 +53,7 @@
 
             <td class="error-icon-wrapper">
               <p-inputMask *ngIf="editMode;else freshOilWashingTime" type="text" styleClass="form-control"
-                formControlName="freshOilWashingTime" mask="99:99" (onChange)="onChange($event)">
+                formControlName="freshOilWashingTime" mask="99:99" (onComplete)="onChange($event)">
               </p-inputMask>
               <ng-template #freshOilWashingTime>
                 <span>{{postDischargeStageTimeFormControl?.freshOilWashingTime?.value}}</span>
