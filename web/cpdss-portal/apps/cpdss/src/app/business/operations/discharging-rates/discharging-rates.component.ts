@@ -135,17 +135,15 @@ export class DischargingRatesComponent implements OnInit {
    */
   onChange(field) {
     this.dischargingRatesFormGroup.markAllAsTouched();
-    if (!this.fieldError(field)) {
-      const dischargeRates: IDischargingRates = { ...this.dischargingRatesFormGroup?.value };
-      if (this.selectedConversion?.id === 2) {
-        const convertionFactor = 6.28981;
-        dischargeRates[field] = Number(dischargeRates[field]) / convertionFactor;
-        this.dischargeRates[field] = Number(dischargeRates[field]);
-        this.dischargingRateChange.emit(dischargeRates)
-      } else {
-        this.dischargeRates[field] = Number(dischargeRates[field]);
-        this.dischargingRateChange.emit(this.dischargingRatesFormGroup?.value)
-      }
+    const dischargeRates: IDischargingRates = { ...this.dischargingRatesFormGroup?.value };
+    if (this.selectedConversion?.id === 2) {
+      const convertionFactor = 6.28981;
+      dischargeRates[field] = Number(dischargeRates[field]) / convertionFactor;
+      this.dischargeRates[field] = Number(dischargeRates[field]);
+      this.dischargingRateChange.emit(dischargeRates)
+    } else {
+      this.dischargeRates[field] = Number(dischargeRates[field]);
+      this.dischargingRateChange.emit(this.dischargingRatesFormGroup?.value)
     }
   }
 
@@ -170,10 +168,10 @@ export class DischargingRatesComponent implements OnInit {
         minBallastRate: Math.round(Number(this.dischargeRates?.minBallastRate) * convertionFactor),
         maxBallastRate: Math.round(Number(this.dischargeRates?.maxBallastRate) * convertionFactor)
       })
-      this.dischargingRatesFormGroup?.controls['maxDischargingRate'].setValidators([Validators.required, compareNumberValidator('initialDischargingRate', '<'), Validators.min(5000 * convertionFactor), Validators.max(16500 * convertionFactor), numberValidator(0, 7)]);
-      this.dischargingRatesFormGroup?.controls['initialDischargingRate'].setValidators([Validators.required, compareNumberValidator('maxDischargingRate', '>'), Validators.min(500 * convertionFactor), Validators.max(3000 * convertionFactor), numberValidator(0, 7)]);
-      this.dischargingRatesFormGroup?.controls['minBallastRate'].setValidators([Validators.required, numberValidator(0, 7), Validators.min(500 * convertionFactor), Validators.max(10000 * convertionFactor)]);
-      this.dischargingRatesFormGroup?.controls['maxBallastRate'].setValidators([Validators.required, numberValidator(0, 7), Validators.min(500 * convertionFactor), Validators.max(10000 * convertionFactor)]);
+      this.dischargingRatesFormGroup?.controls['maxDischargingRate'].setValidators([Validators.required, compareNumberValidator('initialDischargingRate', '<'), Validators.min(Math.round(5000 * convertionFactor)), Validators.max(Math.round(16500 * convertionFactor)), numberValidator(0, 7)]);
+      this.dischargingRatesFormGroup?.controls['initialDischargingRate'].setValidators([Validators.required, compareNumberValidator('maxDischargingRate', '>'), Validators.min(Math.round(500 * convertionFactor)), Validators.max(Math.round(3000 * convertionFactor)), numberValidator(0, 7)]);
+      this.dischargingRatesFormGroup?.controls['minBallastRate'].setValidators([Validators.required, numberValidator(0, 7), Validators.min(Math.round(500 * convertionFactor)), Validators.max(Math.round(10000 * convertionFactor))]);
+      this.dischargingRatesFormGroup?.controls['maxBallastRate'].setValidators([Validators.required, numberValidator(0, 7), Validators.min(Math.round(500 * convertionFactor)), Validators.max(Math.round(10000 * convertionFactor))]);
     } else {
       this.dischargingRatesFormGroup?.patchValue({
         id: this.dischargeRates?.id ? this.dischargeRates?.id : 0,
