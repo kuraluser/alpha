@@ -1539,7 +1539,7 @@ header{
   }
 }
 
-.highcharts-label-box {
+.highcharts-tooltip .highcharts-label-box  {
   fill:rgba($tooltip-bg, 1) !important;
   stroke: $card-distance !important;
 }

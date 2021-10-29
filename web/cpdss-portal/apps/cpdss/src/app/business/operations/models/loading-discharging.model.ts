@@ -754,6 +754,7 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   loadingOrder?: number;
   dischargingOrder?: number;
   isAdd?: boolean;
+  slopQuantityMT?: string;
 }
 
 /**

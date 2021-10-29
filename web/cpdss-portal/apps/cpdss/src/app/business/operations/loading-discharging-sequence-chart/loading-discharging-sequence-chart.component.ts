@@ -406,18 +406,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             },
             {
               enabled: true,
-              color: '#666666',
-              useHTML: true,
               formatter: function () {
-                return this.point?.options?.id?.includes('stripping') ? `<div class="sequence-stripping cargo" style="width: ${this.point?.shapeArgs?.width}px;">${LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR']}</div>` : undefined;
+                return this.point?.options?.className ? `<i class="pi ${this.point.options.className} sequence-icon"></i>` : undefined;
               },
-              animation: {
-                defer: 6000
-              }
-            },
-            {
-              enabled: true,
-              format: '<i class="pi {point.className} sequence-icon"></i>',
               useHTML: true,
               align: 'center'
             }]
@@ -469,7 +460,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           },
           lineWidth: 0,
           lineColor: 'transparent',
-          gridZIndex: 3,
+          gridZIndex: 2,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
           tickPositions: this.cargoStageTickPositions,
@@ -510,7 +501,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           },
           lineWidth: 0,
           lineColor: 'transparent',
-          gridZIndex: 3,
+          gridZIndex: 2,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
           tickPositions: this.cargoStageTickPositions,
@@ -821,7 +812,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             },
             {
               enabled: true,
-              format: '<i class="pi {point.className} sequence-icon"></i>',
+              formatter: function () {
+                return this.point?.options?.className ? `<i class="pi ${this.point.options.className} sequence-icon"></i>` : undefined;
+              },
               useHTML: true,
               align: 'center'
             }]
@@ -877,7 +870,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           },
           lineWidth: 0,
           lineColor: 'transparent',
-          gridZIndex: 3,
+          gridZIndex: 2,
           gridLineColor: '#000d20',
           tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
@@ -918,7 +911,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           },
           lineWidth: 0,
           lineColor: 'transparent',
-          gridZIndex: 3,
+          gridZIndex: 2,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
           tickPositions: this.cargoStageTickPositions,
@@ -1029,6 +1022,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
+          render: this.ballastSequenceChartRender
         },
         zoomType: 'x',
         marginRight: 20
@@ -1053,18 +1047,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             },
             {
               enabled: true,
-              color: '#666666',
-              useHTML: true,
               formatter: function () {
-                return this.point?.options?.id?.includes('stripping') ? `<div class="sequence-stripping ballast" style="width: ${this.point?.shapeArgs?.width}px;">${LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR']}</div>` : undefined;
+                return this.point?.options?.className ? `<i class="pi ${this.point.options.className} sequence-icon"></i>` : undefined;
               },
-              animation: {
-                defer: 6000
-              }
-            },
-            {
-              enabled: true,
-              format: '<i class="pi {point.className} sequence-icon"></i>',
               useHTML: true,
               align: 'center'
             }
@@ -1163,7 +1148,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           },
           lineWidth: 0,
           lineColor: 'transparent',
-          gridZIndex: 3,
+          gridZIndex: 2,
           gridLineColor: '#000d20',
           gridLineWidth: 1,
           tickPositions: this.cargoStageTickPositions,
@@ -1180,7 +1165,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           },
           lineWidth: 0,
           lineColor: 'transparent',
-          gridZIndex: 3,
+          gridZIndex: 2,
           gridLineColor: '#000d20',
           tickPositions: this.cargoStageTickPositions,
           tickColor: '#000d20',
@@ -1306,6 +1291,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           marginLeft: 280, // Keep all charts left aligned
           spacing: [0, 0, 0, 0],
           events: {
+            render: this.ballastPumpSequenceChartRender
           },
           zoomType: 'x',
           marginRight: 20
@@ -1330,18 +1316,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               },
               {
                 enabled: true,
-                color: '#666666',
-                useHTML: true,
                 formatter: function () {
-                  return this.point?.options?.id?.includes('gravity') ? `<div class="sequence-gravity ballast" style="width: ${this.point?.shapeArgs?.width}px;">${LoadingDischargingSequenceChartComponent.translationKeys['GRAVITY']}</div>` : undefined;
+                  return this.point?.options?.className ? `<i class="pi ${this.point.options.className} sequence-icon"></i>` : undefined;
                 },
-                animation: {
-                  defer: 6000
-                }
-              },
-              {
-                enabled: true,
-                format: '<i class="pi {point.className} sequence-class"></i>',
                 useHTML: true,
                 align: 'center'
               }]
@@ -1394,7 +1371,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             },
             lineWidth: 0,
             lineColor: 'transparent',
-            gridZIndex: 3,
+            gridZIndex: 2,
             gridLineColor: '#000d20',
             tickPositions: this.cargoStageTickPositions,
             tickColor: '#000d20',
@@ -1425,7 +1402,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             },
             lineWidth: 0,
             lineColor: 'transparent',
-            gridZIndex: 3,
+            gridZIndex: 2,
             gridLineColor: '#000d20',
             gridLineWidth: 1,
             tickPositions: this.cargoStageTickPositions,
@@ -1905,9 +1882,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
     let chart: Highcharts.Chart,
       points: Array<Highcharts.Point>,
       i;
-    for (i = 0; i < Highcharts.charts.length; i++) {
+    for (i = 0; i < Highcharts.charts?.length; i++) {
       chart = Highcharts.charts[i];
-      if (chart.index !== currentChart.index) {
+      if (chart?.index !== currentChart?.index) {
         points = [];
         if (chart) {
           e = chart?.pointer?.normalize(e); // Find coordinates within the chart
@@ -1934,11 +1911,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           })
           points?.forEach((point) => {
             // point.onMouseOver(); May be needed in future
-            chart.tooltip.refresh(points); // Show the tooltip
+            chart?.tooltip?.refresh(points); // Show the tooltip
             // chart.xAxis[0].drawCrosshair(e, points[0]); // Show the crosshair may be needed in future
           });
         } else {
-          chart.tooltip.hide();
+          chart?.tooltip?.hide();
         }
       }
     }
@@ -2240,6 +2217,115 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         text: '<i class="pi pi-sort-up" style="color: #666666;font-size: 1.5em"></i>'
       }]
     }); */
+  }
+
+  /**
+   * Ballast tank Sequence chart render handler
+   *
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  ballastSequenceChartRender = function () {
+    const chart: Highcharts.Chart = this,
+      renderer = chart.renderer;
+
+    if (chart?.ballastStrippingGroup) {
+      chart?.ballastStrippingGroup.destroy();
+      chart.ballastStrippingGroup = null;
+    }
+    chart.ballastStrippingGroup = renderer.g('ballast-stripping-group')
+      .attr({
+        zIndex: 7
+      })
+      .add(chart.ballastStrippingGroup);
+
+    chart.series[0].data.forEach((point) => {
+      if (point?.options?.id?.includes('stripping')) {
+        const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
+        const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
+        const rect = renderer.rect(rectX, point.plotY + chart.plotTop - (point?.shapeArgs?.height / 2), rectWidth, point?.shapeArgs?.height, 0)
+          .attr({
+            fill: '#f8f8f8',
+            stroke: '#bebebe',
+            'stroke-width': 1,
+            zIndex: 7
+          })
+          .add(chart.ballastStrippingGroup);
+        const box = rect.getBBox();
+
+        const text = renderer.text(
+          LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'],
+          box.x + rectWidth / 2,
+          box.y
+        )
+          .css({
+            width: rectWidth - 10,
+            textOverflow: 'ellipsis',
+            color: '#666666'
+          })
+          .attr({
+            zIndex: 7,
+            translateY: 25,
+            align: 'center'
+          })
+          .addClass('sequence-stripping ballast')
+          .add(chart.ballastStrippingGroup);
+      }
+    });
+  }
+
+  /**
+   * Ballast pump Sequence chart render handler
+   *
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  ballastPumpSequenceChartRender = function () {
+    const chart: Highcharts.Chart = this,
+      renderer = chart.renderer;
+
+    if (chart?.ballastGravityGroup) {
+      chart?.ballastGravityGroup.destroy();
+      chart.ballastGravityGroup = null;
+    }
+    chart.ballastGravityGroup = renderer.g('ballast-gravity-group')
+      .attr({
+        zIndex: 7
+      })
+      .add(chart.ballastGravityGroup);
+
+    chart.series[0].data.forEach((point) => {
+      if (point?.options?.id?.includes('gravity')) {
+        const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
+        const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
+        const rect = renderer.rect(rectX, point.plotY + chart.plotTop - (point?.shapeArgs?.height / 2), rectWidth, point?.shapeArgs?.height, 0)
+          .attr({
+            fill: '#f8f8f8',
+            stroke: '#bebebe',
+            'stroke-width': 1,
+            zIndex: 7
+          })
+          .add(chart.ballastGravityGroup);
+        const box = rect.getBBox();
+
+        const text = renderer.text(
+          LoadingDischargingSequenceChartComponent.translationKeys['GRAVITY'],
+          box.x + (rectWidth) / 2,
+          box.y
+        )
+          .css({
+            width: rectWidth - 10,
+            textOverflow: 'ellipsis',
+            color: '#666666',
+            backgroundColor: 'white'
+          })
+          .attr({
+            zIndex: 7,
+            translateY: 25,
+            align: 'center'
+          })
+          .addClass('sequence-gravity ballast')
+          .add(chart.ballastGravityGroup);
+      }
+    });
   }
 
   /**

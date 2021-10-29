@@ -299,7 +299,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @memberof DischargingInformationComponent
    */
   onCargoToBeDischargedChange(event: ILoadedCargo[]) {
-    this.dischargingInformationPostData.cargoToBeDischarged = { ...this.dischargingInformationPostData?.cargoToBeDischarged, dischargeQuantityCargoDetails: this.loadingDischargingTransformationService.getCargoToBeDischargedAsValue(event, this.listData) };
+    this.dischargingInformationPostData.cargoToBeDischarged = { ...this.dischargingInformationPostData?.cargoToBeDischarged, dischargeQuantityCargoDetails: this.loadingDischargingTransformationService.getCargoToBeDischargedAsValue(event, this.listData, this.currentQuantitySelectedUnit) };
     this.hasUnSavedData = true;
   }
 
@@ -322,7 +322,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       topCow: event?.topCOWTanks?.map(tank => tank.id),
       bottomCow: event?.bottomCOWTanks?.map(tank => tank.id),
       allCow: event?.allCOWTanks?.map(tank => tank.id),
-      cargoCow: event?.tanksWashingWithDifferentCargo?.map(item => ({
+      cargoCow: event?.tanksWashingWithDifferentCargo?.filter(item => item?.washingCargo?.cargoNominationId && item?.tanks?.length).map(item => ({
         cargoId: item?.cargo?.id, cargoNominationId: item?.cargo?.cargoNominationId,
         tankIds: item?.tanks?.map(tank => tank.id),
         washingCargoId: item?.washingCargo?.id,
@@ -362,19 +362,19 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     this.dischargeBerthComponent.berthDetailsForm?.markAllAsTouched();
     this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
 
-    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAsTouched();
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAllAsTouched();
     this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
 
-    this.dischargingInformationForm.markAsDirty();
+    this.dischargingInformationForm.markAllAsTouched();
     this.dischargingInformationForm?.updateValueAndValidity();
 
     const isValid = await this.checkIfValid();
-    this.dischargingInformationData.isDischargeInfoComplete = isValid && this.dischargingInformationForm.valid;
+    this.dischargingInformationData.isDischargeInfoComplete = isValid && this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && !this.dischargeBerthComponent.berthDetailsForm?.invalid && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid;
     this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
 
     const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY', 'DISCHARGING_INFORMATION_INVALID_DATA']).toPromise();
 
-    if ((!this.dischargingInformationForm.valid || !this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid || !this.dischargeBerthComponent.berthDetailsForm?.valid || !this.dischargeRatesComponent.dischargingRatesFormGroup) && isValid) {
+    if (!this.dischargingInformationData?.isDischargeInfoComplete) {
       this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_ERROR'], detail: translationKeys['DISCHARGING_INFORMATION_INVALID_DATA'] });
       if (document.querySelector('.error-icon')) {
         document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth" });

@@ -199,7 +199,7 @@ export class CowPlanComponent implements OnInit {
     const startTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowStart.value);
     const endTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowEnd.value);
     const duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
-    this.cowDetailsForm.controls.cowDuration.setValue(moment.utc(duration * 60 * 1000).format("HH:mm"));
+    this.cowDetailsForm.controls.cowDuration.setValue(this.loadingDischargingTransformationService.convertMinutesToHHMM(duration));
     if (this.cowDetailsForm.controls?.cowStart.value) {
       this.cowDetailsForm.controls?.cowEnd.setValidators([Validators.required, durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
     } else{

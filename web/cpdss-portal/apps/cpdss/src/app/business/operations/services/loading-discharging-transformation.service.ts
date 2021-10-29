@@ -439,6 +439,7 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.loadingInfoId = infoId;
       } else {
         _loadingDischargingDelays.dischargeInfoId = infoId;
+        _loadingDischargingDelays.sequenceNo = Number(loadingValueObject?.sequenceNo.value);
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
@@ -1056,7 +1057,7 @@ export class LoadingDischargingTransformationService {
    * @return {*}  {ILoadedCargoResponse[]}
    * @memberof LoadingDischargingTransformationService
    */
-  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData): ILoadedCargoResponse[] {
+  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData, currentQuantitySelectedUnit: QUANTITY_UNIT): ILoadedCargoResponse[] {
     const _dischargeQuantityCargoDetails: ILoadedCargoResponse[] = dischargeQuantityCargoDetails?.map(cargo => {
       const _cargo = <ILoadedCargoResponse>{};
       for (const key in cargo) {
@@ -1066,7 +1067,7 @@ export class LoadingDischargingTransformationService {
           } else if (key === 'isCommingledDischarge') {
             _cargo.isCommingledDischarge = cargo[key].value;
           } else if (key === 'slopQuantity') {
-            _cargo.slopQuantity = (<ValueObject>cargo[key]).value;
+            _cargo.slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform((<ValueObject>cargo[key]).value, currentQuantitySelectedUnit, QUANTITY_UNIT.MT, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
           } else {
             _cargo[key] = cargo[key];
           }
@@ -1099,6 +1100,7 @@ export class LoadingDischargingTransformationService {
             _cargo.isCommingledDischarge = new ValueObject<boolean>(_isCommingled, true, true, false);
           } else if (key === 'slopQuantity') {
             const _slopQuantity = Number(cargo.slopQuantity) ?? 0;
+            _cargo.slopQuantityMT = _slopQuantity.toString();
             _cargo.slopQuantity = new ValueObject<number>(_slopQuantity, true, true, false);
           } else if (key === 'shipFigure') {
             _cargo.loadableMT = cargo.shipFigure;
