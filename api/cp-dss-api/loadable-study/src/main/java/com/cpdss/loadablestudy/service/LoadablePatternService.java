@@ -1749,14 +1749,20 @@ public class LoadablePatternService {
       Long loadableStudyStatus,
       String messageId,
       boolean generatedFromShore) {
-    LoadableStudyAlgoStatus status = new LoadableStudyAlgoStatus();
-    status.setLoadableStudy(loadableStudy);
+
+    LoadableStudyAlgoStatus status =
+        loadableStudyAlgoStatusRepository
+            .findByLoadableStudyIdAndMessageIdAndIsActive(loadableStudy.getId(), messageId, true)
+            .orElse(new LoadableStudyAlgoStatus());
+
     status.setIsActive(true);
+    status.setLoadableStudy(loadableStudy);
     status.setLoadableStudyStatus(loadableStudyStatusRepository.getOne(loadableStudyStatus));
     status.setProcessId(processId);
     status.setVesselxid(loadableStudy.getVesselXId());
     status.setMessageId(messageId);
     status.setGeneratedFromShore(generatedFromShore);
+
     loadableStudyAlgoStatusRepository.save(status);
   }
 
