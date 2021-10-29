@@ -427,7 +427,7 @@ public class LoadicatorService {
                               : true)
                   .collect(Collectors.toList()));
         });
-    ;
+    
     CargoInfo.CargoReply cargoReply = getCargoInfoForLoadicator(dischargeInformation);
     VesselInfo.VesselReply vesselReply = getVesselDetailsForLoadicator(dischargeInformation);
     PortInfo.PortReply portReply = getPortInfoForLoadicator(dischargeInformation);
