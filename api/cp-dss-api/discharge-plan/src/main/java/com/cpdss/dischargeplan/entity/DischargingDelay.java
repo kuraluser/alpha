@@ -44,4 +44,7 @@ public class DischargingDelay extends EntityDoc {
   // bi-directional many-to-one association to DischargingDelayReason
   @OneToMany(mappedBy = "dischargingDelay", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<DischargingDelayReason> dischargingDelayReasons;
+
+  @Column(name = "sequence_number")
+  private Long sequenceNo;
 }
