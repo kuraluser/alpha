@@ -876,7 +876,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         LoadableStudy.UpdateUllageRequest.newBuilder();
     grpcRequestToLS.setUpdateUllageForLoadingPlan(true); // to skip save to Temp table in LS
     this.loadableStudyService.buildUpdateUllageRequest(
-        updateUllage, activeVoyage.getPatternId(), grpcRequestToLS);
+        updateUllage, activeVoyage.getPatternId(), vesselId, grpcRequestToLS);
 
     // Call to LS for process
     LoadableStudy.UpdateUllageReply grpcReplyFromLS =

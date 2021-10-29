@@ -26,6 +26,7 @@ export class LoadingDischargingTransformationService {
   private _isDischargeStarted: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _unitChangeSource: Subject<boolean> = new Subject();
   public _loadingInstructionSource: Subject<boolean> = new Subject();
+  public _dischargingInstructionSource: Subject<boolean> = new Subject();
   public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
@@ -46,6 +47,7 @@ export class LoadingDischargingTransformationService {
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
   unitChange$ = this._unitChangeSource.asObservable();
   loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
+  dischargingInstructionValidity$ = this._dischargingInstructionSource.asObservable();
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
   tabChange$ = this._tabChangeSource.asObservable();
   validateUllageData$ = this._validateUllageData.asObservable();
@@ -115,6 +117,11 @@ export class LoadingDischargingTransformationService {
   /** Set loading instruction complete status */
   setLoadingInstructionValidity(value: boolean) {
     this._loadingInstructionSource.next(value);
+  }
+
+  /** Set discharging instruction complete status */
+  setDischargingInstructionValidity(value: boolean) {
+    this._dischargingInstructionSource.next(value);
   }
 
 
@@ -439,6 +446,7 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.loadingInfoId = infoId;
       } else {
         _loadingDischargingDelays.dischargeInfoId = infoId;
+        _loadingDischargingDelays.sequenceNo = Number(loadingValueObject?.sequenceNo.value);
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
@@ -1056,7 +1064,7 @@ export class LoadingDischargingTransformationService {
    * @return {*}  {ILoadedCargoResponse[]}
    * @memberof LoadingDischargingTransformationService
    */
-  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData): ILoadedCargoResponse[] {
+  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData, currentQuantitySelectedUnit: QUANTITY_UNIT): ILoadedCargoResponse[] {
     const _dischargeQuantityCargoDetails: ILoadedCargoResponse[] = dischargeQuantityCargoDetails?.map(cargo => {
       const _cargo = <ILoadedCargoResponse>{};
       for (const key in cargo) {
@@ -1066,7 +1074,7 @@ export class LoadingDischargingTransformationService {
           } else if (key === 'isCommingledDischarge') {
             _cargo.isCommingledDischarge = cargo[key].value;
           } else if (key === 'slopQuantity') {
-            _cargo.slopQuantity = (<ValueObject>cargo[key]).value;
+            _cargo.slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform((<ValueObject>cargo[key]).value, currentQuantitySelectedUnit, QUANTITY_UNIT.MT, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
           } else {
             _cargo[key] = cargo[key];
           }
@@ -1099,6 +1107,7 @@ export class LoadingDischargingTransformationService {
             _cargo.isCommingledDischarge = new ValueObject<boolean>(_isCommingled, true, true, false);
           } else if (key === 'slopQuantity') {
             const _slopQuantity = Number(cargo.slopQuantity) ?? 0;
+            _cargo.slopQuantityMT = _slopQuantity.toString();
             _cargo.slopQuantity = new ValueObject<number>(_slopQuantity, true, true, false);
           } else if (key === 'shipFigure') {
             _cargo.loadableMT = cargo.shipFigure;

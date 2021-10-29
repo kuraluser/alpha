@@ -33,8 +33,8 @@ public interface LoadableStudyAlgoStatusRepository
   public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndProcessIdAndIsActive(
       Long loadableStudyId, String processId, Boolean isActive);
 
-  public Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndMessageIdAndIsActive(
-      Long loadableStudyId, String processId, Boolean isActive);
+  Optional<LoadableStudyAlgoStatus> findByLoadableStudyIdAndMessageIdAndIsActive(
+      Long loadableStudyId, String messageId, Boolean isActive);
 
   public List<LoadableStudyAlgoStatus> findByLoadableStudyIdAndIsActive(
       Long loadableStudyId, Boolean isActive);

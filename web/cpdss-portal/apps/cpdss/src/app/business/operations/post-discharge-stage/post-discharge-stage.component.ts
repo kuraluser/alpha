@@ -111,7 +111,7 @@ export class PostDischargeStageComponent implements OnInit {
    * @param {*} event
    * @memberof PostDischargeStageComponent
    */
-  onInput(event) {
+  onChange(event) {
     this.updatePostDischargeDetails.emit(this.postDischargeStageTimeForm?.value);
   }
 }

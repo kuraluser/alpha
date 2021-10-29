@@ -99,6 +99,9 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     this.loadingDischargingTransformationService.dischargingInformationValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.dischargingInformationComplete = res;
     });
+    this.loadingDischargingTransformationService.dischargingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
+      this.dischargingInstructionComplete = res;
+    });
   }
 
 

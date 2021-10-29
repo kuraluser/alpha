@@ -45,4 +45,33 @@ public class JsonDataService {
     }
     return patternJson;
   }
+
+  /**
+   * Method to update existing JSON data. If the record is not present, it creates a new record
+   *
+   * @param referenceId reference Id value
+   * @param jsonTypeId JSON type Id value
+   * @param json Json String
+   */
+  public void updateJsonData(final Long referenceId, final Long jsonTypeId, final String json) {
+
+    Optional<JsonType> jsonTypeOpt = jsonTypeRepository.findByIdAndIsActive(jsonTypeId, true);
+
+    if (jsonTypeOpt.isPresent()) {
+      JsonData jsonData =
+          Optional.ofNullable(
+                  this.jsonDataRepository.findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc(
+                      referenceId, jsonTypeOpt.get()))
+              .orElse(new JsonData());
+
+      jsonData.setReferenceXId(referenceId);
+      jsonData.setJsonTypeXId(jsonTypeOpt.get());
+      jsonData.setJsonData(json);
+      jsonDataRepository.save(jsonData);
+      log.info(
+          "Saved {} JSON in database. Ref Id: {}", jsonTypeOpt.get().getTypeName(), referenceId);
+    } else {
+      log.error("Cannot find JSON type Id: {} in database.", jsonTypeId);
+    }
+  }
 }

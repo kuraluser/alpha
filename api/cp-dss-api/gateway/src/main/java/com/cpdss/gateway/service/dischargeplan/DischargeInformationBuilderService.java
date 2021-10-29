@@ -296,7 +296,7 @@ public class DischargeInformationBuilderService {
         var2.setIsUsing(lm.getIsUsing());
         list2.add(var2);
       }
-      log.info("Loading plan machine in use added, Size {}", var1.size());
+      log.info("Discharging plan machine in use added, Size {}", var1.size());
       // machineryInUse.setLoadingMachinesInUses(list2);
       machineryInUse.setDischargeMachinesInUses(list2);
     }
@@ -325,6 +325,7 @@ public class DischargeInformationBuilderService {
               v -> {
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
+      Optional.ofNullable(var2.getSequenceNo()).ifPresent(val1::setSequenceNo);
       BeanUtils.copyProperties(var2, val1);
       val1.setLoadingInfoId(var2.getDischargeInfoId());
       val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
@@ -564,7 +565,7 @@ public class DischargeInformationBuilderService {
                 })
             .collect(Collectors.toList());
     log.info(
-        "Save Loading info, Save Request Count - {}, Response Count {}",
+        "Save Discharging info, Save Request Count - {}, Response Count {}",
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
@@ -658,6 +659,7 @@ public class DischargeInformationBuilderService {
               .ifPresent(v -> v.forEach(s -> builder.addReasonForDelayIds(s)));
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(builder::setCargoNominationId);
+          Optional.ofNullable(delay.getSequenceNo()).ifPresent(builder::setSequenceNo);
           delayList.add(builder.build());
         });
     return delayList;
