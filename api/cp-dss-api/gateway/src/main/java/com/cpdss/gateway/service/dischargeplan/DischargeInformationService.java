@@ -97,7 +97,7 @@ public class DischargeInformationService {
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
-        "Get Loading Info, Active Voyage Number and Id {} ",
+        "Get Discharging Info, Active Voyage Number and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
@@ -464,7 +464,7 @@ public class DischargeInformationService {
   public DischargingInformationResponse saveDischargingInformation(
       DischargingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
-      log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
+      log.info("Calling saveDischargingInformation in discharging-plan microservice via GRPC");
       DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
       if (request.getDischargeDetails() != null) {
         // Updating synoptic table (time)
@@ -498,7 +498,7 @@ public class DischargeInformationService {
               response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", request.getDischargeInfoId());
+      log.error("Failed to save DischargingInformation {}", request.getDischargeInfoId());
       e.printStackTrace();
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       throw new GenericServiceException(

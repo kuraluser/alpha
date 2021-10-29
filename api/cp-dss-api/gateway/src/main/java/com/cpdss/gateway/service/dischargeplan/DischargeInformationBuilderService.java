@@ -296,7 +296,7 @@ public class DischargeInformationBuilderService {
         var2.setIsUsing(lm.getIsUsing());
         list2.add(var2);
       }
-      log.info("Loading plan machine in use added, Size {}", var1.size());
+      log.info("Discharging plan machine in use added, Size {}", var1.size());
       // machineryInUse.setLoadingMachinesInUses(list2);
       machineryInUse.setDischargeMachinesInUses(list2);
     }
@@ -564,7 +564,7 @@ public class DischargeInformationBuilderService {
                 })
             .collect(Collectors.toList());
     log.info(
-        "Save Loading info, Save Request Count - {}, Response Count {}",
+        "Save Discharging info, Save Request Count - {}, Response Count {}",
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();

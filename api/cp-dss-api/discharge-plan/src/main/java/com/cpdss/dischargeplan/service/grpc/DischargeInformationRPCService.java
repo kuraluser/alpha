@@ -523,20 +523,15 @@ public class DischargeInformationRPCService
       if (!cowPlan.getCowTankPercent().isEmpty()) {
         cowPlanDetail.setCowPercentage(new BigDecimal(cowPlan.getCowTankPercent()));
       }
-      if (!cowPlan.getCowWithCargoEnable()) {
-        cowPlanDetail.setWashTankWithDifferentCargo(cowPlan.getCowWithCargoEnable());
-      }
+      cowPlanDetail.setWashTankWithDifferentCargo(cowPlan.getCowWithCargoEnable());
 
       if (!cowPlan.getEstCowDuration().isEmpty()) {
         cowPlanDetail.setEstimatedCowDuration(new BigDecimal(cowPlan.getEstCowDuration()));
       }
 
-      if (!cowPlan.getNeedFlushingOil()) {
-        cowPlanDetail.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
-      }
-      if (!cowPlan.getNeedFreshCrudeStorage()) {
-        cowPlanDetail.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
-      }
+      cowPlanDetail.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
+      cowPlanDetail.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
+
       if (!cowPlan.getTrimCowMax().isEmpty()) {
         cowPlanDetail.setCowMaxTrim(new BigDecimal(cowPlan.getTrimCowMax()));
       }
