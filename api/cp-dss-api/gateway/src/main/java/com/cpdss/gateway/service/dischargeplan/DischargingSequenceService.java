@@ -365,7 +365,7 @@ public class DischargingSequenceService {
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildDischargingRates(
                   sequence.getTankWiseCargoDischargingRates(), sequenceBuilder);
-              if (sequence.getLoadablePlanPortWiseDetails() != null) {
+              if (sequence.getDischargePlanPortWiseDetails() != null) {
                 this.buildDischargingPlanPortWiseDetails(
                     sequence.getDischargePlanPortWiseDetails(), sequenceBuilder);
               }

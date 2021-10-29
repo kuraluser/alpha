@@ -33,4 +33,7 @@ public interface StowagePlanRepository extends CommonCrudRepository<StowagePlan,
           + "join IntactStability s on s.stowagePlanId = sp.id where sp.id =?1 ")
   public com.cpdss.loadicatorintegration.domain.StowagePlanDetail findPortForStability(
       Long stowagePlanId);
+
+  @Query("SELECT COUNT(id) FROM StowagePlan WHERE status != 3")
+  public Long findCountOfStowagePlansToBeProcessed();
 }

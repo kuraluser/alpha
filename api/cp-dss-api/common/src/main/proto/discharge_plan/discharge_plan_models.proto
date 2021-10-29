@@ -415,3 +415,17 @@ message DischargePlanStowageDetailsResponse {
   ResponseStatus responseStatus = 1;
   repeated LoadingPlanTankDetails dischargingPlanTankDetails = 2;
 }
+
+message DischargingInfoLoadicatorDataRequest {
+  string processId = 1;
+  int64 dischargingInformationId = 2;
+  repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
+  bool isUllageUpdate = 4;
+  int32 conditionType = 5;
+}
+
+message DischargingInfoLoadicatorDataReply {
+  string processId = 1;
+  int64 loadableStudyId = 2;
+  ResponseStatus responseStatus = 3;
+}

@@ -321,7 +321,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       reply.setResponseStatus(
           ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
-      log.error("Exception when getting bill of ladding details agianst cargonomination Id", e);
+      log.error("Exception when getting data from Loadicator", e);
       reply.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
