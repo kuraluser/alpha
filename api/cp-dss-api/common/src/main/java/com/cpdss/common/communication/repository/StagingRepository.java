@@ -3,7 +3,6 @@ package com.cpdss.common.communication.repository;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.springdata.CommonCrudRepository;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -35,21 +34,27 @@ public interface StagingRepository extends CommonCrudRepository<DataTransferStag
   @Query("UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1")
   public void updateStatusForProcessId(String processId, String status);
 
-  @Query("select staging from DataTransferStage staging where staging.status =?1 and staging.lastModifiedDateTime=?2")
+  @Query(
+      "select staging from DataTransferStage staging where staging.status =?1 and staging.lastModifiedDateTime=?2")
   public List<DataTransferStage> getAllWithStatusAndTime(String status, LocalDateTime dateTime);
 
   @Transactional
   @Modifying
-  @Query("UPDATE DataTransferStage staging SET staging.status = ?2, staging.lastModifiedDateTime=?3 where staging.processId = ?1")
-   public void updateStatusAndModifiedDateTimeForProcessId(String processId, String status, LocalDateTime modifiedDateTime);
+  @Query(
+      "UPDATE DataTransferStage staging SET staging.status = ?2, staging.lastModifiedDateTime=?3 where staging.processId = ?1")
+  public void updateStatusAndModifiedDateTimeForProcessId(
+      String processId, String status, LocalDateTime modifiedDateTime);
 
   @Transactional
   @Modifying
-  @Query("UPDATE DataTransferStage staging SET staging.status = ?2, staging.statusDescription =?3, staging.lastModifiedDateTime=?4 where staging.id = ?1")
-  public  void updateStatusAndStatusDescriptionForId(Long id, String status, String statusDescription, LocalDateTime modifiedDateTime);
+  @Query(
+      "UPDATE DataTransferStage staging SET staging.status = ?2, staging.statusDescription =?3, staging.lastModifiedDateTime=?4 where staging.id = ?1")
+  public void updateStatusAndStatusDescriptionForId(
+      Long id, String status, String statusDescription, LocalDateTime modifiedDateTime);
 
   @Transactional
   @Modifying
-  @Query("UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1 and staging.status ='in_progress'")
+  @Query(
+      "UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1 and staging.status ='in_progress'")
   public void updateStatusCompletedForProcessId(String processId, String status);
 }

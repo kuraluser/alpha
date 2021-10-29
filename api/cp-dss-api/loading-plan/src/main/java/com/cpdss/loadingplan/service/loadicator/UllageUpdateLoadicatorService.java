@@ -134,7 +134,8 @@ public class UllageUpdateLoadicatorService {
                   "bill_of_ladding"),
               processId,
               MessageTypes.ULLAGE_UPDATE.getMessageType(),
-              loadingInfoOpt.get().getId());
+              loadingInfoOpt.get().getId(),
+              null);
 
       log.info("Json Array in update ullage service: " + jsonArray.toString());
       EnvoyWriter.WriterReply ewReply =
@@ -305,8 +306,10 @@ public class UllageUpdateLoadicatorService {
     if (algoRequest.getStages().isEmpty()) {
       algoRequest.setStages(null);
     }
+    log.info("Before Algo call");
     LoadicatorAlgoResponse algoResponse =
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+    log.info("Algo call response:" + algoResponse);
     saveLoadicatorResponseJson(algoResponse, loadingInformation.getId());
 
     algoResponse.getLoadicatorResults().get(0).getJudgement().removeIf(error -> error.isEmpty());
@@ -335,7 +338,8 @@ public class UllageUpdateLoadicatorService {
       log.info("Ullage update with loadicator off after algo call for communication tables");
       ullageUpdateSaveForCommunication(
           loadingInformation.getId(),
-          MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType());
+          MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
+          algoResponse.getProcessId());
     }
   }
 
@@ -560,12 +564,13 @@ public class UllageUpdateLoadicatorService {
       log.info("Ullage update with loadicator on after algo call for communication tables");
       ullageUpdateSaveForCommunication(
           loadingInfoOpt.get().getId(),
-          MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType());
+          MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+          algoResponse.getProcessId());
     }
   }
 
-  private void ullageUpdateSaveForCommunication(Long loadingInfoId, String messageType)
-      throws GenericServiceException {
+  private void ullageUpdateSaveForCommunication(
+      Long loadingInfoId, String messageType, String pyUserId) throws GenericServiceException {
     if (enableCommunication && !env.equals("ship")) {
       JsonArray jsonArray =
           loadingPlanStagingService.getCommunicationData(
@@ -574,10 +579,12 @@ public class UllageUpdateLoadicatorService {
                   "port_loading_plan_stowage_details",
                   "port_loading_plan_stowage_ballast_details",
                   "port_loadable_plan_commingle_details",
-                  "port_loading_plan_stability_parameters"),
+                  "port_loading_plan_stability_parameters",
+                  "pyuser"),
               UUID.randomUUID().toString(),
               messageType,
-              loadingInfoId);
+              loadingInfoId,
+              pyUserId);
       log.info("Json Array get in After Algo call: " + jsonArray.toString());
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(

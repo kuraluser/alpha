@@ -16,9 +16,9 @@ import lombok.*;
 @ToString
 public class BillOfLanding extends EntityDoc {
 
-  @Id
+  /*  @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private Long id;*/
 
   @Column(name = "loading_xid")
   private Long loadingId;
@@ -53,6 +53,6 @@ public class BillOfLanding extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @Column(name = "version")
-  private Long version;
+  /*  @Column(name = "version")
+  private Long version;*/
 }

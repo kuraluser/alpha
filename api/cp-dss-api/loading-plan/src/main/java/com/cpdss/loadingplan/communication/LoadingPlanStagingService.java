@@ -68,6 +68,7 @@ public class LoadingPlanStagingService extends StagingService {
   private PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
 
   @Autowired private BillOfLandingRepository billOfLandingRepository;
+  @Autowired private PyUserRepository pyUserRepository;
 
   public LoadingPlanStagingService(
       @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
@@ -84,10 +85,15 @@ public class LoadingPlanStagingService extends StagingService {
    * @param processId - processId
    * @param processGroupId - processGroupId
    * @param Id- id
+   * @param pyUserId- processId of algoResponse
    * @return JsonArray
    */
   public JsonArray getCommunicationData(
-      List<String> processIdentifierList, String processId, String processGroupId, Long Id) {
+      List<String> processIdentifierList,
+      String processId,
+      String processGroupId,
+      Long Id,
+      String pyUserId) {
     log.info("LoadingPlanStaging Service processidentifier list:" + processIdentifierList);
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
@@ -414,6 +420,18 @@ public class LoadingPlanStagingService extends StagingService {
               object.addAll(billOfLandingList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
+            }
+            break;
+          }
+        case pyuser:
+          {
+            if(pyUserId !=null) {
+              Optional<PyUser> pyUser = pyUserRepository.findById(pyUserId);
+              if (pyUser.isPresent()) {
+                object.add(pyUser.get());
+                addIntoProcessedList(
+                        array, object, processIdentifier, processId, processGroupId, processedList);
+              }
             }
             break;
           }

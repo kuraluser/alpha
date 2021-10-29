@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.entity;
 
-import com.cpdss.common.utils.EntityDoc;
 import javax.persistence.*;
 import lombok.*;
 

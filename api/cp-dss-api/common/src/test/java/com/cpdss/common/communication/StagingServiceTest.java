@@ -37,7 +37,13 @@ public class StagingServiceTest {
   public static void beforeAll() {
     dataTransferStage =
         new DataTransferStage(
-            "hsgdfgsdjgsdbgksgfskgiytu786q7ffef", "lodable_study", "user", "table", null, "draft","status description");
+            "hsgdfgsdjgsdbgksgfskgiytu786q7ffef",
+            "lodable_study",
+            "user",
+            "table",
+            null,
+            "draft",
+            "status description");
     dataTransferStage.setId((long) 1);
     dataTransferStage.setStatus("draft");
     dataTransferStage.setCreatedBy("communication");

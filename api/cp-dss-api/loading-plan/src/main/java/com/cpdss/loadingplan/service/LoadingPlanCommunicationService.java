@@ -19,6 +19,8 @@ import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
@@ -95,6 +97,7 @@ public class LoadingPlanCommunicationService {
   @Autowired private StageOffsetRepository stageOffsetRepository;
   @Autowired private StageDurationRepository stageDurationRepository;
   @Autowired private LoadingInformationStatusRepository loadingInfoStatusRepository;
+  @Autowired private PyUserRepository pyUserRepository;
 
   public void getDataFromCommunication(
       Map<String, String> taskReqParams, EnumSet<MessageTypes> messageTypesEnum)
@@ -230,29 +233,37 @@ public class LoadingPlanCommunicationService {
         List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList = null;
         List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
         List<BillOfLanding> billOfLandingList = null;
+        PyUser pyUser = null;
         loadingPlanStagingService.updateStatusForProcessId(
             processId, StagingStatus.IN_PROGRESS.getStatus());
         log.info("updated status to in_progress for processId:" + processId);
         String processGroupId = null;
-        Integer arrivalDeparture =null;
+        Integer arrivalDeparture = null;
         processGroupId = entry.getValue().get(0).getProcessGroupId();
         for (DataTransferStage dataTransferStage : entry.getValue()) {
           Type listType = null;
           String dataTransferString = dataTransferStage.getData();
-          String data =
-              dataTransferString
-                  .replace("[\"", "[")
-                  .replace("\"]", "]")
-                  .replace("\"{", "{")
-                  .replace("}\"", "}")
-                  .replace("\\", "");
+          String data = null;
+          if (dataTransferStage.getProcessIdentifier().equals("loading_information")
+              || dataTransferStage.getProcessIdentifier().equals("pyuser")) {
+            data = JsonParser.parseString(dataTransferString).getAsJsonArray().get(0).getAsString();
+          } else {
+            data =
+                dataTransferString
+                    .replace("[\"", "[")
+                    .replace("\"]", "]")
+                    .replace("\"{", "{")
+                    .replace("}\"", "}")
+                    .replace("\\", "");
+          }
           switch (ProcessIdentifiers.valueOf(dataTransferStage.getProcessIdentifier())) {
             case loading_information:
               {
-                listType = new TypeToken<ArrayList<LoadingInformation>>() {}.getType();
-                List<LoadingInformation> listLoadingInformation =
-                    new Gson().fromJson(data, listType);
-                loadingInformation = listLoadingInformation.get(0);
+                //                listType = new TypeToken<ArrayList<LoadingInformation>>()
+                // {}.getType();
+                //                List<LoadingInformation> listLoadingInformation =
+                //                    new Gson().fromJson(data, listType);
+                loadingInformation = new Gson().fromJson(data, LoadingInformation.class);
                 idMap.put(
                     LoadingPlanTables.LOADING_INFORMATION.getTable(), dataTransferStage.getId());
                 break;
@@ -483,6 +494,12 @@ public class LoadingPlanCommunicationService {
                 listType = new TypeToken<ArrayList<BillOfLanding>>() {}.getType();
                 billOfLandingList = new Gson().fromJson(data, listType);
                 idMap.put(LoadingPlanTables.BILL_OF_LADDING.getTable(), dataTransferStage.getId());
+                break;
+              }
+            case pyuser:
+              {
+                pyUser = new Gson().fromJson(data, PyUser.class);
+                idMap.put(LoadingPlanTables.PYUSER.getTable(), dataTransferStage.getId());
                 break;
               }
           }
@@ -910,6 +927,7 @@ public class LoadingPlanCommunicationService {
             && portLoadingPlanBallastTempDetailsList != null
             && !portLoadingPlanBallastTempDetailsList.isEmpty()) {
           try {
+            arrivalDeparture = portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
             for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
                 portLoadingPlanBallastTempDetailsList) {
               Long version = null;
@@ -1223,6 +1241,24 @@ public class LoadingPlanCommunicationService {
                 processId,
                 StagingStatus.FAILED.getStatus(),
                 e.getMessage());
+          }
+        }
+        if(pyUser != null) {
+          try {
+            pyUserRepository.save(pyUser);
+            log.info("Saved PyUser:" + pyUser);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                    idMap.get(LoadingPlanTables.PYUSER.getTable()),
+                    processId,
+                    retryStatus,
+                    e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                    idMap.get(LoadingPlanTables.PYUSER.getTable()),
+                    processId,
+                    StagingStatus.FAILED.getStatus(),
+                    e.getMessage());
           }
         }
         loadingPlanStagingService.updateStatusCompletedForProcessId(

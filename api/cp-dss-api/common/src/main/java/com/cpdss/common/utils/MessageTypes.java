@@ -22,7 +22,11 @@ public enum MessageTypes {
   public static EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN);
 
   public static EnumSet<MessageTypes> loadingShore = EnumSet.of(LOADINGPLAN, ULLAGE_UPDATE);
-  public static EnumSet<MessageTypes> loadingShip = EnumSet.of(LOADINGPLAN_ALGORESULT,ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT, ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT);
+  public static EnumSet<MessageTypes> loadingShip =
+      EnumSet.of(
+          LOADINGPLAN_ALGORESULT,
+          ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT,
+          ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT);
 
   private final String messageType;
 }

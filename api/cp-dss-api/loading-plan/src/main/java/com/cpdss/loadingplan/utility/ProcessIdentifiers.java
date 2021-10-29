@@ -27,5 +27,6 @@ public enum ProcessIdentifiers {
   loading_information_departure_status,
   port_loadable_plan_commingle_details_temp,
   port_loadable_plan_commingle_details,
-  bill_of_ladding;
+  bill_of_ladding,
+  pyuser;
 }

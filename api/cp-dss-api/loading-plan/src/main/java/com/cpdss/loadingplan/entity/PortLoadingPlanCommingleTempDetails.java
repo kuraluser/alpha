@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.entity;
 
-import com.cpdss.common.utils.EntityDoc;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -19,5 +18,4 @@ public class PortLoadingPlanCommingleTempDetails extends PortLoadingPlanCommingl
 
   @Column(name = "loading_xid")
   private Long loadingInformation;
-
 }

@@ -41,7 +41,8 @@ public class LoadingPlanConstants {
     LOADING_INFORMATION_DEPARTURE_STATUS("loading_information_departure_status"),
     PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP("port_loadable_plan_commingle_details_temp"),
     PORT_LOADABLE_PLAN_COMMINGLE_DETAILS("port_loadable_plan_commingle_details"),
-    BILL_OF_LADDING("bill_of_ladding");
+    BILL_OF_LADDING("bill_of_ladding"),
+    PYUSER("pyuser");
 
     public final String table;
   }
