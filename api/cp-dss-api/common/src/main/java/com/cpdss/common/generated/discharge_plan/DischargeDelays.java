@@ -105,6 +105,11 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
               cargoNominationId_ = input.readInt64();
               break;
             }
+          case 64:
+            {
+              sequenceNo_ = input.readInt64();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -292,6 +297,17 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     return cargoNominationId_;
   }
 
+  public static final int SEQUENCENO_FIELD_NUMBER = 8;
+  private long sequenceNo_;
+  /**
+   * <code>int64 sequenceNo = 8;</code>
+   *
+   * @return The sequenceNo.
+   */
+  public long getSequenceNo() {
+    return sequenceNo_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -331,6 +347,9 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     }
     if (cargoNominationId_ != 0L) {
       output.writeInt64(7, cargoNominationId_);
+    }
+    if (sequenceNo_ != 0L) {
+      output.writeInt64(8, sequenceNo_);
     }
     unknownFields.writeTo(output);
   }
@@ -373,6 +392,9 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     if (cargoNominationId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, cargoNominationId_);
     }
+    if (sequenceNo_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(8, sequenceNo_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -396,6 +418,7 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     if (getCargoId() != other.getCargoId()) return false;
     if (!getQuantity().equals(other.getQuantity())) return false;
     if (getCargoNominationId() != other.getCargoNominationId()) return false;
+    if (getSequenceNo() != other.getSequenceNo()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -423,6 +446,8 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     hash = (53 * hash) + getQuantity().hashCode();
     hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
+    hash = (37 * hash) + SEQUENCENO_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSequenceNo());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -575,6 +600,8 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
 
       cargoNominationId_ = 0L;
 
+      sequenceNo_ = 0L;
+
       return this;
     }
 
@@ -614,6 +641,7 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
       result.cargoId_ = cargoId_;
       result.quantity_ = quantity_;
       result.cargoNominationId_ = cargoNominationId_;
+      result.sequenceNo_ = sequenceNo_;
       onBuilt();
       return result;
     }
@@ -693,6 +721,9 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
       }
       if (other.getCargoNominationId() != 0L) {
         setCargoNominationId(other.getCargoNominationId());
+      }
+      if (other.getSequenceNo() != 0L) {
+        setSequenceNo(other.getSequenceNo());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1108,6 +1139,39 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     public Builder clearCargoNominationId() {
 
       cargoNominationId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long sequenceNo_;
+    /**
+     * <code>int64 sequenceNo = 8;</code>
+     *
+     * @return The sequenceNo.
+     */
+    public long getSequenceNo() {
+      return sequenceNo_;
+    }
+    /**
+     * <code>int64 sequenceNo = 8;</code>
+     *
+     * @param value The sequenceNo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSequenceNo(long value) {
+
+      sequenceNo_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 sequenceNo = 8;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearSequenceNo() {
+
+      sequenceNo_ = 0L;
       onChanged();
       return this;
     }

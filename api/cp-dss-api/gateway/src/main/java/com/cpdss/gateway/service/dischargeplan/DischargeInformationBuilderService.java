@@ -325,6 +325,7 @@ public class DischargeInformationBuilderService {
               v -> {
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
+      Optional.ofNullable(var2.getSequenceNo()).ifPresent(val1::setSequenceNo);
       BeanUtils.copyProperties(var2, val1);
       val1.setLoadingInfoId(var2.getDischargeInfoId());
       val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
@@ -658,6 +659,7 @@ public class DischargeInformationBuilderService {
               .ifPresent(v -> v.forEach(s -> builder.addReasonForDelayIds(s)));
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(builder::setCargoNominationId);
+          Optional.ofNullable(delay.getSequenceNo()).ifPresent(builder::setSequenceNo);
           delayList.add(builder.build());
         });
     return delayList;

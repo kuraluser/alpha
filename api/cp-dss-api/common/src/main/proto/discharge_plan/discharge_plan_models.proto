@@ -169,6 +169,8 @@ message DischargeDelays {
   int64 cargoId = 5;
   string quantity = 6;
   int64 cargoNominationId = 7;
+  int64 sequenceNo = 8;
+  
 }
 
 message PostDischargeStageTime {

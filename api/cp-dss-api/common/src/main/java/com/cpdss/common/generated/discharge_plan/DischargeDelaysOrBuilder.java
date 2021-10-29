@@ -85,4 +85,11 @@ public interface DischargeDelaysOrBuilder
    * @return The cargoNominationId.
    */
   long getCargoNominationId();
+
+  /**
+   * <code>int64 sequenceNo = 8;</code>
+   *
+   * @return The sequenceNo.
+   */
+  long getSequenceNo();
 }
