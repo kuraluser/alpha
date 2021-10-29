@@ -94,23 +94,16 @@ export class ArrivalConditionPanelComponent implements OnInit {
       }
     });
     this.ballastQuantity = Number(ballastQuantity.toFixed(2));
-    let draftFValue = 0;
-    let draftAValue = 0;
-    let draftMValue = 0;
-    let trimValue = 0;
     this.loadingDischargingPlanData?.planStabilityParams?.map(item => {
       if (item.conditionType === 1 && item.valueType === 2) {
-        draftFValue = Number(item?.foreDraft);
-        draftAValue = Number(item?.aftDraft);
-        draftMValue = Number(item?.meanDraft);
-        trimValue = Number(item?.trim);
+        this.draftFValue = Number(item?.foreDraft);
+        this.draftAValue = Number(item?.aftDraft);
+        this.draftMValue = Number(item?.meanDraft);
+        this.trimValue = Number(item?.trim);
+        this.manifoldHeight = item?.manifoldHeight;
+        this.freeboard = item?.freeBoard;
       }
     });
-    this.draftFValue = Number(draftFValue.toFixed(2));
-    this.draftAValue = Number(draftAValue.toFixed(2));
-    this.draftMValue = Number(draftMValue.toFixed(2));
-    this.trimValue = Number(trimValue.toFixed(2));
-    this.manifoldHeight = loadingDischargingPlanInfo?.berthDetails?.availableBerths?.length ? loadingDischargingPlanInfo?.berthDetails?.availableBerths[0].maxManifoldHeight : 0;
   }
 
 }

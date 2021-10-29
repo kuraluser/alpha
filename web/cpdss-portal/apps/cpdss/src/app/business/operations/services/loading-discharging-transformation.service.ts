@@ -26,6 +26,7 @@ export class LoadingDischargingTransformationService {
   private _isDischargeStarted: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _unitChangeSource: Subject<boolean> = new Subject();
   public _loadingInstructionSource: Subject<boolean> = new Subject();
+  public _dischargingInstructionSource: Subject<boolean> = new Subject();
   public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
@@ -46,6 +47,7 @@ export class LoadingDischargingTransformationService {
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
   unitChange$ = this._unitChangeSource.asObservable();
   loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
+  dischargingInstructionValidity$ = this._dischargingInstructionSource.asObservable();
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
   tabChange$ = this._tabChangeSource.asObservable();
   validateUllageData$ = this._validateUllageData.asObservable();
@@ -115,6 +117,11 @@ export class LoadingDischargingTransformationService {
   /** Set loading instruction complete status */
   setLoadingInstructionValidity(value: boolean) {
     this._loadingInstructionSource.next(value);
+  }
+
+  /** Set discharging instruction complete status */
+  setDischargingInstructionValidity(value: boolean) {
+    this._dischargingInstructionSource.next(value);
   }
 
 

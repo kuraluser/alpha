@@ -93,7 +93,7 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
    */
 
   getSaveButtonStatus() {
-    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableSaveButton.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableSaveButton = status;
     })
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {

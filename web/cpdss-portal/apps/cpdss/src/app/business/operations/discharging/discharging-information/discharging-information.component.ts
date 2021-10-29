@@ -129,6 +129,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       const dischargingInformationResponse = await this.loadingDischargingInformationApiService.getDischargingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
       this.dischargingInformationData = this.loadingDischargingTransformationService.transformDischargingInformation(dischargingInformationResponse, this.listData);
       this.initFormArray(this.dischargingInformationData);
+      this.loadingDischargingTransformationService.setDischargingInformationValidity(dischargingInformationResponse?.isDischargeInstructionsComplete);
       // this.rulesService.dischargeInfoId.next(this.dischargingInformationData.dischargeInfoId);
       await this.updateGetData();
     }
