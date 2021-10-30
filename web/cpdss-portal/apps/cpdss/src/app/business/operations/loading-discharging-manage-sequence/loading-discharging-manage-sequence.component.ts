@@ -311,7 +311,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       const loadingDischargingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargeInfoId, this.operation  , this.listData);
       this.updateLoadingDischargingDelays.emit(loadingDischargingDelaysList);
     }
-    await this.checkCargoCount(false);
+    this.checkCargoCount(false);
   }
 
   /**
@@ -400,7 +400,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     }
     const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargeInfoId, this.operation,this.listData);
     this.updateLoadingDischargingDelays.emit(loadingDelaysList);
-    await this.checkCargoCount(false);
+    this.checkCargoCount(false);
   }
 
   /**
@@ -459,7 +459,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       this.updateLoadingDischargingDelays.emit(loadingDelaysList);
     }
     this.updateFormValidity();
-    await this.checkCargoCount(false);
+    this.checkCargoCount(false);
   }
 
   /**
@@ -497,8 +497,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   *
   * @memberof LoadingDischargingManageSequenceComponent
   */
-  async checkCargoCount(showToaster: boolean) {
-    const translationKeys = await this.translateService.get(['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_QUANTITY_SUMMERY']).toPromise();
+  checkCargoCount(showToaster: boolean) {
+    const translationKeys = this.translateService.instant(['LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_ERROR', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_SUMMERY', 'LOADING_MANAGE_SEQUENCE_PLANNED_CARGO_QUANTITY_SUMMERY']);
     let cargoCount = this.listData.loadableQuantityCargo.length;
     cargoCount = this.addInitialDelay ? cargoCount + 1: cargoCount;
     const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');

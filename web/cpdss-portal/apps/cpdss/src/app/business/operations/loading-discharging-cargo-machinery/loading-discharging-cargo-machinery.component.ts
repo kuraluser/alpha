@@ -256,7 +256,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   *
   * @memberof LoadingDischargingCargoMachineryComponent
   */
-  async isMachineryValid(showToaster: boolean) {
+  isMachineryValid(showToaster: boolean) {
     let bottomLine;
     let manifold;
     let vesselPump;
@@ -320,7 +320,7 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       return true;
     } else {
       this.loadingDischargingTransformationService.isMachineryValid = false;
-      const translationKeys = await this.translateService.get(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD', 'LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE', 'LOADING_INFORMATION_CARGO_MACHINERY_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_CARGO_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_STRIPPING_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_GS_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_PUMP']).toPromise();
+      const translationKeys = this.translateService.instant(['LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD', 'LOADING_INFORMATION_CARGO_MACHINERY_BOTTOM_LINE', 'LOADING_INFORMATION_CARGO_MACHINERY_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_BALLAST_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_CARGO_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_STRIPPING_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_GS_PUMP', 'LOADING_INFORMATION_CARGO_MACHINERY_PUMP']);
       let detail;
       if (!manifold) {
         detail = translationKeys['LOADING_INFORMATION_CARGO_MACHINERY_MANIFOLD'];

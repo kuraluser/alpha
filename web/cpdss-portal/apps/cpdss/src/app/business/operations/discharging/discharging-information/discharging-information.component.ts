@@ -59,6 +59,18 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     this.getDischargingInformation()
   }
 
+  get hasUnSavedData(): boolean {
+    return this._hasUnSavedData;
+  }
+
+  set hasUnSavedData(value: boolean) {
+    this._hasUnSavedData = value;
+    if (true) {
+      this.dischargingInformationData.isDischargeInfoComplete = this.checkIfValid(false);
+      this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
+    }
+  }
+
   @Output() dischargingInformationId: EventEmitter<any> = new EventEmitter();
 
   dischargingInformationData?: IDischargingInformation;
@@ -67,7 +79,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   stageDuration: IStageDuration;
   stageOffset: IStageOffset;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
-  hasUnSavedData = false;
+  _hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   readonly OPERATIONS = OPERATIONS;
   dischargingInformationForm: FormGroup;
@@ -357,30 +369,10 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   async saveDischargingInformationData() {
-    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAllAsTouched();
-    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.updateValueAndValidity();
-
-    this.dischargeBerthComponent.berthDetailsForm?.markAllAsTouched();
-    this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
-
-    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAllAsTouched();
-    this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
-
-    this.dischargingInformationForm.markAllAsTouched();
-    this.dischargingInformationForm?.updateValueAndValidity();
-
-    const isValid = await this.checkIfValid();
-    this.dischargingInformationData.isDischargeInfoComplete = isValid && this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && !this.dischargeBerthComponent.berthDetailsForm?.invalid && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid;
+    this.dischargingInformationData.isDischargeInfoComplete = this.checkIfValid(true);
     this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
 
-    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY', 'DISCHARGING_INFORMATION_INVALID_DATA']).toPromise();
-
-    if (!this.dischargingInformationData?.isDischargeInfoComplete) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_ERROR'], detail: translationKeys['DISCHARGING_INFORMATION_INVALID_DATA'] });
-      if (document.querySelector('.error-icon')) {
-        document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth" });
-      }
-    }
+    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
 
     if (this.dischargingInformationData.isDischargeInfoComplete) {
       if (this.hasUnSavedData) {
@@ -404,36 +396,63 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @return {*}  {boolean}
    * @memberof DischargingInformationComponent
    */
-  async checkIfValid(): Promise<boolean> {
-    const translationKeys = this.translateService.instant(['DISCHARGING_INFO_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR']);
+  checkIfValid(showToast = false): boolean {
+    const translationKeys = this.translateService.instant(['DISCHARGING_INFO_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR', 'DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_INVALID_DATA']);
 
-    const isMachineryValid = await this.machineryRefComponent.isMachineryValid(true);
+    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAllAsTouched();
+    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.updateValueAndValidity();
+
+    this.dischargeBerthComponent.berthDetailsForm?.markAllAsTouched();
+    this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
+
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAllAsTouched();
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
+
+    this.dischargingInformationForm.markAllAsTouched();
+    this.dischargingInformationForm?.updateValueAndValidity();
+
+    const isMachineryValid = this.machineryRefComponent.isMachineryValid(showToast);
     if (!isMachineryValid) {
       return false;
     }
 
     const commingledCargos = this.dischargingInformationForm?.value?.cargoTobeLoadedDischarged?.dataTable?.filter(cargo => cargo?.isCommingledDischarge === true);
     if (commingledCargos?.length && commingledCargos?.length < 2) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED'] });
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED'] });
+      }
       return false;
     }
 
-    const validSequence = await this.manageSequenceComponent.checkCargoCount(true);
+    const validSequence = this.manageSequenceComponent.checkCargoCount(showToast);
     if (!validSequence) {
       return false;
     }
 
     if (this.dischargingInformationData?.cowDetails?.totalDuration && this.dischargingInformationForm?.value?.stageDetails?.stageDuration?.duration * 60 > this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.dischargingInformationData?.cowDetails?.totalDuration)) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_STAGE_DURATION_ERROR'] });
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_STAGE_DURATION_ERROR'] });
+      }
       return false
     }
 
     if (this.dischargingInformationForm?.value?.cowDetails?.cowOption?.id === 2 && !this.dischargingInformationForm?.value?.cowDetails?.topCOWTanks?.length && !this.dischargingInformationForm?.value?.cowDetails?.bottomCOWTanks?.length && !this.dischargingInformationForm?.value?.cowDetails?.allCOWTanks?.length) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_COW_TANK_NOT_SELECTED'] });
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_COW_TANK_NOT_SELECTED'] });
+      }
       return false
     }
 
-    return true;
+    if (this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && !this.dischargeBerthComponent.berthDetailsForm?.invalid && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid) {
+      return true
+    } else {
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_ERROR'], detail: translationKeys['DISCHARGING_INFORMATION_INVALID_DATA'] });
+        if (document.querySelector('.error-icon')) {
+          document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
   }
 
 }

@@ -178,9 +178,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       })
     }
     this.checkFormValidity();
-    if (this.berthDetailsForm.valid) {
-      this.berthChange.emit(this.selectedBerths);
-    }
+    this.berthChange.emit(this.selectedBerths);
   }
   clearFilter(data) {
 

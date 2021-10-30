@@ -10,6 +10,7 @@ import com.cpdss.common.generated.CargoInfoServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
+import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.Loadicator;
@@ -22,12 +23,14 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.algo.LDIntactStability;
 import com.cpdss.dischargeplan.domain.algo.LDStrength;
 import com.cpdss.dischargeplan.domain.algo.LDTrim;
+import com.cpdss.dischargeplan.domain.algo.LoadicatorAlgoRequest;
 import com.cpdss.dischargeplan.domain.algo.LoadicatorStage;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingPlanBallastDetails;
@@ -41,6 +44,11 @@ import com.cpdss.dischargeplan.repository.DischargingPlanPortWiseDetailsReposito
 import com.cpdss.dischargeplan.repository.DischargingPlanRobDetailsRepository;
 import com.cpdss.dischargeplan.repository.DischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.DischargingSequenceRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -299,6 +307,7 @@ public class LoadicatorService {
       VesselReply vesselReply,
       PortReply portReply,
       Builder stowagePlanBuilder) {
+    log.info("building stowage plan for time {}", time);
     stowagePlanBuilder.setProcessId(processId);
     VesselInfo.VesselDetail vessel = vesselReply.getVesselsList().get(0);
     Optional.ofNullable(vessel.getId()).ifPresent(stowagePlanBuilder::setVesselId);
@@ -418,7 +427,7 @@ public class LoadicatorService {
                               : true)
                   .collect(Collectors.toList()));
         });
-
+    
     CargoInfo.CargoReply cargoReply = getCargoInfoForLoadicator(dischargeInformation);
     VesselInfo.VesselReply vesselReply = getVesselDetailsForLoadicator(dischargeInformation);
     PortInfo.PortReply portReply = getPortInfoForLoadicator(dischargeInformation);
@@ -644,5 +653,78 @@ public class LoadicatorService {
 
   public void saveJson(com.cpdss.common.generated.LoadableStudy.JsonRequest.Builder jsonBuilder) {
     this.loadableStudyGrpcService.saveJson(jsonBuilder.build());
+  }
+
+  /**
+   * @param request
+   * @param reply
+   * @throws GenericServiceException
+   */
+  public void getLoadicatorData(
+      DischargingInfoLoadicatorDataRequest request,
+      com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply.Builder reply)
+      throws GenericServiceException {
+    Optional<DischargeInformation> dischargeInfoOpt =
+        dischargeInformationRepository.findByIdAndIsActiveTrue(
+            request.getDischargingInformationId());
+    LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
+    buildLoadicatorAlgoRequest(dischargeInfoOpt.get(), request, algoRequest);
+  }
+
+  private void buildLoadicatorAlgoRequest(
+      DischargeInformation dischargeInformation,
+      DischargingInfoLoadicatorDataRequest request,
+      LoadicatorAlgoRequest algoRequest)
+      throws GenericServiceException {
+    algoRequest.setDischargingInformationId(dischargeInformation.getId());
+    algoRequest.setProcessId(request.getProcessId());
+    algoRequest.setVesselId(dischargeInformation.getVesselXid());
+    algoRequest.setPortId(dischargeInformation.getPortXid());
+    List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
+    request
+        .getLoadingInfoLoadicatorDetailsList()
+        .forEach(
+            loadicatorDetails -> {
+              LoadicatorStage loadicatorStage = new LoadicatorStage();
+              loadicatorStage.setTime(loadicatorDetails.getTime());
+              buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
+              buildLdIntactStability(loadicatorDetails.getLDIntactStability(), loadicatorStage);
+              buildLdStrength(loadicatorDetails.getLDStrength(), loadicatorStage);
+              stages.add(loadicatorStage);
+            });
+    algoRequest.setStages(stages);
+    saveLoadicatorRequestJson(algoRequest, dischargeInformation.getId());
+  }
+
+  private void saveLoadicatorRequestJson(LoadicatorAlgoRequest algoRequest, Long dischargeInfoId)
+      throws GenericServiceException {
+    log.info("Saving Loadicator request to Loadable study DB");
+    JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
+    jsonBuilder.setReferenceId(dischargeInfoId);
+    jsonBuilder.setJsonTypeId(
+        DischargePlanConstants.DISCHARGE_INFORMATION_LOADICATOR_REQUEST_JSON_TYPE_ID);
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/dischargeInfoLoadicatorRequest_"
+                  + dischargeInfoId
+                  + ".json"),
+          algoRequest);
+      jsonBuilder.setJson(mapper.writeValueAsString(algoRequest));
+      this.saveJson(jsonBuilder);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save request JSON to Filesystem",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 }
