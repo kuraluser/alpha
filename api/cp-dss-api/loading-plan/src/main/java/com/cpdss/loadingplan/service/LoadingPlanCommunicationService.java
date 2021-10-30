@@ -12,7 +12,6 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
-import com.cpdss.loadingplan.domain.PyUserDto;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
@@ -498,14 +497,7 @@ public class LoadingPlanCommunicationService {
               }
             case pyuser:
               {
-                PyUserDto pyUserDto = new Gson().fromJson(data, PyUserDto.class);
-                pyUser =
-                    new PyUser(
-                        pyUserDto.getId(),
-                        pyUserDto.getLogFile(),
-                        JsonParser.parseString(pyUserDto.getMessage()).getAsJsonObject(),
-                        pyUserDto.getStatus(),
-                        pyUserDto.getTimeStamp());
+                pyUser = new Gson().fromJson(data, PyUser.class);
                 idMap.put(LoadingPlanTables.PYUSER.getTable(), dataTransferStage.getId());
                 break;
               }

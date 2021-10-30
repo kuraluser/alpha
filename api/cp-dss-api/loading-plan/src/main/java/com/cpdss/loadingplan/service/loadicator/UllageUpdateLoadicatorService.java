@@ -156,7 +156,6 @@ public class UllageUpdateLoadicatorService {
     }
 
     String processId = UUID.randomUUID().toString();
-
     if (enableCommunication && env.equals("ship")) {
       JsonArray jsonArray =
           loadingPlanStagingService.getCommunicationData(

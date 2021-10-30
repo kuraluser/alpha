@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.entity;
 
-import com.google.gson.JsonObject;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,7 +16,7 @@ import org.hibernate.annotations.TypeDefs;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@TypeDefs({@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)})
+@TypeDefs({@TypeDef(name = "json", typeClass = JsonBinaryType.class)})
 @Table(name = "pyuser")
 public class PyUser {
 
@@ -28,9 +27,9 @@ public class PyUser {
   @Column(name = "log_file")
   private String logFile;
 
-  @Type(type = "jsonb")
-  @Column(name = "message", columnDefinition = "jsonb")
-  private JsonObject message;
+  @Type(type = "json")
+  @Column(name = "message", columnDefinition = "json")
+  private String message;
 
   @Column(name = "status")
   private String status;
