@@ -918,6 +918,15 @@ public class LoadableStudyServiceShore {
         isEmpty(onBoardQuantityReqObj.getColorCode())
             ? null
             : onBoardQuantityReqObj.getColorCode());
+    onBoardQuantityEntity.setDensity(
+        isEmpty(onBoardQuantityReqObj.getApi())
+            ? null
+            : new BigDecimal(onBoardQuantityReqObj.getApi()));
+    onBoardQuantityEntity.setTemperature(
+        isEmpty(onBoardQuantityReqObj.getTemperature())
+            ? null
+            : new BigDecimal(onBoardQuantityReqObj.getTemperature()));
+    onBoardQuantityEntity.setAbbreviation(onBoardQuantityReqObj.getAbbreviation());
 
     return onBoardQuantityEntity;
   }
