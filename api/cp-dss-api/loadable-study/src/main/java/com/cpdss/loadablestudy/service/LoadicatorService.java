@@ -1188,15 +1188,15 @@ public class LoadicatorService {
         new com.cpdss.loadablestudy.domain.LoadableStudy();
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
         loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
-    if (loadableStudy.getPlaningTypeId() == PLANNING_TYPE_LOADING.longValue()) {
-      loadicator.setModule(LOADABLE_STUDY_JSON_MODULE_NAME);
-    } else {
-      loadicator.setModule(DISCHARGE_STUDY_JSON_MODULE_NAME);
-    }
     if (loadableStudyOpt.isPresent()) {
       ModelMapper modelMapper = new ModelMapper();
       loadableStudyService.buildLoadableStudy(
           request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+      if (loadableStudyOpt.get().getPlanningTypeXId() == PLANNING_TYPE_LOADING) {
+          loadicator.setModule(LOADABLE_STUDY_JSON_MODULE_NAME);
+      } else {
+          loadicator.setModule(DISCHARGE_STUDY_JSON_MODULE_NAME);
+      }
     }
 
     if (request.getIsPattern()) {
