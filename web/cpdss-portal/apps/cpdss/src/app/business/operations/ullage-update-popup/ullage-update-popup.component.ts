@@ -7,7 +7,7 @@ import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TAN
 import { UllageUpdatePopupTransformationService } from './ullage-update-popup-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
-import { ICargoDetail, ICargoDetailValueObject, ITankDetailsValueObject, ULLAGE_STATUS, IUllageSaveDetails, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
+import { ICargoDetail, ICargoDetailValueObject, ITankDetailsValueObject, ULLAGE_STATUS, IUllageSaveDetails, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBlFigureTotal } from '../models/operations.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -45,6 +45,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   @Input() portRotationId: number;
   @Input() operation: OPERATIONS;
   @Input() permission: IPermission;
+  @Input() ullageStatus: number;
 
   @ViewChild('fileUpload') file;
 
@@ -100,6 +101,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
   currentQuantitySelectedUnit: QUANTITY_UNIT = null;
   readonly QUANTITY_UNIT = QUANTITY_UNIT;
+  readonly ULLAGE_STATUS_VALUE = ULLAGE_STATUS_VALUE;
 
   blFigure: any = [];
   cargoQuantityList: any = [];
@@ -1720,21 +1722,21 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.rearBallastTanks?.map(el => {
         el?.map(tank => {
           if (Number(tank.id) === Number(item.tankId)) {
-            item.filling_percentage = tank.percentageFilled;
+            item.filling_percentage = tank?.commodity?.percentageFilled;
           }
         });
       });
       this.frontBallastTanks?.map(el => {
         el?.map(tank => {
           if (Number(tank.id) === Number(item.tankId)) {
-            item.filling_percentage = tank.percentageFilled;
+            item.filling_percentage = tank?.commodity?.percentageFilled;
           }
         });
       });
       this.centerBallastTanks?.map(el => {
         el?.map(tank => {
           if (Number(tank.id) === Number(item.tankId)) {
-            item.filling_percentage = tank.percentageFilled;
+            item.filling_percentage = tank?.commodity?.percentageFilled;
           }
         });
       });

@@ -85,7 +85,7 @@
                 </ng-container>
 
                 <button
-                    [disabled]="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS"
+                    [disabled]="loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.IN_PROGRESS || loadingDischargingPlanInfo?.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS || loadingDischargingPlanInfo?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS"
                     (click)="display = true" class="btn btn-main mr-5 mt-5"
                     id="departure_uptate_ullage">{{'LOADABLE_PLAN_DEPARTURE_CONDITION_CARGO_UPDATE_ULLAGE' |
                     translate}}</button>
@@ -119,5 +119,5 @@
 <cpdss-portal-ullage-update-popup [vesselId]="vesselId" [permission]="permission"
     [patternId]="operation === OPERATIONS.LOADING ? loadingDischargingPlanInfo?.loadablePatternId : loadingDischargingPlanInfo?.dischargePatternId"
     [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation"
-    [infoId]="loadingDischargingInfoId" *ngIf="display" (closePopup)="closePopUp($event)">
+    [infoId]="loadingDischargingInfoId" *ngIf="display" [ullageStatus]="operation === OPERATIONS.LOADING ? loadingDischargingPlanInfo.loadingPlanDepStatusId : loadingDischargingPlanInfo.dischargePlanDepStatusId" (closePopup)="closePopUp($event)">
 </cpdss-portal-ullage-update-popup>
