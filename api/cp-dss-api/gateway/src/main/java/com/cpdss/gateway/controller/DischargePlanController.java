@@ -1156,6 +1156,17 @@ public class DischargePlanController {
     }
   }
 
+  /**
+   * Updates discharging information status
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param request
+   * @return
+   * @throws CommonRestException
+   */
   @PostMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status")
   public LoadingInfoAlgoResponse dischargingPlanStatus(
@@ -1350,7 +1361,9 @@ public class DischargePlanController {
    * @return
    * @throws CommonRestException
    */
-  @GetMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-errors/{conditionType}")
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-errors/{conditionType}")
   public AlgoErrorResponse getAlgoErrors(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
