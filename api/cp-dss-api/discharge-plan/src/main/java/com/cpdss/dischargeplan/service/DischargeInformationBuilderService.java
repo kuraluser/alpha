@@ -80,6 +80,8 @@ public class DischargeInformationBuilderService {
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
 
+  @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
+
   public LoadingDetails buildLoadingDetailsMessage(DischargeInformation var1) {
     LoadingDetails.Builder builder = LoadingDetails.newBuilder();
     if (var1 != null) {
@@ -650,7 +652,8 @@ public class DischargeInformationBuilderService {
       DischargeInformation disEntity,
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
     try {
-      Set<DischargingMachineryInUse> list = disEntity.getDischargingMachineryInUses();
+      List<DischargingMachineryInUse> list =
+          dischargingMachineryInUseRepository.findAllByDischargingInfoId(disEntity.getId());
       for (DischargingMachineryInUse var1 : list) {
         LoadingPlanModels.LoadingMachinesInUse.Builder builder1 =
             LoadingPlanModels.LoadingMachinesInUse.newBuilder();
@@ -669,8 +672,6 @@ public class DischargeInformationBuilderService {
       e.printStackTrace();
     }
   }
-
-  @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
 
   public void buildCowPlanMessageFromEntity(
       DischargeInformation disEntity,
