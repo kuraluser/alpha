@@ -444,6 +444,7 @@ message AlgoErrorRequest {
 	int64 loadablePatternId = 2;
 	int64 loadingInformationId = 3;
 	int32 conditionType = 4;
+	int64 dischargingInformationId = 5;
 }
 
 message AlgoErrorReply {

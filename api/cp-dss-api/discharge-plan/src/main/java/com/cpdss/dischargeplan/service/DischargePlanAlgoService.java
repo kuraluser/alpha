@@ -7,6 +7,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
@@ -1538,5 +1540,39 @@ public class DischargePlanAlgoService {
         log.error("Setting UKC from port Info Table - Failed, Data - {}", portReply);
       }
     }
+  }
+
+  /**
+   * Fetches ALGO errors of Discharge Information with the given condition type
+   *
+   * @param request
+   * @param builder
+   */
+  public void getDischargingInfoAlgoErrors(AlgoErrorRequest request, Builder builder)
+      throws GenericServiceException {
+    log.info("Fetching ALGO errors of Loading Information {}", request.getLoadingInformationId());
+    List<AlgoErrorHeading> errorHeaders = null;
+    if (request.getConditionType() == 0) {
+      errorHeaders =
+          algoErrorHeadingRepository.findByDischargingInformationIdAndConditionTypeAndIsActiveTrue(
+              request.getLoadingInformationId(), null);
+    } else {
+      errorHeaders =
+          algoErrorHeadingRepository.findByDischargingInformationIdAndConditionTypeAndIsActiveTrue(
+              request.getLoadingInformationId(), request.getConditionType());
+    }
+    errorHeaders.forEach(
+        header -> {
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder errorBuilder =
+              com.cpdss.common.generated.LoadableStudy.AlgoErrors.newBuilder();
+          errorBuilder.setErrorHeading(header.getErrorHeading());
+          header
+              .getAlgoErrors()
+              .forEach(
+                  error -> {
+                    errorBuilder.addErrorMessages(error.getErrorMessage());
+                  });
+          builder.addAlgoErrors(errorBuilder.build());
+        });
   }
 }

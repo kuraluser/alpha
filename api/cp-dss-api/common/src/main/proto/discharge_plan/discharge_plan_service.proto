@@ -52,6 +52,7 @@ service DischargePlanService{
   rpc GetDischargingSequences(LoadingSequenceRequest) returns (DischargeSequenceReply) {}
   rpc dischargePlanStowageDetails(DischargePlanStowageDetailsRequest) returns (DischargePlanStowageDetailsResponse){}
   rpc GetLoadicatorData(DischargingInfoLoadicatorDataRequest) returns (DischargingInfoLoadicatorDataReply) {}
+  rpc GetDischargingInfoAlgoErrors(AlgoErrorRequest) returns (AlgoErrorReply) {}
 }
 
 service DischargingInstructionService {

@@ -666,7 +666,8 @@ public class LoadicatorService {
       com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply.Builder reply)
       throws GenericServiceException {
     Optional<DischargeInformation> dischargeInfoOpt =
-        dischargeInformationRepository.findByIdAndIsActiveTrue(request.getDischargingInformationId());
+        dischargeInformationRepository.findByIdAndIsActiveTrue(
+            request.getDischargingInformationId());
     if (!request.getIsUllageUpdate()) {
       LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
       buildLoadicatorAlgoRequest(dischargeInfoOpt.get(), request, algoRequest);

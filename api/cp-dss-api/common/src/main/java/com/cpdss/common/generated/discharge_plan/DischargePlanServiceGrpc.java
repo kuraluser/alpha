@@ -554,6 +554,59 @@ public final class DischargePlanServiceGrpc {
     return getGetLoadicatorDataMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+      getGetDischargingInfoAlgoErrorsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetDischargingInfoAlgoErrors",
+      requestType = com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+      getGetDischargingInfoAlgoErrorsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+        getGetDischargingInfoAlgoErrorsMethod;
+    if ((getGetDischargingInfoAlgoErrorsMethod =
+            DischargePlanServiceGrpc.getGetDischargingInfoAlgoErrorsMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getGetDischargingInfoAlgoErrorsMethod =
+                DischargePlanServiceGrpc.getGetDischargingInfoAlgoErrorsMethod)
+            == null) {
+          DischargePlanServiceGrpc.getGetDischargingInfoAlgoErrorsMethod =
+              getGetDischargingInfoAlgoErrorsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+                          com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetDischargingInfoAlgoErrors"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.AlgoErrorReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier(
+                              "GetDischargingInfoAlgoErrors"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargingInfoAlgoErrorsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargePlanServiceStub> factory =
@@ -698,6 +751,15 @@ public final class DischargePlanServiceGrpc {
           getGetLoadicatorDataMethod(), responseObserver);
     }
 
+    /** */
+    public void getDischargingInfoAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetDischargingInfoAlgoErrorsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -776,6 +838,13 @@ public final class DischargePlanServiceGrpc {
                           .DischargingInfoLoadicatorDataRequest,
                       com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply>(
                       this, METHODID_GET_LOADICATOR_DATA)))
+          .addMethod(
+              getGetDischargingInfoAlgoErrorsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
+                      com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>(
+                      this, METHODID_GET_DISCHARGING_INFO_ALGO_ERRORS)))
           .build();
     }
   }
@@ -912,6 +981,17 @@ public final class DischargePlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getDischargingInfoAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetDischargingInfoAlgoErrorsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1004,6 +1084,13 @@ public final class DischargePlanServiceGrpc {
                 request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadicatorDataMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.AlgoErrorReply getDischargingInfoAlgoErrors(
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetDischargingInfoAlgoErrorsMethod(), getCallOptions(), request);
     }
   }
 
@@ -1115,6 +1202,15 @@ public final class DischargePlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadicatorDataMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>
+        getDischargingInfoAlgoErrors(
+            com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetDischargingInfoAlgoErrorsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
@@ -1127,6 +1223,7 @@ public final class DischargePlanServiceGrpc {
   private static final int METHODID_GET_DISCHARGING_SEQUENCES = 7;
   private static final int METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS = 8;
   private static final int METHODID_GET_LOADICATOR_DATA = 9;
+  private static final int METHODID_GET_DISCHARGING_INFO_ALGO_ERRORS = 10;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1220,6 +1317,12 @@ public final class DischargePlanServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply>)
                   responseObserver);
           break;
+        case METHODID_GET_DISCHARGING_INFO_ALGO_ERRORS:
+          serviceImpl.getDischargingInfoAlgoErrors(
+              (com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1295,6 +1398,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getGetDischargingSequencesMethod())
                       .addMethod(getDischargePlanStowageDetailsMethod())
                       .addMethod(getGetLoadicatorDataMethod())
+                      .addMethod(getGetDischargingInfoAlgoErrorsMethod())
                       .build();
         }
       }

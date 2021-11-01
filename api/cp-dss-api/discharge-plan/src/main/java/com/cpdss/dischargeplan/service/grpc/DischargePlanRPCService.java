@@ -6,6 +6,8 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.discharge_plan.*;
@@ -875,6 +877,37 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .build());
     } finally {
       responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargingInfoAlgoErrors(
+      AlgoErrorRequest request, StreamObserver<AlgoErrorReply> responseObserver) {
+    log.info("Inside getDischargingInfoAlgoErrors in DP MS");
+    AlgoErrorReply.Builder builder = AlgoErrorReply.newBuilder();
+    try {
+      this.dischargePlanAlgoService.getDischargingInfoAlgoErrors(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build()).build();
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in getDischargingInfoAlgoErrors at DP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("Exception in getDischargingInfoAlgoErrors at DP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }
