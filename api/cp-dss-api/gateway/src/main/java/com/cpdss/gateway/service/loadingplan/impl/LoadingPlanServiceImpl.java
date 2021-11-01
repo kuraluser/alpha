@@ -437,6 +437,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         "Get Loading Plan, Active Voyage Number and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
+    loadingPlanResponse.setVoyageDate(activeVoyage.getActualStartDate());
     Optional<PortRotation> portRotation =
         activeVoyage.getPortRotations().stream()
             .filter(v -> v.getId().equals(portRotationId))

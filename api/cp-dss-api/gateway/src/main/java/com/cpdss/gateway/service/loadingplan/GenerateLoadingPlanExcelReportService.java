@@ -6,6 +6,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.GenerateProtectedFile;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
@@ -59,9 +60,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -74,6 +77,12 @@ import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.poifs.crypt.CipherAlgorithm;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -119,6 +128,7 @@ public class GenerateLoadingPlanExcelReportService {
   public final Long GS_PUMP_ID = 3L;
   public final Long IGS_PUMP_ID = 4L;
   public final Long BALLAST_PUMP_ID = 2L;
+  public String voyageDate = null;
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -192,7 +202,7 @@ public class GenerateLoadingPlanExcelReportService {
       workbook = new XSSFWorkbook(resultFileStream);
       try {
         setCellStyle(workbook, loadinPlanExcelDetails);
-        workbook.write(outFile);
+        GenerateProtectedFile.setPasswordToWorkbook(workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
         resultFileStream.close();
         // Putting entry in file repo
         FileRepoReply reply =
@@ -208,7 +218,7 @@ public class GenerateLoadingPlanExcelReportService {
           log.info("Succesfully added entry in FileRepo : {}", reply.getId());
         } else {
           log.info("Data entry in file repo failed");
-        }
+        } 
         // Returning Output file as byte array for local download
         resultFileStream = new FileInputStream(outputLocation.toString());
         if (downloadRequired && resultFileStream != null) {
@@ -680,6 +690,7 @@ public class GenerateLoadingPlanExcelReportService {
       // Calling loading plan get plan details service
       requestPayload =
           loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
+      voyageDate = requestPayload.getVoyageDate();
     }
     // Get a list of all ballast tanks for sheet3
     getAllBallastTanks(
