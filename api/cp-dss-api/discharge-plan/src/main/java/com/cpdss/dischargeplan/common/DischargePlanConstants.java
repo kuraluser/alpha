@@ -31,7 +31,7 @@ public class DischargePlanConstants {
   public static final String DEPARTURE_CONDITION_TYPE = "DEP";
   public static final Long LOADICATOR_TYPE_ID = 3L;
   public static final Long UPDATE_ULLAGE_VALIDATION_STARTED_ID = 12L;
-  public static final Long UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID = 15L;
+  public static final Long UPDATE_ULLAGE_LOADICATOR_REQUEST_JSON_TYPE_ID = 22L;
   public static final Long DISCHARGING_INFORMATION_PROCESSING_STARTED_ID = 3L;
   public static final Long DISCHARGING_INFORMATION_NO_PLAN_AVAILABLE_ID = 6L;
   public static final Long PLAN_GENERATED_ID = 5L;

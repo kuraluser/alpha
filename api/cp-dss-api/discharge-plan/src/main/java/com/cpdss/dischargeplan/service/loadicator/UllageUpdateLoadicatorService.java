@@ -21,6 +21,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -593,6 +594,90 @@ public class UllageUpdateLoadicatorService {
     algoRequest.setPortId(dischargeInformation.getPortXid());
     // TODO ask pranav about the process id. there is no process id for DS
     // algoRequest.setLoadableStudyProcessId(dischargeInformation.get);
+    List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
+    request
+        .getLoadingInfoLoadicatorDetailsList()
+        .forEach(
+            loadicatorDetails -> {
+              LoadicatorStage loadicatorStage = new LoadicatorStage();
+              loadicatorService.buildLdTrim(loadicatorDetails.getLDtrim(), loadicatorStage);
+              loadicatorService.buildLdIntactStability(
+                  loadicatorDetails.getLDIntactStability(), loadicatorStage);
+              loadicatorService.buildLdStrength(loadicatorDetails.getLDStrength(), loadicatorStage);
+              stages.add(loadicatorStage);
+            });
+    algoRequest.setStages(stages);
+
+    DischargingPlanLoadicatorDetails loadingPlanLoadicatorDetails =
+        new DischargingPlanLoadicatorDetails();
+
+    List<PortDischargingPlanStowageTempDetails> tempStowageDetails =
+        portDischargingPlanStowageTempDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), request.getConditionType(), true);
+    List<PortDischargingPlanBallastTempDetails> tempBallastDetails =
+        portDischargingPlanBallastDetailsTempRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), request.getConditionType(), true);
+    List<PortDischargingPlanRobDetails> robDetails =
+        portDischargingPlanRobDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), request.getConditionType(), true);
+
+    List<LoadicatorStowageDetails> loadicatorStowageDetails = new ArrayList<>();
+    tempStowageDetails.forEach(
+        stowage -> {
+          LoadicatorStowageDetails stowageDetails = new LoadicatorStowageDetails();
+          BeanUtils.copyProperties(stowage, stowageDetails);
+          loadicatorStowageDetails.add(stowageDetails);
+        });
+    loadingPlanLoadicatorDetails.setStowageDetails(loadicatorStowageDetails);
+    List<LoadicatorBallastDetails> loadicatorBallastDetails = new ArrayList<>();
+    tempBallastDetails.forEach(
+        ballast -> {
+          LoadicatorBallastDetails ballastDetails = new LoadicatorBallastDetails();
+          BeanUtils.copyProperties(ballast, ballastDetails);
+          loadicatorBallastDetails.add(ballastDetails);
+        });
+
+    loadingPlanLoadicatorDetails.setBallastDetails(loadicatorBallastDetails);
+    List<LoadicatorRobDetails> loadicatorRobDetails = new ArrayList<>();
+    robDetails.forEach(
+        rob -> {
+          LoadicatorRobDetails robDetail = new LoadicatorRobDetails();
+          BeanUtils.copyProperties(rob, robDetail);
+          loadicatorRobDetails.add(robDetail);
+        });
+    loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
+    algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
+  }
+
+  /**
+   * @param request
+   * @param dischargeInformation
+   * @throws GenericServiceException
+   */
+  public void getLoadicatorData(
+      DischargingInfoLoadicatorDataRequest request, DischargeInformation dischargeInformation)
+      throws GenericServiceException {
+    UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
+    buildUllageEditLoadicatorAlgoRequest(dischargeInformation, request, algoRequest);
+    saveUllageEditLoadicatorRequestJson(algoRequest, dischargeInformation.getId());
+  }
+
+  /**
+   * @param dischargeInformation
+   * @param request
+   * @param algoRequest
+   */
+  private void buildUllageEditLoadicatorAlgoRequest(
+      DischargeInformation dischargeInformation,
+      DischargingInfoLoadicatorDataRequest request,
+      UllageEditLoadicatorAlgoRequest algoRequest) {
+    algoRequest.setLoadingInformationId(dischargeInformation.getId());
+    algoRequest.setProcessId(request.getProcessId());
+    algoRequest.setVesselId(dischargeInformation.getVesselXid());
+    algoRequest.setPortId(dischargeInformation.getPortXid());
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()

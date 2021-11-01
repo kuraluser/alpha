@@ -21,6 +21,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoad
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDetail;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadicatorintegration.common.LoadicatorIntegrationConstants;
 import com.cpdss.loadicatorintegration.domain.StowagePlanDetail;
 import com.cpdss.loadicatorintegration.entity.CargoData;
 import com.cpdss.loadicatorintegration.entity.IntactStability;
@@ -369,7 +370,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
-        if (request.getTypeId() == 1) { // Loadable Study
+        if (request.getTypeId()
+            == LoadicatorIntegrationConstants.LOADABLE_TYPE_ID) { // Loadable Study
           LoadicatorDataRequest loadableStudyrequest =
               this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
           log.info(
@@ -379,7 +381,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
                       : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
 
           this.getLoadicatorDatas(loadableStudyrequest);
-        } else if (request.getTypeId() == 2) { // Loading Plan
+        } else if (request.getTypeId()
+            == LoadicatorIntegrationConstants.LOADING_TYPE_ID) { // Loading Plan
           log.info(
               "Loadicator check completed for loading information {}",
               request.getStowagePlanDetails(0).getBookingListId());
@@ -387,7 +390,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
               this.buildLoadingInfoLoadicatorData(
                   stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
           this.getLoadingInfoLoadicatorData(loadingInformationRequest);
-        } else if (request.getTypeId() == 3) { // Discharging Plan
+        } else if (request.getTypeId()
+            == LoadicatorIntegrationConstants.DISCHARGING_TYPE_ID) { // Discharging Plan
           log.info(
               "Loadicator check completed for discharging information {}",
               request.getStowagePlanDetails(0).getBookingListId());

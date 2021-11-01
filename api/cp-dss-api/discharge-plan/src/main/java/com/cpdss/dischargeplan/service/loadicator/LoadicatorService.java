@@ -106,6 +106,7 @@ public class LoadicatorService {
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
+  @Autowired UllageUpdateLoadicatorService ullageupdateLoadicatorService;
   /**
    * get vessel detail for loadicator
    *
@@ -427,7 +428,7 @@ public class LoadicatorService {
                               : true)
                   .collect(Collectors.toList()));
         });
-    
+
     CargoInfo.CargoReply cargoReply = getCargoInfoForLoadicator(dischargeInformation);
     VesselInfo.VesselReply vesselReply = getVesselDetailsForLoadicator(dischargeInformation);
     PortInfo.PortReply portReply = getPortInfoForLoadicator(dischargeInformation);
@@ -665,10 +666,14 @@ public class LoadicatorService {
       com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply.Builder reply)
       throws GenericServiceException {
     Optional<DischargeInformation> dischargeInfoOpt =
-        dischargeInformationRepository.findByIdAndIsActiveTrue(
-            request.getDischargingInformationId());
-    LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
-    buildLoadicatorAlgoRequest(dischargeInfoOpt.get(), request, algoRequest);
+        dischargeInformationRepository.findByIdAndIsActiveTrue(request.getDischargingInformationId());
+    if (!request.getIsUllageUpdate()) {
+      LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
+      buildLoadicatorAlgoRequest(dischargeInfoOpt.get(), request, algoRequest);
+      saveLoadicatorRequestJson(algoRequest, dischargeInfoOpt.get().getId());
+    } else {
+      ullageupdateLoadicatorService.getLoadicatorData(request, dischargeInfoOpt.get());
+    }
   }
 
   private void buildLoadicatorAlgoRequest(
@@ -693,7 +698,6 @@ public class LoadicatorService {
               stages.add(loadicatorStage);
             });
     algoRequest.setStages(stages);
-    saveLoadicatorRequestJson(algoRequest, dischargeInformation.getId());
   }
 
   private void saveLoadicatorRequestJson(LoadicatorAlgoRequest algoRequest, Long dischargeInfoId)
