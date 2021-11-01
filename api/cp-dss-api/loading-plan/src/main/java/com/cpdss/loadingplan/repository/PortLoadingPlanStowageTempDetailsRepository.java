@@ -87,4 +87,6 @@ public interface PortLoadingPlanStowageTempDetailsRepository
       @Param("actual_planned") Long actual_planned,
       @Param("arrival_departutre") Long arrival_departutre,
       @Param("correction_factor") Long correction_factor);
+
+  public List<PortLoadingPlanStowageTempDetails> findByLoadingInformation(Long loadingInfoId);
 }

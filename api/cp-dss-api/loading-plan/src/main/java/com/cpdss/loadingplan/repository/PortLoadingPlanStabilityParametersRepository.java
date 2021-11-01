@@ -39,4 +39,7 @@ public interface PortLoadingPlanStabilityParametersRepository
   public Optional<PortLoadingPlanStabilityParameters>
       findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
           Long loadingInformationId, Integer conditionType, Integer valueType);
+
+  public List<PortLoadingPlanStabilityParameters> findByLoadingInformationId(
+      Long loadingInformationId);
 }

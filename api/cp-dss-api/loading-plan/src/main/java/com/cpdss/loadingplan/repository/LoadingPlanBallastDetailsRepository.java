@@ -28,4 +28,9 @@ public interface LoadingPlanBallastDetailsRepository
       "SELECT LPBD FROM LoadingPlanBallastDetails LPBD WHERE LPBD.loadingPlanPortWiseDetails.id IN ?1 AND LPBD.isActive = ?2")
   public List<LoadingPlanBallastDetails> findByLoadingPlanPortWiseDetailIdsAndIsActive(
       List<Long> portWiseDetailIds, Boolean isActive);
+
+  @Query(
+      "SELECT LPBD FROM LoadingPlanBallastDetails LPBD WHERE LPBD.loadingPlanPortWiseDetails.id IN ?1")
+  public List<LoadingPlanBallastDetails> findByLoadingPlanPortWiseDetailIds(
+      List<Long> portWiseDetailIds);
 }

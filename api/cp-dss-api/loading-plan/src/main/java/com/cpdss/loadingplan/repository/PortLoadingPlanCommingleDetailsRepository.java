@@ -32,4 +32,6 @@ public interface PortLoadingPlanCommingleDetailsRepository
       "Update PortLoadingPlanCommingleDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
+
+  public List<PortLoadingPlanCommingleDetails> findByLoadingInformationId(Long loadingInformation);
 }

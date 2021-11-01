@@ -62,6 +62,8 @@ public class SpringDataConfig {
   @Value("${ro.db.auto.generate:false}")
   private boolean autoGenerate;
 
+  private static final String STAGE_ENTITY_PACKAGE_NAME = "com.cpdss.common.communication.entity";
+
   @Autowired
   @Qualifier("multitenancy")
   private boolean isMultenant;
@@ -176,7 +178,7 @@ public class SpringDataConfig {
     factory.setJpaProperties(jpaProperties);
     factory.setJpaVendorAdapter(vendorAdapter);
     factory.setDataSource(dataSource);
-    factory.setPackagesToScan(entityPackageName);
+    factory.setPackagesToScan(entityPackageName, STAGE_ENTITY_PACKAGE_NAME);
     factory.setPersistenceUnitName("ricoPersistence");
     return factory;
   }

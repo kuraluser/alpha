@@ -3,16 +3,8 @@ package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "loading_plan_portwise_details")
@@ -20,6 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LoadingPlanPortWiseDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -48,4 +41,6 @@ public class LoadingPlanPortWiseDetails extends EntityDoc {
 
   @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<DeballastingRate> deballastingRates;
+
+  @Transient private Long communicationSequenceId;
 }

@@ -29,4 +29,6 @@ public interface LoadingBerthDetailsRepository
   @Modifying
   @Query("UPDATE LoadingBerthDetail SET isActive = false WHERE id = ?1")
   public void deleteById(Long id);
+
+  public List<LoadingBerthDetail> findByLoadingInformationId(Long loadingInformationId);
 }
