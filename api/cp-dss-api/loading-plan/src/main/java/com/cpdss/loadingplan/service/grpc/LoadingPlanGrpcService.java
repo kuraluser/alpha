@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.service.grpc;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -32,6 +33,7 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.service.LoadingCargoHistoryService;
 import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.LoadingSequenceService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
@@ -64,6 +66,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired BillOfLaddingRepository billOfLaddingRepository;
 
   @Autowired PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+
+  @Autowired LoadingCargoHistoryService loadingCargoHistoryService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
@@ -483,5 +487,27 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     reply.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     responseObserver.onNext(reply.build());
     responseObserver.onCompleted();
+  }
+
+  @Override
+  public void getLoadingPlanCargoHistory(
+      Common.CargoHistoryOpsRequest request,
+      StreamObserver<Common.CargoHistoryResponse> responseObserver) {
+    Common.CargoHistoryResponse.Builder builder = Common.CargoHistoryResponse.newBuilder();
+    try {
+      log.info("Get cargo history for voyage id - {}", request.getVoyageId());
+      loadingCargoHistoryService.buildCargoDetailsFromStowageData(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

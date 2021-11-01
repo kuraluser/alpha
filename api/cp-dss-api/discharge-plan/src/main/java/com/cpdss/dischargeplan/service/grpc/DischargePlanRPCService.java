@@ -92,6 +92,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
 
   @Autowired LoadicatorService loadicatorService;
 
+  @Autowired DischargeCargoHistoryService cargoHistoryService;
+
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
 
@@ -905,6 +907,28 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .setStatus(FAILED)
               .setMessage(e.getMessage())
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargePlanCargoHistory(
+      Common.CargoHistoryOpsRequest request,
+      StreamObserver<Common.CargoHistoryResponse> responseObserver) {
+    Common.CargoHistoryResponse.Builder builder = Common.CargoHistoryResponse.newBuilder();
+    try {
+      log.info("Get cargo history for voyage id - {}", request.getVoyageId());
+      cargoHistoryService.buildCargoDetailsFromStowageData(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
               .build());
     } finally {
       responseObserver.onNext(builder.build());

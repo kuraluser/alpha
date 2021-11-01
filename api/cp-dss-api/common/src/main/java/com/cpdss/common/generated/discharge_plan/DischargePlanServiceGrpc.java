@@ -607,6 +607,59 @@ public final class DischargePlanServiceGrpc {
     return getGetDischargingInfoAlgoErrorsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+          com.cpdss.common.generated.Common.CargoHistoryResponse>
+      getGetDischargePlanCargoHistoryMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getDischargePlanCargoHistory",
+      requestType = com.cpdss.common.generated.Common.CargoHistoryOpsRequest.class,
+      responseType = com.cpdss.common.generated.Common.CargoHistoryResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+          com.cpdss.common.generated.Common.CargoHistoryResponse>
+      getGetDischargePlanCargoHistoryMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+            com.cpdss.common.generated.Common.CargoHistoryResponse>
+        getGetDischargePlanCargoHistoryMethod;
+    if ((getGetDischargePlanCargoHistoryMethod =
+            DischargePlanServiceGrpc.getGetDischargePlanCargoHistoryMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getGetDischargePlanCargoHistoryMethod =
+                DischargePlanServiceGrpc.getGetDischargePlanCargoHistoryMethod)
+            == null) {
+          DischargePlanServiceGrpc.getGetDischargePlanCargoHistoryMethod =
+              getGetDischargePlanCargoHistoryMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+                          com.cpdss.common.generated.Common.CargoHistoryResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getDischargePlanCargoHistory"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CargoHistoryOpsRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CargoHistoryResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier(
+                              "getDischargePlanCargoHistory"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargePlanCargoHistoryMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargePlanServiceStub> factory =
@@ -760,6 +813,15 @@ public final class DischargePlanServiceGrpc {
           getGetDischargingInfoAlgoErrorsMethod(), responseObserver);
     }
 
+    /** */
+    public void getDischargePlanCargoHistory(
+        com.cpdss.common.generated.Common.CargoHistoryOpsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetDischargePlanCargoHistoryMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -845,6 +907,13 @@ public final class DischargePlanServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest,
                       com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>(
                       this, METHODID_GET_DISCHARGING_INFO_ALGO_ERRORS)))
+          .addMethod(
+              getGetDischargePlanCargoHistoryMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+                      com.cpdss.common.generated.Common.CargoHistoryResponse>(
+                      this, METHODID_GET_DISCHARGE_PLAN_CARGO_HISTORY)))
           .build();
     }
   }
@@ -992,6 +1061,17 @@ public final class DischargePlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getDischargePlanCargoHistory(
+        com.cpdss.common.generated.Common.CargoHistoryOpsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetDischargePlanCargoHistoryMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1091,6 +1171,13 @@ public final class DischargePlanServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargingInfoAlgoErrorsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.CargoHistoryResponse getDischargePlanCargoHistory(
+        com.cpdss.common.generated.Common.CargoHistoryOpsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetDischargePlanCargoHistoryMethod(), getCallOptions(), request);
     }
   }
 
@@ -1211,6 +1298,15 @@ public final class DischargePlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargingInfoAlgoErrorsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CargoHistoryResponse>
+        getDischargePlanCargoHistory(
+            com.cpdss.common.generated.Common.CargoHistoryOpsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetDischargePlanCargoHistoryMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
@@ -1224,6 +1320,7 @@ public final class DischargePlanServiceGrpc {
   private static final int METHODID_DISCHARGE_PLAN_STOWAGE_DETAILS = 8;
   private static final int METHODID_GET_LOADICATOR_DATA = 9;
   private static final int METHODID_GET_DISCHARGING_INFO_ALGO_ERRORS = 10;
+  private static final int METHODID_GET_DISCHARGE_PLAN_CARGO_HISTORY = 11;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1323,6 +1420,12 @@ public final class DischargePlanServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply>)
                   responseObserver);
           break;
+        case METHODID_GET_DISCHARGE_PLAN_CARGO_HISTORY:
+          serviceImpl.getDischargePlanCargoHistory(
+              (com.cpdss.common.generated.Common.CargoHistoryOpsRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1399,6 +1502,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getDischargePlanStowageDetailsMethod())
                       .addMethod(getGetLoadicatorDataMethod())
                       .addMethod(getGetDischargingInfoAlgoErrorsMethod())
+                      .addMethod(getGetDischargePlanCargoHistoryMethod())
                       .build();
         }
       }

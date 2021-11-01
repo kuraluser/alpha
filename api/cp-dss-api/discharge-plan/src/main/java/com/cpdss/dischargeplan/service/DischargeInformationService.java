@@ -118,6 +118,11 @@ public class DischargeInformationService {
         .orElse(null);
   }
 
+  public List<DischargeInformation> getAllDischargeInformation(Long vesselId, Long voyageId) {
+    return this.dischargeInformationRepository.findAllByVesselXidAndVoyageXidAndIsActiveTrue(
+        vesselId, voyageId);
+  }
+
   public void getDischargeInformation(
       DischargeInformationRequest request,
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder)

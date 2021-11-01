@@ -611,7 +611,8 @@ public class DischargeInformationBuilderService {
             .ifPresent(builder2::setCargoNominationId); // can empty of initial delay
         builder2.addAllReasonForDelayIds(
             source.getDischargingDelayReasons().stream()
-                .map(DischargingDelayReason::getId)
+                .map(DischargingDelayReason::getReasonForDelay)
+                .map(ReasonForDelay::getId)
                 .collect(Collectors.toList()));
         Optional.ofNullable(source.getSequenceNo()).ifPresent(builder2::setSequenceNo);
         builder1.addDelays(builder2.build());

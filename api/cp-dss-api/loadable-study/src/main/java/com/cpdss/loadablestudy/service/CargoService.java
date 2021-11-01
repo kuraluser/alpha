@@ -8,11 +8,14 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.ApiTempHistorySpecification;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
 import com.cpdss.loadablestudy.entity.ApiTempHistory;
+import com.cpdss.loadablestudy.entity.CargoHistory;
 import com.cpdss.loadablestudy.entity.CommingleColour;
 import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
 import com.cpdss.loadablestudy.repository.*;
@@ -24,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,6 +59,12 @@ public class CargoService {
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private CommingleColourRepository commingleColourRepository;
+  @Autowired CargoHistoryRepository cargoHistoryRepository;
+
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
+
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanService;
 
   public LoadableStudy.CargoHistoryReply.Builder getAllCargoHistory(
       LoadableStudy.CargoHistoryRequest request,
@@ -527,6 +537,64 @@ public class CargoService {
                 .ifPresent(temperature -> builder.setTemperature(String.valueOf(temperature)));
             replyBuilder.addCargoHistory(builder);
           });
+    }
+  }
+
+  public void saveCargoHistoryFromOperationsModule(Long vesselId, Long voyageId) {
+    Common.CargoHistoryOpsRequest.Builder request = Common.CargoHistoryOpsRequest.newBuilder();
+    request.setVesselId(vesselId).setVoyageId(voyageId);
+    Common.CargoHistoryOpsRequest.Builder request2 = Common.CargoHistoryOpsRequest.newBuilder();
+    request.setVesselId(vesselId).setVoyageId(voyageId);
+    var loading = loadingPlanService.getLoadingPlanCargoHistory(request.build());
+    var discharge = dischargePlanService.getDischargePlanCargoHistory(request2.build());
+    // Call 1 for Loading data save
+    if (!loading.getCargoHistoryList().isEmpty()) {
+      this.saveCargoHistoryBatch(this.buildCargoHistoryData(loading, true));
+      log.info(
+          "Save Cargo History data fro Loading Plan Success, Size - {}",
+          loading.getCargoHistoryCount());
+    }
+    // Call 2 for discharge
+    if (!discharge.getCargoHistoryList().isEmpty()) {
+      this.saveCargoHistoryBatch(this.buildCargoHistoryData(discharge, false));
+      log.info(
+          "Save Cargo History data fro Discharge Plan Success, Size - {}",
+          discharge.getCargoHistoryCount());
+    }
+  }
+
+  private List<CargoHistory> buildCargoHistoryData(
+      Common.CargoHistoryResponse response, boolean isLoading) {
+    List<CargoHistory> histories = new ArrayList<>();
+    try {
+      for (Common.CargoHistoryOps var1 : response.getCargoHistoryList()) {
+        CargoHistory entity = new CargoHistory();
+        entity.setTankId(var1.getTankId());
+        entity.setApi(var1.getApi().isEmpty() ? null : new BigDecimal(var1.getApi()));
+        entity.setTemperature(
+            var1.getTemperature().isEmpty() ? null : new BigDecimal(var1.getTemperature()));
+        entity.setCargoNomination(
+            cargoNominationRepository.findByIdAndIsActive(var1.getCargoNominationId(), true).get());
+        entity.setQuantity(
+            var1.getQuantity().isEmpty() ? null : new BigDecimal(var1.getQuantity()));
+        if (isLoading) {
+          entity.setLoadingPortId(var1.getPortId());
+        } else {
+          entity.setDischargePort(var1.getPortId());
+        }
+        histories.add(entity);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return histories;
+  }
+
+  private void saveCargoHistoryBatch(List<CargoHistory> cargoHistories) {
+    try {
+      cargoHistoryRepository.saveAll(cargoHistories);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 }

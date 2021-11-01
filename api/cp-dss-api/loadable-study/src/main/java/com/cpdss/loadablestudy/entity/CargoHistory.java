@@ -3,11 +3,7 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,4 +47,10 @@ public class CargoHistory extends EntityDoc {
 
   @Column(name = "api")
   private BigDecimal api;
+
+  @Column(name = "temperature")
+  private BigDecimal temperature;
+
+  @Column(name = "discharge_port_xid")
+  private Long dischargePort;
 }

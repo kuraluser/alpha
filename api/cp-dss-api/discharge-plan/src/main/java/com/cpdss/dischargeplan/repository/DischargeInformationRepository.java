@@ -6,6 +6,7 @@ import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +24,8 @@ public interface DischargeInformationRepository
 
   Optional<DischargeInformation> findByIdAndIsActiveAndVesselXid(
       long dischargeStudyId, boolean isActive, long vesselId);
+
+  List<DischargeInformation> findAllByVesselXidAndVoyageXidAndIsActiveTrue(Long id1, Long id2);
 
   @Transactional
   @Modifying

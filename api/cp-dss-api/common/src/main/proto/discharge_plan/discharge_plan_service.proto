@@ -53,6 +53,7 @@ service DischargePlanService{
   rpc dischargePlanStowageDetails(DischargePlanStowageDetailsRequest) returns (DischargePlanStowageDetailsResponse){}
   rpc GetLoadicatorData(DischargingInfoLoadicatorDataRequest) returns (DischargingInfoLoadicatorDataReply) {}
   rpc GetDischargingInfoAlgoErrors(AlgoErrorRequest) returns (AlgoErrorReply) {}
+  rpc getDischargePlanCargoHistory(CargoHistoryOpsRequest) returns (CargoHistoryResponse) {}
 }
 
 service DischargingInstructionService {

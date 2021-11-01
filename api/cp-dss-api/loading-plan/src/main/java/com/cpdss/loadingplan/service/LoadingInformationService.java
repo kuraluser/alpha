@@ -23,6 +23,8 @@ public interface LoadingInformationService {
   Optional<LoadingInformation> getLoadingInformation(
       Long id, Long vesselId, Long voyageId, Long patternId, Long portRotationId);
 
+  List<LoadingInformation> getAllLoadingInfoByVoyageId(Long vessel, Long voyageId);
+
   /**
    * Fetch Single Data by Id
    *

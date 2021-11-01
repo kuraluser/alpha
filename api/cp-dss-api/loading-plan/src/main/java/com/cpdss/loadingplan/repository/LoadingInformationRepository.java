@@ -18,6 +18,8 @@ public interface LoadingInformationRepository
   public List<LoadingInformation> findByVesselXIdAndLoadablePatternXIdNotAndIsActive(
       Long vesselXId, Long loadablePatternXId, Boolean isActive);
 
+  List<LoadingInformation> findAllByVesselXIdAndVoyageIdAndIsActiveTrue(Long id1, Long id2);
+
   @Transactional
   @Modifying
   @Query("UPDATE LoadingInformation SET isActive = false WHERE id = ?1")
