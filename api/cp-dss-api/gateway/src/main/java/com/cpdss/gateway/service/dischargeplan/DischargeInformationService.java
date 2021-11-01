@@ -746,6 +746,6 @@ public class DischargeInformationService {
               algoErrors.add(algoError);
             });
     algoResponse.setAlgoErrors(algoErrors);
-    algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
+    algoResponse.setResponseStatus(new CommonSuccessResponse("200", ""));
   }
 }
