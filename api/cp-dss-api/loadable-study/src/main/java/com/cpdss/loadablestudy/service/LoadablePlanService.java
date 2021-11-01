@@ -212,6 +212,7 @@ public class LoadablePlanService {
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
           Optional.ofNullable(lpcd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
           Optional.ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+          Optional.ofNullable(lpcd.getCommingleColour()).ifPresent(builder::setCommingleColour);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
@@ -781,6 +782,7 @@ public class LoadablePlanService {
           details.setCargo1NominationId(lpsd.getCargo1NominationId());
           details.setCargo2NominationId(lpsd.getCargo2NominationId());
           details.setAbbreviation(lpsd.getGrade());
+          details.setColorCode(lpsd.getCommingleColour());
           stowageDetails.add(details);
         });
     // }
@@ -2540,6 +2542,7 @@ public class LoadablePlanService {
     ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
     ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
     ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+    ofNullable(lpcd.getCommingleColour()).ifPresent(builder::setCommingleColour);
     return builder;
   }
 
