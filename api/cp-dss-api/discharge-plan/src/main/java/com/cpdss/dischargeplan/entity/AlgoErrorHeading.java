@@ -29,7 +29,7 @@ public class AlgoErrorHeading extends EntityDoc {
   private String errorHeading;
 
   @ManyToOne
-  @JoinColumn(name = "lischarging_information_xid", referencedColumnName = "id")
+  @JoinColumn(name = "discharging_information_xid", referencedColumnName = "id")
   private DischargeInformation dischargingInformation;
 
   @Column(name = "is_active")
