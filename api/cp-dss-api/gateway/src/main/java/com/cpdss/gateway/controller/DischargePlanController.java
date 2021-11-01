@@ -1350,13 +1350,13 @@ public class DischargePlanController {
    * @return
    * @throws CommonRestException
    */
-  @PostMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-errors")
+  @GetMapping(value = "/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-errors/{conditionType}")
   public AlgoErrorResponse getAlgoErrors(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
-      @RequestBody LoadingInfoAlgoStatusRequest request)
+      @PathVariable(required = false) Integer conditionType)
       throws CommonRestException {
     try {
       log.info(
@@ -1366,7 +1366,7 @@ public class DischargePlanController {
           voyageId,
           infoId);
       return dischargeInformationService.getDischargingInfoAlgoErrors(
-          vesselId, voyageId, infoId, request.getConditionType());
+          vesselId, voyageId, infoId, conditionType);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when getAlgoErrors", e);
       throw new CommonRestException(
