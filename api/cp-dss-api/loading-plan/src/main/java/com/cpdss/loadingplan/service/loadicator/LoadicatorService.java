@@ -480,17 +480,19 @@ public class LoadicatorService {
   public Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
       throws GenericServiceException {
     Map<Long, CargoNominationDetail> details = new HashMap<Long, CargoNominationDetail>();
-    cargoNominationIds.forEach(
-        id -> {
-          CargoNominationRequest.Builder builder = CargoNominationRequest.newBuilder();
-          builder.setCargoNominationId(id);
-          CargoNominationDetailReply reply =
-              loadableStudyGrpcService.getCargoNominationByCargoNominationId(builder.build());
-          if (reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
-            log.info("Fetched details of cargo nomination with id {}", id);
-            details.put(id, reply.getCargoNominationdetail());
-          }
-        });
+    cargoNominationIds.stream()
+        .filter(cargoNomId -> cargoNomId != 0)
+        .forEach(
+            id -> {
+              CargoNominationRequest.Builder builder = CargoNominationRequest.newBuilder();
+              builder.setCargoNominationId(id);
+              CargoNominationDetailReply reply =
+                  loadableStudyGrpcService.getCargoNominationByCargoNominationId(builder.build());
+              if (reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
+                log.info("Fetched details of cargo nomination with id {}", id);
+                details.put(id, reply.getCargoNominationdetail());
+              }
+            });
 
     return details;
   }
