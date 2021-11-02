@@ -294,7 +294,7 @@ public class DischargeInformationRPCService
       DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
     DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
     try {
-      log.info("Request payload {}", Utils.toJson(request));
+      
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       log.info("Save Discharging Info, Berths Id {}", request.getDischargeInfoId());
@@ -329,7 +329,7 @@ public class DischargeInformationRPCService
       DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
     DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
     try {
-      log.info("Request payload {}", Utils.toJson(request));
+      
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       log.info("Save Discharging Info, Delays Id {}", request.getDischargeInfoId());
@@ -367,7 +367,7 @@ public class DischargeInformationRPCService
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       log.info("Save Discharging Info, Machines Id {}", request.getDischargeInfoId());
-      log.info("Request payload {}", Utils.toJson(request));
+      
       if (dischargingInformation != null) {
         dischargingMachineryInUseService.saveDischargingMachineryList(
             request.getMachineInUseList(), dischargingInformation);
@@ -399,7 +399,7 @@ public class DischargeInformationRPCService
       DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
     DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
     try {
-      log.info("Request payload {}", Utils.toJson(request));
+      
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       log.info("Save Discharging Info, Rates Id {}", request.getDischargeInfoId());
@@ -433,7 +433,7 @@ public class DischargeInformationRPCService
       DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
     DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
     try {
-      log.info("Request payload {}", Utils.toJson(request));
+      
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       log.info("Save Discharging Info, Rates Id {}", request.getDischargeInfoId());
@@ -467,7 +467,7 @@ public class DischargeInformationRPCService
       DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
     DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
     try {
-      log.info("Request payload {}", Utils.toJson(request));
+      
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       log.info("Save post discharge rate, Id {}", request.getDischargeInfoId());
@@ -733,7 +733,7 @@ public class DischargeInformationRPCService
       DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
     DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
     try {
-      log.info("Request payload {}", Utils.toJson(request));
+      
       com.cpdss.dischargeplan.entity.DischargeInformation response =
           saveDischargingInformation(request);
       buildDischargingInfoSaveResponse(builder, response);
@@ -817,7 +817,7 @@ public class DischargeInformationRPCService
       DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
     DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
     try {
-      log.info("Request payload {}", Utils.toJson(request));
+      
       com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       log.info("Save Discharging Info, Stages Id {}", request.getDischargeInfoId());
