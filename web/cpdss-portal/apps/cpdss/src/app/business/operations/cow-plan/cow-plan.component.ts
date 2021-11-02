@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { ICargo, ITank } from '../../core/models/common.model';
 import { ICOWDetails, IDischargeOperationListData } from '../models/loading-discharging.model';
@@ -137,7 +137,7 @@ export class CowPlanComponent implements OnInit {
    */
   onCowOptionChange(event) {
     this.enableDisableFieldsOnCowOption(event?.value);
-    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+    this.updateCowDetails();
   }
 
   /**
@@ -172,7 +172,7 @@ export class CowPlanComponent implements OnInit {
    */
   onWashWithDifferentCargoChange(event) {
     this.enableDisableTanksWashWithDifferentCargoFields(event?.checked);
-    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+    this.updateCowDetails();
   }
 
   /**
@@ -212,7 +212,7 @@ export class CowPlanComponent implements OnInit {
     }
     this.cowDetailsForm.controls?.cowStart.updateValueAndValidity();
     this.cowDetailsForm.controls?.cowEnd.updateValueAndValidity();
-    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+    this.updateCowDetails();
   }
 
   /**
@@ -222,7 +222,8 @@ export class CowPlanComponent implements OnInit {
    * @memberof CowPlanComponent
    */
   onChange(event) {
-    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+    this.cowDetailsForm.markAllAsTouched();
+    this.updateCowDetails();
   }
 
   /**
@@ -233,7 +234,7 @@ export class CowPlanComponent implements OnInit {
    */
   onWashingCargoChange(event, index) {
     this.cowDetails.tanksWashingWithDifferentCargo[index].washingCargo = this.cowDetailsForm?.value?.tanksWashingWithDifferentCargo[index]?.washingCargo;
-    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+    this.updateCowDetails();
   }
 
   /**
@@ -258,6 +259,43 @@ export class CowPlanComponent implements OnInit {
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.cowDetailsForm?.get(formControlName);
     return formControl;
+  }
+
+  /**
+   * Emit cow details and update form validity
+   *
+   * @memberof CowPlanComponent
+   */
+  updateCowDetails() {
+    this.cowDetailsForm.markAllAsTouched();
+    this.findInvalidControlsRecursive(this.cowDetailsForm);
+    this.updateCowPlan.emit(this.cowDetailsForm?.value);
+  }
+
+  /**
+   * Method get all invalid fields in a row
+   *
+   * @private
+   * @param {FormGroup} formToInvestigate
+   * @returns {string[]}
+   * @memberof CowPlanComponent
+   */
+  private findInvalidControlsRecursive(formToInvestigate: FormGroup): string[] {
+    const invalidControls: string[] = [];
+    const recursiveFunc = (form: FormGroup | FormArray) => {
+      Object.keys(form.controls).forEach(field => {
+        const control = form.get(field);
+        control.updateValueAndValidity();
+        if (control.invalid) invalidControls.push(field);
+        if (control instanceof FormGroup) {
+          recursiveFunc(control);
+        } else if (control instanceof FormArray) {
+          recursiveFunc(control);
+        }
+      });
+    }
+    recursiveFunc(formToInvestigate);
+    return invalidControls;
   }
 
 }

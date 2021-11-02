@@ -17,11 +17,11 @@ export function cargoQuantityValidator(): ValidatorFn {
       if (control?.parent?.value?.cargo) {
         totalQuantity = dataTableArray.reduce((quantity, value) => {
           if (control?.parent?.value?.cargo?.cargoNominationId === value?.cargo?.cargoNominationId) {
-            quantity += Number(value.quantity);
+            quantity += Number(value.quantityMT);
           }
           return quantity;
         }, 0);
-        if (totalQuantity > Number(control?.parent?.value?.cargo?.shipFigure)) {
+        if (totalQuantity > Number(control?.parent?.value?.cargo?.slopQuantityMT)) {
           return { quantityExceeds: true };
         } else {
           return null;

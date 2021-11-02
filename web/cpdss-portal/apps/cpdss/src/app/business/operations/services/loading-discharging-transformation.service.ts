@@ -397,7 +397,7 @@ export class LoadingDischargingTransformationService {
 
     if (loadingDischargingDelay.cargoId) {
       _loadingDischargingDelay.quantityMT = operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT;
-      const loadableMT = this.quantityPipe.transform(operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
+      const loadableMT = this.quantityPipe.transform(operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, operation === OPERATIONS.LOADING ? -1 : null);
       _loadingDischargingDelay.quantity = new ValueObject<number>(Number(loadableMT), true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     } else {
       _loadingDischargingDelay.quantityMT = loadingDischargingDelay?.quantity;
@@ -455,6 +455,9 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.quantity = Number(cargoObj.loadableMT);
       } else {
         _loadingDischargingDelays.quantity = loadingValueObject?.quantity?.value;
+      }
+      if(operation === OPERATIONS.DISCHARGING) {
+        _loadingDischargingDelays.quantity = Number(loadingValueObject?.quantityMT);
       }
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
       _loadingDischargingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);

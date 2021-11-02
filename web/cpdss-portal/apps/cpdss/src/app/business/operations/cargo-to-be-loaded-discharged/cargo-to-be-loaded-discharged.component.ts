@@ -188,6 +188,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         isCommingledCargo: cargo?.isCommingledCargo ?? false,
         protested: this.fb.control(cargo.protested.value),
         isCommingledDischarge: this.fb.control(cargo?.isCommingledDischarge.value),
+        slopQuantityMT: cargo?.slopQuantityMT,
         slopQuantity: this.fb.control((<ValueObject<number>>cargo?.slopQuantity)?.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)]),
       })
     });
