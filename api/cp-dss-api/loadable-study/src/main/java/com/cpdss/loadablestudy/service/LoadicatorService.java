@@ -1193,9 +1193,9 @@ public class LoadicatorService {
       loadableStudyService.buildLoadableStudy(
           request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
       if (loadableStudyOpt.get().getPlanningTypeXId() == PLANNING_TYPE_LOADING) {
-          loadicator.setModule(LOADABLE_STUDY_JSON_MODULE_NAME);
+        loadicator.setModule(LOADABLE_STUDY_JSON_MODULE_NAME);
       } else {
-          loadicator.setModule(DISCHARGE_STUDY_JSON_MODULE_NAME);
+        loadicator.setModule(DISCHARGE_STUDY_JSON_MODULE_NAME);
       }
     }
 
