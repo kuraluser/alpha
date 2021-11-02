@@ -1799,6 +1799,7 @@ public class LoadableStudyService {
               details.setTemp(lqccd.getTemp());
               details.setSlopQuantity(lqccd.getSlopQuantity());
               details.setTankShortName(lqccd.getTankShortName());
+              details.setColorCode(lqccd.getCommingleColour());
               response.getLoadableQuantityCommingleCargoDetails().add(details);
             });
   }
@@ -3936,7 +3937,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     Optional.ofNullable(lqccd.getTankShortName()).ifPresent(builder::setTankShortName);
-    Optional.ofNullable(lqccd.getCommingleColour()).ifPresent(builder::setCommingleColour);
+    Optional.ofNullable(lqccd.getColorCode()).ifPresent(builder::setCommingleColour);
     Optional.ofNullable(lqccd.getToppingSequence())
         .ifPresent(
             toppingSequence -> {
@@ -4302,6 +4303,7 @@ public class LoadableStudyService {
     details.setTankName(lqccd.getTankName());
     details.setTemp(lqccd.getTemp());
     details.setTankShortName(lqccd.getTankShortName());
+    details.setColorCode(lqccd.getCommingleColour());
     return details;
   }
 

@@ -830,6 +830,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
           if (lpcd.isPresent()) {
             Optional.ofNullable(lpcd.get().getGrade())
                 .ifPresent(grade -> cargoBuilder.setCargoAbbreviation(grade));
+            Optional.of(lpcd.get().getCommingleColour()).ifPresent(colorCode -> cargoBuilder.setColorCode(colorCode));
           }
         }
       }
