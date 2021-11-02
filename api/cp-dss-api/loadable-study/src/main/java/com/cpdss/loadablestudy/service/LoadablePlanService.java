@@ -32,11 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -836,27 +832,31 @@ public class LoadablePlanService {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     workbook.write(byteArrayOutputStream);
     // setting password protection on the file
-    List<Voyage> voyageList = voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase
-    		(1L, request.getVesselId(), vesselPlanTable.getVoyageNo()); 
-    String string = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(voyageList.get(0).getVoyageStartDate());
-	String password = voyageList.get(0).getVoyageNo() + string.replaceAll("\\D", "");
+    List<Voyage> voyageList =
+        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
+            1L, request.getVesselId(), vesselPlanTable.getVoyageNo());
+    String string =
+        DateTimeFormatter.ofPattern("dd-MM-yyyy").format(voyageList.get(0).getVoyageStartDate());
+    String password = voyageList.get(0).getVoyageNo() + string.replaceAll("\\D", "");
     File outputFile = File.createTempFile("unProtected", ".xlsx");
-    try(FileOutputStream fos = new FileOutputStream(outputFile)){
-  	  byteArrayOutputStream.writeTo(fos);
-        File protectedFile = GenerateProtectedFile.generatePasswordProtectedFile(outputFile, password);   
-    byte[] bytes = Files.readAllBytes(protectedFile.toPath());
-    
-    dataChunkBuilder
-        .setData(ByteString.copyFrom(bytes))
-        .setSize(bytes.length)
-        .setResponseStatus(
-            LoadableStudy.StatusReply.newBuilder()
-                .setStatus(SUCCESS)
-                .setCode(HttpStatusCode.OK.getReasonPhrase())
-                .build())
-        .build();
+    try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+      byteArrayOutputStream.writeTo(fos);
+      File protectedFile =
+          GenerateProtectedFile.generatePasswordProtectedFile(outputFile, password);
+      byte[] bytes = Files.readAllBytes(protectedFile.toPath());
 
-    byteArrayOutputStream.close();}
+      dataChunkBuilder
+          .setData(ByteString.copyFrom(bytes))
+          .setSize(bytes.length)
+          .setResponseStatus(
+              LoadableStudy.StatusReply.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setCode(HttpStatusCode.OK.getReasonPhrase())
+                  .build())
+          .build();
+
+      byteArrayOutputStream.close();
+    }
   }
 
   /**

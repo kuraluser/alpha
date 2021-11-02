@@ -68,7 +68,8 @@ public class LoadingInformationDischargeService {
                 bolBuilder.setCargoId(billOfLadding.getCargoId());
                 bolBuilder.addAllLoadingPort(
                     billOfLaddings1.stream()
-                        .map(Common.BillOfLadding::getPortId).distinct()
+                        .map(Common.BillOfLadding::getPortId)
+                        .distinct()
                         .collect(Collectors.toList()));
                 Double qtyBbls =
                     billOfLaddings1.stream()

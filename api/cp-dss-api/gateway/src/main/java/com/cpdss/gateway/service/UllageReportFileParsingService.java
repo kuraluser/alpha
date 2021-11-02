@@ -38,9 +38,9 @@ public class UllageReportFileParsingService {
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
-  
-  private static final  String SLOP_TANK_P = "SLP";
-  private static final  String SLOP_TANK_S = "SLS";
+
+  private static final String SLOP_TANK_P = "SLP";
+  private static final String SLOP_TANK_S = "SLS";
 
   public static final String ULLAGE_REPORT_SHEET = "Ullage Report";
 
@@ -203,13 +203,13 @@ public class UllageReportFileParsingService {
     }
     String substring =
         cell.getStringCellValue().substring(cell.getStringCellValue().indexOf(' ') + 1);
-    if(substring.trim().equals("P")) {
-    	innerResponse.setTank(SLOP_TANK_P);
-    	substring = SLOP_TANK_P;
+    if (substring.trim().equals("P")) {
+      innerResponse.setTank(SLOP_TANK_P);
+      substring = SLOP_TANK_P;
     }
-    if(substring.trim().equals("S")) {
-    	innerResponse.setTank(SLOP_TANK_S);
-    	substring = SLOP_TANK_S;
+    if (substring.trim().equals("S")) {
+      innerResponse.setTank(SLOP_TANK_S);
+      substring = SLOP_TANK_S;
     }
     innerResponse.setTank(substring.trim());
     if (tankDetailMap.get(substring) == null) {

@@ -86,7 +86,6 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -1266,7 +1265,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       cargoNominationService.saveAll(
           createNewPortCargoNominations(loadableStudyId, dischargingPorts.get(0)));
     }
-     Set<CargoNomination> firstPortCargos =
+    Set<CargoNomination> firstPortCargos =
         cargos.stream()
             .filter(
                 cargo -> cargo.getIsBackloading() == null || cargo.getIsBackloading().equals(false))
@@ -1279,15 +1278,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     cargoNominationService.getMaxQuantityForCargoNomination(firstPortCargoIds, firstPortCargos);
-    Optional<LoadableStudyPortRotation> dischargeStudyPortRotation =dischargeStudyPortRotations.stream().filter(
-            port ->
-                port.getOperation().getId().equals(DISCHARGING_OPERATION_ID)).sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder)).findFirst();
+    Optional<LoadableStudyPortRotation> dischargeStudyPortRotation =
+        dischargeStudyPortRotations.stream()
+            .filter(port -> port.getOperation().getId().equals(DISCHARGING_OPERATION_ID))
+            .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
+            .findFirst();
 
     cargos.stream()
         .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
         .forEach(
             operation -> {
-              if (!dischargeStudyPortRotation.isEmpty()&&!operation.getPortId().equals(dischargeStudyPortRotation.get().getPortXId())) {
+              if (!dischargeStudyPortRotation.isEmpty()
+                  && !operation.getPortId().equals(dischargeStudyPortRotation.get().getPortXId())) {
                 operation.setQuantity(new BigDecimal(0));
                 operation.setMode(1L);
               } else {
