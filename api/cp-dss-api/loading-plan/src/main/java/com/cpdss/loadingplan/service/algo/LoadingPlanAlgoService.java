@@ -226,10 +226,12 @@ public class LoadingPlanAlgoService {
         log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
       }
     } else {
+      log.info("Create algo request:" + request);
       // Create JSON To Algo
       LoadingInformationAlgoRequest algoRequest =
           loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
-
+      log.info("algo request created:" + algoRequest);
+      log.info("Before Save Above JSON In LS json data Table");
       // Save Above JSON In LS json data Table
       saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
       log.info("Call To Algo End Point for Loading");
