@@ -40,6 +40,7 @@ import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -408,14 +409,40 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                         bLValues.stream()
                             .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
                             .collect(Collectors.toList());
+                    // Checking if stowage details and bill of lading entries exists and quantity
+                    // parameters are greater than zero
+                    // Bug fix DSS 4458
                     if (!dbCargos.containsAll(port.getCargoIdsList())
-                        || !dbBLCargos.containsAll(port.getCargoIdsList())) {
+                        || !dbBLCargos.containsAll(port.getCargoIdsList())
+                        || (stowages.stream()
+                            .anyMatch(
+                                st ->
+                                    st.getQuantity() == null
+                                        || st.getQuantity().compareTo(BigDecimal.ZERO) <= 0
+                                        || st.getQuantityM3() == null
+                                        || st.getQuantityM3().compareTo(BigDecimal.ZERO) <= 0))
+                        || (bLValues.stream()
+                            .anyMatch(
+                                bl ->
+                                    bl.getQuantityMt() == null
+                                        || bl.getQuantityMt().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getQuantityKl() == null
+                                        || bl.getQuantityKl().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getQuantityBbls() == null
+                                        || bl.getQuantityBbls().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getQuantityLT() == null
+                                        || bl.getQuantityLT().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getApi() == null
+                                        || bl.getApi().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getTemperature() == null
+                                        || bl.getTemperature().compareTo(BigDecimal.ZERO) <= 0))) {
                       builder.setStatus(LoadingPlanConstants.FAILED);
                       throw new GenericServiceException(
                           "LS actuals or BL values are missing",
                           "",
                           HttpStatusCode.SERVICE_UNAVAILABLE);
                     }
+                    // Add check for Zero and null values
                   } catch (Exception e) {
                     builder.setStatus(LoadingPlanConstants.FAILED);
                   }
