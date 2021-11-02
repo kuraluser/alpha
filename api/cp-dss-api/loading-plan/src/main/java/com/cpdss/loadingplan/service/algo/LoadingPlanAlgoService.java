@@ -230,7 +230,7 @@ public class LoadingPlanAlgoService {
       // Create JSON To Algo
       LoadingInformationAlgoRequest algoRequest =
           loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
-      log.info("algo request created:" + algoRequest);
+      log.info("algo request created: {}", algoRequest);
       log.info("Before Save Above JSON In LS json data Table");
       // Save Above JSON In LS json data Table
       saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
@@ -240,7 +240,7 @@ public class LoadingPlanAlgoService {
           restTemplate.postForObject(
               planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
       processId = response.getProcessId();
-      log.info("LoadingInformationAlgoResponse:" + response);
+      log.info("LoadingInformationAlgoResponse:{}", response);
     }
     // Set Loading Status
     loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
