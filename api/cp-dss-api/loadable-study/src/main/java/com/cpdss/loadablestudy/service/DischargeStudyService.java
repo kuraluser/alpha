@@ -373,6 +373,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     dischargeStudy.setPlanningTypeXId(2);
     dischargeStudy.setLoadableStudyStatus(
         loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
+    dischargeStudy.setIsPortsComplete(true);
     dischargeStudy.setDraftMark(loadableStudy.getDraftMark());
     dischargeStudy.setConfirmedLoadableStudyId(loadableStudy.getId());
     LoadableStudy savedDischargeStudy = dischargeStudyRepository.save(dischargeStudy);
@@ -1298,8 +1299,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       cargoNominationService.saveAll(
           createNewPortCargoNominations(loadableStudyId, dischargingPorts.get(0)));
     }
-    LoadableStudyPortRotation dischargeStudyPortRotation = dischargeStudyPortRotations.get(0);
-    Set<CargoNomination> firstPortCargos =
+     Set<CargoNomination> firstPortCargos =
         cargos.stream()
             .filter(
                 cargo -> cargo.getIsBackloading() == null || cargo.getIsBackloading().equals(false))
@@ -1312,11 +1312,15 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     cargoNominationService.getMaxQuantityForCargoNomination(firstPortCargoIds, firstPortCargos);
+    Optional<LoadableStudyPortRotation> dischargeStudyPortRotation =dischargeStudyPortRotations.stream().filter(
+            port ->
+                port.getOperation().getId().equals(DISCHARGING_OPERATION_ID)).sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder)).findFirst();
+
     cargos.stream()
         .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
         .forEach(
             operation -> {
-              if (!operation.getPortId().equals(dischargeStudyPortRotation.getPortXId())) {
+              if (!dischargeStudyPortRotation.isEmpty()&&!operation.getPortId().equals(dischargeStudyPortRotation.get().getPortXId())) {
                 operation.setQuantity(new BigDecimal(0));
                 operation.setMode(1L);
               } else {
