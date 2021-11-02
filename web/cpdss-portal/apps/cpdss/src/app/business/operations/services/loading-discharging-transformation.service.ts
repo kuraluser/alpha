@@ -23,11 +23,16 @@ import { TranslateService } from '@ngx-translate/core';
 export class LoadingDischargingTransformationService {
   public _loadingInformationSource: Subject<boolean> = new Subject();
   private _dischargingInformationSource: Subject<boolean> = new Subject();
+  private _dischargingInstructionSource: Subject<boolean> = new Subject();
+  private _dischargingSequenceSource: Subject<boolean> = new Subject();
+  private _dischargingPlanSource: Subject<boolean> = new Subject();
+  private _disableDischargeInfoSave: Subject<boolean> = new Subject();
+  private _disableDischargeGenerateButton: Subject<boolean> = new Subject();
+  private _disableDischargePlanViewError: Subject<boolean> = new Subject();
   private _isDischargeStarted: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _unitChangeSource: Subject<boolean> = new Subject();
   public _loadingInstructionSource: Subject<boolean> = new Subject();
-  public _dischargingInstructionSource: Subject<boolean> = new Subject();
-  public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public disableInfoInstructionRuleSave: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
   private _validateUllageData: Subject<any> = new Subject();
@@ -45,9 +50,14 @@ export class LoadingDischargingTransformationService {
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
+  dischargingInstructionValidity$ = this._dischargingInstructionSource.asObservable();
+  dischargingSequenceValidity$ = this._dischargingSequenceSource.asObservable();
+  dischargingPlanValidity$ = this._dischargingPlanSource.asObservable();
+  disableDischargeInfoSave$ = this._disableDischargeInfoSave.asObservable();
+  disableDischargePlanGenerate$ = this._disableDischargeGenerateButton.asObservable();
+  disableDischargePlanViewError$ = this._disableDischargePlanViewError.asObservable();
   unitChange$ = this._unitChangeSource.asObservable();
   loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
-  dischargingInstructionValidity$ = this._dischargingInstructionSource.asObservable();
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
   tabChange$ = this._tabChangeSource.asObservable();
   validateUllageData$ = this._validateUllageData.asObservable();
@@ -77,6 +87,66 @@ export class LoadingDischargingTransformationService {
    */
   setDischargingInformationValidity(isValid: boolean) {
     this._dischargingInformationSource.next(isValid);
+  }
+
+  /**
+   * Set discharging instruction complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadingDischargingTransformationService
+   */
+  setDischargingInstructionValidity(isValid: boolean) {
+    this._dischargingInstructionSource.next(isValid);
+  }
+
+  /**
+   * Set discharging sequence complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadingDischargingTransformationService
+   */
+  setDischargingSequenceValidity(isValid: boolean) {
+    this._dischargingSequenceSource.next(isValid);
+  }
+
+  /**
+   * Set discharging plan complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadingDischargingTransformationService
+   */
+  setDischargingPlanValidity(isValid: boolean) {
+    this._dischargingPlanSource.next(isValid);
+  }
+
+  /**
+   * Disable / enable discharge information save button
+   *
+   * @param {boolean} isDisable
+   * @memberof LoadingDischargingTransformationService
+   */
+  disableDischargeInfoSave(isDisable: boolean) {
+    this._disableDischargeInfoSave.next(isDisable);
+  }
+
+  /**
+   * Disable / enable discharge plan generate button
+   *
+   * @param {boolean} isDisable
+   * @memberof LoadingDischargingTransformationService
+   */
+  disableGenerateDischargePlanBtn(isDisable: boolean) {
+    this._disableDischargeGenerateButton.next(isDisable);
+  }
+
+  /**
+   * Disable / enable discharge plan View error button
+   *
+   * @param {boolean} isDisable
+   * @memberof LoadingDischargingTransformationService
+   */
+  disableDischargePlanViewErrorBtn(isDisable: boolean) {
+    this._disableDischargePlanViewError.next(isDisable);
   }
 
   /** Set unit changed */
@@ -118,12 +188,6 @@ export class LoadingDischargingTransformationService {
   setLoadingInstructionValidity(value: boolean) {
     this._loadingInstructionSource.next(value);
   }
-
-  /** Set discharging instruction complete status */
-  setDischargingInstructionValidity(value: boolean) {
-    this._dischargingInstructionSource.next(value);
-  }
-
 
   /**
   *  Set validation error message

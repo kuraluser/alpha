@@ -10,6 +10,7 @@ import { LoadingDischargingTransformationService } from '../../../services/loadi
 import { IDischargingInstructionGroup, IDischargingInstructionResponse, IDischargingInstructionSubHeaderData } from './../../../models/discharging-instruction.model';
 import { ILoadingInstructionSubHeaderData } from '../../../models/loading-instruction.model';
 import { ComponentCanDeactivate } from './../../../../../shared/models/common.model';
+import { OPERATIONS } from '../../../../core/models/common.model';
 import { IPermission } from './../../../../../shared/models/user-profile.model';
 
 @Component({
@@ -28,13 +29,12 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
   @ViewChild('instructionCheckList') instructionCheckList;
 
   sidePanelList: IDischargingInstructionGroup[];
-  
   instructionData: IDischargingInstructionSubHeaderData[];
   instructionList: IDischargingInstructionSubHeaderData[];
   groupId: number;
+  readonly OPERATIONS = OPERATIONS;
 
   constructor(
-    private loadingInstructionApiService: LoadingInstructionApiService,
     private dischargingInstructionApiService: DischargingInstructionApiService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private unsavedChangesGuard: UnsavedChangesGuard,

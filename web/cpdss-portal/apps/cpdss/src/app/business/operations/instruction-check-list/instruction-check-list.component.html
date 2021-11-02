@@ -56,7 +56,7 @@
                             </div>
                             <div>
                                 <button *ngIf="rowNode.node.data.editable" id="saveRowBtn" (click)="saveData(rowNode)"
-                                    class="btn-main btn mr-10"  [disabled]="disableSaveButton || isDischargeStarted || !permission?.edit">{{ 'SAVE' | translate}}</button>
+                                    class="btn-main btn mr-10"  [disabled]="disableSaveButton || ((operation === OPERATIONS.LOADING) && isDischargeStarted) || !permission?.edit">{{ 'SAVE' | translate}}</button>
                                 <button *ngIf="rowNode.node.data.editable" id="cancelBtn" (click)="cancel(rowNode)"
                                     class="btn-main btn mr-15">{{'CANCEL' | translate}}</button>
                             </div>
@@ -69,7 +69,7 @@
 </div>
 <div class="row" *ngIf="instructionListData?.length">
     <div class="col text-right pt-10">
-        <button (click)="saveAll()" id="btnSave" class="btn btn-main mr-15" [disabled]="disableSaveButton || isDischargeStarted || !permission?.edit">{{ 'SAVE' |
+        <button (click)="saveAll()" id="btnSave" class="btn btn-main mr-15" [disabled]="disableSaveButton || ((operation === OPERATIONS.LOADING) && isDischargeStarted) || !permission?.edit">{{ 'SAVE' |
             translate}}</button>
     </div>
 </div>

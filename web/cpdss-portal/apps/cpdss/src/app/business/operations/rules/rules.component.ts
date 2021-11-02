@@ -124,9 +124,9 @@ export class RulesComponent implements OnInit {
    * @memberof RulesComponent
    */
   getSaveButtonStatus() {
-    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.subscribe((status) => {
       this.disableSaveButton = status;
-    })
+    });
   }
  
   /**

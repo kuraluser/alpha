@@ -4,7 +4,7 @@ import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
-import { ICargo, OPERATIONS } from '../../../core/models/common.model';
+import { ICargo, OPERATIONS, OPERATIONS_PLAN_STATUS } from '../../../core/models/common.model';
 import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData, IDischargingInformationSaveResponse, ILoadingDischargingDetails, ICOWDetails, IDischargingInformationPostData, IPostDischargeStageTime, ILoadedCargo, ILoadingDischargingDelays } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
@@ -93,6 +93,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       { value: 100, name: '100%' },
     ]
   };
+  disableSaveButton: boolean = false;
 
   private _portRotationId: number;
   private _cargos: ICargo[];
@@ -126,7 +127,11 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-    })
+    });
+
+    this.loadingDischargingTransformationService.disableDischargeInfoSave$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(isDisable => {
+      this.disableSaveButton = isDisable;
+    });
   }
 
   /**
@@ -142,6 +147,25 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       this.dischargingInformationData = this.loadingDischargingTransformationService.transformDischargingInformation(dischargingInformationResponse, this.listData);
       this.initFormArray(this.dischargingInformationData);
       this.loadingDischargingTransformationService.setDischargingInformationValidity(dischargingInformationResponse?.isDischargeInstructionsComplete);
+      this.loadingDischargingTransformationService.setDischargingInstructionValidity(dischargingInformationResponse?.isDischargeInstructionsComplete);
+      this.loadingDischargingTransformationService.setDischargingSequenceValidity(dischargingInformationResponse?.isDischargeSequenceGenerated);
+      this.loadingDischargingTransformationService.setDischargingPlanValidity(dischargingInformationResponse?.isDischargePlanGenerated);
+
+      if ([OPERATIONS_PLAN_STATUS.PLAN_GENERATED, OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE, OPERATIONS_PLAN_STATUS.ERROR_OCCURED, OPERATIONS_PLAN_STATUS.PENDING, OPERATIONS_PLAN_STATUS.CONFIRMED].includes(this.dischargingInformationData?.dischargeInfoStatusId)) {
+        this.disableSaveButton = false;
+        this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(false);
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
+        if ([OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE, OPERATIONS_PLAN_STATUS.ERROR_OCCURED].includes(this.dischargingInformationData?.dischargeInfoStatusId)) {
+          this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(false);
+        } else {
+          this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
+        }
+      } else {
+        this.disableSaveButton = true;
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
+        this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
+        this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(true);
+      }
       // this.rulesService.dischargeInfoId.next(this.dischargingInformationData.dischargeInfoId);
       await this.updateGetData();
     }
