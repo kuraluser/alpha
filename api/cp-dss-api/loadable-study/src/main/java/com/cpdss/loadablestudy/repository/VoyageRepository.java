@@ -23,6 +23,8 @@ public interface VoyageRepository
       Long vesselXId, boolean isActive);
 
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
+  
+  public List<Voyage> findByVoyageNoAndIsActive(String voyageNo,boolean isActive);
 
   /*public Voyage
   findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
