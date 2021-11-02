@@ -86,6 +86,8 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -287,18 +289,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         ohq -> {
           OnHandQuantity dischargeOHQ = new OnHandQuantity();
           dischargeOHQ.setActualArrivalQuantity(ohq.getActualArrivalQuantity());
-          dischargeOHQ.setActualDepartureQuantity(ohq.getActualDepartureQuantity());
-          dischargeOHQ.setArrivalQuantity(ohq.getArrivalQuantity());
-          dischargeOHQ.setArrivalVolume(ohq.getArrivalVolume());
-          dischargeOHQ.setDensity(ohq.getDensity());
-          dischargeOHQ.setDepartureQuantity(ohq.getDepartureQuantity());
-          dischargeOHQ.setDepartureVolume(ohq.getDepartureVolume());
-          dischargeOHQ.setFuelTypeXId(ohq.getFuelTypeXId());
-          dischargeOHQ.setIsActive(ohq.getIsActive());
+          BeanUtils.copyProperties(ohq, dischargeOHQ);
           dischargeOHQ.setLoadableStudy(savedDischargeport.getLoadableStudy());
           dischargeOHQ.setPortRotation(savedDischargeport);
-          dischargeOHQ.setPortXId(ohq.getPortXId());
-          dischargeOHQ.setTankXId(ohq.getTankXId());
           dischargeOHQList.add(dischargeOHQ);
         });
     return dischargeOHQList;
@@ -317,35 +310,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     synopticalData.forEach(
         data -> {
           SynopticalTable dischargeSynoptical = new SynopticalTable();
-          dischargeSynoptical.setConstantActual(data.getConstantActual());
-          dischargeSynoptical.setConstantPlanned(data.getConstantPlanned());
-          dischargeSynoptical.setDeadWeightActual(data.getDeadWeightActual());
-          dischargeSynoptical.setDeadWeightPlanned(data.getDeadWeightPlanned());
-          dischargeSynoptical.setDisplacementActual(data.getDisplacementActual());
-          dischargeSynoptical.setDisplacementPlanned(data.getDisplacementPlanned());
-          dischargeSynoptical.setDistance(data.getDistance());
-          dischargeSynoptical.setEtaActual(data.getEtaActual());
-          dischargeSynoptical.setEtdActual(data.getEtdActual());
-          dischargeSynoptical.setHwTideFrom(data.getHwTideFrom());
-          dischargeSynoptical.setHwTideTimeFrom(data.getHwTideTimeFrom());
-          dischargeSynoptical.setHwTideTimeTo(data.getHwTideTimeTo());
-          dischargeSynoptical.setHwTideTo(data.getHwTideTo());
-          dischargeSynoptical.setInPortHours(data.getInPortHours());
-          dischargeSynoptical.setIsActive(data.getIsActive());
+          BeanUtils.copyProperties(data, dischargeSynoptical);
           dischargeSynoptical.setLoadableStudyPortRotation(entity);
           dischargeSynoptical.setLoadableStudyXId(entity.getLoadableStudy().getId());
-          dischargeSynoptical.setLwTideFrom(data.getLwTideFrom());
-          dischargeSynoptical.setLwTideTimeFrom(data.getLwTideTimeFrom());
-          dischargeSynoptical.setLwTideTimeTo(data.getLwTideTimeTo());
-          dischargeSynoptical.setLwTideTo(data.getLwTideTo());
-          dischargeSynoptical.setOperationType(data.getOperationType());
-          dischargeSynoptical.setOthersActual(data.getOthersActual());
-          dischargeSynoptical.setOthersPlanned(data.getOthersPlanned());
-          dischargeSynoptical.setPortXid(data.getPortXid());
-          dischargeSynoptical.setRunningHours(data.getRunningHours());
-          dischargeSynoptical.setSpeed(data.getSpeed());
-          dischargeSynoptical.setTimeOfSunrise(data.getTimeOfSunrise());
-          dischargeSynoptical.setTimeOfSunSet(data.getTimeOfSunSet());
           dischargeSynopticalList.add(dischargeSynoptical);
         });
 
