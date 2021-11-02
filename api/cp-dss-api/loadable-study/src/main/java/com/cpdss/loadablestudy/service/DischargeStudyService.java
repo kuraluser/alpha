@@ -114,6 +114,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private CargoOperationRepository cargoOperationRepository;
+  @Autowired private CargoNominationOperationDetailsRepository cargoNominationOperationRepository;
   @Autowired private SynopticService synopticService;
   @Autowired private CowDetailService cowDetailService;
   @Autowired private PortInstructionService portInstructionService;
@@ -1177,6 +1178,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     if (portRotations == null) {
       return;
     }
+
     LoadableStudyPortRotation newPort = portRotations.get(portRotations.size() - 1);
 
     if (newPort.getId() != portRotationId) {
@@ -1242,17 +1244,33 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     newPortCargo.stream()
         .forEach(
             cargo -> {
-              Set<CargoNominationPortDetails> newPortDetails =
-                  cargoNominationService.createCargoNominationPortDetails(
-                      cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
-              if (cargo.getCargoNominationPortDetails() != null
-                  && !cargo.getCargoNominationPortDetails().isEmpty()) {
-                cargo.getCargoNominationPortDetails().addAll(newPortDetails);
-              } else {
-                cargo.setCargoNominationPortDetails(newPortDetails);
+              // Bug fix - DSS - 4493 - Checking for duplicate entry in Cargo nomination
+              // operation table
+              if (!checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId())) {
+                Set<CargoNominationPortDetails> newPortDetails =
+                    cargoNominationService.createCargoNominationPortDetails(
+                        cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
+                if (cargo.getCargoNominationPortDetails() != null
+                    && !cargo.getCargoNominationPortDetails().isEmpty()) {
+                  cargo.getCargoNominationPortDetails().addAll(newPortDetails);
+                } else {
+                  cargo.setCargoNominationPortDetails(newPortDetails);
+                }
               }
             });
     return cargos;
+  }
+
+  /**
+   * Method used to check if cargo nomination and port combo already present in DB This check is
+   * needed to avoid duplication when user delete/rename a discharge port and later add the same
+   * port. Bug fix - DSS - 4493 - Checking if for duplicate entry in Cargo nomination
+   */
+  private Boolean checkIfCargoNominationAlreadyPresent(CargoNomination cargo, Long portXId) {
+    CargoNominationPortDetails cargoNominationOperation =
+        cargoNominationOperationRepository.findByCargoNominationAndPortIdAndIsActiveTrue(
+            cargo, portXId);
+    return cargoNominationOperation != null ? true : false;
   }
 
   private List<LoadableStudyPortRotation> getDischargeStudyPortRotations(Long loadableStudyId)
@@ -1280,8 +1298,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       return;
     }
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
-    // finds the DS ports which is converted to DIsharging from another opertaion ID.
-    // These ports will be missing the cargo nomination records so adding cargo nominations.
+    // finds the DS ports which is converted to DIsharging from another opertaion
+    // ID.
+    // These ports will be missing the cargo nomination records so adding cargo
+    // nominations.
     Set<Long> nominationPortIds =
         cargos.stream()
             .flatMap(x -> x.getCargoNominationPortDetails().stream())
