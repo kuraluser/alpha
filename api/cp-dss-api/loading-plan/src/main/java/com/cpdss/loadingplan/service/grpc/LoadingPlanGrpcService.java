@@ -427,7 +427,11 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                                         || bl.getQuantityBbls() == null
                                         || bl.getQuantityBbls().compareTo(BigDecimal.ZERO) <= 0
                                         || bl.getQuantityLT() == null
-                                        || bl.getQuantityLT().compareTo(BigDecimal.ZERO) <= 0))) {
+                                        || bl.getQuantityLT().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getApi() == null
+                                        || bl.getApi().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getTemperature() == null
+                                        || bl.getTemperature().compareTo(BigDecimal.ZERO) <= 0))) {
                       builder.setStatus(LoadingPlanConstants.FAILED);
                       throw new GenericServiceException(
                           "LS actuals or BL values are missing",
