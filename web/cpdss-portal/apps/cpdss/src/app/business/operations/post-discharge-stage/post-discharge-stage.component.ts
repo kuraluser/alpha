@@ -65,9 +65,9 @@ export class PostDischargeStageComponent implements OnInit {
     this.errorMesages = this.loadingDischargingTransformationService.setPostDischargeValidationErrorMessage();
     this.form.setControl('postDischargeStageTime', this.fb.group({
       dryCheckTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
-      slopDischargingTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
-      finalStrippingTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
-      freshOilWashingTime: this.fb.control(this.postDischargeStageTime?.dryCheckTime, [durationValidator(3, 0)]),
+      slopDischargingTime: this.fb.control(this.postDischargeStageTime?.slopDischargingTime, [durationValidator(3, 0)]),
+      finalStrippingTime: this.fb.control(this.postDischargeStageTime?.finalStrippingTime, [durationValidator(3, 0)]),
+      freshOilWashingTime: this.fb.control(this.postDischargeStageTime?.freshOilWashingTime, [durationValidator(3, 0)]),
     }));
   }
 

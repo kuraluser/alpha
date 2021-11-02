@@ -1816,6 +1816,7 @@
   "DISCHARGING_COW_REQUIRED": "Required",
   "DISCHARGING_COW_TRIM_MIN": "Minimum value allowed is 4",
   "DISCHARGING_COW_TRIM_MAX": "Maximum value allowed is 6",
+  "DISCHARGING_COW_TRIM_INVALID": "Invalid",
   "DISCHARGING_COW_SELECT_CARGO": "Select Cargo",
   "DISCHARGING_COW_SELECT_TANKS": "Select Tanks",
   "DISCHARGING_COW_DURATION_MAX_ERROR": "Must be less than total discharge time",
