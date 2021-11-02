@@ -697,6 +697,7 @@ public class DischargingSequenceService {
 
       currentCargoNomId = dischargeSeq.getCargoNominationId();
       buildEduction(dischargeSeq, portEta, ballastEduction);
+      //TODO cargo eduction
       for (DischargePlanPortWiseDetails portWiseDetails :
           dischargeSeq.getDischargePlanPortWiseDetailsList()) {
         List<LoadingPlanTankDetails> filteredStowage =
