@@ -246,7 +246,7 @@ public class UllageUpdateLoadicatorService {
       BigDecimal sg = null;
       List<BigDecimal> specificGravities =
           tempBallastDetails.stream()
-          	  .filter(ballast -> (ballast.getSg() != null) && (ballast.getSg() != BigDecimal.ZERO))
+              .filter(ballast -> (ballast.getSg() != null) && (ballast.getSg() != BigDecimal.ZERO))
               .map(ballast -> ballast.getSg())
               .collect(Collectors.toList());
 
