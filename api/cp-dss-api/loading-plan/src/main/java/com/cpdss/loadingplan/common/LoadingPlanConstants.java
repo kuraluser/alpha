@@ -30,6 +30,7 @@ public final class LoadingPlanConstants {
   public static final Long LOADING_INFORMATION_NO_PLAN_AVAILABLE_ID = 6L;
   public static final Long LOADING_INFORMATION_ERROR_OCCURRED_ID = 7L;
   public static final Long LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID = 8L;
+  public static final Long LOADING_INFORMATION_COMMUNICATED_TO_SHORE = 18L;
 
   // Loading Plan Update Ullage Status IDs
   public static final Long UPDATE_ULLAGE_VALIDATION_STARTED_ID = 12L;
