@@ -45,12 +45,20 @@ public class TaskListener implements ExecuteTaskListener {
 
       } else if (taskName.contains("LOADING_DATA_UPDATE")) {
         log.info("inside TaskName " + taskName);
-        communicationService.getStagingData(
-            StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get("env"));
-        communicationService.getStagingData(
-            StagingStatus.RETRY.getStatus(), taskReqParams.get("env"));
-        communicationService.getStagingData(
-            StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get("env"));
+        communicationService.getLoadingPlanStagingData(
+            StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get("env"), taskName);
+        communicationService.getLoadingPlanStagingData(
+            StagingStatus.RETRY.getStatus(), taskReqParams.get("env"), taskName);
+        communicationService.getLoadingPlanStagingData(
+            StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get("env"), taskName);
+      } else if (taskName.contains("ULLAGE_DATA_UPDATE")) {
+        log.info("inside TaskName " + taskName);
+        communicationService.getUllageUpdateStagingData(
+            StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get("env"), taskName);
+        communicationService.getUllageUpdateStagingData(
+            StagingStatus.RETRY.getStatus(), taskReqParams.get("env"), taskName);
+        communicationService.getUllageUpdateStagingData(
+            StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get("env"), taskName);
       } else if (taskName.contains("LOADING_PLAN_STATUS_CHECK")) {
         // communicationService.checkLoadableStudyStatus(taskReqParams);
       }
