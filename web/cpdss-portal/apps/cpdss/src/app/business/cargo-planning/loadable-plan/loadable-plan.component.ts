@@ -211,7 +211,7 @@ export class LoadablePlanComponent implements OnInit {
           this.communicateShoreMessage();
           this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE;
           this.validationPending = false;
-          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: true });
         }
       } else if (event.data.type === 'loadable-pattern-validation-failed') {
         if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
