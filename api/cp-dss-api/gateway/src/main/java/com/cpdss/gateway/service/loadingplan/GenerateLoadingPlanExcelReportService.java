@@ -60,11 +60,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -77,12 +75,6 @@ import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.poifs.crypt.CipherAlgorithm;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
-import org.apache.poi.poifs.crypt.EncryptionMode;
-import org.apache.poi.poifs.crypt.Encryptor;
-import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -202,7 +194,8 @@ public class GenerateLoadingPlanExcelReportService {
       workbook = new XSSFWorkbook(resultFileStream);
       try {
         setCellStyle(workbook, loadinPlanExcelDetails);
-        GenerateProtectedFile.setPasswordToWorkbook(workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
+        GenerateProtectedFile.setPasswordToWorkbook(
+            workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
         resultFileStream.close();
         // Putting entry in file repo
         FileRepoReply reply =
@@ -218,7 +211,7 @@ public class GenerateLoadingPlanExcelReportService {
           log.info("Succesfully added entry in FileRepo : {}", reply.getId());
         } else {
           log.info("Data entry in file repo failed");
-        } 
+        }
         // Returning Output file as byte array for local download
         resultFileStream = new FileInputStream(outputLocation.toString());
         if (downloadRequired && resultFileStream != null) {

@@ -166,6 +166,7 @@ public class LoadingPlanBuilderService {
               : new BigDecimal(commingle.getUllage2()));
       commingleDetails.setConditionType(commingle.getConditionType());
       commingleDetails.setValueType(commingle.getValueType());
+      commingleDetails.setColorCode(commingle.getColorCode());
       response.add(commingleDetails);
     }
     return response;

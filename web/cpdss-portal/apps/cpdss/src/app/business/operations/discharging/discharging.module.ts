@@ -63,6 +63,6 @@ import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error
     LoadingDischargingSequenceChartModule,
     ErrorLogPopupModule
   ],
-  providers: [LoadingDischargingInformationApiService, DischargingInstructionApiService, DischargingPlanApiService, LoadingInstructionApiService]
+  providers: [LoadingDischargingInformationApiService, DischargingInstructionApiService, DischargingPlanApiService]
 })
 export class DischargingModule { }

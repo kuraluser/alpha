@@ -37,4 +37,7 @@ public interface CargoNominationOperationDetailsRepository
       "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination = ?1 AND LSPR.isActive = ?2")
   public List<CargoNominationPortDetails> findByPortAndCargoIdAndIsActive(
       CargoNomination cargo, Boolean isActive);
+
+  public CargoNominationPortDetails findByCargoNominationAndPortIdAndIsActiveTrue(
+      CargoNomination cargo, Long portXId);
 }

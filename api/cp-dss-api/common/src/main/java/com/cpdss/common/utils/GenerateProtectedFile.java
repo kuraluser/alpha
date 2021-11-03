@@ -71,9 +71,10 @@ public class GenerateProtectedFile {
 
           try (Workbook workbook = new XSSFWorkbook(bufferInput)) {
             try (FileOutputStream fileOut = new FileOutputStream(unProtectedFile)) {
-              try(OutputStream outputStream = enc.getDataStream(fileSystem)){
+              OutputStream outputStream = enc.getDataStream(fileSystem);
               workbook.write(outputStream);
-              fileSystem.writeFilesystem(fileOut);}
+              outputStream.close();
+              fileSystem.writeFilesystem(fileOut);
             }
             return unProtectedFile;
           }
@@ -116,14 +117,16 @@ public class GenerateProtectedFile {
       Encryptor enc = info.getEncryptor();
       enc.confirmPassword(password);
 
-      try(OutputStream outputStream = enc.getDataStream(fileSystem)){
+      OutputStream outputStream = enc.getDataStream(fileSystem);
       workbook.write(outputStream);
-      fileSystem.writeFilesystem(outFile);}
+      outputStream.close();
+      fileSystem.writeFilesystem(outFile);
 
     } catch (Exception e) {
       log.info("Exception in generate password protected file " + e.getLocalizedMessage());
     }
   }
+
   /**
    * generate password protected excel file with custom password
    *

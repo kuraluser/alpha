@@ -9,12 +9,11 @@ import { MessageService } from 'primeng/api';
 import { AppConfigurationService } from '../../../../../shared/services/app-configuration/app-configuration.service';
 import { LoadingDischargingTransformationService } from '../../../services/loading-discharging-transformation.service';
 import { DischargingPlanApiService } from './../../../services/discharging-plan-api.service';
+import { OperationsApiService } from '../../../services/operations-api.service';
 
 import { IAlgoError, IAlgoResponse, ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../../../shared/models/common.model';
 import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../../models/loading-discharging.model';
-import { LoadingPlanApiService } from '../../../services/loading-plan-api.service';
-import { LoadingApiService } from '../../../services/loading-api.service';
 
 /**
  * below dummy data will remove once the actual API implemented
@@ -2552,6 +2551,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
 
   constructor(
     private dischargingPlanApiService: DischargingPlanApiService,
+    private operationsApiService: OperationsApiService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private ngxSpinnerService: NgxSpinnerService,
     private messageService: MessageService,
@@ -2628,14 +2628,15 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
     this.ngxSpinnerService.hide();
   }
 
-
+  /**
+   * function to display ALGO error
+   *
+   * @param {*} status
+   * @memberof DischargingPlanComponent
+   */
   async getAlgoErrorMessage(status) {
     const translationKeys = await this.translateService.get(['DSICHARGING_PLAN_ALGO_ERROR', 'DSICHARGING_PLAN_ALGO_NO_PLAN']).toPromise();
-
-    // TODO: replace discharge plan generation's get algo error details API with below
-    // const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.dischargeInfoId, status.status).toPromise();
-    const algoError: IAlgoResponse = <IAlgoResponse>{};
-
+    const algoError: IAlgoResponse = await this.operationsApiService.getDischargePlanAlgoError(this.vesselId, this.voyageId, this.dischargeInfoId, status.status).toPromise();
     if (algoError.responseStatus.status === 'SUCCESS') {
       this.errorMessage = algoError.algoErrors;
       this.errorPopUp = status.value;

@@ -16,6 +16,8 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSave
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortLoadablePlanStowageDetail;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortLoadingPlanRobDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -43,6 +45,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1096,9 +1100,13 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .collect(Collectors.toList());
     }
     if (portLoadablePlanStowageDetails.size() > 0) {
-      portLoadablePlanStowageDetails.stream()
-          .forEach(
-              portWiseStowageDetail -> {
+    	
+    	for(VesselInfo.VesselTankDetail tankDetail:sortedTankList){
+    			
+    		Optional<PortLoadablePlanStowageDetail> portWiseStowageDetailOptional = portLoadablePlanStowageDetails.stream().filter(stowageDetail ->
+    		stowageDetail.getTankId() == tankDetail.getTankId()).findFirst();
+
+    		portWiseStowageDetailOptional.ifPresent(portWiseStowageDetail -> {
                 PortLoadablePlanStowageDetails stowageDetail = new PortLoadablePlanStowageDetails();
                 stowageDetail.setAbbreviation(portWiseStowageDetail.getAbbreviation());
                 stowageDetail.setApi(portWiseStowageDetail.getApi());
@@ -1119,19 +1127,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 stowageDetail.setArrivalDeparture(portWiseStowageDetail.getArrivalDeparture());
                 stowageDetail.setActualPlanned(portWiseStowageDetail.getActualPlanned());
                 stowageDetail.setUllage(portWiseStowageDetail.getUllage());
+                stowageDetail.setTankName(tankDetail.getTankName());
+                stowageDetail.setTankShortName(tankDetail.getShortName());
 
-                Optional<VesselInfo.VesselTankDetail> tankDetail =
-                    sortedTankList.stream()
-                        .filter(
-                            vesselTankDetail ->
-                                vesselTankDetail.getTankId() == portWiseStowageDetail.getTankId())
-                        .findFirst();
-                if (tankDetail.isPresent()) {
-                  stowageDetail.setTankName(tankDetail.get().getTankName());
-                  stowageDetail.setTankShortName(tankDetail.get().getShortName());
-                }
                 portLoadablePlanStowageDetailsList.add(stowageDetail);
-              });
+    			});
+              }
     }
     return portLoadablePlanStowageDetailsList;
   }
@@ -1254,38 +1255,33 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .collect(Collectors.toList());
     }
     if (portLoadablePlanRobDetails.size() > 0) {
-      portLoadablePlanRobDetails.forEach(
-          portWiseRobDetail -> {
-            PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
-            robDetail.setId(portWiseRobDetail.getId());
-            robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
-            robDetail.setDischargePatternId(portWiseRobDetail.getLoadablePatternId());
-            robDetail.setTankId(portWiseRobDetail.getTankId());
-            robDetail.setQuantity(portWiseRobDetail.getQuantity());
-            robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
-            robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
-            robDetail.setDensity(
-                portWiseRobDetail.getDensity().isEmpty()
-                    ? null
-                    : new BigDecimal(portWiseRobDetail.getDensity()));
-            robDetail.setColorCode(portWiseRobDetail.getColorCode());
+    	
+    	for(VesselInfo.VesselTankDetail tankDetail:sortedTankList){
+    		Optional<PortLoadingPlanRobDetails> portLoadablePlanRobDetailsOptional = portLoadablePlanRobDetails.stream().filter(robDetail ->
+    		robDetail.getTankId() == tankDetail.getTankId()).findFirst();
+    		portLoadablePlanRobDetailsOptional.ifPresent(portWiseRobDetail -> {
+    			 PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
+    	            robDetail.setId(portWiseRobDetail.getId());
+    	            robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
+    	            robDetail.setDischargePatternId(portWiseRobDetail.getLoadablePatternId());
+    	            robDetail.setTankId(portWiseRobDetail.getTankId());
+    	            robDetail.setQuantity(portWiseRobDetail.getQuantity());
+    	            robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
+    	            robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
+    	            robDetail.setDensity(
+    	                portWiseRobDetail.getDensity().isEmpty()
+    	                    ? null
+    	                    : new BigDecimal(portWiseRobDetail.getDensity()));
+    	            robDetail.setColorCode(portWiseRobDetail.getColorCode());
+    	            robDetail.setTankName(tankDetail.getTankName());
+    	            robDetail.setTankShortName(tankDetail.getShortName());
+    	            robDetail.setFuelTypeId(tankDetail.getTankCategoryId());
+    	            robDetail.setFuelTypeShortName(tankDetail.getTankCategoryShortName());
+    	            robDetail.setFuelTypeName(tankDetail.getTankCategoryName());
 
-            Optional<VesselInfo.VesselTankDetail> tankDetail =
-                sortedTankList.stream()
-                    .filter(
-                        vesselTankDetail ->
-                            vesselTankDetail.getTankId() == portWiseRobDetail.getTankId())
-                    .findFirst();
-            if (tankDetail.isPresent()) {
-              robDetail.setTankName(tankDetail.get().getTankName());
-              robDetail.setTankShortName(tankDetail.get().getShortName());
-              robDetail.setFuelTypeId(tankDetail.get().getTankCategoryId());
-              robDetail.setFuelTypeShortName(tankDetail.get().getTankCategoryShortName());
-              robDetail.setFuelTypeName(tankDetail.get().getTankCategoryName());
-            }
-
-            portLoadablePlanRobDetailsList.add(robDetail);
-          });
+    	            portLoadablePlanRobDetailsList.add(robDetail);
+    		});
+    	}
     }
     return portLoadablePlanRobDetailsList;
   }

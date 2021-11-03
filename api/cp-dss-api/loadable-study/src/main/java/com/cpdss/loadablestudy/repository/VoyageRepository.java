@@ -24,6 +24,8 @@ public interface VoyageRepository
 
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
 
+  public List<Voyage> findByVoyageNoAndIsActive(String voyageNo, boolean isActive);
+
   /*public Voyage
   findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
       LocalDateTime currentVoyageStartDate,

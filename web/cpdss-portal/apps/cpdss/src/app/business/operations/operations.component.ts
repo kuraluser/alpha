@@ -77,9 +77,9 @@ export class OperationsComponent implements OnInit, OnDestroy {
         this.onPortSelection(this.selectedPort);
       }
     });
-    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.subscribe((status) => {
       this.generatePatternStatus = status;
-    })
+    });
   }
 
   ngOnDestroy() {

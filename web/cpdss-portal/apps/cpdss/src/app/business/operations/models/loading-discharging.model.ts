@@ -520,6 +520,7 @@ export interface ILoadingInformation {
 export interface IDischargingInformation {
   dischargeInfoId: number;
   synopticalTableId: number;
+  dischargeInfoStatusId?: number;
   dischargeDetails: ILoadingDischargingDetails;
   dischargeRates: IDischargingRates;
   dischargingBerths: IBerth[];
@@ -1390,4 +1391,12 @@ export interface IUllageExcelResponseDetails {
 export interface IUllageExcelResponse {
   responseStatus: IResponseStatus;
   ullageReportResponse: IUllageExcelResponseDetails[];
+}
+
+/**
+ * Interface for generate discharging plan response
+ */
+export interface IGenerateDischargePlanResponse {
+  responseStatus: IResponseStatus;
+  processId: string;
 }

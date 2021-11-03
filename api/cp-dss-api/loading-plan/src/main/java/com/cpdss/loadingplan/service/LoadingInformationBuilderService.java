@@ -488,6 +488,7 @@ public class LoadingInformationBuilderService {
 
             Optional.ofNullable(commingle.getConditionType()).ifPresent(builder::setConditionType);
             Optional.ofNullable(commingle.getValueType()).ifPresent(builder::setValueType);
+            Optional.ofNullable(commingle.getColorCode()).ifPresent(builder::setColorCode);
             portLoadingPlanCommingleDetails.add(builder.build());
           });
     } catch (Exception e) {

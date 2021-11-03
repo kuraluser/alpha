@@ -160,6 +160,16 @@ public class LoadicatorService {
     List<LoadingPlanBallastDetails> loadingPlanBallastDetails =
         loadingPlanBallastDetailsRepository.findByLoadingPlanPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
+    BigDecimal sg = null;
+    List<BigDecimal> specificGravities =
+        loadingPlanBallastDetails.stream()
+            .filter(ballast -> (ballast.getSg() != BigDecimal.ZERO) && (ballast.getSg() != null))
+            .map(ballast -> ballast.getSg())
+            .collect(Collectors.toList());
+
+    if (!specificGravities.isEmpty()) {
+      sg = specificGravities.get(0);
+    }
     List<LoadingPlanRobDetails> loadingPlanRobDetails =
         loadingPlanRobDetailsRepository.findByPortWiseDetailIdsAndIsActive(portWiseDetailIds, true);
     List<LoadingPlanCommingleDetails> loadingPlanCommingleDetails =
@@ -248,38 +258,38 @@ public class LoadicatorService {
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
     loadicatorRequestBuilder.setIsUllageUpdate(false);
-    loadingTimes.forEach(
-        time -> {
-          StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
-          buildStowagePlan(
-              loadingInformation,
-              time,
-              processId,
-              cargoReply,
-              vesselReply,
-              portReply,
-              stowagePlanBuilder);
-          buildLoadicatorStowagePlanDetails(
-              loadingInformation,
-              stowageMap.get(time),
-              commingleMap.get(time),
-              cargoNomDetails,
-              vesselReply,
-              cargoReply,
-              stowagePlanBuilder);
-          buildLoadicatorCargoDetails(
-              loadingInformation,
-              cargoNomDetails,
-              stowageMap.get(time),
-              commingleMap.get(time),
-              cargoReply,
-              stowagePlanBuilder);
-          buildLoadicatorBallastDetails(
-              loadingInformation, ballastMap.get(time), vesselReply, stowagePlanBuilder);
-          buildLoadicatorRobDetails(
-              loadingInformation, robMap.get(time), vesselReply, stowagePlanBuilder);
-          loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
-        });
+    for (Integer time : loadingTimes) {
+      StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
+      buildStowagePlan(
+          loadingInformation,
+          time,
+          processId,
+          cargoReply,
+          vesselReply,
+          portReply,
+          stowagePlanBuilder,
+          sg);
+      buildLoadicatorStowagePlanDetails(
+          loadingInformation,
+          stowageMap.get(time),
+          commingleMap.get(time),
+          cargoNomDetails,
+          vesselReply,
+          cargoReply,
+          stowagePlanBuilder);
+      buildLoadicatorCargoDetails(
+          loadingInformation,
+          cargoNomDetails,
+          stowageMap.get(time),
+          commingleMap.get(time),
+          cargoReply,
+          stowagePlanBuilder);
+      buildLoadicatorBallastDetails(
+          loadingInformation, ballastMap.get(time), vesselReply, stowagePlanBuilder);
+      buildLoadicatorRobDetails(
+          loadingInformation, robMap.get(time), vesselReply, stowagePlanBuilder);
+      loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
+    }
 
     Loadicator.LoadicatorReply reply = this.saveLoadicatorInfo(loadicatorRequestBuilder.build());
     if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
@@ -590,7 +600,8 @@ public class LoadicatorService {
       CargoReply cargoReply,
       VesselReply vesselReply,
       PortReply portReply,
-      Builder stowagePlanBuilder) {
+      Builder stowagePlanBuilder,
+      BigDecimal sg) {
     stowagePlanBuilder.setProcessId(processId);
     VesselInfo.VesselDetail vessel = vesselReply.getVesselsList().get(0);
     Optional.ofNullable(vessel.getId()).ifPresent(stowagePlanBuilder::setVesselId);
@@ -613,6 +624,9 @@ public class LoadicatorService {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
       Optional.ofNullable(portDetail.get().getWaterDensity())
           .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
+    }
+    if (sg != null) {
+      stowagePlanBuilder.setSeaWaterDensity(sg.toString());
     }
     stowagePlanBuilder.setSynopticalId(loadingInformation.getSynopticalTableXId());
   }

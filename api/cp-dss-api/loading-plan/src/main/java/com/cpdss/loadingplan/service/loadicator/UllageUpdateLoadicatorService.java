@@ -243,6 +243,16 @@ public class UllageUpdateLoadicatorService {
                   loadingInfoOpt.get().getId(),
                   request.getUpdateUllage(0).getArrivalDepartutre(),
                   true);
+      BigDecimal sg = null;
+      List<BigDecimal> specificGravities =
+          tempBallastDetails.stream()
+              .filter(ballast -> (ballast.getSg() != BigDecimal.ZERO) && (ballast.getSg() != null))
+              .map(ballast -> ballast.getSg())
+              .collect(Collectors.toList());
+
+      if (!specificGravities.isEmpty()) {
+        sg = specificGravities.get(0);
+      }
       List<PortLoadingPlanRobDetails> robDetails =
           portLoadingPlanRobDetailsRepository
               .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
@@ -282,7 +292,8 @@ public class UllageUpdateLoadicatorService {
           cargoReply,
           vesselReply,
           portReply,
-          stowagePlanBuilder);
+          stowagePlanBuilder,
+          sg);
       buildStowagePlanDetails(
           loadingInfoOpt.get(),
           tempStowageDetails,

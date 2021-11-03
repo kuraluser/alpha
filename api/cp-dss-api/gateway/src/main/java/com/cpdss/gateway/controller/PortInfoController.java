@@ -80,16 +80,16 @@ public class PortInfoController {
           e);
     }
   }
-  
+
   /**
    * Get all countries.
+   *
    * @param headers
    * @return CountrysResponse
    * @throws CommonRestException
    */
   @GetMapping("/countries")
-  public CountrysResponse getAllCountrys(
-      @RequestHeader HttpHeaders headers)
+  public CountrysResponse getAllCountrys(@RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
       return this.portInfoService.getAllCountrys(headers.getFirst(CORRELATION_ID_HEADER));

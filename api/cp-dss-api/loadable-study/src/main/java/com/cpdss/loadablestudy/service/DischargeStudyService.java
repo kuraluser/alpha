@@ -86,6 +86,7 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -114,6 +115,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private CargoOperationRepository cargoOperationRepository;
+  @Autowired private CargoNominationOperationDetailsRepository cargoNominationOperationRepository;
   @Autowired private SynopticService synopticService;
   @Autowired private CowDetailService cowDetailService;
   @Autowired private PortInstructionService portInstructionService;
@@ -287,18 +289,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         ohq -> {
           OnHandQuantity dischargeOHQ = new OnHandQuantity();
           dischargeOHQ.setActualArrivalQuantity(ohq.getActualArrivalQuantity());
-          dischargeOHQ.setActualDepartureQuantity(ohq.getActualDepartureQuantity());
-          dischargeOHQ.setArrivalQuantity(ohq.getArrivalQuantity());
-          dischargeOHQ.setArrivalVolume(ohq.getArrivalVolume());
-          dischargeOHQ.setDensity(ohq.getDensity());
-          dischargeOHQ.setDepartureQuantity(ohq.getDepartureQuantity());
-          dischargeOHQ.setDepartureVolume(ohq.getDepartureVolume());
-          dischargeOHQ.setFuelTypeXId(ohq.getFuelTypeXId());
-          dischargeOHQ.setIsActive(ohq.getIsActive());
+          BeanUtils.copyProperties(ohq, dischargeOHQ);
           dischargeOHQ.setLoadableStudy(savedDischargeport.getLoadableStudy());
           dischargeOHQ.setPortRotation(savedDischargeport);
-          dischargeOHQ.setPortXId(ohq.getPortXId());
-          dischargeOHQ.setTankXId(ohq.getTankXId());
           dischargeOHQList.add(dischargeOHQ);
         });
     return dischargeOHQList;
@@ -317,35 +310,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     synopticalData.forEach(
         data -> {
           SynopticalTable dischargeSynoptical = new SynopticalTable();
-          dischargeSynoptical.setConstantActual(data.getConstantActual());
-          dischargeSynoptical.setConstantPlanned(data.getConstantPlanned());
-          dischargeSynoptical.setDeadWeightActual(data.getDeadWeightActual());
-          dischargeSynoptical.setDeadWeightPlanned(data.getDeadWeightPlanned());
-          dischargeSynoptical.setDisplacementActual(data.getDisplacementActual());
-          dischargeSynoptical.setDisplacementPlanned(data.getDisplacementPlanned());
-          dischargeSynoptical.setDistance(data.getDistance());
-          dischargeSynoptical.setEtaActual(data.getEtaActual());
-          dischargeSynoptical.setEtdActual(data.getEtdActual());
-          dischargeSynoptical.setHwTideFrom(data.getHwTideFrom());
-          dischargeSynoptical.setHwTideTimeFrom(data.getHwTideTimeFrom());
-          dischargeSynoptical.setHwTideTimeTo(data.getHwTideTimeTo());
-          dischargeSynoptical.setHwTideTo(data.getHwTideTo());
-          dischargeSynoptical.setInPortHours(data.getInPortHours());
-          dischargeSynoptical.setIsActive(data.getIsActive());
+          BeanUtils.copyProperties(data, dischargeSynoptical);
           dischargeSynoptical.setLoadableStudyPortRotation(entity);
           dischargeSynoptical.setLoadableStudyXId(entity.getLoadableStudy().getId());
-          dischargeSynoptical.setLwTideFrom(data.getLwTideFrom());
-          dischargeSynoptical.setLwTideTimeFrom(data.getLwTideTimeFrom());
-          dischargeSynoptical.setLwTideTimeTo(data.getLwTideTimeTo());
-          dischargeSynoptical.setLwTideTo(data.getLwTideTo());
-          dischargeSynoptical.setOperationType(data.getOperationType());
-          dischargeSynoptical.setOthersActual(data.getOthersActual());
-          dischargeSynoptical.setOthersPlanned(data.getOthersPlanned());
-          dischargeSynoptical.setPortXid(data.getPortXid());
-          dischargeSynoptical.setRunningHours(data.getRunningHours());
-          dischargeSynoptical.setSpeed(data.getSpeed());
-          dischargeSynoptical.setTimeOfSunrise(data.getTimeOfSunrise());
-          dischargeSynoptical.setTimeOfSunSet(data.getTimeOfSunSet());
           dischargeSynopticalList.add(dischargeSynoptical);
         });
 
@@ -373,6 +340,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     dischargeStudy.setPlanningTypeXId(2);
     dischargeStudy.setLoadableStudyStatus(
         loadableStudyStatusRepository.getOne(LOADABLE_STUDY_INITIAL_STATUS_ID));
+    dischargeStudy.setIsPortsComplete(true);
     dischargeStudy.setDraftMark(loadableStudy.getDraftMark());
     dischargeStudy.setConfirmedLoadableStudyId(loadableStudy.getId());
     LoadableStudy savedDischargeStudy = dischargeStudyRepository.save(dischargeStudy);
@@ -1176,6 +1144,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     if (portRotations == null) {
       return;
     }
+
     LoadableStudyPortRotation newPort = portRotations.get(portRotations.size() - 1);
 
     if (newPort.getId() != portRotationId) {
@@ -1241,17 +1210,33 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     newPortCargo.stream()
         .forEach(
             cargo -> {
-              Set<CargoNominationPortDetails> newPortDetails =
-                  cargoNominationService.createCargoNominationPortDetails(
-                      cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
-              if (cargo.getCargoNominationPortDetails() != null
-                  && !cargo.getCargoNominationPortDetails().isEmpty()) {
-                cargo.getCargoNominationPortDetails().addAll(newPortDetails);
-              } else {
-                cargo.setCargoNominationPortDetails(newPortDetails);
+              // Bug fix - DSS - 4493 - Checking for duplicate entry in Cargo nomination
+              // operation table
+              if (!checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId())) {
+                Set<CargoNominationPortDetails> newPortDetails =
+                    cargoNominationService.createCargoNominationPortDetails(
+                        cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
+                if (cargo.getCargoNominationPortDetails() != null
+                    && !cargo.getCargoNominationPortDetails().isEmpty()) {
+                  cargo.getCargoNominationPortDetails().addAll(newPortDetails);
+                } else {
+                  cargo.setCargoNominationPortDetails(newPortDetails);
+                }
               }
             });
     return cargos;
+  }
+
+  /**
+   * Method used to check if cargo nomination and port combo already present in DB This check is
+   * needed to avoid duplication when user delete/rename a discharge port and later add the same
+   * port. Bug fix - DSS - 4493 - Checking if for duplicate entry in Cargo nomination
+   */
+  private Boolean checkIfCargoNominationAlreadyPresent(CargoNomination cargo, Long portXId) {
+    CargoNominationPortDetails cargoNominationOperation =
+        cargoNominationOperationRepository.findByCargoNominationAndPortIdAndIsActiveTrue(
+            cargo, portXId);
+    return cargoNominationOperation != null ? true : false;
   }
 
   private List<LoadableStudyPortRotation> getDischargeStudyPortRotations(Long loadableStudyId)
@@ -1279,8 +1264,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       return;
     }
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
-    // finds the DS ports which is converted to DIsharging from another opertaion ID.
-    // These ports will be missing the cargo nomination records so adding cargo nominations.
+    // finds the DS ports which is converted to DIsharging from another opertaion
+    // ID.
+    // These ports will be missing the cargo nomination records so adding cargo
+    // nominations.
     Set<Long> nominationPortIds =
         cargos.stream()
             .flatMap(x -> x.getCargoNominationPortDetails().stream())
@@ -1298,7 +1285,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       cargoNominationService.saveAll(
           createNewPortCargoNominations(loadableStudyId, dischargingPorts.get(0)));
     }
-    LoadableStudyPortRotation dischargeStudyPortRotation = dischargeStudyPortRotations.get(0);
     Set<CargoNomination> firstPortCargos =
         cargos.stream()
             .filter(
@@ -1312,11 +1298,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     cargoNominationService.getMaxQuantityForCargoNomination(firstPortCargoIds, firstPortCargos);
+    Optional<LoadableStudyPortRotation> dischargeStudyPortRotation =
+        dischargeStudyPortRotations.stream()
+            .filter(port -> port.getOperation().getId().equals(DISCHARGING_OPERATION_ID))
+            .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
+            .findFirst();
+
     cargos.stream()
         .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
         .forEach(
             operation -> {
-              if (!operation.getPortId().equals(dischargeStudyPortRotation.getPortXId())) {
+              if (!dischargeStudyPortRotation.isEmpty()
+                  && !operation.getPortId().equals(dischargeStudyPortRotation.get().getPortXId())) {
                 operation.setQuantity(new BigDecimal(0));
                 operation.setMode(1L);
               } else {

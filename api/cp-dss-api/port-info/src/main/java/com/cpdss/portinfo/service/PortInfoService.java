@@ -18,12 +18,10 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.entity.BerthInfo;
 import com.cpdss.portinfo.entity.BerthManifold;
 import com.cpdss.portinfo.entity.CargoPortMapping;
-import com.cpdss.portinfo.entity.Country;
 import com.cpdss.portinfo.entity.PortInfo;
 import com.cpdss.portinfo.entity.Timezone;
 import com.cpdss.portinfo.repository.*;
 import com.google.protobuf.Empty;
-
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -521,37 +519,35 @@ public class PortInfoService extends PortInfoServiceImplBase {
       portDetail.addBerthDetails(builder2);
     }
   }
-  
-  /**
-   * Get all country details
-   */
+
+  /** Get all country details */
   @Override
-	public void getAllCountries(Empty request, StreamObserver<CountryReply> responseObserver) {
-	  Builder builder = CountryReply.newBuilder();
-	  
-	    try {
-	    	List<Object[]> list = countryRepository.findCountryIdAndNames();
-	        log.info("Fetch all country success with size {}", list.size());
-	        for (Object[] obj  : list) {
-	        	com.cpdss.common.generated.PortInfo.Country.Builder country = 
-	        			com.cpdss.common.generated.PortInfo.Country.newBuilder();
-	        	long id = (long) obj[0];
-	        	country.setId(id);
-	        	String name = (String) obj[1];
-	        	country.setCountryName(name);
-	        	builder.addCountries(country);
-	        }
-	        ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-	        responseStatus.setStatus(SUCCESS);
-	        builder.setResponseStatus(responseStatus);
-	      } catch (Exception e) {
-	        log.error("Fetch country failed, e - {}", e.getMessage());
-	        ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-	        responseStatus.setStatus(FAILED);
-	        builder.setResponseStatus(responseStatus);
-	      } finally {
-	        responseObserver.onNext(builder.build());
-	        responseObserver.onCompleted();
-	      }
-	}
+  public void getAllCountries(Empty request, StreamObserver<CountryReply> responseObserver) {
+    Builder builder = CountryReply.newBuilder();
+
+    try {
+      List<Object[]> list = countryRepository.findCountryIdAndNames();
+      log.info("Fetch all country success with size {}", list.size());
+      for (Object[] obj : list) {
+        com.cpdss.common.generated.PortInfo.Country.Builder country =
+            com.cpdss.common.generated.PortInfo.Country.newBuilder();
+        long id = (long) obj[0];
+        country.setId(id);
+        String name = (String) obj[1];
+        country.setCountryName(name);
+        builder.addCountries(country);
+      }
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      builder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Fetch country failed, e - {}", e.getMessage());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

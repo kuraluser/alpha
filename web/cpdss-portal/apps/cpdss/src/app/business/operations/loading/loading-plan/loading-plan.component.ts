@@ -7,7 +7,7 @@ import { LoadingDischargingTransformationService } from '../../services/loading-
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ILoadingPlanDetails, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
-import { LoadingApiService } from '../../services/loading-api.service';
+import { OperationsApiService } from '../../services/operations-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { IPermission } from '../../../../shared/models/user-profile.model';
@@ -59,9 +59,9 @@ export class LoadingPlanComponent implements OnInit {
 
   constructor(
     private loadingPlanApiService: LoadingPlanApiService,
+    private operationsApiService: OperationsApiService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadingApiService: LoadingApiService,
     private messageService: MessageService,
     private translateService: TranslateService
   ) { }
@@ -154,7 +154,7 @@ export class LoadingPlanComponent implements OnInit {
    */
   async getAlgoErrorMessage(status) {
     const translationKeys = await this.translateService.get(['GENERATE_LOADABLE_PLAN_ERROR_OCCURED', 'GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE']).toPromise();
-    const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId, status.status).toPromise();
+    const algoError: IAlgoResponse = await this.operationsApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId, status.status).toPromise();
     if (algoError.responseStatus.status === 'SUCCESS') {
       this.errorMessage = algoError.algoErrors;
       this.errorPopUp = status.value;

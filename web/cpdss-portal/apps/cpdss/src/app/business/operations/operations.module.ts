@@ -19,7 +19,6 @@ import { OperationsApiService } from './services/operations-api.service';
 import { RateUnitDropdownModule } from '../core/components/rate-unit-dropdown/rate-unit-dropdown.module';
 import { QuantityDecimalFormatPipe } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { QuantityDecimalFormatPipeModule } from '../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
-import { LoadingApiService } from './services/loading-api.service';
 
 /**
  * Module class for operations module
@@ -45,6 +44,6 @@ import { LoadingApiService } from './services/loading-api.service';
     RateUnitDropdownModule,
     QuantityDecimalFormatPipeModule
   ],
-  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService , QuantityDecimalFormatPipe ,LoadingApiService]
+  providers: [VesselsApiService, RulesService, LoadingDischargingTransformationService, QuantityPipe, OperationsApiService , QuantityDecimalFormatPipe]
 })
 export class OperationsModule { }

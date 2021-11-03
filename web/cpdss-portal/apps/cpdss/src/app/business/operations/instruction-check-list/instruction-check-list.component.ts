@@ -62,6 +62,7 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
   };
   hasUnsavedChanges = false;
   private ngUnsubscribe: Subject<any> = new Subject();
+  readonly OPERATIONS = OPERATIONS;
 
   constructor(
     private translateService: TranslateService,
@@ -93,12 +94,12 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
    */
 
   getSaveButtonStatus() {
-    this.loadingDischargingTransformationService.disableSaveButton.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
+    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableSaveButton = status;
-    })
+    });
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
-    })
+    });
   }
 
   /**
@@ -119,7 +120,7 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
    */
   setSelectedData() {
     this.selectedData = [];
-    this.instructionListData.map(item => {
+    this.instructionListData?.map(item => {
       if (item.children?.length) {
         let selectedCount = 0;
         item.children.map(child => {
