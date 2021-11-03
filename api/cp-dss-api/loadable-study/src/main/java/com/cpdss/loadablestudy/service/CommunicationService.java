@@ -464,8 +464,7 @@ public class CommunicationService {
                 .orElseThrow(RuntimeException::new);
 
         // Check timer and update timeout
-        final long start =
-            Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime()).getTime();
+        final long start = Timestamp.valueOf(communicationStatusRow.getCreatedDateTime()).getTime();
         final long end = start + timeLimit * 1000; // Convert time to ms
         final long currentTime = System.currentTimeMillis();
         if (currentTime > end) {
