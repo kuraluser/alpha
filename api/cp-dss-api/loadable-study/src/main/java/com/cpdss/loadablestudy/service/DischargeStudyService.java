@@ -290,6 +290,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           OnHandQuantity dischargeOHQ = new OnHandQuantity();
           dischargeOHQ.setActualArrivalQuantity(ohq.getActualArrivalQuantity());
           BeanUtils.copyProperties(ohq, dischargeOHQ);
+          dischargeOHQ.setId(null);
           dischargeOHQ.setLoadableStudy(savedDischargeport.getLoadableStudy());
           dischargeOHQ.setPortRotation(savedDischargeport);
           dischargeOHQList.add(dischargeOHQ);
@@ -311,6 +312,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         data -> {
           SynopticalTable dischargeSynoptical = new SynopticalTable();
           BeanUtils.copyProperties(data, dischargeSynoptical);
+          dischargeSynoptical.setId(null);
           dischargeSynoptical.setLoadableStudyPortRotation(entity);
           dischargeSynoptical.setLoadableStudyXId(entity.getLoadableStudy().getId());
           dischargeSynopticalList.add(dischargeSynoptical);
