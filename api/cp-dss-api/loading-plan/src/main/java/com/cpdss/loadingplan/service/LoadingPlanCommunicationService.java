@@ -284,7 +284,10 @@ public class LoadingPlanCommunicationService {
       PyUser pyUser = null;
       loadingPlanStagingService.updateStatusForProcessId(
           processId, StagingStatus.IN_PROGRESS.getStatus());
-      log.info("updated status to in_progress for processId:" + processId);
+      log.info(
+          "updated status to in_progress for processId:{} and time:{}",
+          processId,
+          LocalDateTime.now());
       String processGroupId = null;
       Integer arrivalDeparture = null;
       processGroupId = entry.getValue().get(0).getProcessGroupId();
