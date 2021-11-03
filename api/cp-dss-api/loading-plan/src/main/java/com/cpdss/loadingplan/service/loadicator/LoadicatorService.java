@@ -163,7 +163,7 @@ public class LoadicatorService {
     BigDecimal sg = null;
     List<BigDecimal> specificGravities =
         loadingPlanBallastDetails.stream()
-            .filter(ballast -> (ballast.getSg() != BigDecimal.ZERO) && (ballast.getSg() != null))
+            .filter(ballast -> (ballast.getSg() != null) && (ballast.getSg() != BigDecimal.ZERO))
             .map(ballast -> ballast.getSg())
             .collect(Collectors.toList());
 
