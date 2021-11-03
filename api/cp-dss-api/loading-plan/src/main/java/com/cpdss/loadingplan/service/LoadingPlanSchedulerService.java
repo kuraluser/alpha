@@ -153,7 +153,7 @@ public class LoadingPlanSchedulerService {
                       ScheduledTaskProperties properties = new ScheduledTaskProperties();
                       properties.setTaskName(
                           "ULLAGE_DATA_UPDATE" + environment + "_" + vesssel.getVesselId());
-                      properties.setTaskFrequency(60);
+                      properties.setTaskFrequency(30);
                       properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                       properties.setTaskStartDate(dateTime.toLocalDate());
                       properties.setTaskStartTime(dateTime.toLocalTime());

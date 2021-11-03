@@ -183,8 +183,21 @@ public class LoadingPlanAlgoService {
           HttpStatusCode.BAD_REQUEST);
     }
     String processId = null;
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
+    Long status = null;
+    if (enableCommunication && env.equals("ship")) {
+      status = LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE;
+    } else {
+      status = LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID;
+    }
+    log.info("LoadingInformation status:{}",status);
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt = getLoadingInformationStatus(status);
+    // Set Loading Status
+    loadingInformationRepository.updateLoadingInfoWithInfoStatus(
+        loadingInfoStatusOpt.get(), false, false, loadingInfoOpt.get().getId());
+    //    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
+    //    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
+    //    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
+    //    loadingInformationRepository.save(loadingInfoOpt.get());
     if (enableCommunication && env.equals("ship")) {
       processId = UUID.randomUUID().toString();
       JsonArray jsonArray =
@@ -242,11 +255,7 @@ public class LoadingPlanAlgoService {
       processId = response.getProcessId();
       log.info("LoadingInformationAlgoResponse:{}", response);
     }
-    // Set Loading Status
-    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
-    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
-    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
-    loadingInformationRepository.save(loadingInfoOpt.get());
+
     createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(), processId, loadingInfoStatusOpt.get(), null);
     builder.setLoadingInfoId(loadingInfoOpt.get().getId());
