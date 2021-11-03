@@ -57,7 +57,7 @@
         [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE,'disabled':!loadingSequenceComplete || !loadingSequenceTabPermission?.view}" class="tab-btn">
         {{'LOADING_SEQUENCE' | translate}}
         <div *ngIf="loadingSequenceComplete else notGenerated" class="pt-5">
-          <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}
+          <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED_CLICK'|translate}}
         </div>
         <ng-template #notGenerated>
           <div class="pt-5">
@@ -69,7 +69,7 @@
          [ngClass]="{'active' : currentTab === OPERATION_TAB.PLAN ,'disabled':!loadingPlanComplete || !loadingPlanTabPermission?.view}" class="tab-btn">
         {{'LOADING_PLAN' | translate}}
         <div *ngIf="loadingPlanComplete else incompletePlan" class="pt-5">
-          <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED'|translate}}
+          <div class="tab-status-icon pi pi-check completed"></div> {{'GENERATED_CLICK'|translate}}
         </div>
         <ng-template #incompletePlan>
           <div class="pt-5">
