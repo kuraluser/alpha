@@ -189,7 +189,7 @@ public class LoadingPlanAlgoService {
     } else {
       status = LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID;
     }
-    log.info("LoadingInformation status:{}",status);
+    log.info("LoadingInformation status:{}", status);
     Optional<LoadingInformationStatus> loadingInfoStatusOpt = getLoadingInformationStatus(status);
     // Set Loading Status
     loadingInformationRepository.updateLoadingInfoWithInfoStatus(

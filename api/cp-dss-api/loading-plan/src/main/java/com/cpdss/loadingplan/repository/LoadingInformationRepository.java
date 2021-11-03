@@ -94,7 +94,7 @@ public interface LoadingInformationRepository
   @Transactional
   @Modifying
   @Query(
-      "UPDATE LoadingInformation SET loadingInformationStatus = ?1, isLoadingSequenceGenerated=?2, isLoadingPlanGenerated=?3 WHERE id = ?1")
+      "UPDATE LoadingInformation SET loadingInformationStatus = ?1, isLoadingSequenceGenerated=?2, isLoadingPlanGenerated=?3 WHERE id = ?4")
   void updateLoadingInfoWithInfoStatus(
       LoadingInformationStatus loadingInformationStatus,
       boolean sequenceGenerated,
