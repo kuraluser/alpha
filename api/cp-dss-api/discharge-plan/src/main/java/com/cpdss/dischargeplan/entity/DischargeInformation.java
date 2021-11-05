@@ -156,6 +156,9 @@ public class DischargeInformation extends EntityDoc {
   @Column(name = "discharging_plan_details_from_algo")
   private String dischargingPlanDetailsFromAlgo;
 
+  @Column(name = "discharge_study_process_xid")
+  private String dischargeStudyProcessId;
+
   public DischargeInformation(Long pk) {
     this.setId(pk);
   }

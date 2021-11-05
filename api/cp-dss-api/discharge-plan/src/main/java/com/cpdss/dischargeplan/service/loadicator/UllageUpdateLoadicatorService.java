@@ -588,7 +588,8 @@ public class UllageUpdateLoadicatorService {
       DischargeInformation dischargeInformation,
       LoadingInfoLoadicatorDataRequest request,
       UllageEditLoadicatorAlgoRequest algoRequest) {
-    algoRequest.setLoadingInformationId(dischargeInformation.getId());
+    algoRequest.setDischargingInformationId(dischargeInformation.getId());
+    algoRequest.setDischargeStudyProcessId(dischargeInformation.getDischargeStudyProcessId());
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(dischargeInformation.getVesselXid());
     algoRequest.setPortId(dischargeInformation.getPortXid());
@@ -674,7 +675,8 @@ public class UllageUpdateLoadicatorService {
       DischargeInformation dischargeInformation,
       DischargingInfoLoadicatorDataRequest request,
       UllageEditLoadicatorAlgoRequest algoRequest) {
-    algoRequest.setLoadingInformationId(dischargeInformation.getId());
+    algoRequest.setDischargingInformationId(dischargeInformation.getId());
+    algoRequest.setDischargeStudyProcessId(dischargeInformation.getDischargeStudyProcessId());
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(dischargeInformation.getVesselXid());
     algoRequest.setPortId(dischargeInformation.getPortXid());

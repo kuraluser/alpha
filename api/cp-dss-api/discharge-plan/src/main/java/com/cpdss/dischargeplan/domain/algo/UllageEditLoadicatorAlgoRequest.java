@@ -11,8 +11,8 @@ public class UllageEditLoadicatorAlgoRequest {
 
   private String module = DischargePlanConstants.DISCHARGING_INFORMATION_REQUEST_JSON_MODULE_NAME;
   private String processId;
-  private String loadableStudyProcessId;
-  private Long loadingInformationId;
+  private Long dischargingInformationId;
+  private String dischargeStudyProcessId;
   private Long vesselId;
   private Long portId;
   private List<LoadicatorStage> stages;

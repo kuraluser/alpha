@@ -382,7 +382,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public LoadingPlanAlgoResponse saveLoadingPlan(
-          Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest, String requestJsonString)
+      Long vesselId,
+      Long voyageId,
+      Long infoId,
+      LoadingPlanAlgoRequest loadingPlanAlgoRequest,
+      String requestJsonString)
       throws GenericServiceException, Exception {
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
     LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
@@ -2063,28 +2067,30 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   }*/
   @Override
-  public LoadingSimulatorJsonResponse getSimulatorJsonDataForLoading(Long vesselId, Long infoId, String correlationId) throws GenericServiceException, JsonProcessingException{
+  public LoadingSimulatorJsonResponse getSimulatorJsonDataForLoading(
+      Long vesselId, Long infoId, String correlationId)
+      throws GenericServiceException, JsonProcessingException {
     com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.Builder requestBuilder =
-            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.newBuilder();
+        com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.newBuilder();
     requestBuilder.setVesselId(vesselId);
     requestBuilder.setInfoId(infoId);
     com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply reply =
-            loadableStudyServiceBlockingStub.getLoadingSimulatorJsonData(requestBuilder.build());
+        loadableStudyServiceBlockingStub.getLoadingSimulatorJsonData(requestBuilder.build());
     LoadingSimulatorJsonResponse jsonResponse = new LoadingSimulatorJsonResponse();
     Object loadingJson = null;
     loadingJson =
-            new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .readValue(reply.getLoadingJson(), Object.class);
+        new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .readValue(reply.getLoadingJson(), Object.class);
     jsonResponse.setLoadingJson(loadingJson);
     Object loadicatorJson = null;
     loadicatorJson =
-            new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .readValue(reply.getLoadicatorJson(), Object.class);
+        new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .readValue(reply.getLoadicatorJson(), Object.class);
     jsonResponse.setLoadicatorJson(loadingJson);
     jsonResponse.setResponseStatus(
-            new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return jsonResponse;
   }
 }

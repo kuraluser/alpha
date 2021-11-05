@@ -3,7 +3,6 @@ package com.cpdss.gateway.controller;
 
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
@@ -11,16 +10,9 @@ import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
-import com.cpdss.gateway.service.loadingplan.GenerateLoadingPlanExcelReportService;
-import com.cpdss.gateway.service.loadingplan.LoadingInformationBuilderService;
-import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
-import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
-import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import com.cpdss.gateway.service.loadingplan.*;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingInstructionService;
 import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +24,9 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @Log4j2
 @Validated
@@ -599,10 +594,11 @@ public class LoadingPlanController {
       String requestJsonString = new ObjectMapper().writeValueAsString(requestJson);
       log.info("Writting in string from json using mapper");
       LoadingPlanAlgoRequest loadingPlanAlgoRequest =
-              new ObjectMapper()
-                      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                      .readValue(requestJsonString, LoadingPlanAlgoRequest.class);
-      return loadingPlanService.saveLoadingPlan(vesselId, voyageId, infoId, loadingPlanAlgoRequest, requestJsonString);
+          new ObjectMapper()
+              .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+              .readValue(requestJsonString, LoadingPlanAlgoRequest.class);
+      return loadingPlanService.saveLoadingPlan(
+          vesselId, voyageId, infoId, loadingPlanAlgoRequest, requestJsonString);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in Save Loading Plan API");
       e.printStackTrace();
@@ -972,30 +968,28 @@ public class LoadingPlanController {
    * @throws CommonRestException
    */
   @GetMapping(
-          value =
-                  "/simulator-json/vessels/{vesselId}/loading-info/{infoId}",
-          produces = MediaType.APPLICATION_JSON_VALUE)
+      value = "/simulator-json/vessels/{vesselId}/loading-info/{infoId}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public LoadingSimulatorJsonResponse getSimulatorJsonDataForLoading(
-          @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
-          @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
-                  Long infoId,
-          @RequestHeader HttpHeaders headers)
-          throws CommonRestException {
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
     try {
       return this.loadingPlanService.getSimulatorJsonDataForLoading(
-              vesselId, infoId, headers.getFirst(CORRELATION_ID_HEADER));
+          vesselId, infoId, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error(
-              "GenericServiceException when fetching simulator json data against loadable study", e);
+          "GenericServiceException when fetching simulator json data against loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception when fetching simulator json data for loadable study", e);
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
   }
 }

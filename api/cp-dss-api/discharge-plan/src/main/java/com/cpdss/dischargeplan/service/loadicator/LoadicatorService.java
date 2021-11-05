@@ -1,61 +1,26 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service.loadicator;
 
-import static java.lang.String.valueOf;
-
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.CargoInfo;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
-import com.cpdss.common.generated.CargoInfoServiceGrpc;
-import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
-import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
-import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
-import com.cpdss.common.generated.LoadableStudy.JsonRequest;
-import com.cpdss.common.generated.LoadableStudy.LDtrim;
+import com.cpdss.common.generated.LoadableStudy.*;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
-import com.cpdss.common.generated.Loadicator;
 import com.cpdss.common.generated.Loadicator.StowagePlan;
 import com.cpdss.common.generated.Loadicator.StowagePlan.Builder;
-import com.cpdss.common.generated.LoadicatorServiceGrpc;
-import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.PortReply;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
-import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.algo.LDIntactStability;
 import com.cpdss.dischargeplan.domain.algo.LDStrength;
-import com.cpdss.dischargeplan.domain.algo.LDTrim;
-import com.cpdss.dischargeplan.domain.algo.LoadicatorAlgoRequest;
-import com.cpdss.dischargeplan.domain.algo.LoadicatorStage;
-import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.DischargingPlanBallastDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanPortWiseDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanRobDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanStowageDetails;
-import com.cpdss.dischargeplan.entity.DischargingSequence;
-import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanBallastDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanPortWiseDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanRobDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanStowageDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingSequenceRepository;
+import com.cpdss.dischargeplan.domain.algo.*;
+import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.dischargeplan.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +28,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.String.valueOf;
 
 @Slf4j
 @Service
@@ -683,6 +655,7 @@ public class LoadicatorService {
       LoadicatorAlgoRequest algoRequest)
       throws GenericServiceException {
     algoRequest.setDischargingInformationId(dischargeInformation.getId());
+    algoRequest.setDischargeStudyProcessId(dischargeInformation.getDischargeStudyProcessId());
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(dischargeInformation.getVesselXid());
     algoRequest.setPortId(dischargeInformation.getPortXid());
