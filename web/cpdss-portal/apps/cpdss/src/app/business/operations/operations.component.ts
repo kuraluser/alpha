@@ -48,6 +48,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
 
   voyageDistance: number;
   operationId: number;
+  operation: OPERATIONS;
   readonly OPERATIONS = OPERATIONS;
   readonly OPERATION_TAB = OPERATION_TAB;
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
@@ -77,7 +78,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
         this.onPortSelection(this.selectedPort);
       }
     });
-    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.pipe(takeUntil(this._ngUnsubscribe)).subscribe((status) => {
       this.generatePatternStatus = status;
     });
   }
@@ -182,11 +183,14 @@ export class OperationsComponent implements OnInit, OnDestroy {
     this.loadingDischargingTransformationService.isDischargeStarted(false);
     this.operationId = port?.operationId;
     this.loadingDischargingTransformationService.portRotationId = port?.portRotationId;
+    this.operation = null;
       if (port?.operationId === 1) {
+        this.operation = OPERATIONS.LOADING;
         this.router.navigate(['loading', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
         this.loadingDischargingTransformationService.isDischargeStarted(this.selectedVoyage.isDischargeStarted);
       } else if (port?.operationId === 2 && this.selectedVoyage?.isDischargeStarted && this.selectedVoyage?.confirmedDischargeStudyId) {
         this.router.navigate(['discharging', this.vessel?.id, this.selectedVoyage?.id, port?.portRotationId], { relativeTo: this.activatedRoute });
+        this.operation = OPERATIONS.DISCHARGING;
       }
   }
 
