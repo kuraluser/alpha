@@ -206,6 +206,8 @@ service LoadableStudyService {
 	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
 	
 	rpc updateDischargeQuantityCargoDetails(DischargeQuantityCargoDetailsRequest) returns (ResponseStatus){}
+
+	rpc GetLoadingSimulatorJsonData(LoadingSimulatorJsonRequest) returns (LoadingSimulatorJsonReply){}
 }
 
 service SynopticalOperationService{
@@ -1621,4 +1623,15 @@ message SimulatorJsonRequest{
 message SimulatorJsonReply{
     ResponseStatus responseStatus = 1;
     string departureCondition = 2;
+}
+
+message LoadingSimulatorJsonRequest{
+    int64 vesselId = 1;
+    int64 infoId = 2;
+}
+
+message LoadingSimulatorJsonReply{
+    ResponseStatus responseStatus = 1;
+    string loadicatorJson = 2;
+    string loadingJson = 3;
 }

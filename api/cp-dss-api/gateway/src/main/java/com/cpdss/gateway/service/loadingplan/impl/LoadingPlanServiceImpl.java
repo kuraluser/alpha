@@ -39,6 +39,7 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -381,7 +382,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public LoadingPlanAlgoResponse saveLoadingPlan(
-      Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest)
+          Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest, String requestJsonString)
       throws GenericServiceException, Exception {
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
     LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
@@ -399,7 +400,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           this.saveJson(
               infoId,
               GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID,
-              objectMapper.writeValueAsString(loadingPlanAlgoRequest));
+              objectMapper.writeValueAsString(requestJsonString));
       if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
@@ -2061,4 +2062,29 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     }
 
   }*/
+  @Override
+  public LoadingSimulatorJsonResponse getSimulatorJsonDataForLoading(Long vesselId, Long infoId, String correlationId) throws GenericServiceException, JsonProcessingException{
+    com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.Builder requestBuilder =
+            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.newBuilder();
+    requestBuilder.setVesselId(vesselId);
+    requestBuilder.setInfoId(infoId);
+    com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply reply =
+            loadableStudyServiceBlockingStub.getLoadingSimulatorJsonData(requestBuilder.build());
+    LoadingSimulatorJsonResponse jsonResponse = new LoadingSimulatorJsonResponse();
+    Object loadingJson = null;
+    loadingJson =
+            new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .readValue(reply.getLoadingJson(), Object.class);
+    jsonResponse.setLoadingJson(loadingJson);
+    Object loadicatorJson = null;
+    loadicatorJson =
+            new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .readValue(reply.getLoadicatorJson(), Object.class);
+    jsonResponse.setLoadicatorJson(loadingJson);
+    jsonResponse.setResponseStatus(
+            new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return jsonResponse;
+  }
 }

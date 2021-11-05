@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
@@ -11,6 +12,8 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface LoadingPlanService {
@@ -34,7 +37,7 @@ public interface LoadingPlanService {
       throws GenericServiceException;
 
   LoadingPlanAlgoResponse saveLoadingPlan(
-      Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest)
+          Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest, String requestJsonString)
       throws GenericServiceException, Exception;
 
   LoadingPlanResponse getLoadingPlan(Long vesselId, Long voyageId, Long infoId, Long portRotationId)
@@ -68,4 +71,6 @@ public interface LoadingPlanService {
       boolean isLoading,
       Long vesselId)
       throws IOException, GenericServiceException;
+
+  LoadingSimulatorJsonResponse getSimulatorJsonDataForLoading(Long vesselId, Long infoId, String correlationId) throws GenericServiceException, JsonProcessingException;
 }
