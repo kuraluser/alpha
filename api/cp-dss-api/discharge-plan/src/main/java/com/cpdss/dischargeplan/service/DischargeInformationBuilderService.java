@@ -598,7 +598,7 @@ public class DischargeInformationBuilderService {
 
     try {
       List<DischargingDelay> delays =
-          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(
+          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActiveOrderById(
               disEntity.getId(), true);
       for (DischargingDelay source : delays) {
         DischargeDelays.Builder builder2 = DischargeDelays.newBuilder();
@@ -613,6 +613,7 @@ public class DischargeInformationBuilderService {
             .ifPresent(builder2::setCargoNominationId); // can empty of initial delay
         builder2.addAllReasonForDelayIds(
             source.getDischargingDelayReasons().stream()
+                .filter(DischargingDelayReason::getIsActive)
                 .map(DischargingDelayReason::getReasonForDelay)
                 .map(ReasonForDelay::getId)
                 .collect(Collectors.toList()));
