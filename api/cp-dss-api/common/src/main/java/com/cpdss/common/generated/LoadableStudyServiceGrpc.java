@@ -3576,6 +3576,59 @@ public final class LoadableStudyServiceGrpc {
     return getUpdateDischargeQuantityCargoDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+      getGetLoadingSimulatorJsonDataMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadingSimulatorJsonData",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+      getGetLoadingSimulatorJsonDataMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+        getGetLoadingSimulatorJsonDataMethod;
+    if ((getGetLoadingSimulatorJsonDataMethod =
+            LoadableStudyServiceGrpc.getGetLoadingSimulatorJsonDataMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadingSimulatorJsonDataMethod =
+                LoadableStudyServiceGrpc.getGetLoadingSimulatorJsonDataMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadingSimulatorJsonDataMethod =
+              getGetLoadingSimulatorJsonDataMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetLoadingSimulatorJsonData"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "GetLoadingSimulatorJsonData"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadingSimulatorJsonDataMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -4272,6 +4325,16 @@ public final class LoadableStudyServiceGrpc {
           getUpdateDischargeQuantityCargoDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadingSimulatorJsonData(
+        com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadingSimulatorJsonDataMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4767,6 +4830,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest,
                       com.cpdss.common.generated.Common.ResponseStatus>(
                       this, METHODID_UPDATE_DISCHARGE_QUANTITY_CARGO_DETAILS)))
+          .addMethod(
+              getGetLoadingSimulatorJsonDataMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>(
+                      this, METHODID_GET_LOADING_SIMULATOR_JSON_DATA)))
           .build();
     }
   }
@@ -5572,6 +5642,18 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadingSimulatorJsonData(
+        com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetLoadingSimulatorJsonDataMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -6112,6 +6194,14 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateDischargeQuantityCargoDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply
+        getLoadingSimulatorJsonData(
+            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetLoadingSimulatorJsonDataMethod(), getCallOptions(), request);
     }
   }
 
@@ -6749,6 +6839,15 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getUpdateDischargeQuantityCargoDetailsMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+        getLoadingSimulatorJsonData(
+            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetLoadingSimulatorJsonDataMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6821,6 +6920,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_BY_PORT_ROTATION_ID = 67;
   private static final int METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA = 68;
   private static final int METHODID_UPDATE_DISCHARGE_QUANTITY_CARGO_DETAILS = 69;
+  private static final int METHODID_GET_LOADING_SIMULATOR_JSON_DATA = 70;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -7319,6 +7419,13 @@ public final class LoadableStudyServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADING_SIMULATOR_JSON_DATA:
+          serviceImpl.getLoadingSimulatorJsonData(
+              (com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -7453,6 +7560,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadableStudyPortRotationByPortRotationIdMethod())
                       .addMethod(getGetLoadableStudySimulatorJsonDataMethod())
                       .addMethod(getUpdateDischargeQuantityCargoDetailsMethod())
+                      .addMethod(getGetLoadingSimulatorJsonDataMethod())
                       .build();
         }
       }

@@ -6216,7 +6216,7 @@ public class LoadableStudyService {
     loadableRuleRequestBuilder.setSectionId(sectionId);
     loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
     RuleUtility.buildRuleListForSave(
-        loadableRuleRequest, null, loadableRuleRequestBuilder, null, false, false);
+        loadableRuleRequest, null, loadableRuleRequestBuilder, null, null, false, false, false);
     LoadableRuleReply loadableRuleReply =
         loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
             loadableRuleRequestBuilder.build());

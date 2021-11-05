@@ -364,7 +364,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     builder.setVesselId(vesselId);
     builder.setSectionId(LOADING_RULE_MASTER_ID);
     builder.setLoadingInfoId(loadingInfoId);
-    RuleUtility.buildRuleListForSave(ruleRequest, null, null, builder, false, true);
+    RuleUtility.buildRuleListForSave(ruleRequest, null, null, builder, null,false, true, false);
     RuleResponse ruleResponse = this.loadingPlanGrpcService.saveOrGetLoadingPlanRules(builder);
     return ruleResponse;
   }

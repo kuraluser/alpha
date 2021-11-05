@@ -27,6 +27,7 @@ import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequ
 import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailStatusReply;
 import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
@@ -890,4 +891,28 @@ public class DischargeInformationRPCService
     Optional.ofNullable(response.getVesselXid()).ifPresent(builder::setVesselId);
     Optional.ofNullable(response.getVoyageXid()).ifPresent(builder::setVoyageId);
   }
+
+
+  @Override
+  public void getOrSaveRulesForDischargingPlan(
+         DischargeRuleRequest request,
+          StreamObserver<DischargeRuleReply> responseObserver) {
+    DischargeRuleReply.Builder builder =
+            DischargeRuleReply.newBuilder();
+    try {
+      dischargeInformationService.getOrSaveRulesForDischargingPlan(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+              ResponseStatus.newBuilder()
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage(e.getMessage())
+                      .setStatus(DischargePlanConstants.FAILED)
+                      .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
 }

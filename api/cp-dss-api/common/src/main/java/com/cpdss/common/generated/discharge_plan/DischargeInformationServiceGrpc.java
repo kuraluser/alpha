@@ -704,6 +704,59 @@ public final class DischargeInformationServiceGrpc {
     return getSavePostDischargeStageMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeRuleRequest,
+          com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
+      getGetOrSaveRulesForDischargingPlanMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetOrSaveRulesForDischargingPlan",
+      requestType = com.cpdss.common.generated.discharge_plan.DischargeRuleRequest.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargeRuleReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeRuleRequest,
+          com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
+      getGetOrSaveRulesForDischargingPlanMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargeRuleRequest,
+            com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
+        getGetOrSaveRulesForDischargingPlanMethod;
+    if ((getGetOrSaveRulesForDischargingPlanMethod =
+            DischargeInformationServiceGrpc.getGetOrSaveRulesForDischargingPlanMethod)
+        == null) {
+      synchronized (DischargeInformationServiceGrpc.class) {
+        if ((getGetOrSaveRulesForDischargingPlanMethod =
+                DischargeInformationServiceGrpc.getGetOrSaveRulesForDischargingPlanMethod)
+            == null) {
+          DischargeInformationServiceGrpc.getGetOrSaveRulesForDischargingPlanMethod =
+              getGetOrSaveRulesForDischargingPlanMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan.DischargeRuleRequest,
+                          com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetOrSaveRulesForDischargingPlan"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeRuleRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeRuleReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeInformationServiceMethodDescriptorSupplier(
+                              "GetOrSaveRulesForDischargingPlan"))
+                      .build();
+        }
+      }
+    }
+    return getGetOrSaveRulesForDischargingPlanMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeInformationServiceStub> factory =
@@ -924,6 +977,15 @@ public final class DischargeInformationServiceGrpc {
           getSavePostDischargeStageMethod(), responseObserver);
     }
 
+    /** */
+    public void getOrSaveRulesForDischargingPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeRuleRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetOrSaveRulesForDischargingPlanMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1021,6 +1083,13 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargeInformation,
                       com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>(
                       this, METHODID_SAVE_POST_DISCHARGE_STAGE)))
+          .addMethod(
+              getGetOrSaveRulesForDischargingPlanMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargeRuleRequest,
+                      com.cpdss.common.generated.discharge_plan.DischargeRuleReply>(
+                      this, METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING_PLAN)))
           .build();
     }
   }
@@ -1239,6 +1308,17 @@ public final class DischargeInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getOrSaveRulesForDischargingPlan(
+        com.cpdss.common.generated.discharge_plan.DischargeRuleRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetOrSaveRulesForDischargingPlanMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1404,6 +1484,14 @@ public final class DischargeInformationServiceGrpc {
             com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSavePostDischargeStageMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargeRuleReply
+        getOrSaveRulesForDischargingPlan(
+            com.cpdss.common.generated.discharge_plan.DischargeRuleRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetOrSaveRulesForDischargingPlanMethod(), getCallOptions(), request);
     }
   }
 
@@ -1576,6 +1664,16 @@ public final class DischargeInformationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSavePostDischargeStageMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
+        getOrSaveRulesForDischargingPlan(
+            com.cpdss.common.generated.discharge_plan.DischargeRuleRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetOrSaveRulesForDischargingPlanMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_GET_DISCHARGE_INFORMATION = 0;
@@ -1591,6 +1689,7 @@ public final class DischargeInformationServiceGrpc {
   private static final int METHODID_SAVE_DISCHARGING_INFO_STAGES = 10;
   private static final int METHODID_SAVE_COW_PLAN = 11;
   private static final int METHODID_SAVE_POST_DISCHARGE_STAGE = 12;
+  private static final int METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING_PLAN = 13;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1704,6 +1803,13 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>)
                   responseObserver);
           break;
+        case METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING_PLAN:
+          serviceImpl.getOrSaveRulesForDischargingPlan(
+              (com.cpdss.common.generated.discharge_plan.DischargeRuleRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargeRuleReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1782,6 +1888,7 @@ public final class DischargeInformationServiceGrpc {
                       .addMethod(getSaveDischargingInfoStagesMethod())
                       .addMethod(getSaveCowPlanMethod())
                       .addMethod(getSavePostDischargeStageMethod())
+                      .addMethod(getGetOrSaveRulesForDischargingPlanMethod())
                       .build();
         }
       }
