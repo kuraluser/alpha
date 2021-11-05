@@ -1179,13 +1179,19 @@ public class LoadablePatternService {
       LoadablePattern loadablePattern) {
     loadablePlanStowageDetailsList.forEach(
         lpsd -> {
-          LoadablePlanStowageDetails loadablePlanStowageDetails =
-              loadablePlanStowageDetailsRespository
-                  .findById(lpsd.getStowageDetailsId())
-                  .orElse(new LoadablePlanStowageDetails());
+          LoadablePlanStowageDetails loadablePlanStowageDetails;
+          // To remove proto default 0 for long
+          if (0 == lpsd.getStowageDetailsId()) {
+            loadablePlanStowageDetails = new LoadablePlanStowageDetails();
+          } else {
+            loadablePlanStowageDetails =
+                loadablePlanStowageDetailsRespository
+                    .findById(lpsd.getStowageDetailsId())
+                    .orElse(new LoadablePlanStowageDetails());
+            loadablePlanStowageDetails.setId(lpsd.getId());
+          }
 
           // Set id and activate
-          loadablePlanStowageDetails.setId(lpsd.getId());
           loadablePlanStowageDetails.setIsActive(true);
 
           loadablePlanStowageDetails.setApi(lpsd.getApi());
