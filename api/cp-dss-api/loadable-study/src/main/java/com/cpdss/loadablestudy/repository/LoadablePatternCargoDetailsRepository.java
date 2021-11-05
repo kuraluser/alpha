@@ -36,4 +36,8 @@ public interface LoadablePatternCargoDetailsRepository
   @Query(
       "FROM LoadablePatternCargoDetails lp WHERE lp.loadablePatternId = ?1 AND lp.portId = ?2 and lp.isActive = true")
   List<LoadablePatternCargoDetails> findAllByPatternIdAndPortId(Long var1, Long var2);
+
+  Optional<LoadablePatternCargoDetails>
+      findFirstByLoadablePatternIdAndCargoNominationIdAndTankIdAndIsActiveTrue(
+          long loadablePatternId, long cargoNominationId, long tankId);
 }

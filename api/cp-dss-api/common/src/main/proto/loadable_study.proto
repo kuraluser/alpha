@@ -583,6 +583,7 @@ message LoadablePlanStowageDetails {
   string onboard = 28; //DS field
   string maxTankVolume = 29; //DS field
 	string quantityMT = 30;
+	int64 stowageDetailsId = 31;
  }
 
 

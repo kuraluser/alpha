@@ -23,8 +23,11 @@ import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -3384,5 +3387,87 @@ public class LoadablePlanService {
     replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  /**
+   * Method to build loadable plan stowage details proto object using pattern Id
+   *
+   * @param loadablePatternId loadable pattern id value
+   * @return list of stowage details proto object for the given pattern id
+   * @throws GenericServiceException Exception on failure
+   */
+  public List<LoadableStudy.LoadablePlanStowageDetails> buildLoadablePlanStowageDetails(
+      final long loadablePatternId) throws GenericServiceException {
+
+    List<LoadablePlanStowageDetails> stowageDetailsList =
+        loadablePlanStowageDetailsRespository
+            .findByLoadablePattern_IdAndIsActiveTrue(loadablePatternId)
+            .orElse(Collections.emptyList());
+
+    return buildLoadablePlanStowageDetailsProtoObj(stowageDetailsList);
+  }
+
+  /**
+   * Method to convert loadablePlanStowageDetails entity to proto object
+   *
+   * @param loadablePlanStowageDetails loadablePlanStowageDetails entity object
+   */
+  private List<LoadableStudy.LoadablePlanStowageDetails> buildLoadablePlanStowageDetailsProtoObj(
+      List<LoadablePlanStowageDetails> loadablePlanStowageDetails) throws GenericServiceException {
+
+    List<LoadableStudy.LoadablePlanStowageDetails> loadablePlanStowageDetailsProtoList =
+        new ArrayList<>();
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    for (LoadablePlanStowageDetails loadablePlanStowageDetailsDB : loadablePlanStowageDetails) {
+      try {
+        // Build fields with same var names
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+            loadablePlanStowageDetailsBuilder =
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+        JsonFormat.parser()
+            .ignoringUnknownFields()
+            .merge(
+                objectMapper.writeValueAsString(loadablePlanStowageDetailsDB),
+                loadablePlanStowageDetailsBuilder);
+
+        // Build other fields -> for fields with different var names
+        loadablePlanStowageDetailsBuilder.setStowageDetailsId(loadablePlanStowageDetailsDB.getId());
+        loadablePlanStowageDetailsBuilder.setCargoAbbreviation(
+            loadablePlanStowageDetailsDB.getAbbreviation());
+        loadablePlanStowageDetailsBuilder.setFillingRatio(
+            loadablePlanStowageDetailsDB.getFillingPercentage());
+        loadablePlanStowageDetailsBuilder.setTankName(loadablePlanStowageDetailsDB.getTankname());
+
+        // Add loadable pattern cargo details
+        LoadablePatternCargoDetails loadablePatternCargoDetails =
+            loadablePatternCargoDetailsRepository
+                .findFirstByLoadablePatternIdAndCargoNominationIdAndTankIdAndIsActiveTrue(
+                    loadablePlanStowageDetailsDB.getLoadablePattern().getId(),
+                    loadablePlanStowageDetailsDB.getCargoNominationId(),
+                    loadablePlanStowageDetailsDB.getTankId())
+                .orElseThrow(RuntimeException::new);
+        loadablePlanStowageDetailsBuilder.setOnboard(
+            loadablePatternCargoDetails.getOnBoard().toString());
+        loadablePlanStowageDetailsBuilder.setMaxTankVolume(
+            loadablePatternCargoDetails.getMaxTankVolume().toString());
+
+        // Add details
+        loadablePlanStowageDetailsProtoList.add(loadablePlanStowageDetailsBuilder.build());
+      } catch (InvalidProtocolBufferException | JsonProcessingException e) {
+        log.error(
+            "LoadablePlanStowageDetails entity object to proto object conversion failed. Stowage Details: {}",
+            loadablePlanStowageDetailsDB,
+            e);
+        throw new GenericServiceException(
+            "LoadablePlanStowageDetails entity object to proto object conversion failed. Stowage Details: "
+                + loadablePlanStowageDetailsDB,
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            e);
+      }
+    }
+
+    return loadablePlanStowageDetailsProtoList;
   }
 }
