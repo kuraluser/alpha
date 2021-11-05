@@ -118,7 +118,12 @@ public class VesselValveService {
 
   private VesselValveEdu createValveEdu(VesselValveEducationProcess v) {
     return new VesselValveEdu(
-        v.getSequenceNumber(), v.getValveNumber(), v.getValveId(), v.getStageName());
+        v.getSequenceNumber(),
+        v.getValveNumber(),
+        v.getValveId(),
+        v.getStageName(),
+        v.getValveTypeName(),
+        v.getTankShortName());
   }
 
   public List<VesselValveEducationProcess> buildVesselValveEductorDomain(

@@ -52,4 +52,27 @@ public class VesselValveEducationProcess {
 
   @Column(name = "vessel_xid")
   private Long vesselXid;
+
+  // New fields - Nov 5 2021
+
+  @Column(name = "valve_category_id")
+  private Integer valveCategoryId;
+
+  @Column(name = "valve_category")
+  private String valveCategory;
+
+  @Column(name = "valve_type_id")
+  private Integer valveTypeId;
+
+  @Column(name = "valve_type_name")
+  private String valveTypeName;
+
+  @Column(name = "valve_side")
+  private Integer valveSide;
+
+  @Column(name = "vessel_tank_xid")
+  private Long vesselTankId;
+
+  @Column(name = "tank_short_name")
+  private String tankShortName;
 }

@@ -716,18 +716,21 @@ public class DischargeInformationBuilderService {
               Common.COW_TYPE.TOP_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
                   .collect(Collectors.toList()));
           this.buildCowTankDetails(
               Common.COW_TYPE.BOTTOM_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
                   .collect(Collectors.toList()));
           this.buildCowTankDetails(
               Common.COW_TYPE.ALL_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
                   .collect(Collectors.toList()));
         }
