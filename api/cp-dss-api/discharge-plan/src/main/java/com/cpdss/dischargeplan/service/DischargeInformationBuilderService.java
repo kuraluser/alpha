@@ -598,7 +598,7 @@ public class DischargeInformationBuilderService {
 
     try {
       List<DischargingDelay> delays =
-          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(
+          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActiveOrderById(
               disEntity.getId(), true);
       for (DischargingDelay source : delays) {
         DischargeDelays.Builder builder2 = DischargeDelays.newBuilder();
@@ -613,6 +613,7 @@ public class DischargeInformationBuilderService {
             .ifPresent(builder2::setCargoNominationId); // can empty of initial delay
         builder2.addAllReasonForDelayIds(
             source.getDischargingDelayReasons().stream()
+                .filter(DischargingDelayReason::getIsActive)
                 .map(DischargingDelayReason::getReasonForDelay)
                 .map(ReasonForDelay::getId)
                 .collect(Collectors.toList()));
@@ -715,18 +716,21 @@ public class DischargeInformationBuilderService {
               Common.COW_TYPE.TOP_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
                   .collect(Collectors.toList()));
           this.buildCowTankDetails(
               Common.COW_TYPE.BOTTOM_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
                   .collect(Collectors.toList()));
           this.buildCowTankDetails(
               Common.COW_TYPE.ALL_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
                   .collect(Collectors.toList()));
         }

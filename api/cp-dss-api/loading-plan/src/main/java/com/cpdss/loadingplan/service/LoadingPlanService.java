@@ -781,6 +781,7 @@ public class LoadingPlanService {
                       ullageInsert.getUllage1(),
                       ullageInsert.getUllage2(),
                       ullageInsert.getUllage(),
+                      ullageInsert.getColorCode(),
                       ullageInsert.getTankId(),
                       ullageInsert.getLoadingInformationId(),
                       ullageInsert.getArrivalDeparture());
@@ -808,6 +809,7 @@ public class LoadingPlanService {
                   tempData.setUllage1(ullageInsert.getUllage1());
                   tempData.setUllage2(ullageInsert.getUllage2());
                   tempData.setGrade(ullageInsert.getAbbreviation());
+                  tempData.setColorCode(ullageInsert.getColorCode());
                   portLoadingPlanCommingleTempDetailsRepository.save(tempData);
                 }
               });

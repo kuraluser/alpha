@@ -39,14 +39,13 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -365,7 +364,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     builder.setVesselId(vesselId);
     builder.setSectionId(LOADING_RULE_MASTER_ID);
     builder.setLoadingInfoId(loadingInfoId);
-    RuleUtility.buildRuleListForSave(ruleRequest, null, null, builder, false, true);
+    RuleUtility.buildRuleListForSave(ruleRequest, null, null, builder, null,false, true, false);
     RuleResponse ruleResponse = this.loadingPlanGrpcService.saveOrGetLoadingPlanRules(builder);
     return ruleResponse;
   }
@@ -383,7 +382,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Override
   public LoadingPlanAlgoResponse saveLoadingPlan(
-      Long vesselId, Long voyageId, Long infoId, LoadingPlanAlgoRequest loadingPlanAlgoRequest)
+      Long vesselId,
+      Long voyageId,
+      Long infoId,
+      LoadingPlanAlgoRequest loadingPlanAlgoRequest,
+      String requestJsonString)
       throws GenericServiceException, Exception {
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
     LoadingPlanSaveRequest.Builder builder = LoadingPlanSaveRequest.newBuilder();
@@ -401,7 +404,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           this.saveJson(
               infoId,
               GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID,
-              objectMapper.writeValueAsString(loadingPlanAlgoRequest));
+              objectMapper.writeValueAsString(requestJsonString));
       if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
@@ -1100,39 +1103,42 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .collect(Collectors.toList());
     }
     if (portLoadablePlanStowageDetails.size() > 0) {
-    	
-    	for(VesselInfo.VesselTankDetail tankDetail:sortedTankList){
-    			
-    		Optional<PortLoadablePlanStowageDetail> portWiseStowageDetailOptional = portLoadablePlanStowageDetails.stream().filter(stowageDetail ->
-    		stowageDetail.getTankId() == tankDetail.getTankId()).findFirst();
 
-    		portWiseStowageDetailOptional.ifPresent(portWiseStowageDetail -> {
-                PortLoadablePlanStowageDetails stowageDetail = new PortLoadablePlanStowageDetails();
-                stowageDetail.setAbbreviation(portWiseStowageDetail.getAbbreviation());
-                stowageDetail.setApi(portWiseStowageDetail.getApi());
-                stowageDetail.setCargoNominationId(portWiseStowageDetail.getCargoNominationId());
-                stowageDetail.setCargoId(portWiseStowageDetail.getCargoId());
-                stowageDetail.setColorCode(portWiseStowageDetail.getColorCode());
-                stowageDetail.setCorrectedUllage(portWiseStowageDetail.getCorrectedUllage());
-                stowageDetail.setCorrectionFactor(portWiseStowageDetail.getCorrectionFactor());
-                stowageDetail.setFillingPercentage(portWiseStowageDetail.getFillingPercentage());
-                stowageDetail.setId(portWiseStowageDetail.getId());
-                stowageDetail.setLoadablePatternId(portWiseStowageDetail.getLoadablePatternId());
-                stowageDetail.setDischargePatternId(portWiseStowageDetail.getLoadablePatternId());
-                stowageDetail.setRdgUllage(portWiseStowageDetail.getRdgUllage());
-                stowageDetail.setTankId(portWiseStowageDetail.getTankId());
-                stowageDetail.setTemperature(portWiseStowageDetail.getTemperature());
-                stowageDetail.setWeight(portWiseStowageDetail.getWeight());
-                stowageDetail.setQuantity(portWiseStowageDetail.getQuantity());
-                stowageDetail.setArrivalDeparture(portWiseStowageDetail.getArrivalDeparture());
-                stowageDetail.setActualPlanned(portWiseStowageDetail.getActualPlanned());
-                stowageDetail.setUllage(portWiseStowageDetail.getUllage());
-                stowageDetail.setTankName(tankDetail.getTankName());
-                stowageDetail.setTankShortName(tankDetail.getShortName());
+      for (VesselInfo.VesselTankDetail tankDetail : sortedTankList) {
 
-                portLoadablePlanStowageDetailsList.add(stowageDetail);
-    			});
-              }
+        Optional<PortLoadablePlanStowageDetail> portWiseStowageDetailOptional =
+            portLoadablePlanStowageDetails.stream()
+                .filter(stowageDetail -> stowageDetail.getTankId() == tankDetail.getTankId())
+                .findFirst();
+
+        portWiseStowageDetailOptional.ifPresent(
+            portWiseStowageDetail -> {
+              PortLoadablePlanStowageDetails stowageDetail = new PortLoadablePlanStowageDetails();
+              stowageDetail.setAbbreviation(portWiseStowageDetail.getAbbreviation());
+              stowageDetail.setApi(portWiseStowageDetail.getApi());
+              stowageDetail.setCargoNominationId(portWiseStowageDetail.getCargoNominationId());
+              stowageDetail.setCargoId(portWiseStowageDetail.getCargoId());
+              stowageDetail.setColorCode(portWiseStowageDetail.getColorCode());
+              stowageDetail.setCorrectedUllage(portWiseStowageDetail.getCorrectedUllage());
+              stowageDetail.setCorrectionFactor(portWiseStowageDetail.getCorrectionFactor());
+              stowageDetail.setFillingPercentage(portWiseStowageDetail.getFillingPercentage());
+              stowageDetail.setId(portWiseStowageDetail.getId());
+              stowageDetail.setLoadablePatternId(portWiseStowageDetail.getLoadablePatternId());
+              stowageDetail.setDischargePatternId(portWiseStowageDetail.getLoadablePatternId());
+              stowageDetail.setRdgUllage(portWiseStowageDetail.getRdgUllage());
+              stowageDetail.setTankId(portWiseStowageDetail.getTankId());
+              stowageDetail.setTemperature(portWiseStowageDetail.getTemperature());
+              stowageDetail.setWeight(portWiseStowageDetail.getWeight());
+              stowageDetail.setQuantity(portWiseStowageDetail.getQuantity());
+              stowageDetail.setArrivalDeparture(portWiseStowageDetail.getArrivalDeparture());
+              stowageDetail.setActualPlanned(portWiseStowageDetail.getActualPlanned());
+              stowageDetail.setUllage(portWiseStowageDetail.getUllage());
+              stowageDetail.setTankName(tankDetail.getTankName());
+              stowageDetail.setTankShortName(tankDetail.getShortName());
+
+              portLoadablePlanStowageDetailsList.add(stowageDetail);
+            });
+      }
     }
     return portLoadablePlanStowageDetailsList;
   }
@@ -1255,33 +1261,36 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               .collect(Collectors.toList());
     }
     if (portLoadablePlanRobDetails.size() > 0) {
-    	
-    	for(VesselInfo.VesselTankDetail tankDetail:sortedTankList){
-    		Optional<PortLoadingPlanRobDetails> portLoadablePlanRobDetailsOptional = portLoadablePlanRobDetails.stream().filter(robDetail ->
-    		robDetail.getTankId() == tankDetail.getTankId()).findFirst();
-    		portLoadablePlanRobDetailsOptional.ifPresent(portWiseRobDetail -> {
-    			 PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
-    	            robDetail.setId(portWiseRobDetail.getId());
-    	            robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
-    	            robDetail.setDischargePatternId(portWiseRobDetail.getLoadablePatternId());
-    	            robDetail.setTankId(portWiseRobDetail.getTankId());
-    	            robDetail.setQuantity(portWiseRobDetail.getQuantity());
-    	            robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
-    	            robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
-    	            robDetail.setDensity(
-    	                portWiseRobDetail.getDensity().isEmpty()
-    	                    ? null
-    	                    : new BigDecimal(portWiseRobDetail.getDensity()));
-    	            robDetail.setColorCode(portWiseRobDetail.getColorCode());
-    	            robDetail.setTankName(tankDetail.getTankName());
-    	            robDetail.setTankShortName(tankDetail.getShortName());
-    	            robDetail.setFuelTypeId(tankDetail.getTankCategoryId());
-    	            robDetail.setFuelTypeShortName(tankDetail.getTankCategoryShortName());
-    	            robDetail.setFuelTypeName(tankDetail.getTankCategoryName());
 
-    	            portLoadablePlanRobDetailsList.add(robDetail);
-    		});
-    	}
+      for (VesselInfo.VesselTankDetail tankDetail : sortedTankList) {
+        Optional<PortLoadingPlanRobDetails> portLoadablePlanRobDetailsOptional =
+            portLoadablePlanRobDetails.stream()
+                .filter(robDetail -> robDetail.getTankId() == tankDetail.getTankId())
+                .findFirst();
+        portLoadablePlanRobDetailsOptional.ifPresent(
+            portWiseRobDetail -> {
+              PortLoadablePlanRobDetails robDetail = new PortLoadablePlanRobDetails();
+              robDetail.setId(portWiseRobDetail.getId());
+              robDetail.setLoadablePatternId(portWiseRobDetail.getLoadablePatternId());
+              robDetail.setDischargePatternId(portWiseRobDetail.getLoadablePatternId());
+              robDetail.setTankId(portWiseRobDetail.getTankId());
+              robDetail.setQuantity(portWiseRobDetail.getQuantity());
+              robDetail.setArrivalDeparture(portWiseRobDetail.getArrivalDeparture());
+              robDetail.setActualPlanned(portWiseRobDetail.getActualPlanned());
+              robDetail.setDensity(
+                  portWiseRobDetail.getDensity().isEmpty()
+                      ? null
+                      : new BigDecimal(portWiseRobDetail.getDensity()));
+              robDetail.setColorCode(portWiseRobDetail.getColorCode());
+              robDetail.setTankName(tankDetail.getTankName());
+              robDetail.setTankShortName(tankDetail.getShortName());
+              robDetail.setFuelTypeId(tankDetail.getTankCategoryId());
+              robDetail.setFuelTypeShortName(tankDetail.getTankCategoryShortName());
+              robDetail.setFuelTypeName(tankDetail.getTankCategoryName());
+
+              portLoadablePlanRobDetailsList.add(robDetail);
+            });
+      }
     }
     return portLoadablePlanRobDetailsList;
   }
@@ -1802,6 +1811,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           commingle.getUllage1() == null ? "" : commingle.getUllage1().toString())
                       .setUllage2(
                           commingle.getUllage2() == null ? "" : commingle.getUllage2().toString())
+                      .setColorCode(
+                          commingle.getColorCode() == null ? "" : commingle.getColorCode())
                       .build();
                   builder.addCommingleUpdate(updateCommingleBuilder.build());
                 });
@@ -2055,4 +2066,31 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     }
 
   }*/
+  @Override
+  public LoadingSimulatorJsonResponse getSimulatorJsonDataForLoading(
+      Long vesselId, Long infoId, String correlationId)
+      throws GenericServiceException, JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.Builder requestBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.newBuilder();
+    requestBuilder.setVesselId(vesselId);
+    requestBuilder.setInfoId(infoId);
+    com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply reply =
+        loadableStudyServiceBlockingStub.getLoadingSimulatorJsonData(requestBuilder.build());
+    LoadingSimulatorJsonResponse jsonResponse = new LoadingSimulatorJsonResponse();
+    Object loadingJson = null;
+    loadingJson =
+        new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .readValue(reply.getLoadingJson(), Object.class);
+    jsonResponse.setLoadingJson(loadingJson);
+    Object loadicatorJson = null;
+    loadicatorJson =
+        new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .readValue(reply.getLoadicatorJson(), Object.class);
+    jsonResponse.setLoadicatorJson(loadingJson);
+    jsonResponse.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return jsonResponse;
+  }
 }

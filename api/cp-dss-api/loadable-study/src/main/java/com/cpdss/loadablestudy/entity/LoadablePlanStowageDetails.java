@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -74,10 +75,12 @@ public class LoadablePlanStowageDetails extends EntityDoc {
 
   @JoinColumn(name = "loadable_plan_xid", referencedColumnName = "id")
   @ManyToOne
+  @JsonIgnore
   private LoadablePlan loadablePlan;
 
   @JoinColumn(name = "loadable_pattern_xid")
   @ManyToOne
+  @JsonIgnore
   private LoadablePattern loadablePattern;
 
   @Column(name = "cargo_nomination_temperature")

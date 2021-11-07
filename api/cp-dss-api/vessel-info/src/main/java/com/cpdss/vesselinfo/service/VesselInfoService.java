@@ -183,6 +183,11 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   public static final String BALLAST_CENTER_TANK = "CENTER";
   public static final String BALLAST_REAR_TANK = "REAR";
   public static final String DATE_FORMAT = "dd-MM-yyyy";
+  private static final Long CENTER_TANKS = 2L;
+  private static final Long PORT_TANKS = 1L;
+  private static final Long STBD_TANKS = 3L;
+  private static final Long WP_TANKS = 4L;
+  private static final Long WS_TANKS = 5L;
 
   private static final List<Long> CARGO_TANK_CATEGORIES =
       Arrays.asList(CARGO_TANK_CATEGORY_ID, CARGO_SLOP_TANK_CATEGORY_ID);
@@ -451,17 +456,17 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       List<VesselTank> vesselTanks =
           this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
               vesselEntity, tankCategoryEntities, true);
-      for (VesselTank tank : vesselTanks) {
-        VesselTankDetail.Builder builder = VesselTankDetail.newBuilder();
-        builder.setTankId(tank.getId());
-        builder.setTankName(tank.getTankName());
-        builder.setShortName(tank.getShortName());
-        builder.setTankCategoryId(tank.getTankCategory().getId());
-        // builder.setTankCategoryName(tank.getTankCategory().getName());
-        // builder.setFrameNumberFrom(tank.getFrameNumberFrom());
-        // builder.setFrameNumberTo(tank.getFrameNumberTo());
-        replyBuilder.addVesselTanks(builder.build());
-      }
+      Map<Long, List<VesselTank>> typeWiseTanks =
+          vesselTanks
+              .parallelStream()
+              .collect(Collectors.groupingBy(tank -> tank.getTankType().getId()));
+      List<VesselTank> centerTanks = typeWiseTanks.get(CENTER_TANKS);
+      createVesselTankReply(replyBuilder, centerTanks);
+      createVesselTankReply(replyBuilder, typeWiseTanks.get(PORT_TANKS));
+      createVesselTankReply(replyBuilder, typeWiseTanks.get(STBD_TANKS));
+      createVesselTankReply(replyBuilder, typeWiseTanks.get(WP_TANKS));
+      createVesselTankReply(replyBuilder, typeWiseTanks.get(WS_TANKS));
+
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching cargo tanks", e);
@@ -482,6 +487,24 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  private void createVesselTankReply(
+      VesselReply.Builder replyBuilder, List<VesselTank> vesselTanks) {
+    if (vesselTanks == null || vesselTanks.isEmpty()) {
+      return;
+    }
+    for (VesselTank tank : vesselTanks) {
+      VesselTankDetail.Builder builder = VesselTankDetail.newBuilder();
+      builder.setTankId(tank.getId());
+      builder.setTankName(tank.getTankName());
+      builder.setShortName(tank.getShortName());
+      builder.setTankCategoryId(tank.getTankCategory().getId());
+      // builder.setTankCategoryName(tank.getTankCategory().getName());
+      // builder.setFrameNumberFrom(tank.getFrameNumberFrom());
+      // builder.setFrameNumberTo(tank.getFrameNumberTo());
+      replyBuilder.addVesselTanks(builder.build());
     }
   }
 

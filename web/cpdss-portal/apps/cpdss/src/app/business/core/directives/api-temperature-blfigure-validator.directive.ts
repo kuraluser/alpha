@@ -18,6 +18,12 @@ export function apiTemperatureBlfigValidator(type: string): ValidatorFn {
             && (!row.mt || Number(row.mt) === 0) && (!row.kl || Number(row.kl) === 0) && (!row.temp || Number(row.temp) === 0)) {
             return null;
         }
+        if (type === 'temperature' && !control?.value) {
+            return { required: true };
+        }
+        if (type === 'api' && !control?.value) {
+            return { required: true };
+        }
         if (type === 'temperature' && control.value < 40) {
             return { min: true };
         }

@@ -161,7 +161,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true);  
       }
-      this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
+      this.rulesService.infoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }
     catch (error) {

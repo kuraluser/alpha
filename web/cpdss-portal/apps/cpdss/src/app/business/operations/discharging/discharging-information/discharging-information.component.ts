@@ -166,8 +166,9 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
         this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
         this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(true);
       }
-      // this.rulesService.dischargeInfoId.next(this.dischargingInformationData.dischargeInfoId);
+
       await this.updateGetData();
+      this.rulesService.infoId.next(this.dischargingInformationData.dischargeInfoId);
     }
     catch (error) {
       if (error.error.errorCode === 'ERR-RICO-522') {

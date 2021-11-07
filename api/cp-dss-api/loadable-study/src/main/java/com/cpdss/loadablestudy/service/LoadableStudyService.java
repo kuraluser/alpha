@@ -175,6 +175,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private String rootFolder;
 
   private final long ALGO_RESPONSE_ID = 17L;
+  private final long LOADING_RESPONSE_ID = 14L;
+  private final long LOADICATOR_RESPONSE_ID = 16L;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
@@ -3044,6 +3046,38 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
+  @Override
+  public void getLoadingSimulatorJsonData(
+          com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request,
+          StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+                  responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply.Builder builder =
+            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply.newBuilder();
+    try {
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      String loadicatorJsonString = "";
+      String loadingJsonString = "";
+      JsonData jsonData =
+              this.jsonDataService.getJsonData(request.getInfoId(), LOADING_RESPONSE_ID);
+      if (jsonData != null) {
+        loadicatorJsonString = jsonData.getJsonData();
+      }
+      jsonData =
+              this.jsonDataService.getJsonData(request.getInfoId(), LOADICATOR_RESPONSE_ID);
+      if (jsonData != null) {
+        loadingJsonString = jsonData.getJsonData();
+      }
+
+      builder.setLoadicatorJson(loadicatorJsonString);
+      builder.setLoadingJson(loadingJsonString);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
   public void getVoyage(
       com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>

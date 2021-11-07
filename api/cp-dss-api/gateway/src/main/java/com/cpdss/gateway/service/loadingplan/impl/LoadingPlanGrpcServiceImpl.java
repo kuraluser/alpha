@@ -325,7 +325,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
   }
 
   /*  @Override
-  public RuleResponse getLoadingPlanRules(Long vesselId, Long loadingInfoId)
+  public RuleResponse getDischargingPlanRules(Long vesselId, Long loadingInfoId)
       throws GenericServiceException {
     RuleResponse ruleResponse = new RuleResponse();
     LoadingPlanModels.LoadingPlanRuleRequest.Builder builder =

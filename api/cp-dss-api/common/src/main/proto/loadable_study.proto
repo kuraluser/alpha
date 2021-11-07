@@ -207,11 +207,11 @@ service LoadableStudyService {
 	
 	rpc updateDischargeQuantityCargoDetails(DischargeQuantityCargoDetailsRequest) returns (ResponseStatus){}
 
-	rpc GetVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {
-	}
+	rpc GetLoadingSimulatorJsonData(LoadingSimulatorJsonRequest) returns (LoadingSimulatorJsonReply){}
 
-	rpc saveActivatedVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {
-	}
+	rpc GetVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
+	
+	rpc saveActivatedVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
 }
 
 service SynopticalOperationService{
@@ -589,6 +589,7 @@ message LoadablePlanStowageDetails {
   string onboard = 28; //DS field
   string maxTankVolume = 29; //DS field
 	string quantityMT = 30;
+	int64 stowageDetailsId = 31;
  }
 
 
@@ -1626,6 +1627,17 @@ message SimulatorJsonRequest{
 message SimulatorJsonReply{
     ResponseStatus responseStatus = 1;
     string departureCondition = 2;
+}
+
+message LoadingSimulatorJsonRequest{
+    int64 vesselId = 1;
+    int64 infoId = 2;
+}
+
+message LoadingSimulatorJsonReply{
+    ResponseStatus responseStatus = 1;
+    string loadicatorJson = 2;
+    string loadingJson = 3;
 }
 
 message VoyageActivateRequest{

@@ -31,7 +31,7 @@ public interface PortLoadingPlanCommingleTempDetailsRepository
   @Modifying
   @Query(
       "Update PortLoadingPlanCommingleTempDetails set api = ?1, fillingRatio = ?2, quantity = ?3, quantityM3 = ?4, temperature = ?5, quantity1MT = ?6, quantity2MT = ?7, quantity1M3 = ?8, quantity2M3 = ?9, ullage1 = ?10, ullage2 = ?11,"
-          + " ullage = ?12 where tankId = ?13 and loadingInformation =?14 and conditionType =?15 and isActive = true")
+          + " ullage = ?12, colorCode = ?13 where tankId = ?14 and loadingInformation =?15 and conditionType =?16 and isActive = true")
   public void updateLoadingPlanCommingleDetails(
       String api,
       String fillingRatio,
@@ -45,6 +45,7 @@ public interface PortLoadingPlanCommingleTempDetailsRepository
       String ullage1,
       String ullage2,
       String ullage,
+      String colorCode,
       Long tankXId,
       Long loadingId,
       Integer arrivalDepartutre);

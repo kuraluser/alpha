@@ -320,6 +320,7 @@ public class LoadingSequenceService {
               .ifPresent(temperature -> builder.setTemperature(temperature.toString()));
           Optional.ofNullable(commingle.getUllage())
               .ifPresent(ullage -> builder.setUllage(ullage.toString()));
+          Optional.ofNullable(commingle.getColorCode()).ifPresent(builder::setColorCode);
           portWiseDetailsBuilder.addLoadingPlanCommingleDetails(builder.build());
         });
   }

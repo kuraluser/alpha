@@ -395,7 +395,7 @@
   "TOTAL_QUANTITY_ERROR": "Error",
   "TOTAL_QUANTITY_WARNING": "Warning",
   "TOTAL_QUANTITY_INFO": "Info",
-  "TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity should not be greater than loadable quantity",
+  "TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity entered entered exceeds the loadable quantity. Please correct.",
   "LOADABLE_QUANTITY_WARNING": "Warning",
   "LOADABLE_QUANTITY_WARNING_MISMATCH": "Loadable quantity is changed. Please save/update",
   "PORT_ROW_ADD_ERROR": "Warning",

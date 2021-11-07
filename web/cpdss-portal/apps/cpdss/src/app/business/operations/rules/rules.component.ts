@@ -7,6 +7,7 @@ import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { RulesService } from '../services/rules/rules.service'
+import { OPERATIONS } from '../../core/models/common.model';
 
 /**
  * Component class for loading rules.
@@ -25,10 +26,11 @@ import { RulesService } from '../services/rules/rules.service'
 export class RulesComponent implements OnInit {
 
   @Input() visible: boolean = true;
+  @Input() operation: OPERATIONS;
   @Output() popUpClosed: EventEmitter<any> = new EventEmitter();
   rulesJson: any;
   vessels: IVessel[];
-  loadingInfoId: number; 
+  infoId: number; 
   isCancelChanges: boolean = false;
   formChanges: boolean = false;
   vesselId: number;
@@ -66,10 +68,10 @@ export class RulesComponent implements OnInit {
    */
   async getRulesJson() {
     this.vesselId = this.vessels[0].id;
-    this.rulesService.loadingInfoId.subscribe(async (res) => {
-      this.loadingInfoId = res;
-      if (this.loadingInfoId != null) {
-        this.rulesJson = await this.rulesService.getRules(this.vesselId,this.voyageId,this.loadingInfoId).toPromise();
+    this.rulesService.infoId.subscribe(async (res: number) => {
+      this.infoId = res;
+      if (this.infoId != null) {
+        this.rulesJson = await this.rulesService.getRules(this.vesselId,this.voyageId,this.infoId,this.operation).toPromise();
       }
     })
 
@@ -140,7 +142,7 @@ export class RulesComponent implements OnInit {
     this.ngxSpinner.show();
     let msgkeys, severity;
     try {
-      let result = await this.rulesService.postRules(postData,this.vesselId,this.voyageId,this.loadingInfoId).toPromise(); 
+      const result = await this.rulesService.postRules(postData,this.vesselId,this.voyageId,this.infoId,this.operation).toPromise(); 
       if (result?.responseStatus?.status === '200') {
         msgkeys = ['RULES_UPDATE_SUCCESS', 'RULES_UPDATE_SUCCESSFULLY']
         severity = 'success';

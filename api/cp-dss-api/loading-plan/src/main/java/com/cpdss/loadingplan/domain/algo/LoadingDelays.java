@@ -1,11 +1,13 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.domain.algo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoadingDelays {
 
   private Long id;

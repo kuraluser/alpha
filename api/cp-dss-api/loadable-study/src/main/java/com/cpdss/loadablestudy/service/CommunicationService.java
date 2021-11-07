@@ -465,17 +465,18 @@ public class CommunicationService {
 
         // Check timer and update timeout
         final long start = Timestamp.valueOf(communicationStatusRow.getCreatedDateTime()).getTime();
+        // timeLimit is in seconds
         final long end = start + timeLimit * 1000; // Convert time to ms
         final long currentTime = System.currentTimeMillis();
         if (currentTime > end) {
           log.info(
-              "Timeout: {} ms reached. Start: {} ms, End: {} ms, Current Time: {}, Communication ignored. Generating at {}. LS Id: {}",
-              timeLimit,
+              "Communication Timeout: {} minutes reached. Communication ignored. Generating at: {}. LS Id: {}. Unix Times ::: Start: {} ms, End: {} ms, Current Time: {} ms.",
+              timeLimit / 60,
+              env,
+              loadableStudy.getId(),
               start,
               end,
-              currentTime,
-              env,
-              loadableStudy.getId());
+              currentTime);
           loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
               CommunicationStatus.TIME_OUT.getId(), loadableStudy.getId());
           // Call fallback mechanism on timeout

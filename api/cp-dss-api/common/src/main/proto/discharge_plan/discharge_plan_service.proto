@@ -38,6 +38,8 @@ service DischargeInformationService {
   
   // Case 7, post discharge stage
   rpc savePostDischargeStage(DischargeInformation) returns (DischargingInfoSaveResponse) {}
+
+  rpc GetOrSaveRulesForDischargingPlan (DischargeRuleRequest) returns (DischargeRuleReply) {}
   
 }
 
