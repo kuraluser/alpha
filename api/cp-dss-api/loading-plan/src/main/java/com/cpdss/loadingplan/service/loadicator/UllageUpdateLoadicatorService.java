@@ -195,6 +195,18 @@ public class UllageUpdateLoadicatorService {
         log.info(
             "Communication table update for ullage update: "
                 + loadingPlanCommunicationStatus.getId());
+        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            loadingPlanAlgoService.getLoadingInformationStatus(
+                LoadingPlanConstants.UPDATE_ULLAGE_COMMUNICATED_TO_SHORE);
+        loadingPlanService.updateLoadingPlanStatus(
+            loadingInfoOpt.get(),
+            loadingInfoStatusOpt.get(),
+            request.getUpdateUllage(0).getArrivalDepartutre());
+        loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+            loadingInfoOpt.get(),
+            processId,
+            loadingInfoStatusOpt.get(),
+            request.getUpdateUllage(0).getArrivalDepartutre());
         return processId;
       }
     } else {

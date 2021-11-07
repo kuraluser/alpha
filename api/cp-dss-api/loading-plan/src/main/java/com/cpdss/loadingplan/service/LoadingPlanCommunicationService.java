@@ -12,6 +12,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
+import com.cpdss.loadingplan.domain.VoyageActivate;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
@@ -38,10 +39,13 @@ import org.springframework.web.client.ResourceAccessException;
 public class LoadingPlanCommunicationService {
 
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
-  @Autowired private LoadingInformationRepository loadingInformationRepository;
+
+  @Autowired
+  private LoadingInformationCommunicationRepository loadingInformationCommunicationRepository;
+
   @Autowired private CargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
   @Autowired private LoadingBerthDetailsRepository loadingBerthDetailsRepository;
-  @Autowired private LoadingDelayRepository loadingDelayRepository;
+  @Autowired private LoadingDelayCommunicationRepository loadingDelayCommunicationRepository;
   @Autowired private LoadingMachineryInUseRepository loadingMachineryInUseRepository;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
@@ -97,6 +101,10 @@ public class LoadingPlanCommunicationService {
   @Autowired private StageDurationRepository stageDurationRepository;
   @Autowired private LoadingInformationStatusRepository loadingInfoStatusRepository;
   @Autowired private PyUserRepository pyUserRepository;
+
+  @GrpcClient("loadableStudyService")
+  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
+      loadableStudyServiceBlockingStub;
 
   public void getDataFromCommunication(
       Map<String, String> taskReqParams, EnumSet<MessageTypes> messageTypesEnum)
@@ -263,6 +271,7 @@ public class LoadingPlanCommunicationService {
       List<LoadingBerthDetail> loadingBerthDetails = null;
       List<LoadingDelay> loadingDelays = null;
       List<LoadingMachineryInUse> loadingMachineryInUses = null;
+      VoyageActivate voyageActivate = null;
       // Pattern save tables
       List<LoadingSequence> loadingSequencesList = null;
       List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList = null;
@@ -296,7 +305,8 @@ public class LoadingPlanCommunicationService {
         String dataTransferString = dataTransferStage.getData();
         String data = null;
         if (dataTransferStage.getProcessIdentifier().equals("loading_information")
-            || dataTransferStage.getProcessIdentifier().equals("pyuser")) {
+            || dataTransferStage.getProcessIdentifier().equals("pyuser")
+            || dataTransferStage.getProcessIdentifier().equals("voyage")) {
           data = JsonParser.parseString(dataTransferString).getAsJsonArray().get(0).getAsString();
         } else {
           data =
@@ -548,6 +558,12 @@ public class LoadingPlanCommunicationService {
               idMap.put(LoadingPlanTables.PYUSER.getTable(), dataTransferStage.getId());
               break;
             }
+          case voyage:
+            {
+              voyageActivate = new Gson().fromJson(data, VoyageActivate.class);
+              idMap.put(LoadingPlanTables.VOYAGE.getTable(), dataTransferStage.getId());
+              break;
+            }
         }
       }
       LoadingInformation loadingInfo = null;
@@ -591,12 +607,12 @@ public class LoadingPlanCommunicationService {
           }
           Long version = null;
           Optional<LoadingInformation> loadingInfoObj =
-              loadingInformationRepository.findById(loadingInformation.getId());
+              loadingInformationCommunicationRepository.findById(loadingInformation.getId());
           if (loadingInfoObj.isPresent()) {
             version = loadingInfoObj.get().getVersion();
           }
           loadingInformation.setVersion(version);
-          loadingInfo = loadingInformationRepository.save(loadingInformation);
+          loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
           log.info("LoadingInformation saved with id:" + loadingInfo.getId());
         } catch (ResourceAccessException e) {
           log.info("ResourceAccessException for LOADING_INFORMATION" + e.getMessage());
@@ -675,14 +691,15 @@ public class LoadingPlanCommunicationService {
             for (LoadingDelay loadingDelay : loadingDelays) {
               Long version = null;
               Optional<LoadingDelay> loadingDelayObj =
-                  loadingDelayRepository.findById(loadingDelay.getId());
+                  loadingDelayCommunicationRepository.findById(loadingDelay.getId());
               if (loadingDelayObj.isPresent()) {
                 version = loadingDelayObj.get().getVersion();
               }
               loadingDelay.setVersion(version);
               loadingDelay.setLoadingInformation(loadingInfo);
+              loadingDelayCommunicationRepository.save(loadingDelay);
             }
-            loadingDelayRepository.saveAll(loadingDelays);
+            // loadingDelayCommunicationRepository.saveAll(loadingDelays);
             log.info("LoadingDelay saved :" + loadingDelays);
           } catch (ResourceAccessException e) {
             updateStatusInExceptionCase(
@@ -1299,6 +1316,46 @@ public class LoadingPlanCommunicationService {
               e.getMessage());
         }
       }
+      if (voyageActivate != null) {
+        try {
+          LoadableStudy.VoyageActivateRequest.Builder builder =
+              LoadableStudy.VoyageActivateRequest.newBuilder();
+          builder.setId(voyageActivate.getId());
+          builder.setVoyageStatus(voyageActivate.getVoyageStatus());
+          LoadableStudy.VoyageActivateReply reply = saveActivatedVoyage(builder.build());
+          if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+            log.info(
+                "Voyage activated with status: {} and id:{} ",
+                voyageActivate.getVoyageStatus(),
+                voyageActivate.getId());
+          } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.VOYAGE.getTable()),
+                processId,
+                retryStatus,
+                reply.getResponseStatus().getMessage());
+          } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.VOYAGE.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                reply.getResponseStatus().getMessage());
+          }
+
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.PYUSER.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.PYUSER.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
+        }
+      }
       loadingPlanStagingService.updateStatusCompletedForProcessId(
           processId, StagingStatus.COMPLETED.getStatus());
       log.info("updated status to completed for processId:" + processId);
@@ -1341,5 +1398,10 @@ public class LoadingPlanCommunicationService {
         id, status, statusDescription, LocalDateTime.now());
     loadingPlanStagingService.updateStatusAndModifiedDateTimeForProcessId(
         processId, status, LocalDateTime.now());
+  }
+
+  public LoadableStudy.VoyageActivateReply saveActivatedVoyage(
+      LoadableStudy.VoyageActivateRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.saveActivatedVoyage(grpcRequest);
   }
 }

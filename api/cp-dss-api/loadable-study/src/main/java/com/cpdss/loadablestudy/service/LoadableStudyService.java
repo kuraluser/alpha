@@ -7,6 +7,8 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_TIME
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALLING_ALGO;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_EXC;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_RESOURCE_EXC;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
@@ -104,22 +106,7 @@ import com.cpdss.common.utils.Utils;
 import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
-import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
-import com.cpdss.loadablestudy.entity.JsonData;
-import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadableQuantity;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadableStudyAttachments;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.LoadableStudyRuleInput;
-import com.cpdss.loadablestudy.entity.LoadableStudyRules;
-import com.cpdss.loadablestudy.entity.OnBoardQuantity;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.Voyage;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.BillOfLandingRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
@@ -3051,6 +3038,72 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           .setMessage(e.getMessage())
           .setStatus(FAILED)
           .build();
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public void getVoyage(
+      com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.newBuilder();
+
+    Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
+    if (voyageEntity.isPresent()) {
+      Voyage voyage = voyageEntity.get();
+      com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.Builder builder =
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder();
+      builder.setId(voyage.getId());
+      Optional.ofNullable(voyage.getVoyageStatus().getId()).ifPresent(builder::setVoyageStatus);
+      replyBuilder.setVoyageActivateRequest(builder.build());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder().setMessage("No Voyage Found").build());
+    }
+    responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
+  }
+
+  public void saveActivatedVoyage(
+      com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.newBuilder();
+
+    try {
+      Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
+      if (voyageEntity.isPresent()) {
+        Voyage voyage = voyageEntity.get();
+        Optional<VoyageStatus> voyageStatus =
+            voyageStatusRepository.findById(request.getVoyageStatus());
+        if (voyageStatus.isPresent()) {
+          voyage.setVoyageStatus(voyageStatus.get());
+          voyageRepository.activateVoyage(request.getId(), voyageStatus.get());
+          replyBuilder.setResponseStatus(
+              Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+        }
+      }
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();

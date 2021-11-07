@@ -11,6 +11,8 @@ public class LoadingPlanConstants {
   public static final String FAILED = "FAILED";
   public static final List<String> LOADING_SYNCHRONIZATION_IDENTIFIERS =
       Arrays.asList("loading_information", "cargo_topping_off_sequence");
+  public static final String FAILED_WITH_RESOURCE_EXC = "FAILED_WITH_RESOURCE_EXC";
+  public static final String FAILED_WITH_EXC = "FAILED_WITH_EXC";
 
   @Getter
   @AllArgsConstructor
@@ -42,7 +44,8 @@ public class LoadingPlanConstants {
     PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP("port_loadable_plan_commingle_details_temp"),
     PORT_LOADABLE_PLAN_COMMINGLE_DETAILS("port_loadable_plan_commingle_details"),
     BILL_OF_LADDING("bill_of_ladding"),
-    PYUSER("pyuser");
+    PYUSER("pyuser"),
+    VOYAGE("voyage");
 
     public final String table;
   }
