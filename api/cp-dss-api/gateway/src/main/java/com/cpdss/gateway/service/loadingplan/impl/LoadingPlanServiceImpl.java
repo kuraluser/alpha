@@ -404,12 +404,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
           this.saveJson(
               infoId,
               GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID,
-              objectMapper.writeValueAsString(requestJsonString));
+              requestJsonString);
       if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
-    } catch (JsonProcessingException e) {
-      log.error("Exception encountered when processing Loading Information Response JSON");
+    } catch (Exception e) {
+      log.error("Exception encountered when processing Loading Information Response JSON : {}", e.getMessage());
     }
     loadingSequenceService.buildLoadingPlanSaveRequest(
         loadingPlanAlgoRequest, vesselId, infoId, builder);
@@ -2077,18 +2077,19 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply reply =
         loadableStudyServiceBlockingStub.getLoadingSimulatorJsonData(requestBuilder.build());
     LoadingSimulatorJsonResponse jsonResponse = new LoadingSimulatorJsonResponse();
-    Object loadingJson = null;
-    loadingJson =
+    Object loadingJson =
         new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .readValue(reply.getLoadingJson(), Object.class);
     jsonResponse.setLoadingJson(loadingJson);
     Object loadicatorJson = null;
-    loadicatorJson =
-        new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .readValue(reply.getLoadicatorJson(), Object.class);
-    jsonResponse.setLoadicatorJson(loadingJson);
+    if(reply.getLoadicatorJson() != null && !reply.getLoadicatorJson().isEmpty()) {
+      loadicatorJson =
+              new ObjectMapper()
+                      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                      .readValue(reply.getLoadicatorJson(), Object.class);
+    }
+    jsonResponse.setLoadicatorJson(loadicatorJson);
     jsonResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return jsonResponse;
