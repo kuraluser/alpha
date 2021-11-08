@@ -1204,7 +1204,7 @@ export class LoadingDischargingTransformationService {
   setCowDetails(dischargingInformationResponse: IDischargingInformationResponse, listData: IDischargeOperationListData, dischargingInformation: IDischargingInformation): ICOWDetails {
     const cowDetails = <ICOWDetails>{};
     cowDetails.cowOption = listData.cowOptions.find(option => option.id === dischargingInformationResponse?.cowPlan?.cowOption);
-    cowDetails.cowPercentage = listData.cowPercentages.find(percentage => percentage.value === dischargingInformationResponse?.cowPlan?.cowPercentage);
+    cowDetails.cowPercentage = listData.cowPercentages.find(percentage => percentage.value === Number(dischargingInformationResponse?.cowPlan?.cowPercentage));
 
     cowDetails.allCOWTanks = dischargingInformationResponse?.cowPlan?.allCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
     cowDetails.topCOWTanks = dischargingInformationResponse?.cowPlan?.topCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
