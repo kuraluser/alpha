@@ -63,26 +63,7 @@ import com.cpdss.vesselinfo.domain.VesselInfo;
 import com.cpdss.vesselinfo.domain.VesselInfoSpecification;
 import com.cpdss.vesselinfo.domain.VesselRule;
 import com.cpdss.vesselinfo.domain.VesselTankDetails;
-import com.cpdss.vesselinfo.entity.CalculationSheetTankgroup;
-import com.cpdss.vesselinfo.entity.DraftCondition;
-import com.cpdss.vesselinfo.entity.HydrostaticTable;
-import com.cpdss.vesselinfo.entity.InnerBulkHeadValues;
-import com.cpdss.vesselinfo.entity.MinMaxValuesForBmsf;
-import com.cpdss.vesselinfo.entity.RuleTemplate;
-import com.cpdss.vesselinfo.entity.RuleTemplateInput;
-import com.cpdss.vesselinfo.entity.RuleType;
-import com.cpdss.vesselinfo.entity.RuleVesselDropDownValues;
-import com.cpdss.vesselinfo.entity.RuleVesselMapping;
-import com.cpdss.vesselinfo.entity.RuleVesselMappingInput;
-import com.cpdss.vesselinfo.entity.TankCategory;
-import com.cpdss.vesselinfo.entity.UllageTableData;
-import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
-import com.cpdss.vesselinfo.entity.Vessel;
-import com.cpdss.vesselinfo.entity.VesselChartererMapping;
-import com.cpdss.vesselinfo.entity.VesselDraftCondition;
-import com.cpdss.vesselinfo.entity.VesselFlowRate;
-import com.cpdss.vesselinfo.entity.VesselTank;
-import com.cpdss.vesselinfo.entity.VesselTankTcg;
+import com.cpdss.vesselinfo.entity.*;
 import com.cpdss.vesselinfo.repository.*;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
@@ -132,6 +113,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private HydrostaticTableRepository hydrostaticTableRepository;
   @Autowired private VesselDraftConditionRepository vesselDraftConditionRepository;
   @Autowired private VesselTankTcgRepository vesselTankTcgRepository;
+  @Autowired private VesselPumpTankMappingRepository vesselPumpTankMappingRepository;
 
   @Autowired private BendingMomentRepository bendingMomentRepository;
   @Autowired private ShearingForceRepository shearingForceRepository;
@@ -722,6 +704,13 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                       selectableParameterBuilder(flowRate, selectableBuilder));
                 });
 
+        vesselPumpTankMappingRepository
+            .findByVesselXidAndIsActive(vessel.getId().intValue(), true)
+            .forEach(
+                vesselPumpTankMapping ->
+                    replyBuilder.addVesselPumpTankMapping(
+                        buildVesselPumpTankMapping(vesselPumpTankMapping)));
+
         com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder pumpDetailsBuilder =
             com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.newBuilder();
         this.vesselPumpService.getVesselPumpsAndTypes(pumpDetailsBuilder, vessel.getId());
@@ -746,6 +735,37 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  private com.cpdss.common.generated.VesselInfo.VesselPumpTankMapping buildVesselPumpTankMapping(
+      VesselPumpTankMapping vesselPumpTankMapping) {
+    com.cpdss.common.generated.VesselInfo.VesselPump.Builder vesselPumpBuilder =
+        com.cpdss.common.generated.VesselInfo.VesselPump.newBuilder();
+    Optional.ofNullable(vesselPumpTankMapping.getVesselPumps())
+        .ifPresent(
+            vesselPump -> {
+              Optional.ofNullable(vesselPump.getId())
+                  .ifPresent(id -> vesselPumpBuilder.setId(vesselPump.getId()));
+              vesselPumpBuilder.setVesselId(vesselPumpTankMapping.getVesselXid());
+              Optional.ofNullable(vesselPump.getPumpCode())
+                  .ifPresent(id -> vesselPumpBuilder.setPumpCode(vesselPump.getPumpCode()));
+              Optional.ofNullable(vesselPump.getPumpName())
+                  .ifPresent(id -> vesselPumpBuilder.setPumpName(vesselPump.getPumpName()));
+              Optional.ofNullable(vesselPump.getPumpType())
+                  .ifPresent(
+                      id -> vesselPumpBuilder.setPumpTypeId(vesselPump.getPumpType().getId()));
+            });
+    VesselTankDetail vesselTankDetail = null;
+    if (Optional.ofNullable(vesselPumpTankMapping.getVesselTank()).isPresent()) {
+      vesselTankDetail =
+          createVesselTankData(
+              vesselPumpTankMapping.getVesselTank(), VesselTankDetail.newBuilder());
+    }
+    return com.cpdss.common.generated.VesselInfo.VesselPumpTankMapping.newBuilder()
+        .setVesselId(vesselPumpTankMapping.getVesselXid())
+        .setVesselPump(vesselPumpBuilder.build())
+        .setVesselTankDetail(vesselTankDetail)
+        .build();
   }
 
   private SelectableParameter selectableParameterBuilder(
