@@ -63,8 +63,14 @@ public class StagingService {
           dataTransferStage.setLastModifiedBy(CREATED_OR_UPDATED_BY);
           dataTransferStageobj = stagingRepository.save(dataTransferStage);
         }
-        this.updateStatusForProcessId(
+        log.info(
+            "All data saved in data_transfer_stage table processId:{}",
+            dataTransferStageobj.getProcessId());
+        this.updateStatusReadyToProcessForProcessId(
             dataTransferStageobj.getProcessId(), StagingStatus.READY_TO_PROCESS.getStatus());
+        log.info(
+            "status changed to ready_to_process for processId:{}",
+            dataTransferStageobj.getProcessId());
       }
     } catch (ResourceAccessException e) {
       log.info("Error when saving into DB ", e);
@@ -130,6 +136,16 @@ public class StagingService {
    */
   public void updateStatusForProcessId(String processId, String status) {
     stagingRepository.updateStatusForProcessId(processId, status);
+  }
+
+  /**
+   * Method updateStatusForProcessId used to status to ready_to_process
+   *
+   * @param processId - Id
+   * @param status - Id
+   */
+  public void updateStatusReadyToProcessForProcessId(String processId, String status) {
+    stagingRepository.updateStatusReadyToProcessForProcessId(processId, status);
   }
 
   public Optional<DataTransferStage> getById(Long id) {
