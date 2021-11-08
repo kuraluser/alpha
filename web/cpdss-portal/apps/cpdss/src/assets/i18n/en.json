@@ -2065,6 +2065,7 @@
   "ULLAGE_UPDATE_INVALID_SOUNDING_ERROR": "Invalid sounding value",
   "ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS": "Verification With Loadicator in progress",
   "ULLAGE_UPDATE_FILE_SIZE_ERROR": "File size should be less than 2Mb",
+  "ULLAGE_UPDATE_EXCEL_EMPTY_FILE": "Empty file uploaded",
   "FILE_REPOSITORY": "Files",
   "FILE_REPOSITORY_SL": "SL",
   "FILE_REPOSITORY_VOY_NO": "VOY NO.",

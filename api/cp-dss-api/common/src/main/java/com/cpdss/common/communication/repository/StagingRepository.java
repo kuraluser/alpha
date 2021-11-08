@@ -58,4 +58,9 @@ public interface StagingRepository extends CommonCrudRepository<DataTransferStag
   @Query(
       "UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1 and staging.status ='in_progress'")
   public void updateStatusCompletedForProcessId(String processId, String status);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DataTransferStage staging SET staging.status = ?2 where staging.processId = ?1")
+  public void updateStatusReadyToProcessForProcessId(String processId, String status);
 }
