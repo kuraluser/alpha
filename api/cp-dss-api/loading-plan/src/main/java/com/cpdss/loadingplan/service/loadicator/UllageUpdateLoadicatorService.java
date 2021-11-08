@@ -142,6 +142,7 @@ public class UllageUpdateLoadicatorService {
    */
   public String saveLoadicatorInfoForUllageUpdate(UllageBillRequest request)
       throws GenericServiceException, IllegalAccessException, InvocationTargetException {
+    log.info("Inside saveLoadicatorInfoForUllageUpdate method");
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
     Long loadingInfoId = request.getUpdateUllage(0).getLoadingInformationId();
@@ -154,7 +155,7 @@ public class UllageUpdateLoadicatorService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-
+    log.info("loadingInfoOpt object:{}", loadingInfoOpt.get());
     String processId = UUID.randomUUID().toString();
     if (enableCommunication && env.equals("ship")) {
       JsonArray jsonArray =
@@ -213,6 +214,7 @@ public class UllageUpdateLoadicatorService {
       Optional<LoadingInformationStatus> loadingInfoStatusOpt =
           loadingPlanAlgoService.getLoadingInformationStatus(
               LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+      log.info("LoadingInformationStatus obj:{}", loadingInfoStatusOpt.get());
       loadingPlanService.updateLoadingPlanStatus(
           loadingInfoOpt.get(),
           loadingInfoStatusOpt.get(),
@@ -235,6 +237,7 @@ public class UllageUpdateLoadicatorService {
         loadicatorDataRequestBuilder.setProcessId(processId);
         buildUllageEditLoadicatorAlgoRequest(
             loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
+        log.info("Algo request for ullage update:{}", algoRequest);
         saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
         checkStabilityWithAlgo(
             loadingInfoOpt.get(),
@@ -416,6 +419,7 @@ public class UllageUpdateLoadicatorService {
     }
     LoadicatorAlgoResponse algoResponse =
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+    log.info("Algo response for ullage update:{}", algoResponse);
     saveLoadicatorResponseJson(algoResponse, loadingInformation.getId());
 
     algoResponse.getLoadicatorResults().get(0).getJudgement().removeIf(error -> error.isEmpty());
@@ -726,10 +730,12 @@ public class UllageUpdateLoadicatorService {
 
     UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
     buildUllageEditLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
+    log.info("Algo reuest for ullage update:{}", algoRequest);
     saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
 
     LoadicatorAlgoResponse algoResponse =
         restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+    log.info("Algo response for ullage update:{}", algoResponse);
     saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
     algoResponse.getLoadicatorResults().get(0).getErrorDetails().removeIf(error -> error.isEmpty());
