@@ -19,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -193,6 +194,30 @@ public class DischargeStudyController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in saveLoadablePatterns ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/algo-errors")
+  public AlgoErrorResponse getAlgoError(
+      @PathVariable Long dischargeStudyId, @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      log.info("getAlgoError: {}", getClientIp());
+      return this.loadableStudyService.getAlgoErrorLoadableStudy(
+          dischargeStudyId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoError", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoError", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
