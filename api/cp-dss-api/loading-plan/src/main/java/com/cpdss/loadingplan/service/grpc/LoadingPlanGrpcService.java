@@ -388,6 +388,20 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           blList.stream()
               .collect(
                   Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
+      Map<Long, List<PortLoadingPlanStowageDetails>> portWiseStowagesDepActuals =
+          stowageDetails.stream()
+              .filter(
+                  stowage ->
+                      stowage.getConditionType().equals(2) && stowage.getValueType().equals(1))
+              .collect(Collectors.groupingBy(PortLoadingPlanStowageDetails::getPortRotationXId));
+      if (portRotationIds.stream()
+          .anyMatch(
+              port ->
+                  portWiseStowagesDepActuals.get(port) == null
+                      || portWiseStowagesDepActuals.get(port).isEmpty())) {
+        throw new GenericServiceException(
+            "LS actuals or BL values are missing", "", HttpStatusCode.SERVICE_UNAVAILABLE);
+      }
       if (!portWiseStowages.keySet().containsAll(portRotationIds)
           || !portWiseBL.keySet().containsAll(portIds)) {
         builder.setStatus(LoadingPlanConstants.FAILED);
