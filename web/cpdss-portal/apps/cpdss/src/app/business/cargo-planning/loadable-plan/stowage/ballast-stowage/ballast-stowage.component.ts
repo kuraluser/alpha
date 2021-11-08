@@ -154,6 +154,7 @@ export class BallastStowageComponent implements OnInit {
   */
   changeGridToEditMode() {
     this.editMode = DATATABLE_EDITMODE.CELL;
+    this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns(true);
     this.buttonStatus = 1;
   }
 
@@ -167,6 +168,7 @@ export class BallastStowageComponent implements OnInit {
     if(this.ballastForm.valid) {
       this.buttonStatus = 0;
       this.editMode = null;
+      this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns();
     } else {
       const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST','LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST'] });

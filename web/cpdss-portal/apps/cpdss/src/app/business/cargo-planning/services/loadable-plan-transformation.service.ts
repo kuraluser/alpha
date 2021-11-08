@@ -9,7 +9,7 @@ import { QUANTITY_UNIT, ValueObject , ISubTotal } from '../../../shared/models/c
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ILoadablePlanSynopticalRecord } from '../models/cargo-planning.model';
-import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'; 
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 
 /**
  * Transformation Service for Lodable Plan details module
@@ -354,7 +354,7 @@ export class LoadablePlanTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadablePlanTransformationService
    */
-  getCargoDatatableColumns(): IDataTableColumn[] {
+  getCargoDatatableColumns(isEditMode = false): IDataTableColumn[] {
     return [
       {
         field: 'tankShortName',
@@ -374,7 +374,7 @@ export class LoadablePlanTransformationService {
         fieldPlaceholder: 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_PLACEHOLDER',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldHeaderClass: 'column-rdg-ullage',
-        numberFormat: '1.0-6',
+        numberFormat: isEditMode ? '1.0-6' : '1.0-2',
         errorMessages: {
           'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR',
@@ -462,7 +462,7 @@ export class LoadablePlanTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadablePlanTransformationService
    */
-   getBallastDatatableColumns(): IDataTableColumn[] {
+   getBallastDatatableColumns(isEditMode = false): IDataTableColumn[] {
     return [
       { field: 'tankShortName', header: 'STOWAGE_BALLAST_TANK'},
       {
@@ -470,7 +470,7 @@ export class LoadablePlanTransformationService {
         header: 'STOWAGE_BALLAST_RDG_LEVEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'LOADABLE_PLAN_BALLAST_GRID_RDG_ULG_PLACEHOLDER',
-        numberFormat: '1.0-6',
+        numberFormat: isEditMode ? '1.0-6' : '1.0-2',
         errorMessages: {
           'required': 'LOADABLE_PLAN_BALLAST_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR',
