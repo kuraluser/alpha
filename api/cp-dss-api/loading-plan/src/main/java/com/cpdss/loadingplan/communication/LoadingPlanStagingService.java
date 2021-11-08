@@ -2,8 +2,12 @@
 package com.cpdss.loadingplan.communication;
 
 import com.cpdss.common.communication.StagingService;
+import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudyServiceGrpc;
+import com.cpdss.loadingplan.domain.VoyageActivate;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.utility.LoadingPlanConstants;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -14,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +75,10 @@ public class LoadingPlanStagingService extends StagingService {
   @Autowired private BillOfLandingRepository billOfLandingRepository;
   @Autowired private PyUserRepository pyUserRepository;
 
+  @GrpcClient("loadableStudyService")
+  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
+      loadableStudyServiceBlockingStub;
+
   public LoadingPlanStagingService(
       @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
     super(loadingPlanStagingRepository);
@@ -77,7 +86,7 @@ public class LoadingPlanStagingService extends StagingService {
 
   LoadingInformation loadingInformation = null;
   List<Long> loadingPlanPortWiseDetailsIds = null;
-
+  Long voyageId = null;
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
    *
@@ -435,6 +444,26 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case voyage:
+          {
+            if (voyageId != null) {
+              LoadableStudy.VoyageActivateRequest.Builder builder =
+                  LoadableStudy.VoyageActivateRequest.newBuilder();
+              builder.setId(voyageId);
+              LoadableStudy.VoyageActivateReply reply = getVoyage(builder.build());
+              VoyageActivate voyageActivate = null;
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                voyageActivate =
+                    new VoyageActivate(
+                        reply.getVoyageActivateRequest().getId(),
+                        reply.getVoyageActivateRequest().getVoyageStatus());
+                object.add(voyageActivate);
+                addIntoProcessedList(
+                    array, object, processIdentifier, processId, processGroupId, processedList);
+              }
+            }
+            break;
+          }
       }
     }
     return array;
@@ -461,8 +490,8 @@ public class LoadingPlanStagingService extends StagingService {
       List<Object> object) {
     Optional<LoadingInformation> loadingInformationObj = loadingInformationRepository.findById(id);
     if (!loadingInformationObj.isEmpty()) {
-
       loadingInformation = loadingInformationObj.get();
+      voyageId = loadingInformation.getVoyageId();
       loadingInformation.setLoadingBerthDetails(null);
       loadingInformation.setCargoToppingOfSequences(null);
       loadingInformation.setLoadingDelays(null);
@@ -663,5 +692,10 @@ public class LoadingPlanStagingService extends StagingService {
     }
     jsonObject.add("data", array);
     return jsonObject;
+  }
+
+  public LoadableStudy.VoyageActivateReply getVoyage(
+      LoadableStudy.VoyageActivateRequest grpcRequest) {
+    return this.loadableStudyServiceBlockingStub.getVoyage(grpcRequest);
   }
 }
