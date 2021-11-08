@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ICargoTank, Voyage, VOYAGE_STATUS, LOADABLE_STUDY_STATUS, IBallastTank, ICargo, ICargoResponseModel } from '../../core/models/common.model';
@@ -16,6 +16,8 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { VALIDATION_AND_SAVE_STATUS } from '../models/loadable-plan.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class of pattern history screen
@@ -29,7 +31,7 @@ import { VALIDATION_AND_SAVE_STATUS } from '../models/loadable-plan.model';
   templateUrl: './loadable-pattern-history.component.html',
   styleUrls: ['./loadable-pattern-history.component.scss']
 })
-export class LoadablePatternHistoryComponent implements OnInit {
+export class LoadablePatternHistoryComponent implements OnInit, OnDestroy {
 
   get selectedLoadableStudy(): LoadableStudy {
     return this._selectedLoadableStudy;
@@ -77,6 +79,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
   selectedLoadablePatternId: number;
   readonly VALIDATION_AND_SAVE_STATUS = VALIDATION_AND_SAVE_STATUS;
   enableBackLoading: boolean;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(private vesselsApiService: VesselsApiService,
     private activatedRoute: ActivatedRoute,
@@ -99,7 +102,7 @@ export class LoadablePatternHistoryComponent implements OnInit {
    */
   async ngOnInit(): Promise<void> {
     const permission = await this.getPagePermission();
-    this.activatedRoute.paramMap.subscribe(async params => {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async params => {
       if (permission.view) {
         this.ngxSpinnerService.show();
         this.enableBackLoading = false;
@@ -123,6 +126,11 @@ export class LoadablePatternHistoryComponent implements OnInit {
         this.ngxSpinnerService.hide();
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
 

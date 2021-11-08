@@ -108,11 +108,11 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   * @memberof LoadingInformationComponent
   */
   private async initSubscriptions() {
-    this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
+    this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     });
-    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableSaveButton = status;
     });
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
@@ -316,7 +316,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
 
     setTimeout(() => {
       this.saveLoadingInformationData();
-      this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((status)=>{
+      this.loadingDischargingTransformationService.loadingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status)=>{
         if(status){
           this.loadingDischargingTransformationService.inProcessing.next(false);
         }

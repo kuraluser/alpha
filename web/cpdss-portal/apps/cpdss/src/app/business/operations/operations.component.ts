@@ -73,7 +73,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
     this.getVesselInfo();
     this.initSubscriptions();
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationsComponent']);
-    this.router.events.subscribe((event) => {
+    this.router.events.pipe(takeUntil(this._ngUnsubscribe)).subscribe((event) => {
       if (event instanceof NavigationEnd && event.url === '/business/operations') {
         this.onPortSelection(this.selectedPort);
       }

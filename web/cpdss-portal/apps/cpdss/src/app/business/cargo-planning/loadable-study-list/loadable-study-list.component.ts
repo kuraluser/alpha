@@ -1,5 +1,5 @@
 import { IDateTimeFormatOptions } from './../../../shared/models/common.model';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -17,6 +17,8 @@ import { PermissionsService } from '../../../shared/services/permissions/permiss
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Loadable study list
@@ -26,7 +28,7 @@ import { TimeZoneTransformationService } from '../../../shared/services/time-zon
   templateUrl: './loadable-study-list.component.html',
   styleUrls: ['./loadable-study-list.component.scss']
 })
-export class LoadableStudyListComponent implements OnInit {
+export class LoadableStudyListComponent implements OnInit, OnDestroy {
   loadableStudyList: LoadableStudy[];
   voyages: Voyage[];
   _selectedVoyage: Voyage;
@@ -44,6 +46,7 @@ export class LoadableStudyListComponent implements OnInit {
   permission: IPermission;
   addLSBtnPermissionContext: IPermissionContext;
   VOYAGE_STATUS = VOYAGE_STATUS;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get selectedVoyage(): Voyage {
     return this._selectedVoyage;
@@ -68,7 +71,7 @@ export class LoadableStudyListComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.getPagePermission();
-    this.activatedRoute.params.subscribe(async params => {
+    this.activatedRoute.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async params => {
       this.voyageId = params.id ? Number(params.id) : 0;
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
@@ -93,6 +96,11 @@ export class LoadableStudyListComponent implements OnInit {
 
     this.loading = false;
 
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**

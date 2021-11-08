@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ICargo, ILoadableQuantityCargo, IShipCargoTank, IAlgoResponse, IAlgoError, OPERATIONS } from '../../../core/models/common.model';
 import { ILoadingDischargingSequences, IToppingOffSequence } from '../../models/loading-discharging.model';
 import { LoadingPlanApiService } from './../../services/loading-plan-api.service';
@@ -12,6 +12,8 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { saveAs } from 'file-saver';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class for loading plan component
@@ -27,7 +29,7 @@ import { saveAs } from 'file-saver';
   styleUrls: ['./loading-plan.component.scss']
 })
 
-export class LoadingPlanComponent implements OnInit {
+export class LoadingPlanComponent implements OnInit, OnDestroy {
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
@@ -55,6 +57,7 @@ export class LoadingPlanComponent implements OnInit {
   loadingPlanDetailsTemp: ILoadingPlanDetails;
 
   readonly OPERATIONS = OPERATIONS;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
 
   constructor(
@@ -69,6 +72,11 @@ export class LoadingPlanComponent implements OnInit {
   ngOnInit(): void {
     this.initSubscriptions();
     this.getLoadingPlanDetails();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -126,21 +134,21 @@ export class LoadingPlanComponent implements OnInit {
   * @memberof LoadingInformationComponent
   */
   private async initSubscriptions() {
-    this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
+    this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     });
 
-    this.loadingDischargingTransformationService.showUllageErrorPopup$.subscribe((res) => {
+    this.loadingDischargingTransformationService.showUllageErrorPopup$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.getAlgoErrorMessage(res);
     });
 
-    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value.status === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.getLoadingPlanDetails();
       }
     });
-    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value.status === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.getLoadingPlanDetails();
       }

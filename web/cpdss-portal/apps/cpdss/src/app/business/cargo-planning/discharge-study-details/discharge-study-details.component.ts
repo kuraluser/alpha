@@ -490,13 +490,13 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof DischargeStudyDetailsComponent
    */
   private async initSubsciptions() {
-    this.dischargeStudyDetailsTransformationService.portValidity$.subscribe((res) => {
+    this.dischargeStudyDetailsTransformationService.portValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.portsComplete = res;
     })
-    this.dischargeStudyDetailsTransformationService.ohqValidity$.subscribe((res) => {
+    this.dischargeStudyDetailsTransformationService.ohqValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.ohqComplete = res;
     })
-    this.dischargeStudyDetailsTransformationService.dischargeStudyValiditySource$.subscribe((res) => {
+    this.dischargeStudyDetailsTransformationService.dischargeStudyValiditySource$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.dischargeStudyComplete = res;
     })
   }

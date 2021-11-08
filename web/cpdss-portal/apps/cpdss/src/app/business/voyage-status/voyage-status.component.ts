@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { VesselsApiService } from '../core/services/vessels-api.service';
 import { IVessel } from '../core/models/vessel-details.model';
 import { VoyageService } from '../core/services/voyage.service';
@@ -26,7 +26,7 @@ import { Subject } from 'rxjs';
   templateUrl: './voyage-status.component.html',
   styleUrls: ['./voyage-status.component.scss']
 })
-export class VoyageStatusComponent implements OnInit {
+export class VoyageStatusComponent implements OnInit, OnDestroy {
   display: boolean;
   showData: boolean;
   vesselInfo: IVessel;

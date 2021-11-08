@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -16,6 +16,8 @@ import { VoyageService } from '../../core/services/voyage.service';
 import { DischargeStudyListApiService } from '../services/discharge-study-list-api.service';
 import { DischargeStudyListTransformationApiService } from '../services/discharge-study-list-transformation-api.service';
 import { IDischargeStudy } from './../models/discharge-study-list.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  *
@@ -29,7 +31,7 @@ import { IDischargeStudy } from './../models/discharge-study-list.model';
   templateUrl: './discharge-study-list.component.html',
   styleUrls: ['./discharge-study-list.component.scss']
 })
-export class DischargeStudyListComponent implements OnInit {
+export class DischargeStudyListComponent implements OnInit, OnDestroy {
 
   
   voyages: Voyage[];
@@ -48,6 +50,7 @@ export class DischargeStudyListComponent implements OnInit {
   selectedDischargeStudy: any //ToDo - change the type to any to model type once actual api is availble.
   addDSBtnPermissionContext: IPermissionContext;
   confirmedPlan: IDischargeStudy;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
 
  /**
@@ -89,7 +92,7 @@ export class DischargeStudyListComponent implements OnInit {
    * @memberof DischargeStudyListComponent
    */
   async ngOnInit(): Promise<void> {
-    this.activatedRoute.params.subscribe(async params => {
+    this.activatedRoute.params.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async params => {
       this.voyageId = params.id ? Number(params.id) : 0;
       this.ngxSpinnerService.show();
       const res = await this.vesselsApiService.getVesselsInfo().toPromise();
@@ -107,6 +110,11 @@ export class DischargeStudyListComponent implements OnInit {
 
     });
     this.loading = false;
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**

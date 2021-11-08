@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -26,6 +26,8 @@ import { saveAs } from 'file-saver';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 import { environment } from '../../../../environments/environment';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class of loadable plan
@@ -39,7 +41,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './loadable-plan.component.html',
   styleUrls: ['./loadable-plan.component.scss']
 })
-export class LoadablePlanComponent implements OnInit {
+export class LoadablePlanComponent implements OnInit, OnDestroy {
 
   get cargoTanks(): ICargoTank[][] {
     return this._cargoTanks;
@@ -77,6 +79,7 @@ export class LoadablePlanComponent implements OnInit {
   }
 
   readonly validateAndSaveStatus = VALIDATION_AND_SAVE_STATUS;
+  private ngUnsubscribe: Subject<any> = new Subject();
   voyageId: number;
   loadableStudyId: number;
   loadableStudy: LoadableStudy;
@@ -142,7 +145,7 @@ export class LoadablePlanComponent implements OnInit {
   */
   async ngOnInit(): Promise<void> {
     this.getPagePermission();
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
@@ -160,6 +163,11 @@ export class LoadablePlanComponent implements OnInit {
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
 
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**

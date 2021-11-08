@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ITankOptions, IShipCargoTank, IVoyagePortDetails, TANKTYPE, ICargoQuantities, IShipBallastTank, OPERATIONS } from '../../core/models/common.model';
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
@@ -6,6 +6,8 @@ import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.m
 import { IDischargingInformationResponse, ILoadingInformationResponse, ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class for arrival condition block
@@ -21,7 +23,7 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 })
 
 
-export class ArrivalConditionComponent implements OnInit {
+export class ArrivalConditionComponent implements OnInit, OnDestroy {
 
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
@@ -77,6 +79,7 @@ export class ArrivalConditionComponent implements OnInit {
   ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit, showWeight: true };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   loadingDischargingPlanInfo: any;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   readonly tankType = TANKTYPE;
   selectedTab = TANKTYPE.CARGO;
@@ -96,8 +99,13 @@ export class ArrivalConditionComponent implements OnInit {
     this.getShipLandingTanks();
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
   initSubscriptions() {
-    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value && this.portRotationId === value.portRotationId) {
         this.loadingDischargingPlanData.loadingInformation.loadingPlanArrStatusId = value.status;
       }
