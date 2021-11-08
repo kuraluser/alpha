@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -1222,6 +1223,9 @@ public class LoadableStudyServiceShore {
     commingleCargoEntity.setId(commingleCargoRequestObj.getId());
     commingleCargoEntity.setIsActive(true);
 
+    // Set values
+    BeanUtils.copyProperties(commingleCargoRequestObj, commingleCargoEntity);
+
     // Set loadable study data
     commingleCargoEntity.setLoadableStudyXId(commingleCargoRequestObj.getLoadableStudyXId());
 
@@ -1235,15 +1239,8 @@ public class LoadableStudyServiceShore {
             ? new BigDecimal(commingleCargoRequestObj.getQuantity())
             : null);
     commingleCargoEntity.setIsSlopOnly(commingleCargoRequestObj.getIsSlopOnly());
-
-    // Fetch the max priority for the cargoNomination ids and set as priority for commingle
-    Long maxPriority =
-        cargoNominationRepository.getMaxPriorityCargoNominationIn(
-            Arrays.asList(
-                commingleCargoRequestObj.getCargoNomination1Id(),
-                commingleCargoRequestObj.getCargoNomination2Id()));
-    commingleCargoEntity.setPriority(maxPriority != null ? maxPriority.intValue() : null);
-
+    commingleCargoEntity.setCommingleColour(commingleCargoRequestObj.getCommingleColour());
+    commingleCargoEntity.setPriority(commingleCargoRequestObj.getPriority());
     commingleCargoEntity.setCargoNomination1Id(commingleCargoRequestObj.getCargoNomination1Id());
     commingleCargoEntity.setCargoNomination2Id(commingleCargoRequestObj.getCargoNomination2Id());
 

@@ -1556,7 +1556,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         if (voyage != null) {
           if (voyage.getActualEndDate() != null) {
             DateTimeFormatter dft = DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT);
-            String endDate = voyage.getVoyageEndDate().format(dft);
+            // Changing to actual end Date : previous implementation was voyage planned end date.
+            String endDate = voyage.getActualEndDate().format(dft);
             cowBuilder.setVoyageEndDate(endDate);
           }
         }

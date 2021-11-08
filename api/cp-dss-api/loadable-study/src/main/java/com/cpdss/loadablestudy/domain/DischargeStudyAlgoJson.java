@@ -21,6 +21,6 @@ public class DischargeStudyAlgoJson {
   private List<CargoNominationOperationDetails> cargoNominationOperationDetails;
   private List<OnHandQuantity> onHandQuantity;
   private List<PortDetails> portDetails;
-  private List<?> cowHistory;
+  private List<CowHistory> cowHistory;
   private ArrivalConditionJson loadablePlanPortWiseDetails;
 }
