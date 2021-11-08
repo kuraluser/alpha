@@ -1895,7 +1895,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       return;
     }
     const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_MESSAGE',
-      'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR', 'ULLAGE_UPDATE_FILE_SIZE_ERROR']).toPromise();
+      'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR', 'ULLAGE_UPDATE_FILE_SIZE_ERROR', 'ULLAGE_UPDATE_EXCEL_EMPTY_FILE']).toPromise();
     if (this.allowedFiles.indexOf(event.target?.files[0].name.split('.')[1]) < 0) {
       this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
       this.file.nativeElement.value = '';
@@ -1953,6 +1953,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.file.nativeElement.value = '';
       if (err?.error?.errorCode === "ERR-RICO-314") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
+      } else if(err.error.errorCode === "ERR-RICO-315") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_EXCEL_EMPTY_FILE'] });
       } else if (err?.error?.errorCode === "ERR-RICO-316") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR'] });
       } else if (err?.error?.errorCode === "ERR-RICO-320") {

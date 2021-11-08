@@ -8,7 +8,7 @@ import { FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
  */
 export function apiTemperatureBlfigValidator(type: string): ValidatorFn {
     return (control: FormControl): ValidationErrors | null => {
-        if ((!control?.value && control?.value !== 0) || !control?.parent) {
+        if (!control?.parent) {
             return null;
         }
 
@@ -18,10 +18,10 @@ export function apiTemperatureBlfigValidator(type: string): ValidatorFn {
             && (!row.mt || Number(row.mt) === 0) && (!row.kl || Number(row.kl) === 0) && (!row.temp || Number(row.temp) === 0)) {
             return null;
         }
-        if (type === 'temperature' && !control?.value) {
+        if (type === 'temperature' && (!control?.value && control?.value !== 0)) {
             return { required: true };
         }
-        if (type === 'api' && !control?.value) {
+        if (type === 'api' && (!control?.value && control?.value !== 0)) {
             return { required: true };
         }
         if (type === 'temperature' && control.value < 40) {
