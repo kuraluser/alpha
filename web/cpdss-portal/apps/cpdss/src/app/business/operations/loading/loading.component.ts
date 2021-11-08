@@ -152,29 +152,29 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   private async initSubsciptions() {
 
     this.ngxSpinnerService.show();
-    this.loadingDischargingTransformationService.generateLoadingPlanButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.generateLoadingPlanButton.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableGenerateLoadableButton = status;
     })
-    this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {
+    this.loadingDischargingTransformationService.isLoadingPlanGenerated.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.loadingPlanComplete = status;
       this.processing = !status;
       if (!this.processing)
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
     })
-    this.loadingDischargingTransformationService.isLoadingSequenceGenerated.subscribe((status) => {
+    this.loadingDischargingTransformationService.isLoadingSequenceGenerated.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.loadingSequenceComplete = status;
       this.processing = !status;
       if (!this.processing)
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
     })
 
-    this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
+    this.loadingDischargingTransformationService.validateUllageData$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       if (res?.validate) {
         this.validateUllage(res);
       }
     });
 
-    this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {
+    this.loadingDischargingTransformationService.loadingInformationValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.loadingInformationComplete = res;
       if (!this.processing) {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
@@ -186,10 +186,10 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
     });
-    this.loadingDischargingTransformationService.inProcessing.subscribe((status) => {
+    this.loadingDischargingTransformationService.inProcessing.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.processing = status;
     })
-    this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
+    this.loadingDischargingTransformationService.loadingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.loadingInstructionComplete = res;
       if (!this.processing) {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
@@ -202,14 +202,14 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
     });
-    this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableViewErrorButton.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableViewErrorButton = status;
     })
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
     });
 
-    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value && value === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.disableGenerateLoadableButton = true;
       }

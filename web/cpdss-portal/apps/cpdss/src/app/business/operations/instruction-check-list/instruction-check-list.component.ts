@@ -264,7 +264,7 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
       }
     }
-    this.loadingDischargingTransformationService.isLoadingInfoComplete.subscribe((status) => {
+    this.loadingDischargingTransformationService.isLoadingInfoComplete.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       if (status) {
         this.loadingDischargingTransformationService.inProcessing.next(false);
       }
@@ -570,7 +570,7 @@ export class InstructionCheckListComponent implements OnInit, OnDestroy {
     } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INSTRUCTION_ERROR'], detail: translationKeys['LOADING_INSTRUCTION_ERROR_MESSAGE'] });
     }
-    this.loadingDischargingTransformationService.isLoadingInfoComplete.subscribe((status) => {
+    this.loadingDischargingTransformationService.isLoadingInfoComplete.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       if (status) {
         this.loadingDischargingTransformationService.inProcessing.next(false);
       }

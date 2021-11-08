@@ -1470,7 +1470,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    */
   setFlowRateData() {
     const xAxisTicks = [], aggregateData = [];
-    let sum, count;
+    let sum;
 
     LoadingDischargingSequenceChartComponent.sequenceData?.flowRates.forEach(function (tankDetails, z) {
       tankDetails.data.forEach(function (data, i) {
@@ -1481,16 +1481,15 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
     });
     xAxisTicks.sort();
     for (let i = 0; i < xAxisTicks.length; i++) {
-      sum = 0; count = 0;
+      sum = 0;
       LoadingDischargingSequenceChartComponent.sequenceData?.flowRates.forEach(function (tankDetails, k) {
         tankDetails.data.forEach(function (ob, j) {
           if (ob[0] === xAxisTicks[i]) {
-            count++;
             sum += ob[1];
           }
         });
       });
-      aggregateData?.push([xAxisTicks[i], parseFloat((sum / count).toFixed())]);
+      aggregateData?.push([xAxisTicks[i], parseFloat((sum).toFixed(2))]);
     }
     this.flowRateChartSeries = [
       {
@@ -2336,7 +2335,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
   makeSumSeries = function (event) {
     const chart = this, series = chart.series,
       x = [];
-    let sum, flag, count;
+    let sum, flag;
 
     if (series) {
       series[0].update({
@@ -2360,19 +2359,18 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       });
     }
     for (let i = 0; i < x.length; i++) {
-      sum = 0; count = 0;
+      sum = 0;
       series.forEach(function (p, k) {
         if (p.name !== LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_AGGEGATE'] && p.visible === true) {
           p.data.forEach(function (ob, j) {
             if (ob.x === x[i]) {
-              count++;
               sum += ob.y;
             }
           });
         }
       });
       series[0].addPoint({
-        y: parseFloat((sum / count).toFixed(2)),
+        y: parseFloat((sum).toFixed(2)),
         x: x[i]
       }, false);
     }

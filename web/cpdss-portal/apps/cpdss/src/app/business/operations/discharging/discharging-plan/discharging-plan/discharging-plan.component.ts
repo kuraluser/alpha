@@ -2583,16 +2583,16 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
     });
 
-    this.loadingDischargingTransformationService.showUllageErrorPopup$.subscribe((res) => {
+    this.loadingDischargingTransformationService.showUllageErrorPopup$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.getAlgoErrorMessage(res);
     });
 
-    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.getDischargingPlanDetails();
       }
     });
-    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.getDischargingPlanDetails();
       }

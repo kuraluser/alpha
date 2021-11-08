@@ -1,4 +1,4 @@
-import { Component, OnInit, Input , ViewChild , ElementRef } from '@angular/core';
+import { Component, OnInit, Input , ViewChild , ElementRef, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 
@@ -16,6 +16,8 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { whiteSpaceValidator } from '../../../core/directives/space-validator.directive';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class of comments component in loadable plan
@@ -29,7 +31,7 @@ import { whiteSpaceValidator } from '../../../core/directives/space-validator.di
   templateUrl: './comments.component.html',
   styleUrls: ['./comments.component.scss']
 })
-export class CommentsComponent implements OnInit {
+export class CommentsComponent implements OnInit, OnDestroy {
 
   @ViewChild('submitBtn') submitBtnRef: ElementRef;
 
@@ -68,6 +70,7 @@ export class CommentsComponent implements OnInit {
   private _commentsDetails: ILoadablePlanCommentsDetails[];
   private _loadablePatternValidationStatus: number;
   private _isVoyageClosed: boolean;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   public commentButtonStatus: boolean;
   public commentForm: FormGroup;
@@ -103,9 +106,14 @@ export class CommentsComponent implements OnInit {
     this.commentForm = this.fb.group({
       comment: [{value:'', disabled: !this.isPermissionAvaliable}, [Validators.maxLength(100) , whiteSpaceValidator]]
     })
-    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
+    this.loadablePlanTransformationService.editBallastStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value: any) => {
       this.validateAndSaveProcessing = value.validateAndSaveProcessing;
     });
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -30,7 +31,7 @@ import { NotificationService } from '../../../../../shared/services/notification
     templateUrl: './role-permission.component.html',
     styleUrls: ['./role-permission.component.scss']
 })
-export class RolePermissionComponent implements OnInit {
+export class RolePermissionComponent implements OnInit, OnDestroy {
 
     treeNode: any;
     selectedNodes: TreeNode[] = [];
@@ -47,6 +48,7 @@ export class RolePermissionComponent implements OnInit {
     userDetails: IUserDetail[] = [];
     public saveRoleBtnPermissionContext: IPermissionContext;
     public roleExistSta: boolean;
+    private ngUnsubscribe: Subject<any> = new Subject();
 
     // public method
     constructor(
@@ -76,11 +78,16 @@ export class RolePermissionComponent implements OnInit {
             'roleDescription': ['', [Validators.required]],
             'type': ['shore']
         });
-        this.activatedRoute.paramMap.subscribe(params => {
+        this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
             this.roleId = Number(params.get('roleId'));
             this.treeNode = [];
             this.getUserRolePermission();
         })
+    }
+
+    ngOnDestroy() {
+        this.ngUnsubscribe.next();
+        this.ngUnsubscribe.complete();
     }
 
     /**

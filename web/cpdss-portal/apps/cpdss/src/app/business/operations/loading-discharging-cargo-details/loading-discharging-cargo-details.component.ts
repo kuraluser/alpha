@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -6,6 +6,8 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { IShipCargoTank, ITankOptions, ICargoQuantities, ICargo, OPERATIONS } from '../../core/models/common.model';
 import { ICargoVesselTankDetails } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class for loading discharging berth component
@@ -20,7 +22,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
   styleUrls: ['./loading-discharging-cargo-details.component.scss']
 })
 
-export class LoadingDischargingCargoDetailsComponent implements OnInit {
+export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestroy {
   @Input() cargos: ICargo[];
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() operation: OPERATIONS;
@@ -53,6 +55,7 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoVesselTankDetails: ICargoVesselTankDetails;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
@@ -61,6 +64,11 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
   ) { }
 
   async ngOnInit(): Promise<void> {
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -73,7 +81,7 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit {
     this.cargoConditions = this.cargoVesselTankDetails?.cargoConditions;
     this.cargoQuantities = this.cargoVesselTankDetails?.cargoQuantities;
 
-    this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
+    this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
       this.convertIntoSelectedUnit();

@@ -307,6 +307,7 @@ export class StowageComponent implements OnInit, OnDestroy {
    */
   changeGridToEditMode() {
     this.editMode = DATATABLE_EDITMODE.CELL;
+    this.cargoGridColumns = this.loadablePlanTransformationService.getCargoDatatableColumns(true);
     this.buttonStatus = 1;
   }
 
@@ -658,6 +659,7 @@ export class StowageComponent implements OnInit, OnDestroy {
     if (this.isFormValid('cargoTanks')) {
       this.buttonStatus = 0;
       this.editMode = null;
+      this.cargoGridColumns = this.loadablePlanTransformationService.getCargoDatatableColumns(false);
     } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO'] });
     }
