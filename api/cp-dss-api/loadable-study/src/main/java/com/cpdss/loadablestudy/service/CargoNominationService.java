@@ -204,6 +204,10 @@ public class CargoNominationService {
               cargoMaxQuantityList.stream()
                   .filter(quantity -> item.getId().equals(quantity.getCargoNominationId()))
                   .findFirst();
+          if(itemQuantity.isPresent()) {
+        	  String api = itemQuantity.get().getApi();
+        	  item.setApi( new BigDecimal(itemQuantity.get().getApi()));
+          }
           item.setQuantity(
               itemQuantity.isPresent()
                   ? new BigDecimal(itemQuantity.get().getMaxQuantity())

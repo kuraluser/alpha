@@ -303,13 +303,13 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   String.valueOf(
                       quantity.stream()
                           .mapToDouble(billOfLadding -> billOfLadding.getApi().doubleValue())
-                          .average()));
+                          .average().orElse(0)));
               maxQuantity.setTemp(
                   String.valueOf(
                       quantity.stream()
                           .mapToDouble(
                               billOfLadding -> billOfLadding.getTemperature().doubleValue())
-                          .average()));
+                          .average().orElse(0)));
               reply.addCargoMaxQuantity(maxQuantity);
             });
       }
