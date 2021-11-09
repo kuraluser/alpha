@@ -1205,7 +1205,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       long loadableStudyId, LoadableStudyPortRotation newPort) {
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
     List<LoadableStudyPortRotation> ports = loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(loadableStudyId, true);
-    boolean isDischarging = ports.stream().anyMatch(port->port.getOperation().getId().equals(DISCHARGING_OPERATION_ID));
+    boolean isDischarging = ports.stream().anyMatch(port->port.isActive()&&port.getOperation().getId().equals(DISCHARGING_OPERATION_ID));
     List<CargoNomination> newPortCargo =
         cargos.stream()
             .filter(
