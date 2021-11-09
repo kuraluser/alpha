@@ -48,10 +48,12 @@ public class TaskListener implements ExecuteTaskListener {
 
       // Download result task
       if (taskName.startsWith(DOWNLOAD_TASK_PREFIX)) {
-        if (taskReqParams.get(ENV).equals(CPDSS_BUILD_ENV_SHIP)) {
-          communicationService.getDataFromCommInShipSide(taskReqParams, MessageTypes.ship);
-        } else if (taskReqParams.get(ENV).equals(CPDSS_BUILD_ENV_SHORE)) {
-          communicationService.getDataFromCommInShoreSide(taskReqParams, MessageTypes.shore);
+        if (CPDSS_BUILD_ENV_SHIP.equals(taskReqParams.get(ENV))) {
+          communicationService.getDataFromCommInShipSide(
+              taskName, taskReqParams, MessageTypes.ship);
+        } else if (CPDSS_BUILD_ENV_SHORE.equals(taskReqParams.get(ENV))) {
+          communicationService.getDataFromCommInShoreSide(
+              taskName, taskReqParams, MessageTypes.shore);
         } else {
           log.error(
               "Invalid env configured in task_req_param_attributes. Task: {}, Env: {}",
