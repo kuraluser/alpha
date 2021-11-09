@@ -644,7 +644,7 @@ public class CargoNominationService {
             // build inner loadingPort details object
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
               cargoNomination
-                  .getCargoNominationPortDetails()
+                  .getCargoNominationPortDetails().stream().filter(operation->operation.getIsActive())
                   .forEach(
                       loadingPort -> {
                         if (loadingPort.getIsActive()) {
