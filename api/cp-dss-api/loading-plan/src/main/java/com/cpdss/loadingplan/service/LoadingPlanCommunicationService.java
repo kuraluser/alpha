@@ -39,13 +39,10 @@ import org.springframework.web.client.ResourceAccessException;
 public class LoadingPlanCommunicationService {
 
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
-
-  @Autowired
-  private LoadingInformationCommunicationRepository loadingInformationCommunicationRepository;
-
+  @Autowired private LoadingInformationRepository loadingInformationRepository;
   @Autowired private CargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
   @Autowired private LoadingBerthDetailsRepository loadingBerthDetailsRepository;
-  @Autowired private LoadingDelayCommunicationRepository loadingDelayCommunicationRepository;
+  @Autowired private LoadingDelayRepository loadingDelayRepository;
   @Autowired private LoadingMachineryInUseRepository loadingMachineryInUseRepository;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
@@ -607,12 +604,12 @@ public class LoadingPlanCommunicationService {
           }
           Long version = null;
           Optional<LoadingInformation> loadingInfoObj =
-              loadingInformationCommunicationRepository.findById(loadingInformation.getId());
+              loadingInformationRepository.findById(loadingInformation.getId());
           if (loadingInfoObj.isPresent()) {
             version = loadingInfoObj.get().getVersion();
           }
           loadingInformation.setVersion(version);
-          loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
+          loadingInfo = loadingInformationRepository.save(loadingInformation);
           log.info("LoadingInformation saved with id:" + loadingInfo.getId());
         } catch (ResourceAccessException e) {
           log.info("ResourceAccessException for LOADING_INFORMATION" + e.getMessage());
@@ -691,15 +688,14 @@ public class LoadingPlanCommunicationService {
             for (LoadingDelay loadingDelay : loadingDelays) {
               Long version = null;
               Optional<LoadingDelay> loadingDelayObj =
-                  loadingDelayCommunicationRepository.findById(loadingDelay.getId());
+                  loadingDelayRepository.findById(loadingDelay.getId());
               if (loadingDelayObj.isPresent()) {
                 version = loadingDelayObj.get().getVersion();
               }
               loadingDelay.setVersion(version);
               loadingDelay.setLoadingInformation(loadingInfo);
-              loadingDelayCommunicationRepository.save(loadingDelay);
             }
-            // loadingDelayCommunicationRepository.saveAll(loadingDelays);
+            loadingDelayRepository.saveAll(loadingDelays);
             log.info("LoadingDelay saved :" + loadingDelays);
           } catch (ResourceAccessException e) {
             updateStatusInExceptionCase(
