@@ -88,7 +88,8 @@ public class LoadableStudiesConstants {
           FRESH_WATER_TANK_CATEGORY_ID,
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
-          BALLAST_TANK_CATEGORY_ID);
+          BALLAST_TANK_CATEGORY_ID,
+          BALLAST_VOID_TANK_CATEGORY_ID);
 
   public static final Long ACTIVE_VOYAGE_STATUS = 3L;
   public static final String START_VOYAGE = "START";
