@@ -1148,7 +1148,8 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vesselRuleBuilder.setVesselId(vesselId);
     vesselRuleBuilder.setIsNoDefaultRule(false);
     vesselRuleBuilder.setIsFetchEnabledRules(false);
-    RuleUtility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, null,true, false, false);
+    RuleUtility.buildRuleListForSave(
+        vesselRuleRequest, vesselRuleBuilder, null, null, null, true, false, false);
     VesselRuleReply vesselRuleReply =
         this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
     RuleResponse ruleResponse = new RuleResponse();

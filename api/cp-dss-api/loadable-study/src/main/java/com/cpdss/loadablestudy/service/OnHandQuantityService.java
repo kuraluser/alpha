@@ -215,7 +215,7 @@ public class OnHandQuantityService {
     onHandQuantities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
             loadableStudyOpt.get(), portRotation, true);
- // sorting the tanks based on tank display order from vessel tank table
+    // sorting the tanks based on tank display order from vessel tank table
     List<VesselInfo.VesselTankDetail> sortedTankList =
         new ArrayList<>(vesselReply.getVesselTanksList());
     Collections.sort(

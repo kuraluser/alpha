@@ -364,7 +364,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     builder.setVesselId(vesselId);
     builder.setSectionId(LOADING_RULE_MASTER_ID);
     builder.setLoadingInfoId(loadingInfoId);
-    RuleUtility.buildRuleListForSave(ruleRequest, null, null, builder, null,false, true, false);
+    RuleUtility.buildRuleListForSave(ruleRequest, null, null, builder, null, false, true, false);
     RuleResponse ruleResponse = this.loadingPlanGrpcService.saveOrGetLoadingPlanRules(builder);
     return ruleResponse;
   }
@@ -402,14 +402,14 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       log.info("Saving Loading Information Response JSON");
       StatusReply reply =
           this.saveJson(
-              infoId,
-              GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID,
-              requestJsonString);
+              infoId, GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID, requestJsonString);
       if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
     } catch (Exception e) {
-      log.error("Exception encountered when processing Loading Information Response JSON : {}", e.getMessage());
+      log.error(
+          "Exception encountered when processing Loading Information Response JSON : {}",
+          e.getMessage());
     }
     loadingSequenceService.buildLoadingPlanSaveRequest(
         loadingPlanAlgoRequest, vesselId, infoId, builder);
@@ -2083,11 +2083,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             .readValue(reply.getLoadingJson(), Object.class);
     jsonResponse.setLoadingJson(loadingJson);
     Object loadicatorJson = null;
-    if(reply.getLoadicatorJson() != null && !reply.getLoadicatorJson().isEmpty()) {
+    if (reply.getLoadicatorJson() != null && !reply.getLoadicatorJson().isEmpty()) {
       loadicatorJson =
-              new ObjectMapper()
-                      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                      .readValue(reply.getLoadicatorJson(), Object.class);
+          new ObjectMapper()
+              .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+              .readValue(reply.getLoadicatorJson(), Object.class);
     }
     jsonResponse.setLoadicatorJson(loadicatorJson);
     jsonResponse.setResponseStatus(

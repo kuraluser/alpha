@@ -3629,6 +3629,103 @@ public final class LoadableStudyServiceGrpc {
     return getGetLoadingSimulatorJsonDataMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+      getGetVoyageMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetVoyage",
+      requestType = com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+      getGetVoyageMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+            com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+        getGetVoyageMethod;
+    if ((getGetVoyageMethod = LoadableStudyServiceGrpc.getGetVoyageMethod) == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetVoyageMethod = LoadableStudyServiceGrpc.getGetVoyageMethod) == null) {
+          LoadableStudyServiceGrpc.getGetVoyageMethod =
+              getGetVoyageMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+                          com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetVoyage"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.VoyageActivateReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetVoyage"))
+                      .build();
+        }
+      }
+    }
+    return getGetVoyageMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+      getSaveActivatedVoyageMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveActivatedVoyage",
+      requestType = com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+          com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+      getSaveActivatedVoyageMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+            com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+        getSaveActivatedVoyageMethod;
+    if ((getSaveActivatedVoyageMethod = LoadableStudyServiceGrpc.getSaveActivatedVoyageMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveActivatedVoyageMethod = LoadableStudyServiceGrpc.getSaveActivatedVoyageMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveActivatedVoyageMethod =
+              getSaveActivatedVoyageMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+                          com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "saveActivatedVoyage"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.VoyageActivateReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("saveActivatedVoyage"))
+                      .build();
+        }
+      }
+    }
+    return getSaveActivatedVoyageMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -4335,6 +4432,23 @@ public final class LoadableStudyServiceGrpc {
           getGetLoadingSimulatorJsonDataMethod(), responseObserver);
     }
 
+    /** */
+    public void getVoyage(
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetVoyageMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveActivatedVoyage(
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveActivatedVoyageMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4837,6 +4951,20 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>(
                       this, METHODID_GET_LOADING_SIMULATOR_JSON_DATA)))
+          .addMethod(
+              getGetVoyageMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+                      com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>(
+                      this, METHODID_GET_VOYAGE)))
+          .addMethod(
+              getSaveActivatedVoyageMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
+                      com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>(
+                      this, METHODID_SAVE_ACTIVATED_VOYAGE)))
           .build();
     }
   }
@@ -5654,6 +5782,26 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getVoyage(
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetVoyageMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /** */
+    public void saveActivatedVoyage(
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveActivatedVoyageMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -6202,6 +6350,20 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingSimulatorJsonDataMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.VoyageActivateReply getVoyage(
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetVoyageMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.VoyageActivateReply saveActivatedVoyage(
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveActivatedVoyageMethod(), getCallOptions(), request);
     }
   }
 
@@ -6848,6 +7010,23 @@ public final class LoadableStudyServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadingSimulatorJsonDataMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+        getVoyage(com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetVoyageMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
+        saveActivatedVoyage(
+            com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveActivatedVoyageMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -6921,6 +7100,8 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_SIMULATOR_JSON_DATA = 68;
   private static final int METHODID_UPDATE_DISCHARGE_QUANTITY_CARGO_DETAILS = 69;
   private static final int METHODID_GET_LOADING_SIMULATOR_JSON_DATA = 70;
+  private static final int METHODID_GET_VOYAGE = 71;
+  private static final int METHODID_SAVE_ACTIVATED_VOYAGE = 72;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -7426,6 +7607,20 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>)
                   responseObserver);
           break;
+        case METHODID_GET_VOYAGE:
+          serviceImpl.getVoyage(
+              (com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_ACTIVATED_VOYAGE:
+          serviceImpl.saveActivatedVoyage(
+              (com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -7561,6 +7756,8 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadableStudySimulatorJsonDataMethod())
                       .addMethod(getUpdateDischargeQuantityCargoDetailsMethod())
                       .addMethod(getGetLoadingSimulatorJsonDataMethod())
+                      .addMethod(getGetVoyageMethod())
+                      .addMethod(getSaveActivatedVoyageMethod())
                       .build();
         }
       }

@@ -208,6 +208,10 @@ public class CargoNominationService {
               itemQuantity.isPresent()
                   ? new BigDecimal(itemQuantity.get().getMaxQuantity())
                   : null);
+          item.setApi(
+              itemQuantity.isPresent() ? new BigDecimal(itemQuantity.get().getApi()) : null);
+          item.setTemperature(
+              itemQuantity.isPresent() ? new BigDecimal(itemQuantity.get().getTemp()) : null);
         });
   }
 

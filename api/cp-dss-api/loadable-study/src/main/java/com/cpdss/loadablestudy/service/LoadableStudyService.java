@@ -3048,22 +3048,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Override
   public void getLoadingSimulatorJsonData(
-          com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request,
-          StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
-                  responseObserver) {
+      com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+          responseObserver) {
     com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply.Builder builder =
-            com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply.newBuilder();
+        com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply.newBuilder();
     try {
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       String loadicatorJsonString = "";
       String loadingJsonString = "";
       JsonData jsonData =
-              this.jsonDataService.getJsonData(request.getInfoId(), LOADICATOR_RESPONSE_ID);
+          this.jsonDataService.getJsonData(request.getInfoId(), LOADICATOR_RESPONSE_ID);
       if (jsonData != null) {
         loadicatorJsonString = jsonData.getJsonData();
       }
-      jsonData =
-              this.jsonDataService.getJsonData(request.getInfoId(), LOADING_RESPONSE_ID);
+      jsonData = this.jsonDataService.getJsonData(request.getInfoId(), LOADING_RESPONSE_ID);
       if (jsonData != null) {
         loadingJsonString = jsonData.getJsonData();
       }
@@ -3078,6 +3077,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
   public void getVoyage(
       com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request,
       StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>
