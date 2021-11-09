@@ -1047,6 +1047,7 @@ export class LoadingDischargingTransformationService {
   transformDischargingInformation(dischargingInformationResponse: IDischargingInformationResponse, listData: IDischargeOperationListData): IDischargingInformation {
     const dischargingInformation = <IDischargingInformation>{};
     dischargingInformation.dischargeInfoId = dischargingInformationResponse?.dischargeInfoId;
+    dischargingInformation.dischargeInfoStatusId = dischargingInformationResponse?.dischargeInfoStatusId;
     dischargingInformation.dischargeStudyName = dischargingInformationResponse?.dischargeStudyName;
     dischargingInformation.dischargeSlopTanksFirst = dischargingInformationResponse?.dischargeSlopTanksFirst;
     dischargingInformation.dischargeCommingledCargoSeparately = dischargingInformationResponse?.dischargeCommingledCargoSeparately;

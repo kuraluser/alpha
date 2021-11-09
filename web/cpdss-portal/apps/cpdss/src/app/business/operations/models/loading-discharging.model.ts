@@ -43,6 +43,7 @@ export interface IDischargingInformationResponse {
   dischargeSequences: ILoadingDischargingSequencesResponse;
   cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
   dischargeInfoId: number;
+  dischargeInfoStatusId?: number;
   synopticTableId: number;
   isDischargeInfoComplete: boolean;
   isDischargeInstructionsComplete: boolean,
