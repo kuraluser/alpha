@@ -135,6 +135,9 @@ public class LoadableQuantityService {
         }
         // DSS-4224 need min value of draft
         minDraftValue.add(loadableStudy.get().getDraftMark());
+        //DSS-3125
+        if(loadableStudy.get().getDraftRestriction() != null)
+          minDraftValue.add(loadableStudy.get().getDraftRestriction());
         Optional<BigDecimal> minVal =
             minDraftValue.stream().min(Comparator.comparing(BigDecimal::doubleValue));
         if (minVal.isPresent()) {
