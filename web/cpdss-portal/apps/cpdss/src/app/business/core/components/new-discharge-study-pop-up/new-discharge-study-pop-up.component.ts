@@ -108,7 +108,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
   initialiseForm()
   {
     this.dischargeStudyForm = this.formBuilder.group({
-      'newDischargeStudyName':['', [Validators.required , isAlphaCharacterAvaiable]],
+      'newDischargeStudyName':['', [Validators.required , isAlphaCharacterAvaiable, Validators.maxLength(100)]],
       'enquiryDetails': ['', [Validators.maxLength(1000)]],
     });
   }
