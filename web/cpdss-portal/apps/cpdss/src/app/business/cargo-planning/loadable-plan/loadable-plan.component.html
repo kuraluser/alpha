@@ -35,7 +35,7 @@
                         class="badge-custom badge-muted v-middle mr-10">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_PENDING' |
                         translate}}</span></ng-template>
 
-                <cpdss-portal-simulator *ngIf="vesselId && loadableStudyId && caseNumber" [vesselId]="vesselId" [loadableStudyId]="loadableStudyId" [caseNumber]="caseNumber" [buttonLabel]="'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL'"></cpdss-portal-simulator>
+                <cpdss-portal-simulator *ngIf="vesselId && loadableStudyId && caseNumber" [vesselId]="vesselId" [loadableStudyId]="loadableStudyId" [caseNumber]="caseNumber" [requestType]="SIMULATOR_REQUEST_TYPE.STOWAGE_PLAN" [buttonLabel]="'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL'"></cpdss-portal-simulator>
 
                 <button class="btn btn-main mr-10" id="confirm_plan"
                     [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending"

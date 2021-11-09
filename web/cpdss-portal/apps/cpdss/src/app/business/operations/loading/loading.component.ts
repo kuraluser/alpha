@@ -17,6 +17,7 @@ import { ULLAGE_STATUS_VALUE } from './../models/loading-discharging.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { SIMULATOR_REQUEST_TYPE } from '../../core/components/simulator/simulator.model';
 
 /**
  * Component class for loading component
@@ -59,8 +60,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   loadingPlanTabPermission: IPermission;
   generatePlanPermission: IPermission;
 
-
-
+  readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
 
   private ngUnsubscribe: Subject<any> = new Subject();
   errorPopUp: boolean = false;
