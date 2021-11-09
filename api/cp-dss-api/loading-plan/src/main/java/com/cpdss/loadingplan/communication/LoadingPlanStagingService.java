@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,8 @@ public class LoadingPlanStagingService extends StagingService {
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
 
+  @Autowired private EntityManager entityManager;
+
   public LoadingPlanStagingService(
       @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
     super(loadingPlanStagingRepository);
@@ -129,8 +132,10 @@ public class LoadingPlanStagingService extends StagingService {
               // set each loading info obj to null
               cargoToppingOffSequences.stream()
                   .forEach(
-                      cargoToppingOffSequence ->
-                          cargoToppingOffSequence.setLoadingInformation(null));
+                      cargoToppingOffSequence -> {
+                        entityManager.detach(cargoToppingOffSequence);
+                        cargoToppingOffSequence.setLoadingInformation(null);
+                      });
               object.addAll(cargoToppingOffSequences);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -145,7 +150,11 @@ public class LoadingPlanStagingService extends StagingService {
             if (loadingBerthDetails != null && !loadingBerthDetails.isEmpty()) {
               // set each loading info obj to null
               loadingBerthDetails.stream()
-                  .forEach(loadingBerthDetail -> loadingBerthDetail.setLoadingInformation(null));
+                  .forEach(
+                      loadingBerthDetail -> {
+                        entityManager.detach(loadingBerthDetail);
+                        loadingBerthDetail.setLoadingInformation(null);
+                      });
               object.addAll(loadingBerthDetails);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -161,6 +170,7 @@ public class LoadingPlanStagingService extends StagingService {
               loadingDelayList.stream()
                   .forEach(
                       loadingDelay -> {
+                        entityManager.detach(loadingDelay);
                         loadingDelay.setLoadingInformation(null);
                         loadingDelay.setLoadingDelayReasons(null);
                       });
@@ -179,7 +189,10 @@ public class LoadingPlanStagingService extends StagingService {
               // set each loading info obj to null
               loadingMachineryInUseList.stream()
                   .forEach(
-                      loadingMachineryInUse -> loadingMachineryInUse.setLoadingInformation(null));
+                      loadingMachineryInUse -> {
+                        entityManager.detach(loadingMachineryInUse);
+                        loadingMachineryInUse.setLoadingInformation(null);
+                      });
               object.addAll(loadingMachineryInUseList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -194,6 +207,7 @@ public class LoadingPlanStagingService extends StagingService {
               loadingSequenceList.stream()
                   .forEach(
                       loadingSequence -> {
+                        entityManager.detach(loadingSequence);
                         loadingSequence.setLoadingPlanPortWiseDetails(null);
                         loadingSequence.setCargoLoadingRates(null);
                         loadingSequence.setCargoValves(null);
@@ -222,8 +236,10 @@ public class LoadingPlanStagingService extends StagingService {
                 && !portLoadingPlanStabilityParamList.isEmpty()) {
               portLoadingPlanStabilityParamList.stream()
                   .forEach(
-                      portLoadingPlanStabilityParam ->
-                          portLoadingPlanStabilityParam.setLoadingInformation(null));
+                      portLoadingPlanStabilityParam -> {
+                        entityManager.detach(portLoadingPlanStabilityParam);
+                        portLoadingPlanStabilityParam.setLoadingInformation(null);
+                      });
               object.addAll(portLoadingPlanStabilityParamList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -250,10 +266,11 @@ public class LoadingPlanStagingService extends StagingService {
             if (loadingPlanBallastDetailsList != null && !loadingPlanBallastDetailsList.isEmpty()) {
               loadingPlanBallastDetailsList.stream()
                   .forEach(
-                      portLoadingPlanStabilityParam -> {
-                        portLoadingPlanStabilityParam.setCommunicationPortWiseId(
-                            portLoadingPlanStabilityParam.getLoadingPlanPortWiseDetails().getId());
-                        portLoadingPlanStabilityParam.setLoadingPlanPortWiseDetails(null);
+                      loadingPlanBallastDetails -> {
+                        entityManager.detach(loadingPlanBallastDetails);
+                        loadingPlanBallastDetails.setCommunicationPortWiseId(
+                            loadingPlanBallastDetails.getLoadingPlanPortWiseDetails().getId());
+                        loadingPlanBallastDetails.setLoadingPlanPortWiseDetails(null);
                       });
               object.addAll(loadingPlanBallastDetailsList);
               addIntoProcessedList(
@@ -270,6 +287,7 @@ public class LoadingPlanStagingService extends StagingService {
               loadingPlanRobDetailsList.stream()
                   .forEach(
                       loadingPlanRobDetails -> {
+                        entityManager.detach(loadingPlanRobDetails);
                         loadingPlanRobDetails.setCommunicationPortWiseId(
                             loadingPlanRobDetails.getLoadingPlanPortWiseDetails().getId());
                         loadingPlanRobDetails.setLoadingPlanPortWiseDetails(null);
@@ -289,8 +307,10 @@ public class LoadingPlanStagingService extends StagingService {
                 && !portLoadingPlanBallastDetailsList.isEmpty()) {
               portLoadingPlanBallastDetailsList.stream()
                   .forEach(
-                      portLoadingPlanBallastDetails ->
-                          portLoadingPlanBallastDetails.setLoadingInformation(null));
+                      portLoadingPlanBallastDetails -> {
+                        entityManager.detach(portLoadingPlanBallastDetails);
+                        portLoadingPlanBallastDetails.setLoadingInformation(null);
+                      });
               object.addAll(portLoadingPlanBallastDetailsList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -317,8 +337,10 @@ public class LoadingPlanStagingService extends StagingService {
                 && !portLoadingPlanStowageDetailsList.isEmpty()) {
               portLoadingPlanStowageDetailsList.stream()
                   .forEach(
-                      portLoadingPlanStowageDetails ->
-                          portLoadingPlanStowageDetails.setLoadingInformation(null));
+                      portLoadingPlanStowageDetails -> {
+                        entityManager.detach(portLoadingPlanStowageDetails);
+                        portLoadingPlanStowageDetails.setLoadingInformation(null);
+                      });
               object.addAll(portLoadingPlanStowageDetailsList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -347,6 +369,7 @@ public class LoadingPlanStagingService extends StagingService {
               loadingPlanStowageDetailsList.stream()
                   .forEach(
                       loadingPlanStowageDetails -> {
+                        entityManager.detach(loadingPlanStowageDetails);
                         loadingPlanStowageDetails.setCommunicationPortWiseId(
                             loadingPlanStowageDetails.getLoadingPlanPortWiseDetails().getId());
                         loadingPlanStowageDetails.setLoadingPlanPortWiseDetails(null);
@@ -365,8 +388,10 @@ public class LoadingPlanStagingService extends StagingService {
                 && !loadingSequenceStabilityParametersList.isEmpty()) {
               loadingSequenceStabilityParametersList.stream()
                   .forEach(
-                      loadingSequenceStabilityParameters ->
-                          loadingSequenceStabilityParameters.setLoadingInformation(null));
+                      loadingSequenceStabilityParameters -> {
+                        entityManager.detach(loadingSequenceStabilityParameters);
+                        loadingSequenceStabilityParameters.setLoadingInformation(null);
+                      });
               object.addAll(loadingSequenceStabilityParametersList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -383,6 +408,7 @@ public class LoadingPlanStagingService extends StagingService {
               loadingPlanStabilityParametersList.stream()
                   .forEach(
                       loadingPlanStabilityParameters -> {
+                        entityManager.detach(loadingPlanStabilityParameters);
                         loadingPlanStabilityParameters.setCommunicationPortWiseId(
                             loadingPlanStabilityParameters.getLoadingPlanPortWiseDetails().getId());
                         loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(null);
@@ -414,8 +440,10 @@ public class LoadingPlanStagingService extends StagingService {
               // set each loading info obj to null
               portLoadingPlanCommingleDetailsList.stream()
                   .forEach(
-                      portLoadingPlanCommingleDetails ->
-                          portLoadingPlanCommingleDetails.setLoadingInformation(null));
+                      portLoadingPlanCommingleDetails -> {
+                        entityManager.detach(portLoadingPlanCommingleDetails);
+                        portLoadingPlanCommingleDetails.setLoadingInformation(null);
+                      });
               object.addAll(portLoadingPlanCommingleDetailsList);
               addIntoProcessedList(
                   array, object, processIdentifier, processId, processGroupId, processedList);
@@ -492,6 +520,7 @@ public class LoadingPlanStagingService extends StagingService {
     if (!loadingInformationObj.isEmpty()) {
       loadingInformation = loadingInformationObj.get();
       voyageId = loadingInformation.getVoyageId();
+      entityManager.detach(loadingInformation);
       loadingInformation.setLoadingBerthDetails(null);
       loadingInformation.setCargoToppingOfSequences(null);
       loadingInformation.setLoadingDelays(null);
@@ -649,6 +678,7 @@ public class LoadingPlanStagingService extends StagingService {
       loadingPlanPortWiseDetailsList.stream()
           .forEach(
               loadingPlanPortWiseDetails -> {
+                entityManager.detach(loadingPlanPortWiseDetails);
                 loadingPlanPortWiseDetails.setLoadingPlanStowageDetails(null);
                 loadingPlanPortWiseDetails.setLoadingPlanBallastDetails(null);
                 loadingPlanPortWiseDetails.setLoadingPlanRobDetails(null);
