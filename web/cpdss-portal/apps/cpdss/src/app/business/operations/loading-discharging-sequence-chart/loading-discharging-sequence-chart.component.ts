@@ -349,10 +349,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         color: dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
         abbreviation: dataObj.abbreviation,
         y: tankIndex,
-        pointWidth: dataObj?.id?.includes('stripping') ? 40 : 6,
-        borderColor: dataObj?.id?.includes('stripping') ? '#bebebe' : null,
-        borderWidth: dataObj?.id?.includes('stripping') ? 1 : 0,
-        borderRadius: dataObj?.id?.includes('stripping') ? 5 : 0,
+        pointWidth: dataObj?.id?.includes('stripping') ? 0 : 6,
       });
     });
     this.cargoSequenceChartSeries = [{
@@ -993,10 +990,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         color: dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
         abbreviation: 'Ballast',
         y: tankIndex,
-        pointWidth: dataObj?.id?.includes('stripping') ? 40 : 6,
-        borderColor: dataObj?.id?.includes('stripping') ? '#bebebe' : null,
-        borderWidth: dataObj?.id?.includes('stripping') ? 1 : 0,
-        borderRadius: dataObj?.id?.includes('stripping') ? 5 : 0,
+        pointWidth: dataObj?.id?.includes('stripping') ? 0 : 6,
       });
     });
     this.ballastSequenceChartSeries = [{
@@ -2241,7 +2235,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       if (point?.options?.id?.includes('stripping')) {
         const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
         const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
-        const rect = renderer.rect(rectX, point.plotY + chart.plotTop - (point?.shapeArgs?.height / 2), rectWidth, point?.shapeArgs?.height, 0)
+        const rectHeight = 40;
+        const rect = renderer.rect(rectX, point.plotY + chart.plotTop - (rectHeight / 2), rectWidth, rectHeight, 0)
           .attr({
             fill: '#f8f8f8',
             stroke: '#bebebe',
@@ -2257,7 +2252,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           box.y
         )
           .css({
-            width: rectWidth - 10,
+            width: rectWidth > 10 ? rectWidth - 10 : rectWidth,
             textOverflow: 'ellipsis',
             color: '#666666'
           })
@@ -2295,7 +2290,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       if (point?.options?.id?.includes('gravity')) {
         const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
         const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
-        const rect = renderer.rect(rectX, point.plotY + chart.plotTop - (point?.shapeArgs?.height / 2), rectWidth, point?.shapeArgs?.height, 0)
+        const rectHeight = 40;
+        const rect = renderer.rect(rectX, point.plotY + chart.plotTop - (rectHeight / 2), rectWidth, rectHeight, 0)
           .attr({
             fill: '#f8f8f8',
             stroke: '#bebebe',
@@ -2311,7 +2307,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           box.y
         )
           .css({
-            width: rectWidth - 10,
+            width: rectWidth > 10 ? rectWidth - 10 : rectWidth,
             textOverflow: 'ellipsis',
             color: '#666666',
             backgroundColor: 'white'
