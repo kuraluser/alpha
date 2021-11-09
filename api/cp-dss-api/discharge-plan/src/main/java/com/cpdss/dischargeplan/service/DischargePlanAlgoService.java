@@ -272,50 +272,57 @@ public class DischargePlanAlgoService {
       com.cpdss.dischargeplan.entity.DischargeInformation entity) {
     CowPlan cowPlan = new CowPlan();
     // need null check, also confirm data will insert from DS
-    CowPlanDetail cpd = this.cowPlanDetailRepository.findByDischargingId(entity.getId()).get();
-    BeanUtils.copyProperties(cpd, cowPlan);
-    cowPlan.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
+    Optional<CowPlanDetail> cpdOpt =
+        this.cowPlanDetailRepository.findByDischargingId(entity.getId());
+    cpdOpt.ifPresent(
+        cpd -> {
+          BeanUtils.copyProperties(cpd, cowPlan);
+          cowPlan.setCowOptionType(
+              Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
 
-    if (!cpd.getCowTankDetails().isEmpty()) {
-      cowPlan.setTopCowTankIds(
-          cpd.getCowTankDetails().stream()
-              .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
-              .map(CowTankDetail::getTankXid)
-              .collect(Collectors.toList()));
+          if (!cpd.getCowTankDetails().isEmpty()) {
+            cowPlan.setTopCowTankIds(
+                cpd.getCowTankDetails().stream()
+                    .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
+                    .map(CowTankDetail::getTankXid)
+                    .collect(Collectors.toList()));
 
-      cowPlan.setBottomCowTankIds(
-          cpd.getCowTankDetails().stream()
-              .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
-              .map(CowTankDetail::getTankXid)
-              .collect(Collectors.toList()));
+            cowPlan.setBottomCowTankIds(
+                cpd.getCowTankDetails().stream()
+                    .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
+                    .map(CowTankDetail::getTankXid)
+                    .collect(Collectors.toList()));
 
-      cowPlan.setAllCowTankIds(
-          cpd.getCowTankDetails().stream()
-              .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
-              .map(CowTankDetail::getTankXid)
-              .collect(Collectors.toList()));
-    }
+            cowPlan.setAllCowTankIds(
+                cpd.getCowTankDetails().stream()
+                    .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
+                    .map(CowTankDetail::getTankXid)
+                    .collect(Collectors.toList()));
+          }
 
-    if (!cpd.getCowWithDifferentCargos().isEmpty()) {
-      List<CargoForCowDetails> cargoForCowDetails = new ArrayList<>();
-      var gp1 =
-          cpd.getCowWithDifferentCargos().stream()
-              .collect(Collectors.groupingBy(CowWithDifferentCargo::getCargoXid)); // group by cargo
-      for (Map.Entry<Long, List<CowWithDifferentCargo>> map1 : gp1.entrySet()) {
-        CowWithDifferentCargo firstItem = map1.getValue().stream().findFirst().get();
-        CargoForCowDetails cargoForCow = new CargoForCowDetails();
-        cargoForCow.setCargoId(firstItem.getCargoXid());
-        cargoForCow.setCargoNominationId(firstItem.getCargoNominationXid());
-        cargoForCow.setWashingCargoId(firstItem.getWashingCargoXid());
-        cargoForCow.setWashingCargoNominationId(firstItem.getWashingCargoNominationXid());
-        cargoForCow.setTankIds(
-            map1.getValue().stream()
-                .map(CowWithDifferentCargo::getTankXid)
-                .collect(Collectors.toList()));
-        cargoForCowDetails.add(cargoForCow);
-      }
-      cowPlan.setCargoCowTankIds(cargoForCowDetails);
-    }
+          if (!cpd.getCowWithDifferentCargos().isEmpty()) {
+            List<CargoForCowDetails> cargoForCowDetails = new ArrayList<>();
+            var gp1 =
+                cpd.getCowWithDifferentCargos().stream()
+                    .collect(
+                        Collectors.groupingBy(
+                            CowWithDifferentCargo::getCargoXid)); // group by cargo
+            for (Map.Entry<Long, List<CowWithDifferentCargo>> map1 : gp1.entrySet()) {
+              CowWithDifferentCargo firstItem = map1.getValue().stream().findFirst().get();
+              CargoForCowDetails cargoForCow = new CargoForCowDetails();
+              cargoForCow.setCargoId(firstItem.getCargoXid());
+              cargoForCow.setCargoNominationId(firstItem.getCargoNominationXid());
+              cargoForCow.setWashingCargoId(firstItem.getWashingCargoXid());
+              cargoForCow.setWashingCargoNominationId(firstItem.getWashingCargoNominationXid());
+              cargoForCow.setTankIds(
+                  map1.getValue().stream()
+                      .map(CowWithDifferentCargo::getTankXid)
+                      .collect(Collectors.toList()));
+              cargoForCowDetails.add(cargoForCow);
+            }
+            cowPlan.setCargoCowTankIds(cargoForCowDetails);
+          }
+        });
 
     // set cow history
     cowPlan.setCowHistories(this.setCowHistory(entity.getVesselXid()));

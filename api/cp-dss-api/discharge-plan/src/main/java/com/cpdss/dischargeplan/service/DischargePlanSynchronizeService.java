@@ -10,12 +10,14 @@ import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferReque
 import com.cpdss.common.generated.discharge_plan.PortData;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
+import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.rules.RuleMasterSection;
 import com.cpdss.dischargeplan.entity.CowPlanDetail;
 import com.cpdss.dischargeplan.entity.CowTankDetail;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
+import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.DischargeRulesRepository;
@@ -44,6 +46,8 @@ public class DischargePlanSynchronizeService {
 
   @Autowired DischargeRulesRepository dischargeStudyRulesRepository;
 
+  @Autowired DischargePlanAlgoService dischargePlanAlgoService;
+
   public void saveDischargeInformation(DischargeStudyDataTransferRequest request) {
     log.info("Discharge Study Synchronization Starts");
     List<PortData> portDataList = request.getPortDataList();
@@ -59,6 +63,21 @@ public class DischargePlanSynchronizeService {
               dischargeInformation.setSynopticTableXid(port.getSynopticTableId());
               dischargeInformation.setIsActive(true);
               dischargeInformation.setPortXid(port.getPortId());
+              try {
+                Optional<DischargingInformationStatus> pendingStatusOpt =
+                    dischargePlanAlgoService.getDischargingInformationStatus(
+                        DischargePlanConstants.DISCHARGING_INFORMATION_PENDING_ID);
+                pendingStatusOpt.ifPresent(
+                    status -> {
+                      dischargeInformation.setArrivalStatusId(status.getId());
+                      dischargeInformation.setDischargingInformationStatus(status);
+                      dischargeInformation.setDepartureStatusId(status.getId());
+                    });
+              } catch (GenericServiceException e) {
+                log.error(
+                    "Failed to fetch status with id {}",
+                    DischargePlanConstants.DISCHARGING_INFORMATION_PENDING_ID);
+              }
               infos.add(dischargeInformation);
               log.info("Discharge Study Synchronization Port Data - {}", Utils.toJson(port));
             });
