@@ -77,6 +77,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -801,7 +802,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargoNomination.setTemperature(new BigDecimal(cargoRequest.getTemperature()));
     Optional<CargoNominationPortDetails> cargoOperation =
         cargoNomination.getCargoNominationPortDetails().stream()
-            .filter(cp -> cp.getIsActive()&&cp.getPortId().equals(portId))
+            .filter(cp -> cp.getIsActive() && cp.getPortId().equals(portId))
             .findFirst();
     if (cargoOperation.isPresent()) {
       cargoOperation.get().setQuantity(new BigDecimal(cargoRequest.getQuantity()));
@@ -1204,8 +1205,15 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   private List<CargoNomination> createNewPortCargoNominations(
       long loadableStudyId, LoadableStudyPortRotation newPort) {
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
-    List<LoadableStudyPortRotation> ports = loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(loadableStudyId, true);
-    boolean isDischarging = ports.stream().anyMatch(port->port.isActive()&&port.getOperation().getId().equals(DISCHARGING_OPERATION_ID));
+    List<LoadableStudyPortRotation> ports =
+        loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(loadableStudyId, true);
+    Optional<LoadableStudyPortRotation> firstDischargingPort =
+        ports.stream()
+            .filter(
+                port ->
+                    port.isActive() && port.getOperation().getId().equals(DISCHARGING_OPERATION_ID))
+            .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
+            .findFirst();
     List<CargoNomination> newPortCargo =
         cargos.stream()
             .filter(
@@ -1217,9 +1225,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               // Bug fix - DSS - 4493 - Checking for duplicate entry in Cargo nomination
               // operation table
               if (!checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId())) {
-                Set<CargoNominationPortDetails> newPortDetails =
-                    cargoNominationService.createCargoNominationPortDetails(
-                        cargo, isDischarging?null:cargo, newPort.getPortXId(), newPort.getOperation().getId());
+                Set<CargoNominationPortDetails> newPortDetails = new HashSet<>();
+                if (firstDischargingPort.isPresent()
+                    && firstDischargingPort.get().getPortXId().equals(newPort.getPortXId())) {
+                  newPortDetails =
+                      cargoNominationService.createCargoNominationPortDetails(
+                          cargo, cargo, newPort.getPortXId(), newPort.getOperation().getId());
+                } else {
+                  newPortDetails =
+                      cargoNominationService.createCargoNominationPortDetails(
+                          cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
+                }
+
                 if (cargo.getCargoNominationPortDetails() != null
                     && !cargo.getCargoNominationPortDetails().isEmpty()) {
                   cargo.getCargoNominationPortDetails().addAll(newPortDetails);
