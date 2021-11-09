@@ -39,4 +39,5 @@ public class VesselDetailsResponse {
   private List<TankType> tankTypes;
   private List<VesselManiFold> vesselManifold;
   private List<VesselBottomLine> vesselBottomLine;
+  private List<VesselPumpTankMapping> vesselPumpTankMappings;
 }

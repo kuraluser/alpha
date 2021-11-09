@@ -240,7 +240,14 @@ message VesselReply {
         repeated TankType tankType = 13;
         repeated VesselComponent vesselManifold = 14;
         repeated VesselComponent vesselBottomLine = 15;
+        repeated VesselPumpTankMapping vesselPumpTankMapping = 16;
 
+}
+
+message VesselPumpTankMapping {
+	int64 vesselId = 1;
+	VesselPump vesselPump = 2;
+	VesselTankDetail vesselTankDetail = 3;
 }
 
 message BendingMomentType2 {
