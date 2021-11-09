@@ -406,6 +406,8 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
         this.buildHydrostaticResponse(vesselAlgoReply, correlationId));
     vesselDetailsResponse.setVesselTankTCGs(
         this.buildVesselTankTcgResponse(vesselAlgoReply, correlationId));
+    vesselDetailsResponse.setVesselPumpTankMappings(
+        this.buildVesselPumpTankMappingResponse(vesselAlgoReply));
 
     BMAndSF bmAndSF = new BMAndSF();
 
@@ -481,6 +483,67 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
               }
             });
     return vesselDetailsResponse;
+  }
+
+  private List<VesselPumpTankMapping> buildVesselPumpTankMappingResponse(
+      VesselAlgoReply vesselAlgoReply) {
+    List<VesselPumpTankMapping> vesselPumpTankMappings = new ArrayList<>();
+    vesselAlgoReply
+        .getVesselPumpTankMappingList()
+        .forEach(
+            vesselPumpTankMapping -> {
+              VesselPumpTankMapping vesselPumpTankMappingDto = new VesselPumpTankMapping();
+              vesselPumpTankMappingDto.setVesselXid((int) vesselPumpTankMapping.getVesselId());
+              VesselPump vesselPump = new VesselPump();
+              vesselPump.setId(vesselPumpTankMapping.getVesselPump().getId());
+              vesselPump.setVesselId(vesselPumpTankMapping.getVesselPump().getVesselId());
+              vesselPump.setPumpCode(vesselPumpTankMapping.getVesselPump().getPumpCode());
+              vesselPump.setPumpName(vesselPumpTankMapping.getVesselPump().getPumpName());
+              vesselPump.setPumpTypeId(vesselPumpTankMapping.getVesselPump().getPumpTypeId());
+              vesselPumpTankMappingDto.setVesselPump(vesselPump);
+
+              VesselTank vesselTank = new VesselTank();
+              vesselTank.setId(vesselPumpTankMapping.getVesselTankDetail().getTankId());
+              vesselTank.setCategoryId(
+                  vesselPumpTankMapping.getVesselTankDetail().getTankCategoryId());
+              vesselTank.setCategoryName(
+                  vesselPumpTankMapping.getVesselTankDetail().getTankCategoryName());
+              vesselTank.setDensity(
+                  vesselPumpTankMapping.getVesselTankDetail().getDensity().equals("")
+                      ? null
+                      : new BigDecimal(vesselPumpTankMapping.getVesselTankDetail().getDensity()));
+              vesselTank.setDisplayOrder(
+                  vesselPumpTankMapping.getVesselTankDetail().getTankDisplayOrder());
+              vesselTank.setFrameNumberFrom(
+                  vesselPumpTankMapping.getVesselTankDetail().getFrameNumberFrom());
+              vesselTank.setFrameNumberTo(
+                  vesselPumpTankMapping.getVesselTankDetail().getFrameNumberTo());
+              vesselTank.setCoatingTypeId(
+                  vesselPumpTankMapping.getVesselTankDetail().getCoatingTypeId());
+              vesselTank.setFillCapcityCubm(
+                  vesselPumpTankMapping.getVesselTankDetail().getFillCapacityCubm().equals("")
+                      ? null
+                      : new BigDecimal(
+                          vesselPumpTankMapping.getVesselTankDetail().getFillCapacityCubm()));
+              vesselTank.setFullCapacityCubm(
+                  vesselPumpTankMapping.getVesselTankDetail().getFullCapacityCubm());
+              vesselTank.setGroup(vesselPumpTankMapping.getVesselTankDetail().getTankGroup());
+              vesselTank.setHeightFrom(vesselPumpTankMapping.getVesselTankDetail().getHeightFrom());
+              vesselTank.setHeightTo(vesselPumpTankMapping.getVesselTankDetail().getHeightTo());
+              vesselTank.setIsLoadicatorUsing(
+                  vesselPumpTankMapping.getVesselTankDetail().getIsLoadicatorUsing());
+              vesselTank.setLcg(vesselPumpTankMapping.getVesselTankDetail().getLcg());
+              vesselTank.setName(vesselPumpTankMapping.getVesselTankDetail().getTankName());
+              vesselTank.setOrder(vesselPumpTankMapping.getVesselTankDetail().getTankOrder());
+              vesselTank.setShortName(vesselPumpTankMapping.getVesselTankDetail().getShortName());
+              vesselTank.setSlopTank(vesselPumpTankMapping.getVesselTankDetail().getIsSlopTank());
+              vesselTank.setTcg(vesselPumpTankMapping.getVesselTankDetail().getTcg());
+              vesselTank.setVcg(vesselPumpTankMapping.getVesselTankDetail().getVcg());
+              vesselPumpTankMappingDto.setVesselTank(vesselTank);
+
+              vesselPumpTankMappings.add(vesselPumpTankMappingDto);
+            });
+    return vesselPumpTankMappings;
   }
 
   private Map<Object, Object> getVesselValveSequenceData(Long vesselId) {
@@ -1148,8 +1211,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vesselRuleBuilder.setVesselId(vesselId);
     vesselRuleBuilder.setIsNoDefaultRule(false);
     vesselRuleBuilder.setIsFetchEnabledRules(false);
-    RuleUtility.buildRuleListForSave(
-        vesselRuleRequest, vesselRuleBuilder, null, null, null, true, false, false);
+    RuleUtility.buildRuleListForSave(vesselRuleRequest, vesselRuleBuilder, null, null, null,true, false, false);
     VesselRuleReply vesselRuleReply =
         this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
     RuleResponse ruleResponse = new RuleResponse();

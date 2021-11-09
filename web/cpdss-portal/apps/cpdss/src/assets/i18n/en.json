@@ -395,7 +395,7 @@
   "TOTAL_QUANTITY_ERROR": "Error",
   "TOTAL_QUANTITY_WARNING": "Warning",
   "TOTAL_QUANTITY_INFO": "Info",
-  "TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity entered entered exceeds the loadable quantity. Please correct.",
+  "TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity entered exceeds the loadable quantity. Please correct.",
   "LOADABLE_QUANTITY_WARNING": "Warning",
   "LOADABLE_QUANTITY_WARNING_MISMATCH": "Loadable quantity is changed. Please save/update",
   "PORT_ROW_ADD_ERROR": "Warning",
@@ -2153,6 +2153,7 @@
   "DISCHARGE_STUDY_TEMPERATURE_MIN_ERROR": "TEMP Est. must be greater than or equal to 40°F",
   "DISCHARGE_STUDY_TEMPERATURE_MAX_ERROR": "TEMP Est. must be less than or equal to 160°F",
   "DISCHARGE_STUDY_ADD_PORT": "Please add port",
-  "DISCHARGE_STUDY_OHQ_NO_PORTS_AVAILABLE": "No ports available"
+  "DISCHARGE_STUDY_OHQ_NO_PORTS_AVAILABLE": "No ports available",
+  "DISCHARGE_STUDY_NAME_MAX_LENGTH": "Maximum allowed character length is 100"
 }
 
