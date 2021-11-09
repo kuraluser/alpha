@@ -22,6 +22,7 @@ import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoQuantity;
 import com.cpdss.gateway.domain.loadingplan.CargoTobeLoaded;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionForExcel;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionGroup;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionSubHeader;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructions;
@@ -768,12 +769,13 @@ public class GenerateLoadingPlanExcelReportService {
     int groupHeading = 5;
     List<Integer> continuityList = Arrays.asList(0, 4, 5, 6, 7, 8);
     for (Long headerId : INSTRUCTION_ORDER) {
-      String heading =
+      Optional<LoadingInstructionGroup> ligOpt =
           loadingSequenceResponse.getLoadingInstructionGroupList().stream()
               .filter(value -> value.getGroupId().equals(headerId))
-              .findAny()
-              .get()
-              .getGroupName();
+              .findAny();
+
+      String heading = ligOpt.isEmpty() ? "" : ligOpt.get().getGroupName();
+
       List<LoadingInstructionSubHeader> listUnderHeader =
           loadingSequenceResponse.getLoadingInstructionSubHeader().stream()
               .filter(item -> item.getInstructionHeaderId().equals(headerId) && item.getIsChecked())
