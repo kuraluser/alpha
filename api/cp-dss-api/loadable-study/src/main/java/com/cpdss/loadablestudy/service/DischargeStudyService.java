@@ -1204,6 +1204,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   private List<CargoNomination> createNewPortCargoNominations(
       long loadableStudyId, LoadableStudyPortRotation newPort) {
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
+    List<LoadableStudyPortRotation> ports = loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(loadableStudyId, true);
+    boolean isDischarging = ports.stream().anyMatch(port->port.getOperation().getId().equals(DISCHARGING_OPERATION_ID));
     List<CargoNomination> newPortCargo =
         cargos.stream()
             .filter(
@@ -1217,7 +1219,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               if (!checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId())) {
                 Set<CargoNominationPortDetails> newPortDetails =
                     cargoNominationService.createCargoNominationPortDetails(
-                        cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
+                        cargo, isDischarging?null:cargo, newPort.getPortXId(), newPort.getOperation().getId());
                 if (cargo.getCargoNominationPortDetails() != null
                     && !cargo.getCargoNominationPortDetails().isEmpty()) {
                   cargo.getCargoNominationPortDetails().addAll(newPortDetails);
