@@ -203,6 +203,9 @@ public class LoadableStudiesConstants {
   public static final String INVALID_ULLAGE_OR_SOUNDING_VALUE = "INVALID_ULLAGE_OR_SOUNDING_VALUE";
 
   public static final String CPDSS_BUILD_ENV_SHIP = "ship";
+  public static final String CPDSS_BUILD_ENV_SHORE = "cloud";
   public static final String FAILED_WITH_RESOURCE_EXC = "FAILED_WITH_RESOURCE_EXC";
   public static final String FAILED_WITH_EXC = "FAILED_WITH_EXC";
+
+  public static final String ENV = "env";
 }
