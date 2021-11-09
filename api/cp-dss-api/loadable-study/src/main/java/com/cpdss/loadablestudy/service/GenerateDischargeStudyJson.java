@@ -149,7 +149,7 @@ public class GenerateDischargeStudyJson {
           DISCHARGE_STUDY_REQUEST,
           objectMapper.writeValueAsString(AlgoJsonPayload));
 
-      //Invoking Algo service
+      // Invoking Algo service
       AlgoResponse algoResponse =
           restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
 

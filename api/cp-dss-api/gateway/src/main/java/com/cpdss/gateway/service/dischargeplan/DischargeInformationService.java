@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
+import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_RULE_MASTER_ID;
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -42,6 +43,7 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
+import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -50,8 +52,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import com.cpdss.gateway.utility.RuleUtility;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -60,9 +60,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
-import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_RULE_MASTER_ID;
-import static com.cpdss.gateway.common.GatewayConstants.LOADING_RULE_MASTER_ID;
 
 @Slf4j
 @Service
@@ -762,13 +759,13 @@ public class DischargeInformationService {
    * @param dischargeInfoId
    */
   public RuleResponse getDischargingPlanRules(Long vesselId, Long voyageId, Long dischargeInfoId)
-          throws GenericServiceException {
-    DischargeRuleRequest.Builder builder =
-            DischargeRuleRequest.newBuilder();
+      throws GenericServiceException {
+    DischargeRuleRequest.Builder builder = DischargeRuleRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.setSectionId(DISCHARGING_RULE_MASTER_ID);
     builder.setDischargeInfoId(dischargeInfoId);
-    RuleResponse ruleResponse = this.dischargeInformationGrpcService.saveOrGetDischargingPlanRules(builder);
+    RuleResponse ruleResponse =
+        this.dischargeInformationGrpcService.saveOrGetDischargingPlanRules(builder);
     log.info("Discharging Info Rule Fetch for Vessel Id {}, info Id {}", vesselId, dischargeInfoId);
     return ruleResponse;
   }
@@ -782,16 +779,15 @@ public class DischargeInformationService {
    * @param ruleRequest
    */
   public RuleResponse saveDischargingPlanRules(
-          Long vesselId, Long voyageId, Long infoId, RuleRequest ruleRequest)
-          throws GenericServiceException {
-    DischargeRuleRequest.Builder builder =
-            DischargeRuleRequest.newBuilder();
+      Long vesselId, Long voyageId, Long infoId, RuleRequest ruleRequest)
+      throws GenericServiceException {
+    DischargeRuleRequest.Builder builder = DischargeRuleRequest.newBuilder();
     builder.setVesselId(vesselId);
     builder.setSectionId(DISCHARGING_RULE_MASTER_ID);
     builder.setDischargeInfoId(infoId);
     RuleUtility.buildRuleListForSave(ruleRequest, null, null, null, builder, false, false, true);
-    RuleResponse ruleResponse = this.dischargeInformationGrpcService.saveOrGetDischargingPlanRules(builder);
+    RuleResponse ruleResponse =
+        this.dischargeInformationGrpcService.saveOrGetDischargingPlanRules(builder);
     return ruleResponse;
   }
-
 }

@@ -235,7 +235,7 @@ public class RuleUtility {
                   if ((isAdminRule)) {
                     vesselRuleBuilder.addRulePlan(rulePlanBuilder);
                   } else if (isLoadingPlan) {
-                      loadablePlanBuilder.addRulePlan(rulePlanBuilder);
+                    loadablePlanBuilder.addRulePlan(rulePlanBuilder);
                   } else if (isDischargeRule) {
                     dischargePlanBuilder.addRulePlan(rulePlanBuilder);
                   } else {

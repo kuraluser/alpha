@@ -285,18 +285,31 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           billOfLaddingRepository.findByCargoNominationIdInAndIsActive(
               request.getCargoNominationIdList(), true);
       if (!CollectionUtils.isEmpty(billOfLaddingList)) {
-        Map<Long, Double> cargoWiseQuantity =
+        Map<Long, List<com.cpdss.loadingplan.entity.BillOfLadding>> cargoWiseQuantity =
             billOfLaddingList.stream()
                 .collect(
                     Collectors.groupingBy(
-                        com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId,
-                        Collectors.summingDouble(
-                            a -> Double.parseDouble(String.valueOf(a.getQuantityMt())))));
+                        com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId));
         cargoWiseQuantity.forEach(
             (key, quantity) -> {
               MaxQuantityDetails.Builder maxQuantity = MaxQuantityDetails.newBuilder();
               maxQuantity.setCargoNominationId(key);
-              maxQuantity.setMaxQuantity(quantity.toString());
+              maxQuantity.setMaxQuantity(
+                  String.valueOf(
+                      quantity.stream()
+                          .mapToDouble(billOfLadding -> billOfLadding.getQuantityMt().doubleValue())
+                          .sum()));
+              maxQuantity.setApi(
+                  String.valueOf(
+                      quantity.stream()
+                          .mapToDouble(billOfLadding -> billOfLadding.getApi().doubleValue())
+                          .average()));
+              maxQuantity.setTemp(
+                  String.valueOf(
+                      quantity.stream()
+                          .mapToDouble(
+                              billOfLadding -> billOfLadding.getTemperature().doubleValue())
+                          .average()));
               reply.addCargoMaxQuantity(maxQuantity);
             });
       }

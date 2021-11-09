@@ -803,7 +803,8 @@ message MaxQuantityResponse{
 message MaxQuantityDetails{
   	int64 cargoNominationId = 1;
     string maxQuantity = 2;
-  
+    string api = 3;
+    string temp = 4;
 }
 
 message LoadingInfoLoadicatorDataRequest {

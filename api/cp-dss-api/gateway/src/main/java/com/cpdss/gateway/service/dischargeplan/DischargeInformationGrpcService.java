@@ -137,21 +137,22 @@ public class DischargeInformationGrpcService {
     return statusReply.getData().toByteArray();
   }
 
-  public RuleResponse saveOrGetDischargingPlanRules(
-          DischargeRuleRequest.Builder builder) throws GenericServiceException {
+  public RuleResponse saveOrGetDischargingPlanRules(DischargeRuleRequest.Builder builder)
+      throws GenericServiceException {
     RuleResponse ruleResponse = new RuleResponse();
     DischargeRuleReply dischargingRuleReply =
-            this.dischargeInfoServiceStub.getOrSaveRulesForDischarging(builder.build());
-    log.info("Discharging rules retrieved : {}",dischargingRuleReply.getRulePlanCount());
+        this.dischargeInfoServiceStub.getOrSaveRulesForDischarging(builder.build());
+    log.info("Discharging rules retrieved : {}", dischargingRuleReply.getRulePlanCount());
     if (!dischargingRuleReply.getResponseStatus().getStatus().equals(SUCCESS)) {
       throw new GenericServiceException(
-              "Failed to save discharging plan rules",
-              dischargingRuleReply.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(Integer.valueOf(dischargingRuleReply.getResponseStatus().getCode())));
+          "Failed to save discharging plan rules",
+          dischargingRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(dischargingRuleReply.getResponseStatus().getCode())));
     }
     ruleResponse.setPlan(RuleUtility.buildDischargeRulePlan(dischargingRuleReply));
     ruleResponse.setResponseStatus(
-            new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return ruleResponse;
   }
 }
