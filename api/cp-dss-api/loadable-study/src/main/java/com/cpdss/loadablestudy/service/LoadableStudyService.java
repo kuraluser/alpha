@@ -425,8 +425,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                           ? false
                           : port.getIsPortRotationOhqComplete());
                   List<OnHandQuantity> onHandQuantities =
-                      this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
-                          entity, port.getPortXId(), true);
+                      this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+                          entity, port, true);
 
                   // If there are ohqQuantities for the port rotation and the port rotation
                   // ohqComplete flag is false we set the flag as true since the ohq is already

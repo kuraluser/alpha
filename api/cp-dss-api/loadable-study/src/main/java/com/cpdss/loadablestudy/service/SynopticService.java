@@ -494,8 +494,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
         List<OnHandQuantity> OnHandQuantities = new ArrayList<OnHandQuantity>();
 
         List<LoadableStudyPortRotation> portRotationList =
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                loadableStudyOpt.get().getId(), true);
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+                loadableStudyOpt.get(), true);
         if (null != portRotationList && !portRotationList.isEmpty()) {
           int index =
               IntStream.range(0, portRotationList.size())
