@@ -3174,3 +3174,8 @@ textarea{
     right: 27px;
   }
 }
+
+.column-last-edited, .column-created-date, .column-status{
+  width: 100px!important;
+  max-width: 100px!important;
+}

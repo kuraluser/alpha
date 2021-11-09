@@ -60,6 +60,7 @@ export class DischargeStudyListTransformationApiService {
         editable: false,
         filterPlaceholder: 'DISCHARGE_STUDY_LIST_SEARCH_BY_STATUS',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
+        fieldHeaderClass: 'column-status',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'status',
       },
@@ -74,6 +75,7 @@ export class DischargeStudyListTransformationApiService {
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'createdDate',
+        fieldHeaderClass: 'column-created-date',
         filterFieldMaxvalue: new Date()
       },
       {
@@ -84,6 +86,7 @@ export class DischargeStudyListTransformationApiService {
         editable: false,
         filterPlaceholder: 'DISCHARGE_STUDY_LIST_SEARCH_BY_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
+        fieldHeaderClass: 'column-last-edited',
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'lastEdited',
