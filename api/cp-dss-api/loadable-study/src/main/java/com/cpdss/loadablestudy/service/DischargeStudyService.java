@@ -45,6 +45,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortWiseCargo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.BackLoading;
@@ -74,15 +75,7 @@ import com.cpdss.loadablestudy.repository.VoyageRepository;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -126,6 +119,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @Autowired CowHistoryRepository cowHistoryRepository;
+  @Autowired LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
   @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
@@ -1492,6 +1486,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         DischargeStudyDataTransferRequest.newBuilder();
     request.setVoyageId(dischargeStudy.getVoyage().getId());
     request.setVesselId(dischargeStudy.getVesselXId());
+
+    List<LoadableStudyAlgoStatus> algoStatuses =
+        loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            dischargeStudy.getId(), true);
+    Optional<LoadableStudyAlgoStatus> latestOne =
+        algoStatuses.stream()
+            .sorted(Comparator.comparing(EntityDoc::getCreatedDateTime))
+            .findFirst();
+    if (latestOne.isPresent()) {
+      request.setDischargeProcessId(latestOne.get().getProcessId());
+    }
+
     Optional<com.cpdss.loadablestudy.entity.LoadablePattern> confirmedLoadablePatternOpt =
         this.loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
             dischargeStudy, CONFIRMED_STATUS_ID, true);
