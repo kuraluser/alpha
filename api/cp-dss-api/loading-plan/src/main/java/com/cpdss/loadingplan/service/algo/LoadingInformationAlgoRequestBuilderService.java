@@ -17,7 +17,6 @@ import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceB
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
-import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
@@ -48,6 +47,7 @@ import com.cpdss.loadingplan.domain.rules.RulePlans;
 import com.cpdss.loadingplan.domain.rules.RuleResponse;
 import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.projections.PortTideAlgo;
+import com.cpdss.loadingplan.service.LoadingInformationService;
 import com.cpdss.loadingplan.service.LoadingPlanRuleService;
 import com.cpdss.loadingplan.service.LoadingPortTideService;
 import com.cpdss.loadingplan.utility.RuleUtility;
@@ -65,9 +65,6 @@ import org.springframework.util.StringUtils;
 @Service
 public class LoadingInformationAlgoRequestBuilderService {
 
-  @GrpcClient("loadingInformationService")
-  private LoadingInformationServiceBlockingStub loadingInfoServiceBlockingStub;
-
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
 
@@ -82,6 +79,8 @@ public class LoadingInformationAlgoRequestBuilderService {
   @Autowired LoadingPortTideService loadingPortTideDetailsService;
 
   @Autowired LoadingPlanRuleService loadingPlanRuleService;
+
+  @Autowired LoadingInformationService loadingInformationService;
 
   /**
    * Creates the ALGO request
@@ -708,16 +707,10 @@ public class LoadingInformationAlgoRequestBuilderService {
     builder.setLoadingPlanId(loadingInfoId);
     if (patternId != null) builder.setLoadingPatternId(patternId);
     if (portRotationId != null) builder.setPortRotationId(portRotationId);
-    LoadingPlanModels.LoadingInformation reply =
-        loadingInfoServiceBlockingStub.getLoadingInformation(builder.build());
-    if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
-      throw new GenericServiceException(
-          "Failed to fetch Loading Information",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-
-    return reply;
+    LoadingPlanModels.LoadingInformation.Builder replyBuilder =
+        LoadingPlanModels.LoadingInformation.newBuilder();
+    loadingInformationService.getLoadingInformation(builder.build(), replyBuilder);
+    return replyBuilder.build();
   }
 
   private void buildLoadablePatternPortWiseDetails(
