@@ -699,6 +699,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       Voyage voyage,
       List<LoadablePlanComminglePortwiseDetails> commingleCargoDetails,
       List<Long> patternIds) {
+    boolean isCallForLoadableStudy = true;
     BigDecimal cargoActualTotal = BigDecimal.ZERO;
     BigDecimal cargoPlannedTotal = BigDecimal.ZERO;
     List<com.cpdss.loadablestudy.domain.CargoHistory> cargoHistories = null;
@@ -728,6 +729,28 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               .collect(Collectors.toList()));
     }
 
+    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedLs =
+        loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (confirmedLs.isPresent()) {
+      // Skipping the status check of LS/DS, because we have already done this earlier
+      isCallForLoadableStudy =
+          Common.PLANNING_TYPE.LOADABLE_STUDY.equals(confirmedLs.get().getPlanningTypeXId())
+              ? true
+              : false;
+      if (isCallForLoadableStudy)
+        log.info("Synoptic Cargo Details for Loadable Study - Id {}", confirmedLs.get().getId());
+      else
+        log.info("Synoptic Cargo Details for Discharge Study - Id {}", confirmedLs.get().getId());
+    }
+
+    log.info(
+        "Synoptic Table Id, optType, port - {}, {}, {} Request optType/port - {}. {}",
+        synopticalEntity.getId(),
+        synopticalEntity.getOperationType(),
+        synopticalEntity.getPortXid(),
+        request.getOperationType(),
+        request.getPortId());
+
     for (VesselInfo.VesselTankDetail tank : sortedTankList) {
       if (!CARGO_TANK_CATEGORIES.contains(tank.getTankCategoryId())) {
         continue;
@@ -738,8 +761,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       cargoBuilder.setTankName(tank.getShortName());
       cargoBuilder.setCapacity(tank.getFullCapacityCubm());
       // first port arrival data will be same as obq data
-      // if no obq data is found, previos voyage data has to be fetched
-      if (synopticalEntity.getPortXid().equals(firstPortId)
+      // if no obq data is found, previous voyage data has to be fetched
+      if (isCallForLoadableStudy
+          && synopticalEntity.getPortXid().equals(firstPortId)
           && synopticalEntity.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)) {
         this.buildObqDataForSynopticalTable(
             tank, cargoHistories, obqEntities, cargoBuilder, voyage);
@@ -1802,7 +1826,12 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
         loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
             request.getVoyageId(), CONFIRMED_STATUS_ID, true);
     Optional<LoadablePattern> confirmedLoadablePattern =
-        confirmedLoadablePatternList.stream().findFirst();
+        confirmedLoadablePatternList.stream()
+            .filter(
+                v ->
+                    (v.getLoadableStudy() != null)
+                        && (v.getLoadableStudy().getId().equals(request.getLoadableStudyId())))
+            .findAny();
     if (!confirmedLoadablePattern.isPresent()) {
       throw new GenericServiceException(
           "Confirmed loadable pattern does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);

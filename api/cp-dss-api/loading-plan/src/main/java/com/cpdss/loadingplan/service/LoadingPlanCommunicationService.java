@@ -26,6 +26,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +39,16 @@ import org.springframework.web.client.ResourceAccessException;
 @Transactional
 public class LoadingPlanCommunicationService {
 
+  @Autowired private EntityManager entityManager;
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
+  @Autowired private LoadingInformationRepository loadingInformationRepository;
 
   @Autowired
   private LoadingInformationCommunicationRepository loadingInformationCommunicationRepository;
 
   @Autowired private CargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
   @Autowired private LoadingBerthDetailsRepository loadingBerthDetailsRepository;
-  @Autowired private LoadingDelayCommunicationRepository loadingDelayCommunicationRepository;
+  @Autowired private LoadingDelayRepository loadingDelayRepository;
   @Autowired private LoadingMachineryInUseRepository loadingMachineryInUseRepository;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
@@ -568,41 +571,53 @@ public class LoadingPlanCommunicationService {
       }
       LoadingInformation loadingInfo = null;
       if (loadingInformation != null) {
+        StageOffset stageOffsetObj = null;
+        StageDuration stageDurationObj = null;
         try {
           if (stageOffset != null) {
             Optional<StageOffset> defaultOffsetOpt =
                 stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
             if (defaultOffsetOpt.isPresent()) {
-              loadingInformation.setStageOffset(defaultOffsetOpt.get());
+              stageOffsetObj = defaultOffsetOpt.get();
+              // loadingInformation.setStageOffset(defaultOffsetOpt.get());
             }
           }
           if (stageDuration != null) {
             Optional<StageDuration> defaultDurationOpt =
                 stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
             if (defaultDurationOpt.isPresent()) {
-              loadingInformation.setStageDuration(defaultDurationOpt.get());
+              stageDurationObj = defaultDurationOpt.get();
+              // loadingInformation.setStageDuration(defaultDurationOpt.get());
             }
           }
+          LoadingInformationStatus loadingInformationStatusObj = null;
+          LoadingInformationStatus loadingInformationArrivalStatusObj = null;
+          LoadingInformationStatus loadingInformationDepartureStatusObj = null;
+
           if (loadingInformationStatus != null) {
             Optional<LoadingInformationStatus> informationStatusOpt =
                 loadingInfoStatusRepository.findByIdAndIsActive(
                     loadingInformationStatus.getId(), true);
             if (informationStatusOpt.isPresent()) {
-              loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
+              loadingInformationStatusObj = informationStatusOpt.get();
+              // loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
             }
           }
+
           if (arrivalStatus != null) {
             Optional<LoadingInformationStatus> arrivalStatusOpt =
                 loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
             if (arrivalStatusOpt.isPresent()) {
-              loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
+              loadingInformationArrivalStatusObj = arrivalStatusOpt.get();
+              // loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
             }
           }
           if (departureStatus != null) {
             Optional<LoadingInformationStatus> departureStatusOpt =
                 loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
             if (departureStatusOpt.isPresent()) {
-              loadingInformation.setDepartureStatus(departureStatusOpt.get());
+              loadingInformationDepartureStatusObj = departureStatusOpt.get();
+              // loadingInformation.setDepartureStatus(departureStatusOpt.get());
             }
           }
           Long version = null;
@@ -614,6 +629,14 @@ public class LoadingPlanCommunicationService {
           loadingInformation.setVersion(version);
           loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
           log.info("LoadingInformation saved with id:" + loadingInfo.getId());
+          loadingInformationCommunicationRepository.updateLoadingInformationStatusWithId(
+              loadingInformationStatusObj.getId(),
+              loadingInformationArrivalStatusObj.getId(),
+              loadingInformationDepartureStatusObj.getId(),
+              stageOffsetObj.getId(),
+              stageDurationObj.getId(),
+              loadingInfo.getId());
+          log.info("LoadingInformation updated with master tables ids:" + loadingInfo);
         } catch (ResourceAccessException e) {
           log.info("ResourceAccessException for LOADING_INFORMATION" + e.getMessage());
           updateStatusInExceptionCase(
@@ -691,15 +714,14 @@ public class LoadingPlanCommunicationService {
             for (LoadingDelay loadingDelay : loadingDelays) {
               Long version = null;
               Optional<LoadingDelay> loadingDelayObj =
-                  loadingDelayCommunicationRepository.findById(loadingDelay.getId());
+                  loadingDelayRepository.findById(loadingDelay.getId());
               if (loadingDelayObj.isPresent()) {
                 version = loadingDelayObj.get().getVersion();
               }
               loadingDelay.setVersion(version);
               loadingDelay.setLoadingInformation(loadingInfo);
-              loadingDelayCommunicationRepository.save(loadingDelay);
             }
-            // loadingDelayCommunicationRepository.saveAll(loadingDelays);
+            loadingDelayRepository.saveAll(loadingDelays);
             log.info("LoadingDelay saved :" + loadingDelays);
           } catch (ResourceAccessException e) {
             updateStatusInExceptionCase(

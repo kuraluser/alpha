@@ -41,11 +41,7 @@ import com.cpdss.dischargeplan.entity.DischargePlanRules;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.PortTideDetail;
-import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
-import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
-import com.cpdss.dischargeplan.repository.DischargeRulesInputRepository;
-import com.cpdss.dischargeplan.repository.DischargeRulesRepository;
-import com.cpdss.dischargeplan.repository.PortTideDetailsRepository;
+import com.cpdss.dischargeplan.repository.*;
 import com.google.protobuf.ByteString;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -1405,5 +1401,16 @@ public class DischargeInformationService {
           rulePlanBuilder.addRules(rulesBuilder.build());
         });
     builder.addRulePlan(rulePlanBuilder);
+  }
+
+  public void updateDischargePlanStatus(
+      DischargeInformation dsInfo, DischargingInformationStatus disInfoStatus, int conditionType) {
+    if (DischargePlanConstants.DISCHARGE_PLAN_ARRIVAL_CONDITION_VALUE == conditionType) {
+      dischargeInformationRepository.updateDischargeInformationArrivalStatus(
+          disInfoStatus.getId(), dsInfo.getId());
+    } else if (DischargePlanConstants.DISCHARGE_PLAN_DEPARTURE_CONDITION_VALUE == conditionType) {
+      dischargeInformationRepository.updateDischargeInformationDepartureStatus(
+          disInfoStatus.getId(), dsInfo.getId());
+    }
   }
 }

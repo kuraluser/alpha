@@ -63,6 +63,7 @@ public class DischargePlanSynchronizeService {
               dischargeInformation.setSynopticTableXid(port.getSynopticTableId());
               dischargeInformation.setIsActive(true);
               dischargeInformation.setPortXid(port.getPortId());
+              dischargeInformation.setDischargeStudyProcessId(request.getDischargeProcessId());
               try {
                 Optional<DischargingInformationStatus> pendingStatusOpt =
                     dischargePlanAlgoService.getDischargingInformationStatus(
@@ -211,6 +212,7 @@ public class DischargePlanSynchronizeService {
         if (entity != null) {
           CowPlanDetail cowPlanDetail = new CowPlanDetail();
           cowPlanDetail.setDischargeInformation(entity);
+          cowPlanDetail.setIsActive(true);
           cowPlanDetail.setCowOperationType(portData.getCowDetails().getCowOptionTypeValue());
           cowPlanDetail.setCowPercentage(new BigDecimal(portData.getCowDetails().getPercent()));
           if (portData.getCowDetails().getCowTankDetails() != null) {

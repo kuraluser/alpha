@@ -1291,8 +1291,8 @@ export class LoadingDischargingTransformationService {
       },
       cowTrimMax: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'max': 'DISCHARGING_COW_TRIM_MIN',
         'min': 'DISCHARGING_COW_TRIM_MIN',
+        'max': 'DISCHARGING_COW_TRIM_MAX',
         'invalidNumber': 'DISCHARGING_COW_TRIM_INVALID'
       },
       cowStart: {

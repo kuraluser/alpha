@@ -39,7 +39,7 @@
                             <span
                                 *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.maxlength && !form.newLoadableStudyName.errors?.whitespace"
                                 class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH' | translate}}!
+                                {{'NEW_LOADABLE_STUDY_NAME_POPUP_MAX_LENGTH' | translate}}!
                             </span>
                             <span *ngIf="newLoadableStudyNameExist && !form.newLoadableStudyName.errors?.required"
                                 class="text-danger">

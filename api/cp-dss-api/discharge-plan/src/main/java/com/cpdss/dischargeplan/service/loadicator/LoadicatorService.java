@@ -21,10 +21,12 @@ import com.cpdss.dischargeplan.domain.algo.LDIntactStability;
 import com.cpdss.dischargeplan.domain.algo.LDStrength;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
+import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -78,6 +81,17 @@ public class LoadicatorService {
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
   @Autowired UllageUpdateLoadicatorService ullageupdateLoadicatorService;
+
+  @Autowired DischargingSequenceStabiltyParametersRepository dsSeqStabilityParamRepo;
+
+  @Autowired PortDischargingPlanStabilityParametersRepository portDsPlanStbParamRepo;
+
+  @Autowired DischargeInformationStatusRepository dsInfoStatusRepository;
+
+  @Autowired DischargeInformationService dischargeInformationService;
+
+  @Autowired DischargingInformationAlgoStatusRepository dsInfoAlgoStatusRepository;
+
   /**
    * get vessel detail for loadicator
    *
@@ -639,13 +653,117 @@ public class LoadicatorService {
     Optional<DischargeInformation> dischargeInfoOpt =
         dischargeInformationRepository.findByIdAndIsActiveTrue(
             request.getDischargingInformationId());
-    if (!request.getIsUllageUpdate()) {
+    if (!request.getIsUllageUpdate()) { // Discharge Plan Loadicator Data
       LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
+
+      // Build discharge info data to algo for plan regeneration
       buildLoadicatorAlgoRequest(dischargeInfoOpt.get(), request, algoRequest);
+
+      // Save Request JSON Data at LS json_data table
       saveLoadicatorRequestJson(algoRequest, dischargeInfoOpt.get().getId());
-    } else {
+
+      // Send Payload to Algo
+      LoadicatorAlgoResponse lar =
+          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+
+      // Save Response JSON Data at LS json_data table
+      saveLoadicatorResponseJson(lar, dischargeInfoOpt.get().getId());
+
+      // Save new stability data into tables
+      saveDischargeSequenceStabilityParameters(dischargeInfoOpt.get(), lar);
+
+      // Update status after new data comes in
+      var statusMaster =
+          dsInfoStatusRepository.findByIdAndIsActive(
+              DischargePlanConstants.PLAN_GENERATED_ID, true);
+      if (statusMaster.isPresent()) {
+        dischargeInformationService.updateDischargingInformationStatuses(
+            statusMaster.get(),
+            statusMaster.get(),
+            statusMaster.get(),
+            dischargeInfoOpt.get().getId());
+
+        dsInfoAlgoStatusRepository.updateDischargingInformationAlgoStatus(
+            statusMaster.get().getId(), dischargeInfoOpt.get().getId(), request.getProcessId());
+        dischargeInformationRepository.updateIsDischargingSequenceGeneratedStatus(
+            dischargeInfoOpt.get().getId(), true);
+        dischargeInformationRepository.updateIsDischargingPlanGeneratedStatus(
+            dischargeInfoOpt.get().getId(), true);
+      }
+    } else { // Update Ullage Loadicator Data
       ullageupdateLoadicatorService.getLoadicatorData(request, dischargeInfoOpt.get());
     }
+  }
+
+  public void saveDischargeSequenceStabilityParameters(
+      DischargeInformation dsInfo, LoadicatorAlgoResponse lar) {
+    List<DischargingSequenceStabilityParameters> entityData = new ArrayList<>();
+
+    // 1. Save Discharge Plan Sequence stability param
+    //  1.1 Delete existing discharge sequence stability param
+    dsSeqStabilityParamRepo.deleteByDischargingInformationId(dsInfo.getId());
+    log.info("Discharge Plan Stability Param, Deleted for DS Id - {}", dsInfo.getId());
+    for (var ldRs : lar.getLoadicatorResults()) {
+      DischargingSequenceStabilityParameters dsPm = new DischargingSequenceStabilityParameters();
+      this.buildDischargeSequenceStabilityParameters(dsInfo, ldRs, dsPm);
+      entityData.add(dsPm);
+    }
+    // 1.2 Save new records
+    dsSeqStabilityParamRepo.saveAll(entityData);
+    log.info("Discharge Plan Stability Param, Saved new record Size - {} ", entityData.size());
+
+    // 2. Save Port Discharge Plan Stability Parma
+    savePortDischargePlanStabilityParam(dsInfo, lar);
+  }
+
+  private void savePortDischargePlanStabilityParam(
+      DischargeInformation dsInfo, LoadicatorAlgoResponse lar) {
+
+    // Fetch older data in heap, then delete that.
+    var OldArrData =
+        portDsPlanStbParamRepo.getDataByInfoAndConditionAndValueTypes(
+            dsInfo.getId(),
+            DischargePlanConstants.DISCHARGE_PLAN_ARRIVAL_CONDITION_VALUE,
+            DischargePlanConstants.DISCHARGE_PLAN_PLANNED_TYPE_VALUE);
+
+    var OldDepData =
+        portDsPlanStbParamRepo.getDataByInfoAndConditionAndValueTypes(
+            dsInfo.getId(),
+            DischargePlanConstants.DISCHARGE_PLAN_DEPARTURE_CONDITION_VALUE,
+            DischargePlanConstants.DISCHARGE_PLAN_PLANNED_TYPE_VALUE);
+
+    portDsPlanStbParamRepo.deleteByDischargingInformationId(dsInfo.getId());
+    log.info("Port Discharge Plan Stability Data Deleted for DS Id - {}", dsInfo.getId());
+
+    LoadicatorResult newArrDataLod = lar.getLoadicatorResults().get(0);
+    LoadicatorResult newDepDataLod =
+        lar.getLoadicatorResults().get(lar.getLoadicatorResults().size() - 1);
+
+    PortDischargingPlanStabilityParameters newArrEntity =
+        new PortDischargingPlanStabilityParameters();
+    this.buildPortDischargePlanStabilityParams(
+        dsInfo,
+        newArrDataLod,
+        newArrEntity,
+        DischargePlanConstants.DISCHARGE_PLAN_ARRIVAL_CONDITION_VALUE,
+        DischargePlanConstants.DISCHARGE_PLAN_PLANNED_TYPE_VALUE,
+        OldArrData);
+
+    PortDischargingPlanStabilityParameters newDepEntity =
+        new PortDischargingPlanStabilityParameters();
+    this.buildPortDischargePlanStabilityParams(
+        dsInfo,
+        newDepDataLod,
+        newDepEntity,
+        DischargePlanConstants.DISCHARGE_PLAN_DEPARTURE_CONDITION_VALUE,
+        DischargePlanConstants.DISCHARGE_PLAN_PLANNED_TYPE_VALUE,
+        OldDepData);
+
+    // Save new Port Discharge Plan Stability Data
+    portDsPlanStbParamRepo.save(newArrEntity);
+    log.info("Port Discharge Plan Stability Data Save for Arr, Id - {}", newArrEntity.getId());
+    portDsPlanStbParamRepo.save(newDepEntity);
+    log.info("Port Discharge Plan Stability Data Save for DEP, Id - {}", newDepEntity.getId());
   }
 
   private void buildLoadicatorAlgoRequest(
@@ -703,5 +821,119 @@ public class LoadicatorService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  private void saveLoadicatorResponseJson(LoadicatorAlgoResponse algoResponse, Long dischargeInfoId)
+      throws GenericServiceException {
+    log.info("Saving Loadicator request to Loadable study DB");
+    JsonRequest.Builder jsonBuilder = JsonRequest.newBuilder();
+    jsonBuilder.setReferenceId(dischargeInfoId);
+    jsonBuilder.setJsonTypeId(
+        DischargePlanConstants.DISCHARGE_INFORMATION_LOADICATOR_RESPONSE_JSON_TYPE_ID);
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      mapper.writeValue(
+          new File(
+              this.rootFolder
+                  + "/json/dischargeInfoLoadicatorResponse_"
+                  + dischargeInfoId
+                  + ".json"),
+          algoResponse);
+      jsonBuilder.setJson(mapper.writeValueAsString(algoResponse));
+      this.saveJson(jsonBuilder);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Could not save request JSON to DB",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (IOException e) {
+      throw new GenericServiceException(
+          "Could not save request JSON to Filesystem",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  public void buildDischargeSequenceStabilityParameters(
+      DischargeInformation dsInfo,
+      LoadicatorResult result,
+      DischargingSequenceStabilityParameters stbParam) {
+    stbParam.setAftDraft(
+        StringUtils.isEmpty(result.getCalculatedDraftAftPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftAftPlanned()));
+    stbParam.setBendingMoment(
+        StringUtils.isEmpty(result.getBendingMoment())
+            ? null
+            : new BigDecimal(result.getBendingMoment()));
+    stbParam.setForeDraft(
+        StringUtils.isEmpty(result.getCalculatedDraftFwdPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftFwdPlanned()));
+    stbParam.setIsActive(true);
+    stbParam.setList(
+        StringUtils.isEmpty(result.getList()) ? null : new BigDecimal(result.getList()));
+    stbParam.setDischargingInformation(dsInfo);
+    stbParam.setMeanDraft(
+        StringUtils.isEmpty(result.getCalculatedDraftMidPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedDraftMidPlanned()));
+    stbParam.setPortXId(dsInfo.getPortXid());
+    stbParam.setShearingForce(
+        StringUtils.isEmpty(result.getShearingForce())
+            ? null
+            : new BigDecimal(result.getShearingForce()));
+    stbParam.setTime(result.getTime());
+    stbParam.setTrim(
+        StringUtils.isEmpty(result.getCalculatedTrimPlanned())
+            ? null
+            : new BigDecimal(result.getCalculatedTrimPlanned()));
+  }
+
+  public void buildPortDischargePlanStabilityParams(
+      DischargeInformation dsInfo,
+      LoadicatorResult ldResult,
+      PortDischargingPlanStabilityParameters newEntity,
+      Integer conditionType,
+      Integer valueType,
+      Optional<PortDischargingPlanStabilityParameters> oldEntity) {
+    newEntity.setAftDraft(
+        StringUtils.isEmpty(ldResult.getCalculatedDraftAftPlanned())
+            ? null
+            : new BigDecimal(ldResult.getCalculatedDraftAftPlanned()));
+    newEntity.setBendingMoment(
+        StringUtils.isEmpty(ldResult.getBendingMoment())
+            ? null
+            : new BigDecimal(ldResult.getBendingMoment()));
+    newEntity.setForeDraft(
+        StringUtils.isEmpty(ldResult.getCalculatedDraftFwdPlanned())
+            ? null
+            : new BigDecimal(ldResult.getCalculatedDraftFwdPlanned()));
+    newEntity.setIsActive(true);
+    newEntity.setList(
+        StringUtils.isEmpty(ldResult.getList()) ? null : new BigDecimal(ldResult.getList()));
+    newEntity.setDischargingInformation(dsInfo);
+    newEntity.setMeanDraft(
+        StringUtils.isEmpty(ldResult.getCalculatedDraftMidPlanned())
+            ? null
+            : new BigDecimal(ldResult.getCalculatedDraftMidPlanned()));
+    newEntity.setPortXId(dsInfo.getPortXid());
+    newEntity.setShearingForce(
+        StringUtils.isEmpty(ldResult.getShearingForce())
+            ? null
+            : new BigDecimal(ldResult.getShearingForce()));
+    newEntity.setTrim(
+        StringUtils.isEmpty(ldResult.getCalculatedTrimPlanned())
+            ? null
+            : new BigDecimal(ldResult.getCalculatedTrimPlanned()));
+    newEntity.setConditionType(conditionType);
+    newEntity.setPortRotationXId(dsInfo.getPortRotationXid());
+    newEntity.setValueType(valueType);
+    /*oldEntity.ifPresent( // no column in table
+    stability -> {
+      newEntity.setFreeboard(stability.getFreeboard());
+      newEntity.setManifoldHeight(stability.getManifoldHeight());
+    });*/
   }
 }

@@ -60,4 +60,7 @@ public class Company extends EntityDoc {
 
   @OneToMany(mappedBy = "company")
   private Set<Carousals> carousals;
+  
+  @Column(name = "documentation_site_url", length = 200)
+  private String documentationSiteUrl;
 }

@@ -28,6 +28,7 @@ import { GlobalErrorHandler } from '../../../shared/services/error-handlers/glob
 import { environment } from '../../../../environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SIMULATOR_REQUEST_TYPE } from '../../core/components/simulator/simulator.model';
 
 /**
  * Component class of loadable plan
@@ -114,6 +115,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
   portRotationId: number;
   vesselLightWeight: number;
   simulatorMenu: any;
+  readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -429,12 +431,12 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
       }, 0);
       const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
       const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
-      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence 
+      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence
       , commingleTotalQuantity: commingleTotalQuantity})
     })
     await this.getLoadableQuantity();
     this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) ?? this.loadableQuantity;
-   
+
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => {
       const tank = this.findCargoTank(cargo.tankId, loadablePlanRes?.tankLists)
       cargo.fullCapacityCubm = tank.fullCapacityCubm

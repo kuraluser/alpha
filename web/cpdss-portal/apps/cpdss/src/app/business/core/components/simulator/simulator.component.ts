@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import '../../../../../assets/external/simulator-js/load';
+import '../../../../../assets/simulator-js/load';
 declare var load: any;
 
-import { SimulatorApiService } from './../../services/simulator-api.service';
 import { VesselsApiService } from '../../services/vessels-api.service';
+import { SimulatorApiService } from './services/simulator-api.service';
 
 import { IVessel } from '../../models/vessel-details.model';
-import { ISimulatorResponse } from '../../models/common.model';
+import { ISimulatorLoadingSequenceResponse, ISimulatorLoadParams, ISimulatorStowageResponse, SIMULATOR_REQUEST_TYPE } from './simulator.model';
 
 /**
  * Component for launch Simulator
@@ -23,18 +23,22 @@ import { ISimulatorResponse } from '../../models/common.model';
 })
 export class SimulatorComponent implements OnInit {
 
+  @Input() requestType: SIMULATOR_REQUEST_TYPE;
   @Input() vesselId: number;
   @Input() loadableStudyId: number;
   @Input() caseNumber: string;
   @Input() buttonLabel: string;
-  
+  @Input() loadingInfoId: number;
+  @Input() dischargeInfoId: number;
+
   public simulatorMenu: any;
-  
+  readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
+
   constructor(
     private vesselsApiService: VesselsApiService,
     private simulatorApiService: SimulatorApiService,
     private translateService: TranslateService
-  ) {}
+  ) { }
 
   async ngOnInit(): Promise<void> {
     const vessels: IVessel[] = await this.vesselsApiService.getVesselsInfo().toPromise();
@@ -53,27 +57,56 @@ export class SimulatorComponent implements OnInit {
   }
 
   /**
-   * function to load Simulator
+   * Function to get JSON data for Simulator
    *
    * @param {*} selectdeUserRole
    * @param {IVessel} currentVessel
    * @memberof SimulatorComponent
    */
-  async onLoadSimulator(selectdeUserRole, currentVessel: IVessel) {
-    const simulatorJSON: ISimulatorResponse = await this.simulatorApiService.getSimulatorJsonData(this.vesselId, this.loadableStudyId, this.caseNumber).toPromise();
-    if (simulatorJSON.responseStatus.status === "200") {
-      const userDetails = JSON.parse(localStorage.getItem('userDetails'));
-      const userName = userDetails.rolePermissions.role;
-      const shipName = currentVessel.name.toUpperCase();
-      const requestType = 'StowagePlan';
-      const stowageData = JSON.parse(JSON.stringify(simulatorJSON));
-      const loadicatorData = null;
-      const path = '$.departureCondition';
-      const userRole = selectdeUserRole;
-
-      // NOTE: parameter order must not be change
-      new load(shipName, stowageData, loadicatorData, path, userName, userRole, requestType);
+  async onLoadSimulator(selectdeUserRole: string, currentVessel: IVessel) {
+    const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+    switch (this.requestType) {
+      case SIMULATOR_REQUEST_TYPE.STOWAGE_PLAN:
+        const stowageJSON: ISimulatorStowageResponse = await this.simulatorApiService.getStowagePlanJsonData(this.vesselId, this.loadableStudyId, this.caseNumber).toPromise();
+        if (stowageJSON.responseStatus.status === "200") {
+          const data: ISimulatorLoadParams = {
+            shipName: currentVessel.name.toUpperCase(),
+            stowageData: JSON.parse(JSON.stringify(stowageJSON)),
+            loadicatorData: null,
+            path: '$.departureCondition',
+            userName: userDetails.rolePermissions.role,
+            userRole: selectdeUserRole,
+            requestType: this.requestType
+          };
+          this.launchSimulator(data);
+        }
+        break;
+      case SIMULATOR_REQUEST_TYPE.LOADING_SEQUENCE:
+        const loadingSeqJSON: ISimulatorLoadingSequenceResponse = await this.simulatorApiService.getLoadingSequencePlanJson(this.vesselId, this.loadingInfoId).toPromise();
+        if (loadingSeqJSON.responseStatus.status === "200") {
+          const data: ISimulatorLoadParams = {
+            shipName: currentVessel.name.toUpperCase(),
+            stowageData: JSON.parse(JSON.stringify(loadingSeqJSON.loadingJson)),
+            loadicatorData: JSON.parse(JSON.stringify(loadingSeqJSON.loadicatorJson)),
+            path: '$',
+            userName: userDetails.rolePermissions.role,
+            userRole: selectdeUserRole,
+            requestType: this.requestType
+          };
+          this.launchSimulator(data);
+        }
+        break;
     }
+  }
+
+  /**
+   * Function to launch
+   *
+   * @param {ISimulatorLoadParams} data
+   * @memberof SimulatorComponent
+   */
+  launchSimulator(data: ISimulatorLoadParams): void {
+    load(data.shipName, data.stowageData, data.loadicatorData, data.path, data.userName, data.userRole, data.requestType);
   }
 
 }
