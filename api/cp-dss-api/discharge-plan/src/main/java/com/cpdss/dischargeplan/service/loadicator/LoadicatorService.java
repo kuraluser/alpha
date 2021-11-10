@@ -21,6 +21,7 @@ import com.cpdss.dischargeplan.domain.algo.LDIntactStability;
 import com.cpdss.dischargeplan.domain.algo.LDStrength;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
+import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
@@ -84,6 +85,13 @@ public class LoadicatorService {
   @Autowired DischargingSequenceStabiltyParametersRepository dsSeqStabilityParamRepo;
 
   @Autowired PortDischargingPlanStabilityParametersRepository portDsPlanStbParamRepo;
+
+  @Autowired DischargeInformationStatusRepository dsInfoStatusRepository;
+
+  @Autowired DischargeInformationService dischargeInformationService;
+
+  @Autowired DischargingInformationAlgoStatusRepository dsInfoAlgoStatusRepository;
+
   /**
    * get vessel detail for loadicator
    *
@@ -665,7 +673,23 @@ public class LoadicatorService {
       saveDischargeSequenceStabilityParameters(dischargeInfoOpt.get(), lar);
 
       // Update status after new data comes in
+      var statusMaster =
+          dsInfoStatusRepository.findByIdAndIsActive(
+              DischargePlanConstants.PLAN_GENERATED_ID, true);
+      if (statusMaster.isPresent()) {
+        dischargeInformationService.updateDischargingInformationStatuses(
+            statusMaster.get(),
+            statusMaster.get(),
+            statusMaster.get(),
+            dischargeInfoOpt.get().getId());
 
+        dsInfoAlgoStatusRepository.updateDischargingInformationAlgoStatus(
+            statusMaster.get().getId(), dischargeInfoOpt.get().getId(), request.getProcessId());
+        dischargeInformationRepository.updateIsDischargingSequenceGeneratedStatus(
+            dischargeInfoOpt.get().getId(), true);
+        dischargeInformationRepository.updateIsDischargingPlanGeneratedStatus(
+            dischargeInfoOpt.get().getId(), true);
+      }
     } else { // Update Ullage Loadicator Data
       ullageupdateLoadicatorService.getLoadicatorData(request, dischargeInfoOpt.get());
     }

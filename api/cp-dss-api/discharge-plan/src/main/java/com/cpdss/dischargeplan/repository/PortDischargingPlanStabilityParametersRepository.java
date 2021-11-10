@@ -26,10 +26,18 @@ public interface PortDischargingPlanStabilityParametersRepository
 
   default Optional<PortDischargingPlanStabilityParameters> getDataByInfoAndConditionAndValueTypes(
       Long fk1, Integer val1, Integer val2) {
-    return this.findByDischargingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(fk1, val1, val2);
+    return this.findByDischargingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
+        fk1, val1, val2);
   }
 
   Optional<PortDischargingPlanStabilityParameters>
       findByDischargingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
           Long fk1, Integer val1, Integer val2);
+
+  @Modifying
+  @Transactional
+  @Query(
+      "UPDATE PortDischargingPlanStabilityParameters SET isActive = false WHERE dischargingInformation.id = ?1 AND conditionType = ?2 AND valueType = ?3")
+  public void deleteByDischargingInformationIdAndConditionTypeAndValueType(
+      Long dsInfoId, Integer conditionType, Integer valueType);
 }

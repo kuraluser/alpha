@@ -63,6 +63,7 @@ public class DischargePlanSynchronizeService {
               dischargeInformation.setSynopticTableXid(port.getSynopticTableId());
               dischargeInformation.setIsActive(true);
               dischargeInformation.setPortXid(port.getPortId());
+              dischargeInformation.setDischargeStudyProcessId(request.getDischargeProcessId());
               try {
                 Optional<DischargingInformationStatus> pendingStatusOpt =
                     dischargePlanAlgoService.getDischargingInformationStatus(

@@ -15,6 +15,7 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
 
   private DischargeStudyDataTransferRequest() {
     portData_ = java.util.Collections.emptyList();
+    dischargeProcessId_ = "";
   }
 
   @java.lang.Override
@@ -73,6 +74,18 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
           case 32:
             {
               vesselId_ = input.readInt64();
+              break;
+            }
+          case 40:
+            {
+              dischargeStudyId_ = input.readInt64();
+              break;
+            }
+          case 50:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              dischargeProcessId_ = s;
               break;
             }
           default:
@@ -171,6 +184,52 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     return vesselId_;
   }
 
+  public static final int DISCHARGESTUDYID_FIELD_NUMBER = 5;
+  private long dischargeStudyId_;
+  /**
+   * <code>int64 dischargeStudyId = 5;</code>
+   *
+   * @return The dischargeStudyId.
+   */
+  public long getDischargeStudyId() {
+    return dischargeStudyId_;
+  }
+
+  public static final int DISCHARGEPROCESSID_FIELD_NUMBER = 6;
+  private volatile java.lang.Object dischargeProcessId_;
+  /**
+   * <code>string dischargeProcessId = 6;</code>
+   *
+   * @return The dischargeProcessId.
+   */
+  public java.lang.String getDischargeProcessId() {
+    java.lang.Object ref = dischargeProcessId_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      dischargeProcessId_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string dischargeProcessId = 6;</code>
+   *
+   * @return The bytes for dischargeProcessId.
+   */
+  public com.google.protobuf.ByteString getDischargeProcessIdBytes() {
+    java.lang.Object ref = dischargeProcessId_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      dischargeProcessId_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -197,6 +256,12 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     if (vesselId_ != 0L) {
       output.writeInt64(4, vesselId_);
     }
+    if (dischargeStudyId_ != 0L) {
+      output.writeInt64(5, dischargeStudyId_);
+    }
+    if (!getDischargeProcessIdBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, dischargeProcessId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -217,6 +282,12 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     }
     if (vesselId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, vesselId_);
+    }
+    if (dischargeStudyId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, dischargeStudyId_);
+    }
+    if (!getDischargeProcessIdBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, dischargeProcessId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -239,6 +310,8 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     if (getDischargePatternId() != other.getDischargePatternId()) return false;
     if (getVoyageId() != other.getVoyageId()) return false;
     if (getVesselId() != other.getVesselId()) return false;
+    if (getDischargeStudyId() != other.getDischargeStudyId()) return false;
+    if (!getDischargeProcessId().equals(other.getDischargeProcessId())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -260,6 +333,10 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVoyageId());
     hash = (37 * hash) + VESSELID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+    hash = (37 * hash) + DISCHARGESTUDYID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargeStudyId());
+    hash = (37 * hash) + DISCHARGEPROCESSID_FIELD_NUMBER;
+    hash = (53 * hash) + getDischargeProcessId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -420,6 +497,10 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
 
       vesselId_ = 0L;
 
+      dischargeStudyId_ = 0L;
+
+      dischargeProcessId_ = "";
+
       return this;
     }
 
@@ -464,6 +545,8 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
       result.dischargePatternId_ = dischargePatternId_;
       result.voyageId_ = voyageId_;
       result.vesselId_ = vesselId_;
+      result.dischargeStudyId_ = dischargeStudyId_;
+      result.dischargeProcessId_ = dischargeProcessId_;
       onBuilt();
       return result;
     }
@@ -553,6 +636,13 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
       }
       if (other.getVesselId() != 0L) {
         setVesselId(other.getVesselId());
+      }
+      if (other.getDischargeStudyId() != 0L) {
+        setDischargeStudyId(other.getDischargeStudyId());
+      }
+      if (!other.getDischargeProcessId().isEmpty()) {
+        dischargeProcessId_ = other.dischargeProcessId_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -896,6 +986,115 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     public Builder clearVesselId() {
 
       vesselId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long dischargeStudyId_;
+    /**
+     * <code>int64 dischargeStudyId = 5;</code>
+     *
+     * @return The dischargeStudyId.
+     */
+    public long getDischargeStudyId() {
+      return dischargeStudyId_;
+    }
+    /**
+     * <code>int64 dischargeStudyId = 5;</code>
+     *
+     * @param value The dischargeStudyId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargeStudyId(long value) {
+
+      dischargeStudyId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 dischargeStudyId = 5;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargeStudyId() {
+
+      dischargeStudyId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object dischargeProcessId_ = "";
+    /**
+     * <code>string dischargeProcessId = 6;</code>
+     *
+     * @return The dischargeProcessId.
+     */
+    public java.lang.String getDischargeProcessId() {
+      java.lang.Object ref = dischargeProcessId_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        dischargeProcessId_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string dischargeProcessId = 6;</code>
+     *
+     * @return The bytes for dischargeProcessId.
+     */
+    public com.google.protobuf.ByteString getDischargeProcessIdBytes() {
+      java.lang.Object ref = dischargeProcessId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        dischargeProcessId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string dischargeProcessId = 6;</code>
+     *
+     * @param value The dischargeProcessId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargeProcessId(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      dischargeProcessId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string dischargeProcessId = 6;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargeProcessId() {
+
+      dischargeProcessId_ = getDefaultInstance().getDischargeProcessId();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string dischargeProcessId = 6;</code>
+     *
+     * @param value The bytes for dischargeProcessId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargeProcessIdBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      dischargeProcessId_ = value;
       onChanged();
       return this;
     }

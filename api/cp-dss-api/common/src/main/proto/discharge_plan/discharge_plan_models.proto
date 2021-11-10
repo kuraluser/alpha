@@ -228,6 +228,8 @@ message DischargeStudyDataTransferRequest{
 	int64 dischargePatternId = 2;
 	int64 voyageId = 3;
 	int64 vesselId = 4;
+  int64 dischargeStudyId = 5;
+  string dischargeProcessId = 6;
 }
 
 message PortData{

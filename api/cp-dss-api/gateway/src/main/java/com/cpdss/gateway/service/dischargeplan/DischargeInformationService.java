@@ -195,8 +195,7 @@ public class DischargeInformationService {
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
             portRotation.get().getId(),
-            GatewayConstants.OPERATION_TYPE_DEP); // Discharge Info needed Arrival Conditions
-    // As algo return data with departure condition, changing the operation type
+            GatewayConstants.OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
 
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     vesselTankDetails.setDischargeQuantityCargoDetails(

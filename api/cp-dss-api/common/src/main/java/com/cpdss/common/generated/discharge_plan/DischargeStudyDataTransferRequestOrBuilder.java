@@ -38,4 +38,24 @@ public interface DischargeStudyDataTransferRequestOrBuilder
    * @return The vesselId.
    */
   long getVesselId();
+
+  /**
+   * <code>int64 dischargeStudyId = 5;</code>
+   *
+   * @return The dischargeStudyId.
+   */
+  long getDischargeStudyId();
+
+  /**
+   * <code>string dischargeProcessId = 6;</code>
+   *
+   * @return The dischargeProcessId.
+   */
+  java.lang.String getDischargeProcessId();
+  /**
+   * <code>string dischargeProcessId = 6;</code>
+   *
+   * @return The bytes for dischargeProcessId.
+   */
+  com.google.protobuf.ByteString getDischargeProcessIdBytes();
 }

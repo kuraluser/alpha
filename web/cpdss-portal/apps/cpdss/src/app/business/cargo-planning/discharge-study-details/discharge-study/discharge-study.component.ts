@@ -375,6 +375,7 @@ export class DischargeStudyComponent implements OnInit {
           }
           this.portDetails = [...initPortDetails];
           this.isDischargeStudyValid();
+          this.dischargeStudyForm.markAsDirty();
           this.ngxSpinnerService.hide();
         }
       });
@@ -628,7 +629,7 @@ export class DischargeStudyComponent implements OnInit {
             if (cargoDetailDetails.storedKey.value === cargo.storedKey.value) {
               if (cargoDetailDetails.mode.value.id === 2) {
                 if (Number(totalBackLoadingKlValue) >= Number(cargoDetailDetails.kl.value) && (i !== (this.portDetails.length - 1) || isAutoModeAvailable)) {
-                  totalBackLoadingKlValue -= Number(cargoDetailDetails.kl.value);
+                  totalBackLoadingKlValue = Number((totalBackLoadingKlValue - Number(cargoDetailDetails.kl.value)).toFixed(3));
                   portDetails = this.updateCargoDetails(event, portDetails, cargoDetailDetails, cargoDetailDetails.kl.value, i, cargoIndex).portDetails;
                 } else {
                   portDetails = this.updateCargoDetails(event, portDetails, cargoDetailDetails, totalBackLoadingKlValue, i, cargoIndex).portDetails;
@@ -727,6 +728,15 @@ export class DischargeStudyComponent implements OnInit {
       selectedPortCargo['abbreviation'].value = data.cargo.value.abbreviation;
       selectedPortCargo['api'].value = cargoDetails.api;
       selectedPortCargo['temp'].value = cargoDetails.temperature;
+      const unitConverted = {
+        mt: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, selectedPortCargo['api'].value, selectedPortCargo['temp'].value, -1),
+        bbls: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, selectedPortCargo['api'].value, selectedPortCargo['temp'].value, -1),
+      }
+      selectedPortCargo['mt'].value = !unitConverted.mt || isNaN(unitConverted.mt) ? 0 : unitConverted.mt;
+      selectedPortCargo['bbls'].value = !unitConverted.bbls || isNaN(unitConverted.bbls) ? 0 : unitConverted.bbls;
+      this.updatebackLoadingDetails(feildIndex, index, 'mt', selectedPortCargo['mt'].value, 'backLoadingDetails');
+      this.updatebackLoadingDetails(feildIndex, index, 'bbls', selectedPortCargo['bbls'].value, 'backLoadingDetails');
+
       this.updatebackLoadingDetails(feildIndex, index, 'abbreviation', selectedPortCargo['abbreviation'].value, 'backLoadingDetails');
       this.updatebackLoadingDetails(feildIndex, index, 'api', selectedPortCargo['api'].value, 'backLoadingDetails');
       this.updatebackLoadingDetails(feildIndex, index, 'temp', selectedPortCargo['temp'].value, 'backLoadingDetails');
@@ -736,6 +746,15 @@ export class DischargeStudyComponent implements OnInit {
     if (!event.data.isAdd && formGroup.get('kl').valid && formGroup.get('api').valid && formGroup.get('temp').valid && event.field === 'kl') {
       portDetails = this.onQuantityEditComplete(event, portDetails, selectedPortCargo);
     } else if (!event.data.isAdd) {
+      const unitConverted = {
+        mt: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value, -1),
+        bbls: this.quantityPipe.transform(selectedPortCargo['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value, -1),
+      }
+      selectedPortCargo['mt'].value = !unitConverted.mt || isNaN(unitConverted.mt) ? 0 : unitConverted.mt;
+      selectedPortCargo['bbls'].value = !unitConverted.bbls || isNaN(unitConverted.bbls) ? 0 : unitConverted.bbls;
+      this.updatebackLoadingDetails(feildIndex, index, 'mt', selectedPortCargo['mt'].value, 'backLoadingDetails');
+      this.updatebackLoadingDetails(feildIndex, index, 'bbls', selectedPortCargo['bbls'].value, 'backLoadingDetails');
+
       this.updateDischargeCargoDetails(event, portDetails, event.field);
     }
 
@@ -768,10 +787,10 @@ export class DischargeStudyComponent implements OnInit {
                 mt: this.quantityPipe.transform(portDetails[i].cargoDetail[findCardoIndex]['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, event.data.api.value, event.data.temp.value, -1),
                 bbls: this.quantityPipe.transform(portDetails[i].cargoDetail[findCardoIndex]['kl'].value, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, event.data.api.value, event.data.temp.value, -1),
               }
-              portDetails[i].cargoDetail[findCardoIndex]['mt'].value = unitConverted.mt;
-              this.updatebackLoadingDetails(findCardoIndex, i, 'mt', unitConverted.mt, 'cargoDetail');
-              portDetails[i].cargoDetail[findCardoIndex]['bbls'].value = unitConverted.bbls;
-              this.updatebackLoadingDetails(findCardoIndex, i, 'bbls', unitConverted.bbls, 'cargoDetail');
+              portDetails[i].cargoDetail[findCardoIndex]['mt'].value = !unitConverted.mt || isNaN(unitConverted.mt) ? 0 : unitConverted.mt;
+              this.updatebackLoadingDetails(findCardoIndex, i, 'mt', portDetails[i].cargoDetail[findCardoIndex]['mt'].value , 'cargoDetail');
+              portDetails[i].cargoDetail[findCardoIndex]['bbls'].value = !unitConverted.bbls || isNaN(unitConverted.bbls) ? 0 : unitConverted.bbls;
+              this.updatebackLoadingDetails(findCardoIndex, i, 'bbls', portDetails[i].cargoDetail[findCardoIndex]['bbls'].value , 'cargoDetail');
             } else {
               portDetails[i].cargoDetail[findCardoIndex][key].value = event.data[key].value;
               this.updatebackLoadingDetails(findCardoIndex, i, key, event.data[key].value, 'cargoDetail');
