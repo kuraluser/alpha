@@ -253,7 +253,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
  * @memberof LoadablePlanComponent
  */
   setProcessingLoadableStudyActions() {
-    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
+    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
       this.confirmButtonStatus = true;
     } else {
       this.confirmButtonStatus = false;
@@ -323,6 +323,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
     this.loadablePlanTransformationService.savedComments$.pipe(switchMap(() => {
       return this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();;
     })).subscribe((loadablePlanRes) => {
+
       if (loadablePlanRes.responseStatus.status === '200') {
         this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
       }
@@ -462,9 +463,10 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
     this.loadablePatternValidationStatus = loadablePlanRes.loadablePatternStatusId;
     if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
       this.getAlgoErrorMessage(false);
-    } else if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED || this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE) {
+    } else if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE].includes(this.loadablePatternValidationStatus)) {
       this.validationPending = false;
       this.listenEvents();
+      this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: true });
     }
 
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
@@ -651,8 +653,8 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: translationKeys['VALIDATE_AND_SAVE_PENDING'] });
         return;
       }
-      else if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
-        const errorDetails = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED === result.loadablePatternStatusId ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
+      else if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
+        const errorDetails = [VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE].includes(result.loadablePatternStatusId) ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
         this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: errorDetails });
         return;
       }
