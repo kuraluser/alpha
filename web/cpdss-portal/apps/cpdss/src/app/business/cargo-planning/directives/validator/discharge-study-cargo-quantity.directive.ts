@@ -56,7 +56,7 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
       })
       
       if (findCargo && findCargo.get('mode').value?.id === 2) {
-        calculatedTotalQuantity += Number(findCargo.get('kl').value);
+        calculatedTotalQuantity = Number((calculatedTotalQuantity + Number(findCargo.get('kl').value)).toFixed(3));
       } else if(!findCargo) {
         noCargoFoundtStatus = true;
       }
