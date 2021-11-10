@@ -175,7 +175,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private String rootFolder;
 
   private final long ALGO_RESPONSE_ID = 17L;
-  private final long LOADING_RESPONSE_ID = 10L;
+  private final long LOADING_RESPONSE_ID = 24L;
   private final long LOADICATOR_RESPONSE_ID = 14L;
   @Autowired private VoyageRepository voyageRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
