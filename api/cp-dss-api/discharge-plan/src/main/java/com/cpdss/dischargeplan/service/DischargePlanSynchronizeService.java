@@ -211,6 +211,7 @@ public class DischargePlanSynchronizeService {
         if (entity != null) {
           CowPlanDetail cowPlanDetail = new CowPlanDetail();
           cowPlanDetail.setDischargeInformation(entity);
+          cowPlanDetail.setIsActive(true);
           cowPlanDetail.setCowOperationType(portData.getCowDetails().getCowOptionTypeValue());
           cowPlanDetail.setCowPercentage(new BigDecimal(portData.getCowDetails().getPercent()));
           if (portData.getCowDetails().getCowTankDetails() != null) {

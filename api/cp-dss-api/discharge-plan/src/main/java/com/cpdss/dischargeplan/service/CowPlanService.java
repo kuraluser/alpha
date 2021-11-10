@@ -61,7 +61,15 @@ public class CowPlanService {
       if (!cowPlan.getTrimCowMin().isEmpty()) {
         cowPlanDetail.setCowMinTrim(new BigDecimal(cowPlan.getTrimCowMin()));
       }
-      cowPlanDetail.setCowOperationType(cowPlan.getCowOptionTypeValue());
+
+      if (cowPlan.getCowOptionTypeValue() == 0) {
+        // Setting value 1 for temporary purpose
+        // once the DS Pattern have the actual value, this must remove
+        cowPlanDetail.setCowOperationType(Common.COW_OPTION_TYPE.AUTO_VALUE);
+      } else {
+        cowPlanDetail.setCowOperationType(cowPlan.getCowOptionTypeValue());
+      }
+
       updateTanksDetails(cowPlan, cowPlanDetail);
       cowPlanDetailRepository.save(cowPlanDetail);
     }
