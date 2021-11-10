@@ -167,6 +167,7 @@
   "CHOOSE_ETA": "Choose ETA",
   "CHOOSE_ETD": "Choose ETD",
   "NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH": "Maximum allowed character length is 30",
+  "NEW_LOADABLE_STUDY_NAME_POPUP_MAX_LENGTH": "Maximum allowed character length is 100",
   "VOYAGE_CREATE_SUCCESS": "Success",
   "VOYAGE_CREATED_SUCCESSFULLY": "Voyage created successfully",
   "VOYAGE_CREATE_ERROR": "Error",
