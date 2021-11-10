@@ -6,10 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Set;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "loading_information")
@@ -17,6 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LoadingInformation extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
