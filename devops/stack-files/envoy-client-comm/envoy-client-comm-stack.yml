@@ -16,7 +16,7 @@ services:
     - SHIP_ID=${SHIP_ID}
     dns: 8.8.8.8
     healthcheck:
-      test: "wget --no-verbose --spider http://localhost:80/health || exit 1"
+      test: "wget --no-verbose --spider http://localhost:81/health || exit 1"
       interval: 30s
       timeout: 10s
       retries: 3

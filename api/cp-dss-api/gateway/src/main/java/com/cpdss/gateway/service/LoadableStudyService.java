@@ -1799,6 +1799,7 @@ public class LoadableStudyService {
               details.setTemp(lqccd.getTemp());
               details.setSlopQuantity(lqccd.getSlopQuantity());
               details.setTankShortName(lqccd.getTankShortName());
+              details.setColorCode(lqccd.getCommingleColour());
               response.getLoadableQuantityCommingleCargoDetails().add(details);
             });
   }
@@ -3634,109 +3635,112 @@ public class LoadableStudyService {
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
     Optional.ofNullable(loadablePlanRequest.getProcessId()).ifPresent(request::setProcesssId);
-    loadablePlanRequest
-        .getDischargePlanDetails()
-        .forEach(
-            lpd -> {
-              planBuilder.clearLoadablePlanPortWiseDetails();
-              planBuilder.clearConstraints();
-              LoadablePlanPortWiseDetails.Builder portWiseBuilder =
-                  LoadablePlanPortWiseDetails.newBuilder();
-              lpd.getDischargePlanPortWiseDetails()
-                  .forEach(
-                      lppwd -> {
-                        LoadablePlanDetailsReply.Builder detailsBuilderDeparture =
-                            LoadablePlanDetailsReply.newBuilder();
-                        lppwd
-                            .getDepartureCondition()
-                            .getDischargeQuantityCommingleCargoDetails()
-                            .forEach(
-                                lqccd -> {
-                                  buildCommingleDetails(lqccd, detailsBuilderDeparture);
-                                });
-                        lppwd
-                            .getDepartureCondition()
-                            .getDischargeQuantityCargoDetails()
-                            .forEach(
-                                lpqcd -> {
-                                  buildLoadableCargoDetails(lpqcd, detailsBuilderDeparture);
-                                });
-                        lppwd
-                            .getDepartureCondition()
-                            .getDischargePlanStowageDetails()
-                            .forEach(
-                                lpsd -> {
-                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderDeparture);
-                                });
-                        lppwd
-                            .getDepartureCondition()
-                            .getDischargePlanBallastDetails()
-                            .forEach(
-                                lpbd -> {
-                                  buildLoadablePlanBallastDetails(lpbd, detailsBuilderDeparture);
-                                });
+    if (loadablePlanRequest.getDischargePlanDetails() != null) {
+      loadablePlanRequest
+          .getDischargePlanDetails()
+          .forEach(
+              lpd -> {
+                planBuilder.clearLoadablePlanPortWiseDetails();
+                planBuilder.clearConstraints();
+                LoadablePlanPortWiseDetails.Builder portWiseBuilder =
+                    LoadablePlanPortWiseDetails.newBuilder();
+                lpd.getDischargePlanPortWiseDetails()
+                    .forEach(
+                        lppwd -> {
+                          LoadablePlanDetailsReply.Builder detailsBuilderDeparture =
+                              LoadablePlanDetailsReply.newBuilder();
+                          lppwd
+                              .getDepartureCondition()
+                              .getDischargeQuantityCommingleCargoDetails()
+                              .forEach(
+                                  lqccd -> {
+                                    buildCommingleDetails(lqccd, detailsBuilderDeparture);
+                                  });
+                          lppwd
+                              .getDepartureCondition()
+                              .getDischargeQuantityCargoDetails()
+                              .forEach(
+                                  lpqcd -> {
+                                    buildLoadableCargoDetails(lpqcd, detailsBuilderDeparture);
+                                  });
+                          lppwd
+                              .getDepartureCondition()
+                              .getDischargePlanStowageDetails()
+                              .forEach(
+                                  lpsd -> {
+                                    buildLoadablePlanStowageDetails(lpsd, detailsBuilderDeparture);
+                                  });
+                          lppwd
+                              .getDepartureCondition()
+                              .getDischargePlanBallastDetails()
+                              .forEach(
+                                  lpbd -> {
+                                    buildLoadablePlanBallastDetails(lpbd, detailsBuilderDeparture);
+                                  });
 
-                        Optional.ofNullable(lppwd.getDepartureCondition().getStabilityParameters())
-                            .ifPresent(
-                                stabilityParameter ->
-                                    detailsBuilderDeparture.setStabilityParameter(
-                                        buildStabilityParamter(stabilityParameter)));
+                          Optional.ofNullable(
+                                  lppwd.getDepartureCondition().getStabilityParameters())
+                              .ifPresent(
+                                  stabilityParameter ->
+                                      detailsBuilderDeparture.setStabilityParameter(
+                                          buildStabilityParamter(stabilityParameter)));
 
-                        portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
+                          portWiseBuilder.setDepartureCondition(detailsBuilderDeparture);
 
-                        LoadablePlanDetailsReply.Builder detailsBuilderArrival =
-                            LoadablePlanDetailsReply.newBuilder();
-                        lppwd
-                            .getArrivalCondition()
-                            .getDischargeQuantityCommingleCargoDetails()
-                            .forEach(
-                                lqccd -> {
-                                  buildCommingleDetails(lqccd, detailsBuilderArrival);
-                                });
-                        lppwd
-                            .getArrivalCondition()
-                            .getDischargeQuantityCargoDetails()
-                            .forEach(
-                                lpqcd -> {
-                                  buildLoadableCargoDetails(lpqcd, detailsBuilderArrival);
-                                });
-                        lppwd
-                            .getArrivalCondition()
-                            .getDischargePlanStowageDetails()
-                            .forEach(
-                                lpsd -> {
-                                  buildLoadablePlanStowageDetails(lpsd, detailsBuilderArrival);
-                                });
-                        lppwd
-                            .getArrivalCondition()
-                            .getDischargePlanBallastDetails()
-                            .forEach(
-                                lpbd -> {
-                                  buildLoadablePlanBallastDetails(lpbd, detailsBuilderArrival);
-                                });
+                          LoadablePlanDetailsReply.Builder detailsBuilderArrival =
+                              LoadablePlanDetailsReply.newBuilder();
+                          lppwd
+                              .getArrivalCondition()
+                              .getDischargeQuantityCommingleCargoDetails()
+                              .forEach(
+                                  lqccd -> {
+                                    buildCommingleDetails(lqccd, detailsBuilderArrival);
+                                  });
+                          lppwd
+                              .getArrivalCondition()
+                              .getDischargeQuantityCargoDetails()
+                              .forEach(
+                                  lpqcd -> {
+                                    buildLoadableCargoDetails(lpqcd, detailsBuilderArrival);
+                                  });
+                          lppwd
+                              .getArrivalCondition()
+                              .getDischargePlanStowageDetails()
+                              .forEach(
+                                  lpsd -> {
+                                    buildLoadablePlanStowageDetails(lpsd, detailsBuilderArrival);
+                                  });
+                          lppwd
+                              .getArrivalCondition()
+                              .getDischargePlanBallastDetails()
+                              .forEach(
+                                  lpbd -> {
+                                    buildLoadablePlanBallastDetails(lpbd, detailsBuilderArrival);
+                                  });
 
-                        Optional.ofNullable(lppwd.getArrivalCondition().getStabilityParameters())
-                            .ifPresent(
-                                stabilityParameter ->
-                                    detailsBuilderArrival.setStabilityParameter(
-                                        buildStabilityParamter(stabilityParameter)));
+                          Optional.ofNullable(lppwd.getArrivalCondition().getStabilityParameters())
+                              .ifPresent(
+                                  stabilityParameter ->
+                                      detailsBuilderArrival.setStabilityParameter(
+                                          buildStabilityParamter(stabilityParameter)));
 
-                        portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
+                          portWiseBuilder.setArrivalCondition(detailsBuilderArrival);
 
-                        portWiseBuilder.setPortId(lppwd.getPortId());
-                        portWiseBuilder.setPortRotationId(
-                            null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
-                        Optional.ofNullable(lppwd.getSeaWaterTemperature())
-                            .ifPresent(portWiseBuilder::setSeaWaterTemperature);
-                        Optional.ofNullable(lppwd.getAmbientTemperature())
-                            .ifPresent(portWiseBuilder::setAmbientTemperature);
+                          portWiseBuilder.setPortId(lppwd.getPortId());
+                          portWiseBuilder.setPortRotationId(
+                              null != lppwd.getPortRotationId() ? lppwd.getPortRotationId() : 0);
+                          Optional.ofNullable(lppwd.getSeaWaterTemperature())
+                              .ifPresent(portWiseBuilder::setSeaWaterTemperature);
+                          Optional.ofNullable(lppwd.getAmbientTemperature())
+                              .ifPresent(portWiseBuilder::setAmbientTemperature);
 
-                        planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
-                      });
-              Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
-              buildLoadablePlanConstrains(lpd, planBuilder);
-              request.addLoadablePlanDetails(planBuilder);
-            });
+                          planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
+                        });
+                Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
+                buildLoadablePlanConstrains(lpd, planBuilder);
+                request.addLoadablePlanDetails(planBuilder);
+              });
+    }
   }
   /**
    * @param lpd
@@ -3936,7 +3940,7 @@ public class LoadableStudyService {
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(builder::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(builder::setCargo2NominationId);
     Optional.ofNullable(lqccd.getTankShortName()).ifPresent(builder::setTankShortName);
-    Optional.ofNullable(lqccd.getCommingleColour()).ifPresent(builder::setCommingleColour);
+    Optional.ofNullable(lqccd.getColorCode()).ifPresent(builder::setCommingleColour);
     Optional.ofNullable(lqccd.getToppingSequence())
         .ifPresent(
             toppingSequence -> {
@@ -4302,6 +4306,7 @@ public class LoadableStudyService {
     details.setTankName(lqccd.getTankName());
     details.setTemp(lqccd.getTemp());
     details.setTankShortName(lqccd.getTankShortName());
+    details.setColorCode(lqccd.getCommingleColour());
     return details;
   }
 
@@ -4977,12 +4982,12 @@ public class LoadableStudyService {
    * @return RecalculateVolume
    */
   public UpdateUllage updateUllage(
-      UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
+      Long vesselId, UpdateUllage updateUllageRequest, Long loadablePatternId, String correlationId)
       throws GenericServiceException {
     log.info("Inside updateUllageRequest in gateway micro service");
 
     UpdateUllageRequest.Builder grpcRequest = UpdateUllageRequest.newBuilder();
-    buildUpdateUllageRequest(updateUllageRequest, loadablePatternId, grpcRequest);
+    buildUpdateUllageRequest(updateUllageRequest, loadablePatternId, vesselId, grpcRequest);
     UpdateUllageReply grpcReply = this.updateUllage(grpcRequest.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -5081,8 +5086,10 @@ public class LoadableStudyService {
   public void buildUpdateUllageRequest(
       UpdateUllage updateUllageRequest,
       Long loadablePatternId,
+      Long vesselId,
       com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.Builder grpcRequest) {
     grpcRequest.setLoadablePatternId(loadablePatternId);
+    grpcRequest.setVesselId(vesselId);
     com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
     builder.setId(updateUllageRequest.getId());
@@ -5106,6 +5113,7 @@ public class LoadableStudyService {
       Long loadablePatternId,
       com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.Builder grpcRequest) {
     grpcRequest.setLoadablePatternId(loadablePatternId);
+    grpcRequest.setVesselId(updateUllageRequest.getVesselId());
     com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
     builder.setId(updateUllageRequest.getId());
@@ -6211,7 +6219,7 @@ public class LoadableStudyService {
     loadableRuleRequestBuilder.setSectionId(sectionId);
     loadableRuleRequestBuilder.setLoadableStudyId(loadableStudyId);
     RuleUtility.buildRuleListForSave(
-        loadableRuleRequest, null, loadableRuleRequestBuilder, null, false, false);
+        loadableRuleRequest, null, loadableRuleRequestBuilder, null, null, false, false, false);
     LoadableRuleReply loadableRuleReply =
         loadableStudyServiceBlockingStub.getOrSaveRulesForLoadableStudy(
             loadableRuleRequestBuilder.build());

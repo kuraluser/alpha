@@ -12,6 +12,7 @@ import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest;
+import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
@@ -40,6 +41,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Transactional
 public class CommunicationService {
+
+  // Services
   @Autowired private LoadableStudyServiceShore loadableStudyServiceShore;
   @Autowired VoyageService voyageService;
   @Autowired LoadableQuantityService loadableQuantityService;
@@ -53,15 +56,28 @@ public class CommunicationService {
   @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
   @Autowired private LoadicatorService loadicatorService;
 
+  // Repositories
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
+  @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
+  @Autowired private AlgoErrorsRepository algoErrorsRepository;
+  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+
+  // Props
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
 
   @Value("${algo.loadablestudy.api.url}")
   private String loadableStudyUrl;
 
+  @Value("${loadablestudy.communication.timelimit}")
+  private Long timeLimit;
+
+  @Value("${cpdss.build.env}")
+  private String env;
+
+  // GRPC Services
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -71,51 +87,57 @@ public class CommunicationService {
   @GrpcClient("envoyWriterService")
   private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
 
-  @Value("${loadablestudy.communication.timelimit}")
-  private Long timeLimit;
-
-  @Value("${cpdss.build.env}")
-  private String env;
-
+  /**
+   * Method to get data for communication in ship >>refactored existing method on 09-11-21
+   *
+   * @param taskName taskName value
+   * @param taskReqParams param map from task_req_param_attributes table
+   * @param shore message types for shore
+   * @throws GenericServiceException Exception on failure
+   */
   public void getDataFromCommInShoreSide(
-      Map<String, String> taskReqParams, EnumSet<MessageTypes> shore)
+      String taskName, Map<String, String> taskReqParams, EnumSet<MessageTypes> shore)
       throws GenericServiceException {
-    log.info("inside getDataFromCommInShoreSide ");
     for (MessageTypes messageType : shore) {
       try {
-        log.info("inside getDataFromCommInShoreSide messageType " + messageType.getMessageType());
-        if (messageType.getMessageType().equals("LoadableStudy")) {
-          log.info("inside getDataFromCommInShoreSide messageType ");
-          EnvoyReader.EnvoyReaderResultReply erReply =
-              getResultFromEnvoyReaderShore(taskReqParams, messageType);
-          if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-            throw new GenericServiceException(
-                "Failed to get Result from Communication Server",
-                erReply.getResponseStatus().getCode(),
-                HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-          }
-          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
-            log.info("LoadableStudy received at shore ");
+
+        // Get data from envoy-reader
+        EnvoyReader.EnvoyReaderResultReply erReply =
+            getResultFromEnvoyReaderShore(taskReqParams, messageType);
+
+        if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+          log.error("Invalid response from envoy-reader. Response: {}", erReply);
+          throw new GenericServiceException(
+              "Invalid response from envoy-reader",
+              erReply.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(Integer.parseInt(erReply.getResponseStatus().getCode())));
+        }
+
+        if (!erReply.getPatternResultJson().isEmpty()) {
+          log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
+          // Get loadable study request and update shore
+          if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType.getMessageType())) {
             saveLoadableStudyShore(erReply);
           }
-        } else if (messageType.getMessageType().equals("ValidatePlan")) {
-          log.info(
-              "--------LoadableStudy received at shore side for validating plan "
-                  + taskReqParams.toString());
-          EnvoyReader.EnvoyReaderResultReply erReply =
-              getResultFromEnvoyReaderShore(taskReqParams, messageType);
-          if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
-            throw new GenericServiceException(
-                "Failed to get Result from Communication Server",
-                erReply.getResponseStatus().getCode(),
-                HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
-          }
-          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
-            log.info("@@@@@@@@@@@LoadableStudy received at shore side ");
+          // Get validate plan request and update shore
+          else if (MessageTypes.VALIDATEPLAN
+              .getMessageType()
+              .equals(messageType.getMessageType())) {
             saveValidatePlanRequestShore(erReply);
           }
+        } else {
+          log.debug(
+              "No data received from envoy-reader. Message Type: {}. Params: {}",
+              messageType,
+              taskReqParams);
         }
       } catch (GenericServiceException e) {
+        log.error(
+            "Task: {} failed. Message Type: {}. Params: {}",
+            taskName,
+            messageType,
+            taskReqParams,
+            e);
         throw new GenericServiceException(
             e.getMessage(),
             CommonErrorCodes.E_GEN_INTERNAL_ERR,
@@ -124,11 +146,6 @@ public class CommunicationService {
       }
     }
   }
-
-  @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
-  @Autowired private AlgoErrorsRepository algoErrorsRepository;
-
-  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
 
   private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
       throws GenericServiceException {
@@ -224,28 +241,56 @@ public class CommunicationService {
     }
   }
 
+  /**
+   * Method to get data for communication in ship refactored existing method on 09-11-21
+   *
+   * @param taskName taskName value
+   * @param taskReqParams param map from task_req_param_attributes table
+   * @param ship message types for ship
+   * @throws GenericServiceException Exception on failure
+   */
   public void getDataFromCommInShipSide(
-      Map<String, String> taskReqParams, EnumSet<MessageTypes> ship)
+      String taskName, Map<String, String> taskReqParams, EnumSet<MessageTypes> ship)
       throws GenericServiceException {
     for (MessageTypes messageType : ship) {
       try {
+
+        // Get data from envoy-reader
         EnvoyReader.EnvoyReaderResultReply erReply =
             getResultFromEnvoyReaderShore(taskReqParams, messageType);
         if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
+          log.error("Invalid response from envoy-reader. Response: {}", erReply);
           throw new GenericServiceException(
-              "Failed to get Result from Communication Server",
+              "Invalid response from envoy-reader",
               erReply.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+              HttpStatusCode.valueOf(Integer.parseInt(erReply.getResponseStatus().getCode())));
         }
-        if (messageType.getMessageType().equals("AlgoResult")) {
-          saveAlgoPatternFromShore(erReply);
-        } else if (messageType.getMessageType().equals("PatternDetail")) {
-          if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
-            log.info("-------Pattern received  received at ship side ");
+
+        if (!erReply.getPatternResultJson().isEmpty()) {
+          log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
+          // Get loadable study response and update ship
+          if (MessageTypes.ALGORESULT.getMessageType().equals(messageType.getMessageType())) {
+            saveAlgoPatternFromShore(erReply);
+          }
+          // Get stowage edit response and update ship
+          else if (MessageTypes.PATTERNDETAIL
+              .getMessageType()
+              .equals(messageType.getMessageType())) {
             savePatternInShipSide(erReply);
           }
+        } else {
+          log.debug(
+              "No data received from envoy-reader. Message Type: {}. Params: {}",
+              messageType,
+              taskReqParams);
         }
       } catch (GenericServiceException e) {
+        log.error(
+            "Task: {} failed. Message Type: {}. Params: {}",
+            taskName,
+            messageType,
+            taskReqParams,
+            e);
         throw new GenericServiceException(
             e.getMessage(),
             CommonErrorCodes.E_GEN_INTERNAL_ERR,
@@ -365,24 +410,26 @@ public class CommunicationService {
    * Method to process Algo and update status
    *
    * @param loadableStudyEntity loadable study object
+   * @param messageId communication messageId value
    */
-  private void processAlgo(final LoadableStudy loadableStudyEntity) {
+  private void processAlgo(final LoadableStudy loadableStudyEntity, final String messageId) {
 
     // Get saved request JSON
-    Object algoRequestJson =
+    JsonData algoRequestJson =
         jsonDataService.getJsonData(
             loadableStudyEntity.getId(), LoadableStudiesConstants.LOADABLE_STUDY_REQUEST);
 
     // Call Algo and update response
     AlgoResponse algoResponse =
-        restTemplate.postForObject(loadableStudyUrl, algoRequestJson, AlgoResponse.class);
+        restTemplate.postForObject(
+            loadableStudyUrl, algoRequestJson.getJsonData(), AlgoResponse.class);
     log.info("LS Id: {}, Algo response: {}", loadableStudyEntity.getId(), algoResponse);
 
     loadablePatternService.updateProcessIdForLoadableStudy(
         Objects.requireNonNull(algoResponse).getProcessId(),
         loadableStudyEntity,
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
-        "",
+        messageId,
         !isShip());
 
     loadableStudyRepository.updateLoadableStudyStatus(
@@ -461,18 +508,23 @@ public class CommunicationService {
                 .orElseThrow(RuntimeException::new);
 
         // Check timer and update timeout
-        long start = Timestamp.valueOf(communicationStatusRow.getCommunicationDateTime()).getTime();
-        long end = start + timeLimit * 1000; // Convert time to ms
-        if (System.currentTimeMillis() > end) {
+        final long start = Timestamp.valueOf(communicationStatusRow.getCreatedDateTime()).getTime();
+        // timeLimit is in seconds
+        final long end = start + timeLimit * 1000; // Convert time to ms
+        final long currentTime = System.currentTimeMillis();
+        if (currentTime > end) {
           log.info(
-              "Timeout {} ms reached. Communication ignored. Generating at {}. LS Id: {}",
-              timeLimit,
+              "Communication Timeout: {} minutes reached. Communication ignored. Generating at: {}. LS Id: {}. Unix Times ::: Start: {} ms, End: {} ms, Current Time: {} ms.",
+              timeLimit / 60,
               env,
-              loadableStudy.getId());
+              loadableStudy.getId(),
+              start,
+              end,
+              currentTime);
           loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
               CommunicationStatus.TIME_OUT.getId(), loadableStudy.getId());
           // Call fallback mechanism on timeout
-          processAlgo(loadableStudy);
+          processAlgo(loadableStudy, communicationStatusRow.getMessageUUID());
 
           loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
               CommunicationStatus.RETRY_AT_SOURCE.getId(), loadableStudy.getId());
@@ -531,7 +583,6 @@ public class CommunicationService {
     EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
         EnvoyWriter.EnvoyWriterRequest.newBuilder();
     writerRequest.setJsonPayload(requestJson);
-    // writerRequest.setClientId("KAZUSA_VINOTH");
     writerRequest.setClientId(vesselReply.getName());
     writerRequest.setMessageType(messageType);
     writerRequest.setImoNumber(vesselReply.getImoNumber());

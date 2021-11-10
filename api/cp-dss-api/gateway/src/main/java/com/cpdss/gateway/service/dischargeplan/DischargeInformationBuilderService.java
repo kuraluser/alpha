@@ -296,7 +296,7 @@ public class DischargeInformationBuilderService {
         var2.setIsUsing(lm.getIsUsing());
         list2.add(var2);
       }
-      log.info("Loading plan machine in use added, Size {}", var1.size());
+      log.info("Discharging plan machine in use added, Size {}", var1.size());
       // machineryInUse.setLoadingMachinesInUses(list2);
       machineryInUse.setDischargeMachinesInUses(list2);
     }
@@ -325,6 +325,7 @@ public class DischargeInformationBuilderService {
               v -> {
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
+      Optional.ofNullable(var2.getSequenceNo()).ifPresent(val1::setSequenceNo);
       BeanUtils.copyProperties(var2, val1);
       val1.setLoadingInfoId(var2.getDischargeInfoId());
       val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
@@ -340,10 +341,10 @@ public class DischargeInformationBuilderService {
 
   private List<DischargingDelays> copy(List<LoadingDelays> loadingDelays) {
     List<DischargingDelays> delays = new ArrayList<>();
-    DischargingDelays dischargeDelay = new DischargingDelays();
     loadingDelays.stream()
         .forEach(
             delay -> {
+              DischargingDelays dischargeDelay = new DischargingDelays();
               BeanUtils.copyProperties(delay, dischargeDelay);
               dischargeDelay.setDischargeInfoId(delay.getLoadingInfoId());
               delays.add(dischargeDelay);
@@ -564,7 +565,7 @@ public class DischargeInformationBuilderService {
                 })
             .collect(Collectors.toList());
     log.info(
-        "Save Loading info, Save Request Count - {}, Response Count {}",
+        "Save Discharging info, Save Request Count - {}, Response Count {}",
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
@@ -625,9 +626,10 @@ public class DischargeInformationBuilderService {
               });
       builder.addCowTankDetails(cowTankBuilder);
     }
+    Optional.ofNullable(cowPlan.getCowOption()).ifPresent(builder::setCowOptionTypeValue);
     Optional.ofNullable(cowPlan.getCowDuration()).ifPresent(builder::setEstCowDuration);
     Optional.ofNullable(cowPlan.getCowEnd()).ifPresent(builder::setCowEndTime);
-    Optional.ofNullable(cowPlan.getCowPercentage()).ifPresent(builder::setCowEndTime);
+    Optional.ofNullable(cowPlan.getCowPercentage()).ifPresent(builder::setCowTankPercent);
     Optional.ofNullable(cowPlan.getCowStart()).ifPresent(builder::setCowStartTime);
     Optional.ofNullable(cowPlan.getCowTrimMax()).ifPresent(builder::setTrimCowMax);
     Optional.ofNullable(cowPlan.getCowTrimMin()).ifPresent(builder::setTrimCowMin);
@@ -657,6 +659,7 @@ public class DischargeInformationBuilderService {
               .ifPresent(v -> v.forEach(s -> builder.addReasonForDelayIds(s)));
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(builder::setCargoNominationId);
+          Optional.ofNullable(delay.getSequenceNo()).ifPresent(builder::setSequenceNo);
           delayList.add(builder.build());
         });
     return delayList;

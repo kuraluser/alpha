@@ -3011,22 +3011,6 @@ textarea{
   font-size: 1.5em;
 }
 
-.sequence-stripping {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-  padding: 0px 10px;
-}
-
-.sequence-gravity {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-  padding: 0px 10px;
-}
-
 .cow-legend {
   .list-group-item {
     background: none;
@@ -3158,7 +3142,6 @@ textarea{
 .break-all {
   word-break: break-all;
 }
-
 .ullage-column.p-editable-column > div{
  padding-right: 0;
  .form-control{
@@ -3190,4 +3173,9 @@ textarea{
   .p-dropdown-clear-icon{
     right: 27px;
   }
+}
+
+.column-last-edited, .column-created-date, .column-status{
+  width: 100px!important;
+  max-width: 100px!important;
 }

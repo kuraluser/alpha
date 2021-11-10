@@ -8,17 +8,16 @@ import { LoadingInformationComponent } from './loading-information/loading-infor
 import { UnsavedChangesGuard } from './../../../shared/services/guards/unsaved-data-guard';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { OperationsApiService } from '../services/operations-api.service';
-import { LoadingApiService } from '../services/loading-api.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
-import { SecurityService } from '../../../shared/services/security/security.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ComponentCanDeactivate, RATE_UNIT, PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { ULLAGE_STATUS_VALUE } from './../models/loading-discharging.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { SIMULATOR_REQUEST_TYPE } from '../../core/components/simulator/simulator.model';
 
 /**
  * Component class for loading component
@@ -61,8 +60,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   loadingPlanTabPermission: IPermission;
   generatePlanPermission: IPermission;
 
-
-
+  readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
 
   private ngUnsubscribe: Subject<any> = new Subject();
   errorPopUp: boolean = false;
@@ -80,7 +78,6 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     private activatedRoute: ActivatedRoute,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private operationsApiService: OperationsApiService,
-    private loadingApiService: LoadingApiService,
     private unsavedChangesGuard: UnsavedChangesGuard,
     private translateService: TranslateService,
     private messageService: MessageService,
@@ -88,10 +85,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     private router: Router,
     private ngxSpinnerService: NgxSpinnerService,
     private permissionsService: PermissionsService
-  ) {
-  }
-
-
+  ) { }
 
   ngOnInit(): void {
     this.ngxSpinnerService.show();
@@ -158,49 +152,47 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   private async initSubsciptions() {
 
     this.ngxSpinnerService.show();
-    this.loadingDischargingTransformationService.generateLoadingPlanButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.generateLoadingPlanButton.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableGenerateLoadableButton = status;
     })
-    this.loadingDischargingTransformationService.isLoadingPlanGenerated.subscribe((status) => {
+    this.loadingDischargingTransformationService.isLoadingPlanGenerated.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.loadingPlanComplete = status;
       this.processing = !status;
       if (!this.processing)
-        this.loadingDischargingTransformationService.disableSaveButton.next(false)
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
     })
-    this.loadingDischargingTransformationService.isLoadingSequenceGenerated.subscribe((status) => {
+    this.loadingDischargingTransformationService.isLoadingSequenceGenerated.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.loadingSequenceComplete = status;
       this.processing = !status;
       if (!this.processing)
-        this.loadingDischargingTransformationService.disableSaveButton.next(false)
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
     })
 
-    this.loadingDischargingTransformationService.validateUllageData$.subscribe((res) => {
+    this.loadingDischargingTransformationService.validateUllageData$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       if (res?.validate) {
         this.validateUllage(res);
       }
     });
 
-    this.loadingDischargingTransformationService.loadingInformationValidity$.subscribe((res) => {
+    this.loadingDischargingTransformationService.loadingInformationValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.loadingInformationComplete = res;
       if (!this.processing) {
-        this.loadingDischargingTransformationService.disableSaveButton.next(false)
-
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
           this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false);
-        }
-        else {
+        } else {
           this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true);
         }
       }
 
     });
-    this.loadingDischargingTransformationService.inProcessing.subscribe((status) => {
+    this.loadingDischargingTransformationService.inProcessing.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.processing = status;
     })
-    this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((res) => {
+    this.loadingDischargingTransformationService.loadingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.loadingInstructionComplete = res;
       if (!this.processing) {
-        this.loadingDischargingTransformationService.disableSaveButton.next(false)
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false)
         if (this.loadingInstructionComplete && this.loadingInformationComplete) {
           this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false);
         }
@@ -210,14 +202,14 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       }
 
     });
-    this.loadingDischargingTransformationService.disableViewErrorButton.subscribe((status) => {
+    this.loadingDischargingTransformationService.disableViewErrorButton.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableViewErrorButton = status;
     })
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
     });
 
-    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value && value === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.disableGenerateLoadableButton = true;
       }
@@ -412,7 +404,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (this.loadinfoTemp == this.loadingInfoId) {
       this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
       this.processing = false;
-      this.loadingDischargingTransformationService.disableSaveButton.next(false);
+      this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
       if (error) {
         this.loadingDischargingTransformationService.disableViewErrorButton.next(false)
       }
@@ -441,6 +433,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.ngxSpinnerService.hide();
 
   }
+
   /**
    * Method to call on generate loading plan
    *
@@ -450,11 +443,11 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     const value = await this.unsavedChangesGuard.canDeactivate(this);
     if (!value) { return };
     this.ngxSpinnerService.show();
-    this.loadingDischargingTransformationService.inProcessing.next(true)
-    this.loadingDischargingTransformationService.disableSaveButton.next(true)
-    this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
+    this.loadingDischargingTransformationService.inProcessing.next(true);
+    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
+    this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true);
     this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
-    let result = await this.loadingApiService.generateLoadingPlan(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
+    const result = await this.operationsApiService.generateLoadingPlan(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
     const data = {
       processId: result.processId,
       vesselId: this.vesselId,
@@ -470,9 +463,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         navigator.serviceWorker.controller.postMessage({ type: 'loading-plan-status', data });
       }
     }
-
   }
-
 
   /**
    * Method to get algo error
@@ -482,15 +473,13 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   async getAlgoErrorMessage(status) {
     this.ngxSpinnerService.show();
     if ((this.loadinfoTemp == this.loadingInfoId) || (!this.loadinfoTemp)) {
-      const algoError: IAlgoResponse = await this.loadingApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
+      const algoError: IAlgoResponse = await this.operationsApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
       if (algoError.responseStatus.status === 'SUCCESS') {
         this.ngxSpinnerService.hide();
-
         this.errorMessage = algoError.algoErrors;
         this.errorPopUp = status;
       }
     }
-
   }
 
   /**

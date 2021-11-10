@@ -341,16 +341,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.loadableStudyDetailsTransformationService.totalQuantityCargoNomination$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(totalQuantity => {
       this.totalQuantity = totalQuantity;
     });
-    this.loadableStudyDetailsTransformationService.cargoNominationValidity$.subscribe((res) => {
+    this.loadableStudyDetailsTransformationService.cargoNominationValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.cargoNominationComplete = res;
     })
-    this.loadableStudyDetailsTransformationService.portValidity$.subscribe((res) => {
+    this.loadableStudyDetailsTransformationService.portValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.portsComplete = res;
     })
-    this.loadableStudyDetailsTransformationService.ohqValidity$.subscribe((res) => {
+    this.loadableStudyDetailsTransformationService.ohqValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.ohqComplete = res;
     })
-    this.loadableStudyDetailsTransformationService.obqValidity$.subscribe((res) => {
+    this.loadableStudyDetailsTransformationService.obqValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.obqComplete = res;
     });
     this.loadableStudyDetailsTransformationService.loadableStudyUpdate$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
@@ -384,13 +384,13 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.loadableQuantityNew = loadableQuantityResult.loadableQuantity.totalQuantity === '' ? this.getSubTotal(loadableQuantityResult) : loadableQuantityResult.loadableQuantity.totalQuantity;
       }
     });
-    this.loadableStudyDetailsTransformationService.loadLineChange$.subscribe((res) => {
+    this.loadableStudyDetailsTransformationService.loadLineChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.loadLineChange = res;
     });
-    this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.subscribe(value => {
+    this.loadableStudyDetailsTransformationService.loadablePatternBtnDisable$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(value => {
       this.isServiceWorkerCallActive = value;
     });
-    this.loadableStudyDetailsTransformationService.compareLQvalues$.subscribe(success => {
+    this.loadableStudyDetailsTransformationService.compareLQvalues$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(success => {
       this.checkLoadableQuntityChangeInPopup();
     });
   }

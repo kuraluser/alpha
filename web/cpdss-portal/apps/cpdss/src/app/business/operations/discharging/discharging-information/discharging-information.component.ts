@@ -4,7 +4,7 @@ import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
-import { ICargo, OPERATIONS } from '../../../core/models/common.model';
+import { ICargo, OPERATIONS, OPERATIONS_PLAN_STATUS } from '../../../core/models/common.model';
 import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData, IDischargingInformationSaveResponse, ILoadingDischargingDetails, ICOWDetails, IDischargingInformationPostData, IPostDischargeStageTime, ILoadedCargo, ILoadingDischargingDelays } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
@@ -59,6 +59,18 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     this.getDischargingInformation()
   }
 
+  get hasUnSavedData(): boolean {
+    return this._hasUnSavedData;
+  }
+
+  set hasUnSavedData(value: boolean) {
+    this._hasUnSavedData = value;
+    if (true) {
+      this.dischargingInformationData.isDischargeInfoComplete = this.checkIfValid(false);
+      this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
+    }
+  }
+
   @Output() dischargingInformationId: EventEmitter<any> = new EventEmitter();
 
   dischargingInformationData?: IDischargingInformation;
@@ -67,7 +79,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   stageDuration: IStageDuration;
   stageOffset: IStageOffset;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
-  hasUnSavedData = false;
+  _hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   readonly OPERATIONS = OPERATIONS;
   dischargingInformationForm: FormGroup;
@@ -81,6 +93,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       { value: 100, name: '100%' },
     ]
   };
+  disableSaveButton: boolean = false;
 
   private _portRotationId: number;
   private _cargos: ICargo[];
@@ -114,7 +127,11 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-    })
+    });
+
+    this.loadingDischargingTransformationService.disableDischargeInfoSave$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(isDisable => {
+      this.disableSaveButton = isDisable;
+    });
   }
 
   /**
@@ -129,8 +146,29 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       const dischargingInformationResponse = await this.loadingDischargingInformationApiService.getDischargingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
       this.dischargingInformationData = this.loadingDischargingTransformationService.transformDischargingInformation(dischargingInformationResponse, this.listData);
       this.initFormArray(this.dischargingInformationData);
-      // this.rulesService.dischargeInfoId.next(this.dischargingInformationData.dischargeInfoId);
+      this.loadingDischargingTransformationService.setDischargingInformationValidity(dischargingInformationResponse?.isDischargeInstructionsComplete);
+      this.loadingDischargingTransformationService.setDischargingInstructionValidity(dischargingInformationResponse?.isDischargeInstructionsComplete);
+      this.loadingDischargingTransformationService.setDischargingSequenceValidity(dischargingInformationResponse?.isDischargeSequenceGenerated);
+      this.loadingDischargingTransformationService.setDischargingPlanValidity(dischargingInformationResponse?.isDischargePlanGenerated);
+
+      if ([OPERATIONS_PLAN_STATUS.PLAN_GENERATED, OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE, OPERATIONS_PLAN_STATUS.ERROR_OCCURED, OPERATIONS_PLAN_STATUS.PENDING, OPERATIONS_PLAN_STATUS.CONFIRMED].includes(this.dischargingInformationData?.dischargeInfoStatusId)) {
+        this.disableSaveButton = false;
+        this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(false);
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
+        if ([OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE, OPERATIONS_PLAN_STATUS.ERROR_OCCURED].includes(this.dischargingInformationData?.dischargeInfoStatusId)) {
+          this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(false);
+        } else {
+          this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
+        }
+      } else {
+        this.disableSaveButton = true;
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
+        this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
+        this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(true);
+      }
+
       await this.updateGetData();
+      this.rulesService.infoId.next(this.dischargingInformationData.dischargeInfoId);
     }
     catch (error) {
       if (error.error.errorCode === 'ERR-RICO-522') {
@@ -299,7 +337,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @memberof DischargingInformationComponent
    */
   onCargoToBeDischargedChange(event: ILoadedCargo[]) {
-    this.dischargingInformationPostData.cargoToBeDischarged = { ...this.dischargingInformationPostData?.cargoToBeDischarged, dischargeQuantityCargoDetails: this.loadingDischargingTransformationService.getCargoToBeDischargedAsValue(event, this.listData) };
+    this.dischargingInformationPostData.cargoToBeDischarged = { ...this.dischargingInformationPostData?.cargoToBeDischarged, dischargeQuantityCargoDetails: this.loadingDischargingTransformationService.getCargoToBeDischargedAsValue(event, this.listData, this.currentQuantitySelectedUnit) };
     this.hasUnSavedData = true;
   }
 
@@ -322,7 +360,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       topCow: event?.topCOWTanks?.map(tank => tank.id),
       bottomCow: event?.bottomCOWTanks?.map(tank => tank.id),
       allCow: event?.allCOWTanks?.map(tank => tank.id),
-      cargoCow: event?.tanksWashingWithDifferentCargo?.map(item => ({
+      cargoCow: event?.tanksWashingWithDifferentCargo?.filter(item => item?.washingCargo?.cargoNominationId && item?.tanks?.length).map(item => ({
         cargoId: item?.cargo?.id, cargoNominationId: item?.cargo?.cargoNominationId,
         tankIds: item?.tanks?.map(tank => tank.id),
         washingCargoId: item?.washingCargo?.id,
@@ -356,30 +394,10 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   * @memberof DischargingInformationComponent
   */
   async saveDischargingInformationData() {
-    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAllAsTouched();
-    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.updateValueAndValidity();
-
-    this.dischargeBerthComponent.berthDetailsForm?.markAllAsTouched();
-    this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
-
-    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAsTouched();
-    this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
-
-    this.dischargingInformationForm.markAsDirty();
-    this.dischargingInformationForm?.updateValueAndValidity();
-
-    const isValid = await this.checkIfValid();
-    this.dischargingInformationData.isDischargeInfoComplete = isValid && this.dischargingInformationForm.valid;
+    this.dischargingInformationData.isDischargeInfoComplete = this.checkIfValid(true);
     this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
 
-    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY', 'DISCHARGING_INFORMATION_INVALID_DATA']).toPromise();
-
-    if ((!this.dischargingInformationForm.valid || !this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid || !this.dischargeBerthComponent.berthDetailsForm?.valid || !this.dischargeRatesComponent.dischargingRatesFormGroup) && isValid) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_ERROR'], detail: translationKeys['DISCHARGING_INFORMATION_INVALID_DATA'] });
-      if (document.querySelector('.error-icon')) {
-        document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth" });
-      }
-    }
+    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
 
     if (this.dischargingInformationData.isDischargeInfoComplete) {
       if (this.hasUnSavedData) {
@@ -403,36 +421,63 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @return {*}  {boolean}
    * @memberof DischargingInformationComponent
    */
-  async checkIfValid(): Promise<boolean> {
-    const translationKeys = this.translateService.instant(['DISCHARGING_INFO_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR']);
+  checkIfValid(showToast = false): boolean {
+    const translationKeys = this.translateService.instant(['DISCHARGING_INFO_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR', 'DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_INVALID_DATA']);
 
-    const isMachineryValid = await this.machineryRefComponent.isMachineryValid(true);
+    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAllAsTouched();
+    this.dischargeDetailsComponent.loadingDischargingDetailsForm?.updateValueAndValidity();
+
+    this.dischargeBerthComponent.berthDetailsForm?.markAllAsTouched();
+    this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
+
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.markAllAsTouched();
+    this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
+
+    this.dischargingInformationForm.markAllAsTouched();
+    this.dischargingInformationForm?.updateValueAndValidity();
+
+    const isMachineryValid = this.machineryRefComponent.isMachineryValid(showToast);
     if (!isMachineryValid) {
       return false;
     }
 
     const commingledCargos = this.dischargingInformationForm?.value?.cargoTobeLoadedDischarged?.dataTable?.filter(cargo => cargo?.isCommingledDischarge === true);
     if (commingledCargos?.length && commingledCargos?.length < 2) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED'] });
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_INFO_MIN_CARGO_SELECTED'] });
+      }
       return false;
     }
 
-    const validSequence = await this.manageSequenceComponent.checkCargoCount(true);
+    const validSequence = this.manageSequenceComponent.checkCargoCount(showToast);
     if (!validSequence) {
       return false;
     }
 
     if (this.dischargingInformationData?.cowDetails?.totalDuration && this.dischargingInformationForm?.value?.stageDetails?.stageDuration?.duration * 60 > this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.dischargingInformationData?.cowDetails?.totalDuration)) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_STAGE_DURATION_ERROR'] });
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_STAGE_DURATION_ERROR'] });
+      }
       return false
     }
 
     if (this.dischargingInformationForm?.value?.cowDetails?.cowOption?.id === 2 && !this.dischargingInformationForm?.value?.cowDetails?.topCOWTanks?.length && !this.dischargingInformationForm?.value?.cowDetails?.bottomCOWTanks?.length && !this.dischargingInformationForm?.value?.cowDetails?.allCOWTanks?.length) {
-      this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_COW_TANK_NOT_SELECTED'] });
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_COW_TANK_NOT_SELECTED'] });
+      }
       return false
     }
 
-    return true;
+    if (this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && !this.dischargeBerthComponent.berthDetailsForm?.invalid && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid) {
+      return true
+    } else {
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_ERROR'], detail: translationKeys['DISCHARGING_INFORMATION_INVALID_DATA'] });
+        if (document.querySelector('.error-icon')) {
+          document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
   }
 
 }

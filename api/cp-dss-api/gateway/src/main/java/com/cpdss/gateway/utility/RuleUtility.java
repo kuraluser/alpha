@@ -163,9 +163,11 @@ public class RuleUtility {
       com.cpdss.gateway.domain.RuleRequest vesselRuleRequest,
       VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder,
       LoadableStudy.LoadableRuleRequest.Builder loadableRuleRequestBuilder,
-      LoadingPlanModels.LoadingPlanRuleRequest.Builder planBuilder,
+      LoadingPlanModels.LoadingPlanRuleRequest.Builder loadablePlanBuilder,
+      DischargeRuleRequest.Builder dischargePlanBuilder,
       boolean isAdminRule,
-      boolean isLoadingPlan) {
+      boolean isLoadingPlan,
+      boolean isDischargeRule) {
 
     if (vesselRuleRequest != null && !CollectionUtils.isEmpty(vesselRuleRequest.getPlan())) {
       vesselRuleRequest
@@ -233,7 +235,9 @@ public class RuleUtility {
                   if ((isAdminRule)) {
                     vesselRuleBuilder.addRulePlan(rulePlanBuilder);
                   } else if (isLoadingPlan) {
-                    planBuilder.addRulePlan(rulePlanBuilder);
+                    loadablePlanBuilder.addRulePlan(rulePlanBuilder);
+                  } else if (isDischargeRule) {
+                    dischargePlanBuilder.addRulePlan(rulePlanBuilder);
                   } else {
                     loadableRuleRequestBuilder.addRulePlan(rulePlanBuilder);
                   }

@@ -4,7 +4,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { IVessel } from '../../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../../core/services/vessels-api.service';
 import { OperationsModule } from '../../operations.module';
-
+import { OPERATIONS } from '../../../core/models/common.model';
 
 /**
  * Service class for rules
@@ -17,8 +17,8 @@ export class RulesService {
 
   vessels: IVessel[];
   save = new Subject();
-  loadingInfoId = new BehaviorSubject(null);
-  
+  infoId = new BehaviorSubject(null);
+  readonly OPERATIONS = OPERATIONS;
   constructor(
     private vesselsApiService: VesselsApiService, private commonApiService: CommonApiService
   ) { }
@@ -39,9 +39,12 @@ export class RulesService {
    * @memberof RulesApiService
    */
 
-  getRules(vesselId,voyageId,loadingInfoId)
-  {    
-   return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/rules`);
+  getRules(vesselId,voyageId,infoId: number,operation: OPERATIONS) { 
+    if(operation === OPERATIONS.LOADING) {
+      return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${infoId}/rules`);
+    } else {
+      return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/discharging-info/${infoId}/rules`);
+    }
   }
 
   
@@ -52,8 +55,12 @@ export class RulesService {
    * @return {*} 
    * @memberof RulesService
    */
-   postRules(postData: any, vesselId: number, voyageId: number,loadingInfoId:number) {
-    return this.commonApiService.post<any, any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/rules`, postData);
+   postRules(postData: any, vesselId: number, voyageId: number,infoId:number,operation: OPERATIONS) {
+    if(operation === OPERATIONS.LOADING) {
+      return this.commonApiService.post<any, any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${infoId}/rules`, postData);
+    } else {
+      return this.commonApiService.post<any, any>(`vessels/${vesselId}/voyages/${voyageId}/discharging-info/${infoId}/rules`, postData);
+    }
   }
 
 }

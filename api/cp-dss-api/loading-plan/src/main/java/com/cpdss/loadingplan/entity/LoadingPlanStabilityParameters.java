@@ -3,15 +3,8 @@ package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "loading_plan_stability_parameters")
@@ -19,6 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LoadingPlanStabilityParameters extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -56,4 +50,6 @@ public class LoadingPlanStabilityParameters extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Transient private Long CommunicationPortWiseId;
 }

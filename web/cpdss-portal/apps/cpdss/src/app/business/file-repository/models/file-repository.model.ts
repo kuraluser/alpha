@@ -52,6 +52,7 @@ export interface IFileRepositoryData {
     isEditable?: boolean;
     view?: boolean;
     fileIcon?: string;
+    uploadType?: string;
 }
 
 /**

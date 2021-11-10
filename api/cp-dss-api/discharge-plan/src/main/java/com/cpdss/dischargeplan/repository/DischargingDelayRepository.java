@@ -8,7 +8,8 @@ import java.util.Optional;
 
 public interface DischargingDelayRepository extends CommonCrudRepository<DischargingDelay, Long> {
 
-  List<DischargingDelay> findAllByDischargingInformation_IdAndIsActive(Long var1, boolean isActive);
+  List<DischargingDelay> findAllByDischargingInformation_IdAndIsActiveOrderById(
+      Long var1, boolean isActive);
 
   List<DischargingDelay> findByDischargingInformationIdAndIsActive(Long id, boolean b);
 

@@ -7,7 +7,7 @@
       <div class="row">
         <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_SELECT_COW_OPTION' | translate}}</label>
         <div class="col-2">
-          <p-dropdown [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name"
+          <p-dropdown [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_OPTION'| translate }}"
             styleClass="form-control" (onChange)="onCowOptionChange($event)"></p-dropdown>
         </div>
       </div>
@@ -15,7 +15,7 @@
       <div class="row">
         <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_NO_OF_TANKS' | translate}}</label>
         <div class="col-2">
-          <p-dropdown [options]="listData?.cowPercentages" formControlName="cowPercentage" optionLabel="name"
+          <p-dropdown [options]="listData?.cowPercentages" formControlName="cowPercentage" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_PERCENTAGE'| translate }}"
             styleClass="form-control" (onChange)="onChange($event)"></p-dropdown>
         </div>
       </div>
@@ -167,7 +167,7 @@
               class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_START_TIME' | translate}}</label>
             <div class="col-3 error-icon-wrapper">
               <p-inputMask *ngIf="editMode;else cowStart" type="text" styleClass="form-control"
-                formControlName="cowStart" mask="99:99" (onComplete)="onCowStartEndChange()">
+                formControlName="cowStart" mask="99:99" (onComplete)="onCowStartEndChange()" (onBlur)="onCowStartEndChange()">
               </p-inputMask>
               <ng-template #cowStart>
                 <span>{{cowDetailsFormControl?.cowStart?.value}}</span>
@@ -185,7 +185,7 @@
               class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_END_TIME' | translate}}</label>
             <div class="col-3 error-icon-wrapper">
               <p-inputMask *ngIf="editMode;else cowEnd" type="text" styleClass="form-control" formControlName="cowEnd"
-                mask="99:99" (onComplete)="onCowStartEndChange()">
+                mask="99:99" (onComplete)="onCowStartEndChange()" (onBlur)="onCowStartEndChange()">
               </p-inputMask>
               <ng-template #cowEnd>
                 <span>{{cowDetailsFormControl?.cowEnd?.value}}</span>
@@ -237,7 +237,7 @@
               <ng-template #cowTrimMin>
                 <br><span>{{cowDetailsFormControl?.cowTrimMin?.value}}</span>
               </ng-template>
-              
+
             </div>
 
             <div class="col-auto">
@@ -252,7 +252,7 @@
               <ng-template #cowTrimMax>
                 <br><span>{{cowDetailsFormControl?.cowTrimMax?.value}}</span>
               </ng-template>
-              
+
             </div>
           </div>
         </div>

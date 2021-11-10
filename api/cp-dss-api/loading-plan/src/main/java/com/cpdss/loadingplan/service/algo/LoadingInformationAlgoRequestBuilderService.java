@@ -108,10 +108,10 @@ public class LoadingInformationAlgoRequestBuilderService {
               request.getLoadingInfoId(),
               loadingInfoOpt.get().getLoadablePatternXId(),
               loadingInfoOpt.get().getPortRotationXId());
-
+      log.info("Build Loading Info From getLoadingInfo");
       // Build Loading Info From getLoadingInfo - grpc response
       buildLoadingInformation(algoRequest, loadingInformation, loadingInfoOpt.get());
-
+      log.info("Build OHQ, OBQ From Loadable study");
       // Build OHQ, OBQ From Loadable study
       buildLoadablePatternPortWiseDetails(algoRequest, loadingInfoOpt.get());
 

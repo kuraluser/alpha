@@ -108,16 +108,16 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   * @memberof LoadingInformationComponent
   */
   private async initSubscriptions() {
-    this.loadingDischargingTransformationService.unitChange$.subscribe((res) => {
+    this.loadingDischargingTransformationService.unitChange$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
       this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
       this.currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-    })
-    this.loadingDischargingTransformationService.disableSaveButton.subscribe((status) => {
+    });
+    this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
       this.disableSaveButton = status;
-    })
+    });
     this.loadingDischargingTransformationService.isDischargeStarted$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       this.isDischargeStarted = value;
-    })
+    });
   }
 
   /**
@@ -140,29 +140,28 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     
       
       if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7 || this.loadingInformationData.loadingInfoStatusId == 2 || this.loadingInformationData.loadingInfoStatusId == 0 || this.loadingInformationData.loadingInfoStatusId == 1) {
-        this.loadingDischargingTransformationService.disableSaveButton.next(false); 
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
         this.loadingDischargingTransformationService.inProcessing.next(false);
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
         if(this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7){
           this.loadingDischargingTransformationService.disableViewErrorButton.next(false);
-        } 
-        else{
+        } else {
           this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
         }     
       }
       else {
         this.loadingDischargingTransformationService.inProcessing.next(true);    
-        this.loadingDischargingTransformationService.disableSaveButton.next(true);   
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true);        
       }
       if(this.loadingInformationData.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS){
-        this.loadingDischargingTransformationService.disableSaveButton.next(true);   
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
         this.loadingDischargingTransformationService.inProcessing.next(true);
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true);  
       }
-      this.rulesService.loadingInfoId.next(this.loadingInformationData.loadingInfoId);
+      this.rulesService.infoId.next(this.loadingInformationData.loadingInfoId);
       await this.updateGetData();
     }
     catch (error) {
@@ -317,7 +316,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
 
     setTimeout(() => {
       this.saveLoadingInformationData();
-      this.loadingDischargingTransformationService.loadingInstructionValidity$.subscribe((status)=>{
+      this.loadingDischargingTransformationService.loadingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status)=>{
         if(status){
           this.loadingDischargingTransformationService.inProcessing.next(false);
         }

@@ -18,7 +18,20 @@ declare module 'highcharts' {
     pumpName?: string;
     sounding?: string;
     shapeArgs?: IShapeArgs;
+    plotX: number;
+    plotY: number;
     highlight: (event: Highcharts.PointerEventObject) => void;
+  }
+
+  /**
+   * Overriding interface for Chart
+   *
+   * @interface Chart
+   */
+  interface Chart {
+    group: any;
+    ballastStrippingGroup: any;
+    ballastGravityGroup: any;
   }
 
   /**
@@ -28,6 +41,7 @@ declare module 'highcharts' {
    */
   interface IShapeArgs {
     width: number;
+    height: number;
   }
 
   /**

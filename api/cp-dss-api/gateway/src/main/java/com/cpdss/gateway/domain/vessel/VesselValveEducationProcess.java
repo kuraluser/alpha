@@ -20,4 +20,12 @@ public class VesselValveEducationProcess {
   private Integer valveId;
   private String stageName;
   private Integer stageNumber;
+
+  private Integer valveCategoryId;
+  private String valveCategory;
+  private Integer valveTypeId;
+  private String valveTypeName;
+  private Integer valveSide;
+  private Long vesselTankId;
+  private String tankShortName;
 }

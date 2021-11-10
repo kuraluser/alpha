@@ -1,40 +1,67 @@
 ext{
-  dbHost = System.getenv('DB_HOST') ?: ""
-  dbName = System.getenv('DB_NAME') ?: ""
-  dbUser = System.getenv('DB_USER') ?: ""
-  dbPassword = System.getenv('DB_PASSWORD') ?: ""
-  grpcPort = System.getenv('GRPC_PORT') ?: ""
-  algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
+    dbHost = System.getenv('DB_HOST') ?: ""
+    dbName = System.getenv('DB_NAME') ?: ""
+    dbUser = System.getenv('DB_USER') ?: ""
+    dbPassword = System.getenv('DB_PASSWORD') ?: ""
+
+    algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
+    hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+    enableComm = System.getenv('ENABLE_COMM') ?: ""
+    cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
+    commTimeLimit = System.getenv('COMM_TIME_LIMIT')?:""
+
+    grpcPortHost = System.getenv('GRPC_PORT_HOST') ?: '9097'
+    debugPortHost = System.getenv('DEBUG_PORT_HOST') ?: '5097'
+    imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-loading-plan'
+    containerNameVal = System.getenv('CONTAINER_NAME') ?: "loading-plan-container"
+    serviceNameVal = System.getenv('SERVICE_NAME') ?: 'loading-plan-service'
 }
 
 appConfig {
-  appName = 'loading-plan'
-  grpc = 'y'
-  persistence = 'springData'
-  dataBase = 'postgres'
-  logging = 'y'
-  devTools = 'y'
-  unitTest = 'y'
-  keyvaluestore = 'y'
-  monitoring = 'y'
-docker {
-    imageName = 'cpdss-loading-plan'
-    containerName = 'loading-plan-container'
-    networkName = 'cpdss-network'
-    swarm {
-      serviceName = 'loading-plan-service'
-      swarmMode = REPLICATED_MODE
-      replicas = 1
-      rollbackOnUpdateFailure = true
+    appName = 'loading-plan'
+    persistence = 'springData'
+    dataBase = 'postgres'
+    logging = 'y'
+    devTools = 'y'
+    unitTest = 'y'
+    keyvaluestore = 'y'
+    rest = 'y'
+    monitoring = 'y'
+    docker {
+        imageName = imageNameVal
+        containerName = containerNameVal
+        networkName = 'cpdss-network'
+        memoryLimitInMB = 500
+        hostVolumeMapping {
+            hostPath = hostRootPath
+            containerPath = "/data"
+        }
+        hostPortMapping {
+            hostGrpcPort = Integer.parseInt(grpcPortHost)
+            hostDebugPort = Integer.parseInt(debugPortHost)
+        }
+        healthCheck {
+            healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+            healthCheckIntervalInSec = 30
+            healthCheckInitialDelayInSec = 60
+        }
+        swarm {
+            serviceName = serviceNameVal
+            swarmMode = REPLICATED_MODE
+            replicas = 1
+            rollbackOnUpdateFailure = true
+        }
+        environment = ['GRPC_PORT': "8090", 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword,
+                       'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,'COMM_TIME_LIMIT':commTimeLimit]
     }
-    environment = ['GRPC_PORT': grpcPort, 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword,
-    'ALGO_BASE_URL': algoBaseURL, 'ATTACHMENT_ROOT_PATH': '/data']
-  }
-  javaMainClass = "com.cpdss.loadingplan.Application"
+    javaMainClass = "com.cpdss.loadingplan.Application"
+    grpc = 'y'
 }
 
 dependencies {
     implementation project(':common')
-	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+    compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+    compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.12.0'
+    implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.9.7'
 }

@@ -110,6 +110,7 @@ public class DischargingDelayService {
     }
     dischargingDelay.setDischargingDelayReasons(delayReasons);
     dischargingDelay.setCargoNominationXid(delay.getCargoNominationId());
+    dischargingDelay.setSequenceNo(delay.getSequenceNo());
     dischargingDelay.setDuration(
         StringUtils.isEmpty(delay.getDuration()) ? null : new BigDecimal(delay.getDuration()));
     Optional.ofNullable(delay.getCargoId()).ifPresent(dischargingDelay::setCargoXid);

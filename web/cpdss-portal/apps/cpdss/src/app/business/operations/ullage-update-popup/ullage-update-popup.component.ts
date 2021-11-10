@@ -7,7 +7,7 @@ import { ICargoQuantities, IShipCargoTank, ITankOptions, IVoyagePortDetails, TAN
 import { UllageUpdatePopupTransformationService } from './ullage-update-popup-transformation.service';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
-import { ICargoDetail, ICargoDetailValueObject, ITankDetailsValueObject, ULLAGE_STATUS, IUllageSaveDetails, ULLAGE_STATUS_TEXT } from '../models/loading-discharging.model';
+import { ICargoDetail, ICargoDetailValueObject, ITankDetailsValueObject, ULLAGE_STATUS, IUllageSaveDetails, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { numberValidator } from '../../core/directives/number-validator.directive';
 import { IBlFigureTotal } from '../models/operations.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -45,6 +45,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   @Input() portRotationId: number;
   @Input() operation: OPERATIONS;
   @Input() permission: IPermission;
+  @Input() ullageStatus: number;
 
   @ViewChild('fileUpload') file;
 
@@ -100,6 +101,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
 
   currentQuantitySelectedUnit: QUANTITY_UNIT = null;
   readonly QUANTITY_UNIT = QUANTITY_UNIT;
+  readonly ULLAGE_STATUS_VALUE = ULLAGE_STATUS_VALUE;
 
   blFigure: any = [];
   cargoQuantityList: any = [];
@@ -240,14 +242,14 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
               stowage.colorCode = AppConfigurationService.settings.commingleColor;
               stowage.abbreviation = item.cargo1Abbreviation;
               stowage.cargoNominationId = item.cargoNomination1Id;
-              stowage.ullage = item.ullage1;
+              stowage.ullage = data?.isPlannedValues ? 0 : item.ullage1;
               commingleStowages.push(JSON.parse(JSON.stringify(stowage)));
               commingleStowages[commingleStowages?.length - 1].cargoNominationId = item.cargoNomination2Id;
               commingleStowages[commingleStowages?.length - 1].abbreviation = item.cargo2Abbreviation;
               commingleStowages[commingleStowages?.length - 1].quantityMT = data?.isPlannedValues ? 0 : item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].actualWeight = data?.isPlannedValues ? 0 : item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].quantity = data?.isPlannedValues ? 0 : item.quantity2MT;
-              commingleStowages[commingleStowages?.length - 1].ullage = item.ullage2;
+              commingleStowages[commingleStowages?.length - 1].ullage = data?.isPlannedValues ? 0 : item.ullage2;
             }
           });
         });
@@ -1316,7 +1318,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       isCommingle: event.data.isCommingleCargo ? true : false,
       sg: '',
       tankId: event.data.tankId,
-      temperature: event.data.temperature.value
+      temperature: event.data.temperature.value,
+      vesselId: this.vesselId
     };
 
     this.ngxSpinnerService.show();
@@ -1391,7 +1394,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       isBallast: true,
       sg: '1.025',
       tankId: event.data.tankId,
-      temperature: event.data.temperature.value
+      temperature: event.data.temperature.value,
+      vesselId: this.vesselId
     };
     this.ngxSpinnerService.show();
     const patternId = this.operation === OPERATIONS.LOADING ? event.data.loadablePatternId : event.data.dischargePatternId;
@@ -1718,21 +1722,21 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.rearBallastTanks?.map(el => {
         el?.map(tank => {
           if (Number(tank.id) === Number(item.tankId)) {
-            item.filling_percentage = tank.percentageFilled;
+            item.filling_percentage = tank?.commodity?.percentageFilled;
           }
         });
       });
       this.frontBallastTanks?.map(el => {
         el?.map(tank => {
           if (Number(tank.id) === Number(item.tankId)) {
-            item.filling_percentage = tank.percentageFilled;
+            item.filling_percentage = tank?.commodity?.percentageFilled;
           }
         });
       });
       this.centerBallastTanks?.map(el => {
         el?.map(tank => {
           if (Number(tank.id) === Number(item.tankId)) {
-            item.filling_percentage = tank.percentageFilled;
+            item.filling_percentage = tank?.commodity?.percentageFilled;
           }
         });
       });
@@ -1891,10 +1895,15 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       return;
     }
     const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_LABEL', 'ULLAGE_UPDATE_FILE_UPLOAD_SUCCESS_MESSAGE',
-      'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR']).toPromise();
+      'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TANK_NAME_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_ULLAGE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_API_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_TEMPERATURE_ERROR', 'ULLAGE_UPDATE_FILE_UPLOAD_INVALID_WEIGHT_ERROR', 'ULLAGE_UPDATE_FILE_SIZE_ERROR', 'ULLAGE_UPDATE_EXCEL_EMPTY_FILE']).toPromise();
     if (this.allowedFiles.indexOf(event.target?.files[0].name.split('.')[1]) < 0) {
       this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
       this.file.nativeElement.value = '';
+      return;
+    }
+    if (event.target?.files[0].size > 2000000) {
+      this.file.nativeElement.value = '';
+      this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_SIZE_ERROR'] });
       return;
     }
     const formData: FormData = new FormData();
@@ -1922,6 +1931,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             result?.ullageReportResponse?.map(data => {
               if (data.tankId === item.tankId) {
                 item.quantity = data.weight;
+                item.actualWeight = data.weight;
                 item.ullage = data.ullageObserved;
                 item.correctedUllage = data.ullageObserved;
                 item.temperature = data.temperature;
@@ -1943,6 +1953,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.file.nativeElement.value = '';
       if (err?.error?.errorCode === "ERR-RICO-314") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
+      } else if(err.error.errorCode === "ERR-RICO-315") {
+        this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_EXCEL_EMPTY_FILE'] });
       } else if (err?.error?.errorCode === "ERR-RICO-316") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR'] });
       } else if (err?.error?.errorCode === "ERR-RICO-320") {

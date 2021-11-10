@@ -300,6 +300,12 @@ public class LoadingPlanBuilderService {
         StringUtils.isEmpty(params.getTrim()) ? null : new BigDecimal(params.getTrim()));
     stabilityParams.setList(
         StringUtils.isEmpty(params.getList()) ? null : new BigDecimal(params.getList()));
+    stabilityParams.setFreeboard(
+        StringUtils.isEmpty(params.getFreeboard()) ? null : new BigDecimal(params.getFreeboard()));
+    stabilityParams.setManifoldHeight(
+        StringUtils.isEmpty(params.getManifoldHeight())
+            ? null
+            : new BigDecimal(params.getManifoldHeight()));
     stabilityParams.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }
 

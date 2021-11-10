@@ -13,23 +13,13 @@ import com.cpdss.loadingplan.entity.LoadingMachineryInUse;
 import com.cpdss.loadingplan.entity.ReasonForDelay;
 import com.cpdss.loadingplan.entity.StageDuration;
 import com.cpdss.loadingplan.entity.StageOffset;
-import com.cpdss.loadingplan.repository.CargoToppingOffSequenceRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanBallastDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadingplan.repository.LoadablePlanStowageDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingBerthDetailsRepository;
-import com.cpdss.loadingplan.repository.LoadingDelayRepository;
-import com.cpdss.loadingplan.repository.LoadingInformationRepository;
-import com.cpdss.loadingplan.repository.LoadingMachineryInUseRepository;
-import com.cpdss.loadingplan.repository.ReasonForDelayRepository;
-import com.cpdss.loadingplan.repository.StageDurationRepository;
-import com.cpdss.loadingplan.repository.StageOffsetRepository;
+import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingBerthService;
 import com.cpdss.loadingplan.service.LoadingDelayService;
 import com.cpdss.loadingplan.service.LoadingInformationBuilderService;
 import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
+import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,7 +59,9 @@ class LoadingInformationServiceImplTest {
   @MockBean StageOffsetRepository stageOffsetRepository;
   @MockBean StageDurationRepository stageDurationRepository;
   @MockBean LoadingInformation loadingInformation;
-
+  @MockBean PortTideDetailsRepository portTideDetailsRepository;
+  @MockBean LoadingInstructionRepository loadingInstructionRepository;
+  @MockBean LoadingPlanAlgoService loadingPlanAlgoService;
   // getLoadingInformation(Long id)
 
   @Test

@@ -93,3 +93,24 @@ enum COW_OPTION_TYPE {
 	AUTO = 1;
 	MANUAL = 2;
 }
+
+// On voyage close get tank wise data
+// Ops means - operations modules - port wise data
+message CargoHistoryOpsRequest {
+	int64 voyageId = 1;
+	int64 vesselId = 2;
+}
+message CargoHistoryResponse {
+	ResponseStatus responseStatus = 1;
+	repeated CargoHistoryOps cargoHistory = 2;
+}
+message CargoHistoryOps {
+	int64 tankId = 1;
+	string api = 2;
+	string temperature = 3;
+	int64 cargoNominationId = 4;
+	int64 cargoId = 5; // nullable
+	int64 portId = 6;
+	string quantity = 7;
+	string updateDate = 8;
+}

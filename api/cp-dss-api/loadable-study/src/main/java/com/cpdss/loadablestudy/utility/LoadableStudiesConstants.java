@@ -88,7 +88,8 @@ public class LoadableStudiesConstants {
           FRESH_WATER_TANK_CATEGORY_ID,
           FUEL_OIL_TANK_CATEGORY_ID,
           DIESEL_OIL_TANK_CATEGORY_ID,
-          BALLAST_TANK_CATEGORY_ID);
+          BALLAST_TANK_CATEGORY_ID,
+          BALLAST_VOID_TANK_CATEGORY_ID);
 
   public static final Long ACTIVE_VOYAGE_STATUS = 3L;
   public static final String START_VOYAGE = "START";
@@ -190,7 +191,8 @@ public class LoadableStudiesConstants {
   public static final String LOADABLE_STUDY_JSON_MODULE_NAME = "LOADABLE";
   public static final String DISCHARGE_STUDY_JSON_MODULE_NAME = "DISCHARGE";
   public static final Long DISCHARGE_STUDY_REQUEST = 11L;
-  public static final Long LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  public static final Long UPDATED_LOADABLE_STUDY_RESULT_JSON_ID = 2L;
+  public static final Long LOADABLE_STUDY_ALGO_RESULT_JSON_ID = 17L;
   public static final Long DISCHARGE_STUDY_RESULT_JSON_ID = 12L;
 
   public static final Long LOADABLE_STUDY_LOADICATOR_TYPE_ID = 1L;
@@ -201,4 +203,9 @@ public class LoadableStudiesConstants {
   public static final String INVALID_ULLAGE_OR_SOUNDING_VALUE = "INVALID_ULLAGE_OR_SOUNDING_VALUE";
 
   public static final String CPDSS_BUILD_ENV_SHIP = "ship";
+  public static final String CPDSS_BUILD_ENV_SHORE = "cloud";
+  public static final String FAILED_WITH_RESOURCE_EXC = "FAILED_WITH_RESOURCE_EXC";
+  public static final String FAILED_WITH_EXC = "FAILED_WITH_EXC";
+
+  public static final String ENV = "env";
 }

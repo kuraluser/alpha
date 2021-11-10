@@ -43,6 +43,7 @@ export interface IDischargingInformationResponse {
   dischargeSequences: ILoadingDischargingSequencesResponse;
   cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
   dischargeInfoId: number;
+  dischargeInfoStatusId?: number;
   synopticTableId: number;
   isDischargeInfoComplete: boolean;
   isDischargeInstructionsComplete: boolean,
@@ -520,6 +521,7 @@ export interface ILoadingInformation {
 export interface IDischargingInformation {
   dischargeInfoId: number;
   synopticalTableId: number;
+  dischargeInfoStatusId?: number;
   dischargeDetails: ILoadingDischargingDetails;
   dischargeRates: IDischargingRates;
   dischargingBerths: IBerth[];
@@ -754,6 +756,7 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   loadingOrder?: number;
   dischargingOrder?: number;
   isAdd?: boolean;
+  slopQuantityMT?: string;
 }
 
 /**
@@ -1389,4 +1392,12 @@ export interface IUllageExcelResponseDetails {
 export interface IUllageExcelResponse {
   responseStatus: IResponseStatus;
   ullageReportResponse: IUllageExcelResponseDetails[];
+}
+
+/**
+ * Interface for generate discharging plan response
+ */
+export interface IGenerateDischargePlanResponse {
+  responseStatus: IResponseStatus;
+  processId: string;
 }

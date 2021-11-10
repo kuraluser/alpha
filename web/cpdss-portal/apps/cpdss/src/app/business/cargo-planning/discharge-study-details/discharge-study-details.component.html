@@ -17,9 +17,7 @@
                 </div>
             </div>
         </div>
-        <div class="pr-5" *ngIf="selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION || selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_ERROR">
-            <button class="btn btn-main" id="view_error" (click)="viewError(true)">{{'DISCHARGE_STUDY_PLAN_VIEW_ERROR'| translate}}</button>
-        </div>
+        
         <div class="col cargo-nomiantion-tab text-center">
             <a class="tab-btn"
                 [ngClass]="{'active': selectedTab === DISCHARGE_STUDY_DETAILS_TABS.CARGONOMINATION , 'disabled': !cargoNominationTabPermission?.view}"
@@ -70,7 +68,9 @@
                 </ng-template>
             </a>
         </div>
-
+        <ng-container *ngIf="selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION || selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_ERROR">
+            <button class="mr-10 btn btn-main" id="view_error" (click)="viewError(true)">{{'DISCHARGE_STUDY_PLAN_VIEW_ERROR'| translate}}</button>
+        </ng-container>
         <div class="pr-15 text-right">
             <button id="generate_plan" class="btn btn-main mr-10"
             [disabled]="!dischargeStudies?.length || !dischargeStudyGeneratePermission?.view || isGenerateClicked || !portsComplete || !ohqComplete || isPlanGenerated || isPlanOpenOrNo || [VOYAGE_STATUS.CLOSE , VOYAGE_STATUS.OPEN].includes(selectedVoyage?.statusId) || !isDischargeStudyValid()"
@@ -94,7 +94,7 @@
     <div class="pr-15 clearfix">
         <ng-container
             *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS && [VOYAGE_STATUS.ACTIVE].includes(selectedVoyage?.statusId) 
-            && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(selectedDischargeStudy?.statusId) ">
+            && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(selectedDischargeStudy?.statusId) && !isPlanConfirmed">
             <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                 [ngClass]="{'disabled': !dischargeStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
                 (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|

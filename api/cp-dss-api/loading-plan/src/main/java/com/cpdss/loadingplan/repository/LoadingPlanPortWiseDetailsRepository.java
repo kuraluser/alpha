@@ -33,4 +33,11 @@ public interface LoadingPlanPortWiseDetailsRepository
           + " AND LPPWD.isActive = ?3")
   public List<LoadingPlanPortWiseDetails> findByLoadingInformationIdAndToLoadicatorAndIsActive(
       Long loadingInfoId, Boolean toLoadicator, Boolean isActive);
+
+  @Query(
+      value =
+          "SELECT lpw.* FROM loading_plan_portwise_details lpw inner join "
+              + "loading_sequence ls ON lpw.loading_sequences_xid =ls.id where ls.loading_information_xid =?1",
+      nativeQuery = true)
+  public List<LoadingPlanPortWiseDetails> findByLoadingInformationId(Long loadingInfoId);
 }

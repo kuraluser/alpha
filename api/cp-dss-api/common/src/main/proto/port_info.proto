@@ -5,6 +5,7 @@ option java_package = "com.cpdss.common.generated";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "google/protobuf/empty.proto";
 
 service PortInfoService {
 	rpc GetPortInfo (PortRequest) returns (PortReply) {
@@ -30,6 +31,8 @@ service PortInfoService {
 	rpc GetCargoInfoByPortIds(GetPortInfoByPortIdsRequest) returns (CargoInfos) {}
 
 	rpc GetLoadingPlanBerthData(BerthIdsRequest) returns (LoadingAlgoBerthData);
+	
+	rpc GetAllCountries(google.protobuf.Empty) returns (CountryReply) {}
 	
 }
 
@@ -169,3 +172,13 @@ message BerthDetail{
 	string berthDatumDepth = 17;
 }
 // <------ end loading plan, by john -------->
+
+message Country{
+	int64 id = 1;
+	string countryName = 2;
+}
+
+message CountryReply{
+	repeated Country countries = 1;
+	ResponseStatus responseStatus = 2;
+}

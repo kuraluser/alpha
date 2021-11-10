@@ -4,6 +4,8 @@ package com.cpdss.portinfo.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
+import com.cpdss.common.generated.PortInfo.CountryReply;
+import com.cpdss.common.generated.PortInfo.CountryReply.Builder;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
@@ -19,6 +21,7 @@ import com.cpdss.portinfo.entity.CargoPortMapping;
 import com.cpdss.portinfo.entity.PortInfo;
 import com.cpdss.portinfo.entity.Timezone;
 import com.cpdss.portinfo.repository.*;
+import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -41,6 +44,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
   @Autowired private PortInfoRepository portRepository;
   @Autowired private CargoPortMappingRepository cargoPortMappingRepository;
   @Autowired private TimezoneRepository timezoneRepository;
+  @Autowired private CountryRepository countryRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -513,6 +517,37 @@ public class PortInfoService extends PortInfoServiceImplBase {
       Optional.ofNullable(bi.getBerthDatumDepth())
           .ifPresent(v -> builder2.setBerthDatumDepth(String.valueOf(v)));
       portDetail.addBerthDetails(builder2);
+    }
+  }
+
+  /** Get all country details */
+  @Override
+  public void getAllCountries(Empty request, StreamObserver<CountryReply> responseObserver) {
+    Builder builder = CountryReply.newBuilder();
+
+    try {
+      List<Object[]> list = countryRepository.findCountryIdAndNames();
+      log.info("Fetch all country success with size {}", list.size());
+      for (Object[] obj : list) {
+        com.cpdss.common.generated.PortInfo.Country.Builder country =
+            com.cpdss.common.generated.PortInfo.Country.newBuilder();
+        long id = (long) obj[0];
+        country.setId(id);
+        String name = (String) obj[1];
+        country.setCountryName(name);
+        builder.addCountries(country);
+      }
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      builder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Fetch country failed, e - {}", e.getMessage());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
     }
   }
 }

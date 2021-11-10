@@ -6,6 +6,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.GenerateProtectedFile;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
@@ -21,6 +22,7 @@ import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.CargoQuantity;
 import com.cpdss.gateway.domain.loadingplan.CargoTobeLoaded;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionForExcel;
+import com.cpdss.gateway.domain.loadingplan.LoadingInstructionGroup;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionSubHeader;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructions;
@@ -119,6 +121,7 @@ public class GenerateLoadingPlanExcelReportService {
   public final Long GS_PUMP_ID = 3L;
   public final Long IGS_PUMP_ID = 4L;
   public final Long BALLAST_PUMP_ID = 2L;
+  public String voyageDate = null;
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -192,7 +195,8 @@ public class GenerateLoadingPlanExcelReportService {
       workbook = new XSSFWorkbook(resultFileStream);
       try {
         setCellStyle(workbook, loadinPlanExcelDetails);
-        workbook.write(outFile);
+        GenerateProtectedFile.setPasswordToWorkbook(
+            workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
         resultFileStream.close();
         // Putting entry in file repo
         FileRepoReply reply =
@@ -680,6 +684,7 @@ public class GenerateLoadingPlanExcelReportService {
       // Calling loading plan get plan details service
       requestPayload =
           loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
+      voyageDate = requestPayload.getVoyageDate();
     }
     // Get a list of all ballast tanks for sheet3
     getAllBallastTanks(
@@ -764,12 +769,13 @@ public class GenerateLoadingPlanExcelReportService {
     int groupHeading = 5;
     List<Integer> continuityList = Arrays.asList(0, 4, 5, 6, 7, 8);
     for (Long headerId : INSTRUCTION_ORDER) {
-      String heading =
+      Optional<LoadingInstructionGroup> ligOpt =
           loadingSequenceResponse.getLoadingInstructionGroupList().stream()
               .filter(value -> value.getGroupId().equals(headerId))
-              .findAny()
-              .get()
-              .getGroupName();
+              .findAny();
+
+      String heading = ligOpt.isEmpty() ? "" : ligOpt.get().getGroupName();
+
       List<LoadingInstructionSubHeader> listUnderHeader =
           loadingSequenceResponse.getLoadingInstructionSubHeader().stream()
               .filter(item -> item.getInstructionHeaderId().equals(headerId) && item.getIsChecked())

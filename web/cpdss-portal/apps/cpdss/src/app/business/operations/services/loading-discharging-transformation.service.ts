@@ -23,10 +23,16 @@ import { TranslateService } from '@ngx-translate/core';
 export class LoadingDischargingTransformationService {
   public _loadingInformationSource: Subject<boolean> = new Subject();
   private _dischargingInformationSource: Subject<boolean> = new Subject();
+  private _dischargingInstructionSource: Subject<boolean> = new Subject();
+  private _dischargingSequenceSource: Subject<boolean> = new Subject();
+  private _dischargingPlanSource: Subject<boolean> = new Subject();
+  private _disableDischargeInfoSave: Subject<boolean> = new Subject();
+  private _disableDischargeGenerateButton: Subject<boolean> = new Subject();
+  private _disableDischargePlanViewError: Subject<boolean> = new Subject();
   private _isDischargeStarted: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _unitChangeSource: Subject<boolean> = new Subject();
   public _loadingInstructionSource: Subject<boolean> = new Subject();
-  public disableSaveButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public disableInfoInstructionRuleSave: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _rateUnitChangeSource: Subject<boolean> = new Subject();
   private _tabChangeSource: Subject<OPERATION_TAB> = new Subject();
   private _validateUllageData: Subject<any> = new Subject();
@@ -44,6 +50,12 @@ export class LoadingDischargingTransformationService {
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
   dischargingInformationValidity$ = this._dischargingInformationSource.asObservable();
+  dischargingInstructionValidity$ = this._dischargingInstructionSource.asObservable();
+  dischargingSequenceValidity$ = this._dischargingSequenceSource.asObservable();
+  dischargingPlanValidity$ = this._dischargingPlanSource.asObservable();
+  disableDischargeInfoSave$ = this._disableDischargeInfoSave.asObservable();
+  disableDischargePlanGenerate$ = this._disableDischargeGenerateButton.asObservable();
+  disableDischargePlanViewError$ = this._disableDischargePlanViewError.asObservable();
   unitChange$ = this._unitChangeSource.asObservable();
   loadingInstructionValidity$ = this._loadingInstructionSource.asObservable();
   rateUnitChange$ = this._rateUnitChangeSource.asObservable();
@@ -75,6 +87,66 @@ export class LoadingDischargingTransformationService {
    */
   setDischargingInformationValidity(isValid: boolean) {
     this._dischargingInformationSource.next(isValid);
+  }
+
+  /**
+   * Set discharging instruction complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadingDischargingTransformationService
+   */
+  setDischargingInstructionValidity(isValid: boolean) {
+    this._dischargingInstructionSource.next(isValid);
+  }
+
+  /**
+   * Set discharging sequence complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadingDischargingTransformationService
+   */
+  setDischargingSequenceValidity(isValid: boolean) {
+    this._dischargingSequenceSource.next(isValid);
+  }
+
+  /**
+   * Set discharging plan complete status
+   *
+   * @param {boolean} isValid
+   * @memberof LoadingDischargingTransformationService
+   */
+  setDischargingPlanValidity(isValid: boolean) {
+    this._dischargingPlanSource.next(isValid);
+  }
+
+  /**
+   * Disable / enable discharge information save button
+   *
+   * @param {boolean} isDisable
+   * @memberof LoadingDischargingTransformationService
+   */
+  disableDischargeInfoSave(isDisable: boolean) {
+    this._disableDischargeInfoSave.next(isDisable);
+  }
+
+  /**
+   * Disable / enable discharge plan generate button
+   *
+   * @param {boolean} isDisable
+   * @memberof LoadingDischargingTransformationService
+   */
+  disableGenerateDischargePlanBtn(isDisable: boolean) {
+    this._disableDischargeGenerateButton.next(isDisable);
+  }
+
+  /**
+   * Disable / enable discharge plan View error button
+   *
+   * @param {boolean} isDisable
+   * @memberof LoadingDischargingTransformationService
+   */
+  disableDischargePlanViewErrorBtn(isDisable: boolean) {
+    this._disableDischargePlanViewError.next(isDisable);
   }
 
   /** Set unit changed */
@@ -116,7 +188,6 @@ export class LoadingDischargingTransformationService {
   setLoadingInstructionValidity(value: boolean) {
     this._loadingInstructionSource.next(value);
   }
-
 
   /**
   *  Set validation error message
@@ -390,7 +461,7 @@ export class LoadingDischargingTransformationService {
 
     if (loadingDischargingDelay.cargoId) {
       _loadingDischargingDelay.quantityMT = operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT;
-      const loadableMT = this.quantityPipe.transform(operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, -1);
+      const loadableMT = this.quantityPipe.transform(operation === OPERATIONS.DISCHARGING ? loadingDischargingDelay?.quantity : cargoObj.loadableMT, QUANTITY_UNIT.MT, currUnit, cargoObj?.estimatedAPI, cargoObj?.estimatedTemp, operation === OPERATIONS.LOADING ? -1 : null);
       _loadingDischargingDelay.quantity = new ValueObject<number>(Number(loadableMT), true, operation === OPERATIONS.DISCHARGING && isNewValue && !loadingDischargingDelay?.isInitialDelay, false, operation === OPERATIONS.DISCHARGING && !loadingDischargingDelay?.isInitialDelay);
     } else {
       _loadingDischargingDelay.quantityMT = loadingDischargingDelay?.quantity;
@@ -439,6 +510,7 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.loadingInfoId = infoId;
       } else {
         _loadingDischargingDelays.dischargeInfoId = infoId;
+        _loadingDischargingDelays.sequenceNo = Number(loadingValueObject?.sequenceNo.value);
       }
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
@@ -447,6 +519,9 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.quantity = Number(cargoObj.loadableMT);
       } else {
         _loadingDischargingDelays.quantity = loadingValueObject?.quantity?.value;
+      }
+      if(operation === OPERATIONS.DISCHARGING) {
+        _loadingDischargingDelays.quantity = Number(loadingValueObject?.quantityMT);
       }
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
       _loadingDischargingDelays.duration = (Number(minuteDuration[0]) * 60) + Number(minuteDuration[1]);
@@ -972,6 +1047,7 @@ export class LoadingDischargingTransformationService {
   transformDischargingInformation(dischargingInformationResponse: IDischargingInformationResponse, listData: IDischargeOperationListData): IDischargingInformation {
     const dischargingInformation = <IDischargingInformation>{};
     dischargingInformation.dischargeInfoId = dischargingInformationResponse?.dischargeInfoId;
+    dischargingInformation.dischargeInfoStatusId = dischargingInformationResponse?.dischargeInfoStatusId;
     dischargingInformation.dischargeStudyName = dischargingInformationResponse?.dischargeStudyName;
     dischargingInformation.dischargeSlopTanksFirst = dischargingInformationResponse?.dischargeSlopTanksFirst;
     dischargingInformation.dischargeCommingledCargoSeparately = dischargingInformationResponse?.dischargeCommingledCargoSeparately;
@@ -1056,7 +1132,7 @@ export class LoadingDischargingTransformationService {
    * @return {*}  {ILoadedCargoResponse[]}
    * @memberof LoadingDischargingTransformationService
    */
-  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData): ILoadedCargoResponse[] {
+  getCargoToBeDischargedAsValue(dischargeQuantityCargoDetails: ILoadedCargo[], listData: IDischargeOperationListData, currentQuantitySelectedUnit: QUANTITY_UNIT): ILoadedCargoResponse[] {
     const _dischargeQuantityCargoDetails: ILoadedCargoResponse[] = dischargeQuantityCargoDetails?.map(cargo => {
       const _cargo = <ILoadedCargoResponse>{};
       for (const key in cargo) {
@@ -1066,7 +1142,7 @@ export class LoadingDischargingTransformationService {
           } else if (key === 'isCommingledDischarge') {
             _cargo.isCommingledDischarge = cargo[key].value;
           } else if (key === 'slopQuantity') {
-            _cargo.slopQuantity = (<ValueObject>cargo[key]).value;
+            _cargo.slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform((<ValueObject>cargo[key]).value, currentQuantitySelectedUnit, QUANTITY_UNIT.MT, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
           } else {
             _cargo[key] = cargo[key];
           }
@@ -1099,6 +1175,7 @@ export class LoadingDischargingTransformationService {
             _cargo.isCommingledDischarge = new ValueObject<boolean>(_isCommingled, true, true, false);
           } else if (key === 'slopQuantity') {
             const _slopQuantity = Number(cargo.slopQuantity) ?? 0;
+            _cargo.slopQuantityMT = _slopQuantity.toString();
             _cargo.slopQuantity = new ValueObject<number>(_slopQuantity, true, true, false);
           } else if (key === 'shipFigure') {
             _cargo.loadableMT = cargo.shipFigure;
@@ -1128,7 +1205,7 @@ export class LoadingDischargingTransformationService {
   setCowDetails(dischargingInformationResponse: IDischargingInformationResponse, listData: IDischargeOperationListData, dischargingInformation: IDischargingInformation): ICOWDetails {
     const cowDetails = <ICOWDetails>{};
     cowDetails.cowOption = listData.cowOptions.find(option => option.id === dischargingInformationResponse?.cowPlan?.cowOption);
-    cowDetails.cowPercentage = listData.cowPercentages.find(percentage => percentage.value === dischargingInformationResponse?.cowPlan?.cowPercentage);
+    cowDetails.cowPercentage = listData.cowPercentages.find(percentage => percentage.value === Number(dischargingInformationResponse?.cowPlan?.cowPercentage));
 
     cowDetails.allCOWTanks = dischargingInformationResponse?.cowPlan?.allCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
     cowDetails.topCOWTanks = dischargingInformationResponse?.cowPlan?.topCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
@@ -1209,12 +1286,14 @@ export class LoadingDischargingTransformationService {
       cowTrimMin: {
         'required': 'DISCHARGING_COW_REQUIRED',
         'min': 'DISCHARGING_COW_TRIM_MIN',
-        'max': 'DISCHARGING_COW_TRIM_MAX'
+        'max': 'DISCHARGING_COW_TRIM_MAX',
+        'invalidNumber': 'DISCHARGING_COW_TRIM_INVALID'
       },
       cowTrimMax: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'max': 'DISCHARGING_COW_TRIM_MIN',
-        'min': 'DISCHARGING_COW_TRIM_MIN'
+        'min': 'DISCHARGING_COW_TRIM_MIN',
+        'max': 'DISCHARGING_COW_TRIM_MAX',
+        'invalidNumber': 'DISCHARGING_COW_TRIM_INVALID'
       },
       cowStart: {
         'required': 'DISCHARGING_COW_REQUIRED',

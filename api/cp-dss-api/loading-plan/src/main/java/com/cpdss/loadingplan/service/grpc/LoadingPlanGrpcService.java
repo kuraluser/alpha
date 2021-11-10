@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.service.grpc;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -32,12 +33,14 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
+import com.cpdss.loadingplan.service.LoadingCargoHistoryService;
 import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.LoadingSequenceService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,6 +67,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired BillOfLaddingRepository billOfLaddingRepository;
 
   @Autowired PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
+
+  @Autowired LoadingCargoHistoryService loadingCargoHistoryService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
@@ -280,18 +285,31 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           billOfLaddingRepository.findByCargoNominationIdInAndIsActive(
               request.getCargoNominationIdList(), true);
       if (!CollectionUtils.isEmpty(billOfLaddingList)) {
-        Map<Long, Double> cargoWiseQuantity =
+        Map<Long, List<com.cpdss.loadingplan.entity.BillOfLadding>> cargoWiseQuantity =
             billOfLaddingList.stream()
                 .collect(
                     Collectors.groupingBy(
-                        com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId,
-                        Collectors.summingDouble(
-                            a -> Double.parseDouble(String.valueOf(a.getQuantityMt())))));
+                        com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId));
         cargoWiseQuantity.forEach(
             (key, quantity) -> {
               MaxQuantityDetails.Builder maxQuantity = MaxQuantityDetails.newBuilder();
               maxQuantity.setCargoNominationId(key);
-              maxQuantity.setMaxQuantity(quantity.toString());
+              maxQuantity.setMaxQuantity(
+                  String.valueOf(
+                      quantity.stream()
+                          .mapToDouble(billOfLadding -> billOfLadding.getQuantityMt().doubleValue())
+                          .sum()));
+              maxQuantity.setApi(
+                  String.valueOf(
+                      quantity.stream()
+                          .mapToDouble(billOfLadding -> billOfLadding.getApi().doubleValue())
+                          .average().orElse(0)));
+              maxQuantity.setTemp(
+                  String.valueOf(
+                      quantity.stream()
+                          .mapToDouble(
+                              billOfLadding -> billOfLadding.getTemperature().doubleValue())
+                          .average().orElse(0)));
               reply.addCargoMaxQuantity(maxQuantity);
             });
       }
@@ -321,7 +339,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       reply.setResponseStatus(
           ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
     } catch (Exception e) {
-      log.error("Exception when getting bill of ladding details agianst cargonomination Id", e);
+      log.error("Exception when getting data from Loadicator", e);
       reply.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
@@ -383,6 +401,20 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           blList.stream()
               .collect(
                   Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
+      Map<Long, List<PortLoadingPlanStowageDetails>> portWiseStowagesDepActuals =
+          stowageDetails.stream()
+              .filter(
+                  stowage ->
+                      stowage.getConditionType().equals(2) && stowage.getValueType().equals(1))
+              .collect(Collectors.groupingBy(PortLoadingPlanStowageDetails::getPortRotationXId));
+      if (portRotationIds.stream()
+          .anyMatch(
+              port ->
+                  portWiseStowagesDepActuals.get(port) == null
+                      || portWiseStowagesDepActuals.get(port).isEmpty())) {
+        throw new GenericServiceException(
+            "LS actuals or BL values are missing", "", HttpStatusCode.SERVICE_UNAVAILABLE);
+      }
       if (!portWiseStowages.keySet().containsAll(portRotationIds)
           || !portWiseBL.keySet().containsAll(portIds)) {
         builder.setStatus(LoadingPlanConstants.FAILED);
@@ -404,14 +436,40 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                         bLValues.stream()
                             .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
                             .collect(Collectors.toList());
+                    // Checking if stowage details and bill of lading entries exists and quantity
+                    // parameters are greater than zero
+                    // Bug fix DSS 4458
                     if (!dbCargos.containsAll(port.getCargoIdsList())
-                        || !dbBLCargos.containsAll(port.getCargoIdsList())) {
+                        || !dbBLCargos.containsAll(port.getCargoIdsList())
+                        || (stowages.stream()
+                            .anyMatch(
+                                st ->
+                                    st.getQuantity() == null
+                                        || st.getQuantity().compareTo(BigDecimal.ZERO) <= 0
+                                        || st.getQuantityM3() == null
+                                        || st.getQuantityM3().compareTo(BigDecimal.ZERO) <= 0))
+                        || (bLValues.stream()
+                            .anyMatch(
+                                bl ->
+                                    bl.getQuantityMt() == null
+                                        || bl.getQuantityMt().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getQuantityKl() == null
+                                        || bl.getQuantityKl().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getQuantityBbls() == null
+                                        || bl.getQuantityBbls().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getQuantityLT() == null
+                                        || bl.getQuantityLT().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getApi() == null
+                                        || bl.getApi().compareTo(BigDecimal.ZERO) <= 0
+                                        || bl.getTemperature() == null
+                                        || bl.getTemperature().compareTo(BigDecimal.ZERO) <= 0))) {
                       builder.setStatus(LoadingPlanConstants.FAILED);
                       throw new GenericServiceException(
                           "LS actuals or BL values are missing",
                           "",
                           HttpStatusCode.SERVICE_UNAVAILABLE);
                     }
+                    // Add check for Zero and null values
                   } catch (Exception e) {
                     builder.setStatus(LoadingPlanConstants.FAILED);
                   }
@@ -483,5 +541,27 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     reply.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     responseObserver.onNext(reply.build());
     responseObserver.onCompleted();
+  }
+
+  @Override
+  public void getLoadingPlanCargoHistory(
+      Common.CargoHistoryOpsRequest request,
+      StreamObserver<Common.CargoHistoryResponse> responseObserver) {
+    Common.CargoHistoryResponse.Builder builder = Common.CargoHistoryResponse.newBuilder();
+    try {
+      log.info("Get cargo history for voyage id - {}", request.getVoyageId());
+      loadingCargoHistoryService.buildCargoDetailsFromStowageData(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
   }
 }

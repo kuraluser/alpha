@@ -240,7 +240,14 @@ message VesselReply {
         repeated TankType tankType = 13;
         repeated VesselComponent vesselManifold = 14;
         repeated VesselComponent vesselBottomLine = 15;
+        repeated VesselPumpTankMapping vesselPumpTankMapping = 16;
 
+}
+
+message VesselPumpTankMapping {
+	int64 vesselId = 1;
+	VesselPump vesselPump = 2;
+	VesselTankDetail vesselTankDetail = 3;
 }
 
 message BendingMomentType2 {
@@ -626,6 +633,13 @@ message BendingMomentType1 {
 		int32 stageNumber = 8;
 		int32 valveId = 9;
 		string stageName = 10;
+		int32 valveCategoryId = 11;
+		string valveCategory = 12;
+		int32 valveTypeId = 13;
+		string valveTypeName = 14;
+		int32 valveSide = 15;
+		int64 vesselTankId = 16;
+		string tankShortName = 17;
 	}
 	
 	message LoadingInfoRulesRequest {

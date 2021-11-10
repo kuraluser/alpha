@@ -30,4 +30,6 @@ public interface LoadingDelayRepository extends CommonCrudRepository<LoadingDela
   @Modifying
   @Query("UPDATE LoadingDelay SET isActive = false WHERE id = ?1")
   public void deleteById(Long id);
+
+  public List<LoadingDelay> findByLoadingInformationId(Long loadingInformationId);
 }

@@ -5,6 +5,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VO
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_JSON_MODULE_NAME;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_REQUEST;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VOYAGE_DATE_FORMAT;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -31,6 +32,7 @@ import com.cpdss.loadablestudy.domain.ArrivalConditionJson;
 import com.cpdss.loadablestudy.domain.CargoNomination;
 import com.cpdss.loadablestudy.domain.CargoNominationOperationDetails;
 import com.cpdss.loadablestudy.domain.CowDetail;
+import com.cpdss.loadablestudy.domain.CowHistory;
 import com.cpdss.loadablestudy.domain.DischargeStudyAlgoJson;
 import com.cpdss.loadablestudy.domain.DischargeStudyPortRotationJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanStowageDetailsJson;
@@ -43,17 +45,21 @@ import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
 import com.cpdss.loadablestudy.entity.PortInstruction;
+import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
+import com.cpdss.loadablestudy.repository.CowHistoryRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PortInstructionRepository;
+import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -65,6 +71,9 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -100,9 +109,11 @@ public class GenerateDischargeStudyJson {
 
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
 
+  @Autowired private CowHistoryRepository cowHistoryRepository;
+
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
 
-  @Autowired private LoadableStudyService loadableStudyService;
+  @Autowired private VoyageRepository voyageRepository;
 
   @Autowired VoyageService voyageService;
 
@@ -138,8 +149,7 @@ public class GenerateDischargeStudyJson {
           DISCHARGE_STUDY_REQUEST,
           objectMapper.writeValueAsString(AlgoJsonPayload));
 
-      // Calling Algo Service
-      //       Uncomment when Algo actual API is ready
+      // Invoking Algo service
       AlgoResponse algoResponse =
           restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
 
@@ -209,7 +219,7 @@ public class GenerateDischargeStudyJson {
     dischargeStudyAlgoJson.setPortDetails(getPortDetails(portRotationList));
 
     dischargeStudyAlgoJson.setCowHistory(
-        new ArrayList<>()); // reserved for future.Keeping empty for now
+        getCowHistory(loadableStudy.getVesselXId(), dischargeStudyId));
 
     dischargeStudyAlgoJson.setLoadablePlanPortWiseDetails(
         getLoadablePlanPortWiseDetails(
@@ -218,6 +228,55 @@ public class GenerateDischargeStudyJson {
             loadableStudy.getVoyage().getVoyageNo()));
 
     return dischargeStudyAlgoJson;
+  }
+
+  /**
+   * Getting COW history for vessel. Details of tank washed in previous voyages
+   *
+   * @param dischargeStudyId
+   * @return
+   */
+  private List<CowHistory> getCowHistory(Long vesselId, Long dischargeStudyId) {
+    log.info(
+        "Fetching CowHistory details for discharge id {}, vessel Id {}",
+        dischargeStudyId,
+        vesselId);
+    Pageable pageable = PageRequest.of(0, 500, Sort.by("lastModifiedDateTime").descending());
+    List<com.cpdss.loadablestudy.entity.CowHistory> cowHistory =
+        cowHistoryRepository.findAllByVesselIdAndIsActiveTrue(vesselId, pageable);
+    if (!CollectionUtils.isEmpty(cowHistory)) {
+      List<CowHistory> cowHistoryList = new ArrayList<>();
+      cowHistory.forEach(
+          item -> {
+            CowHistory cowHistoryObj = new CowHistory();
+            ofNullable(item.getId()).ifPresent(cowHistoryObj::setId);
+            ofNullable(item.getVesselId()).ifPresent(cowHistoryObj::setVesselId);
+            ofNullable(item.getVoyageId()).ifPresent(cowHistoryObj::setVoyageId);
+            ofNullable(item.getTankId()).ifPresent(cowHistoryObj::setTankId);
+            ofNullable(item.getCowTypeId())
+                .ifPresent(
+                    id -> {
+                      cowHistoryObj.setCowTypeId(id);
+                      cowHistoryObj.setCowType(
+                          Common.COW_OPTION_TYPE.forNumber(id.intValue()).toString());
+                    });
+            ofNullable(item.getCowTypeId()).ifPresent(cowHistoryObj::setCowTypeId);
+            ofNullable(item.getPortId()).ifPresent(cowHistoryObj::setPortId);
+            Voyage voyage = voyageRepository.findByIdAndIsActive(cowHistoryObj.getVoyageId(), true);
+            if (voyage != null) {
+              if (voyage.getActualEndDate() != null) {
+                DateTimeFormatter dft = DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT);
+                String endDate = voyage.getActualEndDate().format(dft);
+                cowHistoryObj.setVoyageEndDate(endDate);
+              }
+            }
+            cowHistoryList.add(cowHistoryObj);
+          });
+      log.info("Found {} items", cowHistoryList.size());
+      return cowHistoryList;
+    }
+    log.info("No CowHistory details found ");
+    return null;
   }
 
   private ArrivalConditionJson getLoadablePlanPortWiseDetails(

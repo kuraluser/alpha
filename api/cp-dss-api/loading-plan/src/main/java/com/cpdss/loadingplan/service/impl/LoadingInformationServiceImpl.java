@@ -200,6 +200,15 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
+  public List<LoadingInformation> getAllLoadingInfoByVoyageId(Long vesselId, Long voyageId) {
+    var data =
+        this.loadingInformationRepository.findAllByVesselXIdAndVoyageIdAndIsActiveTrue(
+            vesselId, voyageId);
+    log.info("Get Loading information - Size {}", data.size());
+    return data;
+  }
+
+  @Override
   public Optional<LoadingInformation> getLoadingInformation(Long id) {
     return this.getLoadingInformation(id, 0L, 0L, 0L, 0L);
   }

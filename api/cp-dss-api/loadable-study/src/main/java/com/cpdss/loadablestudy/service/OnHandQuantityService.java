@@ -199,8 +199,8 @@ public class OnHandQuantityService {
     }
 
     List<OnHandQuantity> onHandQuantities =
-        this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
-            loadableStudyOpt.get(), portRotation.getPortXId(), true);
+        this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            loadableStudyOpt.get(), portRotation, true);
     VesselInfo.VesselReply vesselReply = this.getOhqTanks(request);
     if (onHandQuantities.isEmpty()) {
       synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
@@ -215,8 +215,12 @@ public class OnHandQuantityService {
     onHandQuantities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
             loadableStudyOpt.get(), portRotation, true);
-
-    for (VesselInfo.VesselTankDetail tankDetail : vesselReply.getVesselTanksList()) {
+    // sorting the tanks based on tank display order from vessel tank table
+    List<VesselInfo.VesselTankDetail> sortedTankList =
+        new ArrayList<>(vesselReply.getVesselTanksList());
+    Collections.sort(
+        sortedTankList, Comparator.comparing(VesselInfo.VesselTankDetail::getTankDisplayOrder));
+    for (VesselInfo.VesselTankDetail tankDetail : sortedTankList) {
       if (!tankDetail.getShowInOhqObq()
           || OHQ_VOID_TANK_CATEGORIES.contains(tankDetail.getTankCategoryId())) {
         continue;

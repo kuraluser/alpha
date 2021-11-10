@@ -1159,7 +1159,7 @@ public class LoadicatorService {
       JsonData patternJson =
           this.jsonDataService.getJsonData(
               loadableStudyOpt.get().getId(),
-              LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+              LoadableStudiesConstants.UPDATED_LOADABLE_STUDY_RESULT_JSON_ID);
       if (patternJson != null) {
         LoadableStudy.LoadablePatternAlgoRequest.Builder loadablePatternAlgoRequest =
             LoadableStudy.LoadablePatternAlgoRequest.newBuilder();
@@ -1192,6 +1192,11 @@ public class LoadicatorService {
       ModelMapper modelMapper = new ModelMapper();
       loadableStudyService.buildLoadableStudy(
           request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
+      if (loadableStudyOpt.get().getPlanningTypeXId() == PLANNING_TYPE_LOADING) {
+        loadicator.setModule(LOADABLE_STUDY_JSON_MODULE_NAME);
+      } else {
+        loadicator.setModule(DISCHARGE_STUDY_JSON_MODULE_NAME);
+      }
     }
 
     if (request.getIsPattern()) {

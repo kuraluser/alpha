@@ -18,6 +18,8 @@ public interface LoadingInformationRepository
   public List<LoadingInformation> findByVesselXIdAndLoadablePatternXIdNotAndIsActive(
       Long vesselXId, Long loadablePatternXId, Boolean isActive);
 
+  List<LoadingInformation> findAllByVesselXIdAndVoyageIdAndIsActiveTrue(Long id1, Long id2);
+
   @Transactional
   @Modifying
   @Query("UPDATE LoadingInformation SET isActive = false WHERE id = ?1")
@@ -88,4 +90,14 @@ public interface LoadingInformationRepository
   @Modifying
   @Query("UPDATE LoadingInformation SET loadingPlanDetailsFromAlgo = ?2 WHERE id = ?1")
   public void updateLoadingPlanDetailsFromAlgo(Long id, String loadingPlanDetailsFromAlgo);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadingInformation SET loadingInformationStatus = ?1, isLoadingSequenceGenerated=?2, isLoadingPlanGenerated=?3 WHERE id = ?4")
+  void updateLoadingInfoWithInfoStatus(
+      LoadingInformationStatus loadingInformationStatus,
+      boolean sequenceGenerated,
+      boolean planGenerated,
+      Long id);
 }

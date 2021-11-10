@@ -5,6 +5,7 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.CountrysResponse;
 import com.cpdss.gateway.domain.PortDetailResponse;
 import com.cpdss.gateway.service.InstructionService;
 import com.cpdss.gateway.service.PortInfoService;
@@ -66,6 +67,32 @@ public class PortInfoController {
     try {
       return this.portInfoService.getPortInformationByPortId(
           portId, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when fetching getPortInformationByPortId", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error fetching getPortInformationByPortId", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get all countries.
+   *
+   * @param headers
+   * @return CountrysResponse
+   * @throws CommonRestException
+   */
+  @GetMapping("/countries")
+  public CountrysResponse getAllCountrys(@RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.portInfoService.getAllCountrys(headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching getPortInformationByPortId", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

@@ -5,7 +5,6 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalTime;
-import java.util.Set;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -133,13 +132,13 @@ public class DischargeInformation extends EntityDoc {
   @JoinColumn(name = "stages_duration_xid")
   private DischargingStagesDuration dischargingStagesDuration;
 
-  // bi-directional many-to-one association to DischargingDelay
-  @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.EAGER)
+  /*  // bi-directional many-to-one association to DischargingDelay
+  @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.LAZY)
   private Set<DischargingDelay> dischargingDelays;
 
   // bi-directional many-to-one association to DischargingMachineryInUse
-  @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.EAGER)
-  private Set<DischargingMachineryInUse> dischargingMachineryInUses;
+  @OneToMany(mappedBy = "dischargingInformation", fetch = FetchType.LAZY)
+  private Set<DischargingMachineryInUse> dischargingMachineryInUses;*/
   /*   // bi-directional many-to-one association to DischargingBerthDetail
   @OneToMany(mappedBy = "dischargingInformation", cascade = CascadeType.ALL)
   private List<DischargingBerthDetail> dischargingBerthDetails;
@@ -156,6 +155,9 @@ public class DischargeInformation extends EntityDoc {
 
   @Column(name = "discharging_plan_details_from_algo")
   private String dischargingPlanDetailsFromAlgo;
+
+  @Column(name = "discharge_study_process_xid")
+  private String dischargeStudyProcessId;
 
   public DischargeInformation(Long pk) {
     this.setId(pk);

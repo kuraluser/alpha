@@ -10,6 +10,8 @@ import { LoadingDischargingTransformationService } from '../../../services/loadi
 import { IDischargingInstructionGroup, IDischargingInstructionResponse, IDischargingInstructionSubHeaderData } from './../../../models/discharging-instruction.model';
 import { ILoadingInstructionSubHeaderData } from '../../../models/loading-instruction.model';
 import { ComponentCanDeactivate } from './../../../../../shared/models/common.model';
+import { OPERATIONS } from '../../../../core/models/common.model';
+import { IPermission } from './../../../../../shared/models/user-profile.model';
 
 @Component({
   selector: 'cpdss-portal-discharging-instruction',
@@ -22,17 +24,17 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
   @Input() voyageId: number;
   @Input() portRotationId: number;
   @Input() dischargeInfoId: number;
+  @Input() permission: IPermission;
 
   @ViewChild('instructionCheckList') instructionCheckList;
 
   sidePanelList: IDischargingInstructionGroup[];
-  
   instructionData: IDischargingInstructionSubHeaderData[];
   instructionList: IDischargingInstructionSubHeaderData[];
   groupId: number;
+  readonly OPERATIONS = OPERATIONS;
 
   constructor(
-    private loadingInstructionApiService: LoadingInstructionApiService,
     private dischargingInstructionApiService: DischargingInstructionApiService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private unsavedChangesGuard: UnsavedChangesGuard,
@@ -132,7 +134,7 @@ export class DischargingInstructionComponent implements OnInit, ComponentCanDeac
    * @memberof DischargingInstructionComponent
    */
   setTabStatus(event) {
-    this.loadingDischargingTransformationService.setLoadingInstructionValidity(event);
+    this.loadingDischargingTransformationService.setDischargingInstructionValidity(event);
   }
 
   /**

@@ -97,7 +97,7 @@
                         <div class="upload-file v-bottom">
                             {{'ULLAGE_UPDATE_FILE_UPLOAD_LABEL' | translate}}
                             <input type="file" name="fl_attachMail" #fileUpload
-                                title="No file selected"  focusTrap (change)="excelUpload($event)" />
+                                title="No file selected" [disabled]="!cargoTankForm?.controls?.dataTable?.controls?.length" focusTrap (change)="excelUpload($event)" />
                         </div>
                     </div>
                 </div>
@@ -379,11 +379,11 @@
                 <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
                 <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.edit">{{'SAVE' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'SAVE' |
                     translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap
-                    [disabled]="isDischargeStarted || !permission?.edit">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    [disabled]="isDischargeStarted || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>

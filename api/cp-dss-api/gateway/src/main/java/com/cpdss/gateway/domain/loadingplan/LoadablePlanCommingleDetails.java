@@ -48,4 +48,6 @@ public class LoadablePlanCommingleDetails {
   private String colorCode;
   private Long cargoNomination1Id;
   private Long cargoNomination2Id;
+  private Long cargo1Id;
+  private Long cargo2Id;
 }

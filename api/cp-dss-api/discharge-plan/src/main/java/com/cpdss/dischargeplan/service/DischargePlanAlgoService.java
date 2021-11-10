@@ -7,6 +7,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
@@ -53,60 +55,8 @@ import com.cpdss.dischargeplan.domain.vessel.PumpTypes;
 import com.cpdss.dischargeplan.domain.vessel.VesselBottomLine;
 import com.cpdss.dischargeplan.domain.vessel.VesselManifold;
 import com.cpdss.dischargeplan.domain.vessel.VesselPump;
-import com.cpdss.dischargeplan.entity.AlgoErrorHeading;
-import com.cpdss.dischargeplan.entity.AlgoErrors;
-import com.cpdss.dischargeplan.entity.BallastValve;
-import com.cpdss.dischargeplan.entity.CargoDischargingRate;
-import com.cpdss.dischargeplan.entity.CargoValve;
-import com.cpdss.dischargeplan.entity.CowPlanDetail;
-import com.cpdss.dischargeplan.entity.CowTankDetail;
-import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
-import com.cpdss.dischargeplan.entity.DeballastingRate;
-import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
-import com.cpdss.dischargeplan.entity.DischargingInformationAlgoStatus;
-import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
-import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
-import com.cpdss.dischargeplan.entity.DischargingPlanBallastDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanCommingleDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanPortWiseDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanRobDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
-import com.cpdss.dischargeplan.entity.DischargingPlanStowageDetails;
-import com.cpdss.dischargeplan.entity.DischargingSequence;
-import com.cpdss.dischargeplan.entity.DischargingSequenceStabilityParameters;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
-import com.cpdss.dischargeplan.repository.AlgoErrorHeadingRepository;
-import com.cpdss.dischargeplan.repository.AlgoErrorsRepository;
-import com.cpdss.dischargeplan.repository.BallastOperationRepository;
-import com.cpdss.dischargeplan.repository.BallastValveRepository;
-import com.cpdss.dischargeplan.repository.CargoDischargingRateRepository;
-import com.cpdss.dischargeplan.repository.CargoValveRepository;
-import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
-import com.cpdss.dischargeplan.repository.DeballastingRateRepository;
-import com.cpdss.dischargeplan.repository.DischargeBerthDetailRepository;
-import com.cpdss.dischargeplan.repository.DischargeInformationStatusRepository;
-import com.cpdss.dischargeplan.repository.DischargingInformationAlgoStatusRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanBallastDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanCommingleDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanPortWiseDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanRobDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanStabilityParametersRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanStowageDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingSequenceRepository;
-import com.cpdss.dischargeplan.repository.DischargingSequenceStabiltyParametersRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastTempDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanCommingleDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
-import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
+import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -118,7 +68,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -202,6 +151,12 @@ public class DischargePlanAlgoService {
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
+
+  @GrpcClient("loadableStudyService")
+  private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
+      dischargeStudyOperationServiceBlockingStub;
+
+  @Autowired DischargingDelayRepository dischargingDelayRepository;
 
   @Value("${loadingplan.attachment.rootFolder}")
   private String rootFolder;
@@ -317,50 +272,57 @@ public class DischargePlanAlgoService {
       com.cpdss.dischargeplan.entity.DischargeInformation entity) {
     CowPlan cowPlan = new CowPlan();
     // need null check, also confirm data will insert from DS
-    CowPlanDetail cpd = this.cowPlanDetailRepository.findByDischargingId(entity.getId()).get();
-    BeanUtils.copyProperties(cpd, cowPlan);
-    cowPlan.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
+    Optional<CowPlanDetail> cpdOpt =
+        this.cowPlanDetailRepository.findByDischargingId(entity.getId());
+    cpdOpt.ifPresent(
+        cpd -> {
+          BeanUtils.copyProperties(cpd, cowPlan);
+          cowPlan.setCowOptionType(
+              Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
 
-    if (!cpd.getCowTankDetails().isEmpty()) {
-      cowPlan.setTopCowTankIds(
-          cpd.getCowTankDetails().stream()
-              .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
-              .map(CowTankDetail::getTankXid)
-              .collect(Collectors.toList()));
+          if (!cpd.getCowTankDetails().isEmpty()) {
+            cowPlan.setTopCowTankIds(
+                cpd.getCowTankDetails().stream()
+                    .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
+                    .map(CowTankDetail::getTankXid)
+                    .collect(Collectors.toList()));
 
-      cowPlan.setBottomCowTankIds(
-          cpd.getCowTankDetails().stream()
-              .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
-              .map(CowTankDetail::getTankXid)
-              .collect(Collectors.toList()));
+            cowPlan.setBottomCowTankIds(
+                cpd.getCowTankDetails().stream()
+                    .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
+                    .map(CowTankDetail::getTankXid)
+                    .collect(Collectors.toList()));
 
-      cowPlan.setAllCowTankIds(
-          cpd.getCowTankDetails().stream()
-              .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
-              .map(CowTankDetail::getTankXid)
-              .collect(Collectors.toList()));
-    }
+            cowPlan.setAllCowTankIds(
+                cpd.getCowTankDetails().stream()
+                    .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
+                    .map(CowTankDetail::getTankXid)
+                    .collect(Collectors.toList()));
+          }
 
-    if (!cpd.getCowWithDifferentCargos().isEmpty()) {
-      List<CargoForCowDetails> cargoForCowDetails = new ArrayList<>();
-      var gp1 =
-          cpd.getCowWithDifferentCargos().stream()
-              .collect(Collectors.groupingBy(CowWithDifferentCargo::getCargoXid)); // group by cargo
-      for (Map.Entry<Long, List<CowWithDifferentCargo>> map1 : gp1.entrySet()) {
-        CowWithDifferentCargo firstItem = map1.getValue().stream().findFirst().get();
-        CargoForCowDetails cargoForCow = new CargoForCowDetails();
-        cargoForCow.setCargoId(firstItem.getCargoXid());
-        cargoForCow.setCargoNominationId(firstItem.getCargoNominationXid());
-        cargoForCow.setWashingCargoId(firstItem.getWashingCargoXid());
-        cargoForCow.setWashingCargoNominationId(firstItem.getWashingCargoNominationXid());
-        cargoForCow.setTankIds(
-            map1.getValue().stream()
-                .map(CowWithDifferentCargo::getTankXid)
-                .collect(Collectors.toList()));
-        cargoForCowDetails.add(cargoForCow);
-      }
-      cowPlan.setCargoCowTankIds(cargoForCowDetails);
-    }
+          if (!cpd.getCowWithDifferentCargos().isEmpty()) {
+            List<CargoForCowDetails> cargoForCowDetails = new ArrayList<>();
+            var gp1 =
+                cpd.getCowWithDifferentCargos().stream()
+                    .collect(
+                        Collectors.groupingBy(
+                            CowWithDifferentCargo::getCargoXid)); // group by cargo
+            for (Map.Entry<Long, List<CowWithDifferentCargo>> map1 : gp1.entrySet()) {
+              CowWithDifferentCargo firstItem = map1.getValue().stream().findFirst().get();
+              CargoForCowDetails cargoForCow = new CargoForCowDetails();
+              cargoForCow.setCargoId(firstItem.getCargoXid());
+              cargoForCow.setCargoNominationId(firstItem.getCargoNominationXid());
+              cargoForCow.setWashingCargoId(firstItem.getWashingCargoXid());
+              cargoForCow.setWashingCargoNominationId(firstItem.getWashingCargoNominationXid());
+              cargoForCow.setTankIds(
+                  map1.getValue().stream()
+                      .map(CowWithDifferentCargo::getTankXid)
+                      .collect(Collectors.toList()));
+              cargoForCowDetails.add(cargoForCow);
+            }
+            cowPlan.setCargoCowTankIds(cargoForCowDetails);
+          }
+        });
 
     // set cow history
     cowPlan.setCowHistories(this.setCowHistory(entity.getVesselXid()));
@@ -399,10 +361,6 @@ public class DischargePlanAlgoService {
     return cowHistory;
   }
 
-  @GrpcClient("loadableStudyService")
-  private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
-      dischargeStudyOperationServiceBlockingStub;
-
   private DischargeSequences buildDischargeDelays(
       com.cpdss.dischargeplan.entity.DischargeInformation entity) {
     DischargeSequences dischargeSequences = new DischargeSequences();
@@ -422,31 +380,34 @@ public class DischargePlanAlgoService {
 
     // User Data from DB
     List<DischargeDelays> dischargeDelays = new ArrayList<>();
-    entity
-        .getDischargingDelays()
-        .forEach(
-            delay -> {
-              DischargeDelays ld = new DischargeDelays();
-              ld.setCargoId(delay.getCargoXid());
-              ld.setDsCargoNominationId(delay.getCargoNominationXid());
-              ld.setDuration(delay.getDuration());
-              ld.setId(delay.getId());
-              ld.setDischargeInfoId(delay.getDischargingInformation().getId());
-              ld.setQuantity(delay.getQuantity());
-              ld.setReasonForDelayIds(
-                  delay.getDischargingDelayReasons().stream()
-                      .map(v -> v.getReasonForDelay().getId())
-                      .collect(Collectors.toList()));
-              dischargeDelays.add(ld);
-            });
+    List<DischargingDelay> delays =
+        dischargingDelayRepository.findByDischargingInformationIdAndIsActive(entity.getId(), true);
+    delays.forEach(
+        delay -> {
+          DischargeDelays ld = new DischargeDelays();
+          ld.setCargoId(delay.getCargoXid());
+          ld.setDsCargoNominationId(delay.getCargoNominationXid());
+          ld.setDuration(delay.getDuration());
+          ld.setId(delay.getId());
+          ld.setDischargeInfoId(delay.getDischargingInformation().getId());
+          ld.setQuantity(delay.getQuantity());
+          ld.setReasonForDelayIds(
+              delay.getDischargingDelayReasons().stream()
+                  .map(v -> v.getReasonForDelay().getId())
+                  .collect(Collectors.toList()));
+          dischargeDelays.add(ld);
+        });
     dischargeSequences.setDischargeDelays(dischargeDelays);
     return dischargeSequences;
   }
 
+  @Autowired DischargingMachineryInUseRepository dischargingMachineryInUseRepository;
+
   private CargoMachineryInUse buildDischargeMachines(
       com.cpdss.dischargeplan.entity.DischargeInformation entity) throws GenericServiceException {
     CargoMachineryInUse cargoMachineryInUse = new CargoMachineryInUse();
-    Set<DischargingMachineryInUse> list = entity.getDischargingMachineryInUses();
+    List<DischargingMachineryInUse> list =
+        this.dischargingMachineryInUseRepository.findAllByDischargingInfoId(entity.getId());
     List<DischargeMachinesInUse> machineList = new ArrayList<>();
 
     VesselInfo.VesselPumpsResponse grpcReply =
@@ -1538,5 +1499,39 @@ public class DischargePlanAlgoService {
         log.error("Setting UKC from port Info Table - Failed, Data - {}", portReply);
       }
     }
+  }
+
+  /**
+   * Fetches ALGO errors of Discharge Information with the given condition type
+   *
+   * @param request
+   * @param builder
+   */
+  public void getDischargingInfoAlgoErrors(AlgoErrorRequest request, Builder builder)
+      throws GenericServiceException {
+    log.info("Fetching ALGO errors of Loading Information {}", request.getLoadingInformationId());
+    List<AlgoErrorHeading> errorHeaders = null;
+    if (request.getConditionType() == 0) {
+      errorHeaders =
+          algoErrorHeadingRepository.findByDischargingInformationIdAndConditionTypeAndIsActiveTrue(
+              request.getLoadingInformationId(), null);
+    } else {
+      errorHeaders =
+          algoErrorHeadingRepository.findByDischargingInformationIdAndConditionTypeAndIsActiveTrue(
+              request.getLoadingInformationId(), request.getConditionType());
+    }
+    errorHeaders.forEach(
+        header -> {
+          com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder errorBuilder =
+              com.cpdss.common.generated.LoadableStudy.AlgoErrors.newBuilder();
+          errorBuilder.setErrorHeading(header.getErrorHeading());
+          header
+              .getAlgoErrors()
+              .forEach(
+                  error -> {
+                    errorBuilder.addErrorMessages(error.getErrorMessage());
+                  });
+          builder.addAlgoErrors(errorBuilder.build());
+        });
   }
 }

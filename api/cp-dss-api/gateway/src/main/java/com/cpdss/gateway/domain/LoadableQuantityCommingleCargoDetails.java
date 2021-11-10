@@ -69,5 +69,5 @@ public class LoadableQuantityCommingleCargoDetails {
   private String timeRequiredForLoading;
   private String tankShortName;
   private Long toppingOffCargoId;
-  private String commingleColour;
+  private String colorCode;
 }

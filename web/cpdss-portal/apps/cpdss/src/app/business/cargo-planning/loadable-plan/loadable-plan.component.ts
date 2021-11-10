@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -26,6 +26,9 @@ import { saveAs } from 'file-saver';
 import { SecurityService } from '../../../shared/services/security/security.service';
 import { GlobalErrorHandler } from '../../../shared/services/error-handlers/global-error-handler';
 import { environment } from '../../../../environments/environment';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { SIMULATOR_REQUEST_TYPE } from '../../core/components/simulator/simulator.model';
 
 /**
  * Component class of loadable plan
@@ -39,7 +42,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './loadable-plan.component.html',
   styleUrls: ['./loadable-plan.component.scss']
 })
-export class LoadablePlanComponent implements OnInit {
+export class LoadablePlanComponent implements OnInit, OnDestroy {
 
   get cargoTanks(): ICargoTank[][] {
     return this._cargoTanks;
@@ -77,6 +80,7 @@ export class LoadablePlanComponent implements OnInit {
   }
 
   readonly validateAndSaveStatus = VALIDATION_AND_SAVE_STATUS;
+  private ngUnsubscribe: Subject<any> = new Subject();
   voyageId: number;
   loadableStudyId: number;
   loadableStudy: LoadableStudy;
@@ -111,6 +115,7 @@ export class LoadablePlanComponent implements OnInit {
   portRotationId: number;
   vesselLightWeight: number;
   simulatorMenu: any;
+  readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
 
   private _cargoTanks: ICargoTank[][];
   private _cargoTankDetails: ICargoTankDetailValueObject[] = [];
@@ -142,7 +147,7 @@ export class LoadablePlanComponent implements OnInit {
   */
   async ngOnInit(): Promise<void> {
     this.getPagePermission();
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
       this.voyageId = Number(params.get('voyageId'));
       this.loadableStudyId = Number(params.get('loadableStudyId'));
@@ -160,6 +165,11 @@ export class LoadablePlanComponent implements OnInit {
       this.getLoadableStudies(this.vesselId, this.voyageId, this.loadableStudyId);
     });
 
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -211,7 +221,7 @@ export class LoadablePlanComponent implements OnInit {
           this.communicateShoreMessage();
           this.loadablePatternValidationStatus = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE;
           this.validationPending = false;
-          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
+          this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: true });
         }
       } else if (event.data.type === 'loadable-pattern-validation-failed') {
         if (event.data.pattern?.loadablePatternId === this.loadablePatternId) {
@@ -421,12 +431,12 @@ export class LoadablePlanComponent implements OnInit {
       }, 0);
       const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
       const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
-      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence 
+      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence
       , commingleTotalQuantity: commingleTotalQuantity})
     })
     await this.getLoadableQuantity();
     this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) ?? this.loadableQuantity;
-   
+
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => {
       const tank = this.findCargoTank(cargo.tankId, loadablePlanRes?.tankLists)
       cargo.fullCapacityCubm = tank.fullCapacityCubm

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -11,6 +11,8 @@ import { LoadablePlanApiService } from '../../../services/loadable-plan-api.serv
 import { IPortsEvent, IBallastTankDetailValueObject , VALIDATION_AND_SAVE_STATUS } from '../../../models/loadable-plan.model';
 import { tankCapacityValidator } from '../../../../core/directives/tankCapacityValidator.directive';
 import { DATATABLE_EDITMODE } from '../../../../../shared/components/datatable/datatable.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class of ballast section
@@ -24,7 +26,7 @@ import { DATATABLE_EDITMODE } from '../../../../../shared/components/datatable/d
   templateUrl: './ballast-stowage.component.html',
   styleUrls: ['./ballast-stowage.component.scss']
 })
-export class BallastStowageComponent implements OnInit {
+export class BallastStowageComponent implements OnInit, OnDestroy {
 
   //public fields
   public columns: any[];
@@ -37,6 +39,8 @@ export class BallastStowageComponent implements OnInit {
   private _initBallastTankDetails: IBallastTankDetailValueObject[];
   private _isStowageEditable: boolean;
   validateAndSaveProcessing: boolean;
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   @Input() stowageDataEditStatus: boolean;
   @Input() validationPending: boolean;
@@ -122,11 +126,16 @@ export class BallastStowageComponent implements OnInit {
   ngOnInit(): void {
     this.buttonStatus = 0;
     this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns();
-    this.loadablePlanTransformationService.editBallastStatus$.subscribe((value: any) => {
+    this.loadablePlanTransformationService.editBallastStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value: any) => {
       this.buttonStatus = value.buttonStatus !== undefined ? value.buttonStatus : this.buttonStatus;
       this.editMode = value.editMode !== undefined ? value.editMode : this.editMode;
       this.validateAndSaveProcessing = value?.validateAndSaveProcessing !== undefined ? value.validateAndSaveProcessing : this.validateAndSaveProcessing
     })
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**
@@ -154,6 +163,7 @@ export class BallastStowageComponent implements OnInit {
   */
   changeGridToEditMode() {
     this.editMode = DATATABLE_EDITMODE.CELL;
+    this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns(true);
     this.buttonStatus = 1;
   }
 
@@ -167,6 +177,7 @@ export class BallastStowageComponent implements OnInit {
     if(this.ballastForm.valid) {
       this.buttonStatus = 0;
       this.editMode = null;
+      this.columns = this.loadablePlanTransformationService.getBallastDatatableColumns();
     } else {
       const translationKeys = await this.translateService.get(['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR', 'LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST','LOADABLE_PLAN_ULLAGE_INVALID_DATA_CARGO']).toPromise();
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_ERROR'], detail: translationKeys['LOADABLE_PLAN_ULLAGE_INVALID_DATA_BALLAST'] });

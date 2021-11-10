@@ -5,6 +5,7 @@ import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.CommonResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
@@ -1155,6 +1156,17 @@ public class DischargePlanController {
     }
   }
 
+  /**
+   * Updates discharging information status
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param request
+   * @return
+   * @throws CommonRestException
+   */
   @PostMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status")
   public LoadingInfoAlgoResponse dischargingPlanStatus(
@@ -1329,6 +1341,118 @@ public class DischargePlanController {
     } catch (Exception e) {
       log.error("Exception in Get discharging Sequence API");
       e.printStackTrace();
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Get ALGO status of Discharging Information
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param request
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/algo-errors/{conditionType}")
+  public AlgoErrorResponse getAlgoErrors(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable(required = false) Integer conditionType)
+      throws CommonRestException {
+    try {
+      log.info(
+          "Get Discharging Information ALGO Errors Status for "
+              + "vessel {}, voyage {}, discharging information {}",
+          vesselId,
+          voyageId,
+          infoId);
+      return dischargeInformationService.getDischargingInfoAlgoErrors(
+          vesselId, voyageId, infoId, conditionType);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when getAlgoErrors", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          headers,
+          HttpStatusCode.BAD_REQUEST,
+          e.getMessage(),
+          e);
+    } catch (Exception e) {
+      log.error("Error when getAlgoErrors", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * To get rule against the Discharging Information.
+   *
+   * @param headers
+   * @param vesselId Long Id
+   * @param voyageId Long Id
+   * @param infoId Long Id
+   * @return RuleResponse
+   * @throws CommonRestException
+   */
+  @GetMapping("/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/rules")
+  public RuleResponse getDischargingPlanRules(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId)
+      throws CommonRestException {
+    try {
+      return dischargeInformationService.getDischargingPlanRules(vesselId, voyageId, infoId);
+    } catch (GenericServiceException e) {
+      log.error("Error when getting discharge rules", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * Save Rule from Discharging Information Page
+   *
+   * @param headers HttpHeaders
+   * @param vesselId Long Id
+   * @param voyageId Long Id
+   * @param infoId Long Id
+   * @param dischargePlanRule RuleRequest
+   * @return RuleResponse
+   * @throws CommonRestException
+   */
+  @PostMapping("/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/rules")
+  public RuleResponse saveLoadingPlanRule(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @RequestBody RuleRequest dischargePlanRule)
+      throws CommonRestException {
+    try {
+      return dischargeInformationService.saveDischargingPlanRules(
+          vesselId, voyageId, infoId, dischargePlanRule);
+    } catch (GenericServiceException e) {
+      log.error("Error when saving discharge rules", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

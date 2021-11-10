@@ -80,6 +80,8 @@ public class DischargeInformationBuilderService {
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
 
+  @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
+
   public LoadingDetails buildLoadingDetailsMessage(DischargeInformation var1) {
     LoadingDetails.Builder builder = LoadingDetails.newBuilder();
     if (var1 != null) {
@@ -596,7 +598,7 @@ public class DischargeInformationBuilderService {
 
     try {
       List<DischargingDelay> delays =
-          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActive(
+          this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActiveOrderById(
               disEntity.getId(), true);
       for (DischargingDelay source : delays) {
         DischargeDelays.Builder builder2 = DischargeDelays.newBuilder();
@@ -611,8 +613,11 @@ public class DischargeInformationBuilderService {
             .ifPresent(builder2::setCargoNominationId); // can empty of initial delay
         builder2.addAllReasonForDelayIds(
             source.getDischargingDelayReasons().stream()
-                .map(DischargingDelayReason::getId)
+                .filter(DischargingDelayReason::getIsActive)
+                .map(DischargingDelayReason::getReasonForDelay)
+                .map(ReasonForDelay::getId)
                 .collect(Collectors.toList()));
+        Optional.ofNullable(source.getSequenceNo()).ifPresent(builder2::setSequenceNo);
         builder1.addDelays(builder2.build());
       }
       log.info("Setting Delay Reasons");
@@ -648,7 +653,8 @@ public class DischargeInformationBuilderService {
       DischargeInformation disEntity,
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
     try {
-      Set<DischargingMachineryInUse> list = disEntity.getDischargingMachineryInUses();
+      List<DischargingMachineryInUse> list =
+          dischargingMachineryInUseRepository.findAllByDischargingInfoId(disEntity.getId());
       for (DischargingMachineryInUse var1 : list) {
         LoadingPlanModels.LoadingMachinesInUse.Builder builder1 =
             LoadingPlanModels.LoadingMachinesInUse.newBuilder();
@@ -667,8 +673,6 @@ public class DischargeInformationBuilderService {
       e.printStackTrace();
     }
   }
-
-  @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
 
   public void buildCowPlanMessageFromEntity(
       DischargeInformation disEntity,
@@ -712,18 +716,21 @@ public class DischargeInformationBuilderService {
               Common.COW_TYPE.TOP_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
                   .collect(Collectors.toList()));
           this.buildCowTankDetails(
               Common.COW_TYPE.BOTTOM_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
                   .collect(Collectors.toList()));
           this.buildCowTankDetails(
               Common.COW_TYPE.ALL_COW,
               builder1,
               cpd.getCowTankDetails().stream()
+                  .filter(CowTankDetail::getIsActive)
                   .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
                   .collect(Collectors.toList()));
         }
@@ -758,8 +765,12 @@ public class DischargeInformationBuilderService {
       case CARGO:
         {
           List<CowWithDifferentCargo> ls1 = new ArrayList<>(list); // cast from generic list
-          var gp1 =
+          List<CowWithDifferentCargo> activeCowWithCargos =
               ls1.stream()
+                  .filter(cow -> cow.getIsActive() != null && cow.getIsActive())
+                  .collect(Collectors.toList());
+          var gp1 =
+              activeCowWithCargos.stream()
                   .collect(
                       Collectors.groupingBy(CowWithDifferentCargo::getCargoXid)); // group by cargo
           for (Map.Entry<Long, List<CowWithDifferentCargo>> map1 : gp1.entrySet()) {

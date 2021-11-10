@@ -100,6 +100,7 @@ public class RuleUtility {
           RulesInputs rulesInputs = new RulesInputs();
           if (isBlankString(rInputsList.getDefaultValue())) {
             rulesInputs.setDefaultValue(rInputsList.getDefaultValue());
+            rulesInputs.setValue(rInputsList.getDefaultValue());
           }
           if (isBlankString(rInputsList.getMax())) {
             rulesInputs.setMax(rInputsList.getMax());

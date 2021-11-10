@@ -1,4 +1,4 @@
-import { Component, OnInit , ViewChild , HostListener } from '@angular/core';
+import { Component, OnInit , ViewChild , HostListener, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RulesService } from '../../core/services/rules.service';
 import { UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component Class for Rules
@@ -22,7 +23,7 @@ import { Subject } from 'rxjs';
   templateUrl: './rules.component.html',
   styleUrls: ['./rules.component.scss']
 })
-export class RulesComponent implements OnInit {
+export class RulesComponent implements OnInit, OnDestroy {
 
   @ViewChild('rulesTable') rulesTable;
   TABS = RULES_TABS;
@@ -39,6 +40,7 @@ export class RulesComponent implements OnInit {
   vessels: any;
   selectedVessel: any;
   rulesChange = new Subject();
+  private ngUnsubscribe: Subject<any> = new Subject();
   
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -67,6 +69,11 @@ export class RulesComponent implements OnInit {
     this.ngxSpinner.hide();
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
   /**
    * Method to initialise rules.
    *
@@ -74,7 +81,7 @@ export class RulesComponent implements OnInit {
    */
 
   async initRules() {
-    this.rulesChange.subscribe(async (res) => {
+    this.rulesChange.pipe(takeUntil(this.ngUnsubscribe)).subscribe(async (res) => {
       this.ngxSpinner.show();
       await this.getRules();
       this.setIndex(this.selectedIndex);

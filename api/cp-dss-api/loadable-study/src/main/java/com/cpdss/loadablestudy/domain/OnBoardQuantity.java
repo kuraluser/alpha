@@ -18,4 +18,5 @@ public class OnBoardQuantity {
   private String api;
   private String colorCode;
   private String temperature;
+  private String abbreviation;
 }

@@ -17,4 +17,12 @@ public interface AlgoErrorsRepository extends CommonCrudRepository<AlgoErrors, L
   @Query(
       "UPDATE AlgoErrors SET isActive = false WHERE algoErrorHeading.id IN (SELECT AEH.id FROM AlgoErrorHeading AEH WHERE AEH.dischargingInformation = ?1)")
   public void deleteByLoadingInformation(DischargeInformation dischargingInformation);
+
+  @Modifying
+  @Transactional
+  @Query(
+      "UPDATE AlgoErrors SET isActive = false WHERE algoErrorHeading.id IN "
+          + "(SELECT AEH.id FROM AlgoErrorHeading AEH WHERE AEH.dischargingInformation = ?1 AND AEH.conditionType = ?2)")
+  public void deleteByDischargingInformationAndConditionType(
+      DischargeInformation dischargingInformation, Integer conditionType);
 }

@@ -1,11 +1,14 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
+import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_RULE_MASTER_ID;
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
@@ -40,11 +43,13 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
+import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +102,7 @@ public class DischargeInformationService {
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
-        "Get Loading Info, Active Voyage Number and Id {} ",
+        "Get Discharging Info, Active Voyage Number and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
@@ -129,7 +134,7 @@ public class DischargeInformationService {
     dischargeInformation.setDischargeCommingledCargoSeparately(
         disRpcReplay.getDischargeCommingledCargoSeparately());
     dischargeInformation.setIsDischargeInfoComplete(disRpcReplay.getIsDischargeInfoComplete());
-
+    dischargeInformation.setDischargeInfoStatusId(disRpcReplay.getDischargingInfoStatusId());
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
         vesselInfoService.getRulesByVesselIdAndSectionId(
@@ -464,7 +469,7 @@ public class DischargeInformationService {
   public DischargingInformationResponse saveDischargingInformation(
       DischargingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
-      log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
+      log.info("Calling saveDischargingInformation in discharging-plan microservice via GRPC");
       DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
       if (request.getDischargeDetails() != null) {
         // Updating synoptic table (time)
@@ -498,7 +503,7 @@ public class DischargeInformationService {
               response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
-      log.error("Failed to save LoadingInformation {}", request.getDischargeInfoId());
+      log.error("Failed to save DischargingInformation {}", request.getDischargeInfoId());
       e.printStackTrace();
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       throw new GenericServiceException(
@@ -693,5 +698,96 @@ public class DischargeInformationService {
     LoadingSequenceResponse response = new LoadingSequenceResponse();
     dischargingSequenceService.buildDischargingSequence(vesselId, reply, response);
     return response;
+  }
+
+  /**
+   * Fetches Discharge Information ALGO Errors
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param conditionType
+   * @return
+   * @throws GenericServiceException
+   */
+  public AlgoErrorResponse getDischargingInfoAlgoErrors(
+      Long vesselId, Long voyageId, Long infoId, Integer conditionType)
+      throws GenericServiceException {
+    log.info("Fetching ALGO errors of Discharging Information {} from Discharge-Plan MS", infoId);
+    AlgoErrorRequest.Builder requestBuilder = AlgoErrorRequest.newBuilder();
+    requestBuilder.setLoadingInformationId(infoId);
+    Optional.ofNullable(conditionType).ifPresent(requestBuilder::setConditionType);
+    AlgoErrorResponse algoResponse = new AlgoErrorResponse();
+    AlgoErrorReply reply =
+        this.dischargePlanServiceBlockingStub.getDischargingInfoAlgoErrors(requestBuilder.build());
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      throw new GenericServiceException(
+          "Failed to fetch Discharging Information ALGO status",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    this.buildAlgoErrors(reply, algoResponse);
+    return algoResponse;
+  }
+
+  /**
+   * Builds ALGO error response
+   *
+   * @param reply
+   * @param algoResponse
+   */
+  private void buildAlgoErrors(AlgoErrorReply reply, AlgoErrorResponse algoResponse) {
+    List<AlgoError> algoErrors = new ArrayList<AlgoError>();
+    reply
+        .getAlgoErrorsList()
+        .forEach(
+            error -> {
+              AlgoError algoError = new AlgoError();
+              algoError.setErrorHeading(error.getErrorHeading());
+              algoError.setErrorDetails(error.getErrorMessagesList());
+              algoErrors.add(algoError);
+            });
+    algoResponse.setAlgoErrors(algoErrors);
+    algoResponse.setResponseStatus(new CommonSuccessResponse("200", ""));
+  }
+
+  /**
+   * Get Discharging rules fot an informationId
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param dischargeInfoId
+   */
+  public RuleResponse getDischargingPlanRules(Long vesselId, Long voyageId, Long dischargeInfoId)
+      throws GenericServiceException {
+    DischargeRuleRequest.Builder builder = DischargeRuleRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    builder.setSectionId(DISCHARGING_RULE_MASTER_ID);
+    builder.setDischargeInfoId(dischargeInfoId);
+    RuleResponse ruleResponse =
+        this.dischargeInformationGrpcService.saveOrGetDischargingPlanRules(builder);
+    log.info("Discharging Info Rule Fetch for Vessel Id {}, info Id {}", vesselId, dischargeInfoId);
+    return ruleResponse;
+  }
+
+  /**
+   * Save Discharging rules fot an informationId
+   *
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param ruleRequest
+   */
+  public RuleResponse saveDischargingPlanRules(
+      Long vesselId, Long voyageId, Long infoId, RuleRequest ruleRequest)
+      throws GenericServiceException {
+    DischargeRuleRequest.Builder builder = DischargeRuleRequest.newBuilder();
+    builder.setVesselId(vesselId);
+    builder.setSectionId(DISCHARGING_RULE_MASTER_ID);
+    builder.setDischargeInfoId(infoId);
+    RuleUtility.buildRuleListForSave(ruleRequest, null, null, null, builder, false, false, true);
+    RuleResponse ruleResponse =
+        this.dischargeInformationGrpcService.saveOrGetDischargingPlanRules(builder);
+    return ruleResponse;
   }
 }

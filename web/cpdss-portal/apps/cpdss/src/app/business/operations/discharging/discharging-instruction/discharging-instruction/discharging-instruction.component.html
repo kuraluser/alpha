@@ -7,9 +7,9 @@
   </div>
 
   <div class="pl-30">
-    <cpdss-portal-instruction-check-list #instructionCheckList (tabStatus)="setTabStatus($event)"
+    <cpdss-portal-instruction-check-list #instructionCheckList [operation]="OPERATIONS.DISCHARGING" (tabStatus)="setTabStatus($event)"
       (updateData)="getDischargingInstructionDetails()" [vesselId]="vesselId" [voyageId]="voyageId" [portRotationId]="portRotationId"
-      [groupId]="groupId" [instructionList]="instructionList" [loadingDischargingInfoId]="dischargeInfoId">
+      [groupId]="groupId" [instructionList]="instructionList" [permission]="permission" [loadingDischargingInfoId]="dischargeInfoId">
     </cpdss-portal-instruction-check-list>
   </div>
 </div>

@@ -17,7 +17,7 @@
         <div class="pr-30 pt-10 ">
           {{voyageDistance? (voyageDistance | number) : 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
         </div>
-        <cpdss-portal-rules [visible]="true" *ngIf="isRuleModalVisible" (popUpClosed)="onRulesPopUpClose($event)"></cpdss-portal-rules>
+        <cpdss-portal-rules [visible]="true" [operation]="operation"  *ngIf="isRuleModalVisible" (popUpClosed)="onRulesPopUpClose($event)"></cpdss-portal-rules>
         <!-- TODO : Remove comment after get confirmation -->
         <!-- <div class="float-right">
             <a class="btn btn-link icon-btn plus-icon-rounded ml-15 disabled" id="show-popup"
@@ -42,7 +42,7 @@
         </div>
     </div>
     </ng-container>
-    <ng-container *ngIf="OPERATIONS.DISCHARGING === operationId && !selectedVoyage?.isDischargeStarted && !selectedVoyage?.confirmedDischargeStudyId">
+    <ng-container *ngIf="OPERATIONS.DISCHARGING === operationId && !(selectedVoyage?.isDischargeStarted && selectedVoyage?.confirmedDischargeStudyId)">
       <div class="text-center pt-25">
         <div class="well-custom">
           <div class="text-info"><span class="icon-info-rounded">!</span> {{'DISCHARGING_PLAN_NOT_AVAILABLE' |

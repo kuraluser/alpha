@@ -15,10 +15,13 @@ import com.cpdss.common.generated.Loadicator.LoadicatorReply;
 import com.cpdss.common.generated.Loadicator.LoadicatorRequest;
 import com.cpdss.common.generated.Loadicator.OtherTankInfo;
 import com.cpdss.common.generated.LoadicatorServiceGrpc.LoadicatorServiceImplBase;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc.DischargePlanServiceBlockingStub;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDetail;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.loadicatorintegration.common.LoadicatorIntegrationConstants;
 import com.cpdss.loadicatorintegration.domain.StowagePlanDetail;
 import com.cpdss.loadicatorintegration.entity.CargoData;
 import com.cpdss.loadicatorintegration.entity.IntactStability;
@@ -72,6 +75,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceBlockingStub loadingPlanService;
+
+  @GrpcClient("dischargingPlanService")
+  private DischargePlanServiceBlockingStub dischargingPlanService;
 
   private static final String FAILED = "FAILED";
   private static final String SUCCESS = "SUCCESS";
@@ -348,8 +354,14 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         log.info(
             "Checking loadicator status of Loading Information "
                 + request.getStowagePlanDetails(0).getBookingListId());
+      } else if (request.getTypeId() == 3) { // Discharging Plan
+        log.info(
+            "Checking loadicator status of Discharging Information "
+                + request.getStowagePlanDetails(0).getBookingListId());
       }
-
+      log.info(
+          "Stowage Plans remaining to be processed: {} entries",
+          stowagePlanRepository.findCountOfStowagePlansToBeProcessed());
       Thread.sleep(10000);
       List<Long> stowagePlanIds =
           stowagePlans.stream().map(StowagePlan::getId).collect(Collectors.toList());
@@ -358,7 +370,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
-        if (request.getTypeId() == 1) { // Loadable Study
+        if (request.getTypeId()
+            == LoadicatorIntegrationConstants.LOADABLE_TYPE_ID) { // Loadable Study
           LoadicatorDataRequest loadableStudyrequest =
               this.sendLoadicatorData(stowagePlanList, request.getIsPattern());
           log.info(
@@ -368,7 +381,8 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
                       : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
 
           this.getLoadicatorDatas(loadableStudyrequest);
-        } else if (request.getTypeId() == 2) { // Loading Plan
+        } else if (request.getTypeId()
+            == LoadicatorIntegrationConstants.LOADING_TYPE_ID) { // Loading Plan
           log.info(
               "Loadicator check completed for loading information {}",
               request.getStowagePlanDetails(0).getBookingListId());
@@ -376,9 +390,41 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
               this.buildLoadingInfoLoadicatorData(
                   stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
           this.getLoadingInfoLoadicatorData(loadingInformationRequest);
+        } else if (request.getTypeId()
+            == LoadicatorIntegrationConstants.DISCHARGING_TYPE_ID) { // Discharging Plan
+          log.info(
+              "Loadicator check completed for discharging information {}",
+              request.getStowagePlanDetails(0).getBookingListId());
+          DischargingInfoLoadicatorDataRequest dischargingInformationRequest =
+              this.buildDischargingInfoLoadicatorData(
+                  stowagePlanList, request.getIsUllageUpdate(), request.getConditionType());
+          this.getDischargingInfoLoadicatorData(dischargingInformationRequest);
         }
       }
     } while (!status);
+  }
+
+  private DischargingInfoLoadicatorDataRequest buildDischargingInfoLoadicatorData(
+      List<StowagePlan> stowagePlanList, Boolean isUllageUpdate, Integer conditionType) {
+    DischargingInfoLoadicatorDataRequest.Builder builder =
+        DischargingInfoLoadicatorDataRequest.newBuilder();
+    builder.setDischargingInformationId(stowagePlanList.get(0).getBookingListId());
+    builder.setProcessId(stowagePlanList.get(0).getProcessId());
+    builder.setIsUllageUpdate(isUllageUpdate);
+    builder.setConditionType(conditionType);
+    stowagePlanList.forEach(
+        stowagePlan -> {
+          LoadingInfoLoadicatorDetail.Builder detailBuilder =
+              LoadingInfoLoadicatorDetail.newBuilder();
+          this.buildLoadingInfoLoadicatorDetails(stowagePlan, detailBuilder);
+          builder.addLoadingInfoLoadicatorDetails(detailBuilder.build());
+        });
+    return builder.build();
+  }
+
+  private void getDischargingInfoLoadicatorData(
+      DischargingInfoLoadicatorDataRequest dischargingInformationRequest) {
+    this.dischargingPlanService.getLoadicatorData(dischargingInformationRequest);
   }
 
   private void getLoadingInfoLoadicatorData(

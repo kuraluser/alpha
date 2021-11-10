@@ -4,6 +4,8 @@ package com.cpdss.gateway.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.BerthDetail;
+import com.cpdss.common.generated.PortInfo.Country;
+import com.cpdss.common.generated.PortInfo.CountryReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest.Builder;
 import com.cpdss.common.generated.PortInfo.PortDetail;
@@ -11,9 +13,12 @@ import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.gateway.domain.CountryInfo;
+import com.cpdss.gateway.domain.CountrysResponse;
 import com.cpdss.gateway.domain.PortBerthInfoResponse;
 import com.cpdss.gateway.domain.PortDetailResponse;
 import com.cpdss.gateway.domain.PortDetails;
+import com.google.protobuf.Empty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +40,7 @@ public class PortInfoService {
     PortInfo.BerthInfoResponse response =
         this.portInfoServiceBlockingStub.getBerthDetailsByPortId(
             PortInfo.PortIdRequest.newBuilder().setPortId(id).build());
-    if (response.getResponseStatus().getStatus().equalsIgnoreCase("SUCCESS")) {
+    if (response.getResponseStatus().getStatus().equalsIgnoreCase(SUCCESS)) {
       return response;
     }
     return null;
@@ -46,12 +51,12 @@ public class PortInfoService {
    *
    * @param portId
    * @param correlationId
-   * @return
+   * @return PortDetailResponse
    * @throws NumberFormatException
    * @throws GenericServiceException
    */
   public PortDetailResponse getPortInformationByPortId(Long portId, String correlationId)
-      throws NumberFormatException, GenericServiceException {
+      throws GenericServiceException {
 
     Builder builder = GetPortInfoByPortIdsRequest.newBuilder();
     builder.addId(portId);
@@ -95,6 +100,23 @@ public class PortInfoService {
         portsList.get(0).getLon().isEmpty() ? null : portsList.get(0).getLon());
 
     List<BerthDetail> berthDetailsList = portsList.get(0).getBerthDetailsList();
+    List<PortBerthInfoResponse> berthList = setBerthInformationForThePorts(berthDetailsList);
+    portDetails.setBerthInfo(berthList);
+    response.setPortDetails(portDetails);
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Set berth information in the response for the ports.
+   *
+   * @param berthDetailsList
+   * @return List of PortBerthInfoResponse.
+   */
+  private List<PortBerthInfoResponse> setBerthInformationForThePorts(
+      List<BerthDetail> berthDetailsList) {
+
     List<PortBerthInfoResponse> berthList = new ArrayList<>();
     for (BerthDetail berth : berthDetailsList) {
       PortBerthInfoResponse berthResponse = new PortBerthInfoResponse();
@@ -117,8 +139,37 @@ public class PortInfoService {
       berthResponse.setMinUKC(berth.getUkc().isEmpty() ? null : berth.getUkc());
       berthList.add(berthResponse);
     }
-    portDetails.setBerthInfo(berthList);
-    response.setPortDetails(portDetails);
+    return berthList;
+  }
+
+  /**
+   * Get all country infrmation
+   *
+   * @param correlationId
+   * @return CountrysResponse
+   * @throws GenericServiceException
+   */
+  public CountrysResponse getAllCountrys(String correlationId) throws GenericServiceException {
+
+    com.google.protobuf.Empty.Builder builder = Empty.newBuilder();
+    CountryReply countryReply = portInfoServiceBlockingStub.getAllCountries(builder.build());
+    if (!SUCCESS.equals(countryReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get country information ",
+          countryReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(countryReply.getResponseStatus().getCode())));
+    }
+    CountrysResponse response = new CountrysResponse();
+    List<CountryInfo> countryList = new ArrayList<>();
+    List<Country> countriesList = countryReply.getCountriesList();
+    countriesList.forEach(
+        country -> {
+          CountryInfo countryInfo = new CountryInfo();
+          countryInfo.setId(country.getId());
+          countryInfo.setName(country.getCountryName());
+          countryList.add(countryInfo);
+        });
+    response.setCountrys(countryList);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;

@@ -38,6 +38,8 @@ service DischargeInformationService {
   
   // Case 7, post discharge stage
   rpc savePostDischargeStage(DischargeInformation) returns (DischargingInfoSaveResponse) {}
+
+  rpc GetOrSaveRulesForDischargingPlan (DischargeRuleRequest) returns (DischargeRuleReply) {}
   
 }
 
@@ -51,6 +53,9 @@ service DischargePlanService{
   rpc SaveDischargingPlanAlgoStatus(AlgoStatusRequest) returns (AlgoStatusReply) {}
   rpc GetDischargingSequences(LoadingSequenceRequest) returns (DischargeSequenceReply) {}
   rpc dischargePlanStowageDetails(DischargePlanStowageDetailsRequest) returns (DischargePlanStowageDetailsResponse){}
+  rpc GetLoadicatorData(DischargingInfoLoadicatorDataRequest) returns (DischargingInfoLoadicatorDataReply) {}
+  rpc GetDischargingInfoAlgoErrors(AlgoErrorRequest) returns (AlgoErrorReply) {}
+  rpc getDischargePlanCargoHistory(CargoHistoryOpsRequest) returns (CargoHistoryResponse) {}
 }
 
 service DischargingInstructionService {

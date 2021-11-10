@@ -60,8 +60,8 @@ public final class LoadingPlanServiceOuterClass {
           + ".ResponseStatus\"\000\022I\n\031DeleteLoadingInstru"
           + "ctions\022\031.LoadingInstructionStatus\032\017.Resp"
           + "onseStatus\"\000\022@\n\020EditInstructions\022\031.Loadi"
-          + "ngInstructionStatus\032\017.ResponseStatus\"\0002\372"
-          + "\007\n\022LoadingPlanService\022N\n\032LoadingPlanSync"
+          + "ngInstructionStatus\032\017.ResponseStatus\"\0002\312"
+          + "\010\n\022LoadingPlanService\022N\n\032LoadingPlanSync"
           + "hronization\022\027.LoadingPlanSyncDetails\032\025.L"
           + "oadingPlanSyncReply\"\000\022F\n\017SaveLoadingPlan"
           + "\022\027.LoadingPlanSaveRequest\032\030.LoadingPlanS"
@@ -86,7 +86,9 @@ public final class LoadingPlanServiceOuterClass {
           + "quest\032\017.ResponseStatus\"\000\022q\n\036GetLoadingPl"
           + "anCommingleDetails\022$.LoadingInformationS"
           + "ynopticalRequest\032\'.LoadablePlanCommingle"
-          + "CargoDetailsReply\"\000B+\n\'com.cpdss.common."
+          + "CargoDetailsReply\"\000\022N\n\032getLoadingPlanCar"
+          + "goHistory\022\027.CargoHistoryOpsRequest\032\025.Car"
+          + "goHistoryResponse\"\000B+\n\'com.cpdss.common."
           + "generated.loading_planP\000b\006proto3"
     };
     descriptor =

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { DepartureConditionTransformationService } from './departure-condition-transformation.service';
 import { ITankOptions, IVoyagePortDetails, TANKTYPE, ICargo, OPERATIONS, ICargoQuantities, IShipCargoTank, IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../core/models/common.model';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
@@ -8,6 +8,8 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class for departure condition block
@@ -21,7 +23,7 @@ import { IPermission } from '../../../shared/models/user-profile.model';
   templateUrl: './departure-condition.component.html',
   styleUrls: ['./departure-condition.component.scss']
 })
-export class DepartureConditionComponent implements OnInit {
+export class DepartureConditionComponent implements OnInit, OnDestroy {
 
   @Input() get loadingDischargingPlanData(): any {
     return this._loadingDischargingPlanData;
@@ -78,6 +80,7 @@ export class DepartureConditionComponent implements OnInit {
   ballastTankOptions: ITankOptions = { showFillingPercentage: true, showTooltip: true, isSelectable: false, ullageField: 'sounding', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'sg', weightField: 'plannedWeight', weightUnit: AppConfigurationService.settings.baseUnit, showWeight: true };
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   loadingDischargingPlanInfo: any;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
 
   readonly tankType = TANKTYPE;
@@ -100,8 +103,13 @@ export class DepartureConditionComponent implements OnInit {
     this.getShipLandingTanks();
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
   initSubscriptions() {
-    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.subscribe((value) => {
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value && value.portRotationId === this.portRotationId) {
         this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value.status;
       }

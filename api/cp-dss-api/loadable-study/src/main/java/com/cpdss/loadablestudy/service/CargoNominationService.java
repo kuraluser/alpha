@@ -204,10 +204,18 @@ public class CargoNominationService {
               cargoMaxQuantityList.stream()
                   .filter(quantity -> item.getId().equals(quantity.getCargoNominationId()))
                   .findFirst();
+          if (itemQuantity.isPresent()) {
+            String api = itemQuantity.get().getApi();
+            item.setApi(new BigDecimal(itemQuantity.get().getApi()));
+          }
           item.setQuantity(
               itemQuantity.isPresent()
                   ? new BigDecimal(itemQuantity.get().getMaxQuantity())
                   : null);
+          item.setApi(
+              itemQuantity.isPresent() ? new BigDecimal(itemQuantity.get().getApi()) : null);
+          item.setTemperature(
+              itemQuantity.isPresent() ? new BigDecimal(itemQuantity.get().getTemp()) : null);
         });
   }
 
@@ -635,8 +643,8 @@ public class CargoNominationService {
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
-              cargoNomination
-                  .getCargoNominationPortDetails()
+              cargoNomination.getCargoNominationPortDetails().stream()
+                  .filter(operation -> operation.getIsActive())
                   .forEach(
                       loadingPort -> {
                         if (loadingPort.getIsActive()) {

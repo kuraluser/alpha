@@ -30,4 +30,7 @@ public interface LoadingSequenceStabiltyParametersRepository
   @Query(
       "UPDATE LoadingSequenceStabilityParameters SET isActive = false WHERE loadingInformation.id = ?1")
   public void deleteByLoadingInformationId(Long loadingInfoId);
+
+  public List<LoadingSequenceStabilityParameters> findByLoadingInformationId(
+      Long loadingInformation);
 }

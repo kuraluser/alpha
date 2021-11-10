@@ -10,27 +10,31 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.GenerateProtectedFile;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -108,6 +112,7 @@ public class LoadablePlanService {
   @Autowired private JsonDataService jsonDataService;
   @Autowired private CommunicationService communicationService;
   @Autowired private VoyageService voyageService;
+  @Autowired private VoyageRepository voyageRepository;
 
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
@@ -212,6 +217,7 @@ public class LoadablePlanService {
           Optional.ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
           Optional.ofNullable(lpcd.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
           Optional.ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+          Optional.ofNullable(lpcd.getCommingleColour()).ifPresent(builder::setCommingleColour);
           replyBuilder.addLoadableQuantityCommingleCargoDetails(builder);
 
           com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
@@ -781,6 +787,7 @@ public class LoadablePlanService {
           details.setCargo1NominationId(lpsd.getCargo1NominationId());
           details.setCargo2NominationId(lpsd.getCargo2NominationId());
           details.setAbbreviation(lpsd.getGrade());
+          details.setColorCode(lpsd.getCommingleColour());
           stowageDetails.add(details);
         });
     // }
@@ -827,19 +834,32 @@ public class LoadablePlanService {
 
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     workbook.write(byteArrayOutputStream);
+    // setting password protection on the file
+    List<Voyage> voyageList =
+        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
+            1L, request.getVesselId(), vesselPlanTable.getVoyageNo());
+    String string =
+        DateTimeFormatter.ofPattern("dd-MM-yyyy").format(voyageList.get(0).getVoyageStartDate());
+    String password = voyageList.get(0).getVoyageNo() + string.replaceAll("\\D", "");
+    File outputFile = File.createTempFile("unProtected", ".xlsx");
+    try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+      byteArrayOutputStream.writeTo(fos);
+      File protectedFile =
+          GenerateProtectedFile.generatePasswordProtectedFile(outputFile, password);
+      byte[] bytes = Files.readAllBytes(protectedFile.toPath());
 
-    byte[] bytes = byteArrayOutputStream.toByteArray();
-    dataChunkBuilder
-        .setData(ByteString.copyFrom(bytes))
-        .setSize(bytes.length)
-        .setResponseStatus(
-            LoadableStudy.StatusReply.newBuilder()
-                .setStatus(SUCCESS)
-                .setCode(HttpStatusCode.OK.getReasonPhrase())
-                .build())
-        .build();
+      dataChunkBuilder
+          .setData(ByteString.copyFrom(bytes))
+          .setSize(bytes.length)
+          .setResponseStatus(
+              LoadableStudy.StatusReply.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setCode(HttpStatusCode.OK.getReasonPhrase())
+                  .build())
+          .build();
 
-    byteArrayOutputStream.close();
+      byteArrayOutputStream.close();
+    }
   }
 
   /**
@@ -2540,6 +2560,7 @@ public class LoadablePlanService {
     ofNullable(lpcd.getTankName()).ifPresent(builder::setTankName);
     ofNullable(lpcd.getTemperature()).ifPresent(builder::setTemp);
     ofNullable(lpcd.getTankShortName()).ifPresent(builder::setTankShortName);
+    ofNullable(lpcd.getCommingleColour()).ifPresent(builder::setCommingleColour);
     return builder;
   }
 
@@ -3207,6 +3228,7 @@ public class LoadablePlanService {
     algoRequest.setTankId(request.getLoadablePlanStowageDetails().getTankId());
     algoRequest.setApi(request.getLoadablePlanStowageDetails().getApi());
     algoRequest.setTemp(request.getLoadablePlanStowageDetails().getTemperature());
+    algoRequest.setVesselId(request.getVesselId());
     Optional<SynopticalTable> synopticalTableOpt =
         synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
             loadableStudyPortRotationService.getLastPortRotationId(
@@ -3365,5 +3387,87 @@ public class LoadablePlanService {
     replyBuilder.setLoadablePlanStowageDetails(this.buildUpdateUllageReply(algoResponse, request));
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  /**
+   * Method to build loadable plan stowage details proto object using pattern Id
+   *
+   * @param loadablePatternId loadable pattern id value
+   * @return list of stowage details proto object for the given pattern id
+   * @throws GenericServiceException Exception on failure
+   */
+  public List<LoadableStudy.LoadablePlanStowageDetails> buildLoadablePlanStowageDetails(
+      final long loadablePatternId) throws GenericServiceException {
+
+    List<LoadablePlanStowageDetails> stowageDetailsList =
+        loadablePlanStowageDetailsRespository
+            .findByLoadablePattern_IdAndIsActiveTrue(loadablePatternId)
+            .orElse(Collections.emptyList());
+
+    return buildLoadablePlanStowageDetailsProtoObj(stowageDetailsList);
+  }
+
+  /**
+   * Method to convert loadablePlanStowageDetails entity to proto object
+   *
+   * @param loadablePlanStowageDetails loadablePlanStowageDetails entity object
+   */
+  private List<LoadableStudy.LoadablePlanStowageDetails> buildLoadablePlanStowageDetailsProtoObj(
+      List<LoadablePlanStowageDetails> loadablePlanStowageDetails) throws GenericServiceException {
+
+    List<LoadableStudy.LoadablePlanStowageDetails> loadablePlanStowageDetailsProtoList =
+        new ArrayList<>();
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    for (LoadablePlanStowageDetails loadablePlanStowageDetailsDB : loadablePlanStowageDetails) {
+      try {
+        // Build fields with same var names
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
+            loadablePlanStowageDetailsBuilder =
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
+        JsonFormat.parser()
+            .ignoringUnknownFields()
+            .merge(
+                objectMapper.writeValueAsString(loadablePlanStowageDetailsDB),
+                loadablePlanStowageDetailsBuilder);
+
+        // Build other fields -> for fields with different var names
+        loadablePlanStowageDetailsBuilder.setStowageDetailsId(loadablePlanStowageDetailsDB.getId());
+        loadablePlanStowageDetailsBuilder.setCargoAbbreviation(
+            loadablePlanStowageDetailsDB.getAbbreviation());
+        loadablePlanStowageDetailsBuilder.setFillingRatio(
+            loadablePlanStowageDetailsDB.getFillingPercentage());
+        loadablePlanStowageDetailsBuilder.setTankName(loadablePlanStowageDetailsDB.getTankname());
+
+        // Add loadable pattern cargo details
+        LoadablePatternCargoDetails loadablePatternCargoDetails =
+            loadablePatternCargoDetailsRepository
+                .findFirstByLoadablePatternIdAndCargoNominationIdAndTankIdAndIsActiveTrue(
+                    loadablePlanStowageDetailsDB.getLoadablePattern().getId(),
+                    loadablePlanStowageDetailsDB.getCargoNominationId(),
+                    loadablePlanStowageDetailsDB.getTankId())
+                .orElseThrow(RuntimeException::new);
+        loadablePlanStowageDetailsBuilder.setOnboard(
+            loadablePatternCargoDetails.getOnBoard().toString());
+        loadablePlanStowageDetailsBuilder.setMaxTankVolume(
+            loadablePatternCargoDetails.getMaxTankVolume().toString());
+
+        // Add details
+        loadablePlanStowageDetailsProtoList.add(loadablePlanStowageDetailsBuilder.build());
+      } catch (InvalidProtocolBufferException | JsonProcessingException e) {
+        log.error(
+            "LoadablePlanStowageDetails entity object to proto object conversion failed. Stowage Details: {}",
+            loadablePlanStowageDetailsDB,
+            e);
+        throw new GenericServiceException(
+            "LoadablePlanStowageDetails entity object to proto object conversion failed. Stowage Details: "
+                + loadablePlanStowageDetailsDB,
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR,
+            e);
+      }
+    }
+
+    return loadablePlanStowageDetailsProtoList;
   }
 }

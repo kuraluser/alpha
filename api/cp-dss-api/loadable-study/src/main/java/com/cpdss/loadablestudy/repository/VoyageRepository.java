@@ -7,8 +7,10 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /** @Author jerin.g */
 public interface VoyageRepository
@@ -23,6 +25,8 @@ public interface VoyageRepository
       Long vesselXId, boolean isActive);
 
   public Voyage findByIdAndIsActive(Long id, boolean isActive);
+
+  public List<Voyage> findByVoyageNoAndIsActive(String voyageNo, boolean isActive);
 
   /*public Voyage
   findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
@@ -76,4 +80,9 @@ public interface VoyageRepository
       "select V from Voyage V WHERE V.voyageStatus.id =?1 AND V.vesselXId = ?2 AND V.isActive=?3")
   public List<Voyage> findByVoyageStatusAndVesselIdAndIsActive(
       Long voyageId, Long vesselId, boolean b);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE Voyage SET voyageStatus = ?2 WHERE id = ?1")
+  void activateVoyage(Long id, VoyageStatus voyageStatus);
 }

@@ -169,6 +169,8 @@ message DischargeDelays {
   int64 cargoId = 5;
   string quantity = 6;
   int64 cargoNominationId = 7;
+  int64 sequenceNo = 8;
+  
 }
 
 message PostDischargeStageTime {
@@ -226,6 +228,8 @@ message DischargeStudyDataTransferRequest{
 	int64 dischargePatternId = 2;
 	int64 voyageId = 3;
 	int64 vesselId = 4;
+  int64 dischargeStudyId = 5;
+  string dischargeProcessId = 6;
 }
 
 message PortData{
@@ -412,4 +416,18 @@ message DischargePlanStowageDetailsRequest{
 message DischargePlanStowageDetailsResponse {
   ResponseStatus responseStatus = 1;
   repeated LoadingPlanTankDetails dischargingPlanTankDetails = 2;
+}
+
+message DischargingInfoLoadicatorDataRequest {
+  string processId = 1;
+  int64 dischargingInformationId = 2;
+  repeated LoadingInfoLoadicatorDetail loadingInfoLoadicatorDetails = 3;
+  bool isUllageUpdate = 4;
+  int32 conditionType = 5;
+}
+
+message DischargingInfoLoadicatorDataReply {
+  string processId = 1;
+  int64 loadableStudyId = 2;
+  ResponseStatus responseStatus = 3;
 }

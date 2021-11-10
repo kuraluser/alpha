@@ -60,6 +60,7 @@ export class DischargeStudyListTransformationApiService {
         editable: false,
         filterPlaceholder: 'DISCHARGE_STUDY_LIST_SEARCH_BY_STATUS',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
+        fieldHeaderClass: 'column-status',
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'status',
       },
@@ -74,6 +75,7 @@ export class DischargeStudyListTransformationApiService {
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'createdDate',
+        fieldHeaderClass: 'column-created-date',
         filterFieldMaxvalue: new Date()
       },
       {
@@ -84,6 +86,7 @@ export class DischargeStudyListTransformationApiService {
         editable: false,
         filterPlaceholder: 'DISCHARGE_STUDY_LIST_SEARCH_BY_DATE',
         filterType: DATATABLE_FILTER_TYPE.DATE,
+        fieldHeaderClass: 'column-last-edited',
         dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'lastEdited',
@@ -138,7 +141,8 @@ convertToDate(value): Date {
     return {    
       newDischargeStudyName: {
         'required': 'DISCHARGE_STUDY_POPUP_REQUIRED_ERROR',       
-        'patternMatch': 'DISCHARGE_NAME_INVALID_PATTERN'
+        'patternMatch': 'DISCHARGE_NAME_INVALID_PATTERN',
+        'maxlength': 'DISCHARGE_STUDY_NAME_MAX_LENGTH'
       },
       enquiryDetails: {
         'maxlength': 'DISCHARGE_STUDY_MAX_LENGTH'

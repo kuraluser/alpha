@@ -103,6 +103,8 @@ public class VoyageService {
   @GrpcClient("cargoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
 
+  @Autowired CargoService cargoService;
+
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
   /**
@@ -662,6 +664,14 @@ public class VoyageService {
                 ? LocalDateTime.from(
                     DateTimeFormatter.ofPattern(DATE_FORMAT).parse(request.getActualEndDate()))
                 : null);
+      }
+
+      try {
+        // Get and Save Cargo History from Loading and Discharge Modules
+        cargoService.saveCargoHistoryFromOperationsModule(
+            voyageEntity.getVesselXId(), voyageEntity.getId());
+      } catch (Exception e) {
+        log.info("Failed to save Cargo History - Error {}", e.getMessage());
       }
     }
     this.voyageRepository.save(voyageEntity);

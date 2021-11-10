@@ -70,6 +70,8 @@ public class LoadableStudyPortRotationService {
   @Autowired private OnHandQuantityService onHandQuantityService;
   @Autowired private EntityManager entityManager;
 
+  @Autowired private CargoNominationService cargoNominationService;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -821,6 +823,17 @@ public class LoadableStudyPortRotationService {
     if (loadableStudy.getPlanningTypeXId() == 2) {
       loadableStudy.setIsDischargeStudyComplete(false);
       this.loadableStudyRepository.save(loadableStudy);
+      List<CargoNomination> cargoNominations =
+          cargoNominationService.getCargoNominations(loadableStudy.getId());
+      cargoNominations.stream()
+          .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
+          .forEach(
+              operation -> {
+                if (operation.getPortId().equals(entity.getPortXId())) {
+                  operation.setIsActive(false);
+                }
+              });
+      cargoNominationService.saveAll(cargoNominations);
     }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;

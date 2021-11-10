@@ -6,6 +6,8 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
+import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.discharge_plan.*;
@@ -38,6 +40,7 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParameters
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
 import com.cpdss.dischargeplan.service.*;
+import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
@@ -86,6 +89,10 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired RestTemplate restTemplate;
   @Autowired DischargeInformationRepository dischargeInformationRepository;
   @Autowired DischargingSequenceService dischargeSequenceService;
+
+  @Autowired LoadicatorService loadicatorService;
+
+  @Autowired DischargeCargoHistoryService cargoHistoryService;
 
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
@@ -848,6 +855,83 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .build());
     } finally {
       responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getLoadicatorData(
+      DischargingInfoLoadicatorDataRequest request,
+      StreamObserver<DischargingInfoLoadicatorDataReply> responseObserver) {
+    DischargingInfoLoadicatorDataReply.Builder reply =
+        DischargingInfoLoadicatorDataReply.newBuilder();
+    try {
+      loadicatorService.getLoadicatorData(request, reply);
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when getting data from Loadicator", e);
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargingInfoAlgoErrors(
+      AlgoErrorRequest request, StreamObserver<AlgoErrorReply> responseObserver) {
+    log.info("Inside getDischargingInfoAlgoErrors in DP MS");
+    AlgoErrorReply.Builder builder = AlgoErrorReply.newBuilder();
+    try {
+      this.dischargePlanAlgoService.getDischargingInfoAlgoErrors(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build()).build();
+    } catch (GenericServiceException e) {
+      log.info("GenericServiceException in getDischargingInfoAlgoErrors at DP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("Exception in getDischargingInfoAlgoErrors at DP MS ", e);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(e.getMessage())
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargePlanCargoHistory(
+      Common.CargoHistoryOpsRequest request,
+      StreamObserver<Common.CargoHistoryResponse> responseObserver) {
+    Common.CargoHistoryResponse.Builder builder = Common.CargoHistoryResponse.newBuilder();
+    try {
+      log.info("Get cargo history for voyage id - {}", request.getVoyageId());
+      cargoHistoryService.buildCargoDetailsFromStowageData(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
   }

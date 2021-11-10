@@ -160,6 +160,16 @@ public class LoadicatorService {
     List<LoadingPlanBallastDetails> loadingPlanBallastDetails =
         loadingPlanBallastDetailsRepository.findByLoadingPlanPortWiseDetailIdsAndIsActive(
             portWiseDetailIds, true);
+    BigDecimal sg = null;
+    List<BigDecimal> specificGravities =
+        loadingPlanBallastDetails.stream()
+            .filter(ballast -> (ballast.getSg() != null) && (ballast.getSg() != BigDecimal.ZERO))
+            .map(ballast -> ballast.getSg())
+            .collect(Collectors.toList());
+
+    if (!specificGravities.isEmpty()) {
+      sg = specificGravities.get(0);
+    }
     List<LoadingPlanRobDetails> loadingPlanRobDetails =
         loadingPlanRobDetailsRepository.findByPortWiseDetailIdsAndIsActive(portWiseDetailIds, true);
     List<LoadingPlanCommingleDetails> loadingPlanCommingleDetails =
@@ -248,38 +258,38 @@ public class LoadicatorService {
 
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
     loadicatorRequestBuilder.setIsUllageUpdate(false);
-    loadingTimes.forEach(
-        time -> {
-          StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
-          buildStowagePlan(
-              loadingInformation,
-              time,
-              processId,
-              cargoReply,
-              vesselReply,
-              portReply,
-              stowagePlanBuilder);
-          buildLoadicatorStowagePlanDetails(
-              loadingInformation,
-              stowageMap.get(time),
-              commingleMap.get(time),
-              cargoNomDetails,
-              vesselReply,
-              cargoReply,
-              stowagePlanBuilder);
-          buildLoadicatorCargoDetails(
-              loadingInformation,
-              cargoNomDetails,
-              stowageMap.get(time),
-              commingleMap.get(time),
-              cargoReply,
-              stowagePlanBuilder);
-          buildLoadicatorBallastDetails(
-              loadingInformation, ballastMap.get(time), vesselReply, stowagePlanBuilder);
-          buildLoadicatorRobDetails(
-              loadingInformation, robMap.get(time), vesselReply, stowagePlanBuilder);
-          loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
-        });
+    for (Integer time : loadingTimes) {
+      StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
+      buildStowagePlan(
+          loadingInformation,
+          time,
+          processId,
+          cargoReply,
+          vesselReply,
+          portReply,
+          stowagePlanBuilder,
+          sg);
+      buildLoadicatorStowagePlanDetails(
+          loadingInformation,
+          stowageMap.get(time),
+          commingleMap.get(time),
+          cargoNomDetails,
+          vesselReply,
+          cargoReply,
+          stowagePlanBuilder);
+      buildLoadicatorCargoDetails(
+          loadingInformation,
+          cargoNomDetails,
+          stowageMap.get(time),
+          commingleMap.get(time),
+          cargoReply,
+          stowagePlanBuilder);
+      buildLoadicatorBallastDetails(
+          loadingInformation, ballastMap.get(time), vesselReply, stowagePlanBuilder);
+      buildLoadicatorRobDetails(
+          loadingInformation, robMap.get(time), vesselReply, stowagePlanBuilder);
+      loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
+    }
 
     Loadicator.LoadicatorReply reply = this.saveLoadicatorInfo(loadicatorRequestBuilder.build());
     if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
@@ -480,17 +490,19 @@ public class LoadicatorService {
   public Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)
       throws GenericServiceException {
     Map<Long, CargoNominationDetail> details = new HashMap<Long, CargoNominationDetail>();
-    cargoNominationIds.forEach(
-        id -> {
-          CargoNominationRequest.Builder builder = CargoNominationRequest.newBuilder();
-          builder.setCargoNominationId(id);
-          CargoNominationDetailReply reply =
-              loadableStudyGrpcService.getCargoNominationByCargoNominationId(builder.build());
-          if (reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
-            log.info("Fetched details of cargo nomination with id {}", id);
-            details.put(id, reply.getCargoNominationdetail());
-          }
-        });
+    cargoNominationIds.stream()
+        .filter(cargoNomId -> cargoNomId != 0)
+        .forEach(
+            id -> {
+              CargoNominationRequest.Builder builder = CargoNominationRequest.newBuilder();
+              builder.setCargoNominationId(id);
+              CargoNominationDetailReply reply =
+                  loadableStudyGrpcService.getCargoNominationByCargoNominationId(builder.build());
+              if (reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
+                log.info("Fetched details of cargo nomination with id {}", id);
+                details.put(id, reply.getCargoNominationdetail());
+              }
+            });
 
     return details;
   }
@@ -588,7 +600,8 @@ public class LoadicatorService {
       CargoReply cargoReply,
       VesselReply vesselReply,
       PortReply portReply,
-      Builder stowagePlanBuilder) {
+      Builder stowagePlanBuilder,
+      BigDecimal sg) {
     stowagePlanBuilder.setProcessId(processId);
     VesselInfo.VesselDetail vessel = vesselReply.getVesselsList().get(0);
     Optional.ofNullable(vessel.getId()).ifPresent(stowagePlanBuilder::setVesselId);
@@ -611,6 +624,9 @@ public class LoadicatorService {
       Optional.ofNullable(portDetail.get().getCode()).ifPresent(stowagePlanBuilder::setPortCode);
       Optional.ofNullable(portDetail.get().getWaterDensity())
           .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
+    }
+    if (sg != null) {
+      stowagePlanBuilder.setSeaWaterDensity(sg.toString());
     }
     stowagePlanBuilder.setSynopticalId(loadingInformation.getSynopticalTableXId());
   }
@@ -973,26 +989,44 @@ public class LoadicatorService {
    */
   private void savePortStabilityParams(
       LoadingInformation loadingInformation, LoadicatorAlgoResponse algoResponse) {
+    Optional<PortLoadingPlanStabilityParameters> oldArrStabilityOpt =
+        portLoadingPlanStabilityParametersRepository
+            .findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
+                loadingInformation.getId(),
+                LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE,
+                LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+
+    Optional<PortLoadingPlanStabilityParameters> oldDepStabilityOpt =
+        portLoadingPlanStabilityParametersRepository
+            .findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
+                loadingInformation.getId(),
+                LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE,
+                LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+
     portLoadingPlanStabilityParametersRepository.deleteByLoadingInformationId(
         loadingInformation.getId());
     LoadicatorResult arrivalStabilityParameters = algoResponse.getLoadicatorResults().get(0);
     LoadicatorResult departureStabilityParameters =
         algoResponse.getLoadicatorResults().get(algoResponse.getLoadicatorResults().size() - 1);
+
     PortLoadingPlanStabilityParameters portArrStability = new PortLoadingPlanStabilityParameters();
     buildPortStabilityParams(
         loadingInformation,
         arrivalStabilityParameters,
         portArrStability,
         LoadingPlanConstants.LOADING_PLAN_ARRIVAL_CONDITION_VALUE,
-        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE,
+        oldArrStabilityOpt);
     portLoadingPlanStabilityParametersRepository.save(portArrStability);
+
     PortLoadingPlanStabilityParameters portDepStability = new PortLoadingPlanStabilityParameters();
     buildPortStabilityParams(
         loadingInformation,
         departureStabilityParameters,
         portDepStability,
         LoadingPlanConstants.LOADING_PLAN_DEPARTURE_CONDITION_VALUE,
-        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
+        LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE,
+        oldDepStabilityOpt);
     portLoadingPlanStabilityParametersRepository.save(portDepStability);
   }
 
@@ -1001,13 +1035,15 @@ public class LoadicatorService {
    * @param loadicatorResult
    * @param portStabilityParameters
    * @param conditionType
+   * @param oldStabilityOpt
    */
   public void buildPortStabilityParams(
       LoadingInformation loadingInformation,
       LoadicatorResult result,
       PortLoadingPlanStabilityParameters portStabilityParameters,
       Integer conditionType,
-      Integer valueType) {
+      Integer valueType,
+      Optional<PortLoadingPlanStabilityParameters> oldStabilityOpt) {
     portStabilityParameters.setAftDraft(
         StringUtils.isEmpty(result.getCalculatedDraftAftPlanned())
             ? null
@@ -1040,6 +1076,11 @@ public class LoadicatorService {
     portStabilityParameters.setConditionType(conditionType);
     portStabilityParameters.setPortRotationXId(loadingInformation.getPortRotationXId());
     portStabilityParameters.setValueType(valueType);
+    oldStabilityOpt.ifPresent(
+        stability -> {
+          portStabilityParameters.setFreeboard(stability.getFreeboard());
+          portStabilityParameters.setManifoldHeight(stability.getManifoldHeight());
+        });
   }
 
   private void deleteLoadingSequenceStabilityParameters(LoadingInformation loadingInformation) {

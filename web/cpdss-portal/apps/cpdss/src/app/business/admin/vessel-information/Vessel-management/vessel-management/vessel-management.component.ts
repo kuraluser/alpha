@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { AppConfigurationService } from '../../../../../shared/services/app-configuration/app-configuration.service';
 import { VesselInformationApiService } from '../../../services/vessel-information-api.service';
@@ -22,7 +24,7 @@ import { IDateTimeFormatOptions } from '../../../../../shared/models/common.mode
   templateUrl: './vessel-management.component.html',
   styleUrls: ['./vessel-management.component.scss']
 })
-export class VesselManagementComponent implements OnInit {
+export class VesselManagementComponent implements OnInit, OnDestroy {
 
   vesselId: number;
   vesselDetails: IVesselDetailsResponse;
@@ -34,6 +36,7 @@ export class VesselManagementComponent implements OnInit {
   rearBunkerTanks: IShipBunkerTank[][];
   selectedTab = TANKTYPE.CARGO;
   readonly tankType = TANKTYPE;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   tankOptions: ITankOptions = {
     showTooltip: true,
@@ -56,10 +59,15 @@ export class VesselManagementComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
       this.vesselId = Number(params.get('vesselId'));
     });
     this.getVesselManagementDetails();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   /**

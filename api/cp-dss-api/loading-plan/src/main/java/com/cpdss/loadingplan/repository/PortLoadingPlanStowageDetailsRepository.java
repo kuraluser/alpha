@@ -68,4 +68,10 @@ public interface PortLoadingPlanStowageDetailsRepository
       "Update PortLoadingPlanStowageDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
+
+  public List<PortLoadingPlanStowageDetails> findByLoadingInformationId(Long loadingInformationId);
+
+  @Query(
+      "FROM PortLoadingPlanStowageDetails plpsd WHERE plpsd.loadingInformation.id = ?1 and plpsd.conditionType = 2 and plpsd.valueType = 2 and plpsd.isActive = true")
+  List<PortLoadingPlanStowageDetails> findCargoHistoryData(Long infoId);
 }

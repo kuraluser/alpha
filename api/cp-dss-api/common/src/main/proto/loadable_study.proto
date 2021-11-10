@@ -206,6 +206,12 @@ service LoadableStudyService {
 	rpc GetLoadableStudySimulatorJsonData(SimulatorJsonRequest) returns (SimulatorJsonReply){}
 	
 	rpc updateDischargeQuantityCargoDetails(DischargeQuantityCargoDetailsRequest) returns (ResponseStatus){}
+
+	rpc GetLoadingSimulatorJsonData(LoadingSimulatorJsonRequest) returns (LoadingSimulatorJsonReply){}
+
+	rpc GetVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
+	
+	rpc saveActivatedVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
 }
 
 service SynopticalOperationService{
@@ -293,6 +299,7 @@ message UpdateUllageRequest {
 	int64 loadablePatternId = 1;
 	LoadablePlanStowageDetails loadablePlanStowageDetails = 2;
 	bool updateUllageForLoadingPlan = 3;
+	int64 vesselId = 4;
 }
 
 message UpdateUllageReply {
@@ -443,6 +450,7 @@ message AlgoErrorRequest {
 	int64 loadablePatternId = 2;
 	int64 loadingInformationId = 3;
 	int32 conditionType = 4;
+	int64 dischargingInformationId = 5;
 }
 
 message AlgoErrorReply {
@@ -581,6 +589,7 @@ message LoadablePlanStowageDetails {
   string onboard = 28; //DS field
   string maxTankVolume = 29; //DS field
 	string quantityMT = 30;
+	int64 stowageDetailsId = 31;
  }
 
 
@@ -1275,6 +1284,9 @@ message SynopticalCargoRecord{
 	int64 planQtyId = 17; // loadable_plan_quantity ID OR discharge_quantity_cargo_details ID
 	int32 planQtyCargoOrder = 18; // loading or discharging order
 	string ullage = 19;
+	string actualApi = 20;	
+	string actualTemperature = 21;
+	
 }
 
 message SynopticalOhqRecord{
@@ -1615,4 +1627,26 @@ message SimulatorJsonRequest{
 message SimulatorJsonReply{
     ResponseStatus responseStatus = 1;
     string departureCondition = 2;
+}
+
+message LoadingSimulatorJsonRequest{
+    int64 vesselId = 1;
+    int64 infoId = 2;
+}
+
+message LoadingSimulatorJsonReply{
+    ResponseStatus responseStatus = 1;
+    string loadicatorJson = 2;
+    string loadingJson = 3;
+}
+
+message VoyageActivateRequest{
+	int64 id=1;
+	int64 voyageStatus=2;
+}
+
+message VoyageActivateReply {
+	ResponseStatus responseStatus = 1;
+	VoyageActivateRequest voyageActivateRequest = 2;
+
 }

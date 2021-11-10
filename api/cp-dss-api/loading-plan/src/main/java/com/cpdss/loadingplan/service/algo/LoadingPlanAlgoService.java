@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.service.algo;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
@@ -23,9 +24,13 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
+import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
 import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
+import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.entity.AlgoErrorHeading;
 import com.cpdss.loadingplan.entity.AlgoErrors;
 import com.cpdss.loadingplan.entity.BallastOperation;
@@ -45,6 +50,7 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
+import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadingplan.repository.AlgoErrorsRepository;
 import com.cpdss.loadingplan.repository.BallastOperationRepository;
@@ -72,14 +78,15 @@ import com.cpdss.loadingplan.repository.PortLoadingPlanRobDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStabilityParametersRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageTempDetailsRepository;
+import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +105,12 @@ public class LoadingPlanAlgoService {
 
   @Value(value = "${loadingplan.attachment.rootFolder}")
   private String rootFolder;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   @Autowired RestTemplate restTemplate;
 
@@ -141,6 +154,10 @@ public class LoadingPlanAlgoService {
   @Autowired LoadingInformationAlgoRequestBuilderService loadingInfoAlgoRequestBuilderService;
   @Autowired LoadingPlanBuilderService loadingPlanBuilderService;
   @Autowired LoadicatorService loadicatorService;
+  @Autowired LoadingPlanCommunicationService loadingPlancommunicationService;
+  @Autowired LoadingPlanStagingService loadingPlanStagingService;
+  @Autowired LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
+  @Autowired private LoadingPlanCommunicationService communicationService;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -155,6 +172,7 @@ public class LoadingPlanAlgoService {
   public void generateLoadingPlan(LoadingInfoAlgoRequest request, Builder builder)
       throws GenericServiceException {
     log.info("Generating Loading Plan");
+
     Optional<LoadingInformation> loadingInfoOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInfoId());
 
@@ -164,36 +182,91 @@ public class LoadingPlanAlgoService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-
-    // Create JSON To Algo
-    LoadingInformationAlgoRequest algoRequest =
-        loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
-
-    // Save Above JSON In LS json data Table
-    saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
-
-    // Call To Algo End Point for Loading
-    LoadingInformationAlgoResponse response =
-        restTemplate.postForObject(
-            planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
-
+    String processId = null;
+    Long status = null;
+    if (enableCommunication && env.equals("ship")) {
+      status = LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE;
+    } else {
+      status = LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID;
+    }
+    log.info("LoadingInformation status:{}", status);
+    Optional<LoadingInformationStatus> loadingInfoStatusOpt = getLoadingInformationStatus(status);
     // Set Loading Status
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-        getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
-    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
-    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
-    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
-    loadingInformationRepository.save(loadingInfoOpt.get());
+    loadingInformationRepository.updateLoadingInfoWithInfoStatus(
+        loadingInfoStatusOpt.get(), false, false, loadingInfoOpt.get().getId());
+    //    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
+    //    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
+    //    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
+    //    loadingInformationRepository.save(loadingInfoOpt.get());
+    if (enableCommunication && env.equals("ship")) {
+      processId = UUID.randomUUID().toString();
+      JsonArray jsonArray =
+          loadingPlanStagingService.getCommunicationData(
+              Arrays.asList(
+                  "loading_information",
+                  "cargo_topping_off_sequence",
+                  "loading_berth_details",
+                  "loading_delay",
+                  "loading_machinary_in_use",
+                  "loading_sequence",
+                  "loading_plan_portwise_details",
+                  "voyage"),
+              processId,
+              MessageTypes.LOADINGPLAN.getMessageType(),
+              loadingInfoOpt.get().getId(),
+              null);
+
+      log.info("Json Array in Loading plan service: " + jsonArray.toString());
+      EnvoyWriter.WriterReply ewReply =
+          communicationService.passRequestPayloadToEnvoyWriter(
+              jsonArray.toString(),
+              loadingInfoOpt.get().getVesselXId(),
+              MessageTypes.LOADINGPLAN.getMessageType());
+
+      if (LoadingPlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+        LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+            new LoadingPlanCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          loadingPlanCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+        }
+        loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
+        loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
+        loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
+            this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+        log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
+      }
+    } else {
+      log.info("Create algo request:" + request);
+      // Create JSON To Algo
+      LoadingInformationAlgoRequest algoRequest =
+          loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
+      log.info("algo request created: {}", algoRequest);
+      log.info("Before Save Above JSON In LS json data Table");
+      // Save Above JSON In LS json data Table
+      saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
+      log.info("Call To Algo End Point for Loading");
+      // Call To Algo End Point for Loading
+      LoadingInformationAlgoResponse response =
+          restTemplate.postForObject(
+              planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+      processId = response.getProcessId();
+      log.info("LoadingInformationAlgoResponse:{}", response);
+    }
+
     createLoadingInformationAlgoStatus(
-        loadingInfoOpt.get(), response.getProcessId(), loadingInfoStatusOpt.get(), null);
+        loadingInfoOpt.get(), processId, loadingInfoStatusOpt.get(), null);
     builder.setLoadingInfoId(loadingInfoOpt.get().getId());
-    builder.setProcessId(response.getProcessId());
+    builder.setProcessId(processId);
   }
 
   /**
    * Fetches Loading Information Status based on status ID.
    *
-   * @param loadingInformationProcessingStartedId
+   * @param
    * @return
    * @throws GenericServiceException
    */
@@ -349,6 +422,50 @@ public class LoadingPlanAlgoService {
 
       deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
+      if (enableCommunication && !env.equals("ship")) {
+        JsonArray jsonArray =
+            loadingPlanStagingService.getCommunicationData(
+                Arrays.asList(
+                    "loading_information",
+                    "loading_sequence",
+                    "loading_plan_portwise_details",
+                    "port_loading_plan_stability_parameters",
+                    "port_loading_plan_rob_details",
+                    "loading_plan_ballast_details",
+                    "loading_plan_rob_details",
+                    "port_loading_plan_stowage_ballast_details",
+                    "port_loading_plan_stowage_ballast_details_temp",
+                    "port_loading_plan_stowage_details",
+                    "port_loading_plan_stowage_details_temp",
+                    "loading_plan_stowage_details",
+                    "loading_sequence_stability_parameters",
+                    "loading_plan_stability_parameters"),
+                UUID.randomUUID().toString(),
+                MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
+                loadingInfoOpt.get().getId(),
+                null);
+        log.info("Json Array in After Algo call: " + jsonArray.toString());
+        EnvoyWriter.WriterReply ewReply =
+            loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                loadingInfoOpt.get().getVesselXId(),
+                MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+        log.info("------- Envoy writer has called successfully in shore: " + ewReply.toString());
+        LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+            new LoadingPlanCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          loadingPlanCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
+        }
+        loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
+        loadingPlanCommunicationStatus.setMessageType(
+            MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+        loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
+            this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+        log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
+      }
       if (request.getHasLoadicator()) {
         log.info("Passing Loading Sequence to Loadicator");
         loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
@@ -633,7 +750,7 @@ public class LoadingPlanAlgoService {
   }
 
   /**
-   * @param savedLoadingSequence
+   * @param
    * @param eductorOperation
    */
   private void saveEductorOperations(
@@ -707,7 +824,7 @@ public class LoadingPlanAlgoService {
   }
 
   /**
-   * @param savedPortWiseDetails
+   * @param
    * @param loadingPlanCommingleDetailsList
    */
   private void saveLoadingPlanCommingleDetails(

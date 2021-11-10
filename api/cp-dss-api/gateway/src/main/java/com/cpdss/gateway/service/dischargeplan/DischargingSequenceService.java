@@ -368,7 +368,7 @@ public class DischargingSequenceService {
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildDischargingRates(
                   sequence.getTankWiseCargoDischargingRates(), sequenceBuilder);
-              if (sequence.getLoadablePlanPortWiseDetails() != null) {
+              if (sequence.getDischargePlanPortWiseDetails() != null) {
                 this.buildDischargingPlanPortWiseDetails(
                     sequence.getDischargePlanPortWiseDetails(), sequenceBuilder);
               }
@@ -825,6 +825,8 @@ public class DischargingSequenceService {
     this.buildPumpDetails(vesselId, response, allPumps);
     loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories,ballastEduction);
     loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
+    // loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories);
+    //    loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);

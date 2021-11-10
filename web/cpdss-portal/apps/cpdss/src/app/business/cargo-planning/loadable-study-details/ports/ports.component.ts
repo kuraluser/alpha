@@ -22,6 +22,8 @@ import { TimeZoneTransformationService } from './../../../../shared/services/tim
 import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
 import * as moment from 'moment';
 import { seaWaterDensityRangeValidator } from '../../../core/directives/seawater-density-range-validator.directive';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component class of ports screen
@@ -84,6 +86,7 @@ export class PortsComponent implements OnInit, OnDestroy {
   progress = true;
   timeZoneList: ITimeZone[];
   portEtaEtdPermission: IPermission;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   // private fields
   private _portsLists: IPortsValueObject[];
@@ -111,6 +114,8 @@ export class PortsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
     navigator.serviceWorker.removeEventListener('message', this.swMessageHandler);
   }
 
@@ -290,7 +295,7 @@ export class PortsComponent implements OnInit, OnDestroy {
  * @memberof PortsComponent
  */
   private initSubscriptions() {
-    this.loadableStudyDetailsTransformationService.addPort$.subscribe(() => {
+    this.loadableStudyDetailsTransformationService.addPort$.pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
       this.addPort();
     });
 

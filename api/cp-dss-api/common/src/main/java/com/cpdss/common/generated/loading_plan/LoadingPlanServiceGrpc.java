@@ -694,6 +694,59 @@ public final class LoadingPlanServiceGrpc {
     return getGetLoadingPlanCommingleDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+          com.cpdss.common.generated.Common.CargoHistoryResponse>
+      getGetLoadingPlanCargoHistoryMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getLoadingPlanCargoHistory",
+      requestType = com.cpdss.common.generated.Common.CargoHistoryOpsRequest.class,
+      responseType = com.cpdss.common.generated.Common.CargoHistoryResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+          com.cpdss.common.generated.Common.CargoHistoryResponse>
+      getGetLoadingPlanCargoHistoryMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+            com.cpdss.common.generated.Common.CargoHistoryResponse>
+        getGetLoadingPlanCargoHistoryMethod;
+    if ((getGetLoadingPlanCargoHistoryMethod =
+            LoadingPlanServiceGrpc.getGetLoadingPlanCargoHistoryMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getGetLoadingPlanCargoHistoryMethod =
+                LoadingPlanServiceGrpc.getGetLoadingPlanCargoHistoryMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getGetLoadingPlanCargoHistoryMethod =
+              getGetLoadingPlanCargoHistoryMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+                          com.cpdss.common.generated.Common.CargoHistoryResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getLoadingPlanCargoHistory"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CargoHistoryOpsRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CargoHistoryResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "getLoadingPlanCargoHistory"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadingPlanCargoHistoryMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -867,6 +920,15 @@ public final class LoadingPlanServiceGrpc {
           getGetLoadingPlanCommingleDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadingPlanCargoHistory(
+        com.cpdss.common.generated.Common.CargoHistoryOpsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadingPlanCargoHistoryMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -967,6 +1029,13 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadablePlanCommingleCargoDetailsReply>(
                       this, METHODID_GET_LOADING_PLAN_COMMINGLE_DETAILS)))
+          .addMethod(
+              getGetLoadingPlanCargoHistoryMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
+                      com.cpdss.common.generated.Common.CargoHistoryResponse>(
+                      this, METHODID_GET_LOADING_PLAN_CARGO_HISTORY)))
           .build();
     }
   }
@@ -1136,6 +1205,17 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadingPlanCargoHistory(
+        com.cpdss.common.generated.Common.CargoHistoryOpsRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetLoadingPlanCargoHistoryMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1260,6 +1340,13 @@ public final class LoadingPlanServiceGrpc {
                 request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingPlanCommingleDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.CargoHistoryResponse getLoadingPlanCargoHistory(
+        com.cpdss.common.generated.Common.CargoHistoryOpsRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetLoadingPlanCargoHistoryMethod(), getCallOptions(), request);
     }
   }
 
@@ -1402,6 +1489,15 @@ public final class LoadingPlanServiceGrpc {
           getChannel().newCall(getGetLoadingPlanCommingleDetailsMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CargoHistoryResponse>
+        getLoadingPlanCargoHistory(
+            com.cpdss.common.generated.Common.CargoHistoryOpsRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetLoadingPlanCargoHistoryMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -1416,6 +1512,7 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_GET_LOADABLE_STUDY_SHORE_TWO = 9;
   private static final int METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING = 10;
   private static final int METHODID_GET_LOADING_PLAN_COMMINGLE_DETAILS = 11;
+  private static final int METHODID_GET_LOADING_PLAN_CARGO_HISTORY = 12;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1540,6 +1637,12 @@ public final class LoadingPlanServiceGrpc {
                           .LoadablePlanCommingleCargoDetailsReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADING_PLAN_CARGO_HISTORY:
+          serviceImpl.getLoadingPlanCargoHistory(
+              (com.cpdss.common.generated.Common.CargoHistoryOpsRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1616,6 +1719,7 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getGetLoadableStudyShoreTwoMethod())
                       .addMethod(getValidateStowageAndBillOfLaddingMethod())
                       .addMethod(getGetLoadingPlanCommingleDetailsMethod())
+                      .addMethod(getGetLoadingPlanCargoHistoryMethod())
                       .build();
         }
       }

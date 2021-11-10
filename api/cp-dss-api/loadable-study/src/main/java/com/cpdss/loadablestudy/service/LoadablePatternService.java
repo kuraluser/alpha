@@ -11,6 +11,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TAN
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DICHARGE_STUDY;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_RESULT_JSON_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_ID;
@@ -29,6 +30,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_O
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.UPDATED_LOADABLE_STUDY_RESULT_JSON_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VALIDATED_CONDITIONS;
 import static java.util.Optional.ofNullable;
 
@@ -50,7 +52,6 @@ import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.CowTypeMaster;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
-import com.cpdss.loadablestudy.entity.JsonData;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
 import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
@@ -99,7 +100,6 @@ import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepositor
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
-import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -399,7 +399,7 @@ public class LoadablePatternService {
       // Update pattern Ids
       if (enableCommunication && !env.equals("ship")) {
         request =
-            updatePatternIdAlgoObj(
+            updateAlgoResponse(
                 loadableStudyOpt.get().getId(), request, loadablePatterns, requestType);
       }
 
@@ -452,69 +452,117 @@ public class LoadablePatternService {
   }
 
   /**
-   * Method to update pattern Ids to algo object
+   * Method to update ids and other missing data to algo object for communication
    *
    * @param loadableStudyId loadableStudyId value
    * @param algoCallBackRequestObj Algo Callback request object
    * @param patterns list of saved patterns
-   * @param requestType
+   * @param requestType requestType value LS/DS
    * @return LoadablePatternAlgoRequest object
    * @throws GenericServiceException Exception on JSON conversion failure
    */
-  private com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
-      updatePatternIdAlgoObj(
-          long loadableStudyId,
-          com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
-              algoCallBackRequestObj,
-          List<LoadablePattern> patterns,
-          String requestType)
-          throws GenericServiceException {
+  private com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest updateAlgoResponse(
+      final long loadableStudyId,
+      final com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
+          algoCallBackRequestObj,
+      final List<LoadablePattern> patterns,
+      final String requestType)
+      throws GenericServiceException {
+
+    // TODO This method was added only for updating Ids to Algo response as they won't be present.
+    //  Need to optimise to a simpler mapper conversion in future. Currently avoiding for immediate
+    //  critical fixes as the var names are different in proto, entity for mapper implementation.
 
     List<LoadablePlanDetails> loadablePlanDetailsList = new ArrayList<>();
+    boolean oneTimeExecuted = false;
+    long lastLoadingPort = 0;
     for (LoadablePlanDetails lpd : algoCallBackRequestObj.getLoadablePlanDetailsList()) {
       LoadablePattern loadablePattern =
           patterns.stream()
               .filter(patternDetail -> patternDetail.getCaseNumber().equals(lpd.getCaseNumber()))
               .findFirst()
-              .orElseThrow(RuntimeException::new);
+              .orElseThrow(
+                  () -> {
+                    log.error(
+                        "Case number from Algo not found in DB pattern. LS Id: {}, Algo Case No: {}",
+                        loadableStudyId,
+                        lpd.getCaseNumber());
+                    return new GenericServiceException(
+                        "Case number from Algo not found in DB pattern. LS Id: " + loadableStudyId,
+                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                        HttpStatusCode.INTERNAL_SERVER_ERROR);
+                  });
+
+      if (!oneTimeExecuted) {
+        // Get last loading port. Get only once for all patterns.
+        lastLoadingPort =
+            loadableStudyPortRotationService.getLastPort(
+                loadablePattern.getLoadableStudy(),
+                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID));
+        oneTimeExecuted = true;
+      }
+
+      List<com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails>
+          loadablePlanPortWiseDetailsList = new ArrayList<>();
+      for (com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails
+          loadablePlanPortWiseDetails : lpd.getLoadablePlanPortWiseDetailsList()) {
+        if (lastLoadingPort == loadablePlanPortWiseDetails.getPortId()) {
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply
+              loadablePlanDetailsReply =
+                  loadablePlanPortWiseDetails
+                      .getDepartureCondition()
+                      .toBuilder()
+                      .clearLoadablePlanStowageDetails()
+                      .addAllLoadablePlanStowageDetails(
+                          loadablePlanService.buildLoadablePlanStowageDetails(
+                              loadablePattern.getId()))
+                      .build();
+          loadablePlanPortWiseDetails =
+              loadablePlanPortWiseDetails
+                  .toBuilder()
+                  .setDepartureCondition(loadablePlanDetailsReply)
+                  .build();
+        }
+        loadablePlanPortWiseDetailsList.add(loadablePlanPortWiseDetails);
+      }
+
       loadablePlanDetailsList.add(
-          lpd.toBuilder().setLoadablePatternId(loadablePattern.getId()).build());
+          lpd.toBuilder()
+              .setLoadablePatternId(loadablePattern.getId())
+              .clearLoadablePlanPortWiseDetails()
+              .addAllLoadablePlanPortWiseDetails(loadablePlanPortWiseDetailsList)
+              .build());
     }
 
-    // Refresh Algo object
-    algoCallBackRequestObj =
-        algoCallBackRequestObj
-            .toBuilder()
-            .clearLoadablePlanDetails()
-            .addAllLoadablePlanDetails(loadablePlanDetailsList)
-            .build();
-    JsonData jsonData = null;
+    // Modify Algo request object adding additional details
+    com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest
+        algoCallBackRequestObjModified =
+            algoCallBackRequestObj
+                .toBuilder()
+                .clearLoadablePlanDetails()
+                .addAllLoadablePlanDetails(loadablePlanDetailsList)
+                .build();
+    long jsonTypeId;
     if (requestType.equals(LOADABLE_STUDY)) {
-      jsonData =
-          jsonDataService.getJsonData(
-              loadableStudyId, LoadableStudiesConstants.LOADABLE_STUDY_RESULT_JSON_ID);
+      // Saved modified data as new entry as id 17 needs to be the actual Algo response
+      jsonTypeId = UPDATED_LOADABLE_STUDY_RESULT_JSON_ID;
     } else {
-      jsonData =
-          jsonDataService.getJsonData(
-              loadableStudyId, LoadableStudiesConstants.DISCHARGE_STUDY_RESULT_JSON_ID);
+      jsonTypeId = DISCHARGE_STUDY_RESULT_JSON_ID;
     }
 
-    // Update JSON data table with pattern id
-    if (jsonData == null) {
-      log.error("No json data found against pattern id {}", loadableStudyId);
-      throw new GenericServiceException(
-          "No json data found against pattern id " + loadableStudyId,
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
+    // Update modified JSON data table with pattern id
     try {
-      jsonData.setJsonData(
-          JsonFormat.printer().omittingInsignificantWhitespace().print(algoCallBackRequestObj));
+      jsonDataService.updateJsonData(
+          loadableStudyId,
+          jsonTypeId,
+          JsonFormat.printer()
+              .omittingInsignificantWhitespace()
+              .print(algoCallBackRequestObjModified));
     } catch (InvalidProtocolBufferException e) {
       log.error(
           "Error converting object to JSON string. LS: {}, Object: {}",
           loadableStudyId,
-          algoCallBackRequestObj,
+          algoCallBackRequestObjModified,
           e);
       throw new GenericServiceException(
           "Error converting object to JSON string. LS: " + loadableStudyId,
@@ -522,9 +570,7 @@ public class LoadablePatternService {
           HttpStatusCode.INTERNAL_SERVER_ERROR,
           e);
     }
-    jsonDataRepository.save(jsonData);
-
-    return algoCallBackRequestObj;
+    return algoCallBackRequestObjModified;
   }
 
   private List<LoadablePattern> savePatternDetails(
@@ -1133,7 +1179,21 @@ public class LoadablePatternService {
       LoadablePattern loadablePattern) {
     loadablePlanStowageDetailsList.forEach(
         lpsd -> {
-          LoadablePlanStowageDetails loadablePlanStowageDetails = new LoadablePlanStowageDetails();
+          LoadablePlanStowageDetails loadablePlanStowageDetails;
+          // To remove proto default 0 for long
+          if (0 == lpsd.getStowageDetailsId()) {
+            loadablePlanStowageDetails = new LoadablePlanStowageDetails();
+          } else {
+            loadablePlanStowageDetails =
+                loadablePlanStowageDetailsRespository
+                    .findById(lpsd.getStowageDetailsId())
+                    .orElse(new LoadablePlanStowageDetails());
+            loadablePlanStowageDetails.setId(lpsd.getId());
+          }
+
+          // Set id and activate
+          loadablePlanStowageDetails.setIsActive(true);
+
           loadablePlanStowageDetails.setApi(lpsd.getApi());
           loadablePlanStowageDetails.setAbbreviation(lpsd.getCargoAbbreviation());
           loadablePlanStowageDetails.setColorCode(lpsd.getColorCode());
@@ -1144,7 +1204,6 @@ public class LoadablePatternService {
           loadablePlanStowageDetails.setWeight(
               StringUtils.isEmpty(lpsd.getWeight()) ? lpsd.getQuantityMT() : lpsd.getWeight());
           loadablePlanStowageDetails.setTemperature(lpsd.getTemperature());
-          loadablePlanStowageDetails.setIsActive(true);
           loadablePlanStowageDetails.setLoadablePattern(loadablePattern);
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
@@ -1759,14 +1818,20 @@ public class LoadablePatternService {
       Long loadableStudyStatus,
       String messageId,
       boolean generatedFromShore) {
-    LoadableStudyAlgoStatus status = new LoadableStudyAlgoStatus();
-    status.setLoadableStudy(loadableStudy);
+
+    LoadableStudyAlgoStatus status =
+        loadableStudyAlgoStatusRepository
+            .findByLoadableStudyIdAndMessageIdAndIsActive(loadableStudy.getId(), messageId, true)
+            .orElse(new LoadableStudyAlgoStatus());
+
     status.setIsActive(true);
+    status.setLoadableStudy(loadableStudy);
     status.setLoadableStudyStatus(loadableStudyStatusRepository.getOne(loadableStudyStatus));
     status.setProcessId(processId);
     status.setVesselxid(loadableStudy.getVesselXId());
     status.setMessageId(messageId);
     status.setGeneratedFromShore(generatedFromShore);
+
     loadableStudyAlgoStatusRepository.save(status);
   }
 
@@ -2348,6 +2413,10 @@ public class LoadablePatternService {
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatusByMessageId(
             LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, responseCommunication.getMessageId(), true);
       }
+
+      // Update communication status table with final state
+      loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
+          CommunicationStatus.COMPLETED.getId(), loadableStudyOpt.get().getId());
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
     }

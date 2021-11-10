@@ -781,6 +781,7 @@ public class LoadingPlanService {
                       ullageInsert.getUllage1(),
                       ullageInsert.getUllage2(),
                       ullageInsert.getUllage(),
+                      ullageInsert.getColorCode(),
                       ullageInsert.getTankId(),
                       ullageInsert.getLoadingInformationId(),
                       ullageInsert.getArrivalDeparture());
@@ -808,6 +809,7 @@ public class LoadingPlanService {
                   tempData.setUllage1(ullageInsert.getUllage1());
                   tempData.setUllage2(ullageInsert.getUllage2());
                   tempData.setGrade(ullageInsert.getAbbreviation());
+                  tempData.setColorCode(ullageInsert.getColorCode());
                   portLoadingPlanCommingleTempDetailsRepository.save(tempData);
                 }
               });
@@ -999,8 +1001,8 @@ public class LoadingPlanService {
               SynopticalCargoRecord.Builder cargo = SynopticalCargoRecord.newBuilder();
               cargo.setActualWeight(stowage.getQuantity().toString());
               cargo.setTankId(stowage.getTankXId());
-              cargo.setApi(stowage.getApi().toString());
-              cargo.setTemperature(stowage.getTemperature().toString());
+              cargo.setActualApi(stowage.getApi().toString());
+              cargo.setActualTemperature(stowage.getTemperature().toString());
               cargo.setUllage(stowage.getUllage().toString());
               synopticalData.addCargo(cargo);
             });
@@ -1165,13 +1167,13 @@ public class LoadingPlanService {
   public void getPortWiseCommingleDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
-    List<PortLoadingPlanCommingleDetails> portWiseRobDetails =
-        portLoadingPlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
-            request.getPatternId());
     Optional<LoadingInformation> loadingInfo =
         this.loadingInformationRepository
             .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
                 request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+    List<PortLoadingPlanCommingleDetails> portWiseRobDetails =
+        portLoadingPlanCommingleDetailsRepository.findByLoadingInformationAndIsActive(
+            loadingInfo.get(), true);
     for (PortLoadingPlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
@@ -1181,13 +1183,13 @@ public class LoadingPlanService {
   public void getPortWiseCommingleTempDetails(
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
-    List<PortLoadingPlanCommingleTempDetails> portWiseRobDetails =
-        portLoadingPlanCommingleTempDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
-            request.getPatternId());
     Optional<LoadingInformation> loadingInfo =
         this.loadingInformationRepository
             .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
                 request.getVesselId(), request.getPatternId(), request.getPortRotationId());
+    List<PortLoadingPlanCommingleTempDetails> portWiseRobDetails =
+        portLoadingPlanCommingleTempDetailsRepository.findByLoadingInformationAndIsActive(
+            loadingInfo.get().getId(), true);
     for (PortLoadingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
       builder.addLoadablePlanCommingleTempDetails(
           this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
@@ -1207,6 +1209,8 @@ public class LoadingPlanService {
     newBuilder.setLoadablePlanId(portWiseCommingleDetail.getLoadablePatternId());
     newBuilder.setCargoNomination1Id(portWiseCommingleDetail.getCargoNomination1XId());
     newBuilder.setCargoNomination2Id(portWiseCommingleDetail.getCargoNomination2XId());
+    newBuilder.setCargo1Id(portWiseCommingleDetail.getCargo1XId());
+    newBuilder.setCargo2Id(portWiseCommingleDetail.getCargo2XId());
     newBuilder.setGrade(
         portWiseCommingleDetail.getGrade() == null ? "" : portWiseCommingleDetail.getGrade());
     newBuilder.setColorCode(

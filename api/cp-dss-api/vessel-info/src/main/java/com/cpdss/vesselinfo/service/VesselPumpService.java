@@ -205,6 +205,15 @@ public class VesselPumpService {
         Optional.ofNullable(vvEp.getStageNumber()).ifPresent(builder::setStageNumber);
         Optional.ofNullable(vvEp.getValveId()).ifPresent(builder::setValveId);
         Optional.ofNullable(vvEp.getStageName()).ifPresent(builder::setStageName);
+
+        Optional.ofNullable(vvEp.getValveCategoryId()).ifPresent(builder::setValveCategoryId);
+        Optional.ofNullable(vvEp.getValveCategory()).ifPresent(builder::setValveCategory);
+        Optional.ofNullable(vvEp.getValveTypeId()).ifPresent(builder::setValveTypeId);
+        Optional.ofNullable(vvEp.getValveTypeName()).ifPresent(builder::setValveTypeName);
+        Optional.ofNullable(vvEp.getValveSide()).ifPresent(builder::setValveSide);
+        Optional.ofNullable(vvEp.getVesselTankId()).ifPresent(builder::setVesselTankId);
+        Optional.ofNullable(vvEp.getTankShortName()).ifPresent(builder::setTankShortName);
+
         list.add(builder.build());
       } catch (Exception e) {
         log.error("Failed to build message for vessel valve educator");

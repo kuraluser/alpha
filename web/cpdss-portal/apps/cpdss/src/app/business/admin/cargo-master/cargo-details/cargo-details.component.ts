@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
@@ -10,6 +10,8 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
 import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import { ICountry } from '../../../../shared/models/common.model';
 import { IPort } from '../../../core/models/common.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Coponent class for cargo details page
@@ -23,7 +25,7 @@ import { IPort } from '../../../core/models/common.model';
   templateUrl: './cargo-details.component.html',
   styleUrls: ['./cargo-details.component.scss']
 })
-export class CargoDetailsComponent implements OnInit {
+export class CargoDetailsComponent implements OnInit, OnDestroy {
 
   cargoDetailsForm: FormGroup;
   cargoId: number;
@@ -35,6 +37,8 @@ export class CargoDetailsComponent implements OnInit {
   apiTempPopupData: IAPITempPopupData;
   openAPITemperatureHistoryPopup = false;
 
+  private ngUnsubscribe: Subject<any> = new Subject();
+
 
   constructor(private activatedRoute: ActivatedRoute,
     private permissionsService: PermissionsService,
@@ -44,7 +48,7 @@ export class CargoDetailsComponent implements OnInit {
     private fb: FormBuilder) { }
 
   async ngOnInit(): Promise<void> {
-    this.activatedRoute.paramMap.subscribe(params => {
+    this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
       this.cargoId = Number(params.get('cargoId'));
     });
 
@@ -134,6 +138,11 @@ export class CargoDetailsComponent implements OnInit {
     this.initForm(this.cargo);
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
   /**
    * Initialize cargo details form
    *
@@ -185,7 +194,7 @@ export class CargoDetailsComponent implements OnInit {
   addLoadingInfo() {
     const info: ICargoLoadingInformation = { id: 0, country: null, port: null };
     this.cargo.loadingInformation.push(info);
-    (<FormArray> this.cargoDetailsForm.get('loadingInformation')).push(this.initLoadingInformationGroup(info));
+    (<FormArray>this.cargoDetailsForm.get('loadingInformation')).push(this.initLoadingInformationGroup(info));
   }
 
   /**

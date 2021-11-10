@@ -514,8 +514,11 @@
       const id = event.data.data.dischargeStudyId;
       syncStore[id] = event.data;
       self.registration.sync.register(id);
-    }
-    else if (event.data.type === 'loading-plan-status') {
+    } else if (event.data.type === 'loading-plan-status') {
+      const id = event.data.data.processId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
+    } else if (event.data.type === 'discharging-plan-status') {
       const id = event.data.data.processId;
       syncStore[id] = event.data;
       self.registration.sync.register(id);
@@ -534,12 +537,12 @@
       event.waitUntil(checkSaveAndValidateStatus(syncStore[event.tag].data));
     } else if (syncStore[event.tag].type === 'discharge-study-pattern-status') {
       event.waitUntil(checkDischargeStudyStatus(syncStore[event.tag].data));
-    }
-    else if (syncStore[event.tag].type === 'loading-plan-status') {
-
+    } else if (syncStore[event.tag].type === 'loading-plan-status') {
       event.waitUntil(checkLoadingPlanStatus(syncStore[event.tag].data));
     } else if(syncStore[event.tag].type === 'ullage-update-status'){
       event.waitUntil(checkUllageUpdateStatus(syncStore[event.tag].data));
+    } else if (syncStore[event.tag].type === 'discharging-plan-status') {
+      event.waitUntil(checkDischargingPlanStatus(syncStore[event.tag].data));
     }
   });
 
@@ -571,6 +574,7 @@
         switch (syncView?.loadingInfoStatusId) {
           case 1:
             sync.type = "pending";
+            break;
           case 2:
             sync.type = "confirmed"
             break;
@@ -578,7 +582,7 @@
             sync.type = "algo-processing-started";
             break;
           case 4:
-            sync.type = "algo-rocessing-completed"
+            sync.type = "algo-processing-completed"
             break;
           case 5:
             sync.type = "plan-generated";
@@ -601,15 +605,12 @@
           case 10:
             sync.type = "loadicator-verification-with-algo";
             break;
-
           case 11:
             sync.type = "loadicator-verification-with-algo-completed"
             break;
         }
         notifyClients(sync)
-
       }
-
     }, 3500);
     setTimeout(() => {
       if (currentStatus === 3) {
@@ -627,7 +628,7 @@
    * @param {*} data 
    */
 
-   async function checkUllageUpdateStatus(data) {
+  async function checkUllageUpdateStatus(data) {
     const timer = setInterval(async () => {
       var headers = {
         'Accept': 'application/json',
@@ -680,9 +681,11 @@
     }, 7200000);
   }
 
-
+  /**
+   * method to monitoting stowage edit save & validate status
+   * @param {*} data
+   */
   async function checkSaveAndValidateStatus(data) {
-    let currentStatus;
     const timer = setInterval(async () => {
       var headers = {
         'Accept': 'application/json',
@@ -886,5 +889,72 @@
     }, 7200000);
   }
 
+  /**
+   * Method to monitor discharging plan status after plan generation is started
+   * @param {*} data
+   */
+  async function checkDischargingPlanStatus(data) {
+    const timer = setInterval(async () => {
+      const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
+      };
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/discharge-info/${data?.dischargingInfoId}/algo-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId, conditionType : 0 }),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      const refreshedToken = syncResponse.headers.get('token');
+      const sync = {};
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+
+      if (syncView?.responseStatus?.status === "200") {
+        sync.status = syncView?.responseStatus?.status;
+        switch (syncView?.dischargingInfoStatusId) {
+          case 1:
+            sync.type = 'pending';
+            break;
+          case 2:
+            sync.type = 'confirmed'
+            break;
+          case 3:
+            sync.type = 'algo-processing-started';
+            break;
+          case 4:
+            sync.type = 'algo-processing-completed'
+            break;
+          case 5:
+            sync.type = 'plan-generated';
+            clearInterval(timer);
+            break;
+          case 6:
+            sync.type = 'no-plan-available'
+            clearInterval(timer);
+            break;
+          case 7:
+            sync.type = 'error-occurred';
+            clearInterval(timer);
+            break;
+          case 8:
+            sync.type = 'verification-with-loadicator'
+            break;
+          case 9:
+            sync.type = 'verification-with-loadicator-completed';
+            break;
+          case 10:
+            sync.type = 'loadicator-verification-with-algo';
+            break;
+          case 11:
+            sync.type = 'loadicator-verification-with-algo-completed'
+            break;
+        }
+        sync.statusId = syncView?.dischargingInfoStatusId;
+        notifyClients(sync);
+      }
+    }, 3500);
+  }
 
 }());

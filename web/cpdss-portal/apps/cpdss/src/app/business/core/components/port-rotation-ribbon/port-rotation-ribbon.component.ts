@@ -139,7 +139,6 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   * @param {number} innerWidth
   */
   setCarouselNumVisble(innerWidth: number) {
-    this.portCarousel = [];
     if (innerWidth > 1921) {
       this.numVisible = 8;
     } else if (innerWidth < 1600 && innerWidth > 1400) {
@@ -151,10 +150,6 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     } else {
       this.numVisible = 4;
     }
-    setTimeout(() => {
-      this.portCarousel = [...this.transformCarouselData(this.portList)];
-      this.setPortSelection(this.selectedPort);
-    }, 50)
   }
 
   /**
@@ -290,7 +285,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method to check discharge study started 
+   * Method to check discharge study started
    *
    * @memberof PortRotationRibbonComponent
    */
