@@ -1,6 +1,5 @@
 import { KeycloakService } from 'keycloak-angular';
 import { environment } from '../../../environments/environment';
-import { KeycloakConfig } from 'keycloak-js';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { IAppConfiguration } from '../services/app-configuration/app-configuration.model';
 import { AppConfigurationService } from '../services/app-configuration/app-configuration.service';
@@ -24,8 +23,9 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                         localStorage.setItem('keycloakIdpConfig', response.providers);
                         localStorage.setItem('realm', response.realm);
                         localStorage.setItem('logo', response.logo);
+                        localStorage.setItem('docsUrl', response.documentationSiteUrl);
                         localStorage.setItem('carousel', JSON.stringify(response.carousals));
-                        localStorage.setItem('favicon', response.favicon); 
+                        localStorage.setItem('favicon', response.favicon);
                         if(environment.name === 'shore'){
                             const keycloakUrl = appSettings.keycloakUrl;
                             const keycloakConfig = {
@@ -33,7 +33,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                                 realm: response.realm,
                                 clientId: appSettings.clientId,
                             }
-    
+
                             const isLoggedIn = await keycloak.init({
                                 config: keycloakConfig,
                                 initOptions: {
@@ -49,7 +49,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                         }
                     }
                 });
-                resolve();
+                resolve(true);
             } catch (error) {
                 reject(error);
             }

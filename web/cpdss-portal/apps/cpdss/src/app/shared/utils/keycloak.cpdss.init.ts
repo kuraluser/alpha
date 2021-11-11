@@ -38,6 +38,15 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     iconUri = localStorage.getItem('favicon');
                 }
 
+                const docsUrlKey = 'docsUrl';
+                const docsUrlIndex = window.location.search.indexOf(docsUrlKey);
+                let docsUri = window.location.search.substring(docsUrlIndex + docsUrlKey.length + 1);
+                if (docsUri) {
+                  localStorage.setItem('docsUrl', docsUri);
+                } else if (localStorage.getItem('docsUrl') !== undefined && localStorage.getItem('docsUrl') !== 'undefined' && localStorage.getItem('docsUrl') !== '' && localStorage.getItem('docsUrl') !== null) {
+                  docsUri = localStorage.getItem('docsUrl');
+                }
+
                 let realm = window.location.search.indexOf('realm=') >= 0 ? window.location.search.split('&')[0].split('=')[1] : null;
                 if (realm) {
                     localStorage.setItem('realm', realm);
@@ -90,7 +99,7 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
                     });
                 }
 
-                resolve();
+                resolve(true);
             } catch (error) {
                 // If error redirect to login app
                 window.location.href = logoutUrl;

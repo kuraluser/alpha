@@ -27,5 +27,6 @@ export interface IAppConfiguration {
   maxCargoLimit?: number;
   simulatorDomainUrl: string;
   unitConversionConstant: number;
+  documentationSiteMapping?: IDictionary<string>;
 }
 

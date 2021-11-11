@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { IAppConfiguration } from '../services/app-configuration/app-configuration.model';
 import { AppConfigurationService } from '../services/app-configuration/app-configuration.service';
-import { SecurityService } from '../services/security/security.service';
 
 /**
  *  initializer function for main ship application
@@ -41,7 +40,14 @@ export function tokenAuthCPDSSInitializer(http: HttpClient, appConfig: AppConfig
                     } else if (localStorage.getItem('favicon') !== undefined && localStorage.getItem('favicon') !== 'undefined' && localStorage.getItem('favicon') !== '' && localStorage.getItem('favicon') !== null) {
                         favicon = localStorage.getItem('favicon');
                     }
-                    
+                    const docsUrlKey = 'docsUrl';
+                    const docsUrlIndex = window.location.search.indexOf(docsUrlKey);
+                    let docsUri = window.location.search.substring(docsUrlIndex + docsUrlKey.length + 1);
+                    if (docsUri) {
+                      localStorage.setItem('docsUrl', docsUri);
+                    } else if (localStorage.getItem('docsUrl') !== undefined && localStorage.getItem('docsUrl') !== 'undefined' && localStorage.getItem('docsUrl') !== '' && localStorage.getItem('docsUrl') !== null) {
+                      docsUri = localStorage.getItem('docsUrl');
+                    }
                     if (arr[4]) {
                         let daysRemain = window.location.search.indexOf('daysRemain=') >= 0 ? arr[4].split('=')[1] : null;
                         if (daysRemain) {

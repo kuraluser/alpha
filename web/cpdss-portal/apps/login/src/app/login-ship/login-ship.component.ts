@@ -80,10 +80,11 @@ export class LoginShipComponent implements OnInit {
         const result = await this.loginShipService.validateShipLogin(loginData).toPromise();
         if (result?.responseStatus?.status === '200') {
           const logoUrl = localStorage.getItem('logo');
+          const docsUrl = localStorage.getItem('docsUrl');
           const realm = localStorage.getItem('realm');
-          const faviconUrl = localStorage.getItem('favicon'); 
+          const faviconUrl = localStorage.getItem('favicon');
           const token = result.token;
-          let redirectUri = window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + realm + '&logoUrl=' + logoUrl + '&token=' + token + '&faviconUrl=' + faviconUrl;
+          let redirectUri = window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + realm + '&logoUrl=' + logoUrl + '&token=' + token + '&faviconUrl=' + faviconUrl + '&docsUrl=' + docsUrl;
           if (typeof result.expiryReminder?.daysRemain !== 'undefined') {
             redirectUri += '&daysRemain=' + result.expiryReminder?.daysRemain
           }
@@ -114,7 +115,7 @@ export class LoginShipComponent implements OnInit {
   }
 
   /**
-   * Get form control of newVoyageForm 
+   * Get form control of newVoyageForm
    */
   get login() {
     return this.loginForm.controls;

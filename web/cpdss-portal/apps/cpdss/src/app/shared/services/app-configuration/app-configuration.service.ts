@@ -26,6 +26,7 @@ export class AppConfigurationService {
       const result: IAppConfiguration = (await this.http.get(jsonFile).toPromise()) as IAppConfiguration;
       AppConfigurationService.settings = result;
       result.permissionMapping = <IDictionary<string>>await this.http.get(`assets/config/permission-mapping.config.json`).toPromise();
+      result.documentationSiteMapping = <IDictionary<string>>await this.http.get(`assets/config/documentation-url-mapping.json`).toPromise();
       return AppConfigurationService.settings;
     }
     catch (e) {
