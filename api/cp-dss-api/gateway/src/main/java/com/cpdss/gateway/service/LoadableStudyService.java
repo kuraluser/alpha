@@ -201,8 +201,7 @@ public class LoadableStudyService {
   private static final Long DISCHARGE_STUDY_RESULT_JSON_ID = 12L;
   private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
-  private static final Long LO = 17L;
-  private static final Long LOADING_RESULT_JSON_SIMULATOR_ID = 24L;
+
 
   private static final String VOYAGE_STATUS_URI = "voyage-status";
   private static final String OPERATIONS_URI = "operations";
@@ -3448,7 +3447,7 @@ public class LoadableStudyService {
     Long jsonTypeID = null;
     if (requestType.equals(LOADABLE_STUDY_SAVE_REQUEST)) {
       fileName = "/json/loadableStudyResult_";
-      jsonTypeID = LOADING_RESULT_JSON_SIMULATOR_ID;
+      jsonTypeID = LOADABLE_STUDY_RESULT_JSON_ID;
     } else {
       fileName = "/json/dischargeStudyResult_";
       jsonTypeID = DISCHARGE_STUDY_RESULT_JSON_ID;
