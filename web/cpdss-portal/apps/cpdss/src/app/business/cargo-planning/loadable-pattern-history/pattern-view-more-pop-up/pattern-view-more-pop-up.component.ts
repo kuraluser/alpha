@@ -126,9 +126,6 @@ export class PatternViewMorePopUpComponent implements OnInit {
       const newGroup = group.map((groupItem) => {
         const tank = Object.assign({}, groupItem);
         tank.commodity = this.selectedLoadablePattern.loadablePlanStowageDetails.find((item) => (item.tankId === groupItem.id) && item);
-        if (tank.commodity?.isCommingle) {
-          tank.commodity.colorCode = AppConfigurationService.settings.commingleColor;
-        }
         return tank;
       });
       return newGroup;

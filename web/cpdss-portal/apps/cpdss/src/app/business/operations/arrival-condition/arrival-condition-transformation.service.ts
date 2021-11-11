@@ -66,9 +66,6 @@ export class ArrivalConditionTransformationService {
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
             cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.plannedWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api, cargoTank[groupIndex][tankIndex].commodity?.temperature);
             cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
-            if (cargoTank[groupIndex][tankIndex].commodity?.isCommingleCargo) {
-              cargoTank[groupIndex][tankIndex].commodity.colorCode = AppConfigurationService.settings.commingleColor;
-            }
             break;
           }
         }
@@ -117,7 +114,7 @@ export class ArrivalConditionTransformationService {
     data.actualWeight = 0;
     data.api = value.api;
     data.cargoId = isCommingle ? commingleData.cargoId : loadableQuantityCargoDetails.cargoId;
-    data.colorCode = isCommingle ? AppConfigurationService.settings.commingleColor : loadableQuantityCargoDetails.colorCode;
+    data.colorCode = isCommingle ? commingleData.colorCode : loadableQuantityCargoDetails.colorCode;
     return data;
   }
 }

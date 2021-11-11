@@ -12,8 +12,7 @@
                     <td *ngFor="let col of columns">
                         <span *ngIf="col.field === 'priority'">{{rowData[col.field]}}</span>
                         <span class="badge-custom" *ngIf="col.field === 'cargoAbbreviation'"
-                            [ngClass]="rowData?.isCommingle ? 'commingle' : ''"
-                            [ngStyle]="!rowData?.isCommingle && {'background': rowData?.cargoColor}">{{rowData[col.field]}}</span>
+                            [ngStyle]="{'background': rowData?.cargoColor}">{{rowData[col.field]}}</span>
                         <span *ngIf="col.field === 'quantity'">{{rowData[col.field] | quantityDecimalFormat}}</span>
                         <span  *ngIf="col.field === 'difference'"
                             [ngClass]="((rowData?.quantity - rowData?.orderedQuantity) / rowData?.orderedQuantity) !== 0 ? (((rowData?.quantity - rowData?.orderedQuantity) / rowData?.orderedQuantity) > 0 ? 'badge-custom success' : 'badge-custom error') : ''"

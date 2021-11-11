@@ -54,7 +54,7 @@ export class ArrivalConditionPanelComponent implements OnInit {
     this.arrivalConditionCargoTotalQuantity = 0;
     this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
       if (com.conditionType === 1) {
-        commingleArray.push({ abbreviation: com.abbreviation, colorCode: AppConfigurationService.settings.commingleColor, quantity: 0, tankId: com.tankId });
+        commingleArray.push({ abbreviation: com.abbreviation, colorCode: com.colorCode, quantity: 0, tankId: com.tankId });
       }
     });
     const loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation

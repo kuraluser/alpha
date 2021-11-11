@@ -751,9 +751,6 @@ export class LoadingDischargingTransformationService {
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;
             cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api, cargoTank[groupIndex][tankIndex].commodity?.temperature);
             cargoTank[groupIndex][tankIndex].commodity.fillingRatio = Number(cargoTank[groupIndex][tankIndex].commodity.fillingRatio);
-            if (cargoTank[groupIndex][tankIndex].commodity?.isCommingleCargo) {
-              cargoTank[groupIndex][tankIndex].commodity.colorCode = AppConfigurationService.settings.commingleColor;
-            }
             break;
           }
         }

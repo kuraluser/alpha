@@ -879,6 +879,7 @@ export interface IPlanStowageDetails {
   valueType: number;
   isCommingleCargo?: boolean;
   abbreviation?: string;
+  colorCode? : string;
 }
 
 /**
@@ -1328,7 +1329,8 @@ export enum ULLAGE_STATUS_TEXT {
   'ULLAGE_UPDATE_PLAN_SUCCESS' = 13,
   'ULLAGE_UPDATE_PLAN_VALIDATION_FAILED' = 14,
   'ULLAGE_UPDATE_PLAN_VERIFICATION_PENDING' = 16,
-  'ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS' = 17
+  'ULLAGE_UPDATE_PLAN_LOADICATOR_INPROGRESS' = 17,
+  'ULLAGE_UPDATE_PLAN_COMMUNICATED_TO_SHORE' = 19
 }
 
 /**
@@ -1343,7 +1345,8 @@ export enum ULLAGE_STATUS_VALUE {
   'SUCCESS' = 13,
   'ERROR' = 14,
   'VERIFICATION_PENDING' = 16,
-  'LOADICATOR_IN_PROGRESS' = 17
+  'LOADICATOR_IN_PROGRESS' = 17,
+  'COMMUNICATED_TO_SHORE' = 19
 }
 
 /**

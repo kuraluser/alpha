@@ -651,6 +651,7 @@ export interface ICommingleDetails {
     cargoPercentage: string;
     cargo1MT: string;
     cargo2MT: string;
+    colorCode?: string;
 }
 
 /**

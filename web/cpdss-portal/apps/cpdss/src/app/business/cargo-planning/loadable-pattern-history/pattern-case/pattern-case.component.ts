@@ -32,7 +32,7 @@ export class PatternCaseComponent implements OnInit {
 
   @Input()
   set loadablePattern(loadablePattern: ILoadablePattern) {
-    this._loadablePattern = loadablePattern;
+    this._loadablePattern = this.setCommingle(loadablePattern);
     this.loadablePatternDetailsId = loadablePattern?.loadablePatternId;
     this.updateTankLIst();
   }
@@ -65,6 +65,31 @@ export class PatternCaseComponent implements OnInit {
   }
 
   /**
+   * Set commingle color
+   *
+   * @memberof PatternCaseComponent
+   */
+  setCommingle(data) {
+    if (data?.loadableQuantityCommingleCargoDetails?.length) {
+      data?.loadablePlanStowageDetails?.map(item => {
+        data?.loadableQuantityCommingleCargoDetails?.map(com => {
+          if (item.cargoAbbreviation === com.grade) {
+            item.colorCode = com.colorCode;
+          }
+        });
+      });
+      data?.loadablePatternCargoDetails?.map(item => {
+        data?.loadableQuantityCommingleCargoDetails?.map(com => {
+          if (item.cargoAbbreviation === com.grade) {
+            item.cargoColor = com.colorCode;
+          }
+        });
+      });
+    }
+    return data;
+  }
+
+  /**
    * Method to update commodity in tank list
    *
    * @memberof PatternCaseComponent
@@ -74,9 +99,6 @@ export class PatternCaseComponent implements OnInit {
       const newGroup = group.map((groupItem) => {
         const tank = Object.assign({}, groupItem);
         tank.commodity = this.loadablePattern.loadablePlanStowageDetails.find((item) => (item.tankId === groupItem.id) && item);
-        if (tank.commodity?.isCommingle) {
-          tank.commodity.colorCode = AppConfigurationService.settings.commingleColor;
-        }
         return tank;
       });
       return newGroup;

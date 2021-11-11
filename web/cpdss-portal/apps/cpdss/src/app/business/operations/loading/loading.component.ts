@@ -296,7 +296,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
   private swMessageHandler = async event => {
     const translationKeys = await this.translateService.get(["GENERATE_LODABLE_PLAN_PENDING", "GENERATE_LODABLE_PLAN_NO_PLAN_AVAILABLE", "GENERATE_LODABLE_PLAN_CONFIRMED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_STARTED", "GENERATE_LODABLE_PLAN_PLAN_GENERATED", "GENERATE_LODABLE_PLAN_ALGO_PROCESSING_COMPLETED", "GENERATE_LODABLE_PLAN_ERROR_OCCURED", "GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER", "GENERATE_LODABLE_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED",
-      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED", "GENERATE_LODABLE_PLAN_INFO", "GENERATE_LOADABLE_PATTERN_NO_PLAN", "GENERATE_LOADABLE_PLAN_COMPLETE_DONE", "ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL", "Port"]).toPromise();
+      "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION", "GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED", "GENERATE_LODABLE_PLAN_INFO", "GENERATE_LOADABLE_PATTERN_NO_PLAN", "GENERATE_LOADABLE_PLAN_COMPLETE_DONE", "LOADING_PLAN_GENERATION_COMMUNICATED_TO_SHORE", "ULLAGE_UPDATE_PLAN_COMMUNICATED_TO_SHORE", "ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL", "Port"]).toPromise();
     if (event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     }
@@ -358,6 +358,10 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_ALGO_VERIFICATION_COMPLETED"], closable: false });
             this.setButtonStatusInProcessing();
             break;
+          case OPERATIONS_PLAN_STATUS.COMMUNICATED_TO_SHORE:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["LOADING_PLAN_GENERATION_COMMUNICATED_TO_SHORE"], closable: false });
+            this.setButtonStatusInProcessing();
+            break;
         }
 
       }
@@ -380,6 +384,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
             break;
           case ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS:
             this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["GENERATE_LODABLE_PLAN_VERIFICATION_WITH_LOADER"] });
+            break;
+          case ULLAGE_STATUS_VALUE.COMMUNICATED_TO_SHORE:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_LODABLE_PLAN_INFO'], detail: translationKeys["ULLAGE_UPDATE_PLAN_COMMUNICATED_TO_SHORE"] });
             break;
 
         }
