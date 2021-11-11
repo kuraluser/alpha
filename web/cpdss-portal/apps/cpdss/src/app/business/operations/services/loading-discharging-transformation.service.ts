@@ -1274,6 +1274,12 @@ export class LoadingDischargingTransformationService {
    */
   setCOWValidationErrorMessage(): IValidationErrorMessagesSet {
     return {
+      cowOption: {
+        'required': 'DISCHARGING_COW_REQUIRED',
+      },
+      cowPercentage: {
+        'required': 'DISCHARGING_COW_REQUIRED',
+      },
       topCOWTanks: {
         'duplicateTanks': 'DISCHARGING_COW_TANK_PREFERENCE_DUPLICATION'
       },
