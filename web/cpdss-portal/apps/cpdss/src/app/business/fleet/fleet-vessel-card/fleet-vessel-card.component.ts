@@ -22,7 +22,7 @@ export class FleetVesselCardComponent implements OnInit {
     const formatOptions: IDateTimeFormatOptions = { stringToDate: true };
     vessels.map(vessel => {
       vessel.voyageStart = vessel.voyagePorts.find((port, portIndex) => (portIndex === 0 && Number(port.portOrder) === 1));
-      vessel.voyageEnd = vessel.voyagePorts.find((port, portIndex) => (portIndex === vessel.voyagePorts.length -1 && Number(port.portOrder) === vessel.voyagePorts.length));
+      vessel.voyageEnd = vessel.voyagePorts.find((port, portIndex) => (portIndex === vessel.voyagePorts.length - 1 && Number(port.portOrder) === vessel.voyagePorts.length));
       if (vessel.ata) { vessel.ata = this.timeZoneTransformationService.formatDateTime(vessel?.ata, formatOptions); }
       if (vessel.atd) { vessel.atd = this.timeZoneTransformationService.formatDateTime(vessel?.atd, formatOptions); }
       if (vessel.eta) { vessel.eta = this.timeZoneTransformationService.formatDateTime(vessel?.eta, formatOptions); }
@@ -37,6 +37,8 @@ export class FleetVesselCardComponent implements OnInit {
   selectedVesselId: number;
   dateFormat: string;
   _vesselValues: IFleetVessel[];
+  userPermission: any;
+  permissionDetails: any;
 
   constructor(
     private router: Router,
@@ -45,6 +47,21 @@ export class FleetVesselCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.dateFormat = AppConfigurationService.settings.dateFormat.split(' ')[0];
+    this.userPermission = JSON.parse(window.localStorage.getItem('_USER_PERMISSIONS'));
+    this.setPermissionObject();
+  }
+
+  /**
+   * function to set permissions
+   * @memberof FleetVesselCardComponent
+   */
+  setPermissionObject() {
+    this.permissionDetails = {
+      voyageStatus: this.userPermission?.find(item => item.languageKey === AppConfigurationService.settings.permissionMapping['VoyageStatusComponent'])?.permission,
+      files: this.userPermission?.find(item => item.languageKey === AppConfigurationService.settings.permissionMapping['FileRepositoryComponent'])?.permission,
+      synoptical: this.userPermission?.find(item => item.languageKey === AppConfigurationService.settings.permissionMapping['SynopticalComponent'])?.permission,
+      voyages: this.userPermission?.find(item => item.languageKey === AppConfigurationService.settings.permissionMapping['voyagesComponent'])?.permission,
+    };
   }
 
   /**
@@ -72,14 +89,14 @@ export class FleetVesselCardComponent implements OnInit {
       case 'voyage-status':
         this.router.navigate(['/business/voyage-status']);
         break;
-      case 'cargo-planning':
-        this.router.navigate(['/business/cargo-planning/loadable-study-list']);
-        break;
       case 'voyages':
         this.router.navigate(['/business/voyages']);
         break;
       case 'synoptical':
         this.router.navigate(['/business/synoptical' + '/' + vessel.id + '/' + vessel.voyageId]);
+        break;
+      case 'file-repo':
+        this.router.navigate(['/business/file-repository']);
         break;
     }
   }
