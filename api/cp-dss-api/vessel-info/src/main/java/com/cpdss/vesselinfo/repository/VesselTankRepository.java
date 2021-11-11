@@ -46,4 +46,11 @@ public interface VesselTankRepository extends CommonCrudRepository<VesselTank, L
           + " from VesselTank VT"
           + " WHERE VT.tankCategory.id = 1 AND VT.vessel.id = ?1 AND isActive = ?2")
   public List<CargoTankMaster> findCargoTankMaster(Long vesselId, boolean isActive);
+
+  /**
+   * @param tankIds
+   * @param isActive
+   * @return List<VesselTank>
+   */
+  public List<VesselTank> findByIdInAndIsActive(List<Long> tankIds, Boolean isActive);
 }

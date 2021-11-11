@@ -2,6 +2,7 @@
 package com.cpdss.vesselinfo.service;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfo.VesselParticulars;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -243,5 +244,19 @@ public class VesselParticularService {
       return String.valueOf(opt.get().getFlowRateSix());
     }
     return null;
+  }
+
+  public void getVesselTanksByTankIds(
+      VesselInfo.VesselTankRequest request, VesselInfo.VesselTankReply.Builder builder) {
+    List<VesselTank> vesselTanks =
+        this.vesselTankRepository.findByIdInAndIsActive(request.getTankIdsList(), true);
+    vesselTanks.forEach(
+        vesselTank -> {
+          builder.addVesselTankInfo(
+              VesselInfo.VesselTankInfo.newBuilder()
+                  .setTankId(vesselTank.getId())
+                  .setTankCategoryId(vesselTank.getTankCategory().getId())
+                  .build());
+        });
   }
 }

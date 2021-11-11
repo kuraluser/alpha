@@ -34,4 +34,17 @@ public interface PortDischargingPlanRobDetailsRepository
   @Query(
       "UPDATE PortDischargingPlanRobDetails SET isActive = false WHERE dischargingInformation = ?1")
   public void deleteByDischargingInformationId(Long dischargingInformation);
+
+  /**
+   * Fetching rob details
+   *
+   * @param portXId
+   * @param portRotationXId
+   * @param conditionType
+   * @param isActive
+   * @return List<PortDischargingPlanRobDetails>
+   */
+  public List<PortDischargingPlanRobDetails>
+      findByPortXIdAndPortRotationXIdAndConditionTypeAndIsActive(
+          Long portXId, Long portRotationXId, Integer conditionType, Boolean isActive);
 }

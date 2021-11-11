@@ -2,6 +2,7 @@
 package com.cpdss.dischargeplan.service;
 
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.DATE_FORMAT;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.DISCHARGING_RULE_MASTER_ID;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_EXCEL_TEMPLATE_TITLES;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_TITLE_FONT_HEIGHT;
@@ -11,7 +12,6 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_DATE;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_HEIGHT;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_TIME;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.DISCHARGING_RULE_MASTER_ID;
 
 import com.cpdss.common.constants.RedisConfigConstants;
 import com.cpdss.common.exception.GenericServiceException;
@@ -23,12 +23,8 @@ import com.cpdss.common.generated.PortInfo.PortRequestWithPaging;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
-import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
-import com.cpdss.common.generated.discharge_plan.DischargeRuleRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailRequest;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.discharge_plan.DischargingDownloadTideDetailStatusReply.Builder;
-import com.cpdss.common.generated.discharge_plan.DischargingUploadTideDetailRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
@@ -98,6 +94,8 @@ public class DischargeInformationService {
   @Autowired DischargeRulesInputRepository dischargeStudyRulesInputRepository;
 
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
+
+  @Autowired PortDischargingPlanRobDetailsRepository portDischargingPlanRobDetailsRepository;
 
   @Autowired DischargeRulesRepository dischargeRulesRepository;
 
@@ -936,27 +934,26 @@ public class DischargeInformationService {
 
   /**
    * Get discharge rules for the algo request json
+   *
    * @param vesselId
    * @param dischargingInfoId
    * @return DischargeRuleReply
    */
-  public DischargeRuleReply getDischargingRuleForAlgo(
-	      Long vesselId, Long dischargingInfoId) {
-	  com.cpdss.common.generated.discharge_plan.DischargeRuleRequest.Builder request =
-			  DischargeRuleRequest.newBuilder();
-	    request.setDischargeInfoId(dischargingInfoId);
-	    request.setVesselId(vesselId);
-	    request.setSectionId(DISCHARGING_RULE_MASTER_ID);
-	    DischargeRuleReply.Builder builder =
-	    		DischargeRuleReply.newBuilder();
-	    try {
-	      this.getOrSaveRulesForDischargingPlan(request.build(), builder);
-	    } catch (GenericServiceException e) {
-	      e.printStackTrace();
-	    }
-	    return builder.build();
+  public DischargeRuleReply getDischargingRuleForAlgo(Long vesselId, Long dischargingInfoId) {
+    com.cpdss.common.generated.discharge_plan.DischargeRuleRequest.Builder request =
+        DischargeRuleRequest.newBuilder();
+    request.setDischargeInfoId(dischargingInfoId);
+    request.setVesselId(vesselId);
+    request.setSectionId(DISCHARGING_RULE_MASTER_ID);
+    DischargeRuleReply.Builder builder = DischargeRuleReply.newBuilder();
+    try {
+      this.getOrSaveRulesForDischargingPlan(request.build(), builder);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    return builder.build();
   }
-  
+
   public void getOrSaveRulesForDischargingPlan(
       DischargeRuleRequest request, DischargeRuleReply.Builder builder)
       throws GenericServiceException {
@@ -1002,7 +999,7 @@ public class DischargeInformationService {
             .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
             .collect(Collectors.toList());
     List<DischargePlanRules> dischargingRulesList =
-        dischargeRulesRepository
+            dischargeRulesRepository
             .findByDischargeInformationAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
                 dischargeInformation, request.getVesselId(), true, ruleListId);
     if (dischargingRulesList.size() > 0) {
@@ -1065,7 +1062,7 @@ public class DischargeInformationService {
                                 .filter(item -> item.trim().length() != 0);
                         if (rule.getId() != null && rule.getId().trim().length() != 0) {
                           Optional<DischargePlanRules> rVesselMapping =
-                              dischargeRulesRepository.findById(Long.valueOf(rule.getId()));
+                                  dischargeRulesRepository.findById(Long.valueOf(rule.getId()));
                           if (rVesselMapping.isPresent()) {
                             dischargePlanRules = rVesselMapping.get();
                           } else {
@@ -1076,7 +1073,7 @@ public class DischargeInformationService {
                         } else {
                           if (isRuleTemplateIdExist.isPresent()) {
                             Optional<DischargePlanRules> loadableStudyRulesRecord =
-                                dischargeRulesRepository.checkIsRuleTemplateExist(
+                                    dischargeRulesRepository.checkIsRuleTemplateExist(
                                     dischargeInformation.getId(),
                                     true,
                                     Long.valueOf(rule.getRuleTemplateId()));
@@ -1136,7 +1133,8 @@ public class DischargeInformationService {
                           DischargePlanRuleInput ruleTemplateInput = new DischargePlanRuleInput();
                           if (input.getId() != null && input.getId().length() != 0) {
                             Optional<DischargePlanRuleInput> rTemplateInput =
-                                dischargeRulesInputRepository.findById(Long.valueOf(input.getId()));
+                                    dischargeRulesInputRepository.findById(
+                                    Long.valueOf(input.getId()));
                             if (rTemplateInput.isPresent()) {
                               ruleTemplateInput = rTemplateInput.get();
                             } else {
@@ -1454,5 +1452,27 @@ public class DischargeInformationService {
       e.printStackTrace();
       return 0;
     }
+  }
+
+  /**
+   * Fetching Rob details and building reply
+   *
+   * @param request
+   * @param builder
+   */
+  public void getPortDischargingPlanRobDetails(
+      PortDischargingPlanRobDetailsRequest request,
+      PortDischargingPlanRobDetailsReply.Builder builder) {
+    List<com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails>
+        portDischargingPlanRobDetailsList =
+            this.portDischargingPlanRobDetailsRepository
+                .findByPortXIdAndPortRotationXIdAndConditionTypeAndIsActive(
+                    request.getPortXId(),
+                    request.getPortRotationXId(),
+                    request.getConditionType(),
+                    true);
+    builder.addAllPortDischargingPlanRobDetails(
+        this.informationBuilderService.buildPortDischargingPlanRobDetailsReply(
+            portDischargingPlanRobDetailsList));
   }
 }

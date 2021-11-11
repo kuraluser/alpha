@@ -4,16 +4,7 @@ package com.cpdss.dischargeplan.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.common.generated.discharge_plan.CargoForCow;
-import com.cpdss.common.generated.discharge_plan.CowPlan;
-import com.cpdss.common.generated.discharge_plan.CowTankDetails;
-import com.cpdss.common.generated.discharge_plan.DischargeBerths;
-import com.cpdss.common.generated.discharge_plan.DischargeDelay;
-import com.cpdss.common.generated.discharge_plan.DischargeDelays;
-import com.cpdss.common.generated.discharge_plan.DischargeDetails;
-import com.cpdss.common.generated.discharge_plan.DischargeRates;
-import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
-import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
@@ -983,5 +974,30 @@ public class DischargeInformationBuilderService {
                 builder.addRulePlan(rulePlanBuilder);
               }
             });
+  }
+
+  /**
+   * Building PortDischargingPlanRobDetailsReply
+   *
+   * @param portDischargingPlanRobDetailsList
+   * @return List<com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetails>
+   */
+  public List<com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetails>
+      buildPortDischargingPlanRobDetailsReply(
+          List<PortDischargingPlanRobDetails> portDischargingPlanRobDetailsList) {
+    List<com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetails>
+        detailsListGenerated = new ArrayList<>();
+    portDischargingPlanRobDetailsList.forEach(
+        detail ->
+            detailsListGenerated.add(
+                com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetails.newBuilder()
+                    .setConditionType(detail.getConditionType())
+                    .setPortXId(detail.getPortXId())
+                    .setTankXId(detail.getTankXId())
+                    .setPortRotationXId(detail.getPortRotationXId())
+                    .setQuantity(detail.getQuantity().doubleValue())
+                    .setDensity(detail.getDensity().doubleValue())
+                    .build()));
+    return detailsListGenerated;
   }
 }
