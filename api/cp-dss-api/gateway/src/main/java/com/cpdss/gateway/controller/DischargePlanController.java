@@ -43,6 +43,8 @@ import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
 import com.cpdss.gateway.service.dischargeplan.DischargingInstructionService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -1251,7 +1253,7 @@ public class DischargePlanController {
       @PathVariable Long vesselId,
       @PathVariable Long voyageId,
       @PathVariable Long infoId,
-      @RequestBody DischargingPlanAlgoRequest dischargingPlanAlgoRequest)
+      @RequestBody Object requestJson)
       throws CommonRestException {
     try {
       log.info(
@@ -1259,10 +1261,16 @@ public class DischargePlanController {
           vesselId,
           voyageId,
           infoId);
+      String requestJsonString = new ObjectMapper().writeValueAsString(requestJson);
+      log.info("Writing in string from json using mapper");
+      DischargingPlanAlgoRequest dischargingPlanAlgoRequest =
+          new ObjectMapper()
+              .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+              .readValue(requestJsonString, DischargingPlanAlgoRequest.class);
       return dischargeInformationService.saveDischargingPlan(
-          vesselId, voyageId, infoId, dischargingPlanAlgoRequest);
+          vesselId, voyageId, infoId, dischargingPlanAlgoRequest, requestJsonString);
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException in Save Loading Plan API");
+      log.error("GenericServiceException in Save Discharging Plan API");
       e.printStackTrace();
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {

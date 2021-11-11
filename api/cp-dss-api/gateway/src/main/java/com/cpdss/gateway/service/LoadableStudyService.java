@@ -204,7 +204,6 @@ public class LoadableStudyService {
   private static final Long LO = 17L;
   private static final Long LOADING_RESULT_JSON_SIMULATOR_ID = 24L;
 
-
   private static final String VOYAGE_STATUS_URI = "voyage-status";
   private static final String OPERATIONS_URI = "operations";
 
