@@ -184,9 +184,17 @@ public class DischargeInformationService {
 
     // Set General Items
     builder.setIsDischargeInfoComplete(disEntity.getIsDischargeInformationComplete());
+
     builder.setDischargeSlopTanksFirst(disEntity.getDischargeSlopTankFirst());
     builder.setDischargeCommingledCargoSeparately(disEntity.getDischargeCommingleCargoSeparately());
-
+    builder.setIsDischargingPlanGenerated(
+        disEntity.getIsDischargingPlanGenerated() == null
+            ? false
+            : disEntity.getIsDischargingPlanGenerated());
+    builder.setIsDischargingSequenceGenerated(
+        disEntity.getIsDischargingSequenceGenerated() == null
+            ? false
+            : disEntity.getIsDischargingSequenceGenerated());
     builder.setResponseStatus(
         Common.ResponseStatus.newBuilder()
             .setHttpStatusCode(HttpStatus.OK.value())

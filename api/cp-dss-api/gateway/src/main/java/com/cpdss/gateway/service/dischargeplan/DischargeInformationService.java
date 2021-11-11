@@ -133,6 +133,9 @@ public class DischargeInformationService {
     dischargeInformation.setDischargeCommingledCargoSeparately(
         disRpcReplay.getDischargeCommingledCargoSeparately());
     dischargeInformation.setIsDischargeInfoComplete(disRpcReplay.getIsDischargeInfoComplete());
+    dischargeInformation.setIsDischargePlanGenerated(disRpcReplay.getIsDischargingPlanGenerated());
+    dischargeInformation.setIsDischargeSequenceGenerated(
+        disRpcReplay.getIsDischargingSequenceGenerated());
     dischargeInformation.setDischargeInfoStatusId(disRpcReplay.getDischargingInfoStatusId());
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
