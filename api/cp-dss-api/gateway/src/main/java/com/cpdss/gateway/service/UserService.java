@@ -482,7 +482,7 @@ public class UserService {
    * @return List of users
    * @throws GenericServiceException Exception object
    */
-  private List<User> findUsers(UserType userType) throws GenericServiceException {
+  public List<User> findUsers(UserType userType) throws GenericServiceException {
     List<User> userList = new ArrayList<>();
     List<Users> users;
     switch (userType) {

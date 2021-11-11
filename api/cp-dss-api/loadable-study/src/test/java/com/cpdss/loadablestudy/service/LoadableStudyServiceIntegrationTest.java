@@ -17,38 +17,7 @@ import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
-import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
-import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
-import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.repository.*;
 import io.grpc.internal.testing.StreamRecorder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +46,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringJUnitConfig(
     classes = {
       LoadableStudyServiceIntegrationTestConfiguration.class,
-      VesselInfoImplForLoadableStudyServiceIntegration.class
+      VesselInfoImplForLoadableStudyServiceIntegration.class,
     })
 @DirtiesContext
 public class LoadableStudyServiceIntegrationTest {
@@ -100,6 +69,19 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   @MockBean private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
+  @MockBean private LoadableStudyRuleRepository loadableStudyRuleRepository;
+  @MockBean private OnHandQuantityService onHandQuantityService;
+  @MockBean private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
+  @MockBean private LoadablePlanService loadablePlanService;
+
+  @MockBean
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
+
+  @MockBean private DischargePatternQuantityCargoPortwiseRepository disCargoQuantityRepository;
+  @MockBean private SynopticServiceUtils synpoticServiceUtils;
+  @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+  @MockBean private LoadableStudyPortRotationService loadableStudyPortRotationService;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -115,6 +97,15 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private OnHandQuantityRepository onHandQuantityRepository;
   @MockBean private ApiTempHistoryRepository apiTempHistoryRepository;
   @MockBean private VoyageStatusRepository voyageStatusRepository;
+  @MockBean private VoyageService voyageService;
+  @MockBean private OnBoardQuantityService onBoardQuantityService;
+  @MockBean private AlgoService algoService;
+  @MockBean private JsonDataService jsonDataService;
+  @MockBean private JsonDataRepository jsonDataRepository;
+  @MockBean private JsonTypeRepository jsonTypeRepository;
+  @MockBean private CargoNominationService cargoNominationService;
+  @MockBean private CargoService cargoService;
+  @MockBean private BillOfLandingRepository billOfLandingRepository;
 
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
@@ -130,6 +121,12 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private PurposeOfCommingleRepository purposeOfCommingleRepository;
   @MockBean private CommingleCargoRepository commingleCargoRepository;
   @MockBean private OnBoardQuantityRepository onBoardQuantityRepository;
+  @MockBean private LoadablePatternService loadablePatternService;
+  @MockBean private LoadableStudyRuleService loadableStudyRuleService;
+  @MockBean private AlgoErrorService algoErrorService;
+  @MockBean private LoadicatorService lsLoadicatorService;
+  @MockBean private CommunicationService communicationService;
+  @MockBean private LoadableQuantityService loadableQuantityService;
 
   @MockBean
   private LoadablePatternComingleDetailsRepository loadablePatternComingleDetailsRepository;
@@ -138,7 +135,16 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private EntityManager entityManager;
   @MockBean private RestTemplate restTemplate;
   @MockBean private LoadablePlanConstraintsRespository loadablePlanConstraintsRespository;
-  @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+  @MockBean private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+
+  @MockBean private CowDetailService cowDetailService;
+  @MockBean private BackLoadingService backLoadingService;
+  @MockBean private GenerateDischargeStudyJson generateDischargeStudyJson;
+  @MockBean private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
+  @MockBean private CowHistoryRepository cowHistoryRepository;
+
+  @MockBean DischargeStudyPortInstructionRepository dischargeStudyPortInstructionRepository;
+  @MockBean PortInstructionRepository portInstructionRepository;
 
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;

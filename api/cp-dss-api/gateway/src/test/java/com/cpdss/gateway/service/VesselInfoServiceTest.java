@@ -4,9 +4,7 @@ package com.cpdss.gateway.service;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
@@ -36,18 +34,21 @@ import com.cpdss.gateway.domain.VesselDetailsResponse;
 import com.cpdss.gateway.repository.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
 
 /** @Author jerin.g */
-@SpringJUnitConfig(classes = {VesselInfoService.class})
+@ExtendWith(MockitoExtension.class)
 public class VesselInfoServiceTest {
 
   private VesselInfoService vesselInfoService;
-  @MockBean private UsersRepository usersRepository;
+  @Mock private UsersRepository usersRepository;
+  @Mock private RedisTemplate redisTemplate;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -63,7 +64,7 @@ public class VesselInfoServiceTest {
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
   void testGetVesselsDetails(boolean empty) throws GenericServiceException {
-    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false))
+    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), eq(false)))
         .thenCallRealMethod();
     VesselDraftCondition.Builder vesselDraftConditionBuilder = VesselDraftCondition.newBuilder();
     UllageDetails.Builder ullageBuilder = UllageDetails.newBuilder();
@@ -144,7 +145,7 @@ public class VesselInfoServiceTest {
 
   @Test
   void testGetVesselsDetailsGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false))
+    Mockito.when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), eq(false)))
         .thenCallRealMethod();
     Mockito.when(this.vesselInfoService.getVesselsDetails(any(VesselAlgoRequest.class)))
         .thenReturn(

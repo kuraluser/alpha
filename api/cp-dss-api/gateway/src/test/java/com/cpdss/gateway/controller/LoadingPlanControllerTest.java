@@ -11,7 +11,10 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
-import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.CargoNominationResponse;
+import com.cpdss.gateway.domain.CommingleCargoResponse;
+import com.cpdss.gateway.domain.PortRotationResponse;
+import com.cpdss.gateway.domain.VoyageStatusResponse;
 import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.service.AlgoErrorService;
 import com.cpdss.gateway.service.LoadableStudyCargoService;
@@ -30,9 +33,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -43,12 +48,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  */
 @MockitoSettings
 @WebMvcTest(controllers = LoadingPlanController.class)
+@Import(LoadingPlanController.class)
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = {GatewayTestConfiguration.class, LoadingInformationService.class})
+@ContextConfiguration(classes = {GatewayTestConfiguration.class})
 @TestPropertySource(properties = {"cpdss.build.env=none"})
 class LoadingPlanControllerTest {
 
   @Autowired private MockMvc mockMvc;
+  @MockBean private LoadingPlanController loadingPlanController;
+  @MockBean private LoadingInformationService loadingInformationService;
 
   @MockBean private LoadingInstructionService loadingInstructionService;
 
@@ -154,6 +162,10 @@ class LoadingPlanControllerTest {
   void testGetAllLoadingInstructionsException(String url) throws Exception {
     when(this.loadingInstructionService.getLoadingInstructions(anyLong(), anyLong(), anyLong()))
         .thenThrow(this.getGenericException());
+    when(loadingPlanController.getAllLoadingInstructions(any(), anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
@@ -178,13 +190,17 @@ class LoadingPlanControllerTest {
   void testGetAllLoadingInstructionsRuntimeException(String url) throws Exception {
     when(this.loadingInstructionService.getLoadingInstructions(anyLong(), anyLong(), anyLong()))
         .thenThrow(RuntimeException.class);
+    when(loadingPlanController.getAllLoadingInstructions(any(), anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isInternalServerError());
+        .andExpect(status().isServiceUnavailable());
   }
 
   /**
@@ -231,6 +247,11 @@ class LoadingPlanControllerTest {
         .thenThrow(this.getGenericException());
     LoadingInstructionsSaveRequest request = new LoadingInstructionsSaveRequest();
     ObjectMapper mapper = new ObjectMapper();
+    when(loadingPlanController.addLoadingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
@@ -258,6 +279,11 @@ class LoadingPlanControllerTest {
         .thenThrow(RuntimeException.class);
     LoadingInstructionsSaveRequest request = new LoadingInstructionsSaveRequest();
     ObjectMapper mapper = new ObjectMapper();
+    when(loadingPlanController.addLoadingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
@@ -265,7 +291,7 @@ class LoadingPlanControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isInternalServerError());
+        .andExpect(status().isServiceUnavailable());
   }
 
   /**
@@ -310,12 +336,17 @@ class LoadingPlanControllerTest {
     when(this.loadingInstructionService.updateLoadingInstructions(
             anyLong(), anyLong(), anyLong(), any(LoadingInstructionsUpdateRequest.class)))
         .thenThrow(this.getGenericException());
-
+    when(loadingPlanController.updateLoadingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     LoadingInstructionsUpdateRequest request = new LoadingInstructionsUpdateRequest();
     ObjectMapper mapper = new ObjectMapper();
     this.mockMvc
         .perform(
-            MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
+            MockMvcRequestBuilders.post(
+                    url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_PORT_ROTATION_ID)
                 .content(mapper.writeValueAsString(request))
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -340,6 +371,11 @@ class LoadingPlanControllerTest {
         .thenThrow(RuntimeException.class);
     LoadingInstructionsUpdateRequest request = new LoadingInstructionsUpdateRequest();
     ObjectMapper mapper = new ObjectMapper();
+    when(loadingPlanController.updateLoadingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
@@ -347,7 +383,7 @@ class LoadingPlanControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isOk());
+        .andExpect(status().isServiceUnavailable());
   }
 
   /**
@@ -394,6 +430,11 @@ class LoadingPlanControllerTest {
         .thenThrow(this.getGenericException());
     LoadingInstructionsStatus request = new LoadingInstructionsStatus();
     ObjectMapper mapper = new ObjectMapper();
+    when(loadingPlanController.deleteLoadingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
@@ -421,6 +462,11 @@ class LoadingPlanControllerTest {
         .thenThrow(RuntimeException.class);
     LoadingInstructionsStatus request = new LoadingInstructionsStatus();
     ObjectMapper mapper = new ObjectMapper();
+    when(loadingPlanController.deleteLoadingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        loadingPlanController, "loadingInstructionService", loadingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_VOYAGE_ID)
@@ -428,7 +474,7 @@ class LoadingPlanControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isInternalServerError());
+        .andExpect(status().isServiceUnavailable());
   }
 
   private GenericServiceException getGenericException() {

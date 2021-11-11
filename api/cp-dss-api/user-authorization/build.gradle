@@ -1,8 +1,8 @@
 appConfig {
   appName = 'user-authorization'
   grpcServer = 'y'
-  persistence = 'springData'
-  dataBase = 'postgres'
+  persistence = ['springData']
+  dataBase = ['postgres']
   logging = 'y'
   devTools = 'y'
   unitTest = 'y'

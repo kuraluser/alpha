@@ -66,8 +66,8 @@ export class CommonDownloadApiService {
                     try {
                         await fspromise.access(directory);
                         await fspromise.rmdir(directory, { recursive: true });
-                    } catch (error) {
-                        // Not handled
+                    } catch (err) {
+                        this.logger.error(`Error in deleting file after file download ${err.message}`, err.stack);
                     }
                 });
                 stream.pipe(res);

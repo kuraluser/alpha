@@ -1,15 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.common.grpc;
 
+import com.cpdss.common.exception.CommonGrpcServerInterruptException;
 import com.cpdss.common.utils.AppContext;
+import io.grpc.*;
 import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
-import io.grpc.Metadata;
-import io.grpc.ServerCall;
-import io.grpc.ServerCallHandler;
-import io.grpc.ServerInterceptor;
-import io.grpc.Status;
-import java.util.HashSet;
-import javax.validation.ConstraintViolationException;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -40,8 +35,8 @@ public class GrpcServerInterceptor implements ServerInterceptor {
           metadata.get(Metadata.Key.of("X-TenantID", Metadata.ASCII_STRING_MARSHALLER));
       if (tenantID == null) {
         log.error("X-TenantID not present in the Request Header");
-        throw new ConstraintViolationException(
-            "X-TenantID not present in the Request Header", new HashSet<>());
+        throw new CommonGrpcServerInterruptException(
+            "X-TenantID not present in the Request Header");
       }
       AppContext.setCurrentTenant(tenantID);
     }

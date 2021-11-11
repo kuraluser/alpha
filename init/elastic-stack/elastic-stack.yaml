@@ -1,0 +1,69 @@
+version: "3.7"
+services:
+  
+  create_certs:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+    command: >
+      bash -c '
+        if [[ ! -f ./config/certificates/elastic-certificates.p12 ]]; then
+          bin/elasticsearch-certutil cert -out config/certificates/elastic-certificates.p12 -pass ""
+        fi;
+        chown -R 1000:0 /usr/share/elasticsearch/config/certificates
+      '
+    user: "0"
+    working_dir: /usr/share/elasticsearch
+    volumes: 
+      - ${VOL_SOURCE}/elasticsearch/certificates:/usr/share/elasticsearch/config/certificates
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.4
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    depends_on: [create_certs]
+    hostname: "{{.Node.Hostname}}"
+    environment:
+      - node.name={{.Node.Hostname}}
+      - cluster.name=my-cluster
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+      # - discovery.seed_hosts=elasticsearch
+      # - cluster.initial_master_nodes={{.Node.Hostname}}
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=MyPw123
+      - node.ml=false
+      - xpack.ml.enabled=false
+      - xpack.monitoring.enabled=false
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certificates/elastic-certificates.p12
+      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certificates/elastic-certificates.p12
+      - xpack.watcher.enabled=false
+      - bootstrap.memory_lock=false
+      # - node.max_local_storage_nodes=2
+    volumes:
+      - ${VOL_SOURCE}/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
+      - ${VOL_SOURCE}/elasticsearch/data:/usr/share/elasticsearch/data
+      - ${VOL_SOURCE}/elasticsearch/certificates:/usr/share/elasticsearch/config/certificates
+    deploy:
+      # mode: global
+      endpoint_mode: dnsrr
+      resources:
+        limits:
+          memory: 1G
+  kib01:
+    image: docker.elastic.co/kibana/kibana:7.13.4
+    volumes:
+      - ${VOL_SOURCE}/elasticsearch/kibana.yml:/usr/share/kibana/config/kibana.yml
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      ELASTICSEARCH_USERNAME: elastic
+      ELASTICSEARCH_PASSWORD: MyPw123
+  
+networks:
+  default:
+    external: true
+    name: cpdss-network

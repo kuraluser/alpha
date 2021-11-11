@@ -52,7 +52,11 @@ class LoadableStudyServiceIntegrationTest {
 
   @Autowired private LoadableStudyService loadableStudyService;
 
+  @MockBean private UserService userService;
+
   @MockBean private UsersRepository usersRepository;
+
+  @MockBean private UserCachingService userCachingService;
 
   @Test
   void testGetCommingleCargo() throws GenericServiceException {
@@ -147,6 +151,7 @@ class LoadableStudyServiceIntegrationTest {
     VoyageStatusRequest voyageStatusRequest = new VoyageStatusRequest();
     voyageStatusRequest.setPortOrder(Long.valueOf(4));
     voyageStatusRequest.setOperationType("ARR");
+    voyageStatusRequest.setPortRotationId(Long.valueOf(1));
     return voyageStatusRequest;
   }
 

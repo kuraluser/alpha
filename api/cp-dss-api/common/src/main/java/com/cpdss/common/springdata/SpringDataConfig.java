@@ -2,7 +2,7 @@
 package com.cpdss.common.springdata;
 
 import com.cpdss.common.exception.SpringDataInitException;
-import com.cpdss.common.utils.Utils;
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -84,42 +84,47 @@ public class SpringDataConfig {
    * @return
    */
   @Bean
-  public HikariDataSource dataSource() {
+  public DataSource dataSource() {
 
-    if (Utils.propertyHasTrailingSpaces(host)) {
+    if (propertyHasTrailingSpaces(host)) {
       throw new RuntimeException("DB Host value has trailing white space");
     }
-    if (Utils.propertyHasTrailingSpaces(userName)) {
+    if (propertyHasTrailingSpaces(userName)) {
       throw new RuntimeException("DB Username value has trailing white space");
     }
-    if (Utils.propertyHasTrailingSpaces(password)) {
+    if (propertyHasTrailingSpaces(password)) {
       throw new RuntimeException("DB password value has trailing white space");
     }
-    if (Utils.propertyHasTrailingSpaces(entityPackageName)) {
+    if (propertyHasTrailingSpaces(entityPackageName)) {
       throw new RuntimeException("Entity Package Name value has trailing white space");
     }
     try {
-      HikariDataSource ds = new HikariDataSource();
+      HikariConfig config = new HikariConfig();
       if (dataBaseType.equals("mysql")) {
-        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        ds.setJdbcUrl("jdbc:mysql://" + host + ":3306/" + databaseName);
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setJdbcUrl("jdbc:mysql://" + host + ":3306/" + databaseName);
       } else if (dataBaseType.equals("postgres")) {
-        ds.setDriverClassName("org.postgresql.Driver");
-        ds.setJdbcUrl("jdbc:postgresql://" + host + ":5432/" + databaseName);
+        config.setDriverClassName("org.postgresql.Driver");
+        config.setJdbcUrl("jdbc:postgresql://" + host + ":5432/" + databaseName);
       }
-      ds.addDataSourceProperty("useSSL", false);
-      ds.setMaximumPoolSize(30);
-      ds.setUsername(userName);
-      ds.setPassword(password);
-      ds.addDataSourceProperty("cachePrepStmts", true);
-      ds.addDataSourceProperty("prepStmtCacheSize", 250);
-      ds.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
-      ds.addDataSourceProperty("useServerPrepStmts", true);
-      ds.addDataSourceProperty("maxLifetime", 30000);
-      return ds;
+      config.addDataSourceProperty("useSSL", false);
+      config.setMaximumPoolSize(30);
+      config.setUsername(userName);
+      config.setPassword(password);
+      config.addDataSourceProperty("cachePrepStmts", true);
+      config.addDataSourceProperty("prepStmtCacheSize", 250);
+      config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+      config.addDataSourceProperty("useServerPrepStmts", true);
+      config.addDataSourceProperty("maxLifetime", 30000);
+      return new HikariDataSource(config);
     } catch (Exception e) {
       throw new RuntimeException("Failed to initialise datasource");
     }
+  }
+
+  private boolean propertyHasTrailingSpaces(String property) {
+    Character lastCharacter = property.charAt(property.length() - 1);
+    return Character.isWhitespace(lastCharacter);
   }
 
   /**

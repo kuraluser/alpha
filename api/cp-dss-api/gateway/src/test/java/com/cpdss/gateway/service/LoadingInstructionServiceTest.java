@@ -52,6 +52,8 @@ class LoadingInstructionServiceTest {
   @BeforeEach
   public void init() {
     this.loadingInstructionService = Mockito.mock(LoadingInstructionService.class);
+    this.loadingInstructionService.loadingInstructionServiceBlockingStub =
+        loadingInstructionServiceBlockingStub;
   }
 
   /**
@@ -126,7 +128,7 @@ class LoadingInstructionServiceTest {
     ResponseStatus replyBuilder = ResponseStatus.newBuilder().setStatus(SUCCESS).build();
     Mockito.when(
             this.loadingInstructionServiceBlockingStub.updateLoadingInstructions(
-                ArgumentMatchers.any(LoadingInstructionsUpdate.class)))
+                any(LoadingInstructionsUpdate.class)))
         .thenReturn(replyBuilder);
     LoadingInstructionsSaveResponse response =
         this.loadingInstructionService.updateLoadingInstructions(

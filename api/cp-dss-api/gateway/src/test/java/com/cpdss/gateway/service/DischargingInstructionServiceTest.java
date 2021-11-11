@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(classes = {DischargingInstructionService.class})
 public class DischargingInstructionServiceTest {
@@ -67,6 +68,10 @@ public class DischargingInstructionServiceTest {
             this.dischargingInstructionServiceBlockingStub.addDischargingInstruction(
                 ArgumentMatchers.any(DischargingInstructionsSave.class)))
         .thenReturn(replyBuilder);
+    ReflectionTestUtils.setField(
+        dischargingInstructionService,
+        "dischargingInstructionServiceBlockingStub",
+        dischargingInstructionServiceBlockingStub);
     DischargingInstructionsSaveResponse response =
         this.dischargingInstructionService.addDischargingInstruction(
             TEST_VESSEL_ID,
@@ -125,6 +130,10 @@ public class DischargingInstructionServiceTest {
             this.dischargingInstructionServiceBlockingStub.updateDischargingInstructions(
                 ArgumentMatchers.any(DischargingInstructionsUpdate.class)))
         .thenReturn(replyBuilder);
+    ReflectionTestUtils.setField(
+        dischargingInstructionService,
+        "dischargingInstructionServiceBlockingStub",
+        dischargingInstructionServiceBlockingStub);
     DischargingInstructionsSaveResponse response =
         this.dischargingInstructionService.updateDischargingInstructions(
             TEST_VESSEL_ID,
@@ -183,6 +192,10 @@ public class DischargingInstructionServiceTest {
             this.dischargingInstructionServiceBlockingStub.editInstructions(
                 ArgumentMatchers.any(DischargingInstructionStatus.class)))
         .thenReturn(replyBuilder);
+    ReflectionTestUtils.setField(
+        dischargingInstructionService,
+        "dischargingInstructionServiceBlockingStub",
+        dischargingInstructionServiceBlockingStub);
     DischargingInstructionsSaveResponse response =
         this.dischargingInstructionService.editDischargingInstructions(
             TEST_VESSEL_ID,
@@ -241,6 +254,10 @@ public class DischargingInstructionServiceTest {
             this.dischargingInstructionServiceBlockingStub.deleteDischargingInstructions(
                 ArgumentMatchers.any(DischargingInstructionStatus.class)))
         .thenReturn(replyBuilder);
+    ReflectionTestUtils.setField(
+        dischargingInstructionService,
+        "dischargingInstructionServiceBlockingStub",
+        dischargingInstructionServiceBlockingStub);
     DischargingInstructionsSaveResponse response =
         this.dischargingInstructionService.deleteDischargingInstructions(
             TEST_VESSEL_ID,

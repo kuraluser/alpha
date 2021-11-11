@@ -29,7 +29,7 @@ export class FinishTaskService {
      */
     @Cron(CronExpression.EVERY_10_SECONDS)
     public async finishTaskCron(): Promise<string> {
-        this.logger.debug('FILE FINISH is under processing ' + this.isLocked);
+        this.logger.log('FILE FINISH is under processing ' + this.isLocked);
         // Checking if the queue length is empty
         if (this.isLocked) {
             return Promise.resolve('success');

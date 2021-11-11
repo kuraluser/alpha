@@ -3,7 +3,7 @@ ext{
     dbName = System.getenv('DB_NAME') ?: ""
     dbUser = System.getenv('DB_USER') ?: ""
     dbPassword = System.getenv('DB_PASSWORD') ?: ""
-	salt = System.getenv('SALT') ?: ""
+    salt = System.getenv('SALT') ?: ""
     cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
     shipUrl = System.getenv('SHIP_URL')?:""
     shoreUrl = System.getenv('SHORE_URL')?:""
@@ -16,40 +16,38 @@ ext{
 }
 
 appConfig {
-  appName = 'envoy-writer'
-  grpc = 'y'
-  logging = 'y'
-  javaMainClass = "com.cpdss.envoywriter.Application"
-  persistence = 'springData'
-  dataBase = 'postgres'
-  devTools = 'y'
-  rest = 'y'
-  monitoring = 'y'
-docker {
-    imageName = imageNameVal
-    containerName = containerNameVal
-    networkName = 'cpdss-network'
-    memoryLimitInMB = 300
-    hostPortMapping {
-        hostGrpcPort = Integer.parseInt(grpcPortHost)
-        hostDebugPort = Integer.parseInt(debugPortHost)
+    appName = 'envoy-writer'
+    grpc = 'y'
+    logging = 'y'
+    javaMainClass = "com.cpdss.envoywriter.Application"
+    persistence = ['springData']
+    dataBase = ['postgres']
+    devTools = 'y'
+    monitoring = 'y'
+    docker {
+        imageName = imageNameVal
+        containerName = containerNameVal
+        networkName = 'cpdss-network'
+        memoryLimitInMB = 300
+        hostPortMapping {
+            hostGrpcPort = Integer.parseInt(grpcPortHost)
+            hostDebugPort = Integer.parseInt(debugPortHost)
+        }
+        healthCheck {
+            healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+            healthCheckIntervalInSec = 30
+            healthCheckInitialDelayInSec = 60
+        }
+        swarm {
+            serviceName = serviceNameVal
+            swarmMode = REPLICATED_MODE
+            replicas = 1
+            rollbackOnUpdateFailure = true
+        }
+        environment = ['GRPC_PORT': '8090', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv,'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl ]
     }
-    healthCheck {
-        healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
-        healthCheckIntervalInSec = 30
-        healthCheckInitialDelayInSec = 60
-    }
-    swarm {
-      serviceName = serviceNameVal
-      swarmMode = REPLICATED_MODE
-      replicas = 1
-      rollbackOnUpdateFailure = true
-    }
-    environment = ['GRPC_PORT': '8090', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv,'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl ]
-  }
 }
 
 dependencies {
     implementation project(':common')
-	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
-}
+ implementation group: 'commons-io', name: 'commons-io', version: '2.6'}

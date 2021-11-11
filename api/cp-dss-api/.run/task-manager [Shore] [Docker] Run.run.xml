@@ -31,6 +31,174 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
+          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5284" />
+          <entry key="GRPC_PORT_HOST" value="9284" />
+          <entry key="IMAGE_NAME" value="task-manager-shore" />
+          <entry key="SERVICE_NAME" value="task-manager-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/task-manager" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="task-manager [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Task Manager">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5284" />
+          <entry key="GRPC_PORT_HOST" value="9284" />
+          <entry key="IMAGE_NAME" value="task-manager-shore" />
+          <entry key="SERVICE_NAME" value="task-manager-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/task-manager" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="task-manager [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Task Manager">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5284" />
+          <entry key="GRPC_PORT_HOST" value="9284" />
+          <entry key="IMAGE_NAME" value="task-manager-shore" />
+          <entry key="SERVICE_NAME" value="task-manager-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/task-manager" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="task-manager [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Task Manager">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5284" />
+          <entry key="GRPC_PORT_HOST" value="9284" />
+          <entry key="IMAGE_NAME" value="task-manager-shore" />
+          <entry key="SERVICE_NAME" value="task-manager-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/task-manager" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="task-manager [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Task Manager">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5284" />
+          <entry key="GRPC_PORT_HOST" value="9284" />
+          <entry key="IMAGE_NAME" value="task-manager-shore" />
+          <entry key="SERVICE_NAME" value="task-manager-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/task-manager" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="task-manager [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Task Manager">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="task-manager-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5284" />
+          <entry key="GRPC_PORT_HOST" value="9284" />
+          <entry key="IMAGE_NAME" value="task-manager-shore" />
+          <entry key="SERVICE_NAME" value="task-manager-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/task-manager" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="task-manager [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Task Manager">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
           <entry key="CONTAINER_NAME" value="task-manager-container-shore" />
           <entry key="CPDSS_BUILD_ENV" value="cloud" />
           <entry key="DEBUG_PORT_HOST" value="5284" />

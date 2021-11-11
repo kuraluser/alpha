@@ -28,8 +28,6 @@ import org.springframework.web.client.RestTemplate;
 public class KeycloakService {
   @Autowired private RestTemplate restTemplate;
 
-  @Autowired private ObjectMapper objectMapper;
-
   @Autowired(required = false)
   private KeycloakDynamicConfigResolver keycloakDynamicConfigResolver;
 
@@ -84,6 +82,7 @@ public class KeycloakService {
               Object.class);
 
       if (HttpStatus.OK.value() == response.getStatusCodeValue()) {
+        ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(response.getBody(), KeycloakAuthenticationResponse.class);
       } else {
         log.error(KEYCLOAK_EXCEPTION_MSG + ": {}", response);
@@ -128,6 +127,7 @@ public class KeycloakService {
           this.restTemplate.exchange(apiUrl, httpMethod, entity, Object.class);
 
       if (HttpStatus.OK.value() == response.getStatusCodeValue()) {
+        ObjectMapper objectMapper = new ObjectMapper();
         return responseType.cast(
             objectMapper.convertValue(response.getBody(), Class.forName(responseType.getName())));
       } else {

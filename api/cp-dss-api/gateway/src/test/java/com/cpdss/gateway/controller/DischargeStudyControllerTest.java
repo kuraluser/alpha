@@ -11,11 +11,8 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.service.AlgoErrorService;
-import com.cpdss.gateway.service.DischargeStudyService;
-import com.cpdss.gateway.service.LoadableStudyCargoService;
-import com.cpdss.gateway.service.SyncRedisMasterService;
-import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
+import com.cpdss.gateway.security.ship.*;
+import com.cpdss.gateway.service.*;
 import com.cpdss.gateway.service.redis.RedisMasterSyncService;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -26,9 +23,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 /**
@@ -40,7 +39,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @WebMvcTest(controllers = DischargeStudyController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {GatewayTestConfiguration.class})
-@TestPropertySource(properties = {"cpdss.build.env=none"})
+@TestPropertySource(properties = {"cpdss.build.env=ship"})
 class DischargeStudyControllerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -57,7 +56,21 @@ class DischargeStudyControllerTest {
 
   @MockBean private LoadableStudyCargoService loadableStudyCargoService;
 
-  @MockBean private LoadingPlanService loadingPlanService;
+  @MockBean private LoadableStudyService loadableStudyService;
+
+  @MockBean private ShipResponseBodyAdvice shipResponseBodyAdvice;
+
+  @MockBean private ShipJwtService shipJwtService;
+
+  @MockBean private ShipAuthenticationProvider jwtAuthenticationProvider;
+
+  @MockBean private ShipUserAuthenticationProvider shipUserAuthenticationProvider;
+
+  @MockBean private ShipUserDetailService userDetailService;
+
+  @MockBean private ShipTokenExtractor jwtTokenExtractor;
+
+  @MockBean private AuthenticationFailureHandler failureHandler;
 
   @MockBean AlgoErrorService algoErrorService;
 
@@ -105,7 +118,8 @@ class DischargeStudyControllerTest {
         .thenReturn(new AlgoPatternResponse());
     this.mockMvc
         .perform(
-            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
+            MockMvcRequestBuilders.post(
+                    url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -130,7 +144,8 @@ class DischargeStudyControllerTest {
         .thenThrow(this.getGenericException());
     this.mockMvc
         .perform(
-            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
+            MockMvcRequestBuilders.post(
+                    url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -153,13 +168,15 @@ class DischargeStudyControllerTest {
     when(this.dischargeStudyService.generateDischargePatterns(
             anyLong(), anyLong(), anyLong(), any(String.class)))
         .thenThrow(RuntimeException.class);
-    this.mockMvc
-        .perform(
-            MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
+    ResultActions actions =
+        this.mockMvc.perform(
+            MockMvcRequestBuilders.post(
+                    url, TEST_VESSEL_ID, TEST_VOYAGE_ID, TEST_DISCHARGE_STUDY_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isInternalServerError());
+                .accept(MediaType.APPLICATION_JSON_VALUE));
+
+    actions.andExpect(status().isServiceUnavailable());
   }
 
   private GenericServiceException getGenericException() {
