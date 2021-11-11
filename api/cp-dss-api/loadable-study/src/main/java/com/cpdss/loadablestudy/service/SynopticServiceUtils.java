@@ -24,6 +24,9 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder;
 import com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest;
+import com.cpdss.common.generated.LoadableStudy.SynopticalCommingleRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
@@ -387,6 +390,12 @@ public class SynopticServiceUtils {
               isEmpty(cargoRecord.getActualWeight())
                   ? null
                   : new BigDecimal(cargoRecord.getActualWeight()));
+          Optional.ofNullable(cargoRecord.getUllage())
+              .ifPresent(value -> cargoEntity.setActualRdgUllage(new BigDecimal(value)));
+          Optional.ofNullable(cargoRecord.getActualApi())
+              .ifPresent(value -> cargoEntity.setActualApi(new BigDecimal(value)));
+          Optional.ofNullable(cargoRecord.getActualTemperature())
+              .ifPresent(value -> cargoEntity.setActualTemperature(new BigDecimal(value)));
           toBeSavedCargoList.add(cargoEntity);
         } else {
           com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails cargoEntity =
@@ -1153,5 +1162,40 @@ public class SynopticServiceUtils {
         isEmpty(record.getDisplacementActual())
             ? null
             : new BigDecimal(record.getDisplacementActual()));
+  }
+
+  public void saveSynopticalCommingleData(
+      SynopticalTableRequest request,
+      Optional<SynopticalTable> synopticalData,
+      SynopticalRecord synopticalRecord) {
+    if (!synopticalRecord.getCommingleList().isEmpty()) {
+      List<LoadablePlanComminglePortwiseDetails> commingles =
+          loadablePlanCommingleDetailsPortwiseRepository.findByLoadablePatternIdAndIsActive(
+              request.getLoadablePatternId(), true);
+      List<LoadablePlanComminglePortwiseDetails> toBeSaved = new ArrayList<>();
+      for (SynopticalCommingleRecord rec : synopticalRecord.getCommingleList()) {
+        Optional<LoadablePlanComminglePortwiseDetails> entityOpt =
+            commingles.stream().filter(b -> b.getTankId().longValue() == rec.getTankId()).findAny();
+        if (entityOpt.isPresent()) {
+          LoadablePlanComminglePortwiseDetails ent = entityOpt.get();
+          ent.setActualQuantity(
+              isEmpty(rec.getActualWeight()) ? null : new BigDecimal(rec.getActualWeight()));
+          toBeSaved.add(ent);
+        } else {
+          LoadablePlanComminglePortwiseDetails ent = new LoadablePlanComminglePortwiseDetails();
+          ent.setTankId(rec.getTankId());
+          ent.setIsActive(true);
+          ent.setLoadablePattern(
+              loadablePatternRepository.findById(request.getLoadablePatternId()).get());
+          ent.setPortId(synopticalData.get().getPortXid());
+          ent.setOperationType(synopticalData.get().getOperationType());
+          ent.setPortRotationXid(synopticalData.get().getLoadableStudyPortRotation().getId());
+          ent.setActualQuantity(
+              isEmpty(rec.getActualWeight()) ? null : new BigDecimal(rec.getActualWeight()));
+          toBeSaved.add(ent);
+        }
+      }
+      this.loadablePlanCommingleDetailsPortwiseRepository.saveAll(toBeSaved);
+    }
   }
 }

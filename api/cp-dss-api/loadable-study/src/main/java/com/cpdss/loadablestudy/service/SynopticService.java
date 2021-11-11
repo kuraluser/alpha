@@ -1945,6 +1945,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
             request, loadableStudy.get(), synopticalData.get(), synopticalRecord, true);
         synpoticServiceUtils.saveSynopticalOhqData(
             loadableStudy.get(), synopticalData.get(), synopticalRecord, true);
+        synpoticServiceUtils.saveSynopticalCommingleData(request, synopticalData, synopticalRecord);
       }
       replyBuilder.setStatus(SUCCESS);
     } catch (GenericServiceException e) {
