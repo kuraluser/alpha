@@ -107,4 +107,9 @@ public interface DischargeInformationRepository
       BigDecimal timeForSlopDischarging,
       BigDecimal timeForDryCheck,
       Long id);
+
+  @Query("Update DischargeInformation SET isDischargingInstructionsComplete = ?1 WHERE id = ?2")
+  @Modifying
+  @Transactional
+  void updateDischargeInstructionStatus(boolean status, Long id);
 }

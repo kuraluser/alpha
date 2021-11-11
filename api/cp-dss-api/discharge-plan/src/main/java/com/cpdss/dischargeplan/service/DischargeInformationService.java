@@ -1413,4 +1413,14 @@ public class DischargeInformationService {
           disInfoStatus.getId(), dsInfo.getId());
     }
   }
+
+  public int updateDischargeInstructionStatusTrue(Long infoId) {
+    try {
+      dischargeInformationRepository.updateDischargeInstructionStatus(true, infoId);
+      return 1;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return 0;
+    }
+  }
 }
