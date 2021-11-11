@@ -42,6 +42,7 @@ public class DischargePlanConstants {
   public static final Long DISCHARGING_INFORMATION_ERROR_OCCURRED_ID = 7L;
   public static final Integer DISCHARGING_PLAN_PLANNED_TYPE_VALUE = 2;
   public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+  public static final Long DISCHARGING_RULE_MASTER_ID = 3L;
 
   public static final Long DISCHARGE_INFORMATION_REQUEST_JSON_TYPE_ID = 18L;
   public static final Long DISCHARGE_INFORMATION_LOADICATOR_REQUEST_JSON_TYPE_ID = 20L;

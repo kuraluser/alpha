@@ -11,6 +11,7 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_DATE;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_HEIGHT;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_TIME;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.DISCHARGING_RULE_MASTER_ID;
 
 import com.cpdss.common.constants.RedisConfigConstants;
 import com.cpdss.common.exception.GenericServiceException;
@@ -933,6 +934,29 @@ public class DischargeInformationService {
     dischargeInformationRepository.updateIsDischargingPlanGeneratedStatus(id, isPlanGenerated);
   }
 
+  /**
+   * Get discharge rules for the algo request json
+   * @param vesselId
+   * @param dischargingInfoId
+   * @return DischargeRuleReply
+   */
+  public DischargeRuleReply getDischargingRuleForAlgo(
+	      Long vesselId, Long dischargingInfoId) {
+	  com.cpdss.common.generated.discharge_plan.DischargeRuleRequest.Builder request =
+			  DischargeRuleRequest.newBuilder();
+	    request.setDischargeInfoId(dischargingInfoId);
+	    request.setVesselId(vesselId);
+	    request.setSectionId(DISCHARGING_RULE_MASTER_ID);
+	    DischargeRuleReply.Builder builder =
+	    		DischargeRuleReply.newBuilder();
+	    try {
+	      this.getOrSaveRulesForDischargingPlan(request.build(), builder);
+	    } catch (GenericServiceException e) {
+	      e.printStackTrace();
+	    }
+	    return builder.build();
+  }
+  
   public void getOrSaveRulesForDischargingPlan(
       DischargeRuleRequest request, DischargeRuleReply.Builder builder)
       throws GenericServiceException {
