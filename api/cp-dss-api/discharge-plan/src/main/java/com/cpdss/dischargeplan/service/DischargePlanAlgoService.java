@@ -685,6 +685,9 @@ public class DischargePlanAlgoService {
         if (!berthData.get().getUkc().isEmpty()) {
           bd.setUkc(berthData.get().getUkc());
         }
+        if (!berthData.get().getPortMaxPermissibleDraft().isEmpty()) {
+          bd.setPortMaxPermissibleDraft(berthData.get().getPortMaxPermissibleDraft());
+        }
       }
     } catch (Exception e) {
       e.printStackTrace();

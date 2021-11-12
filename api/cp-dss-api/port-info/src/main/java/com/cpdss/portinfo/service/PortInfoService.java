@@ -45,6 +45,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
   @Autowired private CargoPortMappingRepository cargoPortMappingRepository;
   @Autowired private TimezoneRepository timezoneRepository;
   @Autowired private CountryRepository countryRepository;
+  @Autowired BerthInfoRepository berthInfoRepository;
+  @Autowired BerthManifoldRepository berthManifoldRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -317,10 +319,6 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
-  @Autowired BerthInfoRepository berthInfoRepository;
-
-  @Autowired BerthManifoldRepository berthManifoldRepository;
-
   @Override
   public void getBerthDetailsByPortId(
       com.cpdss.common.generated.PortInfo.PortIdRequest request,
@@ -383,6 +381,10 @@ public class PortInfoService extends PortInfoServiceImplBase {
       Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
 
       Optional.ofNullable(bi.getUnderKeelClearance()).ifPresent(builder2::setUkc);
+      if (bi.getPortInfo() != null) {
+        Optional.ofNullable(bi.getPortInfo().getMaxPermissibleDraft())
+            .ifPresent(t -> builder2.setPortMaxPermissibleDraft(t.toString()));
+      }
       builder.addBerths(builder2);
     }
   }

@@ -630,6 +630,10 @@ public class LoadingInformationAlgoRequestBuilderService {
                     StringUtils.isEmpty(selectedBerth.getMaxShipChannel())
                         ? null
                         : new BigDecimal(selectedBerth.getMaxShipChannel()));
+                if (!selectedBerth.getPortMaxPermissibleDraft().isEmpty()) {
+                  berthDetail.setPortMaxPermissibleDraft(
+                      selectedBerth.getPortMaxPermissibleDraft());
+                }
               });
           berthDetail.setHoseConnections(berth.getHoseConnections());
           berthDetail.setItemsToBeAgreedWith(berth.getItemsToBeAgreedWith());

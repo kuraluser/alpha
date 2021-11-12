@@ -141,8 +141,6 @@ message TimezoneResponse{
 	repeated Timezone timezones = 2;
 }
 
-// <------ start loading plan, by john -------->
-
 message PortIdRequest{
 	int64 portId = 1;
 }
@@ -170,8 +168,8 @@ message BerthDetail{
 	string maxDwt = 15;
 	string ukc = 16;
 	string berthDatumDepth = 17;
+	string portMaxPermissibleDraft = 18;
 }
-// <------ end loading plan, by john -------->
 
 message Country{
 	int64 id = 1;
