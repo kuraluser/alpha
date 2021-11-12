@@ -211,7 +211,8 @@ public class GenerateLoadingPlanExcelReportService {
                 "xlsx",
                 "Loading",
                 "Process",
-                null);
+                null,
+                true);
         if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
           log.info("Succesfully added entry in FileRepo : {}", reply.getId());
         } else {
