@@ -195,6 +195,12 @@ public class DischargeInformationRPCService
         DischargeInformation.Builder dischargingInformation = DischargeInformation.newBuilder();
         dischargingInformation.setDischargeInfoId(disEntity.getId());
         dischargingInformation.setSynopticTableId(disEntity.getSynopticTableXid());
+        Optional.ofNullable(disEntity.getDischargingInformationStatus())
+            .ifPresent(status -> dischargingInformation.setDischargingInfoStatusId(status.getId()));
+        Optional.ofNullable(disEntity.getArrivalStatusId())
+            .ifPresent(dischargingInformation::setDischargingPlanArrStatusId);
+        Optional.ofNullable(disEntity.getDepartureStatusId())
+            .ifPresent(dischargingInformation::setDischargingPlanDepStatusId);
         // Set Discharge Rates
         this.informationBuilderService.buildDischargeRateMessageFromEntity(
             disEntity, dischargingInformation);

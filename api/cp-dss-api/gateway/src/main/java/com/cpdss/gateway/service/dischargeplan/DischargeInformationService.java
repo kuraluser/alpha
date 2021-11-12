@@ -351,33 +351,11 @@ public class DischargeInformationService {
     vesselTankDetails.setDischargeQuantityCargoDetails(
         this.loadingInformationService.getDischargePlanCargoDetailsByPort(
             vesselId,
-            activeVoyage.getPatternId(),
-            GatewayConstants.OPERATION_TYPE_ARR,
+            activeVoyage.getDischargePatternId(),
+            GatewayConstants.OPERATION_TYPE_DEP,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
-    vesselTankDetails
-        .getDischargeQuantityCargoDetails()
-        .forEach(
-            dqcd -> {
-              CargoNominationDetail cargoDetail =
-                  nominations.getCargoNominationsList().stream()
-                      .filter(detail -> dqcd.getCargoNominationId().equals(detail.getId()))
-                      .findFirst()
-                      .orElse(null);
-              dqcd.setBlFigure(new BigDecimal(cargoDetail.getQuantity()));
-
-              BigDecimal sum =
-                  planReply.getPortDischargingPlanStowageDetailsList().stream()
-                      .filter(
-                          stowage ->
-                              dqcd.getCargoNominationId().equals(stowage.getCargoNominationId())
-                                  && stowage.getValueType() == 2
-                                  && stowage.getConditionType() == 2)
-                      .map(detail -> new BigDecimal(detail.getQuantity()))
-                      .reduce(BigDecimal.ZERO, BigDecimal::add);
-              dqcd.setShipFigure(sum);
-            });
-    dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
+        dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     // discharge sequence (reason/delay)
     LoadingSequences dischargeSequences =
@@ -405,7 +383,9 @@ public class DischargeInformationService {
         this.infoBuilderService.buildDischargeCowPlan(
             planReply.getDischargingInformation().getCowPlan(), extract);
     dischargeInformation.setCowPlan(cowPlan);
-
+    dischargeInformation.setDischargeInfoStatusId(planReply.getDischargingInformation().getDischargingInfoStatusId());
+    dischargeInformation.setDischargePlanArrStatusId(planReply.getDischargingInformation().getDischargingPlanArrStatusId());
+    dischargeInformation.setDischargePlanDepStatusId(planReply.getDischargingInformation().getDischargingPlanDepStatusId());
     dischargingPlanResponse.setDischargingInformation(dischargeInformation);
     List<LoadableStudy.LoadableQuantityCargoDetails> portCargos =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(

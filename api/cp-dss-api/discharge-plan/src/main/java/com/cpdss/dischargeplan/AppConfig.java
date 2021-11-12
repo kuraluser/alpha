@@ -14,8 +14,8 @@ import org.springframework.web.client.RestTemplate;
 @Import({CommonConfig.class, Log4j2Config.class, GrpcConfig.class, SpringDataConfig.class})
 public class AppConfig {
 
-    @Bean
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
-    }
+  @Bean
+  public RestTemplate getRestTemplate() {
+    return new RestTemplate();
+  }
 }
