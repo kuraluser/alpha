@@ -835,6 +835,7 @@ a{
 
 .ship-rear-pattern{
   border-left: 2px solid $tank-ohq-border;
+  border-right: 2px solid $tank-ohq-border;
   .rear-top-pattern{
     border-top: 25px solid $tank-ohq-border;
     &:after{
