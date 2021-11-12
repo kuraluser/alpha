@@ -277,7 +277,8 @@ public class DischargeInformationBuilderService {
               var1.getQuantityM3(),
               var1.getSounding(),
               var1.getConditionType(),
-              var1.getValueType()));
+              var1.getValueType(),
+              var1.getColorCode()));
     }
     return response;
   }
@@ -299,7 +300,8 @@ public class DischargeInformationBuilderService {
               var1.getQuantityM3(),
               null,
               var1.getConditionType(),
-              var1.getValueType()));
+              var1.getValueType(),
+              var1.getColorCode()));
     }
     return response;
   }
@@ -321,7 +323,8 @@ public class DischargeInformationBuilderService {
               var1.getQuantityM3(),
               null,
               var1.getConditionType(),
-              var1.getValueType()));
+              var1.getValueType(),
+              var1.getColorCode()));
     }
     return response;
   }
@@ -389,7 +392,8 @@ public class DischargeInformationBuilderService {
       BigDecimal quantityM3,
       BigDecimal sounding,
       Integer conditionType,
-      Integer valueType)
+      Integer valueType,
+      String colorCode)
       throws GenericServiceException {
 
     try {
@@ -406,6 +410,7 @@ public class DischargeInformationBuilderService {
               .setSounding(sounding != null ? sounding.toString() : "")
               .setConditionType(conditionType != null ? conditionType : 0)
               .setValueType(valueType != null ? valueType : 0)
+              .setColorCode(colorCode != null ? colorCode : "")
               .build();
       return builder;
     } catch (Exception e) {
