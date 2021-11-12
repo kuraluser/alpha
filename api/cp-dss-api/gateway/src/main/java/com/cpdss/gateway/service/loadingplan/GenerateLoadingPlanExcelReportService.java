@@ -207,8 +207,8 @@ public class GenerateLoadingPlanExcelReportService {
             FileRepoService.addFileToRepo(
                 null,
                 loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-                actualFileName,
-                "xlsx",
+                actualFileName.split("/")[1],
+                SUB_FOLDER_NAME + "/",
                 "Loading",
                 "Process",
                 null,
