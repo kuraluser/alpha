@@ -98,32 +98,40 @@ public class GenerateProtectedFile {
    * @param voyageNum
    * @param fileCreatedDate
    * @return Workbook
+   * @throws GenericServiceException 
    */
   public static void setPasswordToWorkbook(
-      XSSFWorkbook workbook, String voyageNum, String fileCreatedDate, FileOutputStream outFile) {
-
+      XSSFWorkbook workbook, String voyageNum, String fileCreatedDate, FileOutputStream outFile) throws GenericServiceException {
     try (POIFSFileSystem fileSystem = new POIFSFileSystem()) {
-      Date date1 = new SimpleDateFormat(DATE_FORMAT).parse(fileCreatedDate);
-      Instant instant = date1.toInstant();
-      ZoneId defaultZoneId = ZoneId.systemDefault();
-      LocalDate localDate = instant.atZone(defaultZoneId).toLocalDate();
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-      String password = voyageNum + localDate.format(formatter).replaceAll("\\D", "");
-      log.info("password for voyage " + voyageNum + " " + password);
-      EncryptionInfo info =
-          new EncryptionInfo(
-              EncryptionMode.agile, CipherAlgorithm.aes192, HashAlgorithm.sha384, -1, -1, null);
-
-      Encryptor enc = info.getEncryptor();
-      enc.confirmPassword(password);
-
-      OutputStream outputStream = enc.getDataStream(fileSystem);
-      workbook.write(outputStream);
-      outputStream.close();
-      fileSystem.writeFilesystem(outFile);
+		log.info("voyageDate "+fileCreatedDate);
+		Date date1 = new SimpleDateFormat(DATE_FORMAT).parse(fileCreatedDate);
+		Instant instant = date1.toInstant();
+		log.info("instant date "+instant);
+		ZoneId defaultZoneId = ZoneId.systemDefault();
+		LocalDate localDate = instant.atZone(defaultZoneId).toLocalDate();
+		log.info("local date "+localDate);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+		String password = voyageNum + localDate.format(formatter).replaceAll("\\D", "");
+		log.info("password for voyage " + voyageNum + " " + password);
+		EncryptionInfo info =
+		     new EncryptionInfo(
+		          EncryptionMode.agile, CipherAlgorithm.aes192, HashAlgorithm.sha384, -1, -1, null);
+		
+		Encryptor enc = info.getEncryptor();
+		enc.confirmPassword(password);
+		
+		OutputStream outputStream = enc.getDataStream(fileSystem);
+		workbook.write(outputStream);
+		outputStream.close();
+		fileSystem.writeFilesystem(outFile);
 
     } catch (Exception e) {
       log.info("Exception in generate password protected file " + e.getLocalizedMessage());
+      e.printStackTrace();
+      throw new GenericServiceException(
+              "Exception in generate password protected file",
+              CommonErrorCodes.E_CPDSS_INVALID_EXCEL_FILE,
+              HttpStatusCode.BAD_REQUEST);
     }
   }
 
