@@ -311,7 +311,7 @@ public class SynopticServiceTest {
   }
 
   @Test
-  void testpopulateOnHandQuantityData() {
+  void testpopulateOnHandQuantityData() throws GenericServiceException {
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
         new com.cpdss.loadablestudy.entity.LoadableStudy();
     loadableStudy.setVoyage(getVoyage());
