@@ -45,15 +45,7 @@ import com.cpdss.gateway.repository.UsersRepository;
 import com.cpdss.gateway.service.vesselinfo.VesselValveService;
 import com.cpdss.gateway.utility.RuleUtility;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
@@ -488,60 +480,41 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
   private List<VesselPumpTankMapping> buildVesselPumpTankMappingResponse(
       VesselAlgoReply vesselAlgoReply) {
     List<VesselPumpTankMapping> vesselPumpTankMappings = new ArrayList<>();
+    Set<Long> pumpIds = new HashSet<>();
     vesselAlgoReply
         .getVesselPumpTankMappingList()
         .forEach(
             vesselPumpTankMapping -> {
-              VesselPumpTankMapping vesselPumpTankMappingDto = new VesselPumpTankMapping();
-              vesselPumpTankMappingDto.setVesselXid((int) vesselPumpTankMapping.getVesselId());
-              VesselPump vesselPump = new VesselPump();
-              vesselPump.setId(vesselPumpTankMapping.getVesselPump().getId());
-              vesselPump.setVesselId(vesselPumpTankMapping.getVesselPump().getVesselId());
-              vesselPump.setPumpCode(vesselPumpTankMapping.getVesselPump().getPumpCode());
-              vesselPump.setPumpName(vesselPumpTankMapping.getVesselPump().getPumpName());
-              vesselPump.setPumpTypeId(vesselPumpTankMapping.getVesselPump().getPumpTypeId());
-              vesselPumpTankMappingDto.setVesselPump(vesselPump);
-
-              VesselTank vesselTank = new VesselTank();
-              vesselTank.setId(vesselPumpTankMapping.getVesselTankDetail().getTankId());
-              vesselTank.setCategoryId(
-                  vesselPumpTankMapping.getVesselTankDetail().getTankCategoryId());
-              vesselTank.setCategoryName(
-                  vesselPumpTankMapping.getVesselTankDetail().getTankCategoryName());
-              vesselTank.setDensity(
-                  vesselPumpTankMapping.getVesselTankDetail().getDensity().equals("")
-                      ? null
-                      : new BigDecimal(vesselPumpTankMapping.getVesselTankDetail().getDensity()));
-              vesselTank.setDisplayOrder(
-                  vesselPumpTankMapping.getVesselTankDetail().getTankDisplayOrder());
-              vesselTank.setFrameNumberFrom(
-                  vesselPumpTankMapping.getVesselTankDetail().getFrameNumberFrom());
-              vesselTank.setFrameNumberTo(
-                  vesselPumpTankMapping.getVesselTankDetail().getFrameNumberTo());
-              vesselTank.setCoatingTypeId(
-                  vesselPumpTankMapping.getVesselTankDetail().getCoatingTypeId());
-              vesselTank.setFillCapcityCubm(
-                  vesselPumpTankMapping.getVesselTankDetail().getFillCapacityCubm().equals("")
-                      ? null
-                      : new BigDecimal(
-                          vesselPumpTankMapping.getVesselTankDetail().getFillCapacityCubm()));
-              vesselTank.setFullCapacityCubm(
-                  vesselPumpTankMapping.getVesselTankDetail().getFullCapacityCubm());
-              vesselTank.setGroup(vesselPumpTankMapping.getVesselTankDetail().getTankGroup());
-              vesselTank.setHeightFrom(vesselPumpTankMapping.getVesselTankDetail().getHeightFrom());
-              vesselTank.setHeightTo(vesselPumpTankMapping.getVesselTankDetail().getHeightTo());
-              vesselTank.setIsLoadicatorUsing(
-                  vesselPumpTankMapping.getVesselTankDetail().getIsLoadicatorUsing());
-              vesselTank.setLcg(vesselPumpTankMapping.getVesselTankDetail().getLcg());
-              vesselTank.setName(vesselPumpTankMapping.getVesselTankDetail().getTankName());
-              vesselTank.setOrder(vesselPumpTankMapping.getVesselTankDetail().getTankOrder());
-              vesselTank.setShortName(vesselPumpTankMapping.getVesselTankDetail().getShortName());
-              vesselTank.setSlopTank(vesselPumpTankMapping.getVesselTankDetail().getIsSlopTank());
-              vesselTank.setTcg(vesselPumpTankMapping.getVesselTankDetail().getTcg());
-              vesselTank.setVcg(vesselPumpTankMapping.getVesselTankDetail().getVcg());
-              vesselPumpTankMappingDto.setVesselTank(vesselTank);
-
-              vesselPumpTankMappings.add(vesselPumpTankMappingDto);
+              if (pumpIds.add(vesselPumpTankMapping.getVesselPump().getId())) {
+                VesselPumpTankMapping vesselPumpTankMappingDto = new VesselPumpTankMapping();
+                vesselPumpTankMappingDto.setVesselXid((int) vesselPumpTankMapping.getVesselId());
+                VesselPump vesselPump = new VesselPump();
+                vesselPump.setId(vesselPumpTankMapping.getVesselPump().getId());
+                vesselPump.setVesselId(vesselPumpTankMapping.getVesselPump().getVesselId());
+                vesselPump.setPumpCode(vesselPumpTankMapping.getVesselPump().getPumpCode());
+                vesselPump.setPumpName(vesselPumpTankMapping.getVesselPump().getPumpName());
+                vesselPump.setPumpTypeId(vesselPumpTankMapping.getVesselPump().getPumpTypeId());
+                List<VesselTank> vesselTanks = new ArrayList<>();
+                vesselAlgoReply
+                    .getVesselPumpTankMappingList()
+                    .forEach(
+                        vesselPumpTankMapping1 -> {
+                          if (vesselPumpTankMapping1.getVesselPump().getId()
+                              == vesselPumpTankMapping.getVesselPump().getId()) {
+                            VesselTank vesselTank = new VesselTank();
+                            vesselTank.setId(
+                                vesselPumpTankMapping1.getVesselPump().getVesselTankDetail().getTankId());
+                            vesselTank.setName(
+                                vesselPumpTankMapping1.getVesselPump().getVesselTankDetail().getTankName());
+                            vesselTank.setShortName(
+                                vesselPumpTankMapping1.getVesselPump().getVesselTankDetail().getShortName());
+                            vesselTanks.add(vesselTank);
+                          }
+                        });
+                vesselPump.setVesselTanks(vesselTanks);
+                vesselPumpTankMappingDto.setVesselPump(vesselPump);
+                vesselPumpTankMappings.add(vesselPumpTankMappingDto);
+              }
             });
     return vesselPumpTankMappings;
   }
