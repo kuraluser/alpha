@@ -746,7 +746,7 @@ public class DischargingSequenceService {
         }
 
         for (LoadingPlanTankDetails ballast :
-            portWiseDetails.getDischargingPlanStowageDetailsList()) {
+            portWiseDetails.getDischargingPlanBallastDetailsList()) {
           // Adding ballasts
           temp =
               this.buildBallastSequence(
@@ -1443,9 +1443,9 @@ public class DischargingSequenceService {
 	      String stageName,
 	      List<EductionOperation> ballastEduction) {
 	    ballastDto.setQuantity(
-	        StringUtils.isEmpty(ballast.getQuantity()) ? null : new BigDecimal(ballast.getQuantity()));
+	        StringUtils.isEmpty(ballast.getQuantity()) ? BigDecimal.ZERO : new BigDecimal(ballast.getQuantity()));
 	    ballastDto.setSounding(
-	        StringUtils.isEmpty(ballast.getSounding()) ? null : new BigDecimal(ballast.getSounding()));
+	        StringUtils.isEmpty(ballast.getSounding()) ? BigDecimal.ZERO : new BigDecimal(ballast.getSounding()));
 	    ballastDto.setStart(portEta + (start * 60 * 1000));
 	    ballastDto.setEnd(portEta + (end * 60 * 1000));
 	    ballastDto.setTankId(ballast.getTankId());

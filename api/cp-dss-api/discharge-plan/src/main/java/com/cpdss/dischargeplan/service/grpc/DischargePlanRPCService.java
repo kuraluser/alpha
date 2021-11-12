@@ -838,7 +838,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   public void getDischargingSequences(
       LoadingSequenceRequest request, StreamObserver<DischargeSequenceReply> responseObserver) {
 
-    log.info("Inside getDischargingSequences");
+    log.info("Inside getDischargingSequences RPC ");
     DischargeSequenceReply.Builder reply = DischargeSequenceReply.newBuilder();
     try {
       dischargeSequenceService.getDischargingSequences(request, reply);

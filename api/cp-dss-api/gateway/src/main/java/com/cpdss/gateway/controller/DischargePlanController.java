@@ -1324,7 +1324,7 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       log.info(
-          "Get discharging Sequence api for vessel {}, voyage {}, loading information {}",
+          "Get discharging Sequence api for vessel {}, voyage {}, discharging information {}",
           vesselId,
           voyageId,
           infoId);

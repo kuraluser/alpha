@@ -189,12 +189,12 @@ public class DischargingSequenceService {
 
 			List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails = portWiseDetailsRepository
 					.findByDischargingSequenceAndIsActiveTrueOrderById(dischargeSequence);
-			buildLoadingPlanPortWiseDetails(sequenceBuilder, dischargingPlanPortWiseDetails);
-			EductionOperation eductionOperation = eductionOperationRepository
-					.findByDischargingSequenceAndIsActiveTrue(dischargeSequence);
-			if (eductionOperation != null) {
-				buildEductionOperations(sequenceBuilder, eductionOperation);
-			}
+			buildDischargingPlanPortWiseDetails(sequenceBuilder, dischargingPlanPortWiseDetails);
+//			EductionOperation eductionOperation = eductionOperationRepository
+//					.findByDischargingSequenceAndIsActiveTrue(dischargeSequence);
+//			if (eductionOperation != null) {
+//				buildEductionOperations(sequenceBuilder, eductionOperation);
+//			}
 			builder.addDischargeSequences(sequenceBuilder.build());
 		});
 	}
@@ -232,7 +232,7 @@ public class DischargingSequenceService {
 		});
 	}
 
-	private void buildLoadingPlanPortWiseDetails(DischargingSequence.Builder sequenceBuilder,
+	private void buildDischargingPlanPortWiseDetails(DischargingSequence.Builder sequenceBuilder,
 			List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails) {
 		log.info("Populating Portwise details");
 		dischargingPlanPortWiseDetails.forEach(portWiseDetails -> {
