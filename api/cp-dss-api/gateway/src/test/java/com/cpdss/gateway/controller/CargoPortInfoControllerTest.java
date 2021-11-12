@@ -18,11 +18,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CargoPortInfoController.class)
 @ContextConfiguration(classes = {GatewayTestConfiguration.class})
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(properties = {"cpdss.build.env = cloud"})
 public class CargoPortInfoControllerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -47,7 +49,7 @@ public class CargoPortInfoControllerTest {
     when(cargoPortInfoService.getTimezones()).thenReturn(response);
     this.mockMvc
         .perform(
-            get("/api/ship/global-timezones")
+            get("/api/cloud/global-timezones")
                 .header(AUTHORIZATION_HEADER, "4b5608ff-b77b-40c6-9645-d69856d4aafa"))
         .andExpect(status().isOk());
   }

@@ -1,12 +1,13 @@
-/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
-/** */
+/**
+ */
 @javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.36.0)",
+    value = "by gRPC proto compiler (version 1.40.1)",
     comments = "Source: loadable_study.proto")
+@io.grpc.stub.annotations.GrpcGenerated
 public final class SynopticalOperationServiceGrpc {
 
   private SynopticalOperationServiceGrpc() {}
@@ -14,130 +15,108 @@ public final class SynopticalOperationServiceGrpc {
   public static final String SERVICE_NAME = "SynopticalOperationService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-          com.cpdss.common.generated.Common.ResponseStatus>
-      getUpdateSynopticalTableMethod;
+  private static volatile io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+      com.cpdss.common.generated.Common.ResponseStatus> getUpdateSynopticalTableMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "updateSynopticalTable",
       requestType = com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class,
       responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-          com.cpdss.common.generated.Common.ResponseStatus>
-      getUpdateSynopticalTableMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-            com.cpdss.common.generated.Common.ResponseStatus>
-        getUpdateSynopticalTableMethod;
-    if ((getUpdateSynopticalTableMethod =
-            SynopticalOperationServiceGrpc.getUpdateSynopticalTableMethod)
-        == null) {
+  public static io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+      com.cpdss.common.generated.Common.ResponseStatus> getUpdateSynopticalTableMethod() {
+    io.grpc.MethodDescriptor<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest, com.cpdss.common.generated.Common.ResponseStatus> getUpdateSynopticalTableMethod;
+    if ((getUpdateSynopticalTableMethod = SynopticalOperationServiceGrpc.getUpdateSynopticalTableMethod) == null) {
       synchronized (SynopticalOperationServiceGrpc.class) {
-        if ((getUpdateSynopticalTableMethod =
-                SynopticalOperationServiceGrpc.getUpdateSynopticalTableMethod)
-            == null) {
-          SynopticalOperationServiceGrpc.getUpdateSynopticalTableMethod =
-              getUpdateSynopticalTableMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-                          com.cpdss.common.generated.Common.ResponseStatus>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "updateSynopticalTable"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest
-                                  .getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.Common.ResponseStatus
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new SynopticalOperationServiceMethodDescriptorSupplier(
-                              "updateSynopticalTable"))
-                      .build();
+        if ((getUpdateSynopticalTableMethod = SynopticalOperationServiceGrpc.getUpdateSynopticalTableMethod) == null) {
+          SynopticalOperationServiceGrpc.getUpdateSynopticalTableMethod = getUpdateSynopticalTableMethod =
+              io.grpc.MethodDescriptor.<com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest, com.cpdss.common.generated.Common.ResponseStatus>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "updateSynopticalTable"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()))
+              .setSchemaDescriptor(new SynopticalOperationServiceMethodDescriptorSupplier("updateSynopticalTable"))
+              .build();
         }
       }
     }
     return getUpdateSynopticalTableMethod;
   }
 
-  /** Creates a new async stub that supports all call types for the service */
+  /**
+   * Creates a new async stub that supports all call types for the service
+   */
   public static SynopticalOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceStub>() {
-          @java.lang.Override
-          public SynopticalOperationServiceStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new SynopticalOperationServiceStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceStub>() {
+        @java.lang.Override
+        public SynopticalOperationServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new SynopticalOperationServiceStub(channel, callOptions);
+        }
+      };
     return SynopticalOperationServiceStub.newStub(factory, channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static SynopticalOperationServiceBlockingStub newBlockingStub(io.grpc.Channel channel) {
+  public static SynopticalOperationServiceBlockingStub newBlockingStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceBlockingStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceBlockingStub>() {
-          @java.lang.Override
-          public SynopticalOperationServiceBlockingStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new SynopticalOperationServiceBlockingStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceBlockingStub>() {
+        @java.lang.Override
+        public SynopticalOperationServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new SynopticalOperationServiceBlockingStub(channel, callOptions);
+        }
+      };
     return SynopticalOperationServiceBlockingStub.newStub(factory, channel);
   }
 
-  /** Creates a new ListenableFuture-style stub that supports unary calls on the service */
-  public static SynopticalOperationServiceFutureStub newFutureStub(io.grpc.Channel channel) {
+  /**
+   * Creates a new ListenableFuture-style stub that supports unary calls on the service
+   */
+  public static SynopticalOperationServiceFutureStub newFutureStub(
+      io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceFutureStub> factory =
-        new io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceFutureStub>() {
-          @java.lang.Override
-          public SynopticalOperationServiceFutureStub newStub(
-              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-            return new SynopticalOperationServiceFutureStub(channel, callOptions);
-          }
-        };
+      new io.grpc.stub.AbstractStub.StubFactory<SynopticalOperationServiceFutureStub>() {
+        @java.lang.Override
+        public SynopticalOperationServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new SynopticalOperationServiceFutureStub(channel, callOptions);
+        }
+      };
     return SynopticalOperationServiceFutureStub.newStub(factory, channel);
   }
 
-  /** */
-  public abstract static class SynopticalOperationServiceImplBase
-      implements io.grpc.BindableService {
+  /**
+   */
+  public static abstract class SynopticalOperationServiceImplBase implements io.grpc.BindableService {
 
-    /** */
-    public void updateSynopticalTable(
-        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
-            responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
-          getUpdateSynopticalTableMethod(), responseObserver);
+    /**
+     */
+    public void updateSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdateSynopticalTableMethod(), responseObserver);
     }
 
-    @java.lang.Override
-    public final io.grpc.ServerServiceDefinition bindService() {
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
-              getUpdateSynopticalTableMethod(),
-              io.grpc.stub.ServerCalls.asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
-                      com.cpdss.common.generated.Common.ResponseStatus>(
-                      this, METHODID_UPDATE_SYNOPTICAL_TABLE)))
+            getUpdateSynopticalTableMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest,
+                com.cpdss.common.generated.Common.ResponseStatus>(
+                  this, METHODID_UPDATE_SYNOPTICAL_TABLE)))
           .build();
     }
   }
 
-  /** */
-  public static final class SynopticalOperationServiceStub
-      extends io.grpc.stub.AbstractAsyncStub<SynopticalOperationServiceStub> {
+  /**
+   */
+  public static final class SynopticalOperationServiceStub extends io.grpc.stub.AbstractAsyncStub<SynopticalOperationServiceStub> {
     private SynopticalOperationServiceStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -149,21 +128,18 @@ public final class SynopticalOperationServiceGrpc {
       return new SynopticalOperationServiceStub(channel, callOptions);
     }
 
-    /** */
-    public void updateSynopticalTable(
-        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
-        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
-            responseObserver) {
+    /**
+     */
+    public void updateSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getUpdateSynopticalTableMethod(), getCallOptions()),
-          request,
-          responseObserver);
+          getChannel().newCall(getUpdateSynopticalTableMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
-  /** */
-  public static final class SynopticalOperationServiceBlockingStub
-      extends io.grpc.stub.AbstractBlockingStub<SynopticalOperationServiceBlockingStub> {
+  /**
+   */
+  public static final class SynopticalOperationServiceBlockingStub extends io.grpc.stub.AbstractBlockingStub<SynopticalOperationServiceBlockingStub> {
     private SynopticalOperationServiceBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -175,17 +151,17 @@ public final class SynopticalOperationServiceGrpc {
       return new SynopticalOperationServiceBlockingStub(channel, callOptions);
     }
 
-    /** */
-    public com.cpdss.common.generated.Common.ResponseStatus updateSynopticalTable(
-        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+    /**
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus updateSynopticalTable(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getUpdateSynopticalTableMethod(), getCallOptions(), request);
     }
   }
 
-  /** */
-  public static final class SynopticalOperationServiceFutureStub
-      extends io.grpc.stub.AbstractFutureStub<SynopticalOperationServiceFutureStub> {
+  /**
+   */
+  public static final class SynopticalOperationServiceFutureStub extends io.grpc.stub.AbstractFutureStub<SynopticalOperationServiceFutureStub> {
     private SynopticalOperationServiceFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -197,11 +173,10 @@ public final class SynopticalOperationServiceGrpc {
       return new SynopticalOperationServiceFutureStub(channel, callOptions);
     }
 
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.Common.ResponseStatus>
-        updateSynopticalTable(
-            com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.cpdss.common.generated.Common.ResponseStatus> updateSynopticalTable(
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUpdateSynopticalTableMethod(), getCallOptions()), request);
     }
@@ -209,11 +184,11 @@ public final class SynopticalOperationServiceGrpc {
 
   private static final int METHODID_UPDATE_SYNOPTICAL_TABLE = 0;
 
-  private static final class MethodHandlers<Req, Resp>
-      implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
-          io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
+  private static final class MethodHandlers<Req, Resp> implements
+      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
     private final SynopticalOperationServiceImplBase serviceImpl;
     private final int methodId;
 
@@ -227,10 +202,8 @@ public final class SynopticalOperationServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_UPDATE_SYNOPTICAL_TABLE:
-          serviceImpl.updateSynopticalTable(
-              (com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
-              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
-                  responseObserver);
+          serviceImpl.updateSynopticalTable((com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -248,9 +221,8 @@ public final class SynopticalOperationServiceGrpc {
     }
   }
 
-  private abstract static class SynopticalOperationServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier,
-          io.grpc.protobuf.ProtoServiceDescriptorSupplier {
+  private static abstract class SynopticalOperationServiceBaseDescriptorSupplier
+      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     SynopticalOperationServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
@@ -292,12 +264,10 @@ public final class SynopticalOperationServiceGrpc {
       synchronized (SynopticalOperationServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
-          serviceDescriptor =
-              result =
-                  io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-                      .setSchemaDescriptor(new SynopticalOperationServiceFileDescriptorSupplier())
-                      .addMethod(getUpdateSynopticalTableMethod())
-                      .build();
+          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+              .setSchemaDescriptor(new SynopticalOperationServiceFileDescriptorSupplier())
+              .addMethod(getUpdateSynopticalTableMethod())
+              .build();
         }
       }
     }

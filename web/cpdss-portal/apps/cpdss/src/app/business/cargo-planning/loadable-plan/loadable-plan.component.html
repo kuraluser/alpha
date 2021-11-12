@@ -29,6 +29,9 @@
                         <span class="badge-custom badge-info v-middle mr-10"
                             *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_STARTED">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_IN_PROGESS'
                             | translate}}</span>
+                        <span class="badge-custom badge-info v-middle mr-10"
+                            *ngSwitchCase="validateAndSaveStatus.LOADABLE_PLAN_COMMUNICATED_TO_SHORE">{{'LOADABLE_PLAN_ULLAGE_VERIFICATION_IN_PROGESS'
+                            | translate}}</span>
                     </ng-container>
                 </ng-container>
                 <ng-template #refPending><span

@@ -4,7 +4,7 @@
     </div>
     <div class="header-nav">
         <ul class="nav">
-            <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen , 'active': list?.isActive}" (click)="rerouteOrShowSubmenu(list, i)"
+            <li [ngClass]="{'nav-item dropdown':true ,'show': list.isSubMenuOpen , 'active': list?.isActive}" (click)="rerouteOrShowSubMenu(list, i)"
                 (focusout)="hide(list.subMenu, i)" *ngFor="let list of menuList; let i = index"
                 routerLinkActive="active" tabindex="-1">
                 <div class="menu-item-icon {{list.menuIcon}}"></div>
@@ -23,8 +23,11 @@
             <li class="nav-item">
                 <a></a>
             </li>
-            <li class="nav-item">
-                <a></a>
+            <li id="help_link" tabindex="-1" class="nav-item">
+              <a class="header-menu-item-right">
+                <!-- TODO: Need to remove primeng icon and replace it with proto icon -->
+                <span class="pi pi-question-circle help-icon" id="help_icon" (click)="loadHelpDocumentationSite()"></span>
+              </a>
             </li>
             <li id="adminNotification" *ngIf="isShore" tabindex="-1" (focusout)="toggleNotification(true)" class="nav-item dropdown" [ngClass]="{'active': showNotification}">
                 <a class="header-menu-item-right notification-menu">

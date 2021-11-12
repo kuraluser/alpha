@@ -253,7 +253,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
  * @memberof LoadablePlanComponent
  */
   setProcessingLoadableStudyActions() {
-    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
+    if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(this.loadablePatternValidationStatus)) {
       this.confirmButtonStatus = true;
     } else {
       this.confirmButtonStatus = false;
@@ -323,6 +323,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
     this.loadablePlanTransformationService.savedComments$.pipe(switchMap(() => {
       return this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();;
     })).subscribe((loadablePlanRes) => {
+
       if (loadablePlanRes.responseStatus.status === '200') {
         this.loadablePlanComments = loadablePlanRes.loadablePlanComments;
       }
@@ -420,10 +421,10 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
     this.loadableQuantityCommingleCargoDetails = loadablePlanRes.loadableQuantityCommingleCargoDetails;
     this.loadableQuantityCargoDetails.map((loadableQuantityCargoDetail) => {
       loadableQuantityCargoDetail['grade'] = this.fingCargo(loadableQuantityCargoDetail);
-      const commingleTotalQuantity =  this.loadableQuantityCommingleCargoDetails.reduce((previousValue: any, currentValue: ILoadableQuantityCommingleCargo) => {
-        if(currentValue.cargo1Abbreviation === loadableQuantityCargoDetail.cargoAbbreviation) {
+      const commingleTotalQuantity = this.loadableQuantityCommingleCargoDetails.reduce((previousValue: any, currentValue: ILoadableQuantityCommingleCargo) => {
+        if (currentValue.cargo1Abbreviation === loadableQuantityCargoDetail.cargoAbbreviation) {
           return previousValue + Number(currentValue.cargo1MT);
-        } else if(currentValue.cargo2Abbreviation === loadableQuantityCargoDetail.cargoAbbreviation) {
+        } else if (currentValue.cargo2Abbreviation === loadableQuantityCargoDetail.cargoAbbreviation) {
           return previousValue + Number(currentValue.cargo2MT);
         } else {
           return previousValue;
@@ -431,8 +432,10 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
       }, 0);
       const minTolerence = (Number(loadableQuantityCargoDetail.minTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
       const maxTolerence = (Number(loadableQuantityCargoDetail.maxTolerence) / 100) * Number(loadableQuantityCargoDetail.orderedQuantity) + Number(loadableQuantityCargoDetail.orderedQuantity);
-      this.loadableQuantityCargo.push({ 'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence
-      , commingleTotalQuantity: commingleTotalQuantity})
+      this.loadableQuantityCargo.push({
+        'cargoAbbreviation': loadableQuantityCargoDetail.cargoAbbreviation, cargoNominationId: loadableQuantityCargoDetail.cargoNominationId, total: 0, minTolerence: minTolerence, maxTolerence: maxTolerence
+        , commingleTotalQuantity: commingleTotalQuantity
+      })
     })
     await this.getLoadableQuantity();
     this.loadableQuantity = Number(loadablePlanRes.loadableQuantity) ?? this.loadableQuantity;
@@ -440,6 +443,12 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
     this.cargoTankDetails = loadablePlanRes?.loadablePlanStowageDetails ? loadablePlanRes?.loadablePlanStowageDetails?.map(cargo => {
       const tank = this.findCargoTank(cargo.tankId, loadablePlanRes?.tankLists)
       cargo.fullCapacityCubm = tank.fullCapacityCubm
+      if (cargo.isCommingle) {
+        const commingleData = loadablePlanRes.loadableQuantityCommingleCargoDetails?.filter(com => com.grade === cargo.cargoAbbreviation);
+        if(commingleData?.length){
+          cargo.colorCode = commingleData[0].colorCode;
+        }
+      }
       const formattedCargo = this.loadablePlanTransformationService.getFormatedCargoDetails(cargo)
       return this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(formattedCargo)
     }) : [];
@@ -462,9 +471,10 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
     this.loadablePatternValidationStatus = loadablePlanRes.loadablePatternStatusId;
     if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED) {
       this.getAlgoErrorMessage(false);
-    } else if (this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED || this.loadablePatternValidationStatus === VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE) {
+    } else if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE].includes(this.loadablePatternValidationStatus)) {
       this.validationPending = false;
       this.listenEvents();
+      this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: true });
     }
 
     loadablePlanRes.loadableStudyStatusId === 2 ? this.loadableStudyStatus = true : this.loadableStudyStatus = false;
@@ -641,7 +651,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
     }
     this.ngxSpinnerService.show();
     const translationKeys = await this.translateService.get(['LOADABLE_PATTERN_CONFIRM_ERROR', 'LOADABLE_PATTERN_CONFIRM_STATUS_ERROR', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS_DETAILS', 'LOADABLE_PLAN_VALIDATION_SAVE_IN_PROGESS', 'LOADABLE_PLAN_ULLAGE_UPDATED', 'LOADABLE_PLAN_ULLAGE_UPDATED_DETAILS', 'LOADABLE_PATTERN_CONFIRM_SUMMARY', 'LOADABLE_PATTERN_CONFIRM_DETAILS_NOT_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_DETAILS_CONFIRM', 'LOADABLE_PATTERN_CONFIRM_CONFIRM_LABEL', 'LOADABLE_PATTERN_CONFIRM_REJECT_LABEL'
-      , 'VALIDATE_AND_SAVE_ERROR', 'VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING','LOADABLE_PATTERN_CONFIRM_VOYAGE_ACTIVE_STATUS_ERROR']).toPromise();
+      , 'VALIDATE_AND_SAVE_ERROR', 'VALIDATE_AND_SAVE_INPROGESS', 'VALIDATE_AND_SAVE_FAILED', 'VALIDATE_AND_SAVE_PENDING', 'LOADABLE_PATTERN_CONFIRM_VOYAGE_ACTIVE_STATUS_ERROR']).toPromise();
 
     try {
       const result = await this.loadablePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
@@ -651,8 +661,8 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
         this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: translationKeys['VALIDATE_AND_SAVE_PENDING'] });
         return;
       }
-      else if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
-        const errorDetails = VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED === result.loadablePatternStatusId ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
+      else if ([VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(result.loadablePatternStatusId)) {
+        const errorDetails = [VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED, VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_COMMUNICATED_TO_SHORE].includes(result.loadablePatternStatusId) ? translationKeys['VALIDATE_AND_SAVE_INPROGESS'] : translationKeys['VALIDATE_AND_SAVE_FAILED'];
         this.messageService.add({ severity: 'error', summary: translationKeys['VALIDATE_AND_SAVE_ERROR'], detail: errorDetails });
         return;
       }
@@ -683,8 +693,8 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
           } catch (errorResponse) {
             if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
               this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
-            } else if(errorResponse?.error?.errorCode === 'ERR-RICO-152') {
-              this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_VOYAGE_ACTIVE_STATUS_ERROR']});
+            } else if (errorResponse?.error?.errorCode === 'ERR-RICO-152') {
+              this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_VOYAGE_ACTIVE_STATUS_ERROR'] });
             }
           }
         }

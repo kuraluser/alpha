@@ -1262,6 +1262,19 @@ message SynopticalRecord{
 	int64 portTimezoneId = 40;
 	bool hasLoadicator = 41;
 	string portRotationType = 42;
+	repeated SynopticalCommingleRecord commingle = 43;
+}
+
+message SynopticalCommingleRecord{
+	int64 tankId = 1;
+	string tankName = 2;
+	string plannedWeight = 3;
+	string actualWeight = 4;
+	string capacity = 5;
+	string correctedUllage = 6;
+	string spGravity = 7;
+	string colorCode = 8;
+	string fillingRatio = 9;
 }
 
 message SynopticalCargoRecord{

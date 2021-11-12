@@ -205,7 +205,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       duration = _duration < duration ? _duration : duration;
       return duration;
     }, totalDuration);
-    const isDense = this.stageTickPositions.length > totalDuration || (minStageDuration < 1 && totalDuration < 24);
+
+    const isStrippingShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballasts.some(tank => tank.id?.includes('stripping') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
+    const isGravityShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballastPumps.some(tank => tank.id?.includes('gravity') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
+    const isDense = this.stageTickPositions.length > totalDuration || (minStageDuration < 1 && totalDuration < 24) || isStrippingShortDuration || isGravityShortDuration;
+
     let maxXAxisValue = 0;
 
     switch (true) {
@@ -2244,25 +2248,39 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             zIndex: 7
           })
           .add(chart.ballastStrippingGroup);
+
+        const titleRect = renderer.createElement('title');
+        titleRect.element.append(LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR']);
+        titleRect.add(rect);
+
         const box = rect.getBBox();
 
         const text = renderer.text(
           LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'],
-          box.x + rectWidth / 2,
+          box.x,
           box.y
         )
           .css({
-            width: rectWidth > 10 ? rectWidth - 10 : rectWidth,
+            width: rectWidth,
+            height: 40,
             textOverflow: 'ellipsis',
             color: '#666666'
           })
           .attr({
             zIndex: 7,
             translateY: 25,
-            align: 'center'
+            align: 'center',
+            translateX: rectWidth / 2,
           })
           .addClass('sequence-stripping ballast')
           .add(chart.ballastStrippingGroup);
+
+        if (rectWidth < 19) {
+          text.element.append(LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'].slice(0, 1));
+          const titleText = renderer.createElement('title');
+          titleText.element.append(LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR']);
+          titleText.add(text);
+        }
       }
     });
   }
@@ -2299,26 +2317,38 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             zIndex: 7
           })
           .add(chart.ballastGravityGroup);
+
+        const titleRect = renderer.createElement('title');
+        titleRect.element.append(LoadingDischargingSequenceChartComponent.translationKeys['GRAVITY']);
+        titleRect.add(rect);
+
         const box = rect.getBBox();
 
         const text = renderer.text(
           LoadingDischargingSequenceChartComponent.translationKeys['GRAVITY'],
-          box.x + (rectWidth) / 2,
+          box.x,
           box.y
         )
           .css({
-            width: rectWidth > 10 ? rectWidth - 10 : rectWidth,
+            width: rectWidth,
             textOverflow: 'ellipsis',
-            color: '#666666',
-            backgroundColor: 'white'
+            color: '#666666'
           })
           .attr({
             zIndex: 7,
             translateY: 25,
-            align: 'center'
+            align: 'center',
+            translateX: rectWidth / 2,
           })
           .addClass('sequence-gravity ballast')
           .add(chart.ballastGravityGroup);
+
+        if (rectWidth < 19) {
+          text.element.append(LoadingDischargingSequenceChartComponent.translationKeys['GRAVITY'].slice(0, 1));
+          const titleText = renderer.createElement('title');
+          titleText.element.append(LoadingDischargingSequenceChartComponent.translationKeys['GRAVITY']);
+          titleText.add(text);
+        }
       }
     });
   }

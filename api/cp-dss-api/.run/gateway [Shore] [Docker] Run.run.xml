@@ -32,6 +32,174 @@
       <option name="env">
         <map>
           <entry key="CONTAINER_NAME" value="gateway-container-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5285" />
+          <entry key="IMAGE_NAME" value="gateway-shore" />
+          <entry key="REST_PORT_HOST" value="9285" />
+          <entry key="SERVICE_NAME" value="gateway-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/gateway" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="gateway [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Gateway">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="gateway-container-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5285" />
+          <entry key="IMAGE_NAME" value="gateway-shore" />
+          <entry key="REST_PORT_HOST" value="9285" />
+          <entry key="SERVICE_NAME" value="gateway-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/gateway" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="gateway [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Gateway">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="gateway-container-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5285" />
+          <entry key="IMAGE_NAME" value="gateway-shore" />
+          <entry key="REST_PORT_HOST" value="9285" />
+          <entry key="SERVICE_NAME" value="gateway-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/gateway" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="gateway [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Gateway">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="gateway-container-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5285" />
+          <entry key="IMAGE_NAME" value="gateway-shore" />
+          <entry key="REST_PORT_HOST" value="9285" />
+          <entry key="SERVICE_NAME" value="gateway-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/gateway" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="gateway [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Gateway">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="gateway-container-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5285" />
+          <entry key="IMAGE_NAME" value="gateway-shore" />
+          <entry key="REST_PORT_HOST" value="9285" />
+          <entry key="SERVICE_NAME" value="gateway-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/gateway" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="gateway [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Gateway">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="gateway-container-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5285" />
+          <entry key="IMAGE_NAME" value="gateway-shore" />
+          <entry key="REST_PORT_HOST" value="9285" />
+          <entry key="SERVICE_NAME" value="gateway-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/gateway" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="gateway [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Gateway">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="gateway-container-shore" />
           <entry key="CPDSS_BUILD_ENV" value="cloud" />
           <entry key="DEBUG_PORT_HOST" value="5285" />
           <entry key="GRPC_PORT" value="8090" />

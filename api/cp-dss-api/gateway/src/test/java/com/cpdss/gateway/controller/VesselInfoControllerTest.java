@@ -1,9 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -97,7 +95,7 @@ public class VesselInfoControllerTest {
       strings = {GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL, GET_VESSEL_DETAILS_SHIP_API_URL})
   @ParameterizedTest
   void testGetVesselsDetails(String url) throws Exception {
-    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false))
+    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), eq(false)))
         .thenReturn(new VesselDetailsResponse());
     this.mockMvc
         .perform(
@@ -110,7 +108,7 @@ public class VesselInfoControllerTest {
   @ParameterizedTest
   void testGetAllRulesForVessel(String url) throws Exception {
     when(this.vesselInfoService.getRulesByVesselIdAndSectionId(
-            anyLong(), anyLong(), null, anyString()))
+            anyLong(), anyLong(), eq(null), anyString()))
         .thenReturn(new RuleResponse());
     this.mockMvc
         .perform(
@@ -154,7 +152,7 @@ public class VesselInfoControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), false)).thenThrow(ex);
+    when(this.vesselInfoService.getVesselsDetails(anyLong(), anyString(), eq(false))).thenThrow(ex);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(GET_VESSEL_DETAILS_API_URL_CLOUD_API_URL, TEST_VESSEL_ID)

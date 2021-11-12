@@ -85,6 +85,7 @@ public class CompanyInfoService {
     }
     response.setLogo(company.getCompanyLogo());
     response.setFavicon(company.getCompanyFavicon());
+    response.setDocumentationSiteUrl(company.getDocumentationSiteUrl()==null?null:company.getDocumentationSiteUrl());
     Set<Carousals> carousals = company.getCarousals();
     if (null != carousals && !carousals.isEmpty()) {
       response.setCarousals(new ArrayList<>());

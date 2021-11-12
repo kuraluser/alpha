@@ -75,19 +75,19 @@
 
         <div class="vessel-card-submenu">
           <ul>
-            <li>
+            <li *ngIf="permissionDetails?.voyageStatus?.view">
               <a pTooltip="{{'DASHBOARD' | translate}}" tooltipPosition="top"
                 (click)="navigateToPage('voyage-status', vessel)" class="menu-item-icon status"></a>
             </li>
-            <li>
-              <a pTooltip="{{'FILES' | translate}} - Comming Soon" tooltipPosition="top"
-                class="menu-item-icon files"></a>
+            <li *ngIf="permissionDetails?.files?.view">
+              <a pTooltip="{{'FILES' | translate}}" tooltipPosition="top"
+              (click)="navigateToPage('file-repo', vessel)" class="menu-item-icon files"></a>
             </li>
-            <li>
+            <li *ngIf="permissionDetails?.synoptical?.view">
               <a pTooltip="{{'SYNOPTICAL' | translate}}" tooltipPosition="top"
                 (click)="navigateToPage('synoptical', vessel)" class="menu-item-icon synoptical-table"></a>
             </li>
-            <li>
+            <li *ngIf="permissionDetails?.voyages?.view">
               <a pTooltip="{{'VOYAGES' | translate}}" tooltipPosition="top" (click)="navigateToPage('voyages', vessel)"
                 class="menu-item-icon voyages"></a>
             </li>

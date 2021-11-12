@@ -31,9 +31,6 @@ public class Sequence {
   @JsonProperty("ballastingRateM3_Hr")
   private Map<String, String> ballastingRates;
 
-  private List simDeballastingRateM3_Hr;
-  private List simBallastingRateM3_Hr;
-  private List simCargoLoadingRatePerTankM3_Hr;
   private Eduction eduction;
 
   // for discharging
@@ -48,7 +45,4 @@ public class Sequence {
   private List<Map<String, String>> tankWiseCargoDischargingRates;
 
   private List<DischargingPlanPortWiseDetails> dischargePlanPortWiseDetails;
-  private Map<String, String> simCargoDischargingRatePerTankM3_Hr;
-  private Map<String, String> simBallastingRatePerTankM3_Hr;
-  private Map<String, String> simDeballastingRatePerTankM3_Hr;
 }

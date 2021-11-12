@@ -9,18 +9,24 @@ ext{
 appConfig {
   appName = 'company-info'
   rest = 'y'
-  persistence = 'springData'
-  dataBase = 'postgres'
+  persistence = ['springData']
+  dataBase = ['postgres']
   logging = 'y'
   devTools = 'y'
   unitTest = 'y'
+  modelMapper = 'y'
   monitoring = 'y'
+  beanValidation = 'y'
   docker {
    imageName = 'cpdss-company-info'
    containerName = 'company-info-container'
-   creationTime = 'USE_CURRENT_TIMESTAMP'
    hostPortMapping {
       hostRestPort = 8081
+   }
+   healthCheck {
+      healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+      healthCheckIntervalInSec = 30
+      healthCheckInitialDelayInSec = 60
    }
    networkName = 'cpdss-network'
    swarm {

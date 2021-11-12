@@ -8,6 +8,14 @@
 appConfig {
 
     autoGenerateJavaClassForProtoFiles = 'y'
+    rest = 'y'
+    persistence = ['springData']
+    dataBase = ['postgres']
+    logging = 'y'
+    grpc = 'y'
+    keyvaluestore = 'y'
+    modelMapper = 'y'
+    beanValidation = 'y'
     unitTest = 'y'
 }
 
@@ -16,8 +24,7 @@ dependencies {
     implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
     implementation group: 'com.vladmihalcea', name: 'hibernate-types-52', version: '2.9.7'
     implementation('commons-beanutils:commons-beanutils:1.9.4')
-    api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
-    api group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
+  //  api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
 	compileOnly 'org.springframework.boot:spring-boot-starter-cache'
 	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
     compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'

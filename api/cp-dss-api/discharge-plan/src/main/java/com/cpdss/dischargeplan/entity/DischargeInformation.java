@@ -159,6 +159,9 @@ public class DischargeInformation extends EntityDoc {
   @Column(name = "discharge_study_process_xid")
   private String dischargeStudyProcessId;
 
+  @Column(name = "is_discharging_instructions_complete")
+  private Boolean isDischargingInstructionsComplete = false;
+
   public DischargeInformation(Long pk) {
     this.setId(pk);
   }

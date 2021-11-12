@@ -31,6 +31,174 @@
     <ExternalSystemSettings>
       <option name="env">
         <map>
+          <entry key="CONTAINER_NAME" value="envoy-reader-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5296" />
+          <entry key="GRPC_PORT_HOST" value="9296" />
+          <entry key="IMAGE_NAME" value="envoy-reader-shore" />
+          <entry key="SERVICE_NAME" value="envoy-reader-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-reader" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="envoy-reader [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Reader">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="envoy-reader-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5296" />
+          <entry key="GRPC_PORT_HOST" value="9296" />
+          <entry key="IMAGE_NAME" value="envoy-reader-shore" />
+          <entry key="SERVICE_NAME" value="envoy-reader-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-reader" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="envoy-reader [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Reader">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="envoy-reader-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5296" />
+          <entry key="GRPC_PORT_HOST" value="9296" />
+          <entry key="IMAGE_NAME" value="envoy-reader-shore" />
+          <entry key="SERVICE_NAME" value="envoy-reader-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-reader" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="envoy-reader [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Reader">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="envoy-reader-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5296" />
+          <entry key="GRPC_PORT_HOST" value="9296" />
+          <entry key="IMAGE_NAME" value="envoy-reader-shore" />
+          <entry key="SERVICE_NAME" value="envoy-reader-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-reader" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="envoy-reader [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Reader">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="envoy-reader-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5296" />
+          <entry key="GRPC_PORT_HOST" value="9296" />
+          <entry key="IMAGE_NAME" value="envoy-reader-shore" />
+          <entry key="SERVICE_NAME" value="envoy-reader-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-reader" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="envoy-reader [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Reader">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
+          <entry key="CONTAINER_NAME" value="envoy-reader-shore" />
+          <entry key="DEBUG_PORT_HOST" value="5296" />
+          <entry key="GRPC_PORT_HOST" value="9296" />
+          <entry key="IMAGE_NAME" value="envoy-reader-shore" />
+          <entry key="SERVICE_NAME" value="envoy-reader-service-shore" />
+        </map>
+      </option>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/envoy-reader" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="swarmRemoveService swarmServiceRun" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list />
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="envoy-reader [Shore] [Docker] Run" type="GradleRunConfiguration" factoryName="Gradle" folderName="Envoy Reader">
+    <ExternalSystemSettings>
+      <option name="env">
+        <map>
           <entry key="CONTAINER_NAME" value="envoy-reader-container-shore" />
           <entry key="DEBUG_PORT_HOST" value="5296" />
           <entry key="GRPC_PORT_HOST" value="9296" />

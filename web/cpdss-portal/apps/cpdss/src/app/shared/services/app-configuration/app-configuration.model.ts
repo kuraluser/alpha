@@ -12,7 +12,6 @@ export interface IAppConfiguration {
   passwordMinLength?: number;
   processingTimeout?: number;
   tokenMinValidity?: number;
-  commingleColor?: string;
   dateFormat?: string;
   quantityNumberFormatKL?: string;
   quantityNumberFormatBBLS?: string;
@@ -28,5 +27,6 @@ export interface IAppConfiguration {
   maxCargoLimit?: number;
   simulatorDomainUrl: string;
   unitConversionConstant: number;
+  documentationSiteMapping?: IDictionary<string>;
 }
 

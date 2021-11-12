@@ -8,8 +8,11 @@ import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationBuilderService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
+import com.cpdss.gateway.service.dischargeplan.DischargingSequenceService;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +36,12 @@ public class DischargeInformationServiceTest {
   @MockBean DischargeInformationBuilderService infoBuilderService;
 
   @MockBean LoadingPlanGrpcService loadingPlanGrpcService;
-
+  @MockBean LoadingPlanBuilderService loadingPlanBuilderService;
   @MockBean LoadingInformationService loadingInformationService;
+  @MockBean LoadingPlanService loadingPlanService;
+  @MockBean VesselInfoService vesselInfoService;
+  @MockBean DischargingSequenceService dischargingSequenceService;
+  @MockBean LoadableStudyService loadableStudyService;
 
   @BeforeEach
   public void init() {

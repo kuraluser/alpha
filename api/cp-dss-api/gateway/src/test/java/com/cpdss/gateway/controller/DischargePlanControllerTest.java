@@ -35,6 +35,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -53,7 +54,7 @@ public class DischargePlanControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean DischargeInformationService dischargeInformationService;
-
+  @MockBean DischargePlanController dischargePlanController;
   @MockBean DischargingInstructionService dischargingInstructionService;
 
   // Common for discharge plan controller
@@ -70,7 +71,7 @@ public class DischargePlanControllerTest {
   private static final String SHIP_API_URL_PREFIX = "/api/ship";
 
   private static final String DIS_INFO_GET_URL =
-      "/vessels/{vesselId}/voyages/{voyageId}/loading-info/{infoId}/port-rotation/{portRotationId}";
+      "/vessels/{vesselId}/voyages/{voyageId}/discharge-info/{infoId}/port-rotation/{portRotationId}";
   private static final String DIS_RULE_GET_URL =
       "/vessels/{vesselId}/discharge-info-rule/{dischargingInfoId}";
   private static final String DIS_ADD_INSTRUCTION =
@@ -96,6 +97,11 @@ public class DischargePlanControllerTest {
   public void getDischargeInformationByPortRIdTestCase1(String url) throws Exception {
     when(this.dischargeInformationService.getDischargeInformation(anyLong(), anyLong(), anyLong()))
         .thenReturn(new DischargeInformation());
+    when(dischargePlanController.getDischargeInformationByPortRId(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        dischargePlanController, "dischargeInformationService", dischargeInformationService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(
@@ -153,6 +159,11 @@ public class DischargePlanControllerTest {
         .thenThrow(this.getGenericException());
     DischargingInstructionsSaveRequest request = new DischargingInstructionsSaveRequest();
     ObjectMapper mapper = new ObjectMapper();
+    when(dischargePlanController.addDischargingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        dischargePlanController, "dischargingInstructionService", dischargingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
@@ -202,6 +213,12 @@ public class DischargePlanControllerTest {
     when(this.dischargingInstructionService.getDischargingInstructions(
             anyLong(), anyLong(), anyLong()))
         .thenThrow(this.getGenericException());
+
+    when(dischargePlanController.getAllDischargingInstructions(
+            any(), anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        dischargePlanController, "dischargingInstructionService", dischargingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
@@ -227,13 +244,18 @@ public class DischargePlanControllerTest {
     when(this.dischargingInstructionService.getDischargingInstructions(
             anyLong(), anyLong(), anyLong()))
         .thenThrow(RuntimeException.class);
+    when(dischargePlanController.getAllDischargingInstructions(
+            any(), anyLong(), anyLong(), anyLong()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        dischargePlanController, "dischargingInstructionService", dischargingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.get(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isInternalServerError());
+        .andExpect(status().isServiceUnavailable());
   }
 
   @ValueSource(
@@ -284,6 +306,11 @@ public class DischargePlanControllerTest {
             anyLong(), anyLong(), anyLong(), any(DischargingInstructionsUpdateRequest.class)))
         .thenThrow(this.getGenericException());
 
+    when(dischargePlanController.updateDischargingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        dischargePlanController, "dischargingInstructionService", dischargingInstructionService);
     DischargingInstructionsUpdateRequest request = new DischargingInstructionsUpdateRequest();
     ObjectMapper mapper = new ObjectMapper();
     this.mockMvc
@@ -339,6 +366,11 @@ public class DischargePlanControllerTest {
             anyLong(), anyLong(), anyLong(), any(DischargingInstructionsStatus.class)))
         .thenReturn(
             new DischargingInstructionsSaveResponse(new CommonSuccessResponse(SUCCESS, "")));
+    when(dischargePlanController.deleteDischargingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        dischargePlanController, "dischargingInstructionService", dischargingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(
@@ -367,6 +399,11 @@ public class DischargePlanControllerTest {
         .thenThrow(RuntimeException.class);
     DischargingInstructionsStatus request = new DischargingInstructionsStatus();
     ObjectMapper mapper = new ObjectMapper();
+    when(dischargePlanController.deleteDischargingInstructions(
+            any(), anyLong(), anyLong(), anyLong(), any()))
+        .thenCallRealMethod();
+    ReflectionTestUtils.setField(
+        dischargePlanController, "dischargingInstructionService", dischargingInstructionService);
     this.mockMvc
         .perform(
             MockMvcRequestBuilders.post(url, TEST_VESSEL_ID, TEST_DISCHARGE_INFO_ID, TEST_VOYAGE_ID)
@@ -374,7 +411,7 @@ public class DischargePlanControllerTest {
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isInternalServerError());
+        .andExpect(status().isServiceUnavailable());
   }
 
   private GenericServiceException getGenericException() {

@@ -15,7 +15,7 @@
             <ng-template pTemplate="caption">
                 <div class="p-d-flex">
                     <div class="inline-block v-t-bottom">
-                        <p-treeTableHeaderCheckbox></p-treeTableHeaderCheckbox>
+                        <p-treeTableHeaderCheckbox [disabled]="!instructionListData?.length"></p-treeTableHeaderCheckbox>
                     </div>
                     <span class="ml-5 inline-block">{{'SELECT_ALL' | translate}}</span>
                 </div>

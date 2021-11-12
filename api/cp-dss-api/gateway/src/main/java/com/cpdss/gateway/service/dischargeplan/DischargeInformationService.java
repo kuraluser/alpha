@@ -44,7 +44,6 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import com.cpdss.gateway.utility.RuleUtility;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -134,6 +133,9 @@ public class DischargeInformationService {
     dischargeInformation.setDischargeCommingledCargoSeparately(
         disRpcReplay.getDischargeCommingledCargoSeparately());
     dischargeInformation.setIsDischargeInfoComplete(disRpcReplay.getIsDischargeInfoComplete());
+    dischargeInformation.setIsDischargePlanGenerated(disRpcReplay.getIsDischargingPlanGenerated());
+    dischargeInformation.setIsDischargeSequenceGenerated(
+        disRpcReplay.getIsDischargingSequenceGenerated());
     dischargeInformation.setDischargeInfoStatusId(disRpcReplay.getDischargingInfoStatusId());
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
@@ -195,8 +197,7 @@ public class DischargeInformationService {
             portRotation.get().getPortId(),
             portRotation.get().getPortOrder(),
             portRotation.get().getId(),
-            GatewayConstants.OPERATION_TYPE_DEP); // Discharge Info needed Arrival Conditions
-    // As algo return data with departure condition, changing the operation type
+            GatewayConstants.OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
 
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     vesselTankDetails.setDischargeQuantityCargoDetails(
@@ -251,7 +252,7 @@ public class DischargeInformationService {
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
-        activeVoyage.getPortRotations().stream()
+        activeVoyage.getDischargePortRotations().stream()
             .filter(v -> v.getId().equals(portRotationId))
             .findFirst();
 
@@ -564,7 +565,8 @@ public class DischargeInformationService {
       Long vesselId,
       Long voyageId,
       Long infoId,
-      DischargingPlanAlgoRequest dischargingPlanAlgoRequest)
+      DischargingPlanAlgoRequest dischargingPlanAlgoRequest,
+      String requestJsonString)
       throws GenericServiceException {
 
     LoadingPlanAlgoResponse algoResponse = new LoadingPlanAlgoResponse();
@@ -572,32 +574,30 @@ public class DischargeInformationService {
     ObjectMapper objectMapper = new ObjectMapper();
     try {
       objectMapper.writeValue(
-          new File(this.rootFolder + "/json/loadingInformationResult_" + infoId + ".json"),
+          new File(this.rootFolder + "/json/dischargingInformationResult_" + infoId + ".json"),
           dischargingPlanAlgoRequest);
     } catch (IOException e) {
       log.error("Exception encountered when saving Loading Information Response JSON");
     }
     try {
-      log.info("Saving Loading Information Response JSON");
+      log.info("Saving Discharging Information Response JSON");
       StatusReply reply =
           this.saveJson(
-              infoId,
-              GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_ID,
-              objectMapper.writeValueAsString(dischargingPlanAlgoRequest));
+              infoId, GatewayConstants.DISCHARGING_INFORMATION_RESPONSE_JSON_ID, requestJsonString);
       if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
-    } catch (JsonProcessingException e) {
-      log.error("Exception encountered when processing Loading Information Response JSON");
+    } catch (Exception e) {
+      log.error("Exception encountered when processing Discharging Information Response JSON");
     }
     dischargingSequenceService.buildDischargingPlanSaveRequest(
         dischargingPlanAlgoRequest, vesselId, infoId, builder);
     DischargingPlanSaveResponse response =
         dischargePlanServiceBlockingStub.saveDischargingPlan(builder.build());
     if (!response.getResponseStatus().getStatus().equals(SUCCESS)) {
-      log.error("Exception occured when saving loading plan");
+      log.error("Exception occured when saving discharging plan");
       throw new GenericServiceException(
-          "Unable to save loading plan for loading information " + infoId,
+          "Unable to save loading plan for discharging information " + infoId,
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }

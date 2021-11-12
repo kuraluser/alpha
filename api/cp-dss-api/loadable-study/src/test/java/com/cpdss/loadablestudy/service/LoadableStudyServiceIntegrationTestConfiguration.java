@@ -22,6 +22,21 @@ public class LoadableStudyServiceIntegrationTestConfiguration {
   }
 
   @Bean
+  SynopticService synopticService() {
+    return new SynopticService();
+  }
+
+  @Bean
+  DischargeStudyService dischargeStudyService() {
+    return new DischargeStudyService();
+  }
+
+  @Bean
+  PortInstructionService portInstructionService() {
+    return new PortInstructionService();
+  }
+
+  @Bean
   PortInfoImplForLoadableStudyServiceIntegrationTest portInfoServiceImpl() {
     return new PortInfoImplForLoadableStudyServiceIntegrationTest();
   }

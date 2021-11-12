@@ -25,6 +25,7 @@ import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -3198,6 +3199,13 @@ public class LoadablePlanService {
       responseEntity =
           this.restTemplate.postForEntity(
               this.algoUpdateUllageUrl, algoRequest, UllageUpdateResponse.class);
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.enable(SerializationFeature.INDENT_OUTPUT);
+      try {
+        log.info("Ullage Edit Response: {}", mapper.writeValueAsString(responseEntity.getBody()));
+      } catch (JsonProcessingException e) {
+        log.error("Could not serialize ullage edit response");
+      }
     } catch (HttpStatusCodeException e) {
       log.error("ALGO returned : {}", e.getRawStatusCode());
       if (e.getStatusCode().equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
@@ -3248,6 +3256,13 @@ public class LoadablePlanService {
       }
     }
     algoRequest.setSg(request.getLoadablePlanStowageDetails().getSg());
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    try {
+      log.info("Ullage Edit Request: {}", mapper.writeValueAsString(algoRequest));
+    } catch (JsonProcessingException e) {
+      log.error("Could not serialize ullage edit request");
+    }
     return algoRequest;
   }
 

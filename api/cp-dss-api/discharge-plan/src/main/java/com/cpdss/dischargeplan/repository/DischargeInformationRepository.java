@@ -56,7 +56,7 @@ public interface DischargeInformationRepository
   @Transactional
   @Modifying
   @Query(
-      "UPDATE DischargeInformation SET dischargingInformationStatus = ?1, arrivalStatusId = ?2, arrivalStatusId = ?3 WHERE id = ?4")
+      "UPDATE DischargeInformation SET dischargingInformationStatus = ?1, arrivalStatusId = ?2, departureStatusId = ?3 WHERE id = ?4")
   public void updateDischargingInformationStatuses(
       DischargingInformationStatus dischargingInformationStatus,
       Long arrivalStatus,
@@ -107,4 +107,9 @@ public interface DischargeInformationRepository
       BigDecimal timeForSlopDischarging,
       BigDecimal timeForDryCheck,
       Long id);
+
+  @Query("Update DischargeInformation SET isDischargingInstructionsComplete = ?1 WHERE id = ?2")
+  @Modifying
+  @Transactional
+  void updateDischargeInstructionStatus(boolean status, Long id);
 }

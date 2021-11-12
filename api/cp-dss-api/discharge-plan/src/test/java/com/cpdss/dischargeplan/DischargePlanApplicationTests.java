@@ -1,16 +1,15 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan;
 
-import com.cpdss.common.jsonbuilder.ParserUtil;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class DischargePlanApplicationTests {
 
-  @Test
-  void contextLoads() {
-    String packageName = "com.cpdss.dischargeplan.domain";
-    ParserUtil.parserMain(packageName);
-  }
+  //  @Test
+  //  void contextLoads() {
+  //    String packageName = "com.cpdss.dischargeplan.domain";
+  //    ParserUtil.parserMain(packageName);
+  //  }
 }

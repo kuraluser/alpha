@@ -90,6 +90,9 @@ public class DischargingInstructionService extends DischargingInstructionService
         log.info("New instruction added with id ");
         response.setStatus(DischargePlanConstants.SUCCESS);
         response.setMessage(DischargePlanConstants.SUCCESS);
+        // Update Discharge Information Table
+        this.dischargeInformationService.updateDischargeInstructionStatusTrue(
+            newInstruction.getDischargingXId());
       }
     } catch (GenericServiceException e) {
       log.info("ADD new instruction request failed");

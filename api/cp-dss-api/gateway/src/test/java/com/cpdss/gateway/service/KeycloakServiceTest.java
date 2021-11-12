@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV;
+import static com.cpdss.gateway.custom.Constants.CPDSS_BUILD_ENV_CLOUD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.gateway.domain.keycloak.KeycloakAuthenticationResponse;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
+import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,16 +20,21 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+@TestPropertySource(properties = {CPDSS_BUILD_ENV + "=" + CPDSS_BUILD_ENV_CLOUD})
 @SpringJUnitConfig(classes = {KeycloakService.class})
 class KeycloakServiceTest {
   @Autowired KeycloakService keycloakService;
 
   @MockBean private RestTemplate restTemplate;
+
   @MockBean private KeycloakAuthenticationResponse keycloakAuthenticationResponse;
+
+  @MockBean private KeycloakDynamicConfigResolver keycloakDynamicConfigResolver;
 
   private final String USER_ID = "4b5608ff-b77b-40c6-9645-d69856d4aafa";
   private final String REALM_NAME = "TestRealm";
@@ -151,7 +159,7 @@ class KeycloakServiceTest {
   /**
    * Method to create get users response object
    *
-   * @return ResponseEntity<KeycloakUser[]> users object
+   * @return ResponseEntity<KeycloakUser [ ]> users object
    */
   private ResponseEntity<Object> createGetUsersResponse() {
     return new ResponseEntity<>(new KeycloakUser[] {getKeycloakUser()}, HttpStatus.OK);

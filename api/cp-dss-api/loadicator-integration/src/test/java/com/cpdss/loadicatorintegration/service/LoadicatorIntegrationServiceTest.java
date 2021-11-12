@@ -20,10 +20,7 @@ import com.cpdss.loadicatorintegration.entity.IntactStability;
 import com.cpdss.loadicatorintegration.entity.LoadicatorStrength;
 import com.cpdss.loadicatorintegration.entity.LoadicatorTrim;
 import com.cpdss.loadicatorintegration.entity.StowagePlan;
-import com.cpdss.loadicatorintegration.repository.LoadicatorIntactStabilityRepository;
-import com.cpdss.loadicatorintegration.repository.LoadicatorStrengthRepository;
-import com.cpdss.loadicatorintegration.repository.LoadicatorTrimRepository;
-import com.cpdss.loadicatorintegration.repository.StowagePlanRepository;
+import com.cpdss.loadicatorintegration.repository.*;
 import io.grpc.internal.testing.StreamRecorder;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /** @Author jerin.g */
@@ -42,6 +40,9 @@ public class LoadicatorIntegrationServiceTest {
   @MockBean private LoadicatorTrimRepository loadicatorTrimRepository;
   @MockBean private LoadicatorStrengthRepository loadicatorStrengthRepository;
   @MockBean private LoadicatorIntactStabilityRepository loadicatorIntactStabilityRepository;
+  @MockBean private CargoDataRepository cargoDataRepository;
+  @MockBean private StowageDetailsRepository stowageDetailsRepository;
+  @MockBean private SimpleAsyncTaskExecutor simpleAsyncTaskExecutor;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String DUMMY_STRING = "DUMMY_STRING";

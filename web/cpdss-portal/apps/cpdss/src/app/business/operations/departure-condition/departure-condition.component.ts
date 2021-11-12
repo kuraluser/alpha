@@ -133,7 +133,7 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
             abbreviation: com.abbreviation,
             actualWeight: 0,
             plannedWeight: 0,
-            colorCode: AppConfigurationService.settings.commingleColor,
+            colorCode: com.colorCode,
             tankId: com.tankId,
             cargoId: 0
           });

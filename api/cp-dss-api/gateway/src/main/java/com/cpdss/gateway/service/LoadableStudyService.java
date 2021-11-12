@@ -202,6 +202,7 @@ public class LoadableStudyService {
   private static final Long LOADABLE_PATTERN_VALIDATE_RESULT_JSON_ID = 6L;
   private static final String DEFAULT_USER_NAME = "UNKNOWN";
 
+
   private static final String VOYAGE_STATUS_URI = "voyage-status";
   private static final String OPERATIONS_URI = "operations";
 

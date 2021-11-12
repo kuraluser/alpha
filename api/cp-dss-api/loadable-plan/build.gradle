@@ -1,10 +1,11 @@
 appConfig {
   appName = 'loadable-plan'
   grpc = 'y'
-  persistence = 'springData'
-  dataBase = 'postgres'
+  persistence = ['springData']
+  dataBase = ['postgres']
   logging = 'y'
   devTools = 'y'
+  modelMapper = 'y'
   monitoring = 'y'
   javaMainClass = "com.cpdss.loadableplan.Application"
 }
