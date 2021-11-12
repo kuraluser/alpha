@@ -515,7 +515,7 @@ public class LoadingSequenceService {
    * @param cargos
    * @param cargoTankCategories
    */
-  private void removeEmptyCargos(List<Cargo> cargos, Set<TankCategory> cargoTankCategories) {
+  public void removeEmptyCargos(List<Cargo> cargos, Set<TankCategory> cargoTankCategories) {
     Set<Long> tankIds = cargos.stream().map(Cargo::getTankId).collect(Collectors.toSet());
     Optional<Long> cargoStartOpt =
         cargos.stream().map(cargo -> cargo.getStart()).sorted().findFirst();
@@ -556,7 +556,7 @@ public class LoadingSequenceService {
    * @param ballastTankCategories
    * @param ballastEduction
    */
-  private void removeEmptyBallasts(
+  public void removeEmptyBallasts(
       List<Ballast> ballasts,
       Set<TankCategory> ballastTankCategories,
       List<EductionOperation> ballastEduction) {
