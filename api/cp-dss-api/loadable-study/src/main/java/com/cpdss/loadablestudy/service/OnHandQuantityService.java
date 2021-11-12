@@ -435,6 +435,9 @@ public class OnHandQuantityService {
           onHandQuantityDto.setFueltypeId(onHandQuantity.getFuelTypeXId());
           onHandQuantityDto.setPortId(onHandQuantity.getPortXId());
           onHandQuantityDto.setTankId(onHandQuantity.getTankXId());
+          if (onHandQuantity.getPortRotation() != null) {
+            onHandQuantityDto.setPortRotationId(onHandQuantity.getPortRotation().getId());
+          }
           loadableStudy.getOnHandQuantity().add(onHandQuantityDto);
         });
   }
