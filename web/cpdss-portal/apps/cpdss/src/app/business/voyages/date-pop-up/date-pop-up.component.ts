@@ -6,6 +6,7 @@ import { VoyageListApiService } from '../services/voyage-list-api.service';
 import { VoyageListTransformationService } from '../services/voyage-list-transformation.service';
 import { AppConfigurationService } from './../../../shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { IDateTimeFormatOptions } from '../../../shared/models/common.model';
 
 /**
  * Component class for Date Popup compoent
@@ -57,6 +58,7 @@ export class DatePopUpComponent implements OnInit {
   today;
   mindate: Date;
   popupDateFormat: string;
+  datePlaceHolder: string;
   private _defaultDate: Date;
   private _plannedStartDate: Date;
 
@@ -68,10 +70,13 @@ export class DatePopUpComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService,
     private confirmationService: ConfirmationService) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.popupDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings.dateFormat);
     this.header = this.isStart ? "VOYAGE_HISTORY_START_DATE_POPUP_HEADER" : "VOYAGE_HISTORY_END_DATE_POPUP_HEADER";
     this.startStopButtonLabel = this.isStart ? "VOYAGE_LIST_DATE_POPUP_START_BUTTON" : "VOYAGE_LIST_DATE_POPUP_STOP_BUTTON";
+    const dtFormatOpts: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings.dateFormat };
+    const translationKeys = await this.translateService.get(['EXAMPLE']).toPromise();
+    this.datePlaceHolder = translationKeys['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(this.today, dtFormatOpts);
   }
 
   /**
