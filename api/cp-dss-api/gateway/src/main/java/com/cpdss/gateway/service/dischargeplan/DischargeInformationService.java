@@ -252,7 +252,7 @@ public class DischargeInformationService {
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
-        activeVoyage.getPortRotations().stream()
+        activeVoyage.getDischargePortRotations().stream()
             .filter(v -> v.getId().equals(portRotationId))
             .findFirst();
 
