@@ -208,8 +208,6 @@ public class LoadingPlanAlgoService {
                   "loading_berth_details",
                   "loading_delay",
                   "loading_machinary_in_use",
-                  "loading_sequence",
-                  "loading_plan_portwise_details",
                   "voyage"),
               processId,
               MessageTypes.LOADINGPLAN.getMessageType(),
