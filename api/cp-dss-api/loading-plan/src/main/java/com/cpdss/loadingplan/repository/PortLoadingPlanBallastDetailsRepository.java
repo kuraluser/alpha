@@ -63,6 +63,4 @@ public interface PortLoadingPlanBallastDetailsRepository
       "Update PortLoadingPlanBallastDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
-
-  public List<PortLoadingPlanBallastDetails> findByLoadingInformationId(Long Id);
 }

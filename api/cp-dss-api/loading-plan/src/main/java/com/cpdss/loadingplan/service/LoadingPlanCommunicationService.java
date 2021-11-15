@@ -19,14 +19,12 @@ import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,6 @@ import org.springframework.web.client.ResourceAccessException;
 @Transactional
 public class LoadingPlanCommunicationService {
 
-  @Autowired private EntityManager entityManager;
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
   @Autowired private LoadingInformationRepository loadingInformationRepository;
 
@@ -116,9 +113,9 @@ public class LoadingPlanCommunicationService {
     for (MessageTypes messageType : messageTypesEnum) {
       try {
         String messageTypeGet = messageType.getMessageType();
-        log.info("Inside getDataFromCommunication messageType : " + messageType);
+        log.info("Inside getDataFromCommunication messageType : " + messageTypeGet);
         EnvoyReader.EnvoyReaderResultReply erReply =
-            getResultFromEnvoyReaderShore(taskReqParams, messageTypeGet);
+            getResultFromEnvoyReader(taskReqParams, messageTypeGet);
         if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
           throw new GenericServiceException(
               "Failed to get Result from Communication Server for: " + messageTypeGet,
@@ -154,9 +151,9 @@ public class LoadingPlanCommunicationService {
     }
   }
 
-  private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
+  private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReader(
       Map<String, String> taskReqParams, String messageType) {
-    log.info("inside getResultFromEnvoyReader");
+    log.info("Inside getResultFromEnvoyReaderwith messageType:{}", messageType);
     EnvoyReader.EnvoyReaderResultRequest.Builder request =
         EnvoyReader.EnvoyReaderResultRequest.newBuilder();
     request.setMessageType(messageType);
@@ -275,7 +272,7 @@ public class LoadingPlanCommunicationService {
       List<LoadingDelay> loadingDelays = null;
       List<LoadingMachineryInUse> loadingMachineryInUses = null;
       VoyageActivate voyageActivate = null;
-      // Pattern save tables
+      // Pattern save tablesloadingPlanPortWiseDetailsList
       List<LoadingSequence> loadingSequencesList = null;
       List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList = null;
       List<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamList = null;
@@ -323,11 +320,20 @@ public class LoadingPlanCommunicationService {
         switch (ProcessIdentifiers.valueOf(dataTransferStage.getProcessIdentifier())) {
           case loading_information:
             {
-              //                listType = new TypeToken<ArrayList<LoadingInformation>>()
-              // {}.getType();
-              //                List<LoadingInformation> listLoadingInformation =
-              //                    new Gson().fromJson(data, listType);
-              loadingInformation = new Gson().fromJson(data, LoadingInformation.class);
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingInformation());
+              JsonArray array = new JsonArray();
+              array.add((JsonElement) JsonParser.parseString(data));
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      array,
+                      map,
+                      "stages_min_amount_xid",
+                      "stages_duration_xid",
+                      "loading_status_xid",
+                      "arrival_status_xid",
+                      "departure_status_xid");
+              loadingInformation = new Gson().fromJson(jsonArray.get(0), LoadingInformation.class);
               idMap.put(
                   LoadingPlanTables.LOADING_INFORMATION.getTable(), dataTransferStage.getId());
               break;
@@ -383,8 +389,15 @@ public class LoadingPlanCommunicationService {
             }
           case cargo_topping_off_sequence:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new CargoToppingOffSequence());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_xid");
               listType = new TypeToken<ArrayList<CargoToppingOffSequence>>() {}.getType();
-              cargoToppingOffSequences = new Gson().fromJson(data, listType);
+              cargoToppingOffSequences = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.CARGO_TOPPING_OFF_SEQUENCE.getTable(),
                   dataTransferStage.getId());
@@ -392,38 +405,73 @@ public class LoadingPlanCommunicationService {
             }
           case loading_berth_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingBerthDetail());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_xid");
               listType = new TypeToken<ArrayList<LoadingBerthDetail>>() {}.getType();
-              loadingBerthDetails = new Gson().fromJson(data, listType);
+              loadingBerthDetails = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_BERTH_DETAILS.getTable(), dataTransferStage.getId());
               break;
             }
           case loading_delay:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingDelay());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_xid");
               listType = new TypeToken<ArrayList<LoadingDelay>>() {}.getType();
-              loadingDelays = new Gson().fromJson(data, listType);
+              loadingDelays = new Gson().fromJson(jsonArray, listType);
               idMap.put(LoadingPlanTables.LOADING_DELAY.getTable(), dataTransferStage.getId());
               break;
             }
           case loading_machinary_in_use:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingMachineryInUse());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_xid");
               listType = new TypeToken<ArrayList<LoadingMachineryInUse>>() {}.getType();
-              loadingMachineryInUses = new Gson().fromJson(data, listType);
+              loadingMachineryInUses = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_MACHINARY_IN_USE.getTable(), dataTransferStage.getId());
               break;
             }
           case loading_sequence:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingSequence());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_information_xid");
               listType = new TypeToken<ArrayList<LoadingSequence>>() {}.getType();
-              loadingSequencesList = new Gson().fromJson(data, listType);
+              loadingSequencesList = new Gson().fromJson(jsonArray, listType);
               idMap.put(LoadingPlanTables.LOADING_SEQUENCE.getTable(), dataTransferStage.getId());
               break;
             }
           case loading_plan_portwise_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingPlanPortWiseDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_sequences_xid");
               listType = new TypeToken<ArrayList<LoadingPlanPortWiseDetails>>() {}.getType();
-              loadingPlanPortWiseDetailsList = new Gson().fromJson(data, listType);
+              loadingPlanPortWiseDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable(),
                   dataTransferStage.getId());
@@ -431,9 +479,17 @@ public class LoadingPlanCommunicationService {
             }
           case port_loading_plan_stability_parameters:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new PortLoadingPlanStabilityParameters());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_information_xid");
               listType =
                   new TypeToken<ArrayList<PortLoadingPlanStabilityParameters>>() {}.getType();
-              portLoadingPlanStabilityParamList = new Gson().fromJson(data, listType);
+              portLoadingPlanStabilityParamList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable(),
                   dataTransferStage.getId());
@@ -441,8 +497,13 @@ public class LoadingPlanCommunicationService {
             }
           case port_loading_plan_rob_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new PortLoadingPlanRobDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
               listType = new TypeToken<ArrayList<PortLoadingPlanRobDetails>>() {}.getType();
-              portLoadingPlanRobDetailsList = new Gson().fromJson(data, listType);
+              portLoadingPlanRobDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable(),
                   dataTransferStage.getId());
@@ -450,8 +511,15 @@ public class LoadingPlanCommunicationService {
             }
           case loading_plan_ballast_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingPlanBallastDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_plan_portwise_details_xid");
               listType = new TypeToken<ArrayList<LoadingPlanBallastDetails>>() {}.getType();
-              loadingPlanBallastDetailsList = new Gson().fromJson(data, listType);
+              loadingPlanBallastDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable(),
                   dataTransferStage.getId());
@@ -459,16 +527,31 @@ public class LoadingPlanCommunicationService {
             }
           case loading_plan_rob_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingPlanRobDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_plan_portwise_details_xid");
               listType = new TypeToken<ArrayList<LoadingPlanRobDetails>>() {}.getType();
-              loadingPlanRobDetailsList = new Gson().fromJson(data, listType);
+              loadingPlanRobDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable(), dataTransferStage.getId());
               break;
             }
           case port_loading_plan_stowage_ballast_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new PortLoadingPlanBallastDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_information_xid");
               listType = new TypeToken<ArrayList<PortLoadingPlanBallastDetails>>() {}.getType();
-              portLoadingPlanBallastDetailsList = new Gson().fromJson(data, listType);
+              portLoadingPlanBallastDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable(),
                   dataTransferStage.getId());
@@ -476,8 +559,14 @@ public class LoadingPlanCommunicationService {
             }
           case port_loading_plan_stowage_ballast_details_temp:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new PortLoadingPlanBallastTempDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
               listType = new TypeToken<ArrayList<PortLoadingPlanBallastTempDetails>>() {}.getType();
-              portLoadingPlanBallastTempDetailsList = new Gson().fromJson(data, listType);
+              portLoadingPlanBallastTempDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable(),
                   dataTransferStage.getId());
@@ -485,8 +574,16 @@ public class LoadingPlanCommunicationService {
             }
           case port_loading_plan_stowage_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new PortLoadingPlanStowageDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_information_xid");
               listType = new TypeToken<ArrayList<PortLoadingPlanStowageDetails>>() {}.getType();
-              portLoadingPlanStowageDetailsList = new Gson().fromJson(data, listType);
+              portLoadingPlanStowageDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable(),
                   dataTransferStage.getId());
@@ -494,8 +591,14 @@ public class LoadingPlanCommunicationService {
             }
           case port_loading_plan_stowage_details_temp:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new PortLoadingPlanStowageTempDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
               listType = new TypeToken<ArrayList<PortLoadingPlanStowageTempDetails>>() {}.getType();
-              portLoadingPlanStowageTempDetailsList = new Gson().fromJson(data, listType);
+              portLoadingPlanStowageTempDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable(),
                   dataTransferStage.getId());
@@ -503,8 +606,15 @@ public class LoadingPlanCommunicationService {
             }
           case loading_plan_stowage_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingPlanStowageDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_plan_portwise_details_xid");
               listType = new TypeToken<ArrayList<LoadingPlanStowageDetails>>() {}.getType();
-              loadingPlanStowageDetailsList = new Gson().fromJson(data, listType);
+              loadingPlanStowageDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable(),
                   dataTransferStage.getId());
@@ -512,9 +622,17 @@ public class LoadingPlanCommunicationService {
             }
           case loading_sequence_stability_parameters:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new LoadingSequenceStabilityParameters());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_information_xid");
               listType =
                   new TypeToken<ArrayList<LoadingSequenceStabilityParameters>>() {}.getType();
-              loadingSequenceStabilityParametersList = new Gson().fromJson(data, listType);
+              loadingSequenceStabilityParametersList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable(),
                   dataTransferStage.getId());
@@ -522,8 +640,16 @@ public class LoadingPlanCommunicationService {
             }
           case loading_plan_stability_parameters:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new LoadingPlanStabilityParameters());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_plan_portwise_details_xid");
               listType = new TypeToken<ArrayList<LoadingPlanStabilityParameters>>() {}.getType();
-              loadingPlanStabilityParametersList = new Gson().fromJson(data, listType);
+              loadingPlanStabilityParametersList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable(),
                   dataTransferStage.getId());
@@ -531,9 +657,15 @@ public class LoadingPlanCommunicationService {
             }
           case port_loadable_plan_commingle_details_temp:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new PortLoadingPlanCommingleTempDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
               listType =
                   new TypeToken<ArrayList<PortLoadingPlanCommingleTempDetails>>() {}.getType();
-              portLoadingPlanCommingleTempDetailsList = new Gson().fromJson(data, listType);
+              portLoadingPlanCommingleTempDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable(),
                   dataTransferStage.getId());
@@ -541,8 +673,16 @@ public class LoadingPlanCommunicationService {
             }
           case port_loadable_plan_commingle_details:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(
+                      new PortLoadingPlanCommingleDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_xid");
               listType = new TypeToken<ArrayList<PortLoadingPlanCommingleDetails>>() {}.getType();
-              portLoadingPlanCommingleDetailsList = new Gson().fromJson(data, listType);
+              portLoadingPlanCommingleDetailsList = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable(),
                   dataTransferStage.getId());
@@ -550,8 +690,13 @@ public class LoadingPlanCommunicationService {
             }
           case bill_of_ladding:
             {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new BillOfLanding());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
               listType = new TypeToken<ArrayList<BillOfLanding>>() {}.getType();
-              billOfLandingList = new Gson().fromJson(data, listType);
+              billOfLandingList = new Gson().fromJson(jsonArray, listType);
               idMap.put(LoadingPlanTables.BILL_OF_LADDING.getTable(), dataTransferStage.getId());
               break;
             }
@@ -571,36 +716,27 @@ public class LoadingPlanCommunicationService {
       }
       LoadingInformation loadingInfo = null;
       if (loadingInformation != null) {
-        StageOffset stageOffsetObj = null;
-        StageDuration stageDurationObj = null;
         try {
           if (stageOffset != null) {
             Optional<StageOffset> defaultOffsetOpt =
                 stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
             if (defaultOffsetOpt.isPresent()) {
-              stageOffsetObj = defaultOffsetOpt.get();
-              // loadingInformation.setStageOffset(defaultOffsetOpt.get());
+              loadingInformation.setStageOffset(defaultOffsetOpt.get());
             }
           }
           if (stageDuration != null) {
             Optional<StageDuration> defaultDurationOpt =
                 stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
             if (defaultDurationOpt.isPresent()) {
-              stageDurationObj = defaultDurationOpt.get();
-              // loadingInformation.setStageDuration(defaultDurationOpt.get());
+              loadingInformation.setStageDuration(defaultDurationOpt.get());
             }
           }
-          LoadingInformationStatus loadingInformationStatusObj = null;
-          LoadingInformationStatus loadingInformationArrivalStatusObj = null;
-          LoadingInformationStatus loadingInformationDepartureStatusObj = null;
-
           if (loadingInformationStatus != null) {
             Optional<LoadingInformationStatus> informationStatusOpt =
                 loadingInfoStatusRepository.findByIdAndIsActive(
                     loadingInformationStatus.getId(), true);
             if (informationStatusOpt.isPresent()) {
-              loadingInformationStatusObj = informationStatusOpt.get();
-              // loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
+              loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
             }
           }
 
@@ -608,16 +744,14 @@ public class LoadingPlanCommunicationService {
             Optional<LoadingInformationStatus> arrivalStatusOpt =
                 loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
             if (arrivalStatusOpt.isPresent()) {
-              loadingInformationArrivalStatusObj = arrivalStatusOpt.get();
-              // loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
+              loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
             }
           }
           if (departureStatus != null) {
             Optional<LoadingInformationStatus> departureStatusOpt =
                 loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
             if (departureStatusOpt.isPresent()) {
-              loadingInformationDepartureStatusObj = departureStatusOpt.get();
-              // loadingInformation.setDepartureStatus(departureStatusOpt.get());
+              loadingInformation.setDepartureStatus(departureStatusOpt.get());
             }
           }
           Long version = null;
@@ -629,14 +763,6 @@ public class LoadingPlanCommunicationService {
           loadingInformation.setVersion(version);
           loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
           log.info("LoadingInformation saved with id:" + loadingInfo.getId());
-          loadingInformationCommunicationRepository.updateLoadingInformationStatusWithId(
-              loadingInformationStatusObj.getId(),
-              loadingInformationArrivalStatusObj.getId(),
-              loadingInformationDepartureStatusObj.getId(),
-              stageOffsetObj.getId(),
-              stageDurationObj.getId(),
-              loadingInfo.getId());
-          log.info("LoadingInformation updated with master tables ids:" + loadingInfo);
         } catch (ResourceAccessException e) {
           log.info("ResourceAccessException for LOADING_INFORMATION" + e.getMessage());
           updateStatusInExceptionCase(
@@ -803,7 +929,9 @@ public class LoadingPlanCommunicationService {
                 Long version = null;
                 if (loadingSequence
                     .getId()
-                    .equals(loadingPlanPortWiseDetails.getCommunicationSequenceId())) {
+                    .equals(
+                        Long.valueOf(
+                            loadingPlanPortWiseDetails.getCommunicationRelatedEntityId()))) {
                   Optional<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailObj =
                       loadingPlanPortWiseDetailsRepository.findById(
                           loadingPlanPortWiseDetails.getId());
@@ -907,7 +1035,9 @@ public class LoadingPlanCommunicationService {
                 Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
-                    .equals(loadingPlanBallastDetails.getCommunicationPortWiseId())) {
+                    .equals(
+                        Long.valueOf(
+                            loadingPlanBallastDetails.getCommunicationRelatedEntityId()))) {
                   Optional<LoadingPlanBallastDetails> loadingPlanBallastDetaObj =
                       loadingPlanBallastDetailsRepository.findById(
                           loadingPlanBallastDetails.getId());
@@ -946,7 +1076,8 @@ public class LoadingPlanCommunicationService {
                 Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
-                    .equals(loadingPlanRobDetails.getCommunicationPortWiseId())) {
+                    .equals(
+                        Long.valueOf(loadingPlanRobDetails.getCommunicationRelatedEntityId()))) {
                   Optional<LoadingPlanRobDetails> loadingPlanRobDetaObj =
                       loadingPlanRobDetailsRepository.findById(loadingPlanRobDetails.getId());
                   if (loadingPlanRobDetaObj.isPresent()) {
@@ -1119,7 +1250,9 @@ public class LoadingPlanCommunicationService {
                 Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
-                    .equals(loadingPlanStowageDetails.getCommunicationPortWiseId())) {
+                    .equals(
+                        Long.valueOf(
+                            loadingPlanStowageDetails.getCommunicationRelatedEntityId()))) {
                   Optional<LoadingPlanStowageDetails> loadingPlanStowageDetaObj =
                       loadingPlanStowageDetailsRepository.findById(
                           loadingPlanStowageDetails.getId());
@@ -1133,7 +1266,7 @@ public class LoadingPlanCommunicationService {
               }
             }
             loadingPlanStowageDetailsRepository.saveAll(loadingPlanStowageDetailsList);
-            log.info("Saved LoadingPlanStowageDetails:" + portLoadingPlanStowageTempDetailsList);
+            log.info("Saved LoadingPlanStowageDetails:" + loadingPlanStowageDetailsList);
           }
         } catch (ResourceAccessException e) {
           updateStatusInExceptionCase(
@@ -1168,7 +1301,7 @@ public class LoadingPlanCommunicationService {
           loadingSequenceStabiltyParametersRepository.saveAll(
               loadingSequenceStabilityParametersList);
           log.info(
-              "Saved LoadingSequenceStabilityParameters:" + portLoadingPlanStowageTempDetailsList);
+              "Saved LoadingSequenceStabilityParameters:" + loadingSequenceStabilityParametersList);
         } catch (ResourceAccessException e) {
           updateStatusInExceptionCase(
               idMap.get(LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable()),
@@ -1194,7 +1327,9 @@ public class LoadingPlanCommunicationService {
                 Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
-                    .equals(loadingPlanStabilityParameters.getCommunicationPortWiseId())) {
+                    .equals(
+                        Long.valueOf(
+                            loadingPlanStabilityParameters.getCommunicationRelatedEntityId()))) {
                   Optional<LoadingPlanStabilityParameters> loadingPlanStabilityParamObj =
                       loadingPlanStabilityParametersRepository.findById(
                           loadingPlanStabilityParameters.getId());
@@ -1208,8 +1343,7 @@ public class LoadingPlanCommunicationService {
               }
             }
             loadingPlanStabilityParametersRepository.saveAll(loadingPlanStabilityParametersList);
-            log.info(
-                "Saved LoadingPlanStabilityParameters:" + portLoadingPlanStowageTempDetailsList);
+            log.info("Saved LoadingPlanStabilityParameters:" + loadingPlanStabilityParametersList);
           }
         } catch (ResourceAccessException e) {
           updateStatusInExceptionCase(
@@ -1244,7 +1378,8 @@ public class LoadingPlanCommunicationService {
           portLoadingPlanCommingleTempDetailsRepository.saveAll(
               portLoadingPlanCommingleTempDetailsList);
           log.info(
-              "Saved PortLoadingPlanCommingleTempDetails:" + portLoadingPlanStowageTempDetailsList);
+              "Saved PortLoadingPlanCommingleTempDetails:"
+                  + portLoadingPlanCommingleTempDetailsList);
         } catch (ResourceAccessException e) {
           updateStatusInExceptionCase(
               idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable()),
@@ -1425,5 +1560,23 @@ public class LoadingPlanCommunicationService {
   public LoadableStudy.VoyageActivateReply saveActivatedVoyage(
       LoadableStudy.VoyageActivateRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.saveActivatedVoyage(grpcRequest);
+  }
+
+  private JsonArray removeJsonFields(JsonArray array, HashMap<String, String> map, String... xIds) {
+    JsonArray json = loadingPlanStagingService.getAsEntityJson(map, array);
+    JsonArray jsonArray = new JsonArray();
+    for (JsonElement jsonElement : json) {
+      final JsonObject jsonObj = jsonElement.getAsJsonObject();
+      if (xIds != null) {
+        for (String xId : xIds) {
+          if (xIds.length == 1) {
+            jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
+          }
+          jsonObj.remove(xId);
+        }
+      }
+      jsonArray.add(jsonObj);
+    }
+    return jsonArray;
   }
 }

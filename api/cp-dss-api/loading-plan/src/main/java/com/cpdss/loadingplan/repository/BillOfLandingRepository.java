@@ -35,6 +35,4 @@ public interface BillOfLandingRepository extends CommonCrudRepository<BillOfLand
   @Query("FROM BillOfLanding WHERE isActive = ?2")
   public List<BillOfLanding> findByBillOfLandingAndIsActive(
       List<BillOfLanding> billOfLandings, Boolean isActive);
-
-  public List<BillOfLanding> findByLoadingId(Long loadingInfoId);
 }

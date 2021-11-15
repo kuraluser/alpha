@@ -8,9 +8,11 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.StagingStatus;
 import com.google.gson.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.util.StringUtils;
@@ -174,5 +176,123 @@ public class StagingService {
 
   public void updateStatusCompletedForProcessId(String processId, String status) {
     stagingRepository.updateStatusCompletedForProcessId(processId, status);
+  }
+
+  public HashMap<String, String> getAttributeMapping(Object classInstance) {
+
+    Class ftClass = classInstance.getClass();
+    HashMap<String, String> attributeMap = new HashMap<>();
+    Field[] fields = ftClass.getDeclaredFields();
+    String db_field = "";
+    String entity_field = "";
+    for (int i = 0; i < fields.length; i++) {
+      db_field = fields[i].getName();
+      entity_field = fields[i].getName();
+
+      Annotation[] annotations = fields[i].getDeclaredAnnotations();
+      for (Annotation ann : annotations) {
+        if (ann.annotationType().getName().equals("javax.persistence.Column")) {
+          db_field =
+              Arrays.asList(ann.toString().split(","))
+                  .get(3)
+                  .replace("name=", "")
+                  .replace("\"", "")
+                  .trim();
+          continue;
+        }
+      }
+      attributeMap.put(db_field, entity_field);
+    }
+    attributeMap.put("id", "id");
+    attributeMap.put("version", "version");
+    attributeMap.put("created_by", "createdBy");
+    attributeMap.put("created_date", "createdDate");
+    attributeMap.put("created_date_time", "createdDateTime");
+    attributeMap.put("last_modified_by", "lastModifiedBy");
+    attributeMap.put("last_modified_date", "lastModifiedDate");
+    attributeMap.put("last_modified_date_time", "lastModifiedDateTime");
+    return attributeMap;
+  }
+
+  public JsonArray getAsEntityJson(HashMap<String, String> attributeMap, JsonArray jsonArrayObj) {
+    JsonArray array = new JsonArray();
+    for (JsonElement jsonElement : jsonArrayObj) {
+      final JsonObject jsonObj = jsonElement.getAsJsonObject();
+      Set<String> keySet = jsonObj.keySet();
+      for (String key : attributeMap.keySet()) {
+        if (!key.equals(attributeMap.get(key))) {
+          modifyAttributeValue(jsonObj, key, attributeMap.get(key));
+          jsonObj.remove(key);
+        }
+      }
+      array.add(jsonObj);
+    }
+    return array;
+  }
+
+  private void modifyAttributeValue(JsonObject jsonObj, String sourceKey, String targetKey) {
+    String[] rmFields = {"created_date_time", "last_modified_date_time"};
+    String[] timeFields = {"sunrise_time", "sunset_time", "start_time"};
+    String[] dateTimeFields = {"created_date", "last_modified_date"};
+    String value = jsonObj.get(sourceKey) == null ? null : jsonObj.get(sourceKey).toString();
+    if (Arrays.stream(rmFields).anyMatch(sourceKey::equals)) {
+      jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, true));
+    } else if (Arrays.stream(timeFields).anyMatch(sourceKey::equals)
+        && value != null
+        && value.split(":").length == 3) {
+      jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, true, true));
+    } else if (Arrays.stream(dateTimeFields).anyMatch(sourceKey::equals)) {
+      jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, false));
+    } else {
+      jsonObj.add(targetKey, jsonObj.get(sourceKey));
+    }
+  }
+
+  public JsonObject getJsonObjectFromTimeStamp(String dateTimeStr, Boolean haveTime) {
+    return getJsonObjectFromTimeStamp(dateTimeStr, haveTime, false);
+  }
+
+  public JsonObject getJsonObjectFromTimeStamp(
+      String dateTimeStr, Boolean haveTime, Boolean onlyTime) {
+    try {
+      dateTimeStr = dateTimeStr.replace("\\", "").replace("/", "").replaceAll("^\"|\"$", "");
+      JsonObject dateTimeObject = new JsonObject();
+      JsonObject dateObject = new JsonObject();
+      if (onlyTime) {
+        String[] time = dateTimeStr.split(":");
+        JsonObject timeObject = new JsonObject();
+        timeObject.addProperty("hour", Integer.valueOf(time[0]));
+        timeObject.addProperty("minute", Integer.valueOf(time[1]));
+        timeObject.addProperty("second", Integer.valueOf(time[2]));
+        return timeObject;
+      }
+
+      String format = haveTime ? "yyyy-MM-dd'T'HH:mm:ss.SSSSSS" : "yyyy-MM-dd";
+      SimpleDateFormat sourceFormat = new SimpleDateFormat(format);
+      TimeZone utc = TimeZone.getTimeZone("UTC");
+      sourceFormat.setTimeZone(utc);
+      Date convertedDate = sourceFormat.parse(dateTimeStr);
+      Calendar calendar = new GregorianCalendar();
+      calendar.setTime(convertedDate);
+      dateObject.addProperty("year", calendar.get(Calendar.YEAR));
+      dateObject.addProperty("month", calendar.get(Calendar.MONTH) + 1);
+      dateObject.addProperty("day", calendar.get(Calendar.DAY_OF_MONTH));
+      if (haveTime) {
+        dateTimeObject.add("date", dateObject);
+        JsonObject timeObject = new JsonObject();
+        timeObject.addProperty("hour", calendar.get(Calendar.HOUR_OF_DAY));
+        timeObject.addProperty("minute", calendar.get(Calendar.MINUTE));
+        timeObject.addProperty("second", calendar.get(Calendar.SECOND));
+        timeObject.addProperty("nano", 217485000);
+        dateTimeObject.add("time", timeObject);
+        return dateTimeObject;
+      } else {
+        return dateObject;
+      }
+
+    } catch (Exception e) {
+
+    }
+    return null;
   }
 }

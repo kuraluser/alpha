@@ -12,7 +12,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class LoadingPlanStabilityParameters extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -51,5 +50,5 @@ public class LoadingPlanStabilityParameters extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @Transient private Long CommunicationPortWiseId;
+  @Transient private String communicationRelatedEntityId;
 }

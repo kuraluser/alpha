@@ -7,7 +7,6 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /** @author pranav.k */
 @Entity
@@ -15,7 +14,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class PortLoadingPlanCommingleTempDetails extends PortLoadingPlanCommingleEntityDoc {
   private static final long serialVersionUID = 1L;
 

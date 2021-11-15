@@ -12,7 +12,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class LoadingPlanPortWiseDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -42,5 +41,5 @@ public class LoadingPlanPortWiseDetails extends EntityDoc {
   @OneToMany(mappedBy = "loadingPlanPortWiseDetails")
   private Set<DeballastingRate> deballastingRates;
 
-  @Transient private Long communicationSequenceId;
+  @Transient private String communicationRelatedEntityId;
 }

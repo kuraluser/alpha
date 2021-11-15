@@ -12,7 +12,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class PortLoadingPlanStowageDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -92,4 +91,6 @@ public class PortLoadingPlanStowageDetails extends EntityDoc {
 
   @Column(name = "actual_planned")
   private Integer valueType;
+
+  @Transient private Long communicationRelatedEntityId;
 }

@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
@@ -40,6 +42,7 @@ public interface PortLoadingPlanStabilityParametersRepository
       findByLoadingInformationIdAndConditionTypeAndValueTypeAndIsActiveTrue(
           Long loadingInformationId, Integer conditionType, Integer valueType);
 
+  @Transactional(isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.REQUIRES_NEW)
   public List<PortLoadingPlanStabilityParameters> findByLoadingInformationId(
       Long loadingInformationId);
 }
