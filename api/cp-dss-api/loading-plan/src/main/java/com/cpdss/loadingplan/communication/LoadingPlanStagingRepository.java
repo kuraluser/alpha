@@ -25,7 +25,7 @@ public interface LoadingPlanStagingRepository extends StagingRepository {
       value =
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loading_plan_portwise_details u where loading_sequences_xid IN ?1",
       nativeQuery = true)
-  String getLoadingPlanPortWiseDetailsLoadingId(List<Long> loadingSequenceIds);
+  String getLoadingPlanPortWiseDetailsWithLoadingSeqIds(List<Long> loadingSequenceIds);
 
   @Query(
       value =
