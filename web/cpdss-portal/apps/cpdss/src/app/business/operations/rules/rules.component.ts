@@ -6,8 +6,9 @@ import { IVessel } from '../../core/models/vessel-details.model';
 import { VesselsApiService } from '../../core/services/vessels-api.service';
 import { VoyageService } from '../../core/services/voyage.service';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
-import { RulesService } from '../services/rules/rules.service'
-import { OPERATIONS } from '../../core/models/common.model';
+import { RulesService } from '../services/rules.service'
+import { OPERATIONS, OPERATIONS_PLAN_STATUS, Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
+import { IDischargingInformation, ILoadingInformationResponse } from '../models/loading-discharging.model';
 
 /**
  * Component class for loading rules.
@@ -25,18 +26,23 @@ import { OPERATIONS } from '../../core/models/common.model';
 
 export class RulesComponent implements OnInit {
 
-  @Input() visible: boolean = true;
+  @ViewChild('rulesTable') rulesTable: any;
+  @Input() visible = true;
   @Input() operation: OPERATIONS;
   @Output() popUpClosed: EventEmitter<any> = new EventEmitter();
   rulesJson: any;
   vessels: IVessel[];
-  infoId: number; 
-  isCancelChanges: boolean = false;
-  formChanges: boolean = false;
+  infoId: number;
+  infoStatusId: OPERATIONS_PLAN_STATUS;
+  loadingDischargingInfo: IDischargingInformation | ILoadingInformationResponse;
+  isCancelChanges = false;
+  formChanges = false;
   vesselId: number;
   voyageId : number;
-  disableSaveButton: boolean = false;
-  @ViewChild('rulesTable') rulesTable: any;
+  voyage : Voyage;
+  disableSaveButton = false;
+  editMode = false;
+
   constructor(private translateService: TranslateService, public rulesService: RulesService,
     private vesselsApiService: VesselsApiService,
     private ngxSpinner: NgxSpinnerService,private messageService: MessageService,
@@ -51,12 +57,12 @@ export class RulesComponent implements OnInit {
    */
   async ngOnInit(): Promise<void> {
     this.ngxSpinner.show();
-    this.rulesService.init();
-    this.vessels = await this.vesselsApiService.getVesselsInfo().toPromise(); 
-    let vesselDetails = this.vessels[0] ?? <IVessel>{};   
-    const result = await this.voyageService.getVoyagesByVesselId(vesselDetails?.id).toPromise();   
-    this.voyageId = result.find(voy=>voy.status==='Active').id;    
-    this.getRulesJson();
+    this.vessels = await this.vesselsApiService.getVesselsInfo().toPromise();
+    const vesselDetails = this.vessels[0] ?? <IVessel>{};
+    const result = await this.voyageService.getVoyagesByVesselId(vesselDetails?.id).toPromise();
+    this.voyage = result.find(voy=>voy.statusId=== VOYAGE_STATUS.ACTIVE);
+    this.voyageId = this.voyage.id;
+    await this.getRulesJson();
     this.getSaveButtonStatus()
     this.ngxSpinner.hide();
   }
@@ -68,8 +74,11 @@ export class RulesComponent implements OnInit {
    */
   async getRulesJson() {
     this.vesselId = this.vessels[0].id;
-    this.rulesService.infoId.subscribe(async (res: number) => {
-      this.infoId = res;
+    this.rulesService.loadingDischargingInfo.subscribe(async (res: IDischargingInformation | ILoadingInformationResponse) => {
+      this.loadingDischargingInfo = res;
+      this.infoId = this.operation === OPERATIONS.LOADING ? res['loadingInfoId'] : res['dischargeInfoId'];
+      this.infoStatusId = this.operation === OPERATIONS.LOADING ? res['loadingInfoStatusId'] : res['dischargeInfoStatusId'];
+      this.editMode = [OPERATIONS_PLAN_STATUS.PENDING, OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE, OPERATIONS_PLAN_STATUS.ERROR_OCCURED].includes(this.infoStatusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage.statusId);
       if (this.infoId != null) {
         this.rulesJson = await this.rulesService.getRules(this.vesselId,this.voyageId,this.infoId,this.operation).toPromise();
       }
@@ -130,7 +139,7 @@ export class RulesComponent implements OnInit {
       this.disableSaveButton = status;
     });
   }
- 
+
   /**
    * Method to save changes.
    *
@@ -142,7 +151,7 @@ export class RulesComponent implements OnInit {
     this.ngxSpinner.show();
     let msgkeys, severity;
     try {
-      const result = await this.rulesService.postRules(postData,this.vesselId,this.voyageId,this.infoId,this.operation).toPromise(); 
+      const result = await this.rulesService.postRules(postData,this.vesselId,this.voyageId,this.infoId,this.operation).toPromise();
       if (result?.responseStatus?.status === '200') {
         msgkeys = ['RULES_UPDATE_SUCCESS', 'RULES_UPDATE_SUCCESSFULLY']
         severity = 'success';

@@ -20,16 +20,8 @@ export class RuleService {
   save = new Subject();
   selectedTab$ = new BehaviorSubject(null);
 
-  constructor(
-    private vesselsApiService: VesselsApiService,private commonApiService: CommonApiService
+  constructor(private commonApiService: CommonApiService
   ) { }
-
- /**
- * Method to initialize variables in the service
- */
-  async init() {
-    this.vessels = await this.vesselsApiService.getVesselsInfo(true).toPromise();
-  }
 
 
  /**
@@ -37,24 +29,24 @@ export class RuleService {
   *
   * @param {*} vesselId
   * @param {*} ruleTypeId
-  * @return {*} 
+  * @return {*}
   * @memberof RulesService
   */
  getRules(vesselId:any,ruleTypeId:number,selectedLoadableStudyId:number)
   {
     return  this.commonApiService.get<any>(`loadble-study-rule/vessels/${vesselId}/ruleMasterSectionId/${ruleTypeId}/loadableStudyId/${selectedLoadableStudyId}`);
   }
-  
-  
+
+
   /**
    * Method to post data.
    *
    * @param {*} postData
-   * @return {*} 
+   * @return {*}
    * @memberof RulesService
    */
   postRules(postData:any,vesselId:number,ruleTypeId:number,selectedLoadableStudyId)
-  { 
+  {
    return this.commonApiService.post<any,any>(`loadble-study-rule/vessels/${vesselId}/ruleMasterSectionId/${ruleTypeId}/loadableStudyId/${selectedLoadableStudyId}`,postData);
   }
 }

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { Observable } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { IValidationErrorMessages } from 'apps/cpdss/src/app/shared/components/validation-error/validation-error.model';
+import { IValidationErrorMessages } from '../../../../shared/components/validation-error/validation-error.model';
 import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -11,6 +11,8 @@ import { numberValidator } from '../../../core/directives/number-validator.direc
 import { RulesValidator } from '../../../core/directives/rules-validator-directive'
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UnsavedChangesGuard } from '../../../../shared/services/guards/unsaved-data-guard';
+import { IVessel } from '../../models/vessel-details.model';
+import { VesselsApiService } from '../../services/vessels-api.service';
 
 /**
  * Component Class for Rules Table
@@ -52,6 +54,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
   @Input() rulesJson;
   @Input() rulesService;
   @Input() displaySettings = true;
+  @Input() editMode = true;
   @Output() isSaveClicked: EventEmitter<any> = new EventEmitter();
   @Output() formChanges: EventEmitter<any> = new EventEmitter();
   @Input() isCancelChanges = false;
@@ -59,7 +62,8 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
 
   rulesFormTemp: any;
   rules: any;
-  
+  vessels: IVessel[];
+
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
     return !(this.rulesForm?.dirty);
@@ -67,7 +71,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(private translateService: TranslateService,
     private messageService: MessageService, private ngxSpinner: NgxSpinnerService,
-    private unsavedChangesGuard: UnsavedChangesGuard) { }
+    private unsavedChangesGuard: UnsavedChangesGuard, private vesselsApiService: VesselsApiService) { }
 
   /**
   * Component lifecycle ngOnInit
@@ -76,8 +80,8 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
   * @memberof RulesTableComponent
   */
   async ngOnInit(): Promise<void> {
-    this.ngxSpinner.show()
-    this.rulesService.init();
+    this.ngxSpinner.show();
+    this.vessels = await this.vesselsApiService.getVesselsInfo(true).toPromise();
     this.showHideDisplaySetttingsColumn();
     this.initActionSubscriptions();
     this.setIndex(this.selectedIndex);
@@ -212,7 +216,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
 
 
   /**
-   * Method to init all action subscriptions 
+   * Method to init all action subscriptions
    *
    * @returns {void}
    * @memberof RulesTableComponent
@@ -226,7 +230,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-  * Method to save changes 
+  * Method to save changes
   *
   * @returns {void}
   * @memberof RulesTableComponent
@@ -284,7 +288,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-  * Method to init form controls based on the rules JSON 
+  * Method to init form controls based on the rules JSON
   *
   * @returns {void}
   * @memberof RulesTableComponent
@@ -371,13 +375,18 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
       )
       this.rulesForm.push(formArrayTemp);
     })
+    if (this.editMode) {
+      this.rulesForm.enable();
+    } else {
+      this.rulesForm.disable();
+    }
     this.ngxSpinner.hide();
   }
 
 
 
   /**
-  * Method to get a control at a particular index 
+  * Method to get a control at a particular index
   *
   * @returns {void}
   * @memberof RulesTableComponent
@@ -406,7 +415,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-  * Method to disable form if specified in the rules JSON 
+  * Method to disable form if specified in the rules JSON
   *
   * @returns {void}
   * @memberof RulesTableComponent

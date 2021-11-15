@@ -5,9 +5,9 @@
             <div class="col">
             </div>
         </div>
-        <div *ngIf="rulesService.vessels">
+        <div *ngIf="vessels">
             <cpdss-portal-rules-table *ngIf="rulesJson" #rulesTable [rulesJson]="rulesJson" [displaySettings]="false"
-                [rulesService]="rulesService" [isCancelChanges]="isCancelChanges"
+                [rulesService]="rulesService" [isCancelChanges]="isCancelChanges" [editMode]="editMode"
                 (isSaveClicked)="saveChanges($event)" (formChanges)="updateCancelChangesButton($event)">
             </cpdss-portal-rules-table>
         </div>
@@ -17,7 +17,7 @@
             <div class="col text-right">
                 <button class="btn btn-main mr-10" *ngIf="formChanges" id="cancelBtn"
                     (click)="cancelChanges()" focusTrap>{{'RULES_CANCEL' | translate}}</button>
-                <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()" [disabled]="disableSaveButton" autofocus focusTrap>{{'RULES_SAVE' |
+                <button class="btn btn-main mr-10" *ngIf="editMode" id="saveBtn" (click)="triggerSaveChanges()" [disabled]="disableSaveButton" autofocus focusTrap>{{'RULES_SAVE' |
                     translate}}</button>
             </div>
         </div>

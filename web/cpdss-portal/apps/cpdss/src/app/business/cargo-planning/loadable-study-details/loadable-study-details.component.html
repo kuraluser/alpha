@@ -1,117 +1,121 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col vessel-info-wrapper">
-            <div class="row">
-                <div class="col">
-                    <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo">
-                    </cpdss-portal-vessel-info>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label class="col-form-label pr-10 text-uppercase">{{ 'LOADABLE_STUDY_DETAILS_VOYAGE_DROPDOWN_LABEL'
-                        | translate }}</label>
-
-                    <p-dropdown id="voyage_dropdown" styleClass="dropdown-w-180" [options]="voyages"
-                        [(ngModel)]="selectedVoyage" filter="true" optionLabel="voyageNo"
-                        (onChange)="onVoyageChange($event)"
-                        resetFilterOnHide="true"></p-dropdown>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col vessel-info-wrapper">
+      <div class="row">
+        <div class="col">
+          <cpdss-portal-vessel-info *ngIf="vesselInfo" [vesselDetails]="vesselInfo">
+          </cpdss-portal-vessel-info>
         </div>
-        <div class="col cargo-nomiantion-tab text-center">
-            <a class="tab-btn" *cpdssPortalPermission="cargoNominationTabPermissionContext"
-                [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION}"
-                (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION)">{{'CARGO_NOMINATION' | translate}}
-                <div *ngIf="cargoNominationComplete && dischargingPorts?.length> 0  else incomplete"
-                    class="pt-5">
-                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
-                </div>
-                <ng-template #incomplete>
-                    <div class="pt-5">
-                        <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
-                    </div>
-                </ng-template>
-            </a>
-            <a class="tab-btn" *cpdssPortalPermission="portsTabPermissionContext"
-                [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS}"
-                (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.PORTS)">{{'PORT' | translate}}
-                <div *ngIf="portsComplete else incomplete" class="pt-5">
-                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
-                </div>
-                <ng-template #incomplete>
-                    <div class="pt-5">
-                        <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
-                    </div>
-                </ng-template>
-            </a>
-            <a class="tab-btn" *cpdssPortalPermission="ohqTabPermissionContext"
-                [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ}"
-                (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OHQ)">{{'ON_HAND_QUANTITIES' | translate}}
-                <div class="pt-5" *ngIf="ohqComplete  else incomplete">
-                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
-                </div>
-                <ng-template #incomplete>
-                    <div class="pt-5">
-                        <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
-                    </div>
-                </ng-template>
-            </a>
-            <a class="tab-btn" *cpdssPortalPermission="obqTabPermissionContext"
-                [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ}"
-                (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OBQ)">{{'ON_BOARD_QUANTITIES' | translate}}
-                <div class="pt-5" *ngIf="obqComplete else incomplete">
-                    <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
-                </div>
-                <ng-template #incomplete>
-                    <div class="pt-5">
-                        <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
-                    </div>
-                </ng-template>
-            </a>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label class="col-form-label pr-10 text-uppercase">{{ 'LOADABLE_STUDY_DETAILS_VOYAGE_DROPDOWN_LABEL'
+            | translate }}</label>
 
+          <p-dropdown id="voyage_dropdown" styleClass="dropdown-w-180" [options]="voyages" [(ngModel)]="selectedVoyage"
+            filter="true" optionLabel="voyageNo" (onChange)="onVoyageChange($event)" resetFilterOnHide="true">
+          </p-dropdown>
         </div>
-
-        <div class="pr-15 text-right">
-            <button id="pattern_history" class="btn btn-main mr-10" (click)="navigateToPatternHistory('0')"
-                [disabled]="!loadableStudies?.length || !loadablePatternHistoryPermission?.view">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL' | translate}}</button>
-            <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
-                [disabled]="(!loadableStudies?.length || isServiceWorkerCallActive || !cargoNominationComplete || !portsComplete || !ohqComplete || !obqComplete  || isGenerateClicked || isPatternGenerated || isPatternOpenOrNoplan ||[VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId) || !(generateBtnPermissionContext?.view))" *ngIf="showGenerateBtn">{{'LOADABLE_PATTERN_GENERATE_BUTTON_LABEL'
-                | translate}}</button>
-            <button id="view_pattern" class="btn btn-main" (click)="navigateToPatternHistory('1')"
-                *ngIf="isPatternGenerated">{{'VIEW_PATTERN_BUTTON_LABEL' | translate }}</button>
-        </div>
+      </div>
     </div>
-    <div class="row mb-10 mt-10">
-        <div class="col text-uppercase sub-heading">
-            <label class=" text-secondary  pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_STUDY_LABEL'| translate}}
-                <span>{{selectedLoadableStudy?.name}}</span></label>
-
-
-                <div class="pr-20 inline-block">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit +
-                    ')'}}
-                    <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
-                        (click)="showLoadableQuantityPopup()" [disabled]="showLoadableQuantityButton || !loadableQuantityPermission?.view || !cargoNominationTabPermission?.view">{{loadableQuantityNew | number :
-                        '1.2-2' }}</button>
-                </div>
-
-            <cpdss-portal-unit-dropdown  *ngIf="selectedTab == LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab == LOADABLE_STUDY_DETAILS_TABS.OBQ" (unitChange)="onUnitChange($event)"
-                [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange"
-                (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
+    <div class="col cargo-nomiantion-tab text-center">
+      <a class="tab-btn" *cpdssPortalPermission="cargoNominationTabPermissionContext"
+        [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION}"
+        (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION)">{{'CARGO_NOMINATION' | translate}}
+        <div *ngIf="cargoNominationComplete && dischargingPorts?.length> 0  else incomplete" class="pt-5">
+          <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
         </div>
-        <div class="pr-5" *ngIf="selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ERROR">
-            <button class="btn btn-main" id="view_error" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'| translate}}</button>
+        <ng-template #incomplete>
+          <div class="pt-5">
+            <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+          </div>
+        </ng-template>
+      </a>
+      <a class="tab-btn" *cpdssPortalPermission="portsTabPermissionContext"
+        [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS}"
+        (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.PORTS)">{{'PORT' | translate}}
+        <div *ngIf="portsComplete else incomplete" class="pt-5">
+          <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
         </div>
-
-
-        <div class="pr-15"
-            *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
-            <button id="commingle_btn" class="btn btn-main  ml-10" type="button" (click)="showComminglePopup()"
-                [disabled]="showCommingleButton || !addComminglePermission?.view">{{'COMMINGLE_BUTTON' | translate}}</button>
+        <ng-template #incomplete>
+          <div class="pt-5">
+            <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+          </div>
+        </ng-template>
+      </a>
+      <a class="tab-btn" *cpdssPortalPermission="ohqTabPermissionContext"
+        [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ}"
+        (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OHQ)">{{'ON_HAND_QUANTITIES' | translate}}
+        <div class="pt-5" *ngIf="ohqComplete  else incomplete">
+          <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
         </div>
+        <ng-template #incomplete>
+          <div class="pt-5">
+            <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+          </div>
+        </ng-template>
+      </a>
+      <a class="tab-btn" *cpdssPortalPermission="obqTabPermissionContext"
+        [ngClass]="{'active': selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ}"
+        (click)="onTabClick(LOADABLE_STUDY_DETAILS_TABS.OBQ)">{{'ON_BOARD_QUANTITIES' | translate}}
+        <div class="pt-5" *ngIf="obqComplete else incomplete">
+          <div class="tab-status-icon pi pi-check completed"></div> {{'COMPLETE'|translate}}
+        </div>
+        <ng-template #incomplete>
+          <div class="pt-5">
+            <div class="tab-status-icon pi pi-check"></div> {{'INCOMPLETE'|translate}}
+          </div>
+        </ng-template>
+      </a>
 
-        <!-- This code may be use in future -->
-        <!-- <div *ngIf="false">
+    </div>
+
+    <div class="pr-15 text-right">
+      <button id="pattern_history" class="btn btn-main mr-10" (click)="navigateToPatternHistory('0')"
+        [disabled]="!loadableStudies?.length || !loadablePatternHistoryPermission?.view">{{'LOADABLE_PATTERN_HISTORY_BUTTON_LABEL'
+        | translate}}</button>
+      <button id="generate_pattern" class="btn btn-main mr-10" (click)="onGenerateLoadablePattern()"
+        [disabled]="(!loadableStudies?.length || isServiceWorkerCallActive || !cargoNominationComplete || !portsComplete || !ohqComplete || !obqComplete  || isGenerateClicked || isPatternGenerated || isPatternOpenOrNoplan ||[VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId) || !(generateBtnPermissionContext?.view))"
+        *ngIf="showGenerateBtn">{{'LOADABLE_PATTERN_GENERATE_BUTTON_LABEL'
+        | translate}}</button>
+      <button id="view_pattern" class="btn btn-main" (click)="navigateToPatternHistory('1')"
+        *ngIf="isPatternGenerated">{{'VIEW_PATTERN_BUTTON_LABEL' | translate }}</button>
+    </div>
+  </div>
+  <div class="row mb-10 mt-10">
+    <div class="col text-uppercase sub-heading">
+      <label class=" text-secondary  pr-20">{{'LOADABLE_STUDY_DETAILS_LOADABLE_STUDY_LABEL'| translate}}
+        <span>{{selectedLoadableStudy?.name}}</span></label>
+
+
+      <div class="pr-20 inline-block">{{'LOADABLE_STUDY_DETAILS_LOADABLE_QUANTITY_LABEL'| translate}}{{' (' + baseUnit +
+        ')'}}
+        <button id="loadable_quantity_btn" class="btn btn-main btn-xs ml-10" type="button"
+          (click)="showLoadableQuantityPopup()"
+          [disabled]="showLoadableQuantityButton || !loadableQuantityPermission?.view || !cargoNominationTabPermission?.view">{{loadableQuantityNew
+          | number :
+          '1.2-2' }}</button>
+      </div>
+
+      <cpdss-portal-unit-dropdown
+        *ngIf="selectedTab == LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab == LOADABLE_STUDY_DETAILS_TABS.OBQ"
+        (unitChange)="onUnitChange($event)" [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange"
+        (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
+    </div>
+    <div class="pr-5"
+      *ngIf="selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ERROR">
+      <button class="btn btn-main" id="view_error" (click)="viewError(true)">{{'LOADABLE_PLAN_VIEW_ERROR'|
+        translate}}</button>
+    </div>
+
+
+    <div class="pr-15" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudies?.length">
+      <button id="commingle_btn" class="btn btn-main  ml-10" type="button" (click)="showComminglePopup()"
+        [disabled]="showCommingleButton || !addComminglePermission?.view">{{'COMMINGLE_BUTTON' | translate}}</button>
+    </div>
+
+    <!-- This code may be use in future -->
+    <!-- <div *ngIf="false">
             <ng-container [ngSwitch]="selectedLoadableStudy?.statusId">
                 <span class="badge-custom badge-muted" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_PENDING">{{'GENERATE_LOADABLE_PATTERN_PENDING' | translate}}</span>
                 <span class="badge-custom badge-info" *ngSwitchCase="LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING">{{'GENERATE_LOADABLE_PATTERN_ALGO_PROCESSING' | translate}}</span>
@@ -123,123 +127,137 @@
             </ng-container>
         </div> -->
 
-        <div class="pr-15">
-            <button id="rulesButton" [disabled]="isPatternGenerated || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE ||selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING || selectedLoadableStudy?.statusId === LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING " class="btn btn-main  mr-10" (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
-            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
-                <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
-                    [ngClass]="{'disabled': !loadableStudies?.length || !cargoNominationTabPermission?.add || !cargoNominationTabPermission?.add === undefined}"
-                    (click)="addCargoNomination()">{{'ADD_CARGO_BUTTON_LABEL'| translate}}</a>
-            </ng-container>
-        </div>
-        <div class="pr-15">
-
-            <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
-                <a id="add_port_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
-                    [ngClass]="{'disabled': !loadableStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
-                    (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|
-                    translate}}</a>
-            </ng-container>
-        </div>
-
-        <div>
-            <cpdss-portal-rules *ngIf="isRuleModalVisible" [selectedLoadableStudyId]="selectedLoadableStudy.id" [visible]="isRuleModalVisible"   (popUpClosed)="closeModal($event)"></cpdss-portal-rules>
-        </div>
+    <div class="pr-15">
+      <button id="rulesButton" class="btn btn-main  mr-10"
+        (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
+      <ng-container
+        *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
+        <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+          [ngClass]="{'disabled': !loadableStudies?.length || !cargoNominationTabPermission?.add || !cargoNominationTabPermission?.add === undefined}"
+          (click)="addCargoNomination()">{{'ADD_CARGO_BUTTON_LABEL'| translate}}</a>
+      </ng-container>
     </div>
-    <div class="content-outer" *ngIf="voyages" [ngClass]="{'sidebar-collapsed': !openSidePane}">
-        <div class="sidebar  relative">
-            <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
-            <div class="sidebar-content">
-                <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
-                    [selectedLoadableStudy]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
-                    (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
-                    (selectedLoadableStudyChange)="onLoadableStudyChange($event)" (newLoadableStudyAdded)="onLoadableStudyChange($event)">
-                </cpdss-portal-side-panel-loadable-study-list>
-            </div>
-        </div>
-        <div class="pl-30">
-            <div class="pl-10" *ngIf="ports && loadableStudies">
+    <div class="pr-15">
 
-                <cpdss-portal-cargo-nomination
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew && (cargoNominationTabPermission?.view || cargoNominationTabPermission?.view === undefined)"
-                    [permission]="cargoNominationTabPermission" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
-                    [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"
-                    (cargoNominationUpdate)="cargoNominationUpdate($event)" (portOhqStatusUpdate)="portOhqStatusUpdate($event)"></cpdss-portal-cargo-nomination>
-                <cpdss-portal-ports
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && portsTabPermission?.view" [permission]="portsTabPermission" [voyage]="selectedVoyage"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy" (portUpdate)="portUpdate($event)" (ohqStatusUpdate)="ohqStatusUpdate($event)">
-                </cpdss-portal-ports>
-                <cpdss-portal-on-hand-quantity
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (ohqTabPermission?.view || ohqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-                    [permission]="ohqTabPermission" [loadableStudy]="selectedLoadableStudy">
-                </cpdss-portal-on-hand-quantity>
-                <cpdss-portal-on-board-quantity
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)" [voyage]="selectedVoyage"
-                    [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-                    [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
-                </cpdss-portal-on-board-quantity>
-
-                <div class="row" *ngIf="selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length">
-                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
-                        <p class="text-uppercase text-center text-danger">{{'DISCHARGE_PORTS_NOT_SELECTED' | translate}}</p>
-                    </div>
-                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ">
-                        <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OHQ' | translate}}</p>
-                    </div>
-                    <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ">
-                        <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OBQ' | translate}}</p>
-                    </div>
-                </div>
-
-                <div class="row"
-                    *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
-                    <div class="col-sm-12" *ngIf="loadableStudies?.length">
-                        <ng-container *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && cargoNominationTabPermission?.view">
-                            <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
-                            <p-dropdown [options]="ports" [filter]="true" (onChange)="onDischargePortChange($event)" placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}" optionLabel="name" [(ngModel)]="dischargingPortData" optionLabel="name" resetFilterOnHide="true"
-                            [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)"></p-dropdown>
-                            <span class="col error-column" *ngIf="!isSelectedDischargePort">
-                                <cpdss-portal-validation-error [errors]="fieldError()"
-                                    [errorMessages]="errorMesages.dischargePort"></cpdss-portal-validation-error>
-                            </span>
-                            <ng-container
-                                *ngIf="dischargingPorts && dischargingPorts.length && dischargeCargos && dischargeCargos.length>1">
-                                <label class="col-form-label pr-10 ml-15">{{'CARGO_DISCHARGE_FIRST' |
-                                    translate}}</label>
-                                <p-dropdown id="cargo_discharge" styleClass="w-150" [(ngModel)]="selectedDischargeCargo"
-                                    [options]="dischargeCargos" optionLabel="name" [showClear]="true"
-                                    placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}"
-                                    (onChange)="onDischargeCargoChange($event)" resetFilterOnHide="true"
-                                    [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
-                                    <ng-template pTemplate="selectedItem">
-                                      <span *ngIf="selectedDischargeCargo">
-                                        <i class="color-rounded align-text-bottom mr-5" [ngStyle]="{'background' : selectedDischargeCargo?.color}"></i>
-                                        <span>{{selectedDischargeCargo.name}}</span>
-                                      </span>
-                                    </ng-template>
-                                    <ng-template let-cargo pTemplate="item">
-                                      <span>
-                                        <i class="color-rounded align-text-bottom mr-5" [ngStyle]="{'background' : cargo.value.color}"></i>
-                                        <span>{{cargo.label}}</span>
-                                      </span>
-                                    </ng-template>
-                                </p-dropdown>
-                            </ng-container>
-                        </ng-container>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <ng-container
+        *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
+        <a id="add_port_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
+          [ngClass]="{'disabled': !loadableStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
+          (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|
+          translate}}</a>
+      </ng-container>
     </div>
+
+  </div>
+  <div class="content-outer" *ngIf="voyages" [ngClass]="{'sidebar-collapsed': !openSidePane}">
+    <div class="sidebar  relative">
+      <a class="sidebar-collapse-btn" (click)="openSidePane=!openSidePane"></a>
+      <div class="sidebar-content">
+        <cpdss-portal-side-panel-loadable-study-list [vesselInfo]="vesselInfo" [voyage]="selectedVoyage"
+          [selectedLoadableStudy]="selectedLoadableStudy" [loadableStudies]="loadableStudies"
+          (deleteLoadableStudy)="onDeleteLoadableStudy($event)"
+          (selectedLoadableStudyChange)="onLoadableStudyChange($event)"
+          (newLoadableStudyAdded)="onLoadableStudyChange($event)">
+        </cpdss-portal-side-panel-loadable-study-list>
+      </div>
+    </div>
+    <div class="pl-30">
+      <div class="pl-10" *ngIf="ports && loadableStudies">
+
+        <cpdss-portal-cargo-nomination
+          *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && loadableStudyId && loadableStudies && loadableQuantityNew && (cargoNominationTabPermission?.view || cargoNominationTabPermission?.view === undefined)"
+          [permission]="cargoNominationTabPermission" [vesselId]="vesselId" [voyageId]="voyageId"
+          [voyage]="selectedVoyage" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"
+          (cargoNominationUpdate)="cargoNominationUpdate($event)" (portOhqStatusUpdate)="portOhqStatusUpdate($event)">
+        </cpdss-portal-cargo-nomination>
+        <cpdss-portal-ports
+          *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && portsTabPermission?.view"
+          [permission]="portsTabPermission" [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId"
+          [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy" (portUpdate)="portUpdate($event)"
+          (ohqStatusUpdate)="ohqStatusUpdate($event)">
+        </cpdss-portal-ports>
+        <cpdss-portal-on-hand-quantity
+          *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (ohqTabPermission?.view || ohqTabPermission?.view === undefined)"
+          [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
+          [permission]="ohqTabPermission" [loadableStudy]="selectedLoadableStudy">
+        </cpdss-portal-on-hand-quantity>
+        <cpdss-portal-on-board-quantity
+          *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)"
+          [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
+          [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
+        </cpdss-portal-on-board-quantity>
+
+        <div class="row"
+          *ngIf="selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && !this.dischargingPorts?.length">
+          <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+            <p class="text-uppercase text-center text-danger">{{'DISCHARGE_PORTS_NOT_SELECTED' | translate}}</p>
+          </div>
+          <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OHQ">
+            <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OHQ' | translate}}</p>
+          </div>
+          <div class="col-sm-12" *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ">
+            <p class="text-uppercase text-center text-danger">{{'PORTS_DATA_NOT_FILLED_FOR_OBQ' | translate}}</p>
+          </div>
+        </div>
+
+        <div class="row"
+          *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab === LOADABLE_STUDY_DETAILS_TABS.PORTS">
+          <div class="col-sm-12" *ngIf="loadableStudies?.length">
+            <ng-container
+              *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION && cargoNominationTabPermission?.view">
+              <label class="col-form-label pr-10">{{'DISCHARGE_DROPDOWN_LABEL' | translate}}</label>
+              <p-dropdown [options]="ports" [filter]="true" (onChange)="onDischargePortChange($event)"
+                placeholder="{{ 'DISCHARGE_DROPDOWN_SELECT_PORT'| translate }}" optionLabel="name"
+                [(ngModel)]="dischargingPortData" optionLabel="name" resetFilterOnHide="true"
+                [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
+              </p-dropdown>
+              <span class="col error-column" *ngIf="!isSelectedDischargePort">
+                <cpdss-portal-validation-error [errors]="fieldError()" [errorMessages]="errorMesages.dischargePort">
+                </cpdss-portal-validation-error>
+              </span>
+              <ng-container
+                *ngIf="dischargingPorts && dischargingPorts.length && dischargeCargos && dischargeCargos.length>1">
+                <label class="col-form-label pr-10 ml-15">{{'CARGO_DISCHARGE_FIRST' |
+                  translate}}</label>
+                <p-dropdown id="cargo_discharge" styleClass="w-150" [(ngModel)]="selectedDischargeCargo"
+                  [options]="dischargeCargos" optionLabel="name" [showClear]="true"
+                  placeholder="{{ 'CARGO_DISCHARGE_SELECT'| translate }}" (onChange)="onDischargeCargoChange($event)"
+                  resetFilterOnHide="true"
+                  [disabled]="![LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(selectedLoadableStudy?.statusId) || [VOYAGE_STATUS.CLOSE].includes(selectedVoyage?.statusId)">
+                  <ng-template pTemplate="selectedItem">
+                    <span *ngIf="selectedDischargeCargo">
+                      <i class="color-rounded align-text-bottom mr-5"
+                        [ngStyle]="{'background' : selectedDischargeCargo?.color}"></i>
+                      <span>{{selectedDischargeCargo.name}}</span>
+                    </span>
+                  </ng-template>
+                  <ng-template let-cargo pTemplate="item">
+                    <span>
+                      <i class="color-rounded align-text-bottom mr-5"
+                        [ngStyle]="{'background' : cargo.value.color}"></i>
+                      <span>{{cargo.label}}</span>
+                    </span>
+                  </ng-template>
+                </p-dropdown>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<cpdss-portal-loadable-quantity *ngIf="displayLoadableQuantity && selectedVoyage && selectedLoadableStudy" (displayPopUp)="displayPopUpTab($event)"
-    (newLoadableQuantity)="loadableQuantity($event)" [vesselId]="vesselId" [voyage]="selectedVoyage"
-    [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-loadable-quantity>
-<cpdss-portal-commingle *ngIf="displayCommingle" (displayPopUp)="displayComminglePopUpTab($event)" [vesselId]="vesselId" [voyage]="selectedVoyage" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId" [loadableStudy]="selectedLoadableStudy"></cpdss-portal-commingle>
+<cpdss-portal-loadable-quantity *ngIf="displayLoadableQuantity && selectedVoyage && selectedLoadableStudy"
+  (displayPopUp)="displayPopUpTab($event)" (newLoadableQuantity)="loadableQuantity($event)" [vesselId]="vesselId"
+  [voyage]="selectedVoyage" [selectedLoadableStudy]="selectedLoadableStudy"></cpdss-portal-loadable-quantity>
 
-<cpdss-portal-error-log-popup
-    [(visible)]="errorPopup"
-    (visibleChange)="viewError($event)"
-    [header]="'GENERATED_PATTERN_ERROR_MESSAGE_HEADING'"
-    [errorMessage]="errorMessage"
-    ></cpdss-portal-error-log-popup>
+<cpdss-portal-commingle *ngIf="displayCommingle" (displayPopUp)="displayComminglePopUpTab($event)" [vesselId]="vesselId"
+  [voyage]="selectedVoyage" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
+  [loadableStudy]="selectedLoadableStudy"></cpdss-portal-commingle>
+
+<cpdss-portal-error-log-popup [(visible)]="errorPopup" (visibleChange)="viewError($event)"
+  [header]="'GENERATED_PATTERN_ERROR_MESSAGE_HEADING'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>
+
+<cpdss-portal-rules *ngIf="isRuleModalVisible" [selectedLoadableStudyId]="selectedLoadableStudy.id"
+  [voyage]="selectedVoyage" [loadableStudy]="selectedLoadableStudy" [visible]="isRuleModalVisible"
+  (popUpClosed)="closeModal($event)"></cpdss-portal-rules>

@@ -4,12 +4,12 @@ import { RulesService } from '../../core/services/rules.service';
 import { UnsavedChangesGuard } from '../../../shared/services/guards/unsaved-data-guard';
 import { RULES_TABS } from './../models/rules.model'
 import { DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
-import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { VesselsApiService } from '../../core/services/vessels-api.service';
 
 /**
  * Component Class for Rules
@@ -36,12 +36,12 @@ export class RulesComponent implements OnInit, OnDestroy {
   errorArray = [];
   vesselId: number;
   ruleTypeId: number;
-  tabIndex: number = 1;
+  tabIndex = 1;
   vessels: any;
   selectedVessel: any;
   rulesChange = new Subject();
   private ngUnsubscribe: Subject<any> = new Subject();
-  
+
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
     return !(this.rulesTable.rulesForm?.dirty);
@@ -50,7 +50,7 @@ export class RulesComponent implements OnInit, OnDestroy {
   constructor(
     public rulesService: RulesService, private translateService: TranslateService, private messageService: MessageService,
     private ngxSpinner: NgxSpinnerService,
-    private unsavedChangesGuard: UnsavedChangesGuard
+    private unsavedChangesGuard: UnsavedChangesGuard, private vesselsApiService: VesselsApiService
   ) { }
 
   /**
@@ -61,10 +61,9 @@ export class RulesComponent implements OnInit, OnDestroy {
   */
   async ngOnInit(): Promise<void> {
     this.ngxSpinner.show();
-    await this.rulesService.init();
-    await this.setSelectedVessel(); 
+    await this.setSelectedVessel();
     await this.initRules();
-    this.triggerGetRules();  
+    this.triggerGetRules();
     this.setSelectedTab();
     this.ngxSpinner.hide();
   }
@@ -95,8 +94,8 @@ export class RulesComponent implements OnInit, OnDestroy {
    * @memberof RulesComponent
    */
   async setSelectedVessel() {
-    this.vessels = await this.rulesService.vessels;
-    this.vesselId = await this.rulesService.vessels[0].id;
+    this.vessels = await this.vesselsApiService.getVesselsInfo(true).toPromise();
+    this.vesselId = await this.vessels[0].id;
     this.selectedVessel = this.vessels[0];
   }
 
@@ -142,7 +141,7 @@ export class RulesComponent implements OnInit, OnDestroy {
     this.ngxSpinner.show();
     let msgkeys, severity;
     try {
-      let result = await this.rulesService.postRules(postData, this.vesselId, this.tabIndex).toPromise();
+      const result = await this.rulesService.postRules(postData, this.vesselId, this.tabIndex).toPromise();
       this.rulesTable.rulesForm.markAsPristine();
       if (result?.responseStatus?.status === '200') {
         msgkeys = ['RULES_UPDATE_SUCCESS', 'RULES_UPDATE_SUCCESSFULLY']
@@ -168,7 +167,7 @@ export class RulesComponent implements OnInit, OnDestroy {
   async onTabClick(tab) {
     const value = await this.unsavedChangesGuard.canDeactivate(this);
     if (!value) { return };
-    
+
     this.ngxSpinner.show();
     switch (tab.toLowerCase()) {
       case 'plan': {

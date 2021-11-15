@@ -1,33 +1,23 @@
-<p-dialog [(visible)]="visible" styleClass="rules-pop-up" header=" {{'RULES' | translate }}" [closable]="true" [draggable]="false" [modal]="true" (onHide)="onClose()">
-<div class="container-fluid">
-    
-    <div class="row">
-        <div class="col">
-            
-            
-            </div>
-            
-    </div>
-    
-   
-    <div *ngIf="rulesService.vessels">
-                <cpdss-portal-rules-table  [rulesJson]="rulesJson"  [displaySettings]="false"
-                 [rulesService]="rulesService" [isCancelChanges]="isCancelChanges"
-                  (isSaveClicked)="saveChanges($event)"
-                  (formChanges)="updateCancelChangesButton($event)" [pageName]="pageName">
-                </cpdss-portal-rules-table>
-    </div>
-</div>
-
-<p-footer *ngIf="rulesJson[data]?.length>0">
-  <div class="row">
-    <div class="col text-right">
-      <button class="btn btn-main mr-10" *ngIf="formChanges" id="cancelBtn" (click)="cancelChanges()">{{'RULES_CANCEL' |
-        translate}}</button>
-      <button class="btn btn-main mr-10" id="saveBtn" (click)="triggerSaveChanges()">{{'RULES_SAVE' |
-        translate}}</button>
+<p-dialog [(visible)]="visible" styleClass="rules-pop-up" header=" {{'RULES' | translate }}" [closable]="true"
+  [draggable]="false" [modal]="true" (onHide)="onClose()">
+  <div class="container-fluid">
+    <div *ngIf="vessels">
+      <cpdss-portal-rules-table [rulesJson]="rulesJson" [displaySettings]="false" [rulesService]="rulesService"
+        [isCancelChanges]="isCancelChanges" [editMode]="editMode" (isSaveClicked)="saveChanges($event)"
+        (formChanges)="updateCancelChangesButton($event)" [pageName]="pageName">
+      </cpdss-portal-rules-table>
     </div>
   </div>
 
-</p-footer>
+  <p-footer *ngIf="rulesJson[data]?.length>0">
+    <div class="row">
+      <div class="col text-right">
+        <button class="btn btn-main mr-10" *ngIf="formChanges" id="cancelBtn" (click)="cancelChanges()">{{'RULES_CANCEL'
+          |
+          translate}}</button>
+        <button class="btn btn-main mr-10" *ngIf="editMode" id="saveBtn" (click)="triggerSaveChanges()">{{'RULES_SAVE' |
+          translate}}</button>
+      </div>
+    </div>
+  </p-footer>
 </p-dialog>

@@ -18,8 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     DialogModule,
     RulesTableModule,
-    TranslateModule,
-    RulesTableModule 
+    TranslateModule
   ],
   exports :[RulesComponent]
 })

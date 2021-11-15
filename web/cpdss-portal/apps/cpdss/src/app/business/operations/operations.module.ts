@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PortRotationRibbonModule } from '../core/components/port-rotation-ribbon/port-rotation-ribbon.module';
 import { AddPortPopupModule } from './add-port-popup/add-port-popup.module';
 import { RulesModule } from './rules/rules.module';
-import { RulesService } from './services/rules/rules.service';
+import { RulesService } from './services/rules.service';
 import { LoadingDischargingTransformationService } from './services/loading-discharging-transformation.service';
 import { QuantityPipeModule } from '../../shared/pipes/quantity/quantity-pipe.module';
 import { QuantityPipe } from '../../shared/pipes/quantity/quantity.pipe';

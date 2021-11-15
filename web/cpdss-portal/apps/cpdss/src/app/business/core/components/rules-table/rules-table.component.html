@@ -1,5 +1,5 @@
 <form>
-    <ng-container *ngIf="rulesService?.vessels && rulesJson[data].length>0; else empty">
+    <ng-container *ngIf="vessels && rulesJson[data].length>0; else empty">
     </ng-container>
     <ng-template #empty>
         <ng-template *ngIf="rulesPageName=='LoadableStudy';then loadableStudy;else genericMessage"> </ng-template>
@@ -104,7 +104,7 @@
                                             [errors]="fieldError('inputs',rowIndex,inputIndex)"
                                             [errorMessages]="errorMessages">
                                         </cpdss-portal-validation-error>
-                                        
+
                                     </div>
                                     {{input.suffix}}
                                 </ng-container>

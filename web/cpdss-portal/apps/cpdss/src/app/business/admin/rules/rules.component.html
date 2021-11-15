@@ -4,7 +4,7 @@
             <h5 class="main-head inline-block">{{'RULES' | translate }}</h5>
             <span class="ml-20 mr-10">
                 {{'Vessel' | translate }}</span>
-            <p-dropdown  [options]="rulesService.vessels" [(ngModel)]="selectedVessel"
+            <p-dropdown  [options]="vessels" [(ngModel)]="selectedVessel"
                optionLabel="name" [filter]="true"
             placeholder="{{ 'LOADABLE_STUDY_LIST_VOYAGE_NO_PLACEHOLDER' }}" (onChange)="onVesselSelected($event)"
                 resetFilterOnHide="true">
@@ -16,10 +16,8 @@
     </div>
     <div class="row">
         <div class="col-10">
-        
         </div>
         <div class="col-2">
-            
         </div>
     </div>
     <div class="col cargo-nomiantion-tab text-center">
@@ -27,9 +25,9 @@
             (click)="onTabClick(TABS[tab])">{{ tab | translate}}
         </a>
     </div>
-   
-    <div *ngIf="rulesService.vessels">
+
+    <div *ngIf="vessels">
                 <cpdss-portal-rules-table #rulesTable *ngIf="rulesJson" [rulesJson]="rulesJson" [rulesService]="rulesService" (isSaveClicked)="saveChanges($event)">
                 </cpdss-portal-rules-table>
-    
+
 </div>

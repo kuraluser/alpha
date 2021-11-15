@@ -1,12 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output , ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { DATATABLE_FIELD_TYPE } from 'apps/cpdss/src/app/shared/components/datatable/datatable.model';
-import { CommonApiService } from 'apps/cpdss/src/app/shared/services/common/common-api.service';
+import { DATATABLE_FIELD_TYPE } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { RULES_TABS, RULE_TYPES } from '../../../core/models/rules.model';
-import { RuleService } from '../../services/rule.service';
 import { RulesTableComponent } from '../../../core/components/rules-table/rules-table.component';
+import { LoadableStudy } from '../../models/loadable-study-list.model';
+import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { RuleService } from '../../services/rule.service';
+import { VesselsApiService } from '../../../core/services/vessels-api.service';
+
 /**
  * Component class for rules.
  *
@@ -25,10 +28,15 @@ export class RulesComponent implements OnInit {
   @ViewChild('rulesTable') rulesTable: RulesTableComponent;
   @Input() visible = true;
   @Input() selectedLoadableStudyId;
- 
- 
+  @Input() voyage: Voyage;
+  @Input()
+  set loadableStudy(value: LoadableStudy) {
+    this.editMode = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId);
+  }
+
+
   @Output() popUpClosed: EventEmitter<any> = new EventEmitter();
-  isCancelChanges: boolean = false;
+  isCancelChanges = false;
 
   TABS = RULES_TABS;
   tabs = Object.keys(this.TABS)
@@ -40,18 +48,19 @@ export class RulesComponent implements OnInit {
   errorArray =[];
   vesselId:number;
   ruleTypeId :number;
-  tabIndex :number = 1;
+  tabIndex = 1;
   vessels:any;
   selectedVessel: any;
-  formChanges:boolean = false;
+  formChanges = false;
   pageName = "LoadableStudy";
   data: any;
+  editMode: boolean;
 
 
   constructor(
-    public rulesService: RuleService, private commonApiService: CommonApiService,
+    public rulesService: RuleService,
     private translateService: TranslateService,private messageService:MessageService,
-    private ngxSpinner: NgxSpinnerService,
+    private ngxSpinner: NgxSpinnerService, private vesselsApiService: VesselsApiService
   ) { }
 
   /**
@@ -64,13 +73,12 @@ export class RulesComponent implements OnInit {
    this.ngxSpinner.show();
    this.rulesService.selectedTab$.next('plan');
    this.data = 'plan';
-   await this.rulesService.init();
-   this.vessels= await this.rulesService.vessels;
-   this.vesselId = await this.rulesService.vessels[0].id;
+   this.vessels = await this.vesselsApiService.getVesselsInfo(true).toPromise();
+   this.vesselId = await this.vessels[0].id;
    this.selectedVessel = this.vessels[0];
-   
-   this.rulesJson = await this.rulesService.getRules(this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();   
-   
+
+   this.rulesJson = await this.rulesService.getRules(this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();
+
    this.ngxSpinner.hide();
   }
 
@@ -94,12 +102,12 @@ export class RulesComponent implements OnInit {
     this.ngxSpinner.show();
     let msgkeys,severity;
     try{
-    let result = await this.rulesService.postRules(postData,this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();
-    if (result?.responseStatus?.status === '200') {   
+    const result = await this.rulesService.postRules(postData,this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();
+    if (result?.responseStatus?.status === '200') {
        msgkeys = ['RULES_UPDATE_SUCCESS', 'RULES_UPDATE_SUCCESSFULLY']
        severity = 'success';
        this.cancelChanges();
-      }   
+      }
     }
     catch(error){
       msgkeys = ['RULES_UPDATE_ERROR', 'RULES_UPDATE_FAILED'];
@@ -133,8 +141,8 @@ export class RulesComponent implements OnInit {
         this.tabIndex = 3;
         break;
       }
-    }    
-    this.rulesJson = await this.rulesService.getRules(this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();   
+    }
+    this.rulesJson = await this.rulesService.getRules(this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();
   }
 
   /**
@@ -145,7 +153,7 @@ export class RulesComponent implements OnInit {
   */
    async onVesselSelected(event) {
      this.vesselId = event.value.id;
-     this.rulesJson = await this.rulesService.getRules(this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();        
+     this.rulesJson = await this.rulesService.getRules(this.vesselId,this.tabIndex,this.selectedLoadableStudyId).toPromise();
   }
 
   /**
@@ -154,13 +162,12 @@ export class RulesComponent implements OnInit {
    * @memberof RulesComponent
    */
   triggerSaveChanges() {
-    this.rulesService.save.next(); 
+    this.rulesService.save.next();
     if(this.rulesTable.rulesForm.valid){
       this.onClose();
     }
   }
 
- 
 /**
  * Method to cancel changes.
  *

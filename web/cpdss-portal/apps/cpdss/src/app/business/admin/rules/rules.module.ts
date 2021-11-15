@@ -4,8 +4,7 @@ import { RulesComponent } from './rules.component';
 import { RouterModule, Routes } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
-import { RulesService } from '../../core/services/rules.service'
-import { RulesApiService } from './services/rules-api.service'
+import { RulesService } from '../../core/services/rules.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RulesTableModule } from '../../core/components/rules-table/rules-table.module'
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -44,8 +43,7 @@ const routes: Routes = [
     TableModule
   ],
   providers:[
-    RulesService,
-    RulesApiService
+    RulesService
   ]
 })
 export class RulesModule { }

@@ -8,7 +8,7 @@ import { ICargo, OPERATIONS, OPERATIONS_PLAN_STATUS } from '../../../core/models
 import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData, IDischargingInformationSaveResponse, ILoadingDischargingDetails, ICOWDetails, IDischargingInformationPostData, IPostDischargeStageTime, ILoadedCargo, ILoadingDischargingDelays } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
-import { RulesService } from '../../services/rules/rules.service';
+import { RulesService } from '../../services/rules.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -168,7 +168,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       }
 
       await this.updateGetData();
-      this.rulesService.infoId.next(this.dischargingInformationData.dischargeInfoId);
+      this.rulesService.loadingDischargingInfo.next(this.dischargingInformationData);
     }
     catch (error) {
       if (error.error.errorCode === 'ERR-RICO-522') {

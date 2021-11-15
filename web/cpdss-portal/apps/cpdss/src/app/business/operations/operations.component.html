@@ -17,14 +17,13 @@
         <div class="pr-30 pt-10 ">
           {{voyageDistance? (voyageDistance | number) : 0}} {{'PORT_ROTATION_RIBBON_DISTANCE_UNIT' | translate }}
         </div>
-        <cpdss-portal-rules [visible]="true" [operation]="operation"  *ngIf="isRuleModalVisible" (popUpClosed)="onRulesPopUpClose($event)"></cpdss-portal-rules>
         <!-- TODO : Remove comment after get confirmation -->
         <!-- <div class="float-right">
             <a class="btn btn-link icon-btn plus-icon-rounded ml-15 disabled" id="show-popup"
                 (click)="addPort()">{{'OPERATIONS_ADD_PORT_BUTTON_LABEL' | translate}}</a>
         </div> -->
         <button id="rulesButton" *ngIf="selectedVoyage" class="btn btn-main  mr-10"
-            (click)="isRuleModalVisible = !isRuleModalVisible" [disabled]="generatePatternStatus">{{'RULES'|translate}}</button>
+          (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
     </div>
     <div class="row">
         <div class="col">
@@ -53,3 +52,6 @@
 </div>
 <cpdss-portal-add-port-popup *ngIf="showAddPortPopup" [display]="showAddPortPopup"
     (displayPopUp)="closeAddPortPoup($event)"></cpdss-portal-add-port-popup>
+
+<cpdss-portal-rules [visible]="true" [operation]="operation" *ngIf="isRuleModalVisible"
+  (popUpClosed)="onRulesPopUpClose($event)"></cpdss-portal-rules>

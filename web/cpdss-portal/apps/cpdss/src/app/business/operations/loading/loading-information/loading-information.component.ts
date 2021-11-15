@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ICargo, OPERATIONS , ILoadableQuantityCargo } from '../../../core/models/common.model';
-import {RulesService}from '../../services/rules/rules.service';
+import { RulesService }from '../../services/rules.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { LoadingDischargingManageSequenceComponent } from '../../loading-discharging-manage-sequence/loading-discharging-manage-sequence.component';
 import { LoadingDischargingCargoMachineryComponent } from '../../loading-discharging-cargo-machinery/loading-discharging-cargo-machinery.component';
@@ -88,10 +88,10 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
 
 
   async ngOnInit(): Promise<void> {
-   
-    this.initSubscriptions();   
+
+    this.initSubscriptions();
   }
-  
+
   /**
    * unsubscribing loading info observable
    * @memberof UllageUpdatePopupComponent
@@ -134,11 +134,11 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
       this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
       this.loadingDischargingTransformationService._loadingInformationSource.next(this.loadingInformationData?.isLoadingInfoComplete)
       this.loadingDischargingTransformationService._loadingInstructionSource.next(this.loadingInformationData?.isLoadingInstructionsComplete)
-      
+
       this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(this.loadingInformationData?.isLoadingSequenceGenerated)
       this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
-    
-      
+
+
       if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7 || this.loadingInformationData.loadingInfoStatusId == 2 || this.loadingInformationData.loadingInfoStatusId == 0 || this.loadingInformationData.loadingInfoStatusId == 1) {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
         this.loadingDischargingTransformationService.inProcessing.next(false);
@@ -147,21 +147,21 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
           this.loadingDischargingTransformationService.disableViewErrorButton.next(false);
         } else {
           this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
-        }     
+        }
       }
       else {
-        this.loadingDischargingTransformationService.inProcessing.next(true);    
+        this.loadingDischargingTransformationService.inProcessing.next(true);
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
-        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
-        this.loadingDischargingTransformationService.disableViewErrorButton.next(true);        
+        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
+        this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
       }
       if(this.loadingInformationData.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS){
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
         this.loadingDischargingTransformationService.inProcessing.next(true);
-        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true) 
-        this.loadingDischargingTransformationService.disableViewErrorButton.next(true);  
+        this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
+        this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
       }
-      this.rulesService.infoId.next(this.loadingInformationData.loadingInfoId);
+      this.rulesService.loadingDischargingInfo.next(this.loadingInformationData);
       await this.updateGetData();
     }
     catch (error) {
@@ -335,11 +335,11 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   }
 
   isLoadingInfoValid() {
-    if(this.loadingRate?.loadingRatesFormGroup?.invalid || 
-      this.manageSequence?.loadingDischargingSequenceForm?.invalid || 
-      this.dischargeBerth?.berthForm?.invalid || 
+    if(this.loadingRate?.loadingRatesFormGroup?.invalid ||
+      this.manageSequence?.loadingDischargingSequenceForm?.invalid ||
+      this.dischargeBerth?.berthForm?.invalid ||
       this.dischargeBerth?.berthDetailsForm?.invalid ||
-      this.dischargeDetails?.loadingDischargingDetailsForm?.invalid || 
+      this.dischargeDetails?.loadingDischargingDetailsForm?.invalid ||
       this.loadingRate?.loadingRatesFormGroup?.invalid) {
         return false;
       } else {
@@ -354,10 +354,10 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   */
   async saveLoadingInformationData() {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
-    
+
     if(this.loadingRate?.loadingRatesFormGroup?.invalid || this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
       this.dischargeDetails.loadingDischargingDetailsForm.invalid || this.loadingRate.loadingRatesFormGroup.invalid || this.cargoMachineryRef.machineryForm.invalid) {
-   
+
 
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
       if(document.querySelector('.error-icon') && !this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
@@ -389,7 +389,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
           this.hasUnSavedData = false;
           this.loadingDischargingTransformationService.setLoadingInformationValidity(true)
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['LOADING_INFORMATION_SAVED_SUCCESSFULLY'] });
-          
+
         }
         this.ngxSpinnerService.hide();
       }
