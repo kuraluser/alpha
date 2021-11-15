@@ -88,12 +88,22 @@ public class LoadingInformationDischargeService {
                 bolBuilder.setQuantityMt(String.valueOf(qtyMT));
                 Double api =
                     billOfLaddings1.stream()
+                        .filter(
+                            bl ->
+                                bl.getApi() != null
+                                    && !bl.getApi().isEmpty()
+                                    && !bl.getApi().equals("0"))
                         .mapToDouble(o -> Double.parseDouble(o.getApi()))
                         .average()
                         .getAsDouble();
                 bolBuilder.setApi(String.valueOf(api));
                 Double temperature =
                     billOfLaddings1.stream()
+                        .filter(
+                            bl ->
+                                bl.getTemperature() != null
+                                    && !bl.getTemperature().isEmpty()
+                                    && !bl.getTemperature().equals("0"))
                         .mapToDouble(o -> Double.parseDouble(o.getTemperature()))
                         .average()
                         .getAsDouble();
