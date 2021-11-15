@@ -1,0 +1,130 @@
+/*Created with Adobe RoboHelp.*/
+/* Fonts */
+	@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800);
+body {
+	font-family: 'Open Sans', Arial, sans-serif;
+	background-color: #ffffff;
+}
+h1 {
+	font-weight: 600;
+	font-size: 27.0pt;
+}
+h2 {
+	font-weight: 600;
+	font-size: 22.5pt;
+	margin-top: 36.0pt;
+	margin-bottom: 9.0pt;
+}
+h3 {
+	font-weight: 600;
+	font-size: 19.0pt;
+	margin-top: 36.0pt;
+	margin-bottom: 9.0pt;
+}
+h4 {
+	font-weight: 600;
+	font-size: 16.0pt;
+	margin-top: 36.0pt;
+	margin-bottom: 9.0pt;
+}
+h5 {
+	font-weight: 600;
+	font-size: 14.0pt;
+	margin-top: 36.0pt;
+	margin-bottom: 9.0pt;
+}
+h6 {
+	font-weight: 600;
+	font-size: 12.0pt;
+	margin-top: 36.0pt;
+	margin-bottom: 9.0pt;
+}
+p {
+	font-size: 12.0pt;
+	margin-top: 18.0pt;
+	margin-bottom: 18.0pt;
+}
+a.expandspot {
+	color: #008000;
+	cursor: hand;
+	font-style: italic;
+	text-decoration: none;
+}
+span.expandtext {
+	font-style: italic;
+	font-weight: normal;
+	color: #ff0000;
+}
+a.dropspot {
+	cursor: hand;
+	color: #008000;
+	font-style: italic;
+	text-decoration: none;
+}
+a.glossterm {
+	color: #800000;
+	cursor: hand;
+	font-style: italic;
+	text-decoration: none;
+}
+span.glosstext {
+	font-style: italic;
+	font-weight: normal;
+	color: #0000ff;
+}
+ol {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+ul {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+a.minitoc-caption {
+  text-decoration: none;
+	color: initial;
+	font-weight: bold;
+	font-size: 12pt;
+}
+p.minitoc-caption {
+  font-weight: bold;
+	font-size: 12pt;
+}
+ol.minitoc-list {
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none;
+}
+ol.minitoc-list ol {
+  list-style: none;
+}
+a.minitoc-list-item {
+  
+}
+
+p.seealso-caption {
+  font-weight: bold;
+	font-size: 12pt;
+}
+ol.seealso-list {
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none;
+}
+a.seealso-list-item {
+  
+}
+
+p.reltopics-caption {
+  font-weight: bold;
+	font-size: 12pt;
+}
+ol.reltopics-list {
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none;
+}
+a.reltopics-list-item {
+
+}

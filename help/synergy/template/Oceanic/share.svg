@@ -1,0 +1,9 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" stroke="#0C96C4" fill="#0C96C4">
+<title stroke="#0C96C4" fill="#0C96C4">network connection</title>
+<g class="nc-icon-wrapper" stroke-linecap="square" stroke-linejoin="miter" stroke-width="2" fill="#0c96c4" stroke="#0c96c4">
+<line data-cap="butt" data-color="color-2" x1="11.371" y1="13.572" x2="20.629" y2="8.428" fill="none" stroke-miterlimit="10" stroke-linecap="butt" stroke="#0C96C4"></line> 
+<line data-cap="butt" data-color="color-2" x1="20.629" y1="23.572" x2="11.371" y2="18.428" fill="none" stroke-miterlimit="10" stroke-linecap="butt" stroke="#0C96C4"></line> 
+<circle cx="7" cy="16" r="5" fill="none" stroke="#0c96c4" stroke-miterlimit="10"></circle> 
+<circle cx="25" cy="6" r="5" fill="none" stroke="#0c96c4" stroke-miterlimit="10"></circle> 
+<circle cx="25" cy="26" r="5" fill="none" stroke="#0c96c4" stroke-miterlimit="10"></circle></g></svg>

@@ -152,6 +152,16 @@ Run `nx dep-graph` to see a diagram of the dependencies of your projects.
 
 Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
 
+## Documentation Website
+
+Documentation Static website files added in path `/help` and the site can be accessed via URL:
+`<base-url>/docs`
+
+| Client | Description | Path |
+| ------ | ------ | ------ |
+| MOL | Documentation for MOL | /help/mol |
+| Synergy | Documentation for Synergy | /help/synergy |
+
 ## ☁ Nx Cloud
 
 ### Computation Memoization in the Cloud
@@ -253,4 +263,9 @@ To remove the service use the following command with the parameters as described
 ```
 gulp removeService <parameters>
 eg: gulp removeService --login --ship --production
+```
+To build Documentation Static website in Login Module
+```
+gulp build --login --<ship/shore> --<env> --<mol/synergy>
+eg: gulp build --login --ship --test --mol
 ```

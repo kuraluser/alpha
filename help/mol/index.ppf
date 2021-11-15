@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ppfml version="2.00" project="CP - DSS User Guide" type="4">
+  <contextmap>
+    
+  </contextmap>
+  <topiclist defaulttopic="about-cp-dss-user-guide.htm">
+    
+    <topic>
+      about-cp-dss-user-guide.htm
+    </topic>
+    
+    <topic>
+      what-is-cp-dss.htm
+    </topic>
+    
+    <topic>
+      features-and-benefits.htm
+    </topic>
+    
+    <topic>
+      getting_started.htm
+    </topic>
+    
+    <topic>
+      understanding-menus-and-icons.htm
+    </topic>
+    
+    <topic>
+      admin.htm
+    </topic>
+    
+    <topic>
+      vessel-informations.htm
+    </topic>
+    
+    <topic>
+      cargo-master.htm
+    </topic>
+    
+    <topic>
+      port-master.htm
+    </topic>
+    
+    <topic>
+      user-role-permission.htm
+    </topic>
+    
+    <topic>
+      user.htm
+    </topic>
+    
+    <topic>
+      charter.htm
+    </topic>
+    
+    <topic>
+      manage-instructions.htm
+    </topic>
+    
+    <topic>
+      manage-rule.htm
+    </topic>
+    
+    <topic>
+      fleet.htm
+    </topic>
+    
+    <topic>
+      dashboard-new.htm
+    </topic>
+    
+    <topic>
+      new-voyage.htm
+    </topic>
+    
+    <topic>
+      cargo-planning.htm
+    </topic>
+    
+    <topic>
+      loadable-study.htm
+    </topic>
+    
+    <topic>
+      loadable-operations.htm
+    </topic>
+    
+    <topic>
+      Create-new-loadable-study.htm
+    </topic>
+    
+    <topic>
+      edit-loadable-study.htm
+    </topic>
+    
+    <topic>
+      duplicate-loadable-study.htm
+    </topic>
+    
+    <topic>
+      delete-loadable-study.htm
+    </topic>
+    
+    <topic>
+      loadable-study-status.htm
+    </topic>
+    
+    <topic>
+      loadable-study-stages.htm
+    </topic>
+    
+    <topic>
+      cargo-nomination.htm
+    </topic>
+    
+    <topic>
+      add-cargo.htm
+    </topic>
+    
+    <topic>
+      select_port-loadable_study.htm
+    </topic>
+    
+    <topic>
+      api-and-temperature-history-loadable-study.htm
+    </topic>
+    
+    <topic>
+      duplicate-cargo.htm
+    </topic>
+    
+    <topic>
+      delete-cargo.htm
+    </topic>
+    
+    <topic>
+      commingle.htm
+    </topic>
+    
+    <topic>
+      port.htm
+    </topic>
+    
+    <topic>
+      add-port.htm
+    </topic>
+    
+    <topic>
+      delete-port.htm
+    </topic>
+    
+    <topic>
+      on-hand-quantities.htm
+    </topic>
+    
+    <topic>
+      on-board-quantities.htm
+    </topic>
+    
+    <topic>
+      generate-loadable-patterns.htm
+    </topic>
+    
+    <topic>
+      view-pattern.htm
+    </topic>
+    
+    <topic>
+      loadable-pattern.htm
+    </topic>
+    
+    <topic>
+      loadable-plan.htm
+    </topic>
+    
+    <topic>
+      view-plan.htm
+    </topic>
+    
+    <topic>
+      confirm-plan.htm
+    </topic>
+    
+    <topic>
+      export-loadable-plan.htm
+    </topic>
+    
+    <topic>
+      pattern-history.htm
+    </topic>
+    
+    <topic>
+      discharge-study-cargo-planning.htm
+    </topic>
+    
+    <topic>
+      discharge-study-operations.htm
+    </topic>
+    
+    <topic>
+      create-new-discharge-study.htm
+    </topic>
+    
+    <topic>
+      edit-discharge-study.htm
+    </topic>
+    
+    <topic>
+      delete-discharge-study.htm
+    </topic>
+    
+    <topic>
+      discharge-study-status.htm
+    </topic>
+    
+    <topic>
+      discharge-study-stages.htm
+    </topic>
+    
+    <topic>
+      cargo-nomination-discharge.htm
+    </topic>
+    
+    <topic>
+      port-discharge.htm
+    </topic>
+    
+    <topic>
+      on-hand-quantities-discharge.htm
+    </topic>
+    
+    <topic>
+      discharge-study.htm
+    </topic>
+    
+    <topic>
+      Cow.htm
+    </topic>
+    
+    <topic>
+      back-loading-discharge-study.htm
+    </topic>
+    
+    <topic>
+      generate-discharge-plan.htm
+    </topic>
+    
+    <topic>
+      view-discharge-plan.htm
+    </topic>
+    
+    <topic>
+      confirm-discharge-plan.htm
+    </topic>
+    
+    <topic>
+      voyages.htm
+    </topic>
+    
+    <topic>
+      start-stop-a-voyage.htm
+    </topic>
+    
+    <topic>
+      stop-voyage.htm
+    </topic>
+    
+    <topic>
+      synoptical.htm
+    </topic>
+    
+    <topic>
+      edit-synoptical-table.htm
+    </topic>
+    
+    <topic>
+      operations.htm
+    </topic>
+    
+    <topic>
+      loading.htm
+    </topic>
+    
+    <topic>
+      loading-operation-stages.htm
+    </topic>
+    
+    <topic>
+      loading-information.htm
+    </topic>
+    
+    <topic>
+      loading-details.htm
+    </topic>
+    
+    <topic>
+      add-tide-details.htm
+    </topic>
+    
+    <topic>
+      loading-rates.htm
+    </topic>
+    
+    <topic>
+      berth-details.htm
+    </topic>
+    
+    <topic>
+      cargo-details.htm
+    </topic>
+    
+    <topic>
+      cargo-loaded.htm
+    </topic>
+    
+    <topic>
+      no-stages.htm
+    </topic>
+    
+    <topic>
+      manage-sequence.htm
+    </topic>
+    
+    <topic>
+      add-initial-delay.htm
+    </topic>
+    
+    <topic>
+      cargo-machinery-use.htm
+    </topic>
+    
+    <topic>
+      pump-use.htm
+    </topic>
+    
+    <topic>
+      loading-instructions.htm
+    </topic>
+    
+    <topic>
+      generate-loading-plan.htm
+    </topic>
+    
+    <topic>
+      loading-sequence.htm
+    </topic>
+    
+    <topic>
+      loading-plan.htm
+    </topic>
+    
+    <topic>
+      discharging.htm
+    </topic>
+    
+    <topic>
+      discharging-operation-stages.htm
+    </topic>
+    
+    <topic>
+      discharging-information.htm
+    </topic>
+    
+    <topic>
+      discharging-instructions.htm
+    </topic>
+    
+    <topic>
+      discharging-sequence.htm
+    </topic>
+    
+    <topic>
+      discharging-plan.htm
+    </topic>
+    
+    <topic>
+      files.htm
+    </topic>
+    
+  </topiclist>
+  <filenamemap>
+    <filenameentry moniker="wh_languagetype">
+      <filename>
+        en_US
+      </filename>
+    </filenameentry>
+    <filenameentry moniker="wh_stoplist">
+      <filename>
+        whxdata/stopwords.xml
+      </filename>
+    </filenameentry>
+    <filenameentry moniker="startpage">
+      <filename>
+        index.htm
+      </filename>
+    </filenameentry>
+        
+  </filenamemap>
+</ppfml>

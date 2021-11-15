@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes"/>
+  <meta name="version" content="2020.0.0"/>
+  <link rel="StyleSheet" href="./template/styles/topic.min.css" type="text/css"/>
+  <link rel="StyleSheet" data-skin="true" type="text/css" href="./template/Oceanic/layout.css"/>
+  <link rel="StyleSheet" data-skin="true" href="./template/Oceanic/userstyles.css" type="text/css"/>
+  
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="generator" content="Adobe RoboHelp 2020"/>
+  <title>On Hand Quantities</title>
+  <meta name="topic-status" content="Draft"/>
+  <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
+<meta name="brsnext" value="discharge-study.htm"/><meta name="brsprev" value="port-discharge.htm"/></head>
+
+<body class="rh-BODY-wrapper">
+  <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
+  <div class="RH-LAYOUT-HEADER-skip-content-container" id="skip-to-content"></div>
+  <header class="RH-LAYOUT-HEADER-container" role="banner">
+    <div class="RH-LAYOUT-HEADER-logo-box  ">
+      <div class="RH-LAYOUT-HEADER-logo" id="logo-holder"></div>
+      <div class="RH-LAYOUT-HEADER-title" id="topic-title-holder"></div>
+    </div>
+    <div class="RH-LAYOUT-HEADERMENU-container" id="header-menu"></div>
+    <div class="search-placeholder-class" id="search-with-help"></div>
+  </header>
+  <main role="main" class="RH-LAYOUT-BODY-container">
+    <div class="RH-LAYOUT-SEARCHRESULTS" id="rh-searchresults"></div>
+    <div class="RH-LAYOUT-LEFTPANEL-container" id="rh-leftpanel"></div>
+    <div class="rh-layout-BODY-main" id="rh-layout-main">
+      <div class="RH-LAYOUT-TOOLBAR-toolbar-box" id="rh-toolbar"></div>
+      <div class="rh-layout-BODY-body">
+        <div class="RH-LAYOUT-CENTERPANEL-container">
+          <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
+          <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
+  <h1>On Hand Quantities</h1>
+  <p class="textbody">The OHQ (On Hand Quantity) is the quantity of cargoes remaining in the vessel tanks at each port. The cargoes include fuel oil, diesel oil, lube oil, and freshwater. The weight or volume of the cargoes are updated at each port during both the arrival and departure conditions. </p>
+  <p class="textbody">The <span style="font-weight:bold;">ON HAND QUANTITIES</span> tab allows the user to update the volume or weight of the onboard cargoes at each port during the arrival and departure conditions.  </p>
+  <p class="textbody"><img class="image-full" src="Images/ohq-discharge-study/ohq tab.png"/></p>
+  <p class="textbody">The <span style="font-weight:bold;">ON HAND QUANTITIES</span> tab displays the port ribbon based on the ports the user added in the <span style="font-weight:bold;">PORT </span>tab. The user must select each port and enter the values against the required tanks.</p>
+  <p class="textbody"><img class="image-full" src="Images/ohq-discharge-study/port ribbon.png"/></p>
+  <p class="note">The status of the OHQ tab becomes <span style="font-weight:bold;">COMPLETE </span>only if data is entered against at least one tank from each tank category against all the ports in the port rotation.</p>
+  <p class="textbody">Update the fields in the OHQ table against each port as per the table given below:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse; padding: 3px;">
+    <colgroup>
+      <col/>
+      <col/>
+    </colgroup>
+    <thead>
+      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato;padding-top:4px;padding-right:4px;padding-bottom:4px;padding-left:4px">
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <p class="textbody">Selected Port</p>
+        </td>
+        <td>
+          <p class="textbody">This field lists the ports selected for the voyage. The data is auto-populated from the <span style="font-weight:bold;">PORT </span>tab. </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Tank Type</p>
+        </td>
+        <td>
+          <p class="textbody">This field allows the user to select the tank type. The available options are:</p>
+          <ul class="bullets">
+            <li class="textbody">Fuel oil tank</li>
+            <li class="textbody">Diesel oil tank</li>
+            <li class="textbody">Freshwater tank</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Tank</p>
+        </td>
+        <td>
+          <p class="textbody">This field lists out the available tanks based on the tank type selection. </p>
+          <ul class="bullets">
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Density</p>
+        </td>
+        <td>
+          <p class="textbody">This field allows the user to enter the density of the selected fuel type in each tank.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Arrival Quantity</p>
+        </td>
+        <td>
+          <p class="textbody">This field allows the user to enter the volume or weight of the cargoes at the selected port during the arrival condition. The data is saved in the Synoptical table of the corresponding voyage. </p>
+          <p class="textbody">By default, the values are auto-populated from the Arrival condition field on the Synoptical Table. </p>
+          <p class="textbody">The user can switch the unit of the cargo quantity by choosing the required option from the <span style="font-weight:bold;">Unit </span>drop-down list. </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Departure Quantity</p>
+        </td>
+        <td>
+          <p class="textbody">This field allows the user to enter the volume or weight of the cargoes at the selected port during the departure condition. The data is saved in the Synoptical table of the corresponding voyage. </p>
+          <p class="textbody">By default, the values are auto-populated from the Departure condition field on the Synoptical Table. </p>
+          <p class="textbody">The user can switch the unit of the cargo quantity by choosing the required option from the <span style="font-weight:bold;">Unit </span>drop-down list. </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="textbody">The right pane of the tab displays the tank layout during both arrival and departure conditions.</p>
+  <p class="note">The tank layout do not display the lube oil tanks.</p>
+  <p class="textbody">The tank layout highlights the details of the tank the user selects from the OHQ table. By default, the CP-DSS application displays the tank layout during the arrival condition. </p>
+  <p class="textbody"><img class="image-full" src="Images/ohq-discharge-study/tank details.png"/></p>
+  <p class="textbody">To view the tank layout during the departure condition, select <span style="font-weight:bold;">DEPARTURE </span>. </p>
+  <p class="textbody"><img class="image-full" src="Images/ohq-discharge-study/departure details.png"/></p>
+
+</div>
+          <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
+        </div>
+        <div class="RH-LAYOUT-RIGHTPANEL-container" id="rh-rightpanel"></div>
+      </div>
+    </div>
+  </main>
+  <footer role="contentinfo" class="RH-LAYOUT-FOOTER-container" id="rh-footer"></footer>
+  <script type="text/javascript">//<![CDATA[
+
+    gRootRelPath = "."
+    gCommonRootRelPath = "."
+    gTopicId = "3.2.2.0_3"
+  
+//]]></script>
+
+
+  <script src="./template/scripts/topicpage.js"></script>
+  <script src="./whxdata/layoutconfig.js"></script>
+  <script src="./whxdata/brsdata.js"></script>
+
+  
+    
+      
+          
+
+            
+              
+                <link rel="StyleSheet" href="./template/Oceanic/CP DSS Font.css" type="text/css"/>
+                
+                  
+
+
+</body></html>

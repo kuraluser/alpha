@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes"/>
+  <meta name="version" content="2020.0.0"/>
+  <link rel="StyleSheet" href="./template/styles/topic.min.css" type="text/css"/>
+  <link rel="StyleSheet" data-skin="true" type="text/css" href="./template/Oceanic/layout.css"/>
+  <link rel="StyleSheet" data-skin="true" href="./template/Oceanic/userstyles.css" type="text/css"/>
+  
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="generator" content="Adobe RoboHelp 2020"/>
+  <title>What is CP-DSS</title>
+  <meta name="topic-status" content="Draft"/>
+  <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
+<meta name="brsnext" value="features-and-benefits.htm"/><meta name="brsprev" value="about-cp-dss-user-guide.htm"/></head>
+
+<body class="rh-BODY-wrapper">
+  <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
+  <div class="RH-LAYOUT-HEADER-skip-content-container" id="skip-to-content"></div>
+  <header class="RH-LAYOUT-HEADER-container" role="banner">
+    <div class="RH-LAYOUT-HEADER-logo-box  ">
+      <div class="RH-LAYOUT-HEADER-logo" id="logo-holder"></div>
+      <div class="RH-LAYOUT-HEADER-title" id="topic-title-holder"></div>
+    </div>
+    <div class="RH-LAYOUT-HEADERMENU-container" id="header-menu"></div>
+    <div class="search-placeholder-class" id="search-with-help"></div>
+  </header>
+  <main role="main" class="RH-LAYOUT-BODY-container">
+    <div class="RH-LAYOUT-SEARCHRESULTS" id="rh-searchresults"></div>
+    <div class="RH-LAYOUT-LEFTPANEL-container" id="rh-leftpanel"></div>
+    <div class="rh-layout-BODY-main" id="rh-layout-main">
+      <div class="RH-LAYOUT-TOOLBAR-toolbar-box" id="rh-toolbar"></div>
+      <div class="rh-layout-BODY-body">
+        <div class="RH-LAYOUT-CENTERPANEL-container">
+          <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
+          <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
+  <h1>What is CP-DSS</h1>
+  <p class="textbody">Cargo Planning Decision Support System (CP-DSS) is a web application developed to simplify and automate the tedious processes involved in the cargo allocation of VLCC (Very Large Crude Carrier) vessels. It reduces the demand for human effort in the complex logical operations associated with generating loading and discharging plans while maintaining maximum safety and security. </p>
+  <p class="textbody">With the help of various associated tools and technologies, the CP-DSS application allows the user to perform cargo plan generation and management without any concern of location, equipment, and infrastructure restrictions.</p>
+  <h2>Features and Benefits</h2>
+  <ul class="bullets">
+    <li>
+      <p class="textbody">Optimized generation of cargo plans for loading and discharging.     </p>
+    </li>
+    <li>
+      <p class="textbody">Provides essential information regarding the cargo, port, vessel, loading sequence, and discharging sequence to facilitate better planning of cargo operations.</p>
+    </li>
+    <li>
+      <p class="textbody">Maximizes the loadable cargo quantity while reducing the waiting time at ports and thereby the operational costs. </p>
+    </li>
+    <li>
+      <p class="textbody">Improves the existing operation to achieve speedy cargo plan generation without compromising safety and security. </p>
+    </li>
+    <li>
+      <p class="textbody">Improved accessibility regardless of location constraints.</p>
+    </li>
+    <li>
+      <p class="textbody">Enhanced vessel safety ensured through Loadicator validation.</p>
+    </li>
+    <li>
+      <p class="textbody">Integrated loadable and discharge study patterns that minimize human errors.</p>
+    </li>
+  </ul>
+  <h2>CP-DSS Process Flow</h2>
+  <p class="textbody">The CP-DSS application is integrated with Loadicator and algorithm. The Loadicator checks the stability parameters of the vessel and the data is passed to the algorithm for validation. The algorithm validates the input data and provides optimal output. </p>
+  <p class="textbody">The CP-DSS application workflow consists of four different stages:</p>
+  <ul class="bullets">
+    <li class="textbody">Cargo Enquiry</li>
+    <li class="textbody">Cargo Planning</li>
+    <li class="textbody">Before, during, and after the cargo loading operation</li>
+    <li class="textbody">Before and after the cargo discharging operation</li>
+  </ul>
+  <p class="textbody"><img class="image-full" height="68" src="Images/Flowcharts/Introduction/whole process high level.png" style="border-width: 1px; border-color: rgb(0, 0, 0); border-style: solid;" width="772"/></p>
+  <h3>Loadable Study</h3>
+  <p class="textbody">The Loadable study comprises the cargo enquiry and planning stages. In this stage, the user identifies the maximum amount of cargoes that can be loaded to the vessel based on the input conditions and generates multiple stowage patterns with individual loadable plan output. </p>
+  <h3>Before Cargo Loading</h3>
+  <p class="textbody">Before cargo loading, the user generates a loading plan that includes the following details:</p>
+  <ul class="bullets">
+    <li class="textbody">The arrival and departure condition of the vessel</li>
+    <li class="textbody">Cargoes to be loaded</li>
+    <li class="textbody">Loading instructions</li>
+    <li class="textbody">Topping off sequence and details</li>
+    <li class="textbody">Loading time sequence</li>
+    <li class="textbody">De-ballasting time sequence</li>
+  </ul>
+  <h3>During Cargo Loading</h3>
+  <p class="textbody">In the cargo loading stage, the user updates the API and temperature values of the cargoes that are loaded onto the vessel and recalculates the vessel&#39;s stability based on these values. </p>
+  <h3>After Cargo Loading</h3>
+  <p class="textbody">After cargo loading, the user updates the B/L figure and final API values in the stowage plan generated after the cargo planning operation. The user can enter multiple B/L figures against each cargo that has a different B/L reference number. </p>
+  <h3>Discharge Study</h3>
+  <p class="textbody">In the Discharge Study stage, the user generates discharge plans by calculating the estimated time for cargo discharging based on the estimated discharging rate of the vessel. The user must consider the port restrictions and other constraints if any when creating a discharge plan.</p>
+  <p class="textbody">If the discharge port restriction details are unknown, the algorithm creates a discharge plan with the maximum equipment design capacity. A practical and more relevant discharge plan is generated once the user updates the port restriction values.</p>
+  <h3>Before Cargo Discharging</h3>
+  <p class="textbody">Before cargo discharging, the user generates a discharge plan that includes the following details:</p>
+  <ul class="bullets">
+    <li class="textbody">The arrival and departure condition of the vessel</li>
+    <li class="textbody">Cargoes to be discharged</li>
+    <li class="textbody">Discharging instructions </li>
+    <li class="textbody">COW (Crude Oil Wash) instructions</li>
+    <li class="textbody">Discharging time sequence</li>
+    <li class="textbody">Ballasting time sequence</li>
+    <li class="textbody">COW time sequence</li>
+  </ul>
+  <h3>After Cargo Discharging</h3>
+  <p class="textbody">After the discharging operation, the user updates the ROB (Remains On Board) figures and departure condition of the vessel. The actual values of the vessel and shore parameters are updated in the <span style="font-weight:bold;">Synoptical Table</span> under the corresponding voyage after the discharging operation. For more information on Synoptical Table, see <a href="synoptical.htm">Synoptical</a>.</p>
+
+</div>
+          <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
+        </div>
+        <div class="RH-LAYOUT-RIGHTPANEL-container" id="rh-rightpanel"></div>
+      </div>
+    </div>
+  </main>
+  <footer role="contentinfo" class="RH-LAYOUT-FOOTER-container" id="rh-footer"></footer>
+  <script type="text/javascript">//<![CDATA[
+
+    gRootRelPath = "."
+    gCommonRootRelPath = "."
+    gTopicId = "1.0_1"
+  
+//]]></script>
+
+
+  <script src="./template/scripts/topicpage.js"></script>
+  <script src="./whxdata/layoutconfig.js"></script>
+  <script src="./whxdata/brsdata.js"></script>
+
+  
+    
+      
+          
+
+            
+              
+                <link rel="StyleSheet" href="./template/Oceanic/CP DSS Font.css" type="text/css"/>
+                
+                  
+
+
+</body></html>

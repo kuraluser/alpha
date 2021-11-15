@@ -16,6 +16,7 @@ let swarmServiceUpdateFailureAction = process.env
   ? process.env.SWARM_SERVICE_UPDATE_FAILURE_ACTION
   : 'rollback';
 let appName = argv.login ? 'login' : argv.cpdss ? 'cpdss' : '';
+let docName = argv.mol ? 'mol' : argv.synergy ? 'synergy' : '';
 let imageName = `${dockerRegistry}/${appName}:${tagName}`;
 let contextPath = path.join(__dirname, '/dist/apps/');
 let hostPortArr = val[1].split(':');
@@ -37,7 +38,7 @@ let swarmMode = 'Replicated';
 let replicas = 1;
 let cpuSetLimit = 0.5;
 let memoryLimitInMB = 256;
-let dockerNetworkName = process.env.DOCKER_NETWORK_NAME? process.env.DOCKER_NETWORK_NAME : 'cpdss-network';
+let dockerNetworkName = process.env.DOCKER_NETWORK_NAME ? process.env.DOCKER_NETWORK_NAME : 'cpdss-network';
 let dockerClient = new Docker({
   protocol: 'http',
   host: host,
@@ -56,9 +57,8 @@ const registryAuth = {
 //Building application
 function buildApp(cb) {
   if (argv.production) {
-    let cmd = `npm run build:${appName}:${
-      argv.shore ? 'shore' : argv.ship ? 'ship' : ''
-    }`;
+    let cmd = `npm run build:${appName}:${argv.shore ? 'shore' : argv.ship ? 'ship' : ''
+      }`;
     console.log(cmd);
     exec(cmd, function (err, stdout, stderr) {
       console.log(stdout);
@@ -75,9 +75,8 @@ function buildApp(cb) {
       cb(err);
     });
   } else if (argv.test) {
-    let cmd = `npm run build:${appName}:${
-      argv.shore ? 'shore' : argv.ship ? 'ship' : ''
-    }`;
+    let cmd = `npm run build:${appName}:${argv.shore ? 'shore' : argv.ship ? 'ship' : ''
+      }`;
     console.log(`${cmd}:test`);
     exec(`${cmd}:test`, function (err, stdout, stderr) {
       console.log(stdout);
@@ -85,9 +84,8 @@ function buildApp(cb) {
       cb(err);
     });
   } else if (argv.uat) {
-    let cmd = `npm run build:${appName}:${
-      argv.shore ? 'shore' : argv.ship ? 'ship' : ''
-    }`;
+    let cmd = `npm run build:${appName}:${argv.shore ? 'shore' : argv.ship ? 'ship' : ''
+      }`;
     console.log(`${cmd}:uat`);
     exec(`${cmd}:uat`, function (err, stdout, stderr) {
       console.log(stdout);
@@ -98,8 +96,22 @@ function buildApp(cb) {
 }
 //Copy files
 function copyFiles(cb) {
-  copyfiles(['-f', 'Dockerfile', './nginx/*.conf', './dist/apps/'], () => {
-    cb();
+  if (docName) {
+    copyfiles(['-f', 'login.Dockerfile', './nginx/*.conf', './dist/apps/'], () => {
+      copyDirectory(cb)
+    });
+  }
+  else {
+    copyfiles(['-f', 'cpdss.Dockerfile', './nginx/*.conf', './dist/apps/'], () => {
+      cb();
+    });
+  }
+}
+function copyDirectory(cb) {
+  exec(`cp -r ../../help/${docName}/ ./dist/apps/`, function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
   });
 }
 
@@ -115,19 +127,38 @@ function checkRegistryAuth(cb) {
 //Dockerize the application
 async function dockerize(cb) {
   try {
-    let stream = await dockerClient.buildImage(
-      {
-        context: contextPath,
-        src: ['Dockerfile', appName, 'nginx'],
-      },
-      {
-        t: imageName,
-        buildargs: {
-          app: appName,
+    let stream = undefined;
+    if (docName) {
+      stream = await dockerClient.buildImage(
+        {
+          context: contextPath,
+          src: ['login.Dockerfile', appName, 'nginx', docName],
         },
-      }
-    );
-
+        {
+          t: imageName,
+          dockerfile: 'login.Dockerfile',
+          buildargs: {
+            app: appName,
+            doc: docName
+          },
+        }
+      );
+    }
+    else {
+      stream = await dockerClient.buildImage(
+        {
+          context: contextPath,
+          src: ['cpdss.Dockerfile', appName, 'nginx'],
+        },
+        {
+          t: imageName,
+          dockerfile: 'cpdss.Dockerfile',
+          buildargs: {
+            app: appName
+          },
+        }
+      );
+    }
     let progress = await new Promise((resolve, reject) => {
       stream.on('data', (data) => console.log(data.toString('utf8')));
       stream.on('end', () =>
@@ -282,7 +313,7 @@ async function runSwarmService(cb) {
     networkName['Target'] = dockerNetworkName;
     networks.push(networkName);
   }
-  
+
   //Adding Swarmpit network
   let networkName = {};
   networkName['Target'] = "swarmpit_net";

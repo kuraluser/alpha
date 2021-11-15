@@ -1,0 +1,1 @@
+(function() {    var toc =  [{"name":"Edit Synoptical Table","type":"item","tilePath":"","description":"","url":"edit-synoptical-table.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();

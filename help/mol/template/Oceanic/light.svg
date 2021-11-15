@@ -1,0 +1,13 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" stroke="#0C96C4" fill="#0C96C4">
+<title stroke="#0C96C4" fill="#0C96C4">sun</title>
+<g class="nc-icon-wrapper" fill="#0c96c4" stroke="#0C96C4">
+<rect data-color="color-2" y="15" width="4" height="2" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<rect data-color="color-2" x="5.101" y="4.101" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -2.5269 6.1006)" width="2" height="4" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<rect data-color="color-2" x="15" width="2" height="4" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<rect data-color="color-2" x="23.9" y="5.101" transform="matrix(0.7071 -0.7071 0.7071 0.7071 3.272 20.1005)" width="4" height="2" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<rect data-color="color-2" x="28" y="15" width="4" height="2" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<rect data-color="color-2" x="24.9" y="23.9" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -10.7279 25.8994)" width="2" height="4" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<rect data-color="color-2" x="15" y="28" width="2" height="4" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<rect data-color="color-2" x="4.101" y="24.9" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -16.5268 11.8995)" width="4" height="2" stroke="#0C96C4" fill="#0C96C4"></rect> 
+<path fill="#0c96c4" d="M16,7c-4.963,0-9,4.038-9,9s4.037,9,9,9s9-4.038,9-9S20.963,7,16,7z" stroke="#0C96C4"></path></g></svg>

@@ -1,0 +1,1 @@
+rh._.exports({"0":[[" ","Discharge Study Stages"]],"1":[[" ","Discharge Study Stages"]],"3":[[" ","The Discharge Study phase consists of four different stages:"," ","Cargo Nomination"," ","Port Rotation"," ","On Hand Quantities"," ","Discharge Study"]],"id":"24"})
