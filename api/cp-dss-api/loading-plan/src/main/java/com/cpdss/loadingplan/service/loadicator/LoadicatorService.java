@@ -1127,12 +1127,12 @@ public class LoadicatorService {
     stabilityParameters.setGomValue(
         StringUtils.isEmpty(result.getGomValue()) ? null : new BigDecimal(result.getGomValue()));
     stabilityParameters.setSfFrameNumber(
-        StringUtils.isEmpty(result.getSFFrameNumber())
+        StringUtils.isEmpty(result.getSfFrameNumber())
             ? null
-            : new BigDecimal(result.getSFFrameNumber()));
+            : new BigDecimal(result.getSfFrameNumber()));
     stabilityParameters.setBmFrameNumber(
-        StringUtils.isEmpty(result.getBMFrameNumber())
+        StringUtils.isEmpty(result.getBmFrameNumber())
             ? null
-            : new BigDecimal(result.getBMFrameNumber()));
+            : new BigDecimal(result.getBmFrameNumber()));
   }
 }

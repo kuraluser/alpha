@@ -27,6 +27,10 @@ public class LoadicatorResult {
   private List<String> errorDetails;
   private List<String> judgement;
   private String gomValue;
-  private String SFFrameNumber;
-  private String BMFrameNumber;
+
+  @JsonProperty("SFFrameNumber")
+  private String sfFrameNumber;
+
+  @JsonProperty("BMFrameNumber")
+  private String bmFrameNumber;
 }

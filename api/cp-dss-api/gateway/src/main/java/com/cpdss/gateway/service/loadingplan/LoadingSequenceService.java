@@ -837,7 +837,10 @@ public class LoadingSequenceService {
         });
     ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
     ballastTankCategories.add(tankCategory);
-    ballasts.add(ballastDto);
+    if (!(stageName.equals("topping")
+        && (ballastDto.getSounding().compareTo(BigDecimal.ZERO) == 0))) {
+      ballasts.add(ballastDto);
+    }
     return end;
   }
 
