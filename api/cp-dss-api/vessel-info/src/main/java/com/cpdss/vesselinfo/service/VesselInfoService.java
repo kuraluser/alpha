@@ -754,17 +754,15 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               Optional.ofNullable(vesselPump.getPumpType())
                   .ifPresent(
                       id -> vesselPumpBuilder.setPumpTypeId(vesselPump.getPumpType().getId()));
+              if (Optional.ofNullable(vesselPumpTankMapping.getVesselTank()).isPresent()) {
+                vesselPumpBuilder.setVesselTankDetail(createVesselTankData(
+                        vesselPumpTankMapping.getVesselTank(), VesselTankDetail.newBuilder()));
+              }
             });
-    VesselTankDetail vesselTankDetail = null;
-    if (Optional.ofNullable(vesselPumpTankMapping.getVesselTank()).isPresent()) {
-      vesselTankDetail =
-          createVesselTankData(
-              vesselPumpTankMapping.getVesselTank(), VesselTankDetail.newBuilder());
-    }
+
     return com.cpdss.common.generated.VesselInfo.VesselPumpTankMapping.newBuilder()
         .setVesselId(vesselPumpTankMapping.getVesselXid())
         .setVesselPump(vesselPumpBuilder.build())
-        .setVesselTankDetail(vesselTankDetail)
         .build();
   }
 

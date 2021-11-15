@@ -9,5 +9,4 @@ public class VesselPumpTankMapping {
 
   private Integer vesselXid;
   private VesselPump vesselPump;
-  private VesselTank vesselTank;
 }

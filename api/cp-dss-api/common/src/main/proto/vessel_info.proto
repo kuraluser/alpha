@@ -249,7 +249,6 @@ message VesselReply {
 message VesselPumpTankMapping {
 	int64 vesselId = 1;
 	VesselPump vesselPump = 2;
-	VesselTankDetail vesselTankDetail = 3;
 }
 
 message BendingMomentType2 {
@@ -541,6 +540,7 @@ message BendingMomentType1 {
 		string pumpName = 4;
 		string pumpCode = 5;
 		string pumpCapacity = 6;
+		VesselTankDetail vesselTankDetail = 7;
 	}
 	message VesselRuleRequest{
 	    int64 vesselId = 1;
