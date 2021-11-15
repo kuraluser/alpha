@@ -239,7 +239,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
               stowage.api = data?.isPlannedValues ? 0 : item.api;
               stowage.grade = item.grade;
               stowage.temperature = data?.isPlannedValues ? 0 : item.temperature;
-              stowage.colorCode = AppConfigurationService.settings.commingleColor;
+              stowage.colorCode = item.colorCode;
               stowage.abbreviation = item.cargo1Abbreviation;
               stowage.cargoNominationId = item.cargoNomination1Id;
               stowage.ullage = data?.isPlannedValues ? 0 : item.ullage1;
@@ -376,7 +376,10 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             }
           });
         } else {
-          obj.colorCode = AppConfigurationService.settings.commingleColor;
+          const commingleColorObj = commingle?.filter(comItem => comItem.tankId === obj.tankId);
+          if (commingleColorObj?.length) {
+            obj.colorCode = commingleColorObj[0].colorCode;
+          }
         }
         combinedCommingleData.push(obj);
       });
@@ -1866,7 +1869,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           cargoNomination2Id: item.cargoNomination2Id,
           cargo1Id: item.cargo1Id,
           cargo2Id: item.cargo2Id,
-          colorCode: AppConfigurationService.settings.commingleColor,
+          colorCode: item.colorCode,
           abbreviation: item.grade,
           arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
           actual_planned: 1,
@@ -1953,7 +1956,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.file.nativeElement.value = '';
       if (err?.error?.errorCode === "ERR-RICO-314") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_UNSUPPORTED_FILE_ERROR'] });
-      } else if(err.error.errorCode === "ERR-RICO-315") {
+      } else if (err.error.errorCode === "ERR-RICO-315") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_EXCEL_EMPTY_FILE'] });
       } else if (err?.error?.errorCode === "ERR-RICO-316") {
         this.messageService.add({ severity: 'error', summary: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_ERROR_LABEL'], detail: translationKeys['ULLAGE_UPDATE_FILE_UPLOAD_INVALID_CONTENT_ERROR'] });

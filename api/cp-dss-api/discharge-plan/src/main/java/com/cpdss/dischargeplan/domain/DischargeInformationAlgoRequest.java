@@ -21,5 +21,5 @@ public class DischargeInformationAlgoRequest {
   private List<OnHandQuantity> onHandQuantity;
   private List<OnBoardQuantity> onBoardQuantity;
   // private List<PortTideAlgo> portTideDetails;
-  private RuleResponse loadingRules;
+  private RuleResponse dischargingRules;
 }

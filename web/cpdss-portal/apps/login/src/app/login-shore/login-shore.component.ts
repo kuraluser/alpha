@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
-import { environment } from '../../environments/environment';
 import { IAppConfiguration } from '../shared/services/app-configuration/app-configuration.model';
 import { AppConfigurationService } from '../shared/services/app-configuration/app-configuration.service';
 import { OwlOptions } from 'ngx-owl-carousel-o';
@@ -28,7 +27,6 @@ export class LoginShoreComponent implements OnInit {
       0: {
         items: 1
       }
-      
     },
   }
   idpList = [];
@@ -36,7 +34,7 @@ export class LoginShoreComponent implements OnInit {
   realm = '';
   logo = '';
   carousels = [];
-  favicon = ''; 
+  favicon = '';
 
   constructor(private kcService: KeycloakService, private appConfig: AppConfigurationService) { }
 
@@ -60,12 +58,12 @@ export class LoginShoreComponent implements OnInit {
   // common login function for all identity-providers
   login(idp) {
     const logoUrl = localStorage.getItem('logo');
-    const faviconUrl = localStorage.getItem('favicon'); 
+    const faviconUrl = localStorage.getItem('favicon');
+    const docsUrl = localStorage.getItem('docsUrl');
     this.kcService.login({
-      redirectUri: window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + this.realm + '&logoUrl=' + logoUrl + '&faviconUrl=' + faviconUrl,
+      redirectUri: window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + this.realm + '&logoUrl=' + logoUrl + '&faviconUrl=' + faviconUrl + '&docsUrl=' + docsUrl,
       idpHint: idp
     });
   }
-  
 
 }

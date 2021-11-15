@@ -30,4 +30,5 @@ public class BerthDetails {
   private Boolean airPurge;
   private Boolean cargoCirculation;
   private String ukc;
+  private String portMaxPermissibleDraft;
 }

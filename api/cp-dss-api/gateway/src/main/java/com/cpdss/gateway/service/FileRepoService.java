@@ -95,15 +95,16 @@ public class FileRepoService {
       MultipartFile file,
       String voyageNo,
       String fileNameX,
-      String fileType,
+      String filePath,
       String section,
       String category,
-      String correlationId)
+      String correlationId,
+      Boolean isSystemGenerated)
       throws GenericServiceException {
     FileRepo repo = new FileRepo();
     FileRepoReply reply =
         this.validateAndAddFile(
-            file, repo, voyageNo, section, category, null, fileNameX, correlationId);
+            file, repo, voyageNo, section, category, filePath, fileNameX, correlationId, isSystemGenerated);
     return reply;
   }
 
@@ -161,7 +162,7 @@ public class FileRepoService {
       } else {
         reply =
             this.validateAndAddFile(
-                file, repo, repo.getVoyageNumber(), section, category, null, null, correlationId);
+                file, repo, repo.getVoyageNumber(), section, category, null, null, correlationId, false);
       }
     } else {
       repo.setCategory(category);
@@ -176,14 +177,15 @@ public class FileRepoService {
   }
 
   private FileRepoReply validateAndAddFile(
-      MultipartFile file,
-      FileRepo repo,
-      String voyageNo,
-      String section,
-      String category,
-      String filePath,
-      String originalFileName,
-      String correlationId)
+          MultipartFile file,
+          FileRepo repo,
+          String voyageNo,
+          String section,
+          String category,
+          String filePath,
+          String originalFileName,
+          String correlationId,
+          Boolean isSystemGenerated)
       throws GenericServiceException {
     FileRepoReply reply = new FileRepoReply();
     if (file != null) {
@@ -206,18 +208,22 @@ public class FileRepoService {
       }
     }
     try {
-      if (filePath == null && file != null) {
-        String folderLocation = "/file-repo/" + voyageNo + "/";
-        System.out.println(this.rootFolder + folderLocation);
+      String folderLocation;
+      if (!isSystemGenerated) {
+        folderLocation = "/file-repo/" + voyageNo + "/";
+      } else {
+        folderLocation = filePath;
+      }
+
+      if(file != null) {
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         String fileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
         filePath = folderLocation + fileName + '.' + extension;
         Path path = Paths.get(this.rootFolder + filePath);
         Files.createFile(path);
         Files.write(
-            path, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                path, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       }
-
       repo.setVoyageNumber(voyageNo);
       repo.setFileName(originalFileName);
       repo.setFileType(extension);
@@ -226,6 +232,7 @@ public class FileRepoService {
       repo.setSection(section);
       repo.setIsActive(true);
       repo.setIsTransferred(false);
+      repo.setIsSystemGenerated(isSystemGenerated);
       repo = this.fileRepoRepository.save(repo);
       reply.setId(repo.getId());
       reply.setResponseStatus(

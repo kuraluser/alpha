@@ -1,9 +1,8 @@
 import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
-import { Event as NavigationEvent, Router, ActivatedRoute, NavigationStart, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 import { Observable, Subscription } from 'rxjs';
 import { AppConfigurationService } from '../../services/app-configuration/app-configuration.service';
-import { SecurityService } from '../../services/security/security.service';
 import { ThemeService } from '../../services/theme-service/theme.service';
 import { IMenuItem, IPermission, INotificationItem } from './navbar.component.model';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
@@ -66,7 +65,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
     this.navigationEvent$ = this.router.events.pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(event => {
-    this.getPagePermission(this.menuListConstant);
+        this.getPagePermission(this.menuListConstant);
 
         this.activeRoute(event['url']);
       });
@@ -261,9 +260,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Reroute or Display submenu when clicked
+   * Reroute or Display sub menu when clicked
    */
-  rerouteOrShowSubmenu(list, index) {
+  rerouteOrShowSubMenu(list, index) {
     if (list.menuLink !== '') {
       let link = '/business/' + list.menuLink;
       if (list.addVesselId) {
@@ -305,7 +304,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Hide submenu on focus out
+   * Hide sub menu on focus out
    */
   hide(list, index) {
     this.menuList?.map((menuItem: IMenuItem) => menuItem.isSubMenuOpen = false);
@@ -407,6 +406,38 @@ export class NavbarComponent implements OnInit, OnDestroy {
         menu.isActive = false
       }
     })
+  }
+
+  /**
+   * Loading help documentation site
+   *
+   * @memberof NavbarComponent
+   */
+  async loadHelpDocumentationSite() {
+    const currUrl = this.router.url;
+    let isEqual = false;
+    let path = '';
+    for (const key in AppConfigurationService.settings.documentationSiteMapping) {
+      if (Object.prototype.hasOwnProperty.call(AppConfigurationService.settings.documentationSiteMapping, key)) {
+        const currUrlFormat = key;
+        const currUrlFormatArr = currUrlFormat.split('/');
+        const currUrlArr = currUrl.split('/');
+        if (currUrlFormatArr.length === currUrlArr.length) {
+          isEqual = true;
+          for (let i = 0; i < currUrlFormatArr.length; i++) {
+            if (!currUrlFormatArr[i].includes(':') && currUrlFormatArr[i] !== currUrlArr[i]) {
+              isEqual = false;
+              break;
+            }
+          }
+        }
+        if (isEqual) {
+          path = AppConfigurationService.settings.documentationSiteMapping[key];
+          break;
+        }
+      }
+    }
+    window.open(localStorage.getItem('docsUrl') + path);
   }
 
 }

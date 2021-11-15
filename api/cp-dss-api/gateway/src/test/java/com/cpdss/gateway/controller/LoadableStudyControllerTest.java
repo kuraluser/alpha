@@ -3,9 +3,7 @@ package com.cpdss.gateway.controller;
 
 import static com.cpdss.gateway.TestUtils.createDummyObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,10 +17,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.service.AlgoErrorService;
-import com.cpdss.gateway.service.LoadableStudyCargoService;
-import com.cpdss.gateway.service.LoadableStudyService;
-import com.cpdss.gateway.service.SyncRedisMasterService;
+import com.cpdss.gateway.service.*;
 import com.cpdss.gateway.service.redis.RedisMasterSyncService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -164,13 +159,13 @@ class LoadableStudyControllerTest {
       SHIP_API_URL_PREFIX + DELETE_PORT_ROTATION_API_URL;
 
   private static final String GET_ON_HAND_QUANTITIES_API_URL =
-      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities";
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/port-rotation/{portRotationId}/on-hand-quantities";
   private static final String GET_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL =
       CLOUD_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
   private static final String GET_ON_HAND_QUANTITIES_SHIP_API_URL =
       SHIP_API_URL_PREFIX + GET_ON_HAND_QUANTITIES_API_URL;
   private static final String SAVE_ON_HAND_QUANTITIES_API_URL =
-      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/ports/{portId}/on-hand-quantities/{id}";
+      "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/port-rotation/{portRotationId}/on-hand-quantities/{id}";
   private static final String GET_LOADABLE_PLAN_REPORT_API_URL =
       "/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-patten/{loadablePatternId}/report";
   private static final String SAVE_ON_HAND_QUANTITIES_API_URL_CLOUD_API_URL =
@@ -431,7 +426,7 @@ class LoadableStudyControllerTest {
             anyLong(),
             anyLong(),
             anyLong(),
-            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            eq(Common.PLANNING_TYPE.LOADABLE_STUDY),
             anyString(),
             any(HttpHeaders.class)))
         .thenReturn(new PortRotationResponse());
@@ -456,7 +451,7 @@ class LoadableStudyControllerTest {
             anyLong(),
             anyLong(),
             anyLong(),
-            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            eq(Common.PLANNING_TYPE.LOADABLE_STUDY),
             anyString(),
             any(HttpHeaders.class)))
         .thenThrow(
@@ -483,7 +478,7 @@ class LoadableStudyControllerTest {
             anyLong(),
             anyLong(),
             anyLong(),
-            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            eq(Common.PLANNING_TYPE.LOADABLE_STUDY),
             anyString(),
             any(HttpHeaders.class)))
         .thenThrow(RuntimeException.class);
@@ -1096,8 +1091,8 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.saveLoadablePatterns(
-            any(LoadablePlanRequest.class), anyLong(), anyString(), anyString()))
+    when(this.loadableStudyService.saveAlgoPatterns(
+            any(LoadablePlanRequest.class), anyLong(), anyString(), anyString(), any()))
         .thenThrow(ex);
     this.mockMvc
         .perform(
@@ -1398,7 +1393,8 @@ class LoadableStudyControllerTest {
   }
 
   /**
-   * @param exceptionClass
+   * // * @param exceptionClass
+   *
    * @throws Exception void
    */
   @Test
@@ -1420,7 +1416,8 @@ class LoadableStudyControllerTest {
   }
 
   /**
-   * @param exceptionClass
+   * // * @param exceptionClass
+   *
    * @throws Exception void
    */
   @Test
@@ -1943,14 +1940,15 @@ class LoadableStudyControllerTest {
         .perform(
             post("/api/ship/save-alog-errors")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(list.toString()))
+                .content(new ObjectMapper().writeValueAsString(list)))
         .andExpect(status().isOk());
   }
 
   @ValueSource(strings = {UPDATE_ULLAGE_CLOUD_API_URL, UPDATE_ULLAGE_SHIP_API_URL})
   @ParameterizedTest
   void testUpdateUllage(String url) throws Exception {
-    when(this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+    when(this.loadableStudyService.updateUllage(
+            anyLong(), any(UpdateUllage.class), anyLong(), anyString()))
         .thenReturn(new UpdateUllage());
     this.mockMvc
         .perform(
@@ -1979,7 +1977,8 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.updateUllage(any(UpdateUllage.class), anyLong(), anyString()))
+    when(this.loadableStudyService.updateUllage(
+            anyLong(), any(UpdateUllage.class), anyLong(), anyString()))
         .thenThrow(ex);
     this.mockMvc
         .perform(
@@ -2000,7 +1999,7 @@ class LoadableStudyControllerTest {
   @ParameterizedTest
   void testGetRulesAgainstLoadbleStudy(String url) throws Exception {
     when(this.loadableStudyService.getOrSaveRulesForLoadableStudy(
-            anyLong(), anyLong(), anyLong(), null, anyString()))
+            anyLong(), anyLong(), anyLong(), eq(null), anyString()))
         .thenReturn(new RuleResponse());
     this.mockMvc
         .perform(

@@ -503,40 +503,42 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
         item -> {
           LoadablePlanCommingleCargoDetails.Builder builder =
               LoadablePlanCommingleCargoDetails.newBuilder();
-          builder.setId(item.getId());
-          builder.setGrade(item.getGrade());
-          builder.setTankName(item.getTankName());
-          builder.setQuantity(item.getQuantity());
-          builder.setApi(item.getApi());
-          builder.setTemp(item.getTemperature());
-          builder.setCargo1Abbreviation(item.getCargo1Abbreviation());
-          builder.setCargo2Abbreviation(item.getCargo2Abbreviation());
-          builder.setCargo1Percentage(item.getCargo1Percentage());
-          builder.setCargo2Percentage(item.getCargo2Percentage());
-          builder.setCargo1Bblsdbs(item.getCargo1BblsDbs());
-          builder.setCargo2Bblsdbs(item.getCargo2BblsDbs());
-          builder.setCargo1Bbls60F(item.getCargo1Bbls60f());
-          builder.setCargo2Bbls60F(item.getCargo2Bbls60f());
-          builder.setCargo1LT(item.getCargo1Lt());
-          builder.setCargo2LT(item.getCargo2Lt());
-          builder.setCargo1MT(item.getCargo1Mt());
-          builder.setCargo2MT(item.getCargo2Mt());
-          builder.setCargo1KL(item.getCargo1Kl());
-          builder.setCargo1KL(item.getCargo2Kl());
-          builder.setOrderedMT(item.getOrderQuantity());
-          builder.setPriority(item.getPriority());
-          builder.setLoadingOrder(item.getLoadingOrder());
-          builder.setTankId(item.getTankId());
-          builder.setFillingRatio(item.getFillingRatio());
+          Optional.ofNullable(item.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(item.getGrade()).ifPresent(builder::setGrade);
+          Optional.ofNullable(item.getTankName()).ifPresent(builder::setTankName);
+          Optional.ofNullable(item.getQuantity()).ifPresent(builder::setQuantity);
+          Optional.ofNullable(item.getApi()).ifPresent(builder::setApi);
+          Optional.ofNullable(item.getTemperature()).ifPresent(builder::setTemp);
+          Optional.ofNullable(item.getCargo1Abbreviation())
+              .ifPresent(builder::setCargo1Abbreviation);
+          Optional.ofNullable(item.getCargo2Abbreviation())
+              .ifPresent(builder::setCargo2Abbreviation);
+          Optional.ofNullable(item.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
+          Optional.ofNullable(item.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
+          Optional.ofNullable(item.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
+          Optional.ofNullable(item.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
+          Optional.ofNullable(item.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
+          Optional.ofNullable(item.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
+          Optional.ofNullable(item.getCargo1Lt()).ifPresent(builder::setCargo1LT);
+          Optional.ofNullable(item.getCargo2Lt()).ifPresent(builder::setCargo2LT);
+          Optional.ofNullable(item.getCargo1Mt()).ifPresent(builder::setCargo1MT);
+          Optional.ofNullable(item.getCargo2Mt()).ifPresent(builder::setCargo2MT);
+          Optional.ofNullable(item.getCargo1Kl()).ifPresent(builder::setCargo1KL);
+          Optional.ofNullable(item.getCargo2Kl()).ifPresent(builder::setCargo2KL);
+          Optional.ofNullable(item.getOrderQuantity()).ifPresent(builder::setOrderedMT);
+          Optional.ofNullable(item.getPriority()).ifPresent(builder::setPriority);
+          Optional.ofNullable(item.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
+          Optional.ofNullable(item.getTankId()).ifPresent(builder::setTankId);
+          Optional.ofNullable(item.getFillingRatio()).ifPresent(builder::setFillingRatio);
           Optional.ofNullable(item.getCorrectedUllage())
               .ifPresent(i -> builder.setCorrectedUllage(i.toString()));
           Optional.ofNullable(item.getRdgUllage())
               .ifPresent(i -> builder.setRdgUllage(i.toString()));
-          builder.setCorrectionFactor(item.getCorrectionFactor());
-          builder.setSlopQuantity(item.getSlopQuantity());
-          builder.setTimeRequiredForLoading(item.getTimeRequiredForLoading());
-          builder.setTimeRequiredForLoading(item.getTimeRequiredForLoading());
-          builder.setTankShortName(item.getShortName());
+          Optional.ofNullable(item.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
+          Optional.ofNullable(item.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+          Optional.ofNullable(item.getTimeRequiredForLoading())
+              .ifPresent(builder::setTimeRequiredForLoading);
+          Optional.ofNullable(item.getShortName()).ifPresent(builder::setTankShortName);
 
           reply.addLoadablePlanCommingleCargoList(builder.build());
         });

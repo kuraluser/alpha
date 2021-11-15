@@ -1418,7 +1418,7 @@ td.sl div{
 .loadable-plan-ballast .tank-outer-pattern, .loadable-plan-stowage.tank-outer-pattern{
       height: 40vh;
       min-height: 260px;
-      padding: 0 10% 0 110px;
+      padding: 0 10% 0 108px;
       .ship-front-pattern{
         width: 10%;
         .front-tank-wrapper{
@@ -3178,4 +3178,12 @@ textarea{
 .column-last-edited, .column-created-date, .column-status{
   width: 100px!important;
   max-width: 100px!important;
+}
+.cargo-nomination-table .p-datatable-thead tr th {
+  vertical-align: top;
+}
+.discharge-study-table-wrapper{
+  .p-datatable .p-datatable-tbody > tr > td{
+    vertical-align: top;
+  }
 }

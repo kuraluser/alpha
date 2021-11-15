@@ -83,7 +83,7 @@ export class CowPlanComponent implements OnInit {
 
     this.form?.setControl('cowDetails', this.fb.group({
       washTanksWithDifferentCargo: this.fb.control(this.cowDetails?.washTanksWithDifferentCargo),
-      cowOption: this.fb.control(this.cowDetails?.cowOption),
+      cowOption: this.fb.control(this.cowDetails?.cowOption, [Validators.required]),
       cowPercentage: this.fb.control(this.cowDetails?.cowPercentage),
       topCOWTanks: this.fb.control(this.cowDetails?.topCOWTanks, [tankPreferenceDuplicationValidator('top')]),
       selectedTopCOWTanks: this.joinDropOptionsToLabel(this.cowDetails?.topCOWTanks),
@@ -154,6 +154,7 @@ export class CowPlanComponent implements OnInit {
       this.cowDetailsForm.controls.topCOWTanks.disable();
       this.cowDetailsForm.controls.washTanksWithDifferentCargo.disable();
       this.cowDetailsForm.controls.tanksWashingWithDifferentCargo.disable();
+      this.cowDetailsForm.controls?.cowPercentage.setValidators([Validators.required]);
     } else {
       this.cowDetailsForm.controls.cowPercentage.disable();
       this.cowDetailsForm.controls.allCOWTanks.enable();
@@ -161,6 +162,7 @@ export class CowPlanComponent implements OnInit {
       this.cowDetailsForm.controls.topCOWTanks.enable();
       this.cowDetailsForm.controls.washTanksWithDifferentCargo.enable();
       this.enableDisableTanksWashWithDifferentCargoFields(this.cowDetailsForm.controls.washTanksWithDifferentCargo?.value);
+      this.cowDetailsForm.controls?.cowPercentage.clearValidators();
     }
   }
 

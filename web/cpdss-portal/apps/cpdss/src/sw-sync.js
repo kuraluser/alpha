@@ -2,7 +2,7 @@
   'use strict';
 
   importScripts('dexie.min.js');
-  let apiUrl, environment, appConfig, apiEndPoint;
+  let apiUrl, environment, appConfig, apiEndPoint, production;
   const db = new Dexie("CPDSS");
   db.version(1).stores({
     cargoNominations: "++,storeKey,timeStamp,vesselId,voyageId,loadableStudyId,status",
@@ -23,6 +23,10 @@
         environment = await db.properties.get('environment');
       }
 
+      if (!production) {
+        production = await db.properties.get('production');
+      }
+
       if (!appConfig) {
         appConfig = await db.properties.get('appConfig');
       }
@@ -37,9 +41,9 @@
         apiEndPoint = appConfig?.path + apiEndPoint;
       }
 
-      if (self.location.protocol === 'https:') {
-        apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}${apiEndPoint}`;
-      } else {
+      apiUrl = `${self.location.protocol}//${self.location.hostname}:${self.location.port}${apiEndPoint}`;
+
+      if (production === 'false') {
         const port = 8085;
         const hostName = environment === 'shore' ? '13.251.141.12' : '13.251.226.207';
         apiUrl = `${self.location.protocol}//${hostName}:${port}${apiEndPoint}`;
@@ -548,7 +552,7 @@
 
   /**
    * Method to set loading plan status
-   * @param {*} data 
+   * @param {*} data
    */
 
   async function checkLoadingPlanStatus(data) {
@@ -625,7 +629,7 @@
 
   /**
    * Method to set ullage update status
-   * @param {*} data 
+   * @param {*} data
    */
 
   async function checkUllageUpdateStatus(data) {

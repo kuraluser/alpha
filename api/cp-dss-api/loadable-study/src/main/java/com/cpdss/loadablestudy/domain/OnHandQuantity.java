@@ -15,4 +15,5 @@ public class OnHandQuantity {
   private String departureVolume;
   private String departureQuantity;
   private String density;
+  private Long portRotationId;
 }

@@ -17,6 +17,7 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
@@ -29,6 +30,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
+import com.cpdss.dischargeplan.common.RuleUtility;
 import com.cpdss.dischargeplan.domain.BerthDetails;
 import com.cpdss.dischargeplan.domain.CargoForCowDetails;
 import com.cpdss.dischargeplan.domain.CargoMachineryInUse;
@@ -51,6 +53,8 @@ import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
 import com.cpdss.dischargeplan.domain.cargo.LoadablePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
 import com.cpdss.dischargeplan.domain.cargo.OnHandQuantity;
+import com.cpdss.dischargeplan.domain.rules.RulePlans;
+import com.cpdss.dischargeplan.domain.rules.RuleResponse;
 import com.cpdss.dischargeplan.domain.vessel.PumpTypes;
 import com.cpdss.dischargeplan.domain.vessel.VesselBottomLine;
 import com.cpdss.dischargeplan.domain.vessel.VesselManifold;
@@ -232,11 +236,28 @@ public class DischargePlanAlgoService {
       // Build hourly based tide details which upload from loading info page - TO DO
       // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
 
-      // Build Loading Rule, service is in loading-plan (self) - TO DO
-      // buildLoadingRules(algoRequest, loadingInfoOpt.get());
+      // Build Discharging Rule, service is in discharging-plan (self)
+      buildDischargingRules(algoRequest, entity);
 
       algoRequest.setDischargeInformation(disDto);
     }
+  }
+  
+  /**
+   * Build discharge plan rule section for the algo request JSON
+   * @param algoRequest
+   * @param dischargeInformation
+   */
+  private void buildDischargingRules(
+		  DischargeInformationAlgoRequest algoRequest,
+		  DischargeInformation dischargeInformation) {
+	    DischargeRuleReply ruleReply = 
+	    		dischargeInformationService.getDischargingRuleForAlgo(
+	    				dischargeInformation.getVesselXid(), dischargeInformation.getId());
+	    if (ruleReply != null) {
+	      List<RulePlans> rulePlans = RuleUtility.buildDischargingRule(ruleReply);
+	      algoRequest.setDischargingRules(new RuleResponse(rulePlans));
+	    }
   }
 
   private void getAndSetDataFromSynopticTable(
@@ -663,6 +684,9 @@ public class DischargePlanAlgoService {
         bd.setBerthName(berthData.get().getBerthName());
         if (!berthData.get().getUkc().isEmpty()) {
           bd.setUkc(berthData.get().getUkc());
+        }
+        if (!berthData.get().getPortMaxPermissibleDraft().isEmpty()) {
+          bd.setPortMaxPermissibleDraft(berthData.get().getPortMaxPermissibleDraft());
         }
       }
     } catch (Exception e) {

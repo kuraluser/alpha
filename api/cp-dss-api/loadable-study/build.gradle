@@ -4,7 +4,7 @@ ext{
     dbName = System.getenv('DB_NAME') ?: ""
     dbUser = System.getenv('DB_USER') ?: ""
     dbPassword = System.getenv('DB_PASSWORD') ?: ""
-	algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
+    algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
     hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
     enableComm = System.getenv('ENABLE_COMM') ?: ""
     cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
@@ -18,49 +18,47 @@ ext{
 }
 
 appConfig {
-  appName = 'loadable-study'
-  persistence = 'springData'
-  dataBase = 'postgres'
-  logging = 'y'
-  devTools = 'y'
-  unitTest = 'y'
-  rest = 'y'
-  monitoring = 'y'
-  docker {
-      imageName = imageNameVal
-      containerName = containerNameVal
-      networkName = 'cpdss-network'
-      memoryLimitInMB = 500
-      hostVolumeMapping {
-          hostPath = hostRootPath
-          containerPath = "/data"
-      }
-      hostPortMapping {
-          hostGrpcPort = Integer.parseInt(grpcPortHost)
-          hostDebugPort = Integer.parseInt(debugPortHost)
-      }
-      healthCheck {
-          healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
-          healthCheckIntervalInSec = 30
-          healthCheckInitialDelayInSec = 60
-      }
-      swarm {
-          serviceName = serviceNameVal
-          swarmMode = REPLICATED_MODE
-          replicas = 1
-          rollbackOnUpdateFailure = true
-      }
-      environment = ['GRPC_PORT': '8090', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser,
-	  'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,'COMM_TIME_LIMIT':commTimeLimit]
-  }
-  javaMainClass = "com.cpdss.loadablestudy.Application"
-  grpc = 'y'
+    appName = 'loadable-study'
+    persistence = ['springData']
+    dataBase = ['postgres']
+    logging = 'y'
+    devTools = 'y'
+    unitTest = 'y'
+    modelMapper = 'y'
+    monitoring = 'y'
+    docker {
+        imageName = imageNameVal
+        containerName = containerNameVal
+        networkName = 'cpdss-network'
+        memoryLimitInMB = 500
+        hostVolumeMapping {
+            hostPath = hostRootPath
+            containerPath = "/data"
+        }
+        hostPortMapping {
+            hostGrpcPort = Integer.parseInt(grpcPortHost)
+            hostDebugPort = Integer.parseInt(debugPortHost)
+        }
+        healthCheck {
+            healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+            healthCheckIntervalInSec = 30
+            healthCheckInitialDelayInSec = 60
+        }
+        swarm {
+            serviceName = serviceNameVal
+            swarmMode = REPLICATED_MODE
+            replicas = 1
+            rollbackOnUpdateFailure = true
+        }
+        environment = ['GRPC_PORT': '8090', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser,
+                       'DB_PASSWORD': dbPassword, 'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,'COMM_TIME_LIMIT':commTimeLimit]
+    }
+    javaMainClass = "com.cpdss.loadablestudy.Application"
+    grpc = 'y'
 }
 
 dependencies {
     implementation project(':common')
-    compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
-    compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
-    compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
-    compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.12.0'
+    implementation 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
 }

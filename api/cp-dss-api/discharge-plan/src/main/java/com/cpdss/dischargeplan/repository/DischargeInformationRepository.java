@@ -56,7 +56,7 @@ public interface DischargeInformationRepository
   @Transactional
   @Modifying
   @Query(
-      "UPDATE DischargeInformation SET dischargingInformationStatus = ?1, arrivalStatusId = ?2, arrivalStatusId = ?3 WHERE id = ?4")
+      "UPDATE DischargeInformation SET dischargingInformationStatus = ?1, arrivalStatusId = ?2, departureStatusId = ?3 WHERE id = ?4")
   public void updateDischargingInformationStatuses(
       DischargingInformationStatus dischargingInformationStatus,
       Long arrivalStatus,

@@ -194,20 +194,25 @@ public class GenerateLoadingPlanExcelReportService {
       XSSFWorkbook workbook;
       workbook = new XSSFWorkbook(resultFileStream);
       try {
+
         setCellStyle(workbook, loadinPlanExcelDetails);
+
+        // Adding password protection
         GenerateProtectedFile.setPasswordToWorkbook(
             workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
         resultFileStream.close();
+
         // Putting entry in file repo
         FileRepoReply reply =
             FileRepoService.addFileToRepo(
                 null,
                 loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-                actualFileName,
-                "xlsx",
+                actualFileName.split("/")[1],
+                SUB_FOLDER_NAME + "/",
                 "Loading",
                 "Process",
-                null);
+                null,
+                true);
         if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
           log.info("Succesfully added entry in FileRepo : {}", reply.getId());
         } else {
@@ -219,6 +224,13 @@ public class GenerateLoadingPlanExcelReportService {
           log.info("Excel created.");
           return IOUtils.toByteArray(resultFileStream);
         }
+      } catch (GenericServiceException e) {
+        e.printStackTrace();
+        log.info("Excel export failed.");
+        throw new GenericServiceException(
+            "Generating excel failed. " + e.getMessage(),
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       } catch (Exception e) {
         e.printStackTrace();
         log.info("Applying style in excel failed");

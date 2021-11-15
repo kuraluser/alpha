@@ -26,13 +26,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /** Test class for {@link CompanyInfoService} */
 @SpringJUnitConfig(classes = {CompanyInfoService.class})
 class CompanyInfoServiceTest {
 
-  @Autowired private CompanyInfoService companyInfoService;
+  @SpyBean @Autowired private CompanyInfoService companyInfoService;
 
   @MockBean private CompanyRepository companyRepository;
 
@@ -44,6 +45,7 @@ class CompanyInfoServiceTest {
   @Test
   void testFindCompanyInfoByDomain() throws GenericServiceException {
     when(this.companyRepository.findByDomain(anyString())).thenReturn(prepareCompanyEntity());
+    when(this.companyInfoService.isShore()).thenReturn(true);
     CompanyInfoResponse response = this.companyInfoService.findCompanyInfoByDomain(TEST_DOMAIN);
     assertNotNull(response);
     assertNotNull(response.getRealm());

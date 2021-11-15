@@ -8,8 +8,14 @@ import com.cpdss.common.redis.CacheConfig;
 import com.cpdss.common.redis.RedisConfig;
 import com.cpdss.common.rest.RestConfig;
 import com.cpdss.common.springdata.SpringDataConfig;
+import com.cpdss.gateway.service.SyncRedisMasterService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.client.RestTemplate;
 
 /** Configuration manager to add configurations for external systems */
 @Configuration
@@ -22,4 +28,19 @@ import org.springframework.context.annotation.Import;
   RedisConfig.class,
   CacheConfig.class
 })
-public class AppConfig {}
+public class AppConfig {
+
+  @Autowired private SyncRedisMasterService syncRedisMasterService;
+
+  @Bean
+  public RestTemplate getRestTemplate() {
+    return new RestTemplate();
+  }
+
+  @Bean
+  public CommandLineRunner commandLineRunner(ApplicationContext context) {
+    return args -> {
+      syncRedisMasterService.updateRedisFromMasterData();
+    };
+  }
+}

@@ -1,0 +1,23 @@
+{
+    "fluentd": {
+        "arch": "amd64",
+        "digest": "8e97ca86120c2b3acf410ee508d732d6872d6db3d2afeece25a3dcb02b05443d",
+        "distro": "debian-10",
+        "type": "NAMI",
+        "version": "1.14.2-0"
+    },
+    "gosu": {
+        "arch": "amd64",
+        "digest": "3e6fc37ca073b10a73a804d39c2f0c028947a1a596382a4f8ebe43dfbaa3a25e",
+        "distro": "debian-10",
+        "type": "NAMI",
+        "version": "1.14.0-0"
+    },
+    "ruby": {
+        "arch": "amd64",
+        "digest": "c0f9bcb452ea0833b81159c1e1656ab0174131930157659875309be2fed2d57c",
+        "distro": "debian-10",
+        "type": "NAMI",
+        "version": "2.7.4-1"
+    }
+}

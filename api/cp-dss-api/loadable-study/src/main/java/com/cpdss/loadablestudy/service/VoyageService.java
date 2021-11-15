@@ -392,7 +392,7 @@ public class VoyageService {
         // Checking if Discharge started or not
         Optional<List<com.cpdss.loadablestudy.entity.LoadableStudy>> dischargeStudyEntries =
             synopticService.checkDischargeStarted(entity.getVesselXId(), entity.getId());
-        if (dischargeStudyEntries.isPresent()) {
+        if (dischargeStudyEntries.isPresent() && !dischargeStudyEntries.get().isEmpty()) {
           detailbuilder.setIsDischargeStarted(true);
           confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_DISCHARGE);
           if (confirmedStudy.isPresent()) {

@@ -6,24 +6,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.gateway.TestUtils;
 import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.entity.RoleUserMapping;
-import com.cpdss.gateway.entity.Roles;
-import com.cpdss.gateway.entity.Screen;
-import com.cpdss.gateway.entity.Users;
-import com.cpdss.gateway.repository.RoleScreenRepository;
-import com.cpdss.gateway.repository.RoleUserRepository;
-import com.cpdss.gateway.repository.RolesRepository;
-import com.cpdss.gateway.repository.ScreenRepository;
-import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.domain.user.UserType;
+import com.cpdss.gateway.entity.*;
+import com.cpdss.gateway.repository.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +38,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class UserServiceTest {
@@ -55,11 +47,15 @@ class UserServiceTest {
 
   @Mock private RoleScreenRepository roleScreenRepository;
 
-  @Mock private Users users;
-
   @Mock private RoleUserMapping roleUserMapping;
 
+  @Mock private RoleUserMappingRepository roleUserMappingRepository;
+
   @Mock private List<RoleUserMapping> roleUserMappingList;
+
+  @Mock private NotificationStatusRepository notificationStatusRepository;
+
+  @Mock private NotificationRepository notificationRepository;
 
   @Mock private List<ScreenInfo> screenInfoList;
 
@@ -67,10 +63,14 @@ class UserServiceTest {
 
   @Spy @InjectMocks private UserService userService;
 
+  @Mock PasswordEncoder passwordEncoder;
+
   @Mock private RolesRepository rolesRepository;
 
   @Mock private ScreenRepository screenRepository;
   @Mock private RoleUserRepository roleUserRepository;
+  @Mock private UserStatusRepository userStatusRepository;
+
   private AutoCloseable closeable;
 
   private static final String SUCCESS = "SUCCESS";
@@ -78,21 +78,24 @@ class UserServiceTest {
   private static final String AUTHORIZATION = "Authorization";
   private static final String AUTHORIZATION_VALUE = "4b5608ff-b77b-40c6-9645-d69856d4aafa";
   private static final String CORRELATION_ID_VALUE = "8b5609cc-b00b-90a8-1085-p69856d4abgf";
+  private static final String BEARER_TOKEN =
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
   @BeforeEach
   public void init() {
     closeable = MockitoAnnotations.openMocks(this);
-    when(users.getId()).thenReturn(1L);
+    Users users = createUser();
     when(roleUserMapping.getRoles()).thenReturn(roles);
-    when(users.getRoleUserMappings()).thenReturn(roleUserMappingList);
-    when(usersRepository.findByKeycloakIdAndIsActive(anyString(), anyBoolean())).thenReturn(users);
+    when(usersRepository.findByKeycloakIdAndIsActive(anyString(), eq(true))).thenReturn(users);
     when(userService.isShip()).thenReturn(true);
   }
 
   @Test
   void getUserPermissionsTest() throws GenericServiceException, VerificationException {
     HttpHeaders headers = new HttpHeaders();
-    headers.set(AUTHORIZATION, AUTHORIZATION_VALUE);
+    headers.set(AUTHORIZATION, BEARER_TOKEN);
+    when(userService.isShip()).thenReturn(false);
+    when(usersRepository.findByKeycloakId("1234567890")).thenReturn(createUser());
     UserAuthorizationsResponse response = userService.getUserPermissions(headers);
     assertThat(response.getResponseStatus().getStatus()).isEqualTo(SUCCESS);
   }
@@ -100,11 +103,11 @@ class UserServiceTest {
   @Test
   void getUserPermissionsWithRolesTest() throws GenericServiceException, VerificationException {
     HttpHeaders headers = new HttpHeaders();
-    headers.set(AUTHORIZATION, AUTHORIZATION_VALUE);
-    when(usersRepository.findByKeycloakIdAndIsActive(anyString(), anyBoolean()))
-        .thenReturn(createUser());
-    when(roleScreenRepository.findByRolesAndIsActive(any(), anyBoolean()))
+    headers.set(AUTHORIZATION, BEARER_TOKEN);
+    when(userService.isShip()).thenReturn(false);
+    when(roleScreenRepository.findByRolesAndIsActive(any(), eq(true)))
         .thenReturn(createScreenInfoList());
+    when(usersRepository.findByKeycloakId("1234567890")).thenReturn(createUser());
     UserAuthorizationsResponse response = userService.getUserPermissions(headers);
     assertThat(response.getResponseStatus().getStatus()).isEqualTo(SUCCESS);
   }
@@ -112,6 +115,9 @@ class UserServiceTest {
   @Test
   void getUserPermissionsWithoutAuthTokenTest() throws GenericServiceException {
     HttpHeaders headers = new HttpHeaders();
+    headers.set(AUTHORIZATION, BEARER_TOKEN);
+    when(userService.isShip()).thenReturn(false);
+    when(usersRepository.findByKeycloakId("invaliduser")).thenReturn(createUser());
     when(usersRepository.findByKeycloakIdAndIsActive(anyString(), anyBoolean()))
         .thenReturn(createUser());
     when(roleScreenRepository.findByRolesAndIsActive(any(), anyBoolean()))
@@ -122,7 +128,7 @@ class UserServiceTest {
             () -> {
               userService.getUserPermissions(headers);
             });
-    String expectedMessage = "Invalid user";
+    String expectedMessage = "Invalid user in request token";
     String actualMessage = exception.getMessage();
     assertTrue(actualMessage.contains(expectedMessage));
   }
@@ -130,15 +136,16 @@ class UserServiceTest {
   @Test
   void getUserPermissionsWithoutUserTest() throws GenericServiceException {
     HttpHeaders headers = new HttpHeaders();
-    headers.set(AUTHORIZATION, AUTHORIZATION_VALUE);
-    when(usersRepository.findByKeycloakIdAndIsActive(anyString(), anyBoolean())).thenReturn(null);
+    headers.set(AUTHORIZATION, BEARER_TOKEN);
+    when(userService.isShip()).thenReturn(false);
+    when(usersRepository.findByKeycloakId("1234567890")).thenReturn(null);
     Exception exception =
         assertThrows(
             GenericServiceException.class,
             () -> {
               userService.getUserPermissions(headers);
             });
-    String expectedMessage = "Invalid user";
+    String expectedMessage = "Invalid user in request token";
     String actualMessage = exception.getMessage();
     assertTrue(actualMessage.contains(expectedMessage));
   }
@@ -218,12 +225,15 @@ class UserServiceTest {
     return screenDataList;
   }
 
+  // To Do -Rework (userService.findUsers should be private)
   @Test
   void testGetUsers() throws GenericServiceException {
+    ReflectionTestUtils.setField(userService, "maxShipUserCount", 100);
     Users users = new Users();
     users.setId(1L);
     List<Users> userList = new ArrayList<Users>();
     userList.add(users);
+    when(this.userService.findUsers(UserType.SHIP)).thenReturn(new ArrayList<User>());
     when(this.usersRepository.findByIsActive(anyBoolean())).thenReturn(userList);
     UserResponse userResponse = userService.getUsers(anyString());
     assertEquals(STATUS, userResponse.getResponseStatus().getStatus());
@@ -232,13 +242,15 @@ class UserServiceTest {
   @Test
   void testSavePermission() throws GenericServiceException {
     PermissionResponse permissionResponse = new PermissionResponse();
+    Role role = new Role();
+    role.setName(null);
     Roles roleEntity = new Roles();
     roleEntity.setId(1L);
-    RolePermission RolePermission = new RolePermission();
-    RolePermission.setRoleId(1L);
-    RolePermission.setUserId(new ArrayList<Long>());
-    RolePermission.setScreens(new ArrayList<ScreenInfo>());
-
+    RolePermission rolePermission = new RolePermission();
+    rolePermission.setRoleId(1L);
+    rolePermission.setUserId(new ArrayList<Long>());
+    rolePermission.setScreens(new ArrayList<ScreenInfo>());
+    rolePermission.setRole(role);
     Users users = new Users();
     users.setId(1L);
 
@@ -258,7 +270,7 @@ class UserServiceTest {
     when(this.roleUserRepository.findByUsersAndRolesAndIsActive(anyLong(), anyLong(), anyBoolean()))
         .thenReturn(Optional.of(roleUserMapping));
 
-    permissionResponse = userService.savePermission(RolePermission, 1L, "TEST");
+    permissionResponse = userService.savePermission(rolePermission, 1L, "TEST");
 
     assertEquals(STATUS, permissionResponse.getResponseStatus().getStatus());
   }
@@ -271,15 +283,15 @@ class UserServiceTest {
             anyLong(), anyString(), anyBoolean()))
         .thenReturn(Optional.empty());
 
-    Roles role = new Roles();
-    role.setId(1L);
-    when(this.rolesRepository.save(role)).thenReturn(role);
+    Roles roleEntity = new Roles();
+    roleEntity.setId(1L);
+    when(this.rolesRepository.save(any(Roles.class))).thenReturn(roleEntity);
 
-    Role roles = new Role();
-    roles.setId(1L);
-    roles.setName("CHIEF_OFFICER");
+    Role roleDomain = new Role();
+    roleDomain.setId(1L);
+    roleDomain.setName("CHIEF_OFFICER");
 
-    roleResponse = userService.saveRole(roles, 1L, "test");
+    roleResponse = userService.saveRole(roleDomain, 1L, "test");
     assertEquals(STATUS, roleResponse.getResponseStatus().getStatus());
   }
 
@@ -402,15 +414,19 @@ class UserServiceTest {
   @ParameterizedTest(name = "#{index} - Run test with password = {0}")
   @MethodSource("validPasswordProvider")
   void restPasswordTest(String password) throws GenericServiceException {
+    ReflectionTestUtils.setField(userService, "passwordMinLength", 8);
+    ReflectionTestUtils.setField(userService, "passwordMaxLength", 16);
+    ReflectionTestUtils.setField(userService, "PASSWORD_AGE", 90);
     Users users = new Users();
     users.setId(1l);
     users.setFirstName("test");
     users.setUsername("hello");
     Optional<Users> usersOp = Optional.of(users);
     when(usersRepository.updateUserPasswordExpireDateAndTime(
-            1l, password, LocalDateTime.now().plusDays(1), LocalDateTime.now()))
+            eq(1l), eq(password), any(LocalDateTime.class), any(LocalDateTime.class)))
         .thenReturn(1);
     when(usersRepository.findById(1l)).thenReturn(usersOp);
+    when(passwordEncoder.encode(eq(password))).thenReturn(password);
     boolean resp = userService.resetPassword(password, usersOp.get().getId());
     assertTrue(resp);
   }
@@ -462,6 +478,14 @@ class UserServiceTest {
       ReflectionTestUtils.setField(userService, "maxShipUserCount", 1);
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       when(this.usersRepository.save(any(Users.class))).thenReturn(users);
+      when(this.userStatusRepository.getOne(1L)).thenReturn(new UserStatus());
+      when(this.roleUserMappingRepository.save(any(RoleUserMapping.class)))
+          .thenReturn(new RoleUserMapping());
+      when(this.notificationStatusRepository.getOne(2l)).thenReturn(new NotificationStatus());
+      when(this.notificationRepository.findByRequestedByAndIsActive(1l, true))
+          .thenReturn(new ArrayList<Notifications>());
+      when(this.notificationRepository.saveAll(new ArrayList<Notifications>()))
+          .thenReturn(new ArrayList<Notifications>());
       response = this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();
@@ -476,6 +500,7 @@ class UserServiceTest {
       ReflectionTestUtils.setField(userService, "maxShipUserCount", 0);
       when(this.usersRepository.findByIdAndIsActive(1l, true)).thenReturn(null);
       User user = TestUtils.getDummyUser();
+      user.setId(1l);
       this.userService.saveUser(user, RandomString.make(6), 1L);
     } catch (GenericServiceException e) {
       e.printStackTrace();

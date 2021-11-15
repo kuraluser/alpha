@@ -14,6 +14,7 @@ public class GatewayConstants {
 
   public static final Long LOADING_INFORMATION_RESPONSE_JSON_ID = 10L;
   public static final Long DISCHARGING_INFORMATION_RESPONSE_JSON_ID = 19L;
+  public static final Long LOADING_INFORMATION_RESPONSE_JSON_SIMULATOR_ID = 10L;
 
   public static final List<Long> LOADING_VESSEL_PUMPS_VAL =
       Arrays.asList(

@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  fluentd:
+    image: 945995963191.dkr.ecr.ap-southeast-1.amazonaws.com/fluentd:0.0.2
+    environment:
+      - FLUENTD_DAEMON_USER=root
+      - FLUENT_CONTAINER_TAIL_PARSER_TYPE=/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$$/
+    deploy:
+      mode: global
+    ports:
+      - '24224:24224'
+      - '5140:5140'
+    volumes:
+      - "${VOL_SOURCE}/fluentd/fluentd.conf:/opt/bitnami/fluentd/conf/fluentd.conf"
+      - "/var/lib/docker/containers:/containers:ro"
+      - "${VOL_SOURCE}/fluentd/pos:/pos"
+networks:
+  default:
+    external: true
+    name: cpdss-network

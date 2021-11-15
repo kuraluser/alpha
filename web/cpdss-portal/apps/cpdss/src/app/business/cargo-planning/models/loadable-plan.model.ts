@@ -62,7 +62,8 @@ export interface ILoadableQuantityCommingleCargo {
     cargo2MT: string,
     cargo1KL: string,
     cargo2KL: string,
-    tankShortName?: string
+    tankShortName?: string,
+    colorCode?: string;
 }
 
 /**

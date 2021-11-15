@@ -2,14 +2,9 @@
 package com.cpdss.gateway.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -18,6 +13,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.TestUtils;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.security.ship.*;
 import com.cpdss.gateway.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -28,7 +24,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -36,6 +34,7 @@ import org.springframework.util.MultiValueMap;
 @WebMvcTest(UserController.class)
 @ContextConfiguration(classes = {GatewayTestConfiguration.class})
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(properties = {"cpdss.build.env=ship"})
 public class UserControllerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -45,6 +44,20 @@ public class UserControllerTest {
   @MockBean private UserAuthorizationsResponse userAuthorizationsResponse;
 
   @MockBean private RoleResponse roleResponse;
+
+  @MockBean private ShipResponseBodyAdvice shipResponseBodyAdvice;
+
+  @MockBean private ShipJwtService shipJwtService;
+
+  @MockBean private ShipAuthenticationProvider jwtAuthenticationProvider;
+
+  @MockBean private ShipUserAuthenticationProvider shipUserAuthenticationProvider;
+
+  @MockBean private ShipUserDetailService userDetailService;
+
+  @MockBean private ShipTokenExtractor jwtTokenExtractor;
+
+  @MockBean private AuthenticationFailureHandler failureHandler;
 
   private static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -124,7 +137,7 @@ public class UserControllerTest {
   @Test
   void saveUserTest() throws Exception {
     User dummy = TestUtils.getDummyUser();
-    when(userService.saveUser(dummy, "test", anyLong())).thenReturn(new UserResponse());
+    when(userService.saveUser(eq(dummy), eq("test"), anyLong())).thenReturn(new UserResponse());
     ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
     String json = ow.writeValueAsString(dummy);
     this.mockMvc

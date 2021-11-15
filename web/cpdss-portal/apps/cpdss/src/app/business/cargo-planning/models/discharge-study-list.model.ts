@@ -106,7 +106,8 @@ export interface IDischargeStudyAttachment {
     toppingSequence: string,
     timeRequiredForLoading: string,
     tankShortName:string,
-    toppingOffCargoId: string
+    toppingOffCargoId: string,
+    colorCode?: string;
 }
 
 /**

@@ -4,72 +4,24 @@ package com.cpdss.loadablestudy.service;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
-import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.entity.VoyageStatus;
-import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
-import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
-import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
-import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.JsonDataRepository;
-import com.cpdss.loadablestudy.repository.JsonTypeRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternComingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommentsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
-import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRuleInputRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.PurposeOfCommingleRepository;
-import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
-import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.repository.*;
 import io.grpc.internal.testing.StreamRecorder;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,10 +37,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.client.ResourceAccessException;
@@ -188,6 +140,11 @@ class DischargeStudyServiceTest {
   @MockBean private LoadablePatternCargoToppingOffSequenceRepository toppingOffSequenceRepository;
   @MockBean private LoadableQuantityService loadableQuantityService;
   @MockBean private GenerateDischargeStudyJson generateDischargeStudyJson;
+  @MockBean private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
+  @MockBean private CowHistoryRepository cowHistoryRepository;
+
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub =
+      Mockito.mock(LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub.class);
 
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
@@ -196,24 +153,28 @@ class DischargeStudyServiceTest {
 
   @BeforeAll
   public static void beforeAll() {
-    MockedStatic<Files> mockedStatic = Mockito.mockStatic(Files.class);
-    Path pathMock = Mockito.mock(Path.class);
-    mockedStatic.when(() -> Files.createDirectories(any(Path.class))).thenReturn(pathMock);
-    mockedStatic.when(() -> Files.createFile(any(Path.class))).thenReturn(pathMock);
-    mockedStatic.when(() -> Files.write(any(Path.class), any(byte[].class))).thenReturn(pathMock);
-    mockedStatic
-        .when(() -> Files.deleteIfExists(any(Path.class)))
-        .thenReturn(true)
-        .thenThrow(IOException.class);
+    try (MockedStatic<Files> mockedStatic = Mockito.mockStatic(Files.class)) {
+      Path pathMock = Mockito.mock(Path.class);
+      mockedStatic.when(() -> Files.createDirectories(any(Path.class))).thenReturn(pathMock);
+      mockedStatic.when(() -> Files.createFile(any(Path.class))).thenReturn(pathMock);
+      mockedStatic.when(() -> Files.write(any(Path.class), any(byte[].class))).thenReturn(pathMock);
+      mockedStatic
+          .when(() -> Files.deleteIfExists(any(Path.class)))
+          .thenReturn(true)
+          .thenThrow(IOException.class);
 
-    TransactionStatus status = Mockito.mock(TransactionStatus.class);
-    MockedStatic<TransactionAspectSupport> mockedTransactionStatic =
-        Mockito.mockStatic(TransactionAspectSupport.class);
-    mockedTransactionStatic
-        .when(() -> TransactionAspectSupport.currentTransactionStatus())
-        .thenReturn(status);
+      TransactionStatus status = Mockito.mock(TransactionStatus.class);
+      MockedStatic<TransactionAspectSupport> mockedTransactionStatic =
+          Mockito.mockStatic(TransactionAspectSupport.class);
+      mockedTransactionStatic
+          .when(() -> TransactionAspectSupport.currentTransactionStatus())
+          .thenReturn(status);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    ;
+    // MockitoAnnotations.openMocks(LoadableStudyServiceTest.class);
 
-    MockitoAnnotations.openMocks(LoadableStudyServiceTest.class);
   }
 
   @Test
@@ -228,10 +189,11 @@ class DischargeStudyServiceTest {
     when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
             anyLong(), any(Voyage.class), anyBoolean(), anyLong()))
         .thenReturn(createLoadableList());
+    List<SynopticalTable> synopticalTableList = createLoadableSynopticalTableList();
     when(this.synopticalTableRepository
             .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
                 anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(createLoadableSynopticalTableList());
+        .thenReturn(synopticalTableList);
     when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
             any(LoadableStudy.class), any(LoadableStudyPortRotation.class), anyBoolean()))
         .thenReturn(createOnHandQuantityList());
@@ -241,9 +203,28 @@ class DischargeStudyServiceTest {
     when(loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idAndIsActive(
             any(LoadableStudy.class), anyLong(), anyBoolean()))
         .thenReturn(createLoadableStudyPortRotationList());
+    LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
+    portRotation.setPortXId(1l);
+    CargoOperation operation = new CargoOperation();
+    operation.setId(1l);
+    portRotation.setOperation(operation);
+    portRotation.setLoadableStudy(entity);
+    when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
+        .thenReturn(portRotation);
+
+    when(this.synopticalTableRepository.saveAll(anyCollection())).thenReturn(synopticalTableList);
 
     when(this.loadableStudyStatusRepository.getOne(anyLong()))
         .thenReturn(new LoadableStudyStatus());
+
+    when(this.loadingPlanServiceBlockingStub.validateStowageAndBillOfLadding(
+            any(StowageAndBillOfLaddingValidationRequest.class)))
+        .thenReturn(Common.ResponseStatus.newBuilder().setStatus("SUCCESS").build());
+
+    ReflectionTestUtils.setField(
+        this.dischargeStudyService,
+        "loadingPlanServiceBlockingStub",
+        this.loadingPlanServiceBlockingStub);
 
     StreamRecorder<DischargeStudyReply> responseObserver = StreamRecorder.create();
     this.dischargeStudyService.saveDischargeStudy(request, responseObserver);
@@ -328,7 +309,11 @@ class DischargeStudyServiceTest {
 
     when(this.generateDischargeStudyJson.generateDischargePatterns(
             any(AlgoRequest.class), any(AlgoReply.Builder.class)))
-        .thenThrow(GenericServiceException.class);
+        .thenThrow(
+            new GenericServiceException(
+                "Failed",
+                CommonErrorCodes.E_CPDSS_NO_DISCHARGE_STUDY_FOUND,
+                HttpStatusCode.INTERNAL_SERVER_ERROR));
 
     this.dischargeStudyService.generateDischargePatterns(request, responseObserver);
     List<AlgoReply> replies = responseObserver.getValues();
@@ -381,12 +366,14 @@ class DischargeStudyServiceTest {
 
   private List<LoadableStudyPortRotation> createLoadableStudyPortRotationList() {
     LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    loadableStudyPortRotation.setId(1l);
     loadableStudyPortRotation.setPortOrder(1L);
     return Arrays.asList(loadableStudyPortRotation);
   }
 
   private List<LoadableStudy> createLoadableList() {
-
-    return Arrays.asList(new LoadableStudy());
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setId(1l);
+    return Arrays.asList(loadableStudy);
   }
 }

@@ -40,7 +40,7 @@ public class LoadingInstructionService {
   public static final String FAILED = "FAILED";
 
   @GrpcClient("loadingInformationService")
-  private LoadingInstructionServiceBlockingStub loadingInstructionServiceBlockingStub;
+  public LoadingInstructionServiceBlockingStub loadingInstructionServiceBlockingStub;
 
   public LoadingInstructionResponse getLoadingInstructions(
       Long vesselId, Long infoId, Long portRotationId) throws GenericServiceException {

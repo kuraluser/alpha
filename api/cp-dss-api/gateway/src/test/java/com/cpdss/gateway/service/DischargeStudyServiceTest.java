@@ -11,6 +11,7 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingInstructionServiceGrpc.LoadingInstructionServiceBlockingStub;
+import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.gateway.domain.AlgoPatternResponse;
 import com.cpdss.gateway.repository.UsersRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +42,7 @@ class DischargeStudyServiceTest {
 
   @MockBean private UsersRepository usersRepository;
   @MockBean private LoadingInstructionServiceBlockingStub loadingInstructionServiceBlockingStub;
+  @MockBean private LoadableStudyService loadableStudyService;
 
   @BeforeEach
   public void init() {
@@ -71,7 +73,7 @@ class DischargeStudyServiceTest {
             TEST_VESSEL_ID, TEST_LOADING_INFO_ID, TEST_PORT_ROTATION_ID, "");
 
     assertEquals(
-        SUCCESS, response.getResponseStatus().getStatus(), String.valueOf(HttpStatus.OK.value()));
+        "200", response.getResponseStatus().getStatus(), String.valueOf(HttpStatus.OK.value()));
   }
 
   /**
@@ -87,7 +89,11 @@ class DischargeStudyServiceTest {
         .thenCallRealMethod();
     AlgoReply replyBuilder =
         AlgoReply.newBuilder()
-            .setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build())
+            .setResponseStatus(
+                ResponseStatus.newBuilder()
+                    .setStatus(FAILED)
+                    .setCode(CommonErrorCodes.E_CPDSS_ALGO_ISSUE)
+                    .build())
             .build();
     Mockito.when(
             this.dischargeStudyService.generateDischargePatterns(

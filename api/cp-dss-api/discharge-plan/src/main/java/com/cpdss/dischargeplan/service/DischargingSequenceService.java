@@ -10,6 +10,7 @@ import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
 import com.cpdss.common.generated.discharge_plan.DischargingRate;
 import com.cpdss.common.generated.discharge_plan.DischargingSequence;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
@@ -29,6 +30,7 @@ import com.cpdss.dischargeplan.entity.DischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.DischargingPlanStowageDetails;
 import com.cpdss.dischargeplan.entity.DischargingSequenceStabilityParameters;
+import com.cpdss.dischargeplan.entity.EductionOperation;
 import com.cpdss.dischargeplan.repository.BallastOperationRepository;
 import com.cpdss.dischargeplan.repository.CargoDischargingRateRepository;
 import com.cpdss.dischargeplan.repository.DeballastingRateRepository;
@@ -41,6 +43,7 @@ import com.cpdss.dischargeplan.repository.DischargingPlanStabilityParametersRepo
 import com.cpdss.dischargeplan.repository.DischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.DischargingSequenceRepository;
 import com.cpdss.dischargeplan.repository.DischargingSequenceStabiltyParametersRepository;
+import com.cpdss.dischargeplan.repository.EductionOperationRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +66,7 @@ public class DischargingSequenceService {
   @Autowired DischargingPlanRobDetailsRepository robDetailsRepository;
   @Autowired DischargingPlanStabilityParametersRepository stabilityParametersRepository;
   @Autowired DischargingPlanStowageDetailsRepository stowageDetailsRepository;
+  @Autowired EductionOperationRepository eductionOperationRepository;
 
   @Autowired
   DischargingSequenceStabiltyParametersRepository dischargingSequenceStabilityParamsRepository;
@@ -133,7 +137,7 @@ public class DischargingSequenceService {
           Optional.ofNullable(param.getList())
               .ifPresent(list -> paramBuilder.setList(String.valueOf(list)));
           Optional.ofNullable(param.getTime()).ifPresent(paramBuilder::setTime);
-          //			Optional.ofNullable(param.getGomValue()).ifPresent(value ->
+          // Optional.ofNullable(param.getGomValue()).ifPresent(value ->
           // paramBuilder.setGomValue(value.toString())); TODO
           builder.addDischargeSequenceStabilityParameters(paramBuilder.build());
         });
@@ -195,9 +199,33 @@ public class DischargingSequenceService {
           List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails =
               portWiseDetailsRepository.findByDischargingSequenceAndIsActiveTrueOrderById(
                   dischargeSequence);
-          buildLoadingPlanPortWiseDetails(sequenceBuilder, dischargingPlanPortWiseDetails);
+          buildDischargingPlanPortWiseDetails(sequenceBuilder, dischargingPlanPortWiseDetails);
+          //			EductionOperation eductionOperation = eductionOperationRepository
+          //					.findByDischargingSequenceAndIsActiveTrue(dischargeSequence);
+          //			if (eductionOperation != null) {
+          //				buildEductionOperations(sequenceBuilder, eductionOperation);
+          //			}
           builder.addDischargeSequences(sequenceBuilder.build());
         });
+  }
+
+  /**
+   * @param sequenceBuilder
+   * @param eductionOperation
+   */
+  private void buildEductionOperations(
+      DischargingSequence.Builder sequenceBuilder, EductionOperation eductionOperation) {
+    log.info(
+        "Populating eduction operation, tanks: {}, pumps: {}",
+        eductionOperation.getTanksUsed(),
+        eductionOperation.getEductorsUsed());
+    EductorOperation.Builder builder = EductorOperation.newBuilder();
+    Optional.ofNullable(eductionOperation.getEductorsUsed()).ifPresent(builder::setPumpsUsed);
+    Optional.ofNullable(eductionOperation.getEndTime()).ifPresent(builder::setEndTime);
+    Optional.ofNullable(eductionOperation.getId()).ifPresent(builder::setId);
+    Optional.ofNullable(eductionOperation.getStartTime()).ifPresent(builder::setStartTime);
+    Optional.ofNullable(eductionOperation.getTanksUsed()).ifPresent(builder::setTanksUsed);
+    sequenceBuilder.setEductorOperation(builder.build());
   }
 
   private void buildBallastOperations(
@@ -218,7 +246,7 @@ public class DischargingSequenceService {
         });
   }
 
-  private void buildLoadingPlanPortWiseDetails(
+  private void buildDischargingPlanPortWiseDetails(
       DischargingSequence.Builder sequenceBuilder,
       List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails) {
     log.info("Populating Portwise details");

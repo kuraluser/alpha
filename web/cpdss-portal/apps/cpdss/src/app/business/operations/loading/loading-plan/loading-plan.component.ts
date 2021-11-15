@@ -121,6 +121,7 @@ export class LoadingPlanComponent implements OnInit, OnDestroy {
             plan.temperature = item.temperature;
             plan.abbreviation = item.abbreviation;
             plan.cargoNominationId = null;
+            plan.colorCode = item.colorCode;
           }
         });
       });

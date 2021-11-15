@@ -25,12 +25,24 @@ jobs:
 
         echo "##vso[task.setvariable variable=DOCKER_PASSWORD]$token"
   - task: Gradle@2
+    displayName: Run Build Company-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/company-info/gradlew
+      cwd: api/cp-dss-api/company-info
+      options: -PbuildEnv=$(ENV)
+  - task: Gradle@2
     displayName: Run Jib Company-Info
     inputs:
       wrapperScript: api/cp-dss-api/company-info/gradlew
       cwd: api/cp-dss-api/company-info
       options: -PbuildEnv=$(ENV)
       tasks: jib
+  - task: Gradle@2
+    displayName: Run Build Cargo-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/cargo-info/gradlew
+      cwd: api/cp-dss-api/cargo-info
+      options: -PbuildEnv=$(ENV)
   - task: Gradle@2
     displayName: Run Jib Cargo-Info
     inputs:
@@ -39,12 +51,24 @@ jobs:
       options: -PbuildEnv=$(ENV)
       tasks: jib
   - task: Gradle@2
+    displayName: Run Build Port-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/port-info/gradlew
+      cwd: api/cp-dss-api/port-info
+      options: -PbuildEnv=$(ENV)
+  - task: Gradle@2
     displayName: Run Jib Port-Info
     inputs:
       wrapperScript: api/cp-dss-api/port-info/gradlew
       cwd: api/cp-dss-api/port-info
       options: -PbuildEnv=$(ENV)
       tasks: jib
+  - task: Gradle@2
+    displayName: Run Build Vessel-Info
+    inputs:
+      wrapperScript: api/cp-dss-api/vessel-info/gradlew
+      cwd: api/cp-dss-api/vessel-info
+      options: -PbuildEnv=$(ENV)
   - task: Gradle@2
     displayName: Run Jib Vessel-Info
     inputs:
@@ -53,12 +77,24 @@ jobs:
       options: -PbuildEnv=$(ENV)
       tasks: jib
   - task: Gradle@2
+    displayName: Run Build Loadicator-Integration
+    inputs:
+      wrapperScript: api/cp-dss-api/loadicator-integration/gradlew
+      cwd: api/cp-dss-api/loadicator-integration
+      options: -PbuildEnv=$(ENV)
+  - task: Gradle@2
     displayName: Run Jib Loadicator-Integration
     inputs:
       wrapperScript: api/cp-dss-api/loadicator-integration/gradlew
       cwd: api/cp-dss-api/loadicator-integration
       options: -PbuildEnv=$(ENV)
       tasks: jib
+  - task: Gradle@2
+    displayName: Run Build Loading-Plan
+    inputs:
+      wrapperScript: api/cp-dss-api/loading-plan/gradlew
+      cwd: api/cp-dss-api/loading-plan
+      options: -PbuildEnv=$(ENV)
   - task: Gradle@2
     displayName: Run Jib Loading-Plan
     inputs:
@@ -67,12 +103,24 @@ jobs:
       options: -PbuildEnv=$(ENV)
       tasks: jib
   - task: Gradle@2
+    displayName: Run Build Envoy-Writer
+    inputs:
+      wrapperScript: api/cp-dss-api/envoy-writer/gradlew
+      cwd: api/cp-dss-api/envoy-writer
+      options: -PbuildEnv=$(ENV)
+  - task: Gradle@2
     displayName: Run Jib Envoy-Writer
     inputs:
       wrapperScript: api/cp-dss-api/envoy-writer/gradlew
       cwd: api/cp-dss-api/envoy-writer
       options: -PbuildEnv=$(ENV)
       tasks: jib
+  - task: Gradle@2
+    displayName: Run Build Envoy-Reader
+    inputs:
+      wrapperScript: api/cp-dss-api/envoy-reader/gradlew
+      cwd: api/cp-dss-api/envoy-reader
+      options: -PbuildEnv=$(ENV)
   - task: Gradle@2
     displayName: Run Jib Envoy-Reader
     inputs:
@@ -81,12 +129,24 @@ jobs:
       options: -PbuildEnv=$(ENV)
       tasks: jib
   - task: Gradle@2
+    displayName: Run Build Task-Manager
+    inputs:
+      wrapperScript: api/cp-dss-api/task-manager/gradlew
+      cwd: api/cp-dss-api/task-manager
+      options: -PbuildEnv=$(ENV)
+  - task: Gradle@2
     displayName: Run Jib Task-Manager
     inputs:
       wrapperScript: api/cp-dss-api/task-manager/gradlew
       cwd: api/cp-dss-api/task-manager
       options: -PbuildEnv=$(ENV)
       tasks: jib
+  - task: Gradle@2
+    displayName: Run Build Loadable-Study
+    inputs:
+      wrapperScript: api/cp-dss-api/loadable-study/gradlew
+      cwd: api/cp-dss-api/loadable-study
+      options: -PbuildEnv=$(ENV)
   - task: Gradle@2
     displayName: Run Jib Loadable-Study
     inputs:
@@ -95,12 +155,24 @@ jobs:
       options: -PbuildEnv=$(ENV)
       tasks: jib
   - task: Gradle@2
+    displayName: Run Build Discharge-Plan
+    inputs:
+      wrapperScript: api/cp-dss-api/discharge-plan/gradlew
+      cwd: api/cp-dss-api/discharge-plan
+      options: -PbuildEnv=$(ENV)
+  - task: Gradle@2
     displayName: Run Jib Discharge-Plan
     inputs:
       wrapperScript: api/cp-dss-api/discharge-plan/gradlew
       cwd: api/cp-dss-api/discharge-plan
       options: -PbuildEnv=$(ENV)
       tasks: jib
+  - task: Gradle@2
+    displayName: Run Build Gateway
+    inputs:
+      wrapperScript: api/cp-dss-api/gateway/gradlew
+      cwd: api/cp-dss-api/gateway
+      options: -PbuildEnv=$(ENV)
   - task: Gradle@2
     displayName: Run Jib Gateway
     inputs:

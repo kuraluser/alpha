@@ -6,6 +6,7 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
+import com.cpdss.common.generated.LoadableStudy.SynopticalCommingleRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
@@ -1025,6 +1026,16 @@ public class LoadingPlanService {
               ohq.setActualWeight(rob.getQuantity().toString());
               ohq.setTankId(rob.getTankXId());
               synopticalData.addOhq(ohq);
+            });
+
+    commingleEntityList.stream()
+        .forEach(
+            commingle -> {
+              SynopticalCommingleRecord.Builder commingleRecord =
+                  SynopticalCommingleRecord.newBuilder();
+              commingleRecord.setActualWeight(commingle.getQuantity());
+              commingleRecord.setTankId(commingle.getTankId());
+              synopticalData.addCommingle(commingleRecord);
             });
     request.addSynopticalRecord(synopticalData);
     ResponseStatus response =

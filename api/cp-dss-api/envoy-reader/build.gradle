@@ -1,5 +1,5 @@
 ext{
-	salt = System.getenv('SALT') ?: ""
+    salt = System.getenv('SALT') ?: ""
     cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
     shipUrl = System.getenv('SHIP_URL')?:""
     shoreUrl = System.getenv('SHORE_URL')?:""
@@ -12,35 +12,35 @@ ext{
 }
 
 appConfig {
-  grpc = 'y'
-  logging = 'y'
-  javaMainClass = "com.cpdss.envoyreader.Application"
-  appName = 'envoy-reader'
-  rest = 'y'
-  monitoring = 'y'
-  devTools = 'y'
-docker {
-    imageName = imageNameVal
-    containerName = containerNameVal
-    networkName = 'cpdss-network'
-    memoryLimitInMB = 300
-    hostPortMapping {
-        hostGrpcPort = Integer.parseInt(grpcPortHost)
-        hostDebugPort = Integer.parseInt(debugPortHost)
+    grpc = 'y'
+    logging = 'y'
+    javaMainClass = "com.cpdss.envoyreader.Application"
+    appName = 'envoy-reader'
+    devTools = 'y'
+    modelMapper = 'y'
+    monitoring = 'y'
+    docker {
+        imageName = imageNameVal
+        containerName = containerNameVal
+        networkName = 'cpdss-network'
+        memoryLimitInMB = 300
+        hostPortMapping {
+            hostGrpcPort = Integer.parseInt(grpcPortHost)
+            hostDebugPort = Integer.parseInt(debugPortHost)
+        }
+        healthCheck {
+            healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
+            healthCheckIntervalInSec = 30
+            healthCheckInitialDelayInSec = 60
+        }
+        swarm {
+            serviceName = serviceNameVal
+            swarmMode = REPLICATED_MODE
+            replicas = 1
+            rollbackOnUpdateFailure = true
+        }
+        environment = ['GRPC_PORT': '8090', 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv, 'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl]
     }
-    healthCheck {
-        healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
-        healthCheckIntervalInSec = 30
-        healthCheckInitialDelayInSec = 60
-    }
-    swarm {
-      serviceName = serviceNameVal
-      swarmMode = REPLICATED_MODE
-      replicas = 1
-      rollbackOnUpdateFailure = true
-    }
-    environment = ['GRPC_PORT': '8090', 'SALT': salt,'CPDSS_BUILD_ENV': cpdssBuildEnv, 'SHIP_URL': shipUrl,'SHORE_URL':shoreUrl]
-  }
 }
 
 dependencies {
