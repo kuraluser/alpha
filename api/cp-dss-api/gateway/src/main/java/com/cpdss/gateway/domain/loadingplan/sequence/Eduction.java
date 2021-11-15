@@ -12,4 +12,5 @@ public class Eduction {
   private String timeEnd;
   private Map<String, String> tank;
   private Map<String, Object> pumpSelected;
+  private Map<String, Object> ballastPumpSelected;
 }

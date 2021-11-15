@@ -554,8 +554,9 @@ message EductorOperation {
   int64 id = 1;
   int32 endTime = 2;
   string tanksUsed = 3;
-  string pumpsUsed = 4;
+  string eductorPumpsUsed = 4;
   int32 startTime = 5;
+  string ballastPumpsUsed = 6;
 }
 
 message LoadingPlanSaveResponse {

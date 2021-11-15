@@ -39,6 +39,9 @@ public class EductionOperation extends EntityDoc {
   @Column(name = "eductor_used")
   private String eductorsUsed;
 
+  @Column(name = "ballast_pumps_used")
+  private String ballastPumpsUsed;
+
   @Column(name = "is_active")
   private Boolean isActive;
 }

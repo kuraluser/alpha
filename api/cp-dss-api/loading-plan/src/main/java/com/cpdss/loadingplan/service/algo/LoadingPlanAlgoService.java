@@ -758,7 +758,8 @@ public class LoadingPlanAlgoService {
       EductorOperation eductorOperation) {
     log.info("Saving Eductor Operation for Loading Sequence {}", loadingSequence.getId());
     EductionOperation eductionOperation = new EductionOperation();
-    eductionOperation.setEductorsUsed(eductorOperation.getPumpsUsed());
+    eductionOperation.setEductorsUsed(eductorOperation.getEductorPumpsUsed());
+    eductionOperation.setBallastPumpsUsed(eductorOperation.getBallastPumpsUsed());
     eductionOperation.setEndTime(eductorOperation.getEndTime());
     eductionOperation.setIsActive(true);
     eductionOperation.setLoadingSequence(loadingSequence);

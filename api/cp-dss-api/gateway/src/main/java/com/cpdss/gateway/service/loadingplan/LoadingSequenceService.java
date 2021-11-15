@@ -256,20 +256,9 @@ public class LoadingSequenceService {
       response.setInterval(reply.getInterval());
       // Adding cargo loading rates
       this.buildCargoLoadingRates(loadingSequence, portEta, stageTickPositions, cargoLoadingRates);
-
       // Adding ballast pumps
-      loadingSequence
-          .getBallastOperationsList()
-          .forEach(
-              operation -> {
-                BallastPump ballastPump = new BallastPump();
-                buildBallastPump(operation, portEta, ballastPump);
-                if (ballastPump.getPumpId() == 0L) {
-                  gravityList.add(ballastPump);
-                } else {
-                  ballastPumps.add(ballastPump);
-                }
-              });
+      this.buildBallastPumpSequence(
+          loadingSequence, portEta, ballastPumps, gravityList, ballastEduction);
       loadingRates.addAll(loadingSequence.getLoadingRatesList());
     }
 
@@ -310,6 +299,43 @@ public class LoadingSequenceService {
     response.setBallastEduction(ballastEduction);
   }
 
+  /** @param ballastEduction */
+  private void buildBallastPumpSequence(
+      LoadingSequence loadingSequence,
+      Long portEta,
+      List<BallastPump> ballastPumps,
+      List<BallastPump> gravityList,
+      List<EductionOperation> ballastEduction) {
+    loadingSequence
+        .getBallastOperationsList()
+        .forEach(
+            operation -> {
+              BallastPump ballastPump = new BallastPump();
+              buildBallastPump(operation, portEta, ballastPump);
+              if (ballastPump.getPumpId() == 0L) {
+                gravityList.add(ballastPump);
+              } else {
+                ballastPumps.add(ballastPump);
+              }
+            });
+    if (ballastEduction != null) {
+      ballastEduction.forEach(
+          eduction -> {
+            if (eduction.getBallastPumpSelected() != null) {
+              eduction.getBallastPumpSelected().stream()
+                  .forEach(
+                      pumpId -> {
+                        ballastPumps.stream()
+                            .filter(pump -> pump.getPumpId().equals(pumpId))
+                            .sorted(Comparator.comparing(BallastPump::getEnd).reversed())
+                            .findFirst()
+                            .ifPresent(pump -> pump.setEnd(eduction.getTimeEnd()));
+                      });
+            }
+          });
+    }
+  }
+
   /**
    * @param loadingSequence
    * @param portEta
@@ -320,9 +346,9 @@ public class LoadingSequenceService {
     EductorOperation eductorOperation = loadingSequence.getEductorOperation();
     if (eductorOperation.getEndTime() != 0) {
       EductionOperation ballastEduction = new EductionOperation();
-      if (!eductorOperation.getPumpsUsed().isEmpty()) {
+      if (!eductorOperation.getEductorPumpsUsed().isEmpty()) {
         ballastEduction.setPumpSelected(
-            List.of(eductorOperation.getPumpsUsed().split(",")).stream()
+            List.of(eductorOperation.getEductorPumpsUsed().split(",")).stream()
                 .map(pumpId -> Long.valueOf(pumpId))
                 .collect(Collectors.toList()));
       }
@@ -330,6 +356,12 @@ public class LoadingSequenceService {
         ballastEduction.setTanks(
             List.of(eductorOperation.getTanksUsed().split(",")).stream()
                 .map(tankId -> Long.valueOf(tankId))
+                .collect(Collectors.toList()));
+      }
+      if (!eductorOperation.getBallastPumpsUsed().isEmpty()) {
+        ballastEduction.setBallastPumpSelected(
+            List.of(eductorOperation.getBallastPumpsUsed().split(",")).stream()
+                .map(pumpId -> Long.valueOf(pumpId))
                 .collect(Collectors.toList()));
       }
       ballastEduction.setTimeEnd(portEta + (eductorOperation.getEndTime() * 60 * 1000));
@@ -1343,8 +1375,12 @@ public class LoadingSequenceService {
       eductorBuilder.setEndTime(
           StringUtils.isEmpty(eduction.getTimeEnd()) ? 0 : Integer.valueOf(eduction.getTimeEnd()));
       if (eduction.getPumpSelected() != null) {
-        eductorBuilder.setPumpsUsed(
+        eductorBuilder.setEductorPumpsUsed(
             eduction.getPumpSelected().keySet().stream().collect(Collectors.joining(",")));
+      }
+      if (eduction.getBallastPumpSelected() != null) {
+        eductorBuilder.setBallastPumpsUsed(
+            eduction.getBallastPumpSelected().keySet().stream().collect(Collectors.joining(",")));
       }
       if (eduction.getTank() != null) {
         eductorBuilder.setTanksUsed(

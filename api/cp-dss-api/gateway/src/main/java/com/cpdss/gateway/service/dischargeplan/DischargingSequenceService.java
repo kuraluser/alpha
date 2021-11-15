@@ -857,9 +857,9 @@ public class DischargingSequenceService {
     EductorOperation eductorOperation = dischargeSeq.getEductorOperation();
     if (eductorOperation.getEndTime() != 0) {
       EductionOperation ballastEduction = new EductionOperation();
-      if (!eductorOperation.getPumpsUsed().isEmpty()) {
+      if (!eductorOperation.getEductorPumpsUsed().isEmpty()) {
         ballastEduction.setPumpSelected(
-            List.of(eductorOperation.getPumpsUsed().split(",")).stream()
+            List.of(eductorOperation.getEductorPumpsUsed().split(",")).stream()
                 .map(pumpId -> Long.valueOf(pumpId))
                 .collect(Collectors.toList()));
       }
