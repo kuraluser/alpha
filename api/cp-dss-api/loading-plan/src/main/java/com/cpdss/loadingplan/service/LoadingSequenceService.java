@@ -135,6 +135,10 @@ public class LoadingSequenceService {
           Optional.ofNullable(param.getTime()).ifPresent(paramBuilder::setTime);
           Optional.ofNullable(param.getGomValue())
               .ifPresent(value -> paramBuilder.setGomValue(value.toString()));
+          Optional.ofNullable(param.getBmFrameNumber())
+              .ifPresent(value -> paramBuilder.setBmFrameNumber(value.toString()));
+          Optional.ofNullable(param.getSfFrameNumber())
+              .ifPresent(value -> paramBuilder.setSfFrameNumber(value.toString()));
           builder.addLoadingSequenceStabilityParameters(paramBuilder.build());
         });
   }

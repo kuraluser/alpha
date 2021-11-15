@@ -499,6 +499,8 @@ message LoadingPlanStabilityParameters {
   string gomValue = 12;
   string freeboard = 13;
   string manifoldHeight = 14;
+  string sfFrameNumber = 15;
+  string bmFrameNumber = 16;
 }
 
 message LoadingPlanTankDetails {

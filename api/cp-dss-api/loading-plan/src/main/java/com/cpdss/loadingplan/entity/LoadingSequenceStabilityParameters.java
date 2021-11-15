@@ -57,4 +57,10 @@ public class LoadingSequenceStabilityParameters extends EntityDoc {
   private BigDecimal gomValue;
 
   @Transient private Long communicationRelatedEntityId;
+
+  @Column(name = "sf_frame_number")
+  private BigDecimal sfFrameNumber;
+
+  @Column(name = "bm_frame_number")
+  private BigDecimal bmFrameNumber;
 }

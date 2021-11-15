@@ -402,7 +402,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       log.info("Saving Loading Information Response JSON");
       StatusReply reply =
           this.saveJson(
-              infoId, GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_SIMULATOR_ID, requestJsonString);
+              infoId,
+              GatewayConstants.LOADING_INFORMATION_RESPONSE_JSON_SIMULATOR_ID,
+              requestJsonString);
       if (!GatewayConstants.SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }

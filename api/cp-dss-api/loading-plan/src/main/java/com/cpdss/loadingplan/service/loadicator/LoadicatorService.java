@@ -1126,5 +1126,13 @@ public class LoadicatorService {
             : new BigDecimal(result.getCalculatedTrimPlanned()));
     stabilityParameters.setGomValue(
         StringUtils.isEmpty(result.getGomValue()) ? null : new BigDecimal(result.getGomValue()));
+    stabilityParameters.setSfFrameNumber(
+        StringUtils.isEmpty(result.getSFFrameNumber())
+            ? null
+            : new BigDecimal(result.getSFFrameNumber()));
+    stabilityParameters.setBmFrameNumber(
+        StringUtils.isEmpty(result.getBMFrameNumber())
+            ? null
+            : new BigDecimal(result.getBMFrameNumber()));
   }
 }

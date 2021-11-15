@@ -27,4 +27,6 @@ public class LoadicatorResult {
   private List<String> errorDetails;
   private List<String> judgement;
   private String gomValue;
+  private String SFFrameNumber;
+  private String BMFrameNumber;
 }
