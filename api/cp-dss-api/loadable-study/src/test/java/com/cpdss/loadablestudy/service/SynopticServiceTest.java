@@ -347,7 +347,7 @@ public class SynopticServiceTest {
             this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLLSPR());
-    this.synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
+    //    this.synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
   }
 
   private Voyage getVoyage() {
