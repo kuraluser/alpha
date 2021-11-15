@@ -12,7 +12,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class PortLoadingPlanRobDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;

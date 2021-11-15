@@ -5,14 +5,12 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "port_loadable_plan_commingle_details")
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 public class PortLoadingPlanCommingleDetails extends PortLoadingPlanCommingleEntityDoc {
   private static final long serialVersionUID = 1L;
 

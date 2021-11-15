@@ -5,6 +5,8 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Table(name = "loading_plan_stowage_details")
@@ -12,7 +14,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class LoadingPlanStowageDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -22,6 +23,7 @@ public class LoadingPlanStowageDetails extends EntityDoc {
       name = "loading_plan_portwise_details_xid",
       referencedColumnName = "id",
       nullable = true)
+  @NotFound(action = NotFoundAction.IGNORE)
   private LoadingPlanPortWiseDetails loadingPlanPortWiseDetails;
 
   @Column(name = "tank_xid")
@@ -54,5 +56,5 @@ public class LoadingPlanStowageDetails extends EntityDoc {
   @Column(name = "abbreviation")
   private String abbreviation;
 
-  @Transient private Long CommunicationPortWiseId;
+  @Transient private Long communicationRelatedEntityId;
 }

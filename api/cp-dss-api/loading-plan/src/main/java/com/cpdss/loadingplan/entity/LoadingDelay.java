@@ -39,4 +39,6 @@ public class LoadingDelay extends EntityDoc {
 
   @Column(name = "cargo_nomination_xid")
   private Long cargoNominationId;
+
+  @Transient private Long communicationRelatedEntityId;
 }

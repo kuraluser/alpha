@@ -63,6 +63,4 @@ public interface PortLoadingPlanCommingleTempDetailsRepository
 
   List<PortLoadingPlanCommingleTempDetails> findByLoadablePatternIdAndIsActiveTrue(
       Long loadablePatternId);
-
-  public List<PortLoadingPlanCommingleTempDetails> findByLoadingInformation(Long loadingInfoId);
 }

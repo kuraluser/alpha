@@ -2,15 +2,10 @@
 package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.*;
 
 @Entity
@@ -19,7 +14,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class LoadingSequence extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -75,4 +69,6 @@ public class LoadingSequence extends EntityDoc {
 
   @Column(name = "cargo_loading_rate_2")
   private BigDecimal cargoLoadingRate2;
+
+  @Transient private Long communicationRelatedEntityId;
 }

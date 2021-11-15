@@ -12,7 +12,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class PortLoadingPlanBallastDetails extends EntityDoc {
 
   private static final long serialVersionUID = 1L;
@@ -92,4 +91,6 @@ public class PortLoadingPlanBallastDetails extends EntityDoc {
 
   @Column(name = "sounding")
   private BigDecimal sounding;
+
+  @Transient private Long communicationRelatedEntityId;
 }
