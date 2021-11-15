@@ -302,12 +302,15 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               maxQuantity.setApi(
                   String.valueOf(
                       quantity.stream()
+                          .filter(bl -> bl.getApi() != null && bl.getApi().signum() > 0)
                           .mapToDouble(billOfLadding -> billOfLadding.getApi().doubleValue())
                           .average()
                           .orElse(0)));
               maxQuantity.setTemp(
                   String.valueOf(
                       quantity.stream()
+                          .filter(
+                              bl -> bl.getTemperature() != null && bl.getTemperature().signum() > 0)
                           .mapToDouble(
                               billOfLadding -> billOfLadding.getTemperature().doubleValue())
                           .average()
