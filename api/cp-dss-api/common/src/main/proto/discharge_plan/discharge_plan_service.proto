@@ -40,7 +40,7 @@ service DischargeInformationService {
   rpc savePostDischargeStage(DischargeInformation) returns (DischargingInfoSaveResponse) {}
 
   rpc GetOrSaveRulesForDischargingPlan (DischargeRuleRequest) returns (DischargeRuleReply) {}
-  
+  rpc getPortDischargingPlanRobDetails(PortDischargingPlanRobDetailsRequest) returns (PortDischargingPlanRobDetailsReply) {}
 }
 
 service DischargePlanService{

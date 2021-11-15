@@ -431,3 +431,24 @@ message DischargingInfoLoadicatorDataReply {
   int64 loadableStudyId = 2;
   ResponseStatus responseStatus = 3;
 }
+
+message PortDischargingPlanRobDetails{
+    int64 portXId = 1;
+    int64 portRotationXId = 2;
+    int64 tankXId = 3;
+    double quantity = 4;
+    int32 conditionType = 5;
+    int32 valueType = 6;
+    double density = 7;
+}
+
+message PortDischargingPlanRobDetailsRequest{
+    int64 portXId = 1;
+    int64 portRotationXId = 2;
+    int32 conditionType = 3;
+}
+
+message PortDischargingPlanRobDetailsReply{
+    ResponseStatus responseStatus = 1;
+    repeated PortDischargingPlanRobDetails portDischargingPlanRobDetails = 2;
+}

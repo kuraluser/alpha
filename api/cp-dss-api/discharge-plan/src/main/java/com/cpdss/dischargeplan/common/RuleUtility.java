@@ -9,7 +9,6 @@ import com.cpdss.dischargeplan.domain.rules.RuleDropDownMaster;
 import com.cpdss.dischargeplan.domain.rules.RulePlans;
 import com.cpdss.dischargeplan.domain.rules.Rules;
 import com.cpdss.dischargeplan.domain.rules.RulesInputs;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +32,7 @@ public class RuleUtility {
     return rulePlans;
   }
 
-  public static List<RulePlans> buildDischargingRule(
-		  DischargeRuleReply ruleReply) {
+  public static List<RulePlans> buildDischargingRule(DischargeRuleReply ruleReply) {
     List<RulePlans> rulePlans = new ArrayList<>();
     ruleReply
         .getRulePlanList()

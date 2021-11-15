@@ -2942,4 +2942,35 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       }
     }
   }
+
+  /**
+   * Getting Vessel Tanks using Tank ids
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getVesselTanksByTankIds(
+      VesselTankRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.VesselTankReply> responseObserver) {
+    log.info("Getting vessel tanks for tank Ids.");
+    com.cpdss.common.generated.VesselInfo.VesselTankReply.Builder builder =
+        com.cpdss.common.generated.VesselInfo.VesselTankReply.newBuilder();
+    try {
+      this.vesselParticularService.getVesselTanksByTankIds(request, builder);
+      builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (Exception e) {
+      log.info("Getting vessel tanks failed.");
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(null != e.getMessage() ? e.getMessage() : "")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

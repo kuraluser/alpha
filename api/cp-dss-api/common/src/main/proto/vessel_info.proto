@@ -50,6 +50,8 @@ service VesselInfoService {
 	rpc GetVesselParticulars(LoadingInfoRulesRequest) returns (VesselParticulars) {} //used for Loading plan excel 
 	
 	rpc GetVesselDetaildInformation(VesselIdRequest) returns (VesselDetaildInfoReply){}
+
+	rpc GetVesselTanksByTankIds(VesselTankRequest) returns (VesselTankReply){}
 }
 
 
@@ -713,6 +715,11 @@ message BendingMomentType1 {
 		int32 tankOrder = 11;
 		int32 tankGroup = 12;
 		
+	}
+
+	message VesselTankReply{
+		repeated VesselTankInfo vesselTankInfo = 1;
+		ResponseStatus responseStatus = 2;
 	}
 	
 	message VesselDetaildInfoReply{
