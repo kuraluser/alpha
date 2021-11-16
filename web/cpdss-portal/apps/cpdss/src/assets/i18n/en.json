@@ -2111,6 +2111,7 @@
   "FILE_REPOSITORY_INVALID_FILE": "Invalid file type",
   "FILE_REPOSITORY_FILE_SIZE_ERROR": "File size should be less than 1Mb",
   "FILE_REPOSITORY_UPLOAD_TYPE": "Upload type",
+  "FILE_REPOSITORY_PASSWORD_HINT": "Hint : \n The password will be the combinaion of voyage number and created date.\n Example : \n Voyage number = voyage \n Created Date = 01-Jan-2021 \n Password = voyage01012021",
   "LOADING_OPERATION_REGENARATE_INFO_MESSAGE": "If there is any change in loading information, loading rules, please regenerate the plan to get the updated figures.",
   "DISCHARGE_STUDY_PORTS_VIEW_PLAN_NOT_AVAILABLE": "PLAN NOT GENERATED FOR THE SELECTED VOYAGE SINCE NO DISCHARGE STUDY AVAILABLE.",
   "GENERATE_LOADABLE_PATTERN_COMMUNICATION_TO_SHORE_INFO": "Info",
