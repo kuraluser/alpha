@@ -310,7 +310,9 @@ public class DischargingPlanBuilderService {
     stabilityParams.setFreeboard(
         StringUtils.isEmpty(params.getFreeboard()) ? null : new BigDecimal(params.getFreeboard()));
     stabilityParams.setManifoldHeight(
-        StringUtils.isEmpty(params.getManifoldHeight()) ? null : new BigDecimal(params.getManifoldHeight()));
+        StringUtils.isEmpty(params.getManifoldHeight())
+            ? null
+            : new BigDecimal(params.getManifoldHeight()));
   }
 
   public void buildPortStowage(

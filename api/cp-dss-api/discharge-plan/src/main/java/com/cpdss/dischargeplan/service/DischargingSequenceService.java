@@ -220,7 +220,8 @@ public class DischargingSequenceService {
         eductionOperation.getTanksUsed(),
         eductionOperation.getEductorsUsed());
     EductorOperation.Builder builder = EductorOperation.newBuilder();
-    Optional.ofNullable(eductionOperation.getEductorsUsed()).ifPresent(builder::setEductorPumpsUsed);
+    Optional.ofNullable(eductionOperation.getEductorsUsed())
+        .ifPresent(builder::setEductorPumpsUsed);
     Optional.ofNullable(eductionOperation.getEndTime()).ifPresent(builder::setEndTime);
     Optional.ofNullable(eductionOperation.getId()).ifPresent(builder::setId);
     Optional.ofNullable(eductionOperation.getStartTime()).ifPresent(builder::setStartTime);
