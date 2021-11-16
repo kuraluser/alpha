@@ -198,6 +198,18 @@ public class DischargeInformationRPCService
             .ifPresent(dischargingInformation::setDischargingPlanArrStatusId);
         Optional.ofNullable(disEntity.getDepartureStatusId())
             .ifPresent(dischargingInformation::setDischargingPlanDepStatusId);
+        Optional.ofNullable(disEntity.getIsDischargeInformationComplete())
+            .ifPresent(dischargingInformation::setIsDischargeInfoComplete);
+        Optional.ofNullable(disEntity.getIsDischargingInstructionsComplete())
+            .ifPresent(dischargingInformation::setIsDischargingInstructionsComplete);
+        Optional.ofNullable(disEntity.getIsDischargingPlanGenerated())
+            .ifPresent(dischargingInformation::setIsDischargingPlanGenerated);
+        Optional.ofNullable(disEntity.getIsDischargingSequenceGenerated())
+            .ifPresent(dischargingInformation::setIsDischargingSequenceGenerated);
+        Optional.ofNullable(disEntity.getDischargeSlopTankFirst())
+            .ifPresent(dischargingInformation::setDischargeSlopTanksFirst);
+        Optional.ofNullable(disEntity.getDischargeCommingleCargoSeparately())
+            .ifPresent(dischargingInformation::setDischargeCommingledCargoSeparately);
         // Set Discharge Rates
         this.informationBuilderService.buildDischargeRateMessageFromEntity(
             disEntity, dischargingInformation);

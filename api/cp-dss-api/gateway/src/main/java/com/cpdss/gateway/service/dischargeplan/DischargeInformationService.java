@@ -381,12 +381,26 @@ public class DischargeInformationService {
         this.infoBuilderService.buildDischargeCowPlan(
             planReply.getDischargingInformation().getCowPlan(), extract);
     dischargeInformation.setCowPlan(cowPlan);
+    com.cpdss.common.generated.discharge_plan.DischargeInformation dischargingInformationReply =
+        planReply.getDischargingInformation();
     dischargeInformation.setDischargeInfoStatusId(
-        planReply.getDischargingInformation().getDischargingInfoStatusId());
+        dischargingInformationReply.getDischargingInfoStatusId());
     dischargeInformation.setDischargePlanArrStatusId(
-        planReply.getDischargingInformation().getDischargingPlanArrStatusId());
+        dischargingInformationReply.getDischargingPlanArrStatusId());
     dischargeInformation.setDischargePlanDepStatusId(
-        planReply.getDischargingInformation().getDischargingPlanDepStatusId());
+        dischargingInformationReply.getDischargingPlanDepStatusId());
+    dischargeInformation.setIsDischargeInfoComplete(
+        dischargingInformationReply.getIsDischargeInfoComplete());
+    dischargeInformation.setIsDischargeInstructionsComplete(
+        dischargingInformationReply.getIsDischargeInfoComplete());
+    dischargeInformation.setIsDischargePlanGenerated(
+        dischargingInformationReply.getIsDischargingPlanGenerated());
+    dischargeInformation.setIsDischargeSequenceGenerated(
+        dischargingInformationReply.getIsDischargingSequenceGenerated());
+    dischargeInformation.setDischargeSlopTanksFirst(
+        dischargingInformationReply.getDischargeSlopTanksFirst());
+    dischargeInformation.setDischargeCommingledCargoSeparately(
+        dischargingInformationReply.getDischargeCommingledCargoSeparately());
     dischargingPlanResponse.setDischargingInformation(dischargeInformation);
     List<LoadableStudy.LoadableQuantityCargoDetails> portCargos =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(

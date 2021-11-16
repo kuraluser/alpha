@@ -65,7 +65,7 @@ public class PortDischargingPlanStabilityParameters extends EntityDoc {
 
   @Column(name = "actual_planned")
   private Integer valueType;
-  
+
   @Column(name = "freeboard")
   private BigDecimal freeboard;
 

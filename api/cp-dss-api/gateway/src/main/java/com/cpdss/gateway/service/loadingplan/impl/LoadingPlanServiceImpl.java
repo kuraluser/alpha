@@ -1869,22 +1869,22 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     // if no value in temp take actual
     if (commingleDetails.size() == 0) {
       commingleDetails =
-              response.getLoadablePlanCommingleDetailsList().stream()
-                      .filter(
-                              commingleDetail ->
-                                      arrivalDeparture.equalsIgnoreCase(commingleDetail.getArrivalDeparture())
-                                              && ACTUAL.equalsIgnoreCase(commingleDetail.getActualPlanned()))
-                      .collect(Collectors.toList());
+          response.getLoadablePlanCommingleDetailsList().stream()
+              .filter(
+                  commingleDetail ->
+                      arrivalDeparture.equalsIgnoreCase(commingleDetail.getArrivalDeparture())
+                          && ACTUAL.equalsIgnoreCase(commingleDetail.getActualPlanned()))
+              .collect(Collectors.toList());
     }
     // if no actual values take planned
     if (commingleDetails.size() == 0) {
       commingleDetails =
-              response.getLoadablePlanCommingleDetailsList().stream()
-                      .filter(
-                              commingleDetail ->
-                                      commingleDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
-                                              && commingleDetail.getActualPlanned().equalsIgnoreCase(PLANNED))
-                      .collect(Collectors.toList());
+          response.getLoadablePlanCommingleDetailsList().stream()
+              .filter(
+                  commingleDetail ->
+                      commingleDetail.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture)
+                          && commingleDetail.getActualPlanned().equalsIgnoreCase(PLANNED))
+              .collect(Collectors.toList());
     }
     if (commingleDetails.size() > 0) {
       commingleDetails.stream()

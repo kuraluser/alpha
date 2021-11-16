@@ -999,7 +999,7 @@ public class DischargeInformationService {
             .map(rules -> Long.parseLong(rules.getVesselRuleXId()))
             .collect(Collectors.toList());
     List<DischargePlanRules> dischargingRulesList =
-            dischargeRulesRepository
+        dischargeRulesRepository
             .findByDischargeInformationAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
                 dischargeInformation, request.getVesselId(), true, ruleListId);
     if (dischargingRulesList.size() > 0) {
@@ -1062,7 +1062,7 @@ public class DischargeInformationService {
                                 .filter(item -> item.trim().length() != 0);
                         if (rule.getId() != null && rule.getId().trim().length() != 0) {
                           Optional<DischargePlanRules> rVesselMapping =
-                                  dischargeRulesRepository.findById(Long.valueOf(rule.getId()));
+                              dischargeRulesRepository.findById(Long.valueOf(rule.getId()));
                           if (rVesselMapping.isPresent()) {
                             dischargePlanRules = rVesselMapping.get();
                           } else {
@@ -1073,7 +1073,7 @@ public class DischargeInformationService {
                         } else {
                           if (isRuleTemplateIdExist.isPresent()) {
                             Optional<DischargePlanRules> loadableStudyRulesRecord =
-                                    dischargeRulesRepository.checkIsRuleTemplateExist(
+                                dischargeRulesRepository.checkIsRuleTemplateExist(
                                     dischargeInformation.getId(),
                                     true,
                                     Long.valueOf(rule.getRuleTemplateId()));
@@ -1133,8 +1133,7 @@ public class DischargeInformationService {
                           DischargePlanRuleInput ruleTemplateInput = new DischargePlanRuleInput();
                           if (input.getId() != null && input.getId().length() != 0) {
                             Optional<DischargePlanRuleInput> rTemplateInput =
-                                    dischargeRulesInputRepository.findById(
-                                    Long.valueOf(input.getId()));
+                                dischargeRulesInputRepository.findById(Long.valueOf(input.getId()));
                             if (rTemplateInput.isPresent()) {
                               ruleTemplateInput = rTemplateInput.get();
                             } else {

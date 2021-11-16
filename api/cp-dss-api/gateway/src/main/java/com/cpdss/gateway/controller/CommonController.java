@@ -164,8 +164,7 @@ public class CommonController {
           section,
           category,
           headers.getFirst(CORRELATION_ID_HEADER),
-          false
-          );
+          false);
 
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving file repo details", e);

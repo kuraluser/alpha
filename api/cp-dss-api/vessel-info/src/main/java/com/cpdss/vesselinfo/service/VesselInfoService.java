@@ -755,7 +755,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
                   .ifPresent(
                       id -> vesselPumpBuilder.setPumpTypeId(vesselPump.getPumpType().getId()));
               if (Optional.ofNullable(vesselPumpTankMapping.getVesselTank()).isPresent()) {
-                vesselPumpBuilder.setVesselTankDetail(createVesselTankData(
+                vesselPumpBuilder.setVesselTankDetail(
+                    createVesselTankData(
                         vesselPumpTankMapping.getVesselTank(), VesselTankDetail.newBuilder()));
               }
             });
