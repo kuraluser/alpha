@@ -477,7 +477,9 @@ public class LoadableStudyService {
   public LoadableStudyResponse saveLoadableStudy(
       final LoadableStudy request, String correlationId, MultipartFile[] files)
       throws GenericServiceException, IOException {
-    this.validateLoadableStudyFiles(files);
+    if (files != null) {
+      this.validateLoadableStudyFiles(files);
+    }
     Builder builder = LoadableStudyDetail.newBuilder();
     Optional.ofNullable(request.getDeletedAttachments())
         .ifPresent(builder::addAllDeletedAttachments);
@@ -506,12 +508,14 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getIsObqComplete()).ifPresent(builder::setIsObqComplete);
     Optional.ofNullable(request.getIsDischargingPortComplete())
         .ifPresent(builder::setIsDischargingPortComplete);
-    for (MultipartFile file : files) {
-      builder.addAttachments(
-          LoadableStudyAttachment.newBuilder()
-              .setFileName(file.getOriginalFilename() == null ? "" : file.getOriginalFilename())
-              .setByteString(ByteString.copyFrom(file.getBytes()))
-              .build());
+    if (files != null) {
+      for (MultipartFile file : files) {
+        builder.addAttachments(
+            LoadableStudyAttachment.newBuilder()
+                .setFileName(file.getOriginalFilename() == null ? "" : file.getOriginalFilename())
+                .setByteString(ByteString.copyFrom(file.getBytes()))
+                .build());
+      }
     }
     LoadableStudyReply reply = this.saveLoadableStudy(builder.build());
     if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {

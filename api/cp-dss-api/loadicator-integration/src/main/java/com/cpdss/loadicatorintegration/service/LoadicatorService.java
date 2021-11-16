@@ -354,23 +354,24 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       List<StowagePlan> stowagePlanList = this.stowagePlanRepository.findByIdIn(stowagePlanIds);
       Long statusCount =
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
+      Long remainingCount = stowagePlanList.size() - statusCount;
       if (request.getTypeId() == 1) { // Loadable Study
         log.info(
             "Checking loadicator status of {} ({} entries remaining)",
             (!request.getIsPattern()
                 ? ("Loadable Study " + request.getStowagePlanDetails(0).getBookingListId())
                 : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())),
-            statusCount);
+            remainingCount);
       } else if (request.getTypeId() == 2) { // Loading Plan
         log.info(
             "Checking loadicator status of Loading Information {} ({} entries remaining)",
             request.getStowagePlanDetails(0).getBookingListId(),
-            statusCount);
+            remainingCount);
       } else if (request.getTypeId() == 3) { // Discharging Plan
         log.info(
             "Checking loadicator status of Discharging Information {} ({} entries remaining)",
             request.getStowagePlanDetails(0).getBookingListId(),
-            statusCount);
+            remainingCount);
       }
       log.info(
           "Stowage Plans remaining to be processed: {} entries",
