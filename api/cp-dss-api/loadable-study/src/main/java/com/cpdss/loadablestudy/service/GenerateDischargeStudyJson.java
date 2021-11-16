@@ -484,8 +484,8 @@ public class GenerateDischargeStudyJson {
                   ofNullable(item.getAverageTideHeight())
                       .ifPresent(portdetail::setAverageTideHeight);
                   ofNullable(item.getTideHeight()).ifPresent(portdetail::setTideHeight);
-                  ofNullable(item.getSerializedSize())
-                      .ifPresent(i -> portdetail.setDensitySeaWater(i.toString()));
+                  // Bug fix : 4615
+                  ofNullable(item.getWaterDensity()).ifPresent(portdetail::setDensitySeaWater);
                   ofNullable(item.getCountryName()).ifPresent(portdetail::setCountryName);
                   portDetailsList.add(portdetail);
                 });
@@ -525,6 +525,8 @@ public class GenerateDischargeStudyJson {
                 .ifPresent(i -> onHandQuantity.setDepartureVolume(i.toString()));
             ofNullable(item.getDepartureQuantity())
                 .ifPresent(i -> onHandQuantity.setDepartureQuantity(i.toString()));
+            // Bug fix : 4615
+            ofNullable(item.getDensity()).ifPresent(i -> onHandQuantity.setDensity(i.toString()));
             onHandQuantityList.add(onHandQuantity);
           });
       log.info("Found {} items", onHandQuantityList.size());
