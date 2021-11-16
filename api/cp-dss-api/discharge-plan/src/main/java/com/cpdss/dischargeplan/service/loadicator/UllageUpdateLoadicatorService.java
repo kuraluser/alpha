@@ -629,6 +629,7 @@ public class UllageUpdateLoadicatorService {
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(dischargeInformation.getVesselXid());
     algoRequest.setPortId(dischargeInformation.getPortXid());
+    algoRequest.setPortRotationId(dischargeInformation.getPortRotationXid());
     // TODO ask pranav about the process id. there is no process id for DS
     // algoRequest.setLoadableStudyProcessId(dischargeInformation.get);
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
@@ -813,6 +814,7 @@ public class UllageUpdateLoadicatorService {
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(dischargeInformation.getVesselXid());
     algoRequest.setPortId(dischargeInformation.getPortXid());
+    algoRequest.setPortRotationId(dischargeInformation.getPortRotationXid());
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()

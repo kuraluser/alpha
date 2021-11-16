@@ -377,6 +377,7 @@ message LDtrim {
    int64 stowagePlanId = 22;
    int64 synopticalId = 23;
    string deflection = 24;
+   int64 portRotationId = 25;
 }
 
 message LDStrength{
@@ -405,6 +406,7 @@ message LDStrength{
    int64 portId = 23;
    int64 stowagePlanId = 24;
    int64 synopticalId = 25;
+   int64 portRotationId = 26;
 }
 
 message LDIntactStability {
@@ -433,6 +435,7 @@ message LDIntactStability {
    int64 portId = 23;
    int64 stowagePlanId = 24;
    int64 synopticalId = 25;
+   int64 portRotationId = 26;
 }
 message LoadablePatternAlgoRequest {
 	string processsId = 1;

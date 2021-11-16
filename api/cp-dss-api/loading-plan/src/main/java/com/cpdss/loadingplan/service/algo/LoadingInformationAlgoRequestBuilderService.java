@@ -98,7 +98,7 @@ public class LoadingInformationAlgoRequestBuilderService {
       algoRequest.setVesselId(loadingInfoOpt.get().getVesselXId());
       algoRequest.setVoyageId(loadingInfoOpt.get().getVoyageId());
       algoRequest.setPortId(loadingInfoOpt.get().getPortXId());
-
+      algoRequest.setPortRotationId(loadingInfoOpt.get().getPortRotationXId());
       // Self Call of GRPC to get loading info, need to change in future.
       LoadingInformation loadingInformation =
           getLoadingInformation(

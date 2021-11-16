@@ -29,4 +29,5 @@ public class LDTrim {
   private Long portId;
   private Long synopticalId;
   private String deflection;
+  private Long portRotationId;
 }

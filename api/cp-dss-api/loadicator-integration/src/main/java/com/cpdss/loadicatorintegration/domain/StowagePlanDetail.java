@@ -12,4 +12,5 @@ public class StowagePlanDetail {
   private Long id;
   private Long portId;
   private Long synopticalId;
+  private Long portRotationId;
 }

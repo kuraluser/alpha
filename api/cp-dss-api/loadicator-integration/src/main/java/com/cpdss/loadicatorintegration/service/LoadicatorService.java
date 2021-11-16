@@ -337,6 +337,10 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         StringUtils.isEmpty(stowagePlanInfo.getSeaWaterDensity())
             ? null
             : new BigDecimal(stowagePlanInfo.getSeaWaterDensity()));
+    stowagePlan.setPortRotationId(
+        StringUtils.isEmpty(stowagePlanInfo.getPortRotationId())
+            ? null
+            : stowagePlanInfo.getPortRotationId());
     return stowagePlan;
   }
 
@@ -557,6 +561,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       ldStability.setPortId(stowageDetail.getPortId());
       ldStability.setId(stability.getId());
       ldStability.setSynopticalId(stowageDetail.getSynopticalId());
+      ldStability.setPortRotationId(stowageDetail.getPortRotationId());
       Optional.ofNullable(stability.getStowagePlanId()).ifPresent(ldStability::setStowagePlanId);
       Optional.ofNullable(stability.getBigintialGomvalue())
           .ifPresent(item -> ldStability.setBigintialGomValue(String.valueOf(item)));
@@ -614,6 +619,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
       ldStrength.setPortId(stowageDetail.getPortId());
       ldStrength.setSynopticalId(stowageDetail.getSynopticalId());
+      ldStrength.setPortRotationId(stowageDetail.getPortRotationId());
       ldStrength.setId(strength.getId());
       Optional.ofNullable(strength.getStowagePlanId()).ifPresent(ldStrength::setStowagePlanId);
       Optional.ofNullable(strength.getShearingForcePresentValue())
@@ -674,6 +680,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
       ldTrim.setPortId(stowageDetail.getPortId());
       ldTrim.setSynopticalId(stowageDetail.getSynopticalId());
+      ldTrim.setPortRotationId(stowageDetail.getPortRotationId());
       ldTrim.setId(trim.getId());
       Optional.ofNullable(trim.getStowagePlanId()).ifPresent(ldTrim::setStowagePlanId);
       Optional.ofNullable(trim.getAftDraft())

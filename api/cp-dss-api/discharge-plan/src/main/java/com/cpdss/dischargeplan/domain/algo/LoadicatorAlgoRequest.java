@@ -14,5 +14,6 @@ public class LoadicatorAlgoRequest {
   private String dischargeStudyProcessId;
   private Long vesselId;
   private Long portId;
+  private Long portRotationId;
   private List<LoadicatorStage> stages;
 }

@@ -310,6 +310,7 @@ public class LoadicatorService {
           .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
     }
     stowagePlanBuilder.setSynopticalId(dischargeInformation.getSynopticTableXid());
+    stowagePlanBuilder.setPortRotationId(dischargeInformation.getPortRotationXid());
   }
 
   public void saveLoadicatorInfo(DischargeInformation dischargeInformation, String processId)
@@ -752,6 +753,7 @@ public class LoadicatorService {
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(dischargeInformation.getVesselXid());
     algoRequest.setPortId(dischargeInformation.getPortXid());
+    algoRequest.setPortRotationId(dischargeInformation.getPortRotationXid());
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()
