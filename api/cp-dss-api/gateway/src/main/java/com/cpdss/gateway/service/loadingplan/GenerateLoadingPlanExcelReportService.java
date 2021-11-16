@@ -199,7 +199,7 @@ public class GenerateLoadingPlanExcelReportService {
 
         // Adding password protection
         GenerateProtectedFile.setPasswordToWorkbook(
-            workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
+            workbook, "test", "2021-10-10 00:00:00", outFile);
         resultFileStream.close();
 
         // Putting entry in file repo
