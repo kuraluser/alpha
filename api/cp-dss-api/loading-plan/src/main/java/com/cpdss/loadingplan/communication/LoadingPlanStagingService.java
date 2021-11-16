@@ -222,7 +222,7 @@ public class LoadingPlanStagingService extends StagingService {
           }
         case loading_plan_ballast_details:
           {
-            if (loadingPlanPortWiseDetailsIds != null) {
+            if (loadingPlanPortWiseDetailsIds != null && !loadingPlanPortWiseDetailsIds.isEmpty()) {
               String loadingPlanBallastDetailsJson =
                   loadingPlanStagingRepository.getLoadingPlanBallastDetailsWithPortIds(
                       loadingPlanPortWiseDetailsIds);
@@ -243,7 +243,7 @@ public class LoadingPlanStagingService extends StagingService {
           }
         case loading_plan_rob_details:
           {
-            if (loadingPlanPortWiseDetailsIds != null) {
+            if (loadingPlanPortWiseDetailsIds != null && !loadingPlanPortWiseDetailsIds.isEmpty()) {
               String loadingPlanRobDetailsJson =
                   loadingPlanStagingRepository.getLoadingPlanRobDetailsWithPortIds(
                       loadingPlanPortWiseDetailsIds);
@@ -338,7 +338,7 @@ public class LoadingPlanStagingService extends StagingService {
 
         case loading_plan_stowage_details:
           {
-            if (loadingPlanPortWiseDetailsIds != null) {
+            if (loadingPlanPortWiseDetailsIds != null && !loadingPlanPortWiseDetailsIds.isEmpty()) {
               String loadingPlanStowageDetailsJson =
                   loadingPlanStagingRepository.getLoadingPlanStowageDetailsWithPortIds(
                       loadingPlanPortWiseDetailsIds);
@@ -377,7 +377,7 @@ public class LoadingPlanStagingService extends StagingService {
           }
         case loading_plan_stability_parameters:
           {
-            if (loadingPlanPortWiseDetailsIds != null) {
+            if (loadingPlanPortWiseDetailsIds != null && !loadingPlanPortWiseDetailsIds.isEmpty()) {
               String loadingPlanStabilityParametersJson =
                   loadingPlanStagingRepository.getLoadingPlanStabilityParametersWithPortIds(
                       loadingPlanPortWiseDetailsIds);
@@ -661,7 +661,7 @@ public class LoadingPlanStagingService extends StagingService {
       String processGroupId,
       List<String> processedList,
       List<Object> object) {
-    if (loadingSequenceIds != null) {
+    if (loadingSequenceIds != null && !loadingSequenceIds.isEmpty()) {
       String loadingPlanPortWiseDetailsJson =
           loadingPlanStagingRepository.getLoadingPlanPortWiseDetailsWithLoadingSeqIds(
               loadingSequenceIds);
