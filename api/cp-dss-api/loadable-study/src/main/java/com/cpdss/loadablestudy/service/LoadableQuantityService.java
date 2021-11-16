@@ -155,8 +155,8 @@ public class LoadableQuantityService {
             String.valueOf(
                 this.getDWTByVesselId(
                     loadableStudy.get().getVesselXId(),
-                    portRotation.getMaxDraft() != null
-                        ? portRotation.getMaxDraft()
+                        minVal.isPresent()
+                        ? minVal.get()
                         : BigDecimal.ZERO));
       }
 
