@@ -335,7 +335,9 @@ public class DischargeInformationBuilderService {
               var1.getBendingMoment(),
               var1.getShearingForce(),
               var1.getConditionType(),
-              var1.getValueType()));
+              var1.getValueType(),
+              var1.getFreeboard(),
+              var1.getManifoldHeight()));
     }
     return response;
   }
@@ -348,7 +350,9 @@ public class DischargeInformationBuilderService {
       BigDecimal bm,
       BigDecimal sf,
       Integer conditionType,
-      Integer valueType)
+      Integer valueType,
+      BigDecimal freeboard,
+      BigDecimal manifoldHeight)
       throws GenericServiceException {
     try {
       LoadingPlanModels.LoadingPlanStabilityParameters builder =
@@ -361,6 +365,8 @@ public class DischargeInformationBuilderService {
               .setSf(sf != null ? sf.toString() : "")
               .setConditionType(conditionType != null ? conditionType : 0)
               .setValueType(valueType != null ? valueType : 0)
+              .setFreeboard(freeboard != null ? freeboard.toString() : "")
+              .setManifoldHeight(manifoldHeight != null ? manifoldHeight.toString() : "")
               .build();
       return builder;
     } catch (Exception e) {

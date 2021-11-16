@@ -68,4 +68,12 @@ public class OnHandQuantity extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "port_rotation_xid")
   private LoadableStudyPortRotation portRotation;
+  
+  public BigDecimal getDepartureQuantity() {
+	 return departureQuantity == null ? BigDecimal.valueOf(0) : departureQuantity;
+  }
+
+  public void setDepartureQuantity(BigDecimal departureQuantity) {
+	 this.departureQuantity = departureQuantity== null ? BigDecimal.valueOf(0) : departureQuantity;
+  }
 }
