@@ -2226,15 +2226,15 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
     if (LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING) {
       const cowLegend = `<ul class="list-group list-group-horizontal cow-legend">
                           <li class="list-group-item">
-                            <i class="pi pi-sort cow-legend-icon full-wash"></i>
+                            <i class=" cow-legend-icon full-wash"></i>
                             <span class="cow-legend-label">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_FULL_WASH']}</span>
                           </li>
                           <li class="list-group-item">
-                            <i class="pi pi-sort-down cow-legend-icon top-wash"></i>
+                            <i class="cow-legend-icon top-wash"></i>
                             <span class="cow-legend-label">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOP_WASH']}</span>
                           </li>
                           <li class="list-group-item">
-                            <i class="pi pi-sort-up cow-legend-icon bottom-wash"></i>
+                            <i class=" cow-legend-icon bottom-wash"></i>
                             <span class="cow-legend-label">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BOTTOM_WASH']}</span> </li>
                         </ul>`;
       chart.renderer.text(cowLegend, chart.plotLeft, chart.chartHeight - 20, true).attr({
