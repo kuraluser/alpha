@@ -153,6 +153,40 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
     return Highcharts.Tick.prototype?.getPosition.call(tick, axis.horiz, tick.pos, axis?.tickmarkOffset);
   };
 
+  /**
+   * Get the bm/sf text with frame no
+   *
+   * @static
+   * @param {*} name
+   * @param {*} index
+   * @param {string} text
+   * @return {*}  {string}
+   * @memberof LoadingDischargingSequenceChartComponent
+   */
+  static getTextWithFrameNo(name, index, text: string): string {
+    let frameNoData;
+
+    switch (name) {
+      case LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_SF']:
+        frameNoData = LoadingDischargingSequenceChartComponent?.sequenceData?.stabilityParams.find(param => param.name === 'sfFrameNumber');
+        break;
+
+      case LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BM']:
+        frameNoData = LoadingDischargingSequenceChartComponent?.sequenceData?.stabilityParams.find(param => param.name === 'bmFrameNumber');
+        break;
+
+      default:
+
+        break;
+    }
+    if (frameNoData) {
+      const frameNo = frameNoData?.data[index][1];
+      text = frameNo + ' / ' + text + '%';
+    }
+
+    return text
+  }
+
   constructor(private ngxSpinnerService: NgxSpinnerService,
     private loadingDischargingSequenceService: LoadingDischargingSequenceApiService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
@@ -206,8 +240,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       return duration;
     }, totalDuration);
 
-    const isStrippingShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballasts.some(tank => tank.id?.includes('stripping') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
-    const isGravityShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballastPumps.some(tank => tank.id?.includes('gravity') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
+    const isStrippingShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballasts?.some(tank => tank.id?.includes('stripping') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
+    const isGravityShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballastPumps?.some(tank => tank.id?.includes('gravity') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
     const isDense = this.stageTickPositions.length > totalDuration || (minStageDuration < 1 && totalDuration < 24) || isStrippingShortDuration || isGravityShortDuration;
 
     let maxXAxisValue = 0;
@@ -564,7 +598,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         {
           visible: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING,
           title: {
-            text: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_LOADING_RATE'] : LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DISCHARGING_RATE']} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}`,
+            text: `${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_LOADING_RATE']} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}`,
           },
           grid: {
             enabled: true,
@@ -782,180 +816,177 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    * @memberof LoadingDischargingSequenceChartComponent
    */
   setCargoPumpSequenceChartOptions() {
-    this.cargoPumpSequenceGanttChart = {
-      credits: {
-        enabled: false
-      },
-      chart: {
-        marginLeft: 280, // Keep all charts left aligned
-        spacing: [0, 0, 0, 0],
-        events: {
+    if (LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumps) {
+      this.cargoPumpSequenceGanttChart = {
+        credits: {
+          enabled: false
         },
-        zoomType: 'x',
-        marginRight: 20
-      },
-      plotOptions: {
-        gantt: {
-          colorAxis: false,
-          pointWidth: 6,
-          borderWidth: 0,
-          borderRadius: 0,
-        },
-        series: {
-          dataLabels: [
-            {
-              enabled: true,
-              align: 'right',
-              verticalAlign: 'bottom',
-              formatter: function () {
-                return !this.point?.options?.className ? this.point?.ullage : undefined;
-              }
-            },
-            {
-              enabled: true,
-              formatter: function () {
-                return this.point?.options?.className ? `<i class="pi ${this.point.options.className} sequence-icon"></i>` : undefined;
-              },
-              useHTML: true,
-              align: 'center'
-            }]
-        }
-      },
-      scrollbar: {
-        enabled: true,
-        showFull: false
-      },
-      xAxis: [
-        {
-          lineColor: '#bebebe',
-          lineWidth: 1,
-          crosshair: {
-            color: 'red',
-            zIndex: 3,
-            snap: false
-          },
+        chart: {
+          marginLeft: 280, // Keep all charts left aligned
+          spacing: [0, 0, 0, 0],
           events: {
-            setExtremes: this.syncExtremes,
-            afterSetExtremes: this.afterSyncExtremes
           },
-          labels: {
-            rotation: -45,
-            align: 'center',
-            formatter: function (y) {
-              const hours = (1000 * 60 * 60),
-                number = (Number(this.value) - LoadingDischargingSequenceChartComponent.minXAxisValue) / (hours);
-              return number.toFixed(2);
-            }
-          },
-          grid: {
-            enabled: false
-          },
-          // tickInterval: 1000 * 60 * 60,
-          tickPositions: LoadingDischargingSequenceChartComponent.tickPositions,
-          minorTickInterval: 1000 * 60 * 60,
-          minorGridLineColor: '#bebebe',
-          tickLength: 0,
-          gridLineWidth: 1,
-          gridLineColor: '#bebebe',
-          min: LoadingDischargingSequenceChartComponent.minXAxisValue,
-          max: this.maxXAxisScrollValue,
-          minRange: this.stageInterval * 1000 * 60 * 60,
-          // plotLines: this.stagePlotLines // TODO: will be needed in future
+          zoomType: 'x',
+          marginRight: 20
         },
-        {
-          title: {
-            text: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING ? `${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DISCHARGING_RATE']} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}` : null,
+        plotOptions: {
+          gantt: {
+            colorAxis: false,
+            pointWidth: 6,
+            borderWidth: 0,
+            borderRadius: 0,
           },
-          grid: {
-            enabled: true,
-          },
-          lineWidth: 0,
-          lineColor: 'transparent',
-          gridZIndex: 2,
-          gridLineColor: '#000d20',
-          tickPositions: this.cargoStageTickPositions,
-          tickColor: '#000d20',
-          tickLength: 100,
-          margin: 10,
-          labels: {
-            enabled: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING,
-            useHTML: true,
-            formatter: function () {
-              if (!this.isLast) {
-                const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
-                const tempRateArray = [];
-                const stage = LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages.find((data: any) => data.start <= this.value && data.end > this.value);
-                let categoryLabel;
-                if (stage?.cargos?.length) {
-                  LoadingDischargingSequenceChartComponent.sequenceData?.cargoLoadingRates[equalIndex]?.loadingRates?.map(item => {
-                    tempRateArray.push(item?.toFixed());
-                  });
-                  const rate = tempRateArray.join('/');
-
-                  categoryLabel =
-                    `<div class="row">
-                    <div class="col-md-12 text-center">
-                      <span>Requested Max</span>
-                        <br/><span>${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</span>
-                    </div>
-                  </div>`;
+          series: {
+            dataLabels: [
+              {
+                enabled: true,
+                align: 'right',
+                verticalAlign: 'bottom',
+                formatter: function () {
+                  return !this.point?.options?.className ? this.point?.ullage : undefined;
                 }
-                return categoryLabel;
-              }
-            },
+              },
+              {
+                enabled: true,
+                formatter: function () {
+                  return this.point?.options?.className ? `<i class="pi ${this.point.options.className} sequence-icon"></i>` : undefined;
+                },
+                useHTML: true,
+                align: 'center'
+              }]
           }
         },
-        {
-          opposite: false,
+        scrollbar: {
+          enabled: true,
+          showFull: false
+        },
+        xAxis: [
+          {
+            lineColor: '#bebebe',
+            lineWidth: 1,
+            crosshair: {
+              color: 'red',
+              zIndex: 3,
+              snap: false
+            },
+            events: {
+              setExtremes: this.syncExtremes,
+              afterSetExtremes: this.afterSyncExtremes
+            },
+            labels: {
+              rotation: -45,
+              align: 'center',
+              formatter: function (y) {
+                const hours = (1000 * 60 * 60),
+                  number = (Number(this.value) - LoadingDischargingSequenceChartComponent.minXAxisValue) / (hours);
+                return number.toFixed(2);
+              }
+            },
+            grid: {
+              enabled: false
+            },
+            // tickInterval: 1000 * 60 * 60,
+            tickPositions: LoadingDischargingSequenceChartComponent.tickPositions,
+            minorTickInterval: 1000 * 60 * 60,
+            minorGridLineColor: '#bebebe',
+            tickLength: 0,
+            gridLineWidth: 1,
+            gridLineColor: '#bebebe',
+            min: LoadingDischargingSequenceChartComponent.minXAxisValue,
+            max: this.maxXAxisScrollValue,
+            minRange: this.stageInterval * 1000 * 60 * 60,
+            // plotLines: this.stagePlotLines // TODO: will be needed in future
+          },
+          {
+            title: {
+              text: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING ? `${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DISCHARGING_RATE']} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}` : null,
+            },
+            grid: {
+              enabled: true,
+            },
+            lineWidth: 0,
+            lineColor: 'transparent',
+            gridZIndex: 2,
+            gridLineColor: '#000d20',
+            tickPositions: this.stageTickPositions,
+            tickColor: '#000d20',
+            tickLength: 100,
+            margin: 10,
+            labels: {
+              enabled: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING,
+              useHTML: true,
+              formatter: function () {
+                if (!this.isLast) {
+                  const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
+                  const tempRateArray = [];
+                  const stage = LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages.find((data: any) => data.start <= this.value && data.end > this.value);
+                  let categoryLabel;
+                  if (stage?.cargos?.length) {
+                    LoadingDischargingSequenceChartComponent.sequenceData?.cargoDischargingRates[equalIndex]?.dischargingRates?.map(item => {
+                      tempRateArray.push(item?.toFixed());
+                    });
+                    const rate = tempRateArray.join('/');
+                    categoryLabel =
+                      `<div class="font-main  text-center pl-5 pr-5">
+                      <div class="">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
+                  </div>`;
+                  }
+                  return categoryLabel;
+                }
+              },
+            }
+          },
+          {
+            opposite: false,
+            grid: {
+              enabled: true,
+            },
+            lineWidth: 0,
+            lineColor: 'transparent',
+            gridZIndex: 2,
+            gridLineColor: '#000d20',
+            gridLineWidth: 1,
+            tickPositions: this.cargoStageTickPositions,
+            tickColor: '#000d20',
+            margin: -45,
+            labels: {
+              enabled: false
+            },
+          },
+        ],
+        yAxis: {
+          type: 'category',
           grid: {
             enabled: true,
+            borderColor: '#bebebe',
+            columns: [
+              {
+                title: {
+                  text: `<div class="sequence-chart-cargo-pump-column">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_CARGO_PUMP']}</div>`,
+                  useHTML: true,
+                  y: -45,
+                },
+                categories: LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories?.map(function (item) {
+                  return item.pumpName;
+                })
+              }]
           },
-          lineWidth: 0,
-          lineColor: 'transparent',
-          gridZIndex: 2,
-          gridLineColor: '#000d20',
-          gridLineWidth: 1,
-          tickPositions: this.cargoStageTickPositions,
-          tickColor: '#000d20',
-          margin: -45,
-          labels: {
-            enabled: false
-          },
+          gridLineColor: '#bebebe'
         },
-      ],
-      yAxis: {
-        type: 'category',
-        grid: {
-          enabled: true,
+        tooltip: {
+          // shared: true,
           borderColor: '#bebebe',
-          columns: [
-            {
-              title: {
-                text: `<div class="sequence-chart-cargo-pump-column">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_CARGO_PUMP']}</div>`,
-                useHTML: true,
-                y: -45,
-              },
-              categories: LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories?.map(function (item) {
-                return item.pumpName;
-              })
-            }]
-        },
-        gridLineColor: '#bebebe'
-      },
-      tooltip: {
-        // shared: true,
-        borderColor: '#bebebe',
-        borderWidth: 1,
-        borderRadius: 20,
-        followPointer: true,
-        useHTML: true,
-        className: 'sequence-chart-tooltip container-fluid',
-        formatter: function () {
-          const pumpName = this?.point?.pumpName,
-            seriesName = this?.series?.name,
-            rate = this?.point?.rate;
+          borderWidth: 1,
+          borderRadius: 20,
+          followPointer: true,
+          useHTML: true,
+          className: 'sequence-chart-tooltip container-fluid',
+          formatter: function () {
+            const pumpName = this?.point?.pumpName,
+              seriesName = this?.series?.name,
+              rate = this?.point?.rate;
 
-          return `
+            return `
             <table>
               <tr>
                 <th>${pumpName}</th>
@@ -966,10 +997,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               </tr>
             </table>`;
 
+          },
         },
-      },
-      series: this.cargoPumpSequenceChartSeries
-    };
+        series: this.cargoPumpSequenceChartSeries
+      };
+    }
   }
 
   /**
@@ -1852,7 +1884,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         borderRadius: 20,
         followPointer: true,
         enabled: true,
-        xDateFormat: '%A, %b %e, %Y %H:%M'
+        xDateFormat: '%A, %b %e, %Y %H:%M',
+        pointFormatter: function() {
+          let text = this.y.toString();
+          text = LoadingDischargingSequenceChartComponent.getTextWithFrameNo(this.series.name, this.index, text);
+          
+          return `${this.series.name}: <b>${text}</b><br/>`;
+        }
       },
       series: this.stabilityChartSeries
     };
@@ -2007,7 +2045,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       series.forEach((item, i) => {
         if (series[i].data[category_index]) {
           cellWidth = series[i].data[category_index].plotX;
-          const text = series[i].data[category_index]?.y;
+          let text = series[i].data[category_index]?.y;
+          text = LoadingDischargingSequenceChartComponent.getTextWithFrameNo(series[i].name, category_index, text);
+          
           const x = chart.plotLeft + series[i].data[category_index].plotX;
           const y = tableTop + (i + 2) * rowHeight - cellPadding;
           const dataLabel = `${text}`;

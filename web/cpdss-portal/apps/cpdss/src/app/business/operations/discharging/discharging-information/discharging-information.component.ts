@@ -283,7 +283,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    */
   onUpdateDischargingDetails(event: ILoadingDischargingDetails) {
     this.dischargingInformationPostData.dischargeDetails = event;
-    this.dischargingInformationPostData.dischargeDetails.trimAllowed.finalTrim = this.dischargingInformationPostData.dischargeDetails.trimAllowed.topOffTrim;
+    this.dischargingInformationPostData.dischargeDetails.trimAllowed.finalTrim = this.dischargingInformationPostData.dischargeDetails.trimAllowed.strippingTrim;
     this.hasUnSavedData = true;
   }
 
@@ -422,19 +422,26 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    * @memberof DischargingInformationComponent
    */
   checkIfValid(showToast = false): boolean {
-    const translationKeys = this.translateService.instant(['DISCHARGING_INFO_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR', 'DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_INVALID_DATA']);
+    const translationKeys = this.translateService.instant(['DISCHARGING_INFO_ERROR', 'DISCHARGING_INFO_MIN_CARGO_SELECTED', 'DISCHARGING_COW_TANK_NOT_SELECTED', 'DISCHARGING_STAGE_DURATION_ERROR', 'DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_INVALID_DATA', 'DISCHARGING_INFORMATION_NO_BERTHS']);
 
     this.dischargeDetailsComponent.loadingDischargingDetailsForm?.markAllAsTouched();
     this.dischargeDetailsComponent.loadingDischargingDetailsForm?.updateValueAndValidity();
 
-    this.dischargeBerthComponent.berthDetailsForm?.markAllAsTouched();
-    this.dischargeBerthComponent.berthDetailsForm?.updateValueAndValidity();
+    this.dischargeBerthComponent.berthFormArray?.markAllAsTouched();
+    this.dischargeBerthComponent.updateFormValidity(this.dischargeBerthComponent.berthFormArray.controls);
 
     this.dischargeRatesComponent.dischargingRatesFormGroup?.markAllAsTouched();
     this.dischargeRatesComponent.dischargingRatesFormGroup?.updateValueAndValidity();
 
     this.dischargingInformationForm.markAllAsTouched();
     this.dischargingInformationForm?.updateValueAndValidity();
+
+    if (!this.dischargeBerthComponent.berthFormArray?.value?.length) {
+      if (showToast) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFO_ERROR'], detail: translationKeys['DISCHARGING_INFORMATION_NO_BERTHS'] });
+      }
+      return false;
+    }
 
     const isMachineryValid = this.machineryRefComponent.isMachineryValid(showToast);
     if (!isMachineryValid) {
@@ -468,7 +475,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       return false
     }
 
-    if (this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && !this.dischargeBerthComponent.berthDetailsForm?.invalid && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid) {
+    if (this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && this.dischargeBerthComponent.berthFormArray?.valid && this.dischargeBerthComponent.berthFormArray?.value?.every(berth => berth.formValid) && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid) {
       return true
     } else {
       if (showToast) {

@@ -126,13 +126,13 @@ export class LoadingDischargingBerthComponent implements OnInit {
       this.availableBerths = this.availableBerths.map(availBerth => this.selectedBerths.find(selectedBerth => selectedBerth.berthId === availBerth.berthId) || availBerth);
       const initialBerthArray = this.selectedBerths.map((selectedBerth, i) => this.createBerth(selectedBerth));
       this.berthForm = this.fb.group({
-        berth: this.fb.array([...initialBerthArray])
+        berth: this.fb.array([...initialBerthArray], [Validators.minLength(1)])
       });
       this.setBerthDetails(this.selectedBerths[0], 0)
       this.selectedIndex = 0;
     } else {
       this.berthForm = this.fb.group({
-        berth: this.fb.array([])
+        berth: this.fb.array([], [Validators.minLength(1)])
       });
     }
 

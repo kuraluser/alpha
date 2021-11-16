@@ -122,7 +122,7 @@ export interface ITrimAllowed {
   initialTrim: number;
   maximumTrim: number;
   finalTrim?: number;
-  topOffTrim?: number;
+  strippingTrim?: number;
 }
 
 /**
