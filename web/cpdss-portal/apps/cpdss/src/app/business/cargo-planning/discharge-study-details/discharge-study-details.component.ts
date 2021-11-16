@@ -463,6 +463,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     this.dischargeStudies = null;
     this.dischargeStudyId = 0;
     this.dischargeStudyDetailsTransformationService.setPortValidity(false);
+    this.dischargeStudyDetailsTransformationService.setDischargeStudyValidity(false);
     this.dischargeStudyDetailsTransformationService.setOHQValidity([]);
     this.tabPermission();
     this.selectedDischargeStudy = null;
