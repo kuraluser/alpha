@@ -82,6 +82,7 @@ public class LoadablePatternServiceTest {
   @MockBean private DischargePlanService dischargePlanService;
   @MockBean private CommingleCargoRepository commingleCargoRepository;
   @MockBean private SynopticalTableRepository synopticalTableRepository;
+  @MockBean private CargoService cargoService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";

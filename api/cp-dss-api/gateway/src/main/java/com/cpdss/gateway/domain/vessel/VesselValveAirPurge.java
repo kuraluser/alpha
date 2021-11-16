@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class VesselValveAirPurge {
-  private String id;
+  private Long id;
   private Long vesselId;
   private String vesselName;
   private String shortname;
@@ -15,6 +15,6 @@ public class VesselValveAirPurge {
   private int sequenceNumber;
   private String valveNumber;
   private int valveId;
-  private boolean isShut;
-  private boolean isCopWarmup;
+  private Boolean isShut;
+  private Boolean isCopWarmup;
 }
