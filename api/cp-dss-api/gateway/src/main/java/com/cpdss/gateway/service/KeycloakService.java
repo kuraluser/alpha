@@ -7,6 +7,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.keycloak.KeycloakAuthenticationResponse;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,7 @@ public class KeycloakService {
 
       if (HttpStatus.OK.value() == response.getStatusCodeValue()) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper.convertValue(response.getBody(), KeycloakAuthenticationResponse.class);
       } else {
         log.error(KEYCLOAK_EXCEPTION_MSG + ": {}", response);
@@ -128,6 +130,7 @@ public class KeycloakService {
 
       if (HttpStatus.OK.value() == response.getStatusCodeValue()) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return responseType.cast(
             objectMapper.convertValue(response.getBody(), Class.forName(responseType.getName())));
       } else {
