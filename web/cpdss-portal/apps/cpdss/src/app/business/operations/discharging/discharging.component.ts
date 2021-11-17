@@ -57,10 +57,11 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   dischargingInstructionTabPermission: IPermission;
   dischargingSequenceTabPermission: IPermission;
   dischargingPlanTabPermission: IPermission;
-  disablePlanGenerateBtn: boolean = false;
-  disablePlanViewErrorBtn: boolean = true;
+  generateDischargingPlanPermission: IPermission;
+  disablePlanGenerateBtn = false;
+  disablePlanViewErrorBtn = true;
   errorMessage: IAlgoError[];
-  errorPopUp: boolean = false;
+  errorPopUp = false;
 
 
   private ngUnsubscribe: Subject<any> = new Subject();
@@ -231,9 +232,6 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     this.loadingDischargingTransformationService.disableDischargePlanViewError$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((isDisabled) => {
       this.disablePlanViewErrorBtn = isDisabled;
     });
-    this.loadingDischargingTransformationService.dischargingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
-      this.dischargingInstructionComplete = res;
-    });
   }
 
   /**
@@ -278,6 +276,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   */
   setPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingComponent']);
+    this.generateDischargingPlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationDischargingGeneratePlan'], false);
     this.dischargingInfoTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingInformationComponent'], false);
     this.dischargingInstructionTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingInstructionComponent'], false);
     this.dischargingSequenceTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingSequenceComponent'], false);
@@ -311,7 +310,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     if (!value) { return };
     this.ngxSpinnerService.show();
     const response: IGenerateDischargePlanResponse = await this.operationsApiService.generateDischargePlan(this.vesselId, this.voyageId, this.dischargeInfoId).toPromise();
-    if (response.responseStatus.status == "200" && response.processId) {
+    if (response.responseStatus.status === "200" && response.processId) {
       this.setButtonStatusInProcessing(true);
       const data = {
         processId: response.processId,
