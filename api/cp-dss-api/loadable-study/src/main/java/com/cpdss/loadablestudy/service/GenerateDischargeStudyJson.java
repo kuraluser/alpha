@@ -11,7 +11,6 @@ import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.Common.RulePlans;
 import com.cpdss.common.generated.LoadableStudy.ActiveVoyage;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
@@ -19,8 +18,8 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselTankRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankResponse;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
@@ -121,7 +120,7 @@ public class GenerateDischargeStudyJson {
   @Autowired private VoyageRepository voyageRepository;
 
   @Autowired VoyageService voyageService;
-  
+
   @Autowired private LoadableStudyRuleService loadableStudyRuleService;
 
   @GrpcClient("vesselInfoService")
@@ -233,25 +232,25 @@ public class GenerateDischargeStudyJson {
             dischargeStudyId,
             loadableStudy.getVesselXId(),
             loadableStudy.getVoyage().getVoyageNo()));
-    
-    //build admin rules section
+
+    // build admin rules section
     VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
-	        VesselInfo.VesselRuleRequest.newBuilder();
-	    vesselRuleBuilder.setSectionId(RuleMasterSection.Discharging.getId());
-	    vesselRuleBuilder.setVesselId(loadableStudy.getVesselXId());
-	    vesselRuleBuilder.setIsFetchEnabledRules(false);
-	    vesselRuleBuilder.setIsNoDefaultRule(true);
-	    VesselInfo.VesselRuleReply vesselRuleReply =
-	        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
-	if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
-	      throw new GenericServiceException(
-	          "failed to get vessel rule Details ",
-	          vesselRuleReply.getResponseStatus().getCode(),
-	          HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
-	}
-	List<com.cpdss.loadablestudy.domain.RulePlans> adminRulePlan = 
-			RuleUtility.buildAdminRulePlan(vesselRuleReply);
-	dischargeStudyAlgoJson.setDischargeStudyRuleList(adminRulePlan);
+        VesselInfo.VesselRuleRequest.newBuilder();
+    vesselRuleBuilder.setSectionId(RuleMasterSection.Discharging.getId());
+    vesselRuleBuilder.setVesselId(loadableStudy.getVesselXId());
+    vesselRuleBuilder.setIsFetchEnabledRules(false);
+    vesselRuleBuilder.setIsNoDefaultRule(true);
+    VesselInfo.VesselRuleReply vesselRuleReply =
+        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+    if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get vessel rule Details ",
+          vesselRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
+    }
+    List<com.cpdss.loadablestudy.domain.RulePlans> adminRulePlan =
+        RuleUtility.buildAdminRulePlan(vesselRuleReply);
+    dischargeStudyAlgoJson.setDischargeStudyRuleList(adminRulePlan);
 
     return dischargeStudyAlgoJson;
   }

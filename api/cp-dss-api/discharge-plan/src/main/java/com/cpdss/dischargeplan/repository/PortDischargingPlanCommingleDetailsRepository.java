@@ -25,4 +25,12 @@ public interface PortDischargingPlanCommingleDetailsRepository
 
   public List<PortDischargingPlanCommingleDetails> findByDischargingInformationAndIsActive(
       DischargeInformation dischargingInformation, Boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "Update PortDischargingPlanCommingleDetails set isActive = false "
+          + "WHERE dischargingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
+  public void deleteExistingByDischargingInformationAndConditionTypeAndValueType(
+      Long id, Integer conditionType, int actualTypeValue);
 }

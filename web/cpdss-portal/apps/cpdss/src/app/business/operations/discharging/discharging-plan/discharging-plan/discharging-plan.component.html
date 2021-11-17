@@ -18,13 +18,13 @@
           </div>
         </div>
 
-        <cpdss-portal-arrival-condition [vesselId]="vesselId" [portRotationId]="portRotationId"
+        <cpdss-portal-arrival-condition [permission]="permission" [vesselId]="vesselId" [portRotationId]="portRotationId"
           [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
           [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
           [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">
         </cpdss-portal-arrival-condition>
 
-        <cpdss-portal-departure-condition [vesselId]="vesselId" [portRotationId]="portRotationId"
+        <cpdss-portal-departure-condition [permission]="permission" [vesselId]="vesselId" [portRotationId]="portRotationId"
           [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
           [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
           [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">

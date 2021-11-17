@@ -11,9 +11,10 @@ import { LoadingDischargingTransformationService } from '../../../services/loadi
 import { DischargingPlanApiService } from './../../../services/discharging-plan-api.service';
 import { OperationsApiService } from '../../../services/operations-api.service';
 
-import { IAlgoError, IAlgoResponse, ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../../../core/models/common.model';
+import { IAlgoError, IAlgoResponse, ICargo, OPERATIONS } from '../../../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../../../shared/models/common.model';
 import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../../models/loading-discharging.model';
+import { IPermission } from './../../../../../shared/models/user-profile.model';
 
 /**
  * Component for Discharge-plan
@@ -28,6 +29,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   @Input() vesselId: number;
   @Input() voyageId: number;
   @Input() dischargeInfoId: number;
+  @Input() permission: IPermission;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }

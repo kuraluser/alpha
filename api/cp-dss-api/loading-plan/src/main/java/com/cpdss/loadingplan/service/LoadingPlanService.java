@@ -1051,6 +1051,8 @@ public class LoadingPlanService {
         loadingInformation.getId(), conditionType);
     portLoadingPlanBallastTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
         loadingInformation.getId(), conditionType);
+    portLoadingPlanCommingleTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+        loadingInformation.getId(), conditionType);
   }
 
   public void getPortWiseStowageTempDetails(

@@ -58,6 +58,7 @@
     "OperationLoadingInformation": "OPERATIONS_LOADING_INFO",
     "OperationLoadingGeneratePlan": "OPERATIONS_LOADING_GENERATE_PLAN",
     "FileRepositoryComponent":"FILE_REPOSITORY",
+    "OperationDischargingGeneratePlan": "OPERATIONS_DISCHARGING_GENERATE_PLAN",
     "DischargingInstructionComponent": "DISCHARGING_INSTRUCTION",
     "DischargingSequenceComponent": "DISCHARGING_SEQUENCE",
     "DischargingPlanComponent": "DISCHARGING_PLAN",
