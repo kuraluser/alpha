@@ -9,6 +9,7 @@ public class LoadingPlanStowageDetails {
   private Long tankId;
   private String tankName;
   private Long cargoNominationId;
+  private Long dsCargoNominationId;
   private String quantityMT;
   private String quantityM3;
   private String api;

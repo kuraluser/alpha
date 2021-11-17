@@ -106,6 +106,8 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     }
     VoyageResponse voyageResponse = new VoyageResponse();
     BeanUtils.copyProperties(activeVoyage, voyageResponse);
+    // Printing object to check if we loosing any data by BeanUtils.copyProperties
+    log.info("After copy properties " + voyageResponse.toString());
     if (activeVoyage.getConfirmedLoadableStudy() != null
         && activeVoyage.getConfirmedLoadableStudy().getId() > 0) {
       com.cpdss.gateway.domain.LoadableStudy loadableStudy =

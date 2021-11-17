@@ -181,7 +181,7 @@ public class DischargePlanAlgoService {
       algoRequest.setPortId(entity.getPortXid());
       disDto.setDischargeInfoId(entity.getId());
       disDto.setSynopticTableId(entity.getSynopticTableXid());
-
+      algoRequest.setPortRotationId(entity.getPortRotationXid());
       // discharge details
       DischargeDetails dischargeDetails = new DischargeDetails();
       dischargeDetails.setStartTime(
@@ -242,22 +242,22 @@ public class DischargePlanAlgoService {
       algoRequest.setDischargeInformation(disDto);
     }
   }
-  
+
   /**
    * Build discharge plan rule section for the algo request JSON
+   *
    * @param algoRequest
    * @param dischargeInformation
    */
   private void buildDischargingRules(
-		  DischargeInformationAlgoRequest algoRequest,
-		  DischargeInformation dischargeInformation) {
-	    DischargeRuleReply ruleReply = 
-	    		dischargeInformationService.getDischargingRuleForAlgo(
-	    				dischargeInformation.getVesselXid(), dischargeInformation.getId());
-	    if (ruleReply != null) {
-	      List<RulePlans> rulePlans = RuleUtility.buildDischargingRule(ruleReply);
-	      algoRequest.setDischargingRules(new RuleResponse(rulePlans));
-	    }
+      DischargeInformationAlgoRequest algoRequest, DischargeInformation dischargeInformation) {
+    DischargeRuleReply ruleReply =
+        dischargeInformationService.getDischargingRuleForAlgo(
+            dischargeInformation.getVesselXid(), dischargeInformation.getId());
+    if (ruleReply != null) {
+      List<RulePlans> rulePlans = RuleUtility.buildDischargingRule(ruleReply);
+      algoRequest.setDischargingRules(new RuleResponse(rulePlans));
+    }
   }
 
   private void getAndSetDataFromSynopticTable(

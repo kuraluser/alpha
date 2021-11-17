@@ -145,6 +145,8 @@ public class VesselValveService {
                 v -> {
                   VesselValveAirPurge var1 = new VesselValveAirPurge();
                   BeanUtils.copyProperties(v, var1);
+                  var1.setIsShut(v.getIsShut());
+                  var1.setIsCopWarmup(v.getIsCopWarmup());
                   return var1;
                 })
             .collect(Collectors.toList());

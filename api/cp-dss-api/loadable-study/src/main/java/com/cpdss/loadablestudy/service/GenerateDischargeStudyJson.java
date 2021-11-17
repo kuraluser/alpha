@@ -5,6 +5,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VO
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_JSON_MODULE_NAME;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_REQUEST;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VOYAGE_DATE_FORMAT;
 import static java.util.Optional.ofNullable;
 
@@ -18,6 +19,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselTankRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankResponse;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
@@ -39,6 +41,7 @@ import com.cpdss.loadablestudy.domain.LoadablePlanStowageDetailsJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyInstruction;
 import com.cpdss.loadablestudy.domain.OnHandQuantity;
 import com.cpdss.loadablestudy.domain.PortDetails;
+import com.cpdss.loadablestudy.domain.RuleMasterSection;
 import com.cpdss.loadablestudy.domain.StabilityParameter;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
@@ -54,6 +57,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.PortInstructionRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,6 +120,8 @@ public class GenerateDischargeStudyJson {
   @Autowired private VoyageRepository voyageRepository;
 
   @Autowired VoyageService voyageService;
+
+  @Autowired private LoadableStudyRuleService loadableStudyRuleService;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -226,6 +232,25 @@ public class GenerateDischargeStudyJson {
             dischargeStudyId,
             loadableStudy.getVesselXId(),
             loadableStudy.getVoyage().getVoyageNo()));
+
+    // build admin rules section
+    VesselInfo.VesselRuleRequest.Builder vesselRuleBuilder =
+        VesselInfo.VesselRuleRequest.newBuilder();
+    vesselRuleBuilder.setSectionId(RuleMasterSection.Discharging.getId());
+    vesselRuleBuilder.setVesselId(loadableStudy.getVesselXId());
+    vesselRuleBuilder.setIsFetchEnabledRules(false);
+    vesselRuleBuilder.setIsNoDefaultRule(true);
+    VesselInfo.VesselRuleReply vesselRuleReply =
+        this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(vesselRuleBuilder.build());
+    if (!SUCCESS.equals(vesselRuleReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "failed to get vessel rule Details ",
+          vesselRuleReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.parseInt(vesselRuleReply.getResponseStatus().getCode())));
+    }
+    List<com.cpdss.loadablestudy.domain.RulePlans> adminRulePlan =
+        RuleUtility.buildAdminRulePlan(vesselRuleReply);
+    dischargeStudyAlgoJson.setDischargeStudyRuleList(adminRulePlan);
 
     return dischargeStudyAlgoJson;
   }
@@ -458,8 +483,8 @@ public class GenerateDischargeStudyJson {
                   ofNullable(item.getAverageTideHeight())
                       .ifPresent(portdetail::setAverageTideHeight);
                   ofNullable(item.getTideHeight()).ifPresent(portdetail::setTideHeight);
-                  ofNullable(item.getSerializedSize())
-                      .ifPresent(i -> portdetail.setDensitySeaWater(i.toString()));
+                  // Bug fix : 4615
+                  ofNullable(item.getWaterDensity()).ifPresent(portdetail::setDensitySeaWater);
                   ofNullable(item.getCountryName()).ifPresent(portdetail::setCountryName);
                   portDetailsList.add(portdetail);
                 });
@@ -499,6 +524,8 @@ public class GenerateDischargeStudyJson {
                 .ifPresent(i -> onHandQuantity.setDepartureVolume(i.toString()));
             ofNullable(item.getDepartureQuantity())
                 .ifPresent(i -> onHandQuantity.setDepartureQuantity(i.toString()));
+            // Bug fix : 4615
+            ofNullable(item.getDensity()).ifPresent(i -> onHandQuantity.setDensity(i.toString()));
             onHandQuantityList.add(onHandQuantity);
           });
       log.info("Found {} items", onHandQuantityList.size());

@@ -14,6 +14,7 @@ public class LoadingInformationAlgoRequest {
   private Long vesselId;
   private Long voyageId;
   private Long portId;
+  private Long portRotationId;
   private List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails;
   private LoadingInformation loadingInformation;
   private List<OnHandQuantity> onHandQuantity;

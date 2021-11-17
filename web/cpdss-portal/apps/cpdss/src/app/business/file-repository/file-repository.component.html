@@ -10,6 +10,10 @@
                 <h5 class="main-head pt-10">{{'FILE_REPOSITORY_FILE_LABEL' | translate}}</h5>
             </div>
             <div class="col-md-4 text-right">
+                <!-- commented as per the latest discussion - this will need in fuiture -->
+                <!-- <span class="pr-10 pt-5" #infoDiv>
+                    <span class="info-icon mr-5 mt-5" [appendTo]="infoDiv" tooltipPosition="left" tooltipStyleClass="file-repo-tooltip-width text-left" pTooltip="{{'FILE_REPOSITORY_PASSWORD_HINT'|translate}}">!</span>
+                </span> -->
                 <button (click)="addNewFile()" id="add-new-file-btn" class="btn btn-main pull-right">{{'FILE_REPOSITORY_ADD_NEW_LABEL' | translate}}</button>
             </div>
         </div>

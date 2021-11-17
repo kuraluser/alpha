@@ -26,7 +26,7 @@
 
                                 <p-calendar formControlName="timeOfSunrise" [timeOnly]="true" appendTo="body" inputId="timeOfSunrise"
                                     placeholder="{{'LOADING_DETAILS_SUNRISE_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true"
-                                    [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender 
+                                    [showButtonBar]="false" todayButtonStyleClass="hide" #timeOfSunRiseCalender
                                     (onClose)="onBlur(timeOfSunRiseCalender,'timeOfSunrise')">
                                     <p-footer>
                                         <div class="row">
@@ -66,7 +66,7 @@
 
                         <p-calendar formControlName="timeOfSunset" [timeOnly]="true" appendTo="body" readonly="true"
                             *ngIf="timeOfSunsetPermission?.edit" inputId="timeOfSunset"
-                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true" #timeOfSunSetCalender 
+                            placeholder="{{'LOADING_DETAILS_SUNSET_LABEL' | translate}}" hourFormat="24" [readonlyInput]="true" #timeOfSunSetCalender
                             (onClose)="onBlur(timeOfSunSetCalender,'timeOfSunset')">
                             <p-footer>
                                 <div class="row">
@@ -146,9 +146,9 @@
                     </div>
                     <div class="col error-icon-wrapper" *ngIf="operation === OPERATIONS.DISCHARGING else finalTrim">
                       <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" id="trim-final"
-                        formControlName="topOffTrim" placeholder="{{'DISCHARGING_DETAILS_TRIM_TOP_OFF' | translate}}"
-                        (change)="trimValueChange('topOffTrim')">
-                      <cpdss-portal-validation-error [errors]="fieldError('topOffTrim')" [errorMessages]="errorMessages.topOffTrim">
+                        formControlName="strippingTrim" placeholder="{{'DISCHARGING_DETAILS_TRIM_STRIPPING' | translate}}"
+                        (change)="trimValueChange('strippingTrim')">
+                      <cpdss-portal-validation-error [errors]="fieldError('strippingTrim')" [errorMessages]="errorMessages.strippingTrim">
                       </cpdss-portal-validation-error>
                     </div>
                     <ng-template #finalTrim>

@@ -1,37 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_CENTER_TANK;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_FRONT_TANK;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_REAR_TANK;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_COLOR_CODE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_BALLAST_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CREATED_DATE_FORMAT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DICHARGE_STUDY;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_STUDY_RESULT_JSON_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_COMMINGLE_DETAIL_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_PATTERN_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_STUDY_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_PATTERN_VALIDATION_FAILED_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_PATTERN_VALIDATION_SUCCESS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COMMUNICATED_TO_SHORE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_NO_PLAN_AVAILABLE_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_REQUEST;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_VERIFICATION_WITH_LOADICATOR_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.UPDATED_LOADABLE_STUDY_RESULT_JSON_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VALIDATED_CONDITIONS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -219,6 +189,8 @@ public class LoadablePatternService {
 
   @Autowired
   private LoadablePatternCargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
+
+  @Autowired CargoService cargoService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -1208,8 +1180,10 @@ public class LoadablePatternService {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
-          loadablePlanStowageDetails.setCargoNominationTemperature(
-              new BigDecimal(lpsd.getCargoNominationTemperature()));
+          if (lpsd.getCargoNominationTemperature() != null) {
+            loadablePlanStowageDetails.setCargoNominationTemperature(
+                new BigDecimal(lpsd.getCargoNominationTemperature()));
+          }
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
@@ -1697,6 +1671,9 @@ public class LoadablePatternService {
           request.getLoadableStudyId(), loadableStudyOpt.get(), loadableStudy, modelMapper);
       loadableStudyService.buildLoadableAttachment(request.getLoadableStudyId(), loadableStudy);
       loadableStudyService.buildSynopticalTable(request.getLoadableStudyId(), loadableStudy);
+
+      // Voyage History
+      loadableStudy.setVoyageCargoHistories(cargoService.buildPreviousVoyageDetails());
       ObjectMapper objectMapper = new ObjectMapper();
 
       objectMapper.writeValue(

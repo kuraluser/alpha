@@ -374,7 +374,7 @@ export class LoadablePlanTransformationService {
         fieldPlaceholder: 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_PLACEHOLDER',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldHeaderClass: 'column-rdg-ullage',
-        numberFormat: isEditMode ? '1.0-6' : '1.0-2',
+        numberFormat: '1.2-2',
         errorMessages: {
           'required': 'LOADABLE_PLAN_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_STOWAGE_EDIT_TANK_CAPACITY_ERROR',
@@ -470,7 +470,7 @@ export class LoadablePlanTransformationService {
         header: 'STOWAGE_BALLAST_RDG_LEVEL',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'LOADABLE_PLAN_BALLAST_GRID_RDG_ULG_PLACEHOLDER',
-        numberFormat: isEditMode ? '1.0-6' : '1.0-2',
+        numberFormat: '1.2-2',
         errorMessages: {
           'required': 'LOADABLE_PLAN_BALLAST_CARGO_GRID_RDG_ULG_REQUIRED',
           'greaterThanTankCapacity': 'LOADABLE_PLAN_BALLAST_EDIT_TANK_CAPACITY_ERROR',

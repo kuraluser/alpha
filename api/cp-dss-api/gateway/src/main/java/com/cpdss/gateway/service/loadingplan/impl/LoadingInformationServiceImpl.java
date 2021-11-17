@@ -3,6 +3,7 @@ package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.PLANNING_TYPE;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -594,30 +595,32 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Override
   public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType,
+      boolean isDischarging) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId,
-            operationType,
-            portRotationId,
-            portId,
-            true,
-            Common.PLANNING_TYPE.LOADABLE_STUDY);
-    return this.buildLoadablePlanQuantity(list, vesselId);
+            patternId, operationType, portRotationId, portId, true, planningType);
+    return this.buildLoadablePlanQuantity(list, vesselId, isDischarging);
   }
 
   @Override
   public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPortUnfiltered(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType,
+      boolean isDischarging) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId,
-            operationType,
-            portRotationId,
-            portId,
-            false,
-            Common.PLANNING_TYPE.LOADABLE_STUDY);
-    return this.buildLoadablePlanQuantity(list, vesselId);
+            patternId, operationType, portRotationId, portId, false, planningType);
+    return this.buildLoadablePlanQuantity(list, vesselId, isDischarging);
   }
 
   @Override
@@ -668,7 +671,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   private List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> buildLoadablePlanQuantity(
-      List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId) {
+      List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId, boolean isDischarging) {
     List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> response = new ArrayList<>();
     log.info("Cargo to be loaded data from LS, Size {}", list.size());
     for (LoadableStudy.LoadableQuantityCargoDetails lqcd : list) {
@@ -703,7 +706,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       cargoDetails.setOrderQuantity(lqcd.getOrderedQuantity());
       cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
-      cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
+      if (isDischarging) {
+        cargoDetails.setCargoNominationId(lqcd.getDscargoNominationId());
+      } else {
+        cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
+      }
       //      cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
       // Max Loading Rate from ALGO
       cargoDetails.setMaxLoadingRate(lqcd.getLoadingRateM3Hr());
@@ -1122,5 +1129,17 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             });
 
     return pdStage;
+  }
+
+  @Override
+  public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

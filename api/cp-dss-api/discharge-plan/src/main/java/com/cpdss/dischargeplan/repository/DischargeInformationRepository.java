@@ -112,4 +112,8 @@ public interface DischargeInformationRepository
   @Modifying
   @Transactional
   void updateDischargeInstructionStatus(boolean status, Long id);
+
+  Optional<DischargeInformation>
+      findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
+          long vesselId, long patternId, long portRotationId, boolean isActive);
 }

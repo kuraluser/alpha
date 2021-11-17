@@ -28,6 +28,7 @@ message DischargingPlanReply {
   repeated LoadingPlanTankDetails portDischargingPlanBallastDetails = 4;
   repeated LoadingPlanTankDetails portDischargingPlanRobDetails = 5;
   repeated LoadingPlanStabilityParameters portDischargingPlanStabilityParameters = 6;
+  repeated LoadingPlanCommingleDetails portDischargingPlanCommingleDetails = 9;
 }
 
 message DischargingPlanStabilityParameters {

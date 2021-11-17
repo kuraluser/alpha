@@ -11,6 +11,13 @@
       </div>
 
       <div class="col main-content-loading-and-discharging">
+        <div class="row pt-5 btn-wrapper">
+          <div class="col text-right">
+            <a type="button" (click)="downloadDischargePlanTemplate()" class="btn btn-main"><span
+                class="download-icon v-top mr-10"></span>{{'DOWNLOAD_TEMPLATE' | translate}}</a>
+          </div>
+        </div>
+
         <cpdss-portal-arrival-condition [vesselId]="vesselId" [portRotationId]="portRotationId"
           [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
           [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
@@ -50,9 +57,9 @@
 
         <div class="row mt-20">
           <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
-            <cpdss-portal-cow-plan [cowDetails]="dischargingInformation?.cowDetails"
-              [form]="dischargingPlanForm" [cargoTanks]="dischargingInformation?.cargoTanks"
-              [loadedCargos]="dischargingInformation?.loadedCargos" [listData]="listData" [editMode]="false">
+            <cpdss-portal-cow-plan [cowDetails]="dischargingInformation?.cowDetails" [form]="dischargingPlanForm"
+              [cargoTanks]="dischargingInformation?.cargoTanks" [loadedCargos]="dischargingInformation?.loadedCargos"
+              [listData]="listData" [editMode]="false">
             </cpdss-portal-cow-plan>
           </div>
         </div>

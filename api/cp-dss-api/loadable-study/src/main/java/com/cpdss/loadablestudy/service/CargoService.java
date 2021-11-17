@@ -5,19 +5,16 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.ApiTempHistorySpecification;
 import com.cpdss.loadablestudy.domain.SearchCriteria;
-import com.cpdss.loadablestudy.entity.ApiTempHistory;
-import com.cpdss.loadablestudy.entity.CargoHistory;
-import com.cpdss.loadablestudy.entity.CommingleColour;
-import com.cpdss.loadablestudy.entity.PurposeOfCommingle;
+import com.cpdss.loadablestudy.domain.VoyageHistoryDto;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -60,9 +57,17 @@ public class CargoService {
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private CommingleColourRepository commingleColourRepository;
   @Autowired CargoHistoryRepository cargoHistoryRepository;
+  @Autowired VoyageStatusRepository voyageStatusRepository;
+  @Autowired VoyageRepository voyageRepository;
+  @Autowired LoadableStudyStatusRepository loadableStudyStatusRepository;
+  @Autowired LoadablePatternRepository loadablePatternRepository;
+  @Autowired LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
+
+  @GrpcClient("cargoService")
+  private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
 
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanService;
 
@@ -595,6 +600,62 @@ public class CargoService {
       cargoHistoryRepository.saveAll(cargoHistories);
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  public List<VoyageHistoryDto> buildPreviousVoyageDetails() throws GenericServiceException {
+
+    List<VoyageHistoryDto> response = new ArrayList<>();
+    var vyStatus = voyageStatusRepository.getById(CLOSE_VOYAGE_STATUS);
+    var lsStatus = loadableStudyStatusRepository.findById(LS_STATUS_CONFIRMED);
+
+    Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "actualEndDate"));
+    var voyageList = voyageRepository.findRecentClosedVoyageDetails(vyStatus, 1l, pageable);
+    if (!voyageList.isEmpty()) {
+      for (Voyage entity : voyageList) {
+        Optional<com.cpdss.loadablestudy.entity.LoadableStudy> ls =
+            entity.getLoadableStudies().stream()
+                .filter(v -> v.getLoadableStudyStatus().getId().equals(lsStatus.get().getId()))
+                .findFirst();
+        List<LoadablePattern> lps =
+            loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
+                ls.get(), true);
+        if (!lps.isEmpty()) {
+          Optional<LoadablePattern> lpOp =
+              lps.stream()
+                  .filter(v -> v.getLoadableStudyStatus().equals(lsStatus.get().getId()))
+                  .findFirst();
+
+          List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
+              loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+                  lpOp.get(), true);
+          List<CargoNomination> cargoNominations =
+              cargoNominationRepository.findByLoadableStudyXIdAndIsActive(ls.get().getId(), true);
+          for (CargoNomination cn : cargoNominations) {
+            if (cn.getCargoXId() != null && cn.getCargoXId() > 0) {
+              cn.setIsCondensateCargo(this.updateCargoNominationWithDetails(cn.getCargoXId()));
+            }
+          }
+          VoyageHistoryDto dto = new VoyageHistoryDto(entity);
+          dto.addAllStowageDetails(loadablePlanStowageDetails);
+          dto.addAllCargoNominations(cargoNominations);
+          response.add(dto);
+        }
+      }
+    }
+    return response;
+  }
+
+  private Boolean updateCargoNominationWithDetails(Long cargoId) {
+    CargoInfo.CargoRequest.Builder cargoReq = CargoInfo.CargoRequest.newBuilder();
+    cargoReq.setCargoId(cargoId);
+    com.cpdss.common.generated.CargoInfo.CargoDetailReply rpcRepay =
+        cargoInfoGrpcService.getCargoInfoById(cargoReq.build());
+    if (SUCCESS.equals(rpcRepay.getResponseStatus().getStatus())) {
+      return rpcRepay.getCargoDetail().getIsCondensateCargo();
+    } else {
+      log.info("Failed to get Data for - CondensateCargo - id - {}", cargoId);
+      return null;
     }
   }
 }

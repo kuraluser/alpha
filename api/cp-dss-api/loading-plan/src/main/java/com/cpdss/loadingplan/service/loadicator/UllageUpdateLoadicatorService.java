@@ -968,6 +968,7 @@ public class UllageUpdateLoadicatorService {
     algoRequest.setVesselId(loadingInformation.getVesselXId());
     algoRequest.setPortId(loadingInformation.getPortXId());
     algoRequest.setLoadableStudyProcessId(loadingInformation.getLoadableStudyProcessId());
+    algoRequest.setPortRotationId(loadingInformation.getPortRotationXId());
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()

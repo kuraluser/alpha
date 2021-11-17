@@ -629,6 +629,7 @@ public class LoadicatorService {
       stowagePlanBuilder.setSeaWaterDensity(sg.toString());
     }
     stowagePlanBuilder.setSynopticalId(loadingInformation.getSynopticalTableXId());
+    stowagePlanBuilder.setPortRotationId(loadingInformation.getPortRotationXId());
   }
 
   /**
@@ -854,6 +855,7 @@ public class LoadicatorService {
     algoRequest.setProcessId(request.getProcessId());
     algoRequest.setVesselId(loadingInformation.getVesselXId());
     algoRequest.setPortId(loadingInformation.getPortXId());
+    algoRequest.setPortRotationId(loadingInformation.getPortRotationXId());
     List<LoadicatorStage> stages = new ArrayList<LoadicatorStage>();
     request
         .getLoadingInfoLoadicatorDetailsList()

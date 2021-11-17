@@ -18,5 +18,6 @@ public interface EductionOperationRepository extends CommonCrudRepository<Educti
   @Query(value = "UPDATE EductionOperation SET isActive = false WHERE loadingSequence = ?1")
   public void deleteByLoadingSequence(DischargingSequence loadingSequence);
 
-  public EductionOperation findByDischargingSequenceAndIsActiveTrue(DischargingSequence loadingSequence);
+  public EductionOperation findByDischargingSequenceAndIsActiveTrue(
+      DischargingSequence loadingSequence);
 }

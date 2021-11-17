@@ -15,6 +15,7 @@ public class UllageEditLoadicatorAlgoRequest {
   private Long loadingInformationId;
   private Long vesselId;
   private Long portId;
+  private Long portRotationId;
   private List<LoadicatorStage> stages;
   private LoadingPlanLoadicatorDetails planDetails;
 }

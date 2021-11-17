@@ -760,7 +760,8 @@ message LoadablePlanCommingleDetails{
  int64 cargoNomination2Id = 43;
  int64 cargo1Id = 44;
  int64 cargo2Id = 45;
-}
+ string arrivalDeparture = 46;
+ string actualPlanned = 47;}
 
 message LoadingSequenceRequest {
   int64 loadingInfoId = 1;

@@ -23,4 +23,5 @@ public class DischargeStudyAlgoJson {
   private List<PortDetails> portDetails;
   private List<CowHistory> cowHistory;
   private ArrivalConditionJson loadablePlanPortWiseDetails;
+  private List<RulePlans> dischargeStudyRuleList;
 }

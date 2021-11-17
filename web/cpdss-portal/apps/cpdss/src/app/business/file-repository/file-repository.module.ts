@@ -12,6 +12,7 @@ import { AddEditFileComponent } from './add-edit-file/add-edit-file.component';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Module for file repository
@@ -31,7 +32,8 @@ import { ValidationErrorModule } from '../../shared/components/validation-error/
     TranslateModule,
     DatatableModule,
     DialogModule,
-    DropdownModule
+    DropdownModule,
+    TooltipModule
   ],
   providers: [FileRepositoryTransformationService, FileRepositoryApiService]
 })

@@ -140,7 +140,10 @@ export class DischargeStudyComponent implements OnInit {
         const portUniqueColorAbbrList = [];
         this.portDetails = portList.filter(portDetail => portDetail.operationId === OPERATIONS.DISCHARGING).map((portDetail, index) => {
           const isLastIndex = index + 1 === portList.length;
-          const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList);
+          const cargoList = this.portCargoList.find((portcargo) => {
+            return portcargo.portId === portDetail.portId;
+          })
+          const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList,cargoList);
           portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject));
           return portDetailAsValueObject;
         })
@@ -309,7 +312,7 @@ export class DischargeStudyComponent implements OnInit {
   async addBackLoading(index: number, formGroupName: string) {
     const storedKey = uuid4();
     const backLoadingDetails = <IDischargeStudyBackLoadingDetails>{};
-    const backLoadingDetailsValueAsObject = this.dischargeStudyDetailsTransformationService.getBackLoadingDetailAsValueObject(backLoadingDetails, this.listData, storedKey, true);
+    const backLoadingDetailsValueAsObject = this.dischargeStudyDetailsTransformationService.getBackLoadingDetailAsValueObject(backLoadingDetails, this.listData, storedKey, null, true);
     const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
     const backLoading = portDetails.at(index).get(formGroupName).get('dataTable') as FormArray;
     if (backLoading.length < 3) {

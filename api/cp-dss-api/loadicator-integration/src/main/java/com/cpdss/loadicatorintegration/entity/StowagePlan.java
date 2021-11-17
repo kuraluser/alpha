@@ -90,4 +90,7 @@ public class StowagePlan extends EntityDoc {
 
   @Column(name = "seawater")
   private BigDecimal seaWater;
+
+  @Column(name = "port_rotation_xid")
+  private Long portRotationId;
 }

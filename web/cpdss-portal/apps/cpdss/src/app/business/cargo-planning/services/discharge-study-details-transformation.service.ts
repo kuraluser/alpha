@@ -17,7 +17,7 @@ import { TimeZoneTransformationService } from '../../../shared/services/time-zon
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject } from '../models/cargo-planning.model';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode } from '../../../shared/models/common.model';
-import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails  } from '../models/discharge-study-list.model';
+import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails , IPortCargoDetails } from '../models/discharge-study-list.model';
 import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo, OPERATIONS } from '../../core/models/common.model';
 
 
@@ -1020,7 +1020,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getPortDetailAsValueObject(portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any): IPortDetailValueObject {
+    getPortDetailAsValueObject(portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any,cargoDetails:IPortCargoDetails): IPortDetailValueObject {
       const _portDetail = <IPortDetailValueObject>{};
       _portDetail.id = portDetail.id;
       _portDetail.portTimezoneId = portDetail.portTimezoneId;
@@ -1064,7 +1064,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _portDetail.enableBackToLoading = portDetail.isBackLoadingEnabled  && !isLastIndex ? true : false;
       _portDetail.backLoadingDetails =  portDetail?.backLoading ? portDetail?.backLoading?.map((backLoadingDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,backLoadingDetail);
-        return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData , storedKey , isNewValue);
+        return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData , storedKey ,cargoDetails, isNewValue);
       }) : [];
       return _portDetail;
     }
@@ -1157,13 +1157,13 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getBackLoadingDetailAsValueObject(backLoadingDetail: IDischargeStudyBackLoadingDetails, listData:IDischargeStudyDropdownData ,storedKey: string ,isNewValue = true): IBackLoadingDetails {
+    getBackLoadingDetailAsValueObject(backLoadingDetail: IDischargeStudyBackLoadingDetails, listData:IDischargeStudyDropdownData ,storedKey: string ,cargoDetails:IPortCargoDetails,isNewValue = true): IBackLoadingDetails {
       const _backLoadingDetailDetail = <IBackLoadingDetails>{};
       const unitConversion = {
         kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
         bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
       }
-      const cargoObj: ICargo = backLoadingDetail.cargoId ? listData.cargoList.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
+      const cargoObj: ICargo = cargoDetails?.cargos ? cargoDetails.cargos.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
       _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls ? unitConversion.bbls : 0, true , false);
       _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true , isNewValue);

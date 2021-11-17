@@ -337,6 +337,10 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         StringUtils.isEmpty(stowagePlanInfo.getSeaWaterDensity())
             ? null
             : new BigDecimal(stowagePlanInfo.getSeaWaterDensity()));
+    stowagePlan.setPortRotationId(
+        StringUtils.isEmpty(stowagePlanInfo.getPortRotationId())
+            ? null
+            : stowagePlanInfo.getPortRotationId());
     return stowagePlan;
   }
 
@@ -344,30 +348,34 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       throws InterruptedException {
     boolean status = false;
     do {
-      if (request.getTypeId() == 1) { // Loadable Study
-        log.info(
-            "Checking loadicator status of "
-                + (!request.getIsPattern()
-                    ? ("Loadable Study " + request.getStowagePlanDetails(0).getBookingListId())
-                    : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())));
-      } else if (request.getTypeId() == 2) { // Loading Plan
-        log.info(
-            "Checking loadicator status of Loading Information "
-                + request.getStowagePlanDetails(0).getBookingListId());
-      } else if (request.getTypeId() == 3) { // Discharging Plan
-        log.info(
-            "Checking loadicator status of Discharging Information "
-                + request.getStowagePlanDetails(0).getBookingListId());
-      }
-      log.info(
-          "Stowage Plans remaining to be processed: {} entries",
-          stowagePlanRepository.findCountOfStowagePlansToBeProcessed());
       Thread.sleep(10000);
       List<Long> stowagePlanIds =
           stowagePlans.stream().map(StowagePlan::getId).collect(Collectors.toList());
       List<StowagePlan> stowagePlanList = this.stowagePlanRepository.findByIdIn(stowagePlanIds);
       Long statusCount =
           stowagePlanList.stream().filter(plan -> plan.getStatus().equals(3L)).count();
+      Long remainingCount = stowagePlanList.size() - statusCount;
+      if (request.getTypeId() == 1) { // Loadable Study
+        log.info(
+            "Checking loadicator status of {} ({} entries remaining)",
+            (!request.getIsPattern()
+                ? ("Loadable Study " + request.getStowagePlanDetails(0).getBookingListId())
+                : ("Loadable Pattern " + request.getStowagePlanDetails(0).getStowageId())),
+            remainingCount);
+      } else if (request.getTypeId() == 2) { // Loading Plan
+        log.info(
+            "Checking loadicator status of Loading Information {} ({} entries remaining)",
+            request.getStowagePlanDetails(0).getBookingListId(),
+            remainingCount);
+      } else if (request.getTypeId() == 3) { // Discharging Plan
+        log.info(
+            "Checking loadicator status of Discharging Information {} ({} entries remaining)",
+            request.getStowagePlanDetails(0).getBookingListId(),
+            remainingCount);
+      }
+      log.info(
+          "Stowage Plans remaining to be processed: {} entries",
+          stowagePlanRepository.findCountOfStowagePlansToBeProcessed());
       if (statusCount.equals(stowagePlanList.stream().count())) {
         status = true;
         if (request.getTypeId()
@@ -557,6 +565,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
       ldStability.setPortId(stowageDetail.getPortId());
       ldStability.setId(stability.getId());
       ldStability.setSynopticalId(stowageDetail.getSynopticalId());
+      ldStability.setPortRotationId(stowageDetail.getPortRotationId());
       Optional.ofNullable(stability.getStowagePlanId()).ifPresent(ldStability::setStowagePlanId);
       Optional.ofNullable(stability.getBigintialGomvalue())
           .ifPresent(item -> ldStability.setBigintialGomValue(String.valueOf(item)));
@@ -614,6 +623,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           this.stowagePlanRepository.findPortForStrength(strength.getStowagePlanId());
       ldStrength.setPortId(stowageDetail.getPortId());
       ldStrength.setSynopticalId(stowageDetail.getSynopticalId());
+      ldStrength.setPortRotationId(stowageDetail.getPortRotationId());
       ldStrength.setId(strength.getId());
       Optional.ofNullable(strength.getStowagePlanId()).ifPresent(ldStrength::setStowagePlanId);
       Optional.ofNullable(strength.getShearingForcePresentValue())
@@ -674,6 +684,7 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
           this.stowagePlanRepository.findPortForTrim(trim.getStowagePlanId());
       ldTrim.setPortId(stowageDetail.getPortId());
       ldTrim.setSynopticalId(stowageDetail.getSynopticalId());
+      ldTrim.setPortRotationId(stowageDetail.getPortRotationId());
       ldTrim.setId(trim.getId());
       Optional.ofNullable(trim.getStowagePlanId()).ifPresent(ldTrim::setStowagePlanId);
       Optional.ofNullable(trim.getAftDraft())

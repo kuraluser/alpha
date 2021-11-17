@@ -30,4 +30,5 @@ public class LDStrength {
   private String messageText;
   private Long portId;
   private Long synopticalId;
+  private Long portRotationId;
 }

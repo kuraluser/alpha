@@ -23,6 +23,7 @@ import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
 import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
@@ -36,6 +37,7 @@ import com.cpdss.dischargeplan.repository.DischargeStageMinAmountRepository;
 import com.cpdss.dischargeplan.repository.DischargingDelayReasonRepository;
 import com.cpdss.dischargeplan.repository.DischargingDelayRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanCommingleDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
@@ -82,6 +84,7 @@ public class DischargeInformationRPCService
   @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
   @Autowired CowTankDetailRepository cowTankDetailRepository;
   @Autowired DischargeInformationRepository dischargeInformationRepository;
+  @Autowired PortDischargingPlanCommingleDetailsRepository pdpCommingleDetailsRepository;
 
   @Override
   public void getDischargeInformation(
@@ -198,6 +201,18 @@ public class DischargeInformationRPCService
             .ifPresent(dischargingInformation::setDischargingPlanArrStatusId);
         Optional.ofNullable(disEntity.getDepartureStatusId())
             .ifPresent(dischargingInformation::setDischargingPlanDepStatusId);
+        Optional.ofNullable(disEntity.getIsDischargeInformationComplete())
+            .ifPresent(dischargingInformation::setIsDischargeInfoComplete);
+        Optional.ofNullable(disEntity.getIsDischargingInstructionsComplete())
+            .ifPresent(dischargingInformation::setIsDischargingInstructionsComplete);
+        Optional.ofNullable(disEntity.getIsDischargingPlanGenerated())
+            .ifPresent(dischargingInformation::setIsDischargingPlanGenerated);
+        Optional.ofNullable(disEntity.getIsDischargingSequenceGenerated())
+            .ifPresent(dischargingInformation::setIsDischargingSequenceGenerated);
+        Optional.ofNullable(disEntity.getDischargeSlopTankFirst())
+            .ifPresent(dischargingInformation::setDischargeSlopTanksFirst);
+        Optional.ofNullable(disEntity.getDischargeCommingleCargoSeparately())
+            .ifPresent(dischargingInformation::setDischargeCommingledCargoSeparately);
         // Set Discharge Rates
         this.informationBuilderService.buildDischargeRateMessageFromEntity(
             disEntity, dischargingInformation);
@@ -245,7 +260,8 @@ public class DischargeInformationRPCService
         List<PortDischargingPlanStabilityParameters> pdpStabilityList =
             pdpStabilityParametersRepository.findByDischargingInformationAndIsActive(
                 disEntity, true);
-
+        List<PortDischargingPlanCommingleDetails> pdpCommingleList =
+            pdpCommingleDetailsRepository.findByDischargingInformationAndIsActive(disEntity, true);
         builder.addAllPortDischargingPlanBallastDetails(
             this.informationBuilderService.buildDischargingPlanTankBallastMessage(pdpBallastList));
         builder.addAllPortDischargingPlanStowageDetails(
@@ -255,6 +271,8 @@ public class DischargeInformationRPCService
         builder.addAllPortDischargingPlanStabilityParameters(
             this.informationBuilderService.buildDischargingPlanTankStabilityMessage(
                 pdpStabilityList));
+        builder.addAllPortDischargingPlanCommingleDetails(
+            this.informationBuilderService.buildDischargingPlanCommingleMessage(pdpCommingleList));
       } else {
         log.error("Failed to fetch Discharging Plan, Discharging info Id is 0");
         throw new GenericServiceException(

@@ -353,6 +353,8 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_DEP,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
+    // setting discharge cargo nomination id
+    this.setDischargeCargoNominationId(vesselTankDetails);
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     // discharge sequence (reason/delay)
@@ -381,12 +383,26 @@ public class DischargeInformationService {
         this.infoBuilderService.buildDischargeCowPlan(
             planReply.getDischargingInformation().getCowPlan(), extract);
     dischargeInformation.setCowPlan(cowPlan);
+    com.cpdss.common.generated.discharge_plan.DischargeInformation dischargingInformationReply =
+        planReply.getDischargingInformation();
     dischargeInformation.setDischargeInfoStatusId(
-        planReply.getDischargingInformation().getDischargingInfoStatusId());
+        dischargingInformationReply.getDischargingInfoStatusId());
     dischargeInformation.setDischargePlanArrStatusId(
-        planReply.getDischargingInformation().getDischargingPlanArrStatusId());
+        dischargingInformationReply.getDischargingPlanArrStatusId());
     dischargeInformation.setDischargePlanDepStatusId(
-        planReply.getDischargingInformation().getDischargingPlanDepStatusId());
+        dischargingInformationReply.getDischargingPlanDepStatusId());
+    dischargeInformation.setIsDischargeInfoComplete(
+        dischargingInformationReply.getIsDischargeInfoComplete());
+    dischargeInformation.setIsDischargeInstructionsComplete(
+        dischargingInformationReply.getIsDischargeInfoComplete());
+    dischargeInformation.setIsDischargePlanGenerated(
+        dischargingInformationReply.getIsDischargingPlanGenerated());
+    dischargeInformation.setIsDischargeSequenceGenerated(
+        dischargingInformationReply.getIsDischargingSequenceGenerated());
+    dischargeInformation.setDischargeSlopTanksFirst(
+        dischargingInformationReply.getDischargeSlopTanksFirst());
+    dischargeInformation.setDischargeCommingledCargoSeparately(
+        dischargingInformationReply.getDischargeCommingledCargoSeparately());
     dischargingPlanResponse.setDischargingInformation(dischargeInformation);
     List<LoadableStudy.LoadableQuantityCargoDetails> portCargos =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
@@ -411,6 +427,9 @@ public class DischargeInformationService {
     dischargingPlanResponse.setPlanStabilityParams(
         dischargingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortDischargingPlanStabilityParametersList()));
+    dischargingPlanResponse.setPlanCommingleDetails(
+        dischargingPlanBuilderService.buildLoadingPlanCommingleFromRpc(
+            planReply.getPortDischargingPlanCommingleDetailsList()));
     dischargingPlanResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return dischargingPlanResponse;
@@ -424,12 +443,6 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(dischargeUllageResponse, response);
-    dischargeUllageResponse.getBillOfLaddingList().stream()
-        .forEach(
-            ladding -> {
-              ladding.setCargoToBeDischarged(ladding.getCargoToBeLoaded());
-              ladding.setCargoDischarged(ladding.getCargoLoaded());
-            });
     response.setPortDischargePlanBallastDetails(
         dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(

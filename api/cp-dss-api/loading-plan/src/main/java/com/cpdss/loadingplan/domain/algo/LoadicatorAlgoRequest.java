@@ -13,5 +13,6 @@ public class LoadicatorAlgoRequest {
   private Long loadingInformationId;
   private Long vesselId;
   private Long portId;
+  private Long portRotationId;
   private List<LoadicatorStage> stages;
 }

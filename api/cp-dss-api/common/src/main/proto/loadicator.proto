@@ -46,7 +46,7 @@ message StowagePlan{
 	repeated OtherTankInfo otherTankInfo = 23;
 	repeated BallastInfo ballastInfo = 24;
 	string seaWaterDensity = 25;
-
+	int64 portRotationId = 26;
 }
 
 message StowageDetails{

@@ -43,6 +43,9 @@ public class CargoServiceTest {
   @MockBean CargoNominationRepository cargoNominationRepository;
   @MockBean VoyageRepository voyageRepository;
   @MockBean LoadablePatternRepository loadablePatternRepository;
+  @MockBean VoyageStatusRepository voyageStatusRepository;
+  @MockBean LoadableStudyStatusRepository loadableStudyStatusRepository;
+  @MockBean LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
   private static final String SUCCESS = "SUCCESS";
 
   @Test

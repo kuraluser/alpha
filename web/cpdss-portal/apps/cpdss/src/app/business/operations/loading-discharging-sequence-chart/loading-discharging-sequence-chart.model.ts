@@ -30,6 +30,7 @@ declare module 'highcharts' {
    */
   interface Chart {
     group: any;
+    cargoStrippingGroup: any;
     ballastStrippingGroup: any;
     ballastGravityGroup: any;
   }
@@ -218,9 +219,11 @@ export interface ISequenceData {
   ballastPumps: IPumpData[];
   flowRates: Array<IFlowRate>;
   cargoLoadingRates: Array<ILoadingRate>;
+  cargoDischargingRates: Array<IDischargingRate>;
   stabilityParams: IStabilityParam[];
   gravity?: IPumpData;
-  ballastEduction?: IBallastEduction[];
+  ballastEduction?: IEduction[];
+  cargoEduction?: IEduction[];
 }
 
 /**
@@ -257,6 +260,19 @@ export interface ILoadingRate {
   endTime: number;
   loadingRates: number[];
   loadingRatesM3PerHr: number[];
+}
+
+/**
+ * Interface for discharging rate data per stage
+ *
+ * @export
+ * @interface IDischargingRate
+ */
+export interface IDischargingRate {
+  startTime: number;
+  endTime: number;
+  dischargingRates: number[];
+  dischargingRatesM3PerHr: number[];
 }
 
 /**
@@ -300,9 +316,9 @@ export enum SEQUENCE_CHARTS {
  * Interface for ballast eduction details
  *
  * @export
- * @interface IBallastEduction
+ * @interface IEduction
  */
-export interface IBallastEduction {
+export interface IEduction {
   timeStart: number;
   timeEnd: number;
   tanks: number[];

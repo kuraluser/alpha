@@ -1470,14 +1470,6 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               + fwDepTotal
               + ballastDepTotal
               + vesselLwt;
-      BigDecimal depDeflection =
-          depSynopticalTableLoadicatorData.getDeflection() != null
-              ? depSynopticalTableLoadicatorData.getDeflection()
-              : BigDecimal.ZERO;
-      BigDecimal arrDeflection =
-          arrSynopticalTableLoadicatorData.getDeflection() != null
-              ? arrSynopticalTableLoadicatorData.getDeflection()
-              : BigDecimal.ZERO;
       BigDecimal depAft =
           depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned() != null
               ? depSynopticalTableLoadicatorData.getCalculatedDraftAftPlanned()

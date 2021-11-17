@@ -450,6 +450,8 @@ public class LoadicatorService {
     }
     Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation().getSeaWaterDensity())
         .ifPresent(density -> stowagePlanBuilder.setSeaWaterDensity(valueOf(density)));
+    Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation().getId())
+        .ifPresent(stowagePlanBuilder::setPortRotationId);
     stowagePlanBuilder.setSynopticalId(synopticalEntity.getId());
   }
 
@@ -1423,6 +1425,7 @@ public class LoadicatorService {
           trim.setPortId(ldTrim.getPortId());
           trim.setSynopticalId(ldTrim.getSynopticalId());
           trim.setDeflection(ldTrim.getDeflection());
+          trim.setPortRotationId(ldTrim.getPortRotationId());
           ldTrims.add(trim);
         });
 
@@ -1476,6 +1479,7 @@ public class LoadicatorService {
           intactStability.setStabilityAreaBaValue(lDIntactStability.getStabilityAreaBaValue());
           intactStability.setPortId(lDIntactStability.getPortId());
           intactStability.setSynopticalId(lDIntactStability.getSynopticalId());
+          intactStability.setPortRotationId(lDIntactStability.getPortRotationId());
           ldIntactStabilities.add(intactStability);
         });
 
@@ -1516,6 +1520,7 @@ public class LoadicatorService {
           strength.setShearingForcePersentValue(ldStrength.getShearingForcePersentValue());
           strength.setPortId(ldStrength.getPortId());
           strength.setSynopticalId(ldStrength.getSynopticalId());
+          strength.setPortRotationId(ldStrength.getPortRotationId());
           ldStrengths.add(strength);
         });
 

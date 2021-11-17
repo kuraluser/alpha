@@ -10,7 +10,6 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.GenerateProtectedFile;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.*;
@@ -27,15 +26,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -47,6 +42,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -610,7 +606,8 @@ public class LoadablePlanService {
   }
 
   /**
-   * @param findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive
+   * @param synopticalTableOpt
+   * @param loadablePatternId
    * @return
    */
   private StabilityParameter createStabilityParameters(
@@ -835,32 +832,33 @@ public class LoadablePlanService {
 
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     workbook.write(byteArrayOutputStream);
-    // setting password protection on the file
-    List<Voyage> voyageList =
-        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
-            1L, request.getVesselId(), vesselPlanTable.getVoyageNo());
-    String string =
-        DateTimeFormatter.ofPattern("dd-MM-yyyy").format(voyageList.get(0).getVoyageStartDate());
-    String password = voyageList.get(0).getVoyageNo() + string.replaceAll("\\D", "");
-    File outputFile = File.createTempFile("unProtected", ".xlsx");
-    try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-      byteArrayOutputStream.writeTo(fos);
-      File protectedFile =
-          GenerateProtectedFile.generatePasswordProtectedFile(outputFile, password);
-      byte[] bytes = Files.readAllBytes(protectedFile.toPath());
+    // setting password protection on the file is commented for temporary
+    //    List<Voyage> voyageList =
+    //        voyageRepository.findByCompanyXIdAndVesselXIdAndVoyageNoIgnoreCase(
+    //            1L, request.getVesselId(), vesselPlanTable.getVoyageNo());
+    //    String string =
+    //
+    // DateTimeFormatter.ofPattern("dd-MM-yyyy").format(voyageList.get(0).getVoyageStartDate());
+    //    String password = voyageList.get(0).getVoyageNo() + string.replaceAll("\\D", "");
+    //    File outputFile = File.createTempFile("unProtected", ".xlsx");
+    //    try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+    //      byteArrayOutputStream.writeTo(fos);
+    //      File protectedFile =
+    //          GenerateProtectedFile.generatePasswordProtectedFile(outputFile, password);
+    //      byte[] bytes = Files.readAllBytes(protectedFile.toPath());
+    byte[] bytes = byteArrayOutputStream.toByteArray();
+    dataChunkBuilder
+        .setData(ByteString.copyFrom(bytes))
+        .setSize(bytes.length)
+        .setResponseStatus(
+            LoadableStudy.StatusReply.newBuilder()
+                .setStatus(SUCCESS)
+                .setCode(HttpStatusCode.OK.getReasonPhrase())
+                .build())
+        .build();
 
-      dataChunkBuilder
-          .setData(ByteString.copyFrom(bytes))
-          .setSize(bytes.length)
-          .setResponseStatus(
-              LoadableStudy.StatusReply.newBuilder()
-                  .setStatus(SUCCESS)
-                  .setCode(HttpStatusCode.OK.getReasonPhrase())
-                  .build())
-          .build();
-
-      byteArrayOutputStream.close();
-    }
+    byteArrayOutputStream.close();
+    //    }
   }
 
   /**
@@ -3440,11 +3438,16 @@ public class LoadablePlanService {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
             loadablePlanStowageDetailsBuilder =
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
-        JsonFormat.parser()
-            .ignoringUnknownFields()
-            .merge(
-                objectMapper.writeValueAsString(loadablePlanStowageDetailsDB),
-                loadablePlanStowageDetailsBuilder);
+        try {
+          BeanUtils.copyProperties(loadablePlanStowageDetailsDB, loadablePlanStowageDetailsBuilder);
+        } catch (Exception e) {
+          log.info("loadablePlanStowageDetailsBuilder:{}", loadablePlanStowageDetailsBuilder);
+        }
+        //        JsonFormat.parser()
+        //            .ignoringUnknownFields()
+        //            .merge(
+        //                objectMapper.writeValueAsString(loadablePlanStowageDetailsDB),
+        //                loadablePlanStowageDetailsBuilder);
 
         // Build other fields -> for fields with different var names
         loadablePlanStowageDetailsBuilder.setStowageDetailsId(loadablePlanStowageDetailsDB.getId());
@@ -3469,7 +3472,7 @@ public class LoadablePlanService {
 
         // Add details
         loadablePlanStowageDetailsProtoList.add(loadablePlanStowageDetailsBuilder.build());
-      } catch (InvalidProtocolBufferException | JsonProcessingException e) {
+      } catch (Exception e) {
         log.error(
             "LoadablePlanStowageDetails entity object to proto object conversion failed. Stowage Details: {}",
             loadablePlanStowageDetailsDB,

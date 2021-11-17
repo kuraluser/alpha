@@ -6,7 +6,7 @@ import { QUANTITY_UNIT, RATE_UNIT, ValueObject } from '../../../shared/models/co
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank, OPERATIONS } from '../../core/models/common.model';
-import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage, IBallastEduction, ITankData, ITank as ISequenceTank } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
+import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage, IEduction, ITankData, ITank as ISequenceTank, IDischargingRate } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
 import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays, ITanksWashingWithDifferentCargo, ITanksWashingWithDifferentCargoResponse, ILoadedCargoResponse } from '../models/loading-discharging.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
@@ -564,7 +564,7 @@ export class LoadingDischargingTransformationService {
         'required': 'LOADING_DETAILS_FINAL_TRIM_REQUIRED',
         'max': 'LOADING_DETAILS_FINAL_TRIM_MAX'
       },
-      topOffTrim: {
+      strippingTrim: {
         'required': 'LOADING_DETAILS_TOP_OFF_TRIM_REQUIRED',
         'max': 'LOADING_DETAILS_TOP_OFF_TRIM_MAX'
       }
@@ -795,18 +795,19 @@ export class LoadingDischargingTransformationService {
   }
 
   /**
-   * Set ballast eduction operation
+   * Set ballast/cargo eduction operation
    *
-   * @param {IPumpData[]} ballastPumps
-   * @param {IPumpData} gravity
-   * @param {IPump[]} ballastPumpCategories
+   * @param {ITankData[]} tankData
+   * @param {IEduction[]} eduction
+   * @param {ISequenceTank[]} tankCategories
+   * @param {string} type
    * @return {*}
    * @memberof LoadingDischargingTransformationService
    */
-  setBallastEduction(ballasts: ITankData[], eduction: IBallastEduction[], ballastTankCategories: ISequenceTank[]) {
+  setEduction(tankData: ITankData[], eduction: IEduction[], tankCategories: ISequenceTank[], type: string) {
     eduction?.forEach(item => {
       item?.tanks?.forEach(tankId => {
-        const _tank = ballastTankCategories.find(tank => tank?.id === tankId);
+        const _tank = tankCategories.find(tank => tank?.id === tankId);
         const data: ITankData = {
           tankId: tankId,
           start: item.timeStart,
@@ -814,13 +815,14 @@ export class LoadingDischargingTransformationService {
           quantity: 0,
           quantityMT: 0,
           sounding: 0,
-          id: "ballast-stripping-" + _tank.tankName // NB:- id must be unique
+          ullage: 0,
+          id: `${type}-stripping-${_tank.tankName}` // NB:- id must be unique
         }
-        ballasts?.push(data);
+        tankData?.push(data);
       });
     });
 
-    return ballasts;
+    return tankData;
   }
 
   /**
@@ -853,25 +855,35 @@ export class LoadingDischargingTransformationService {
    * Set cargo loading rate data
    *
    * @param {*} stageTickPositions
-   * @param {*} cargoLoadingRates
+   * @param {*} cargoRates
    * @return {*}
    * @memberof LoadingDischargingTransformationService
    */
-  setCargoLoadingRate(stageTickPositions, cargoLoadingRates: ILoadingRate[]) {
-    const _cargoLoadingRates = <ILoadingRate[]>[];
+  setCargoRate(stageTickPositions, cargoRates: ILoadingRate[] | IDischargingRate[], type: OPERATIONS) {
+    const _cargoLoadingRates: ILoadingRate[] = [];
+    const _cargoDischargingRates: IDischargingRate[] = [];
     for (let index = 0; index < stageTickPositions.length - 1; index++) {
       const start = stageTickPositions[index];
       const end = stageTickPositions[index + 1];
       const rate = new Set<number>();
-      cargoLoadingRates.forEach(element => {
+      cargoRates?.forEach(element => {
         if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end < element.endTime)) {
-          element.loadingRates.forEach(rate.add, rate);
+          if(type === OPERATIONS.LOADING){
+            element.loadingRates.forEach(rate.add, rate);
+          } else {
+            element.dischargingRates.forEach(rate.add, rate);
+          }
         }
       });
       const rateArr = Array.from(rate);
-      _cargoLoadingRates.push({ startTime: start, endTime: end, loadingRatesM3PerHr: rateArr, loadingRates: rateArr });
+      if (type === OPERATIONS.LOADING) {
+        _cargoLoadingRates.push({ startTime: start, endTime: end, loadingRatesM3PerHr: rateArr, loadingRates: rateArr });
+      } else {
+        _cargoDischargingRates.push({ startTime: start, endTime: end, dischargingRatesM3PerHr: rateArr, dischargingRates: rateArr });
+      }
+
     }
-    return _cargoLoadingRates;
+    return type === OPERATIONS.LOADING ? _cargoLoadingRates: _cargoDischargingRates;
   }
 
   /**
@@ -932,6 +944,8 @@ export class LoadingDischargingTransformationService {
       cargo.quantityMT = cargo.quantity;
       return cargo;
     });
+    sequenceData.cargos = this.setEduction(sequenceData?.cargos, sequenceData?.cargoEduction, sequenceData.cargoTankCategories, 'cargo')
+
     sequenceData.cargoStages = sequenceData?.cargoStages?.map(stage => {
       stage.cargos = stage.cargos.map(cargo => {
         cargo.quantityMT = cargo.quantity;
@@ -965,8 +979,9 @@ export class LoadingDischargingTransformationService {
     sequenceData.flowRates = [...flowRates];
     sequenceData.stagePlotLines = this.setPlotLines(sequenceData?.stageTickPositions);
     sequenceData.tickPositions = this.setTickPositions(sequenceData?.minXAxisValue, sequenceData?.maxXAxisValue);
-    sequenceData.cargoLoadingRates = this.setCargoLoadingRate(sequenceData?.stageTickPositions, sequenceData?.cargoLoadingRates);
-    sequenceData.ballasts = this.setBallastEduction(sequenceData?.ballasts, sequenceData?.ballastEduction, sequenceData.ballastTankCategories)
+    sequenceData.cargoLoadingRates = <ILoadingRate[]>this.setCargoRate(sequenceData?.stageTickPositions, sequenceData?.cargoLoadingRates, OPERATIONS.LOADING);
+    sequenceData.cargoDischargingRates = <IDischargingRate[]>this.setCargoRate(sequenceData?.stageTickPositions, sequenceData?.cargoDischargingRates, OPERATIONS.DISCHARGING);
+    sequenceData.ballasts = this.setEduction(sequenceData?.ballasts, sequenceData?.ballastEduction, sequenceData.ballastTankCategories, 'ballast')
     return { ...sequenceData };
   }
 
@@ -986,7 +1001,7 @@ export class LoadingDischargingTransformationService {
     });
     sequenceData.cargoStages = sequenceData?.cargoStages?.map(stage => {
       stage.cargos = stage?.cargos?.map(cargo => {
-        cargo.quantity = this.quantityPipe.transform(cargo?.quantityMT, QUANTITY_UNIT.MT, quantityUnitTo, cargo?.api);
+        cargo.quantity = this.quantityPipe.transform(cargo?.quantityMT, QUANTITY_UNIT.MT, quantityUnitTo, cargo?.api) ?? 0;
         return cargo;
       });
       return stage;
@@ -1002,6 +1017,18 @@ export class LoadingDischargingTransformationService {
         });
       } else {
         stage.loadingRates = [...stage?.loadingRatesM3PerHr];
+      }
+
+      return stage;
+    });
+
+    sequenceData.cargoDischargingRates = sequenceData?.cargoDischargingRates?.map(stage => {
+      if (rateUnitTo === RATE_UNIT.BBLS_PER_HR) {
+        stage.dischargingRates = stage?.dischargingRatesM3PerHr?.map(rate => {
+          return rate * AppConfigurationService.settings.unitConversionConstant;
+        });
+      } else {
+        stage.dischargingRates = [...stage?.dischargingRatesM3PerHr];
       }
 
       return stage;
@@ -1068,7 +1095,7 @@ export class LoadingDischargingTransformationService {
 
     // Update discharging details
     dischargingInformation.dischargeDetails = dischargingInformationResponse?.dischargeDetails;
-    dischargingInformation.dischargeDetails.trimAllowed.topOffTrim = dischargingInformationResponse?.dischargeDetails?.trimAllowed?.finalTrim;
+    dischargingInformation.dischargeDetails.trimAllowed.strippingTrim = dischargingInformationResponse?.dischargeDetails?.trimAllowed?.finalTrim;
 
     //Update tank list
     const cargoTanks = [];

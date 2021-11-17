@@ -84,6 +84,8 @@ export class DischargeStudyViewPlanTransformationService {
       },
       {
         field: 'dischargeTime',
+        fieldColumnClass: 'text-right',
+        fieldClass: 'text-right',
         header: 'DISCHARGE_STUDY_VIEW_PLAN_TIME'
       }
     ]
@@ -219,9 +221,9 @@ export class DischargeStudyViewPlanTransformationService {
       bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
     }
     _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color, true, false , false);
-    _cargoDetailValuObject.bbls = new ValueObject<string>(unitConversion.bbls?.toString(), true, false);
+    _cargoDetailValuObject.bbls = new ValueObject<string>(unitConversion.bbls ? unitConversion.bbls?.toString() : '0', true, false);
     _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj, true, false);
-    _cargoDetailValuObject.kl = new ValueObject<string>(unitConversion.kl?.toString(), true, false, false, false);
+    _cargoDetailValuObject.kl = new ValueObject<string>(unitConversion.kl ? unitConversion.kl?.toString() : '0', true, false, false, false);
     
     _cargoDetailValuObject.mt = new ValueObject<string>(cargoDetail.quantity?.toString(), true, false);
     _cargoDetailValuObject.dischargeTime = cargoDetail.dischargeTime;

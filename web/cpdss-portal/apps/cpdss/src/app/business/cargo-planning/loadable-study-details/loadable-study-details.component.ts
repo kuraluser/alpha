@@ -987,7 +987,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 
     const isLQvalueNotChanged = await this.checkLoadableQuntityChangeInPopup();
     if (isLQvalueNotChanged) {
-      this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
+      await this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
       this.ngxSpinnerService.hide();
     }
   }
