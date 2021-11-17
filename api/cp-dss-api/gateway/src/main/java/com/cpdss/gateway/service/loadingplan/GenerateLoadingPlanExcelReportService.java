@@ -198,9 +198,10 @@ public class GenerateLoadingPlanExcelReportService {
 
         setCellStyle(workbook, loadinPlanExcelDetails);
 
-        // Adding password protection
-        GenerateProtectedFile.setPasswordToWorkbook(
-            workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
+        // Adding password protection code commented for temporary
+        //GenerateProtectedFile.setPasswordToWorkbook(
+        //    workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
+        workbook.write(outFile);
         resultFileStream.close();
 
         // Putting entry in file repo
