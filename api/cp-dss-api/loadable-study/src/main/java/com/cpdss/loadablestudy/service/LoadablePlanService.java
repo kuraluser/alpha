@@ -27,8 +27,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.util.JsonFormat;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -47,6 +45,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xssf.usermodel.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -610,7 +609,8 @@ public class LoadablePlanService {
   }
 
   /**
-   * @param findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive
+   * @param synopticalTableOpt
+   * @param loadablePatternId
    * @return
    */
   private StabilityParameter createStabilityParameters(
@@ -3440,11 +3440,16 @@ public class LoadablePlanService {
         com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.Builder
             loadablePlanStowageDetailsBuilder =
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanStowageDetails.newBuilder();
-        JsonFormat.parser()
-            .ignoringUnknownFields()
-            .merge(
-                objectMapper.writeValueAsString(loadablePlanStowageDetailsDB),
-                loadablePlanStowageDetailsBuilder);
+        try {
+          BeanUtils.copyProperties(loadablePlanStowageDetailsDB, loadablePlanStowageDetailsBuilder);
+        } catch (Exception e) {
+          log.info("loadablePlanStowageDetailsBuilder:{}", loadablePlanStowageDetailsBuilder);
+        }
+        //        JsonFormat.parser()
+        //            .ignoringUnknownFields()
+        //            .merge(
+        //                objectMapper.writeValueAsString(loadablePlanStowageDetailsDB),
+        //                loadablePlanStowageDetailsBuilder);
 
         // Build other fields -> for fields with different var names
         loadablePlanStowageDetailsBuilder.setStowageDetailsId(loadablePlanStowageDetailsDB.getId());
@@ -3469,7 +3474,7 @@ public class LoadablePlanService {
 
         // Add details
         loadablePlanStowageDetailsProtoList.add(loadablePlanStowageDetailsBuilder.build());
-      } catch (InvalidProtocolBufferException | JsonProcessingException e) {
+      } catch (Exception e) {
         log.error(
             "LoadablePlanStowageDetails entity object to proto object conversion failed. Stowage Details: {}",
             loadablePlanStowageDetailsDB,
