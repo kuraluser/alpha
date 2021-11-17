@@ -212,6 +212,8 @@ service LoadableStudyService {
 	rpc GetVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
 	
 	rpc saveActivatedVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
+
+	rpc GetVoyageByVoyageId(VoyageInfoRequest) returns (VoyageInfoReply) {}
 }
 
 service SynopticalOperationService{
@@ -1665,4 +1667,13 @@ message VoyageActivateReply {
 	ResponseStatus responseStatus = 1;
 	VoyageActivateRequest voyageActivateRequest = 2;
 
+}
+
+message VoyageInfoRequest{
+	int64 voyageId = 1;
+}
+
+message VoyageInfoReply{
+	ResponseStatus responseStatus = 1;
+	VoyageDetail voyageDetail = 2;
 }

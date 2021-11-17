@@ -3143,4 +3143,32 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  /**
+   * Fetching Voyage using voyageId
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getVoyageByVoyageId(
+      com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.VoyageInfoReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.VoyageInfoReply.newBuilder();
+    try {
+      this.voyageService.getVoyageByVoyageId(request, replyBuilder);
+    } catch (Exception e) {
+      log.error("Error in getting Voyage ", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

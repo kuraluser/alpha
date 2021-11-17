@@ -89,6 +89,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
 
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+
   @Autowired LoadingPlanService loadingPlanService;
 
   private static final String SUCCESS = "SUCCESS";
@@ -2156,5 +2159,35 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     jsonResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return jsonResponse;
+  }
+
+  @Override
+  public String prepareFileName(Long vesselId, Long voyageId, Long portRotationId) {
+    Long portId =
+        this.loadableStudyServiceBlockingStub
+            .getLoadableStudyPortRotationByPortRotationId(
+                LoadableStudy.PortRotationRequest.newBuilder().setId(portRotationId).build())
+            .getPortRotationDetail()
+            .getPortId();
+    return this.vesselInfoGrpcService
+            .getVesselInfoByVesselId(
+                VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build())
+            .getVesselDetail()
+            .getName()
+        + " - "
+        + this.loadableStudyServiceBlockingStub
+            .getVoyageByVoyageId(
+                com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest.newBuilder()
+                    .setVoyageId(voyageId)
+                    .build())
+            .getVoyageDetail()
+            .getVoyageNumber()
+        + " - "
+        + this.portInfoGrpcService
+            .getPortInfoByPortIds(
+                PortInfo.GetPortInfoByPortIdsRequest.newBuilder().addId(portId).build())
+            .getPorts(0)
+            .getName()
+        + " - ";
   }
 }
