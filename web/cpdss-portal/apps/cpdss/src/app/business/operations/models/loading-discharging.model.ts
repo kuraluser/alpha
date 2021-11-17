@@ -1368,6 +1368,7 @@ export interface IDischargingPlanDetailsResponse {
   ballastRearTanks: IShipBallastTank[][];
   bunkerRearTanks: IShipBunkerTank[][];
   bunkerTanks: IShipBunkerTank[][];
+  planCommingleDetails?: IPlanCommingleCargo[];
 }
 
 /**

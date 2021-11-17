@@ -139,7 +139,8 @@ export class ArrivalConditionComponent implements OnInit, OnDestroy {
     this.loadingDischargingPlanData?.currentPortCargos?.map(item => {
       let actualWeight = 0, plannedWeight = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
-        if (stowage.conditionType === 1 && item.cargoNominationId === stowage.cargoNominationId) {
+        const currentPorCargoNominationId = this.loadingDischargingPlanData?.loadingInformation ? item.cargoNominationId : item.dischargeCargoNominationId;
+        if (stowage.conditionType === 1 && currentPorCargoNominationId === stowage.cargoNominationId) {
           if (stowage.valueType === 1) {
             if (stowage.isCommingleCargo) {
               commingleArray?.map(com => {
