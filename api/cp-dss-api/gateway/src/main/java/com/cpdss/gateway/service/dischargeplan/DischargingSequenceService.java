@@ -320,7 +320,7 @@ public class DischargingSequenceService {
               stowage -> {
                 LoadingPlanTankDetails.Builder stowageBuilder = LoadingPlanTankDetails.newBuilder();
                 Optional.ofNullable(stowage.getApi()).ifPresent(stowageBuilder::setApi);
-                Optional.ofNullable(stowage.getCargoNominationId())
+                Optional.ofNullable(stowage.getDsCargoNominationId())
                     .ifPresent(stowageBuilder::setCargoNominationId);
                 Optional.ofNullable(stowage.getQuantityM3())
                     .ifPresent(stowageBuilder::setQuantityM3);
