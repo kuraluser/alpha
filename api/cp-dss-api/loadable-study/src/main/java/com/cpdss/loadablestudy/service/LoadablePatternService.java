@@ -1180,8 +1180,10 @@ public class LoadablePatternService {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
-          loadablePlanStowageDetails.setCargoNominationTemperature(
-              new BigDecimal(lpsd.getCargoNominationTemperature()));
+          if(lpsd.getCargoNominationTemperature() != null){
+            loadablePlanStowageDetails.setCargoNominationTemperature(
+                    new BigDecimal(lpsd.getCargoNominationTemperature()));
+          }
           loadablePlanStowageDetailsRespository.save(loadablePlanStowageDetails);
         });
   }
