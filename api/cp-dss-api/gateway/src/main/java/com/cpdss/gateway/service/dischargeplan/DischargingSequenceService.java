@@ -823,9 +823,7 @@ public class DischargingSequenceService {
     // Building cargo and ballast pumps details
     this.buildPumpDetails(vesselId, response, allPumps);
     loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories, ballastEduction);
-    loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
-    // loadingSequenceService.removeEmptyBallasts(ballasts, ballastTankCategories);
-    //    loadingSequenceService.removeEmptyCargos(cargos, cargoTankCategories);
+    this.removeEmptyCargos(cargos, cargoTankCategories);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -845,6 +843,34 @@ public class DischargingSequenceService {
                     ballast -> vesselTankDetails.indexOf(vesselTankMap.get(ballast.getId()))))
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
+  }
+
+  /**
+   * Remove items with no cargo details from the list
+   *
+   * @param cargos
+   * @param cargoTankCategories
+   */
+  public void removeEmptyCargos(List<Cargo> cargos, Set<TankCategory> cargoTankCategories) {
+    Set<Long> tankIds = cargos.stream().map(Cargo::getTankId).collect(Collectors.toSet());
+    tankIds.forEach(
+        tankId -> {
+          // Removing entries with no quantity present
+          cargos.removeIf(
+              cargo ->
+                  cargo.getTankId().equals(tankId)
+                      && (cargo.getQuantity().compareTo(BigDecimal.ZERO) <= 0));
+
+          List<Cargo> tankWiseCargos =
+              cargos.stream()
+                  .filter(cargo -> cargo.getTankId().equals(tankId))
+                  .collect(Collectors.toList());
+          // Removing entries with less than 1 occurrence like Loading
+          if (tankWiseCargos.size() < 2) {
+            cargos.removeIf(cargo -> cargo.getTankId().equals(tankId));
+            cargoTankCategories.removeIf(category -> category.getId().equals(tankId));
+          }
+        });
   }
 
   /**
