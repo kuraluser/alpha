@@ -89,6 +89,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /** @author sanalkumar.k */
@@ -197,9 +198,10 @@ public class GenerateLoadingPlanExcelReportService {
 
         setCellStyle(workbook, loadinPlanExcelDetails);
 
-        // Adding password protection
-        GenerateProtectedFile.setPasswordToWorkbook(
-            workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
+        // Adding password protection code commented for temporary
+        //GenerateProtectedFile.setPasswordToWorkbook(
+        //    workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
+        workbook.write(outFile);
         resultFileStream.close();
 
         // Putting entry in file repo
@@ -207,13 +209,13 @@ public class GenerateLoadingPlanExcelReportService {
             FileRepoService.addFileToRepo(
                 null,
                 loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-                actualFileName.split("/")[1],
+                actualFileName.split("/")[actualFileName.split("/").length - 1],
                 SUB_FOLDER_NAME + "/",
                 "Loading",
                 "Process",
                 null,
                 true);
-        if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+        if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
           log.info("Succesfully added entry in FileRepo : {}", reply.getId());
         } else {
           log.info("Data entry in file repo failed");
@@ -696,8 +698,8 @@ public class GenerateLoadingPlanExcelReportService {
       // Calling loading plan get plan details service
       requestPayload =
           loadingPlanServiceImpl.getLoadingPlan(vesselId, voyageId, infoId, portRotationId);
-      voyageDate = requestPayload.getVoyageDate();
     }
+    voyageDate = requestPayload.getVoyageDate();
     // Get a list of all ballast tanks for sheet3
     getAllBallastTanks(
         requestPayload.getBallastFrontTanks(),

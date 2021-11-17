@@ -51,7 +51,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   loadingPlanComplete: boolean;
   OPERATIONS = OPERATIONS;
   errorMessage: IAlgoError[];
-  disableGenerateLoadableButton: boolean = true;
+  disableGenerateLoadableButton = true;
   loadinfoTemp: number;
 
   loadingInfoTabPermission: IPermission;
@@ -63,9 +63,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
 
   private ngUnsubscribe: Subject<any> = new Subject();
-  errorPopUp: boolean = false;
-  disableViewErrorButton: boolean = true;
-  processing: boolean = true;
+  errorPopUp = false;
+  disableViewErrorButton = true;
+  processing = true;
   isDischargeStarted: boolean;
 
   @HostListener('window:beforeunload')
@@ -408,7 +408,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   setButtonStatus(error?) {
-    if (this.loadinfoTemp == this.loadingInfoId) {
+    if (this.loadinfoTemp === this.loadingInfoId) {
       this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
       this.processing = false;
       this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
@@ -433,7 +433,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   setButtonStatusInProcessing() {
-    if (this.loadingInfoId == this.loadinfoTemp) {
+    if (this.loadingInfoId === this.loadinfoTemp) {
       this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
       this.processing = true;
     }
@@ -464,7 +464,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       portName: localStorage.getItem('selectedPortName'),
       type: 'loading-plan-status'
     }
-    if (result.responseStatus.status == "SUCCESS") {
+    if (result.responseStatus.status === "SUCCESS") {
       if (result.processId) {
         data.processId = result.processId;
         navigator.serviceWorker.controller.postMessage({ type: 'loading-plan-status', data });
@@ -479,7 +479,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    */
   async getAlgoErrorMessage(status) {
     this.ngxSpinnerService.show();
-    if ((this.loadinfoTemp == this.loadingInfoId) || (!this.loadinfoTemp)) {
+    if ((this.loadinfoTemp === this.loadingInfoId) || (!this.loadinfoTemp)) {
       const algoError: IAlgoResponse = await this.operationsApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
       if (algoError.responseStatus.status === 'SUCCESS') {
         this.ngxSpinnerService.hide();

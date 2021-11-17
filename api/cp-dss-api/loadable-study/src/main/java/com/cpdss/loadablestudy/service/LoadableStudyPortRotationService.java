@@ -619,6 +619,22 @@ public class LoadableStudyPortRotationService {
     LoadableStudy loadableStudy = loadableStudyOpt.get();
 
     loadableStudy.setIsPortsComplete(request.getIsPortsComplete());
+    Boolean isPortRotationComplete = true;
+    if (loadableStudy.getPlanningTypeXId() == PLANNING_TYPE_LOADING) {
+      List<LoadableStudyPortRotation> portRotations =
+          this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+              loadableStudy.getId(), true);
+      for (LoadableStudyPortRotation portRotation : portRotations) {
+        if ((portRotation.getAirDraftRestriction() == null)
+            || (portRotation.getMaxDraft() == null)
+            || (portRotation.getOperation() == null)
+            || (portRotation.getPortXId() == null)
+            || (portRotation.getSeaWaterDensity() == null)) {
+          isPortRotationComplete = false;
+        }
+      }
+      loadableStudy.setIsPortsComplete(isPortRotationComplete);
+    }
     if (loadableStudy.getPlanningTypeXId() == 2) {
       loadableStudy.setIsDischargeStudyComplete(false);
     }

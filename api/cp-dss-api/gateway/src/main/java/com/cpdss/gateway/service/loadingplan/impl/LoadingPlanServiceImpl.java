@@ -6,6 +6,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.Common.PLANNING_TYPE;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
@@ -304,7 +305,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             activeVoyage.getPatternId(),
             OPERATION_TYPE,
             portRotation.get().getId(),
-            portRotation.get().getPortId()));
+            portRotation.get().getPortId(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY));
 
     // Manage Sequence
     LoadingSequences loadingSequences =
@@ -527,7 +529,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             activeVoyage.getPatternId(),
             OPERATION_TYPE,
             portRotation.get().getId(),
-            portRotation.get().getPortId()));
+            portRotation.get().getPortId(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY));
     loadingInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     LoadingSequences loadingSequences =
@@ -558,7 +561,9 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             activeVoyage.getPatternId(),
             OPERATION_TYPE,
             portRotation.get().getId(),
-            portRotation.get().getPortId()));
+            portRotation.get().getPortId(),
+            PLANNING_TYPE.LOADABLE_STUDY,
+            false));
 
     return loadingPlanResponse;
   }
@@ -707,22 +712,50 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     final String OPERATION_TYPE = "DEP";
     // Getting Cargo to Be Loaded in the Port
-    List<LoadableQuantityCargoDetails> loadablePlanCargoDetails =
-        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
-            vesselId,
-            activeVoyage.getPatternId(),
-            OPERATION_TYPE,
-            portRotation.get().getId(),
-            portRotation.get().getPortId());
-
+    List<LoadableQuantityCargoDetails> loadablePlanCargoDetails = new ArrayList<>();
     // Getting already added cargoes until this port
-    List<LoadableQuantityCargoDetails> loadedCargoDetails =
-        this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
-            vesselId,
-            activeVoyage.getPatternId(),
-            OPERATION_TYPE,
-            portRotation.get().getId(),
-            portRotation.get().getPortId());
+    List<LoadableQuantityCargoDetails> loadedCargoDetails = new ArrayList<>();
+    if (isDischarging) {
+      loadablePlanCargoDetails =
+          this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+              vesselId,
+              activeVoyage.getDischargePatternId(),
+              OPERATION_TYPE,
+              portRotation.get().getId(),
+              portRotation.get().getPortId(),
+              Common.PLANNING_TYPE.DISCHARGE_STUDY,
+              isDischarging);
+      // Getting already added cargoes until this port
+      loadedCargoDetails =
+          this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
+              vesselId,
+              activeVoyage.getDischargePatternId(),
+              OPERATION_TYPE,
+              portRotation.get().getId(),
+              portRotation.get().getPortId(),
+              Common.PLANNING_TYPE.DISCHARGE_STUDY,
+              isDischarging);
+    } else {
+      loadablePlanCargoDetails =
+          this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
+              vesselId,
+              activeVoyage.getPatternId(),
+              OPERATION_TYPE,
+              portRotation.get().getId(),
+              portRotation.get().getPortId(),
+              Common.PLANNING_TYPE.LOADABLE_STUDY,
+              isDischarging);
+      // Getting already added cargoes until this port
+      loadedCargoDetails =
+          this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
+              vesselId,
+              activeVoyage.getPatternId(),
+              OPERATION_TYPE,
+              portRotation.get().getId(),
+              portRotation.get().getPortId(),
+              Common.PLANNING_TYPE.LOADABLE_STUDY,
+              isDischarging);
+    }
 
     // Getting ballast tanks
     VesselInfo.VesselRequest.Builder vesselGrpcRequest = VesselInfo.VesselRequest.newBuilder();
@@ -815,7 +848,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         cargoReply,
         arrivalDeparture,
         loadablePlanCargoDetails,
-        loadedCargoDetails);
+        loadedCargoDetails,
+        isDischarging);
 
     outResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
@@ -852,7 +886,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       CargoInfo.CargoReply cargoReply,
       String arrivalDeparture,
       List<LoadableQuantityCargoDetails> loadablePlanCargoDetails,
-      List<LoadableQuantityCargoDetails> loadedCargoDetails) {
+      List<LoadableQuantityCargoDetails> loadedCargoDetails,
+      boolean isDischarging) {
     // Setting actual or planned
     boolean isPlanned = true;
     if (portLoadablePlanStowageDetails.size() > 0
@@ -927,6 +962,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       cargoBillOfLadding.setCargoNominationId(cargoNominationId);
       cargoBillOfLadding.setCargoToBeLoaded(cargoToBeLoaded);
       cargoBillOfLadding.setCargoLoaded(cargoLoaded);
+      if (isDischarging) {
+        cargoBillOfLadding.setCargoToBeDischarged(cargoToBeLoaded);
+        cargoBillOfLadding.setCargoDischarged(cargoLoaded);
+      }
       cargoBillOfLadding.setBillOfLaddings(billOfLaddings);
       billOfLaddingList.add(cargoBillOfLadding);
 

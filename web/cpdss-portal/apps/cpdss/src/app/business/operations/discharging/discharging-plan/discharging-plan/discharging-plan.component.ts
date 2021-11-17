@@ -49,7 +49,6 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   dischargingPlanDetails: IDischargingPlanDetailsResponse;
   dischargingInformation: IDischargingInformation;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-  dischargeQuantityCargoDetails: ILoadableQuantityCargo[];
   loadedCargos: ICargo[];
   readonly OPERATIONS = OPERATIONS;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
@@ -125,12 +124,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
       const dischargePlanResponse: IDischargingPlanDetailsResponse = await this.dischargingPlanApiService.getDischargingPlanDetails(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId).toPromise();
       if (dischargePlanResponse.responseStatus.status === "200") {
         this.dischargingPlanDetails = dischargePlanResponse;
-        this.dischargingPlanDetails.dischargingInformation.cargoVesselTankDetails.loadableQuantityCargoDetails = dischargePlanResponse.dischargingInformation.cargoVesselTankDetails.dischargeQuantityCargoDetails;
-        this.dischargeQuantityCargoDetails = this.dischargingPlanDetails?.dischargingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails;
-        this.dischargingPlanDetails.dischargingInformation.loadedCargos = [...this.dischargeQuantityCargoDetails].map(cargo => {
-          const loadedCargo = { 'id': cargo?.cargoNominationId, 'abbreviation': cargo?.cargoAbbreviation, 'colorCode': cargo?.colorCode };
-          return loadedCargo;
-        });
+        this.setCommingleCargo();
         this.dischargingInformation = this.loadingDischargingTransformationService.transformDischargingInformation(this.dischargingPlanDetails.dischargingInformation, this.listData);
         this.dischargingPlanForm = this.fb.group({
           cowDetails: this.fb.group({}),
@@ -140,6 +134,28 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.hide();
     } catch (error) {
       this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+   * function to set commingle cargo flag
+   *
+   * @memberof DischargingPlanComponent
+   */
+  setCommingleCargo() {
+    if (this.dischargingPlanDetails?.planCommingleDetails?.length && this.dischargingPlanDetails?.planStowageDetails?.length) {
+      this.dischargingPlanDetails?.planCommingleDetails.map(item => {
+        this.dischargingPlanDetails?.planStowageDetails.map(plan => {
+          if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType) {
+            plan.isCommingleCargo = true;
+            plan.quantityMT = item.quantityMT;
+            plan.api = item.api;
+            plan.temperature = item.temperature;
+            plan.abbreviation = item.abbreviation;
+            plan.cargoNominationId = null;
+          }
+        });
+      });
     }
   }
 
@@ -167,6 +183,15 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
    */
   viewError(status) {
     this.errorPopUp = status;
+  }
+
+  /**
+   * function to download discharge-plan file as xls
+   *
+   * @memberof DischargingPlanComponent
+   */
+  downloadDischargePlanTemplate(): void  {
+    // TODO : will use this once download excel API available.
   }
 
 }

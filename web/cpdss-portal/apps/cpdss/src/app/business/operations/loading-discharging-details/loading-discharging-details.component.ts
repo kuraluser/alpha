@@ -126,7 +126,7 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
     });
 
     if(this.operation === OPERATIONS.DISCHARGING) {
-      this.loadingDischargingDetailsForm.addControl('topOffTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.topOffTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
+      this.loadingDischargingDetailsForm.addControl('strippingTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.strippingTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
     } else {
       this.loadingDischargingDetailsForm.addControl('finalTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
     }
@@ -262,7 +262,7 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
       } else {
         saveAs(fileurl, 'Loading_port_tide_details.xlsx');
       }
-      
+
     });
   }
 

@@ -76,4 +76,5 @@ public class LoadableQuantityCargoDetails {
   private String timeRequiredForDischarging;
   private String dischargingRate;
   private List<ContainerWashing> cowDetails;
+  private Long dsCargoNominationId;
 }

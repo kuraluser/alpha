@@ -58,4 +58,8 @@ public class LoadableStudy {
   private Boolean isDischargePortCompleted;
   private Long planingTypeId;
   private Integer caseNo;
+
+  // Last 3 voyage data and cargo, tank allocations
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private List<VoyageHistoryDto> voyageCargoHistories;
 }

@@ -353,6 +353,8 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_DEP,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
+    // setting discharge cargo nomination id
+    this.setDischargeCargoNominationId(vesselTankDetails);
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     // discharge sequence (reason/delay)
@@ -441,12 +443,6 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(dischargeUllageResponse, response);
-    dischargeUllageResponse.getBillOfLaddingList().stream()
-        .forEach(
-            ladding -> {
-              ladding.setCargoToBeDischarged(ladding.getCargoToBeLoaded());
-              ladding.setCargoDischarged(ladding.getCargoLoaded());
-            });
     response.setPortDischargePlanBallastDetails(
         dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(

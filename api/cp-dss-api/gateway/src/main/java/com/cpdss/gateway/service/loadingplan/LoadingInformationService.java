@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common.PLANNING_TYPE;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -63,10 +64,22 @@ public interface LoadingInformationService {
   List<ToppingOffSequence> getToppingOffSequence(List<LoadingPlanModels.LoadingToppingOff> var1);
 
   List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType,
+      boolean isDischarging);
 
   List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPortUnfiltered(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType,
+      boolean isDischarging);
 
   List<DischargeQuantityCargoDetails> getDischargePlanCargoDetailsByPort(
       Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
@@ -115,4 +128,12 @@ public interface LoadingInformationService {
 
   public List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
       List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId);
+
+  List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType);
 }

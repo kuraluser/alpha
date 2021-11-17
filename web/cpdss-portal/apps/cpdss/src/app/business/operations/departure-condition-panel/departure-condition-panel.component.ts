@@ -57,11 +57,11 @@ export class DepartureConditionPanelComponent implements OnInit {
         commingleArray.push({ abbreviation: com.abbreviation, colorCode: com.colorCode, quantity: 0, tankId: com.tankId });
       }
     });
-    const loadingDischargingPlanInfo = this.loadingDischargingPlanData?.loadingInformation ? this.loadingDischargingPlanData?.loadingInformation : this.loadingDischargingPlanData?.dischargingInformation
     this.loadingDischargingPlanData?.currentPortCargos?.map(cargo => {
       let cargoQuantity = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(item => {
-        if (item.conditionType === 2 && item.valueType === 2 && cargo.cargoNominationId === item.cargoNominationId) {
+        const currentPorCargoNominationId = this.loadingDischargingPlanData?.loadingInformation ? cargo.cargoNominationId : cargo.dischargeCargoNominationId;
+        if (item.conditionType === 2 && item.valueType === 2 && currentPorCargoNominationId === item.cargoNominationId) {
           if (item.isCommingleCargo) {
             commingleArray?.map(com => {
               if (com.tankId === item.tankId) {

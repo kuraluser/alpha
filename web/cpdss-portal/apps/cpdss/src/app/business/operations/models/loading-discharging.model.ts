@@ -122,7 +122,7 @@ export interface ITrimAllowed {
   initialTrim: number;
   maximumTrim: number;
   finalTrim?: number;
-  topOffTrim?: number;
+  strippingTrim?: number;
 }
 
 /**
@@ -1368,6 +1368,7 @@ export interface IDischargingPlanDetailsResponse {
   ballastRearTanks: IShipBallastTank[][];
   bunkerRearTanks: IShipBunkerTank[][];
   bunkerTanks: IShipBunkerTank[][];
+  planCommingleDetails?: IPlanCommingleCargo[];
 }
 
 /**

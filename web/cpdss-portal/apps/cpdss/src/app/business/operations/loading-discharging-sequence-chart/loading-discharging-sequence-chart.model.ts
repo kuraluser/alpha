@@ -218,6 +218,7 @@ export interface ISequenceData {
   ballastPumps: IPumpData[];
   flowRates: Array<IFlowRate>;
   cargoLoadingRates: Array<ILoadingRate>;
+  cargoDischargingRates: Array<IDischargingRate>;
   stabilityParams: IStabilityParam[];
   gravity?: IPumpData;
   ballastEduction?: IBallastEduction[];
@@ -257,6 +258,19 @@ export interface ILoadingRate {
   endTime: number;
   loadingRates: number[];
   loadingRatesM3PerHr: number[];
+}
+
+/**
+ * Interface for discharging rate data per stage
+ *
+ * @export
+ * @interface IDischargingRate
+ */
+export interface IDischargingRate {
+  startTime: number;
+  endTime: number;
+  dischargingRates: number[];
+  dischargingRatesM3PerHr: number[];
 }
 
 /**

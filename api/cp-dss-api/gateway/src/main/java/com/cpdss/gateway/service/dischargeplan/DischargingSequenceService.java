@@ -269,6 +269,8 @@ public class DischargingSequenceService {
     Optional.ofNullable(value.getMeanDraft()).ifPresent(paramBuilder::setMeanDraft);
     Optional.ofNullable(value.getTrim()).ifPresent(paramBuilder::setTrim);
     Optional.ofNullable(value.getList()).ifPresent(paramBuilder::setList);
+    Optional.ofNullable(value.getFreeboard()).ifPresent(paramBuilder::setFreeboard);
+    Optional.ofNullable(value.getManifoldHeight()).ifPresent(paramBuilder::setManifoldHeight);
     paramBuilder.setConditionType(conditionType);
     builder.addPortDischargingPlanStabilityParameters(paramBuilder.build());
   }
@@ -320,7 +322,7 @@ public class DischargingSequenceService {
               stowage -> {
                 LoadingPlanTankDetails.Builder stowageBuilder = LoadingPlanTankDetails.newBuilder();
                 Optional.ofNullable(stowage.getApi()).ifPresent(stowageBuilder::setApi);
-                Optional.ofNullable(stowage.getCargoNominationId())
+                Optional.ofNullable(stowage.getDsCargoNominationId())
                     .ifPresent(stowageBuilder::setCargoNominationId);
                 Optional.ofNullable(stowage.getQuantityM3())
                     .ifPresent(stowageBuilder::setQuantityM3);
