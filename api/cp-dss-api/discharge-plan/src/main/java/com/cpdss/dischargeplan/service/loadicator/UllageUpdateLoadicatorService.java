@@ -76,6 +76,9 @@ public class UllageUpdateLoadicatorService {
   @Autowired
   PortDischargingPlanBallastDetailsRepository portDischargingPlanBallastDetailsRepository;
 
+  @Autowired
+  PortDischargingPlanCommingleDetailsRepository portDischargingPlanCommingleDetailsRepository;
+
   @Autowired PortDischargingPlanRobDetailsRepository portDischargingPlanRobDetailsRepository;
 
   @Autowired
@@ -83,6 +86,10 @@ public class UllageUpdateLoadicatorService {
 
   @Autowired
   PortDischargingPlanBallastTempDetailsRepository portDischargingPlanBallastDetailsTempRepository;
+
+  @Autowired
+  PortDischargingPlanCommingleTempDetailsRepository
+      portDischargingPlanCommingleTempDetailsRepository;
 
   @Autowired DischargePlanAlgoService dischargingPlanAlgoService;
 
@@ -177,6 +184,12 @@ public class UllageUpdateLoadicatorService {
                 request.getUpdateUllage(0).getArrivalDepartutre(),
                 DischargePlanConstants.ACTUAL_TYPE_VALUE,
                 true);
+    List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails =
+        portDischargingPlanCommingleTempDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargingInfoOpt.get().getId(),
+                request.getCommingleUpdate(0).getArrivalDeparture(),
+                true);
     Set<Long> cargoNominationIds = new LinkedHashSet<>();
 
     cargoNominationIds.addAll(
@@ -205,6 +218,7 @@ public class UllageUpdateLoadicatorService {
     buildStowagePlanDetails(
         dischargingInfoOpt.get(),
         tempStowageDetails,
+        tempCommingleDetails,
         cargoNomDetails,
         vesselReply,
         cargoReply,
@@ -213,6 +227,7 @@ public class UllageUpdateLoadicatorService {
         dischargingInfoOpt.get(),
         cargoNomDetails,
         tempStowageDetails,
+        tempCommingleDetails,
         cargoReply,
         stowagePlanBuilder);
     buildBallastDetails(
@@ -316,6 +331,38 @@ public class UllageUpdateLoadicatorService {
               DischargePlanConstants.ACTUAL_TYPE_VALUE);
       portDischargingPlanBallastDetailsRepository.saveAll(ballastEntityList);
     }
+
+    List<PortDischargingPlanCommingleTempDetails> tempCommingleList =
+        portDischargingPlanCommingleTempDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), conditionType, true);
+
+    List<PortDischargingPlanCommingleDetails> commingleEntityList = new ArrayList<>();
+    if (!tempCommingleList.isEmpty()) {
+      log.info("Copying commingle details from temporary tables");
+      for (PortDischargingPlanCommingleTempDetails tempCommingleEntity : tempCommingleList) {
+        PortDischargingPlanCommingleDetails commingleEntity =
+            new PortDischargingPlanCommingleDetails();
+        BeanUtils.copyProperties(tempCommingleEntity, commingleEntity);
+        commingleEntity.setId(null);
+        commingleEntity.setCreatedBy(null);
+        commingleEntity.setCreatedDate(null);
+        commingleEntity.setCreatedDateTime(null);
+        commingleEntity.setLastModifiedBy(null);
+        commingleEntity.setLastModifiedDate(null);
+        commingleEntity.setLastModifiedDateTime(null);
+        commingleEntity.setIsActive(true);
+        commingleEntity.setDischargingInformation(dischargeInformation);
+        commingleEntityList.add(commingleEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portDischargingPlanCommingleDetailsRepository
+          .deleteExistingByDischargingInformationAndConditionTypeAndValueType(
+              dischargeInformation.getId(),
+              conditionType,
+              DischargePlanConstants.ACTUAL_TYPE_VALUE);
+      portDischargingPlanCommingleDetailsRepository.saveAll(commingleEntityList);
+    }
     /**
      * copying data to synoptical table. stowage quantity as cargo rob quantity as ohq ballas as
      * ballast condition type is used to determine which records are need to be updated(arrival/
@@ -360,6 +407,15 @@ public class UllageUpdateLoadicatorService {
               ohq.setTankId(rob.getTankXId());
               synopticalData.addOhq(ohq);
             });
+    commingleEntityList.stream()
+        .forEach(
+            commingle -> {
+              LoadableStudy.SynopticalCommingleRecord.Builder commingleRecord =
+                  LoadableStudy.SynopticalCommingleRecord.newBuilder();
+              commingleRecord.setActualWeight(commingle.getQuantity());
+              commingleRecord.setTankId(commingle.getTankId());
+              synopticalData.addCommingle(commingleRecord);
+            });
     request.addSynopticalRecord(synopticalData);
     ResponseStatus response =
         synopticalOperationServiceBlockingStub.updateSynopticalTable(request.build());
@@ -374,6 +430,9 @@ public class UllageUpdateLoadicatorService {
         dischargeInformation.getId(), conditionType);
     portDischargingPlanBallastDetailsTempRepository.deleteExistingByDischargingInfoAndConditionType(
         dischargeInformation.getId(), conditionType);
+    portDischargingPlanCommingleTempDetailsRepository
+        .deleteExistingByDischargingInfoAndConditionType(
+            dischargeInformation.getId(), conditionType);
   }
 
   /**
@@ -450,6 +509,7 @@ public class UllageUpdateLoadicatorService {
    * @param dischargeInformation
    * @param cargoNomDetails
    * @param tempStowageDetails
+   * @param tempCommingleDetails
    * @param cargoReply
    * @param stowagePlanBuilder
    */
@@ -457,6 +517,7 @@ public class UllageUpdateLoadicatorService {
       DischargeInformation dischargeInformation,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       List<PortDischargingPlanStowageTempDetails> tempStowageDetails,
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
       CargoReply cargoReply,
       Builder stowagePlanBuilder) {
     tempStowageDetails.stream()
@@ -488,6 +549,54 @@ public class UllageUpdateLoadicatorService {
                   .ifPresent(cargoBuilder::setStowageId);
               stowagePlanBuilder.addCargoInfo(cargoBuilder.build());
             });
+    buildLoadicatorCargoDetailsForCommingleCargo(
+        tempCommingleDetails, dischargeInformation, cargoReply, stowagePlanBuilder);
+  }
+
+  /**
+   * Build Loadicator Cargo Details For Commingle Cargo
+   *
+   * @param tempCommingleDetails
+   * @param dischargeInformation
+   * @param cargoReply
+   * @param stowagePlanBuilder
+   */
+  private void buildLoadicatorCargoDetailsForCommingleCargo(
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
+      DischargeInformation dischargeInformation,
+      CargoReply cargoReply,
+      Builder stowagePlanBuilder) {
+    tempCommingleDetails.stream()
+        .filter(
+            distinctByKeys(
+                PortDischargingPlanCommingleTempDetails::getCargoNomination1XId,
+                PortDischargingPlanCommingleTempDetails::getCargoNomination2XId))
+        .forEach(
+            commingle -> {
+              Loadicator.CargoInfo.Builder cargoBuilder = Loadicator.CargoInfo.newBuilder();
+              cargoBuilder.setCargoAbbrev(commingle.getGrade());
+              Optional.ofNullable(String.valueOf(commingle.getApi()))
+                  .ifPresent(cargoBuilder::setApi);
+              Optional.ofNullable(String.valueOf(commingle.getTemperature()))
+                  .ifPresent(cargoBuilder::setStandardTemp);
+              Optional.ofNullable(dischargeInformation.getPortXid())
+                  .ifPresent(cargoBuilder::setPortId);
+              Optional.ofNullable(stowagePlanBuilder.getStowageId())
+                  .ifPresent(cargoBuilder::setStowageId);
+              stowagePlanBuilder.addCargoInfo(cargoBuilder.build());
+            });
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
+    final Map<List<?>, Boolean> seen = new ConcurrentHashMap<>();
+
+    return t -> {
+      final List<?> keys =
+          Arrays.stream(keyExtractors).map(ke -> ke.apply(t)).collect(Collectors.toList());
+
+      return seen.putIfAbsent(keys, Boolean.TRUE) == null;
+    };
   }
 
   /**
@@ -495,6 +604,7 @@ public class UllageUpdateLoadicatorService {
    *
    * @param dischargeInformation
    * @param tempStowageDetails
+   * @param tempCommingleDetails
    * @param cargoNomDetails
    * @param vesselReply
    * @param cargoReply
@@ -503,6 +613,7 @@ public class UllageUpdateLoadicatorService {
   private void buildStowagePlanDetails(
       DischargeInformation dischargeInformation,
       List<PortDischargingPlanStowageTempDetails> tempStowageDetails,
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       VesselReply vesselReply,
       CargoReply cargoReply,
@@ -539,6 +650,53 @@ public class UllageUpdateLoadicatorService {
               }
               stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
             });
+    buildLoadicatorStowagePlanDetailsForCommingleCargo(
+        tempCommingleDetails, dischargeInformation, cargoReply, vesselReply, stowagePlanBuilder);
+  }
+
+  /**
+   * Build Loadicator Stowage Plan Details For Commingle Cargo
+   *
+   * @param tempCommingleDetails
+   * @param dischargeInformation
+   * @param cargoReply
+   * @param vesselReply
+   * @param stowagePlanBuilder
+   */
+  private void buildLoadicatorStowagePlanDetailsForCommingleCargo(
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
+      DischargeInformation dischargeInformation,
+      CargoReply cargoReply,
+      VesselReply vesselReply,
+      Builder stowagePlanBuilder) {
+
+    tempCommingleDetails.forEach(
+        commingle -> {
+          Loadicator.StowageDetails.Builder stowageDetailsBuilder =
+              Loadicator.StowageDetails.newBuilder();
+          Optional.ofNullable(commingle.getTankId()).ifPresent(stowageDetailsBuilder::setTankId);
+
+          Optional.ofNullable(commingle.getQuantity())
+              .ifPresent(quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
+
+          Optional.ofNullable(dischargeInformation.getPortXid())
+              .ifPresent(stowageDetailsBuilder::setPortId);
+          Optional.ofNullable(stowageDetailsBuilder.getStowageId())
+              .ifPresent(stowageDetailsBuilder::setStowageId);
+          Optional<VesselInfo.VesselTankDetail> tankDetail =
+              vesselReply.getVesselTanksList().stream()
+                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(commingle.getTankId()))
+                  .findAny();
+          if (tankDetail.isPresent()) {
+            Optional.ofNullable(tankDetail.get().getTankName())
+                .ifPresent(stowageDetailsBuilder::setTankName);
+            Optional.ofNullable(tankDetail.get().getShortName())
+                .ifPresent(stowageDetailsBuilder::setShortName);
+          }
+
+          stowageDetailsBuilder.setCargoName(commingle.getGrade());
+          stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
+        });
   }
 
   /**

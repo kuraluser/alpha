@@ -1755,6 +1755,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           commingle.getLoadingInformationId() == null
                               ? 0
                               : commingle.getLoadingInformationId().longValue())
+                      .setDischargingInformationId(
+                          commingle.getDischargingInformationId() == null
+                              ? 0
+                              : commingle.getDischargingInformationId())
                       .setTankId(
                           commingle.getTankId() == null ? 0 : commingle.getTankId().longValue())
                       .setTemperature(

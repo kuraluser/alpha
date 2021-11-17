@@ -503,11 +503,20 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
                               == vesselPumpTankMapping.getVesselPump().getId()) {
                             VesselTank vesselTank = new VesselTank();
                             vesselTank.setId(
-                                vesselPumpTankMapping1.getVesselPump().getVesselTankDetail().getTankId());
+                                vesselPumpTankMapping1
+                                    .getVesselPump()
+                                    .getVesselTankDetail()
+                                    .getTankId());
                             vesselTank.setName(
-                                vesselPumpTankMapping1.getVesselPump().getVesselTankDetail().getTankName());
+                                vesselPumpTankMapping1
+                                    .getVesselPump()
+                                    .getVesselTankDetail()
+                                    .getTankName());
                             vesselTank.setShortName(
-                                vesselPumpTankMapping1.getVesselPump().getVesselTankDetail().getShortName());
+                                vesselPumpTankMapping1
+                                    .getVesselPump()
+                                    .getVesselTankDetail()
+                                    .getShortName());
                             vesselTanks.add(vesselTank);
                           }
                         });

@@ -1,16 +1,14 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BallastUpdate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLanding;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLandingRemove;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllage;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
-import com.cpdss.dischargeplan.entity.BillOfLadding;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageTempDetails;
+import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.BillOfLaddingRepository;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -327,5 +325,93 @@ public class DischargeUllageServiceUtils {
             });
 
     return robToSave;
+  }
+
+  public static List<PortDischargingPlanCommingleTempDetails> updateCommingle(
+      UllageBillRequest request, List<PortDischargingPlanCommingleTempDetails> tempCommingle) {
+    List<PortDischargingPlanCommingleTempDetails> commingleToSave = new ArrayList<>();
+    request
+        .getCommingleUpdateList()
+        .forEach(
+            commingleRequest -> {
+              if (commingleRequest.getIsUpdate() && !tempCommingle.isEmpty()) {
+                PortDischargingPlanCommingleTempDetails dbData =
+                    tempCommingle.stream()
+                        .filter(
+                            commingle ->
+                                commingle.getTankId().equals(commingleRequest.getTankId())
+                                    && commingle
+                                        .getDischargingInformation()
+                                        .equals(commingleRequest.getDischargingInformationId())
+                                    && commingle
+                                        .getConditionType()
+                                        .equals(commingleRequest.getArrivalDeparture()))
+                        .findFirst()
+                        .orElse(null);
+                dbData.setQuantityM3(commingleRequest.getQuantityM3());
+                dbData.setApi(commingleRequest.getApi());
+                dbData.setFillingRatio(commingleRequest.getFillingPercentage());
+                dbData.setQuantity(commingleRequest.getQuantityMT());
+                dbData.setQuantityM3(commingleRequest.getQuantityM3());
+                dbData.setTemperature(commingleRequest.getTemperature());
+                dbData.setCargo1Mt(commingleRequest.getQuantity1MT());
+                dbData.setCargo2Mt(commingleRequest.getQuantity2MT());
+                dbData.setCargo1Lt(commingleRequest.getQuantity1M3());
+                dbData.setCargo2Lt(commingleRequest.getQuantity2M3());
+                dbData.setUllage(commingleRequest.getUllage());
+                dbData.setColorCode(commingleRequest.getColorCode());
+                dbData.setTankId(commingleRequest.getTankId());
+                dbData.setDischargingInformation(commingleRequest.getDischargingInformationId());
+                dbData.setConditionType(commingleRequest.getArrivalDeparture());
+
+                commingleToSave.add(dbData);
+              } else {
+                commingleToSave.add(createCommingle(commingleRequest));
+              }
+            });
+    return commingleToSave;
+  }
+
+  private static PortDischargingPlanCommingleTempDetails createCommingle(
+      LoadingPlanModels.CommingleUpdate commingleRequest) {
+    PortDischargingPlanCommingleTempDetails tempData =
+        new PortDischargingPlanCommingleTempDetails();
+    tempData.setDischargingInformation(commingleRequest.getDischargingInformationId());
+    tempData.setTankId(commingleRequest.getTankId());
+    tempData.setTemperature(
+        StringUtils.isEmpty(commingleRequest.getTemperature())
+            ? null
+            : commingleRequest.getTemperature());
+    tempData.setCorrectedUllage(
+        StringUtils.isEmpty(commingleRequest.getCorrectedUllage())
+            ? null
+            : Long.valueOf(commingleRequest.getCorrectedUllage()));
+    tempData.setQuantity(commingleRequest.getQuantityMT());
+    tempData.setFillingRatio(
+        StringUtils.isEmpty(commingleRequest.getFillingPercentage())
+            ? null
+            : commingleRequest.getFillingPercentage());
+    tempData.setApi(
+        StringUtils.isEmpty(commingleRequest.getApi()) ? null : commingleRequest.getApi());
+    tempData.setValueType(commingleRequest.getActualPlanned());
+    tempData.setConditionType(commingleRequest.getArrivalDeparture());
+    tempData.setCorrectionFactor(
+        StringUtils.isEmpty(commingleRequest.getCorrectionFactor())
+            ? null
+            : commingleRequest.getCorrectionFactor());
+    tempData.setIsActive(true);
+    tempData.setUllage(
+        StringUtils.isEmpty(commingleRequest.getUllage()) ? null : commingleRequest.getUllage());
+    tempData.setColorCode(commingleRequest.getColorCode());
+    tempData.setCargoNomination1XId(commingleRequest.getCargoNomination1Id());
+    tempData.setCargoNomination2XId(commingleRequest.getCargoNomination2Id());
+    tempData.setCargo1XId(commingleRequest.getCargo1Id());
+    tempData.setCargo2XId(commingleRequest.getCargo2Id());
+    tempData.setCargo1Mt(commingleRequest.getQuantity1MT());
+    tempData.setCargo2Mt(commingleRequest.getQuantity2MT());
+    tempData.setCargo1Lt(commingleRequest.getQuantity1M3());
+    tempData.setCargo2Lt(commingleRequest.getQuantity2M3());
+    tempData.setGrade(commingleRequest.getAbbreviation());
+    return tempData;
   }
 }
