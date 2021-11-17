@@ -37,4 +37,10 @@ public interface SynopticalTableLoadicatorDataRepository
 
   public SynopticalTableLoadicatorData findByLoadablePatternIdAndPortIdAndOperationId(
       Long loadablePatternId, Long portId, Long operationId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadicator_data_for_synoptical_table u where loadable_pattern_xid=?1",
+      nativeQuery = true)
+  String getSynopticalTableLoadicatorDataWithLoadablePatternId(long id);
 }

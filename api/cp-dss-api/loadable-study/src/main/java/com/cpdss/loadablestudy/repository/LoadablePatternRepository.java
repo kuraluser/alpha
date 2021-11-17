@@ -77,4 +77,9 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
   @Query(
       "from LoadablePattern lp where lp.loadableStudy.id = ?1 and lp.loadableStudyStatus = ?2 and lp.isActive = true")
   List<LoadablePattern> findConfirmedPatternByLoadableStudyId(Long lsId, Long status);
+
+  @Query(
+      value = "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_pattern u where id=?1",
+      nativeQuery = true)
+  String getLoadablePatternWithId(long id);
 }
