@@ -427,6 +427,9 @@ public class DischargeInformationService {
     dischargingPlanResponse.setPlanStabilityParams(
         dischargingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortDischargingPlanStabilityParametersList()));
+    dischargingPlanResponse.setPlanCommingleDetails(
+        dischargingPlanBuilderService.buildLoadingPlanCommingleFromRpc(
+            planReply.getPortDischargingPlanCommingleDetailsList()));
     dischargingPlanResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return dischargingPlanResponse;

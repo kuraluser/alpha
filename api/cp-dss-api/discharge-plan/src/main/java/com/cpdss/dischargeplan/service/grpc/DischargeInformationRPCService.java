@@ -23,6 +23,7 @@ import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
 import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
@@ -36,6 +37,7 @@ import com.cpdss.dischargeplan.repository.DischargeStageMinAmountRepository;
 import com.cpdss.dischargeplan.repository.DischargingDelayReasonRepository;
 import com.cpdss.dischargeplan.repository.DischargingDelayRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanCommingleDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
@@ -82,6 +84,7 @@ public class DischargeInformationRPCService
   @Autowired CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
   @Autowired CowTankDetailRepository cowTankDetailRepository;
   @Autowired DischargeInformationRepository dischargeInformationRepository;
+  @Autowired PortDischargingPlanCommingleDetailsRepository pdpCommingleDetailsRepository;
 
   @Override
   public void getDischargeInformation(
@@ -257,7 +260,8 @@ public class DischargeInformationRPCService
         List<PortDischargingPlanStabilityParameters> pdpStabilityList =
             pdpStabilityParametersRepository.findByDischargingInformationAndIsActive(
                 disEntity, true);
-
+        List<PortDischargingPlanCommingleDetails> pdpCommingleList =
+            pdpCommingleDetailsRepository.findByDischargingInformationAndIsActive(disEntity, true);
         builder.addAllPortDischargingPlanBallastDetails(
             this.informationBuilderService.buildDischargingPlanTankBallastMessage(pdpBallastList));
         builder.addAllPortDischargingPlanStowageDetails(
@@ -267,6 +271,8 @@ public class DischargeInformationRPCService
         builder.addAllPortDischargingPlanStabilityParameters(
             this.informationBuilderService.buildDischargingPlanTankStabilityMessage(
                 pdpStabilityList));
+        builder.addAllPortDischargingPlanCommingleDetails(
+            this.informationBuilderService.buildDischargingPlanCommingleMessage(pdpCommingleList));
       } else {
         log.error("Failed to fetch Discharging Plan, Discharging info Id is 0");
         throw new GenericServiceException(
