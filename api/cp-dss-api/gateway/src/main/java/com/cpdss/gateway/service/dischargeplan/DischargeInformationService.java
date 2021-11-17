@@ -353,6 +353,8 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_DEP,
             portRotation.get().getId(),
             portRotation.get().getPortId()));
+    // setting discharge cargo nomination id
+    this.setDischargeCargoNominationId(vesselTankDetails);
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     // discharge sequence (reason/delay)
