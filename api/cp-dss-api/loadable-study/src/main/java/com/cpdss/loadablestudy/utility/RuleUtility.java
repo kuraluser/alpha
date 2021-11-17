@@ -9,7 +9,6 @@ import com.cpdss.loadablestudy.domain.RulePlans;
 import com.cpdss.loadablestudy.domain.Rules;
 import com.cpdss.loadablestudy.domain.RulesInputs;
 import com.cpdss.loadablestudy.domain.TypeValue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

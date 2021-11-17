@@ -1,7 +1,10 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service.grpc;
 
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.ACTUAL_TYPE_VALUE;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.DEPARTURE_CONDITION_VALUE;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -10,8 +13,20 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
-import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply;
+import com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest;
+import com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse;
+import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
+import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply;
+import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
+import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleDetails.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
@@ -23,10 +38,11 @@ import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.algo.DischargingInformationAlgoResponse;
 import com.cpdss.dischargeplan.entity.BillOfLadding;
-import com.cpdss.dischargeplan.entity.DischargePlanCommingleDetails;
+import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageTempDetails;
@@ -35,11 +51,19 @@ import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.DischargePlanCommingleDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastTempDetailsRepository;
+import com.cpdss.dischargeplan.repository.PortDischargingPlanCommingleDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
-import com.cpdss.dischargeplan.service.*;
+import com.cpdss.dischargeplan.service.DischargeCargoHistoryService;
+import com.cpdss.dischargeplan.service.DischargeInfoStatusCheckService;
+import com.cpdss.dischargeplan.service.DischargeInformationBuilderService;
+import com.cpdss.dischargeplan.service.DischargeInformationService;
+import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
+import com.cpdss.dischargeplan.service.DischargePlanSynchronizeService;
+import com.cpdss.dischargeplan.service.DischargeUllageServiceUtils;
+import com.cpdss.dischargeplan.service.DischargingSequenceService;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -93,6 +117,9 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Autowired LoadicatorService loadicatorService;
 
   @Autowired DischargeCargoHistoryService cargoHistoryService;
+
+  @Autowired
+  PortDischargingPlanCommingleDetailsRepository portDischargingPlanCommingleDetailsRepository;
 
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
@@ -512,133 +539,167 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
 
   public void getPortWiseCommingleDetails(
       UpdateUllageDetailsRequest request, UpdateUllageDetailsResponse.Builder builder) {
-    List<DischargePlanCommingleDetails> portWiseRobDetails =
-        loadablePlanCommingleDetailsRepository.findByDischargePatternXIdAndIsActive(
-            request.getPatternId(), true);
-
-    for (DischargePlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
-      LoadingPlanModels.LoadablePlanCommingleDetails.Builder newBuilder =
-          LoadingPlanModels.LoadablePlanCommingleDetails.newBuilder();
-
-      newBuilder.setLoadablePatternId(request.getPatternId());
-      newBuilder.setId(portWiseCommingleDetail.getId());
-      newBuilder.setLoadingInformationId(portWiseCommingleDetail.getDischargeInformation().getId());
-      newBuilder.setLoadablePlanId(portWiseCommingleDetail.getLoadablePatternXId());
-      newBuilder.setGrade(
-          portWiseCommingleDetail.getGrade() == null ? "" : portWiseCommingleDetail.getGrade());
-      newBuilder.setTankName(
-          portWiseCommingleDetail.getTankName() == null
-              ? ""
-              : portWiseCommingleDetail.getTankName());
-      newBuilder.setQuantity(
-          portWiseCommingleDetail.getQuantity() == null
-              ? ""
-              : portWiseCommingleDetail.getQuantity());
-      newBuilder.setApi(
-          portWiseCommingleDetail.getApi() == null ? "" : portWiseCommingleDetail.getApi());
-      newBuilder.setTemperature(
-          portWiseCommingleDetail.getTemperature() == null
-              ? ""
-              : portWiseCommingleDetail.getTemperature());
-      newBuilder.setCargo1Abbreviation(
-          portWiseCommingleDetail.getCargo1Abbreviation() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo1Abbreviation());
-      newBuilder.setCargo2Abbreviation(
-          portWiseCommingleDetail.getCargo2Abbreviation() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo2Abbreviation());
-      newBuilder.setCargo1Percentage(
-          portWiseCommingleDetail.getCargo1Percentage() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo1Percentage());
-      newBuilder.setCargo2Percentage(
-          portWiseCommingleDetail.getCargo2Percentage() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo2Percentage());
-      newBuilder.setCargo1BblsDbs(
-          portWiseCommingleDetail.getCargo1BblsDbs() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo1BblsDbs());
-      newBuilder.setCargo2BblsDbs(
-          portWiseCommingleDetail.getCargo2BblsDbs() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo2BblsDbs());
-      newBuilder.setCargo1Bbls60F(
-          portWiseCommingleDetail.getCargo1Bbls60f() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo1Bbls60f());
-      newBuilder.setCargo2Bbls60F(
-          portWiseCommingleDetail.getCargo2Bbls60f() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo2Bbls60f());
-      newBuilder.setCargo1Lt(
-          portWiseCommingleDetail.getCargo1Lt() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo1Lt());
-      newBuilder.setCargo2Lt(
-          portWiseCommingleDetail.getCargo2Lt() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo2Lt());
-      newBuilder.setCargo1Mt(
-          portWiseCommingleDetail.getCargo1Mt() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo1Mt());
-      newBuilder.setCargo2Mt(
-          portWiseCommingleDetail.getCargo2Mt() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo2Mt());
-      newBuilder.setCargo1Kl(
-          portWiseCommingleDetail.getCargo1Kl() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo1Kl());
-      newBuilder.setCargo2Kl(
-          portWiseCommingleDetail.getCargo2Kl() == null
-              ? ""
-              : portWiseCommingleDetail.getCargo2Kl());
-      newBuilder.setIsActive(portWiseCommingleDetail.getIsActive());
-      newBuilder.setPriority(
-          portWiseCommingleDetail.getPriority() == null
-              ? Long.valueOf(0)
-              : portWiseCommingleDetail.getPriority().longValue());
-      newBuilder.setOrderQuantity(
-          portWiseCommingleDetail.getOrderQuantity() == null
-              ? ""
-              : portWiseCommingleDetail.getOrderQuantity());
-      newBuilder.setLoadingOrder(
-          portWiseCommingleDetail.getDischargingOrder() == null
-              ? Long.valueOf(0)
-              : portWiseCommingleDetail.getDischargingOrder().longValue());
-      newBuilder.setTankId(
-          portWiseCommingleDetail.getTankId() == null
-              ? Long.valueOf(0)
-              : portWiseCommingleDetail.getTankId().longValue());
-      newBuilder.setFillingRatio(
-          portWiseCommingleDetail.getFillingRatio() == null
-              ? ""
-              : portWiseCommingleDetail.getFillingRatio());
-      newBuilder.setCorrectedUllage(
-          portWiseCommingleDetail.getCorrectedUllage() == null
-              ? ""
-              : portWiseCommingleDetail.getCorrectedUllage());
-      newBuilder.setCorrectionFactor(
-          portWiseCommingleDetail.getCorrectionFactor() == null
-              ? ""
-              : portWiseCommingleDetail.getCorrectionFactor());
-      newBuilder.setRdgUllage(
-          portWiseCommingleDetail.getRdgUllage() == null
-              ? ""
-              : portWiseCommingleDetail.getRdgUllage());
-      newBuilder.setSlopQuantity(
-          portWiseCommingleDetail.getSlopQuantity() == null
-              ? ""
-              : portWiseCommingleDetail.getSlopQuantity());
-      newBuilder.setTimeRequiredForLoading(
-          portWiseCommingleDetail.getTimeRequiredForDischarging() == null
-              ? ""
-              : portWiseCommingleDetail.getTimeRequiredForDischarging());
-      builder.addLoadablePlanCommingleDetails(newBuilder);
+    Optional<com.cpdss.dischargeplan.entity.DischargeInformation> dischargingInfo =
+        this.dischargeInformationRepository
+            .findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
+                request.getVesselId(), request.getPatternId(), request.getPortRotationId(), true);
+    List<PortDischargingPlanCommingleDetails> portWiseRobDetails =
+        portDischargingPlanCommingleDetailsRepository.findByDischargingInformationAndIsActive(
+            dischargingInfo.get(), true);
+    for (PortDischargingPlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
+      builder.addLoadablePlanCommingleDetails(
+          buildPortWiseCommingleDetails(request, portWiseCommingleDetail, dischargingInfo));
     }
+  }
+  // TODO sreemanikandan is working on the commingle temp entity.I can only work on this after that
+  // code merge.
+  //  public void getPortWiseCommingleTempDetails(
+  //	      LoadingPlanModels.UpdateUllageDetailsRequest request,
+  //	      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+  //	    Optional<com.cpdss.dischargeplan.entity.DischargeInformation> loadingInfo =
+  //	        this.dischargeInformationRepository
+  //	            .findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
+  //	                request.getVesselId(), request.getPatternId(),
+  // request.getPortRotationId(),true);
+  //	    List<PortDischargingPlanCommingleDetails> portWiseRobDetails =
+  //	        portLoadingPlanCommingleTempDetailsRepository.findByLoadingInformationAndIsActive(
+  //	            loadingInfo.get().getId(), true);
+  //	    for (PortDischargingPlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
+  //	      builder.addLoadablePlanCommingleTempDetails(
+  //	          this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
+  //	    }
+  //	  }
+  private Builder buildPortWiseCommingleDetails(
+      UpdateUllageDetailsRequest request,
+      PortDischargingPlanCommingleDetails portWiseCommingleDetail,
+      Optional<DischargeInformation> dischargingInfo) {
+    LoadingPlanModels.LoadablePlanCommingleDetails.Builder newBuilder =
+        LoadingPlanModels.LoadablePlanCommingleDetails.newBuilder();
+
+    newBuilder.setLoadablePatternId(request.getPatternId());
+    newBuilder.setId(portWiseCommingleDetail.getId());
+    newBuilder.setLoadingInformationId(dischargingInfo.get().getId());
+    newBuilder.setLoadablePlanId(portWiseCommingleDetail.getLoadablePatternId());
+    newBuilder.setCargoNomination1Id(portWiseCommingleDetail.getCargoNomination1XId());
+    newBuilder.setCargoNomination2Id(portWiseCommingleDetail.getCargoNomination2XId());
+    newBuilder.setCargo1Id(portWiseCommingleDetail.getCargo1XId());
+    newBuilder.setCargo2Id(portWiseCommingleDetail.getCargo2XId());
+    newBuilder.setGrade(
+        portWiseCommingleDetail.getGrade() == null ? "" : portWiseCommingleDetail.getGrade());
+    newBuilder.setColorCode(
+        portWiseCommingleDetail.getColorCode() == null
+            ? ""
+            : portWiseCommingleDetail.getColorCode());
+    newBuilder.setTankName(
+        portWiseCommingleDetail.getTankName() == null ? "" : portWiseCommingleDetail.getTankName());
+    newBuilder.setQuantity(
+        portWiseCommingleDetail.getQuantity() == null ? "" : portWiseCommingleDetail.getQuantity());
+    newBuilder.setApi(
+        portWiseCommingleDetail.getApi() == null ? "" : portWiseCommingleDetail.getApi());
+    newBuilder.setTemperature(
+        portWiseCommingleDetail.getTemperature() == null
+            ? ""
+            : portWiseCommingleDetail.getTemperature());
+    newBuilder.setCargo1Abbreviation(
+        portWiseCommingleDetail.getCargo1Abbreviation() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo1Abbreviation());
+    newBuilder.setCargo2Abbreviation(
+        portWiseCommingleDetail.getCargo2Abbreviation() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo2Abbreviation());
+    newBuilder.setCargo1Percentage(
+        portWiseCommingleDetail.getCargo1Percentage() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo1Percentage());
+    newBuilder.setCargo2Percentage(
+        portWiseCommingleDetail.getCargo2Percentage() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo2Percentage());
+    newBuilder.setCargo1BblsDbs(
+        portWiseCommingleDetail.getCargo1BblsDbs() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo1BblsDbs());
+    newBuilder.setCargo2BblsDbs(
+        portWiseCommingleDetail.getCargo2BblsDbs() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo2BblsDbs());
+    newBuilder.setCargo1Bbls60F(
+        portWiseCommingleDetail.getCargo1Bbls60f() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo1Bbls60f());
+    newBuilder.setCargo2Bbls60F(
+        portWiseCommingleDetail.getCargo2Bbls60f() == null
+            ? ""
+            : portWiseCommingleDetail.getCargo2Bbls60f());
+    newBuilder.setCargo1Lt(
+        portWiseCommingleDetail.getCargo1Lt() == null ? "" : portWiseCommingleDetail.getCargo1Lt());
+    newBuilder.setCargo2Lt(
+        portWiseCommingleDetail.getCargo2Lt() == null ? "" : portWiseCommingleDetail.getCargo2Lt());
+    newBuilder.setCargo1Mt(
+        portWiseCommingleDetail.getCargo1Mt() == null ? "" : portWiseCommingleDetail.getCargo1Mt());
+    newBuilder.setCargo2Mt(
+        portWiseCommingleDetail.getCargo2Mt() == null ? "" : portWiseCommingleDetail.getCargo2Mt());
+    newBuilder.setCargo1Kl(
+        portWiseCommingleDetail.getCargo1Kl() == null ? "" : portWiseCommingleDetail.getCargo1Kl());
+    newBuilder.setCargo2Kl(
+        portWiseCommingleDetail.getCargo2Kl() == null ? "" : portWiseCommingleDetail.getCargo2Kl());
+    newBuilder.setIsActive(portWiseCommingleDetail.getIsActive());
+    newBuilder.setPriority(
+        portWiseCommingleDetail.getPriority() == null
+            ? Long.valueOf(0)
+            : portWiseCommingleDetail.getPriority().longValue());
+    newBuilder.setOrderQuantity(
+        portWiseCommingleDetail.getOrderQuantity() == null
+            ? ""
+            : portWiseCommingleDetail.getOrderQuantity());
+    newBuilder.setLoadingOrder(
+        portWiseCommingleDetail.getDischargingOrder() == null
+            ? Long.valueOf(0)
+            : portWiseCommingleDetail.getDischargingOrder().longValue());
+    newBuilder.setTankId(
+        portWiseCommingleDetail.getTankId() == null
+            ? Long.valueOf(0)
+            : portWiseCommingleDetail.getTankId().longValue());
+    newBuilder.setFillingRatio(
+        portWiseCommingleDetail.getFillingRatio() == null
+            ? ""
+            : portWiseCommingleDetail.getFillingRatio());
+    newBuilder.setCorrectedUllage(
+        portWiseCommingleDetail.getCorrectedUllage() == null
+            ? ""
+            : portWiseCommingleDetail.getCorrectedUllage().toString());
+    newBuilder.setCorrectionFactor(
+        portWiseCommingleDetail.getCorrectionFactor() == null
+            ? ""
+            : portWiseCommingleDetail.getCorrectionFactor());
+    newBuilder.setRdgUllage(
+        portWiseCommingleDetail.getRdgUllage() == null
+            ? ""
+            : portWiseCommingleDetail.getRdgUllage());
+    newBuilder.setSlopQuantity(
+        portWiseCommingleDetail.getSlopQuantity() == null
+            ? ""
+            : portWiseCommingleDetail.getSlopQuantity());
+    newBuilder.setTimeRequiredForLoading(
+        portWiseCommingleDetail.getTimeRequiredForDischarging() == null
+            ? ""
+            : portWiseCommingleDetail.getTimeRequiredForDischarging());
+    newBuilder.setQuantity1M3(
+        portWiseCommingleDetail.getQuantityM3() == null
+            ? ""
+            : portWiseCommingleDetail.getQuantityM3());
+    newBuilder.setUllage1(
+        portWiseCommingleDetail.getUllage() == null ? "" : portWiseCommingleDetail.getUllage());
+    newBuilder.setArrivalDeparture(
+        portWiseCommingleDetail.getConditionType() == null
+            ? ""
+            : portWiseCommingleDetail.getConditionType().toString());
+    newBuilder.setActualPlanned(
+        portWiseCommingleDetail.getValueType() == null
+            ? ""
+            : portWiseCommingleDetail.getValueType().toString());
+    return newBuilder;
   }
 
   @Override
