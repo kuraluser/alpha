@@ -729,7 +729,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       loadedCargoDetails =
           this.loadingInformationService.getLoadablePlanCargoDetailsByPortUnfiltered(
               vesselId,
-              activeVoyage.getPatternId(),
+              activeVoyage.getDischargePatternId(),
               OPERATION_TYPE,
               portRotation.get().getId(),
               portRotation.get().getPortId(),
