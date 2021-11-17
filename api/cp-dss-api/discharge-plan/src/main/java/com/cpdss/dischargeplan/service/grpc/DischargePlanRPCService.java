@@ -37,33 +37,10 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.algo.DischargingInformationAlgoResponse;
-import com.cpdss.dischargeplan.entity.BillOfLadding;
-import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastTempDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
+import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageTempDetails;
-import com.cpdss.dischargeplan.repository.BillOfLaddingRepository;
-import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
-import com.cpdss.dischargeplan.repository.DischargePlanCommingleDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanBallastTempDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanCommingleDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
-import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageTempDetailsRepository;
-import com.cpdss.dischargeplan.service.DischargeCargoHistoryService;
-import com.cpdss.dischargeplan.service.DischargeInfoStatusCheckService;
-import com.cpdss.dischargeplan.service.DischargeInformationBuilderService;
-import com.cpdss.dischargeplan.service.DischargeInformationService;
-import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
-import com.cpdss.dischargeplan.service.DischargePlanSynchronizeService;
-import com.cpdss.dischargeplan.service.DischargeUllageServiceUtils;
-import com.cpdss.dischargeplan.service.DischargingSequenceService;
+import com.cpdss.dischargeplan.repository.*;
+import com.cpdss.dischargeplan.service.*;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,6 +76,10 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
 
   @Autowired
   PortDischargingPlanBallastTempDetailsRepository portLoadingPlanBallastTempDetailsRepository;
+
+  @Autowired
+  PortDischargingPlanCommingleTempDetailsRepository
+      portDischargingPlanCommingleTempDetailsRepository;
 
   @Autowired DischargePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @Autowired UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
@@ -747,6 +728,16 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           DischargeUllageServiceUtils.updateBillOfLadding(
               request, billOfLaddingRepo, dischargeInformationService);
       billOfLaddingRepo.saveAll(updatedBillOfLadding);
+
+      List<PortDischargingPlanCommingleTempDetails> tempCommingle =
+          portDischargingPlanCommingleTempDetailsRepository
+              .findByDischargingInformationAndConditionTypeAndIsActive(
+                  request.getCommingleUpdate(0).getDischargingInformationId(),
+                  request.getCommingleUpdate(0).getArrivalDeparture(),
+                  true);
+      List<PortDischargingPlanCommingleTempDetails> updatedCommingle =
+          DischargeUllageServiceUtils.updateCommingle(request, tempCommingle);
+      portDischargingPlanCommingleTempDetailsRepository.saveAll(updatedCommingle);
 
       if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
         processId = validateAndSaveData(request);

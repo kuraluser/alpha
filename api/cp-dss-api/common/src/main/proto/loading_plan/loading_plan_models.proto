@@ -979,6 +979,7 @@ message CommingleUpdate {
     string quantity2M3 = 27;
     string ullage1 = 28;
     string ullage2 = 29;
+    int64 dischargingInformationId = 30;
 }
 message UllageBillRequest{
   repeated BillOfLanding billOfLanding = 1;
