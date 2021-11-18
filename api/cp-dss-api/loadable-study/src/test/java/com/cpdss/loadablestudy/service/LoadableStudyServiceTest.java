@@ -248,6 +248,8 @@ class LoadableStudyServiceTest {
   @MockBean private JsonDataRepository jsonDataRepository;
   @MockBean private JsonTypeRepository jsonTypeRepository;
 
+  @MockBean private LoadableStudyCommunicationData loadableStudyCommunicationData;
+
   @MockBean
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 

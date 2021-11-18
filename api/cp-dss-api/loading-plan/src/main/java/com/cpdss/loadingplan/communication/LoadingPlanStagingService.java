@@ -50,6 +50,7 @@ public class LoadingPlanStagingService extends StagingService {
   List<Long> loadingSequenceIds = null;
 
   Long voyageId = null;
+  Long loadablePatternId = null;
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
    *
@@ -494,6 +495,58 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case loadable_pattern:
+          {
+            if (loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub.getLoadablePatternForCommunication(
+                      builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray loadablePattern =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      loadablePattern);
+                }
+              }
+            }
+            break;
+          }
+        case loadicator_data_for_synoptical_table:
+          {
+            if (loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub.getLoadicatorDataSynopticalForCommunication(
+                      builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray synopticalTableLoadicatorData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      synopticalTableLoadicatorData);
+                }
+              }
+            }
+            break;
+          }
       }
     }
     return array;
@@ -524,6 +577,7 @@ public class LoadingPlanStagingService extends StagingService {
       JsonObject loadingInfoJsonObj =
           JsonParser.parseString(loadingInformationJson).getAsJsonArray().get(0).getAsJsonObject();
       voyageId = loadingInfoJsonObj.get("voyage_xid").getAsLong();
+      loadablePatternId = loadingInfoJsonObj.get("loadable_pattern_xid").getAsLong();
       Long stageOffsetId = loadingInfoJsonObj.get("stages_min_amount_xid").getAsLong();
       Long stageDurationId = loadingInfoJsonObj.get("stages_duration_xid").getAsLong();
       Long loadingInformationStatusId = loadingInfoJsonObj.get("loading_status_xid").getAsLong();

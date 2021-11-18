@@ -212,6 +212,14 @@ service LoadableStudyService {
 	rpc GetVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
 	
 	rpc saveActivatedVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
+
+	rpc getLoadablePatternForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadablePatternForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc getLoadicatorDataSynopticalForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadicatorDataSynopticalForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 }
 
 service SynopticalOperationService{
@@ -1664,5 +1672,14 @@ message VoyageActivateRequest{
 message VoyageActivateReply {
 	ResponseStatus responseStatus = 1;
 	VoyageActivateRequest voyageActivateRequest = 2;
+}
 
+message LoadableStudyCommunicationRequest{
+	int64 id=1;
+	string dataJson=2;
+}
+
+message LoadableStudyCommunicationReply {
+	ResponseStatus responseStatus = 1;
+	string dataJson=2;
 }
