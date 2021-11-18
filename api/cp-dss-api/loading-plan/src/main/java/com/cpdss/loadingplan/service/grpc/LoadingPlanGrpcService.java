@@ -473,6 +473,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                           "LS actuals or BL values are missing",
                           "",
                           HttpStatusCode.SERVICE_UNAVAILABLE);
+                    } else {
+                      builder.setStatus(LoadingPlanConstants.SUCCESS);
                     }
                     // Add check for Zero and null values
                   } catch (Exception e) {
@@ -481,7 +483,6 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                 });
       }
 
-      builder.setStatus(LoadingPlanConstants.SUCCESS);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setStatus(LoadingPlanConstants.FAILED);
