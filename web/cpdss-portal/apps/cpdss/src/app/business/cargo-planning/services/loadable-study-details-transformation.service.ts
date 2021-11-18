@@ -1696,7 +1696,7 @@ export class LoadableStudyDetailsTransformationService {
  * @memberof LoadableStudyDetailsTransformationService
  */
   getSubTotal(data: ISubTotal): Number {
-    const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection ? data.sgCorrection : 0) - Number(data.foOnboard)
+    const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection && Number(data.sgCorrection) < 0 ? data.sgCorrection : 0) - Number(data.foOnboard)
       - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.ballast)
       - Number(data.constant) - Number(data.others);
     return Number(subTotal);
