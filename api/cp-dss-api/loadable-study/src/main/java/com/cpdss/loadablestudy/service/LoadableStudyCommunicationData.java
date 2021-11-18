@@ -46,16 +46,22 @@ public class LoadableStudyCommunicationData {
     JsonArray jsonArray =
         removeJsonFields(
             JsonParser.parseString(dataJson).getAsJsonArray(), map, "loadablestudy_xid");
+    log.info("saveLoadablePattern json array:{}",jsonArray);
     listType = new TypeToken<ArrayList<LoadablePattern>>() {}.getType();
     loadablePatterns = new Gson().fromJson(jsonArray, listType);
+    log.info("loadablePatterns list:{}",loadablePatterns);
     if (loadablePatterns != null && !loadablePatterns.isEmpty()) {
       for (LoadablePattern loadablePattern : loadablePatterns) {
+        log.info("loadableStudy id from loadablePattern staging id:{}",loadablePattern.getCommunicationRelatedEntityId());
         Optional<LoadableStudy> loadableStudy =
             loadableStudyRepository.findById(loadablePattern.getCommunicationRelatedEntityId());
+        log.info("loadableStudy:{}",loadableStudy);
         if (loadableStudy.isPresent()) {
           loadablePattern.setLoadableStudy(loadableStudy.get());
+          log.info("LoadablePattern id to fetch:{}",loadablePattern.getId());
           Optional<LoadablePattern> loadablePatternOpt =
               loadablePatternRepository.findById(loadablePattern.getId());
+          log.info("LoadablePattern get:{}",loadablePatternOpt);
           loadablePattern.setVersion(
               loadablePatternOpt.isPresent() ? loadablePatternOpt.get().getVersion() : null);
         }
@@ -71,19 +77,24 @@ public class LoadableStudyCommunicationData {
     JsonArray jsonArray =
         removeJsonFields(
             JsonParser.parseString(dataJson).getAsJsonArray(), map, "synoptical_table_xid");
+    log.info("saveSynopticalTableLoadicatorData json array:{}",jsonArray);
     listType = new TypeToken<ArrayList<LoadablePattern>>() {}.getType();
     synopticalTableLoadicatorDatas = new Gson().fromJson(jsonArray, listType);
+    log.info("synopticalTableLoadicatorDatas list:{}",synopticalTableLoadicatorDatas);
     if (synopticalTableLoadicatorDatas != null && !synopticalTableLoadicatorDatas.isEmpty()) {
       for (SynopticalTableLoadicatorData synopticalTableLoadicatorData :
           synopticalTableLoadicatorDatas) {
+        log.info("synopticalTable id from synopticalTableLoadicatorDatas staging id:{}",synopticalTableLoadicatorData.getCommunicationRelatedEntityId());
         Optional<SynopticalTable> synopticalTable =
             synopticalTableRepository.findById(
                 synopticalTableLoadicatorData.getCommunicationRelatedEntityId());
+        log.info("synopticalTable:{}",synopticalTable);
         if (synopticalTable.isPresent()) {
           synopticalTableLoadicatorData.setSynopticalTable(synopticalTable.get());
           Optional<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataOpt =
               synopticalTableLoadicatorDataRepository.findById(
                   synopticalTableLoadicatorData.getId());
+          log.info("SynopticalTableLoadicatorData get:{}",synopticalTableLoadicatorDataOpt);
           synopticalTableLoadicatorData.setVersion(
               synopticalTableLoadicatorDataOpt.isPresent()
                   ? synopticalTableLoadicatorDataOpt.get().getVersion()
