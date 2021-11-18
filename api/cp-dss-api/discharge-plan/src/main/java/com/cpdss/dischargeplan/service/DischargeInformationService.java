@@ -37,6 +37,7 @@ import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
 import com.cpdss.dischargeplan.entity.DischargePlanRules;
 import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
+import com.cpdss.dischargeplan.entity.DischargingInstruction;
 import com.cpdss.dischargeplan.entity.PortTideDetail;
 import com.cpdss.dischargeplan.repository.*;
 import com.google.protobuf.ByteString;
@@ -100,6 +101,8 @@ public class DischargeInformationService {
   @Autowired DischargeRulesRepository dischargeRulesRepository;
 
   @Autowired DischargeRulesInputRepository dischargeRulesInputRepository;
+  
+  @Autowired DischargingInstructionRepository dischargingInstructionRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -152,7 +155,12 @@ public class DischargeInformationService {
     } catch (Exception e) {
       log.error("Failed to set PK, Synoptic Id in response - {}", e.getMessage());
     }
-
+    
+    List<DischargingInstruction> dischargingInstructionList = 
+    		dischargingInstructionRepository.getAllDischargingInstructions(request.getVesselId(),
+    				disEntity.getId(), request.getPortRotationId());
+    builder.setIsDischargingInstructionsComplete(
+    		!dischargingInstructionList.isEmpty()? Boolean.TRUE : Boolean.FALSE);
     // Set Discharge Details
     this.informationBuilderService.buildDischargeDetailsMessageFromEntity(disEntity, builder);
 
