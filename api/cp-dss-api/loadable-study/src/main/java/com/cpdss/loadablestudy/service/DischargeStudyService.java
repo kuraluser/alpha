@@ -239,7 +239,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     List<LoadableStudyPortRotation> ports =
         loadableStudyPortRotationRepository
             .findByLoadableStudyAndIsActive(loadableStudy.getId(), true).stream()
-            .filter(p -> p.getOperation().getId().equals(LOADING_OPERATION_ID))
+            .filter(p -> p.getOperation().getId().equals(LOADING_OPERATION_ID)).sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
             .collect(Collectors.toList());
     StowageAndBillOfLaddingValidationRequest.Builder request =
         StowageAndBillOfLaddingValidationRequest.newBuilder();
