@@ -38,7 +38,6 @@ import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.algo.DischargingInformationAlgoResponse;
 import com.cpdss.dischargeplan.entity.*;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.*;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
@@ -532,27 +531,26 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           buildPortWiseCommingleDetails(request, portWiseCommingleDetail, dischargingInfo));
     }
   }
-  // TODO sreemanikandan is working on the commingle temp entity.I can only work on this after that
-  // code merge.
-  //  public void getPortWiseCommingleTempDetails(
-  //	      LoadingPlanModels.UpdateUllageDetailsRequest request,
-  //	      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
-  //	    Optional<com.cpdss.dischargeplan.entity.DischargeInformation> loadingInfo =
-  //	        this.dischargeInformationRepository
-  //	            .findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
-  //	                request.getVesselId(), request.getPatternId(),
-  // request.getPortRotationId(),true);
-  //	    List<PortDischargingPlanCommingleDetails> portWiseRobDetails =
-  //	        portLoadingPlanCommingleTempDetailsRepository.findByLoadingInformationAndIsActive(
-  //	            loadingInfo.get().getId(), true);
-  //	    for (PortDischargingPlanCommingleDetails portWiseCommingleDetail : portWiseRobDetails) {
-  //	      builder.addLoadablePlanCommingleTempDetails(
-  //	          this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, loadingInfo));
-  //	    }
-  //	  }
+ 
+    public void getPortWiseCommingleTempDetails(
+  	      LoadingPlanModels.UpdateUllageDetailsRequest request,
+  	      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+  	    Optional<com.cpdss.dischargeplan.entity.DischargeInformation> dischargingInfo =
+  	        this.dischargeInformationRepository
+  	            .findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
+  	                request.getVesselId(), request.getPatternId(),
+   request.getPortRotationId(),true);
+  	    List<PortDischargingPlanCommingleTempDetails> portWiseRobDetails =
+  	    		portDischargingPlanCommingleTempDetailsRepository.findByDischargingInformationAndIsActive(
+  	    				dischargingInfo.get().getId(), true);
+  	    for (PortDischargingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
+  	      builder.addLoadablePlanCommingleTempDetails(
+  	          this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, dischargingInfo));
+  	    }
+  	  }
   private Builder buildPortWiseCommingleDetails(
       UpdateUllageDetailsRequest request,
-      PortDischargingPlanCommingleDetails portWiseCommingleDetail,
+      PortDischargingPlanCommingleEntityDoc portWiseCommingleDetail,
       Optional<DischargeInformation> dischargingInfo) {
     LoadingPlanModels.LoadablePlanCommingleDetails.Builder newBuilder =
         LoadingPlanModels.LoadablePlanCommingleDetails.newBuilder();

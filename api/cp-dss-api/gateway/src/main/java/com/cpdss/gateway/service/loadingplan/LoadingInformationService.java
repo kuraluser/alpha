@@ -128,12 +128,4 @@ public interface LoadingInformationService {
 
   public List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
       List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId);
-
-  List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
-      Long vesselId,
-      Long patternId,
-      String operationType,
-      Long portRotationId,
-      Long portId,
-      PLANNING_TYPE planningType);
 }

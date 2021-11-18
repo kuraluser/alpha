@@ -309,7 +309,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             OPERATION_TYPE,
             portRotation.get().getId(),
             portRotation.get().getPortId(),
-            Common.PLANNING_TYPE.LOADABLE_STUDY));
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            false));
 
     // Manage Sequence
     LoadingSequences loadingSequences =
@@ -533,7 +534,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             OPERATION_TYPE,
             portRotation.get().getId(),
             portRotation.get().getPortId(),
-            Common.PLANNING_TYPE.LOADABLE_STUDY));
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            false));
     loadingInformation.setCargoVesselTankDetails(vesselTankDetails);
 
     LoadingSequences loadingSequences =
