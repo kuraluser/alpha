@@ -48,6 +48,7 @@ public class LoadingPlanController {
   @Autowired GenerateLoadingPlanExcelReportService generateLoadingPlanExcelReportService;
 
   private static final String LOADING_PORT_TIDE_DETAIL_FILE_NAME = "Loading_port_tide_details.xlsx";
+  private static final String LOADING_PLAN_REPORT_FILE_NAME = "Loading Plan.xlsx";
 
   /**
    * Get API to collect the port rotation details of active Voyage
@@ -937,7 +938,11 @@ public class LoadingPlanController {
       // Set file download headers
       HttpHeaders header = new HttpHeaders();
       header.setContentType(new MediaType("application", "force-download"));
-      header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= Loading_Plan.xlsx");
+      header.set(
+          HttpHeaders.CONTENT_DISPOSITION,
+          "attachment; filename="
+              + loadingPlanService.prepareFileName(vesselId, voyageId, portRotationId)
+              + LOADING_PLAN_REPORT_FILE_NAME);
 
       // Send file
       return new HttpEntity<ByteArrayResource>(

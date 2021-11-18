@@ -77,4 +77,6 @@ public interface LoadingPlanService {
   LoadingSimulatorJsonResponse getSimulatorJsonDataForLoading(
       Long vesselId, Long infoId, String correlationId)
       throws GenericServiceException, JsonProcessingException;
+
+  String prepareFileName(Long vesselId, Long voyageId, Long portRotationId);
 }

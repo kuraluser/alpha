@@ -213,6 +213,8 @@ service LoadableStudyService {
 	
 	rpc saveActivatedVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
 
+	rpc GetVoyageByVoyageId(VoyageInfoRequest) returns (VoyageInfoReply) {}
+
 	rpc getLoadablePatternForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 
 	rpc saveLoadablePatternForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
@@ -1682,4 +1684,13 @@ message LoadableStudyCommunicationRequest{
 message LoadableStudyCommunicationReply {
 	ResponseStatus responseStatus = 1;
 	string dataJson=2;
+}
+
+message VoyageInfoRequest{
+	int64 voyageId = 1;
+}
+
+message VoyageInfoReply{
+	ResponseStatus responseStatus = 1;
+	VoyageDetail voyageDetail = 2;
 }
