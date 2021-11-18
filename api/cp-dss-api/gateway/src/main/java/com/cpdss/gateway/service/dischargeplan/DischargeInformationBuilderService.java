@@ -141,7 +141,7 @@ public class DischargeInformationBuilderService {
       String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MIN_DE_BALLAST_RATE);
       var2.setMinBallastRate(val.isEmpty() ? null : new BigDecimal(val));
     } else {
-      var2.setMinBallastRate(new BigDecimal(var1.getMaxBallastRate()));
+      var2.setMinBallastRate(new BigDecimal(var1.getMinBallastRate()));
     }
 
     if (var1.getMaxBallastRate().isEmpty()) {
