@@ -6527,7 +6527,7 @@ class LoadableStudyServiceTest {
     LoadablePattern loadablePattern = new LoadablePattern();
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setPlanningTypeXId(1);
-    loadablePattern.setLoadableStudy(loadableStudy);;
+    loadablePattern.setLoadableStudy(loadableStudy);
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(loadablePattern));
     when(this.restTemplate.postForEntity(anyString(), any(UllageUpdateRequest.class), any()))
