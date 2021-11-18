@@ -234,6 +234,8 @@ export class DatatableComponent implements OnInit {
   customSort: boolean;
   filterObject: object = {};
   filteredValue: Array<any>;
+  onInputRange = false;
+  onInputTime = false;
 
 
   // private fields
@@ -794,11 +796,42 @@ export class DatatableComponent implements OnInit {
   }
 
   /**
+  * Range date onblur
+  */
+  onBlurDateRange(event, formGroupIndex: number, col, rowData: Object){
+    if(this.onInputRange){
+      this.onDateRangeSelect(event, formGroupIndex, col, rowData);
+      const formControlName: string = col.field;
+      const formControl = this.field(formGroupIndex, formControlName);
+      rowData[formControlName].isEditMode = formControl.invalid;
+    }
+  }
+
+  /**
   * Range date selected
   */
   onDateRangeSelect(event, formGroupIndex: number, col, rowData: Object) {
     const formControlName: string = col.field;
     const formControl = this.field(formGroupIndex, formControlName);
+    let hasError = false;
+    if (col.minDate && formControl.value?.length) {
+      const minDate = new Date(col.minDate);
+      formControl.value?.map(date => {
+        const inputValue = new Date(date);
+        if (moment(moment(inputValue).format('YYYY-MM-DD')).isBefore(moment(minDate).format('YYYY-MM-DD'))) {
+          hasError = true;
+          formControl.setErrors({ invalid: true });
+          rowData[formControlName].isEditMode = true;
+        }
+      });
+      if (hasError) {
+        return;
+      } else {
+        formControl.setErrors(null);
+      }
+    } else {
+      formControl.setErrors(null);
+    }
     if (formControl?.value && formControl?.value[0] && formControl?.value[1]) {
       if (formControl?.value[0]?.toDateString() === formControl?.value[1]?.toDateString()) {
         formControl.setErrors({ 'datesEqual': true });
@@ -809,7 +842,8 @@ export class DatatableComponent implements OnInit {
         } else {
           rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
         }
-        rowData[formControlName].isEditMode = false;
+        rowData[formControlName].isEditMode = this.onInputRange ? true :false;
+        this.onInputRange = false;
         this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
       }
     }
@@ -829,14 +863,42 @@ export class DatatableComponent implements OnInit {
   }
 
   /**
+  * date time onblur
+  */
+  onBlurDateTime(event, formGroupIndex: number, formControlName: string, rowData: any, col: any){
+    if(this.onInputTime){
+      this.onDatePanelClosed(event, formGroupIndex, formControlName, rowData, col);
+      const formControl = this.field(formGroupIndex, formControlName);
+      rowData[formControlName].isEditMode = formControl?.invalid;
+    }
+  }
+
+  /**
   * On closing Date panel
   */
-  onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any) {
+  onDatePanelClosed(event, formGroupIndex: number, formControlName: string, rowData: any, col: any) {
     const formControl = this.field(formGroupIndex, formControlName);
+    let hasError = false;
+    if(col.minDate && formControl.value){
+      const minDate = new Date(col.minDate);
+      const inputValue = new Date(formControl.value);
+      if(minDate.getTime() > inputValue.getTime()){
+        hasError = true;
+        formControl.setErrors({ invalid : true});
+        rowData[formControlName].isEditMode = true;
+        return;
+      }
+    } else {
+      formControl.setErrors(null);
+    }
+    if(!hasError){
+      formControl.setErrors(null);
+    }
     const oldValue = rowData[formControlName].value;
     const newValue = formControl.value ? this.convertDT_PortBasedTimeZone(formControl.value, rowData.port.value?.timezoneOffsetVal, rowData.port.value?.timezoneAbbreviation) : null;
     rowData[formControlName].value = newValue;
-    rowData[formControlName].isEditMode = formControl?.invalid;
+    rowData[formControlName].isEditMode = this.onInputTime ? true : formControl?.invalid;
+    this.onInputTime = false;
     if (oldValue !== newValue) {
       this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
     }

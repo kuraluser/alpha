@@ -897,7 +897,8 @@ export class LoadableStudyDetailsTransformationService {
             'required': 'PORT_ETA_REQUIRED_ERROR',
             'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
             'failedCompare': 'PORT_ETA_COMPARE_ERROR',
-            'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR'
+            'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR',
+            'invalid' : 'PORT_ETA_INVALID_DATE'
           }
         },
         {
@@ -921,7 +922,8 @@ export class LoadableStudyDetailsTransformationService {
             'required': 'PORT_ETD_REQUIRED_ERROR',
             'notInRange': 'PORT_ETD_NOT_IN_DATE_RANGE',
             'failedCompare': 'PORT_ETD_COMPARE_ERROR',
-            'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
+            'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR',
+            'invalid' : 'PORT_ETA_INVALID_DATE'
           }
         }
       ]
