@@ -177,12 +177,15 @@ public class UllageUpdateLoadicatorService {
                 request.getUpdateUllage(0).getArrivalDepartutre(),
                 DischargePlanConstants.ACTUAL_TYPE_VALUE,
                 true);
-    List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails =
-        portDischargingPlanCommingleTempDetailsRepository
-            .findByDischargingInformationAndConditionTypeAndIsActive(
-                dischargingInfoOpt.get().getId(),
-                request.getCommingleUpdate(0).getArrivalDeparture(),
-                true);
+    List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails = new ArrayList<>();
+    if (!request.getCommingleUpdateList().isEmpty()) {
+      tempCommingleDetails =
+          portDischargingPlanCommingleTempDetailsRepository
+              .findByDischargingInformationAndConditionTypeAndIsActive(
+                  dischargingInfoOpt.get().getId(),
+                  request.getCommingleUpdate(0).getArrivalDeparture(),
+                  true);
+    }
     Set<Long> cargoNominationIds = new LinkedHashSet<>();
 
     cargoNominationIds.addAll(
@@ -520,9 +523,14 @@ public class UllageUpdateLoadicatorService {
         .forEach(
             cargoNominationId -> {
               Loadicator.CargoInfo.Builder cargoBuilder = Loadicator.CargoInfo.newBuilder();
-              Optional.ofNullable(
-                      String.valueOf(cargoNomDetails.get(cargoNominationId).getAbbreviation()))
-                  .ifPresent(cargoBuilder::setCargoAbbrev);
+              Optional.ofNullable(cargoNomDetails.get(cargoNominationId))
+                  .ifPresent(
+                      cargoNominationDetail -> {
+                        Optional.ofNullable(cargoNominationDetail.getAbbreviation())
+                            .ifPresent(cargoBuilder::setCargoAbbrev);
+                        Optional.ofNullable(cargoNominationDetail.getCargoId())
+                            .ifPresent(cargoBuilder::setCargoId);
+                      });
               Optional<PortDischargingPlanStowageTempDetails> stowageOpt =
                   tempStowageDetails.stream()
                       .filter(stwg -> stwg.getCargoNominationXId().equals(cargoNominationId))
@@ -534,8 +542,6 @@ public class UllageUpdateLoadicatorService {
                     Optional.ofNullable(String.valueOf(stwg.getTemperature()))
                         .ifPresent(cargoBuilder::setStandardTemp);
                   });
-              Optional.ofNullable(cargoNomDetails.get(cargoNominationId).getCargoId())
-                  .ifPresent(cargoBuilder::setCargoId);
               Optional.ofNullable(dischargeInformation.getPortXid())
                   .ifPresent(cargoBuilder::setPortId);
               Optional.ofNullable(stowagePlanBuilder.getStowageId())
@@ -617,16 +623,19 @@ public class UllageUpdateLoadicatorService {
             stowage -> {
               Loadicator.StowageDetails.Builder stowageDetailsBuilder =
                   Loadicator.StowageDetails.newBuilder();
-              CargoNominationDetail cargoNomDetail =
-                  cargoNomDetails.get(stowage.getCargoNominationXId());
-              Optional.ofNullable(cargoNomDetail.getCargoId())
-                  .ifPresent(stowageDetailsBuilder::setCargoId);
+              Optional.ofNullable(cargoNomDetails.get(stowage.getCargoNominationXId()))
+                  .ifPresent(
+                      cargoNominationDetail -> {
+                        Optional.ofNullable(cargoNominationDetail.getAbbreviation())
+                            .ifPresent(stowageDetailsBuilder::setCargoName);
+                        Optional.ofNullable(cargoNominationDetail.getCargoId())
+                            .ifPresent(stowageDetailsBuilder::setCargoId);
+                      });
               Optional.ofNullable(stowage.getTankXId()).ifPresent(stowageDetailsBuilder::setTankId);
               Optional.ofNullable(stowage.getQuantity())
                   .ifPresent(
                       quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
-              Optional.ofNullable(cargoNomDetail.getAbbreviation())
-                  .ifPresent(stowageDetailsBuilder::setCargoName);
+
               Optional.ofNullable(dischargeInformation.getPortXid())
                   .ifPresent(stowageDetailsBuilder::setPortId);
               Optional.ofNullable(stowageDetailsBuilder.getStowageId())

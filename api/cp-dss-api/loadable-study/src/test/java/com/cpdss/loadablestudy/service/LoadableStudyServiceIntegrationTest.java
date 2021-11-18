@@ -146,6 +146,8 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean DischargeStudyPortInstructionRepository dischargeStudyPortInstructionRepository;
   @MockBean PortInstructionRepository portInstructionRepository;
 
+  @MockBean private LoadableStudyCommunicationData loadableStudyCommunicationData;
+
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;
   private static final Long CARGO_VOID_TANK_CATEGORY_ID = 15L;

@@ -291,6 +291,8 @@ public class LoadingPlanCommunicationService {
       List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
       List<BillOfLanding> billOfLandingList = null;
       PyUser pyUser = null;
+      String loadablePattern = null;
+      String loadicatorDataForSynoptical = null;
       loadingPlanStagingService.updateStatusForProcessId(
           processId, StagingStatus.IN_PROGRESS.getStatus());
       log.info(
@@ -710,6 +712,20 @@ public class LoadingPlanCommunicationService {
             {
               voyageActivate = new Gson().fromJson(data, VoyageActivate.class);
               idMap.put(LoadingPlanTables.VOYAGE.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case loadable_pattern:
+            {
+              loadablePattern = dataTransferString;
+              idMap.put(LoadingPlanTables.LOADABLE_PATTERN.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case loadicator_data_for_synoptical_table:
+            {
+              loadicatorDataForSynoptical = dataTransferString;
+              idMap.put(
+                  LoadingPlanTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable(),
+                  dataTransferStage.getId());
               break;
             }
         }
@@ -1474,43 +1490,72 @@ public class LoadingPlanCommunicationService {
         }
       }
       if (voyageActivate != null) {
-        try {
-          LoadableStudy.VoyageActivateRequest.Builder builder =
-              LoadableStudy.VoyageActivateRequest.newBuilder();
-          builder.setId(voyageActivate.getId());
-          builder.setVoyageStatus(voyageActivate.getVoyageStatus());
-          LoadableStudy.VoyageActivateReply reply = saveActivatedVoyage(builder.build());
-          if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-            log.info(
-                "Voyage activated with status: {} and id:{} ",
-                voyageActivate.getVoyageStatus(),
-                voyageActivate.getId());
-          } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.VOYAGE.getTable()),
-                processId,
-                retryStatus,
-                reply.getResponseStatus().getMessage());
-          } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.VOYAGE.getTable()),
-                processId,
-                StagingStatus.FAILED.getStatus(),
-                reply.getResponseStatus().getMessage());
-          }
-
-        } catch (ResourceAccessException e) {
+        LoadableStudy.VoyageActivateRequest.Builder builder =
+            LoadableStudy.VoyageActivateRequest.newBuilder();
+        builder.setId(voyageActivate.getId());
+        builder.setVoyageStatus(voyageActivate.getVoyageStatus());
+        LoadableStudy.VoyageActivateReply reply = saveActivatedVoyage(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info(
+              "Voyage activated with status: {} and id:{} ",
+              voyageActivate.getVoyageStatus(),
+              voyageActivate.getId());
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
           updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PYUSER.getTable()),
+              idMap.get(LoadingPlanTables.VOYAGE.getTable()),
               processId,
               retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
           updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PYUSER.getTable()),
+              idMap.get(LoadingPlanTables.VOYAGE.getTable()),
               processId,
               StagingStatus.FAILED.getStatus(),
-              e.getMessage());
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadablePattern != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        builder.setDataJson(loadablePattern);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveLoadablePatternForCommunication(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("LoadablePattern saved in LoadableStudy");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PATTERN.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PATTERN.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadicatorDataForSynoptical != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        builder.setDataJson(loadicatorDataForSynoptical);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveLoadablePatternForCommunication(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("SynopticalTableLoadicatorData saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
         }
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(
