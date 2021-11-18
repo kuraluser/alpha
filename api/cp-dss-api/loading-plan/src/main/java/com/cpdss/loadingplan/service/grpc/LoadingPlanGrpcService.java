@@ -450,9 +450,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                             .anyMatch(
                                 st ->
                                     st.getQuantity() == null
-                                        || st.getQuantity().compareTo(BigDecimal.ZERO) <= 0
-                                        || st.getQuantityM3() == null
-                                        || st.getQuantityM3().compareTo(BigDecimal.ZERO) <= 0))
+                                        || st.getQuantity().compareTo(BigDecimal.ZERO) <= 0))
                         || (bLValues.stream()
                             .anyMatch(
                                 bl ->
