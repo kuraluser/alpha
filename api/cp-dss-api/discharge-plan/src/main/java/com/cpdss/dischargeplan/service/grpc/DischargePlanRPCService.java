@@ -729,15 +729,17 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               request, billOfLaddingRepo, dischargeInformationService);
       billOfLaddingRepo.saveAll(updatedBillOfLadding);
 
-      List<PortDischargingPlanCommingleTempDetails> tempCommingle =
-          portDischargingPlanCommingleTempDetailsRepository
-              .findByDischargingInformationAndConditionTypeAndIsActive(
-                  request.getCommingleUpdate(0).getDischargingInformationId(),
-                  request.getCommingleUpdate(0).getArrivalDeparture(),
-                  true);
-      List<PortDischargingPlanCommingleTempDetails> updatedCommingle =
-          DischargeUllageServiceUtils.updateCommingle(request, tempCommingle);
-      portDischargingPlanCommingleTempDetailsRepository.saveAll(updatedCommingle);
+      if (!request.getCommingleUpdateList().isEmpty()) {
+        List<PortDischargingPlanCommingleTempDetails> tempCommingle =
+            portDischargingPlanCommingleTempDetailsRepository
+                .findByDischargingInformationAndConditionTypeAndIsActive(
+                    request.getCommingleUpdate(0).getDischargingInformationId(),
+                    request.getCommingleUpdate(0).getArrivalDeparture(),
+                    true);
+        List<PortDischargingPlanCommingleTempDetails> updatedCommingle =
+            DischargeUllageServiceUtils.updateCommingle(request, tempCommingle);
+        portDischargingPlanCommingleTempDetailsRepository.saveAll(updatedCommingle);
+      }
 
       if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
         processId = validateAndSaveData(request);
