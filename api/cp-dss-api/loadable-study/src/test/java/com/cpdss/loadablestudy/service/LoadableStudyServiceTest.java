@@ -6524,8 +6524,12 @@ class LoadableStudyServiceTest {
   void testUpdateUllage(int iteration)
       throws RestClientException, InstantiationException, IllegalAccessException {
     UpdateUllageRequest request = this.createUpdateUllageRequest();
+    LoadablePattern loadablePattern = new LoadablePattern();
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setPlanningTypeXId(1);
+    loadablePattern.setLoadableStudy(loadableStudy);;
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(Optional.of(new LoadablePattern()));
+        .thenReturn(Optional.of(loadablePattern));
     when(this.restTemplate.postForEntity(anyString(), any(UllageUpdateRequest.class), any()))
         .thenReturn(
             new ResponseEntity<Object>(this.createAlgoResponseForUpdateUllage(), HttpStatus.OK));

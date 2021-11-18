@@ -3239,7 +3239,11 @@ public class LoadablePlanService {
         synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
             loadableStudyPortRotationService.getLastPortRotationId(
                 loadablePattern.getLoadableStudy(),
-                this.cargoOperationRepository.getOne(LOADING_OPERATION_ID)),
+                this.cargoOperationRepository.getOne(
+                    (loadablePattern.getLoadableStudy().getPlanningTypeXId()
+                            == PLANNING_TYPE_LOADING)
+                        ? LOADING_OPERATION_ID
+                        : DISCHARGING_OPERATION_ID)),
             SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
             true);
     if (synopticalTableOpt.isPresent()) {
