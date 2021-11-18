@@ -527,7 +527,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   public LoadingStages getLoadingStagesAndMasters(LoadingPlanModels.LoadingStages var1) {
     LoadingStages loadingStages = new LoadingStages();
     try {
-      BeanUtils.copyProperties(var1, loadingStages);
       List<StageOffset> list1 = new ArrayList<>();
       List<StageDuration> list2 = new ArrayList<>();
       for (LoadingPlanModels.StageOffsets val1 : var1.getStageOffsetsList()) {
@@ -542,6 +541,16 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         Optional.ofNullable(val1.getDuration()).ifPresent(duration::setDuration);
         list2.add(duration);
       }
+      loadingStages.setId(var1.getId());
+      loadingStages.setTrackStartEndStage(var1.getTrackStartEndStage());
+      loadingStages.setTrackGradeSwitch(var1.getTrackGradeSwitch());
+      if (var1.getStageOffset() != 0) {
+        loadingStages.setStageOffset(var1.getStageOffset());
+      }
+      if (var1.getStageDuration() != 0) {
+        loadingStages.setStageDuration(var1.getStageDuration());
+      }
+
       loadingStages.setStageOffsetList(list1);
       loadingStages.setStageDurationList(list2);
       log.info(

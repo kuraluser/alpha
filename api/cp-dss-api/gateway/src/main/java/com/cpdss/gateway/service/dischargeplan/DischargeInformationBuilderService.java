@@ -78,22 +78,19 @@ public class DischargeInformationBuilderService {
     LoadableStudy.LoadingSynopticResponse var3 =
         loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
             portRId, GatewayConstants.OPERATION_TYPE_ARR);
-    if (!var3.getTimeOfSunrise().isEmpty()) {
-      var2.setTimeOfSunrise(var3.getTimeOfSunrise());
-    } else {
-      var2.setTimeOfSunrise(var1.getTimeOfSunrise());
-    }
 
-    if (!var3.getTimeOfSunset().isEmpty()) {
-      var2.setTimeOfSunset(var3.getTimeOfSunset());
-    } else {
-      var2.setTimeOfSunset(var1.getTimeOfSunset());
-    }
+    var2.setTimeOfSunrise(var3.getTimeOfSunrise().isEmpty() ? null : var3.getTimeOfSunrise());
+    var2.setTimeOfSunset(var3.getTimeOfSunset().isEmpty() ? null : var3.getTimeOfSunset());
+
     // If not found in LS, Synoptic Go to Port Master
     if (var2.getTimeOfSunrise() == null || var2.getTimeOfSunset() == null) {
       PortInfo.PortDetail response2 = this.loadingPlanGrpcService.fetchPortDetailByPortId(portId);
-      var2.setTimeOfSunrise(response2.getSunriseTime());
-      var2.setTimeOfSunset(response2.getSunsetTime());
+      if (var2.getTimeOfSunrise() == null || var2.getTimeOfSunrise().isEmpty()) {
+        var2.setTimeOfSunrise(response2.getSunriseTime());
+      }
+      if (var2.getTimeOfSunset() == null || var2.getTimeOfSunset().isEmpty()) {
+        var2.setTimeOfSunset(response2.getSunsetTime());
+      }
       log.info(
           "Get Loading info, Sunrise/Sunset added from Port Info table {}, {}",
           response2.getSunriseTime(),
