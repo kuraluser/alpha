@@ -1130,16 +1130,4 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
     return pdStage;
   }
-
-  @Override
-  public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
-      Long vesselId,
-      Long patternId,
-      String operationType,
-      Long portRotationId,
-      Long portId,
-      PLANNING_TYPE planningType) {
-    // TODO Auto-generated method stub
-    return null;
-  }
 }
