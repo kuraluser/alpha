@@ -450,9 +450,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                             .anyMatch(
                                 st ->
                                     st.getQuantity() == null
-                                        || st.getQuantity().compareTo(BigDecimal.ZERO) <= 0
-                                        || st.getQuantityM3() == null
-                                        || st.getQuantityM3().compareTo(BigDecimal.ZERO) <= 0))
+                                        || st.getQuantity().compareTo(BigDecimal.ZERO) <= 0))
                         || (bLValues.stream()
                             .anyMatch(
                                 bl ->
@@ -473,6 +471,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                           "LS actuals or BL values are missing",
                           "",
                           HttpStatusCode.SERVICE_UNAVAILABLE);
+                    } else {
+                      builder.setStatus(LoadingPlanConstants.SUCCESS);
                     }
                     // Add check for Zero and null values
                   } catch (Exception e) {
@@ -481,7 +481,6 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                 });
       }
 
-      builder.setStatus(LoadingPlanConstants.SUCCESS);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setStatus(LoadingPlanConstants.FAILED);
