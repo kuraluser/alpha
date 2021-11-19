@@ -2,8 +2,6 @@
 package com.cpdss.dischargeplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
-import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleTempDetails;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
@@ -26,8 +24,7 @@ public interface PortDischargingPlanCommingleTempDetailsRepository
           + "WHERE dischargingInformation = ?1 and conditionType = ?2 and isActive = true")
   public void deleteExistingByDischargingInfoAndConditionType(
       Long dischargingInformationId, Integer conditionType);
-  
+
   public List<PortDischargingPlanCommingleTempDetails> findByDischargingInformationAndIsActive(
-	      Long dsInfo, Boolean isActive);
-  
+      Long dsInfo, Boolean isActive);
 }

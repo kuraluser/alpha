@@ -135,7 +135,8 @@ public class DischargeInformationService {
     dischargeInformation.setIsDischargeSequenceGenerated(
         disRpcReplay.getIsDischargingSequenceGenerated());
     dischargeInformation.setDischargeInfoStatusId(disRpcReplay.getDischargingInfoStatusId());
-    dischargeInformation.setIsDischargeInstructionsComplete(disRpcReplay.getIsDischargingInstructionsComplete());
+    dischargeInformation.setIsDischargeInstructionsComplete(
+        disRpcReplay.getIsDischargingInstructionsComplete());
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
         vesselInfoService.getRulesByVesselIdAndSectionId(

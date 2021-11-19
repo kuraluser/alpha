@@ -1070,4 +1070,10 @@ message LoadablePlanCommingleCargoDetails {
 	 int64 cargo1NominationId = 33;
 	 int64 cargo2NominationId = 34;
 	 string tankShortName = 35;
+	 string quantity1MT = 36;
+     string quantity2MT = 37;
+     string quantity1M3 = 38;
+     string quantity2M3 = 39;
+     int64 cargo1Id = 40;
+     int64 cargo2Id = 41;
 }
