@@ -82,6 +82,7 @@ import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
@@ -93,6 +94,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -1041,6 +1043,45 @@ public class LoadingPlanAlgoService {
                     errorBuilder.addErrorMessages(error.getErrorMessage());
                   });
           builder.addAlgoErrors(errorBuilder.build());
+        });
+  }
+
+  /**
+   * Saves ALGO errors
+   *
+   * @param loadingInformation
+   * @param heading
+   * @param conditionType
+   * @param errors
+   */
+  public void createAlgoErrors(
+      LoadingInformation loadingInformation,
+      String heading,
+      Integer conditionType,
+      List<String> errors) {
+
+    if (conditionType != null) {
+      algoErrorHeadingRepository.deleteByLoadingInformationAndConditionType(
+          loadingInformation, conditionType);
+      algoErrorsRepository.deleteByLoadingInformationAndConditionType(
+          loadingInformation, conditionType);
+    } else {
+      algoErrorHeadingRepository.deleteByLoadingInformation(loadingInformation);
+      algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
+    }
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading(heading);
+    algoErrorHeading.setLoadingInformation(loadingInformation);
+    algoErrorHeading.setConditionType(conditionType);
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    errors.forEach(
+        error -> {
+          AlgoErrors algoErrors = new AlgoErrors();
+          algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          algoErrors.setErrorMessage(error);
+          algoErrors.setIsActive(true);
+          algoErrorsRepository.save(algoErrors);
         });
   }
 }

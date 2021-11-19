@@ -57,6 +57,7 @@ import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -80,6 +81,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -739,27 +741,41 @@ public class LoadicatorService {
       LoadicatorAlgoRequest algoRequest = new LoadicatorAlgoRequest();
       buildLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
       saveLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
+      try {
+        LoadicatorAlgoResponse algoResponse =
+            restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+        saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
-      LoadicatorAlgoResponse algoResponse =
-          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
-      saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
+        saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
 
-      saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
-
-      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
-      loadingInformationRepository.updateLoadingInformationStatuses(
-          loadingInfoStatusOpt.get(),
-          loadingInfoStatusOpt.get(),
-          loadingInfoStatusOpt.get(),
-          loadingInfoOpt.get().getId());
-      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-          loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-      loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-          loadingInfoOpt.get().getId(), true);
-      loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-          loadingInfoOpt.get().getId(), true);
+        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            loadingPlanAlgoService.getLoadingInformationStatus(
+                LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
+        loadingInformationRepository.updateLoadingInformationStatuses(
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoOpt.get().getId());
+        loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
+        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
+      } catch (HttpStatusCodeException e) {
+        Optional<LoadingInformationStatus> errorOccurredStatusOpt =
+            loadingPlanAlgoService.getLoadingInformationStatus(
+                LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
+        loadingInformationRepository.updateLoadingInformationStatus(
+            errorOccurredStatusOpt.get(), loadingInfoOpt.get().getId());
+        loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), errorOccurredStatusOpt.get());
+        loadingPlanAlgoService.createAlgoErrors(
+            loadingInfoOpt.get(),
+            "ALGO Internal Server Error",
+            null,
+            Lists.newArrayList(e.getResponseBodyAsString()));
+      }
     } else {
       ullageUpdateLoadicatorService.getLoadicatorData(request);
     }
