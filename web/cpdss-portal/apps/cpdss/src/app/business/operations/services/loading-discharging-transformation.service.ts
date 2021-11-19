@@ -690,7 +690,6 @@ export class LoadingDischargingTransformationService {
       {
         field: 'blFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_BL_FIGURE',
-        numberType: 'quantity',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },

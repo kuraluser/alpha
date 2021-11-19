@@ -479,10 +479,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
         this.loadingDischargingDelays[0].sequenceNo.value = 1;
       }
     }
-    if (!event.data.isAdd) {
-      const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargeInfoId, this.operation,this.listData);
-      this.updateLoadingDischargingDelays.emit(loadingDelaysList);
-    }
+    const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargeInfoId, this.operation, this.listData);
+    this.updateLoadingDischargingDelays.emit(loadingDelaysList);
     this.updateFormValidity();
     this.checkCargoCount(false);
   }

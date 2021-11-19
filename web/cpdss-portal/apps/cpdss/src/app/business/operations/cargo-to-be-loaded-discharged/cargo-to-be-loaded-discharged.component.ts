@@ -159,8 +159,8 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails.loadableQuantityCargoDetails?.map(cargo => {
       if (cargo) {
         cargo.grade = this.findCargo(cargo);
-        const blFigure = Number(cargo?.blFigure) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.blFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
-        cargo.blFigure = blFigure.toString();
+
+        cargo.blFigure = cargo?.blFigure ?? "0";
 
         const shipFigure = Number(cargo?.loadableMT) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.shipFigure = shipFigure.toString();
