@@ -70,4 +70,6 @@ public interface CommonErrorCodes {
   String E_CPDSS_ULLAGE_INVALID_WEIGHT = "324";
 
   String E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE = "325";
+
+  String E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND = "326";
 }
