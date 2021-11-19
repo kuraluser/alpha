@@ -177,13 +177,13 @@ public class DischargeStudyService {
     details.setCargo1Bblsdbs(lqccd.getCargo1Bblsdbs());
     details.setCargo1KL(lqccd.getCargo1KL());
     details.setCargo1LT(lqccd.getCargo1LT());
-    details.setCargo1MT(lqccd.getCargo1MT());
+    details.setCargo1MT(lqccd.getQuantity1MT());
     details.setCargo1Percentage(lqccd.getCargo1Percentage());
     details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
     details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
     details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
     details.setCargo2KL(lqccd.getCargo2KL());
-    details.setCargo2LT(lqccd.getCargo2LT());
+    details.setCargo2LT(lqccd.getQuantity2MT());
     details.setCargo2MT(lqccd.getCargo2MT());
     details.setCargo2Percentage(lqccd.getCargo2Percentage());
     details.setGrade(lqccd.getGrade());
