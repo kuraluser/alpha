@@ -16,6 +16,8 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.CleaningTankDetails;
+import com.cpdss.common.generated.discharge_plan.CleaningTanks;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
@@ -91,6 +93,7 @@ public class DischargePlanAlgoService {
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
+  @Autowired CowTankDetailRepository cowTankDetailRepository;
 
   @Autowired private DischargeInformationStatusRepository dischargeInformationStatusRepository;
   @Autowired private DischargingPlanBuilderService dischargingPlanBuilderService;
@@ -161,6 +164,10 @@ public class DischargePlanAlgoService {
       dischargeStudyOperationServiceBlockingStub;
 
   @Autowired DischargingDelayRepository dischargingDelayRepository;
+  
+  private static final Integer cowBottomTypeId = 2;
+  private static final Integer cowTopTypeId = 3;
+  private static final Integer cowFullTypeId = 1;
 
   @Value("${loadingplan.attachment.rootFolder}")
   private String rootFolder;
@@ -1178,8 +1185,61 @@ public class DischargePlanAlgoService {
         savedDischargingSequence, sequence.getDischargingPlanPortWiseDetailsList());
     saveCargoDischargingRates(savedDischargingSequence, sequence.getDischargingRatesList());
     saveBallastPumps(savedDischargingSequence, sequence.getBallastOperationsList());
+    if(sequence.getCleaningTanks()!=null) {
+    saveCleaningDetails(dischargingInfo, sequence.getCleaningTanks());}
+  }
+  
+  /**
+   * Save tank cleaning details
+   * @param dischargingInfo
+   * @param cleaningTanks
+   */
+  private void saveCleaningDetails(DischargeInformation dischargingInfo, CleaningTanks cleaningTanks) {
+	  List<CowTankDetail> cowTankDetails = new ArrayList<>();
+	  List<CleaningTankDetails> bottomTankList = cleaningTanks.getBottomTankList();
+	  if (!bottomTankList.isEmpty()) {
+		  bottomTankList.forEach(item -> {
+			  CowTankDetail cowTankDetail = buildCowTankDetails(item, cowBottomTypeId, dischargingInfo.getId());
+			  cowTankDetails.add(cowTankDetail);
+	  	  });
+	  }
+	  List<CleaningTankDetails> fullTankList = cleaningTanks.getFullTankList();
+	  if(!fullTankList.isEmpty()) {
+		  fullTankList.forEach(item -> {
+			  CowTankDetail cowTankDetail = buildCowTankDetails(item, cowFullTypeId, dischargingInfo.getId());
+			  cowTankDetails.add(cowTankDetail);
+		  }); 
+	  }
+	  List<CleaningTankDetails> topTankList = cleaningTanks.getTopTankList();
+	  if(!topTankList.isEmpty()) {
+		  topTankList.forEach(item -> {
+			  CowTankDetail cowTankDetail = buildCowTankDetails(item, cowTopTypeId, dischargingInfo.getId());
+			  cowTankDetails.add(cowTankDetail);
+		  });
+	  }
+	  cowTankDetailRepository.saveAll(cowTankDetails); 
   }
 
+  /**
+   * Build cleaning tank detail entity data to save
+   * @param cleaningTankDetails
+   * @param cowTypeId
+   * @param dischargeId
+   * @return CowTankDetail
+   */
+  private CowTankDetail buildCowTankDetails(CleaningTankDetails cleaningTankDetails, Integer cowTypeId, Long dischargeId) {
+	  CowTankDetail tankDetail = new CowTankDetail();
+	  tankDetail.setActualPlanned(1);
+	  Optional.ofNullable(cleaningTankDetails.getTankId()).ifPresent(tankDetail::setTankXid);
+	  tankDetail.setTankShortName(cleaningTankDetails.getTankShortName());
+	  tankDetail.setTimeEnd(Long.parseLong(cleaningTankDetails.getTimeEnd()));
+	  tankDetail.setTimeStart(Long.parseLong(cleaningTankDetails.getTimeStart()));
+	  tankDetail.setCowTypeXid(cowTypeId);
+	  tankDetail.setDischargingXid(dischargeId);
+	  tankDetail.setIsActive(true);
+	  return tankDetail;
+  }
+  
   private void saveCargoDischargingRates(
       DischargingSequence loadingSequence, List<DischargingRate> dischargingRatesList) {
     log.info("Saving Cargo Loading Rates for Loading Sequence {}", loadingSequence.getId());

@@ -398,6 +398,20 @@ message DischargingSequence {
   string cargoDischargingRate2 = 15;
   repeated PumpOperation ballastOperations = 16;
   EductorOperation eductorOperation = 17;
+  CleaningTanks cleaningTanks = 18;
+}
+
+message CleaningTanks {
+	repeated CleaningTankDetails topTank = 1;
+	repeated CleaningTankDetails bottomTank = 2;
+	repeated CleaningTankDetails fullTank = 3;
+}
+
+message CleaningTankDetails {
+	string tankShortName = 1;
+	int64 tankId = 2;
+	string timeStart = 3;
+	string timeEnd = 4; 
 }
 
 message DischargePlanPortWiseDetails {

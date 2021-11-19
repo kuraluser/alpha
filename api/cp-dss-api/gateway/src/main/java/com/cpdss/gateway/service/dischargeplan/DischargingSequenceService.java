@@ -20,6 +20,7 @@ import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
+import com.cpdss.common.generated.discharge_plan.CleaningTanks;
 import com.cpdss.common.generated.discharge_plan.DischargePlanPortWiseDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest.Builder;
@@ -36,6 +37,8 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.AlgoError;
+import com.cpdss.gateway.domain.Cleaning;
+import com.cpdss.gateway.domain.CleaningTankDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanPortWiseDetails;
@@ -384,8 +387,39 @@ public class DischargingSequenceService {
                           sequenceBuilder.setStartTime((new BigDecimal(timeStart)).intValue()));
               Optional.ofNullable(sequence.getToLoadicator())
                   .ifPresent(sequenceBuilder::setToLoadicator);
+              //build tank cleaning details
+              Cleaning cleaning = sequence.getCleaning();
+              com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder cleaningTanksBuilder = 
+            		  CleaningTanks.newBuilder();
+              cleaning.getBtmClean().forEach(cleaningTankDetails -> {            	  
+            	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder 
+            	  bottomTankDetails = buildCleaningTankDetails(cleaningTankDetails);
+            	  cleaningTanksBuilder.addBottomTank(bottomTankDetails);
+              });
+              cleaning.getTopClean().forEach(cleaningTankDetails -> {
+            	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder topCleaningTankDetails = 
+            			  buildCleaningTankDetails(cleaningTankDetails);
+            	  cleaningTanksBuilder.addTopTank(topCleaningTankDetails);
+              });
+              cleaning.getFullClean().forEach(cleaningTankDetails -> {
+            	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder fullCleaningTankDetails = 
+            			  buildCleaningTankDetails(cleaningTankDetails);
+            	  cleaningTanksBuilder.addFullTank(fullCleaningTankDetails);
+              });
+              sequenceBuilder.setCleaningTanks(cleaningTanksBuilder);
               builder.addDischargingSequences(sequenceBuilder.build());
             });
+  }
+  
+  private com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder buildCleaningTankDetails(
+		  CleaningTankDetails cleaningTankDetails){
+	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder tankDetailsBuilder = 
+			  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.newBuilder();
+	  Optional.ofNullable(cleaningTankDetails.getTankShortName()).ifPresent(tankDetailsBuilder::setTankShortName);
+	  Optional.ofNullable(cleaningTankDetails.getTankId()).ifPresent(tankDetailsBuilder::setTankId);
+	  Optional.ofNullable(cleaningTankDetails.getTimeStart()).ifPresent(tankDetailsBuilder::setTimeStart);
+	  Optional.ofNullable(cleaningTankDetails.getTimeEnd()).ifPresent(tankDetailsBuilder::setTimeEnd);
+	  return tankDetailsBuilder;
   }
 
   private void buildDischargingPlanPortWiseDetails(
