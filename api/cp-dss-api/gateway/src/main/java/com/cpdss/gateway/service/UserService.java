@@ -838,6 +838,7 @@ public class UserService {
     if (this.isShip()) {
       Users entity = null;
       boolean roleEdited = false;
+      List<RoleUserMapping> roleUserMappings = null;
       if (0 != request.getId()) {
         entity = this.usersRepository.findByIdAndIsActive(request.getId(), true);
         if (null == entity) {
@@ -846,15 +847,11 @@ public class UserService {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         }
-        List<RoleUserMapping> roleUserMappings =
-            this.roleUserMappingRepository.findByUsersAndIsActive(entity, true);
-        if (roleUserMappings.isEmpty() && request.getRoleId() != 0L) {
+        roleUserMappings = this.roleUserMappingRepository.findByUsersAndIsActive(entity, true);
+        if ((roleUserMappings.isEmpty() && request.getRoleId() != 0L)
+            || !roleUserMappings.get(0).getRoles().getId().equals(request.getRoleId())) {
           roleEdited = true;
-        } else if (!roleUserMappings.get(0).getRoles().getId().equals(request.getRoleId())) {
-          roleEdited = true;
-          this.roleUserMappingRepository.deleteRolesByUser(entity.getId());
         }
-
       } else {
         this.validateShipMaxUserCount();
         entity = new Users();
@@ -879,11 +876,15 @@ public class UserService {
       entity = this.usersRepository.save(entity);
 
       // insert roles either if role edited or new row
-      if (roleEdited || request.getId() == 0) {
+      if (request.getId() == 0 || roleEdited && roleUserMappings.isEmpty()) {
         RoleUserMapping mapping = new RoleUserMapping();
         mapping.setUsers(entity);
         mapping.setRoles(this.rolesRepository.getOne(request.getRoleId()));
         mapping.setIsActive(true);
+        this.roleUserMappingRepository.save(mapping);
+      } else if (roleEdited) {
+        RoleUserMapping mapping = roleUserMappings.get(0);
+        mapping.setRoles(this.rolesRepository.getOne(request.getRoleId()));
         this.roleUserMappingRepository.save(mapping);
       }
 
@@ -1065,7 +1066,7 @@ public class UserService {
             CommonErrorCodes.E_CPDSS_INVALID_USER,
             HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
-      if (users.get().getIsShipUser() != null && users.get().getIsShipUser().booleanValue()) {
+      if (users.get().getIsShipUser() != null && users.get().getIsShipUser()) {
         // cannot delete
         log.info("Trying to delete default user, User Id {}", userId);
         throw new GenericServiceException(
@@ -1075,6 +1076,12 @@ public class UserService {
       }
       // update is active to False
       int var1 = usersRepository.updateUserIsActiveToFalse(userId);
+      try {
+        this.roleUserMappingRepository.deleteRolesByUser(userId);
+      } catch (Exception e) {
+        e.printStackTrace();
+        log.error(e.getMessage(), e);
+      }
       return var1 > 0;
     } else {
       // throw no user found
