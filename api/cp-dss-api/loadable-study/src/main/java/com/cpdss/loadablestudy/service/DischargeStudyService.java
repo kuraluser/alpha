@@ -162,6 +162,24 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudy loadableStudy = loadables.get(0);
+      List<LoadableStudyPortRotation> portRotationsForNonDischargingOperations =
+          loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idNotAndIsActive(
+              loadableStudy, DISCHARGING_OPERATION_ID, true);
+      for (LoadableStudyPortRotation loadableStudyPortRotation :
+          portRotationsForNonDischargingOperations) {
+        List<SynopticalTable> synopticalTables =
+            this.synopticalTableRepository
+                .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
+                    loadableStudy.getId(), loadableStudyPortRotation.getId(), true);
+        for (SynopticalTable synopticalTable : synopticalTables) {
+          if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
+            throw new GenericServiceException(
+                "No Actual ETA/ETD values found",
+                CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        }
+      }
       LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
       validateActuals(loadableStudy);
       if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
