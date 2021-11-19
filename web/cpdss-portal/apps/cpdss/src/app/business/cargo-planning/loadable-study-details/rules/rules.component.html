@@ -2,7 +2,7 @@
   [draggable]="false" [modal]="true" (onHide)="onClose()">
   <div class="container-fluid">
     <div *ngIf="vessels">
-      <cpdss-portal-rules-table [rulesJson]="rulesJson" [displaySettings]="false" [rulesService]="rulesService"
+      <cpdss-portal-rules-table #rulesTable [rulesJson]="rulesJson" [displaySettings]="false" [rulesService]="rulesService"
         [isCancelChanges]="isCancelChanges" [editMode]="editMode" (isSaveClicked)="saveChanges($event)"
         (formChanges)="updateCancelChangesButton($event)" [pageName]="pageName">
       </cpdss-portal-rules-table>

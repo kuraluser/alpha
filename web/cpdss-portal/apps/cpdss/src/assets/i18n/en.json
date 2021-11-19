@@ -1922,8 +1922,8 @@
   "MAX_DISCHARGING_RATE_MIN_VAL_BBLS": "Minimum 31,449 required",
   "MAX_DISCHARGING_RATE_MAX_VAL_M3": "Maximum 16,500 is allowed",
   "MAX_DISCHARGING_RATE_MAX_VAL_BBLS": "Maximum 1,03,781 is allowed",
-  "INITIAL_DISCHARGING_RATE_MIN_M3": "Maximum 500 required",
-  "INITIAL_DISCHARGING_RATE_MIN_BBLS": "Maximum 3144 required",
+  "INITIAL_DISCHARGING_RATE_MIN_M3": "Minimum 500 required",
+  "INITIAL_DISCHARGING_RATE_MIN_BBLS": "Minimum 3144 required",
   "INITIAL_DISCHARGING_RATE_MAX_M3": "Maximum 3000 is allowed",
   "INITIAL_DISCHARGING_RATE_MAX_BBLS": "Maximum 18,869 is allowed",
   "MIN_BALLAST_MINIMUM_M3": "Minimum 500 required",
@@ -2163,6 +2163,8 @@
   "DISCHARGE_STUDY_TEMPERATURE_MAX_ERROR": "TEMP Est. must be less than or equal to 160°F",
   "DISCHARGE_STUDY_ADD_PORT": "Please add port",
   "DISCHARGE_STUDY_OHQ_NO_PORTS_AVAILABLE": "No ports available",
-  "DISCHARGE_STUDY_NAME_MAX_LENGTH": "Maximum allowed character length is 100"
+  "DISCHARGE_STUDY_NAME_MAX_LENGTH": "Maximum allowed character length is 100",
+  "MIN_BALLAST_RATE_COMPARE": "Should be less than max ballasting rate",
+  "MAX_BALLAST_RATE_COMPARE": "Should be greater than min ballasting rate"
 }
 

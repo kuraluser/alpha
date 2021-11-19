@@ -319,12 +319,14 @@ export class LoadingDischargingTransformationService {
       minBallastRate: {
         'required': 'DISCHARGING_RATE_REQUIRED',
         'invalidNumber': 'DISCHARGING_RATE_INVALID',
+        'failedCompare': 'MIN_BALLAST_RATE_COMPARE',
         'min': `MIN_BALLAST_MINIMUM_${unit}`,
         'max': `MIN_BALLAST_MAXIMUM_${unit}`
       },
       maxBallastRate: {
         'required': 'DISCHARGING_RATE_REQUIRED',
         'invalidNumber': 'DISCHARGING_RATE_INVALID',
+        'failedCompare': 'MAX_BALLAST_RATE_COMPARE',
         'min': `MAX_BALLAST_MINIMUM_${unit}`,
         'max': `MAX_BALLAST_MAXIMUM_${unit}`
       }
