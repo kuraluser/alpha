@@ -101,7 +101,7 @@ public class DischargeInformationService {
   @Autowired DischargeRulesRepository dischargeRulesRepository;
 
   @Autowired DischargeRulesInputRepository dischargeRulesInputRepository;
-  
+
   @Autowired DischargingInstructionRepository dischargingInstructionRepository;
 
   @GrpcClient("vesselInfoService")
@@ -155,12 +155,12 @@ public class DischargeInformationService {
     } catch (Exception e) {
       log.error("Failed to set PK, Synoptic Id in response - {}", e.getMessage());
     }
-    
-    List<DischargingInstruction> dischargingInstructionList = 
-    		dischargingInstructionRepository.getAllDischargingInstructions(request.getVesselId(),
-    				disEntity.getId(), request.getPortRotationId());
+
+    List<DischargingInstruction> dischargingInstructionList =
+        dischargingInstructionRepository.getAllDischargingInstructions(
+            request.getVesselId(), disEntity.getId(), request.getPortRotationId());
     builder.setIsDischargingInstructionsComplete(
-    		!dischargingInstructionList.isEmpty()? Boolean.TRUE : Boolean.FALSE);
+        !dischargingInstructionList.isEmpty() ? Boolean.TRUE : Boolean.FALSE);
     // Set Discharge Details
     this.informationBuilderService.buildDischargeDetailsMessageFromEntity(disEntity, builder);
 

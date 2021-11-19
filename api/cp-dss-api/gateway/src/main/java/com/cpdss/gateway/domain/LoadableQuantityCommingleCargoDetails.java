@@ -70,4 +70,10 @@ public class LoadableQuantityCommingleCargoDetails {
   private String tankShortName;
   private Long toppingOffCargoId;
   private String colorCode;
+  private BigDecimal quantity1MT;
+  private BigDecimal quantity2MT;
+  private BigDecimal quantity1M3;
+  private BigDecimal quantity2M3;
+  private Long cargo1Id;
+  private Long cargo2Id;
 }
