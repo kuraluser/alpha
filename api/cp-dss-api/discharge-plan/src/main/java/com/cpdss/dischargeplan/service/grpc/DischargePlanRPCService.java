@@ -531,23 +531,23 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           buildPortWiseCommingleDetails(request, portWiseCommingleDetail, dischargingInfo));
     }
   }
- 
-    public void getPortWiseCommingleTempDetails(
-  	      LoadingPlanModels.UpdateUllageDetailsRequest request,
-  	      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
-  	    Optional<com.cpdss.dischargeplan.entity.DischargeInformation> dischargingInfo =
-  	        this.dischargeInformationRepository
-  	            .findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
-  	                request.getVesselId(), request.getPatternId(),
-   request.getPortRotationId(),true);
-  	    List<PortDischargingPlanCommingleTempDetails> portWiseRobDetails =
-  	    		portDischargingPlanCommingleTempDetailsRepository.findByDischargingInformationAndIsActive(
-  	    				dischargingInfo.get().getId(), true);
-  	    for (PortDischargingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
-  	      builder.addLoadablePlanCommingleTempDetails(
-  	          this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, dischargingInfo));
-  	    }
-  	  }
+
+  public void getPortWiseCommingleTempDetails(
+      LoadingPlanModels.UpdateUllageDetailsRequest request,
+      LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
+    Optional<com.cpdss.dischargeplan.entity.DischargeInformation> dischargingInfo =
+        this.dischargeInformationRepository
+            .findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
+                request.getVesselId(), request.getPatternId(), request.getPortRotationId(), true);
+    List<PortDischargingPlanCommingleTempDetails> portWiseRobDetails =
+        portDischargingPlanCommingleTempDetailsRepository.findByDischargingInformationAndIsActive(
+            dischargingInfo.get().getId(), true);
+    for (PortDischargingPlanCommingleTempDetails portWiseCommingleDetail : portWiseRobDetails) {
+      builder.addLoadablePlanCommingleTempDetails(
+          this.buildPortWiseCommingleDetails(request, portWiseCommingleDetail, dischargingInfo));
+    }
+  }
+
   private Builder buildPortWiseCommingleDetails(
       UpdateUllageDetailsRequest request,
       PortDischargingPlanCommingleEntityDoc portWiseCommingleDetail,

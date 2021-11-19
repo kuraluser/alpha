@@ -128,6 +128,11 @@ public class UllageUpdateLoadicatorService {
     }
 
     String processId = UUID.randomUUID().toString();
+    this.updateDischargePlanStatus(
+  		  dischargingInfoOpt.get(),
+            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID,
+            processId,
+            request.getUpdateUllage(0).getArrivalDepartutre());
     VesselInfo.VesselReply vesselReply =
         loadicatorService.getVesselDetailsForLoadicator(dischargingInfoOpt.get());
     if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
@@ -142,15 +147,12 @@ public class UllageUpdateLoadicatorService {
         algoRequest.setStages(null);
       }
       saveUllageEditLoadicatorRequestJson(algoRequest, dischargingInfoOpt.get().getId());
-      Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-          dischargingPlanAlgoService.getDischargingInformationStatus(
-              DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
-
-      dischargingPlanAlgoService.createDischargingInformationAlgoStatus(
-          dischargingInfoOpt.get(),
-          processId,
-          dischargingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
+      
+      this.updateDischargePlanStatus(
+    		  dischargingInfoOpt.get(),
+              DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
+              processId,
+              request.getUpdateUllage(0).getArrivalDepartutre());
       saveUpdatedDischargingPlanDetails(
           dischargingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
       log.info(
@@ -233,10 +235,16 @@ public class UllageUpdateLoadicatorService {
     Loadicator.LoadicatorReply reply =
         loadicatorService.saveLoadicatorInfo(loadicatorRequestBuilder.build());
     if (!reply.getResponseStatus().getStatus().equals(DischargePlanConstants.SUCCESS)) {
+    	  this.updateDischargePlanStatus(
+        		  dischargingInfoOpt.get(),
+                  DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
+                  processId,
+                  request.getUpdateUllage(0).getArrivalDepartutre());
       throw new GenericServiceException(
           "Failed to send Stowage plans to Loadicator",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
+    
     }
 
     Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
