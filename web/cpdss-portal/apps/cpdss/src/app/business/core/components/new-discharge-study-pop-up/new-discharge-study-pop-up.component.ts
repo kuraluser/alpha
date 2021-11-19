@@ -206,6 +206,8 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
         } else if(error.error.errorCode === 'ERR-RICO-151') {
           this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING'] });
           this.ngxSpinnerService.hide();
+        } else if (error?.error?.errorCode === 'ERR-RICO-326') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_DELETE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP_ACTUAL_VALUE']});
         }
       }
     }
