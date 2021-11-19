@@ -192,9 +192,10 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         data = await this.ullageUpdateApiService.getDischargePlanUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
       }
 
-      data.portPlanStowageDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanStowageDetails : data.portDischargePlanStowageDetails;
-      data.portPlanBallastDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanBallastDetails : data.portDischargePlanBallastDetails;
-      data.portPlanRobDetails = this.operation === OPERATIONS.LOADING ? data.portLoadablePlanRobDetails : data.portDischargePlanRobDetails;
+      data.portPlanStowageDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanStowageDetails : data?.portDischargePlanStowageDetails;
+      data.portPlanBallastDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanBallastDetails : data?.portDischargePlanBallastDetails;
+      data.portPlanRobDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanRobDetails : data?.portDischargePlanRobDetails;
+      data.planCommingleDetails = this.operation === OPERATIONS.LOADING ? data?.loadablePlanCommingleDetails : data?.dischargePlanCommingleDetails;
 
       if (data?.isPlannedValues) {
         data.portPlanStowageDetails?.map(item => {
@@ -227,9 +228,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         });
       }
 
-      if (data.loadablePlanCommingleDetails?.length) {
+      if (data.planCommingleDetails?.length) {
         const commingleStowages = [];
-        data.loadablePlanCommingleDetails?.map(item => {
+        data.planCommingleDetails?.map(item => {
           data.portPlanStowageDetails?.map(stowage => {
             if (Number(item.tankId) === Number(stowage.tankId)) {
               stowage.isCommingleCargo = true;
@@ -1574,7 +1575,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method for save ullage update 
+   * Method for save ullage update
    * @param validate
    * @memberof UllageUpdatePopupComponent
    */
@@ -1791,7 +1792,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       } else {
         result = await this.ullageUpdateApiService.dischargePlanUpdateUllage(data).toPromise();
       }
-      if (result.responseStatus.status === '200') {
+      if (result.responseStatus.status === '200' || result.responseStatus.status === 'SUCCESS') {
         const translationKeys = await this.translateService.get(['ULLAGE_UPDATE_SUCCESS_LABEL', 'ULLAGE_UPDATE_SUCCESS_MESSAGE']).toPromise();
         this.messageService.add({ severity: 'success', summary: translationKeys['ULLAGE_UPDATE_SUCCESS_LABEL'], detail: translationKeys['ULLAGE_UPDATE_SUCCESS_MESSAGE'] });
         if (validate && result['processId']) {
@@ -1832,7 +1833,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       }
     });
     const cargoTanks = [...this.ullageUpdatePopupTransformationService.formatCargoTanks(this.ullageResponseData?.cargoTanks, this.combineCommingleCargoLayout(this.ullageResponseData?.portPlanStowageDetails), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit).slice(0)];
-    this.ullageResponseData?.loadablePlanCommingleDetails?.map(item => {
+    this.ullageResponseData?.planCommingleDetails?.map(item => {
       const firstCargo = commingle?.filter(com => com.tankId === item.tankId && com.cargoNominationId === item.cargoNomination1Id);
       const secondCargo = commingle?.filter(com => com.tankId === item.tankId && com.cargoNominationId === item.cargoNomination2Id);
       let firstSelected = false;
@@ -1873,7 +1874,6 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           abbreviation: item.grade,
           arrival_departutre: this.status === ULLAGE_STATUS.ARRIVAL ? 1 : 2,
           actual_planned: 1,
-          loadingInformationId: item.loadingInformationId,
           fillingPercentage: fillingPertcentage,
           isUpdate: this.ullageResponseData.isPlannedValues ? false : true,
           quantity1MT: firstSelected ? Number((Number(firstCargo[0].quantity) - Number(secondCargo[0].quantity)).toFixed(2)) : firstCargo[0].quantity,
@@ -1881,7 +1881,8 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           quantity1M3: '',
           quantity2M3: '',
           ullage1: Number(firstCargo[0].ullage),
-          ullage2: Number(secondCargo[0].ullage)
+          ullage2: Number(secondCargo[0].ullage),
+          ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: item.loadingInformationId } : { dischargingInformationId: item.dischargingInformationId })
         }
       )
     });

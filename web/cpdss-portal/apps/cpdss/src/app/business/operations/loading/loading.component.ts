@@ -210,7 +210,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     });
 
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
-      if (value && value === ULLAGE_STATUS_VALUE.SUCCESS) {
+      if (value && value.status === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.disableGenerateLoadableButton = true;
       }
     });
@@ -368,10 +368,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     }
     if (event?.data?.pattern?.type === 'ullage-update-status') {
       if (event?.data.statusId === ULLAGE_STATUS_VALUE.ERROR) {
-        this.loadingDischargingTransformationService.showUllageError(true);
-      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
-        this.messageService.clear();
-        this.loadingDischargingTransformationService.showUllageError(true);
+        const errorStatus = {value: true, status: event?.data?.pattern?.status};
+        this.loadingDischargingTransformationService.showUllageError(errorStatus);
       } else if (event?.data?.statusId === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL"] });
       }

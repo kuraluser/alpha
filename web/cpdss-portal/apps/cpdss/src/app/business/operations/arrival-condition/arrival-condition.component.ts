@@ -107,7 +107,11 @@ export class ArrivalConditionComponent implements OnInit, OnDestroy {
   initSubscriptions() {
     this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value && this.portRotationId === value.portRotationId) {
-        this.loadingDischargingPlanData.loadingInformation.loadingPlanArrStatusId = value.status;
+        if (this.operation === OPERATIONS.LOADING) {
+          this.loadingDischargingPlanData.loadingInformation.loadingPlanArrStatusId = value.status;
+        } else {
+          this.loadingDischargingPlanData.dischargingInformation.dischargePlanArrStatusId = value.status;
+        }
       }
     });
   }

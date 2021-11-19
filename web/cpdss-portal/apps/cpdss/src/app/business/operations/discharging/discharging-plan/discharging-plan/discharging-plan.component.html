@@ -18,14 +18,14 @@
           </div>
         </div>
 
-        <cpdss-portal-arrival-condition [permission]="permission" [vesselId]="vesselId" [portRotationId]="portRotationId"
-          [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
+        <cpdss-portal-arrival-condition [permission]="permission" [vesselId]="vesselId"
+          [portRotationId]="portRotationId" [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
           [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
           [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">
         </cpdss-portal-arrival-condition>
 
-        <cpdss-portal-departure-condition [permission]="permission" [vesselId]="vesselId" [portRotationId]="portRotationId"
-          [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
+        <cpdss-portal-departure-condition [permission]="permission" [vesselId]="vesselId"
+          [portRotationId]="portRotationId" [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
           [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
           [loadingDischargingPlanData]="dischargingPlanDetails" [operation]="OPERATIONS.DISCHARGING">
         </cpdss-portal-departure-condition>
@@ -57,7 +57,8 @@
 
         <div class="row mt-20">
           <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
-            <cpdss-portal-cow-plan [cowDetails]="dischargingInformation?.cowDetails" [form]="dischargingPlanForm"
+            <cpdss-portal-cow-plan *ngIf="dischargingInformation?.cowDetails && dischargingPlanForm"
+              [cowDetails]="dischargingInformation?.cowDetails" [form]="dischargingPlanForm"
               [cargoTanks]="dischargingInformation?.cargoTanks" [loadedCargos]="dischargingInformation?.loadedCargos"
               [listData]="listData" [editMode]="false">
             </cpdss-portal-cow-plan>
@@ -76,5 +77,6 @@
     </div>
   </div>
 </ng-container>
+
 <cpdss-portal-error-log-popup [(visible)]="errorPopUp" (visibleChange)="viewError($event)"
   [header]="'GENERATED_PLAN_ERROR_MESSAGE_HEADING'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>

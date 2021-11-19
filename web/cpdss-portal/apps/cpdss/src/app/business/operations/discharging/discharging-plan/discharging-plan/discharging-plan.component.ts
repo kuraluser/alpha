@@ -104,12 +104,12 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
     });
 
     this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
-      if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
+      if (value.status === ULLAGE_STATUS_VALUE.SUCCESS && this.portRotationId === value.portRotationId) {
         this.getDischargingPlanDetails();
       }
     });
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
-      if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
+      if (value.status === ULLAGE_STATUS_VALUE.SUCCESS && this.portRotationId === value.portRotationId) {
         this.getDischargingPlanDetails();
       }
     });
@@ -128,10 +128,12 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
         this.dischargingPlanDetails = dischargePlanResponse;
         this.setCommingleCargo();
         this.dischargingInformation = this.loadingDischargingTransformationService.transformDischargingInformation(this.dischargingPlanDetails.dischargingInformation, this.listData);
-        this.dischargingPlanForm = this.fb.group({
-          cowDetails: this.fb.group({}),
-          postDischargeStageTime: this.fb.group({})
-        });
+        if (this.dischargingPlanForm === undefined) {
+          this.dischargingPlanForm = this.fb.group({
+            cowDetails: this.fb.group({}),
+            postDischargeStageTime: this.fb.group({})
+          });
+        }
       }
       this.ngxSpinnerService.hide();
     } catch (error) {
@@ -192,7 +194,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
    *
    * @memberof DischargingPlanComponent
    */
-  downloadDischargePlanTemplate(): void  {
+  downloadDischargePlanTemplate(): void {
     // TODO : will use this once download excel API available.
   }
 

@@ -522,11 +522,15 @@
       const id = event.data.data.processId;
       syncStore[id] = event.data;
       self.registration.sync.register(id);
+    } else if (event.data.type === 'ullage-update-status') {
+      const id = event.data.data.processId;
+      syncStore[id] = event.data;
+      self.registration.sync.register(id);
     } else if (event.data.type === 'discharging-plan-status') {
       const id = event.data.data.processId;
       syncStore[id] = event.data;
       self.registration.sync.register(id);
-    } else if (event.data.type === 'ullage-update-status') {
+    } else if (event.data.type === 'discharge-ullage-update-status') {
       const id = event.data.data.processId;
       syncStore[id] = event.data;
       self.registration.sync.register(id);
@@ -547,6 +551,8 @@
       event.waitUntil(checkUllageUpdateStatus(syncStore[event.tag].data));
     } else if (syncStore[event.tag].type === 'discharging-plan-status') {
       event.waitUntil(checkDischargingPlanStatus(syncStore[event.tag].data));
+    } else if(syncStore[event.tag].type === 'discharge-ullage-update-status'){
+      event.waitUntil(checkDischargeUllageUpdateStatus(syncStore[event.tag].data));
     }
   });
 
@@ -957,6 +963,59 @@
         }
         sync.statusId = syncView?.dischargingInfoStatusId;
         notifyClients(sync);
+      }
+    }, 3500);
+  }
+
+  /**
+   * Method to monitor dischargeing plan ullage update save and validate status
+   * @param {*} data
+   */
+  async function checkDischargeUllageUpdateStatus(data) {
+    const timer = setInterval(async () => {
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + await getToken()
+      }
+      const syncResponse = await fetch(`${apiUrl}/vessels/${data?.vesselId}/voyages/${data?.voyageId}/discharge-info/${data?.dischargingInfoId}/algo-status`, {
+        method: 'POST',
+        body: JSON.stringify({ processId: data?.processId, conditionType : data?.status ? data?.status : null }),
+        headers: headers
+      });
+      const syncView = await syncResponse.json();
+      const refreshedToken = syncResponse.headers.get('token');
+      const sync = {};
+      sync.refreshedToken = refreshedToken;
+      sync.pattern = data;
+
+      if (syncView?.responseStatus?.status === "200") {
+        sync.status = syncView?.responseStatus?.status;
+        sync.statusId = syncView?.dischargingInfoStatusId;
+        switch (syncView?.dischargingInfoStatusId) {
+          case 5:
+            sync.type = "plan-generated";
+            clearInterval(timer);
+            break;
+          case 12:
+            sync.type = "algo-processing-started";
+            break;
+          case 13:
+            sync.type = "success";
+            clearInterval(timer);
+            break;
+          case 14:
+            sync.type = "error-occurred";
+            clearInterval(timer);
+            break;
+          case 17:
+            sync.type = "loadicator-checking";
+            break;
+          case 19:
+            sync.type = "communicated-to-shore";
+            break;
+        }
+        notifyClients(sync)
       }
     }, 3500);
   }

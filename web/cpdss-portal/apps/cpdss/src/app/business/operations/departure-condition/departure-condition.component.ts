@@ -111,7 +111,11 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
   initSubscriptions() {
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value && value.portRotationId === this.portRotationId) {
-        this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value.status;
+        if (this.operation === OPERATIONS.LOADING) {
+          this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value.status;
+        } else {
+          this.loadingDischargingPlanData.dischargingInformation.dischargePlanDepStatusId = value.status;
+        }
       }
     });
   }
