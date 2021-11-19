@@ -1364,7 +1364,7 @@ public class DischargePlanAlgoService {
     Optional<DischargingInformationAlgoStatus> algoStatusOpt =
         this.dischargingInformationAlgoStatusRepository
             .findByProcessIdAndDischargeInformationAndConditionTypeAndIsActiveTrue(
-                processId, dischargingInformation.getId(), conditionType);
+                processId, dischargingInformation, conditionType);
     if (algoStatusOpt.isEmpty()) {
       createDischargingInformationAlgoStatus(
           dischargingInformation, processId, dischargingInformationStatus, conditionType);

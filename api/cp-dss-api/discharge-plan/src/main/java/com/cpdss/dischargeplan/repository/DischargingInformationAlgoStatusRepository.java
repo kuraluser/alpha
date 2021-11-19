@@ -2,6 +2,7 @@
 package com.cpdss.dischargeplan.repository;
 
 import com.cpdss.common.springdata.CommonCrudRepository;
+import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingInformationAlgoStatus;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,7 +34,7 @@ public interface DischargingInformationAlgoStatusRepository
 
   Optional<DischargingInformationAlgoStatus>
       findByProcessIdAndDischargeInformationAndConditionTypeAndIsActiveTrue(
-          String processId, Long dischargingInfoId, Integer conditionType);
+          String processId, DischargeInformation dischargingInformation, Integer conditionType);
 
   @Transactional
   @Modifying
