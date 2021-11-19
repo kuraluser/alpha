@@ -940,7 +940,7 @@ public class UllageUpdateLoadicatorService {
         dsInfoStatusRepository.findByIdAndIsActive(statusId, true);
     if (dis.isPresent()) {
       dischargeInformationService.updateDischargePlanStatus(dsInfo, dis.get(), conditionType);
-      dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(dsInfo, processId, dis.get());
+      dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(dsInfo, processId, dis.get(), conditionType);
     }
   }
 

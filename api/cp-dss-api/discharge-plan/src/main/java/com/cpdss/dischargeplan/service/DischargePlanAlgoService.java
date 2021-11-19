@@ -991,7 +991,7 @@ public class DischargePlanAlgoService {
       dischargeInformationService.updateDischargingInformationStatus(
           noPlanAvailableStatusOpt.get(), dischargingInfo.getId());
       updateDischargingInfoAlgoStatus(
-          dischargingInfo, request.getProcessId(), noPlanAvailableStatusOpt.get());
+          dischargingInfo, request.getProcessId(), noPlanAvailableStatusOpt.get(), null);
     }
 
     if (!request.getAlgoErrorsList().isEmpty()) {
@@ -1021,7 +1021,7 @@ public class DischargePlanAlgoService {
             getDischargingInformationStatus(
                 DischargePlanConstants.DISCHARGING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
         updateDischargingInfoAlgoStatus(
-            dischargingInfo, request.getProcessId(), loadicatorVerificationStatusOpt.get());
+            dischargingInfo, request.getProcessId(), loadicatorVerificationStatusOpt.get(), null);
       } else {
         Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
             getDischargingInformationStatus(DischargePlanConstants.PLAN_GENERATED_ID);
@@ -1031,7 +1031,7 @@ public class DischargePlanAlgoService {
             dischargingInfoStatusOpt.get(),
             dischargingInfo.getId());
         updateDischargingInfoAlgoStatus(
-            dischargingInfo, request.getProcessId(), dischargingInfoStatusOpt.get());
+            dischargingInfo, request.getProcessId(), dischargingInfoStatusOpt.get(), null);
         dischargeInformationService.updateIsDischargingSequenceGeneratedStatus(
             dischargingInfo.getId(), true);
         dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
@@ -1326,7 +1326,7 @@ public class DischargePlanAlgoService {
     dischargeInformationService.updateDischargingInformationStatus(
         errorOccurredStatusOpt.get(), dischargeInformation.getId());
     updateDischargingInfoAlgoStatus(
-        dischargeInformation, request.getProcessId(), errorOccurredStatusOpt.get());
+        dischargeInformation, request.getProcessId(), errorOccurredStatusOpt.get(), null);
   }
 
   private void saveDischargingPlanPortWiseDetails(
@@ -1359,10 +1359,19 @@ public class DischargePlanAlgoService {
   public void updateDischargingInfoAlgoStatus(
       DischargeInformation dischargingInformation,
       String processId,
-      DischargingInformationStatus dischargingInformationStatus) {
-
-    this.dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
-        dischargingInformationStatus.getId(), dischargingInformation.getId(), processId);
+      DischargingInformationStatus dischargingInformationStatus,
+      Integer conditionType) {
+    Optional<DischargingInformationAlgoStatus> algoStatusOpt =
+        this.dischargingInformationAlgoStatusRepository
+            .findByProcessIdAndDischargeInformationAndConditionTypeAndIsActiveTrue(
+                processId, dischargingInformation.getId(), conditionType);
+    if (algoStatusOpt.isEmpty()) {
+      createDischargingInformationAlgoStatus(
+          dischargingInformation, processId, dischargingInformationStatus, conditionType);
+    } else {
+      this.dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
+          dischargingInformationStatus.getId(), dischargingInformation.getId(), processId);
+    }
   }
 
   private void saveBallastPumps(
