@@ -258,7 +258,7 @@ public class UllageUpdateLoadicatorService {
       dischargeInformationRepository.updateDischargeInformationDepartureStatus(
           dischargingInfoStatusOpt.get().getId(), dsichargingInfoId);
     }
-    dischargingPlanAlgoService.createDischargingInformationAlgoStatus(
+    dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(
         dischargingInfoOpt.get(),
         processId,
         dischargingInfoStatusOpt.get(),
@@ -940,7 +940,8 @@ public class UllageUpdateLoadicatorService {
         dsInfoStatusRepository.findByIdAndIsActive(statusId, true);
     if (dis.isPresent()) {
       dischargeInformationService.updateDischargePlanStatus(dsInfo, dis.get(), conditionType);
-      dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(dsInfo, processId, dis.get(), conditionType);
+      dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(
+          dsInfo, processId, dis.get(), conditionType);
     }
   }
 
