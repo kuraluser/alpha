@@ -3778,23 +3778,24 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
       getGetLoadablePatternForCommunicationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "getLoadablePatternForCommunication",
       requestType =
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
-      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest.class,
+      responseType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
       getGetLoadablePatternForCommunicationMethod() {
     io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
         getGetLoadablePatternForCommunicationMethod;
     if ((getGetLoadablePatternForCommunicationMethod =
             LoadableStudyServiceGrpc.getGetLoadablePatternForCommunicationMethod)
@@ -3806,8 +3807,10 @@ public final class LoadableStudyServiceGrpc {
           LoadableStudyServiceGrpc.getGetLoadablePatternForCommunicationMethod =
               getGetLoadablePatternForCommunicationMethod =
                   io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationReply>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                       .setFullMethodName(
@@ -3817,11 +3820,11 @@ public final class LoadableStudyServiceGrpc {
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.cpdss.common.generated.LoadableStudy
-                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                                  .LoadableStudyPatternCommunicationRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.cpdss.common.generated.LoadableStudy
-                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                                  .LoadableStudyPatternCommunicationReply.getDefaultInstance()))
                       .setSchemaDescriptor(
                           new LoadableStudyServiceMethodDescriptorSupplier(
                               "getLoadablePatternForCommunication"))
@@ -3833,23 +3836,24 @@ public final class LoadableStudyServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
       getSaveLoadablePatternForCommunicationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "saveLoadablePatternForCommunication",
       requestType =
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
-      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest.class,
+      responseType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
       getSaveLoadablePatternForCommunicationMethod() {
     io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
         getSaveLoadablePatternForCommunicationMethod;
     if ((getSaveLoadablePatternForCommunicationMethod =
             LoadableStudyServiceGrpc.getSaveLoadablePatternForCommunicationMethod)
@@ -3861,8 +3865,10 @@ public final class LoadableStudyServiceGrpc {
           LoadableStudyServiceGrpc.getSaveLoadablePatternForCommunicationMethod =
               getSaveLoadablePatternForCommunicationMethod =
                   io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationReply>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                       .setFullMethodName(
@@ -3872,11 +3878,11 @@ public final class LoadableStudyServiceGrpc {
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.cpdss.common.generated.LoadableStudy
-                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                                  .LoadableStudyPatternCommunicationRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.cpdss.common.generated.LoadableStudy
-                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                                  .LoadableStudyPatternCommunicationReply.getDefaultInstance()))
                       .setSchemaDescriptor(
                           new LoadableStudyServiceMethodDescriptorSupplier(
                               "saveLoadablePatternForCommunication"))
@@ -4731,9 +4737,9 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public void getLoadablePatternForCommunication(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
         io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getGetLoadablePatternForCommunicationMethod(), responseObserver);
@@ -4741,9 +4747,9 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public void saveLoadablePatternForCommunication(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
         io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getSaveLoadablePatternForCommunicationMethod(), responseObserver);
@@ -5296,15 +5302,19 @@ public final class LoadableStudyServiceGrpc {
               getGetLoadablePatternForCommunicationMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>(
                       this, METHODID_GET_LOADABLE_PATTERN_FOR_COMMUNICATION)))
           .addMethod(
               getSaveLoadablePatternForCommunicationMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>(
                       this, METHODID_SAVE_LOADABLE_PATTERN_FOR_COMMUNICATION)))
           .addMethod(
               getGetLoadicatorDataSynopticalForCommunicationMethod(),
@@ -6171,9 +6181,9 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public void getLoadablePatternForCommunication(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
         io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
             responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetLoadablePatternForCommunicationMethod(), getCallOptions()),
@@ -6183,9 +6193,9 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public void saveLoadablePatternForCommunication(
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
         io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
             responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSaveLoadablePatternForCommunicationMethod(), getCallOptions()),
@@ -6790,17 +6800,19 @@ public final class LoadableStudyServiceGrpc {
     }
 
     /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply
         getLoadablePatternForCommunication(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadablePatternForCommunicationMethod(), getCallOptions(), request);
     }
 
     /** */
-    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply
         saveLoadablePatternForCommunication(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadablePatternForCommunicationMethod(), getCallOptions(), request);
     }
@@ -7499,9 +7511,10 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
         getLoadablePatternForCommunication(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadablePatternForCommunicationMethod(), getCallOptions()),
           request);
@@ -7509,9 +7522,10 @@ public final class LoadableStudyServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
         saveLoadablePatternForCommunication(
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadablePatternForCommunicationMethod(), getCallOptions()),
           request);
@@ -8146,16 +8160,20 @@ public final class LoadableStudyServiceGrpc {
           break;
         case METHODID_GET_LOADABLE_PATTERN_FOR_COMMUNICATION:
           serviceImpl.getLoadablePatternForCommunication(
-              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest)
+                  request,
               (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>)
                   responseObserver);
           break;
         case METHODID_SAVE_LOADABLE_PATTERN_FOR_COMMUNICATION:
           serviceImpl.saveLoadablePatternForCommunication(
-              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest)
+                  request,
               (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>)
                   responseObserver);
           break;
         case METHODID_GET_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION:

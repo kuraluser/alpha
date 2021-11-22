@@ -215,9 +215,9 @@ service LoadableStudyService {
 
 	rpc GetVoyageByVoyageId(VoyageInfoRequest) returns (VoyageInfoReply) {}
 
-	rpc getLoadablePatternForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+	rpc getLoadablePatternForCommunication(LoadableStudyPatternCommunicationRequest) returns (LoadableStudyPatternCommunicationReply) {}
 
-	rpc saveLoadablePatternForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+	rpc saveLoadablePatternForCommunication(LoadableStudyPatternCommunicationRequest) returns (LoadableStudyPatternCommunicationReply) {}
 
 	rpc getLoadicatorDataSynopticalForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 
@@ -1682,6 +1682,16 @@ message LoadableStudyCommunicationRequest{
 }
 
 message LoadableStudyCommunicationReply {
+	ResponseStatus responseStatus = 1;
+	string dataJson=2;
+}
+
+message LoadableStudyPatternCommunicationRequest{
+	int64 id=1;
+	string dataJson=2;
+}
+
+message LoadableStudyPatternCommunicationReply {
 	ResponseStatus responseStatus = 1;
 	string dataJson=2;
 }

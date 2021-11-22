@@ -3131,11 +3131,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   public void getLoadablePatternForCommunication(
-      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
-      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
           responseObserver) {
-    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.newBuilder();
 
     String loadablePattern = loadablePatternRepository.getLoadablePatternWithId(request.getId());
     if (loadablePattern != null) {
@@ -3173,11 +3173,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   public void saveLoadablePatternForCommunication(
-      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
-      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
           responseObserver) {
-    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
-        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.newBuilder();
     try {
       loadableStudyCommunicationData.saveLoadablePattern(request.getDataJson());
       replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
