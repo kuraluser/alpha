@@ -602,6 +602,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
               onHandQuantity.setActualArrivalQuantity(null);
               onHandQuantity.setActualDepartureQuantity(null);
+              if (onHandQuantity.getDepartureQuantity() == null) {
+                onHandQuantity.setDepartureQuantity(new BigDecimal(0));
+              }
               onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
               onHandQuantity.setPortXId(portRotation.getPortXId());
               onHandQuantity.setPortRotation(portRotation);
@@ -624,6 +627,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                   onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
                   onHandQuantity.setActualArrivalQuantity(null);
                   onHandQuantity.setActualDepartureQuantity(null);
+                  if (onHandQuantity.getDepartureQuantity() == null) {
+                    onHandQuantity.setDepartureQuantity(new BigDecimal(0));
+                  }
                   onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
                   onHandQuantity.setPortXId(portRotation.getPortXId());
                   onHandQuantity.setPortRotation(portRotation);
