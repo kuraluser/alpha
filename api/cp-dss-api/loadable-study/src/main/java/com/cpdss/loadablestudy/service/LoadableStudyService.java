@@ -3075,6 +3075,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     //Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
     String voyage = voyageRepository.getVoyagebyId(request.getId());
+    log.info("voyage get:{}", voyage);
     if (StringUtils.hasLength(voyage)) {
       JsonObject voyageObj =
               JsonParser.parseString(voyage).getAsJsonArray().get(0).getAsJsonObject();
