@@ -834,7 +834,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'PORT_LAY_CAN_REQUIRED_ERROR',
           'toDate': 'PORT_LAY_CAN_TO_DATE_ERROR',
-          'datesEqual': 'PORT_LAY_CAN_DATE_EQUAL'
+          'datesEqual': 'PORT_LAY_CAN_DATE_EQUAL',
+          'invalid' : 'PORT_LAY_CAN_INVALID_DATE'
         }
       },
       {

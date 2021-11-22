@@ -542,6 +542,7 @@
   "PORT_ETD_COMAPRE_WITH_ETA_ERROR": "Etd is overlapping with Eta of next port",
   "PORT_ETA_COMAPRE_LAST_LOADING_PORT": "ETA should be greater than last loading port ETD",
   "PORT_ETA_INVALID_DATE": "Invalid Date",
+  "PORT_LAY_CAN_INVALID_DATE": "Invalid Date",
   "CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY": "Error",
   "CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS": "Discharge port is required",
   "NEW_LOADABLE_STUDY_POPUP_EDIT_HEADER": "Loadable Study",
