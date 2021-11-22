@@ -197,22 +197,22 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       data.portPlanRobDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanRobDetails : data?.portDischargePlanRobDetails;
       data.planCommingleDetails = this.operation === OPERATIONS.LOADING ? data?.loadablePlanCommingleDetails : data?.dischargePlanCommingleDetails;
 
-      if (data?.isPlannedValues) {
-        data.portPlanStowageDetails?.map(item => {
-          item.quantity = 0;
-          item.ullage = 0;
-          item.temperature = 0;
-          item.api = 0;
-        });
-        data.portPlanBallastDetails?.map(item => {
-          item.quantity = 0;
-          item.sounding = 0;
-        });
-        data.portPlanRobDetails?.map(item => {
-          item.quantity = 0;
-          item.density = 0;
-        });
-      }
+      // if (data?.isPlannedValues) {
+      //   data.portPlanStowageDetails?.map(item => {
+      //     item.quantity = 0;
+      //     item.ullage = 0;
+      //     item.temperature = 0;
+      //     item.api = 0;
+      //   });
+      //   data.portPlanBallastDetails?.map(item => {
+      //     item.quantity = 0;
+      //     item.sounding = 0;
+      //   });
+      //   data.portPlanRobDetails?.map(item => {
+      //     item.quantity = 0;
+      //     item.density = 0;
+      //   });
+      // }
       this.gradeDropdown = [];
       if (this.operation === OPERATIONS.LOADING) {
         data?.billOfLaddingList?.map(item => {
@@ -234,23 +234,23 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           data.portPlanStowageDetails?.map(stowage => {
             if (Number(item.tankId) === Number(stowage.tankId)) {
               stowage.isCommingleCargo = true;
-              stowage.quantity = data?.isPlannedValues ? 0 : item.quantity1MT;
-              stowage.quantityMT = data?.isPlannedValues ? 0 : item.quantity1MT;
-              stowage.actualWeight = data?.isPlannedValues ? 0 : item.quantity1MT;
-              stowage.api = data?.isPlannedValues ? 0 : item.api;
+              stowage.quantity =  item.quantity1MT;
+              stowage.quantityMT = item.quantity1MT;
+              stowage.actualWeight = item.quantity1MT;
+              stowage.api = item.api;
               stowage.grade = item.grade;
-              stowage.temperature = data?.isPlannedValues ? 0 : item.temperature;
+              stowage.temperature = item.temperature;
               stowage.colorCode = item.colorCode;
               stowage.abbreviation = item.cargo1Abbreviation;
               stowage.cargoNominationId = item.cargoNomination1Id;
-              stowage.ullage = data?.isPlannedValues ? 0 : item.ullage1;
+              stowage.ullage = item.ullage1;
               commingleStowages.push(JSON.parse(JSON.stringify(stowage)));
               commingleStowages[commingleStowages?.length - 1].cargoNominationId = item.cargoNomination2Id;
               commingleStowages[commingleStowages?.length - 1].abbreviation = item.cargo2Abbreviation;
-              commingleStowages[commingleStowages?.length - 1].quantityMT = data?.isPlannedValues ? 0 : item.quantity2MT;
-              commingleStowages[commingleStowages?.length - 1].actualWeight = data?.isPlannedValues ? 0 : item.quantity2MT;
-              commingleStowages[commingleStowages?.length - 1].quantity = data?.isPlannedValues ? 0 : item.quantity2MT;
-              commingleStowages[commingleStowages?.length - 1].ullage = data?.isPlannedValues ? 0 : item.ullage2;
+              commingleStowages[commingleStowages?.length - 1].quantityMT = item.quantity2MT;
+              commingleStowages[commingleStowages?.length - 1].actualWeight = item.quantity2MT;
+              commingleStowages[commingleStowages?.length - 1].quantity = item.quantity2MT;
+              commingleStowages[commingleStowages?.length - 1].ullage = item.ullage2;
             }
           });
         });
