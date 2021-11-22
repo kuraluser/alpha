@@ -3111,7 +3111,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             voyageStatusRepository.findById(request.getVoyageStatus());
         if (voyageStatus.isPresent()) {
           voyage.setVoyageStatus(voyageStatus.get());
-          voyageRepository.activateVoyage(request.getId(), voyageStatus.get());
+          voyageRepository.save(voyage);
           replyBuilder.setResponseStatus(
               Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
         }
