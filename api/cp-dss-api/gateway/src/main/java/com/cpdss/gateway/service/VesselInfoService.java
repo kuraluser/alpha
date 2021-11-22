@@ -443,8 +443,6 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     vesselDetailsResponse.setUllageTrimCorrections(
         this.buildUllageTrimCorrections(vesselAlgoReply));
     vesselDetailsResponse.setSelectableParameter(this.buildSelectableParameters(vesselAlgoReply));
-    if (enableValveSeq)
-      vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData(vesselId));
     vesselDetailsResponse.setPumpTypes(this.buildPumpTypes(vesselAlgoReply));
     vesselDetailsResponse.setVesselPumps(this.buildVesselPumps(vesselAlgoReply));
     vesselDetailsResponse.setTankTypes(this.buildTankTypes(vesselAlgoReply));
@@ -474,6 +472,11 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
                 bottomLine.setComponentTypeName(type.get().getTypeName());
               }
             });
+
+    // Keep this valve section below
+    if (enableValveSeq)
+      vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData(vesselId));
+
     return vesselDetailsResponse;
   }
 
