@@ -1180,7 +1180,7 @@ public class LoadablePatternService {
           loadablePlanStowageDetails.setCorrectionFactor(lpsd.getCorrectionFactor());
           loadablePlanStowageDetails.setCorrectedUllage(lpsd.getCorrectedUllage());
           loadablePlanStowageDetails.setCargoNominationId(lpsd.getCargoNominationId());
-          if (lpsd.getCargoNominationTemperature() != null) {
+          if (StringUtils.hasLength(lpsd.getCargoNominationTemperature())) {
             loadablePlanStowageDetails.setCargoNominationTemperature(
                 new BigDecimal(lpsd.getCargoNominationTemperature()));
           }
