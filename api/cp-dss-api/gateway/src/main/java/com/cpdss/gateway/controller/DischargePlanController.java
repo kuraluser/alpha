@@ -1144,17 +1144,14 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       log.info("Save Loading Info, api for vessel {}, voyage {}", vesselId, voyageId);
+      request.setVoyageId(voyageId);
+      request.setVesselId(vesselId);
       return this.dischargeInformationService.saveDischargingInformation(
           request, headers.getFirst(CORRELATION_ID_HEADER));
     } catch (GenericServiceException e) {
       log.error("Exception in Save Loading Information API");
       e.printStackTrace();
-      throw new CommonRestException(
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          headers,
-          HttpStatusCode.INTERNAL_SERVER_ERROR,
-          e.getMessage(),
-          e);
+      throw new CommonRestException(e.getMessage(), headers, e.getStatus(), e.getMessage(), e);
     }
   }
 

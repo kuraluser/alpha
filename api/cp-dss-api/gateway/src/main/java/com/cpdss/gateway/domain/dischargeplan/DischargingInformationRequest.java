@@ -15,6 +15,9 @@ public class DischargingInformationRequest {
   private Long dischargeInfoId;
 
   private Long synopticTableId;
+  private Long portRotationId;
+  private Long voyageId;
+  private Long vesselId;
 
   // re using loading object
   private LoadingDetails dischargeDetails;

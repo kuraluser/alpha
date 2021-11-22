@@ -544,6 +544,15 @@ public class DischargeInformationBuilderService {
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     List<Future<DischargingInfoSaveResponse>> futures = executorService.invokeAll(callableTasks);
 
+    if (futures.isEmpty()) {
+      // Means no save goes to DS-Plan Service
+      return DischargingInfoSaveResponse.newBuilder()
+          .setVesselId(request.getVesselId())
+          .setVoyageId(request.getVoyageId())
+          .setPortRotationId(request.getPortRotationId())
+          .build(); // to bypass null check at caller.
+    }
+
     List<Future<DischargingInfoSaveResponse>> data =
         futures.stream()
             .filter(

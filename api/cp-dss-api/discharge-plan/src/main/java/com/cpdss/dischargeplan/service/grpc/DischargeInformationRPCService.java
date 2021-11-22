@@ -856,37 +856,28 @@ public class DischargeInformationRPCService
   }
 
   private void saveDischargingStages(
-      LoadingStages dischargeStage,
-      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation) {
+      LoadingStages dischargeStage, com.cpdss.dischargeplan.entity.DischargeInformation dsInfo) {
 
     if (dischargeStage != null) {
-      dischargingInformation.setIsTrackStartEndStage(dischargeStage.getTrackStartEndStage());
-      dischargingInformation.setIsTrackGradeSwitching(dischargeStage.getTrackGradeSwitch());
       dischargeInformationRepository.updateIsTrackStartEndAndTrackGradeSwitching(
           dischargeStage.getTrackStartEndStage(),
           dischargeStage.getTrackGradeSwitch(),
-          dischargingInformation.getId());
-      if (Optional.ofNullable(dischargeStage.getDuration().getId()).isPresent()
-          && dischargeStage.getDuration().getId() != 0) {
-        Optional<DischargingStagesDuration> stageDurationOpt =
+          dsInfo.getId());
+
+      Optional<DischargingStagesDuration> dur1 = Optional.empty();
+      if (dischargeStage.getDuration() != null && dischargeStage.getDuration().getId() > 0) {
+        dur1 =
             stageDurationRepository.findByIdAndIsActiveTrue(dischargeStage.getDuration().getId());
-        if (stageDurationOpt.isPresent()) {
-          dischargingInformation.setDischargingStagesDuration(stageDurationOpt.get());
-        } else {
-          log.error("Duration not found id {}", dischargeStage.getDuration().getId());
-        }
       }
-      if (Optional.of(dischargeStage.getOffset().getId()).isPresent()
-          && dischargeStage.getOffset().getId() != 0) {
-        Optional<DischargingStagesMinAmount> stageOffsetOpt =
-            minAmountRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
-        if (stageOffsetOpt.isPresent()) {
-          dischargingInformation.setDischargingStagesMinAmount(stageOffsetOpt.get());
-        } else {
-          log.info("Offset Not found Id {}", dischargeStage.getOffset().getId());
-        }
+
+      Optional<DischargingStagesMinAmount> min1 = Optional.empty();
+      if (dischargeStage.getOffset() != null && dischargeStage.getOffset().getId() > 0) {
+        min1 = minAmountRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
       }
-      dischargeInformationRepository.save(dischargingInformation);
+
+      dischargeInformationRepository.updateStageMinAndDuration(
+          min1.get(), dur1.get(), dsInfo.getId());
+      // dischargeInformationRepository.save(dischargingInformation);
     }
   }
 

@@ -4,6 +4,8 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
+import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
+import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
@@ -96,6 +98,13 @@ public interface DischargeInformationRepository
       "UPDATE DischargeInformation SET isTrackStartEndStage = ?1, isTrackGradeSwitching=?2 WHERE id = ?3")
   void updateIsTrackStartEndAndTrackGradeSwitching(
       boolean trackStartEndStage, boolean trackGradeSwitch, Long id);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE DischargeInformation SET dischargingStagesMinAmount = ?1, dischargingStagesDuration = ?2 WHERE id = ?3 ")
+  void updateStageMinAndDuration(
+      DischargingStagesMinAmount var1, DischargingStagesDuration var2, Long var3);
 
   @Transactional
   @Modifying

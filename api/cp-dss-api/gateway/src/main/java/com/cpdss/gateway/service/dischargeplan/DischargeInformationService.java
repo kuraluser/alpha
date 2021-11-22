@@ -116,7 +116,8 @@ public class DischargeInformationService {
     }
 
     com.cpdss.common.generated.discharge_plan.DischargeInformation disRpcReplay =
-        this.dischargeInformationGrpcService.getDischargeInfoRpc(vesselId, voyageId, portRoId);
+        this.dischargeInformationGrpcService.getDischargeInfoRpc(
+            vesselId, activeVoyage.getId(), portRoId);
 
     DischargeInformation dischargeInformation = new DischargeInformation();
 
@@ -466,6 +467,13 @@ public class DischargeInformationService {
   public DischargingInformationResponse saveDischargingInformation(
       DischargingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
+      if (request.getPortRotationId() == null || request.getPortRotationId() <= 0) {
+        log.error("Invalid port rotation Id for Save DS Info");
+        throw new GenericServiceException(
+            "Invalid port rotation Id",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
       log.info("Calling saveDischargingInformation in discharging-plan microservice via GRPC");
       DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
       if (request.getDischargeDetails() != null) {
