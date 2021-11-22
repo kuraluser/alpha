@@ -48,40 +48,48 @@ public class DischargePlanSynchronizeService {
 
   @Autowired DischargePlanAlgoService dischargePlanAlgoService;
 
-  public void saveDischargeInformation(DischargeStudyDataTransferRequest request) {
+  @Autowired private DischargeRuleService dischargeRuleService;
+
+  public void saveDischargeInformation(DischargeStudyDataTransferRequest request)
+      throws GenericServiceException {
     log.info("Discharge Study Synchronization Starts");
     List<PortData> portDataList = request.getPortDataList();
     List<DischargeInformation> infos = new ArrayList<>();
-    portDataList.stream()
-        .forEach(
-            port -> {
-              DischargeInformation dischargeInformation = new DischargeInformation();
-              dischargeInformation.setVoyageXid(request.getVoyageId());
-              dischargeInformation.setVesselXid(request.getVesselId());
-              dischargeInformation.setDischargingPatternXid(request.getDischargePatternId());
-              dischargeInformation.setPortRotationXid(port.getPortRotationId());
-              dischargeInformation.setSynopticTableXid(port.getSynopticTableId());
-              dischargeInformation.setIsActive(true);
-              dischargeInformation.setPortXid(port.getPortId());
-              dischargeInformation.setDischargeStudyProcessId(request.getDischargeProcessId());
-              try {
-                Optional<DischargingInformationStatus> pendingStatusOpt =
-                    dischargePlanAlgoService.getDischargingInformationStatus(
-                        DischargePlanConstants.DISCHARGING_INFORMATION_PENDING_ID);
-                pendingStatusOpt.ifPresent(
-                    status -> {
-                      dischargeInformation.setArrivalStatusId(status.getId());
-                      dischargeInformation.setDischargingInformationStatus(status);
-                      dischargeInformation.setDepartureStatusId(status.getId());
-                    });
-              } catch (GenericServiceException e) {
-                log.error(
-                    "Failed to fetch status with id {}",
-                    DischargePlanConstants.DISCHARGING_INFORMATION_PENDING_ID);
-              }
-              infos.add(dischargeInformation);
-              log.info("Discharge Study Synchronization Port Data - {}", Utils.toJson(port));
+    for (PortData port : portDataList) {
+      DischargeInformation dischargeInformation = new DischargeInformation();
+      dischargeInformation.setVoyageXid(request.getVoyageId());
+      dischargeInformation.setVesselXid(request.getVesselId());
+      dischargeInformation.setDischargingPatternXid(request.getDischargePatternId());
+      dischargeInformation.setPortRotationXid(port.getPortRotationId());
+      dischargeInformation.setSynopticTableXid(port.getSynopticTableId());
+      dischargeInformation.setIsActive(true);
+      dischargeInformation.setPortXid(port.getPortId());
+      dischargeInformation.setDischargeStudyProcessId(request.getDischargeProcessId());
+      try {
+        Optional<DischargingInformationStatus> pendingStatusOpt =
+            dischargePlanAlgoService.getDischargingInformationStatus(
+                DischargePlanConstants.DISCHARGING_INFORMATION_PENDING_ID);
+        pendingStatusOpt.ifPresent(
+            status -> {
+              dischargeInformation.setArrivalStatusId(status.getId());
+              dischargeInformation.setDischargingInformationStatus(status);
+              dischargeInformation.setDepartureStatusId(status.getId());
             });
+      } catch (GenericServiceException e) {
+        log.error(
+            "Failed to fetch status with id {}",
+            DischargePlanConstants.DISCHARGING_INFORMATION_PENDING_ID);
+      }
+      try {
+        this.dischargeRuleService.setDischargeInfoDefaultValues(dischargeInformation, request);
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        e.printStackTrace();
+      }
+
+      infos.add(dischargeInformation);
+      log.info("Discharge Study Synchronization Port Data - {}", Utils.toJson(port));
+    }
     List<DischargeInformation> listOfDischargeInformationList =
         dischargeInformationRepository.saveAll(infos);
     listOfDischargeInformationList.forEach(
