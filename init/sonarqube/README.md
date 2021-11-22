@@ -1,50 +1,55 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
+# CP-DSS SonarQube Docker Stack
 
+## Prerequisites
+
+    - PostgreSQL - AWS RDS
+    - EFS - AWS EFS
+
+## Installation
+
+- Create Volume Path for SonarQube in `AWS EFS` shared Directory
+- Increase `Virtual Memory Limit` for SonarQube
+```
+sudo sysctl -w vm.max_map_count=262144
+```
+- Set Environment Variables for SonarQube
+```
+DB_HOST=<DB_HOST>
+DB_USER=<DB_USER>
+DB_NAME=<DB_NAME>
+DB_PASSWORD=<DB_PASSWORD>
+VOLUME_PATH=<VOLUME_PATH>
+```
+- Deploy SonarQube using Docker Stack Deploy
+```
+docker stack deploy -c <(docker-compose -f sonarqube-stack.yml config) sonarqube
+```
+
+## SonarQube Properties
+
+### Gradle
+
+Add the following properties to the `build.gradle` file in the `api/cp-dss-api` directory:
+
+```
 plugins {
-    id 'org.springframework.boot' version "2.5.4" apply false
-    id "name.remal.sonarlint" version "1.5.0" apply false
-    id "com.diffplug.gradle.spotless" version "3.28.0" apply false
-    id 'com.github.rico.general' version '3.11' apply false
     id "org.sonarqube" version "3.3"
 }
-
-// Configurations applied to all subprojects
+.
+.
+.
 subprojects {
-
-    group = 'com.cpdss'
-    version = '0.0.1-SNAPSHOT'
-
-    repositories {
-        mavenCentral()
-    }
-
-    apply plugin: 'com.github.rico.general'
-    apply plugin: 'name.remal.sonarlint'
-    apply plugin: 'com.diffplug.gradle.spotless'
     apply plugin: 'jacoco'
-
-    // Applying sonarlint plugin
-    sonarlint {
-        ignoreFailures = true
-        excludes {
-            source "**${File.separator}generated${File.separator}*"
-        }
-    }
-
-    jacocoTestReport {
+    sonarqube {
+        jacocoTestReport {
         reports {
             xml.enabled true
             html.enabled true
+            }
         }
-    }
-    test.finalizedBy jacocoTestReport
+        test.finalizedBy jacocoTestReport
 
-    // Applying SonarQube properties
-    sonarqube {
+        sonarqube {
         properties {
             property "sonar.sourceEncoding", "UTF-8"
             property "sonar.sources", "src/main/java"
@@ -71,30 +76,23 @@ subprojects {
             property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
         }
     }
-
-    // Applying spotless plugin with google java formatter
-    spotless {
-        java {
-            googleJavaFormat()
-            licenseHeader '/* Licensed at AlphaOri Technologies */'
-        }
-    }
-
-    it.tasks.build.dependsOn it.tasks.spotlessApply
-
-    configurations {
-        all {
-            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-        }
-        developmentOnly
-        runtimeClasspath {
-            extendsFrom developmentOnly
-        }
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-        }
-    }
 }
+```
+
+### Angular
+
+Install sonar-scanner using npm:
+```
+npm install sonar-scanner --save-dev
+```
+Add the following script to the `package.json` file in the `web/cpdss-portal` directory:
+```
+scripts {
+    "sonar": "sonar-scanner"
+}
+```
+Add the following properties to the `Prepare Analysis for SonarQube - Additional Properties` task in `Azure Pipelines`:
+```
+sonar.sourceEncoding=UTF-8
+sonar.exclusions=**/node_modules/**, **/cpdss-e2e/**, **/login-e2e/**
+```

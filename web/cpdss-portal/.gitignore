@@ -5,6 +5,10 @@
 /tmp
 /out-tsc
 
+#sonarscanner
+/.scannerwork
+/sonar-project.properties
+
 # dependencies
 /node_modules
 

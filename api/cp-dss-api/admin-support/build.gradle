@@ -3,6 +3,7 @@ appConfig {
   grpcServer = 'y'
   logging = 'y'
   monitoring = 'y'
+  unitTest = 'y'
   javaMainClass = "com.cpdss.adminsupport.Application"
 }
 
