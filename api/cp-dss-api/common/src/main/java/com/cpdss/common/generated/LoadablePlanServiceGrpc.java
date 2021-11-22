@@ -1,9 +1,7 @@
+/* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated;
 
-import static io.grpc.MethodDescriptor.generateFullMethodName;
-
-/**
- */
+/** */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.40.1)",
     comments = "Source: loadable_plan.proto")
@@ -15,65 +13,60 @@ public final class LoadablePlanServiceGrpc {
   public static final String SERVICE_NAME = "LoadablePlanService";
 
   // Static method descriptors that strictly reflect the proto.
-  /**
-   * Creates a new async stub that supports all call types for the service
-   */
+  /** Creates a new async stub that supports all call types for the service */
   public static LoadablePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceStub>() {
-        @java.lang.Override
-        public LoadablePlanServiceStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new LoadablePlanServiceStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceStub>() {
+          @java.lang.Override
+          public LoadablePlanServiceStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new LoadablePlanServiceStub(channel, callOptions);
+          }
+        };
     return LoadablePlanServiceStub.newStub(factory, channel);
   }
 
   /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
-  public static LoadablePlanServiceBlockingStub newBlockingStub(
-      io.grpc.Channel channel) {
+  public static LoadablePlanServiceBlockingStub newBlockingStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceBlockingStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceBlockingStub>() {
-        @java.lang.Override
-        public LoadablePlanServiceBlockingStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new LoadablePlanServiceBlockingStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceBlockingStub>() {
+          @java.lang.Override
+          public LoadablePlanServiceBlockingStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new LoadablePlanServiceBlockingStub(channel, callOptions);
+          }
+        };
     return LoadablePlanServiceBlockingStub.newStub(factory, channel);
   }
 
-  /**
-   * Creates a new ListenableFuture-style stub that supports unary calls on the service
-   */
-  public static LoadablePlanServiceFutureStub newFutureStub(
-      io.grpc.Channel channel) {
+  /** Creates a new ListenableFuture-style stub that supports unary calls on the service */
+  public static LoadablePlanServiceFutureStub newFutureStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceFutureStub> factory =
-      new io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceFutureStub>() {
-        @java.lang.Override
-        public LoadablePlanServiceFutureStub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
-          return new LoadablePlanServiceFutureStub(channel, callOptions);
-        }
-      };
+        new io.grpc.stub.AbstractStub.StubFactory<LoadablePlanServiceFutureStub>() {
+          @java.lang.Override
+          public LoadablePlanServiceFutureStub newStub(
+              io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+            return new LoadablePlanServiceFutureStub(channel, callOptions);
+          }
+        };
     return LoadablePlanServiceFutureStub.newStub(factory, channel);
   }
 
-  /**
-   */
-  public static abstract class LoadablePlanServiceImplBase implements io.grpc.BindableService {
+  /** */
+  public abstract static class LoadablePlanServiceImplBase implements io.grpc.BindableService {
 
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
-          .build();
+    @java.lang.Override
+    public final io.grpc.ServerServiceDefinition bindService() {
+      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor()).build();
     }
   }
 
-  /**
-   */
-  public static final class LoadablePlanServiceStub extends io.grpc.stub.AbstractAsyncStub<LoadablePlanServiceStub> {
-    private LoadablePlanServiceStub(
-        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+  /** */
+  public static final class LoadablePlanServiceStub
+      extends io.grpc.stub.AbstractAsyncStub<LoadablePlanServiceStub> {
+    private LoadablePlanServiceStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
     }
 
@@ -84,9 +77,9 @@ public final class LoadablePlanServiceGrpc {
     }
   }
 
-  /**
-   */
-  public static final class LoadablePlanServiceBlockingStub extends io.grpc.stub.AbstractBlockingStub<LoadablePlanServiceBlockingStub> {
+  /** */
+  public static final class LoadablePlanServiceBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<LoadablePlanServiceBlockingStub> {
     private LoadablePlanServiceBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -99,9 +92,9 @@ public final class LoadablePlanServiceGrpc {
     }
   }
 
-  /**
-   */
-  public static final class LoadablePlanServiceFutureStub extends io.grpc.stub.AbstractFutureStub<LoadablePlanServiceFutureStub> {
+  /** */
+  public static final class LoadablePlanServiceFutureStub
+      extends io.grpc.stub.AbstractFutureStub<LoadablePlanServiceFutureStub> {
     private LoadablePlanServiceFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -114,12 +107,11 @@ public final class LoadablePlanServiceGrpc {
     }
   }
 
-
-  private static final class MethodHandlers<Req, Resp> implements
-      io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
-      io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
+  private static final class MethodHandlers<Req, Resp>
+      implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
+          io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
     private final LoadablePlanServiceImplBase serviceImpl;
     private final int methodId;
 
@@ -148,8 +140,9 @@ public final class LoadablePlanServiceGrpc {
     }
   }
 
-  private static abstract class LoadablePlanServiceBaseDescriptorSupplier
-      implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
+  private abstract static class LoadablePlanServiceBaseDescriptorSupplier
+      implements io.grpc.protobuf.ProtoFileDescriptorSupplier,
+          io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     LoadablePlanServiceBaseDescriptorSupplier() {}
 
     @java.lang.Override
@@ -191,9 +184,11 @@ public final class LoadablePlanServiceGrpc {
       synchronized (LoadablePlanServiceGrpc.class) {
         result = serviceDescriptor;
         if (result == null) {
-          serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
-              .setSchemaDescriptor(new LoadablePlanServiceFileDescriptorSupplier())
-              .build();
+          serviceDescriptor =
+              result =
+                  io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
+                      .setSchemaDescriptor(new LoadablePlanServiceFileDescriptorSupplier())
+                      .build();
         }
       }
     }

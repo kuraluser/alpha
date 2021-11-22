@@ -1,25 +1,27 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.common.generated.discharge_plan;
 
-/** Protobuf type {@code DischargingRate} */
-public final class DischargingRate extends com.google.protobuf.GeneratedMessageV3
+/** Protobuf type {@code CleaningTankDetails} */
+public final class CleaningTankDetails extends com.google.protobuf.GeneratedMessageV3
     implements
-    // @@protoc_insertion_point(message_implements:DischargingRate)
-    DischargingRateOrBuilder {
+    // @@protoc_insertion_point(message_implements:CleaningTankDetails)
+    CleaningTankDetailsOrBuilder {
   private static final long serialVersionUID = 0L;
-  // Use DischargingRate.newBuilder() to construct.
-  private DischargingRate(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use CleaningTankDetails.newBuilder() to construct.
+  private CleaningTankDetails(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
 
-  private DischargingRate() {
-    dischargingRate_ = "";
+  private CleaningTankDetails() {
+    tankShortName_ = "";
+    timeStart_ = "";
+    timeEnd_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-    return new DischargingRate();
+    return new CleaningTankDetails();
   }
 
   @java.lang.Override
@@ -27,7 +29,7 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     return this.unknownFields;
   }
 
-  private DischargingRate(
+  private CleaningTankDetails(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -49,7 +51,7 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
             {
               java.lang.String s = input.readStringRequireUtf8();
 
-              dischargingRate_ = s;
+              tankShortName_ = s;
               break;
             }
           case 16:
@@ -57,14 +59,18 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
               tankId_ = input.readInt64();
               break;
             }
-          case 24:
+          case 26:
             {
-              startTime_ = input.readInt32();
+              java.lang.String s = input.readStringRequireUtf8();
+
+              timeStart_ = s;
               break;
             }
-          case 32:
+          case 34:
             {
-              endTime_ = input.readInt32();
+              java.lang.String s = input.readStringRequireUtf8();
+
+              timeEnd_ = s;
               break;
             }
           default:
@@ -88,48 +94,48 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.cpdss.common.generated.discharge_plan.DischargePlanModels
-        .internal_static_DischargingRate_descriptor;
+        .internal_static_CleaningTankDetails_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return com.cpdss.common.generated.discharge_plan.DischargePlanModels
-        .internal_static_DischargingRate_fieldAccessorTable
+        .internal_static_CleaningTankDetails_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.cpdss.common.generated.discharge_plan.DischargingRate.class,
-            com.cpdss.common.generated.discharge_plan.DischargingRate.Builder.class);
+            com.cpdss.common.generated.discharge_plan.CleaningTankDetails.class,
+            com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder.class);
   }
 
-  public static final int DISCHARGINGRATE_FIELD_NUMBER = 1;
-  private volatile java.lang.Object dischargingRate_;
+  public static final int TANKSHORTNAME_FIELD_NUMBER = 1;
+  private volatile java.lang.Object tankShortName_;
   /**
-   * <code>string dischargingRate = 1;</code>
+   * <code>string tankShortName = 1;</code>
    *
-   * @return The dischargingRate.
+   * @return The tankShortName.
    */
-  public java.lang.String getDischargingRate() {
-    java.lang.Object ref = dischargingRate_;
+  public java.lang.String getTankShortName() {
+    java.lang.Object ref = tankShortName_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      dischargingRate_ = s;
+      tankShortName_ = s;
       return s;
     }
   }
   /**
-   * <code>string dischargingRate = 1;</code>
+   * <code>string tankShortName = 1;</code>
    *
-   * @return The bytes for dischargingRate.
+   * @return The bytes for tankShortName.
    */
-  public com.google.protobuf.ByteString getDischargingRateBytes() {
-    java.lang.Object ref = dischargingRate_;
+  public com.google.protobuf.ByteString getTankShortNameBytes() {
+    java.lang.Object ref = tankShortName_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      dischargingRate_ = b;
+      tankShortName_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -147,26 +153,74 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     return tankId_;
   }
 
-  public static final int STARTTIME_FIELD_NUMBER = 3;
-  private int startTime_;
+  public static final int TIMESTART_FIELD_NUMBER = 3;
+  private volatile java.lang.Object timeStart_;
   /**
-   * <code>int32 startTime = 3;</code>
+   * <code>string timeStart = 3;</code>
    *
-   * @return The startTime.
+   * @return The timeStart.
    */
-  public int getStartTime() {
-    return startTime_;
+  public java.lang.String getTimeStart() {
+    java.lang.Object ref = timeStart_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      timeStart_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string timeStart = 3;</code>
+   *
+   * @return The bytes for timeStart.
+   */
+  public com.google.protobuf.ByteString getTimeStartBytes() {
+    java.lang.Object ref = timeStart_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      timeStart_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
-  public static final int ENDTIME_FIELD_NUMBER = 4;
-  private int endTime_;
+  public static final int TIMEEND_FIELD_NUMBER = 4;
+  private volatile java.lang.Object timeEnd_;
   /**
-   * <code>int32 endTime = 4;</code>
+   * <code>string timeEnd = 4;</code>
    *
-   * @return The endTime.
+   * @return The timeEnd.
    */
-  public int getEndTime() {
-    return endTime_;
+  public java.lang.String getTimeEnd() {
+    java.lang.Object ref = timeEnd_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      timeEnd_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string timeEnd = 4;</code>
+   *
+   * @return The bytes for timeEnd.
+   */
+  public com.google.protobuf.ByteString getTimeEndBytes() {
+    java.lang.Object ref = timeEnd_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      timeEnd_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   private byte memoizedIsInitialized = -1;
@@ -183,17 +237,17 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (!getDischargingRateBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, dischargingRate_);
+    if (!getTankShortNameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, tankShortName_);
     }
     if (tankId_ != 0L) {
       output.writeInt64(2, tankId_);
     }
-    if (startTime_ != 0) {
-      output.writeInt32(3, startTime_);
+    if (!getTimeStartBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, timeStart_);
     }
-    if (endTime_ != 0) {
-      output.writeInt32(4, endTime_);
+    if (!getTimeEndBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, timeEnd_);
     }
     unknownFields.writeTo(output);
   }
@@ -204,17 +258,17 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     if (size != -1) return size;
 
     size = 0;
-    if (!getDischargingRateBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, dischargingRate_);
+    if (!getTankShortNameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, tankShortName_);
     }
     if (tankId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, tankId_);
     }
-    if (startTime_ != 0) {
-      size += com.google.protobuf.CodedOutputStream.computeInt32Size(3, startTime_);
+    if (!getTimeStartBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, timeStart_);
     }
-    if (endTime_ != 0) {
-      size += com.google.protobuf.CodedOutputStream.computeInt32Size(4, endTime_);
+    if (!getTimeEndBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, timeEnd_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -226,16 +280,16 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof com.cpdss.common.generated.discharge_plan.DischargingRate)) {
+    if (!(obj instanceof com.cpdss.common.generated.discharge_plan.CleaningTankDetails)) {
       return super.equals(obj);
     }
-    com.cpdss.common.generated.discharge_plan.DischargingRate other =
-        (com.cpdss.common.generated.discharge_plan.DischargingRate) obj;
+    com.cpdss.common.generated.discharge_plan.CleaningTankDetails other =
+        (com.cpdss.common.generated.discharge_plan.CleaningTankDetails) obj;
 
-    if (!getDischargingRate().equals(other.getDischargingRate())) return false;
+    if (!getTankShortName().equals(other.getTankShortName())) return false;
     if (getTankId() != other.getTankId()) return false;
-    if (getStartTime() != other.getStartTime()) return false;
-    if (getEndTime() != other.getEndTime()) return false;
+    if (!getTimeStart().equals(other.getTimeStart())) return false;
+    if (!getTimeEnd().equals(other.getTimeEnd())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -247,84 +301,84 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + DISCHARGINGRATE_FIELD_NUMBER;
-    hash = (53 * hash) + getDischargingRate().hashCode();
+    hash = (37 * hash) + TANKSHORTNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getTankShortName().hashCode();
     hash = (37 * hash) + TANKID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTankId());
-    hash = (37 * hash) + STARTTIME_FIELD_NUMBER;
-    hash = (53 * hash) + getStartTime();
-    hash = (37 * hash) + ENDTIME_FIELD_NUMBER;
-    hash = (53 * hash) + getEndTime();
+    hash = (37 * hash) + TIMESTART_FIELD_NUMBER;
+    hash = (53 * hash) + getTimeStart().hashCode();
+    hash = (37 * hash) + TIMEEND_FIELD_NUMBER;
+    hash = (53 * hash) + getTimeEnd().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(byte[] data)
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseDelimitedFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseDelimitedFrom(
       java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseDelimitedFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseDelimitedFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       com.google.protobuf.CodedInputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate parseFrom(
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -342,7 +396,7 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
   }
 
   public static Builder newBuilder(
-      com.cpdss.common.generated.discharge_plan.DischargingRate prototype) {
+      com.cpdss.common.generated.discharge_plan.CleaningTankDetails prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
 
@@ -356,27 +410,27 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     Builder builder = new Builder(parent);
     return builder;
   }
-  /** Protobuf type {@code DischargingRate} */
+  /** Protobuf type {@code CleaningTankDetails} */
   public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:DischargingRate)
-      com.cpdss.common.generated.discharge_plan.DischargingRateOrBuilder {
+      // @@protoc_insertion_point(builder_implements:CleaningTankDetails)
+      com.cpdss.common.generated.discharge_plan.CleaningTankDetailsOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.cpdss.common.generated.discharge_plan.DischargePlanModels
-          .internal_static_DischargingRate_descriptor;
+          .internal_static_CleaningTankDetails_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.cpdss.common.generated.discharge_plan.DischargePlanModels
-          .internal_static_DischargingRate_fieldAccessorTable
+          .internal_static_CleaningTankDetails_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.cpdss.common.generated.discharge_plan.DischargingRate.class,
-              com.cpdss.common.generated.discharge_plan.DischargingRate.Builder.class);
+              com.cpdss.common.generated.discharge_plan.CleaningTankDetails.class,
+              com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder.class);
     }
 
-    // Construct using com.cpdss.common.generated.discharge_plan.DischargingRate.newBuilder()
+    // Construct using com.cpdss.common.generated.discharge_plan.CleaningTankDetails.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -393,13 +447,13 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      dischargingRate_ = "";
+      tankShortName_ = "";
 
       tankId_ = 0L;
 
-      startTime_ = 0;
+      timeStart_ = "";
 
-      endTime_ = 0;
+      timeEnd_ = "";
 
       return this;
     }
@@ -407,17 +461,18 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
       return com.cpdss.common.generated.discharge_plan.DischargePlanModels
-          .internal_static_DischargingRate_descriptor;
+          .internal_static_CleaningTankDetails_descriptor;
     }
 
     @java.lang.Override
-    public com.cpdss.common.generated.discharge_plan.DischargingRate getDefaultInstanceForType() {
-      return com.cpdss.common.generated.discharge_plan.DischargingRate.getDefaultInstance();
+    public com.cpdss.common.generated.discharge_plan.CleaningTankDetails
+        getDefaultInstanceForType() {
+      return com.cpdss.common.generated.discharge_plan.CleaningTankDetails.getDefaultInstance();
     }
 
     @java.lang.Override
-    public com.cpdss.common.generated.discharge_plan.DischargingRate build() {
-      com.cpdss.common.generated.discharge_plan.DischargingRate result = buildPartial();
+    public com.cpdss.common.generated.discharge_plan.CleaningTankDetails build() {
+      com.cpdss.common.generated.discharge_plan.CleaningTankDetails result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -425,13 +480,13 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
     }
 
     @java.lang.Override
-    public com.cpdss.common.generated.discharge_plan.DischargingRate buildPartial() {
-      com.cpdss.common.generated.discharge_plan.DischargingRate result =
-          new com.cpdss.common.generated.discharge_plan.DischargingRate(this);
-      result.dischargingRate_ = dischargingRate_;
+    public com.cpdss.common.generated.discharge_plan.CleaningTankDetails buildPartial() {
+      com.cpdss.common.generated.discharge_plan.CleaningTankDetails result =
+          new com.cpdss.common.generated.discharge_plan.CleaningTankDetails(this);
+      result.tankShortName_ = tankShortName_;
       result.tankId_ = tankId_;
-      result.startTime_ = startTime_;
-      result.endTime_ = endTime_;
+      result.timeStart_ = timeStart_;
+      result.timeEnd_ = timeEnd_;
       onBuilt();
       return result;
     }
@@ -471,29 +526,32 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
 
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.cpdss.common.generated.discharge_plan.DischargingRate) {
-        return mergeFrom((com.cpdss.common.generated.discharge_plan.DischargingRate) other);
+      if (other instanceof com.cpdss.common.generated.discharge_plan.CleaningTankDetails) {
+        return mergeFrom((com.cpdss.common.generated.discharge_plan.CleaningTankDetails) other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.cpdss.common.generated.discharge_plan.DischargingRate other) {
-      if (other == com.cpdss.common.generated.discharge_plan.DischargingRate.getDefaultInstance())
+    public Builder mergeFrom(com.cpdss.common.generated.discharge_plan.CleaningTankDetails other) {
+      if (other
+          == com.cpdss.common.generated.discharge_plan.CleaningTankDetails.getDefaultInstance())
         return this;
-      if (!other.getDischargingRate().isEmpty()) {
-        dischargingRate_ = other.dischargingRate_;
+      if (!other.getTankShortName().isEmpty()) {
+        tankShortName_ = other.tankShortName_;
         onChanged();
       }
       if (other.getTankId() != 0L) {
         setTankId(other.getTankId());
       }
-      if (other.getStartTime() != 0) {
-        setStartTime(other.getStartTime());
+      if (!other.getTimeStart().isEmpty()) {
+        timeStart_ = other.timeStart_;
+        onChanged();
       }
-      if (other.getEndTime() != 0) {
-        setEndTime(other.getEndTime());
+      if (!other.getTimeEnd().isEmpty()) {
+        timeEnd_ = other.timeEnd_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -510,12 +568,13 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.cpdss.common.generated.discharge_plan.DischargingRate parsedMessage = null;
+      com.cpdss.common.generated.discharge_plan.CleaningTankDetails parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
         parsedMessage =
-            (com.cpdss.common.generated.discharge_plan.DischargingRate) e.getUnfinishedMessage();
+            (com.cpdss.common.generated.discharge_plan.CleaningTankDetails)
+                e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -525,78 +584,78 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
       return this;
     }
 
-    private java.lang.Object dischargingRate_ = "";
+    private java.lang.Object tankShortName_ = "";
     /**
-     * <code>string dischargingRate = 1;</code>
+     * <code>string tankShortName = 1;</code>
      *
-     * @return The dischargingRate.
+     * @return The tankShortName.
      */
-    public java.lang.String getDischargingRate() {
-      java.lang.Object ref = dischargingRate_;
+    public java.lang.String getTankShortName() {
+      java.lang.Object ref = tankShortName_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        dischargingRate_ = s;
+        tankShortName_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>string dischargingRate = 1;</code>
+     * <code>string tankShortName = 1;</code>
      *
-     * @return The bytes for dischargingRate.
+     * @return The bytes for tankShortName.
      */
-    public com.google.protobuf.ByteString getDischargingRateBytes() {
-      java.lang.Object ref = dischargingRate_;
+    public com.google.protobuf.ByteString getTankShortNameBytes() {
+      java.lang.Object ref = tankShortName_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        dischargingRate_ = b;
+        tankShortName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>string dischargingRate = 1;</code>
+     * <code>string tankShortName = 1;</code>
      *
-     * @param value The dischargingRate to set.
+     * @param value The tankShortName to set.
      * @return This builder for chaining.
      */
-    public Builder setDischargingRate(java.lang.String value) {
+    public Builder setTankShortName(java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
       }
 
-      dischargingRate_ = value;
+      tankShortName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>string dischargingRate = 1;</code>
+     * <code>string tankShortName = 1;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearDischargingRate() {
+    public Builder clearTankShortName() {
 
-      dischargingRate_ = getDefaultInstance().getDischargingRate();
+      tankShortName_ = getDefaultInstance().getTankShortName();
       onChanged();
       return this;
     }
     /**
-     * <code>string dischargingRate = 1;</code>
+     * <code>string tankShortName = 1;</code>
      *
-     * @param value The bytes for dischargingRate to set.
+     * @param value The bytes for tankShortName to set.
      * @return This builder for chaining.
      */
-    public Builder setDischargingRateBytes(com.google.protobuf.ByteString value) {
+    public Builder setTankShortNameBytes(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
 
-      dischargingRate_ = value;
+      tankShortName_ = value;
       onChanged();
       return this;
     }
@@ -634,68 +693,154 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
       return this;
     }
 
-    private int startTime_;
+    private java.lang.Object timeStart_ = "";
     /**
-     * <code>int32 startTime = 3;</code>
+     * <code>string timeStart = 3;</code>
      *
-     * @return The startTime.
+     * @return The timeStart.
      */
-    public int getStartTime() {
-      return startTime_;
+    public java.lang.String getTimeStart() {
+      java.lang.Object ref = timeStart_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timeStart_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
     }
     /**
-     * <code>int32 startTime = 3;</code>
+     * <code>string timeStart = 3;</code>
      *
-     * @param value The startTime to set.
+     * @return The bytes for timeStart.
+     */
+    public com.google.protobuf.ByteString getTimeStartBytes() {
+      java.lang.Object ref = timeStart_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        timeStart_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string timeStart = 3;</code>
+     *
+     * @param value The timeStart to set.
      * @return This builder for chaining.
      */
-    public Builder setStartTime(int value) {
+    public Builder setTimeStart(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
 
-      startTime_ = value;
+      timeStart_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>int32 startTime = 3;</code>
+     * <code>string timeStart = 3;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearStartTime() {
+    public Builder clearTimeStart() {
 
-      startTime_ = 0;
-      onChanged();
-      return this;
-    }
-
-    private int endTime_;
-    /**
-     * <code>int32 endTime = 4;</code>
-     *
-     * @return The endTime.
-     */
-    public int getEndTime() {
-      return endTime_;
-    }
-    /**
-     * <code>int32 endTime = 4;</code>
-     *
-     * @param value The endTime to set.
-     * @return This builder for chaining.
-     */
-    public Builder setEndTime(int value) {
-
-      endTime_ = value;
+      timeStart_ = getDefaultInstance().getTimeStart();
       onChanged();
       return this;
     }
     /**
-     * <code>int32 endTime = 4;</code>
+     * <code>string timeStart = 3;</code>
+     *
+     * @param value The bytes for timeStart to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimeStartBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      timeStart_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object timeEnd_ = "";
+    /**
+     * <code>string timeEnd = 4;</code>
+     *
+     * @return The timeEnd.
+     */
+    public java.lang.String getTimeEnd() {
+      java.lang.Object ref = timeEnd_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        timeEnd_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string timeEnd = 4;</code>
+     *
+     * @return The bytes for timeEnd.
+     */
+    public com.google.protobuf.ByteString getTimeEndBytes() {
+      java.lang.Object ref = timeEnd_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        timeEnd_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string timeEnd = 4;</code>
+     *
+     * @param value The timeEnd to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimeEnd(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      timeEnd_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string timeEnd = 4;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearEndTime() {
+    public Builder clearTimeEnd() {
 
-      endTime_ = 0;
+      timeEnd_ = getDefaultInstance().getTimeEnd();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string timeEnd = 4;</code>
+     *
+     * @param value The bytes for timeEnd to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTimeEndBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      timeEnd_ = value;
       onChanged();
       return this;
     }
@@ -711,42 +856,43 @@ public final class DischargingRate extends com.google.protobuf.GeneratedMessageV
       return super.mergeUnknownFields(unknownFields);
     }
 
-    // @@protoc_insertion_point(builder_scope:DischargingRate)
+    // @@protoc_insertion_point(builder_scope:CleaningTankDetails)
   }
 
-  // @@protoc_insertion_point(class_scope:DischargingRate)
-  private static final com.cpdss.common.generated.discharge_plan.DischargingRate DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:CleaningTankDetails)
+  private static final com.cpdss.common.generated.discharge_plan.CleaningTankDetails
+      DEFAULT_INSTANCE;
 
   static {
-    DEFAULT_INSTANCE = new com.cpdss.common.generated.discharge_plan.DischargingRate();
+    DEFAULT_INSTANCE = new com.cpdss.common.generated.discharge_plan.CleaningTankDetails();
   }
 
-  public static com.cpdss.common.generated.discharge_plan.DischargingRate getDefaultInstance() {
+  public static com.cpdss.common.generated.discharge_plan.CleaningTankDetails getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<DischargingRate> PARSER =
-      new com.google.protobuf.AbstractParser<DischargingRate>() {
+  private static final com.google.protobuf.Parser<CleaningTankDetails> PARSER =
+      new com.google.protobuf.AbstractParser<CleaningTankDetails>() {
         @java.lang.Override
-        public DischargingRate parsePartialFrom(
+        public CleaningTankDetails parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-          return new DischargingRate(input, extensionRegistry);
+          return new CleaningTankDetails(input, extensionRegistry);
         }
       };
 
-  public static com.google.protobuf.Parser<DischargingRate> parser() {
+  public static com.google.protobuf.Parser<CleaningTankDetails> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<DischargingRate> getParserForType() {
+  public com.google.protobuf.Parser<CleaningTankDetails> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.cpdss.common.generated.discharge_plan.DischargingRate getDefaultInstanceForType() {
+  public com.cpdss.common.generated.discharge_plan.CleaningTankDetails getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 }
