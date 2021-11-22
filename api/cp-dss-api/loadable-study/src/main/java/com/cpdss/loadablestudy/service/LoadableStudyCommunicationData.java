@@ -106,7 +106,7 @@ public class LoadableStudyCommunicationData {
                   : null);
         }
       }
-      log.info("Saved SynopticalTableLoadicatorDatas:{}", loadablePatterns);
+      log.info("Saved SynopticalTableLoadicatorDatas:{}", synopticalTableLoadicatorDatas);
       synopticalTableLoadicatorDataRepository.saveAll(synopticalTableLoadicatorDatas);
     }
   }
