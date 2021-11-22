@@ -68,6 +68,7 @@ public class LoadableStudyCommunicationData {
               loadablePatternOpt.isPresent() ? loadablePatternOpt.get().getVersion() : null);
         }
       }
+      log.info("Saved LoadablePattern:{}", loadablePatterns);
       loadablePatternRepository.saveAll(loadablePatterns);
     }
   }
@@ -80,7 +81,7 @@ public class LoadableStudyCommunicationData {
         removeJsonFields(
             JsonParser.parseString(dataJson).getAsJsonArray(), map, "synoptical_table_xid");
     log.info("saveSynopticalTableLoadicatorData json array:{}", jsonArray);
-    listType = new TypeToken<ArrayList<LoadablePattern>>() {}.getType();
+    listType = new TypeToken<ArrayList<SynopticalTableLoadicatorData>>() {}.getType();
     synopticalTableLoadicatorDatas = new Gson().fromJson(jsonArray, listType);
     log.info("synopticalTableLoadicatorDatas list:{}", synopticalTableLoadicatorDatas);
     if (synopticalTableLoadicatorDatas != null && !synopticalTableLoadicatorDatas.isEmpty()) {
@@ -105,6 +106,7 @@ public class LoadableStudyCommunicationData {
                   : null);
         }
       }
+      log.info("Saved SynopticalTableLoadicatorDatas:{}", synopticalTableLoadicatorDatas);
       synopticalTableLoadicatorDataRepository.saveAll(synopticalTableLoadicatorDatas);
     }
   }
