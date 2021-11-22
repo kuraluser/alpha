@@ -174,7 +174,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
       }
 
       const translationKeys = await this.translateService.get(['NEW_DISCHARGE_STUDY_POPUP__NAME_EXIST', 'DISCHARGE_STUDY_CREATE_SUCCESS', 'DISCHARGE_STUDY_CREATE_SUCCESS','DISCHARGE_STUDY_CREATED_SUCCESSFULLY', 'DISCHARGE_STUDY_CREATE_ERROR', 'DISCHARGE_STUDY_ALREADY_EXIST', 'DISCHARGE_STUDY_UPDATE_SUCCESS', 'DISCHARGE_STUDY_UPDATED_SUCCESSFULLY',
-      'NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING']).toPromise();
+      'NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING','NEW_DISCHARGE_STUDY_POPUP_ACTUAL_VALUE']).toPromise();
       try {
         if (!this.selectedDischargeStudy) {
           result = await this.dischargeStudyApiService.saveOrUpdateDischargeStudy(this.vesselInfoList.id, this.selectedVoyage.id, newModel).toPromise();
@@ -207,7 +207,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP_BILL_OF_LADDING'] });
           this.ngxSpinnerService.hide();
         } else if (error?.error?.errorCode === 'ERR-RICO-326') {
-          this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_DELETE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP_ACTUAL_VALUE']});
+          this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_DISCHARGE_STUDY_POPUP_ACTUAL_VALUE']});
         }
       }
     }
