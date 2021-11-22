@@ -46,6 +46,7 @@ import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -222,7 +223,9 @@ public class DischargeInformationService {
                   .forEach(
                       bol -> {
                         if (bol.getCargoAbbrevation().equals(v.getCargoAbbreviation())) {
-                          v.setOrderBblsdbs(bol.getQuantityBbls());
+                          if (bol.getQuantityBbls() != null) {
+                            v.setBlFigure(new BigDecimal(bol.getQuantityBbls()));
+                          }
                         }
                       });
             });
