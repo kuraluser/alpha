@@ -110,6 +110,15 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   }
 
   /**
+  * Method to set discharging info id
+  * @param tab
+  * @memberof DischargingComponent
+  */
+  setDischargingInfoId(data) {
+    this.dischargeInfoId = data;
+  }
+
+  /**
    * Initialise all subscription in this page
    *
    * @private
@@ -201,12 +210,12 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
       if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
         this.messageService.clear();
         this.setButtonStatusInProcessing(false, true);
-        await this.getAlgoErrorMessage(true, 0);
+        this.getAlgoErrorMessage(true, 0, event?.data?.pattern?.dischargingInfoId);
         this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR_OCCURED'] });
       } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
         this.messageService.clear();
         this.setButtonStatusInProcessing(false, true);
-        await this.getAlgoErrorMessage(true, 0);
+        this.getAlgoErrorMessage(true, 0, event?.data?.pattern?.dischargingInfoId);
         this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_NO_PLAN_AVAILABLE'] });
       } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
         this.messageService.clear();
@@ -311,15 +320,6 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   }
 
   /**
-  * Method to set discharging info id
-  * @param tab
-  * @memberof DischargingComponent
-  */
-  setDischargingInfoId(data) {
-    this.dischargeInfoId = data;
-  }
-
-  /**
   * Set page permission
   *
   * @memberof DischargingComponent
@@ -402,8 +402,8 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     this.disablePlanViewErrorBtn = !hasError;
     this.loadingDischargingTransformationService.disableDischargeInfoSave(isProcesing);
     this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(isProcesing);
-    this.dischargeSequenceGenerated = !isProcesing;
-    this.dischargePlanGenerated = !isProcesing;
+    this.dischargeSequenceGenerated = (!isProcesing && !hasError);
+    this.dischargePlanGenerated = (!isProcesing && !hasError);
   }
 
   /**
@@ -417,6 +417,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   async getAlgoErrorMessage(status: boolean, conditionType: number, currentDischargeInfoId?: number) {
     this.ngxSpinnerService.show();
     const infoId = (currentDischargeInfoId && currentDischargeInfoId === this.dischargeInfoId) ? currentDischargeInfoId : this.dischargeInfoId;
+    if (infoId === undefined) return;
     const algoError: IAlgoResponse = await this.operationsApiService.getDischargePlanAlgoError(this.vesselId, this.voyageId, infoId, conditionType).toPromise();
     if (algoError.responseStatus.status === '200') {
       this.ngxSpinnerService.hide();
