@@ -111,6 +111,8 @@ import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -3071,13 +3073,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.newBuilder();
 
-    Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
-    if (voyageEntity.isPresent()) {
-      Voyage voyage = voyageEntity.get();
+    //Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
+    String voyage = voyageRepository.getVoyagebyId(request.getId());
+    log.info("voyage get:{}", voyage);
+    if (StringUtils.hasLength(voyage)) {
+      JsonObject voyageObj =
+              JsonParser.parseString(voyage).getAsJsonArray().get(0).getAsJsonObject();
+      Long voyageId = voyageObj.get("id").getAsLong();
+      Long voyageStatus = voyageObj.get("voyage_status").getAsLong();
+      //Voyage voyage = voyageEntity.get();
       com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.Builder builder =
           com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder();
-      builder.setId(voyage.getId());
-      Optional.ofNullable(voyage.getVoyageStatus().getId()).ifPresent(builder::setVoyageStatus);
+      builder.setId(voyageId);
+      Optional.ofNullable(voyageStatus).ifPresent(builder::setVoyageStatus);
       replyBuilder.setVoyageActivateRequest(builder.build());
       replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } else {

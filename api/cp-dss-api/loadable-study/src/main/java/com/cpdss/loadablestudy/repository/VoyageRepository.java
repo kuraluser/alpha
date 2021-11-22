@@ -90,4 +90,9 @@ public interface VoyageRepository
   @Query(
       "FROM Voyage vg WHERE vg.voyageStatus = ?1 AND vg.vesselXId = ?2 AND vg.actualEndDate != null AND vg.isActive = true")
   List<Voyage> findRecentClosedVoyageDetails(VoyageStatus var1, Long var2, Pageable pageable);
+
+  @Query(
+          value = "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM voyage u where id=?1",
+          nativeQuery = true)
+    String getVoyagebyId(long id);
 }
