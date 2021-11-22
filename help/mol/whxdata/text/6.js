@@ -1,1 +1,1 @@
-rh._.exports({"0":[[" ","Discharging"]],"1":[[" ","Discharging"]],"id":"6"})
+rh._.exports({"0":[[" ","Manage Rules"]],"1":[[" ","Manage Rules"]],"id":"6"})

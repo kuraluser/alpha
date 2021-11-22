@@ -37,16 +37,19 @@
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
   <h1 id="h">Loading Sequence</h1>
-  <p class="textbody">ALGO provides the estimated Loading sequence according to the details provided in the <strong>Loading Information</strong> and<strong> Loading Instruction </strong>stages<strong>.</strong> The various Gantt charts available under Loading Sequence helps the user to monitor the progress of the Loading Operation. It displays the following details: </p>
+  <p class="textbody">The algorithm provides the estimated loading sequence according to the details provided in the <strong>Loading Information</strong> tab<strong>.</strong> The various Gantt charts available under <strong>Loading Sequence</strong> helps the user to monitor the progress of the loading operation. It displays the following details: </p>
   <ul class="bullets">
-    <li class="textbody">Cargo loading sequence chart</li>
-    <li class="textbody">Ballast loading sequence chart</li>
-    <li class="textbody">Deballasting sequence chart</li>
+    <li class="textbody">Cargo sequence chart</li>
+    <li class="textbody">Ballast sequence chart</li>
+    <li class="textbody">Ballast pump chart</li>
     <li class="textbody">Flow rate chart  </li>
     <li class="textbody">Stability parameters</li>
   </ul>
-  <h2>Cargo Loading Sequence Chart</h2>
-  <p class="textbody">The Cargo loading sequence chart displays the cargo loading rate of the active voyage. The X-axis represents the time in hours, and Y-axis represents the cargo name. The available details are:</p>
+  <h2>Cargo Sequence Chart</h2>
+  <p class="textbody">The Cargo sequence chart displays the cargo loading rate of the active voyage. The X-axis represents the time in hours, and Y-axis represents the cargo name.<br/>
+    <img class="image-full" src="Images/Loading Sequence/cargo-loading-sequence-chart.jpg"/><br/>
+    The section displays the following details:
+  </p>
   <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
@@ -86,26 +89,34 @@
           <p class="textbody">Qty</p>
         </td>
         <td>
-          <p class="textbody">Displays the cargo Qty in BBLS</p>
+          <p class="textbody">Displays the cargo quantity in BBLS</p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">The vertical lines on the graph display each stage. Mouse hover anywhere on the ullage line to view the <strong>Time</strong>, <strong>Qty</strong>, and <strong>Ullage value</strong>. The graph also displays the Total cargo quantity and Loading Rate of each stage at the bottom.</p>
-  <h2>Ballast Loading Sequence Chart</h2>
-  <p class="textbody">Ballast loading sequence chart displays the ballast loading rate of the active voyage. The X-axis represents the time in hours, and Y-axis represents the tank. The blue lines marked on the graph represent sounding.</p>
-  <p class="note">Sounding is the measured height of fluid from the surface of the fluid to the bottom of the tank. </p>
-  <p class="textbody">The vertical lines on the graph display each stage. Mouse hover anywhere on the ullage line to view the <strong>Time</strong>, <strong>Qty</strong>, and <strong>Sounding value</strong>.<br/>
-    <strong>Stripping by Eductor- </strong>After ballasting, the remaining sediments (fuel residue) are sucked using eductor. 
+  <p class="textbody">The vertical lines on the graph display each stage. Mouse hover on the ullage line to view the <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Ullage value</strong>. The graph also displays the total cargo quantity and loading rate of each stage at the bottom.<br/>
+    <img class="image-full" src="Images/Loading Sequence/cargo-loading-total.jpg"/>
   </p>
-  <h2>Deballasting Sequence Chart</h2>
-  <p class="textbody">Deballasting sequence chart displays the deballasting loading rate of the active voyage. The X-axis represents the time in hours, and Y-axis represents the pump name.  Various color lines marked on the graph represent the sounding of different ballast pumps.<br/>
-     The vertical lines on the graph display each stage. Mouse hover anywhere on the sounding line to view the deballasting rate. </p>
+  <h2>Ballast Sequence Chart</h2>
+  <p class="textbody">The Ballast sequence chart displays the ballast loading rate of the active voyage. The X-axis represents the time in hours, and Y-axis represents the tank. The blue lines marked on the graph represent sounding.<br/>
+    <img class="image-full" src="Images/Loading Sequence/ballst.jpg"/>
+  </p>
+  <p class="note">Sounding is the measured height of fluid from the surface of the fluid to the bottom of the tank. </p>
+  <p class="textbody">The vertical lines on the graph display each stage. Mouse hover on the ullage line to view <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Sounding</strong>.<br/>
+    <strong>Stripping by Eductor- </strong>After ballasting, the remaining sediments (fuel residue) are sucked using eductor. The graph displays the stripping process against time. The graph also displays the total ballast quantity of each stage at the bottom.
+  </p>
+  <h2>Ballast Pump Chart</h2>
+  <p class="textbody">Ballast pump chart displays the various pumps and their corresponding pumping rate. The X-axis represents the time in hours, and Y-axis represents the pump name.  Various color lines marked on the graph represent the pumping rate of different ballast pumps.<br/>
+    The vertical lines on the graph display each stage. Mouse hover on the color lines to view the pumping rate. <br/>
+    <img class="image-full" src="Images/Loading Sequence/deballasting.jpg"/>
+  </p>
   <h2>Flow Rate Chart</h2>
-  <p class="textbody">The flow Rate chart displays the flow rate of cargo.<br/>
-    The X-axis displays the flow rate in bbls, and the y-axis displays the time in hours. Mouse hover on the graph to view the aggregate values.</p>
+  <p class="textbody">The Flow rate chart displays the flow rate of cargo.<br/>
+    The X-axis displays the flow rate in bbls, and the y-axis displays the time in hours. Mouse hover anywhere on the graph to view the aggregate values.<br/>
+    <img class="image-full" src="Images/Loading Sequence/flow-rate.jpg"/>
+  </p>
   <h2>Stability Parameters</h2>
-  <p class="textbody">Stability Parameters displays the stability parameter values against time. They are:</p>
+  <p class="textbody">Stability parameters display the stability parameter values against time for different stages. They are:</p>
   <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
@@ -129,7 +140,7 @@
           <p class="textbody">Aft draft</p>
         </td>
         <td>
-          <p class="textbody">Displays the air draft value against time</p>
+          <p class="textbody">Displays the after draft value against time</p>
         </td>
       </tr>
       <tr>
@@ -142,10 +153,10 @@
       </tr>
       <tr>
         <td>
-          <p class="textbody">  UKC</p>
+          <p class="textbody"> UKC</p>
         </td>
         <td>
-          <p class="textbody">Displays the UKC value against time.   </p>
+          <p class="textbody">Displays the UKC (Under-keel Clearance) value against time.   </p>
         </td>
       </tr>
       <tr>
@@ -153,7 +164,7 @@
           <p class="textbody">GM</p>
         </td>
         <td>
-          <p class="textbody">Displays the GM value against time.</p>
+          <p class="textbody">Displays the GM (metacentric height) value against time.</p>
         </td>
       </tr>
       <tr>
@@ -166,7 +177,7 @@
       </tr>
       <tr>
         <td>
-          <p class="textbody">  Max Bending Force</p>
+          <p class="textbody"> Max Bending Force</p>
         </td>
         <td>
           <p class="textbody">Displays the max bending force against time.</p>
@@ -174,7 +185,9 @@
       </tr>
     </tbody>
   </table>
-  <p class="textbody">Mouse hover on the table to view the stability parameters at that point.</p>
+  <p class="textbody">Mouse hover on the table to view the stability parameters at that point.<br/>
+    <img class="image-full" src="Images/Loading Sequence/stability-parameters.jpg"/>
+  </p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
@@ -188,7 +201,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "6.1.1.1_3"
+    gTopicId = "6.1.1_3"
   
 //]]></script>
 

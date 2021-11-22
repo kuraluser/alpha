@@ -1,1 +1,1 @@
-(function() {    var toc =  [{"name":"Discharging Operation Stages","type":"book","tilePath":"","description":"","url":"discharging-operation-stages.htm","key":"toc28"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();
+(function() {    var toc =  [{"name":"Add Cargo","type":"item","tilePath":"","description":"","url":"add-cargo-managesequence.htm"},{"name":"Add Initial Delay","type":"item","tilePath":"","description":"","url":"add-initial-delay.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();

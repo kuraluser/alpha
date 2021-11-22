@@ -1,1 +1,1 @@
-rh._.exports({"0":[[" ","Loading Plan"]],"1":[[" ","Loading Plan"]],"id":"7"})
+rh._.exports({"0":[[" ","Vessel Informations"]],"1":[[" ","Vessel Information"]],"id":"7"})

@@ -13,7 +13,8 @@
   <meta name="generator" content="Adobe RoboHelp 2020"/>
   <title>Discharging Sequence</title>
   <meta name="topic-status" content="Draft"/>
-<link rel="stylesheet" type="text/css" href="assets/css/default.css"/></head>
+  <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
+<meta name="brsnext" value="discharging-plan.htm"/><meta name="brsprev" value="generate-discharging-plan.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -35,8 +36,157 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Discharging Sequence</h1>
-  <p></p>
+  <h1 id="h">Discharging Sequence</h1>
+  <p class="textbody"><strong>Discharging Sequence</strong> displays the sequence of discharging of each cargo. The algorithm provides the estimated discharging sequence according to the details provided in the <strong>Discharging Information</strong> tab<strong>.</strong> The various Gantt charts available under <strong>Discharging Sequence</strong> helps the user to monitor the progress of the discharging operation. It displays the following details: </p>
+  <ul class="bullets">
+    <li class="textbody">Cargo sequence chart</li>
+    <li class="textbody">Ballast sequence chart</li>
+    <li class="textbody">Ballast pump chart</li>
+    <li class="textbody">Flow rate chart  </li>
+    <li class="textbody">Stability parameters</li>
+  </ul>
+  <h2>Cargo Sequence Chart</h2>
+  <p class="textbody">The Cargo sequence chart displays the <span style="color:#ff0000;">cargo loading rate</span> of the active voyage. The <span style="color:#ff0000;">X-axis represents the time in hours, and Y-axis represents the cargo name</span>.<br/>
+    (img)<br/>
+    The available details are:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
+    <colgroup>
+      <col/>
+      <col/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Tank No</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the tank number</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Cargo Grade</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the cargo name</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Ullage</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the ullage value. Ullage is the void space in the tank measured from the top of the tank to the upper surface of the fluid. For each cargo, ullage values are marked on the graph in the cargo’s color.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Qty</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the cargo quantity in BBLS</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="textbody">The vertical lines on the graph display each stage. <span style="color:#ff0000;">Mouse hover anywhere on the ullage line to view the <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Ullage value</strong></span>. The graph also displays the total cargo quantity and loading rate of each stage at the bottom.<br/>
+    <img class="image-full" src="Images/Loading Sequence/cargo-loading-total.jpg"/>
+  </p>
+  <h2>Ballast Sequence Chart</h2>
+  <p class="textbody">The Ballast sequence chart displays the <span style="color:#ff0000;">ballast loading rate </span>of the active voyage. The<span style="color:#ff0000;"> X-axis represents the time in hours, and Y-axis represents the tank</span>. The blue lines marked on the graph represent sounding.<br/>
+    <img class="image-full" src="Images/Loading Sequence/ballst.jpg"/>
+  </p>
+  <p class="note">Sounding is the measured height of fluid from the surface of the fluid to the bottom of the tank. </p>
+  <p class="textbody">The vertical lines on the graph display each stage. <span style="color:#ff0000;">Mouse hover anywhere on the ullage line to view <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Sounding</strong>.</span><br/>
+    <strong>Stripping by Eductor- </strong>After ballasting, the remaining sediments (fuel residue) are sucked using eductor. The graph displays the stripping process against time. The graph also displays the total ballast quantity of each stage at the bottom.
+  </p>
+  <h2>Ballast Pump Chart</h2>
+  <p class="textbody">Ballast pump chart displays the various pumps and their corresponding pumping rate. The X-axis represents the time in hours, and Y-axis represents the pump name.  Various color lines marked on the graph represent the pumping rate of different ballast pumps.<br/>
+    The vertical lines on the graph display each stage. Mouse hover anywhere on the color lines to view the pumping rate. <br/>
+    <img class="image-full" src="Images/Loading Sequence/deballasting.jpg"/>
+  </p>
+  <h2>Flow Rate Chart</h2>
+  <p class="textbody">The Flow rate chart displays the flow rate of cargo.<br/>
+    The X-axis displays the flow rate in bbls, and the y-axis displays the time in hours. Mouse hover anywhere on the graph to view the aggregate values.<br/>
+    <img class="image-full" src="Images/Loading Sequence/flow-rate.jpg"/>
+  </p>
+  <h2>Stability Parameters</h2>
+  <p class="textbody">Stability parameters display the stability parameter values against time for different stages. They are:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
+    <colgroup>
+      <col/>
+      <col/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Fore Draft</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the fore draft value against time</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Aft draft</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the after draft value against time</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Trim</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the trim value against time</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody"> UKC</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the UKC (Under-keel Clearance) value against time.   </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">GM</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the GM (metacentric height) value against time.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Max Shearing Force</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the maximum shearing force against time</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody"> Max Bending Force</p>
+        </td>
+        <td>
+          <p class="textbody">Displays the max bending force against time.</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="textbody">Mouse hover anywhere on the table to view the stability parameters at that point.<br/>
+    <img class="image-full" src="Images/Loading Sequence/stability-parameters.jpg"/>
+  </p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
@@ -50,7 +200,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "6.2.1.0_3"
+    gTopicId = "6.2.1_3"
   
 //]]></script>
 

@@ -1,1 +1,1 @@
-rh._.exports({"0":[[" ","Discharging Information"]],"1":[[" ","Discharging Information"]],"id":"16"})
+rh._.exports({"0":[[" ","View Discharge Plan"]],"1":[[" ","View Discharge Plan"]],"2":[[" ","The ","View Plan ","option appears on the ","Discharge Study"," page once the discharge plan generation is complete."," ","Click ","View Plan"," to view the discharge plan created against the current voyage. "," ","\n    The ","Discharge Plan"," page appears. For more information, see ","Discharge Plan","."]],"id":"16"})

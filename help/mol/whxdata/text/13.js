@@ -1,1 +1,1 @@
-rh._.exports({"0":[[" ","Discharging Sequence"]],"1":[[" ","Discharging Sequence"]],"id":"13"})
+rh._.exports({"0":[[" ","Understanding Menus and Icons"]],"1":[[" ","Understanding Menus and Icons"]],"id":"13"})

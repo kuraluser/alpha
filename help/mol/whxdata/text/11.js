@@ -1,1 +1,1 @@
-rh._.exports({"0":[[" ","Manage Instructions"]],"1":[[" ","Manage Instructions"]],"id":"11"})
+rh._.exports({"0":[[" ","Introduction"]],"1":[[" ","Introduction"]],"2":[[" ","MOL's Cargo Planning Decision Support System (CP-DSS) application guides the users to manage commodities, create loadable and discharge study patterns, and generate loading and discharging plans for the future. "],[" ","Users having a basic understanding of cargo management activities and associated marine terminologies."]],"3":[[" ","Targeted Audience"]],"id":"11"})
