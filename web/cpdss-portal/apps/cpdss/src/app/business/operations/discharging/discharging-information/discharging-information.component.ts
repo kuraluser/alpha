@@ -403,6 +403,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       if (this.hasUnSavedData) {
         this.ngxSpinnerService.show();
         this.dischargingInformationPostData.isDischargeInfoComplete = true;
+        this.dischargingInformationPostData.portRotationId = this.portRotationId;
         const result: IDischargingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveDischargingInformation(this.vesselId, this.voyageId, this.dischargingInformationPostData).toPromise();
         if (result?.responseStatus?.status === '200') {
           this.hasUnSavedData = false;

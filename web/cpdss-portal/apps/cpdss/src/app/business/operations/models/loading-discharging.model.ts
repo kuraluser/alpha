@@ -84,6 +84,7 @@ export interface IDischargingInformationPostData {
   dischargingBerths: IBerth[];
   dischargingDelays: ILoadingDischargingDelays[];
   cargoToBeDischarged: ICargoToBeDischarged;
+  portRotationId?: number;
 }
 
 /**
