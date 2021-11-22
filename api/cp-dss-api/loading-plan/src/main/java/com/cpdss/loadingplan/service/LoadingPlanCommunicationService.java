@@ -1515,10 +1515,11 @@ public class LoadingPlanCommunicationService {
         }
       }
       if (loadablePattern != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        LoadableStudy.LoadableStudyPatternCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyPatternCommunicationRequest.newBuilder();
+        log.info("loadablePattern get form staging table:{}", loadablePattern);
         builder.setDataJson(loadablePattern);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
+        LoadableStudy.LoadableStudyPatternCommunicationReply reply =
             loadableStudyServiceBlockingStub.saveLoadablePatternForCommunication(builder.build());
         if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
           log.info("LoadablePattern saved in LoadableStudy");
@@ -1539,9 +1540,12 @@ public class LoadingPlanCommunicationService {
       if (loadicatorDataForSynoptical != null) {
         LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
             LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info(
+            "loadicatorDataForSynoptical get form staging table:{}", loadicatorDataForSynoptical);
         builder.setDataJson(loadicatorDataForSynoptical);
         LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveLoadablePatternForCommunication(builder.build());
+            loadableStudyServiceBlockingStub.saveLoadicatorDataSynopticalForCommunication(
+                builder.build());
         if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
           log.info("SynopticalTableLoadicatorData saved in LoadableStudy ");
         } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {

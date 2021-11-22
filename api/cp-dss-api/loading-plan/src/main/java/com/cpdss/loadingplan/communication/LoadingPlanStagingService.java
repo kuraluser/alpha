@@ -498,10 +498,10 @@ public class LoadingPlanStagingService extends StagingService {
         case loadable_pattern:
           {
             if (loadablePatternId != null) {
-              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              LoadableStudy.LoadableStudyPatternCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyPatternCommunicationRequest.newBuilder();
               builder.setId(loadablePatternId);
-              LoadableStudy.LoadableStudyCommunicationReply reply =
+              LoadableStudy.LoadableStudyPatternCommunicationReply reply =
                   this.loadableStudyServiceBlockingStub.getLoadablePatternForCommunication(
                       builder.build());
               if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
