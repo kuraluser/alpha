@@ -639,6 +639,10 @@ public class SynopticServiceUtils {
                   v ->
                       (v.getPortId().equals(request.getPortId()))
                           && (v.getOperationType().equals(request.getOperationType())))
+              .filter(
+                  v ->
+                      v.getDischargeMT() != null
+                          && v.getDischargeMT().compareTo(BigDecimal.ZERO) != 0)
               .collect(Collectors.toList());
 
       // build Entity to Message

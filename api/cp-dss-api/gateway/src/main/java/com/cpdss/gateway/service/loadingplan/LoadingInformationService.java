@@ -128,4 +128,7 @@ public interface LoadingInformationService {
 
   public List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
       List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId);
+
+  LoadingPlanModels.LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(
+      Long patternId) throws GenericServiceException;
 }

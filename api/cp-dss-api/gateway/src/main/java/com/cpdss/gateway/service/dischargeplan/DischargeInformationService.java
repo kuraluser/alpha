@@ -209,6 +209,24 @@ public class DischargeInformationService {
             portRotation.get().getId(),
             portRotation.get().getPortId()));
 
+    // Call No. 3 To Loading Info for quantity in BBLS (by passing LS pattern ID)
+    var lsInfoCargo =
+        this.loadingInformationService.getLoadingInfoCargoDetailsByPattern(
+            activeVoyage.getPatternId());
+    vesselTankDetails
+        .getDischargeQuantityCargoDetails()
+        .forEach(
+            v -> {
+              lsInfoCargo
+                  .getBillOfLaddingList()
+                  .forEach(
+                      bol -> {
+                        if (bol.getCargoAbbrevation().equals(v.getCargoAbbreviation())) {
+                          v.setOrderBblsdbs(bol.getQuantityBbls());
+                        }
+                      });
+            });
+
     // setting discharge cargo nomination id
     this.setDischargeCargoNominationId(vesselTankDetails);
 

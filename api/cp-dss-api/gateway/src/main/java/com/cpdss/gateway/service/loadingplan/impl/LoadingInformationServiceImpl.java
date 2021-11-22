@@ -807,6 +807,23 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return response;
   }
 
+  @Override
+  public LoadingPlanModels.LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(
+      Long patternId) throws GenericServiceException {
+    LoadingPlanModels.LoadingInformationSynopticalRequest.Builder requestBuilder =
+        LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder();
+    requestBuilder.setLoadablePatternId(patternId);
+    LoadingPlanModels.LoadingInformationSynopticalReply grpcReply =
+        loadingInfoServiceBlockingStub.getLoadigInformationByVoyage(requestBuilder.build());
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch getDischargeStudyByVoyage",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return grpcReply;
+  }
+
   /**
    * A grpc call to vessel info to get Max Loading Rate only Similar grpc calling for get machines
    * in use.
