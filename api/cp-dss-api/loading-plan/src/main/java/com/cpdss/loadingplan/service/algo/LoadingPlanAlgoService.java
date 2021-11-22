@@ -82,6 +82,7 @@ import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
@@ -93,6 +94,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -250,11 +252,27 @@ public class LoadingPlanAlgoService {
       saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
       log.info("Call To Algo End Point for Loading");
       // Call To Algo End Point for Loading
-      LoadingInformationAlgoResponse response =
-          restTemplate.postForObject(
-              planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
-      processId = response.getProcessId();
-      log.info("LoadingInformationAlgoResponse:{}", response);
+      try {
+        LoadingInformationAlgoResponse response =
+            restTemplate.postForObject(
+                planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+        processId = response.getProcessId();
+        log.info("LoadingInformationAlgoResponse:{}", response);
+      } catch (HttpStatusCodeException e) {
+        createAlgoErrors(
+            loadingInfoOpt.get(),
+            "ALGO Internal Server Error",
+            null,
+            Lists.newArrayList(e.getResponseBodyAsString()));
+        Optional<LoadingInformationStatus> errorOccurredStatusOpt =
+            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
+        loadingInformationRepository.updateLoadingInformationStatus(
+            errorOccurredStatusOpt.get(), loadingInfoOpt.get().getId());
+        throw new GenericServiceException(
+            "Internal Server Error in ALGO" + request.getLoadingInfoId(),
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
     }
 
     createLoadingInformationAlgoStatus(
