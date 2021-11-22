@@ -82,11 +82,6 @@ public interface VoyageRepository
   public List<Voyage> findByVoyageStatusAndVesselIdAndIsActive(
       Long voyageId, Long vesselId, boolean b);
 
-  @Transactional
-  @Modifying
-  @Query("UPDATE Voyage SET voyageStatus = ?2 WHERE id = ?1")
-  void activateVoyage(Long id, VoyageStatus voyageStatus);
-
   @Query(
       "FROM Voyage vg WHERE vg.voyageStatus = ?1 AND vg.vesselXId = ?2 AND vg.actualEndDate != null AND vg.isActive = true")
   List<Voyage> findRecentClosedVoyageDetails(VoyageStatus var1, Long var2, Pageable pageable);
