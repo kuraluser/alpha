@@ -432,8 +432,8 @@ public class DischargeInformationBuilderService {
               .setConditionType(conditionType != null ? conditionType : 0)
               .setValueType(valueType != null ? valueType : 0)
               .setColorCode(colorCode != null ? colorCode : "")
-              .setCargoId(cargoId != null ? cargoId :0L)
-              .setAbbreviation(abbreviation != null ? abbreviation :"")
+              .setCargoId(cargoId != null ? cargoId : 0L)
+              .setAbbreviation(abbreviation != null ? abbreviation : "")
               .build();
       return builder;
     } catch (Exception e) {

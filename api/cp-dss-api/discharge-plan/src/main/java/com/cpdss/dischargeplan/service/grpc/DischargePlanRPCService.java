@@ -43,6 +43,7 @@ import com.cpdss.dischargeplan.service.*;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import io.grpc.stub.StreamObserver;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -53,6 +54,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -166,22 +168,39 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
             HttpStatusCode.BAD_REQUEST);
       }
       // Call To Algo End Point for Loading
-      DischargingInformationAlgoResponse response =
-          restTemplate.postForObject(
-              planGenerationUrl, algoRequest, DischargingInformationAlgoResponse.class);
-      // Set Loading Status
-      Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-          dischargePlanAlgoService.getDischargingInformationStatus(
-              DischargePlanConstants.DISCHARGING_INFORMATION_PROCESSING_STARTED_ID);
-      dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
-      dischargeInformation.setIsDischargingPlanGenerated(false);
-      dischargeInformation.setIsDischargingSequenceGenerated(false);
-      dischargeInformationRepository.save(dischargeInformation);
-      dischargePlanAlgoService.createDischargingInformationAlgoStatus(
-          dischargeInformation, response.getProcessId(), dischargingInfoStatusOpt.get(), null);
-      builder.setProcessId(response.getProcessId());
-      builder.setResponseStatus(
-          Common.ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+      try {
+        DischargingInformationAlgoResponse response =
+            restTemplate.postForObject(
+                planGenerationUrl, algoRequest, DischargingInformationAlgoResponse.class);
+        // Set Loading Status
+        Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+            dischargePlanAlgoService.getDischargingInformationStatus(
+                DischargePlanConstants.DISCHARGING_INFORMATION_PROCESSING_STARTED_ID);
+        dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
+        dischargeInformation.setIsDischargingPlanGenerated(false);
+        dischargeInformation.setIsDischargingSequenceGenerated(false);
+        dischargeInformationRepository.save(dischargeInformation);
+        dischargePlanAlgoService.createDischargingInformationAlgoStatus(
+            dischargeInformation, response.getProcessId(), dischargingInfoStatusOpt.get(), null);
+        builder.setProcessId(response.getProcessId());
+        builder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+      } catch (HttpStatusCodeException e) {
+        log.error("Error occured in ALGO side while calling new_loadable API");
+        Optional<DischargingInformationStatus> errorOccurredStatusOpt =
+            dischargePlanAlgoService.getDischargingInformationStatus(
+                DischargePlanConstants.DISCHARGING_INFORMATION_ERROR_OCCURRED_ID);
+        dischargeInformationService.updateDischargingInformationStatus(
+            errorOccurredStatusOpt.get(), dischargeInformation.getId());
+        dischargePlanAlgoService.saveAlgoInternalError(
+            dischargeInformation, null, Lists.newArrayList(e.getResponseBodyAsString()));
+        builder.setResponseStatus(
+            Common.ResponseStatus.newBuilder()
+                .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                .setMessage(e.getMessage())
+                .setStatus(DischargePlanConstants.FAILED)
+                .build());
+      }
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(

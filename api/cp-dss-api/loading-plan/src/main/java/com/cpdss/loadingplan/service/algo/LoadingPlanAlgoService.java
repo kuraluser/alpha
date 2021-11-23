@@ -257,6 +257,7 @@ public class LoadingPlanAlgoService {
         processId = response.getProcessId();
         log.info("LoadingInformationAlgoResponse:{}", response);
       } catch (HttpStatusCodeException e) {
+        log.error("Error occured in ALGO side while calling new_loadable API");
         createAlgoErrors(
             loadingInfoOpt.get(),
             "ALGO Internal Server Error",

@@ -453,6 +453,7 @@ public class UllageUpdateLoadicatorService {
             algoResponse.getProcessId());
       }
     } catch (HttpStatusCodeException e) {
+      log.error("Error occured in ALGO side while calling loadicator_results API");
       updateLoadingPlanStatuses(
           loadingInformation,
           LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
@@ -789,6 +790,7 @@ public class UllageUpdateLoadicatorService {
             algoResponse.getProcessId());
       }
     } catch (HttpStatusCodeException e) {
+      log.error("Error occured in ALGO side while calling loadicator_results API");
       updateLoadingPlanStatuses(
           loadingInfoOpt.get(),
           LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,

@@ -1638,4 +1638,46 @@ public class DischargePlanAlgoService {
           builder.addAlgoErrors(errorBuilder.build());
         });
   }
+
+  /**
+   * @param conditionType
+   * @param heading
+   * @param loadingInformation
+   * @param errorDetails
+   */
+  public void saveAlgoErrors(
+      DischargeInformation dischargingInformation,
+      String heading,
+      Integer conditionType,
+      List<String> errors) {
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading(heading);
+    algoErrorHeading.setDischargingInformation(dischargingInformation);
+    algoErrorHeading.setConditionType(conditionType);
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    errors.forEach(
+        error -> {
+          AlgoErrors algoErrors = new AlgoErrors();
+          algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          algoErrors.setErrorMessage(error);
+          algoErrors.setIsActive(true);
+          algoErrorsRepository.save(algoErrors);
+        });
+  }
+
+  /** */
+  public void saveAlgoInternalError(
+      DischargeInformation dischargingInformation, Integer conditionType, List<String> errors) {
+    if (conditionType != null) {
+      algoErrorHeadingRepository.deleteByDischargingInformationAndConditionType(
+          dischargingInformation, conditionType);
+      algoErrorsRepository.deleteByDischargingInformationAndConditionType(
+          dischargingInformation, conditionType);
+    } else {
+      algoErrorHeadingRepository.deleteByDischargingInformation(dischargingInformation);
+      algoErrorsRepository.deleteByLoadingInformation(dischargingInformation);
+    }
+    saveAlgoErrors(dischargingInformation, "ALGO Internal Server Error", conditionType, errors);
+  }
 }

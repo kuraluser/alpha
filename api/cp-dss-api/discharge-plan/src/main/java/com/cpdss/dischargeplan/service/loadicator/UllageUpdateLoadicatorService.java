@@ -30,6 +30,7 @@ import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -45,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 /** @author pranav.k */
@@ -147,41 +149,53 @@ public class UllageUpdateLoadicatorService {
         algoRequest.setStages(null);
       }
       saveUllageEditLoadicatorRequestJson(algoRequest, dischargingInfoOpt.get().getId());
+      try {
+        // Send Payload to Algo
+        LoadicatorAlgoResponse lar =
+            restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
 
-      // Send Payload to Algo
-      LoadicatorAlgoResponse lar =
-          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+        // Save Algo Response in File
+        saveUllageEditLoadicatorResponseJson(lar, dischargingInfoOpt.get().getId());
 
-      // Save Algo Response in File
-      saveUllageEditLoadicatorResponseJson(lar, dischargingInfoOpt.get().getId());
-
-      if (lar.getLoadicatorResults().get(0).getJudgement().size() > 0) {
-        // If there is error
+        if (lar.getLoadicatorResults().get(0).getJudgement().size() > 0) {
+          // If there is error
+          this.updateDischargePlanStatus(
+              dischargingInfoOpt.get(),
+              DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
+              processId,
+              request.getUpdateUllage(0).getArrivalDepartutre());
+          this.saveLoadingPlanAlgoErrors(
+              lar.getLoadicatorResults().get(0).getJudgement(),
+              dischargingInfoOpt.get(),
+              request.getUpdateUllage(0).getArrivalDepartutre());
+        } else {
+          this.updateDischargePlanStatus(
+              dischargingInfoOpt.get(),
+              DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
+              processId,
+              request.getUpdateUllage(0).getArrivalDepartutre());
+          this.saveDischargePlanStabilityParameters(
+              dischargingInfoOpt.get(),
+              lar,
+              request.getUpdateUllage(0).getArrivalDepartutre(),
+              DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
+          saveUpdatedDischargingPlanDetails(
+              dischargingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
+          log.info(
+              "Saved updated loading plan details of loading information {}",
+              dischargingInfoOpt.get().getId());
+        }
+      } catch (HttpStatusCodeException e) {
+        log.error("Error occured in ALGO side while calling loadicator_results API");
         this.updateDischargePlanStatus(
             dischargingInfoOpt.get(),
             DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
             processId,
             request.getUpdateUllage(0).getArrivalDepartutre());
-        this.saveLoadingPlanAlgoErrors(
-            lar.getLoadicatorResults().get(0).getJudgement(),
+        dischargingPlanAlgoService.saveAlgoInternalError(
             dischargingInfoOpt.get(),
-            request.getUpdateUllage(0).getArrivalDepartutre());
-      } else {
-        this.updateDischargePlanStatus(
-            dischargingInfoOpt.get(),
-            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
-            processId,
-            request.getUpdateUllage(0).getArrivalDepartutre());
-        this.saveDischargePlanStabilityParameters(
-            dischargingInfoOpt.get(),
-            lar,
             request.getUpdateUllage(0).getArrivalDepartutre(),
-            DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
-        saveUpdatedDischargingPlanDetails(
-            dischargingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
-        log.info(
-            "Saved updated loading plan details of loading information {}",
-            dischargingInfoOpt.get().getId());
+            Lists.newArrayList(e.getResponseBodyAsString()));
       }
       return processId;
     }
@@ -303,7 +317,8 @@ public class UllageUpdateLoadicatorService {
     algoErrorsRepository.deleteByDischargingInformationAndConditionType(
         dischargeInformation, conditionType);
 
-    saveAlgoErrors(dischargeInformation, loadicatorUrl, conditionType, judgement);
+    dischargingPlanAlgoService.saveAlgoErrors(
+        dischargeInformation, loadicatorUrl, conditionType, judgement);
   }
 
   public void saveUpdatedDischargingPlanDetails(
@@ -913,39 +928,51 @@ public class UllageUpdateLoadicatorService {
 
     // Save Algo Request in File
     saveUllageEditLoadicatorRequestJson(algoRequest, dischargeInformation.getId());
+    try {
+      // Send Payload to Algo
+      LoadicatorAlgoResponse lar =
+          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
 
-    // Send Payload to Algo
-    LoadicatorAlgoResponse lar =
-        restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+      // Save Algo Response in File
+      saveUllageEditLoadicatorResponseJson(lar, dischargeInformation.getId());
 
-    // Save Algo Response in File
-    saveUllageEditLoadicatorResponseJson(lar, dischargeInformation.getId());
-
-    lar.getLoadicatorResults().get(0).getErrorDetails().removeIf(error -> error.isEmpty());
-    if (lar.getLoadicatorResults().get(0).getErrorDetails().size() > 0
-        || lar.getLoadicatorResults().get(0).getJudgement().size() > 0) {
-      // If there is error
+      lar.getLoadicatorResults().get(0).getErrorDetails().removeIf(error -> error.isEmpty());
+      if (lar.getLoadicatorResults().get(0).getErrorDetails().size() > 0
+          || lar.getLoadicatorResults().get(0).getJudgement().size() > 0) {
+        // If there is error
+        this.updateDischargePlanStatus(
+            dischargeInformation,
+            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
+            request.getProcessId(),
+            request.getConditionType());
+        this.saveLoadingPlanLoadicatorErrors(
+            lar.getLoadicatorResults().get(0).getErrorDetails(),
+            lar.getLoadicatorResults().get(0).getJudgement(),
+            dischargeInformation,
+            request.getConditionType());
+      } else {
+        this.updateDischargePlanStatus(
+            dischargeInformation,
+            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
+            request.getProcessId(),
+            request.getConditionType());
+        this.saveDischargePlanStabilityParameters(
+            dischargeInformation,
+            lar,
+            request.getConditionType(),
+            DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
+      }
+    } catch (HttpStatusCodeException e) {
+      log.error("Error occured in ALGO side while calling loadicator_results API");
       this.updateDischargePlanStatus(
           dischargeInformation,
           DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
           request.getProcessId(),
           request.getConditionType());
-      this.saveLoadingPlanLoadicatorErrors(
-          lar.getLoadicatorResults().get(0).getErrorDetails(),
-          lar.getLoadicatorResults().get(0).getJudgement(),
+      dischargingPlanAlgoService.saveAlgoInternalError(
           dischargeInformation,
-          request.getConditionType());
-    } else {
-      this.updateDischargePlanStatus(
-          dischargeInformation,
-          DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
-          request.getProcessId(),
-          request.getConditionType());
-      this.saveDischargePlanStabilityParameters(
-          dischargeInformation,
-          lar,
           request.getConditionType(),
-          DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
+          Lists.newArrayList(e.getResponseBodyAsString()));
     }
   }
 
@@ -996,35 +1023,10 @@ public class UllageUpdateLoadicatorService {
         loadingInformation, conditionType);
     algoErrorsRepository.deleteByDischargingInformationAndConditionType(
         loadingInformation, conditionType);
-    saveAlgoErrors(loadingInformation, "Loadicator Errors", conditionType, errorDetails);
-    saveAlgoErrors(loadingInformation, "ALGO Stability Errors", conditionType, judgement);
-  }
-
-  /**
-   * @param conditionType
-   * @param heading
-   * @param loadingInformation
-   * @param errorDetails
-   */
-  private void saveAlgoErrors(
-      DischargeInformation loadingInformation,
-      String heading,
-      int conditionType,
-      List<String> errors) {
-    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
-    algoErrorHeading.setErrorHeading(heading);
-    algoErrorHeading.setDischargingInformation(loadingInformation);
-    algoErrorHeading.setConditionType(conditionType);
-    algoErrorHeading.setIsActive(true);
-    algoErrorHeadingRepository.save(algoErrorHeading);
-    errors.forEach(
-        error -> {
-          AlgoErrors algoErrors = new AlgoErrors();
-          algoErrors.setAlgoErrorHeading(algoErrorHeading);
-          algoErrors.setErrorMessage(error);
-          algoErrors.setIsActive(true);
-          algoErrorsRepository.save(algoErrors);
-        });
+    dischargingPlanAlgoService.saveAlgoErrors(
+        loadingInformation, "Loadicator Errors", conditionType, errorDetails);
+    dischargingPlanAlgoService.saveAlgoErrors(
+        loadingInformation, "ALGO Stability Errors", conditionType, judgement);
   }
 
   /**

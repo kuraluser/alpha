@@ -763,6 +763,7 @@ public class LoadicatorService {
         loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
             loadingInfoOpt.get().getId(), true);
       } catch (HttpStatusCodeException e) {
+        log.error("Error occured in ALGO side while calling loadicator_results API");
         Optional<LoadingInformationStatus> errorOccurredStatusOpt =
             loadingPlanAlgoService.getLoadingInformationStatus(
                 LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
