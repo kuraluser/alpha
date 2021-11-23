@@ -65,6 +65,8 @@ export class SimulatorComponent implements OnInit {
    */
   async onLoadSimulator(selectdeUserRole: string, currentVessel: IVessel) {
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+    const simulatorInputURL = decodeURIComponent(localStorage.getItem('simulatorSiteUrl'));
+
     switch (this.requestType) {
       case SIMULATOR_REQUEST_TYPE.STOWAGE_PLAN:
         const stowageJSON: ISimulatorStowageResponse = await this.simulatorApiService.getStowagePlanJsonData(this.vesselId, this.loadableStudyId, this.caseNumber).toPromise();
@@ -76,7 +78,8 @@ export class SimulatorComponent implements OnInit {
             path: '$.departureCondition',
             userName: userDetails.rolePermissions.role,
             userRole: selectdeUserRole,
-            requestType: this.requestType
+            requestType: this.requestType,
+            url: simulatorInputURL
           };
           this.launchSimulator(data);
         }
@@ -91,7 +94,8 @@ export class SimulatorComponent implements OnInit {
             path: '$',
             userName: userDetails.rolePermissions.role,
             userRole: selectdeUserRole,
-            requestType: this.requestType
+            requestType: this.requestType,
+            url: simulatorInputURL
           };
           this.launchSimulator(data);
         }
@@ -106,7 +110,7 @@ export class SimulatorComponent implements OnInit {
    * @memberof SimulatorComponent
    */
   launchSimulator(data: ISimulatorLoadParams): void {
-    load(data.shipName, data.stowageData, data.loadicatorData, data.path, data.userName, data.userRole, data.requestType);
+    load(data.shipName, data.stowageData, data.loadicatorData, data.path, data.userName, data.userRole, data.requestType, data.url);
   }
 
 }

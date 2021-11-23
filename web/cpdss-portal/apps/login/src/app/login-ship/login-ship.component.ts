@@ -83,8 +83,9 @@ export class LoginShipComponent implements OnInit {
           const docsUrl = localStorage.getItem('docsUrl');
           const realm = localStorage.getItem('realm');
           const faviconUrl = localStorage.getItem('favicon');
+          const simulatorSiteUrl = localStorage.getItem('simulatorSiteUrl');
           const token = result.token;
-          let redirectUri = window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + realm + '&logoUrl=' + logoUrl + '&token=' + token + '&faviconUrl=' + faviconUrl + '&docsUrl=' + docsUrl;
+          let redirectUri = window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + realm + '&logoUrl=' + logoUrl + '&token=' + token + '&faviconUrl=' + faviconUrl + '&simulatorUrl=' + encodeURIComponent(simulatorSiteUrl) + '&docsUrl=' + docsUrl;
           if (typeof result.expiryReminder?.daysRemain !== 'undefined') {
             redirectUri += '&daysRemain=' + result.expiryReminder?.daysRemain
           }

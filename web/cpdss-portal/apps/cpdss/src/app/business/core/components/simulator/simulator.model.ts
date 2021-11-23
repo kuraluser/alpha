@@ -26,6 +26,7 @@ export interface ISimulatorLoadParams {
     userName: string;
     userRole: string;
     requestType: string;
+    url: string;
 }
 
 /**

@@ -13,14 +13,14 @@ import { OwlOptions } from 'ngx-owl-carousel-o';
 })
 export class LoginShoreComponent implements OnInit {
   customOptions: OwlOptions = {
-    loop:true,
-    margin:0,
-    items:1,
-    nav:false,
+    loop: true,
+    margin: 0,
+    items: 1,
+    nav: false,
     dots: false,
-    autoplay:true,
-    autoplayTimeout:5000,
-    autoplayHoverPause:false,
+    autoplay: true,
+    autoplayTimeout: 5000,
+    autoplayHoverPause: false,
     animateOut: 'fadeOut',
     animateIn: 'fadeIn',
     responsive: {
@@ -60,8 +60,9 @@ export class LoginShoreComponent implements OnInit {
     const logoUrl = localStorage.getItem('logo');
     const faviconUrl = localStorage.getItem('favicon');
     const docsUrl = localStorage.getItem('docsUrl');
+    const simulatorSiteUrl = localStorage.getItem('simulatorSiteUrl');
     this.kcService.login({
-      redirectUri: window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + this.realm + '&logoUrl=' + logoUrl + '&faviconUrl=' + faviconUrl + '&docsUrl=' + docsUrl,
+      redirectUri: window.location.protocol + '//' + window.location.hostname + this.settings.path + '?realm=' + this.realm + '&logoUrl=' + logoUrl + '&faviconUrl=' + faviconUrl + '&simulatorUrl=' + encodeURIComponent(simulatorSiteUrl) + '&docsUrl=' + docsUrl,
       idpHint: idp
     });
   }
