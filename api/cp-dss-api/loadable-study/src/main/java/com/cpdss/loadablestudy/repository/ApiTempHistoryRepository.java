@@ -29,6 +29,6 @@ public interface ApiTempHistoryRepository
 
   public List<ApiTempHistory> findByOrderByCreatedDateTimeDesc();
 
-  public List<ApiTempHistory> findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(
+  public List<ApiTempHistory> findByLoadingPortIdAndCargoIdOrderByLoadedDateDesc(
       Long loadingPortId, Long cargoId);
 }
