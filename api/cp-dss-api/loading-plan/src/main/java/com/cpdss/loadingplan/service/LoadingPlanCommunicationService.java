@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
@@ -35,6 +36,7 @@ import org.springframework.web.client.ResourceAccessException;
 @Log4j2
 @Service
 @Transactional
+@Scope(value = "prototype")
 public class LoadingPlanCommunicationService {
 
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
