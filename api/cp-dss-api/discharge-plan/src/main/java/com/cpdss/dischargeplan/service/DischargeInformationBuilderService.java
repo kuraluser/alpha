@@ -285,7 +285,8 @@ public class DischargeInformationBuilderService {
               var1.getSounding(),
               var1.getConditionType(),
               var1.getValueType(),
-              var1.getColorCode()));
+              var1.getColorCode(),
+              null));
     }
     return response;
   }
@@ -308,7 +309,8 @@ public class DischargeInformationBuilderService {
               null,
               var1.getConditionType(),
               var1.getValueType(),
-              var1.getColorCode()));
+              var1.getColorCode(),
+              var1.getCargoXId()));
     }
     return response;
   }
@@ -331,7 +333,8 @@ public class DischargeInformationBuilderService {
               null,
               var1.getConditionType(),
               var1.getValueType(),
-              var1.getColorCode()));
+              var1.getColorCode(),
+              null));
     }
     return response;
   }
@@ -406,7 +409,8 @@ public class DischargeInformationBuilderService {
       BigDecimal sounding,
       Integer conditionType,
       Integer valueType,
-      String colorCode)
+      String colorCode,
+      Long cargoId)
       throws GenericServiceException {
 
     try {
@@ -424,6 +428,7 @@ public class DischargeInformationBuilderService {
               .setConditionType(conditionType != null ? conditionType : 0)
               .setValueType(valueType != null ? valueType : 0)
               .setColorCode(colorCode != null ? colorCode : "")
+              .setCargoId(cargoId != null ? cargoId :0L)
               .build();
       return builder;
     } catch (Exception e) {
