@@ -3,6 +3,7 @@ package com.cpdss.loadingplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo;
@@ -461,7 +462,7 @@ public class UllageUpdateLoadicatorService {
           conditionType);
       loadingPlanAlgoService.createAlgoErrors(
           loadingInformation,
-          "ALGO Internal Server Error",
+          AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
           conditionType,
           Lists.newArrayList(e.getResponseBodyAsString()));
     }
@@ -798,7 +799,7 @@ public class UllageUpdateLoadicatorService {
           request.getConditionType());
       loadingPlanAlgoService.createAlgoErrors(
           loadingInfoOpt.get(),
-          "ALGO Internal Server Error",
+          AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
           request.getConditionType(),
           Lists.newArrayList(e.getResponseBodyAsString()));
     }
@@ -832,16 +833,25 @@ public class UllageUpdateLoadicatorService {
     algoErrorsRepository.deleteByLoadingInformationAndConditionType(
         loadingInformation, conditionType);
     loadingPlanAlgoService.saveAlgoErrorEntity(
-        loadingInformation, "Loadicator Errors", conditionType, errorDetails);
+        loadingInformation,
+        AlgoErrorHeaderConstants.LOADICATOR_ERRORS,
+        conditionType,
+        errorDetails);
     loadingPlanAlgoService.saveAlgoErrorEntity(
-        loadingInformation, "ALGO Stability Errors", conditionType, judgement);
+        loadingInformation,
+        AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
+        conditionType,
+        judgement);
   }
 
   private void saveLoadingPlanAlgoErrors(
       List<String> judgement, LoadingInformation loadingInformation, int conditionType) {
 
     loadingPlanAlgoService.createAlgoErrors(
-        loadingInformation, "ALGO Stability Errors", conditionType, judgement);
+        loadingInformation,
+        AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
+        conditionType,
+        judgement);
   }
 
   /**

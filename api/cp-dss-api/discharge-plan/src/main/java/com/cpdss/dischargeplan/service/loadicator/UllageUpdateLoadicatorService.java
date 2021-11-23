@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
@@ -318,7 +319,10 @@ public class UllageUpdateLoadicatorService {
         dischargeInformation, conditionType);
 
     dischargingPlanAlgoService.saveAlgoErrors(
-        dischargeInformation, loadicatorUrl, conditionType, judgement);
+        dischargeInformation,
+        AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
+        conditionType,
+        judgement);
   }
 
   public void saveUpdatedDischargingPlanDetails(
@@ -1024,9 +1028,15 @@ public class UllageUpdateLoadicatorService {
     algoErrorsRepository.deleteByDischargingInformationAndConditionType(
         loadingInformation, conditionType);
     dischargingPlanAlgoService.saveAlgoErrors(
-        loadingInformation, "Loadicator Errors", conditionType, errorDetails);
+        loadingInformation,
+        AlgoErrorHeaderConstants.LOADICATOR_ERRORS,
+        conditionType,
+        errorDetails);
     dischargingPlanAlgoService.saveAlgoErrors(
-        loadingInformation, "ALGO Stability Errors", conditionType, judgement);
+        loadingInformation,
+        AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
+        conditionType,
+        judgement);
   }
 
   /**

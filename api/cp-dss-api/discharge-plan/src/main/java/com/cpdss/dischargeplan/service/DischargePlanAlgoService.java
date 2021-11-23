@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.service;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
@@ -1678,6 +1679,10 @@ public class DischargePlanAlgoService {
       algoErrorHeadingRepository.deleteByDischargingInformation(dischargingInformation);
       algoErrorsRepository.deleteByLoadingInformation(dischargingInformation);
     }
-    saveAlgoErrors(dischargingInformation, "ALGO Internal Server Error", conditionType, errors);
+    saveAlgoErrors(
+        dischargingInformation,
+        AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
+        conditionType,
+        errors);
   }
 }

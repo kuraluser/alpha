@@ -3,6 +3,7 @@ package com.cpdss.loadingplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
@@ -773,7 +774,7 @@ public class LoadicatorService {
             loadingInfoOpt.get(), request.getProcessId(), errorOccurredStatusOpt.get());
         loadingPlanAlgoService.createAlgoErrors(
             loadingInfoOpt.get(),
-            "ALGO Internal Server Error",
+            AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
             null,
             Lists.newArrayList(e.getResponseBodyAsString()));
       }

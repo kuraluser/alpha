@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.algo;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -260,7 +261,7 @@ public class LoadingPlanAlgoService {
         log.error("Error occured in ALGO side while calling new_loadable API");
         createAlgoErrors(
             loadingInfoOpt.get(),
-            "ALGO Internal Server Error",
+            AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
             null,
             Lists.newArrayList(e.getResponseBodyAsString()));
         Optional<LoadingInformationStatus> errorOccurredStatusOpt =
