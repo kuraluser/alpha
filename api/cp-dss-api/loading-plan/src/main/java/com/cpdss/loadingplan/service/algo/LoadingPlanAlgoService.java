@@ -1085,6 +1085,22 @@ public class LoadingPlanAlgoService {
       algoErrorHeadingRepository.deleteByLoadingInformation(loadingInformation);
       algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
     }
+    saveAlgoErrorEntity(loadingInformation, heading, conditionType, errors);
+  }
+
+  /**
+   * Persists ALGO errors
+   *
+   * @param errors
+   * @param conditionType
+   * @param heading
+   * @param loadingInformation
+   */
+  public void saveAlgoErrorEntity(
+      LoadingInformation loadingInformation,
+      String heading,
+      Integer conditionType,
+      List<String> errors) {
     AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
     algoErrorHeading.setErrorHeading(heading);
     algoErrorHeading.setLoadingInformation(loadingInformation);

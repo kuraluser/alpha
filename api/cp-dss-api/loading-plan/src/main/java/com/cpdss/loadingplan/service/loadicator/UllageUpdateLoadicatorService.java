@@ -825,18 +825,21 @@ public class UllageUpdateLoadicatorService {
       List<String> judgement,
       LoadingInformation loadingInformation,
       int conditionType) {
-
-    loadingPlanAlgoService.createAlgoErrors(
-        loadingInformation, "Loadicator Error", conditionType, errorDetails);
-    loadingPlanAlgoService.createAlgoErrors(
-        loadingInformation, "ALGO Stability Error", conditionType, judgement);
+    algoErrorHeadingRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+    algoErrorsRepository.deleteByLoadingInformationAndConditionType(
+        loadingInformation, conditionType);
+    loadingPlanAlgoService.saveAlgoErrorEntity(
+        loadingInformation, "Loadicator Errors", conditionType, errorDetails);
+    loadingPlanAlgoService.saveAlgoErrorEntity(
+        loadingInformation, "ALGO Stability Errors", conditionType, judgement);
   }
 
   private void saveLoadingPlanAlgoErrors(
       List<String> judgement, LoadingInformation loadingInformation, int conditionType) {
 
     loadingPlanAlgoService.createAlgoErrors(
-        loadingInformation, "ALGO Stability Error", conditionType, judgement);
+        loadingInformation, "ALGO Stability Errors", conditionType, judgement);
   }
 
   /**
