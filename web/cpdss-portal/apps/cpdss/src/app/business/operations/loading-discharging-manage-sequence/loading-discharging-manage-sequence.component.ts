@@ -173,6 +173,17 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
   }
 
   /**
+  * Method call when manage sequence is saved
+  *
+  * @memberof LoadingDischargingManageSequenceComponent
+  */
+  manageSequenceSaved() {
+    this.loadingDischargingDelays.map((loadingDischarging) => {
+      loadingDischarging.isAdd = false;
+    })
+  }
+
+  /**
   * Method for Unit conversion
   *
   * @memberof LoadingDischargingManageSequenceComponent
@@ -304,7 +315,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const index = event.index;
     const form = this.row(index);
 
-    const quantity = this.quantityPipe.transform(event.data.cargo.value.loadableMT, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, event.data.cargo.value?.estimatedAPI, event.data.cargo.value?.estimatedTemp);
+    const quantity = this.quantityPipe.transform(event.data.cargo.value?.loadableMT ?? 0, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, event.data.cargo.value?.estimatedAPI, event.data.cargo.value?.estimatedTemp);
     if (event.field === 'cargo') {
       this.loadingDischargingDelays[index].quantityMT = event.data.cargo.value.loadableMT;
       this.loadingDischargingDelays[index]['quantity'].value =  Number(quantity);
@@ -375,6 +386,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const recursiveFunc = (form: FormGroup | FormArray) => {
       Object.keys(form.controls).forEach(field => {
         const control = form.get(field);
+        control.updateValueAndValidity();
         if (control.invalid) invalidControls.push(field);
         if (control instanceof FormGroup) {
           recursiveFunc(control);

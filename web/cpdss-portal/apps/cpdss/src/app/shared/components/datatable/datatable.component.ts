@@ -827,10 +827,18 @@ export class DatatableComponent implements OnInit {
       if (hasError) {
         return;
       } else {
-        formControl.setErrors(null);
+        const errors = formControl.errors;
+        if(errors) {
+          if(errors?.hasOwnProperty('invalid')) {delete errors.invalid};
+          formControl.setErrors(Object.keys(errors)?.length ? errors : null);
+        }
       }
     } else {
-      formControl.setErrors(null);
+      const errors = formControl.errors;
+      if(errors) {
+        if(errors?.hasOwnProperty('invalid')) {delete errors.invalid};
+        formControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
     }
     if (formControl?.value && formControl?.value[0] && formControl?.value[1]) {
       if (formControl?.value[0]?.toDateString() === formControl?.value[1]?.toDateString()) {
@@ -889,10 +897,18 @@ export class DatatableComponent implements OnInit {
         return;
       }
     } else {
-      formControl.setErrors(null);
+      const errors = formControl.errors;
+      if(errors) {
+        if(errors?.hasOwnProperty('invalid')) {delete errors.invalid};
+        formControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
     }
     if(!hasError){
-      formControl.setErrors(null);
+      const errors = formControl.errors;
+      if(errors) {
+        if(errors?.hasOwnProperty('invalid')) {delete errors.invalid};
+        formControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
     }
     const oldValue = rowData[formControlName].value;
     const newValue = formControl.value ? this.convertDT_PortBasedTimeZone(formControl.value, rowData.port.value?.timezoneOffsetVal, rowData.port.value?.timezoneAbbreviation) : null;

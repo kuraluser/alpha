@@ -93,7 +93,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       { value: 100, name: '100%' },
     ]
   };
-  disableSaveButton: boolean = false;
+  disableSaveButton = false;
 
   private _portRotationId: number;
   private _cargos: ICargo[];
@@ -407,6 +407,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
         const result: IDischargingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveDischargingInformation(this.vesselId, this.voyageId, this.dischargingInformationPostData).toPromise();
         if (result?.responseStatus?.status === '200') {
           this.hasUnSavedData = false;
+          this.manageSequenceComponent.manageSequenceSaved();
           this.messageService.add({ severity: 'success', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_SUCCESS'], detail: translationKeys['DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY'] });
         }
         this.ngxSpinnerService.hide();
