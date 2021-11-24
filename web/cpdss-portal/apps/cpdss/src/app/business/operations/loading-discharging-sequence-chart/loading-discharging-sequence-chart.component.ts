@@ -181,7 +181,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
     }
     if (frameNoData) {
       const frameNo = frameNoData?.data[index][1];
-      text = frameNo + ' / ' + text + '%';
+      text = frameNo + ' /<br/> ' + text + '%';
     }
 
     return text
@@ -1993,7 +1993,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
 
     const tableTop = 0,
       tableLeft = 0,
-      rowHeight = 40,
+      rowHeight = 45,
       cellPadding = 2.5,
       tablePadding = 20;
 
