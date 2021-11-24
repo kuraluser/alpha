@@ -103,6 +103,7 @@ public class LoadingPlanCommunicationService {
   @Autowired private StageDurationRepository stageDurationRepository;
   @Autowired private LoadingInformationStatusRepository loadingInfoStatusRepository;
   @Autowired private PyUserRepository pyUserRepository;
+  @Autowired private LoadingInformationAlgoStatusRepository loadingInformationAlgoStatusRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -780,6 +781,12 @@ public class LoadingPlanCommunicationService {
           }
           loadingInformation.setVersion(version);
           loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
+          try {
+            loadingInformationAlgoStatusRepository.updateLoadingInformationAlgoStatus(
+                5L, loadingInfo.getId());
+          } catch (Exception e) {
+            log.error("Error when updating LoadingInformationAlgoStatus:{}", e);
+          }
           log.info("LoadingInformation saved with id:" + loadingInfo.getId());
         } catch (ResourceAccessException e) {
           log.info("ResourceAccessException for LOADING_INFORMATION" + e.getMessage());
