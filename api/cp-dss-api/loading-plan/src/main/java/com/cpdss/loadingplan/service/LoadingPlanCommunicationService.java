@@ -104,6 +104,9 @@ public class LoadingPlanCommunicationService {
   @Autowired private LoadingInformationStatusRepository loadingInfoStatusRepository;
   @Autowired private PyUserRepository pyUserRepository;
   @Autowired private LoadingInformationAlgoStatusRepository loadingInformationAlgoStatusRepository;
+  @Autowired private BallastOperationRepository ballastOperationRepository;
+  @Autowired private EductionOperationRepository eductionOperationRepository;
+  @Autowired private CargoLoadingRateRepository cargoLoadingRateRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -289,6 +292,9 @@ public class LoadingPlanCommunicationService {
       List<LoadingPlanStowageDetails> loadingPlanStowageDetailsList = null;
       List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParametersList = null;
       List<LoadingPlanStabilityParameters> loadingPlanStabilityParametersList = null;
+      List<BallastOperation> ballastOperationList = null;
+      List<EductionOperation> eductionOperationList = null;
+      List<CargoLoadingRate> cargoLoadingRateList = null;
       // Ullage update tables
       List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList = null;
       List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
@@ -729,6 +735,48 @@ public class LoadingPlanCommunicationService {
               idMap.put(
                   LoadingPlanTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable(),
                   dataTransferStage.getId());
+              break;
+            }
+          case ballast_operation:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new BallastOperation());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_sequences_xid");
+              listType = new TypeToken<ArrayList<BallastOperation>>() {}.getType();
+              ballastOperationList = new Gson().fromJson(jsonArray, listType);
+              idMap.put(LoadingPlanTables.BALLAST_OPERATION.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case eduction_operation:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new EductionOperation());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_sequences_xid");
+              listType = new TypeToken<ArrayList<EductionOperation>>() {}.getType();
+              eductionOperationList = new Gson().fromJson(jsonArray, listType);
+              idMap.put(LoadingPlanTables.EDUCTION_OPERATION.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case cargo_loading_rate:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new CargoLoadingRate());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_sequences_xid");
+              listType = new TypeToken<ArrayList<CargoLoadingRate>>() {}.getType();
+              cargoLoadingRateList = new Gson().fromJson(jsonArray, listType);
+              idMap.put(LoadingPlanTables.CARGO_LOADING_RATE.getTable(), dataTransferStage.getId());
               break;
             }
         }
@@ -1569,6 +1617,114 @@ public class LoadingPlanCommunicationService {
               processId,
               StagingStatus.FAILED.getStatus(),
               reply.getResponseStatus().getMessage());
+        }
+      }
+      if (ballastOperationList != null && !ballastOperationList.isEmpty()) {
+        try {
+          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
+            for (LoadingSequence loadingSequence : loadingSequencesList) {
+              for (BallastOperation ballastOperation : ballastOperationList) {
+                Long version = null;
+                if (loadingSequence
+                    .getId()
+                    .equals(Long.valueOf(ballastOperation.getCommunicationRelatedEntityId()))) {
+                  Optional<BallastOperation> ballastOperationObj =
+                      ballastOperationRepository.findById(ballastOperation.getId());
+                  if (ballastOperationObj.isPresent()) {
+                    version = ballastOperationObj.get().getVersion();
+                  }
+                  ballastOperation.setVersion(version);
+                  ballastOperation.setLoadingSequence(loadingSequence);
+                }
+              }
+            }
+            ballastOperationRepository.saveAll(ballastOperationList);
+            log.info("Saved BallastOperation: " + ballastOperationList);
+          }
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.BALLAST_OPERATION.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.BALLAST_OPERATION.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
+        }
+      }
+      if (eductionOperationList != null && !eductionOperationList.isEmpty()) {
+        try {
+          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
+            for (LoadingSequence loadingSequence : loadingSequencesList) {
+              for (EductionOperation eductionOperation : eductionOperationList) {
+                Long version = null;
+                if (loadingSequence
+                    .getId()
+                    .equals(Long.valueOf(eductionOperation.getCommunicationRelatedEntityId()))) {
+                  Optional<EductionOperation> eductionOperationObj =
+                      eductionOperationRepository.findById(eductionOperation.getId());
+                  if (eductionOperationObj.isPresent()) {
+                    version = eductionOperationObj.get().getVersion();
+                  }
+                  eductionOperation.setVersion(version);
+                  eductionOperation.setLoadingSequence(loadingSequence);
+                }
+              }
+            }
+            eductionOperationRepository.saveAll(eductionOperationList);
+            log.info("Saved EductionOperation: " + eductionOperationList);
+          }
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.EDUCTION_OPERATION.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.EDUCTION_OPERATION.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
+        }
+      }
+      if (cargoLoadingRateList != null && !cargoLoadingRateList.isEmpty()) {
+        try {
+          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
+            for (LoadingSequence loadingSequence : loadingSequencesList) {
+              for (CargoLoadingRate cargoLoadingRate : cargoLoadingRateList) {
+                Long version = null;
+                if (loadingSequence
+                    .getId()
+                    .equals(Long.valueOf(cargoLoadingRate.getCommunicationRelatedEntityId()))) {
+                  Optional<CargoLoadingRate> cargoLoadingRateObj =
+                      cargoLoadingRateRepository.findById(cargoLoadingRate.getId());
+                  if (cargoLoadingRateObj.isPresent()) {
+                    version = cargoLoadingRateObj.get().getVersion();
+                  }
+                  cargoLoadingRate.setVersion(version);
+                  cargoLoadingRate.setLoadingSequence(loadingSequence);
+                }
+              }
+            }
+            cargoLoadingRateRepository.saveAll(cargoLoadingRateList);
+            log.info("Saved CargoLoadingRate: " + cargoLoadingRateList);
+          }
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.CARGO_LOADING_RATE.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.CARGO_LOADING_RATE.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
         }
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(

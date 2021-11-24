@@ -31,5 +31,8 @@ public enum ProcessIdentifiers {
   pyuser,
   voyage,
   loadable_pattern,
-  loadicator_data_for_synoptical_table;
+  loadicator_data_for_synoptical_table,
+  ballast_operation,
+  eduction_operation,
+  cargo_loading_rate;
 }

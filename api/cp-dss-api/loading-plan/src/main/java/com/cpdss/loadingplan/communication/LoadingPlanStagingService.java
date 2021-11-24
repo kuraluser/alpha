@@ -547,6 +547,66 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case ballast_operation:
+          {
+            if (loadingSequenceIds != null && !loadingSequenceIds.isEmpty()) {
+              String ballastOperationJson =
+                  loadingPlanStagingRepository.getBallastOperationWithLoadingSeqIds(
+                      loadingSequenceIds);
+              if (ballastOperationJson != null) {
+                JsonArray ballastOperation =
+                    JsonParser.parseString(ballastOperationJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    ballastOperation);
+              }
+            }
+          }
+        case eduction_operation:
+          {
+            if (loadingSequenceIds != null && !loadingSequenceIds.isEmpty()) {
+              String eductionOperationJson =
+                  loadingPlanStagingRepository.getEductionOperationWithLoadingSeqIds(
+                      loadingSequenceIds);
+              if (eductionOperationJson != null) {
+                JsonArray eductionOperation =
+                    JsonParser.parseString(eductionOperationJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    eductionOperation);
+              }
+            }
+          }
+        case cargo_loading_rate:
+          {
+            if (loadingSequenceIds != null && !loadingSequenceIds.isEmpty()) {
+              String cargoLoadingRateJson =
+                  loadingPlanStagingRepository.getCargoLoadingRateWithLoadingSeqIds(
+                      loadingSequenceIds);
+              if (cargoLoadingRateJson != null) {
+                JsonArray cargoLoadingRate =
+                    JsonParser.parseString(cargoLoadingRateJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    cargoLoadingRate);
+              }
+            }
+          }
       }
     }
     return array;
