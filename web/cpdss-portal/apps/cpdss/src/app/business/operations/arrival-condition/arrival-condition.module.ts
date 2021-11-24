@@ -8,6 +8,7 @@ import { LoadingDischargingCargoDetailsTableModule } from './../loading-discharg
 import { ArrivalConditionTransformationService } from './arrival-condition-transformation.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
+import { LoadingDischargingCommingleDetailsModule } from './../loading-discharging-commingle-details/loading-discharging-commingle-details.module';
 
 /**
  * Module for arrival condition block
@@ -24,7 +25,8 @@ import { TooltipModule } from 'primeng/tooltip';
     LoadingDischargingCargoDetailsTableModule,
     BallastLayoutModule,
     TranslateModule,
-    TooltipModule
+    TooltipModule,
+    LoadingDischargingCommingleDetailsModule
   ],
   exports: [ArrivalConditionComponent],
   providers: [ArrivalConditionTransformationService]

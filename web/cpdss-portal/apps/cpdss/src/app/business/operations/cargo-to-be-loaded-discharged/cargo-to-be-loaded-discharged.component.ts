@@ -67,7 +67,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   @Output() updateCargoToBeLoaded = new EventEmitter<ILoadedCargo[]>();
 
   get cargoTobeLoadedDischargedForm() {
-    return <FormGroup> this.form?.get('cargoTobeLoadedDischarged');
+    return <FormGroup>this.form?.get('cargoTobeLoadedDischarged');
   }
 
   set cargoTobeLoadedDischargedForm(form: FormGroup) {
@@ -130,10 +130,10 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         cargo.differencePercentage = cargo.differencePercentage ? (cargo.differencePercentage.includes('%') ? cargo.differencePercentage : cargo.differencePercentage + '%') : '';
         cargo.grade = this.findCargo(cargo);
 
-        const convertedOrderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        const convertedOrderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.convertedOrderedQuantity = convertedOrderedQuantity.toString();
 
-        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.shipFigure = shipFigure?.toString();
 
         const convertedSlopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
@@ -243,7 +243,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
    * @memberof CargoToBeLoadedDischargedComponent
    */
   onEditComplete(event: IDataTableEvent) {
-    if(this.operation === OPERATIONS.DISCHARGING) {
+    if (this.operation === OPERATIONS.DISCHARGING) {
       this.cargoTobeLoadedDischarged[event?.index][event?.field].value = event?.data[event?.field]?.value;
       if (event?.field === 'slopQuantity') {
         this.cargoTobeLoadedDischarged[event?.index].slopQuantityMT = this.quantityPipe.transform(event?.data[event?.field]?.value, this.currentQuantitySelectedUnit, QUANTITY_UNIT.MT, event?.data?.estimatedAPI, event?.data?.estimatedTemp, -1).toString();

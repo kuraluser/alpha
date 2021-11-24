@@ -1418,4 +1418,53 @@ export class LoadingDischargingTransformationService {
   convertMinutesToHHMM(minutes: number): string {
     return `0${Math.floor(minutes / 60)}`.slice(-2) + ':' + ('0' + minutes % 60).slice(-2)
   }
+
+  /**
+* Method for setting commingle details grid columns
+*
+* @returns {IDataTableColumn[]}
+* @memberof LoadingDischargingTransformationService
+*/
+getCommingleDetailsDatatableColumns(): IDataTableColumn[] {
+  return [
+    {
+      field: 'abbreviation',
+      header: 'LOADABLE_PATTERN_GRADE'
+    },
+    {
+      field: 'tankName',
+      header: 'LOADABLE_PATTERN_TANK'
+    },
+    {
+      field: 'quantity',
+      header: 'LOADABLE_PATTERN_TOTAL_QUANTITY'
+    },
+    {
+      field: 'api',
+      header: 'LOADABLE_PATTERN_API'
+    },
+    {
+      field: 'temperature',
+      header: 'LOADABLE_PATTERN_TEMP'
+    },
+    {
+      field: '',
+      header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
+      fieldColumnClass: 'commingle-composition colspan-header',
+      columns: [
+        {
+          field: 'cargoPercentage',
+          header: 'LOADABLE_PATTERN_PERCENTAGE',
+          fieldClass: 'commingle-composition-percentage'
+        },
+        {
+          field: 'cargoQuantity',
+          header: 'LOADABLE_PATTERN_QUANTITY',
+          fieldClass: 'commingle-composition-quantity'
+        }
+      ]
+    }
+
+  ]
+}
 }

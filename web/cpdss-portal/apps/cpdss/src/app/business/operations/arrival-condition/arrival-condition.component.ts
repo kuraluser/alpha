@@ -8,6 +8,8 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
+import { DecimalPipe } from '@angular/common';
 
 /**
  * Component class for arrival condition block
@@ -71,6 +73,8 @@ export class ArrivalConditionComponent implements OnInit, OnDestroy {
   }
   cargoConditions: ICargoConditions[];
   cargoQuantities: ICargoQuantities[];
+  commingleDetails: any[];
+  showComminglePopup = false;
 
   ballastTankQuantity: any = [];
   rearBallastTanks: IShipBallastTank[][];
@@ -91,7 +95,9 @@ export class ArrivalConditionComponent implements OnInit, OnDestroy {
 
   constructor(
     private arrivalConditionTransformationService: ArrivalConditionTransformationService,
-    private loadingDischargingTransformationService: LoadingDischargingTransformationService
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService,
+    private quantityPipe: QuantityPipe,
+    private _decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit(): void {
@@ -360,6 +366,31 @@ export class ArrivalConditionComponent implements OnInit, OnDestroy {
    */
   showError() {
     this.loadingDischargingTransformationService.showUllageError({ value: true, status: 1 });
+  }
+
+  /**
+   * Handler for show commingle pop up
+   * @param {Event} data
+   * @memberof ArrivalConditionComponent
+   */
+   showCommingle(data) {
+    const commingleDetails = this.loadingDischargingPlanData?.planCommingleDetails?.find(com => com.abbreviation === data.abbreviation);
+    let tankData;
+    this.loadingDischargingPlanData?.cargoTanks.map(row => {
+      row.map(tank => {
+        if (tank.id === data.tankId) {
+          tankData = tank;
+        }
+      })
+    });
+    commingleDetails.tankName = tankData ? tankData.name : '';
+    const cargoNomination1 = this.loadingDischargingPlanData?.currentPortCargos?.find(item => item.cargoNominationId === commingleDetails.cargoNomination1Id);
+    const cargoNomination2 = this.loadingDischargingPlanData?.currentPortCargos?.find(item => item.cargoNominationId === commingleDetails.cargoNomination2Id);
+    commingleDetails.cargoQuantity = this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantity1MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2') + '\n' + this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantity2MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2');
+    commingleDetails.cargoPercentage = cargoNomination1.cargoAbbreviation + '-' + ((commingleDetails.quantity1MT / commingleDetails.quantityMT) * 100).toFixed(2) + '%\n' + cargoNomination2.cargoAbbreviation + '-' + ((commingleDetails.quantity2MT / commingleDetails.quantityMT) * 100).toFixed(2) + '%';
+    commingleDetails.quantity = this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantityMT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2');
+    this.commingleDetails = [commingleDetails];
+    this.showComminglePopup = true;
   }
 
 }

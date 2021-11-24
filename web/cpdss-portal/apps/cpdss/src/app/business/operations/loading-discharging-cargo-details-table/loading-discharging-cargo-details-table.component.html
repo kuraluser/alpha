@@ -8,7 +8,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns">
 
-        <tr>
+        <tr (click)="rowClick(rowData)">
             <td *ngFor="let col of columns">
                 <ng-container *ngIf="col.field !== 'difference'">
                     <ng-container *ngIf="col.field === 'abbreviation' " class="col no-left-padding"
