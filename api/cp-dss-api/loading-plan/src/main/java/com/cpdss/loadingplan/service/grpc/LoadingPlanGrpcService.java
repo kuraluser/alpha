@@ -416,13 +416,28 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           blList.stream()
               .collect(
                   Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
-
       if (stowageDetails == null
           || stowageDetails.isEmpty()
           || !portWiseBL.keySet().containsAll(portIds)) {
         builder.setStatus(LoadingPlanConstants.FAILED);
         return;
       }
+      Map<Long, List<PortLoadingPlanStowageDetails>> cargoWiseStowage =
+          stowageDetails.stream()
+              .filter(v -> v.getCargoNominationXId() != 0)
+              .collect(Collectors.groupingBy(PortLoadingPlanStowageDetails::getCargoNominationXId));
+      cargoWiseStowage.forEach(
+          (key, values) -> {
+            if (values.stream()
+                .noneMatch(
+                    v ->
+                        v.getQuantity() != null
+                            || v.getQuantity().compareTo(BigDecimal.ZERO) > 0)) {
+              builder.setStatus(LoadingPlanConstants.FAILED);
+              return;
+            }
+          });
+
       portWiseCargosList.stream()
           .forEach(
               port -> {
@@ -444,11 +459,6 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   // Bug fix DSS 4458
                   if (!dbCargos.containsAll(port.getCargoIdsList())
                       || !dbBLCargos.containsAll(port.getCargoIdsList())
-                      || (stowageDetails.stream()
-                          .anyMatch(
-                              st ->
-                                  st.getQuantity() == null
-                                      || st.getQuantity().compareTo(BigDecimal.ZERO) <= 0))
                       || (bLValues.stream()
                           .anyMatch(
                               bl ->
