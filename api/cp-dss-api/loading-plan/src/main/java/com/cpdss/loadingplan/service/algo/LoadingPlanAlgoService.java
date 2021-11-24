@@ -211,7 +211,8 @@ public class LoadingPlanAlgoService {
                   "loading_berth_details",
                   "loading_delay",
                   "loading_machinary_in_use",
-                  "voyage"),
+                  "voyage",
+                  "loadable_pattern"),
               processId,
               MessageTypes.LOADINGPLAN.getMessageType(),
               loadingInfoOpt.get().getId(),
@@ -437,7 +438,31 @@ public class LoadingPlanAlgoService {
 
       deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
-      if (enableCommunication && !env.equals("ship")) {
+      if (request.getHasLoadicator()) {
+        log.info("Passing Loading Sequence to Loadicator");
+        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+        Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
+            getLoadingInformationStatus(
+                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
+        updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
+      } else {
+        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
+        loadingInformationRepository.updateLoadingInformationStatuses(
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoOpt.get().getId());
+        updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
+        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
+      }
+      log.info("Communication side started");
+      if (enableCommunication && !env.equals("ship") && !request.getHasLoadicator()) {
         JsonArray jsonArray =
             loadingPlanStagingService.getCommunicationData(
                 Arrays.asList(
@@ -480,29 +505,6 @@ public class LoadingPlanAlgoService {
         LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
             this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
         log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
-      }
-      if (request.getHasLoadicator()) {
-        log.info("Passing Loading Sequence to Loadicator");
-        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
-        Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
-            getLoadingInformationStatus(
-                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
-        updateLoadingInfoAlgoStatus(
-            loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
-      } else {
-        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
-        loadingInformationRepository.updateLoadingInformationStatuses(
-            loadingInfoStatusOpt.get(),
-            loadingInfoStatusOpt.get(),
-            loadingInfoStatusOpt.get(),
-            loadingInfoOpt.get().getId());
-        updateLoadingInfoAlgoStatus(
-            loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
-        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
       }
     }
   }
