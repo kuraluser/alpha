@@ -460,11 +460,8 @@ public class UllageUpdateLoadicatorService {
           LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
           processId,
           conditionType);
-      loadingPlanAlgoService.createAlgoErrors(
-          loadingInformation,
-          AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
-          conditionType,
-          Lists.newArrayList(e.getResponseBodyAsString()));
+      loadingPlanAlgoService.saveAlgoInternalError(
+          loadingInformation, conditionType, Lists.newArrayList(e.getResponseBodyAsString()));
     }
   }
 
@@ -797,9 +794,8 @@ public class UllageUpdateLoadicatorService {
           LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
           request.getProcessId(),
           request.getConditionType());
-      loadingPlanAlgoService.createAlgoErrors(
+      loadingPlanAlgoService.saveAlgoInternalError(
           loadingInfoOpt.get(),
-          AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
           request.getConditionType(),
           Lists.newArrayList(e.getResponseBodyAsString()));
     }

@@ -44,6 +44,7 @@ public class LoadablePlanServiceTest {
   @MockBean private SynopticService synopticService;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
   @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
+  @MockBean private AlgoService algoService;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;

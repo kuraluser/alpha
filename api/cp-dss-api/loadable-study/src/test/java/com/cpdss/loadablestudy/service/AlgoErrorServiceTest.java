@@ -10,6 +10,9 @@ import com.cpdss.common.scheduler.ScheduledTaskRequest;
 import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import io.grpc.internal.testing.StreamRecorder;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +32,9 @@ public class AlgoErrorServiceTest {
   @MockBean AlgoErrorsRepository algoErrorsRepository;
   @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @MockBean ScheduledTaskRequest scheduledTaskRequest;
+  @MockBean LoadableStudyRepository loadableStudyRepository;
+  @MockBean LoadablePatternRepository loadablePatternRepository;
+  @MockBean LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";

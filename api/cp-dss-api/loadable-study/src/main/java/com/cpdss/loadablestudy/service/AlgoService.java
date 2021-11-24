@@ -2,13 +2,14 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.INVALID_LOADABLE_STUDY_ID;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
+import com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest;
 import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Master Service for Loadable Pattern
@@ -40,7 +43,13 @@ public class AlgoService {
 
   @Autowired LoadablePatternRepository loadablePatternRepository;
 
+  @Autowired LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
+
   @Autowired AlgoErrorsRepository algoErrorsRepository;
+
+  @Autowired RestTemplate restTemplate;
+
+  @Autowired AlgoErrorService algoErrorService;
 
   public LoadableStudy.AlgoStatusReply.Builder saveAlgoLoadableStudyStatus(
       LoadableStudy.AlgoStatusRequest request, LoadableStudy.AlgoStatusReply.Builder replyBuilder) {
@@ -246,5 +255,57 @@ public class AlgoService {
       }
     }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
+  /**
+   * Calls ALGO APIs
+   *
+   * @param <T>
+   * @param id
+   * @param url
+   * @param request
+   * @param responseType
+   * @param isPattern
+   * @param processId
+   * @return
+   * @throws GenericServiceException
+   */
+  public <T> T callAlgo(
+      Long id,
+      String url,
+      Object request,
+      Class<T> responseType,
+      Boolean isPattern,
+      String processId)
+      throws GenericServiceException {
+    try {
+      return responseType.cast(restTemplate.postForObject(url, request, responseType));
+    } catch (HttpStatusCodeException e) {
+      log.error("Encountered Error while calling {} in ALGO side", url);
+      if (request.getClass() == com.cpdss.loadablestudy.domain.LoadableStudy.class) {
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, id);
+      } else if (request.getClass() == LoadabalePatternValidateRequest.class) {
+        algoErrorService.saveAlgoInternalServerError(
+            id, processId, isPattern, e.getResponseBodyAsString());
+        throw new GenericServiceException(
+            "ALGO threw Internal Server Error",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      } else if (request.getClass() == LoadicatorAlgoRequest.class) {
+        if (isPattern) {
+          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+              LOADABLE_PATTERN_VALIDATION_FAILED_ID, processId, true);
+        } else {
+          loadableStudyRepository.updateLoadableStudyStatus(
+              LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, id);
+          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+              LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, processId, true);
+        }
+      }
+      algoErrorService.saveAlgoInternalServerError(
+          id, processId, isPattern, e.getResponseBodyAsString());
+      return null;
+    }
   }
 }

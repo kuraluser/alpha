@@ -1743,9 +1743,16 @@ public class LoadablePatternService {
   private void getAlgoCall(
       com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder replyBuilder,
       Optional<LoadableStudy> loadableStudyOpt,
-      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy) {
+      com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy)
+      throws GenericServiceException {
     AlgoResponse algoResponse =
-        restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
+        algoService.callAlgo(
+            loadableStudyOpt.get().getId(),
+            loadableStudyUrl,
+            loadableStudy,
+            AlgoResponse.class,
+            false,
+            null);
     updateProcessIdForLoadableStudy(
         algoResponse.getProcessId(),
         loadableStudyOpt.get(),

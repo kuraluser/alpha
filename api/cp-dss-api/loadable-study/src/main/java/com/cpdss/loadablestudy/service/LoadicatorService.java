@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Master Service for Voyage Related Operations
@@ -80,8 +79,6 @@ public class LoadicatorService {
 
   @Autowired private LoadablePatternService loadablePatternService;
 
-  @Autowired private RestTemplate restTemplate;
-
   @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
 
   @Autowired private LoadableStudyService loadableStudyService;
@@ -89,6 +86,8 @@ public class LoadicatorService {
   @Autowired private CommunicationService communicationService;
   @Autowired private JsonDataRepository jsonDataRepository;
   @Autowired private JsonTypeRepository jsonTypeRepository;
+
+  @Autowired private AlgoService algoService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -950,8 +949,26 @@ public class LoadicatorService {
     this.buildLoadicatorUrlRequest(request, loadicator);
     ObjectMapper objectMapper = new ObjectMapper();
     this.saveLoadicatorAlgoRequest(request, loadicator, objectMapper);
-    LoadicatorAlgoResponse algoResponse =
-        restTemplate.postForObject(loadicatorUrl, loadicator, LoadicatorAlgoResponse.class);
+    LoadicatorAlgoResponse algoResponse = null;
+    if (request.getIsPattern()) {
+      algoResponse =
+          algoService.callAlgo(
+              request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+              loadicatorUrl,
+              loadicator,
+              LoadicatorAlgoResponse.class,
+              true,
+              request.getProcessId());
+    } else {
+      algoResponse =
+          algoService.callAlgo(
+              request.getLoadableStudyId(),
+              loadicatorUrl,
+              loadicator,
+              LoadicatorAlgoResponse.class,
+              false,
+              request.getProcessId());
+    }
     this.saveLoadicatorAlgoResponse(request, algoResponse, objectMapper);
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
         this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);

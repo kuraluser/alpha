@@ -1,13 +1,18 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.scheduler.ScheduledTaskRequest;
 import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
 import com.cpdss.loadablestudy.entity.AlgoErrors;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
+import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
+import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +32,12 @@ public class AlgoErrorService {
   @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
 
   @Autowired ScheduledTaskRequest scheduledTaskRequest;
+
+  @Autowired LoadableStudyRepository loadableStudyRepository;
+
+  @Autowired LoadablePatternRepository loadablePatternRepository;
+
+  @Autowired LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
 
   /** Save GRPC Algo Error into Entity Object */
   public void saveAlgoError(
@@ -69,5 +80,39 @@ public class AlgoErrorService {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /**
+   * Saves ALGO Internal Server Error details
+   *
+   * @param id
+   * @param processId
+   * @param isPatternError
+   * @param error
+   */
+  public void saveAlgoInternalServerError(
+      Long id, String processId, Boolean isPatternError, String error) {
+    algoErrorsRepository.deleteAlgoErrorByLSId(false, id);
+    algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(false, id);
+    // algoService.saveAlgoErrorToDB(request, new LoadablePattern(), loadableStudyOpt.get(), false);
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading(AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR);
+    if (isPatternError) {
+      Optional<LoadablePattern> loadablePatternOpt =
+          loadablePatternRepository.findByIdAndIsActive(id, true);
+      algoErrorHeading.setLoadablePattern(loadablePatternOpt.get());
+    } else {
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+          loadableStudyRepository.findByIdAndIsActive(id, true);
+      algoErrorHeading.setLoadableStudy(loadableStudyOpt.get());
+    }
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    com.cpdss.loadablestudy.entity.AlgoErrors algoErrors =
+        new com.cpdss.loadablestudy.entity.AlgoErrors();
+    algoErrors.setAlgoErrorHeading(algoErrorHeading);
+    algoErrors.setErrorMessage(error);
+    algoErrors.setIsActive(true);
+    algoErrors = algoErrorsRepository.save(algoErrors);
   }
 }

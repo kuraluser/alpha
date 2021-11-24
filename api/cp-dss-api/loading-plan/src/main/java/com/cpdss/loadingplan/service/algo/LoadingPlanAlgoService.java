@@ -259,11 +259,8 @@ public class LoadingPlanAlgoService {
         log.info("LoadingInformationAlgoResponse:{}", response);
       } catch (HttpStatusCodeException e) {
         log.error("Error occured in ALGO side while calling new_loadable API");
-        createAlgoErrors(
-            loadingInfoOpt.get(),
-            AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
-            null,
-            Lists.newArrayList(e.getResponseBodyAsString()));
+        saveAlgoInternalError(
+            loadingInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
         Optional<LoadingInformationStatus> errorOccurredStatusOpt =
             getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
         loadingInformationRepository.updateLoadingInformationStatus(
@@ -1086,6 +1083,20 @@ public class LoadingPlanAlgoService {
       algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
     }
     saveAlgoErrorEntity(loadingInformation, heading, conditionType, errors);
+  }
+
+  /* Persists Internal Server Error in ALGO side
+   * @param loadingInformation
+   * @param conditionType
+   * @param errors
+   */
+  public void saveAlgoInternalError(
+      LoadingInformation loadingInformation, Integer conditionType, List<String> errors) {
+    createAlgoErrors(
+        loadingInformation,
+        AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
+        conditionType,
+        errors);
   }
 
   /**

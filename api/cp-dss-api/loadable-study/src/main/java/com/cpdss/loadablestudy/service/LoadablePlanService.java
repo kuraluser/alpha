@@ -137,6 +137,8 @@ public class LoadablePlanService {
   @Value("${cpdss.build.env}")
   private String env;
 
+  @Autowired AlgoService algoService;
+
   public void buildLoadablePlanQuantity(
       List<LoadablePlanQuantity> loadablePlanQuantities,
       com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder) {
@@ -2755,9 +2757,13 @@ public class LoadablePlanService {
         }
       } else {
         AlgoResponse algoResponse =
-            restTemplate.postForObject(
-                loadableStudyUrl, loadabalePatternValidateRequest, AlgoResponse.class);
-
+            algoService.callAlgo(
+                loadablePatternOpt.get().getId(),
+                loadableStudyUrl,
+                loadabalePatternValidateRequest,
+                AlgoResponse.class,
+                true,
+                null);
         updateProcessIdForLoadablePattern(
             algoResponse.getProcessId(),
             loadablePatternOpt.get(),

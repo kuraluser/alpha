@@ -3,7 +3,6 @@ package com.cpdss.loadingplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
-import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
@@ -772,11 +771,8 @@ public class LoadicatorService {
             errorOccurredStatusOpt.get(), loadingInfoOpt.get().getId());
         loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), errorOccurredStatusOpt.get());
-        loadingPlanAlgoService.createAlgoErrors(
-            loadingInfoOpt.get(),
-            AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
-            null,
-            Lists.newArrayList(e.getResponseBodyAsString()));
+        loadingPlanAlgoService.saveAlgoInternalError(
+            loadingInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
       }
     } else {
       ullageUpdateLoadicatorService.getLoadicatorData(request);
