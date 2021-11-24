@@ -123,7 +123,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   */
   updateCargoTobeLoadedData() {
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
-      if (cargo) {
+      if (cargo && ((this.operation === OPERATIONS.DISCHARGING && cargo.shipFigure) || (this.operation === OPERATIONS.LOADING))) {
         const minTolerence = this.loadingDischargingTransformationService.decimalConvertion(this._decimalPipe, cargo.minTolerence, '0.2-2');
         const maxTolerence = this.loadingDischargingTransformationService.decimalConvertion(this._decimalPipe, cargo.maxTolerence, '0.2-2');
         cargo.minMaxTolerance = maxTolerence + (minTolerence ? "/" + minTolerence : '');
