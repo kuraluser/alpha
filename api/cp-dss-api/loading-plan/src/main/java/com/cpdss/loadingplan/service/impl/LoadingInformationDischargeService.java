@@ -5,13 +5,12 @@ import static com.cpdss.loadingplan.common.LoadingPlanConstants.SUCCESS;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
-import java.math.BigDecimal;
-
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.loadingplan.entity.BillOfLadding;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -105,7 +104,9 @@ public class LoadingInformationDischargeService {
                             bl ->
                                 bl.getTemperature() != null
                                     && !bl.getTemperature().isEmpty()
-                                    && (new BigDecimal(bl.getTemperature()).compareTo(BigDecimal.ZERO) > 0))
+                                    && (new BigDecimal(bl.getTemperature())
+                                            .compareTo(BigDecimal.ZERO)
+                                        > 0))
                         .mapToDouble(o -> Double.parseDouble(o.getTemperature()))
                         .average()
                         .getAsDouble();
