@@ -102,8 +102,9 @@ public class CargoServiceTest {
     apiTempHistory.setTemp(new BigDecimal(1));
     apiHistories.add(apiTempHistory);
     Mockito.when(
-            apiTempHistoryRepository.findByLoadingPortIdAndCargoIdOrderByLoadedDateDesc(
-                Mockito.anyLong(), Mockito.anyLong()))
+            apiTempHistoryRepository
+                .findByLoadingPortIdAndCargoIdAndLoadedDateNotNullOrderByLoadedDateDesc(
+                    Mockito.anyLong(), Mockito.anyLong()))
         .thenReturn(apiHistories);
     var result = cargoService.getCargoHistoryByCargo(request, replyBuilder);
     assertEquals(SUCCESS, result.getResponseStatus().getStatus());

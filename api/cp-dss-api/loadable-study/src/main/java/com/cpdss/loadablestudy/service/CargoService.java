@@ -194,8 +194,9 @@ public class CargoService {
       LoadableStudy.LatestCargoRequest request,
       LoadableStudy.LatestCargoReply.Builder replyBuilder) {
     List<ApiTempHistory> apiHistories =
-        apiTempHistoryRepository.findByLoadingPortIdAndCargoIdOrderByLoadedDateDesc(
-            request.getPortId(), request.getCargoId());
+        apiTempHistoryRepository
+            .findByLoadingPortIdAndCargoIdAndLoadedDateNotNullOrderByLoadedDateDesc(
+                request.getPortId(), request.getCargoId());
     if (apiHistories != null && apiHistories.size() > 0) {
       ApiTempHistory apiTempHistory = apiHistories.get(0);
       replyBuilder
