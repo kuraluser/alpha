@@ -44,6 +44,7 @@ import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
 import com.cpdss.gateway.service.dischargeplan.DischargingInstructionService;
 import com.cpdss.gateway.service.dischargeplan.GenerateDischargingPlanExcelReportService;
+import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletRequest;
@@ -82,6 +83,9 @@ public class DischargePlanController {
 
   private static final String DISCHARGING_PORT_TIDE_DETAIL_FILE_NAME =
       "Discharging_port_tide_details.xlsx";
+  private static final String DISCHARGING_PLAN_REPORT_FILE_NAME = "Discharging Plan.xlsx";
+
+  @Autowired LoadingPlanService loadingPlanService;
 
   @Autowired private DischargeStudyService dischargeStudyService;
 
@@ -207,6 +211,7 @@ public class DischargePlanController {
           e);
     }
   }
+
   /**
    * @param dischargeStudyId discharge study id to update
    * @param request values to update in discharge study
@@ -409,6 +414,7 @@ public class DischargePlanController {
           e);
     }
   }
+
   /**
    * Delete port rotation by id
    *
@@ -577,6 +583,7 @@ public class DischargePlanController {
           e);
     }
   }
+
   /**
    * @param dischargeStudyId
    * @param dischargePatternId
@@ -789,6 +796,7 @@ public class DischargePlanController {
           e);
     }
   }
+
   /**
    * Get Loading Sequence API
    *
@@ -1503,7 +1511,11 @@ public class DischargePlanController {
       HttpHeaders header = new HttpHeaders();
       header.setContentType(new MediaType("application", "force-download"));
       header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= Discharging_Plan.xlsx");
-
+      header.set(
+          HttpHeaders.CONTENT_DISPOSITION,
+          "attachment; filename="
+              + loadingPlanService.prepareFileName(vesselId, voyageId, portRotationId)
+              + DISCHARGING_PLAN_REPORT_FILE_NAME);
       // Send file
       return new HttpEntity<ByteArrayResource>(
           new ByteArrayResource(

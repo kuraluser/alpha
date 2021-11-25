@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain.dischargeplan;
 
 import java.util.List;
-
 import lombok.Data;
 
 @Data

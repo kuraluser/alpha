@@ -2,7 +2,6 @@
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
 import com.cpdss.gateway.domain.Cleaning;
-import com.cpdss.gateway.domain.CleaningTankDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanPortWiseDetails;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

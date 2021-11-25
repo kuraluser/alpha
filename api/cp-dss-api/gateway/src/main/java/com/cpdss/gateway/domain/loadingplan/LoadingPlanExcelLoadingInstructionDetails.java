@@ -1,10 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
-import java.util.List;
-
 import com.cpdss.gateway.domain.dischargeplan.CowPlanForExcel;
-
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +23,6 @@ public class LoadingPlanExcelLoadingInstructionDetails {
   private Long ballastPumpCount;
   private String cargoPumpCount;
   private Long strippingPumpCount;
-  private String cargoNames; 
+  private String cargoNames;
   private CowPlanForExcel cowPlan;
 }
