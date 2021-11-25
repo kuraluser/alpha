@@ -287,7 +287,8 @@ public class DischargeInformationBuilderService {
               var1.getValueType(),
               var1.getColorCode(),
               null,
-              null));
+              null,
+              var1.getSg().toString()));
     }
     return response;
   }
@@ -312,7 +313,8 @@ public class DischargeInformationBuilderService {
               var1.getValueType(),
               var1.getColorCode(),
               var1.getCargoXId(),
-              var1.getAbbreviation()));
+              var1.getAbbreviation(),
+              null));
     }
     return response;
   }
@@ -336,6 +338,7 @@ public class DischargeInformationBuilderService {
               var1.getConditionType(),
               var1.getValueType(),
               var1.getColorCode(),
+              null,
               null,
               null));
     }
@@ -414,7 +417,8 @@ public class DischargeInformationBuilderService {
       Integer valueType,
       String colorCode,
       Long cargoId,
-      String abbreviation)
+      String abbreviation,
+      String sg)
       throws GenericServiceException {
 
     try {
@@ -434,6 +438,7 @@ public class DischargeInformationBuilderService {
               .setColorCode(colorCode != null ? colorCode : "")
               .setCargoId(cargoId != null ? cargoId : 0L)
               .setAbbreviation(abbreviation != null ? abbreviation : "")
+              .setSg(sg != null ? sg : "")
               .build();
       return builder;
     } catch (Exception e) {
