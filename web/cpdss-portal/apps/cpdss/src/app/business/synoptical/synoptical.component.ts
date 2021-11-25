@@ -66,9 +66,15 @@ export class SynopticalComponent implements OnInit {
     this.synopticalService.selectedLoadablePattern = null;
     this.synopticalService.loadablePatternId = null; 
     this.synopticalService.loadablePatternsList = [];
+    this.synopticalService.hasDischargeStarted = this.synopticalService.selectedVoyage.isDischargeStarted ?? false;
     localStorage.setItem("voyageId", this.synopticalService.selectedVoyage.id.toString())
     this.router.navigateByUrl('/business/synoptical/' + this.synopticalService.vesselInfo.id + '/' + this.synopticalService.selectedVoyage.id)
-    this.synopticalService.getLoadableStudyInfo(this.synopticalService.vesselInfo.id, this.synopticalService.selectedVoyage.id);
+    if(this.synopticalService.hasDischargeStarted){
+      this.synopticalService.getDischargeStudyInfo(this.synopticalService.vesselInfo.id, this.synopticalService.selectedVoyage.id);
+    } else {
+      this.synopticalService.getLoadableStudyInfo(this.synopticalService.vesselInfo.id, this.synopticalService.selectedVoyage.id);
+    }
+
   }
 
   /**
