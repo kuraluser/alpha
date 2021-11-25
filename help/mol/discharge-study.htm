@@ -37,9 +37,10 @@
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
   <h1>Discharge Study</h1>
-  <p class="textbody">The <span style="font-weight:bold;">Discharge Study</span> tab displays the details of all the discharging ports included in confirmed loadable plan and the port rotation stage of the Dishcrage Study phase of the current voyage. </p>
+  <p class="textbody">The <span style="font-weight:bold;">Discharge Study</span> tab displays the details of all the discharging ports included in the current voyage. </p>
+  <p class="textbody"><img class="image-full" src="Images/discharge-study/discharge study tab.png"/></p>
   <p class="textbody">The CP-DSS application captures the following details of all the discharging ports involved in the current voyage. </p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
@@ -47,14 +48,14 @@
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Field</td>
         <td>Type</td>
         <td>Mandatory</td>
         <td>Description</td>
       </tr>
-    </thead>
-    <tbody>
       <tr>
         <td>
           <p class="textbody">Discharging Port Name</p>
@@ -66,7 +67,8 @@
           <p class="textbody">Yes</p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Displays the names of the discharging ports involved in the current voyage. </p>
+          <p class="textbody">The data is fetched from the respective confirmed loadable plan and the <span style="font-weight:bold;">Port </span>tab of the <span style="font-weight:bold;">Discharge Study</span> . </p>
         </td>
       </tr>
       <tr>
@@ -77,10 +79,16 @@
           <p class="textbody">Drop-down</p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Yes</p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Allows the user to select an instruction type based on which the dischargeable quantity of cargo at that particular port is calculated. </p>
+          <p class="textbody">The available options are:</p>
+          <ul class="bullets">
+            <li class="textbody">Discharge upto maximum draft at next port.</li>
+            <li class="textbody">Empty maximum number of tanks.</li>
+            <li class="textbody">Discharge exact quantity.</li>
+          </ul>
         </td>
       </tr>
       <tr>
@@ -94,7 +102,7 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Allows the user to enter the draft restriction value if any.</p>
         </td>
       </tr>
       <tr>
@@ -108,7 +116,8 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Displays the color mapped against the corresponding cargo. </p>
+          <p class="textbody">The data is fetched from the respective confirmed loadable plan and the <span style="font-weight:bold;">Port </span>tab of the <span style="font-weight:bold;">Discharge Study</span> .</p>
         </td>
       </tr>
       <tr>
@@ -122,7 +131,8 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Displays the name of the cargo.</p>
+          <p class="textbody">The data is fetched from the respective confirmed loadable plan and the <span style="font-weight:bold;">Port </span>tab of the <span style="font-weight:bold;">Discharge Study</span> .</p>
         </td>
       </tr>
       <tr>
@@ -136,7 +146,8 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">displays the abbreviation mapped against the respective cargo. </p>
+          <p class="textbody">The data is fetched from the respective confirmed loadable plan and the <span style="font-weight:bold;">Port </span>tab of the <span style="font-weight:bold;">Discharge Study</span> .</p>
         </td>
       </tr>
       <tr>
@@ -150,7 +161,7 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Displays the dischargeable cargo quantity at the selected port in BBLS.</p>
         </td>
       </tr>
       <tr>
@@ -164,7 +175,7 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Displays the dischargeable cargo quantity at the selected port in MT.</p>
         </td>
       </tr>
       <tr>
@@ -178,7 +189,7 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Displays the dischargeable cargo quantity at the selected port in KL. The user can edit the value if required. </p>
         </td>
       </tr>
       <tr>
@@ -192,7 +203,9 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Allows the user to select the mode of cargo discharge. The available options are:</p>
+          <p class="textbody">Auto - The CP-DSS application calculates the amount of cargo to the discharged at the selected port. The user cannot edit the KL value in this mode. </p>
+          <p class="textbody">Manual - The user can decide the amount of cargo to be discharged at the selected port. </p>
         </td>
       </tr>
       <tr>
@@ -206,7 +219,12 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Allows the user to select the type of Cow for the vessel tanks. The available options are:</p>
+          <ul class="bullets">
+            <li class="textbody">Auto </li>
+            <li class="textbody">Manual</li>
+          </ul>
+          <p class="textbody">For more information, see <a href="Cow.htm">Cow</a>.</p>
         </td>
       </tr>
       <tr>
@@ -220,7 +238,21 @@
           <p class="textbody"> </p>
         </td>
         <td>
+          <p class="textbody">Allows the user to select the percentage of cow. This option is available for Auto cow. </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="textbody">Tanks</p>
+        </td>
+        <td>
+          <p class="textbody">Drop-down</p>
+        </td>
+        <td>
           <p class="textbody"> </p>
+        </td>
+        <td>
+          <p class="textbody">Allows the user to select the tanks for cow. This option is available only for Manual cow. </p>
         </td>
       </tr>
       <tr>
@@ -234,14 +266,47 @@
           <p class="textbody"> </p>
         </td>
         <td>
-          <p class="textbody"> </p>
+          <p class="textbody">Select the check box to carry out cargo back loading at the selected port. For more information, see <a href="back-loading-discharge-study.htm">Back Loading</a>. </p>
         </td>
       </tr>
     </tbody>
   </table>
   <p class="note">Transit and Bunkering ports are not included in the Discharge Study stage. </p>
-  <p class="textbody">To complete the <span style="font-weight:bold;">Discharge Study</span> stage, perform the following steps:</p>
-  <p class="textbody"> </p>
+  <p class="textbody">Perform the following steps to complete the <span style="font-weight:bold;">Discharge Study</span> stage:</p>
+  <ol class="numberlist">
+    <li class="textbody">From <strong>Cargo Planning</strong>, click <strong>Discharge Study</strong>. <br/>
+      <img class="image-full" src="Images/discharge-study/discharge study tab.png"/><br/>
+      The page displays all the discharging ports involved in the current voyage. 
+    </li>
+    <li class="textbody">From the <span style="font-weight:bold;">Instruction </span>drop-down, select the required option.<br/>
+      <img class="image-full" src="Images/discharge-study/instructions drop-down.png"/>
+    </li>
+    <li class="textbody">In the <span style="font-weight:bold;">Draft Restriction</span> field, enter the required draft restriction value.<br/>
+      <img class="image-full" src="Images/discharge-study/draft restriction.png"/>
+    </li>
+    <li class="textbody">Against each cargoes listed under the port, select the <span style="font-weight:bold;">Mode</span>.<br/>
+      <img class="image-full" src="Images/discharge-study/change mode.png"/><br/>
+      For <span style="font-weight:bold;">Manual </span>mode, select the amount of cargo to be discharged at the port. <br/>
+      <img class="image-full" src="Images/discharge-study/edit cargo quantity.png"/><br/>
+      For <span style="font-weight:bold;">Auto </span>mode, the CP-DSS application auto-calculates the cargo to be discharged at the port. <br/>
+      <img class="image-full" src="Images/discharge-study/Auto mode for discharge.png"/>
+    </li>
+    <li class="textbody">From <span style="font-weight:bold;">Cow </span>drop-down, select the mode.<br/>
+      <img class="image-full" src="Images/discharge-study/cow/cow drop-down.png"/><br/>
+      For <span style="font-weight:bold;">Manual </span>mode, select the tanks for Cow.<br/>
+      <img class="image-full" src="Images/discharge-study/cow/cow manual.png"/><br/>
+      For <span style="font-weight:bold;">Auto </span>Auto mode, select the percentage of Cow. For more information, see <a href="Cow.htm">Cow</a>.<br/>
+      <img class="image-full" src="Images/discharge-study/cow/auto cow.png"/>
+    </li>
+    <li class="textbody">Select the <span style="font-weight:bold;">Enable Back Loading</span> check box to enable back loading at the selected port. For more information, see <a href="back-loading-discharge-study.htm">Back Loading</a>.<br/>
+      <img class="image-full" src="Images/discharge-study/back loading/enable back loading.png"/>
+    </li>
+    <li class="textbody">Click <span style="font-weight:bold;">Save </span>to save the changes. <br/>
+      <img class="image-full" src="Images/discharge-study/save.png"/><br/>
+      A success message appears on the screen indicating the discharge study is created successfully. <br/>
+      <img class="image-full" src="Images/discharge-study/discharge study success message.png"/>
+    </li>
+  </ol>
   <p class="textbody">Once the user enters data in the required fields of all the discharging ports listed on the <span style="font-weight:bold;">Discharge Study </span>page, the status of <span style="font-weight:bold;">Discharge Study</span> becomes <span style="font-weight:bold;">Complete</span>. </p>
   <p class="textbody"><img class="image-full" src="Images/discharge-study/status complete.png"/></p>
 
@@ -257,7 +322,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "3.2.2.1"
+    gTopicId = "3.2.2.2"
   
 //]]></script>
 

@@ -32,4 +32,5 @@ public class CommingleDetail {
   private BigDecimal quantity2M3;
   private BigDecimal ullage1;
   private BigDecimal ullage2;
+  private Long dischargingInformationId;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IDataTableColumn, DATATABLE_FIELD_TYPE } from '../../../shared/components/datatable/datatable.model';
 import { ICargoConditions, QUANTITY_UNIT } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -37,6 +37,8 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
+
+  @Output() commingleClick = new EventEmitter();
 
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
@@ -129,6 +131,17 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
    */
   formateQuantity(value: string): number{
     return value ? Number(this.quantityDecimalFormatPipe.transform(value,this.currentQuantitySelectedUnit).replace(/,/g, '')) : 0;
+  }
+
+  /**
+   * Method to emit commingle data
+   *
+   * @memberof LoadingDischargingCargoDetailsTableComponent
+   */
+  rowClick(data){
+    if(data.isCommingleCargo){
+      this.commingleClick.emit(data);
+    }
   }
 
 }

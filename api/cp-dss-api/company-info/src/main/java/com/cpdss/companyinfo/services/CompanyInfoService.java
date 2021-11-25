@@ -36,7 +36,7 @@ public class CompanyInfoService {
    * @param domain - The sub-domain entered by the user
    * @return {@link CompanyInfoResponse} - The response object including realm and authentication
    *     providers
-   * @throws CpdssException
+   * @throws GenericServiceException
    */
   public CompanyInfoResponse findCompanyInfoByDomain(final String domain)
       throws GenericServiceException {
@@ -85,7 +85,9 @@ public class CompanyInfoService {
     }
     response.setLogo(company.getCompanyLogo());
     response.setFavicon(company.getCompanyFavicon());
-    response.setDocumentationSiteUrl(company.getDocumentationSiteUrl()==null?null:company.getDocumentationSiteUrl());
+    response.setDocumentationSiteUrl(
+        company.getDocumentationSiteUrl() == null ? null : company.getDocumentationSiteUrl());
+    response.setSimulatorSiteUrl(company.getSimulatorSiteUrl());
     Set<Carousals> carousals = company.getCarousals();
     if (null != carousals && !carousals.isEmpty()) {
       response.setCarousals(new ArrayList<>());

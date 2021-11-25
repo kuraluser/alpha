@@ -35,6 +35,7 @@ public class LoadablePlanServiceTest {
   @Autowired LoadablePlanService loadablePlanService;
   @MockBean CargoNominationRepository cargoNominationRepository;
   @MockBean LoadablePatternCargoDetailsRepository lpCargoDetailsRepository;
+  @MockBean VoyageRepository voyageRepository;
   @MockBean LoadableStudyPortRotationRepository portRotationRepository;
   @Mock private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private LoadableStudyPortRotationService loadableStudyPortRotationService;
@@ -44,6 +45,7 @@ public class LoadablePlanServiceTest {
   @MockBean private SynopticService synopticService;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
   @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
+  @MockBean private AlgoService algoService;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -53,7 +55,6 @@ public class LoadablePlanServiceTest {
   @MockBean private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @MockBean private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @MockBean private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
-  @MockBean private VoyageRepository voyageRepository;
 
   @MockBean
   private LoadablePlanCommingleDetailsPortwiseRepository

@@ -391,10 +391,13 @@ public class SynopticServiceUtils {
                   ? null
                   : new BigDecimal(cargoRecord.getActualWeight()));
           Optional.ofNullable(cargoRecord.getUllage())
+              .filter(value -> !value.isEmpty())
               .ifPresent(value -> cargoEntity.setActualRdgUllage(new BigDecimal(value)));
           Optional.ofNullable(cargoRecord.getActualApi())
+              .filter(value -> !value.isEmpty())
               .ifPresent(value -> cargoEntity.setActualApi(new BigDecimal(value)));
           Optional.ofNullable(cargoRecord.getActualTemperature())
+              .filter(value -> !value.isEmpty())
               .ifPresent(value -> cargoEntity.setActualTemperature(new BigDecimal(value)));
           toBeSavedCargoList.add(cargoEntity);
         } else {
@@ -411,12 +414,6 @@ public class SynopticServiceUtils {
           //    	.ifPresent(value -> cargoEntity.setApi(new BigDecimal(value)));
           //    Optional.ofNullable(cargoRecord.getTemperature())
           //        .ifPresent(value -> cargoEntity.setTemperature(new BigDecimal(value)));
-          Optional.ofNullable(cargoRecord.getUllage())
-              .ifPresent(value -> cargoEntity.setActualRdgUllage(new BigDecimal(value)));
-          Optional.ofNullable(cargoRecord.getActualApi())
-              .ifPresent(value -> cargoEntity.setActualApi(new BigDecimal(value)));
-          Optional.ofNullable(cargoRecord.getActualTemperature())
-              .ifPresent(value -> cargoEntity.setActualTemperature(new BigDecimal(value)));
           cargoEntity.setActualQuantity(
               isEmpty(cargoRecord.getActualWeight())
                   ? null

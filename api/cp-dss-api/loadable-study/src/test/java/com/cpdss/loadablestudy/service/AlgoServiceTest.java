@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.web.client.RestTemplate;
 
 @SpringJUnitConfig(
     classes = {
@@ -32,7 +33,11 @@ public class AlgoServiceTest {
   @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @MockBean LoadableStudyRepository loadableStudyRepository;
   @MockBean LoadablePatternRepository loadablePatternRepository;
+  @MockBean LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @MockBean AlgoErrorsRepository algoErrorsRepository;
+  @MockBean AlgoErrorService algoErrorService;
+  @MockBean RestTemplate restTemplate;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 

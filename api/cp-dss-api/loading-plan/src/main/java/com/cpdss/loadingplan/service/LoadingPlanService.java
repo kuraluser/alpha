@@ -1051,6 +1051,8 @@ public class LoadingPlanService {
         loadingInformation.getId(), conditionType);
     portLoadingPlanBallastTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
         loadingInformation.getId(), conditionType);
+    portLoadingPlanCommingleTempDetailsRepository.deleteExistingByLoadingInfoAndConditionType(
+        loadingInformation.getId(), conditionType);
   }
 
   public void getPortWiseStowageTempDetails(
@@ -1343,6 +1345,14 @@ public class LoadingPlanService {
         portWiseCommingleDetail.getUllage1() == null ? "" : portWiseCommingleDetail.getUllage1());
     newBuilder.setUllage2(
         portWiseCommingleDetail.getUllage2() == null ? "" : portWiseCommingleDetail.getUllage2());
+    newBuilder.setActualPlanned(
+        portWiseCommingleDetail.getValueType() == null
+            ? ""
+            : portWiseCommingleDetail.getValueType().toString());
+    newBuilder.setArrivalDeparture(
+        portWiseCommingleDetail.getConditionType() == null
+            ? ""
+            : portWiseCommingleDetail.getConditionType().toString());
     return newBuilder;
   }
 }

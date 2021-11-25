@@ -45,136 +45,131 @@ public class LoadingPlanSchedulerService {
   public void init() {
     List<SchedulerRequest> vesselList = getAllVessel();
     List<String> scheduledTasks = getScheduledTasks();
-    vesselList.forEach(
-        vesssel -> {
-          new Thread(
-                  () -> {
-                    try {
-                      Thread.sleep(15 * 1000);
-                      System.out.println("EXECUTING");
-                      LocalDateTime dateTime = LocalDateTime.now();
-                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
-                      ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                      properties.setTaskName(
-                          "LOADING_PLAN_DOWNLOAD_RESULT"
-                              + environment
-                              + "_"
-                              + vesssel.getVesselId());
-                      properties.setTaskFrequency(30);
-                      properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
-                      properties.setTaskStartDate(dateTime.toLocalDate());
-                      properties.setTaskStartTime(dateTime.toLocalTime());
-                      properties.setTaskEndDate(endDateTime.toLocalDate());
-                      properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI("loading-plan-service:" + port);
-                      Map<String, String> requestParam = new HashMap<>();
-                      requestParam.put("env", environment);
-                      requestParam.put("ClientId", vesssel.getVesselName());
-                      requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
-                      properties.setTaskReqParam(requestParam);
-                      if (scheduledTasks != null
-                          && !scheduledTasks.contains(properties.getTaskName()))
-                        scheduledTaskRequest.createScheduledTaskRequest(properties);
 
-                    } catch (InterruptedException | GenericServiceException e) {
-                      e.printStackTrace();
-                    }
-                  })
-              .start();
-          new Thread(
-                  () -> {
-                    try {
-                      Thread.sleep(15 * 1000);
-                      System.out.println("EXECUTING STATUS");
-                      LocalDateTime dateTime = LocalDateTime.now();
-                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
-                      ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                      properties.setTaskName(
-                          "LOADING_PLAN_STATUS_CHECK" + environment + "_" + vesssel.getVesselId());
-                      properties.setTaskFrequency(60);
-                      properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
-                      properties.setTaskStartDate(dateTime.toLocalDate());
-                      properties.setTaskStartTime(dateTime.toLocalTime());
-                      properties.setTaskEndDate(endDateTime.toLocalDate());
-                      properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI("loading-plan-service:" + port);
-                      Map<String, String> requestParam = new HashMap<>();
+    for (SchedulerRequest vesssel : vesselList) {
+      new Thread(
+              () -> {
+                try {
+                  Thread.sleep(15 * 1000);
+                  System.out.println("EXECUTING");
+                  LocalDateTime dateTime = LocalDateTime.now();
+                  LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
+                  ScheduledTaskProperties properties = new ScheduledTaskProperties();
+                  properties.setTaskName(
+                      "LOADING_PLAN_DOWNLOAD_RESULT" + environment + "_" + vesssel.getVesselId());
+                  properties.setTaskFrequency(30);
+                  properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+                  properties.setTaskStartDate(dateTime.toLocalDate());
+                  properties.setTaskStartTime(dateTime.toLocalTime());
+                  properties.setTaskEndDate(endDateTime.toLocalDate());
+                  properties.setTaskEndTime(endDateTime.toLocalTime());
+                  properties.setTaskURI("loading-plan-service:" + port);
+                  Map<String, String> requestParam = new HashMap<>();
+                  requestParam.put("env", environment);
+                  requestParam.put("ClientId", vesssel.getVesselName());
+                  requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
+                  properties.setTaskReqParam(requestParam);
+                  if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
+                    scheduledTaskRequest.createScheduledTaskRequest(properties);
 
-                      requestParam.put("ClientId", vesssel.getVesselName());
-                      requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
-                      properties.setTaskReqParam(requestParam);
-                      if (scheduledTasks != null
-                          && !scheduledTasks.contains(properties.getTaskName()))
-                        scheduledTaskRequest.createScheduledTaskRequest(properties);
+                } catch (InterruptedException | GenericServiceException e) {
+                  e.printStackTrace();
+                }
+              })
+          .start();
+      new Thread(
+              () -> {
+                try {
+                  Thread.sleep(15 * 1000);
+                  System.out.println("EXECUTING STATUS");
+                  LocalDateTime dateTime = LocalDateTime.now();
+                  LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
+                  ScheduledTaskProperties properties = new ScheduledTaskProperties();
+                  properties.setTaskName(
+                      "LOADING_PLAN_STATUS_CHECK" + environment + "_" + vesssel.getVesselId());
+                  properties.setTaskFrequency(60);
+                  properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+                  properties.setTaskStartDate(dateTime.toLocalDate());
+                  properties.setTaskStartTime(dateTime.toLocalTime());
+                  properties.setTaskEndDate(endDateTime.toLocalDate());
+                  properties.setTaskEndTime(endDateTime.toLocalTime());
+                  properties.setTaskURI("loading-plan-service:" + port);
+                  Map<String, String> requestParam = new HashMap<>();
 
-                    } catch (InterruptedException | GenericServiceException e) {
-                      e.printStackTrace();
-                    }
-                  })
-              .start();
-          new Thread(
-                  () -> {
-                    try {
-                      Thread.sleep(15 * 1000);
-                      System.out.println("EXECUTING");
-                      LocalDateTime dateTime = LocalDateTime.now();
-                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
-                      ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                      properties.setTaskName(
-                          "LOADING_DATA_UPDATE" + environment + "_" + vesssel.getVesselId());
-                      properties.setTaskFrequency(30);
-                      properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
-                      properties.setTaskStartDate(dateTime.toLocalDate());
-                      properties.setTaskStartTime(dateTime.toLocalTime());
-                      properties.setTaskEndDate(endDateTime.toLocalDate());
-                      properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI("loading-plan-service:" + port);
-                      Map<String, String> requestParam = new HashMap<>();
-                      requestParam.put("env", environment);
-                      requestParam.put("ClientId", vesssel.getVesselName());
-                      requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
-                      properties.setTaskReqParam(requestParam);
-                      if (scheduledTasks != null
-                          && !scheduledTasks.contains(properties.getTaskName()))
-                        scheduledTaskRequest.createScheduledTaskRequest(properties);
+                  requestParam.put("ClientId", vesssel.getVesselName());
+                  requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
+                  properties.setTaskReqParam(requestParam);
+                  if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
+                    scheduledTaskRequest.createScheduledTaskRequest(properties);
 
-                    } catch (InterruptedException | GenericServiceException e) {
-                      e.printStackTrace();
-                    }
-                  })
-              .start();
-          new Thread(
-                  () -> {
-                    try {
-                      Thread.sleep(15 * 1000);
-                      System.out.println("EXECUTING");
-                      LocalDateTime dateTime = LocalDateTime.now();
-                      LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
-                      ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                      properties.setTaskName(
-                          "ULLAGE_DATA_UPDATE" + environment + "_" + vesssel.getVesselId());
-                      properties.setTaskFrequency(30);
-                      properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
-                      properties.setTaskStartDate(dateTime.toLocalDate());
-                      properties.setTaskStartTime(dateTime.toLocalTime());
-                      properties.setTaskEndDate(endDateTime.toLocalDate());
-                      properties.setTaskEndTime(endDateTime.toLocalTime());
-                      properties.setTaskURI("loading-plan-service:" + port);
-                      Map<String, String> requestParam = new HashMap<>();
-                      requestParam.put("env", environment);
-                      requestParam.put("ClientId", vesssel.getVesselName());
-                      requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
-                      properties.setTaskReqParam(requestParam);
-                      if (scheduledTasks != null
-                          && !scheduledTasks.contains(properties.getTaskName()))
-                        scheduledTaskRequest.createScheduledTaskRequest(properties);
+                } catch (InterruptedException | GenericServiceException e) {
+                  e.printStackTrace();
+                }
+              })
+          .start();
+    }
 
-                    } catch (InterruptedException | GenericServiceException e) {
-                      e.printStackTrace();
-                    }
-                  })
-              .start();
-        });
+    SchedulerRequest vesssel = vesselList.get(0);
+    new Thread(
+            () -> {
+              try {
+                Thread.sleep(15 * 1000);
+                System.out.println("EXECUTING");
+                LocalDateTime dateTime = LocalDateTime.now();
+                LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
+                ScheduledTaskProperties properties = new ScheduledTaskProperties();
+                properties.setTaskName(
+                    "LOADING_DATA_UPDATE" + environment + "_" + vesssel.getVesselId());
+                properties.setTaskFrequency(30);
+                properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+                properties.setTaskStartDate(dateTime.toLocalDate());
+                properties.setTaskStartTime(dateTime.toLocalTime());
+                properties.setTaskEndDate(endDateTime.toLocalDate());
+                properties.setTaskEndTime(endDateTime.toLocalTime());
+                properties.setTaskURI("loading-plan-service:" + port);
+                Map<String, String> requestParam = new HashMap<>();
+                requestParam.put("env", environment);
+                requestParam.put("ClientId", vesssel.getVesselName());
+                requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
+                properties.setTaskReqParam(requestParam);
+                if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
+                  scheduledTaskRequest.createScheduledTaskRequest(properties);
+
+              } catch (InterruptedException | GenericServiceException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
+    new Thread(
+            () -> {
+              try {
+                Thread.sleep(15 * 1000);
+                System.out.println("EXECUTING");
+                LocalDateTime dateTime = LocalDateTime.now();
+                LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
+                ScheduledTaskProperties properties = new ScheduledTaskProperties();
+                properties.setTaskName(
+                    "ULLAGE_DATA_UPDATE" + environment + "_" + vesssel.getVesselId());
+                properties.setTaskFrequency(30);
+                properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+                properties.setTaskStartDate(dateTime.toLocalDate());
+                properties.setTaskStartTime(dateTime.toLocalTime());
+                properties.setTaskEndDate(endDateTime.toLocalDate());
+                properties.setTaskEndTime(endDateTime.toLocalTime());
+                properties.setTaskURI("loading-plan-service:" + port);
+                Map<String, String> requestParam = new HashMap<>();
+                requestParam.put("env", environment);
+                requestParam.put("ClientId", vesssel.getVesselName());
+                requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
+                properties.setTaskReqParam(requestParam);
+                if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
+                  scheduledTaskRequest.createScheduledTaskRequest(properties);
+
+              } catch (InterruptedException | GenericServiceException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
   }
 
   private List<SchedulerRequest> getAllVessel() {

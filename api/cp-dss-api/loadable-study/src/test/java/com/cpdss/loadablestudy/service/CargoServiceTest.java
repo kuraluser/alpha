@@ -31,8 +31,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 public class CargoServiceTest {
   @Autowired CargoService cargoService;
   @MockBean CommingleColourRepository commingleColourRepository;
-  @MockBean ApiTempHistoryRepository apiTempHistoryRepository;
   @MockBean CargoHistoryRepository cargoHistoryRepository;
+  @MockBean ApiTempHistoryRepository apiTempHistoryRepository;
   @MockBean PurposeOfCommingleRepository purposeOfCommingleRepository;
   @MockBean CommingleCargoRepository commingleCargoRepository;
   @MockBean LoadableStudyRepository loadableStudyRepository;
@@ -102,8 +102,9 @@ public class CargoServiceTest {
     apiTempHistory.setTemp(new BigDecimal(1));
     apiHistories.add(apiTempHistory);
     Mockito.when(
-            apiTempHistoryRepository.findByLoadingPortIdAndCargoIdOrderByCreatedDateTimeDesc(
-                Mockito.anyLong(), Mockito.anyLong()))
+            apiTempHistoryRepository
+                .findByLoadingPortIdAndCargoIdAndLoadedDateNotNullOrderByLoadedDateDesc(
+                    Mockito.anyLong(), Mockito.anyLong()))
         .thenReturn(apiHistories);
     var result = cargoService.getCargoHistoryByCargo(request, replyBuilder);
     assertEquals(SUCCESS, result.getResponseStatus().getStatus());

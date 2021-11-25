@@ -72,6 +72,7 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
   departureDetailsColumns: any = [];
   cargoConditions: ICargoConditions[] = [];
   cargoQuantities: ICargoQuantities[] = [];
+  showComminglePopup = false;
 
   ballastTankQuantity: any = [];
   rearBallastTanks: IShipBallastTank[][];
@@ -81,6 +82,7 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   loadingDischargingPlanInfo: any;
   private ngUnsubscribe: Subject<any> = new Subject();
+  commingleDetails: any[];
 
 
   readonly tankType = TANKTYPE;
@@ -111,7 +113,11 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
   initSubscriptions() {
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
       if (value && value.portRotationId === this.portRotationId) {
-        this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value.status;
+        if (this.operation === OPERATIONS.LOADING) {
+          this.loadingDischargingPlanData.loadingInformation.loadingPlanDepStatusId = value.status;
+        } else {
+          this.loadingDischargingPlanData.dischargingInformation.dischargePlanDepStatusId = value.status;
+        }
       }
     });
   }
@@ -143,7 +149,8 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
     this.loadingDischargingPlanData?.currentPortCargos.map(item => {
       let actualWeight = 0, plannedWeight = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(stowage => {
-        if (stowage.conditionType === 2 && item.cargoNominationId === stowage.cargoNominationId) {
+        const currentPorCargoNominationId = this.loadingDischargingPlanData?.loadingInformation ? item.cargoNominationId : item.dischargeCargoNominationId;
+        if (stowage.conditionType === 2 && currentPorCargoNominationId === stowage.cargoNominationId) {
           if (stowage.valueType === 1) {
             if (stowage.isCommingleCargo) {
               commingleArray?.map(com => {
@@ -375,6 +382,31 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
    */
   showError() {
     this.loadingDischargingTransformationService.showUllageError({ value: true, status: 2 });
+  }
+
+  /**
+   * Handler for show commingle pop up
+   * @param {Event} data
+   * @memberof DepartureConditionComponent
+   */
+  showCommingle(data) {
+    const commingleDetails = this.loadingDischargingPlanData?.planCommingleDetails?.find(com => com.abbreviation === data.abbreviation);
+    let tankData;
+    this.loadingDischargingPlanData?.cargoTanks.map(row => {
+      row.map(tank => {
+        if (tank.id === data.tankId) {
+          tankData = tank;
+        }
+      })
+    });
+    commingleDetails.tankName = tankData ? tankData.name : '';
+    const cargoNomination1 = this.loadingDischargingPlanData?.currentPortCargos?.find(item => item.cargoNominationId === commingleDetails.cargoNomination1Id);
+    const cargoNomination2 = this.loadingDischargingPlanData?.currentPortCargos?.find(item => item.cargoNominationId === commingleDetails.cargoNomination2Id);
+    commingleDetails.cargoQuantity = this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantity1MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2') + '\n' + this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantity2MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2');
+    commingleDetails.cargoPercentage = cargoNomination1.cargoAbbreviation + '-' + ((commingleDetails.quantity1MT / commingleDetails.quantityMT) * 100).toFixed(2) + '%\n' + cargoNomination2.cargoAbbreviation + '-' + ((commingleDetails.quantity2MT / commingleDetails.quantityMT) * 100).toFixed(2) + '%';
+    commingleDetails.quantity = this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantityMT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2');
+    this.commingleDetails = [commingleDetails];
+    this.showComminglePopup = true;
   }
 
 }

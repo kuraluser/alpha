@@ -834,7 +834,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'PORT_LAY_CAN_REQUIRED_ERROR',
           'toDate': 'PORT_LAY_CAN_TO_DATE_ERROR',
-          'datesEqual': 'PORT_LAY_CAN_DATE_EQUAL'
+          'datesEqual': 'PORT_LAY_CAN_DATE_EQUAL',
+          'invalid' : 'PORT_LAY_CAN_INVALID_DATE'
         }
       },
       {
@@ -897,7 +898,8 @@ export class LoadableStudyDetailsTransformationService {
             'required': 'PORT_ETA_REQUIRED_ERROR',
             'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
             'failedCompare': 'PORT_ETA_COMPARE_ERROR',
-            'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR'
+            'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR',
+            'invalid' : 'PORT_ETA_INVALID_DATE'
           }
         },
         {
@@ -921,7 +923,8 @@ export class LoadableStudyDetailsTransformationService {
             'required': 'PORT_ETD_REQUIRED_ERROR',
             'notInRange': 'PORT_ETD_NOT_IN_DATE_RANGE',
             'failedCompare': 'PORT_ETD_COMPARE_ERROR',
-            'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
+            'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR',
+            'invalid' : 'PORT_ETA_INVALID_DATE'
           }
         }
       ]
@@ -1694,7 +1697,7 @@ export class LoadableStudyDetailsTransformationService {
  * @memberof LoadableStudyDetailsTransformationService
  */
   getSubTotal(data: ISubTotal): Number {
-    const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection ? data.sgCorrection : 0) - Number(data.foOnboard)
+    const subTotal = Number(data.dwt) - Number(data.sagCorrection) + Number(data.sgCorrection && Number(data.sgCorrection) < 0 ? data.sgCorrection : 0) - Number(data.foOnboard)
       - Number(data.doOnboard) - Number(data.freshWaterOnboard) - Number(data.ballast)
       - Number(data.constant) - Number(data.others);
     return Number(subTotal);

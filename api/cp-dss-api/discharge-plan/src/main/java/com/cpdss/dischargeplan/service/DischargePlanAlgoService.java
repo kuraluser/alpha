@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.service;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
@@ -16,6 +17,8 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.CleaningTankDetails;
+import com.cpdss.common.generated.discharge_plan.CleaningTanks;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
@@ -91,6 +94,7 @@ public class DischargePlanAlgoService {
   @Autowired ReasonForDelayRepository reasonForDelayRepository;
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
+  @Autowired CowTankDetailRepository cowTankDetailRepository;
 
   @Autowired private DischargeInformationStatusRepository dischargeInformationStatusRepository;
   @Autowired private DischargingPlanBuilderService dischargingPlanBuilderService;
@@ -161,6 +165,10 @@ public class DischargePlanAlgoService {
       dischargeStudyOperationServiceBlockingStub;
 
   @Autowired DischargingDelayRepository dischargingDelayRepository;
+
+  private static final Integer cowBottomTypeId = 2;
+  private static final Integer cowTopTypeId = 3;
+  private static final Integer cowFullTypeId = 1;
 
   @Value("${loadingplan.attachment.rootFolder}")
   private String rootFolder;
@@ -984,7 +992,7 @@ public class DischargePlanAlgoService {
       dischargeInformationService.updateDischargingInformationStatus(
           noPlanAvailableStatusOpt.get(), dischargingInfo.getId());
       updateDischargingInfoAlgoStatus(
-          dischargingInfo, request.getProcessId(), noPlanAvailableStatusOpt.get());
+          dischargingInfo, request.getProcessId(), noPlanAvailableStatusOpt.get(), null);
     }
 
     if (!request.getAlgoErrorsList().isEmpty()) {
@@ -1014,7 +1022,7 @@ public class DischargePlanAlgoService {
             getDischargingInformationStatus(
                 DischargePlanConstants.DISCHARGING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
         updateDischargingInfoAlgoStatus(
-            dischargingInfo, request.getProcessId(), loadicatorVerificationStatusOpt.get());
+            dischargingInfo, request.getProcessId(), loadicatorVerificationStatusOpt.get(), null);
       } else {
         Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
             getDischargingInformationStatus(DischargePlanConstants.PLAN_GENERATED_ID);
@@ -1024,7 +1032,7 @@ public class DischargePlanAlgoService {
             dischargingInfoStatusOpt.get(),
             dischargingInfo.getId());
         updateDischargingInfoAlgoStatus(
-            dischargingInfo, request.getProcessId(), dischargingInfoStatusOpt.get());
+            dischargingInfo, request.getProcessId(), dischargingInfoStatusOpt.get(), null);
         dischargeInformationService.updateIsDischargingSequenceGeneratedStatus(
             dischargingInfo.getId(), true);
         dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
@@ -1178,6 +1186,70 @@ public class DischargePlanAlgoService {
         savedDischargingSequence, sequence.getDischargingPlanPortWiseDetailsList());
     saveCargoDischargingRates(savedDischargingSequence, sequence.getDischargingRatesList());
     saveBallastPumps(savedDischargingSequence, sequence.getBallastOperationsList());
+    if (sequence.getCleaningTanks() != null) {
+      saveCleaningDetails(dischargingInfo, sequence.getCleaningTanks());
+    }
+  }
+
+  /**
+   * Save tank cleaning details
+   *
+   * @param dischargingInfo
+   * @param cleaningTanks
+   */
+  private void saveCleaningDetails(
+      DischargeInformation dischargingInfo, CleaningTanks cleaningTanks) {
+    List<CowTankDetail> cowTankDetails = new ArrayList<>();
+    List<CleaningTankDetails> bottomTankList = cleaningTanks.getBottomTankList();
+    if (!bottomTankList.isEmpty()) {
+      bottomTankList.forEach(
+          item -> {
+            CowTankDetail cowTankDetail =
+                buildCowTankDetails(item, cowBottomTypeId, dischargingInfo.getId());
+            cowTankDetails.add(cowTankDetail);
+          });
+    }
+    List<CleaningTankDetails> fullTankList = cleaningTanks.getFullTankList();
+    if (!fullTankList.isEmpty()) {
+      fullTankList.forEach(
+          item -> {
+            CowTankDetail cowTankDetail =
+                buildCowTankDetails(item, cowFullTypeId, dischargingInfo.getId());
+            cowTankDetails.add(cowTankDetail);
+          });
+    }
+    List<CleaningTankDetails> topTankList = cleaningTanks.getTopTankList();
+    if (!topTankList.isEmpty()) {
+      topTankList.forEach(
+          item -> {
+            CowTankDetail cowTankDetail =
+                buildCowTankDetails(item, cowTopTypeId, dischargingInfo.getId());
+            cowTankDetails.add(cowTankDetail);
+          });
+    }
+    cowTankDetailRepository.saveAll(cowTankDetails);
+  }
+
+  /**
+   * Build cleaning tank detail entity data to save
+   *
+   * @param cleaningTankDetails
+   * @param cowTypeId
+   * @param dischargeId
+   * @return CowTankDetail
+   */
+  private CowTankDetail buildCowTankDetails(
+      CleaningTankDetails cleaningTankDetails, Integer cowTypeId, Long dischargeId) {
+    CowTankDetail tankDetail = new CowTankDetail();
+    tankDetail.setActualPlanned(1);
+    Optional.ofNullable(cleaningTankDetails.getTankId()).ifPresent(tankDetail::setTankXid);
+    tankDetail.setTankShortName(cleaningTankDetails.getTankShortName());
+    tankDetail.setTimeEnd(Long.parseLong(cleaningTankDetails.getTimeEnd()));
+    tankDetail.setTimeStart(Long.parseLong(cleaningTankDetails.getTimeStart()));
+    tankDetail.setCowTypeXid(cowTypeId);
+    tankDetail.setDischargingXid(dischargeId);
+    tankDetail.setIsActive(true);
+    return tankDetail;
   }
 
   private void saveCargoDischargingRates(
@@ -1266,7 +1338,7 @@ public class DischargePlanAlgoService {
     dischargeInformationService.updateDischargingInformationStatus(
         errorOccurredStatusOpt.get(), dischargeInformation.getId());
     updateDischargingInfoAlgoStatus(
-        dischargeInformation, request.getProcessId(), errorOccurredStatusOpt.get());
+        dischargeInformation, request.getProcessId(), errorOccurredStatusOpt.get(), null);
   }
 
   private void saveDischargingPlanPortWiseDetails(
@@ -1299,10 +1371,19 @@ public class DischargePlanAlgoService {
   public void updateDischargingInfoAlgoStatus(
       DischargeInformation dischargingInformation,
       String processId,
-      DischargingInformationStatus dischargingInformationStatus) {
-
-    this.dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
-        dischargingInformationStatus.getId(), dischargingInformation.getId(), processId);
+      DischargingInformationStatus dischargingInformationStatus,
+      Integer conditionType) {
+    Optional<DischargingInformationAlgoStatus> algoStatusOpt =
+        this.dischargingInformationAlgoStatusRepository
+            .findByProcessIdAndDischargeInformationAndConditionTypeAndIsActiveTrue(
+                processId, dischargingInformation, conditionType);
+    if (algoStatusOpt.isEmpty()) {
+      createDischargingInformationAlgoStatus(
+          dischargingInformation, processId, dischargingInformationStatus, conditionType);
+    } else {
+      this.dischargingInformationAlgoStatusRepository.updateDischargingInformationAlgoStatus(
+          dischargingInformationStatus.getId(), dischargingInformation.getId(), processId);
+    }
   }
 
   private void saveBallastPumps(
@@ -1557,5 +1638,51 @@ public class DischargePlanAlgoService {
                   });
           builder.addAlgoErrors(errorBuilder.build());
         });
+  }
+
+  /**
+   * @param conditionType
+   * @param heading
+   * @param loadingInformation
+   * @param errorDetails
+   */
+  public void saveAlgoErrors(
+      DischargeInformation dischargingInformation,
+      String heading,
+      Integer conditionType,
+      List<String> errors) {
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading(heading);
+    algoErrorHeading.setDischargingInformation(dischargingInformation);
+    algoErrorHeading.setConditionType(conditionType);
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    errors.forEach(
+        error -> {
+          AlgoErrors algoErrors = new AlgoErrors();
+          algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          algoErrors.setErrorMessage(error);
+          algoErrors.setIsActive(true);
+          algoErrorsRepository.save(algoErrors);
+        });
+  }
+
+  /** */
+  public void saveAlgoInternalError(
+      DischargeInformation dischargingInformation, Integer conditionType, List<String> errors) {
+    if (conditionType != null) {
+      algoErrorHeadingRepository.deleteByDischargingInformationAndConditionType(
+          dischargingInformation, conditionType);
+      algoErrorsRepository.deleteByDischargingInformationAndConditionType(
+          dischargingInformation, conditionType);
+    } else {
+      algoErrorHeadingRepository.deleteByDischargingInformation(dischargingInformation);
+      algoErrorsRepository.deleteByLoadingInformation(dischargingInformation);
+    }
+    saveAlgoErrors(
+        dischargingInformation,
+        AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
+        conditionType,
+        errors);
   }
 }

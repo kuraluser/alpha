@@ -71,8 +71,7 @@ public class LoadableStudyController {
   @Autowired private AlgoErrorService algoErrorService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
-  private static final String LOADABLE_PLAN_REPORT_FILE_NAME =
-      "MOL_Stowage_Plan_Before_Loading.xlsx";
+  private static final String LOADABLE_PLAN_REPORT_FILE_NAME = "Stowage Plan Before Loading.xlsx";
   private static final String INVALID_LOADABLE_PATTERN_ID = "INVALID_LOADABLE_PATTERN_ID";
   private static final String INVALID_ULLAGE_OR_SOUNDING_VALUE = "INVALID_ULLAGE_OR_SOUNDING_VALUE";
 
@@ -2059,6 +2058,7 @@ public class LoadableStudyController {
   public HttpEntity<ByteArrayResource> getLoadablePlanReport(
       @RequestHeader HttpHeaders headers,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable Long voyageId,
       @PathVariable Long loadableStudyId,
       @PathVariable @Min(value = 0, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadablePatternId)
@@ -2070,7 +2070,9 @@ public class LoadableStudyController {
       header.setContentType(new MediaType("application", "force-download"));
       header.set(
           HttpHeaders.CONTENT_DISPOSITION,
-          "attachment; filename=" + LOADABLE_PLAN_REPORT_FILE_NAME);
+          "attachment; filename="
+              + loadableStudyService.prepareFileName(vesselId, voyageId)
+              + LOADABLE_PLAN_REPORT_FILE_NAME);
 
       //      Send file
       return new HttpEntity<>(

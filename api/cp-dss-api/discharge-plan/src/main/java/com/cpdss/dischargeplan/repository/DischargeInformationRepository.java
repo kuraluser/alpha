@@ -4,6 +4,8 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
+import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
+import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
@@ -100,6 +102,13 @@ public interface DischargeInformationRepository
   @Transactional
   @Modifying
   @Query(
+      "UPDATE DischargeInformation SET dischargingStagesMinAmount = ?1, dischargingStagesDuration = ?2 WHERE id = ?3 ")
+  void updateStageMinAndDuration(
+      DischargingStagesMinAmount var1, DischargingStagesDuration var2, Long var3);
+
+  @Transactional
+  @Modifying
+  @Query(
       "UPDATE DischargeInformation SET timeForFinalStripping = ?1, freshOilWashing=?2,timeForSlopDischarging = ?3, timeForDryCheck=?4 WHERE id = ?5")
   void updateFinalStrippingAndFreshOilWashAndSlopDischargingAndTimeForDryCheck(
       BigDecimal timeForFinalStripping,
@@ -112,4 +121,8 @@ public interface DischargeInformationRepository
   @Modifying
   @Transactional
   void updateDischargeInstructionStatus(boolean status, Long id);
+
+  Optional<DischargeInformation>
+      findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
+          long vesselId, long patternId, long portRotationId, boolean isActive);
 }

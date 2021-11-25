@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes"/>
+  <meta name="version" content="2020.0.0"/>
+  <link rel="StyleSheet" href="./template/styles/topic.min.css" type="text/css"/>
+  <link rel="StyleSheet" data-skin="true" type="text/css" href="./template/Oceanic/layout.css"/>
+  <link rel="StyleSheet" data-skin="true" href="./template/Oceanic/userstyles.css" type="text/css"/>
+  
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="generator" content="Adobe RoboHelp 2020"/>
+  <title>Sign In to CP-DSS</title>
+  <meta name="topic-status" content="Draft"/>
+  <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
+<meta name="brsnext" value="understanding-menus-and-icons.htm"/><meta name="brsprev" value="features-and-benefits.htm"/></head>
+
+<body class="rh-BODY-wrapper">
+  <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
+  <div class="RH-LAYOUT-HEADER-skip-content-container" id="skip-to-content"></div>
+  <header class="RH-LAYOUT-HEADER-container" role="banner">
+    <div class="RH-LAYOUT-HEADER-logo-box  ">
+      <div class="RH-LAYOUT-HEADER-logo" id="logo-holder"></div>
+      <div class="RH-LAYOUT-HEADER-title" id="topic-title-holder"></div>
+    </div>
+    <div class="RH-LAYOUT-HEADERMENU-container" id="header-menu"></div>
+    <div class="search-placeholder-class" id="search-with-help"></div>
+  </header>
+  <main role="main" class="RH-LAYOUT-BODY-container">
+    <div class="RH-LAYOUT-SEARCHRESULTS" id="rh-searchresults"></div>
+    <div class="RH-LAYOUT-LEFTPANEL-container" id="rh-leftpanel"></div>
+    <div class="rh-layout-BODY-main" id="rh-layout-main">
+      <div class="RH-LAYOUT-TOOLBAR-toolbar-box" id="rh-toolbar"></div>
+      <div class="rh-layout-BODY-body">
+        <div class="RH-LAYOUT-CENTERPANEL-container">
+          <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
+          <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
+  <h1>Sign in to CP-DSS</h1>
+  <p class="textbody">The CP-DSS application sign-in procedure for a vessel employee and a shore employee is different. </p>
+  <h2 class="textbody">Vessel Employee Sign In </h2>
+  <p class="textbody">Perform the following steps to sign in to the CP-DSS application:</p>
+  <ol class="numberlist">
+    <li class="textbody">Open a web browser and enter the following URL: <a href="https://mol-cpdss-qa-ship.alphaorimarine.com/login"><span style="background-color:#00ff00;">https://mol-cpdss-uat.alphaorimarine.com/login</span>.</a> The CP-DSS vessel sign-in page appears.<br/>
+      <img class="image-full" src="Images/sign_in/login page.png"/>
+    </li>
+    <li class="textbody">Enter the username and password in the <span style="font-weight:bold;">Registered Users</span> fields.<br/>
+      <img class="image-full" src="Images/sign_in/Registered Users.png"/>
+    </li>
+    <li class="textbody">Click <span style="font-weight:bold;">Sign In</span>.<br/>
+      <img class="image-full" src="Images/sign_in/Sign In.png" style="cursor: nwse-resize;"/><br/>
+      The vessel dashboard appears displaying the details of the active voyage.<br/>
+      <img class="image-full" height="16" src="Images/dashboard/dashboard.png" width="16"/><br/>
+      For more information, see <a href="dashboard-new.htm">Dashboard</a>.
+      <p class="note">A vessel employee can access only the details of the vessel involved in the active voyage. </p>
+    </li>
+  </ol>
+  <h2 class="textbody">Shore Employee Sign In </h2>
+  <p class="textbody"><span style="background-color:rgba(0, 255, 255, 0.25);">Shore employees can access the CP-DSS application either through <span style="font-weight:bold;">KEYCLOAK </span>or a Microsoft account.</span></p>
+  <h3>Prerequisites:</h3>
+  <p class="textbody">Consider the following prerequisites before attempting to sign in to the shore side CP-DSS application. </p>
+  <ul class="bullets">
+    <li class="textbody">Users must be registered in the Keycloak directory.
+      <p class="note">Only the users with Admin privilege can add users to the Keycloack directory.</p>
+    </li>
+    <li class="textbody">Users must have a Microsoft account. Once the user accesses the CP-DSS application through the Microsoft account, the user&#39;s login credentials are automatically updated in the Keycloak registry allowing the user to sign in to the CP-DSS application through <span style="font-weight:bold;">KEYCLOAK</span> from the next time. </li>
+  </ul>
+  <p class="textbody">Perform the following steps to sign in to the CP-DSS application:</p>
+  <ol class="numberlist">
+    <li class="textbody">Open a web browser and enter the following URL: <span style="background-color:#00ff00;"><a href="https://cpdss-dev.alphaorimarine.com/login">https://cpdss-dev.alphaorimarine.com/login</a></span>. <br/>
+      <img class="image-full" src="Images/Shore Login/Login Page.png"/>
+    </li>
+    <li class="textbody">Click <span style="font-weight:bold;">KEYCLOAK </span>if you have already registered in the directory. Else, click <span style="font-weight:bold;">MICROSOFT.</span><br/>
+       The Shore Sign In page appears. Enter the Username and Password in the respective fields. <br/>
+      <img class="image-full" src="Images/Shore Login/Enter Creds.png" style="background-image: url(&quot;&quot;);"/>
+    </li>
+    <li class="textbody">Click <span style="font-weight:bold;">Sign In</span>.<br/>
+      <img class="image-full" src="Images/Shore Login/Sign In.png" style="cursor: nwse-resize;"/><br/>
+      The <span style="font-weight:bold;">Fleet </span>page appears displaying the details of all the vessels or the fleet managed by the user.<br/>
+      <img class="image-full" src="Images/fleet/fleet page.png"/><br style="border-width: 1px;border-style: solid;border-color: #000000;border-left-width: 1px;border-left-style: solid;border-left-color: #000000;border-top-width: 1px;border-top-style: solid;border-top-color: #000000;border-right-width: 1px;border-right-style: solid;border-right-color: #000000;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #000000"/>
+      For more information, see <a href="fleet.htm">Fleet</a>. 
+      <p class="note"><span style="background-color:rgba(0, 255, 255, 0.47);">A shore employee can access the details of all the vessels that comes under the fleet managed by the user. </span></p>
+    </li>
+  </ol>
+  <p class="textbody"> </p>
+
+</div>
+          <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
+        </div>
+        <div class="RH-LAYOUT-RIGHTPANEL-container" id="rh-rightpanel"></div>
+      </div>
+    </div>
+  </main>
+  <footer role="contentinfo" class="RH-LAYOUT-FOOTER-container" id="rh-footer"></footer>
+  <script type="text/javascript">//<![CDATA[
+
+    gRootRelPath = "."
+    gCommonRootRelPath = "."
+    gTopicId = "1_1"
+  
+//]]></script>
+
+
+  <script src="./template/scripts/topicpage.js"></script>
+  <script src="./whxdata/layoutconfig.js"></script>
+  <script src="./whxdata/brsdata.js"></script>
+
+  
+    
+      
+          
+
+            
+              
+                <link rel="StyleSheet" href="./template/Oceanic/CP DSS Font.css" type="text/css"/>
+                
+                  
+
+
+</body></html>

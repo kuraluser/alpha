@@ -118,7 +118,7 @@ public class DischargeInformation extends EntityDoc {
   private Boolean dischargeCommingleCargoSeparately = false; // default unchecked
 
   // bi-directional many-to-one association to DischargingInformationStatus
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "discharging_status_xid")
   private DischargingInformationStatus dischargingInformationStatus;
 

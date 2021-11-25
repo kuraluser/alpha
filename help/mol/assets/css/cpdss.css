@@ -506,3 +506,6 @@
   font-weight: bold;
   font-family: Lato;
 }
+.RH-LAYOUT-CENTERPANEL-topic-box ol.LowerRoman, .RH-LAYOUT-FOOTER-container ol.LowerRoman {
+  list-style: lower-roman;
+}

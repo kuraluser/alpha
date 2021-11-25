@@ -1,0 +1,20 @@
+<p-dialog id="dialog_commingle_cargo_details_popup" header="{{'COMMINGLE_CARGO_DETAILS_POPUP_HEADER' | translate}}"
+    [(visible)]="display" [modal]="true" styleClass="commingle-cargo-details-popup" [draggable]="false"
+    [responsive]="true" [closable]="false" *ngIf="display">
+    <div class="col" *ngIf="commingleData">
+
+        <cpdss-portal-datatable [tableId]="'comminglePopup'" [columns]="columns" [value]="commingleData" [scrollable]="false">
+        </cpdss-portal-datatable>
+
+    </div>
+    <p-footer>
+        <div class="row">
+            <div class="col-sm-12 text-right">
+                <button type="button" class="btn btn-main" (click)="closeDialog()"
+                    id="commingle-cargo-details-popup-cancel" autofocus focusTrap>{{'COMMINGLE_CARGO_DETAILS_POPUP_CANCEL_BUTTON' |
+                    translate}}</button>
+
+            </div>
+        </div>
+    </p-footer>
+</p-dialog>

@@ -55,6 +55,10 @@ public interface PortLoadingPlanStowageDetailsRepository
   public List<PortLoadingPlanStowageDetails> findByPortRotationXIdInAndIsActive(
       List<Long> portRotationId, Boolean isActive);
 
+  public List<PortLoadingPlanStowageDetails>
+      findByPortRotationXIdAndIsActiveAndConditionTypeAndValueType(
+          Long portRotationId, Boolean isActive, Integer conditionType, Integer valueType);
+
   @Transactional
   @Modifying
   @Query(

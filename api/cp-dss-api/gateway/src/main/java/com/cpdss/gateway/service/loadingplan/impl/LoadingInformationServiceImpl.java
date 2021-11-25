@@ -3,6 +3,7 @@ package com.cpdss.gateway.service.loadingplan.impl;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.PLANNING_TYPE;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -526,7 +527,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   public LoadingStages getLoadingStagesAndMasters(LoadingPlanModels.LoadingStages var1) {
     LoadingStages loadingStages = new LoadingStages();
     try {
-      BeanUtils.copyProperties(var1, loadingStages);
       List<StageOffset> list1 = new ArrayList<>();
       List<StageDuration> list2 = new ArrayList<>();
       for (LoadingPlanModels.StageOffsets val1 : var1.getStageOffsetsList()) {
@@ -541,6 +541,16 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         Optional.ofNullable(val1.getDuration()).ifPresent(duration::setDuration);
         list2.add(duration);
       }
+      loadingStages.setId(var1.getId());
+      loadingStages.setTrackStartEndStage(var1.getTrackStartEndStage());
+      loadingStages.setTrackGradeSwitch(var1.getTrackGradeSwitch());
+      if (var1.getStageOffset() != 0) {
+        loadingStages.setStageOffset(var1.getStageOffset());
+      }
+      if (var1.getStageDuration() != 0) {
+        loadingStages.setStageDuration(var1.getStageDuration());
+      }
+
       loadingStages.setStageOffsetList(list1);
       loadingStages.setStageDurationList(list2);
       log.info(
@@ -594,30 +604,32 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
   @Override
   public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPort(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType,
+      boolean isDischarging) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId,
-            operationType,
-            portRotationId,
-            portId,
-            true,
-            Common.PLANNING_TYPE.LOADABLE_STUDY);
-    return this.buildLoadablePlanQuantity(list, vesselId);
+            patternId, operationType, portRotationId, portId, true, planningType);
+    return this.buildLoadablePlanQuantity(list, vesselId, isDischarging);
   }
 
   @Override
   public List<LoadableQuantityCargoDetails> getLoadablePlanCargoDetailsByPortUnfiltered(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType,
+      boolean isDischarging) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId,
-            operationType,
-            portRotationId,
-            portId,
-            false,
-            Common.PLANNING_TYPE.LOADABLE_STUDY);
-    return this.buildLoadablePlanQuantity(list, vesselId);
+            patternId, operationType, portRotationId, portId, false, planningType);
+    return this.buildLoadablePlanQuantity(list, vesselId, isDischarging);
   }
 
   @Override
@@ -668,7 +680,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   private List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> buildLoadablePlanQuantity(
-      List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId) {
+      List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId, boolean isDischarging) {
     List<com.cpdss.gateway.domain.LoadableQuantityCargoDetails> response = new ArrayList<>();
     log.info("Cargo to be loaded data from LS, Size {}", list.size());
     for (LoadableStudy.LoadableQuantityCargoDetails lqcd : list) {
@@ -703,7 +715,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       cargoDetails.setOrderQuantity(lqcd.getOrderedQuantity());
       cargoDetails.setCargoNominationQuantity(lqcd.getCargoNominationQuantity());
-      cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
+      if (isDischarging) {
+        cargoDetails.setCargoNominationId(lqcd.getDscargoNominationId());
+      } else {
+        cargoDetails.setCargoNominationId(lqcd.getCargoNominationId());
+      }
       //      cargoDetails.setMaxLoadingRate(this.getLoadingRateFromVesselService(vesselId));
       // Max Loading Rate from ALGO
       cargoDetails.setMaxLoadingRate(lqcd.getLoadingRateM3Hr());
@@ -789,6 +805,23 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       response.add(cargoDetails);
     }
     return response;
+  }
+
+  @Override
+  public LoadingPlanModels.LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(
+      Long patternId) throws GenericServiceException {
+    LoadingPlanModels.LoadingInformationSynopticalRequest.Builder requestBuilder =
+        LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder();
+    requestBuilder.setLoadablePatternId(patternId);
+    LoadingPlanModels.LoadingInformationSynopticalReply grpcReply =
+        loadingInfoServiceBlockingStub.getLoadigInformationByVoyage(requestBuilder.build());
+    if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch getDischargeStudyByVoyage",
+          grpcReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+    }
+    return grpcReply;
   }
 
   /**

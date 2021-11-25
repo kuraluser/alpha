@@ -100,6 +100,7 @@ import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceB
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
@@ -3303,6 +3304,12 @@ public class LoadableStudyService {
       rec.setFillingRatio(protoRec.getFillingRatio());
       rec.setPlanQtyId(protoRec.getPlanQtyId());
       rec.setPlanQtyCargoOrder(protoRec.getPlanQtyCargoOrder());
+      rec.setCargo1NominationId(protoRec.getCargo1NominationId());
+      rec.setCargo2NominationId(protoRec.getCargo2NominationId());
+      rec.setCargo1Mt(protoRec.getCargo1Mt());
+      rec.setCargo2Mt(protoRec.getCargo2Mt());
+      rec.setCargo1Lt(protoRec.getCargo1Lt());
+      rec.setCargo2Lt(protoRec.getCargo2Lt());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
@@ -6360,5 +6367,29 @@ public class LoadableStudyService {
   public UpdateUllageReply getUllage(
       com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.getUllage(grpcRequest);
+  }
+
+  /**
+   * Make file name using proper convention
+   *
+   * @param vesselId
+   * @param voyageId
+   * @return FileName
+   */
+  public String prepareFileName(Long vesselId, Long voyageId) {
+    return this.vesselInfoGrpcService
+            .getVesselInfoByVesselId(
+                VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build())
+            .getVesselDetail()
+            .getName()
+        + " - "
+        + this.loadableStudyServiceBlockingStub
+            .getVoyageByVoyageId(
+                com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest.newBuilder()
+                    .setVoyageId(voyageId)
+                    .build())
+            .getVoyageDetail()
+            .getVoyageNumber()
+        + " - ";
   }
 }

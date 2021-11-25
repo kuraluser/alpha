@@ -602,6 +602,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
               onHandQuantity.setActualArrivalQuantity(null);
               onHandQuantity.setActualDepartureQuantity(null);
+              if (onHandQuantity.getDepartureQuantity() == null) {
+                onHandQuantity.setDepartureQuantity(BigDecimal.ZERO);
+              }
               onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
               onHandQuantity.setPortXId(portRotation.getPortXId());
               onHandQuantity.setPortRotation(portRotation);
@@ -624,6 +627,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                   onHandQuantity.setLoadableStudy(loadableStudyOpt.get());
                   onHandQuantity.setActualArrivalQuantity(null);
                   onHandQuantity.setActualDepartureQuantity(null);
+                  if (onHandQuantity.getDepartureQuantity() == null) {
+                    onHandQuantity.setDepartureQuantity(BigDecimal.ZERO);
+                  }
                   onHandQuantity.setArrivalQuantity(onHandQuantity.getDepartureQuantity());
                   onHandQuantity.setPortXId(portRotation.getPortXId());
                   onHandQuantity.setPortRotation(portRotation);
@@ -932,12 +938,24 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                           comDetail.getTankId().equals(commingleTankDataOpt.get().getTankId()))
                   .findAny();
 
-          if (lpcd.isPresent()) {
-            Optional.ofNullable(lpcd.get().getGrade())
-                .ifPresent(grade -> cargoBuilder.setCargoAbbreviation(grade));
-            Optional.of(lpcd.get().getCommingleColour())
-                .ifPresent(colorCode -> cargoBuilder.setColorCode(colorCode));
-          }
+          lpcd.ifPresent(
+              loadablePlanCommingleDetails -> {
+                Optional.ofNullable(loadablePlanCommingleDetails.getGrade())
+                    .ifPresent(cargoBuilder::setCargoAbbreviation);
+                Optional.of(lpcd.get().getCommingleColour()).ifPresent(cargoBuilder::setColorCode);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo1NominationId())
+                    .ifPresent(cargoBuilder::setCargo1NominationId);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo2NominationId())
+                    .ifPresent(cargoBuilder::setCargo2NominationId);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo1Mt())
+                    .ifPresent(cargoBuilder::setCargo1Mt);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo2Mt())
+                    .ifPresent(cargoBuilder::setCargo2Mt);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo1Lt())
+                    .ifPresent(cargoBuilder::setCargo1Lt);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo2Lt())
+                    .ifPresent(cargoBuilder::setCargo2Lt);
+              });
         }
       }
       if (!isEmpty(cargoBuilder.getActualWeight())) {

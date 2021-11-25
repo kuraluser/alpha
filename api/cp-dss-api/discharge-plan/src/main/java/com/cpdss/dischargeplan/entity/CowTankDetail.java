@@ -27,6 +27,18 @@ public class CowTankDetail extends EntityDoc {
   @Column(name = "tank_xid")
   private Long tankXid;
 
+  @Column(name = "actual_planned")
+  private Integer actualPlanned;
+
+  @Column(name = "time_start")
+  private Long timeStart;
+
+  @Column(name = "time_end")
+  private Long timeEnd;
+
+  @Column(name = "tank_short_name")
+  private String tankShortName;
+
   // bi-directional many-to-one association to CowPlanDetail
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "cow_plan_details_xid")

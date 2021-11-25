@@ -54,7 +54,7 @@ export class PortRotationPopupComponent implements OnInit {
   portEtaEtdPermission: IPermission;
   listData = <IPortAllDropdownData>{};
   portLoaded = false;
-  enableSaveButton: boolean = false;
+  enableSaveButton = false;
 
   private _visible: boolean;
 
@@ -122,7 +122,7 @@ export class PortRotationPopupComponent implements OnInit {
   private async initPortsArray(portsLists: IPortList[]) {
     const formatOpt: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat };
     const laycanFormat: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
-    const _ports = portsLists?.map((item) => {
+    const _ports = portsLists?.map((item, index) => {
       if (item.layCanFrom && item.layCanTo) {
         const layCanFrom = moment(item.layCanFrom, 'DD-MM-YYYY').startOf('d').toDate();
         item.layCanFrom = item.portTimezoneId ? this.convertDateTimeWithZone(layCanFrom, item.portTimezoneId, true) : this.timeZoneTransformationService.formatDateTime(item.layCanFrom, laycanFormat);
@@ -145,6 +145,12 @@ export class PortRotationPopupComponent implements OnInit {
     this.portsForm = this.fb.group({
       dataTable: this.fb.array([...portListArray])
     });
+    this.ports.map((port, index) => {
+      port.slNo = index + 1;
+      const form = this.row(index);
+      this.updateValuesIfBunkering(port, form, index);
+      return port;
+    })
     this.portLoaded = true;
     this.enableSaveButton = this.portsForm.valid ? true : false;
     this.ngxSpinnerService.hide()
@@ -156,10 +162,10 @@ export class PortRotationPopupComponent implements OnInit {
 * @memberof PortRotationPopupComponent
 */
   closePopup(success?: boolean) {
-    let successData = {
+    const successData = {
       success: success,
       hide: false
-    }
+    };
     this.displayPopup.emit(successData);
   }
 
@@ -273,11 +279,13 @@ export class PortRotationPopupComponent implements OnInit {
       for (let i = 0; i < this.ports.length; i++) {
         this.updateValidityAndEditMode(i, 'eta');
       }
+      this.updateEtaEtdIfSameBunkerPort(event, 'etd', index);
     }
     if (event.field === 'eta') {
       for (let i = 0; i < this.ports.length; i++) {
         this.updateValidityAndEditMode(i, 'etd')
       }
+      this.updateEtaEtdIfSameBunkerPort(event, 'eta', index);
     }
     if (event.field === 'eta' || event.field === 'etd') {
       this.updateValuesIfBunkering(event.data, form, index);
@@ -342,7 +350,7 @@ export class PortRotationPopupComponent implements OnInit {
  * @memberof PortRotationPopupComponent
  */
   async savePort() {
-    if(!this.portsForm.valid) { return; }
+    if (!this.portsForm.valid) { return; }
     this.ngxSpinnerService.show();
     const portSave: IEditPortRotationModel = { portList: [] };
     const saveportList = this.portRotationPopupTransformationService.getPortAsValue(this.portsDetails?.portList, this.ports);
@@ -408,6 +416,14 @@ export class PortRotationPopupComponent implements OnInit {
           this.updateValidityAndEditMode(index, 'eta');
           this.updateValidityAndEditMode(index, 'etd');
           return;
+        } else if (this.ports[index + 1] && portId === this.ports[index + 1].port?.value?.id && [OPERATIONS.LOADING, OPERATIONS.DISCHARGING].includes(this.ports[index + 1].operation?.value?.id)) {
+          form.controls.eta.disable();
+          form.controls.etd.disable();
+          this.ports[index].eta.isEditable = false;
+          this.ports[index].etd.isEditable = false;
+          this.updateValidityAndEditMode(index, 'eta');
+          this.updateValidityAndEditMode(index, 'etd');
+          return;
         }
       }
     }
@@ -420,6 +436,31 @@ export class PortRotationPopupComponent implements OnInit {
       this.ports[index].etd.isEditable = true;
       this.updateValidityAndEditMode(index, 'eta');
       this.updateValidityAndEditMode(index, 'etd');
+    }
+  }
+
+  /**
+   * Method to auto update bunker port ETA & ETD if same adjusent loading / discharing port
+   *
+   * @param {*} event
+   * @param {string} typeOfEt
+   * @param {number} index
+   * @memberof PortRotationPopupComponent
+   */
+  updateEtaEtdIfSameBunkerPort(event: any, typeOfEt: string, index: number): void {
+    const previousRow = this.ports[index - 1] ? this.ports[index - 1] : null;
+    if (previousRow && previousRow.port.value.id === this.ports[index].port.value.id && this.ports[index].operation.value.id === OPERATIONS.DISCHARGING && previousRow.operation.value.id === OPERATIONS.BUNKERING) {
+      this.ports[index - 1][typeOfEt].value = typeOfEt === 'eta' ? event.data.eta.value : event.data.etd.value;
+      this.updateValidityAndEditMode(index - 1, typeOfEt);
+    }
+    const nextRow = this.ports[index + 1] ? this.ports[index + 1] : null;
+    if (nextRow && nextRow.port.value.id === this.ports[index].port.value.id && (this.ports[index].operation.value.id === OPERATIONS.DISCHARGING || this.ports[index].operation.value.id === OPERATIONS.LOADING) && nextRow.operation.value.id === OPERATIONS.BUNKERING) {
+      this.ports[index + 1][typeOfEt].value = typeOfEt === 'eta' ? event.data.eta.value : event.data.etd.value;
+      if (this.ports[index].operation.value.id === OPERATIONS.DISCHARGING) {
+        this.updateValidityAndEditMode(index - 1, typeOfEt);
+      } else {
+        this.updateValidityAndEditMode(index, typeOfEt);
+      }
     }
   }
 

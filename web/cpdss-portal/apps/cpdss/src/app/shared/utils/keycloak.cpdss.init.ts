@@ -20,22 +20,30 @@ export function keycloakCPDSSInitializer(keycloak: KeycloakService, http: HttpCl
 
         return new Promise(async (resolve, reject) => {
             try {
-                const logoKey = 'logoUrl';
-                const imageIndex = window.location.search.indexOf(logoKey);
-                let imgUri = window.location.search.substring(imageIndex + logoKey.length + 1);
-                imgUri = imgUri.split('&')[0];
+                const queryParamsArr = window.location.search.split('&');
+
+                const imageIndex = window.location.search.indexOf('logoUrl=') > -1 && queryParamsArr.findIndex((queryParam) => queryParam.includes('logoUrl='));
+                let imgUri = imageIndex ? queryParamsArr[imageIndex].split('=')[1] : null;
                 if (imgUri) {
                     localStorage.setItem('companyLogo', imgUri);
                 } else if (localStorage.getItem('companyLogo') !== undefined && localStorage.getItem('companyLogo') !== 'undefined' && localStorage.getItem('companyLogo') !== '' && localStorage.getItem('companyLogo') !== null) {
                     imgUri = localStorage.getItem('companyLogo');
                 }
-                const faviconKey = 'faviconUrl';
-                const iconIndex = window.location.search.indexOf(faviconKey);
-                let iconUri = window.location.search.substring(iconIndex + faviconKey.length + 1);
+
+                const iconIndex = window.location.search.indexOf('faviconUrl=') > -1 && queryParamsArr.findIndex((queryParam) => queryParam.includes('faviconUrl='));
+                let iconUri = iconIndex ? queryParamsArr[iconIndex].split('=')[1] : null;
                 if (iconUri) {
                     localStorage.setItem('favicon', iconUri);
                 } else if (localStorage.getItem('favicon') !== undefined && localStorage.getItem('favicon') !== 'undefined' && localStorage.getItem('favicon') !== '' && localStorage.getItem('favicon') !== null) {
                     iconUri = localStorage.getItem('favicon');
+                }
+
+                const simulatorUrlIndex =  window.location.search.indexOf('simulatorUrl=') > -1 && queryParamsArr.findIndex((queryParam) => queryParam.includes('simulatorUrl='));
+                let simulatorSiteUrl = simulatorUrlIndex ? queryParamsArr[simulatorUrlIndex].split('=')[1] : null;
+                if (simulatorSiteUrl) {
+                    localStorage.setItem('simulatorSiteUrl', simulatorSiteUrl);
+                } else if (localStorage.getItem('simulatorSiteUrl') !== undefined && localStorage.getItem('simulatorSiteUrl') !== 'undefined' && localStorage.getItem('simulatorSiteUrl') !== '' && localStorage.getItem('simulatorSiteUrl') !== null) {
+                    simulatorSiteUrl = localStorage.getItem('simulatorSiteUrl');
                 }
 
                 const docsUrlKey = 'docsUrl';

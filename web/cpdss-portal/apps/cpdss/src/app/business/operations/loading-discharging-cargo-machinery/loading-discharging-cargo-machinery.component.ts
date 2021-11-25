@@ -98,7 +98,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   updateMachinery() {
     this.machineries = [];
     this.machineryInUses?.vesselPumps?.map((vesselpump) => {
-      vesselpump.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType);
+      const loadingDischargingMachinesInUses = this.machineryInUses?.loadingDischargingMachinesInUses?.find(machine => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType)
+      vesselpump.isUsing = loadingDischargingMachinesInUses?.isUsing ?? false;
       const machinaryUsed = this.machineryInUses?.loadingDischargingMachinesInUses?.find((machine) => machine.machineId === vesselpump.id && machine.machineTypeId === vesselpump.machineType);
       if (machinaryUsed) {
         vesselpump.capacity = machinaryUsed.capacity;
@@ -124,7 +125,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
     let filteredManiFoldMachineByTankType = [];
     filteredManiFoldMachineByTankType = this.machineryInUses.vesselManifold.filter((manifold) => manifold.componentType === this.selectedType.id);
     filteredManiFoldMachineByTankType?.map((manifold) => {
-      manifold.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === manifold.id && machine.machineTypeId === manifold.machineTypeId);
+      const loadingDischargingMachinesInUses = this.machineryInUses?.loadingDischargingMachinesInUses?.find(machine => machine.machineId === manifold.id && machine.machineTypeId === manifold.machineTypeId);
+      manifold.isUsing = loadingDischargingMachinesInUses?.isUsing ?? false;
     });
     const manifoldObject = {
       machine: 'Manifold',
@@ -132,7 +134,8 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
       field: 'componentCode'
     }
     this.machineryInUses.vesselBottomLine.map((bottoLine) => {
-      bottoLine.isUsing = this.machineryInUses?.loadingDischargingMachinesInUses?.some(machine => machine.machineId === bottoLine.id && machine.machineTypeId === bottoLine.machineTypeId);
+      const loadingDischargingMachinesInUses = this.machineryInUses?.loadingDischargingMachinesInUses?.find(machine => machine.machineId === bottoLine.id && machine.machineTypeId === bottoLine.machineTypeId);
+      bottoLine.isUsing = loadingDischargingMachinesInUses?.isUsing ?? false;
     });
     const bottomLineObject = {
       machine: 'BottomLine',
@@ -224,27 +227,36 @@ export class LoadingDischargingCargoMachineryComponent implements OnInit {
   onUse(event, column, key: string, typeIndex: number, index: number) {
     column.isUsing = event.target.checked;
     const formControl = this.field(this.getFormGroupName(key, typeIndex, index), 'capacity', key === 'cargoMachineryValues' ? 'cargoMachinery' : 'pumps');
+    
+    const machineTypeId = column?.machineType ?? column?.machineTypeId;
+    this.machineryInUses.loadingDischargingMachinesInUses.map((machineUse) => {
+      if(machineUse.machineId === column.id && machineUse.machineTypeId === machineTypeId) {
+        machineUse.isUsing = column?.isUsing ? true : false;
+      }
+    })
 
     if (column?.isUsing) {
       const info = this.operation === OPERATIONS.LOADING ? { loadingInfoId: this.loadingInfoId } : { dischargeInfoId: this.dichargingInfoId };
-      const machineInUse: ILoadingMachinesInUse | IDischargingMachinesInUse = {
-        id: 0,
-        machineId: column.id,
-        capacity: column.capacity,
-        isUsing: column.isUsing,
-        machineTypeId: column?.machineType ?? column?.machineTypeId,
-        pumpTypeId: column?.pumpTypeId !== undefined ? column?.pumpTypeId : '',
-        ...info
+      const isAvailable = this.machineryInUses.loadingDischargingMachinesInUses.findIndex((machineUse) => {
+        if(machineUse.machineId === column.id && machineUse.machineTypeId === machineTypeId) { 
+          return;
+        }
+      })
+      if(isAvailable === -1) {
+        const machineInUse: ILoadingMachinesInUse | IDischargingMachinesInUse = {
+          id: 0,
+          machineId: column.id,
+          capacity: column.capacity,
+          isUsing: column.isUsing,
+          machineTypeId: column?.machineType ?? column?.machineTypeId,
+          pumpTypeId: column?.pumpTypeId !== undefined ? column?.pumpTypeId : '',
+          ...info
+        }
+        this.machineryInUses.loadingDischargingMachinesInUses.push(machineInUse);
       }
-      this.machineryInUses.loadingDischargingMachinesInUses.push(machineInUse);
+      
       formControl?.enable();
     } else {
-      const machineTypeId = column?.machineType ?? column?.machineTypeId;
-      this.machineryInUses?.loadingDischargingMachinesInUses?.map(machineUse => {
-        if (machineUse.machineId === column.id && machineUse.machineTypeId === machineTypeId) {
-          machineUse.isUsing = false;
-        }
-      });
       formControl?.disable();
     }
     this.updatemachineryInUses.emit(this.machineryInUses.loadingDischargingMachinesInUses);

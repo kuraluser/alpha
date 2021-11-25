@@ -4,15 +4,10 @@ package com.cpdss.loadingplan.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.loadingplan.entity.CargoToppingOffSequence;
-import com.cpdss.loadingplan.entity.LoadingBerthDetail;
-import com.cpdss.loadingplan.entity.LoadingDelay;
-import com.cpdss.loadingplan.entity.LoadingInformation;
-import com.cpdss.loadingplan.entity.LoadingMachineryInUse;
-import com.cpdss.loadingplan.entity.ReasonForDelay;
-import com.cpdss.loadingplan.entity.StageDuration;
-import com.cpdss.loadingplan.entity.StageOffset;
+import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.CargoToppingOffSequenceService;
 import com.cpdss.loadingplan.service.LoadingBerthService;
@@ -20,14 +15,21 @@ import com.cpdss.loadingplan.service.LoadingDelayService;
 import com.cpdss.loadingplan.service.LoadingInformationBuilderService;
 import com.cpdss.loadingplan.service.LoadingMachineryInUseService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
+import com.google.protobuf.ByteString;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(
     classes = {
@@ -62,6 +64,8 @@ class LoadingInformationServiceImplTest {
   @MockBean PortTideDetailsRepository portTideDetailsRepository;
   @MockBean LoadingInstructionRepository loadingInstructionRepository;
   @MockBean LoadingPlanAlgoService loadingPlanAlgoService;
+  @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoServiceBlockingStub;
+
   // getLoadingInformation(Long id)
 
   @Test
@@ -372,5 +376,219 @@ class LoadingInformationServiceImplTest {
     loading.setPortRotationXId(1L);
     loading.setIsLoadingInfoComplete(false);
     return loading;
+  }
+
+  @Test
+  void testDeleteLoadablePlanDetails() {
+    LoadingInformation loadingInformation = new LoadingInformation();
+    loadingInformation.setId(1L);
+    this.loadingInformationServiceImpl.deleteLoadablePlanDetails(loadingInformation);
+  }
+
+  @Test
+  void testgetAllLoadingInfoByVoyageId() {
+    Long vesselId = 1L;
+    Long voyageId = 1L;
+    Mockito.when(
+            this.loadingInformationRepository.findAllByVesselXIdAndVoyageIdAndIsActiveTrue(
+                Mockito.anyLong(), Mockito.anyLong()))
+        .thenReturn(getLLI());
+    var reply = this.loadingInformationServiceImpl.getAllLoadingInfoByVoyageId(vesselId, voyageId);
+    assertEquals(1L, reply.get(0).getId());
+  }
+
+  private List<LoadingInformation> getLLI() {
+    List<LoadingInformation> list = new ArrayList<>();
+    LoadingInformation loadingInformation = new LoadingInformation();
+    loadingInformation.setId(1L);
+    list.add(loadingInformation);
+    return list;
+  }
+
+  @Test
+  void testSaveLoadingInformation() {
+    com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request =
+        LoadingPlanModels.LoadingInformation.newBuilder()
+            .setIsLoadingInfoComplete(true)
+            .setLoadingDetail(
+                LoadingPlanModels.LoadingDetails.newBuilder()
+                    .setStartTime("11:23")
+                    .setTrimAllowed(
+                        LoadingPlanModels.TrimAllowed.newBuilder()
+                            .setMaximumTrim("1")
+                            .setInitialTrim("1")
+                            .setFinalTrim("1")
+                            .build())
+                    .setId(1L)
+                    .build())
+            .build();
+    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(getLoading());
+    try {
+      var loading = this.loadingInformationServiceImpl.saveLoadingInformation(request);
+      assertEquals(1L, loading.getId());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  void testSaveLoadingInfoRates() {
+    LoadingPlanModels.LoadingRates source =
+        LoadingPlanModels.LoadingRates.newBuilder()
+            .setLineContentRemaining("1")
+            .setMaxDeBallastingRate("1")
+            .setMaxLoadingRate("1")
+            .setMinDeBallastingRate("1")
+            .setReducedLoadingRate("1")
+            .setMinLoadingRate("1")
+            .setInitialLoadingRate("1")
+            .setNoticeTimeRateReduction("1")
+            .setNoticeTimeStopLoading("1")
+            .setShoreLoadingRate("1")
+            .setId(1L)
+            .build();
+    LoadingInformation loadingInformation = new LoadingInformation();
+    LoadingPlanModels.LoadingInfoSaveResponse.Builder response =
+        LoadingPlanModels.LoadingInfoSaveResponse.newBuilder();
+    Mockito.when(this.loadingInformationServiceImpl.loadingInformationRepository.findById(1L))
+        .thenReturn(findById());
+    Mockito.when(
+            this.loadingInformationServiceImpl.loadingInformationRepository
+                .findByVesselXIdAndVoyageIdAndPortRotationXIdAndIsActiveTrue(1L, 1L, 1L))
+        .thenReturn(findByVesselXIdAndVoyageIdAndPortRotationXIdAndIsActiveTrue());
+    this.loadingInformationServiceImpl.saveLoadingInfoRates(source, loadingInformation, response);
+    Mockito.verify(loadingInformationRepository).save(Mockito.any());
+  }
+
+  @Test
+  void testSaveLoadingInfoStages() {
+    LoadingPlanModels.LoadingStages loadingStage =
+        LoadingPlanModels.LoadingStages.newBuilder()
+            .setOffset(LoadingPlanModels.StageOffsets.newBuilder().setId(1L).build())
+            .setTrackStartEndStage(true)
+            .setTrackGradeSwitch(true)
+            .setDuration(LoadingPlanModels.StageDuration.newBuilder().setId(1L).build())
+            .build();
+    LoadingInformation loadingInformation = new LoadingInformation();
+    Mockito.when(stageDurationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(getOSD());
+    Mockito.when(stageOffsetRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(getOSO());
+    this.loadingInformationServiceImpl.saveLoadingInfoStages(loadingStage, loadingInformation);
+    Mockito.verify(loadingInformationRepository).save(Mockito.any());
+  }
+
+  private Optional<StageDuration> getOSD() {
+    StageDuration defaultDurationOpt = new StageDuration();
+    defaultDurationOpt.setId(1L);
+    return Optional.of(defaultDurationOpt);
+  }
+
+  private Optional<StageOffset> getOSO() {
+    StageOffset defaultOffsetOpt = new StageOffset();
+    defaultOffsetOpt.setId(1L);
+    return Optional.of(defaultOffsetOpt);
+  }
+
+  @Test
+  void testUpdateIsLoadingInfoCompeteStatus() {
+    Long loadingInfoId = 1L;
+    boolean status = true;
+    this.loadingInformationServiceImpl.updateIsLoadingInfoCompeteStatus(loadingInfoId, status);
+  }
+
+  //  @Test
+  //  void testUploadPortTideDetails() {
+  //    LoadingPlanModels.UploadTideDetailRequest request =
+  // LoadingPlanModels.UploadTideDetailRequest.newBuilder().setLoadingId(1L).setTideDetaildata(ByteString.EMPTY).build();
+  //    try {
+  //      this.loadingInformationServiceImpl.uploadPortTideDetails(request);
+  //    } catch (GenericServiceException e) {
+  //      e.printStackTrace();
+  //    }
+  //  }
+
+  @Test
+  void testUploadPortTideDetailsFailed() {
+    LoadingPlanModels.UploadTideDetailRequest request =
+        LoadingPlanModels.UploadTideDetailRequest.newBuilder()
+            .setLoadingId(1L)
+            .setTideDetaildata(ByteString.EMPTY)
+            .build();
+    try {
+      this.loadingInformationServiceImpl.uploadPortTideDetails(request);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  void testDownloadPortTideDetails() {
+    XSSFWorkbook workbook = new XSSFWorkbook();
+    LoadingPlanModels.DownloadTideDetailRequest request =
+        LoadingPlanModels.DownloadTideDetailRequest.newBuilder().setLoadingId(1L).build();
+    LoadingPlanModels.DownloadTideDetailStatusReply.Builder builder =
+        LoadingPlanModels.DownloadTideDetailStatusReply.newBuilder();
+    Mockito.when(
+            portTideDetailsRepository.findByLoadingXidAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLPTD());
+    Mockito.when(portInfoServiceBlockingStub.getPortInfoByPaging(Mockito.any()))
+        .thenReturn(getPR());
+    ReflectionTestUtils.setField(
+        loadingInformationServiceImpl,
+        "portInfoServiceBlockingStub",
+        this.portInfoServiceBlockingStub);
+    try {
+      this.loadingInformationServiceImpl.downloadPortTideDetails(workbook, request, builder);
+      assertEquals("SUCCESS", builder.getResponseStatus().getStatus());
+
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private List<PortTideDetail> getLPTD() {
+    List<PortTideDetail> list = new ArrayList<>();
+    PortTideDetail portTideDetail = new PortTideDetail();
+    portTideDetail.setIsActive(true);
+    portTideDetail.setPortXid(1L);
+    portTideDetail.setTideDate(new Date(34));
+    portTideDetail.setTideTime(LocalTime.MAX);
+    portTideDetail.setTideHeight(new BigDecimal(1));
+    list.add(portTideDetail);
+    return list;
+  }
+
+  private PortInfo.PortReply getPR() {
+    List<PortInfo.PortDetail> list = new ArrayList<>();
+    PortInfo.PortDetail portDetail =
+        PortInfo.PortDetail.newBuilder().setId(1L).setName("1").build();
+    list.add(portDetail);
+    PortInfo.PortReply portReply = PortInfo.PortReply.newBuilder().addAllPorts(list).build();
+    return portReply;
+  }
+
+  @Test
+  void testDownloadPortTideDetailsFailed() {
+    XSSFWorkbook workbook = new XSSFWorkbook();
+    LoadingPlanModels.DownloadTideDetailRequest request =
+        LoadingPlanModels.DownloadTideDetailRequest.newBuilder().setLoadingId(1L).build();
+    LoadingPlanModels.DownloadTideDetailStatusReply.Builder builder =
+        LoadingPlanModels.DownloadTideDetailStatusReply.newBuilder();
+    Mockito.when(
+            portTideDetailsRepository.findByLoadingXidAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenThrow(new RuntimeException("server error"));
+    try {
+      this.loadingInformationServiceImpl.downloadPortTideDetails(workbook, request, builder);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

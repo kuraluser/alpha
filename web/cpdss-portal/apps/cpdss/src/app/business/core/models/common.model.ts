@@ -313,6 +313,7 @@ export interface IDischargePortsDetailsResponse {
  */
 export interface IPortList {
     id: number;
+    slNo?: any;
     portOrder: number;
     loadableStudyId: number;
     portId: number;

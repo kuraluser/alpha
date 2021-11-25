@@ -42,7 +42,7 @@
             <div class="col">
                 <cpdss-portal-loading-discharging-cargo-details-table
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions"
-                    [cargoQuantities]="cargoQuantities"></cpdss-portal-loading-discharging-cargo-details-table>
+                    [cargoQuantities]="cargoQuantities" (commingleClick)="showCommingle($event)"></cpdss-portal-loading-discharging-cargo-details-table>
             </div>
 
         </div>
@@ -119,5 +119,10 @@
 <cpdss-portal-ullage-update-popup [vesselId]="vesselId" [permission]="permission"
     [patternId]="operation === OPERATIONS.LOADING ? loadingDischargingPlanInfo?.loadablePatternId : loadingDischargingPlanInfo?.dischargePatternId"
     [portRotationId]="portRotationId" [status]="ULLAGE_STATUS.DEPARTURE" [operation]="operation"
-    [infoId]="loadingDischargingInfoId" *ngIf="display" [ullageStatus]="operation === OPERATIONS.LOADING ? loadingDischargingPlanInfo.loadingPlanDepStatusId : loadingDischargingPlanInfo.dischargePlanDepStatusId" (closePopup)="closePopUp($event)">
+    [infoId]="loadingDischargingInfoId" *ngIf="display"
+    [ullageStatus]="operation === OPERATIONS.LOADING ? loadingDischargingPlanInfo.loadingPlanDepStatusId : loadingDischargingPlanInfo.dischargePlanDepStatusId"
+    (closePopup)="closePopUp($event)">
 </cpdss-portal-ullage-update-popup>
+<cpdss-portal-loading-discharging-commingle-details [display]="showComminglePopup" (displayPopup)="showComminglePopup=$event"
+    [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [commingleData]="commingleDetails">
+</cpdss-portal-loading-discharging-commingle-details>

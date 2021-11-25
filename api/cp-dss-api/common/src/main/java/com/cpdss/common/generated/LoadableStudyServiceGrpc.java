@@ -3727,6 +3727,282 @@ public final class LoadableStudyServiceGrpc {
     return getSaveActivatedVoyageMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest,
+          com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>
+      getGetVoyageByVoyageIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetVoyageByVoyageId",
+      requestType = com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.VoyageInfoReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest,
+          com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>
+      getGetVoyageByVoyageIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest,
+            com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>
+        getGetVoyageByVoyageIdMethod;
+    if ((getGetVoyageByVoyageIdMethod = LoadableStudyServiceGrpc.getGetVoyageByVoyageIdMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetVoyageByVoyageIdMethod = LoadableStudyServiceGrpc.getGetVoyageByVoyageIdMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetVoyageByVoyageIdMethod =
+              getGetVoyageByVoyageIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest,
+                          com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetVoyageByVoyageId"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.VoyageInfoReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("GetVoyageByVoyageId"))
+                      .build();
+        }
+      }
+    }
+    return getGetVoyageByVoyageIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+      getGetLoadablePatternForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getLoadablePatternForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest.class,
+      responseType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+      getGetLoadablePatternForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        getGetLoadablePatternForCommunicationMethod;
+    if ((getGetLoadablePatternForCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetLoadablePatternForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePatternForCommunicationMethod =
+                LoadableStudyServiceGrpc.getGetLoadablePatternForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadablePatternForCommunicationMethod =
+              getGetLoadablePatternForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "getLoadablePatternForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyPatternCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyPatternCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getLoadablePatternForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePatternForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+      getSaveLoadablePatternForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveLoadablePatternForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest.class,
+      responseType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+      getSaveLoadablePatternForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        getSaveLoadablePatternForCommunicationMethod;
+    if ((getSaveLoadablePatternForCommunicationMethod =
+            LoadableStudyServiceGrpc.getSaveLoadablePatternForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadablePatternForCommunicationMethod =
+                LoadableStudyServiceGrpc.getSaveLoadablePatternForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveLoadablePatternForCommunicationMethod =
+              getSaveLoadablePatternForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy
+                              .LoadableStudyPatternCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "saveLoadablePatternForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyPatternCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyPatternCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveLoadablePatternForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadablePatternForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadicatorDataSynopticalForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getLoadicatorDataSynopticalForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadicatorDataSynopticalForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetLoadicatorDataSynopticalForCommunicationMethod;
+    if ((getGetLoadicatorDataSynopticalForCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetLoadicatorDataSynopticalForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadicatorDataSynopticalForCommunicationMethod =
+                LoadableStudyServiceGrpc.getGetLoadicatorDataSynopticalForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadicatorDataSynopticalForCommunicationMethod =
+              getGetLoadicatorDataSynopticalForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "getLoadicatorDataSynopticalForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getLoadicatorDataSynopticalForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadicatorDataSynopticalForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadicatorDataSynopticalForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveLoadicatorDataSynopticalForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadicatorDataSynopticalForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getSaveLoadicatorDataSynopticalForCommunicationMethod;
+    if ((getSaveLoadicatorDataSynopticalForCommunicationMethod =
+            LoadableStudyServiceGrpc.getSaveLoadicatorDataSynopticalForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadicatorDataSynopticalForCommunicationMethod =
+                LoadableStudyServiceGrpc.getSaveLoadicatorDataSynopticalForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveLoadicatorDataSynopticalForCommunicationMethod =
+              getSaveLoadicatorDataSynopticalForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "saveLoadicatorDataSynopticalForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveLoadicatorDataSynopticalForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadicatorDataSynopticalForCommunicationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -4450,6 +4726,55 @@ public final class LoadableStudyServiceGrpc {
           getSaveActivatedVoyageMethod(), responseObserver);
     }
 
+    /** */
+    public void getVoyageByVoyageId(
+        com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetVoyageByVoyageIdMethod(), responseObserver);
+    }
+
+    /** */
+    public void getLoadablePatternForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadablePatternForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePatternForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveLoadablePatternForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void getLoadicatorDataSynopticalForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadicatorDataSynopticalForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveLoadicatorDataSynopticalForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveLoadicatorDataSynopticalForCommunicationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -4966,6 +5291,45 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest,
                       com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>(
                       this, METHODID_SAVE_ACTIVATED_VOYAGE)))
+          .addMethod(
+              getGetVoyageByVoyageIdMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest,
+                      com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>(
+                      this, METHODID_GET_VOYAGE_BY_VOYAGE_ID)))
+          .addMethod(
+              getGetLoadablePatternForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>(
+                      this, METHODID_GET_LOADABLE_PATTERN_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveLoadablePatternForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>(
+                      this, METHODID_SAVE_LOADABLE_PATTERN_FOR_COMMUNICATION)))
+          .addMethod(
+              getGetLoadicatorDataSynopticalForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_GET_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveLoadicatorDataSynopticalForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_SAVE_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION)))
           .build();
     }
   }
@@ -5803,6 +6167,67 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getVoyageByVoyageId(
+        com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetVoyageByVoyageIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getLoadablePatternForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetLoadablePatternForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePatternForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveLoadablePatternForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getLoadicatorDataSynopticalForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(getGetLoadicatorDataSynopticalForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveLoadicatorDataSynopticalForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(getSaveLoadicatorDataSynopticalForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -6365,6 +6790,53 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveActivatedVoyageMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.VoyageInfoReply getVoyageByVoyageId(
+        com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetVoyageByVoyageIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply
+        getLoadablePatternForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetLoadablePatternForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply
+        saveLoadablePatternForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveLoadablePatternForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getLoadicatorDataSynopticalForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getGetLoadicatorDataSynopticalForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        saveLoadicatorDataSynopticalForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getSaveLoadicatorDataSynopticalForCommunicationMethod(),
+          getCallOptions(),
+          request);
     }
   }
 
@@ -7028,6 +7500,58 @@ public final class LoadableStudyServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveActivatedVoyageMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>
+        getVoyageByVoyageId(com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetVoyageByVoyageIdMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        getLoadablePatternForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetLoadablePatternForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        saveLoadablePatternForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveLoadablePatternForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getLoadicatorDataSynopticalForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(getGetLoadicatorDataSynopticalForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        saveLoadicatorDataSynopticalForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(getSaveLoadicatorDataSynopticalForCommunicationMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -7103,6 +7627,11 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_GET_LOADING_SIMULATOR_JSON_DATA = 70;
   private static final int METHODID_GET_VOYAGE = 71;
   private static final int METHODID_SAVE_ACTIVATED_VOYAGE = 72;
+  private static final int METHODID_GET_VOYAGE_BY_VOYAGE_ID = 73;
+  private static final int METHODID_GET_LOADABLE_PATTERN_FOR_COMMUNICATION = 74;
+  private static final int METHODID_SAVE_LOADABLE_PATTERN_FOR_COMMUNICATION = 75;
+  private static final int METHODID_GET_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION = 76;
+  private static final int METHODID_SAVE_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION = 77;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -7622,6 +8151,45 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.VoyageActivateReply>)
                   responseObserver);
           break;
+        case METHODID_GET_VOYAGE_BY_VOYAGE_ID:
+          serviceImpl.getVoyageByVoyageId(
+              (com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.VoyageInfoReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_LOADABLE_PATTERN_FOR_COMMUNICATION:
+          serviceImpl.getLoadablePatternForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADABLE_PATTERN_FOR_COMMUNICATION:
+          serviceImpl.saveLoadablePatternForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy
+                          .LoadableStudyPatternCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION:
+          serviceImpl.getLoadicatorDataSynopticalForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION:
+          serviceImpl.saveLoadicatorDataSynopticalForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -7759,6 +8327,11 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getGetLoadingSimulatorJsonDataMethod())
                       .addMethod(getGetVoyageMethod())
                       .addMethod(getSaveActivatedVoyageMethod())
+                      .addMethod(getGetVoyageByVoyageIdMethod())
+                      .addMethod(getGetLoadablePatternForCommunicationMethod())
+                      .addMethod(getSaveLoadablePatternForCommunicationMethod())
+                      .addMethod(getGetLoadicatorDataSynopticalForCommunicationMethod())
+                      .addMethod(getSaveLoadicatorDataSynopticalForCommunicationMethod())
                       .build();
         }
       }

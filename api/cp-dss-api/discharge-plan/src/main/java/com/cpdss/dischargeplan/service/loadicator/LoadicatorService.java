@@ -21,8 +21,11 @@ import com.cpdss.dischargeplan.domain.algo.LDIntactStability;
 import com.cpdss.dischargeplan.domain.algo.LDStrength;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
+import com.cpdss.dischargeplan.service.DischargeInformationService;
+import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,6 +38,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -84,6 +88,11 @@ public class LoadicatorService {
   @Autowired DischargingSequenceStabiltyParametersRepository dsSeqStabilityParamRepo;
 
   @Autowired PortDischargingPlanStabilityParametersRepository portDsPlanStbParamRepo;
+
+  @Autowired DischargePlanAlgoService dischargePlanAlgoService;
+
+  @Autowired DischargeInformationService dischargeInformationService;
+
   /**
    * get vessel detail for loadicator
    *
@@ -655,18 +664,44 @@ public class LoadicatorService {
       // Save Request JSON Data at LS json_data table
       saveLoadicatorRequestJson(algoRequest, dischargeInfoOpt.get().getId());
 
-      // Send Payload to Algo
-      LoadicatorAlgoResponse lar =
-          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+      try {
+        // Send Payload to Algo
+        LoadicatorAlgoResponse lar =
+            restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+        // Save Response JSON Data at LS json_data table
+        saveLoadicatorResponseJson(lar, dischargeInfoOpt.get().getId());
 
-      // Save Response JSON Data at LS json_data table
-      saveLoadicatorResponseJson(lar, dischargeInfoOpt.get().getId());
+        // Save new stability data into tables
+        saveDischargeSequenceStabilityParameters(dischargeInfoOpt.get(), lar);
 
-      // Save new stability data into tables
-      saveDischargeSequenceStabilityParameters(dischargeInfoOpt.get(), lar);
-
-      // Update status after new data comes in
-
+        // Update status after new data comes in
+        Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+            dischargePlanAlgoService.getDischargingInformationStatus(
+                DischargePlanConstants.PLAN_GENERATED_ID);
+        dischargeInformationService.updateDischargingInformationStatuses(
+            dischargingInfoStatusOpt.get(),
+            dischargingInfoStatusOpt.get(),
+            dischargingInfoStatusOpt.get(),
+            dischargeInfoOpt.get().getId());
+        dischargePlanAlgoService.updateDischargingInfoAlgoStatus(
+            dischargeInfoOpt.get(), request.getProcessId(), dischargingInfoStatusOpt.get(), null);
+        dischargeInformationService.updateIsDischargingSequenceGeneratedStatus(
+            dischargeInfoOpt.get().getId(), true);
+        dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
+            dischargeInfoOpt.get().getId(), true);
+      } catch (HttpStatusCodeException e) {
+        // Update status after error occurs
+        log.error("Error occured in ALGO side while calling loadicator_results API");
+        Optional<DischargingInformationStatus> errorOccurredStatusOpt =
+            dischargePlanAlgoService.getDischargingInformationStatus(
+                DischargePlanConstants.DISCHARGING_INFORMATION_ERROR_OCCURRED_ID);
+        dischargeInformationService.updateDischargingInformationStatus(
+            errorOccurredStatusOpt.get(), dischargeInfoOpt.get().getId());
+        dischargePlanAlgoService.updateDischargingInfoAlgoStatus(
+            dischargeInfoOpt.get(), request.getProcessId(), errorOccurredStatusOpt.get(), null);
+        dischargePlanAlgoService.saveAlgoInternalError(
+            dischargeInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
+      }
     } else { // Update Ullage Loadicator Data
       ullageupdateLoadicatorService.getLoadicatorData(request, dischargeInfoOpt.get());
     }

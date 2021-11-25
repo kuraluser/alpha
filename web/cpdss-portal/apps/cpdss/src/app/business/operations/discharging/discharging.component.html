@@ -48,7 +48,7 @@
       </a>
 
       <button class="btn btn-main tab-center-btn" id="generate-discharge-plan-btn" (click)="generateDischargingPlan()"
-        [disabled]="(!dischargingInformationComplete || !dischargingInstructionComplete || disablePlanGenerateBtn)">{{'GENERATE_DISCHARGING_PLAN' | translate}}</button>
+        [disabled]="(!dischargingInformationComplete || !dischargingInstructionComplete || disablePlanGenerateBtn || !generateDischargingPlanPermission?.view)">{{'GENERATE_DISCHARGING_PLAN' | translate}}</button>
 
       <a (click)="switchTab(OPERATION_TAB.SEQUENCE)"
         [ngClass]="{'active' : currentTab === OPERATION_TAB.SEQUENCE, 'disabled' : !dischargeSequenceGenerated || !dischargingSequenceTabPermission?.view}"
@@ -107,7 +107,7 @@
     </div>
   </div>
 
-  <cpdss-portal-error-log-popup [(visible)]="errorPopUp" (visibleChange)="viewError()"
-    [header]="'GENERATED_PLAN_ERROR_MESSAGE_HEADING'" [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>
+  <cpdss-portal-error-log-popup [(visible)]="errorPopUp" [header]="'GENERATED_PLAN_ERROR_MESSAGE_HEADING'"
+    [errorMessage]="errorMessage"></cpdss-portal-error-log-popup>
 
 </div>

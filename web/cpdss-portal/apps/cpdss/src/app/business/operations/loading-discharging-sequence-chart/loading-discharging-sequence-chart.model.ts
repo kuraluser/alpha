@@ -30,6 +30,7 @@ declare module 'highcharts' {
    */
   interface Chart {
     group: any;
+    cargoStrippingGroup: any;
     ballastStrippingGroup: any;
     ballastGravityGroup: any;
   }
@@ -221,7 +222,8 @@ export interface ISequenceData {
   cargoDischargingRates: Array<IDischargingRate>;
   stabilityParams: IStabilityParam[];
   gravity?: IPumpData;
-  ballastEduction?: IBallastEduction[];
+  ballastEduction?: IEduction[];
+  cargoEduction?: IEduction[];
 }
 
 /**
@@ -314,9 +316,9 @@ export enum SEQUENCE_CHARTS {
  * Interface for ballast eduction details
  *
  * @export
- * @interface IBallastEduction
+ * @interface IEduction
  */
-export interface IBallastEduction {
+export interface IEduction {
   timeStart: number;
   timeEnd: number;
   tanks: number[];

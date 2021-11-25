@@ -4,7 +4,16 @@ package com.cpdss.dischargeplan.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.discharge_plan.CargoForCow;
+import com.cpdss.common.generated.discharge_plan.CowPlan;
+import com.cpdss.common.generated.discharge_plan.CowTankDetails;
+import com.cpdss.common.generated.discharge_plan.DischargeBerths;
+import com.cpdss.common.generated.discharge_plan.DischargeDelay;
+import com.cpdss.common.generated.discharge_plan.DischargeDelays;
+import com.cpdss.common.generated.discharge_plan.DischargeDetails;
+import com.cpdss.common.generated.discharge_plan.DischargeRates;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
+import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
@@ -12,6 +21,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelays;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
@@ -34,6 +44,7 @@ import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
 import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
 import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanCommingleDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanStowageDetails;
@@ -47,7 +58,12 @@ import com.cpdss.dischargeplan.repository.DischargingDelayRepository;
 import com.cpdss.dischargeplan.repository.DischargingMachineryInUseRepository;
 import com.cpdss.dischargeplan.repository.ReasonForDelayRepository;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,7 +285,10 @@ public class DischargeInformationBuilderService {
               var1.getSounding(),
               var1.getConditionType(),
               var1.getValueType(),
-              var1.getColorCode()));
+              var1.getColorCode(),
+              null,
+              null,
+              var1.getSg()));
     }
     return response;
   }
@@ -292,7 +311,10 @@ public class DischargeInformationBuilderService {
               null,
               var1.getConditionType(),
               var1.getValueType(),
-              var1.getColorCode()));
+              var1.getColorCode(),
+              var1.getCargoXId(),
+              var1.getAbbreviation(),
+              null));
     }
     return response;
   }
@@ -315,7 +337,10 @@ public class DischargeInformationBuilderService {
               null,
               var1.getConditionType(),
               var1.getValueType(),
-              var1.getColorCode()));
+              var1.getColorCode(),
+              null,
+              null,
+              null));
     }
     return response;
   }
@@ -390,7 +415,10 @@ public class DischargeInformationBuilderService {
       BigDecimal sounding,
       Integer conditionType,
       Integer valueType,
-      String colorCode)
+      String colorCode,
+      Long cargoId,
+      String abbreviation,
+      BigDecimal bigDecimal)
       throws GenericServiceException {
 
     try {
@@ -408,6 +436,9 @@ public class DischargeInformationBuilderService {
               .setConditionType(conditionType != null ? conditionType : 0)
               .setValueType(valueType != null ? valueType : 0)
               .setColorCode(colorCode != null ? colorCode : "")
+              .setCargoId(cargoId != null ? cargoId : 0L)
+              .setAbbreviation(abbreviation != null ? abbreviation : "")
+              .setSg(bigDecimal != null ? bigDecimal.toString() : "0")
               .build();
       return builder;
     } catch (Exception e) {
@@ -1010,5 +1041,46 @@ public class DischargeInformationBuilderService {
                     .setDensity(detail.getDensity().doubleValue())
                     .build()));
     return detailsListGenerated;
+  }
+
+  /**
+   * @param plpCommingleList
+   * @return
+   * @throws GenericServiceException
+   */
+  public List<LoadingPlanCommingleDetails> buildDischargingPlanCommingleMessage(
+      List<PortDischargingPlanCommingleDetails> plpCommingleList) throws GenericServiceException {
+    List<LoadingPlanCommingleDetails> portLoadingPlanCommingleDetails = new ArrayList<>();
+    try {
+      plpCommingleList.forEach(
+          commingle -> {
+            LoadingPlanCommingleDetails.Builder builder = LoadingPlanCommingleDetails.newBuilder();
+            Optional.ofNullable(commingle.getGrade()).ifPresent(builder::setAbbreviation);
+            Optional.ofNullable(commingle.getApi()).ifPresent(builder::setApi);
+            Optional.ofNullable(commingle.getCargo1XId()).ifPresent(builder::setCargo1Id);
+            Optional.ofNullable(commingle.getCargo2XId()).ifPresent(builder::setCargo2Id);
+            Optional.ofNullable(commingle.getCargoNomination1XId())
+                .ifPresent(builder::setCargoNomination1Id);
+            Optional.ofNullable(commingle.getCargoNomination2XId())
+                .ifPresent(builder::setCargoNomination2Id);
+            Optional.ofNullable(commingle.getId()).ifPresent(builder::setId);
+            Optional.ofNullable(commingle.getQuantity()).ifPresent(builder::setQuantityMT);
+            Optional.ofNullable(commingle.getQuantityM3()).ifPresent(builder::setQuantityM3);
+            Optional.ofNullable(commingle.getTankId()).ifPresent(builder::setTankId);
+            Optional.ofNullable(commingle.getTemperature()).ifPresent(builder::setTemperature);
+            Optional.ofNullable(commingle.getUllage()).ifPresent(builder::setUllage);
+            Optional.ofNullable(commingle.getConditionType()).ifPresent(builder::setConditionType);
+            Optional.ofNullable(commingle.getValueType()).ifPresent(builder::setValueType);
+            Optional.ofNullable(commingle.getColorCode()).ifPresent(builder::setColorCode);
+            portLoadingPlanCommingleDetails.add(builder.build());
+          });
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "LoadingPlanCommingleDetails Object Build failed",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    return portLoadingPlanCommingleDetails;
   }
 }

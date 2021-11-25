@@ -51,7 +51,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   loadingPlanComplete: boolean;
   OPERATIONS = OPERATIONS;
   errorMessage: IAlgoError[];
-  disableGenerateLoadableButton: boolean = true;
+  disableGenerateLoadableButton = true;
   loadinfoTemp: number;
 
   loadingInfoTabPermission: IPermission;
@@ -63,9 +63,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
 
   private ngUnsubscribe: Subject<any> = new Subject();
-  errorPopUp: boolean = false;
-  disableViewErrorButton: boolean = true;
-  processing: boolean = true;
+  errorPopUp = false;
+  disableViewErrorButton = true;
+  processing = true;
   isDischargeStarted: boolean;
 
   @HostListener('window:beforeunload')
@@ -210,7 +210,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     });
 
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
-      if (value && value === ULLAGE_STATUS_VALUE.SUCCESS) {
+      if (value && value.status === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.disableGenerateLoadableButton = true;
       }
     });
@@ -368,10 +368,8 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     }
     if (event?.data?.pattern?.type === 'ullage-update-status') {
       if (event?.data.statusId === ULLAGE_STATUS_VALUE.ERROR) {
-        this.loadingDischargingTransformationService.showUllageError(true);
-      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
-        this.messageService.clear();
-        this.loadingDischargingTransformationService.showUllageError(true);
+        const errorStatus = {value: true, status: event?.data?.pattern?.status};
+        this.loadingDischargingTransformationService.showUllageError(errorStatus);
       } else if (event?.data?.statusId === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_LOADABLE_PLAN_COMPLETE_DONE'], detail: translationKeys["ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL"] });
       }
@@ -408,7 +406,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   setButtonStatus(error?) {
-    if (this.loadinfoTemp == this.loadingInfoId) {
+    if (this.loadinfoTemp === this.loadingInfoId) {
       this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
       this.processing = false;
       this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
@@ -433,7 +431,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    * @memberof LoadingComponent
    */
   setButtonStatusInProcessing() {
-    if (this.loadingInfoId == this.loadinfoTemp) {
+    if (this.loadingInfoId === this.loadinfoTemp) {
       this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
       this.processing = true;
     }
@@ -464,7 +462,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
       portName: localStorage.getItem('selectedPortName'),
       type: 'loading-plan-status'
     }
-    if (result.responseStatus.status == "SUCCESS") {
+    if (result.responseStatus.status === "SUCCESS") {
       if (result.processId) {
         data.processId = result.processId;
         navigator.serviceWorker.controller.postMessage({ type: 'loading-plan-status', data });
@@ -479,7 +477,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
    */
   async getAlgoErrorMessage(status) {
     this.ngxSpinnerService.show();
-    if ((this.loadinfoTemp == this.loadingInfoId) || (!this.loadinfoTemp)) {
+    if ((this.loadinfoTemp === this.loadingInfoId) || (!this.loadinfoTemp)) {
       const algoError: IAlgoResponse = await this.operationsApiService.getAlgoErrorDetails(this.vesselId, this.voyageId, this.loadingInfoId).toPromise();
       if (algoError.responseStatus.status === 'SUCCESS') {
         this.ngxSpinnerService.hide();

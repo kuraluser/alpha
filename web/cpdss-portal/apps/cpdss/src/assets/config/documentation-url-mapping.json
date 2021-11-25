@@ -33,5 +33,5 @@
   "/business/admin/vessel-information": "vessel-informations.htm",
   "/business/admin/vessel-information/vessel/:vesselId": "vessel-informations.htm",
   "/business/voyage-list": "voyages.htm",
-  "/business/file-repository": "files.htm"
+  "/business/file-repository": "files-repository.htm"
 }

@@ -78,22 +78,19 @@ public class DischargeInformationBuilderService {
     LoadableStudy.LoadingSynopticResponse var3 =
         loadingPlanGrpcService.fetchSynopticRecordForPortRotation(
             portRId, GatewayConstants.OPERATION_TYPE_ARR);
-    if (!var3.getTimeOfSunrise().isEmpty()) {
-      var2.setTimeOfSunrise(var3.getTimeOfSunrise());
-    } else {
-      var2.setTimeOfSunrise(var1.getTimeOfSunrise());
-    }
 
-    if (!var3.getTimeOfSunset().isEmpty()) {
-      var2.setTimeOfSunset(var3.getTimeOfSunset());
-    } else {
-      var2.setTimeOfSunset(var1.getTimeOfSunset());
-    }
+    var2.setTimeOfSunrise(var3.getTimeOfSunrise().isEmpty() ? null : var3.getTimeOfSunrise());
+    var2.setTimeOfSunset(var3.getTimeOfSunset().isEmpty() ? null : var3.getTimeOfSunset());
+
     // If not found in LS, Synoptic Go to Port Master
     if (var2.getTimeOfSunrise() == null || var2.getTimeOfSunset() == null) {
       PortInfo.PortDetail response2 = this.loadingPlanGrpcService.fetchPortDetailByPortId(portId);
-      var2.setTimeOfSunrise(response2.getSunriseTime());
-      var2.setTimeOfSunset(response2.getSunsetTime());
+      if (var2.getTimeOfSunrise() == null || var2.getTimeOfSunrise().isEmpty()) {
+        var2.setTimeOfSunrise(response2.getSunriseTime());
+      }
+      if (var2.getTimeOfSunset() == null || var2.getTimeOfSunset().isEmpty()) {
+        var2.setTimeOfSunset(response2.getSunsetTime());
+      }
       log.info(
           "Get Loading info, Sunrise/Sunset added from Port Info table {}, {}",
           response2.getSunriseTime(),
@@ -106,7 +103,7 @@ public class DischargeInformationBuilderService {
       var2.setStartTime(var1.getStartTime());
     }
 
-    if (var1.hasTrimAllowed()) { // TO DO get trim data from admin rule
+    if (var1.hasTrimAllowed()) {
       TrimAllowed trimAllowed = new TrimAllowed();
       if (!var1.getTrimAllowed().getInitialTrim().isEmpty()) {
         trimAllowed.setInitialTrim(new BigDecimal(var1.getTrimAllowed().getInitialTrim()));
@@ -144,7 +141,7 @@ public class DischargeInformationBuilderService {
       String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MIN_DE_BALLAST_RATE);
       var2.setMinBallastRate(val.isEmpty() ? null : new BigDecimal(val));
     } else {
-      var2.setMinBallastRate(new BigDecimal(var1.getMaxBallastRate()));
+      var2.setMinBallastRate(new BigDecimal(var1.getMinBallastRate()));
     }
 
     if (var1.getMaxBallastRate().isEmpty()) {
@@ -546,6 +543,15 @@ public class DischargeInformationBuilderService {
     ExecutorService executorService =
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     List<Future<DischargingInfoSaveResponse>> futures = executorService.invokeAll(callableTasks);
+
+    if (futures.isEmpty()) {
+      // Means no save goes to DS-Plan Service
+      return DischargingInfoSaveResponse.newBuilder()
+          .setVesselId(request.getVesselId())
+          .setVoyageId(request.getVoyageId())
+          .setPortRotationId(request.getPortRotationId())
+          .build(); // to bypass null check at caller.
+    }
 
     List<Future<DischargingInfoSaveResponse>> data =
         futures.stream()

@@ -173,4 +173,7 @@ public interface LoadableStudyPortRotationRepository
       "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy= ?1 AND  LSPR.portXId= ?2 and LSPR.operation.id = 2 AND LSPR.isActive = true")
   public LoadableStudyPortRotation findByLoadableStudyAndPortAndOperation(
       LoadableStudy loadableStudy, long portId);
+
+  List<LoadableStudyPortRotation> findByLoadableStudyAndOperation_idNotAndIsActive(
+      LoadableStudy loadableStudy, Long dischargingOperationId, boolean isActive);
 }

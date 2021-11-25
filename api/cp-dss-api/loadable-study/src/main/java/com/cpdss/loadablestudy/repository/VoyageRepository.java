@@ -8,10 +8,8 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 /** @Author jerin.g */
 public interface VoyageRepository
@@ -82,12 +80,12 @@ public interface VoyageRepository
   public List<Voyage> findByVoyageStatusAndVesselIdAndIsActive(
       Long voyageId, Long vesselId, boolean b);
 
-  @Transactional
-  @Modifying
-  @Query("UPDATE Voyage SET voyageStatus = ?2 WHERE id = ?1")
-  void activateVoyage(Long id, VoyageStatus voyageStatus);
-
   @Query(
       "FROM Voyage vg WHERE vg.voyageStatus = ?1 AND vg.vesselXId = ?2 AND vg.actualEndDate != null AND vg.isActive = true")
   List<Voyage> findRecentClosedVoyageDetails(VoyageStatus var1, Long var2, Pageable pageable);
+
+  @Query(
+      value = "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM voyage u where id=?1",
+      nativeQuery = true)
+  String getVoyagebyId(long id);
 }

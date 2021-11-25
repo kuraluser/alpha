@@ -26,8 +26,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
     })
 public class LoadableStudyPortRotationServiceTest {
   @Autowired LoadableStudyPortRotationService loadableStudyPortRotationService;
-  @MockBean LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean CargoNominationService cargoNominationService;
+  @MockBean LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean LoadableStudyRepository loadableStudyRepository;
   @MockBean LoadableQuantityRepository loadableQuantityRepository;
   @MockBean CargoOperationRepository cargoOperationRepository;

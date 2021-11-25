@@ -119,7 +119,8 @@ export class PortRotationPopupTransformationService {
         errorMessages: {
           'required': 'PORT_LAY_CAN_REQUIRED_ERROR',
           'toDate': 'PORT_LAY_CAN_TO_DATE_ERROR',
-          'datesEqual': 'PORT_LAY_CAN_DATE_EQUAL'
+          'datesEqual': 'PORT_LAY_CAN_DATE_EQUAL',
+          'invalid': 'PORT_LAY_INVALID_DATE'
         }
       },
       {
@@ -143,7 +144,8 @@ export class PortRotationPopupTransformationService {
           'required': 'PORT_ETA_REQUIRED_ERROR',
           'notInRange': 'PORT_ETA_NOT_IN_DATE_RANGE',
           'failedCompare': 'PORT_ETA_COMPARE_ERROR',
-          'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR'
+          'etaFailed': 'PORT_ETA_COMAPRE_WITH_ETD_ERROR',
+          'invalid': 'PORT_LAY_INVALID_DATE'
         }
       },
       {
@@ -167,7 +169,8 @@ export class PortRotationPopupTransformationService {
           'required': 'PORT_ETD_REQUIRED_ERROR',
           'notInRange': 'PORT_ETD_NOT_IN_DATE_RANGE',
           'failedCompare': 'PORT_ETD_COMPARE_ERROR',
-          'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR'
+          'etdFailed': 'PORT_ETD_COMAPRE_WITH_ETA_ERROR',
+          'invalid': 'PORT_LAY_INVALID_DATE'
         }
       }
     ];

@@ -13,7 +13,8 @@
   <meta name="generator" content="Adobe RoboHelp 2020"/>
   <title>Generate Discharge Plan</title>
   <meta name="topic-status" content="Draft"/>
-<link rel="stylesheet" type="text/css" href="assets/css/default.css"/><meta name="brsnext" value="view-discharge-plan.htm"/><meta name="brsprev" value="back-loading-discharge-study.htm"/></head>
+  <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
+<meta name="brsnext" value="view-discharge-plan.htm"/><meta name="brsprev" value="delete-back-loading.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -35,8 +36,37 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Generate Discharge Plan</h1>
-  <p></p>
+  <h1 id="h">Generate Discharge Plan</h1>
+  <p class="textbody">The CP-DSS application generates the discharge plan suggested by the algorithm satisfying all the given constraints for the current voyage. The application uses the following details to generate the discharge plan:</p>
+  <ul class="bullets">
+    <li class="textbody">Cargo details</li>
+    <li class="textbody">Port details</li>
+    <li class="textbody">OBQ</li>
+    <li class="textbody">Discharge Study</li>
+  </ul>
+  <p class="note">The user can only create a discharge plan for the current voyage. The cargo details are fetched from the confirmed loadable study of the respective voyage. </p>
+  <p class="textbody">Perform the following steps to generate a discharge plan for the discharging operation of the current voyage. </p>
+  <ol class="numberlist">
+    <li class="textbody">Navigate to <span style="font-weight:bold;">Cargo Planning &gt; Discharge Study.</span> The <span style="font-weight:bold;">Discharge Study List </span>page for current voyage appears. </li>
+    <li class="textbody">From the <span style="font-weight:bold;">Discharge Study List</span>, select the required option.<br/>
+      Alternatively. click <span style="font-weight:bold;">Create New Discharge Study</span> to create a new discharge study. For more information, see <a href="create-new-discharge-study.htm">Create New Discharge Study</a>. </li>
+    <li class="textbody">The <span style="font-weight:bold;">Cargo Nomination </span>tab of the current voyage appears displaying all the cargo details. The data is fetched from the confirmed loadable plan of the current voyage. For more information, see <a href="cargo-nomination-discharge.htm">Cargo Nomination</a>.<br/>
+      The Cargo Nomination tab is not editable and the status is Complete. </li>
+    <li class="textbody">Go to the <span style="font-weight:bold;">Port </span>tab. The tab displays the details of the first discharging port given in the confirmed loadable study of the current voyage. </li>
+    <li class="textbody">Add or edit port details as per the requirement. The status of the Port tab becomes Complete. For more information, see <a href="port-discharge.htm">Port Rotation</a>.</li>
+    <li class="textbody">Go to the <span style="font-weight:bold;">On Hand Qauntities</span> tab. The tab displays the details of available cargo on board at each discharging port. The data is fetched from the loading data mapped in the respective Synoptical Table. </li>
+    <li class="textbody">Add or edit the OHQ quantities against each discharging port. <br/>
+      The status of the <span style="font-weight:bold;">ON HAND QUANTITIES</span> tab becomes <span style="font-weight:bold;">COMPLETE</span>. For more information, see <a href="on-hand-quantities-discharge.htm">On Hand Quantities</a>.</li>
+    <li class="textbody">Go to the <span style="font-weight:bold;">Discharge Study </span>tab. The tab displays the details of all the discharging ports involved in the current voyage. </li>
+    <li class="textbody">Add or edit the discharging port data. The status of the <b>Discharge Study </b>tab becomes <span style="font-weight:bold;">Complete</span>. For more information, see <a href="discharge-study.htm">Discharge Study</a>.</li>
+    <li class="textbody">Click <span style="font-weight:bold;">Generate Plan </span>to generate the discharge plan. <br/>
+      <img class="image-full" src="Images/discharge-study/generate discharge plan.png"/><br/>
+      The status of the Discharge Study becomes <span style="font-weight:bold;">Algo Processing Started </span>from <span style="font-weight:bold;">Pending</span>. <br/>
+      <img class="image-full" src="Images/discharge-study/status - algo processing started.png"/>
+      <p class="textbody">The status of the Discharge Study becomes <span style="font-weight:bold;">Plan Generated</span> from <span style="font-weight:bold;">Pending </span>once the discharge plan is generated. For more information, see <a href="discharge-study-status.htm">Discharge Study Status</a>.</p>
+      <p class="textbody">(<span style="background-color:rgba(0, 255, 255, 0.27);">img</span>)</p>
+    </li>
+  </ol>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>

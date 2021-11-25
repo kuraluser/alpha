@@ -4,7 +4,6 @@ package com.cpdss.vesselinfo.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -42,14 +41,16 @@ class VesselInfoServiceTest {
   @Mock private HydrostaticTableRepository hydrostaticTableRepository;
   @Mock private VesselDraftConditionRepository vesselDraftConditionRepository;
   @Mock private VesselTankTcgRepository vesselTankTcgRepository;
+  @Mock private BendingMomentRepository bendingMomentRepository;
+  @Mock private ShearingForceRepository shearingForceRepository;
   @Mock private CalculationSheetRepository calculationSheetRepository;
   @Mock private CalculationSheetTankgroupRepository calculationSheetTankgroupRepository;
   @Mock private MinMaxValuesForBmsfRepository minMaxValuesForBmsfRepository;
   @Mock private StationValuesRepository stationValuesRepository;
   @Mock private InnerBulkHeadValuesRepository innerBulkHeadValuesRepository;
   @Mock private UllageTableDataRepository ullageTableDataRepository;
-  @Mock private VesselPumpTankMappingRepository vesselPumpTankMappingRepository;
   @Mock private VesselFlowRateRepository vesselFlowRateRepository;
+  @Mock private VesselPumpTankMappingRepository vesselPumpTankMappingRepository;
   @Mock private VesselPumpService vesselPumpService;
   @Mock private HydrostaticService hydrostaticService;
   @Mock private TankCategoryRepository tankCategoryRepository;
@@ -146,50 +147,327 @@ class VesselInfoServiceTest {
   }
 
   @Test
-  void testGetVesselDetailsForAlgo() throws GenericServiceException {
-    Vessel vessel = new Vessel();
-    vessel.setId(1L);
-    this.setUllageTrimCorrections(vessel);
-    when(this.vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(vessel);
-    when(this.vesselDraftConditionRepository.findByVesselAndIsActive(
-            any(Vessel.class), anyBoolean()))
-        .thenReturn(Arrays.asList(new VesselDraftCondition()));
-    when(this.vesselTankRepository.findByVesselAndIsActive(any(Vessel.class), anyBoolean()))
-        .thenReturn(Arrays.asList(new VesselTank()));
-    when(this.hydrostaticTableRepository.findByVesselAndIsActive(any(Vessel.class), anyBoolean()))
-        .thenReturn(Arrays.asList(new HydrostaticTable()));
-    when(this.vesselTankTcgRepository.findByVesselIdAndIsActive(any(), anyBoolean()))
-        .thenReturn(Arrays.asList(new VesselTankTcg()));
-    when(this.calculationSheetRepository.findByVessel(any(Vessel.class)))
-        .thenReturn(Arrays.asList(new CalculationSheet()));
-    when(this.calculationSheetTankgroupRepository.findByVessel(any(Vessel.class)))
-        .thenReturn(Arrays.asList(new CalculationSheetTankgroup()));
-    when(this.minMaxValuesForBmsfRepository.findByVessel(any(Vessel.class)))
-        .thenReturn(Arrays.asList(new MinMaxValuesForBmsf()));
-    when(this.stationValuesRepository.findByVesselId(any()))
-        .thenReturn(Arrays.asList(new StationValues()));
-    when(this.innerBulkHeadValuesRepository.findByVesselId((any())))
-        .thenReturn(Arrays.asList(new InnerBulkHeadValues()));
-    when(this.ullageTableDataRepository.findByVesselOrderByVesselTankAscUllageDepthAsc(
-            (any(Vessel.class))))
-        .thenReturn(Arrays.asList(new UllageTableData()));
-    when(this.vesselFlowRateRepository.findByVessel((any(Vessel.class))))
-        .thenReturn(Arrays.asList(new VesselFlowRate()));
-    VesselInfo.VesselPumpsResponse.Builder vesselPumpResponseBuilder =
-        VesselInfo.VesselPumpsResponse.newBuilder();
-    lenient()
-        .when(
-            this.vesselPumpService.getVesselPumpsAndTypes(
-                vesselPumpResponseBuilder, vessel.getId()))
-        .thenReturn(vesselPumpResponseBuilder.build());
-
+  void testGetVesselDetailsForAlgo() {
+    VesselAlgoRequest request = VesselAlgoRequest.newBuilder().setVesselId(1L).build();
     StreamRecorder<VesselAlgoReply> responseObserver = StreamRecorder.create();
-    this.vesselInfoService.getVesselDetailsForAlgo(
-        VesselAlgoRequest.newBuilder().setVesselId(TEST_ID).build(), responseObserver);
+    Mockito.when(this.vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getVesl());
+    Mockito.when(
+            vesselDraftConditionRepository.findByVesselAndIsActive(
+                Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLVDC());
+    Mockito.when(vesselTankRepository.findByVesselAndIsActive(Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLVesselTank());
+    Mockito.when(
+            hydrostaticTableRepository.findByVesselAndIsActive(Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLHST());
+    Mockito.when(
+            vesselTankTcgRepository.findByVesselIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLVTT());
+    Mockito.when(bendingMomentRepository.findByVessel(Mockito.any())).thenReturn(getLBMT());
+    Mockito.when(shearingForceRepository.findByVessel(Mockito.any())).thenReturn(getLSFT());
+    Mockito.when(calculationSheetRepository.findByVessel(Mockito.any())).thenReturn(getLCS());
+    Mockito.when(calculationSheetTankgroupRepository.findByVessel(Mockito.any()))
+        .thenReturn(getCSTG());
+    Mockito.when(minMaxValuesForBmsfRepository.findByVessel(Mockito.any())).thenReturn(getMM());
+    Mockito.when(stationValuesRepository.findByVesselId(Mockito.anyLong())).thenReturn(getLSV());
+    Mockito.when(innerBulkHeadValuesRepository.findByVesselId(Mockito.anyLong()))
+        .thenReturn(getBHV());
+    Mockito.when(
+            ullageTableDataRepository.findByVesselOrderByVesselTankAscUllageDepthAsc(Mockito.any()))
+        .thenReturn(getLUTD());
+    Mockito.when(vesselFlowRateRepository.findByVessel(Mockito.any())).thenReturn(getLVFR());
+    Mockito.when(
+            vesselPumpTankMappingRepository.findByVesselXidAndIsActive(
+                Mockito.any(), Mockito.any()))
+        .thenReturn(getVPTM());
+    try {
+      Mockito.when(this.vesselPumpService.getVesselPumpsAndTypes(Mockito.any(), Mockito.anyLong()))
+          .thenReturn(getVPR());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    this.vesselInfoService.getVesselDetailsForAlgo(request, responseObserver);
     List<VesselAlgoReply> replies = responseObserver.getValues();
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private VesselInfo.VesselPumpsResponse getVPR() {
+    VesselInfo.VesselPumpsResponse response = VesselInfo.VesselPumpsResponse.newBuilder().build();
+    return response;
+  }
+
+  private List<VesselPumpTankMapping> getVPTM() {
+    List<VesselPumpTankMapping> list = new ArrayList<>();
+    VesselPumpTankMapping vesselPumpTankMapping = new VesselPumpTankMapping();
+    vesselPumpTankMapping.setVesselPumps(getVP());
+    vesselPumpTankMapping.setVesselXid(1);
+    vesselPumpTankMapping.setVesselTank(getLVesselTank().get(0));
+    list.add(vesselPumpTankMapping);
+    return list;
+  }
+
+  private VesselPumps getVP() {
+    VesselPumps vesselPumps = new VesselPumps();
+    vesselPumps.setId(1L);
+    vesselPumps.setPumpCode("1");
+    vesselPumps.setPumpName("1");
+    vesselPumps.setPumpType(getPT());
+    return vesselPumps;
+  }
+
+  private PumpType getPT() {
+    PumpType pumpType = new PumpType();
+    pumpType.setId(1L);
+    return pumpType;
+  }
+
+  private List<VesselFlowRate> getLVFR() {
+    List<VesselFlowRate> list = new ArrayList<>();
+    VesselFlowRate vesselFlowRate = new VesselFlowRate();
+    vesselFlowRate.setFlowRateParameter(getFP());
+    vesselFlowRate.setFlowRateOne(new BigDecimal(1));
+    vesselFlowRate.setFlowRateSix(new BigDecimal(1));
+    vesselFlowRate.setFlowRateSeven(new BigDecimal(1));
+    vesselFlowRate.setFlowRateTwelve(new BigDecimal(1));
+
+    list.add(vesselFlowRate);
+    return list;
+  }
+
+  private FlowRateParameter getFP() {
+    FlowRateParameter flowRateParameter = new FlowRateParameter();
+    flowRateParameter.setId(1L);
+    flowRateParameter.setFlowRateParameter("1");
+    return flowRateParameter;
+  }
+
+  private List<UllageTableData> getLUTD() {
+    List<UllageTableData> list = new ArrayList<>();
+    UllageTableData ullageTableData = new UllageTableData();
+    ullageTableData.setId(1L);
+    ullageTableData.setVesselTank(getListVesselTank().get(0));
+    ullageTableData.setUllageDepth(new BigDecimal(1));
+    ullageTableData.setEvenKeelCapacityCubm(new BigDecimal(1));
+    ullageTableData.setSoundDepth(new BigDecimal(1));
+    list.add(ullageTableData);
+    return list;
+  }
+
+  private List<InnerBulkHeadValues> getBHV() {
+    List<InnerBulkHeadValues> list = new ArrayList<>();
+    InnerBulkHeadValues innerBulkHeadValues = new InnerBulkHeadValues();
+    innerBulkHeadValues.setId(1L);
+    innerBulkHeadValues.setFrameNumber(new BigDecimal(1));
+    innerBulkHeadValues.setForeAlpha(new BigDecimal(1));
+    innerBulkHeadValues.setForeCenterCargotankId(new BigDecimal(1));
+    innerBulkHeadValues.setForeC1(new BigDecimal(1));
+    innerBulkHeadValues.setForeWingTankId("1");
+    innerBulkHeadValues.setForeC2(new BigDecimal(1));
+    innerBulkHeadValues.setForeBallastTank("1");
+    innerBulkHeadValues.setForeC3(new BigDecimal(1));
+    innerBulkHeadValues.setForeBwCorrection(new BigDecimal(1));
+    innerBulkHeadValues.setForeC4(new BigDecimal(1));
+    innerBulkHeadValues.setForeMaxAllowence(new BigDecimal(1));
+    innerBulkHeadValues.setForeMinAllowence(new BigDecimal(1));
+    innerBulkHeadValues.setAftAlpha(new BigDecimal(1));
+    innerBulkHeadValues.setAftCenterCargotankId(new BigDecimal(1));
+    innerBulkHeadValues.setAftC1(new BigDecimal(1));
+    innerBulkHeadValues.setAftWingTankId("1");
+    innerBulkHeadValues.setAftC2(new BigDecimal(1));
+    innerBulkHeadValues.setAftBallastTank("1");
+    innerBulkHeadValues.setAftC3(new BigDecimal(1));
+    innerBulkHeadValues.setAftBwCorrection(new BigDecimal(1));
+    innerBulkHeadValues.setAftC4(new BigDecimal(1));
+    innerBulkHeadValues.setAftMaxFlAllowence(new BigDecimal(1));
+    innerBulkHeadValues.setAftMinFlAllowence(new BigDecimal(1));
+    list.add(innerBulkHeadValues);
+    return list;
+  }
+
+  private List<StationValues> getLSV() {
+    List<StationValues> list = new ArrayList<>();
+    StationValues stationValues = new StationValues();
+    stationValues.setId(1L);
+    stationValues.setFrameNumberFrom(new BigDecimal(1));
+    stationValues.setFrameNumberTo(new BigDecimal(1));
+    stationValues.setStationTo(new BigDecimal(1));
+    stationValues.setStattionFrom(new BigDecimal(1));
+    stationValues.setDistance(new BigDecimal(1));
+    list.add(stationValues);
+    return list;
+  }
+
+  private List<MinMaxValuesForBmsf> getMM() {
+    List<MinMaxValuesForBmsf> list = new ArrayList<>();
+    MinMaxValuesForBmsf minMaxValuesForBmsf = new MinMaxValuesForBmsf();
+    minMaxValuesForBmsf.setId(1L);
+    minMaxValuesForBmsf.setFrameNumber(new BigDecimal(1));
+    minMaxValuesForBmsf.setMinBm(new BigDecimal(1));
+    minMaxValuesForBmsf.setMaxBm(new BigDecimal(1));
+    minMaxValuesForBmsf.setMinSf(new BigDecimal(1));
+    minMaxValuesForBmsf.setMaxSf(new BigDecimal(1));
+    list.add(minMaxValuesForBmsf);
+    return list;
+  }
+
+  private List<CalculationSheetTankgroup> getCSTG() {
+    List<CalculationSheetTankgroup> list = new ArrayList<>();
+    CalculationSheetTankgroup calculationSheetTankgroup = new CalculationSheetTankgroup();
+    calculationSheetTankgroup.setId(1L);
+    calculationSheetTankgroup.setTankGroup(1);
+    calculationSheetTankgroup.setLcg(new BigDecimal(1));
+    calculationSheetTankgroup.setFrameNumber(new BigDecimal(1));
+    list.add(calculationSheetTankgroup);
+    return list;
+  }
+
+  private List<CalculationSheet> getLCS() {
+    List<CalculationSheet> list = new ArrayList<>();
+    CalculationSheet sheet = new CalculationSheet();
+    sheet.setId(1L);
+    sheet.setTankGroup(1);
+    sheet.setTankId(1);
+    sheet.setWeightRatio(new BigDecimal(1));
+    sheet.setLcg(new BigDecimal(1));
+    list.add(sheet);
+    return list;
+  }
+
+  private List<ShearingForceType1> getLSFT() {
+    List<ShearingForceType1> list = new ArrayList<>();
+    ShearingForceType1 type1 = new ShearingForceType1();
+    type1.setId(1L);
+    type1.setFrameNumber(new BigDecimal(1));
+    type1.setBaseDraft(new BigDecimal(1));
+    type1.setBaseValue(new BigDecimal(1));
+    type1.setDraftCorrection(new BigDecimal(1));
+    type1.setTrimCorrection(new BigDecimal(1));
+    list.add(type1);
+    return list;
+  }
+
+  private List<BendingMomentType1> getLBMT() {
+    List<BendingMomentType1> list = new ArrayList<>();
+    BendingMomentType1 bendingMomentType1 = new BendingMomentType1();
+    bendingMomentType1.setId(1L);
+    bendingMomentType1.setFrameNumber(new BigDecimal(1));
+    bendingMomentType1.setBaseDraft(new BigDecimal(1));
+    bendingMomentType1.setBaseValue(new BigDecimal(1));
+    bendingMomentType1.setDraftCorrection(new BigDecimal(1));
+    bendingMomentType1.setTrimCorrection(new BigDecimal(1));
+    list.add(bendingMomentType1);
+    return list;
+  }
+
+  private List<VesselTankTcg> getLVTT() {
+    List<VesselTankTcg> list = new ArrayList<>();
+    VesselTankTcg vesselTankTcg = new VesselTankTcg();
+    vesselTankTcg.setId(1L);
+    vesselTankTcg.setCapacity(new BigDecimal(1));
+    vesselTankTcg.setTankId(1L);
+    vesselTankTcg.setTcg(new BigDecimal(1));
+    vesselTankTcg.setLcg(new BigDecimal(1));
+    vesselTankTcg.setVcg(new BigDecimal(1));
+    vesselTankTcg.setInertia(new BigDecimal(1));
+    list.add(vesselTankTcg);
+    return list;
+  }
+
+  private List<HydrostaticTable> getLHST() {
+    List<HydrostaticTable> list = new ArrayList<>();
+    HydrostaticTable hydrostaticTable = new HydrostaticTable();
+    hydrostaticTable.setId(1L);
+    hydrostaticTable.setTrim(new BigDecimal(1));
+    hydrostaticTable.setDraft(new BigDecimal(1));
+    hydrostaticTable.setDisplacement(new BigDecimal(1));
+    hydrostaticTable.setLcb(new BigDecimal(1));
+    hydrostaticTable.setLcf(new BigDecimal(1));
+    hydrostaticTable.setMtc(new BigDecimal(1));
+    hydrostaticTable.setTpc(new BigDecimal(1));
+    hydrostaticTable.setVcb(new BigDecimal(1));
+    hydrostaticTable.setTkm(new BigDecimal(1));
+    hydrostaticTable.setLkm(new BigDecimal(1));
+    list.add(hydrostaticTable);
+    return list;
+  }
+
+  private List<VesselDraftCondition> getLVDC() {
+    List<VesselDraftCondition> list = new ArrayList<>();
+    VesselDraftCondition condition = new VesselDraftCondition();
+    condition.setId(1L);
+    condition.setDraftCondition(getDraft());
+    condition.setDepth(new BigDecimal(1));
+    condition.setFreeboard(new BigDecimal(1));
+    condition.setDraftExtreme(new BigDecimal(1));
+    condition.setDisplacement(new BigDecimal(1));
+    condition.setDeadweight(new BigDecimal(1));
+    list.add(condition);
+    return list;
+  }
+
+  private Vessel getVesl() {
+    Vessel vessel = new Vessel();
+    vessel.setId(1L);
+    vessel.setName("1");
+    vessel.setImoNumber("1");
+    vessel.setPortOfRegistry("1");
+    vessel.setOfficialNumber("1");
+    vessel.setSignalLetter("1");
+    vessel.setNavigationAreaId(1);
+    vessel.setTypeOfShip("1");
+    vessel.setBm_sf_model_type(1);
+    vessel.setRegisterLength(new BigDecimal(1));
+    vessel.setLengthOverall(new BigDecimal(1));
+    vessel.setLengthBetweenPerpendiculars(new BigDecimal(1));
+    vessel.setDepthMolded(new BigDecimal(1));
+    vessel.setDesignedLoaddraft(new BigDecimal(1));
+    vessel.setDraftFullLoadSummer(new BigDecimal(1));
+    vessel.setThicknessOfUpperDeckStringerPlate(new BigDecimal(1));
+    vessel.setThicknessOfKeelplate(new BigDecimal(1));
+    vessel.setDeadweight(new BigDecimal(1));
+    vessel.setLightweight(new BigDecimal(1));
+    vessel.setLcg(new BigDecimal(1));
+    vessel.setKeelToMastHeight(new BigDecimal(1));
+    vessel.setDeadweightConstant(new BigDecimal(1));
+    vessel.setProvisionalConstant(new BigDecimal(1));
+    vessel.setDeadweightConstantLcg(new BigDecimal(1));
+    vessel.setProvisionalConstantLcg(new BigDecimal(1));
+    vessel.setGrossTonnage(new BigDecimal(1));
+    vessel.setNetTonnage(new BigDecimal(1));
+    vessel.setDeadweightConstantTcg(new BigDecimal(1));
+    vessel.setHasLoadicator(true);
+    vessel.setMaxLoadRate(new BigDecimal(1));
+    vessel.setMastRiser(new BigDecimal(1));
+    vessel.setHeightOfManifoldAboveDeck(new BigDecimal(1));
+    vessel.setUllageTrimCorrections(getUTC());
+    return vessel;
+  }
+
+  private Set<UllageTrimCorrection> getUTC() {
+    Set<UllageTrimCorrection> set = new HashSet<>();
+    UllageTrimCorrection correction = new UllageTrimCorrection();
+    correction.setIsActive(true);
+    correction.setId(1L);
+    correction.setTankId(1L);
+    correction.setUllageDepth(new BigDecimal(1));
+    correction.setTrimM1(new BigDecimal(1));
+    correction.setTrimM2(new BigDecimal(1));
+    correction.setTrimM3(new BigDecimal(1));
+    correction.setTrimM4(new BigDecimal(1));
+    correction.setTrimM5(new BigDecimal(1));
+    correction.setTrim0(new BigDecimal(1));
+    correction.setTrim1(new BigDecimal(1));
+    correction.setTrim2(new BigDecimal(1));
+    correction.setTrim3(new BigDecimal(1));
+    correction.setTrim4(new BigDecimal(1));
+    correction.setTrim5(new BigDecimal(1));
+    correction.setTrim6(new BigDecimal(1));
+    set.add(correction);
+    return set;
   }
 
   private void setUllageTrimCorrections(Vessel vessel) {
@@ -450,9 +728,18 @@ class VesselInfoServiceTest {
     VesselTank vs = new VesselTank();
     vs.setId(1L);
     vs.setTankName("1");
+    vs.setTankType(getTT());
     vs.setShortName("1");
     vs.setTankCategory(gettc());
-    vs.setTankType(getTT());
+    vs.setCoatingTypeXid(1);
+    vs.setFrameNumberFrom("1");
+    vs.setFrameNumberTo("1");
+    vs.setFullCapacityCubm(new BigDecimal(1));
+    vs.setLcg(new BigDecimal(1));
+    vs.setTcg(new BigDecimal(1));
+    vs.setVcg(new BigDecimal(1));
+    vs.setFillCapacityCubm(new BigDecimal(1));
+    vs.setIsLoadicatorUsing(true);
     vessel.add(vs);
     return vessel;
   }

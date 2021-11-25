@@ -11,9 +11,10 @@ import { LoadingDischargingTransformationService } from '../../../services/loadi
 import { DischargingPlanApiService } from './../../../services/discharging-plan-api.service';
 import { OperationsApiService } from '../../../services/operations-api.service';
 
-import { IAlgoError, IAlgoResponse, ICargo, ILoadableQuantityCargo, OPERATIONS } from '../../../../core/models/common.model';
+import { IAlgoError, IAlgoResponse, ICargo, OPERATIONS } from '../../../../core/models/common.model';
 import { QUANTITY_UNIT } from '../../../../../shared/models/common.model';
 import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../../models/loading-discharging.model';
+import { IPermission } from './../../../../../shared/models/user-profile.model';
 
 /**
  * Component for Discharge-plan
@@ -28,6 +29,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   @Input() vesselId: number;
   @Input() voyageId: number;
   @Input() dischargeInfoId: number;
+  @Input() permission: IPermission;
   @Input() get cargos(): ICargo[] {
     return this._cargos;
   }
@@ -49,7 +51,6 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   dischargingPlanDetails: IDischargingPlanDetailsResponse;
   dischargingInformation: IDischargingInformation;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
-  dischargeQuantityCargoDetails: ILoadableQuantityCargo[];
   loadedCargos: ICargo[];
   readonly OPERATIONS = OPERATIONS;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
@@ -103,12 +104,12 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
     });
 
     this.loadingDischargingTransformationService.setUllageArrivalBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
-      if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
+      if (value.status === ULLAGE_STATUS_VALUE.SUCCESS && this.portRotationId === value.portRotationId) {
         this.getDischargingPlanDetails();
       }
     });
     this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
-      if (value === ULLAGE_STATUS_VALUE.SUCCESS) {
+      if (value.status === ULLAGE_STATUS_VALUE.SUCCESS && this.portRotationId === value.portRotationId) {
         this.getDischargingPlanDetails();
       }
     });
@@ -125,21 +126,40 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
       const dischargePlanResponse: IDischargingPlanDetailsResponse = await this.dischargingPlanApiService.getDischargingPlanDetails(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId).toPromise();
       if (dischargePlanResponse.responseStatus.status === "200") {
         this.dischargingPlanDetails = dischargePlanResponse;
-        this.dischargingPlanDetails.dischargingInformation.cargoVesselTankDetails.loadableQuantityCargoDetails = dischargePlanResponse.dischargingInformation.cargoVesselTankDetails.dischargeQuantityCargoDetails;
-        this.dischargeQuantityCargoDetails = this.dischargingPlanDetails?.dischargingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails;
-        this.dischargingPlanDetails.dischargingInformation.loadedCargos = [...this.dischargeQuantityCargoDetails].map(cargo => {
-          const loadedCargo = { 'id': cargo?.cargoNominationId, 'abbreviation': cargo?.cargoAbbreviation, 'colorCode': cargo?.colorCode };
-          return loadedCargo;
-        });
+        this.setCommingleCargo();
         this.dischargingInformation = this.loadingDischargingTransformationService.transformDischargingInformation(this.dischargingPlanDetails.dischargingInformation, this.listData);
-        this.dischargingPlanForm = this.fb.group({
-          cowDetails: this.fb.group({}),
-          postDischargeStageTime: this.fb.group({})
-        });
+        if (this.dischargingPlanForm === undefined) {
+          this.dischargingPlanForm = this.fb.group({
+            cowDetails: this.fb.group({}),
+            postDischargeStageTime: this.fb.group({})
+          });
+        }
       }
       this.ngxSpinnerService.hide();
     } catch (error) {
       this.ngxSpinnerService.hide();
+    }
+  }
+
+  /**
+   * function to set commingle cargo flag
+   *
+   * @memberof DischargingPlanComponent
+   */
+  setCommingleCargo() {
+    if (this.dischargingPlanDetails?.planCommingleDetails?.length && this.dischargingPlanDetails?.planStowageDetails?.length) {
+      this.dischargingPlanDetails?.planCommingleDetails.map(item => {
+        this.dischargingPlanDetails?.planStowageDetails.map(plan => {
+          if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType) {
+            plan.isCommingleCargo = true;
+            plan.quantityMT = item.quantityMT;
+            plan.api = item.api;
+            plan.temperature = item.temperature;
+            plan.abbreviation = item.abbreviation;
+            plan.cargoNominationId = null;
+          }
+        });
+      });
     }
   }
 
@@ -167,6 +187,15 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
    */
   viewError(status) {
     this.errorPopUp = status;
+  }
+
+  /**
+   * function to download discharge-plan file as xls
+   *
+   * @memberof DischargingPlanComponent
+   */
+  downloadDischargePlanTemplate(): void {
+    // TODO : will use this once download excel API available.
   }
 
 }

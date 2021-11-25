@@ -1,1 +1,1 @@
-rh._.exports({"0":[[" ","Vessel Informations"]],"1":[[" ","Vessel Informations"]],"id":"8"})
+rh._.exports({"0":[[" ","User Role Permission"]],"1":[[" ","User Role Permission"]],"id":"8"})

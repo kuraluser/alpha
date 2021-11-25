@@ -10,6 +10,7 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.loadingplan.entity.BillOfLadding;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -50,9 +51,9 @@ public class LoadingInformationDischargeService {
     if (!billOfLaddings.isEmpty()) {
       buildBillOfLading(billOfLaddings, builder);
       List<Common.BillOfLadding> billOfLaddingList = builder.getBillOfLaddingList();
-      Map<String, List<Common.BillOfLadding>> billOfLaddingByCargo =
+      Map<Long, List<com.cpdss.common.generated.Common.BillOfLadding>> billOfLaddingByCargo =
           billOfLaddingList.stream()
-              .collect(Collectors.groupingBy(Common.BillOfLadding::getCargoColor));
+              .collect(Collectors.groupingBy(Common.BillOfLadding::getCargoNominationId));
       builder.clearBillOfLadding();
       billOfLaddingByCargo
           .entrySet()
@@ -92,7 +93,7 @@ public class LoadingInformationDischargeService {
                             bl ->
                                 bl.getApi() != null
                                     && !bl.getApi().isEmpty()
-                                    && !bl.getApi().equals("0"))
+                                    && (new BigDecimal(bl.getApi()).compareTo(BigDecimal.ZERO) > 0))
                         .mapToDouble(o -> Double.parseDouble(o.getApi()))
                         .average()
                         .getAsDouble();
@@ -103,7 +104,9 @@ public class LoadingInformationDischargeService {
                             bl ->
                                 bl.getTemperature() != null
                                     && !bl.getTemperature().isEmpty()
-                                    && !bl.getTemperature().equals("0"))
+                                    && (new BigDecimal(bl.getTemperature())
+                                            .compareTo(BigDecimal.ZERO)
+                                        > 0))
                         .mapToDouble(o -> Double.parseDouble(o.getTemperature()))
                         .average()
                         .getAsDouble();

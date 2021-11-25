@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.algo;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -82,6 +83,7 @@ import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
@@ -93,6 +95,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -208,7 +211,8 @@ public class LoadingPlanAlgoService {
                   "loading_berth_details",
                   "loading_delay",
                   "loading_machinary_in_use",
-                  "voyage"),
+                  "voyage",
+                  "loadable_pattern"),
               processId,
               MessageTypes.LOADINGPLAN.getMessageType(),
               loadingInfoOpt.get().getId(),
@@ -248,11 +252,25 @@ public class LoadingPlanAlgoService {
       saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
       log.info("Call To Algo End Point for Loading");
       // Call To Algo End Point for Loading
-      LoadingInformationAlgoResponse response =
-          restTemplate.postForObject(
-              planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
-      processId = response.getProcessId();
-      log.info("LoadingInformationAlgoResponse:{}", response);
+      try {
+        LoadingInformationAlgoResponse response =
+            restTemplate.postForObject(
+                planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+        processId = response.getProcessId();
+        log.info("LoadingInformationAlgoResponse:{}", response);
+      } catch (HttpStatusCodeException e) {
+        log.error("Error occured in ALGO side while calling new_loadable API");
+        saveAlgoInternalError(
+            loadingInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
+        Optional<LoadingInformationStatus> errorOccurredStatusOpt =
+            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
+        loadingInformationRepository.updateLoadingInformationStatus(
+            errorOccurredStatusOpt.get(), loadingInfoOpt.get().getId());
+        throw new GenericServiceException(
+            "Internal Server Error in ALGO" + request.getLoadingInfoId(),
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
     }
 
     createLoadingInformationAlgoStatus(
@@ -420,7 +438,31 @@ public class LoadingPlanAlgoService {
 
       deleteLoadingPlan(loadingInfoOpt.get().getId());
       saveLoadingPlan(request, loadingInfoOpt.get());
-      if (enableCommunication && !env.equals("ship")) {
+      if (request.getHasLoadicator()) {
+        log.info("Passing Loading Sequence to Loadicator");
+        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
+        Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
+            getLoadingInformationStatus(
+                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
+        updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
+      } else {
+        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
+        loadingInformationRepository.updateLoadingInformationStatuses(
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoStatusOpt.get(),
+            loadingInfoOpt.get().getId());
+        updateLoadingInfoAlgoStatus(
+            loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
+        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
+        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+            loadingInfoOpt.get().getId(), true);
+      }
+      log.info("Communication side started");
+      if (enableCommunication && !env.equals("ship") && !request.getHasLoadicator()) {
         JsonArray jsonArray =
             loadingPlanStagingService.getCommunicationData(
                 Arrays.asList(
@@ -437,7 +479,10 @@ public class LoadingPlanAlgoService {
                     "port_loading_plan_stowage_details_temp",
                     "loading_plan_stowage_details",
                     "loading_sequence_stability_parameters",
-                    "loading_plan_stability_parameters"),
+                    "loading_plan_stability_parameters",
+                    "ballast_operation",
+                    "eduction_operation",
+                    "cargo_loading_rate"),
                 UUID.randomUUID().toString(),
                 MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
                 loadingInfoOpt.get().getId(),
@@ -463,29 +508,6 @@ public class LoadingPlanAlgoService {
         LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
             this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
         log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
-      }
-      if (request.getHasLoadicator()) {
-        log.info("Passing Loading Sequence to Loadicator");
-        loadicatorService.saveLoadicatorInfo(loadingInfoOpt.get(), request.getProcessId());
-        Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
-            getLoadingInformationStatus(
-                LoadingPlanConstants.LOADING_INFORMATION_VERIFICATION_WITH_LOADICATOR_ID);
-        updateLoadingInfoAlgoStatus(
-            loadingInfoOpt.get(), request.getProcessId(), loadicatorVerificationStatusOpt.get());
-      } else {
-        Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
-        loadingInformationRepository.updateLoadingInformationStatuses(
-            loadingInfoStatusOpt.get(),
-            loadingInfoStatusOpt.get(),
-            loadingInfoStatusOpt.get(),
-            loadingInfoOpt.get().getId());
-        updateLoadingInfoAlgoStatus(
-            loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
-        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
       }
     }
   }
@@ -1039,6 +1061,75 @@ public class LoadingPlanAlgoService {
                     errorBuilder.addErrorMessages(error.getErrorMessage());
                   });
           builder.addAlgoErrors(errorBuilder.build());
+        });
+  }
+
+  /**
+   * Saves ALGO errors
+   *
+   * @param loadingInformation
+   * @param heading
+   * @param conditionType
+   * @param errors
+   */
+  public void createAlgoErrors(
+      LoadingInformation loadingInformation,
+      String heading,
+      Integer conditionType,
+      List<String> errors) {
+
+    if (conditionType != null) {
+      algoErrorHeadingRepository.deleteByLoadingInformationAndConditionType(
+          loadingInformation, conditionType);
+      algoErrorsRepository.deleteByLoadingInformationAndConditionType(
+          loadingInformation, conditionType);
+    } else {
+      algoErrorHeadingRepository.deleteByLoadingInformation(loadingInformation);
+      algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
+    }
+    saveAlgoErrorEntity(loadingInformation, heading, conditionType, errors);
+  }
+
+  /* Persists Internal Server Error in ALGO side
+   * @param loadingInformation
+   * @param conditionType
+   * @param errors
+   */
+  public void saveAlgoInternalError(
+      LoadingInformation loadingInformation, Integer conditionType, List<String> errors) {
+    createAlgoErrors(
+        loadingInformation,
+        AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
+        conditionType,
+        errors);
+  }
+
+  /**
+   * Persists ALGO errors
+   *
+   * @param errors
+   * @param conditionType
+   * @param heading
+   * @param loadingInformation
+   */
+  public void saveAlgoErrorEntity(
+      LoadingInformation loadingInformation,
+      String heading,
+      Integer conditionType,
+      List<String> errors) {
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading(heading);
+    algoErrorHeading.setLoadingInformation(loadingInformation);
+    algoErrorHeading.setConditionType(conditionType);
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    errors.forEach(
+        error -> {
+          AlgoErrors algoErrors = new AlgoErrors();
+          algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          algoErrors.setErrorMessage(error);
+          algoErrors.setIsActive(true);
+          algoErrorsRepository.save(algoErrors);
         });
   }
 }

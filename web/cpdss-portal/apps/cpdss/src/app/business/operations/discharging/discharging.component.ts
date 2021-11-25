@@ -20,7 +20,7 @@ import { ComponentCanDeactivate } from '../../../shared/models/common.model';
 import { IAlgoError, IAlgoResponse, ICargo, ICargoResponseModel, OPERATIONS_PLAN_STATUS } from '../../core/models/common.model';
 import { OPERATIONS } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
-import { IGenerateDischargePlanResponse } from '../models/loading-discharging.model';
+import { IGenerateDischargePlanResponse, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 
 /**
  * Component for discharging module
@@ -57,10 +57,11 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   dischargingInstructionTabPermission: IPermission;
   dischargingSequenceTabPermission: IPermission;
   dischargingPlanTabPermission: IPermission;
-  disablePlanGenerateBtn: boolean = false;
-  disablePlanViewErrorBtn: boolean = true;
+  generateDischargingPlanPermission: IPermission;
+  disablePlanGenerateBtn = false;
+  disablePlanViewErrorBtn = true;
   errorMessage: IAlgoError[];
-  errorPopUp: boolean = false;
+  errorPopUp = false;
 
 
   private ngUnsubscribe: Subject<any> = new Subject();
@@ -109,96 +110,12 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   }
 
   /**
-   * Method to listen to service worker events.
-   *
-   * @private
-   * @memberof DischargingComponent
-   */
-  private listenEvents() {
-    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
-  }
-
-  /**
-   * Method to show service worker status messages based on api result.
-   *
-   * @private
-   * @param {*} event
-   * @memberof DischargingComponent
-   */
-  private swMessageHandler = async event => {
-    const translationKeys = await this.translateService.get([
-      'PORT',
-      'GENERATE_DISCHARGING_PLAN_INFO',
-      'GENERATE_DISCHARGING_PLAN_PENDING',
-      'GENERATE_DISCHARGING_PLAN_NO_PLAN_AVAILABLE',
-      'GENERATE_DISCHARGING_PLAN_CONFIRMED',
-      'GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_STARTED',
-      'GENERATE_DISCHARGING_PLAN_PLAN_GENERATED',
-      'GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_COMPLETED',
-      'GENERATE_DISCHARGING_PLAN_ERROR_OCCURED',
-      'GENERATE_DISCHARGING_PLAN_VERIFICATION_WITH_LOADER',
-      'GENERATE_DISCHARGING_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED',
-      'GENERATE_DISCHARGING_PLAN_ALGO_VERIFICATION',
-      'GENERATE_DISCHARGING_PLAN_ALGO_VERIFICATION_COMPLETED',
-    ]).toPromise();
-
-    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
-      this.globalErrorHandler.sessionOutMessage();
-    }
-    this.ngxSpinnerService.hide();
-
-    if (event?.data?.pattern?.type === 'discharging-plan-status') {
-      if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
-        this.messageService.clear();
-        this.setButtonStatusInProcessing(false, true);
-        await this.getAlgoErrorMessage(true, 0);
-        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR_OCCURED'] });
-      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
-        this.messageService.clear();
-        this.setButtonStatusInProcessing(false, true);
-        await this.getAlgoErrorMessage(true, 0);
-        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_NO_PLAN_AVAILABLE'] });
-      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
-        this.messageService.clear();
-        if (this.dischargeInfoId === event?.data?.pattern?.dischargingInfoId) {
-          this.setButtonStatusInProcessing(false);
-        }
-        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_DISCHARGING_PLAN_SUCCESS'], detail: event?.data?.pattern?.portName + ' ' + translationKeys['PORT']?.toLowerCase() + ' ' + translationKeys['GENERATE_DISCHARGING_PLAN_PLAN_GENERATED'], sticky: true, closable: true });
-      }
-
-      if (this.router.url.includes('operations/discharging') && this.loadingDischargingTransformationService.portRotationId === event?.data?.pattern?.portRotationId) {
-        switch (event?.data?.statusId) {
-          case OPERATIONS_PLAN_STATUS.PENDING:
-            this.setButtonStatusInProcessing(true);
-            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_PENDING']);
-            break;
-          case OPERATIONS_PLAN_STATUS.CONFIRMED:
-            this.setButtonStatusInProcessing(true);
-            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_CONFIRMED']);
-            break;
-          case OPERATIONS_PLAN_STATUS.PLAN_ALGO_PROCESSING_STARTED:
-            this.setButtonStatusInProcessing(true);
-            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_STARTED']);
-            break;
-          case OPERATIONS_PLAN_STATUS.VERIFICATION_WITH_LOADICATOR:
-            this.setButtonStatusInProcessing(true);
-            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_VERIFICATION_WITH_LOADER']);
-            break;
-          case OPERATIONS_PLAN_STATUS.VERFICATION_WITH_LOADICATOT_COMPLETED:
-            this.setButtonStatusInProcessing(true);
-            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED']);
-            break;
-          case OPERATIONS_PLAN_STATUS.ALGO_PROCESSING_COMPLETED:
-            this.setButtonStatusInProcessing(true);
-            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_COMPLETED']);
-            break;
-          case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
-            this.setButtonStatusInProcessing(true);
-            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_ALGO_VERIFICATION_COMPLETED']);
-            break;
-        }
-      }
-    }
+  * Method to set discharging info id
+  * @param tab
+  * @memberof DischargingComponent
+  */
+  setDischargingInfoId(data) {
+    this.dischargeInfoId = data;
   }
 
   /**
@@ -231,9 +148,149 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     this.loadingDischargingTransformationService.disableDischargePlanViewError$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((isDisabled) => {
       this.disablePlanViewErrorBtn = isDisabled;
     });
-    this.loadingDischargingTransformationService.dischargingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
-      this.dischargingInstructionComplete = res;
+
+    this.loadingDischargingTransformationService.validateUllageData$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((res) => {
+      if (res?.validate && this.portRotationId === res?.portRotationId) {
+        this.validateUllage(res);
+      }
     });
+
+    this.loadingDischargingTransformationService.setUllageDepartureBtnStatus$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((value) => {
+      if (value && value.status === ULLAGE_STATUS_VALUE.SUCCESS) {
+        this.disablePlanGenerateBtn = true;
+      }
+    });
+  }
+
+  /**
+   * Method to listen to service worker events.
+   *
+   * @private
+   * @memberof DischargingComponent
+   */
+  private listenEvents() {
+    navigator.serviceWorker.addEventListener('message', this.swMessageHandler);
+  }
+
+  /**
+   * Method to show service worker status messages based on api result.
+   *
+   * @private
+   * @param {*} event
+   * @memberof DischargingComponent
+   */
+  private swMessageHandler = async event => {
+    const translationKeys = await this.translateService.get([
+      'PORT',
+      'GENERATE_DISCHARGING_PLAN_INFO',
+      'GENERATE_DISCHARGING_PLAN_ERROR',
+      'GENERATE_DISCHARGING_PLAN_SUCCESS',
+      'GENERATE_DISCHARGING_PLAN_PENDING',
+      'GENERATE_DISCHARGING_PLAN_NO_PLAN_AVAILABLE',
+      'GENERATE_DISCHARGING_PLAN_CONFIRMED',
+      'GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_STARTED',
+      'GENERATE_DISCHARGING_PLAN_PLAN_GENERATED',
+      'GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_COMPLETED',
+      'GENERATE_DISCHARGING_PLAN_ERROR_OCCURED',
+      'GENERATE_DISCHARGING_PLAN_VERIFICATION_WITH_LOADICATOR',
+      'GENERATE_DISCHARGING_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED',
+      'GENERATE_DISCHARGING_PLAN_ALGO_VERIFICATION',
+      'GENERATE_DISCHARGING_PLAN_ALGO_VERIFICATION_COMPLETED',
+      'GENERATE_DISCHARGING_PLAN_COMMUNICATED_TO_SHORE',
+      'ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL',
+      'ULLAGE_UPDATE_PLAN_COMMUNICATED_TO_SHORE'
+    ]).toPromise();
+
+    if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
+      this.globalErrorHandler.sessionOutMessage();
+    }
+    this.ngxSpinnerService.hide();
+
+    if (event?.data?.pattern?.type === 'discharging-plan-status') {
+      if (event?.data.statusId === OPERATIONS_PLAN_STATUS.ERROR_OCCURED) {
+        this.messageService.clear();
+        this.setButtonStatusInProcessing(false, true);
+        this.getAlgoErrorMessage(true, 0, event?.data?.pattern?.dischargingInfoId);
+        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR_OCCURED'] });
+      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE) {
+        this.messageService.clear();
+        this.setButtonStatusInProcessing(false, true);
+        this.getAlgoErrorMessage(true, 0, event?.data?.pattern?.dischargingInfoId);
+        this.messageService.add({ severity: 'error', summary: translationKeys['GENERATE_DISCHARGING_PLAN_ERROR'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_NO_PLAN_AVAILABLE'] });
+      } else if (event?.data?.statusId === OPERATIONS_PLAN_STATUS.PLAN_GENERATED) {
+        this.messageService.clear();
+        if (this.dischargeInfoId === event?.data?.pattern?.dischargingInfoId) {
+          this.setButtonStatusInProcessing(false);
+        }
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_DISCHARGING_PLAN_SUCCESS'], detail: event?.data?.pattern?.portName + ' ' + translationKeys['PORT']?.toLowerCase() + ' ' + translationKeys['GENERATE_DISCHARGING_PLAN_PLAN_GENERATED'], sticky: true, closable: true });
+      }
+
+      if (this.router.url.includes('operations/discharging') && this.loadingDischargingTransformationService.portRotationId === event?.data?.pattern?.portRotationId) {
+        switch (event?.data?.statusId) {
+          case OPERATIONS_PLAN_STATUS.PENDING:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_PENDING']);
+            break;
+          case OPERATIONS_PLAN_STATUS.CONFIRMED:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_CONFIRMED']);
+            break;
+          case OPERATIONS_PLAN_STATUS.PLAN_ALGO_PROCESSING_STARTED:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_STARTED']);
+            break;
+          case OPERATIONS_PLAN_STATUS.VERIFICATION_WITH_LOADICATOR:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_VERIFICATION_WITH_LOADICATOR']);
+            break;
+          case OPERATIONS_PLAN_STATUS.VERFICATION_WITH_LOADICATOT_COMPLETED:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_VERIFICATIOON_WITH_LOADER_COMPLETED']);
+            break;
+          case OPERATIONS_PLAN_STATUS.ALGO_PROCESSING_COMPLETED:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_COMPLETED']);
+            break;
+          case OPERATIONS_PLAN_STATUS.LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_ALGO_VERIFICATION_COMPLETED']);
+            break;
+          case OPERATIONS_PLAN_STATUS.COMMUNICATED_TO_SHORE:
+            this.setButtonStatusInProcessing(true);
+            this.processingMessages(translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], translationKeys['GENERATE_DISCHARGING_PLAN_COMMUNICATED_TO_SHORE']);
+            break;
+        }
+      }
+    }
+
+    if (event?.data?.pattern?.type === 'discharge-ullage-update-status') {
+      if (event?.data.statusId === ULLAGE_STATUS_VALUE.ERROR) {
+        const errorStatus = {value: true, status: event?.data?.pattern?.status};
+        this.loadingDischargingTransformationService.showUllageError(errorStatus);
+      } else if (event?.data?.statusId === ULLAGE_STATUS_VALUE.SUCCESS) {
+        this.messageService.add({ severity: 'success', summary: translationKeys['GENERATE_DISCHARGING_PLAN_SUCCESS'], detail: translationKeys['ULLAGE_UPDATE_VALIDATION_SUCCESS_LABEL'] });
+      }
+
+      if (this.router.url.includes('operations/discharging') && this.loadingDischargingTransformationService.portRotationId === event?.data?.pattern?.portRotationId) {
+        switch (event?.data?.statusId) {
+          case ULLAGE_STATUS_VALUE.IN_PROGRESS:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_ALGO_PROCESSING_STARTED'] });
+            break;
+          case ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], detail: translationKeys['GENERATE_DISCHARGING_PLAN_VERIFICATION_WITH_LOADICATOR'] });
+            break;
+          case ULLAGE_STATUS_VALUE.COMMUNICATED_TO_SHORE:
+            this.messageService.add({ severity: 'info', summary: translationKeys['GENERATE_DISCHARGING_PLAN_INFO'], detail: translationKeys['ULLAGE_UPDATE_PLAN_COMMUNICATED_TO_SHORE'] });
+            break;
+        }
+      }
+      if (event?.data?.pattern?.status === 1) {
+        this.loadingDischargingTransformationService.setUllageArrivalBtnStatus({ status: event?.data.statusId, portRotationId: event?.data?.pattern?.portRotationId });
+      }
+      if (event?.data?.pattern?.status === 2) {
+        this.loadingDischargingTransformationService.setUllageDepartureBtnStatus({ status: event?.data.statusId, portRotationId: event?.data?.pattern?.portRotationId });
+      }
+    }
   }
 
   /**
@@ -263,21 +320,13 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   }
 
   /**
-  * Method to set discharging info id
-  * @param tab
-  * @memberof DischargingComponent
-  */
-  setDischargingInfoId(data) {
-    this.dischargeInfoId = data;
-  }
-
-  /**
   * Set page permission
   *
   * @memberof DischargingComponent
   */
   setPagePermission() {
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingComponent']);
+    this.generateDischargingPlanPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationDischargingGeneratePlan'], false);
     this.dischargingInfoTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingInformationComponent'], false);
     this.dischargingInstructionTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingInstructionComponent'], false);
     this.dischargingSequenceTabPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['DischargingSequenceComponent'], false);
@@ -311,7 +360,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     if (!value) { return };
     this.ngxSpinnerService.show();
     const response: IGenerateDischargePlanResponse = await this.operationsApiService.generateDischargePlan(this.vesselId, this.voyageId, this.dischargeInfoId).toPromise();
-    if (response.responseStatus.status == "200" && response.processId) {
+    if (response.responseStatus.status === "200" && response.processId) {
       this.setButtonStatusInProcessing(true);
       const data = {
         processId: response.processId,
@@ -353,8 +402,8 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     this.disablePlanViewErrorBtn = !hasError;
     this.loadingDischargingTransformationService.disableDischargeInfoSave(isProcesing);
     this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(isProcesing);
-    this.dischargeSequenceGenerated = !isProcesing;
-    this.dischargePlanGenerated = !isProcesing;
+    this.dischargeSequenceGenerated = (!isProcesing && !hasError);
+    this.dischargePlanGenerated = (!isProcesing && !hasError);
   }
 
   /**
@@ -368,12 +417,33 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   async getAlgoErrorMessage(status: boolean, conditionType: number, currentDischargeInfoId?: number) {
     this.ngxSpinnerService.show();
     const infoId = (currentDischargeInfoId && currentDischargeInfoId === this.dischargeInfoId) ? currentDischargeInfoId : this.dischargeInfoId;
+    if (infoId === undefined) return;
     const algoError: IAlgoResponse = await this.operationsApiService.getDischargePlanAlgoError(this.vesselId, this.voyageId, infoId, conditionType).toPromise();
     if (algoError.responseStatus.status === '200') {
       this.ngxSpinnerService.hide();
       this.errorMessage = algoError.algoErrors;
       this.errorPopUp = status;
     }
+  }
+
+  /**
+   * function to validate ullage
+   *
+   * @param {*} value
+   * @memberof DischargingComponent
+   */
+  validateUllage(value) {
+    const data = {
+      processId: value.processId,
+      vesselId: this.vesselId,
+      voyageId: this.voyageId,
+      dischargingInfoId: this.dischargeInfoId,
+      type: 'discharge-ullage-update-status',
+      status: value.status,
+      portRotationId: this.portRotationId
+
+    }
+    navigator.serviceWorker.controller.postMessage({ type: 'discharge-ullage-update-status', data });
   }
 
   /**

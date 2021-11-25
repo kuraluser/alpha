@@ -1,23 +1,24 @@
 <div class="row">
-    <div class="col text-uppercase sub-head-color pt-10">
-        {{ 'LOADING_DISCHARGING_INSTRUCTION_HEADING' | translate}}
-    </div>
     <div class="col text-right">
-        <button (click)="addParent()" class="btn btn-main mr-15">{{'ADD_NEW_INSTRUCTION_SUBSECTION_BUTTON_LABEL' | translate}}</button>
+        <button (click)="addParent()" class="btn btn-main mr-15">{{'ADD_NEW_INSTRUCTION_SUBSECTION_BUTTON_LABEL' |
+            translate}}</button>
         <button (click)="addNewInstruction()" class="btn btn-main">{{'ADD_NEW_INSTRUCTION_BUTTON_LABEL' |
             translate}}</button>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12 check-list-table">
-        <p-treeTable (onHeaderCheckboxToggle)="selectAllData($event)" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"
-            [value]="instructionListData" selectionMode="checkbox" [(selection)]="selectedData">
+        <p-treeTable (onHeaderCheckboxToggle)="selectAllData($event)" (onNodeSelect)="nodeSelect($event)"
+            (onNodeUnselect)="nodeUnselect($event)" [value]="instructionListData" selectionMode="checkbox"
+            [(selection)]="selectedData">
             <ng-template pTemplate="caption">
                 <div class="p-d-flex">
                     <div class="inline-block v-t-bottom">
-                        <p-treeTableHeaderCheckbox [disabled]="!instructionListData?.length"></p-treeTableHeaderCheckbox>
+                        <p-treeTableHeaderCheckbox [disabled]="!instructionListData?.length">
+                        </p-treeTableHeaderCheckbox>
                     </div>
-                    <span class="ml-5 inline-block">{{'SELECT_ALL' | translate}}</span>
+                    <span [ngClass]="{'text-muted': !instructionListData?.length, 'text-faded': !instructionListData?.length}"
+                        class="ml-5 inline-block">{{'SELECT_ALL' | translate}}</span>
                 </div>
             </ng-template>
             <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-index="rowIndex">
@@ -51,12 +52,15 @@
                             <div class="col">
                                 <input #editField *ngIf="rowNode.node.data.editable" [maxlength]="textFieldLength"
                                     formControlName="name" type="text" class="form-control">
-                                    <cpdss-portal-validation-error [errors]="fieldError('name')" [errorMessages]="errorMessages">
-                                    </cpdss-portal-validation-error>
+                                <cpdss-portal-validation-error [errors]="fieldError('name')"
+                                    [errorMessages]="errorMessages">
+                                </cpdss-portal-validation-error>
                             </div>
                             <div>
                                 <button *ngIf="rowNode.node.data.editable" id="saveRowBtn" (click)="saveData(rowNode)"
-                                    class="btn-main btn mr-10"  [disabled]="disableSaveButton || ((operation === OPERATIONS.LOADING) && isDischargeStarted) || !permission?.edit">{{ 'SAVE' | translate}}</button>
+                                    class="btn-main btn mr-10"
+                                    [disabled]="disableSaveButton || ((operation === OPERATIONS.LOADING) && isDischargeStarted) || !permission?.edit">{{
+                                    'SAVE' | translate}}</button>
                                 <button *ngIf="rowNode.node.data.editable" id="cancelBtn" (click)="cancel(rowNode)"
                                     class="btn-main btn mr-15">{{'CANCEL' | translate}}</button>
                             </div>
@@ -69,7 +73,9 @@
 </div>
 <div class="row" *ngIf="instructionListData?.length">
     <div class="col text-right pt-10">
-        <button (click)="saveAll()" id="btnSave" class="btn btn-main mr-15" [disabled]="disableSaveButton || ((operation === OPERATIONS.LOADING) && isDischargeStarted) || !permission?.edit">{{ 'SAVE' |
+        <button (click)="saveAll()" id="btnSave" class="btn btn-main mr-15"
+            [disabled]="disableSaveButton || ((operation === OPERATIONS.LOADING) && isDischargeStarted) || !permission?.edit">{{
+            'SAVE' |
             translate}}</button>
     </div>
 </div>

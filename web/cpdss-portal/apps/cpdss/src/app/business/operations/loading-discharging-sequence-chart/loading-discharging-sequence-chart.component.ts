@@ -181,7 +181,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
     }
     if (frameNoData) {
       const frameNo = frameNoData?.data[index][1];
-      text = frameNo + ' / ' + text + '%';
+      text = frameNo + ' /<br/> ' + text + '%';
     }
 
     return text
@@ -413,7 +413,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         marginLeft: 280, // Keep all charts left aligned
         spacing: [0, 0, 0, 0],
         events: {
-          render: this.sequnceChartRender
+          render: this.sequenceChartRender
         },
         zoomType: 'x',
         marginRight: 20
@@ -1688,9 +1688,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             yAxis: 0,
             type: 'areaspline',
             name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_FORE_DRAFT'],
-            custom: {
-              showFinalValue: true
-            },
+            index: 0,
             data: item?.data,
           };
           break;
@@ -1700,9 +1698,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             yAxis: 0,
             type: 'areaspline',
             name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_AFT_DRAFT'],
-            custom: {
-              showFinalValue: true
-            },
+            index: 1,
             data: item?.data,
           };
           break;
@@ -1712,9 +1708,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             yAxis: 0,
             type: 'areaspline',
             name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TRIM'],
-            custom: {
-              showFinalValue: true
-            },
+            index: 2,
             data: item?.data,
           };
           break;
@@ -1724,9 +1718,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             yAxis: 0,
             type: 'areaspline',
             name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_UKC'],
-            custom: {
-              showFinalValue: true
-            },
+            index: 3,
             data: item?.data,
           };
           break;
@@ -1736,18 +1728,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             yAxis: 0,
             type: 'areaspline',
             name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_GM'],
-            custom: {
-              showFinalValue: true
-            },
-            data: item?.data,
-          };
-          break;
-
-        case 'sf':
-          series = {
-            yAxis: 0,
-            type: 'areaspline',
-            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_SF'],
+            index: 4,
             data: item?.data,
           };
           break;
@@ -1757,6 +1738,17 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             yAxis: 0,
             type: 'areaspline',
             name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BM'],
+            index: 5,
+            data: item?.data,
+          };
+          break;
+
+        case 'sf':
+          series = {
+            yAxis: 0,
+            type: 'areaspline',
+            name: LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_SF'],
+            index: 6,
             data: item?.data,
           };
           break;
@@ -1766,7 +1758,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       }
 
       return series;
-    }).filter(param => param)];
+    }).filter(param => param).sort((a,b) => a.index - b.index)];
   }
 
   /**
@@ -1888,7 +1880,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         pointFormatter: function() {
           let text = this.y.toString();
           text = LoadingDischargingSequenceChartComponent.getTextWithFrameNo(this.series.name, this.index, text);
-          
+
           return `${this.series.name}: <b>${text}</b><br/>`;
         }
       },
@@ -2001,7 +1993,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
 
     const tableTop = 0,
       tableLeft = 0,
-      rowHeight = 40,
+      rowHeight = 45,
       cellPadding = 2.5,
       tablePadding = 20;
 
@@ -2047,7 +2039,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           cellWidth = series[i].data[category_index].plotX;
           let text = series[i].data[category_index]?.y;
           text = LoadingDischargingSequenceChartComponent.getTextWithFrameNo(series[i].name, category_index, text);
-          
+
           const x = chart.plotLeft + series[i].data[category_index].plotX;
           const y = tableTop + (i + 2) * rowHeight - cellPadding;
           const dataLabel = `${text}`;
@@ -2219,8 +2211,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    *
    * @memberof LoadingDischargingSequenceChartComponent
    */
-  sequnceChartRender = function () {
-    const chart: Highcharts.Chart = this;
+  sequenceChartRender = function () {
+    const chart: Highcharts.Chart = this,
+      renderer = chart.renderer;
 
     // Show COW legends only in discharging operation
     if (LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING) {
@@ -2237,23 +2230,70 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                             <i class=" cow-legend-icon bottom-wash"></i>
                             <span class="cow-legend-label">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BOTTOM_WASH']}</span> </li>
                         </ul>`;
-      chart.renderer.text(cowLegend, chart.plotLeft, chart.chartHeight - 20, true).attr({
+      renderer.text(cowLegend, chart.plotLeft, chart.chartHeight - 20, true).attr({
         cursor: 'pointer',
         zIndex: 1
       }).add();
     }
-    /* TODO:Mabe added as annotation this.addAnnotation({
-      labels: [{
-        backgroundColor: 'transparent',
-        shape: 'rect',
-        point: {
-          x: this.plotLeft,
-          y: this.plotHeight + 300
-        },
-        useHTML: true,
-        text: '<i class="pi pi-sort-up" style="color: #666666;font-size: 1.5em"></i>'
-      }]
-    }); */
+
+    if (chart?.cargoStrippingGroup) {
+      chart?.cargoStrippingGroup.destroy();
+      chart.cargoStrippingGroup = null;
+    }
+    chart.cargoStrippingGroup = renderer.g('cargo-stripping-group')
+      .attr({
+        zIndex: 7
+      })
+      .add(chart.cargoStrippingGroup);
+
+    chart.series[0].data.forEach((point) => {
+      if (point?.options?.id?.includes('stripping')) {
+        const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
+        const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
+        const rectHeight = 40;
+        const rect = renderer.rect(rectX, point.plotY + chart.plotTop - (rectHeight / 2), rectWidth, rectHeight, 0)
+          .attr({
+            fill: '#f8f8f8',
+            stroke: '#bebebe',
+            'stroke-width': 1,
+            zIndex: 7
+          })
+          .add(chart.cargoStrippingGroup);
+
+        const titleRect = renderer.createElement('title');
+        titleRect.element.append(LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR']);
+        titleRect.add(rect);
+
+        const box = rect.getBBox();
+
+        const text = renderer.text(
+          LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'],
+          box.x,
+          box.y
+        )
+          .css({
+            width: rectWidth,
+            height: 40,
+            textOverflow: 'ellipsis',
+            color: '#666666'
+          })
+          .attr({
+            zIndex: 7,
+            translateY: 25,
+            align: 'center',
+            translateX: rectWidth / 2,
+          })
+          .addClass('sequence-stripping cargo')
+          .add(chart.cargoStrippingGroup);
+
+        if (rectWidth < 19) {
+          text.element.append(LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR'].slice(0, 1));
+          const titleText = renderer.createElement('title');
+          titleText.element.append(LoadingDischargingSequenceChartComponent.translationKeys['STRIPPING_BY_EDUCTOR']);
+          titleText.add(text);
+        }
+      }
+    });
   }
 
   /**

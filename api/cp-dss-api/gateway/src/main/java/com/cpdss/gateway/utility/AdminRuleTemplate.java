@@ -18,9 +18,10 @@ public enum AdminRuleTemplate {
   // Loading Rules - end
 
   // Discharge Rules -start
-  DISCHARGE_INITIAL_TRIM(3L), // need clarifications
-  DISCHARGE_FINAL_TRIM(2L), // need clarifications
-  DISCHARGE_MAXIMUM_TRIM(1L), // need clarifications
+  DISCHARGE_INITIAL_TRIM(906L),
+  DISCHARGE_FINAL_TRIM(907L),
+  DISCHARGE_FINAL_TRIM_LAST_PORT(908L),
+  DISCHARGE_MAXIMUM_TRIM(906L),
 
   DISCHARGE_INITIAL_RATE(921L),
   DISCHARGE_MAXIMUM_RATE(924L),

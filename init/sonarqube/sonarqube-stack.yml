@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  cpdss-sonarqube:
+    image: sonarqube:community
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      - sonar.jdbc.url=jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
+      - sonar.jdbc.username=${DB_USER}
+      - sonar.jdbc.password=${DB_PASSWORD}
+      - sonar.web.context=/sonar
+    volumes:
+      - ${VOLUME_PATH}/sonarqube/sonarqube_data:/opt/sonarqube/data
+      - ${VOLUME_PATH}/sonarqube/sonarqube_extensions:/opt/sonarqube/extensions
+      - ${VOLUME_PATH}/sonarqube/sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "3000:9000"
+    healthcheck:
+      test: "wget -qO- http://localhost:9000/sonar/api/system/status | grep -q -e '\"status\":\"UP\"' -e '\"status\":\"DB_MIGRATION_NEEDED\"' -e '\"status\":\"DB_MIGRATION_RUNNING\"' || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

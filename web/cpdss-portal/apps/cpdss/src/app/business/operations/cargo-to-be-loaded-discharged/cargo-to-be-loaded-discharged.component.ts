@@ -67,7 +67,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   @Output() updateCargoToBeLoaded = new EventEmitter<ILoadedCargo[]>();
 
   get cargoTobeLoadedDischargedForm() {
-    return <FormGroup> this.form?.get('cargoTobeLoadedDischarged');
+    return <FormGroup>this.form?.get('cargoTobeLoadedDischarged');
   }
 
   set cargoTobeLoadedDischargedForm(form: FormGroup) {
@@ -123,17 +123,17 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   */
   updateCargoTobeLoadedData() {
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {
-      if (cargo) {
+      if (cargo && ((this.operation === OPERATIONS.DISCHARGING && cargo.shipFigure) || (this.operation === OPERATIONS.LOADING))) {
         const minTolerence = this.loadingDischargingTransformationService.decimalConvertion(this._decimalPipe, cargo.minTolerence, '0.2-2');
         const maxTolerence = this.loadingDischargingTransformationService.decimalConvertion(this._decimalPipe, cargo.maxTolerence, '0.2-2');
         cargo.minMaxTolerance = maxTolerence + (minTolerence ? "/" + minTolerence : '');
         cargo.differencePercentage = cargo.differencePercentage ? (cargo.differencePercentage.includes('%') ? cargo.differencePercentage : cargo.differencePercentage + '%') : '';
         cargo.grade = this.findCargo(cargo);
 
-        const convertedOrderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        const convertedOrderedQuantity = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.orderedQuantity), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.convertedOrderedQuantity = convertedOrderedQuantity.toString();
 
-        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT , this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
+        const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.shipFigure = shipFigure?.toString();
 
         const convertedSlopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
@@ -159,8 +159,8 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails.loadableQuantityCargoDetails?.map(cargo => {
       if (cargo) {
         cargo.grade = this.findCargo(cargo);
-        const blFigure = Number(cargo?.blFigure) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.blFigure), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
-        cargo.blFigure = blFigure.toString();
+
+        cargo.blFigure = cargo?.blFigure ?? "0";
 
         const shipFigure = Number(cargo?.loadableMT) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, this.currentQuantitySelectedUnit, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.shipFigure = shipFigure.toString();
@@ -243,7 +243,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
    * @memberof CargoToBeLoadedDischargedComponent
    */
   onEditComplete(event: IDataTableEvent) {
-    if(this.operation === OPERATIONS.DISCHARGING) {
+    if (this.operation === OPERATIONS.DISCHARGING) {
       this.cargoTobeLoadedDischarged[event?.index][event?.field].value = event?.data[event?.field]?.value;
       if (event?.field === 'slopQuantity') {
         this.cargoTobeLoadedDischarged[event?.index].slopQuantityMT = this.quantityPipe.transform(event?.data[event?.field]?.value, this.currentQuantitySelectedUnit, QUANTITY_UNIT.MT, event?.data?.estimatedAPI, event?.data?.estimatedTemp, -1).toString();

@@ -162,6 +162,24 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudy loadableStudy = loadables.get(0);
+      List<LoadableStudyPortRotation> portRotationsForNonDischargingOperations =
+          loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idNotAndIsActive(
+              loadableStudy, DISCHARGING_OPERATION_ID, true);
+      for (LoadableStudyPortRotation loadableStudyPortRotation :
+          portRotationsForNonDischargingOperations) {
+        List<SynopticalTable> synopticalTables =
+            this.synopticalTableRepository
+                .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
+                    loadableStudy.getId(), loadableStudyPortRotation.getId(), true);
+        for (SynopticalTable synopticalTable : synopticalTables) {
+          if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
+            throw new GenericServiceException(
+                "No Actual ETA/ETD values found",
+                CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
+                HttpStatusCode.BAD_REQUEST);
+          }
+        }
+      }
       LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
       validateActuals(loadableStudy);
       if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
@@ -240,6 +258,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         loadableStudyPortRotationRepository
             .findByLoadableStudyAndIsActive(loadableStudy.getId(), true).stream()
             .filter(p -> p.getOperation().getId().equals(LOADING_OPERATION_ID))
+            .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
             .collect(Collectors.toList());
     StowageAndBillOfLaddingValidationRequest.Builder request =
         StowageAndBillOfLaddingValidationRequest.newBuilder();
@@ -538,13 +557,22 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       if (!CollectionUtils.isEmpty(portIds) && !CollectionUtils.isEmpty(portReply.getPortsList())) {
         dischargingPorts =
             this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
-        this.loadableStudyPortRotationRepository
-            .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
-            .forEach(
-                portRotation -> {
-                  // portRotation.setIsPortRotationOhqComplete(false);
-                });
         loadableStudy.setIsPortsComplete(false);
+
+        // Port complete status becomes false even when all the mandatory fields are available for
+        // all ports, need to set the port complete status properly on save.
+        Boolean isPortRotationComplete = true;
+        for (LoadableStudyPortRotation portRotation :
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+                loadableStudy.getId(), true)) {
+          // portRotation.setIsPortRotationOhqComplete(false);
+          if ((portRotation.getSeaWaterDensity() == null)
+              || (portRotation.getMaxDraft() == null)
+              || (portRotation.getAirDraftRestriction() == null)) {
+            isPortRotationComplete = false;
+          }
+        }
+        loadableStudy.setIsPortsComplete(isPortRotationComplete);
         this.loadableStudyRepository.save(loadableStudy);
         this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
       }
@@ -1510,6 +1538,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               PortData.Builder portDataBuilder = PortData.newBuilder();
               portDataBuilder.setPortRotationId(port.getId());
               portDataBuilder.setPortId(port.getPortXId());
+              Optional.ofNullable(port.getPortOrder())
+                  .ifPresent(v -> portDataBuilder.setPortOrder(v.intValue()));
               Optional<SynopticalTable> synopticalTableOpt =
                   port.getSynopticalTable().stream()
                       .filter(

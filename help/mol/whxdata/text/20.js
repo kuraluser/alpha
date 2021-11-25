@@ -1,1 +1,1 @@
-rh._.exports({"0":[[" ","Discharging Instructions"]],"1":[[" ","Discharging Instructions"]],"id":"20"})
+rh._.exports({"0":[[" ","Export Loadable Plan"]],"1":[[" ","Export Loadable Plan"]],"2":[[" ","The ","Export ","option on the ","LOADABLE PLAN"," page of the selected loadable study allows the user to export the XML file of the loadable plan to the local machine. "," ","The downloaded XML file displays the details of the stowage plan before the loading operation. "]],"id":"20"})

@@ -115,6 +115,7 @@ export class ArrivalConditionTransformationService {
     data.api = value.api;
     data.cargoId = isCommingle ? commingleData.cargoId : loadableQuantityCargoDetails.cargoId;
     data.colorCode = isCommingle ? commingleData.colorCode : loadableQuantityCargoDetails.colorCode;
+    data.isCommingleCargo = isCommingle;
     return data;
   }
 }

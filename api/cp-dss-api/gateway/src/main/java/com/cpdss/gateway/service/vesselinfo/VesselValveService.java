@@ -96,24 +96,44 @@ public class VesselValveService {
   public Object buildVesselValveEductorResponse(
       List<VesselInfo.VesselValveEducationProcess> grpcSource) {
     List<VesselValveEducationProcess> sourceList = buildVesselValveEductorDomain(grpcSource);
+    /*    Object aa =
+    sourceList.stream()
+        .collect(
+            Collectors.groupingBy(
+                v -> toCamelCase(v.getStepName()),
+                Collectors.groupingBy(
+                    v -> toCamelCase(v.getStageName()),
+                    Collectors.groupingBy(
+                        v -> toCamelCase("stage_" + v.getStageNumber()),
+                        Collectors.groupingBy(
+                            v -> toCamelCase(v.getEductorName()),
+                            Collectors.groupingBy(
+                                v -> "sequence_" + v.getSequenceNumber(),
+                                Collectors.mapping(
+                                    v -> createValveEdu(v), Collectors.toList())))))));*/
 
-    Object aa =
+    Object groupedData =
         sourceList.stream()
             .collect(
                 Collectors.groupingBy(
                     v -> toCamelCase(v.getStepName()),
+                    () -> new TreeMap<>(new EductorStepNameComparator()),
                     Collectors.groupingBy(
                         v -> toCamelCase(v.getStageName()),
+                        () -> new TreeMap<>(new EductorStepNameComparator()),
                         Collectors.groupingBy(
                             v -> toCamelCase("stage_" + v.getStageNumber()),
+                            () -> new TreeMap<>(new EductorStageNumberComparator()),
                             Collectors.groupingBy(
                                 v -> toCamelCase(v.getEductorName()),
+                                () -> new TreeMap<>(new EductorStepNameComparator()),
                                 Collectors.groupingBy(
-                                    v -> "sequence_" + v.getSequenceNumber(),
+                                    v -> toCamelCase("sequence_" + v.getSequenceNumber()),
+                                    () -> new TreeMap<>(new EductorSequenceNumberComparator()),
                                     Collectors.mapping(
                                         v -> createValveEdu(v), Collectors.toList())))))));
 
-    return aa;
+    return groupedData;
   }
 
   private VesselValveEdu createValveEdu(VesselValveEducationProcess v) {

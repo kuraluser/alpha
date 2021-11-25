@@ -212,6 +212,16 @@ service LoadableStudyService {
 	rpc GetVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
 	
 	rpc saveActivatedVoyage(VoyageActivateRequest) returns (VoyageActivateReply) {}
+
+	rpc GetVoyageByVoyageId(VoyageInfoRequest) returns (VoyageInfoReply) {}
+
+	rpc getLoadablePatternForCommunication(LoadableStudyPatternCommunicationRequest) returns (LoadableStudyPatternCommunicationReply) {}
+
+	rpc saveLoadablePatternForCommunication(LoadableStudyPatternCommunicationRequest) returns (LoadableStudyPatternCommunicationReply) {}
+
+	rpc getLoadicatorDataSynopticalForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadicatorDataSynopticalForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 }
 
 service SynopticalOperationService{
@@ -1302,7 +1312,12 @@ message SynopticalCargoRecord{
 	string ullage = 19;
 	string actualApi = 20;	
 	string actualTemperature = 21;
-	
+	int64 cargo1NominationId = 22;
+	int64 cargo2NominationId = 23;
+	string cargo1Mt = 24;
+	string cargo2Mt = 25;
+	string cargo1Lt = 26;
+	string cargo2Lt = 27;
 }
 
 message SynopticalOhqRecord{
@@ -1664,5 +1679,33 @@ message VoyageActivateRequest{
 message VoyageActivateReply {
 	ResponseStatus responseStatus = 1;
 	VoyageActivateRequest voyageActivateRequest = 2;
+}
 
+message LoadableStudyCommunicationRequest{
+	int64 id=1;
+	string dataJson=2;
+}
+
+message LoadableStudyCommunicationReply {
+	ResponseStatus responseStatus = 1;
+	string dataJson=2;
+}
+
+message LoadableStudyPatternCommunicationRequest{
+	int64 id=1;
+	string dataJson=2;
+}
+
+message LoadableStudyPatternCommunicationReply {
+	ResponseStatus responseStatus = 1;
+	string dataJson=2;
+}
+
+message VoyageInfoRequest{
+	int64 voyageId = 1;
+}
+
+message VoyageInfoReply{
+	ResponseStatus responseStatus = 1;
+	VoyageDetail voyageDetail = 2;
 }

@@ -45,7 +45,12 @@ public class LoadingPlanConstants {
     PORT_LOADABLE_PLAN_COMMINGLE_DETAILS("port_loadable_plan_commingle_details"),
     BILL_OF_LADDING("bill_of_ladding"),
     PYUSER("pyuser"),
-    VOYAGE("voyage");
+    VOYAGE("voyage"),
+    LOADABLE_PATTERN("loadable_pattern"),
+    LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE("loadicator_data_for_synoptical_table"),
+    BALLAST_OPERATION("ballast_operation"),
+    EDUCTION_OPERATION("eduction_operation"),
+    CARGO_LOADING_RATE("cargo_loading_rate");
 
     public final String table;
   }

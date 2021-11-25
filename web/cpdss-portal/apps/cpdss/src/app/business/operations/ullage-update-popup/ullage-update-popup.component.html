@@ -1,4 +1,4 @@
-<p-dialog id="dialog_newLoadableStudyPopup" header="{{'UPDATE_ULLAGE' | translate}}" [visible]="true" *ngIf="display"
+<p-dialog id="ullage-update-popup" header="{{'UPDATE_ULLAGE' | translate}}" [visible]="true" *ngIf="display"
     [modal]="true" styleClass="arrival-condition-pop-up" [draggable]="false" [responsive]="true" [minY]="70"
     [closable]="false">
 
@@ -70,7 +70,7 @@
                     <div class="col-5">
                         <div class="row">
                             <div class="col-4">
-                                {{'LOADABLE_PLANE_CARGO_GRADE' | translate}}
+                                {{'LOADABLE_PLAN_CARGO_GRADE' | translate}}
                             </div>
                             <div class="col">
                                 <p-dropdown styleClass="form-control" [(ngModel)]="selectedCargo"
@@ -106,7 +106,7 @@
 
                         <div class="col">
                             <div class="row pt-10">
-                                <div class="col-2">{{'LOADABLE_PLANE_CARGO_GRADE' | translate}}</div>
+                                <div class="col-2">{{'LOADABLE_PLAN_CARGO_GRADE' | translate}}</div>
                                 <div class="col">
                                     <ul class="list-inline tank-order mb-5">
                                         <li class="pt-5 list-inline-item"
@@ -376,12 +376,12 @@
     <p-footer>
         <div class="row">
             <div class="col-sm-12 text-right">
-                <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
+                <button type="button" class="btn btn-main" (click)="closeDialog()" id="update-ullage-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
-                <button (click)="saveUllage(false)" class="btn btn-main" id="new-loadable-study-popup-save"
+                <button (click)="saveUllage(false)" class="btn btn-main" id="update-ullagey-popup-save"
                     form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'SAVE' |
                     translate}}</button>
-                <button (click)="saveUllage(true)" class="btn btn-main" id="new-loadable-study-popup-save"
+                <button (click)="saveUllage(true)" class="btn btn-main" id="update-ullage-popup-save-validate"
                     form="fg_newLoadableStudy" autofocus focusTrap
                     [disabled]="isDischargeStarted || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>

@@ -6,7 +6,6 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.GenerateProtectedFile;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.LoadLine;
 import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
@@ -198,9 +197,11 @@ public class GenerateLoadingPlanExcelReportService {
 
         setCellStyle(workbook, loadinPlanExcelDetails);
 
-        // Adding password protection
-        GenerateProtectedFile.setPasswordToWorkbook(
-            workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate, outFile);
+        // Adding password protection code commented for temporary
+        // GenerateProtectedFile.setPasswordToWorkbook(
+        //    workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
+        // outFile);
+        workbook.write(outFile);
         resultFileStream.close();
 
         // Putting entry in file repo

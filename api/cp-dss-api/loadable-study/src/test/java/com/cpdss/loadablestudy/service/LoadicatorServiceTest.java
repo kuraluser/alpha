@@ -53,6 +53,7 @@ public class LoadicatorServiceTest {
   @MockBean private LoadableStudyService loadableStudyService;
   @MockBean private JsonDataService jsonDataService;
   @MockBean private CommunicationService communicationService;
+  @MockBean private AlgoService algoService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";

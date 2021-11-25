@@ -29,5 +29,10 @@ public enum ProcessIdentifiers {
   port_loadable_plan_commingle_details,
   bill_of_ladding,
   pyuser,
-  voyage;
+  voyage,
+  loadable_pattern,
+  loadicator_data_for_synoptical_table,
+  ballast_operation,
+  eduction_operation,
+  cargo_loading_rate;
 }

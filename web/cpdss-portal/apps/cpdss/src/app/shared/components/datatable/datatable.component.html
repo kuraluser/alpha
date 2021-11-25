@@ -336,12 +336,12 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATERANGE">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <p-calendar appendTo="body" [showButtonBar]="true"
+                                        <p-calendar (keyup.enter)="coldaterange.hideOverlay()" appendTo="body" [showButtonBar]="true"
                                             [readonlyInput]="col?.readonlyInput !== undefined ? col?.readonlyInput : true"
-                                            [disabled]="disabledField(rowIndex, col.field)"
+                                            [disabled]="disabledField(rowIndex, col.field)" (onInput)="coldaterange.hideOverlay();onInputRange=true"
                                             [hidden]="disabledField(rowIndex, col.field)"
                                             (onSelect)="onDateRangeSelect($event, rowIndex, col, rowData)"
-                                            (onClose)="onDateRangeSelect($event, rowIndex, col, rowData)"
+                                            (onClose)="onDateRangeSelect($event, rowIndex, col, rowData)" (onBlur)="onBlurDateRange($event, rowIndex, col, rowData)"
                                             (onClearClick)="onClearDateRange($event, rowIndex, col.field, rowData)"
                                             [dateFormat]="col.dateFormat" selectionMode="range"
                                             [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate" [minDate]="col.minDate"
@@ -361,12 +361,12 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <p-calendar appendTo="body" [showTime]="true" [showButtonBar]="true"
+                                        <p-calendar  (keyup.enter)="coldatetime.hideOverlay()" appendTo="body" [showTime]="true" [showButtonBar]="true"
                                             [readonlyInput]="col?.readonlyInput !== undefined ? col?.readonlyInput : true"
-                                            (onClose)="onDatePanelClosed($event,rowIndex, col.field,rowData)"
-                                            [formControlName]="col.field"
+                                            (onBlur)="onBlurDateTime($event,rowIndex, col.field,rowData, col)" (onClose)="onDatePanelClosed($event,rowIndex, col.field,rowData, col)"
+                                            [formControlName]="col.field" (onInput)="coldatetime.hideOverlay();onInputTime=true"
                                             [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
-                                            inputId="{{col.field+'_'+rowIndex + 'input'}}"
+                                            inputId="{{col.field+'_'+rowIndex + 'input'}}" 
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
                                             [dateFormat]="col.dateFormat ? col.dateFormat : 'dd-mm-yy'"
                                             [hideOnDateTimeSelect]="false" #coldatetime>

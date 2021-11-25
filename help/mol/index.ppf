@@ -18,7 +18,7 @@
     </topic>
     
     <topic>
-      getting_started.htm
+      getting-started.htm
     </topic>
     
     <topic>
@@ -118,7 +118,7 @@
     </topic>
     
     <topic>
-      select_port-loadable_study.htm
+      select-port-loadable-study.htm
     </topic>
     
     <topic>
@@ -162,7 +162,7 @@
     </topic>
     
     <topic>
-      view-pattern.htm
+      view-loadable-pattern.htm
     </topic>
     
     <topic>
@@ -174,7 +174,7 @@
     </topic>
     
     <topic>
-      view-plan.htm
+      view-loadable-plan.htm
     </topic>
     
     <topic>
@@ -226,6 +226,14 @@
     </topic>
     
     <topic>
+      add-port-discharge-study.htm
+    </topic>
+    
+    <topic>
+      delete-port-discharge-study.htm
+    </topic>
+    
+    <topic>
       on-hand-quantities-discharge.htm
     </topic>
     
@@ -242,11 +250,19 @@
     </topic>
     
     <topic>
+      delete-back-loading.htm
+    </topic>
+    
+    <topic>
       generate-discharge-plan.htm
     </topic>
     
     <topic>
       view-discharge-plan.htm
+    </topic>
+    
+    <topic>
+      discharge-plan.htm
     </topic>
     
     <topic>
@@ -279,10 +295,6 @@
     
     <topic>
       loading.htm
-    </topic>
-    
-    <topic>
-      loading-operation-stages.htm
     </topic>
     
     <topic>
@@ -322,6 +334,10 @@
     </topic>
     
     <topic>
+      add-cargo-managesequence.htm
+    </topic>
+    
+    <topic>
       add-initial-delay.htm
     </topic>
     
@@ -350,11 +366,19 @@
     </topic>
     
     <topic>
-      discharging.htm
+      arrival-departure-condition.htm
     </topic>
     
     <topic>
-      discharging-operation-stages.htm
+      cargotype-toppingff-sequence.htm
+    </topic>
+    
+    <topic>
+      update-ullage.htm
+    </topic>
+    
+    <topic>
+      discharging.htm
     </topic>
     
     <topic>
@@ -362,7 +386,67 @@
     </topic>
     
     <topic>
+      discharging-details.htm
+    </topic>
+    
+    <topic>
+      add-tide-details-discharging.htm
+    </topic>
+    
+    <topic>
+      discharging-rates.htm
+    </topic>
+    
+    <topic>
+      berth-details-discharging.htm
+    </topic>
+    
+    <topic>
+      cargo-machinery-discharging.htm
+    </topic>
+    
+    <topic>
+      pump-use-discharging.htm
+    </topic>
+    
+    <topic>
+      cargo-details-discharging.htm
+    </topic>
+    
+    <topic>
+      planned-cargo.htm
+    </topic>
+    
+    <topic>
+      No-stages-discharging.htm
+    </topic>
+    
+    <topic>
+      manage-sequence-discharging.htm
+    </topic>
+    
+    <topic>
+      add-cargo-discharging.htm
+    </topic>
+    
+    <topic>
+      add-initialdelay-discharging.htm
+    </topic>
+    
+    <topic>
+      cow-plan-options.htm
+    </topic>
+    
+    <topic>
+      time-post-discharge.htm
+    </topic>
+    
+    <topic>
       discharging-instructions.htm
+    </topic>
+    
+    <topic>
+      generate-discharging-plan.htm
     </topic>
     
     <topic>
@@ -374,7 +458,23 @@
     </topic>
     
     <topic>
-      files.htm
+      files-repository.htm
+    </topic>
+    
+    <topic>
+      add-new-file.htm
+    </topic>
+    
+    <topic>
+      view-file.htm
+    </topic>
+    
+    <topic>
+      edit-file.htm
+    </topic>
+    
+    <topic>
+      delete-file.htm
     </topic>
     
   </topiclist>

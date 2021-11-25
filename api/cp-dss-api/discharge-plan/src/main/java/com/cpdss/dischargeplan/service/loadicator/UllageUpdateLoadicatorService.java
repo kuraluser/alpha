@@ -3,8 +3,9 @@ package com.cpdss.dischargeplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.CargoInfo;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
@@ -14,12 +15,8 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
-import com.cpdss.common.generated.Loadicator;
 import com.cpdss.common.generated.Loadicator.StowagePlan;
 import com.cpdss.common.generated.Loadicator.StowagePlan.Builder;
-import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
@@ -34,16 +31,14 @@ import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -52,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 /** @author pranav.k */
@@ -76,6 +72,9 @@ public class UllageUpdateLoadicatorService {
   @Autowired
   PortDischargingPlanBallastDetailsRepository portDischargingPlanBallastDetailsRepository;
 
+  @Autowired
+  PortDischargingPlanCommingleDetailsRepository portDischargingPlanCommingleDetailsRepository;
+
   @Autowired PortDischargingPlanRobDetailsRepository portDischargingPlanRobDetailsRepository;
 
   @Autowired
@@ -83,6 +82,10 @@ public class UllageUpdateLoadicatorService {
 
   @Autowired
   PortDischargingPlanBallastTempDetailsRepository portDischargingPlanBallastDetailsTempRepository;
+
+  @Autowired
+  PortDischargingPlanCommingleTempDetailsRepository
+      portDischargingPlanCommingleTempDetailsRepository;
 
   @Autowired DischargePlanAlgoService dischargingPlanAlgoService;
 
@@ -128,6 +131,11 @@ public class UllageUpdateLoadicatorService {
     }
 
     String processId = UUID.randomUUID().toString();
+    this.updateDischargePlanStatus(
+        dischargingInfoOpt.get(),
+        DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID,
+        processId,
+        request.getUpdateUllage(0).getArrivalDepartutre());
     VesselInfo.VesselReply vesselReply =
         loadicatorService.getVesselDetailsForLoadicator(dischargingInfoOpt.get());
     if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
@@ -142,20 +150,54 @@ public class UllageUpdateLoadicatorService {
         algoRequest.setStages(null);
       }
       saveUllageEditLoadicatorRequestJson(algoRequest, dischargingInfoOpt.get().getId());
-      Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-          dischargingPlanAlgoService.getDischargingInformationStatus(
-              DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID);
+      try {
+        // Send Payload to Algo
+        LoadicatorAlgoResponse lar =
+            restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
 
-      dischargingPlanAlgoService.createDischargingInformationAlgoStatus(
-          dischargingInfoOpt.get(),
-          processId,
-          dischargingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
-      saveUpdatedDischargingPlanDetails(
-          dischargingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
-      log.info(
-          "Saved updated loading plan details of loading information {}",
-          dischargingInfoOpt.get().getId());
+        // Save Algo Response in File
+        saveUllageEditLoadicatorResponseJson(lar, dischargingInfoOpt.get().getId());
+
+        if (lar.getLoadicatorResults().get(0).getJudgement().size() > 0) {
+          // If there is error
+          this.updateDischargePlanStatus(
+              dischargingInfoOpt.get(),
+              DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
+              processId,
+              request.getUpdateUllage(0).getArrivalDepartutre());
+          this.saveLoadingPlanAlgoErrors(
+              lar.getLoadicatorResults().get(0).getJudgement(),
+              dischargingInfoOpt.get(),
+              request.getUpdateUllage(0).getArrivalDepartutre());
+        } else {
+          this.updateDischargePlanStatus(
+              dischargingInfoOpt.get(),
+              DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
+              processId,
+              request.getUpdateUllage(0).getArrivalDepartutre());
+          this.saveDischargePlanStabilityParameters(
+              dischargingInfoOpt.get(),
+              lar,
+              request.getUpdateUllage(0).getArrivalDepartutre(),
+              DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
+          saveUpdatedDischargingPlanDetails(
+              dischargingInfoOpt.get(), request.getUpdateUllage(0).getArrivalDepartutre());
+          log.info(
+              "Saved updated loading plan details of loading information {}",
+              dischargingInfoOpt.get().getId());
+        }
+      } catch (HttpStatusCodeException e) {
+        log.error("Error occured in ALGO side while calling loadicator_results API");
+        this.updateDischargePlanStatus(
+            dischargingInfoOpt.get(),
+            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
+            processId,
+            request.getUpdateUllage(0).getArrivalDepartutre());
+        dischargingPlanAlgoService.saveAlgoInternalError(
+            dischargingInfoOpt.get(),
+            request.getUpdateUllage(0).getArrivalDepartutre(),
+            Lists.newArrayList(e.getResponseBodyAsString()));
+      }
       return processId;
     }
     List<PortDischargingPlanStowageTempDetails> tempStowageDetails =
@@ -177,6 +219,15 @@ public class UllageUpdateLoadicatorService {
                 request.getUpdateUllage(0).getArrivalDepartutre(),
                 DischargePlanConstants.ACTUAL_TYPE_VALUE,
                 true);
+    List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails = new ArrayList<>();
+    if (!request.getCommingleUpdateList().isEmpty()) {
+      tempCommingleDetails =
+          portDischargingPlanCommingleTempDetailsRepository
+              .findByDischargingInformationAndConditionTypeAndIsActive(
+                  dischargingInfoOpt.get().getId(),
+                  request.getCommingleUpdate(0).getArrivalDeparture(),
+                  true);
+    }
     Set<Long> cargoNominationIds = new LinkedHashSet<>();
 
     cargoNominationIds.addAll(
@@ -205,6 +256,7 @@ public class UllageUpdateLoadicatorService {
     buildStowagePlanDetails(
         dischargingInfoOpt.get(),
         tempStowageDetails,
+        tempCommingleDetails,
         cargoNomDetails,
         vesselReply,
         cargoReply,
@@ -213,6 +265,7 @@ public class UllageUpdateLoadicatorService {
         dischargingInfoOpt.get(),
         cargoNomDetails,
         tempStowageDetails,
+        tempCommingleDetails,
         cargoReply,
         stowagePlanBuilder);
     buildBallastDetails(
@@ -222,6 +275,11 @@ public class UllageUpdateLoadicatorService {
     Loadicator.LoadicatorReply reply =
         loadicatorService.saveLoadicatorInfo(loadicatorRequestBuilder.build());
     if (!reply.getResponseStatus().getStatus().equals(DischargePlanConstants.SUCCESS)) {
+      this.updateDischargePlanStatus(
+          dischargingInfoOpt.get(),
+          DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
+          processId,
+          request.getUpdateUllage(0).getArrivalDepartutre());
       throw new GenericServiceException(
           "Failed to send Stowage plans to Loadicator",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -240,12 +298,31 @@ public class UllageUpdateLoadicatorService {
       dischargeInformationRepository.updateDischargeInformationDepartureStatus(
           dischargingInfoStatusOpt.get().getId(), dsichargingInfoId);
     }
-    dischargingPlanAlgoService.createDischargingInformationAlgoStatus(
+    dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(
         dischargingInfoOpt.get(),
         processId,
         dischargingInfoStatusOpt.get(),
         request.getUpdateUllage(0).getArrivalDepartutre());
     return processId;
+  }
+
+  /**
+   * @param judgement
+   * @param dischargeInformation
+   * @param arrivalDepartutre
+   */
+  private void saveLoadingPlanAlgoErrors(
+      List<String> judgement, DischargeInformation dischargeInformation, int conditionType) {
+    algoErrorHeadingRepository.deleteByDischargingInformationAndConditionType(
+        dischargeInformation, conditionType);
+    algoErrorsRepository.deleteByDischargingInformationAndConditionType(
+        dischargeInformation, conditionType);
+
+    dischargingPlanAlgoService.saveAlgoErrors(
+        dischargeInformation,
+        AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
+        conditionType,
+        judgement);
   }
 
   public void saveUpdatedDischargingPlanDetails(
@@ -316,6 +393,38 @@ public class UllageUpdateLoadicatorService {
               DischargePlanConstants.ACTUAL_TYPE_VALUE);
       portDischargingPlanBallastDetailsRepository.saveAll(ballastEntityList);
     }
+
+    List<PortDischargingPlanCommingleTempDetails> tempCommingleList =
+        portDischargingPlanCommingleTempDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndIsActive(
+                dischargeInformation.getId(), conditionType, true);
+
+    List<PortDischargingPlanCommingleDetails> commingleEntityList = new ArrayList<>();
+    if (!tempCommingleList.isEmpty()) {
+      log.info("Copying commingle details from temporary tables");
+      for (PortDischargingPlanCommingleTempDetails tempCommingleEntity : tempCommingleList) {
+        PortDischargingPlanCommingleDetails commingleEntity =
+            new PortDischargingPlanCommingleDetails();
+        BeanUtils.copyProperties(tempCommingleEntity, commingleEntity);
+        commingleEntity.setId(null);
+        commingleEntity.setCreatedBy(null);
+        commingleEntity.setCreatedDate(null);
+        commingleEntity.setCreatedDateTime(null);
+        commingleEntity.setLastModifiedBy(null);
+        commingleEntity.setLastModifiedDate(null);
+        commingleEntity.setLastModifiedDateTime(null);
+        commingleEntity.setIsActive(true);
+        commingleEntity.setDischargingInformation(dischargeInformation);
+        commingleEntityList.add(commingleEntity);
+      }
+      // Deleting existing entry from actual table before pushing new records
+      portDischargingPlanCommingleDetailsRepository
+          .deleteExistingByDischargingInformationAndConditionTypeAndValueType(
+              dischargeInformation.getId(),
+              conditionType,
+              DischargePlanConstants.ACTUAL_TYPE_VALUE);
+      portDischargingPlanCommingleDetailsRepository.saveAll(commingleEntityList);
+    }
     /**
      * copying data to synoptical table. stowage quantity as cargo rob quantity as ohq ballas as
      * ballast condition type is used to determine which records are need to be updated(arrival/
@@ -360,6 +469,15 @@ public class UllageUpdateLoadicatorService {
               ohq.setTankId(rob.getTankXId());
               synopticalData.addOhq(ohq);
             });
+    commingleEntityList.stream()
+        .forEach(
+            commingle -> {
+              LoadableStudy.SynopticalCommingleRecord.Builder commingleRecord =
+                  LoadableStudy.SynopticalCommingleRecord.newBuilder();
+              commingleRecord.setActualWeight(commingle.getQuantity());
+              commingleRecord.setTankId(commingle.getTankId());
+              synopticalData.addCommingle(commingleRecord);
+            });
     request.addSynopticalRecord(synopticalData);
     ResponseStatus response =
         synopticalOperationServiceBlockingStub.updateSynopticalTable(request.build());
@@ -374,6 +492,9 @@ public class UllageUpdateLoadicatorService {
         dischargeInformation.getId(), conditionType);
     portDischargingPlanBallastDetailsTempRepository.deleteExistingByDischargingInfoAndConditionType(
         dischargeInformation.getId(), conditionType);
+    portDischargingPlanCommingleTempDetailsRepository
+        .deleteExistingByDischargingInfoAndConditionType(
+            dischargeInformation.getId(), conditionType);
   }
 
   /**
@@ -450,6 +571,7 @@ public class UllageUpdateLoadicatorService {
    * @param dischargeInformation
    * @param cargoNomDetails
    * @param tempStowageDetails
+   * @param tempCommingleDetails
    * @param cargoReply
    * @param stowagePlanBuilder
    */
@@ -457,6 +579,7 @@ public class UllageUpdateLoadicatorService {
       DischargeInformation dischargeInformation,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       List<PortDischargingPlanStowageTempDetails> tempStowageDetails,
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
       CargoReply cargoReply,
       Builder stowagePlanBuilder) {
     tempStowageDetails.stream()
@@ -466,9 +589,14 @@ public class UllageUpdateLoadicatorService {
         .forEach(
             cargoNominationId -> {
               Loadicator.CargoInfo.Builder cargoBuilder = Loadicator.CargoInfo.newBuilder();
-              Optional.ofNullable(
-                      String.valueOf(cargoNomDetails.get(cargoNominationId).getAbbreviation()))
-                  .ifPresent(cargoBuilder::setCargoAbbrev);
+              Optional.ofNullable(cargoNomDetails.get(cargoNominationId))
+                  .ifPresent(
+                      cargoNominationDetail -> {
+                        Optional.ofNullable(cargoNominationDetail.getAbbreviation())
+                            .ifPresent(cargoBuilder::setCargoAbbrev);
+                        Optional.ofNullable(cargoNominationDetail.getCargoId())
+                            .ifPresent(cargoBuilder::setCargoId);
+                      });
               Optional<PortDischargingPlanStowageTempDetails> stowageOpt =
                   tempStowageDetails.stream()
                       .filter(stwg -> stwg.getCargoNominationXId().equals(cargoNominationId))
@@ -480,8 +608,42 @@ public class UllageUpdateLoadicatorService {
                     Optional.ofNullable(String.valueOf(stwg.getTemperature()))
                         .ifPresent(cargoBuilder::setStandardTemp);
                   });
-              Optional.ofNullable(cargoNomDetails.get(cargoNominationId).getCargoId())
-                  .ifPresent(cargoBuilder::setCargoId);
+              Optional.ofNullable(dischargeInformation.getPortXid())
+                  .ifPresent(cargoBuilder::setPortId);
+              Optional.ofNullable(stowagePlanBuilder.getStowageId())
+                  .ifPresent(cargoBuilder::setStowageId);
+              stowagePlanBuilder.addCargoInfo(cargoBuilder.build());
+            });
+    buildLoadicatorCargoDetailsForCommingleCargo(
+        tempCommingleDetails, dischargeInformation, cargoReply, stowagePlanBuilder);
+  }
+
+  /**
+   * Build Loadicator Cargo Details For Commingle Cargo
+   *
+   * @param tempCommingleDetails
+   * @param dischargeInformation
+   * @param cargoReply
+   * @param stowagePlanBuilder
+   */
+  private void buildLoadicatorCargoDetailsForCommingleCargo(
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
+      DischargeInformation dischargeInformation,
+      CargoReply cargoReply,
+      Builder stowagePlanBuilder) {
+    tempCommingleDetails.stream()
+        .filter(
+            distinctByKeys(
+                PortDischargingPlanCommingleTempDetails::getCargoNomination1XId,
+                PortDischargingPlanCommingleTempDetails::getCargoNomination2XId))
+        .forEach(
+            commingle -> {
+              Loadicator.CargoInfo.Builder cargoBuilder = Loadicator.CargoInfo.newBuilder();
+              cargoBuilder.setCargoAbbrev(commingle.getGrade());
+              Optional.ofNullable(String.valueOf(commingle.getApi()))
+                  .ifPresent(cargoBuilder::setApi);
+              Optional.ofNullable(String.valueOf(commingle.getTemperature()))
+                  .ifPresent(cargoBuilder::setStandardTemp);
               Optional.ofNullable(dischargeInformation.getPortXid())
                   .ifPresent(cargoBuilder::setPortId);
               Optional.ofNullable(stowagePlanBuilder.getStowageId())
@@ -490,11 +652,24 @@ public class UllageUpdateLoadicatorService {
             });
   }
 
+  @SuppressWarnings("unchecked")
+  private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
+    final Map<List<?>, Boolean> seen = new ConcurrentHashMap<>();
+
+    return t -> {
+      final List<?> keys =
+          Arrays.stream(keyExtractors).map(ke -> ke.apply(t)).collect(Collectors.toList());
+
+      return seen.putIfAbsent(keys, Boolean.TRUE) == null;
+    };
+  }
+
   /**
    * Builds stowage plan details
    *
    * @param dischargeInformation
    * @param tempStowageDetails
+   * @param tempCommingleDetails
    * @param cargoNomDetails
    * @param vesselReply
    * @param cargoReply
@@ -503,6 +678,7 @@ public class UllageUpdateLoadicatorService {
   private void buildStowagePlanDetails(
       DischargeInformation dischargeInformation,
       List<PortDischargingPlanStowageTempDetails> tempStowageDetails,
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       VesselReply vesselReply,
       CargoReply cargoReply,
@@ -513,16 +689,19 @@ public class UllageUpdateLoadicatorService {
             stowage -> {
               Loadicator.StowageDetails.Builder stowageDetailsBuilder =
                   Loadicator.StowageDetails.newBuilder();
-              CargoNominationDetail cargoNomDetail =
-                  cargoNomDetails.get(stowage.getCargoNominationXId());
-              Optional.ofNullable(cargoNomDetail.getCargoId())
-                  .ifPresent(stowageDetailsBuilder::setCargoId);
+              Optional.ofNullable(cargoNomDetails.get(stowage.getCargoNominationXId()))
+                  .ifPresent(
+                      cargoNominationDetail -> {
+                        Optional.ofNullable(cargoNominationDetail.getAbbreviation())
+                            .ifPresent(stowageDetailsBuilder::setCargoName);
+                        Optional.ofNullable(cargoNominationDetail.getCargoId())
+                            .ifPresent(stowageDetailsBuilder::setCargoId);
+                      });
               Optional.ofNullable(stowage.getTankXId()).ifPresent(stowageDetailsBuilder::setTankId);
               Optional.ofNullable(stowage.getQuantity())
                   .ifPresent(
                       quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
-              Optional.ofNullable(cargoNomDetail.getAbbreviation())
-                  .ifPresent(stowageDetailsBuilder::setCargoName);
+
               Optional.ofNullable(dischargeInformation.getPortXid())
                   .ifPresent(stowageDetailsBuilder::setPortId);
               Optional.ofNullable(stowageDetailsBuilder.getStowageId())
@@ -539,6 +718,53 @@ public class UllageUpdateLoadicatorService {
               }
               stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
             });
+    buildLoadicatorStowagePlanDetailsForCommingleCargo(
+        tempCommingleDetails, dischargeInformation, cargoReply, vesselReply, stowagePlanBuilder);
+  }
+
+  /**
+   * Build Loadicator Stowage Plan Details For Commingle Cargo
+   *
+   * @param tempCommingleDetails
+   * @param dischargeInformation
+   * @param cargoReply
+   * @param vesselReply
+   * @param stowagePlanBuilder
+   */
+  private void buildLoadicatorStowagePlanDetailsForCommingleCargo(
+      List<PortDischargingPlanCommingleTempDetails> tempCommingleDetails,
+      DischargeInformation dischargeInformation,
+      CargoReply cargoReply,
+      VesselReply vesselReply,
+      Builder stowagePlanBuilder) {
+
+    tempCommingleDetails.forEach(
+        commingle -> {
+          Loadicator.StowageDetails.Builder stowageDetailsBuilder =
+              Loadicator.StowageDetails.newBuilder();
+          Optional.ofNullable(commingle.getTankId()).ifPresent(stowageDetailsBuilder::setTankId);
+
+          Optional.ofNullable(commingle.getQuantity())
+              .ifPresent(quantity -> stowageDetailsBuilder.setQuantity(String.valueOf(quantity)));
+
+          Optional.ofNullable(dischargeInformation.getPortXid())
+              .ifPresent(stowageDetailsBuilder::setPortId);
+          Optional.ofNullable(stowageDetailsBuilder.getStowageId())
+              .ifPresent(stowageDetailsBuilder::setStowageId);
+          Optional<VesselInfo.VesselTankDetail> tankDetail =
+              vesselReply.getVesselTanksList().stream()
+                  .filter(tank -> Long.valueOf(tank.getTankId()).equals(commingle.getTankId()))
+                  .findAny();
+          if (tankDetail.isPresent()) {
+            Optional.ofNullable(tankDetail.get().getTankName())
+                .ifPresent(stowageDetailsBuilder::setTankName);
+            Optional.ofNullable(tankDetail.get().getShortName())
+                .ifPresent(stowageDetailsBuilder::setShortName);
+          }
+
+          stowageDetailsBuilder.setCargoName(commingle.getGrade());
+          stowagePlanBuilder.addStowageDetails(stowageDetailsBuilder.build());
+        });
   }
 
   /**
@@ -706,37 +932,51 @@ public class UllageUpdateLoadicatorService {
 
     // Save Algo Request in File
     saveUllageEditLoadicatorRequestJson(algoRequest, dischargeInformation.getId());
+    try {
+      // Send Payload to Algo
+      LoadicatorAlgoResponse lar =
+          restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
 
-    // Send Payload to Algo
-    LoadicatorAlgoResponse lar =
-        restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
+      // Save Algo Response in File
+      saveUllageEditLoadicatorResponseJson(lar, dischargeInformation.getId());
 
-    // Save Algo Response in File
-    saveUllageEditLoadicatorResponseJson(lar, dischargeInformation.getId());
-
-    lar.getLoadicatorResults().get(0).getErrorDetails().removeIf(error -> error.isEmpty());
-    if (lar.getLoadicatorResults().get(0).getErrorDetails().size() > 0) {
-      // If there is error
+      lar.getLoadicatorResults().get(0).getErrorDetails().removeIf(error -> error.isEmpty());
+      if (lar.getLoadicatorResults().get(0).getErrorDetails().size() > 0
+          || lar.getLoadicatorResults().get(0).getJudgement().size() > 0) {
+        // If there is error
+        this.updateDischargePlanStatus(
+            dischargeInformation,
+            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
+            request.getProcessId(),
+            request.getConditionType());
+        this.saveLoadingPlanLoadicatorErrors(
+            lar.getLoadicatorResults().get(0).getErrorDetails(),
+            lar.getLoadicatorResults().get(0).getJudgement(),
+            dischargeInformation,
+            request.getConditionType());
+      } else {
+        this.updateDischargePlanStatus(
+            dischargeInformation,
+            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
+            request.getProcessId(),
+            request.getConditionType());
+        this.saveDischargePlanStabilityParameters(
+            dischargeInformation,
+            lar,
+            request.getConditionType(),
+            DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
+      }
+    } catch (HttpStatusCodeException e) {
+      log.error("Error occured in ALGO side while calling loadicator_results API");
       this.updateDischargePlanStatus(
           dischargeInformation,
           DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_FAILED_ID,
           request.getProcessId(),
           request.getConditionType());
-      this.saveLoadingPlanLoadicatorErrors(
-          lar.getLoadicatorResults().get(0).getErrorDetails(),
+      dischargingPlanAlgoService.saveAlgoInternalError(
           dischargeInformation,
-          request.getConditionType());
-    } else {
-      this.updateDischargePlanStatus(
-          dischargeInformation,
-          DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
-          request.getProcessId(),
-          request.getConditionType());
-      this.saveDischargePlanStabilityParameters(
-          dischargeInformation,
-          lar,
           request.getConditionType(),
-          DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
+          Lists.newArrayList(e.getResponseBodyAsString()));
     }
   }
 
@@ -773,31 +1013,30 @@ public class UllageUpdateLoadicatorService {
         dsInfoStatusRepository.findByIdAndIsActive(statusId, true);
     if (dis.isPresent()) {
       dischargeInformationService.updateDischargePlanStatus(dsInfo, dis.get(), conditionType);
-      dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(dsInfo, processId, dis.get());
+      dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(
+          dsInfo, processId, dis.get(), conditionType);
     }
   }
 
   private void saveLoadingPlanLoadicatorErrors(
-      List<String> errorDetails, DischargeInformation loadingInformation, int conditionType) {
+      List<String> errorDetails,
+      List<String> judgement,
+      DischargeInformation loadingInformation,
+      int conditionType) {
     algoErrorHeadingRepository.deleteByDischargingInformationAndConditionType(
         loadingInformation, conditionType);
     algoErrorsRepository.deleteByDischargingInformationAndConditionType(
         loadingInformation, conditionType);
-
-    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
-    algoErrorHeading.setErrorHeading("Loadicator Errors");
-    algoErrorHeading.setDischargingInformation(loadingInformation);
-    algoErrorHeading.setConditionType(conditionType);
-    algoErrorHeading.setIsActive(true);
-    algoErrorHeadingRepository.save(algoErrorHeading);
-    errorDetails.forEach(
-        error -> {
-          AlgoErrors algoErrors = new AlgoErrors();
-          algoErrors.setAlgoErrorHeading(algoErrorHeading);
-          algoErrors.setErrorMessage(error);
-          algoErrors.setIsActive(true);
-          algoErrorsRepository.save(algoErrors);
-        });
+    dischargingPlanAlgoService.saveAlgoErrors(
+        loadingInformation,
+        AlgoErrorHeaderConstants.LOADICATOR_ERRORS,
+        conditionType,
+        errorDetails);
+    dischargingPlanAlgoService.saveAlgoErrors(
+        loadingInformation,
+        AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
+        conditionType,
+        judgement);
   }
 
   /**

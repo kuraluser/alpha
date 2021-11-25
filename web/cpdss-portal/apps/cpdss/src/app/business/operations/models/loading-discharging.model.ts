@@ -84,6 +84,7 @@ export interface IDischargingInformationPostData {
   dischargingBerths: IBerth[];
   dischargingDelays: ILoadingDischargingDelays[];
   cargoToBeDischarged: ICargoToBeDischarged;
+  portRotationId?: number;
 }
 
 /**
@@ -1368,6 +1369,7 @@ export interface IDischargingPlanDetailsResponse {
   ballastRearTanks: IShipBallastTank[][];
   bunkerRearTanks: IShipBunkerTank[][];
   bunkerTanks: IShipBunkerTank[][];
+  planCommingleDetails?: IPlanCommingleCargo[];
 }
 
 /**

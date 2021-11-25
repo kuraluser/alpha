@@ -1070,4 +1070,11 @@ public class VoyageService {
     voyageDDto = modelMapper.map(voyage, VoyageDto.class);
     loadableStudy.setVoyage(voyageDDto);
   }
+
+  public void getVoyageByVoyageId(
+      LoadableStudy.VoyageInfoRequest request, LoadableStudy.VoyageInfoReply.Builder replyBuilder) {
+    Voyage voyage = this.voyageRepository.findByIdAndIsActive(request.getVoyageId(), true);
+    replyBuilder.setVoyageDetail(
+        LoadableStudy.VoyageDetail.newBuilder().setVoyageNumber(voyage.getVoyageNo()).build());
+  }
 }

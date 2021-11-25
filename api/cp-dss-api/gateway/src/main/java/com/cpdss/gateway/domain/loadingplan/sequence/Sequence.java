@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
+import com.cpdss.gateway.domain.Cleaning;
+import com.cpdss.gateway.domain.CleaningTankDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanPortWiseDetails;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
@@ -45,4 +47,7 @@ public class Sequence {
   private List<Map<String, String>> tankWiseCargoDischargingRates;
 
   private List<DischargingPlanPortWiseDetails> dischargePlanPortWiseDetails;
+
+  @JsonProperty("Cleaning")
+  private Cleaning cleaning;
 }

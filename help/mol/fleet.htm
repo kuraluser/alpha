@@ -37,9 +37,22 @@
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
   <h1>Fleet (Shore Dashboard)</h1>
-  <p class="textbody"><span style="font-weight:bold;">FLEET </span>is the default home page for the shore employees. The page displays the details of the vessels or the fleet managed by the current user.</p>
+  <p class="textbody"><span style="font-weight:bold;">Fleet </span>is the default home page for the shore employees. The page displays the details of the vessels or the fleet managed by the current user.</p>
   <p class="textbody"><img class="image-full" src="Images/fleet/fleet page.png"/></p>
-  <p class="textbody">The vessel card on the page displays the arrival and departure details of the vessel in the current voyage. </p>
+  <p class="textbody">The Vessel Card displays the basic details of the vessel. The <strong>Fleet</strong> page displays the vessel cards of only those vessels that are assigned to the user. It appears as a carousel on the <strong>Fleet</strong> page. The details of each vessel appear as separate vessel cards. Each vessel card displays the following information: </p>
+  <ul class="bullets">
+    <li class="textbody">Vessel Name - Displays the name of the vessel.</li>
+    <li class="textbody">IMO Number - Displays the International Maritime Organization (IMO) number, which is unique to each vessel.</li>
+    <li class="textbody">Vessel Status -  Indicates the current status of the vessel.  A vessel can have one of the following statuses.
+      <ul>
+        <li class="textbody">Actual Time of Arrival (<strong>ATA</strong>) - Displays the actual time of the arrival in dd/mm format. </li>
+        <li class="textbody">Estimated Time of Arrival (<strong>ETA</strong>) - Displays the estimated time of the arrival in dd/mm format. </li>
+        <li class="textbody">Start Port - Displays the name of the start port. </li>
+        <li class="textbody">Destination Port- Displays the name of the destination port. </li>
+      </ul>
+    </li>
+  </ul>
+  <p class="note">If the vessel has no active voyage, the status displays <strong>No Active Voyage</strong>.</p>
   <p class="textbody"><img class="image-full" src="Images/fleet/vessel details.png"/></p>
   <p class="textbody">Mouse hover the vessel box to view and navigate to the following pages:</p>
   <ul class="bullets">
@@ -65,14 +78,14 @@
   </ul>
   <p class="textbody">To view the ETA and ETD of the vessel at each port during the voyage, mouse hover the required port cards. </p>
   <p class="textbody"><img class="image-full" src="Images/fleet/port details.png"/></p>
-  <p class="textbody">The left pane on the <span style="font-weight:bold;">FLEET </span>page displays the notifications received from the vessel. </p>
+  <p class="textbody">The left pane on the <span style="font-weight:bold;">Fleet </span>page displays the notifications received from the vessel. </p>
   <p class="textbody"><img class="image-full" src="Images/fleet/notifications.png"/></p>
-  <p class="textbody">By default, the <span style="font-weight:bold;">FLEET </span>page displays the current vessel notifications. To view all the notifications received from the vessel to date, click <span style="font-weight:bold;">All</span>. </p>
+  <p class="textbody">By default, the <span style="font-weight:bold;">Fleet </span>page displays the current vessel notifications. To view all the notifications received from the vessel to date, click <span style="font-weight:bold;">All</span>. </p>
   <p class="textbody"><img class="image-full" src="Images/fleet/All notifications.png"/></p>
   <p class="textbody">To filter the notifications based on a particular date, select the required date range from the <span style="font-weight:bold;">Filter by date range</span> field. <img class="image-full" src="Images/fleet/filter date range.png"/></p>
   <p class="textbody">To view the notifications received from another vessel in the fleet, select the required vessel name from the <span style="font-weight:bold;">Search Vessel</span> field.</p>
   <p class="textbody"><img class="image-full" src="Images/fleet/search vessel.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">ADMIN </span>menu allows the user to access different Admin settings. The shore side configures all the Admin settings.</p>
+  <p class="textbody">The <span style="font-weight:bold;">Admin </span>menu allows the user to access different admin settings. The shore side configures all the admin settings.</p>
   <p class="textbody"><img class="image-full" src="Images/fleet/Admin.png"/></p>
   <p class="textbody">The CP-DSS application updates all admin configurations made from the shore side in every vessel that comes under the respective fleet. </p>
 

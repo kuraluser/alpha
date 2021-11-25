@@ -107,31 +107,12 @@ import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.BillOfLandingRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.JsonDataRepository;
-import com.cpdss.loadablestudy.repository.JsonTypeRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAttachmentsRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRuleInputRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRuleRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
-import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.grpc.stub.StreamObserver;
 import java.io.File;
 import java.io.IOException;
@@ -219,7 +200,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private CargoNominationService cargoNominationService;
   @Autowired private CargoService cargoService;
-  @Autowired private BillOfLandingRepository billOfLandingRepository;
 
   @Autowired
   private DischargePatternQuantityCargoPortwiseRepository
@@ -233,6 +213,14 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+
+  @Autowired private BillOfLandingRepository billOfLandingRepository;
+  @Autowired private LoadablePatternRepository loadablePatternRepository;
+
+  @Autowired
+  private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
+
+  @Autowired private LoadableStudyCommunicationData loadableStudyCommunicationData;
 
   /**
    * method for save voyage
@@ -3085,13 +3073,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.VoyageActivateReply.newBuilder();
 
-    Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
-    if (voyageEntity.isPresent()) {
-      Voyage voyage = voyageEntity.get();
+    // Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
+    String voyage = voyageRepository.getVoyagebyId(request.getId());
+    log.info("voyage get:{}", voyage);
+    if (StringUtils.hasLength(voyage)) {
+      JsonObject voyageObj =
+          JsonParser.parseString(voyage).getAsJsonArray().get(0).getAsJsonObject();
+      Long voyageId = voyageObj.get("id").getAsLong();
+      Long voyageStatus = voyageObj.get("voyage_status").getAsLong();
+      // Voyage voyage = voyageEntity.get();
       com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.Builder builder =
           com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder();
-      builder.setId(voyage.getId());
-      Optional.ofNullable(voyage.getVoyageStatus().getId()).ifPresent(builder::setVoyageStatus);
+      builder.setId(voyageId);
+      Optional.ofNullable(voyageStatus).ifPresent(builder::setVoyageStatus);
       replyBuilder.setVoyageActivateRequest(builder.build());
       replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } else {
@@ -3117,7 +3111,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             voyageStatusRepository.findById(request.getVoyageStatus());
         if (voyageStatus.isPresent()) {
           voyage.setVoyageStatus(voyageStatus.get());
-          voyageRepository.activateVoyage(request.getId(), voyageStatus.get());
+          voyageRepository.save(voyage);
           replyBuilder.setResponseStatus(
               Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
         }
@@ -3137,6 +3131,144 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage(e.getMessage())
               .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public void getLoadablePatternForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+      StreamObserver<
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.Builder
+        replyBuilder =
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply
+                .newBuilder();
+
+    String loadablePattern = loadablePatternRepository.getLoadablePatternWithId(request.getId());
+    if (loadablePattern != null) {
+      replyBuilder.setDataJson(loadablePattern);
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder().setMessage("No LoadablePattern Found").build());
+    }
+    responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
+  }
+
+  public void getLoadicatorDataSynopticalForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+
+    String loadicatorDataForSynoptical =
+        synopticalTableLoadicatorDataRepository
+            .getSynopticalTableLoadicatorDataWithLoadablePatternId(request.getId());
+    if (loadicatorDataForSynoptical != null) {
+      replyBuilder.setDataJson(loadicatorDataForSynoptical);
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("No SynopticalTableLoadicatorData Found")
+              .build());
+    }
+    responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
+  }
+
+  public void saveLoadablePatternForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request,
+      StreamObserver<
+              com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply.Builder
+        replyBuilder =
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply
+                .newBuilder();
+    try {
+      loadableStudyCommunicationData.saveLoadablePattern(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  public void saveLoadicatorDataSynopticalForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveSynopticalTableLoadicatorData(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Fetching Voyage using voyageId
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getVoyageByVoyageId(
+      com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.VoyageInfoReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.VoyageInfoReply.newBuilder();
+    try {
+      this.voyageService.getVoyageByVoyageId(request, replyBuilder);
+    } catch (Exception e) {
+      log.error("Error in getting Voyage ", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
               .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());

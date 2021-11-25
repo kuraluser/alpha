@@ -277,7 +277,7 @@ public class DischargingPlanBuilderService {
         StringUtils.isEmpty(rob.getQuantityM3()) ? null : new BigDecimal(rob.getQuantityM3()));
     robDetails.setColorCode(StringUtils.isEmpty(rob.getColorCode()) ? null : rob.getColorCode());
     robDetails.setDensity(
-        StringUtils.isEmpty(rob.getDensity()) ? null : new BigDecimal(rob.getDensity()));
+        StringUtils.isEmpty(rob.getDensity()) ? BigDecimal.ZERO : new BigDecimal(rob.getDensity()));
   }
 
   public void buildPortStabilityParams(

@@ -78,7 +78,7 @@ export class RulesComponent implements OnInit {
       this.loadingDischargingInfo = res;
       this.infoId = this.operation === OPERATIONS.LOADING ? res['loadingInfoId'] : res['dischargeInfoId'];
       this.infoStatusId = this.operation === OPERATIONS.LOADING ? res['loadingInfoStatusId'] : res['dischargeInfoStatusId'];
-      this.editMode = [OPERATIONS_PLAN_STATUS.PENDING, OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE, OPERATIONS_PLAN_STATUS.ERROR_OCCURED].includes(this.infoStatusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage.statusId);
+      this.editMode = [OPERATIONS_PLAN_STATUS.PENDING, OPERATIONS_PLAN_STATUS.NO_PLAN_AVAILABLE, OPERATIONS_PLAN_STATUS.ERROR_OCCURED, OPERATIONS_PLAN_STATUS.PLAN_GENERATED, OPERATIONS_PLAN_STATUS.CONFIRMED].includes(this.infoStatusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage.statusId);
       if (this.infoId != null) {
         this.rulesJson = await this.rulesService.getRules(this.vesselId,this.voyageId,this.infoId,this.operation).toPromise();
       }
@@ -137,6 +137,7 @@ export class RulesComponent implements OnInit {
   getSaveButtonStatus() {
     this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.subscribe((status) => {
       this.disableSaveButton = status;
+      this.editMode = !status;
     });
   }
 

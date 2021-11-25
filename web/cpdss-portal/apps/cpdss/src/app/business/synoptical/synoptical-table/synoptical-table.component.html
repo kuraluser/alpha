@@ -90,7 +90,7 @@
                             <ng-container [ngSwitch]="field.type">
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">
                                     <p-calendar appendTo="body" [showButtonBar]="true" [showTime]="true"
-                                        inputId="{{field.key + colIndex}}" id="{{field.key + colIndex}}"
+                                        inputId="{{field.key + colIndex}}" id="{{field.key + colIndex}}" (onInput)="subcoldatetime.hideOverlay()"
                                         [formControl]="getControl(colIndex,field.key)" [hideOnDateTimeSelect]="false" [placeholder]="datePlaceHolder"
                                         [minDate]="field.minValue" [maxDate]="field.maxValue" dateFormat="{{editDateFormat}}" (onClose)="onBlur(field,colIndex)"
                                         #subcoldatetime>
@@ -104,7 +104,7 @@
                                 <ng-container *ngSwitchCase="fieldType.TIME">
                                     <p-calendar appendTo="body" inputId="{{field.key + colIndex}}"
                                         id="{{field.key + colIndex}}" [timeOnly]="true" [readonlyInput]="true"
-                                        [showButtonBar]="false" todayButtonStyleClass="hide"
+                                        [showButtonBar]="false" todayButtonStyleClass="hide" (onInput)="subcoltime.hideOverlay()"
                                         [formControl]="getControl(colIndex,field.key)" (onClose)="onBlur(field,colIndex)"
                                         #subcoltime>
                                         <p-footer>

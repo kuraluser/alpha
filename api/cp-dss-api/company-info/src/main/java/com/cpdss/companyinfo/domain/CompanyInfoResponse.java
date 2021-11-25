@@ -21,6 +21,8 @@ public class CompanyInfoResponse {
   private String logo;
 
   private String favicon;
-  
+
   private String documentationSiteUrl;
+
+  private String simulatorSiteUrl;
 }

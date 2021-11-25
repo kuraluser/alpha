@@ -46,6 +46,7 @@ import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -116,7 +117,8 @@ public class DischargeInformationService {
     }
 
     com.cpdss.common.generated.discharge_plan.DischargeInformation disRpcReplay =
-        this.dischargeInformationGrpcService.getDischargeInfoRpc(vesselId, voyageId, portRoId);
+        this.dischargeInformationGrpcService.getDischargeInfoRpc(
+            vesselId, activeVoyage.getId(), portRoId);
 
     DischargeInformation dischargeInformation = new DischargeInformation();
 
@@ -135,6 +137,8 @@ public class DischargeInformationService {
     dischargeInformation.setIsDischargeSequenceGenerated(
         disRpcReplay.getIsDischargingSequenceGenerated());
     dischargeInformation.setDischargeInfoStatusId(disRpcReplay.getDischargingInfoStatusId());
+    dischargeInformation.setIsDischargeInstructionsComplete(
+        disRpcReplay.getIsDischargingInstructionsComplete());
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
         vesselInfoService.getRulesByVesselIdAndSectionId(
@@ -205,6 +209,26 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_DEP, // Discharge Info needed Arrival Conditions
             portRotation.get().getId(),
             portRotation.get().getPortId()));
+
+    // Call No. 3 To Loading Info for quantity in BBLS (by passing LS pattern ID)
+    var lsInfoCargo =
+        this.loadingInformationService.getLoadingInfoCargoDetailsByPattern(
+            activeVoyage.getPatternId());
+    vesselTankDetails
+        .getDischargeQuantityCargoDetails()
+        .forEach(
+            v -> {
+              lsInfoCargo
+                  .getBillOfLaddingList()
+                  .forEach(
+                      bol -> {
+                        if (bol.getCargoAbbrevation().equals(v.getCargoAbbreviation())) {
+                          if (bol.getQuantityBbls() != null) {
+                            v.setBlFigure(new BigDecimal(bol.getQuantityBbls()));
+                          }
+                        }
+                      });
+            });
 
     // setting discharge cargo nomination id
     this.setDischargeCargoNominationId(vesselTankDetails);
@@ -428,6 +452,9 @@ public class DischargeInformationService {
     dischargingPlanResponse.setPlanStabilityParams(
         dischargingPlanBuilderService.buildLoadingPlanStabilityParamFromRpc(
             planReply.getPortDischargingPlanStabilityParametersList()));
+    dischargingPlanResponse.setPlanCommingleDetails(
+        dischargingPlanBuilderService.buildLoadingPlanCommingleFromRpc(
+            planReply.getPortDischargingPlanCommingleDetailsList()));
     dischargingPlanResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return dischargingPlanResponse;
@@ -441,12 +468,6 @@ public class DischargeInformationService {
         loadingPlanService.getUpdateUllageDetails(
             vesselId, patternId, portRotationId, operationType, true);
     BeanUtils.copyProperties(dischargeUllageResponse, response);
-    dischargeUllageResponse.getBillOfLaddingList().stream()
-        .forEach(
-            ladding -> {
-              ladding.setCargoToBeDischarged(ladding.getCargoToBeLoaded());
-              ladding.setCargoDischarged(ladding.getCargoLoaded());
-            });
     response.setPortDischargePlanBallastDetails(
         dischargeUllageResponse.getPortLoadablePlanBallastDetails());
     response.setPortDischargePlanRobDetails(
@@ -468,6 +489,13 @@ public class DischargeInformationService {
   public DischargingInformationResponse saveDischargingInformation(
       DischargingInformationRequest request, String correlationId) throws GenericServiceException {
     try {
+      if (request.getPortRotationId() == null || request.getPortRotationId() <= 0) {
+        log.error("Invalid port rotation Id for Save DS Info");
+        throw new GenericServiceException(
+            "Invalid port rotation Id",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
       log.info("Calling saveDischargingInformation in discharging-plan microservice via GRPC");
       DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
       if (request.getDischargeDetails() != null) {

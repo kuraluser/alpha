@@ -51,4 +51,16 @@ public class SynopticalCargoBallastRecord {
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private Long dischargeCargoNominationId;
+
+  private Long cargo1NominationId;
+
+  private Long cargo2NominationId;
+
+  private String cargo1Lt;
+
+  private String cargo2Lt;
+
+  private String cargo1Mt;
+
+  private String cargo2Mt;
 }
