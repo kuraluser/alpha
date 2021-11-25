@@ -67,7 +67,7 @@ public interface VesselRepository
           + " INNER JOIN RuleTemplateInput ruleTemplateInput ON ruleTemplate.id = ruleTemplateInput.ruleTemplate "
           + " WHERE ruleMasterSection.id = :sectionId AND ruleListMaster.isActive = true AND ruleMasterSection.isActive = true"
           + " AND ruleTemplate.isActive = true AND ruleType.isActive = true AND ruleTemplateInput.isActive = true "
-          + "  ORDER BY ruleListMaster.ruleOrder, ruleTemplateInput.id ASC")
+          + "  ORDER BY ruleListMaster.ruleOrder, ruleTemplate.displayOrder, ruleTemplateInput.id ASC")
   public List<VesselRule> findDefaultAdminRule(@Param("sectionId") Long sectionId);
 
   @Query(

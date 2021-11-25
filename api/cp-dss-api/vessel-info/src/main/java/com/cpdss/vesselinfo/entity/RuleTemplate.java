@@ -41,4 +41,7 @@ public class RuleTemplate extends EntityDoc {
 
   @Column(name = "numeric_scale")
   private Long numericScale;
+  
+  @Column(name = "display_order")
+  private Long displayOrder;
 }
