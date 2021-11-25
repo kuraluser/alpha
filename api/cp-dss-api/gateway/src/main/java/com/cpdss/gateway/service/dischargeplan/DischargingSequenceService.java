@@ -1111,7 +1111,7 @@ public class DischargingSequenceService {
       Long portEta,
       Set<Long> stageTickPositions,
       List<CargoLoadingRate> cargoDischargeRates) {
-    log.info("Adding cargo loading rate");
+    log.info("Adding cargo discharging rate");
     CargoLoadingRate cargoDischargeRate = new CargoLoadingRate();
     cargoDischargeRate.setStartTime(portEta + (dischargingSequence.getStartTime() * 60 * 1000));
     cargoDischargeRate.setEndTime(portEta + (dischargingSequence.getEndTime() * 60 * 1000));

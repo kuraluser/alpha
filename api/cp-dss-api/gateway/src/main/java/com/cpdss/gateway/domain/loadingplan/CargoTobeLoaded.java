@@ -15,10 +15,12 @@ public class CargoTobeLoaded {
   private String api;
   private String temperature;
   private String loadingPort;
+  private String dischargingPort;
   private String nomination;
   private String shipLoadable;
   private String tolerance;
   private String difference;
   private String timeRequiredForLoading;
+  private String timeRequiredForDischarging;
   private String slopQuantity;
 }

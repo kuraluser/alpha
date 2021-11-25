@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan;
 
+import com.cpdss.gateway.domain.dischargeplan.CowPlanForExcel;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,5 +18,11 @@ public class LoadingPlanExcelLoadingInstructionDetails {
   private String gsPump;
   private String igsPump;
   private String ballastPump;
+  private String cargoPump;
+  private String strippingPump;
+  private Long ballastPumpCount;
+  private String cargoPumpCount;
+  private Long strippingPumpCount;
   private String cargoNames;
+  private CowPlanForExcel cowPlan;
 }

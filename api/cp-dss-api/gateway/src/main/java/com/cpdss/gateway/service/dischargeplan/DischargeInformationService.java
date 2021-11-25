@@ -273,6 +273,7 @@ public class DischargeInformationService {
         "Get dischargin Plan, Active Voyage Number and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
+    dischargingPlanResponse.setVoyageDate(activeVoyage.getActualStartDate());
     Optional<PortRotation> portRotation =
         activeVoyage.getDischargePortRotations().stream()
             .filter(v -> v.getId().equals(portRotationId))

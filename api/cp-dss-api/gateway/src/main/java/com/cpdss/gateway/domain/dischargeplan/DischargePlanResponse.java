@@ -33,6 +33,7 @@ public class DischargePlanResponse {
   private List<List<VesselTank>> ballastRearTanks;
   private List<List<VesselTank>> cargoTanks;
   private List<DischargeQuantityCargoDetails> currentPortCargos;
+  private String voyageDate;
   private List<LoadingPlanCommingleDetails> planCommingleDetails;
 
   public DischargePlanResponse(CommonSuccessResponse responseStatus) {
