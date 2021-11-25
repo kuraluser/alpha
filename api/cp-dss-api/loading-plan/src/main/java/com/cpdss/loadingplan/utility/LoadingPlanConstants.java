@@ -50,7 +50,8 @@ public class LoadingPlanConstants {
     LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE("loadicator_data_for_synoptical_table"),
     BALLAST_OPERATION("ballast_operation"),
     EDUCTION_OPERATION("eduction_operation"),
-    CARGO_LOADING_RATE("cargo_loading_rate");
+    CARGO_LOADING_RATE("cargo_loading_rate"),
+    JSON_DATA("json_data");
 
     public final String table;
   }

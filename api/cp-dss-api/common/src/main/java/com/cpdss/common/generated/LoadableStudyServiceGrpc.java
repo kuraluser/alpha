@@ -4003,6 +4003,114 @@ public final class LoadableStudyServiceGrpc {
     return getSaveLoadicatorDataSynopticalForCommunicationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetJsonDataForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getJsonDataForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetJsonDataForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetJsonDataForCommunicationMethod;
+    if ((getGetJsonDataForCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetJsonDataForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetJsonDataForCommunicationMethod =
+                LoadableStudyServiceGrpc.getGetJsonDataForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetJsonDataForCommunicationMethod =
+              getGetJsonDataForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getJsonDataForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getJsonDataForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetJsonDataForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveJsonDataForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveJsonDataForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveJsonDataForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getSaveJsonDataForCommunicationMethod;
+    if ((getSaveJsonDataForCommunicationMethod =
+            LoadableStudyServiceGrpc.getSaveJsonDataForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveJsonDataForCommunicationMethod =
+                LoadableStudyServiceGrpc.getSaveJsonDataForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveJsonDataForCommunicationMethod =
+              getSaveJsonDataForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "saveJsonDataForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveJsonDataForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveJsonDataForCommunicationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -4775,6 +4883,26 @@ public final class LoadableStudyServiceGrpc {
           getSaveLoadicatorDataSynopticalForCommunicationMethod(), responseObserver);
     }
 
+    /** */
+    public void getJsonDataForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetJsonDataForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveJsonDataForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveJsonDataForCommunicationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -5330,6 +5458,20 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
                       this, METHODID_SAVE_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION)))
+          .addMethod(
+              getGetJsonDataForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_GET_JSON_DATA_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveJsonDataForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_SAVE_JSON_DATA_FOR_COMMUNICATION)))
           .build();
     }
   }
@@ -6228,6 +6370,30 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getJsonDataForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetJsonDataForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveJsonDataForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveJsonDataForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -6837,6 +7003,22 @@ public final class LoadableStudyServiceGrpc {
           getSaveLoadicatorDataSynopticalForCommunicationMethod(),
           getCallOptions(),
           request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getJsonDataForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetJsonDataForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        saveJsonDataForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveJsonDataForCommunicationMethod(), getCallOptions(), request);
     }
   }
 
@@ -7552,6 +7734,24 @@ public final class LoadableStudyServiceGrpc {
               .newCall(getSaveLoadicatorDataSynopticalForCommunicationMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getJsonDataForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetJsonDataForCommunicationMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        saveJsonDataForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveJsonDataForCommunicationMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -7632,6 +7832,8 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_LOADABLE_PATTERN_FOR_COMMUNICATION = 75;
   private static final int METHODID_GET_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION = 76;
   private static final int METHODID_SAVE_LOADICATOR_DATA_SYNOPTICAL_FOR_COMMUNICATION = 77;
+  private static final int METHODID_GET_JSON_DATA_FOR_COMMUNICATION = 78;
+  private static final int METHODID_SAVE_JSON_DATA_FOR_COMMUNICATION = 79;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -8190,6 +8392,20 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
                   responseObserver);
           break;
+        case METHODID_GET_JSON_DATA_FOR_COMMUNICATION:
+          serviceImpl.getJsonDataForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_JSON_DATA_FOR_COMMUNICATION:
+          serviceImpl.saveJsonDataForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -8332,6 +8548,8 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveLoadablePatternForCommunicationMethod())
                       .addMethod(getGetLoadicatorDataSynopticalForCommunicationMethod())
                       .addMethod(getSaveLoadicatorDataSynopticalForCommunicationMethod())
+                      .addMethod(getGetJsonDataForCommunicationMethod())
+                      .addMethod(getSaveJsonDataForCommunicationMethod())
                       .build();
         }
       }

@@ -302,6 +302,7 @@ public class LoadingPlanCommunicationService {
       PyUser pyUser = null;
       String loadablePattern = null;
       String loadicatorDataForSynoptical = null;
+      String jsonData = null;
       loadingPlanStagingService.updateStatusForProcessId(
           processId, StagingStatus.IN_PROGRESS.getStatus());
       log.info(
@@ -777,6 +778,12 @@ public class LoadingPlanCommunicationService {
               listType = new TypeToken<ArrayList<CargoLoadingRate>>() {}.getType();
               cargoLoadingRateList = new Gson().fromJson(jsonArray, listType);
               idMap.put(LoadingPlanTables.CARGO_LOADING_RATE.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case json_data:
+            {
+              jsonData = dataTransferString;
+              idMap.put(LoadingPlanTables.JSON_DATA.getTable(), dataTransferStage.getId());
               break;
             }
         }
@@ -1725,6 +1732,29 @@ public class LoadingPlanCommunicationService {
               processId,
               StagingStatus.FAILED.getStatus(),
               e.getMessage());
+        }
+      }
+      if (jsonData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info("jsonData from staging table:{}", jsonData);
+        builder.setDataJson(jsonData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveJsonDataForCommunication(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("JsonData saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.JSON_DATA.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.JSON_DATA.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
         }
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(

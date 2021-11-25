@@ -3275,4 +3275,70 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  /**
+   * get json Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getJsonDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      String jsonData = jsonDataRepository.getJsonDataWithLoadingInfoId(request.getId());
+      if (jsonData != null) {
+        replyBuilder.setDataJson(jsonData);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setMessage("No JsonData Found").build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get json data");
+    }
+  }
+
+  /**
+   * save json Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveJsonDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveJsonDataForCommunication(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

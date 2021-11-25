@@ -31,10 +31,13 @@ public class LoadableStudyCommunicationData {
   private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
   @Autowired private SynopticalTableRepository synopticalTableRepository;
+  @Autowired private JsonDataRepository jsonDataRepository;
+  @Autowired private JsonTypeRepository jsonTypeRepository;
 
   Type listType = null;
   List<LoadablePattern> loadablePatterns = null;
   List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDatas = null;
+  List<JsonData> jsonDatas = null;
 
   public void saveLoadablePattern(String dataJson) throws ResourceAccessException, Exception {
     HashMap<String, String> map =
@@ -152,5 +155,40 @@ public class LoadableStudyCommunicationData {
       jsonArray.add(jsonObj);
     }
     return jsonArray;
+  }
+
+  /**
+   * save json Data for loadingplan communication
+   *
+   * @param dataJson
+   */
+  public void saveJsonDataForCommunication(String dataJson) {
+    try {
+      HashMap<String, String> map = loadableStudyStagingService.getAttributeMapping(new JsonData());
+      JsonArray jsonArray =
+          removeJsonFields(JsonParser.parseString(dataJson).getAsJsonArray(), map, "json_type_xid");
+      log.info("JsonData json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<JsonData>>() {}.getType();
+      jsonDatas = new Gson().fromJson(jsonArray, listType);
+      log.info("jsonData list:{}", jsonDatas);
+      if (jsonDatas != null && !jsonDatas.isEmpty()) {
+        for (JsonData jsonData : jsonDatas) {
+          log.info("JsonType id :{}", jsonData.getCommunicationRelatedEntityId());
+          Optional<JsonType> jsonType =
+              jsonTypeRepository.findById(jsonData.getCommunicationRelatedEntityId());
+          log.info("jsonType:{}", jsonType);
+          if (jsonType.isPresent()) {
+            Optional<JsonData> jsonDataOpt = jsonDataRepository.findById(jsonData.getId());
+            log.info("jsonDataOpt get:{}", jsonDataOpt);
+            jsonData.setVersion(jsonDataOpt.isPresent() ? jsonDataOpt.get().getVersion() : null);
+            jsonData.setJsonTypeXId(jsonType.get());
+          }
+        }
+        jsonDataRepository.saveAll(jsonDatas);
+        log.info("Saved JsonData:{}", jsonDatas);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving json data part of loadingplan communication");
+    }
   }
 }

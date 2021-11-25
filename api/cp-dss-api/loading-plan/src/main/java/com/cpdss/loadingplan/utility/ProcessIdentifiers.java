@@ -34,5 +34,6 @@ public enum ProcessIdentifiers {
   loadicator_data_for_synoptical_table,
   ballast_operation,
   eduction_operation,
-  cargo_loading_rate;
+  cargo_loading_rate,
+  json_data;
 }

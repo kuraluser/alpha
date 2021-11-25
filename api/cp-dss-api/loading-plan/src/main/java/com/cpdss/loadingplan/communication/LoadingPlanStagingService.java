@@ -610,6 +610,28 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case json_data:
+          {
+            LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+            builder.setId(Id);
+            LoadableStudy.LoadableStudyCommunicationReply reply =
+                this.loadableStudyServiceBlockingStub.getJsonDataForCommunication(builder.build());
+            if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+              if (reply.getDataJson() != null) {
+                JsonArray jsonData = JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    jsonData);
+              }
+            }
+            break;
+          }
       }
     }
     return array;
