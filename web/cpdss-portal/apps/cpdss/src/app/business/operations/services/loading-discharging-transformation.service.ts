@@ -1316,14 +1316,14 @@ export class LoadingDischargingTransformationService {
       },
       cowTrimMin: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'min': 'DISCHARGING_COW_TRIM_MIN',
-        'max': 'DISCHARGING_COW_TRIM_MAX',
+        'min': 'DISCHARGING_COW_TRIM_MIN_START',
+        'max': 'DISCHARGING_COW_TRIM_MIN_END',
         'invalidNumber': 'DISCHARGING_COW_TRIM_INVALID'
       },
       cowTrimMax: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'min': 'DISCHARGING_COW_TRIM_MIN',
-        'max': 'DISCHARGING_COW_TRIM_MAX',
+        'min': 'DISCHARGING_COW_TRIM_MAX_START',
+        'max': 'DISCHARGING_COW_TRIM_MAX_END',
         'invalidNumber': 'DISCHARGING_COW_TRIM_INVALID'
       },
       cowStart: {
