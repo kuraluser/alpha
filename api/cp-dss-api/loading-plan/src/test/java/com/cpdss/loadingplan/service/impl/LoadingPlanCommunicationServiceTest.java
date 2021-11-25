@@ -25,7 +25,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class LoadingPlanCommunicationServiceTest {
 
   @Autowired LoadingPlanCommunicationService loadingPlanCommunicationService;
-
+  @MockBean LoadingInformationAlgoStatusRepository loadingInformationAlgoStatusRepository;
+  @MockBean EductionOperationRepository eductionOperationRepository;
+  @MockBean CargoLoadingRateRepository cargoLoadingRateRepository;
+  @MockBean BallastOperationRepository ballastOperationRepository;
   @MockBean private EntityManager entityManager;
   @MockBean private LoadingPlanStagingService loadingPlanStagingService;
   //  @MockBean private LoadingInformationRepository loadingInformationRepository;
