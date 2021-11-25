@@ -866,8 +866,8 @@ public class LoadablePatternService {
           loadableQuantityCommingleCargoDetailsList.get(i).getSlopQuantity());
       loadablePlanCommingleDetails.setTimeRequiredForLoading(
           loadableQuantityCommingleCargoDetailsList.get(i).getTimeRequiredForLoading());
-      loadablePlanCommingleDetails.setCargo2NominationId(
-          loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
+      loadablePlanCommingleDetails.setCargo1NominationId(
+          loadableQuantityCommingleCargoDetailsList.get(i).getCargo1NominationId());
       loadablePlanCommingleDetails.setCargo2NominationId(
           loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
       loadablePlanCommingleDetails.setTankShortName(
