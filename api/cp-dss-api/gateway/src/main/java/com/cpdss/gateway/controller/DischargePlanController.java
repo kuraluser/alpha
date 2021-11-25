@@ -43,6 +43,7 @@ import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
 import com.cpdss.gateway.service.dischargeplan.DischargingInstructionService;
+import com.cpdss.gateway.service.dischargeplan.GenerateDischargingPlanExcelReportService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletRequest;
@@ -89,6 +90,9 @@ public class DischargePlanController {
   @Autowired private DischargeInformationService dischargeInformationService;
 
   @Autowired private DischargingInstructionService dischargingInstructionService;
+
+  @Autowired
+  private GenerateDischargingPlanExcelReportService generateDischargingPlanExcelReportService;
 
   /**
    * Delete port rotation by id
@@ -1461,6 +1465,59 @@ public class DischargePlanController {
           vesselId, voyageId, infoId, dischargePlanRule);
     } catch (GenericServiceException e) {
       log.error("Error when saving discharge rules", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * API to download discharging plan report
+   *
+   * @param headers
+   * @param vesselId
+   * @param voyageId
+   * @param infoId
+   * @param portRotationId
+   * @param requestPayload
+   * @return
+   * @throws CommonRestException
+   */
+  @PostMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/port-rotation/{portRotationId}/report",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public HttpEntity<ByteArrayResource> getDischargingReport(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long infoId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long portRotationId,
+      @RequestBody(required = false) DischargePlanResponse requestPayload)
+      throws CommonRestException {
+
+    try {
+      // Set file download headers
+      HttpHeaders header = new HttpHeaders();
+      header.setContentType(new MediaType("application", "force-download"));
+      header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= Discharging_Plan.xlsx");
+
+      // Send file
+      return new HttpEntity<ByteArrayResource>(
+          new ByteArrayResource(
+              generateDischargingPlanExcelReportService.generateDischargingPlanExcel(
+                  requestPayload, vesselId, voyageId, infoId, portRotationId, true)),
+          header);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in generateDischargingPlanExcel method", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception in generateDischargingPlanExcel method", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

@@ -2,6 +2,9 @@
 package com.cpdss.gateway.domain.loadingplan;
 
 import java.util.List;
+
+import com.cpdss.gateway.domain.dischargeplan.CowPlanForExcel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +20,11 @@ public class LoadingPlanExcelLoadingInstructionDetails {
   private String gsPump;
   private String igsPump;
   private String ballastPump;
-  private String cargoNames;
+  private String cargoPump;
+  private String strippingPump;
+  private Long ballastPumpCount;
+  private String cargoPumpCount;
+  private Long strippingPumpCount;
+  private String cargoNames; 
+  private CowPlanForExcel cowPlan;
 }

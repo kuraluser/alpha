@@ -23,6 +23,7 @@ public class LoadingPlanExcelLoadingPlanDetails {
   private ArrivalDeparcherCondition arrivalCondition;
   private ArrivalDeparcherCondition deparcherCondition;
   private List<CargoTobeLoaded> cargoTobeLoaded;
+  private List<CargoTobeLoaded> cargoTobeDischarged;
   private List<BerthInformation> berthInformation;
   private String itemsAgreedWithTerminal;
 }

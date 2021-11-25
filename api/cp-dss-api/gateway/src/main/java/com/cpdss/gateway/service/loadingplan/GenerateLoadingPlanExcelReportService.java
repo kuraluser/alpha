@@ -1904,7 +1904,7 @@ public class GenerateLoadingPlanExcelReportService {
             .filter(item -> item.getConditionType().equals(conditionType))
             .findAny();
     if (stabilityParam.isPresent()) {
-      Optional.ofNullable(stabilityParam.get().getAftDraft()).ifPresent(vesselCondition::setDraftF);
+      Optional.ofNullable(stabilityParam.get().getAftDraft()).ifPresent(vesselCondition::setDraftA);
       Optional.ofNullable(stabilityParam.get().getForeDraft())
           .ifPresent(vesselCondition::setDraftA);
       Optional.ofNullable(stabilityParam.get().getTrim()).ifPresent(vesselCondition::setTrim);
