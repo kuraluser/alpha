@@ -3310,6 +3310,8 @@ public class LoadableStudyService {
       rec.setCargo2Mt(protoRec.getCargo2Mt());
       rec.setCargo1Lt(protoRec.getCargo1Lt());
       rec.setCargo2Lt(protoRec.getCargo2Lt());
+      rec.setCargo1Abbreviation(protoRec.getCargo1Abbreviation());
+      rec.setCargo2Abbreviation(protoRec.getCargo2Abbreviation());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);

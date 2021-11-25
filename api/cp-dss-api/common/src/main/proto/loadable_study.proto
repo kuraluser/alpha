@@ -1322,6 +1322,8 @@ message SynopticalCargoRecord{
 	string cargo2Mt = 25;
 	string cargo1Lt = 26;
 	string cargo2Lt = 27;
+	string cargo1Abbreviation = 28;
+	string cargo2Abbreviation = 29;
 }
 
 message SynopticalOhqRecord{
