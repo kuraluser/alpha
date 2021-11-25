@@ -174,7 +174,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       case LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BM']:
         frameNoData = LoadingDischargingSequenceChartComponent?.sequenceData?.stabilityParams.find(param => param.name === 'bmFrameNumber');
         break;
-
+      case LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TRIM']:
+        const trimValue = LoadingDischargingSequenceChartComponent?.sequenceData?.stabilityParams.find(param => param.name === 'trim');
+        if (trimValue) {
+          text = trimValue?.data[index][1] > - 1 ? (trimValue?.data[index][1] + ' B/S') : (trimValue?.data[index][1] + ' B/H');
+        }
+        break;
       default:
 
         break;
