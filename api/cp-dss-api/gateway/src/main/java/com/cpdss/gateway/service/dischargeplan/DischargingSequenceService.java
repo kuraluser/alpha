@@ -387,39 +387,50 @@ public class DischargingSequenceService {
                           sequenceBuilder.setStartTime((new BigDecimal(timeStart)).intValue()));
               Optional.ofNullable(sequence.getToLoadicator())
                   .ifPresent(sequenceBuilder::setToLoadicator);
-              //build tank cleaning details
+              // build tank cleaning details
               Cleaning cleaning = sequence.getCleaning();
-              com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder cleaningTanksBuilder = 
-            		  CleaningTanks.newBuilder();
-              cleaning.getBtmClean().forEach(cleaningTankDetails -> {            	  
-            	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder 
-            	  bottomTankDetails = buildCleaningTankDetails(cleaningTankDetails);
-            	  cleaningTanksBuilder.addBottomTank(bottomTankDetails);
-              });
-              cleaning.getTopClean().forEach(cleaningTankDetails -> {
-            	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder topCleaningTankDetails = 
-            			  buildCleaningTankDetails(cleaningTankDetails);
-            	  cleaningTanksBuilder.addTopTank(topCleaningTankDetails);
-              });
-              cleaning.getFullClean().forEach(cleaningTankDetails -> {
-            	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder fullCleaningTankDetails = 
-            			  buildCleaningTankDetails(cleaningTankDetails);
-            	  cleaningTanksBuilder.addFullTank(fullCleaningTankDetails);
-              });
+              com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder cleaningTanksBuilder =
+                  CleaningTanks.newBuilder();
+              cleaning
+                  .getBtmClean()
+                  .forEach(
+                      cleaningTankDetails -> {
+                        com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder
+                            bottomTankDetails = buildCleaningTankDetails(cleaningTankDetails);
+                        cleaningTanksBuilder.addBottomTank(bottomTankDetails);
+                      });
+              cleaning
+                  .getTopClean()
+                  .forEach(
+                      cleaningTankDetails -> {
+                        com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder
+                            topCleaningTankDetails = buildCleaningTankDetails(cleaningTankDetails);
+                        cleaningTanksBuilder.addTopTank(topCleaningTankDetails);
+                      });
+              cleaning
+                  .getFullClean()
+                  .forEach(
+                      cleaningTankDetails -> {
+                        com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder
+                            fullCleaningTankDetails = buildCleaningTankDetails(cleaningTankDetails);
+                        cleaningTanksBuilder.addFullTank(fullCleaningTankDetails);
+                      });
               sequenceBuilder.setCleaningTanks(cleaningTanksBuilder);
               builder.addDischargingSequences(sequenceBuilder.build());
             });
   }
-  
-  private com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder buildCleaningTankDetails(
-		  CleaningTankDetails cleaningTankDetails){
-	  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder tankDetailsBuilder = 
-			  com.cpdss.common.generated.discharge_plan.CleaningTankDetails.newBuilder();
-	  Optional.ofNullable(cleaningTankDetails.getTankShortName()).ifPresent(tankDetailsBuilder::setTankShortName);
-	  Optional.ofNullable(cleaningTankDetails.getTankId()).ifPresent(tankDetailsBuilder::setTankId);
-	  Optional.ofNullable(cleaningTankDetails.getTimeStart()).ifPresent(tankDetailsBuilder::setTimeStart);
-	  Optional.ofNullable(cleaningTankDetails.getTimeEnd()).ifPresent(tankDetailsBuilder::setTimeEnd);
-	  return tankDetailsBuilder;
+
+  private com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder
+      buildCleaningTankDetails(CleaningTankDetails cleaningTankDetails) {
+    com.cpdss.common.generated.discharge_plan.CleaningTankDetails.Builder tankDetailsBuilder =
+        com.cpdss.common.generated.discharge_plan.CleaningTankDetails.newBuilder();
+    Optional.ofNullable(cleaningTankDetails.getTankShortName())
+        .ifPresent(tankDetailsBuilder::setTankShortName);
+    Optional.ofNullable(cleaningTankDetails.getTankId()).ifPresent(tankDetailsBuilder::setTankId);
+    Optional.ofNullable(cleaningTankDetails.getTimeStart())
+        .ifPresent(tankDetailsBuilder::setTimeStart);
+    Optional.ofNullable(cleaningTankDetails.getTimeEnd()).ifPresent(tankDetailsBuilder::setTimeEnd);
+    return tankDetailsBuilder;
   }
 
   private void buildDischargingPlanPortWiseDetails(

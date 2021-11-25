@@ -47,7 +47,7 @@ public class Sequence {
   private List<Map<String, String>> tankWiseCargoDischargingRates;
 
   private List<DischargingPlanPortWiseDetails> dischargePlanPortWiseDetails;
-  
+
   @JsonProperty("Cleaning")
   private Cleaning cleaning;
 }

@@ -31,8 +31,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 public class CargoServiceTest {
   @Autowired CargoService cargoService;
   @MockBean CommingleColourRepository commingleColourRepository;
-  @MockBean ApiTempHistoryRepository apiTempHistoryRepository;
   @MockBean CargoHistoryRepository cargoHistoryRepository;
+  @MockBean ApiTempHistoryRepository apiTempHistoryRepository;
   @MockBean PurposeOfCommingleRepository purposeOfCommingleRepository;
   @MockBean CommingleCargoRepository commingleCargoRepository;
   @MockBean LoadableStudyRepository loadableStudyRepository;

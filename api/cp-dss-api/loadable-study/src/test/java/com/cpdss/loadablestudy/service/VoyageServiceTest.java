@@ -32,8 +32,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class VoyageServiceTest {
 
   @Autowired private VoyageService voyageService;
-  @MockBean private CargoService cargoService;
   @MockBean private VoyageRepository voyageRepository;
+  @MockBean private CargoService cargoService;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
   @MockBean private VoyageStatusRepository voyageStatusRepository;
   @MockBean private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;

@@ -4,14 +4,17 @@ package com.cpdss.dischargeplan.service;
 import static org.junit.Assert.assertEquals;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -203,6 +206,7 @@ public class DischargeInformationBuilderServiceTest {
     List<DischargingDelayReason> list = new ArrayList<>();
     DischargingDelayReason dischargingDelayReason = new DischargingDelayReason();
     dischargingDelayReason.setIsActive(true);
+    dischargingDelayReason.setId(1L);
     dischargingDelayReason.setReasonForDelay(getRD());
     list.add(dischargingDelayReason);
     return list;
@@ -298,6 +302,24 @@ public class DischargeInformationBuilderServiceTest {
   }
 
   @Test
+  void testBuildDischargeDetailsMessageFromEntity() {
+    DischargeInformation disEntity = new DischargeInformation();
+    disEntity.setId(1L);
+    disEntity.setSunsetTime(Timestamp.valueOf("1998-09-22 10:23:34"));
+    disEntity.setSunriseTime(Timestamp.valueOf("1998-09-22 10:23:34"));
+    disEntity.setVoyageXid(1L);
+    disEntity.setStartTime(LocalTime.NOON);
+    disEntity.setInitialTrim(new BigDecimal(1));
+    disEntity.setFinalTrim(new BigDecimal(1));
+    disEntity.setMaximumTrim(new BigDecimal(1));
+    com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+    this.dischargeInformationBuilderService.buildDischargeDetailsMessageFromEntity(
+        disEntity, builder);
+    assertEquals("1", builder.getDischargeDetails().getTrimAllowed().getFinalTrim());
+  }
+
+  @Test
   void testBuildDischargeRateMessageFromEntity() {
     DischargeInformation disEntity = new DischargeInformation();
     disEntity.setInitialDischargingRate(new BigDecimal(1));
@@ -336,5 +358,223 @@ public class DischargeInformationBuilderServiceTest {
     this.dischargeInformationBuilderService.buildDischargeBerthMessageFromEntity(
         disEntity, listVarB, builder);
     assertEquals(1L, builder.getBerthDetails(0).getBerthId());
+  }
+
+  @Test
+  void testBuildDischargeStageMessageFromEntity() {
+    DischargeInformation disEntity = new DischargeInformation();
+    disEntity.setId(1L);
+    disEntity.setDischargingStagesMinAmount(getDSMA());
+    disEntity.setDischargingStagesDuration(getDSD());
+    disEntity.setIsTrackStartEndStage(true);
+    disEntity.setIsTrackGradeSwitching(true);
+    com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+    Mockito.when(dischargeStageDurationRepository.findAllByIsActiveTrue()).thenReturn(getLDSD());
+    Mockito.when(dischargeStageMinAmountRepository.findAllByIsActiveTrue()).thenReturn(getLDSMA());
+    this.dischargeInformationBuilderService.buildDischargeStageMessageFromEntity(
+        disEntity, builder);
+    assertEquals(1L, builder.getDischargeStage().getId());
+  }
+
+  private List<DischargingStagesDuration> getLDSD() {
+    List<DischargingStagesDuration> list = new ArrayList<>();
+    DischargingStagesDuration dischargingStagesDuration = new DischargingStagesDuration();
+    dischargingStagesDuration.setId(1L);
+    dischargingStagesDuration.setDuration(1);
+    list.add(dischargingStagesDuration);
+    return list;
+  }
+
+  private List<DischargingStagesMinAmount> getLDSMA() {
+    List<DischargingStagesMinAmount> list = new ArrayList<>();
+    DischargingStagesMinAmount dischargingStagesMinAmount = new DischargingStagesMinAmount();
+    dischargingStagesMinAmount.setId(1L);
+    dischargingStagesMinAmount.setMinAmount(1);
+    list.add(dischargingStagesMinAmount);
+    return list;
+  }
+
+  @Test
+  void testBuildDischargeDelaysMessageFromEntity() {
+    DischargeInformation disEntity = new DischargeInformation();
+    disEntity.setId(1L);
+    com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+    Mockito.when(this.reasonForDelayRepository.findAllByIsActiveTrue()).thenReturn(getLRD());
+    Mockito.when(
+            this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActiveOrderById(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLDD());
+    this.dischargeInformationBuilderService.buildDischargeDelaysMessageFromEntity(
+        disEntity, builder);
+    assertEquals(1L, builder.getDischargeDelay().getDelays(0).getCargoId());
+  }
+
+  private List<ReasonForDelay> getLRD() {
+    List<ReasonForDelay> reasonForDelays = new ArrayList<>();
+    ReasonForDelay reason = new ReasonForDelay();
+    reason.setId(1L);
+    reason.setReason("1");
+    reasonForDelays.add(reason);
+    return reasonForDelays;
+  }
+
+  private List<DischargingDelay> getLDD() {
+    List<DischargingDelay> list = new ArrayList<>();
+    DischargingDelay dischargingDelay = new DischargingDelay();
+    dischargingDelay.setId(1L);
+    dischargingDelay.setDuration(new BigDecimal(1));
+    dischargingDelay.setQuantity(new BigDecimal(1));
+    dischargingDelay.setCargoXid(1L);
+    dischargingDelay.setCargoNominationXid(1L);
+    dischargingDelay.setDischargingDelayReasons(getDDR());
+    list.add(dischargingDelay);
+    return list;
+  }
+
+  @Test
+  void testBuildPostDischargeStageMessageFromEntity() {
+    DischargeInformation disEntity = new DischargeInformation();
+    disEntity.setTimeForDryCheck(new BigDecimal(1));
+    disEntity.setTimeForSlopDischarging(new BigDecimal(1));
+    disEntity.setTimeForFinalStripping(new BigDecimal(1));
+    disEntity.setFreshOilWashing(new BigDecimal(1));
+    com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+    this.dischargeInformationBuilderService.buildPostDischargeStageMessageFromEntity(
+        disEntity, builder);
+    assertEquals("1", builder.getPostDischargeStageTime().getSlopDischarging());
+  }
+
+  @Test
+  void testbuildMachineInUseMessageFromEntity() {
+    DischargeInformation disEntity = new DischargeInformation();
+    disEntity.setId(1L);
+    com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+    Mockito.when(dischargingMachineryInUseRepository.findAllByDischargingInfoId(Mockito.anyLong()))
+        .thenReturn(getLDMU());
+    this.dischargeInformationBuilderService.buildMachineInUseMessageFromEntity(disEntity, builder);
+    assertEquals("1", builder.getMachineInUse(0).getCapacity());
+  }
+
+  private List<DischargingMachineryInUse> getLDMU() {
+    List<DischargingMachineryInUse> list = new ArrayList<>();
+    DischargingMachineryInUse dischargingMachineryInUse = new DischargingMachineryInUse();
+    dischargingMachineryInUse.setId(1L);
+    dischargingMachineryInUse.setMachineXid(1L);
+    dischargingMachineryInUse.setMachineTypeXid(1);
+    dischargingMachineryInUse.setCapacity(new BigDecimal(1));
+    dischargingMachineryInUse.setIsUsing(true);
+    list.add(dischargingMachineryInUse);
+    return list;
+  }
+
+  @Test
+  void testBuildCowPlanMessageFromEntity() {
+    DischargeInformation disEntity = new DischargeInformation();
+    disEntity.setId(1L);
+    com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
+        com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+    Mockito.when(this.cowPlanDetailRepository.findByDischargingId(Mockito.anyLong()))
+        .thenReturn(getCPD());
+    this.dischargeInformationBuilderService.buildCowPlanMessageFromEntity(disEntity, builder);
+    assertEquals("1", builder.getCowPlan().getCowEndTime());
+  }
+
+  private Optional<CowPlanDetail> getCPD() {
+    CowPlanDetail cowPlanDetail = new CowPlanDetail();
+    cowPlanDetail.setCowOperationType(1);
+    cowPlanDetail.setCowPercentage(new BigDecimal(1));
+    cowPlanDetail.setCowStartTime(new BigDecimal(1));
+    cowPlanDetail.setCowEndTime(new BigDecimal(1));
+    cowPlanDetail.setEstimatedCowDuration(new BigDecimal(1));
+    cowPlanDetail.setCowMinTrim(new BigDecimal(1));
+    cowPlanDetail.setCowMaxTrim(new BigDecimal(1));
+    cowPlanDetail.setNeedFreshCrudeStorage(true);
+    cowPlanDetail.setNeedFlushingOil(true);
+    cowPlanDetail.setWashTankWithDifferentCargo(true);
+    cowPlanDetail.setCowTankDetails(getCTD());
+    cowPlanDetail.setCowWithDifferentCargos(getCDC());
+    return Optional.of(cowPlanDetail);
+  }
+
+  private Set<CowTankDetail> getCTD() {
+    Set<CowTankDetail> set = new HashSet<>();
+    CowTankDetail cowTankDetail = new CowTankDetail();
+    cowTankDetail.setCowTypeXid(3);
+    cowTankDetail.setTankXid(1L);
+    cowTankDetail.setIsActive(true);
+    set.add(cowTankDetail);
+    return set;
+  }
+
+  private Set<CowWithDifferentCargo> getCDC() {
+    Set<CowWithDifferentCargo> set = new HashSet<>();
+    CowWithDifferentCargo cowWithDifferentCargo = new CowWithDifferentCargo();
+    cowWithDifferentCargo.setIsActive(true);
+    cowWithDifferentCargo.setCargoXid(1L);
+    cowWithDifferentCargo.setCargoNominationXid(1L);
+    cowWithDifferentCargo.setWashingCargoXid(1L);
+    cowWithDifferentCargo.setWashingCargoNominationXid(1L);
+    cowWithDifferentCargo.setTankXid(1L);
+    set.add(cowWithDifferentCargo);
+    return set;
+  }
+
+  @Test
+  void testBuildResponseForDSRules() {
+    List<DischargePlanRules> dStudyRulesList = new ArrayList<>();
+    DischargePlanRules dischargePlanRules = new DischargePlanRules();
+    dischargePlanRules.setIsEnable(false);
+    dischargePlanRules.setDisplayInSettings(false);
+    dischargePlanRules.setId(1L);
+    dischargePlanRules.setRuleTypeXId(1L);
+    dischargePlanRules.setIsHardRule(false);
+    dischargePlanRules.setVesselRuleXId(1L);
+    dischargePlanRules.setParentRuleXId(1L);
+    dischargePlanRules.setNumericPrecision(1L);
+    dischargePlanRules.setNumericScale(1L);
+    dischargePlanRules.setDischargePlanRuleInputList(getDPRI());
+    dStudyRulesList.add(dischargePlanRules);
+    Common.RulePlans.Builder rulePlanBuilder = Common.RulePlans.newBuilder();
+    DischargeRuleReply.Builder builder = DischargeRuleReply.newBuilder();
+    VesselInfo.VesselRuleReply vesselRuleReply = VesselInfo.VesselRuleReply.newBuilder().build();
+    this.dischargeInformationBuilderService.buildResponseForDSRules(
+        dStudyRulesList, rulePlanBuilder, builder, vesselRuleReply);
+    assertEquals(false, builder.getRulePlan(0).getRules(0).getDisplayInSettings());
+  }
+
+  private List<DischargePlanRuleInput> getDPRI() {
+    List<DischargePlanRuleInput> list = new ArrayList<>();
+    DischargePlanRuleInput dischargePlanRuleInput = new DischargePlanRuleInput();
+    dischargePlanRuleInput.setId(1L);
+    dischargePlanRuleInput.setDefaultValue("1");
+    dischargePlanRuleInput.setPrefix("1");
+    dischargePlanRuleInput.setMinValue("1");
+    dischargePlanRuleInput.setMaxValue("1");
+    dischargePlanRuleInput.setTypeValue("1");
+    dischargePlanRuleInput.setSuffix("1");
+    dischargePlanRuleInput.setIsMandatory(true);
+    list.add(dischargePlanRuleInput);
+    return list;
+  }
+
+  @Test
+  void testBuildResponseForDefaultDSRules() {
+    List<Common.Rules> list1 = new ArrayList<>();
+    Common.Rules rules = Common.Rules.newBuilder().setRuleType("1").build();
+    list1.add(rules);
+    List<Common.RulePlans> list = new ArrayList<>();
+    Common.RulePlans rulePlans =
+        Common.RulePlans.newBuilder().setHeader("1").addAllRules(list1).build();
+    list.add(rulePlans);
+    VesselInfo.VesselRuleReply vesselRuleReply =
+        VesselInfo.VesselRuleReply.newBuilder().addAllRulePlan(list).build();
+    DischargeRuleReply.Builder builder = DischargeRuleReply.newBuilder();
+    this.dischargeInformationBuilderService.buildResponseForDefaultDSRules(
+        vesselRuleReply, builder);
+    assertEquals("1", builder.getRulePlan(0).getRules(0).getRuleType());
   }
 }
