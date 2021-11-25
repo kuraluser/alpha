@@ -24,17 +24,11 @@ public class AdminRuleValueExtract {
   public String adminRuleValueCollector(AdminRuleTemplate template, Boolean secondInput) {
     for (RulePlans plan : plan) {
       for (Rules rule : plan.getRules()) {
-        log.info(
-            "Find Rule for Id {}, template id {}",
-            template.getRuleTemplateId(),
-            rule.getRuleTemplateId());
         if (rule.getRuleTemplateId().equals(template.getRuleTemplateId().toString())) {
           String val;
           if (!secondInput) {
-            log.info("Rule default value, 1st Input {}", rule.getInputs().size());
             val = rule.getInputs().stream().findFirst().get().getDefaultValue();
           } else {
-            log.info("Rule default value, 2nd Input {}", rule.getInputs().size());
             val = rule.getInputs().stream().skip(1).findFirst().get().getDefaultValue();
           }
           return val != null ? val : "";

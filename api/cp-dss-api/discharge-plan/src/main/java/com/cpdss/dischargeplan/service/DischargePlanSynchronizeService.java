@@ -81,7 +81,8 @@ public class DischargePlanSynchronizeService {
             DischargePlanConstants.DISCHARGING_INFORMATION_PENDING_ID);
       }
       try {
-        this.dischargeRuleService.setDischargeInfoDefaultValues(dischargeInformation, request);
+        this.dischargeRuleService.setDischargeInfoDefaultValues(
+            dischargeInformation, port, request);
       } catch (Exception e) {
         log.error(e.getMessage(), e);
         e.printStackTrace();

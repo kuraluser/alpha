@@ -75,6 +75,11 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
 
               break;
             }
+          case 48:
+            {
+              portOrder_ = input.readInt32();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -142,6 +147,17 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     return synopticTableId_;
   }
 
+  public static final int PORTORDER_FIELD_NUMBER = 6;
+  private int portOrder_;
+  /**
+   * <code>int32 portOrder = 6;</code>
+   *
+   * @return The portOrder.
+   */
+  public int getPortOrder() {
+    return portOrder_;
+  }
+
   public static final int COWDETAILS_FIELD_NUMBER = 5;
   private com.cpdss.common.generated.discharge_plan.DSCowDetails cowDetails_;
   /**
@@ -193,6 +209,9 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     if (cowDetails_ != null) {
       output.writeMessage(5, getCowDetails());
     }
+    if (portOrder_ != 0) {
+      output.writeInt32(6, portOrder_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -214,6 +233,9 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     if (cowDetails_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, getCowDetails());
     }
+    if (portOrder_ != 0) {
+      size += com.google.protobuf.CodedOutputStream.computeInt32Size(6, portOrder_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -233,6 +255,7 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     if (getPortId() != other.getPortId()) return false;
     if (getPortRotationId() != other.getPortRotationId()) return false;
     if (getSynopticTableId() != other.getSynopticTableId()) return false;
+    if (getPortOrder() != other.getPortOrder()) return false;
     if (hasCowDetails() != other.hasCowDetails()) return false;
     if (hasCowDetails()) {
       if (!getCowDetails().equals(other.getCowDetails())) return false;
@@ -254,6 +277,8 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
     hash = (37 * hash) + SYNOPTICTABLEID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSynopticTableId());
+    hash = (37 * hash) + PORTORDER_FIELD_NUMBER;
+    hash = (53 * hash) + getPortOrder();
     if (hasCowDetails()) {
       hash = (37 * hash) + COWDETAILS_FIELD_NUMBER;
       hash = (53 * hash) + getCowDetails().hashCode();
@@ -401,6 +426,8 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
 
       synopticTableId_ = 0L;
 
+      portOrder_ = 0;
+
       if (cowDetailsBuilder_ == null) {
         cowDetails_ = null;
       } else {
@@ -437,6 +464,7 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
       result.portId_ = portId_;
       result.portRotationId_ = portRotationId_;
       result.synopticTableId_ = synopticTableId_;
+      result.portOrder_ = portOrder_;
       if (cowDetailsBuilder_ == null) {
         result.cowDetails_ = cowDetails_;
       } else {
@@ -500,6 +528,9 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
       }
       if (other.getSynopticTableId() != 0L) {
         setSynopticTableId(other.getSynopticTableId());
+      }
+      if (other.getPortOrder() != 0) {
+        setPortOrder(other.getPortOrder());
       }
       if (other.hasCowDetails()) {
         mergeCowDetails(other.getCowDetails());
@@ -629,6 +660,39 @@ public final class PortData extends com.google.protobuf.GeneratedMessageV3
     public Builder clearSynopticTableId() {
 
       synopticTableId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private int portOrder_;
+    /**
+     * <code>int32 portOrder = 6;</code>
+     *
+     * @return The portOrder.
+     */
+    public int getPortOrder() {
+      return portOrder_;
+    }
+    /**
+     * <code>int32 portOrder = 6;</code>
+     *
+     * @param value The portOrder to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortOrder(int value) {
+
+      portOrder_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 portOrder = 6;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearPortOrder() {
+
+      portOrder_ = 0;
       onChanged();
       return this;
     }

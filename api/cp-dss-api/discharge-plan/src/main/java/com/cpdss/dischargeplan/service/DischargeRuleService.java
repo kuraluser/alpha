@@ -7,6 +7,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
+import com.cpdss.common.generated.discharge_plan.PortData;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.AdminRuleTemplate;
@@ -30,7 +31,9 @@ public class DischargeRuleService {
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   public void setDischargeInfoDefaultValues(
-      DischargeInformation dischargeInformation, DischargeStudyDataTransferRequest request)
+      DischargeInformation dischargeInformation,
+      PortData port,
+      DischargeStudyDataTransferRequest request)
       throws GenericServiceException {
     // RPC call to vessel info, Get Rules (default value for Discharge Info)
     RuleResponse ruleResponse =
@@ -40,35 +43,79 @@ public class DischargeRuleService {
         AdminRuleValueExtract.builder().plan(ruleResponse.getPlan()).build();
 
     // Trim Values
-    var initialTrim = extract.getDefaultValueForKey(AdminRuleTemplate.INITIAL_TRIM);
+    var initialTrim = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_INITIAL_TRIM);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_INITIAL_TRIM,
+        initialTrim);
     if (initialTrim != null && !initialTrim.isEmpty()) {
       dischargeInformation.setInitialTrim(new BigDecimal(initialTrim));
     }
-    var maximumTrim = extract.getDefaultValueForKey(AdminRuleTemplate.MAXIMUM_TRIM);
+    var maximumTrim = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MAXIMUM_TRIM, true);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_MAXIMUM_TRIM,
+        maximumTrim);
     if (maximumTrim != null && !maximumTrim.isEmpty()) {
       dischargeInformation.setMaximumTrim(new BigDecimal(maximumTrim));
     }
-    var finalTrim = extract.getDefaultValueForKey(AdminRuleTemplate.FINAL_TRIM);
-    if (finalTrim != null && !finalTrim.isEmpty()) {
+
+    var finalTrim = "";
+    if (port.getPortOrder() >= 0) {
+      var lastPortId =
+          request.getPortDataList().stream().map(PortData::getPortOrder).max(Integer::compareTo);
+      if (lastPortId.isPresent() && (lastPortId.get().equals(port.getPortOrder()))) {
+        finalTrim = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FINAL_TRIM_LAST_PORT);
+        log.info(
+            "Discharge Info Default Admin Rule Id {}, Value {}",
+            AdminRuleTemplate.DISCHARGE_FINAL_TRIM_LAST_PORT,
+            finalTrim);
+      } else {
+        finalTrim = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FINAL_TRIM);
+        log.info(
+            "Discharge Info Default Admin Rule Id {}, Value {}",
+            AdminRuleTemplate.DISCHARGE_FINAL_TRIM,
+            finalTrim);
+      }
+    }
+    if (finalTrim != null && !finalTrim.isEmpty()) { // identify last port or not
       dischargeInformation.setFinalTrim(new BigDecimal(finalTrim));
     }
 
     // Discharge Rates
-    var maxBallastRate = extract.getDefaultValueForKey(AdminRuleTemplate.MAX_DE_BALLAST_RATE);
+    var maxBallastRate =
+        extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MAX_DE_BALLAST_RATE);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_MAX_DE_BALLAST_RATE,
+        maxBallastRate);
     if (maxBallastRate != null && !maxBallastRate.isEmpty()) {
       dischargeInformation.setMaxBallastRate(new BigDecimal(maxBallastRate));
     }
-    var minBallastRate = extract.getDefaultValueForKey(AdminRuleTemplate.MIN_DE_BALLAST_RATE);
+    var minBallastRate =
+        extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MIN_DE_BALLAST_RATE);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_MIN_DE_BALLAST_RATE,
+        minBallastRate);
     if (minBallastRate != null && !minBallastRate.isEmpty()) {
       dischargeInformation.setMinBallastRate(new BigDecimal(minBallastRate));
     }
     var initialDischargingRate =
         extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_INITIAL_RATE);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_INITIAL_RATE,
+        initialDischargingRate);
     if (initialDischargingRate != null && !initialDischargingRate.isEmpty()) {
       dischargeInformation.setInitialDischargingRate(new BigDecimal(initialDischargingRate));
     }
     var maxDischargingRate =
         extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MAXIMUM_RATE);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_MAXIMUM_RATE,
+        maxDischargingRate);
     if (maxDischargingRate != null && !maxDischargingRate.isEmpty()) {
       dischargeInformation.setMaxDischargingRate(new BigDecimal(maxDischargingRate));
     }
@@ -76,21 +123,37 @@ public class DischargeRuleService {
     // Post Discharge Rates
     var dischargeTimeForDryCheck =
         extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_TIME_FOR_DRY_CHECK);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_TIME_FOR_DRY_CHECK,
+        dischargeTimeForDryCheck);
     if (dischargeTimeForDryCheck != null && !dischargeTimeForDryCheck.isEmpty()) {
       dischargeInformation.setTimeForDryCheck(new BigDecimal(dischargeTimeForDryCheck));
     }
     var dischargeSlopDischarge =
         extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_SLOP_DISCHARGE);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_SLOP_DISCHARGE,
+        dischargeSlopDischarge);
     if (dischargeSlopDischarge != null && !dischargeSlopDischarge.isEmpty()) {
       dischargeInformation.setTimeForSlopDischarging(new BigDecimal(dischargeSlopDischarge));
     }
     var dischargeFinalStripping =
         extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FINAL_STRIPPING);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_FINAL_STRIPPING,
+        dischargeFinalStripping);
     if (dischargeFinalStripping != null && !dischargeFinalStripping.isEmpty()) {
       dischargeInformation.setTimeForFinalStripping(new BigDecimal(dischargeFinalStripping));
     }
     var dischargeFreshOilWashing =
         extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FRESH_OIL_WASHING);
+    log.info(
+        "Discharge Info Default Admin Rule Id {}, Value {}",
+        AdminRuleTemplate.DISCHARGE_FRESH_OIL_WASHING,
+        dischargeFreshOilWashing);
     if (dischargeFreshOilWashing != null && !dischargeFreshOilWashing.isEmpty()) {
       dischargeInformation.setFreshOilWashing(new BigDecimal(dischargeFreshOilWashing));
     }

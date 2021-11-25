@@ -103,7 +103,7 @@ public class DischargeInformationBuilderService {
       var2.setStartTime(var1.getStartTime());
     }
 
-    if (var1.hasTrimAllowed()) { // TO DO get trim data from admin rule
+    if (var1.hasTrimAllowed()) {
       TrimAllowed trimAllowed = new TrimAllowed();
       if (!var1.getTrimAllowed().getInitialTrim().isEmpty()) {
         trimAllowed.setInitialTrim(new BigDecimal(var1.getTrimAllowed().getInitialTrim()));

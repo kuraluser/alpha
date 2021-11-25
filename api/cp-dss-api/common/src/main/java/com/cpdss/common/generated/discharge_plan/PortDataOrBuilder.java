@@ -28,6 +28,13 @@ public interface PortDataOrBuilder
   long getSynopticTableId();
 
   /**
+   * <code>int32 portOrder = 6;</code>
+   *
+   * @return The portOrder.
+   */
+  int getPortOrder();
+
+  /**
    * <code>.DSCowDetails cowDetails = 5;</code>
    *
    * @return Whether the cowDetails field is set.
