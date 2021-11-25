@@ -36,6 +36,7 @@ public class LoadingPlanBuilderService {
       var2.setAbbreviation(var1.getAbbreviation());
       var2.setCargoId(var1.getCargoId());
       var2.setColorCode(var1.getColorCode());
+      var2.setAbbreviation(var2.getAbbreviation());
       response.add(var2);
     }
     return response;
