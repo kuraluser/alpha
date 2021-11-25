@@ -566,6 +566,7 @@ public class LoadingPlanStagingService extends StagingService {
                     ballastOperation);
               }
             }
+            break;
           }
         case eduction_operation:
           {
@@ -586,6 +587,7 @@ public class LoadingPlanStagingService extends StagingService {
                     eductionOperation);
               }
             }
+            break;
           }
         case cargo_loading_rate:
           {
@@ -606,6 +608,7 @@ public class LoadingPlanStagingService extends StagingService {
                     cargoLoadingRate);
               }
             }
+            break;
           }
       }
     }
