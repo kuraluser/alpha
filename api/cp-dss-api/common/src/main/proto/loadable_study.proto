@@ -1312,7 +1312,12 @@ message SynopticalCargoRecord{
 	string ullage = 19;
 	string actualApi = 20;	
 	string actualTemperature = 21;
-	
+	int64 cargo1NominationId = 22;
+	int64 cargo2NominationId = 23;
+	string cargo1Mt = 24;
+	string cargo2Mt = 25;
+	string cargo1Lt = 26;
+	string cargo2Lt = 27;
 }
 
 message SynopticalOhqRecord{

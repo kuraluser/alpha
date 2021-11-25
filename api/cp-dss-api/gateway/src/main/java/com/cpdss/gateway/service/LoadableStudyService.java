@@ -3304,6 +3304,12 @@ public class LoadableStudyService {
       rec.setFillingRatio(protoRec.getFillingRatio());
       rec.setPlanQtyId(protoRec.getPlanQtyId());
       rec.setPlanQtyCargoOrder(protoRec.getPlanQtyCargoOrder());
+      rec.setCargo1NominationId(protoRec.getCargo1NominationId());
+      rec.setCargo2NominationId(protoRec.getCargo2NominationId());
+      rec.setCargo1Mt(protoRec.getCargo1Mt());
+      rec.setCargo2Mt(protoRec.getCargo2Mt());
+      rec.setCargo1Lt(protoRec.getCargo1Lt());
+      rec.setCargo2Lt(protoRec.getCargo2Lt());
       list.add(rec);
     }
     synopticalRecord.setCargos(list);
