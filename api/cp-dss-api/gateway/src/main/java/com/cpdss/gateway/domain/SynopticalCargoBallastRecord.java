@@ -63,4 +63,8 @@ public class SynopticalCargoBallastRecord {
   private String cargo1Mt;
 
   private String cargo2Mt;
+
+  private String cargo1Abbreviation;
+
+  private String cargo2Abbreviation;
 }

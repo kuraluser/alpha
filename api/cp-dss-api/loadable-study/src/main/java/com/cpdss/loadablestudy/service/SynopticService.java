@@ -942,7 +942,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               loadablePlanCommingleDetails -> {
                 Optional.ofNullable(loadablePlanCommingleDetails.getGrade())
                     .ifPresent(cargoBuilder::setCargoAbbreviation);
-                Optional.of(lpcd.get().getCommingleColour()).ifPresent(cargoBuilder::setColorCode);
+                Optional.of(loadablePlanCommingleDetails.getCommingleColour())
+                    .ifPresent(cargoBuilder::setColorCode);
                 Optional.ofNullable(loadablePlanCommingleDetails.getCargo1NominationId())
                     .ifPresent(cargoBuilder::setCargo1NominationId);
                 Optional.ofNullable(loadablePlanCommingleDetails.getCargo2NominationId())
@@ -955,6 +956,10 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                     .ifPresent(cargoBuilder::setCargo1Lt);
                 Optional.ofNullable(loadablePlanCommingleDetails.getCargo2Lt())
                     .ifPresent(cargoBuilder::setCargo2Lt);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo1Abbreviation())
+                    .ifPresent(cargoBuilder::setCargo1Abbreviation);
+                Optional.ofNullable(loadablePlanCommingleDetails.getCargo2Abbreviation())
+                    .ifPresent(cargoBuilder::setCargo2Abbreviation);
               });
         }
       }
