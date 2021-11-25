@@ -285,6 +285,12 @@ public class AlgoService {
       if (request.getClass() == com.cpdss.loadablestudy.domain.LoadableStudy.class) {
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, id);
+        algoErrorService.saveAlgoInternalServerError(
+            id, processId, isPattern, e.getResponseBodyAsString());
+        throw new GenericServiceException(
+            "ALGO threw Internal Server Error",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       } else if (request.getClass() == LoadabalePatternValidateRequest.class) {
         algoErrorService.saveAlgoInternalServerError(
             id, processId, isPattern, e.getResponseBodyAsString());
