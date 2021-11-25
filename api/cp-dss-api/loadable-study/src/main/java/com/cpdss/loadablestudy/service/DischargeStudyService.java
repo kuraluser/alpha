@@ -557,13 +557,22 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       if (!CollectionUtils.isEmpty(portIds) && !CollectionUtils.isEmpty(portReply.getPortsList())) {
         dischargingPorts =
             this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
-        this.loadableStudyPortRotationRepository
-            .findByLoadableStudyAndIsActive(loadableStudy.getId(), true)
-            .forEach(
-                portRotation -> {
-                  // portRotation.setIsPortRotationOhqComplete(false);
-                });
         loadableStudy.setIsPortsComplete(false);
+
+        // Port complete status becomes false even when all the mandatory fields are available for
+        // all ports, need to set the port complete status properly on save.
+        Boolean isPortRotationComplete = true;
+        for (LoadableStudyPortRotation portRotation :
+            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+                loadableStudy.getId(), true)) {
+          // portRotation.setIsPortRotationOhqComplete(false);
+          if ((portRotation.getSeaWaterDensity() == null)
+              || (portRotation.getMaxDraft() == null)
+              || (portRotation.getAirDraftRestriction() == null)) {
+            isPortRotationComplete = false;
+          }
+        }
+        loadableStudy.setIsPortsComplete(isPortRotationComplete);
         this.loadableStudyRepository.save(loadableStudy);
         this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
       }
