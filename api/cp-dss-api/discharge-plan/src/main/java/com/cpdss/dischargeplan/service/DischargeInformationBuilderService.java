@@ -288,7 +288,7 @@ public class DischargeInformationBuilderService {
               var1.getColorCode(),
               null,
               null,
-              var1.getSg().toString()));
+              var1.getSg()));
     }
     return response;
   }
@@ -418,7 +418,7 @@ public class DischargeInformationBuilderService {
       String colorCode,
       Long cargoId,
       String abbreviation,
-      String sg)
+      BigDecimal bigDecimal)
       throws GenericServiceException {
 
     try {
@@ -438,7 +438,7 @@ public class DischargeInformationBuilderService {
               .setColorCode(colorCode != null ? colorCode : "")
               .setCargoId(cargoId != null ? cargoId : 0L)
               .setAbbreviation(abbreviation != null ? abbreviation : "")
-              .setSg(sg != null ? sg : "")
+              .setSg(bigDecimal != null ? bigDecimal.toString() : "0")
               .build();
       return builder;
     } catch (Exception e) {
