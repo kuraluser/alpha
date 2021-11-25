@@ -95,8 +95,8 @@ export class CowPlanComponent implements OnInit {
       cowStart: this.fb.control(this.cowDetails?.cowStart, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
       cowEnd: this.fb.control(this.cowDetails?.cowEnd, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
       cowDuration: this.fb.control(this.cowDetails?.cowDuration),
-      cowTrimMin: this.fb.control(this.cowDetails?.cowTrimMin, [Validators.required, Validators.min(4), Validators.max(6), numberValidator(2, 1)]),
-      cowTrimMax: this.fb.control(this.cowDetails?.cowTrimMax, [Validators.required, Validators.min(4), Validators.max(6), numberValidator(2, 1)]),
+      cowTrimMin: this.fb.control(this.cowDetails?.cowTrimMin, [Validators.required, Validators.min(3.5), Validators.max(4.5), numberValidator(2, 1)]),
+      cowTrimMax: this.fb.control(this.cowDetails?.cowTrimMax, [Validators.required, Validators.min(5.5), Validators.max(6.5), numberValidator(2, 1)]),
       needFreshCrudeStorage: this.fb.control(this.cowDetails?.needFreshCrudeStorage),
       needFlushingOil: this.fb.control(this.cowDetails?.needFlushingOil),
     }));
