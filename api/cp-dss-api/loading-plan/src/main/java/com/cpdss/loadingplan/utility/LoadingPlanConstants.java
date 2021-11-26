@@ -51,7 +51,11 @@ public class LoadingPlanConstants {
     BALLAST_OPERATION("ballast_operation"),
     EDUCTION_OPERATION("eduction_operation"),
     CARGO_LOADING_RATE("cargo_loading_rate"),
-    JSON_DATA("json_data");
+    JSON_DATA("json_data"),
+    LOADING_PORT_TIDE_DETAILS("loading_port_tide_details"),
+    ALGO_ERROR_HEADING("algo_error_heading"),
+    ALGO_ERRORS("algo_errors"),
+    LOADING_INSTRUCTIONS("loading_instructions");
 
     public final String table;
   }

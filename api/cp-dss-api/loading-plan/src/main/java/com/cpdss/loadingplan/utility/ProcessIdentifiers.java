@@ -35,5 +35,9 @@ public enum ProcessIdentifiers {
   ballast_operation,
   eduction_operation,
   cargo_loading_rate,
-  json_data;
+  json_data,
+  loading_port_tide_details,
+  algo_error_heading,
+  algo_errors,
+  loading_instructions;
 }

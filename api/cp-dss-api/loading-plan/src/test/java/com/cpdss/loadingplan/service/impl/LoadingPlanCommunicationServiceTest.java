@@ -89,6 +89,10 @@ public class LoadingPlanCommunicationServiceTest {
   @MockBean private StageDurationRepository stageDurationRepository;
   @MockBean private LoadingInformationStatusRepository loadingInfoStatusRepository;
   @MockBean private PyUserRepository pyUserRepository;
+  @MockBean private PortTideDetailsRepository portTideDetailsRepository;
+  @MockBean private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @MockBean private AlgoErrorsRepository algoErrorsRepository;
+  @MockBean private LoadingInstructionRepository loadingInstructionRepository;
 
   @MockBean
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub

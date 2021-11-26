@@ -107,6 +107,10 @@ public class LoadingPlanCommunicationService {
   @Autowired private BallastOperationRepository ballastOperationRepository;
   @Autowired private EductionOperationRepository eductionOperationRepository;
   @Autowired private CargoLoadingRateRepository cargoLoadingRateRepository;
+  @Autowired private PortTideDetailsRepository portTideDetailsRepository;
+  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired private AlgoErrorsRepository algoErrorsRepository;
+  @Autowired private LoadingInstructionRepository loadingInstructionRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -303,6 +307,11 @@ public class LoadingPlanCommunicationService {
       String loadablePattern = null;
       String loadicatorDataForSynoptical = null;
       String jsonData = null;
+      List<PortTideDetail> portTideDetailList = null;
+      List<AlgoErrorHeading> algoErrorHeadings = null;
+      List<AlgoErrors> algoErrors = null;
+      List<LoadingInstruction> loadingInstructions = null;
+
       loadingPlanStagingService.updateStatusForProcessId(
           processId, StagingStatus.IN_PROGRESS.getStatus());
       log.info(
@@ -784,6 +793,65 @@ public class LoadingPlanCommunicationService {
             {
               jsonData = dataTransferString;
               idMap.put(LoadingPlanTables.JSON_DATA.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case loading_port_tide_details:
+            {
+              try {
+                HashMap<String, String> map =
+                    loadingPlanStagingService.getAttributeMapping(new PortTideDetail());
+                JsonArray jsonArray =
+                    removeJsonFields(
+                        JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
+                listType = new TypeToken<ArrayList<PortTideDetail>>() {}.getType();
+                portTideDetailList = new Gson().fromJson(jsonArray, listType);
+                idMap.put(
+                    LoadingPlanTables.LOADING_PORT_TIDE_DETAILS.getTable(),
+                    dataTransferStage.getId());
+              } catch (Exception e) {
+                log.error("Error getting in PortTideDetail:", e);
+              }
+              break;
+            }
+          case algo_error_heading:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new AlgoErrorHeading());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_information_xid");
+              listType = new TypeToken<ArrayList<AlgoErrorHeading>>() {}.getType();
+              algoErrorHeadings = new Gson().fromJson(jsonArray, listType);
+              idMap.put(LoadingPlanTables.ALGO_ERROR_HEADING.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case algo_errors:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new AlgoErrors());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "error_heading_xid");
+              listType = new TypeToken<ArrayList<AlgoErrors>>() {}.getType();
+              algoErrors = new Gson().fromJson(jsonArray, listType);
+              idMap.put(LoadingPlanTables.ALGO_ERRORS.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case loading_instructions:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingInstruction());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
+              listType = new TypeToken<ArrayList<LoadingInstruction>>() {}.getType();
+              loadingInstructions = new Gson().fromJson(jsonArray, listType);
+              idMap.put(
+                  LoadingPlanTables.LOADING_INSTRUCTIONS.getTable(), dataTransferStage.getId());
               break;
             }
         }
@@ -1755,6 +1823,123 @@ public class LoadingPlanCommunicationService {
               processId,
               StagingStatus.FAILED.getStatus(),
               reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadingInfo != null && portTideDetailList != null && !portTideDetailList.isEmpty()) {
+        try {
+          for (PortTideDetail portTideDetail : portTideDetailList) {
+            Long version = null;
+            Optional<PortTideDetail> portTideDetailObj =
+                portTideDetailsRepository.findById(portTideDetail.getId());
+            if (portTideDetailObj.isPresent()) {
+              version = portTideDetailObj.get().getVersion();
+            }
+            portTideDetail.setVersion(version);
+            portTideDetail.setLoadingXid(loadingInfo.getId());
+          }
+          portTideDetailsRepository.saveAll(portTideDetailList);
+          log.info("Saved PortTideDetail:" + portTideDetailList);
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_PORT_TIDE_DETAILS.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_PORT_TIDE_DETAILS.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
+        }
+      }
+      if (loadingInfo != null && algoErrorHeadings != null && !algoErrorHeadings.isEmpty()) {
+        try {
+          for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
+            Optional<AlgoErrorHeading> algoErrorHeadingOptional =
+                algoErrorHeadingRepository.findById(algoErrorHeading.getId());
+            algoErrorHeading.setVersion(
+                algoErrorHeadingOptional.isPresent()
+                    ? algoErrorHeadingOptional.get().getVersion()
+                    : null);
+            algoErrorHeading.setLoadingInformation(loadingInfo);
+          }
+          algoErrorHeadingRepository.saveAll(algoErrorHeadings);
+          log.info("Saved AlgoErrorHeading:" + algoErrorHeadings);
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ALGO_ERROR_HEADING.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ALGO_ERROR_HEADING.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
+        }
+      }
+      if (algoErrors != null && !algoErrors.isEmpty()) {
+        try {
+          if (algoErrorHeadings != null && !algoErrorHeadings.isEmpty()) {
+            for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
+              for (AlgoErrors algoError : algoErrors) {
+                if (algoErrorHeading
+                    .getId()
+                    .equals(Long.valueOf(algoError.getCommunicationRelatedEntityId()))) {
+                  Optional<AlgoErrors> algoErrorsOptional =
+                      algoErrorsRepository.findById(algoError.getId());
+                  algoError.setVersion(
+                      algoErrorsOptional.isPresent()
+                          ? algoErrorsOptional.get().getVersion()
+                          : null);
+                  algoError.setAlgoErrorHeading(algoErrorHeading);
+                }
+              }
+            }
+            algoErrorsRepository.saveAll(algoErrors);
+            log.info("Saved AlgoErrors: " + algoErrors);
+          }
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ALGO_ERRORS.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ALGO_ERRORS.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
+        }
+      }
+      if (loadingInfo != null && loadingInstructions != null && !loadingInstructions.isEmpty()) {
+        try {
+          for (LoadingInstruction loadingInstruction : loadingInstructions) {
+            Optional<LoadingInstruction> loadingInstructionOptional =
+                loadingInstructionRepository.findById(loadingInstruction.getId());
+            loadingInstruction.setVersion(
+                loadingInstructionOptional.isPresent()
+                    ? loadingInstructionOptional.get().getVersion()
+                    : null);
+            loadingInstruction.setLoadingXId(loadingInfo.getId());
+          }
+          loadingInstructionRepository.saveAll(loadingInstructions);
+          log.info("Saved LoadingInstruction:" + loadingInstructions);
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_INSTRUCTIONS.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_INSTRUCTIONS.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
         }
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(

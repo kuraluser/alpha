@@ -35,6 +35,7 @@ public class LoadingPlanStagingService extends StagingService {
   @Autowired private LoadingInformationStatusRepository loadingInformationStatusRepository;
   @Autowired private LoadingPlanStagingRepository loadingPlanStagingRepository;
   @Autowired private PyUserRepository pyUserRepository;
+  @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -48,7 +49,7 @@ public class LoadingPlanStagingService extends StagingService {
   LoadingInformation loadingInformation = null;
   List<Long> loadingPlanPortWiseDetailsIds = null;
   List<Long> loadingSequenceIds = null;
-
+  List<Long> algoErrorHeadingsIds = null;
   Long voyageId = null;
   Long loadablePatternId = null;
   /**
@@ -629,6 +630,82 @@ public class LoadingPlanStagingService extends StagingService {
                     processedList,
                     jsonData);
               }
+            }
+            break;
+          }
+        case loading_port_tide_details:
+          {
+            String portTideDetailJson =
+                loadingPlanStagingRepository.getPortTideDetailWithLoadingId(Id);
+            if (portTideDetailJson != null) {
+              JsonArray portTideDetail =
+                  JsonParser.parseString(portTideDetailJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  portTideDetail);
+            }
+            break;
+          }
+        case algo_error_heading:
+          {
+            String algoErrorHeadingJson =
+                loadingPlanStagingRepository.getAlgoErrorHeadingWithLoadingId(Id);
+            if (algoErrorHeadingJson != null) {
+              algoErrorHeadingsIds =
+                  algoErrorHeadingRepository.getAlgoErrorHeadingIdWithLoadingInformationId(Id);
+              JsonArray algoErrorHeading =
+                  JsonParser.parseString(algoErrorHeadingJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  algoErrorHeading);
+            }
+            break;
+          }
+        case algo_errors:
+          {
+            if (algoErrorHeadingsIds != null && !algoErrorHeadingsIds.isEmpty()) {
+              String algoErrorsJson =
+                  loadingPlanStagingRepository.getAlgoErrorsWithAlgoErrorHeadingIds(
+                      algoErrorHeadingsIds);
+              if (algoErrorsJson != null) {
+                JsonArray algoErrors = JsonParser.parseString(algoErrorsJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    algoErrors);
+              }
+            }
+            break;
+          }
+        case loading_instructions:
+          {
+            String loadingInstructionJson =
+                loadingPlanStagingRepository.getLoadingInstructionWithLoadingId(Id);
+            if (loadingInstructionJson != null) {
+              JsonArray loadingInstruction =
+                  JsonParser.parseString(loadingInstructionJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadingInstruction);
             }
             break;
           }

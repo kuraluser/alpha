@@ -3107,11 +3107,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Optional<Voyage> voyageEntity = voyageRepository.findById(request.getId());
       if (voyageEntity.isPresent()) {
         Voyage voyage = voyageEntity.get();
+        log.info("Voayge get:{}", voyage);
+        try {
+          Long vesselId = voyage.getVesselXId();
+          log.info("vesselId get:{}", vesselId);
+          voyageRepository.deActivateAllVoyageByVesselId(vesselId);
+          log.info("Deactivated voyages against this vesselId:{}", vesselId);
+        }catch(Exception e){
+          log.error("Error occurred when deactivating voyages against vessel", e);
+        }
         Optional<VoyageStatus> voyageStatus =
             voyageStatusRepository.findById(request.getVoyageStatus());
         if (voyageStatus.isPresent()) {
           voyage.setVoyageStatus(voyageStatus.get());
           voyageRepository.save(voyage);
+          log.info("Voyage activated:{}",voyage);
           replyBuilder.setResponseStatus(
               Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
         }
