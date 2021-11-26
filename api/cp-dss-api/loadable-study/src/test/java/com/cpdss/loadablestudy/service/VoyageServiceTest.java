@@ -9,10 +9,9 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.CargoInfo;
-import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.PortInfo;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
@@ -47,7 +46,9 @@ public class VoyageServiceTest {
   @MockBean private LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @MockBean private SynopticService synopticService;
   @MockBean private CargoNominationService cargoNominationService;
-
+  @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
+  @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+  @MockBean private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
   @Test
@@ -369,6 +370,39 @@ public class VoyageServiceTest {
     when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
     voyageService.buildVoyageDetails(modelMapper, loadableStudy);
     assertEquals(1l, loadableStudy.getVoyage().getId().longValue());
+  }
+
+  @Test
+  void testGetPortInfo() {
+    VoyageService spyService = spy(VoyageService.class);
+    PortInfo.PortRequest request = PortInfo.PortRequest.newBuilder().build();
+    PortInfo.PortReply portReply =
+        PortInfo.PortReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+
+    when(portInfoGrpcService.getPortInfo(any(PortInfo.PortRequest.class))).thenReturn(portReply);
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+
+    var result = spyService.GetPortInfo(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetCargoInfo() {
+    VoyageService spyService = spy(VoyageService.class);
+    CargoInfo.CargoRequest request = CargoInfo.CargoRequest.newBuilder().build();
+    CargoInfo.CargoReply cargoReply =
+        CargoInfo.CargoReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+
+    when(cargoInfoGrpcService.getCargoInfo(any(CargoInfo.CargoRequest.class)))
+        .thenReturn(cargoReply);
+    ReflectionTestUtils.setField(spyService, "cargoInfoGrpcService", cargoInfoGrpcService);
+
+    var result = spyService.getCargoInfo(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
   }
 
   private Optional<VoyageStatus> getOVS() {

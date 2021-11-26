@@ -1,9 +1,15 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyRuleInput;
 import com.cpdss.loadablestudy.entity.LoadableStudyRules;
@@ -18,6 +24,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(classes = {LoadableStudyRuleService.class})
 public class LoadableStudyRuleServiceTest {
@@ -26,6 +33,8 @@ public class LoadableStudyRuleServiceTest {
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private LoadableStudyRuleRepository loadableStudyRuleRepository;
   @MockBean private LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+  public static final String SUCCESS = "SUCCESS";
 
   @Test
   void testGetLoadableStudyRules() {
@@ -34,13 +43,10 @@ public class LoadableStudyRuleServiceTest {
             .setVesselId(1L)
             .setDuplicatedFromId(1L)
             .build();
-    Mockito.when(
-            this.loadableStudyRepository.findByIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
+    when(this.loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLoadablestudy());
-    Mockito.when(
-            loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
-                Mockito.any(), Mockito.anyLong(), Mockito.anyBoolean()))
+    when(loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
+            Mockito.any(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLSR());
     try {
       var loadableStudyRules = this.loadableStudyRuleService.getLoadableStudyRules(request);
@@ -53,6 +59,7 @@ public class LoadableStudyRuleServiceTest {
   private Optional<LoadableStudy> getLoadablestudy() {
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setId(1L);
+    loadableStudy.setVesselXId(1l);
     return Optional.of(loadableStudy);
   }
 
@@ -105,5 +112,150 @@ public class LoadableStudyRuleServiceTest {
     loadableStudyRuleInput.setIsMandatory(false);
     loadableStudyRuleInputs.add(loadableStudyRuleInput);
     return loadableStudyRuleInputs;
+  }
+
+  @Test
+  void testGetOrSaveRulesForLoadableStudy() throws GenericServiceException {
+    LoadableStudyRuleService spyService = spy(LoadableStudyRuleService.class);
+    com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest.newBuilder()
+            .setSectionId(1l)
+            .setVesselId(1l)
+            .setLoadableStudyId(1l)
+            .addAllRulePlan(getVesselRuleReply().getRulePlanList())
+            .build();
+    com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.newBuilder();
+    when(loadableStudyRepository.findByIdAndIsActiveAndVesselXId(
+            anyLong(), anyBoolean(), anyLong()))
+        .thenReturn(getLoadablestudy());
+    LoadableStudyRules rVesselMapping = new LoadableStudyRules();
+    when(loadableStudyRuleInputRepository.findById(anyLong()))
+        .thenReturn(Optional.of(getLLSRI().get(0)));
+    when(loadableStudyRuleRepository.findById(anyLong())).thenReturn(Optional.of(rVesselMapping));
+    when(this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
+            any(VesselInfo.VesselRuleRequest.class)))
+        .thenReturn(getVesselRuleReply());
+    when(loadableStudyRuleRepository
+            .findByLoadableStudyAndVesselXIdAndIsActiveAndVesselRuleXIdInOrderById(
+                any(LoadableStudy.class), anyLong(), anyBoolean(), anyList()))
+        .thenReturn(getLoadableStudyRulesList());
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyRuleInputRepository", loadableStudyRuleInputRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyRuleRepository", loadableStudyRuleRepository);
+
+    spyService.getOrSaveRulesForLoadableStudy(request, builder);
+    assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
+  }
+
+  private List<LoadableStudyRules> getLoadableStudyRulesList() {
+    List<LoadableStudyRules> loadableStudyRulesList = new ArrayList<>();
+    LoadableStudyRules studyRules = new LoadableStudyRules();
+    studyRules.setVesselRuleXId(1l);
+    studyRules.setId(1l);
+    studyRules.setIsEnable(true);
+    studyRules.setDisplayInSettings(true);
+    studyRules.setRuleTypeXId(1l);
+    studyRules.setIsHardRule(true);
+    studyRules.setVesselRuleXId(1l);
+    studyRules.setParentRuleXId(1l);
+    studyRules.setNumericPrecision(1l);
+    studyRules.setNumericScale(1l);
+    List<LoadableStudyRuleInput> inputList = new ArrayList<>();
+    LoadableStudyRuleInput input = new LoadableStudyRuleInput();
+    input.setId(1l);
+    input.setDefaultValue("1");
+    input.setPrefix("**");
+    input.setMinValue("1");
+    input.setMaxValue("1");
+    input.setTypeValue("MultiSelect");
+    input.setSuffix("**");
+    input.setIsMandatory(true);
+    inputList.add(input);
+    studyRules.setLoadableStudyRuleInputs(inputList);
+    loadableStudyRulesList.add(studyRules);
+    return loadableStudyRulesList;
+  }
+
+  private VesselInfo.VesselRuleReply getVesselRuleReply() {
+    List<Common.Rules> rulesList = new ArrayList<>();
+    Common.Rules rules =
+        Common.Rules.newBuilder()
+            .setVesselRuleXId("1")
+            .setRuleTemplateId("1")
+            .setId("1")
+            .setDisplayInSettings(true)
+            .setEnable(true)
+            .setIsHardRule(true)
+            .setNumericPrecision(1l)
+            .setNumericScale(1l)
+            .setRuleType("1")
+            .build();
+    rulesList.add(rules);
+    List<Common.RulePlans> plansList = new ArrayList<>();
+    Common.RulePlans rulePlans =
+        Common.RulePlans.newBuilder().setHeader("1").addAllRules(rulesList).build();
+    plansList.add(rulePlans);
+    List<VesselInfo.CargoTankMaster> masterList = new ArrayList<>();
+    VesselInfo.CargoTankMaster tankMaster =
+        VesselInfo.CargoTankMaster.newBuilder().setId(1l).setShortName("1").build();
+    masterList.add(tankMaster);
+    List<VesselInfo.RuleDropDownValueMaster> valueMasterList = new ArrayList<>();
+    VesselInfo.RuleDropDownValueMaster valueMaster =
+        VesselInfo.RuleDropDownValueMaster.newBuilder()
+            .setRuleTemplateId(1l)
+            .setId(1l)
+            .setValue("1")
+            .build();
+    valueMasterList.add(valueMaster);
+    List<VesselInfo.RuleTypeMaster> typeMasterList = new ArrayList<>();
+    VesselInfo.RuleTypeMaster typeMaster =
+        VesselInfo.RuleTypeMaster.newBuilder().setRuleType("1").build();
+    typeMasterList.add(typeMaster);
+
+    VesselInfo.VesselRuleReply vesselRuleReply =
+        VesselInfo.VesselRuleReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllRulePlan(plansList)
+            .addAllCargoTankMaster(masterList)
+            .addAllRuleTypeMaster(typeMasterList)
+            .build();
+    return vesselRuleReply;
+  }
+
+  @Test
+  void testBuildLoadableStudyRuleDetails() throws GenericServiceException {
+    LoadableStudyRuleService spyService = spy(LoadableStudyRuleService.class);
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+
+    when(this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
+            any(VesselInfo.VesselRuleRequest.class)))
+        .thenReturn(getVesselRuleReply());
+    when(loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
+            any(LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(getLoadableStudyRulesList());
+
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyRuleRepository", loadableStudyRuleRepository);
+
+    spyService.buildLoadableStudyRuleDetails(getLoadablestudy().get(), loadableStudy);
+    var id =
+        loadableStudy
+            .getLoadableStudyRuleList()
+            .get(0)
+            .getRules()
+            .get(0)
+            .getInputs()
+            .get(0)
+            .getRuleDropDownMaster()
+            .get(0)
+            .getId();
+    assertEquals(1l, id);
+    assertEquals(1, loadableStudy.getLoadableStudyRuleList().size());
   }
 }

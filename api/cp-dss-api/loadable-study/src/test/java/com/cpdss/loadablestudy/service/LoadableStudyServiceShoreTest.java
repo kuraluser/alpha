@@ -20,7 +20,6 @@ import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -74,9 +72,6 @@ public class LoadableStudyServiceShoreTest {
   @MockBean LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @MockBean LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
   @MockBean SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
-
-  @Value("${loadablestudy.attachement.rootFolder}")
-  private String rootFolder;
 
   @Test
   void testSetLoadableStudyShore() {
@@ -203,22 +198,10 @@ public class LoadableStudyServiceShoreTest {
       Mockito.verify(commingleCargoRepository).saveAll(Mockito.anyList());
       Mockito.verify(commingleCargoRepository).saveAll(Mockito.anyList());
       Mockito.verify(loadableStudyPortRotationRepository).saveAll(Mockito.anyList());
-      File file = new File(this.rootFolder);
-      deleteFolder(file);
+
     } catch (GenericServiceException | IOException e) {
       e.printStackTrace();
     }
-  }
-
-  static void deleteFolder(File file) {
-    for (File subFile : file.listFiles()) {
-      if (subFile.isDirectory()) {
-        deleteFolder(subFile);
-      } else {
-        subFile.delete();
-      }
-    }
-    file.delete();
   }
 
   @Test

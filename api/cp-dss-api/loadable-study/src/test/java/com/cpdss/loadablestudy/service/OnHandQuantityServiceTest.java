@@ -2,10 +2,15 @@
 package com.cpdss.loadablestudy.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
@@ -18,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(
     classes = {
@@ -43,6 +49,8 @@ public class OnHandQuantityServiceTest {
   @MockBean VoyageStatusRepository voyageStatusRepository;
 
   @MockBean SynopticService synopticService;
+
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -79,37 +87,26 @@ public class OnHandQuantityServiceTest {
     List<LoadableStudyPortRotation> portRotations = new ArrayList<>();
     portRotations.add(getPortRotation());
 
-    Mockito.when(
-            onHandQuantityRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+    when(onHandQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(getOnHandQuantity());
-    Mockito.when(
-            loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(getLoadableStudyOpt());
-    Mockito.when(
-            loadableStudyPortRotationRepository.findByIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
+    when(loadableStudyPortRotationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(getPortRotation());
-    Mockito.when(voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(voyage);
-    Mockito.when(
-            loadablePatternRepository.findLoadablePatterns(
-                Mockito.anyLong(),
-                Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-                Mockito.anyBoolean()))
+    when(voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(voyage);
+    when(loadablePatternRepository.findLoadablePatterns(
+            anyLong(), any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(loadablePatternList);
-    Mockito.when(
-            loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
+    when(loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
         .thenReturn(portRotations);
-    Mockito.when(
-            onHandQuantityRepository.save(
-                Mockito.any(com.cpdss.loadablestudy.entity.OnHandQuantity.class)))
+    when(onHandQuantityRepository.save(any(com.cpdss.loadablestudy.entity.OnHandQuantity.class)))
         .thenReturn(getOnHandQuantity());
     try {
       var entity = onHandQuantityService.saveOnHandQuantity(request, replyBuilder);
       Mockito.verify(loadableStudyPortRotationRepository)
-          .save(Mockito.any(LoadableStudyPortRotation.class));
-      Mockito.verify(onHandQuantityRepository).save(Mockito.any(OnHandQuantity.class));
+          .save(any(LoadableStudyPortRotation.class));
+      Mockito.verify(onHandQuantityRepository).save(any(OnHandQuantity.class));
       assertEquals(SUCCESS, entity.getResponseStatus().getStatus());
     } catch (GenericServiceException e) {
       e.printStackTrace();
@@ -208,10 +205,8 @@ public class OnHandQuantityServiceTest {
     ModelMapper modelMapper = new ModelMapper();
     List<OnHandQuantity> onHandQuantities = new ArrayList<>();
     onHandQuantities.add(getOnHandQuantity());
-    Mockito.when(
-            onHandQuantityRepository.findByLoadableStudyAndIsActive(
-                Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-                Mockito.anyBoolean()))
+    when(onHandQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(onHandQuantities);
     this.onHandQuantityService.buildOnHandQuantityDetails(
         loadableStudyEntity, loadableStudy, modelMapper);
@@ -225,13 +220,88 @@ public class OnHandQuantityServiceTest {
     LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
     List<OnHandQuantity> onHandQuantities = new ArrayList<>();
     onHandQuantities.add(getOnHandQuantity());
-    Mockito.when(
-            onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-                Mockito.any(LoadableStudyPortRotation.class),
-                Mockito.anyBoolean()))
+    when(onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(LoadableStudyPortRotation.class),
+            anyBoolean()))
         .thenReturn(onHandQuantities);
     this.onHandQuantityService.deletePortRotationDetails(loadableStudy, entity);
     Mockito.verify(onHandQuantityRepository).saveAll(Mockito.anyList());
+  }
+
+  @Test
+  void testGetOnHandQuantity() throws GenericServiceException {
+    OnHandQuantityService spyService = new OnHandQuantityService();
+    LoadableStudy.OnHandQuantityRequest request =
+        LoadableStudy.OnHandQuantityRequest.newBuilder().build();
+    LoadableStudy.OnHandQuantityReply.Builder replyBuilder =
+        LoadableStudy.OnHandQuantityReply.newBuilder();
+    VoyageStatus voyageStatus = new VoyageStatus();
+
+    List<OnHandQuantity> onHandQuantities = new ArrayList<>();
+    onHandQuantities.add(getOnHandQuantity());
+
+    List<VesselInfo.VesselTankDetail> tankDetailList = new ArrayList<>();
+    VesselInfo.VesselTankDetail tankDetail =
+        VesselInfo.VesselTankDetail.newBuilder()
+            .setShowInOhqObq(true)
+            .setTankCategoryId(1l)
+            .setTankCategoryName("1")
+            .setTankCategoryShortName("1")
+            .setTankId(1l)
+            .setShortName("1")
+            .setColourCode("1")
+            .build();
+    tankDetailList.add(tankDetail);
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllVesselTanks(tankDetailList)
+            .build();
+    when(vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    doNothing()
+        .when(synopticService)
+        .populateOnHandQuantityData(any(Optional.class), any(LoadableStudyPortRotation.class));
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortXIdAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(onHandQuantities);
+    when(onHandQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(onHandQuantities);
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(LoadableStudyPortRotation.class),
+            anyBoolean()))
+        .thenReturn(onHandQuantities);
+    when(this.voyageStatusRepository.getOne(anyLong())).thenReturn(voyageStatus);
+    when(loadableStudyPortRotationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getPortRotation());
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLoadableStudyOpt());
+
+    ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "voyageStatusRepository", voyageStatusRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(spyService, "synopticService", synopticService);
+
+    var result = spyService.getOnHandQuantity(request, replyBuilder);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselTanks() {
+    OnHandQuantityService spyService = new OnHandQuantityService();
+    VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder().setVesselId(1l).build();
+    when(vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    var result = spyService.getVesselTanks(request);
+    assertEquals(1l, result.getVesselId());
   }
 }

@@ -33,11 +33,10 @@ public class AlgoServiceTest {
   @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @MockBean LoadableStudyRepository loadableStudyRepository;
   @MockBean LoadablePatternRepository loadablePatternRepository;
-  @MockBean LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @MockBean AlgoErrorsRepository algoErrorsRepository;
-  @MockBean AlgoErrorService algoErrorService;
+  @MockBean LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @MockBean RestTemplate restTemplate;
-
+  @MockBean AlgoErrorService algoErrorService;
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 

@@ -1,19 +1,26 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(classes = {CargoNominationService.class})
 public class CargoNominationServiceTest {
@@ -38,7 +45,9 @@ public class CargoNominationServiceTest {
   @MockBean private CargoNominationValveSegregationRepository valveSegregationRepository;
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private VoyageService voyageService;
-
+  @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+  @MockBean private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
+  @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanGrpcService;
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 
@@ -229,6 +238,17 @@ public class CargoNominationServiceTest {
     cargoNomination.setId(1L);
     cargoNomination.setCargoXId(2L);
     cargoNomination.setLoadableStudyXId(1L);
+    cargoNomination.setAbbreviation("!");
+    cargoNomination.setApi(new BigDecimal(1));
+    cargoNomination.setCargoXId(1l);
+    cargoNomination.setColor("1");
+    cargoNomination.setMaxTolerance(new BigDecimal(1));
+    cargoNomination.setMinTolerance(new BigDecimal(1));
+    cargoNomination.setPriority(1l);
+    cargoNomination.setQuantity(new BigDecimal(1));
+    cargoNomination.setSegregationXId(1l);
+    cargoNomination.setTemperature(new BigDecimal(1));
+    cargoNomination.setVersion(1l);
     cargoNomination.setCargoNominationPortDetails(getCargoNPDetails());
     return Optional.of(cargoNomination);
   }
@@ -336,5 +356,260 @@ public class CargoNominationServiceTest {
     List<CargoNomination> entities = new ArrayList<>();
     this.cargoNominationService.saveAll(entities);
     Mockito.verify(cargoNominationRepository).saveAll(Mockito.any());
+  }
+
+  @Test
+  void testSaveDischargeStudyCargoNominations() throws GenericServiceException {
+    CargoNominationService spyService = spy(CargoNominationService.class);
+    List<CargoNomination> cargos = new ArrayList<>();
+    cargos.add(getCargoNomination().get());
+    List<LoadingPlanModels.MaxQuantityDetails> maxQuantityDetailsList = new ArrayList<>();
+    LoadingPlanModels.MaxQuantityDetails maxQuantityDetails =
+        LoadingPlanModels.MaxQuantityDetails.newBuilder()
+            .setCargoNominationId(1l)
+            .setMaxQuantity("1")
+            .setApi("1")
+            .setTemp("1")
+            .build();
+    maxQuantityDetailsList.add(maxQuantityDetails);
+    LoadingPlanModels.MaxQuantityResponse response =
+        LoadingPlanModels.MaxQuantityResponse.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllCargoMaxQuantity(maxQuantityDetailsList)
+            .build();
+    when(loadingPlanGrpcService.getCargoNominationMaxQuantity(
+            any(LoadingPlanModels.MaxQuantityRequest.class)))
+        .thenReturn(response);
+    when(cargoNominationRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(cargos);
+    when(cargoNominationRepository.saveAll(anyList())).thenReturn(cargos);
+    ReflectionTestUtils.setField(spyService, "loadingPlanGrpcService", loadingPlanGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+    var result = spyService.saveDsichargeStudyCargoNominations(1l, 1l, 1l, 1l);
+    assertEquals(1l, result.get(0).getId());
+  }
+
+  @Test
+  void testGetCargoNominationById() throws GenericServiceException {
+    LoadableStudy.CargoNominationRequest request =
+        LoadableStudy.CargoNominationRequest.newBuilder().build();
+    LoadableStudy.CargoNominationReply.Builder replyBuilder =
+        LoadableStudy.CargoNominationReply.newBuilder();
+    List<CargoNomination> cargos = new ArrayList<>();
+    cargos.add(getCargoNomination().get());
+    List<ApiTempHistory> apiTempHistories = new ArrayList<>();
+    when(apiTempHistoryRepository.findByOrderByCreatedDateTimeDesc()).thenReturn(apiTempHistories);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(getLoadableStudy());
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
+            anyLong(), anyBoolean()))
+        .thenReturn(cargos);
+
+    var result = cargoNominationService.getCargoNominationById(request, replyBuilder);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetMaxQuantityFromBillOfLadding() {
+    CargoNominationService spyService = spy(CargoNominationService.class);
+    List<com.cpdss.common.generated.Common.BillOfLadding> list = new ArrayList<>();
+    com.cpdss.common.generated.Common.BillOfLadding billOfLadding =
+        Common.BillOfLadding.newBuilder().setQuantityKl("1").build();
+    list.add(billOfLadding);
+    LoadingPlanModels.LoadingInformationSynopticalReply reply =
+        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllBillOfLadding(list)
+            .build();
+    when(loadingPlanGrpcService.getBillOfLaddingDetails(
+            any(LoadingPlanModels.BillOfLaddingRequest.class)))
+        .thenReturn(reply);
+    ReflectionTestUtils.setField(spyService, "loadingPlanGrpcService", loadingPlanGrpcService);
+
+    var result = spyService.getMaxQuantityFromBillOfLadding(1l);
+    assertEquals("1", result);
+  }
+
+  @Test
+  void testGetCargoNominationByCargoNominationId() {
+    CargoNominationService spyService = spy(CargoNominationService.class);
+    LoadableStudy.CargoNominationRequest request =
+        LoadableStudy.CargoNominationRequest.newBuilder().build();
+    LoadableStudy.CargoNominationDetailReply.Builder builder =
+        LoadableStudy.CargoNominationDetailReply.newBuilder();
+    com.cpdss.common.generated.CargoInfo.CargoDetailReply reply =
+        CargoInfo.CargoDetailReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    when(this.cargoNominationRepository.getOne(anyLong())).thenReturn(getCargoNomination().get());
+    when(cargoInfoGrpcService.getCargoInfoById(any(CargoInfo.CargoRequest.class)))
+        .thenReturn(reply);
+    ReflectionTestUtils.setField(spyService, "cargoInfoGrpcService", cargoInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+
+    var result = spyService.getCargoNominationByCargoNominationId(request, builder);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetCargoInfoById() {
+    CargoNominationService spyService = spy(CargoNominationService.class);
+    CargoInfo.CargoRequest request = CargoInfo.CargoRequest.newBuilder().build();
+    com.cpdss.common.generated.CargoInfo.CargoDetailReply reply =
+        CargoInfo.CargoDetailReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    when(cargoInfoGrpcService.getCargoInfoById(any(CargoInfo.CargoRequest.class)))
+        .thenReturn(reply);
+    ReflectionTestUtils.setField(spyService, "cargoInfoGrpcService", cargoInfoGrpcService);
+
+    var result = spyService.getCargoInfoById(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testBuildCargoNominationDetails() {
+    CargoNominationService spyService = spy(CargoNominationService.class);
+    ModelMapper modelMapper = new ModelMapper();
+    List<CargoNomination> cargos = new ArrayList<>();
+    cargos.add(getCargoNomination().get());
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    loadableStudy.setId(1l);
+    CargoInfo.CargoDetail cargoDetail =
+        CargoInfo.CargoDetail.newBuilder().setIsCondensateCargo(true).setIsHrvpCargo(true).build();
+
+    com.cpdss.common.generated.CargoInfo.CargoDetailReply reply =
+        CargoInfo.CargoDetailReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .setCargoDetail(cargoDetail)
+            .build();
+    when(cargoInfoGrpcService.getCargoInfoById(any(CargoInfo.CargoRequest.class)))
+        .thenReturn(reply);
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(cargos);
+
+    ReflectionTestUtils.setField(spyService, "cargoInfoGrpcService", cargoInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+
+    spyService.buildCargoNominationDetails(1l, loadableStudy, modelMapper);
+    assertEquals(true, loadableStudy.getCargoNomination().get(0).getIsCondensateCargo());
+  }
+
+  @Test
+  void testGetMaxQuantityForCargoNomination() throws GenericServiceException {
+    CargoNominationService spyService = spy(CargoNominationService.class);
+    List<Long> cargoNominations = new ArrayList<>();
+    Set<CargoNomination> firstPortCargos = new HashSet<>();
+    CargoNomination cargoNomination = new CargoNomination();
+    cargoNomination.setLsCargoNominationId(1l);
+    firstPortCargos.add(cargoNomination);
+
+    List<LoadingPlanModels.MaxQuantityDetails> maxQuantityDetailsList = new ArrayList<>();
+    LoadingPlanModels.MaxQuantityDetails maxQuantityDetails =
+        LoadingPlanModels.MaxQuantityDetails.newBuilder()
+            .setCargoNominationId(1l)
+            .setMaxQuantity("1")
+            .build();
+    maxQuantityDetailsList.add(maxQuantityDetails);
+    LoadingPlanModels.MaxQuantityResponse response =
+        LoadingPlanModels.MaxQuantityResponse.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllCargoMaxQuantity(maxQuantityDetailsList)
+            .build();
+    when(loadingPlanGrpcService.getCargoNominationMaxQuantity(
+            any(LoadingPlanModels.MaxQuantityRequest.class)))
+        .thenReturn(response);
+    ReflectionTestUtils.setField(spyService, "loadingPlanGrpcService", loadingPlanGrpcService);
+    var result = spyService.getMaxQuantityForCargoNomination(cargoNominations, firstPortCargos);
+    assertEquals(1l, result.get(0).getLsCargoNominationId());
+  }
+
+  @Test
+  void testSaveCargoNomination() throws GenericServiceException {
+    CargoNominationService spyService = spy(CargoNominationService.class);
+    List<LoadableStudy.LoadingPortDetail> portDetailList = new ArrayList<>();
+    LoadableStudy.LoadingPortDetail portDetail =
+        LoadableStudy.LoadingPortDetail.newBuilder().setPortId(1l).setQuantity("1").build();
+    portDetailList.add(portDetail);
+    LoadableStudy.CargoNominationRequest request =
+        LoadableStudy.CargoNominationRequest.newBuilder()
+            .setCargoNominationDetail(
+                LoadableStudy.CargoNominationDetail.newBuilder()
+                    .setId(1l)
+                    .setCargoId(1l)
+                    .setLoadableStudyId(1l)
+                    .setPriority(1l)
+                    .setCargoId(1l)
+                    .setAbbreviation("1")
+                    .setColor("1")
+                    .setQuantity("1")
+                    .setMaxTolerance("1")
+                    .setMinTolerance("1")
+                    .setApiEst("1")
+                    .setTempEst("1")
+                    .setSegregationId(1l)
+                    .addAllLoadingPortDetails(portDetailList)
+                    .build())
+            .build();
+
+    LoadableStudy.CargoNominationReply.Builder builder =
+        LoadableStudy.CargoNominationReply.newBuilder();
+    List<Long> transitPorts = new ArrayList<>();
+    when(this.loadableStudyPortRotationRepository.getTransitPorts(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyList()))
+        .thenReturn(transitPorts);
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLoadableStudy());
+    doNothing().when(voyageService).checkIfVoyageClosed(anyLong());
+    doNothing()
+        .when(loadablePatternService)
+        .isPatternGeneratedOrConfirmed(any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+    when(this.cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getCargoNomination());
+    doNothing()
+        .when(this.commingleCargoRepository)
+        .deleteCommingleCargoByLodableStudyXIdAndCargoXId(anyLong(), anyLong());
+    doNothing()
+        .when(loadableStudyPortRotationService)
+        .validateTransitPorts(any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyList());
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(CargoOperation.class),
+            anyBoolean()))
+        .thenReturn(getLLSPR());
+    when(cargoOperationRepository.getOne(anyLong())).thenReturn(getCOperation());
+    when(this.cargoNominationRepository.getCountCargoNominationWithPortIds(
+            anyLong(), any(CargoNomination.class), anyLong()))
+        .thenReturn(1l);
+    PortInfo.PortReply reply =
+        PortInfo.PortReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    doNothing()
+        .when(loadableStudyPortRotationService)
+        .validateTransitPorts(any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyList());
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(reply);
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+    ReflectionTestUtils.setField(spyService, "cargoOperationRepository", cargoOperationRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(spyService, "commingleCargoRepository", commingleCargoRepository);
+    ReflectionTestUtils.setField(spyService, "loadablePatternService", loadablePatternService);
+    ReflectionTestUtils.setField(spyService, "voyageService", voyageService);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationService", loadableStudyPortRotationService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+    ReflectionTestUtils.setField(spyService, "apiTempHistoryRepository", apiTempHistoryRepository);
+
+    var result = spyService.saveCargoNomination(request, builder);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
   }
 }

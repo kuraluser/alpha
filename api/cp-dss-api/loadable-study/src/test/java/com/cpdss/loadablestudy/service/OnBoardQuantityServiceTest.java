@@ -2,9 +2,17 @@
 package com.cpdss.loadablestudy.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyStatus;
 import com.cpdss.loadablestudy.entity.OnBoardQuantity;
@@ -20,6 +28,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(
     classes = {
@@ -40,6 +49,12 @@ public class OnBoardQuantityServiceTest {
   @MockBean LoadableStudyStatusRepository loadableStudyStatusRepository;
   @MockBean LoadableStudyPortRotationService loadableStudyPortRotationService;
   @MockBean CargoNominationRepository cargoNominationRepository;
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @MockBean
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
+      dischargePlanServiceBlockingStub;
+
   private static final String SUCCESS = "SUCCESS";
 
   @Test
@@ -62,23 +77,19 @@ public class OnBoardQuantityServiceTest {
     LoadableStudy.OnBoardQuantityReply.Builder replyBuilder =
         LoadableStudy.OnBoardQuantityReply.newBuilder();
     List<LoadablePattern> generatedPatterns = new ArrayList<>();
-    Mockito.when(
-            loadablePatternRepository.findLoadablePatterns(
-                Mockito.anyLong(),
-                Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-                Mockito.anyBoolean()))
+    when(loadablePatternRepository.findLoadablePatterns(
+            Mockito.anyLong(),
+            Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            Mockito.anyBoolean()))
         .thenReturn(generatedPatterns);
-    Mockito.when(
-            this.loadableStudyRepository.findByIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
+    when(this.loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(Optional.of(getLoadableStudy()));
-    Mockito.when(
-            this.onBoardQuantityRepository.findByIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
+    when(this.onBoardQuantityRepository.findByIdAndIsActive(
+            Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getOnBoardQuantity());
-    Mockito.when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+    when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLoadableStudy().getVoyage());
-    Mockito.when(this.onBoardQuantityRepository.save(Mockito.any(OnBoardQuantity.class)))
+    when(this.onBoardQuantityRepository.save(Mockito.any(OnBoardQuantity.class)))
         .thenReturn(getOnBoardQuantity());
     try {
       var result = onBoardQuantityService.saveOnBoardQuantity(request, replyBuilder);
@@ -102,36 +113,63 @@ public class OnBoardQuantityServiceTest {
     ModelMapper modelMapper = new ModelMapper();
     List<OnBoardQuantity> onBoardQuantities = new ArrayList<>();
     onBoardQuantities.add(getOnBoardQuantity());
-    Mockito.when(
-            onBoardQuantityRepository.findByLoadableStudyAndIsActive(
-                Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-                Mockito.anyBoolean()))
+    when(onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class), Mockito.anyBoolean()))
         .thenReturn(onBoardQuantities);
     onBoardQuantityService.buildOnBoardQuantityDetails(
         getLoadableStudy(), loadableStudy, modelMapper);
     assertEquals("1", loadableStudy.getOnBoardQuantity().get(0).getApi());
   }
-  // grpc
+
   @Test
-  void testGetOnBoardQuantity() {
+  void testGetOnBoardQuantity() throws GenericServiceException {
+    OnBoardQuantityService spyService = spy(OnBoardQuantityService.class);
+
     LoadableStudy.OnBoardQuantityRequest request =
         LoadableStudy.OnBoardQuantityRequest.newBuilder().setCompanyId(1l).setVesselId(1l).build();
     LoadableStudy.OnBoardQuantityReply.Builder replyBuilder =
         LoadableStudy.OnBoardQuantityReply.newBuilder();
-    Mockito.when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+    when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLoadableStudy().getVoyage());
-    Mockito.when(
-            this.loadableStudyRepository.findByIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
+    when(this.loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(Optional.of(getLoadableStudy()));
     List<OnBoardQuantity> obqEntities = new ArrayList<>();
     obqEntities.add(getOnBoardQuantity());
-    Mockito.when(
-            this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
-                Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-                Mockito.anyLong(),
-                Mockito.anyBoolean()))
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            Mockito.anyLong(),
+            Mockito.anyBoolean()))
         .thenReturn(obqEntities);
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    when(vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+    List<LoadableStudy.TankList> tankLists = new ArrayList<>();
+    when(onHandQuantityService.groupTanks(anyList())).thenReturn(tankLists);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(spyService, "voyageRepository", voyageRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(
+        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "onHandQuantityService", onHandQuantityService);
+
+    spyService.getOnBoardQuantity(request, replyBuilder);
+    assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselTanks() {
+    OnBoardQuantityService spyService = new OnBoardQuantityService();
+    VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder().setVesselId(1l).build();
+    when(vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    var result = spyService.getVesselTanks(request);
+    assertEquals(1l, result.getVesselId());
   }
 
   private com.cpdss.loadablestudy.entity.LoadableStudy getLoadableStudy() {

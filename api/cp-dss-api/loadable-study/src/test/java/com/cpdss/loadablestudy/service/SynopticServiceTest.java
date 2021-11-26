@@ -1,31 +1,38 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static org.junit.Assert.assertEquals;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetails;
+import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsReply;
+import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsRequest;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import io.grpc.internal.testing.StreamRecorder;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(classes = {SynopticService.class})
 public class SynopticServiceTest {
@@ -41,6 +48,7 @@ public class SynopticServiceTest {
   @MockBean private OnHandQuantityRepository onHandQuantityRepository;
   @MockBean private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @MockBean private LoadablePatternRepository loadablePatternRepository;
+  @MockBean private CargoNominationService cargoNominationService;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -64,47 +72,59 @@ public class SynopticServiceTest {
   private DischargePatternQuantityCargoPortwiseRepository
       dischargePatternQuantityCargoPortwiseRepository;
 
-  @MockBean private SynopticServiceUtils synopticServiceUtils;
+  @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+  @MockBean SynopticServiceUtils synpoticServiceUtils;
+
+  @MockBean
+  private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
+      dischargeInformationGrpcService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
   public static final String ETA_ETD_FORMAT = "dd-MM-yyyy HH:mm";
 
-  //    @Test
-  //    void testFetchLoadingInformationSynopticDetails() {
-  //        LoadableStudy.LoadingPlanIdRequest request =
-  // LoadableStudy.LoadingPlanIdRequest.newBuilder().setId(1L).setOperationType("1").setIdType("PORT_ROTATION")
-  //                .setPatternId(1L).setPortRotationId(1L).setPortId(1L).build();
-  //        LoadableStudy.LoadingPlanCommonResponse.Builder builder =
-  // LoadableStudy.LoadingPlanCommonResponse.newBuilder();
-  //        Common.ResponseStatus.Builder repBuilder = Common.ResponseStatus.newBuilder();
-  //
-  // Mockito.when(synopticalTableRepository.findAllByPortRotationId(Mockito.anyLong())).thenReturn(getST());
-  //
-  // Mockito.when(this.loadablePlanQuantityRepository.PORT_WISE_CARGO_DETAILS(Mockito.anyLong(),
-  // Mockito.any(), Mockito.anyLong(), Mockito.anyLong()))
-  //                .thenReturn(getLPQ());
-  //        Mockito.when(cargoNominationRepository.findByIdAndIsActive(Mockito.anyLong(),
-  // Mockito.anyBoolean())).thenReturn(getCN());
-  //
-  // Mockito.when(this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndPortRotationIdAndIsActive(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
-  //                .thenReturn(getLPSBD());
-  //
-  // ReflectionTestUtils.setField(synopticServiceUtils,"synopticalTableRepository",this.synopticalTableRepository);
-  //
-  // ReflectionTestUtils.setField(synopticServiceUtils,"loadablePlanQuantityRepository",this.loadablePlanQuantityRepository);
-  //
-  // ReflectionTestUtils.setField(synopticServiceUtils,"cargoNominationRepository",this.cargoNominationRepository);
-  //
-  // ReflectionTestUtils.setField(synopticServiceUtils,"loadablePlanStowageBallastDetailsRepository",this.loadablePlanStowageBallastDetailsRepository);
-  //        try {
-  //            this.synopticService.fetchLoadingInformationSynopticDetails(request, builder,
-  // repBuilder);
-  //            assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
-  //        } catch (GenericServiceException e) {
-  //            e.printStackTrace();
-  //        }
-  //    }
+  @Test
+  void testFetchLoadingInformationSynopticDetails() throws GenericServiceException {
+    LoadableStudy.LoadingPlanIdRequest request =
+        LoadableStudy.LoadingPlanIdRequest.newBuilder()
+            .setId(1L)
+            .setOperationType("1")
+            .setIdType("PORT_ROTATION")
+            .setPatternId(1L)
+            .setPortRotationId(1L)
+            .setPortId(1L)
+            .build();
+    LoadableStudy.LoadingPlanCommonResponse.Builder builder =
+        LoadableStudy.LoadingPlanCommonResponse.newBuilder();
+    Common.ResponseStatus.Builder repBuilder = Common.ResponseStatus.newBuilder();
+
+    doNothing()
+        .when(synpoticServiceUtils)
+        .buildPortRotationResponse(
+            anyLong(),
+            any(LoadableStudy.LoadingPlanCommonResponse.Builder.class),
+            any(Common.ResponseStatus.Builder.class));
+    doNothing()
+        .when(synpoticServiceUtils)
+        .buildCargoToBeLoadedForPort(
+            any(LoadableStudy.LoadingPlanIdRequest.class),
+            any(LoadableStudy.LoadingPlanCommonResponse.Builder.class),
+            any(Common.ResponseStatus.Builder.class));
+    doNothing()
+        .when(synpoticServiceUtils)
+        .buildCargoToBeDischargedFroPort(
+            any(LoadableStudy.LoadingPlanIdRequest.class),
+            any(LoadableStudy.LoadingPlanCommonResponse.Builder.class),
+            any(Common.ResponseStatus.Builder.class));
+    doNothing()
+        .when(synpoticServiceUtils)
+        .buildBallastDetailsBasedOnPort(
+            any(LoadableStudy.LoadingPlanIdRequest.class),
+            any(LoadableStudy.LoadingPlanCommonResponse.Builder.class),
+            any(Common.ResponseStatus.Builder.class));
+    this.synopticService.fetchLoadingInformationSynopticDetails(request, builder, repBuilder);
+  }
 
   private List<SynopticalTable> getST() {
     List<SynopticalTable> synopticalTableList = new ArrayList<>();
@@ -129,6 +149,11 @@ public class SynopticServiceTest {
     loadableStudyPortRotation.setEta(LocalDateTime.now());
     loadableStudyPortRotation.setEtd(LocalDateTime.now());
     loadableStudyPortRotation.setPortOrder(1L);
+    loadableStudyPortRotation.setPortXId(1l);
+    loadableStudyPortRotation.setActive(true);
+    CargoOperation operation = new CargoOperation();
+    operation.setName("1");
+    loadableStudyPortRotation.setOperation(operation);
     loadableStudyPortRotation.setSeaWaterDensity(new BigDecimal(1));
     return loadableStudyPortRotation;
   }
@@ -181,6 +206,7 @@ public class SynopticServiceTest {
     loadablePlanStowageBallastDetails.setFillingPercentage("1");
     loadablePlanStowageBallastDetails.setTankXId(1L);
     loadablePlanStowageBallastDetails.setOperationType("1");
+    loadablePlanStowageBallastDetails.setPortRotationId(1l);
     list.add(loadablePlanStowageBallastDetails);
     return list;
   }
@@ -233,30 +259,24 @@ public class SynopticServiceTest {
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
         new com.cpdss.loadablestudy.entity.LoadableStudy();
     loadableStudy.setId(1L);
+    loadableStudy.setLoadLineXId(1l);
+    loadableStudy.setLoadableStudyStatus(getLSS());
+    loadableStudy.setId(1L);
+    loadableStudy.setPlanningTypeXId(2);
+    loadableStudy.setName("ACTIVE");
+    loadableStudy.setDraftMark(new BigDecimal(1));
+    loadableStudy.setCreatedDateTime(LocalDateTime.now());
+    Set<LoadableStudyPortRotation> loadableStudyPortRotations = new HashSet<>();
+    loadableStudyPortRotations.add(getLSPR());
+    loadableStudy.setPortRotations(loadableStudyPortRotations);
     return loadableStudy;
   }
 
-  // need grpc
-  @Test
-  void testGetSynopticDataByLoadableStudyId() {
-    LoadableStudy.SynopticalTableRequest request =
-        LoadableStudy.SynopticalTableRequest.newBuilder().setLoadableStudyId(1L).build();
-    LoadableStudy.SynopticalTableReply.Builder replyBuilder =
-        LoadableStudy.SynopticalTableReply.newBuilder();
-    Mockito.when(
-            this.loadableStudyRepository.findByIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getOLS());
-    Mockito.when(this.cargoOperationRepository.getOne(Mockito.anyLong())).thenReturn(getCO());
-    Mockito.when(
-            loadableStudyPortRotationRepository.findLastPort(
-                Mockito.any(), Mockito.any(), Mockito.anyBoolean()))
-        .thenReturn(getObj());
-    Mockito.when(loadableStudyPortRotationRepository.getOne(Mockito.anyLong()))
-        .thenReturn(getLSPR());
-    Mockito.when(
-            synopticalTableRepository.findByloadableStudyPortRotation(Mockito.any(), Mockito.any()))
-        .thenReturn(getPST());
+  private LoadableStudyStatus getLSS() {
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setId(1L);
+    loadableStudyStatus.setName("CONFIRMED");
+    return loadableStudyStatus;
   }
 
   private CargoOperation getCO() {
@@ -274,16 +294,6 @@ public class SynopticServiceTest {
     synopticalTable.setIsActive(true);
     synopticalTable.setOperationType("DEP");
     return new PageImpl<>(Collections.singletonList(synopticalTable));
-  }
-
-  // need grpc
-  @Test
-  void testGetSynopticalTablePortDetails() {
-    List<SynopticalTable> synopticalTableList = new ArrayList<>();
-    SynopticalTable synopticalTable = new SynopticalTable();
-    synopticalTable.setId(1L);
-    synopticalTable.setPortXid(1L);
-    synopticalTableList.add(synopticalTable);
   }
 
   @Test
@@ -306,21 +316,46 @@ public class SynopticServiceTest {
     loadableStudyPortRotation.setPortXId(1L);
     loadableStudyPortRotation.setId(1L);
     loadableStudyPortRotation.setPortOrder(1L);
+    loadableStudyPortRotation.setActive(true);
     loadableStudyPortRotations.add(loadableStudyPortRotation);
     return loadableStudyPortRotations;
   }
 
   @Test
-  void testpopulateOnHandQuantityData() throws GenericServiceException {
+  void testPopulateOnHandQuantityData() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
         new com.cpdss.loadablestudy.entity.LoadableStudy();
     loadableStudy.setVoyage(getVoyage());
     loadableStudy.setId(1L);
-    Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
-        Optional.ofNullable(loadableStudy);
+
     LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
     portRotation.setPortOrder(1L);
     portRotation.setId(1L);
+    List<PortDischargingPlanRobDetails> robDetailsList = new ArrayList<>();
+    PortDischargingPlanRobDetails robDetails =
+        PortDischargingPlanRobDetails.newBuilder()
+            .setTankXId(1l)
+            .setQuantity(1)
+            .setDensity(1)
+            .setPortXId(1l)
+            .build();
+    robDetailsList.add(robDetails);
+    PortDischargingPlanRobDetailsReply reply =
+        PortDischargingPlanRobDetailsReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllPortDischargingPlanRobDetails(robDetailsList)
+            .build();
+    List<VesselInfo.VesselTankInfo> tankInfoList = new ArrayList<>();
+    VesselInfo.VesselTankInfo tankInfo =
+        VesselInfo.VesselTankInfo.newBuilder().setTankCategoryId(1l).setTankId(1l).build();
+    tankInfoList.add(tankInfo);
+    VesselInfo.VesselTankReply vesselTankReply =
+        VesselInfo.VesselTankReply.newBuilder().addAllVesselTankInfo(tankInfoList).build();
+
+    when(this.vesselInfoGrpcService.getVesselTanksByTankIds(
+            any(VesselInfo.VesselTankRequest.class)))
+        .thenReturn(vesselTankReply);
     Mockito.when(this.voyageStatusRepository.getOne(Mockito.anyLong()))
         .thenReturn(getVoyageStatus());
     Mockito.when(
@@ -332,7 +367,7 @@ public class SynopticServiceTest {
             this.loadableStudyRepository
                 .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
                     Mockito.any(), Mockito.anyLong(), Mockito.anyBoolean(), Mockito.anyInt()))
-        .thenReturn(loadableStudyOpt);
+        .thenReturn(Optional.of(loadableStudy));
     Mockito.when(this.cargoOperationRepository.getOne(Mockito.anyLong())).thenReturn(getCO());
     Mockito.when(
             this.loadableStudyPortRotationRepository
@@ -347,7 +382,27 @@ public class SynopticServiceTest {
             this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLLSPR());
-    //    this.synopticService.populateOnHandQuantityData(loadableStudyOpt, portRotation);
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getLLSPR());
+
+    when(this.dischargeInformationGrpcService.getPortDischargingPlanRobDetails(
+            any(PortDischargingPlanRobDetailsRequest.class)))
+        .thenReturn(reply);
+    ReflectionTestUtils.setField(spyService, "entityManager", entityManager);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "dischargeInformationGrpcService", dischargeInformationGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "cargoOperationRepository", cargoOperationRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(spyService, "voyageRepository", voyageRepository);
+    ReflectionTestUtils.setField(spyService, "voyageStatusRepository", voyageStatusRepository);
+
+    spyService.populateOnHandQuantityData(Optional.of(loadableStudy), portRotation);
+    Mockito.verify(onHandQuantityRepository).saveAll(Mockito.anyList());
   }
 
   private Voyage getVoyage() {
@@ -368,6 +423,7 @@ public class SynopticServiceTest {
     onHandQuantity.setId(1L);
     onHandQuantity.setTankXId(1L);
     onHandQuantity.setFuelTypeXId(1L);
+    onHandQuantity.setPortRotation(getLSPR());
     onHandQuantity.setDepartureQuantity(new BigDecimal(1));
     onHandQuantities.add(onHandQuantity);
     return onHandQuantities;
@@ -430,9 +486,19 @@ public class SynopticServiceTest {
     assertEquals(1L, builder.getPortRotationId());
   }
 
+  private List<LoadablePlanComminglePortwiseDetails> getPortwiseDetailsList() {
+    List<LoadablePlanComminglePortwiseDetails> commingleCargoDetails = new ArrayList<>();
+    LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails =
+        new LoadablePlanComminglePortwiseDetails();
+    loadablePlanComminglePortwiseDetails.setApi("1");
+    loadablePlanComminglePortwiseDetails.setPortRotationXid(1L);
+    loadablePlanComminglePortwiseDetails.setOperationType("1");
+    commingleCargoDetails.add(loadablePlanComminglePortwiseDetails);
+    return commingleCargoDetails;
+  }
+
   @Test
   void testSetSynopticalCargoDetails() {
-    List<Long> patternIds = new ArrayList<>();
     LoadableStudy.SynopticalTableRequest request =
         LoadableStudy.SynopticalTableRequest.newBuilder().build();
     List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetails =
@@ -467,13 +533,6 @@ public class SynopticServiceTest {
     sortedTankList.add(tankDetail);
     Long firstPortId = 1L;
     Voyage voyage = new Voyage();
-    List<LoadablePlanComminglePortwiseDetails> commingleCargoDetails = new ArrayList<>();
-    LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails =
-        new LoadablePlanComminglePortwiseDetails();
-    loadablePlanComminglePortwiseDetails.setApi("1");
-    loadablePlanComminglePortwiseDetails.setPortRotationXid(1L);
-    loadablePlanComminglePortwiseDetails.setOperationType("1");
-    commingleCargoDetails.add(loadablePlanComminglePortwiseDetails);
     this.synopticService.setSynopticalCargoDetails(
         request,
         cargoDetails,
@@ -483,8 +542,8 @@ public class SynopticServiceTest {
         sortedTankList,
         firstPortId,
         voyage,
-        commingleCargoDetails,
-        patternIds);
+        getPortwiseDetailsList(),
+        Arrays.asList(1l));
     assertEquals("1", builder.getCargoActualTotal());
   }
 
@@ -547,6 +606,13 @@ public class SynopticServiceTest {
     synopticalEntity.setOperationType("ARR");
     synopticalEntity.setLoadableStudyPortRotation(getLSPR());
     LoadableStudy.SynopticalRecord.Builder builder = LoadableStudy.SynopticalRecord.newBuilder();
+
+    this.synopticService.setSynopticalOhqData(
+        ohqEntities, synopticalEntity, builder, getVesselTankDetailList());
+    assertEquals("1", builder.getOhq(0).getActualWeight());
+  }
+
+  private List<VesselInfo.VesselTankDetail> getVesselTankDetailList() {
     List<VesselInfo.VesselTankDetail> sortedTankList = new ArrayList<>();
     VesselInfo.VesselTankDetail vesselTankDetail =
         VesselInfo.VesselTankDetail.newBuilder()
@@ -556,11 +622,10 @@ public class SynopticServiceTest {
             .setTankId(1L)
             .setTankCategoryId(5L)
             .setShowInOhqObq(true)
+            .setTankDisplayOrder(1)
             .build();
     sortedTankList.add(vesselTankDetail);
-    this.synopticService.setSynopticalOhqData(
-        ohqEntities, synopticalEntity, builder, sortedTankList);
-    assertEquals("1", builder.getOhq(0).getActualWeight());
+    return sortedTankList;
   }
 
   @Test
@@ -575,6 +640,13 @@ public class SynopticServiceTest {
     synopticalEntity.setDisplacementActual(new BigDecimal(1));
     synopticalEntity.setDisplacementPlanned(new BigDecimal(1));
     LoadableStudy.SynopticalRecord.Builder builder = LoadableStudy.SynopticalRecord.newBuilder();
+
+    this.synopticService.setSynopticalTableVesselParticulars(
+        synopticalEntity, builder, getVesselDetails());
+    assertEquals("1", builder.getOthersPlanned());
+  }
+
+  private VesselInfo.VesselLoadableQuantityDetails getVesselDetails() {
     VesselInfo.VesselLoadableQuantityDetails vesselLoadableQuantityDetails =
         VesselInfo.VesselLoadableQuantityDetails.newBuilder()
             .setHasLoadicator(true)
@@ -582,9 +654,7 @@ public class SynopticServiceTest {
             .setConstant("1")
             .setDwt("1")
             .build();
-    this.synopticService.setSynopticalTableVesselParticulars(
-        synopticalEntity, builder, vesselLoadableQuantityDetails);
-    assertEquals("1", builder.getOthersPlanned());
+    return vesselLoadableQuantityDetails;
   }
 
   @Test
@@ -714,6 +784,13 @@ public class SynopticServiceTest {
         new com.cpdss.loadablestudy.entity.LoadableStudy();
     loadableStudy.setId(1L);
     loadableStudy.setVoyage(getVoyage());
+    loadableStudy.setConfirmedLoadableStudyId(1l);
+    loadableStudy.setVesselXId(1l);
+    loadableStudy.setLoadLineXId(1l);
+    Set<LoadableStudyPortRotation> portRotationSet = new HashSet<>();
+    portRotationSet.add(getLSPR());
+    loadableStudy.setPortRotations(portRotationSet);
+    loadableStudy.setDraftMark(new BigDecimal(1));
     return Optional.of(loadableStudy);
   }
 
@@ -791,8 +868,6 @@ public class SynopticServiceTest {
             .setLoadablePatternId(1L)
             .setLoadableStudyId(1L)
             .build();
-    LoadableStudy.SynopticalTableReply.Builder replyBuilder =
-        LoadableStudy.SynopticalTableReply.newBuilder();
     Mockito.when(
             this.loadableStudyRepository.findByIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
@@ -855,7 +930,8 @@ public class SynopticServiceTest {
                 Mockito.any(), Mockito.any(), Mockito.anyBoolean()))
         .thenReturn(getLOHQ());
     try {
-      var synopticalTableReply = this.synopticService.saveSynopticalTable(request, replyBuilder);
+      var synopticalTableReply =
+          this.synopticService.saveSynopticalTable(request, getReplyBuilder());
       assertEquals(SUCCESS, synopticalTableReply.getResponseStatus().getStatus());
     } catch (GenericServiceException e) {
       e.printStackTrace();
@@ -872,6 +948,9 @@ public class SynopticServiceTest {
     List<LoadablePattern> loadablePatterns = new ArrayList<>();
     LoadablePattern loadablePattern = new LoadablePattern();
     loadablePattern.setId(1L);
+    loadablePattern.setCaseNumber(1);
+    loadablePattern.setLoadableStudy(getLS());
+    loadablePattern.setLoadableStudyStatus(1L);
     loadablePatterns.add(loadablePattern);
     return loadablePatterns;
   }
@@ -1049,17 +1128,394 @@ public class SynopticServiceTest {
   //       }
   //   }
 
-  // need grpc
   @Test
-  void testGetSynopticalDataByPortId() {
-    LoadableStudy.SynopticalTableRequest request =
-        LoadableStudy.SynopticalTableRequest.newBuilder()
-            .setLoadableStudyId(1L)
-            .setVoyageId(1L)
-            .setPortId(1L)
+  void testGetPortInfo() {
+    SynopticService spyService = spy(SynopticService.class);
+    PortInfo.GetPortInfoByPortIdsRequest portRequest =
+        PortInfo.GetPortInfoByPortIdsRequest.newBuilder().build();
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+
+    var result = spyService.getPortInfo(portRequest);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselDetailForSynopticalTable() {
+    SynopticService spyService = spy(SynopticService.class);
+    VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
             .build();
-    LoadableStudy.SynopticalTableReply.Builder replyBuilder =
-        LoadableStudy.SynopticalTableReply.newBuilder();
+    when(vesselInfoGrpcService.getVesselDetailForSynopticalTable(
+            any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    var result = spyService.getVesselDetailForSynopticalTable(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void getSynopticDataByLoadableStudyId() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
+    LoadableStudy.SynopticalTableRequest request =
+        LoadableStudy.SynopticalTableRequest.newBuilder().setLoadableStudyId(1L).build();
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    Mockito.when(
+            this.loadableStudyRepository.findByIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getOLS());
+    Mockito.when(this.cargoOperationRepository.getOne(Mockito.anyLong())).thenReturn(getCO());
+    when(loadableStudyPortRotationService.getLastPortRotationId(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), any(CargoOperation.class)))
+        .thenReturn(1l);
+    Mockito.when(
+            loadableStudyPortRotationRepository.findLastPort(
+                Mockito.any(), Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getObj());
+    Mockito.when(loadableStudyPortRotationRepository.getOne(Mockito.anyLong()))
+        .thenReturn(getLSPR());
+    Mockito.when(
+            synopticalTableRepository.findByloadableStudyPortRotation(Mockito.any(), Mockito.any()))
+        .thenReturn(getPST());
+    doReturn(vesselReply)
+        .when(spyService)
+        .getSynopticalTableVesselData(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+    doReturn(getPortReply()).when(spyService).getSynopticalTablePortDetails(anyList());
+    doReturn(getLLSPR())
+        .when(spyService)
+        .getSynopticalTablePortRotations(any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+    doNothing()
+        .when(spyService)
+        .buildSynopticalTableReply(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            anyList(),
+            any(PortInfo.PortReply.class),
+            anyList(),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            anyList(),
+            any(VesselInfo.VesselLoadableQuantityDetails.class),
+            anyList(),
+            any(LoadableStudy.SynopticalTableReply.Builder.class));
+
+    ReflectionTestUtils.setField(
+        spyService, "synopticalTableRepository", synopticalTableRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationService", loadableStudyPortRotationService);
+    ReflectionTestUtils.setField(spyService, "cargoOperationRepository", cargoOperationRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+
+    var result = spyService.getSynopticDataByLoadableStudyId(request, getReplyBuilder());
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void getSynopticalTablePortDetails() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
+    doNothing()
+        .when(spyService)
+        .buildPortIdsRequestSynoptical(
+            any(PortInfo.GetPortInfoByPortIdsRequest.Builder.class), anyList());
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    var result = spyService.getSynopticalTablePortDetails(getSynopticalTableList());
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void getSynopticalTableVesselData() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    doReturn(vesselReply)
+        .when(spyService)
+        .getVesselDetailForSynopticalTable(any(VesselInfo.VesselRequest.class));
+
+    var result = spyService.getSynopticalTableVesselData(getSynopticalTableRequest(), getLS());
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void getSynopticalTable() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
+    LoadableStudy.SynopticalTableReply.Builder replyBuilder = getReplyBuilder();
+    List<LoadableStudy.LoadablePattern> loadablePatternList = new ArrayList<>();
+    LoadableStudy.LoadablePattern loadablePattern =
+        LoadableStudy.LoadablePattern.newBuilder()
+            .setLoadablePatternStatusId(2l)
+            .setLoadablePatternId(1l)
+            .build();
+    loadablePatternList.add(loadablePattern);
+
+    LoadableStudy.LoadablePatternReply.Builder lpReply =
+        LoadableStudy.LoadablePatternReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllLoadablePattern(loadablePatternList);
+    when(loadablePatternService.getLoadablePatternList(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePatternReply.Builder.class)))
+        .thenReturn(lpReply);
+    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(getOLS());
+    doReturn(getOLS()).when(spyService).checkDischargeStarted(anyLong(), anyLong());
+    when(synpoticServiceUtils.getsynopticalTableList(anyLong(), anyLong()))
+        .thenReturn(getSynopticalTableList());
+    doReturn(getVesselReply())
+        .when(spyService)
+        .getSynopticalTableVesselData(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+    doReturn(getPortReply()).when(spyService).getSynopticalTablePortDetails(anyList());
+    doReturn(getLLSPR())
+        .when(spyService)
+        .getSynopticalTablePortRotations(any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+
+    doNothing()
+        .when(spyService)
+        .buildSynopticalTableReply(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            anyList(),
+            any(PortInfo.PortReply.class),
+            anyList(),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            anyList(),
+            any(VesselInfo.VesselLoadableQuantityDetails.class),
+            anyList(),
+            any(LoadableStudy.SynopticalTableReply.Builder.class));
+
+    ReflectionTestUtils.setField(spyService, "loadablePatternService", loadablePatternService);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(spyService, "synpoticServiceUtils", synpoticServiceUtils);
+
+    spyService.getSynopticalTable(getSynopticalTableRequest(), replyBuilder);
+    assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void buildSynopticalTableReply() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
+    LoadableStudy.SynopticalTableRequest request =
+        LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    List<LoadablePatternCargoDetails> cargoes = new ArrayList<>();
+
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(getLOBQ());
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(LoadableStudyPortRotation.class),
+            anyBoolean()))
+        .thenReturn(getLOHQ());
+    doNothing()
+        .when(spyService)
+        .populateOnHandQuantityData(any(Optional.class), any(LoadableStudyPortRotation.class));
+    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getLOHQ());
+    when(this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(cargoes);
+    when(this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getLPSBD());
+    when(this.loadablePlanCommingleDetailsPortwiseRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getPortwiseDetailsList());
+    doNothing()
+        .when(spyService)
+        .buildSynopticalRecord(
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.Builder.class),
+            any(PortInfo.PortReply.class));
+    doNothing()
+        .when(spyService)
+        .setSynopticalEtaEtdEstimated(
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.Builder.class),
+            anyList());
+    doNothing()
+        .when(spyService)
+        .setSynopticalCargoDetails(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            anyList(),
+            anyList(),
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.Builder.class),
+            anyList(),
+            anyLong(),
+            any(Voyage.class),
+            anyList(),
+            anyList());
+    doNothing()
+        .when(spyService)
+        .setSynopticalOhqData(
+            anyList(),
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.Builder.class),
+            anyList());
+    doNothing()
+        .when(spyService)
+        .setSynopticalTableVesselParticulars(
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.Builder.class),
+            any(VesselInfo.VesselLoadableQuantityDetails.class));
+    doNothing()
+        .when(spyService)
+        .setSynopticalTableLoadicatorData(
+            any(SynopticalTable.class),
+            anyLong(),
+            any(LoadableStudy.SynopticalRecord.Builder.class));
+    doNothing()
+        .when(synpoticServiceUtils)
+        .setBallastDetails(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.Builder.class),
+            anyList(),
+            anyList());
+    doNothing()
+        .when(synpoticServiceUtils)
+        .setPortDetailForSynoptics(
+            any(SynopticalTable.class), any(LoadableStudy.SynopticalRecord.Builder.class));
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(getOLS());
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(
+        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "synpoticServiceUtils", synpoticServiceUtils);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsPortwiseRepository",
+        loadablePlanCommingleDetailsPortwiseRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanStowageBallastDetailsRepository",
+        loadablePlanStowageBallastDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternCargoDetailsRepository", loadablePatternCargoDetailsRepository);
+    ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+
+    LoadableStudy.SynopticalTableReply.Builder builder = getReplyBuilder();
+    spyService.buildSynopticalTableReply(
+        request,
+        getSynopticalTableList(),
+        getPortReply(),
+        getLLSPR(),
+        getLS(),
+        getVesselTankDetailList(),
+        getVesselDetails(),
+        Arrays.asList(1l),
+        builder);
+    assertFalse(builder.getSynopticalRecordsList().isEmpty());
+  }
+
+  @Test
+  void testBuildPortOperationsTable() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
+    VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
+    List<LoadablePatternCargoDetails> cargoes = new ArrayList<>();
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    List<Long> list = new ArrayList<>(Arrays.asList(1l));
+
+    when(loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getLPSBD());
+    when(onHandQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getLOHQ());
+    when(synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+            anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(getOST());
+    when(this.synopticalTableLoadicatorDataRepository
+            .findBySynopticalTableAndLoadablePatternIdAndIsActive(any(), anyLong(), anyBoolean()))
+        .thenReturn(getSTLD());
+    when(synpoticServiceUtils.getTimezoneConvertedString(any(), anyLong(), anyString()))
+        .thenReturn("1");
+    when(synpoticServiceUtils.getTimezoneConvertedDate(any(), anyLong(), anyBoolean()))
+        .thenReturn(LocalDate.now());
+    when(vesselInfoGrpcService.getVesselDetailByVesselId(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+    doCallRealMethod()
+        .when(loadableStudyPortRotationService)
+        .buildLoadableStudyPortRotationDetails(
+            anyLong(),
+            any(com.cpdss.loadablestudy.domain.LoadableStudy.class),
+            any(ModelMapper.class));
+    when(loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getLLSPR());
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(getOLS());
+    doCallRealMethod()
+        .when(loadableStudyPortRotationService)
+        .buildportRotationDetails(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(com.cpdss.loadablestudy.domain.LoadableStudy.class));
+    doReturn(list)
+        .when(loadableStudyPortRotationService)
+        .getPortRoationPortIds(any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+    doReturn(getPortReply())
+        .when(loadableStudyPortRotationService)
+        .getPortInfo(any(PortInfo.GetPortInfoByPortIdsRequest.class));
+    when(loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(cargoes);
+
+    ReflectionTestUtils.setField(
+        loadableStudyPortRotationService,
+        "loadableStudyPortRotationRepository",
+        loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternCargoDetailsRepository", loadablePatternCargoDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationService", loadableStudyPortRotationService);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(spyService, "synpoticServiceUtils", synpoticServiceUtils);
+    ReflectionTestUtils.setField(
+        spyService,
+        "synopticalTableLoadicatorDataRepository",
+        synopticalTableLoadicatorDataRepository);
+    ReflectionTestUtils.setField(
+        spyService, "synopticalTableRepository", synopticalTableRepository);
+    ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanStowageBallastDetailsRepository",
+        loadablePlanStowageBallastDetailsRepository);
+
+    var result = spyService.buildPortOperationsTable(1l, 1l);
+    assertTrue(!(result.getOperationsTableList().isEmpty()));
+  }
+
+  private VesselInfo.VesselReply getVesselReply() {
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllVesselTanks(getVesselTankDetailList())
+            .setVesselLoadableQuantityDetails(
+                VesselInfo.VesselLoadableQuantityDetails.newBuilder()
+                    .setVesselLightWeight("1")
+                    .build())
+            .build();
+    return vesselReply;
+  }
+
+  @Test
+  void testGetSynopticalDataByPortId() throws GenericServiceException {
+    SynopticService spyService = spy(SynopticService.class);
+    List<LoadableStudy.TankList> tankLists = new ArrayList<>();
+
     Mockito.when(
             this.loadableStudyRepository.findByIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
@@ -1072,5 +1528,190 @@ public class SynopticServiceTest {
             this.synopticalTableRepository.findByLoadableStudyXIdAndIsActiveAndPortXid(
                 Mockito.anyLong(), Mockito.anyBoolean(), Mockito.anyLong()))
         .thenReturn(getST());
+    doReturn(getVesselReply())
+        .when(spyService)
+        .getSynopticalTableVesselData(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+    doNothing()
+        .when(spyService)
+        .buildSynopticalTableReply(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            anyList(),
+            any(PortInfo.PortReply.class),
+            anyList(),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            anyList(),
+            any(VesselInfo.VesselLoadableQuantityDetails.class),
+            anyList(),
+            any(LoadableStudy.SynopticalTableReply.Builder.class));
+    when(onHandQuantityService.groupTanks(anyList())).thenReturn(tankLists);
+    doReturn(getPortReply()).when(spyService).getSynopticalTablePortDetails(anyList());
+    doReturn(getLLSPR())
+        .when(spyService)
+        .getSynopticalTablePortRotations(any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+
+    ReflectionTestUtils.setField(spyService, "onHandQuantityService", onHandQuantityService);
+    ReflectionTestUtils.setField(
+        spyService, "synopticalTableRepository", synopticalTableRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+
+    var result =
+        spyService.getSynopticalDataByPortId(getSynopticalTableRequest(), getReplyBuilder());
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  private PortInfo.PortReply getPortReply() {
+    List<PortInfo.PortDetail> portDetailList = new ArrayList<>();
+    PortInfo.PortDetail portDetail =
+        PortInfo.PortDetail.newBuilder()
+            .setAverageTideHeight("1")
+            .setCode("1")
+            .setWaterDensity("1")
+            .setId(1l)
+            .setName("1")
+            .setTideHeight("1")
+            .setCountryName("1")
+            .setTimezoneId(1l)
+            .setTimezoneOffsetVal("1")
+            .setTimezoneAbbreviation("1")
+            .build();
+    portDetailList.add(portDetail);
+    PortInfo.PortReply portReply =
+        PortInfo.PortReply.newBuilder()
+            .addAllPorts(portDetailList)
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    return portReply;
+  }
+
+  private LoadableStudy.SynopticalTableReply.Builder getReplyBuilder() {
+    LoadableStudy.SynopticalTableReply.Builder replyBuilder =
+        LoadableStudy.SynopticalTableReply.newBuilder();
+    return replyBuilder;
+  }
+
+  private LoadableStudy.SynopticalTableRequest getSynopticalTableRequest() {
+    List<LoadableStudy.SynopticalRecord> recordList = new ArrayList<>();
+    LoadableStudy.SynopticalRecord record =
+        LoadableStudy.SynopticalRecord.newBuilder().setPortRotationId(1l).build();
+    recordList.add(record);
+    LoadableStudy.SynopticalTableRequest request =
+        LoadableStudy.SynopticalTableRequest.newBuilder()
+            .setLoadableStudyId(1L)
+            .setLoadablePatternId(1l)
+            .setVoyageId(1L)
+            .addAllSynopticalRecord(recordList)
+            .setPortId(1L)
+            .setVesselId(1l)
+            .build();
+    return request;
+  }
+
+  private List<SynopticalTable> getSynopticalTableList() {
+    List<SynopticalTable> synopticalTableList = new ArrayList<>();
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setId(1L);
+    synopticalTable.setPortXid(1L);
+    synopticalTable.setOperationType("1");
+    synopticalTable.setLoadableStudyPortRotation(getLSPR());
+    synopticalTableList.add(synopticalTable);
+    return synopticalTableList;
+  }
+
+  @Test
+  void testUpdateSynopticalTable() throws GenericServiceException {
+    StreamRecorder<Common.ResponseStatus> responseObserver = StreamRecorder.create();
+    doCallRealMethod()
+        .when(voyageService)
+        .fetchActiveVoyageByVesselId(
+            any(LoadableStudy.ActiveVoyage.Builder.class), anyLong(), anyLong());
+    Mockito.when(
+            this.voyageRepository.findActiveVoyagesByVesselId(Mockito.anyLong(), Mockito.anyLong()))
+        .thenReturn(getLV());
+    Mockito.when(cargoNominationService.getCargoNominations(Mockito.anyLong()))
+        .thenReturn(getLCN());
+    Mockito.when(
+            loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+                Mockito.anyLong(), Mockito.anyLong()))
+        .thenReturn(getLP());
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+    ReflectionTestUtils.setField(voyageService, "voyageRepository", voyageRepository);
+    ReflectionTestUtils.setField(voyageService, "cargoNominationService", cargoNominationService);
+    ReflectionTestUtils.setField(
+        voyageService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(voyageService, "formatter", formatter);
+
+    when(loadableStudyRepository.findById(anyLong())).thenReturn(getOLS());
+    when(synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+            anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(getOST());
+    doNothing()
+        .when(synpoticServiceUtils)
+        .saveSynopticalBallastData(
+            anyLong(), any(LoadableStudy.SynopticalRecord.class), any(SynopticalTable.class));
+    doNothing()
+        .when(synpoticServiceUtils)
+        .saveSynopticalCargoData(
+            any(LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.class),
+            anyBoolean());
+    doNothing()
+        .when(synpoticServiceUtils)
+        .saveSynopticalOhqData(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(SynopticalTable.class),
+            any(LoadableStudy.SynopticalRecord.class),
+            anyBoolean());
+
+    synopticService.updateSynopticalTable(getSynopticalTableRequest(), responseObserver);
+    List<Common.ResponseStatus> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getStatus());
+  }
+
+  private List<CargoNomination> getLCN() {
+    List<CargoNomination> list = new ArrayList<>();
+    CargoNomination cargoNomination = new CargoNomination();
+    cargoNomination.setCargoXId(1L);
+    cargoNomination.setId(1L);
+    cargoNomination.setApi(new BigDecimal(1));
+    cargoNomination.setColor("1");
+    cargoNomination.setQuantity(new BigDecimal(1));
+    cargoNomination.setTemperature(new BigDecimal(1));
+    cargoNomination.setLastModifiedDateTime(LocalDateTime.now());
+    list.add(cargoNomination);
+    return list;
+  }
+
+  private List<Voyage> getLV() {
+    List<Voyage> voyages = new ArrayList<>();
+    Voyage voyage = new Voyage();
+    voyage.setId(1L);
+    voyage.setVesselXId(1L);
+    voyage.setActualEndDate(LocalDateTime.now());
+    voyage.setActualStartDate(LocalDateTime.now());
+    voyage.setVoyageStartDate(LocalDateTime.now());
+    voyage.setVoyageEndDate(LocalDateTime.now());
+    voyage.setVoyageNo("1");
+    voyage.setVoyageStatus(getVS());
+    Set<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudies = new HashSet<>();
+    loadableStudies.add(getLS());
+    voyage.setLoadableStudies(loadableStudies);
+    voyages.add(voyage);
+    return voyages;
+  }
+
+  private VoyageStatus getVS() {
+    VoyageStatus voyageStatus = new VoyageStatus();
+    voyageStatus.setName("ACTIVE");
+    voyageStatus.setId(1L);
+    return voyageStatus;
   }
 }

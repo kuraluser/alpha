@@ -1,31 +1,42 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
+import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 @TestPropertySource(properties = "cpdss.communication.enable = false")
@@ -35,7 +46,6 @@ public class LoadablePlanServiceTest {
   @Autowired LoadablePlanService loadablePlanService;
   @MockBean CargoNominationRepository cargoNominationRepository;
   @MockBean LoadablePatternCargoDetailsRepository lpCargoDetailsRepository;
-  @MockBean VoyageRepository voyageRepository;
   @MockBean LoadableStudyPortRotationRepository portRotationRepository;
   @Mock private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
   @MockBean private LoadableStudyPortRotationService loadableStudyPortRotationService;
@@ -45,7 +55,7 @@ public class LoadablePlanServiceTest {
   @MockBean private SynopticService synopticService;
   @MockBean private LoadableQuantityRepository loadableQuantityRepository;
   @MockBean private LoadablePlanCommentsRepository loadablePlanCommentsRepository;
-  @MockBean private AlgoService algoService;
+  @MockBean MessageTypes messageTypes;
 
   @MockBean
   private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
@@ -55,6 +65,7 @@ public class LoadablePlanServiceTest {
   @MockBean private LoadablePlanCommingleDetailsRepository loadablePlanCommingleDetailsRepository;
   @MockBean private LoadablePlanQuantityRepository loadablePlanQuantityRepository;
   @MockBean private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
+  @MockBean private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
 
   @MockBean
   private LoadablePlanCommingleDetailsPortwiseRepository
@@ -82,114 +93,495 @@ public class LoadablePlanServiceTest {
   @Value("${algo.stowage.edit.api.url}")
   private String algoUpdateUllageUrl;
 
-  // need grpc config
-  //  @Test
-  //  void testBuildLoadablePlanQuantity() {
-  //    List<LoadablePlanQuantity> loadablePlanQuantities = new ArrayList<>();
-  //    LoadablePlanQuantity loadablePlanQuantity = new LoadablePlanQuantity();
-  //    loadablePlanQuantity.setId(1L);
-  //    loadablePlanQuantity.setDifferenceColor("1");
-  //    loadablePlanQuantity.setDifferencePercentage("1");
-  //    loadablePlanQuantity.setEstimatedApi(new BigDecimal(1));
-  //    loadablePlanQuantity.setCargoNominationTemperature(new BigDecimal(1));
-  //    loadablePlanQuantity.setGrade("1");
-  //    loadablePlanQuantity.setLoadableBbls60f("1");
-  //    loadablePlanQuantity.setLoadableKl("1");
-  //    loadablePlanQuantity.setLoadableBblsDbs("1");
-  //    loadablePlanQuantity.setLoadableLt("1");
-  //    loadablePlanQuantity.setLoadableMt("1");
-  //    loadablePlanQuantity.setMaxTolerence("1");
-  //    loadablePlanQuantity.setMinTolerence("1");
-  //    loadablePlanQuantity.setOrderBbls60f("1");
-  //    loadablePlanQuantity.setOrderBblsDbs("1");
-  //    loadablePlanQuantity.setCargoXId(1L);
-  //    loadablePlanQuantity.setOrderQuantity(new BigDecimal(1));
-  //    loadablePlanQuantity.setSlopQuantity("1");
-  //    loadablePlanQuantity.setTimeRequiredForLoading("1");
-  //    loadablePlanQuantity.setCargoNominationId(1L);
-  //    com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder =
-  //        com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
-  //    Mockito.when(
-  //            this.cargoNominationRepository.findByIdAndIsActive(
-  //                Mockito.anyLong(), Mockito.anyBoolean()))
-  //        .thenReturn(getCargoNomination());
-  //  }
+  @MockBean CargoNominationService cargoNominationService;
+  @MockBean CargoService cargoService;
+  @MockBean LoadableQuantityService loadableQuantityService;
+  @MockBean OnHandQuantityService onHandQuantityService;
+  @MockBean OnBoardQuantityService onBoardQuantityService;
+  @MockBean LoadableStudyRuleService loadableStudyRuleService;
+  @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+  private static final String SUCCESS = "SUCCESS";
+  @MockBean AlgoService algoService;
+  @MockBean private VoyageRepository voyageRepository;
 
-  private Optional<CargoNomination> getCargoNomination() {
-    CargoNomination cargoNomination = new CargoNomination();
-    cargoNomination.setCargoXId(1L);
-    cargoNomination.setCargoNominationPortDetails(getCNPD());
-    return Optional.of(cargoNomination);
+  @Test
+  void testBuildLoadablePlanQuantity() {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
+
+    Mockito.when(
+            this.cargoNominationRepository.findByIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getCargoNomination());
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+
+    spyService.buildLoadablePlanQuantity(getLoadablePlanQuantities(), replyBuilder);
+    assertEquals("1", replyBuilder.getLoadableQuantityCargoDetails(0).getLoadingPorts(0).getName());
   }
 
-  private Set<CargoNominationPortDetails> getCNPD() {
-    Set<CargoNominationPortDetails> cargoNominationPortDetails = new HashSet<>();
-    CargoNominationPortDetails cargoNominationPortDetails1 = new CargoNominationPortDetails();
-    cargoNominationPortDetails1.setPortId(1L);
-    cargoNominationPortDetails.add(cargoNominationPortDetails1);
-    return cargoNominationPortDetails;
+  @Test
+  void testSetLoadingPortForLoadableQuantityCargoDetails() {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
+        LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+    List<Long> lpPortRotationIds = new ArrayList<>(Arrays.asList(1l));
+
+    when(loadablePatternCargoDetailsRepository.findAllPortRotationIdByCargoNomination(anyLong()))
+        .thenReturn(lpPortRotationIds);
+    when(loadableStudyPortRotationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getPortRotation());
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternCargoDetailsRepository", loadablePatternCargoDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+
+    var result =
+        spyService.setLoadingPortForLoadableQuantityCargoDetails(
+            getLoadablePlanQuantities().get(0), builder);
+    assertEquals(false, result);
+  }
+
+  @Test
+  void testFetchPortNameFromPortService() {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    var result = spyService.fetchPortNameFromPortService(1l);
+    assertEquals("1", result.getName());
+  }
+
+  private SynopticalTableLoadicatorData getLoadicatorData() {
+    SynopticalTableLoadicatorData data = new SynopticalTableLoadicatorData();
+    data.setBendingMoment(new BigDecimal(1));
+    data.setCalculatedDraftAftActual(new BigDecimal(1));
+    data.setCalculatedDraftFwdPlanned(new BigDecimal(1));
+    data.setCalculatedDraftMidPlanned(new BigDecimal(1));
+    data.setCalculatedTrimPlanned(new BigDecimal(1));
+    data.setFreeboard(new BigDecimal(1));
+    data.setManifoldHeight(new BigDecimal(1));
+    data.setShearingForce(new BigDecimal(1));
+    return data;
+  }
+
+  private List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails> getStowageDetailsList() {
+    List<com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails> stowageDetailsList =
+        new ArrayList<>();
+    com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails loadablePlanStowageDetails =
+        new com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails();
+    loadablePlanStowageDetails.setId(1L);
+    loadablePlanStowageDetails.setTankId(1l);
+    stowageDetailsList.add(loadablePlanStowageDetails);
+    return stowageDetailsList;
+  }
+
+  @Test
+  void testBuildLoadablePlanPortWiseDetails() {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    LoadabalePatternValidateRequest loadabalePatternValidateRequest =
+        new LoadabalePatternValidateRequest();
+    LoadablePattern pattern = new LoadablePattern();
+    pattern.setLoadableStudy(getLS());
+    pattern.setId(1l);
+    List<LoadableStudyPortRotation> rotationList = new ArrayList<>();
+    rotationList.add(getPortRotation());
+    List<LoadablePatternCargoDetails> cargoDetailsList = new ArrayList<>();
+    List<LoadablePlanStowageBallastDetails> ballastDetailsList = new ArrayList<>();
+    LoadablePlanStowageBallastDetails ballastDetails = new LoadablePlanStowageBallastDetails();
+    ballastDetails.setId(1l);
+    ballastDetailsList.add(ballastDetails);
+    List<LoadablePlanComminglePortwiseDetails> portwiseDetailsList = new ArrayList<>();
+
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(rotationList);
+    when(loadableStudyPortRotationService.getLastPortRotationId(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), any(CargoOperation.class)))
+        .thenReturn(1l);
+    when(this.cargoOperationRepository.getOne(anyLong())).thenReturn(getCargoOp());
+    when(loadableStudyPortRotationService.getLastPort(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), any(CargoOperation.class)))
+        .thenReturn(1l);
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    doReturn(getStowageDetailsList())
+        .when(spyService)
+        .addLoadablePatternsStowageDetails(anyList(), anyBoolean(), anyLong());
+    doReturn(getLoadablePlanBallastDetails())
+        .when(spyService)
+        .addLoadablePlanBallastDetails(anyList(), anyBoolean(), anyLong());
+    when(loadablePatternCargoDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(cargoDetailsList);
+    when(loadablePlanStowageBallastDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(ballastDetailsList);
+    doReturn(getStowageDetailsList())
+        .when(spyService)
+        .addLoadablePlanCommingleDetails(anyList(), anyBoolean(), anyLong());
+    when(loadablePlanCommingleDetailsPortwiseRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(portwiseDetailsList);
+    when(synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+            anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    when(synopticalTableLoadicatorDataRepository
+            .findByloadablePatternIdAndSynopticalTableAndIsActive(
+                anyLong(), any(SynopticalTable.class), anyBoolean()))
+        .thenReturn(getLoadicatorData());
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(spyService, "cargoOperationRepository", cargoOperationRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyPortRotationService", loadableStudyPortRotationService);
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternCargoDetailsRepository", loadablePatternCargoDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanStowageBallastDetailsRepository",
+        loadablePlanStowageBallastDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsPortwiseRepository",
+        loadablePlanCommingleDetailsPortwiseRepository);
+    ReflectionTestUtils.setField(
+        spyService, "synopticalTableRepository", synopticalTableRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "synopticalTableLoadicatorDataRepository",
+        synopticalTableLoadicatorDataRepository);
+    spyService.buildLoadablePlanPortWiseDetails(pattern, loadabalePatternValidateRequest);
+    assertEquals(
+        1l,
+        loadabalePatternValidateRequest
+            .getLoadablePlanPortWiseDetails()
+            .get(0)
+            .getArrivalCondition()
+            .getLoadablePlanStowageDetails()
+            .get(0)
+            .getId());
+    assertEquals(
+        1l, loadabalePatternValidateRequest.getLoadablePlanPortWiseDetails().get(0).getPortId());
+  }
+
+  @Test
+  void testGetLoadablePlanReport() throws GenericServiceException, IOException {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    XSSFWorkbook workbook = new XSSFWorkbook();
+    LoadableStudy.LoadablePlanReportRequest request =
+        LoadableStudy.LoadablePlanReportRequest.newBuilder().build();
+    LoadableStudy.LoadablePlanReportReply.Builder dataChunkBuilder =
+        LoadableStudy.LoadablePlanReportReply.newBuilder();
+    VesselPlanTable vesselPlanTable = VesselPlanTable.builder().build();
+    SheetCoordinates cargoDetailsTableCoordinates = new SheetCoordinates(1, 1);
+    PortOperationTable portOperationTable = PortOperationTable.builder().build();
+    CargoDetailsTable cargoDetailsTable = CargoDetailsTable.builder().build();
+
+    when(synopticService.buildPortOperationsTable(anyLong(), anyLong()))
+        .thenReturn(portOperationTable);
+    doReturn(vesselPlanTable).when(spyService).buildVesselPlanTableData(anyLong(), anyLong());
+    doReturn(cargoDetailsTableCoordinates)
+        .when(spyService)
+        .drawCargoDetailsTable(
+            any(XSSFSheet.class), any(CargoDetailsTable.class), anyInt(), anyInt());
+    doReturn(cargoDetailsTableCoordinates)
+        .when(spyService)
+        .drawPortOperationTable(
+            any(XSSFSheet.class), any(PortOperationTable.class), anyInt(), anyInt());
+    doReturn(cargoDetailsTableCoordinates)
+        .when(spyService)
+        .drawVesselPlanTable(any(XSSFSheet.class), any(VesselPlanTable.class), anyInt(), anyInt());
+    doReturn(cargoDetailsTable).when(spyService).buildCargoDetailsTable(anyLong(), anyLong());
+    ReflectionTestUtils.setField(spyService, "synopticService", synopticService);
+    spyService.getLoadablePlanReport(workbook, request, dataChunkBuilder);
+    assertEquals(SUCCESS, dataChunkBuilder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testBuildVesselPlanTableData() throws GenericServiceException, IOException {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+
+    List<LoadablePlanStowageDetails> stowageDetailsList = new ArrayList<>();
+    stowageDetailsList.add(getLoadablePSD());
+
+    when(this.vesselInfoGrpcService.getVesselDetailByVesselId(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLP());
+    when(this.vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+    when(loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanQuantities());
+    when(loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanCommingleDetails());
+    when(this.vesselInfoGrpcService.getVesselInfoBytankIds(any(VesselInfo.VesselTankRequest.class)))
+        .thenReturn(getVesselTankResponse());
+    when(loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(stowageDetailsList);
+    when(this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsInAndIsActive(
+            anyList(), anyBoolean()))
+        .thenReturn(getLPSDT());
+    when(loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanBallastDetails());
+    when(loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getPlanCommentsList());
+    when(loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class)))
+        .thenReturn(Optional.of(getLoadableQuantity()));
+    when(loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getAlgoStatusList());
+    when(stowageDetailsTempRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLPSDT());
+
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanQuantityRepository", loadablePlanQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsRepository",
+        loadablePlanCommingleDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanStowageDetailsRespository", loadablePlanStowageDetailsRespository);
+    ReflectionTestUtils.setField(
+        spyService, "stowageDetailsTempRepository", stowageDetailsTempRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanBallastDetailsRepository", loadablePlanBallastDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanCommentsRepository", loadablePlanCommentsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableQuantityRepository", loadableQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
+
+    var result = spyService.buildVesselPlanTableData(1l, 1l);
+    assertEquals("1", result.getVesselName());
+  }
+
+  @Test
+  void testGetVesselDetailByVesselId() {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
+    when(this.vesselInfoGrpcService.getVesselDetailByVesselId(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = spyService.getVesselDetailByVesselId(request);
+    assertEquals("SUCCESS", result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testBuildCargoDetailsTable() throws GenericServiceException {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
+    List<CargoNomination> cargoNominationList = new ArrayList<>();
+    cargoNominationList.add(getCargoNomination().get());
+    List<LoadablePlanStowageDetails> stowageDetailsList = new ArrayList<>();
+    stowageDetailsList.add(getLoadablePSD());
+
+    when(this.vesselInfoGrpcService.getVesselDetailByVesselId(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
+            anyLong(), anyBoolean()))
+        .thenReturn(cargoNominationList);
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLP());
+    when(this.vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+    when(loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanQuantities());
+    when(loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanCommingleDetails());
+    when(this.vesselInfoGrpcService.getVesselInfoBytankIds(any(VesselInfo.VesselTankRequest.class)))
+        .thenReturn(getVesselTankResponse());
+    when(loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(stowageDetailsList);
+    when(this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsInAndIsActive(
+            anyList(), anyBoolean()))
+        .thenReturn(getLPSDT());
+    when(loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanBallastDetails());
+    when(loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getPlanCommentsList());
+    when(loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class)))
+        .thenReturn(Optional.of(getLoadableQuantity()));
+    when(loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getAlgoStatusList());
+    when(stowageDetailsTempRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLPSDT());
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanQuantityRepository", loadablePlanQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsRepository",
+        loadablePlanCommingleDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanStowageDetailsRespository", loadablePlanStowageDetailsRespository);
+    ReflectionTestUtils.setField(
+        spyService, "stowageDetailsTempRepository", stowageDetailsTempRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanBallastDetailsRepository", loadablePlanBallastDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanCommentsRepository", loadablePlanCommentsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableQuantityRepository", loadableQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+
+    var result = spyService.buildCargoDetailsTable(1l, 1l);
+    assertEquals(1.0, result.getCargosTableList().get(0).getApi());
+  }
+
+  @Test
+  void testBuildLoadablePlanDetails() throws GenericServiceException {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.newBuilder();
+    List<LoadablePlanStowageDetails> stowageDetailsList = new ArrayList<>();
+    stowageDetailsList.add(getLoadablePSD());
+
+    when(this.vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLP());
+    when(loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanQuantities());
+    when(loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanCommingleDetails());
+    when(this.vesselInfoGrpcService.getVesselInfoBytankIds(any(VesselInfo.VesselTankRequest.class)))
+        .thenReturn(getVesselTankResponse());
+    when(loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(stowageDetailsList);
+    when(this.stowageDetailsTempRepository.findByLoadablePlanStowageDetailsInAndIsActive(
+            anyList(), anyBoolean()))
+        .thenReturn(getLPSDT());
+    when(loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanBallastDetails());
+    when(loadablePlanCommentsRepository.findByLoadablePatternAndIsActiveOrderByIdDesc(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getPlanCommentsList());
+    when(loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class)))
+        .thenReturn(Optional.of(getLoadableQuantity()));
+    when(loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getAlgoStatusList());
+    when(stowageDetailsTempRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLPSDT());
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanQuantityRepository", loadablePlanQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsRepository",
+        loadablePlanCommingleDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanStowageDetailsRespository", loadablePlanStowageDetailsRespository);
+    ReflectionTestUtils.setField(
+        spyService, "stowageDetailsTempRepository", stowageDetailsTempRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanBallastDetailsRepository", loadablePlanBallastDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePlanCommentsRepository", loadablePlanCommentsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableQuantityRepository", loadableQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+
+    spyService.buildLoadablePlanDetails(getLP(), replyBuilder);
+    assertEquals("SUCCESS", replyBuilder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselTanks() {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
+    when(this.vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(getVesselReply());
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = spyService.getVesselTanks(request);
+    assertEquals("SUCCESS", result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testgetVesselTankDetailsByTankIds() {
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    VesselInfo.VesselTankRequest request = VesselInfo.VesselTankRequest.newBuilder().build();
+    when(this.vesselInfoGrpcService.getVesselInfoBytankIds(any(VesselInfo.VesselTankRequest.class)))
+        .thenReturn(getVesselTankResponse());
+
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = spyService.getVesselTankDetailsByTankIds(request);
+    assertEquals("SUCCESS", result.getResponseStatus().getStatus());
   }
 
   @Test
   void testBuildLoadablePlanCommingleDetails() {
-    List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails = new ArrayList<>();
-    LoadablePlanCommingleDetails loadablePlanCommingleDetails1 = new LoadablePlanCommingleDetails();
-    loadablePlanCommingleDetails1.setId(1L);
-    loadablePlanCommingleDetails1.setApi("1");
-    loadablePlanCommingleDetails1.setCargo1Abbreviation("1");
-    loadablePlanCommingleDetails1.setCargo1Bbls60f("1");
-    loadablePlanCommingleDetails1.setCargo1BblsDbs("1");
-    loadablePlanCommingleDetails1.setCargo1Kl("1");
-    loadablePlanCommingleDetails1.setCargo1Lt("1");
-    loadablePlanCommingleDetails1.setCargo1Mt("1");
-    loadablePlanCommingleDetails1.setCargo1Percentage("1");
-    loadablePlanCommingleDetails1.setCargo2Abbreviation("1");
-    loadablePlanCommingleDetails1.setCargo2Bbls60f("1");
-    loadablePlanCommingleDetails1.setCargo1BblsDbs("1");
-    loadablePlanCommingleDetails1.setCargo2Kl("1");
-    loadablePlanCommingleDetails1.setCargo2Lt("1");
-    loadablePlanCommingleDetails1.setCargo2Mt("1");
-    loadablePlanCommingleDetails1.setCargo2Percentage("1");
-    loadablePlanCommingleDetails1.setGrade("1");
-    loadablePlanCommingleDetails1.setQuantity("1");
-    loadablePlanCommingleDetails1.setTankName("1");
-    loadablePlanCommingleDetails1.setSlopQuantity("1");
-    loadablePlanCommingleDetails1.setTemperature("1");
-    loadablePlanCommingleDetails1.setTankShortName("1");
-    loadablePlanCommingleDetails1.setCorrectedUllage("1");
-    loadablePlanCommingleDetails1.setCorrectionFactor("1");
-    loadablePlanCommingleDetails1.setFillingRatio("1");
-    loadablePlanCommingleDetails1.setRdgUllage("1");
-    loadablePlanCommingleDetails1.setTankId(1L);
-    loadablePlanCommingleDetails.add(loadablePlanCommingleDetails1);
+
     com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
     this.loadablePlanService.buildLoadablePlanCommingleDetails(
-        loadablePlanCommingleDetails, replyBuilder);
+        getLoadablePlanCommingleDetails(), replyBuilder);
     assertEquals(1L, replyBuilder.getLoadableQuantityCommingleCargoDetails(0).getId());
     assertEquals("1", replyBuilder.getLoadablePlanStowageDetails(0).getCorrectedUllage());
   }
 
   @Test
   void testBuildBallastGridDetails() {
-    List<LoadablePlanBallastDetails> loadablePlanBallastDetails = new ArrayList<>();
-    LoadablePlanBallastDetails loadablePlanBallastDetails1 = new LoadablePlanBallastDetails();
-    loadablePlanBallastDetails1.setId(1L);
-    loadablePlanBallastDetails1.setCorrectedLevel("1");
-    loadablePlanBallastDetails1.setCorrectionFactor("1");
-    loadablePlanBallastDetails1.setCubicMeter("1");
-    loadablePlanBallastDetails1.setInertia("1");
-    loadablePlanBallastDetails1.setLcg("1");
-    loadablePlanBallastDetails1.setMetricTon("1");
-    loadablePlanBallastDetails1.setPercentage("1");
-    loadablePlanBallastDetails1.setRdgLevel("1");
-    loadablePlanBallastDetails1.setSg("1");
-    loadablePlanBallastDetails1.setTankId(1L);
-    loadablePlanBallastDetails1.setTcg("1");
-    loadablePlanBallastDetails1.setVcg("1");
-    loadablePlanBallastDetails1.setTankName("1");
-    loadablePlanBallastDetails1.setColorCode("1");
-    loadablePlanBallastDetails.add(loadablePlanBallastDetails1);
     List<LoadablePlanStowageDetailsTemp> ballstTempList = new ArrayList<>();
     LoadablePlanStowageDetailsTemp temp = new LoadablePlanStowageDetailsTemp();
     temp.setRdgUllage(new BigDecimal(1));
@@ -201,9 +593,10 @@ public class LoadablePlanServiceTest {
         com.cpdss.common.generated.LoadableStudy.LoadablePattern.newBuilder();
     LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp =
         new LoadablePlanStowageDetailsTemp();
-    loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(loadablePlanBallastDetails1);
+    loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(
+        getLoadablePlanBallastDetails().get(0));
     this.loadablePlanService.buildBallastGridDetails(
-        loadablePlanBallastDetails, ballstTempList, replyBuilder);
+        getLoadablePlanBallastDetails(), ballstTempList, replyBuilder);
     assertEquals(1L, replyBuilder.getLoadablePlanBallastDetails(0).getId());
   }
 
@@ -227,17 +620,26 @@ public class LoadablePlanServiceTest {
     assertEquals("1", builder.getCorrectionFactor());
   }
 
-  // need grpc
   @Test
   void testSetLoadingPortNameFromCargoOperation() {
-    LoadablePlanQuantity lpQuantity = new LoadablePlanQuantity();
-    lpQuantity.setCargoXId(1L);
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+
     Mockito.when(
             this.cargoNominationRepository.findByIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getCargoNomination());
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "cargoNominationRepository", cargoNominationRepository);
+
+    var result =
+        spyService.setLoadingPortNameFromCargoOperation(
+            getLoadablePlanQuantities().get(0), builder);
+    assertEquals(true, result);
   }
 
   @Test
@@ -280,30 +682,6 @@ public class LoadablePlanServiceTest {
   //    assertEquals(1, sheetCoordinates.getColumn());
   //  }
 
-  private List<Float> getLF() {
-    List<Float> fo = new ArrayList<>();
-    fo.add(1f);
-    return fo;
-  }
-
-  private List<VesselTanksTable> getVTTL() {
-    List<VesselTanksTable> vesselTanksTableList = new ArrayList<>();
-    VesselTanksTable vesselTanksTable = VesselTanksTable.builder().build();
-    vesselTanksTable.setTankNo("1");
-    vesselTanksTable.setFrameNoTo(1f);
-    vesselTanksTable.setFrameNoFrom(1f);
-    vesselTanksTable.setColorCode("1");
-    vesselTanksTable.setCargoCode("1");
-    vesselTanksTable.setUllage(1d);
-    vesselTanksTable.setLoadedPercentage(1d);
-    vesselTanksTable.setShipsNBbls(1d);
-    vesselTanksTable.setShipsMt(1d);
-    vesselTanksTable.setShipsKlAt15C(1d);
-
-    vesselTanksTableList.add(vesselTanksTable);
-    return vesselTanksTableList;
-  }
-
   @Test
   void testConvertFromBbls() {
     float value = 1f;
@@ -330,25 +708,6 @@ public class LoadablePlanServiceTest {
   //    assertEquals("1", portOperationTable.getOperationsTableList().get(0).getOperation());
   //  }
 
-  private List<OperationsTable> getLOT() {
-    List<OperationsTable> operationsTables = new ArrayList<>();
-    OperationsTable operationsTable = OperationsTable.builder().build();
-    operationsTable.setOperation("1");
-    operationsTable.setPortName("1");
-    operationsTable.setCountry("1");
-    operationsTable.setLaycanRange("1");
-    operationsTable.setEta("1");
-    operationsTable.setEtd("1");
-    operationsTable.setArrFwdDraft(1d);
-    operationsTable.setArrAftDraft(1d);
-    operationsTable.setArrDisplacement(1d);
-    operationsTable.setDepFwdDraft(1d);
-    operationsTable.setDepAftDraft(1d);
-    operationsTable.setDepDisp(1d);
-    operationsTables.add(operationsTable);
-    return operationsTables;
-  }
-
   //  @Test
   //  void testDrawCargoDetailsTable() {
   //    XSSFWorkbook workbook = new XSSFWorkbook();
@@ -371,88 +730,6 @@ public class LoadablePlanServiceTest {
   //    assertEquals(3, sheetCoordinates.getColumn());
   //    assertEquals(13, sheetCoordinates.getRow());
   //  }
-
-  private List<CargosTable> getLCT() {
-    List<CargosTable> cargosTables = new ArrayList<>();
-    CargosTable cargosTable = CargosTable.builder().build();
-    cargosTable.setCargoCode("1");
-    cargosTable.setColorCode("1");
-    cargosTable.setLoadingPort("1");
-    cargosTable.setApi(1d);
-    cargosTable.setTemp(1d);
-    cargosTable.setCargoNomination(1d);
-    cargosTable.setTolerance("1");
-    cargosTable.setNBbls(1d);
-    cargosTable.setMt(1d);
-    cargosTable.setKl15C(1d);
-    cargosTable.setLt(1d);
-    cargosTable.setDiffBbls(1d);
-    cargosTable.setDiffPercentage(1d);
-    cargosTables.add(cargosTable);
-    return cargosTables;
-  }
-
-  // need grpc
-  //  @Test
-  //  void testBuildCargoDetailsTable() {
-  //    long loadableStudyId = 1L;
-  //    long loadablePatternId = 1L;
-  //    PortInfo.PortDetail portReply = PortInfo.PortDetail.newBuilder().setName("1").build();
-  //    List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetails =
-  //        new ArrayList<>();
-  //    LoadableStudy.LoadableQuantityCargoDetails loadableQuantityCargoDetails1 =
-  //        LoadableStudy.LoadableQuantityCargoDetails.newBuilder()
-  //            .setColorCode("1")
-  //            .setMinTolerence("1")
-  //            .setMaxTolerence("1")
-  //            .setEstimatedAPI("1")
-  //            .setEstimatedTemp("1")
-  //            .setCargoAbbreviation("1")
-  //            .setCargoId(1L)
-  //            .build();
-  //    loadableQuantityCargoDetails.add(loadableQuantityCargoDetails1);
-  //    List<LoadableStudy.LoadablePlanStowageDetails> loadablePlanStowageDetails = new
-  // ArrayList<>();
-  //    LoadableStudy.LoadablePlanStowageDetails loadablePlanStowageDetails1 =
-  //        LoadableStudy.LoadablePlanStowageDetails.newBuilder()
-  //            .setWeight("1")
-  //            .setCargoAbbreviation("1")
-  //            .setTankId(1L)
-  //            .build();
-  //    loadablePlanStowageDetails.add(loadablePlanStowageDetails1);
-  //    LoadableStudy.LoadablePlanDetailsReply loadablePlanDetails =
-  //        LoadableStudy.LoadablePlanDetailsReply.newBuilder()
-  //            .addAllLoadablePlanStowageDetails(loadablePlanStowageDetails)
-  //            .addAllLoadableQuantityCargoDetails(loadableQuantityCargoDetails)
-  //            .build();
-  //    Mockito.when(
-  //
-  // this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
-  //                Mockito.anyLong(), Mockito.anyBoolean()))
-  //        .thenReturn(getLCN());
-  //    Mockito.when(
-  //            this.loadablePatternRepository.findByIdAndIsActive(
-  //                Mockito.anyLong(), Mockito.anyBoolean()))
-  //        .thenReturn(getLP());
-  //    try {
-  //      var cargoDetailsTable =
-  //          this.loadablePlanService.buildCargoDetailsTable(loadableStudyId, loadablePatternId);
-  //    } catch (GenericServiceException e) {
-  //      e.printStackTrace();
-  //    }
-  //  }
-
-  private List<CargoNomination> getLCN() {
-    List<CargoNomination> cargoNominations = new ArrayList<>();
-    CargoNomination cargoNomination = new CargoNomination();
-    cargoNomination.setAbbreviation("1");
-    cargoNomination.setQuantity(new BigDecimal(1));
-    cargoNomination.setTemperature(new BigDecimal(1));
-    cargoNomination.setApi(new BigDecimal(1));
-    cargoNomination.setCargoNominationPortDetails(getCNPD());
-    cargoNominations.add(cargoNomination);
-    return cargoNominations;
-  }
 
   // buildLoadablePlanDetails need grpc
 
@@ -524,37 +801,6 @@ public class LoadablePlanServiceTest {
     assertEquals(1L, replyBuilder.getLoadablePlanStowageDetails(0).getCargoNominationId());
   }
 
-  private List<LoadablePlanStowageDetailsTemp> getLPSDT() {
-    List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTemps = new ArrayList<>();
-    LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp =
-        new LoadablePlanStowageDetailsTemp();
-    loadablePlanStowageDetailsTemp.setId(1L);
-    loadablePlanStowageDetailsTemp.setCorrectedUllage(new BigDecimal(1));
-    loadablePlanStowageDetailsTemp.setCorrectionFactor(new BigDecimal(1));
-    loadablePlanStowageDetailsTemp.setFillingRatio(new BigDecimal(1));
-    loadablePlanStowageDetailsTemp.setQuantity(new BigDecimal(1));
-    loadablePlanStowageDetailsTemp.setRdgUllage(new BigDecimal(1));
-    loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(getLoadablePSD());
-    loadablePlanStowageDetailsTemps.add(loadablePlanStowageDetailsTemp);
-    return loadablePlanStowageDetailsTemps;
-  }
-
-  private LoadablePlanStowageDetails getLoadablePSD() {
-    LoadablePlanStowageDetails loadablePlanStowageDetails = new LoadablePlanStowageDetails();
-    loadablePlanStowageDetails.setId(1L);
-    return loadablePlanStowageDetails;
-  }
-
-  private VesselInfo.VesselTankOrder getvesselTO() {
-    VesselInfo.VesselTankOrder vesselTankOrder =
-        VesselInfo.VesselTankOrder.newBuilder()
-            .setTankId(1L)
-            .setShortName("1")
-            .setTankDisplayOrder(1)
-            .build();
-    return vesselTankOrder;
-  }
-
   @Test
   void testBuildBallastTankLayout() {
     List<VesselInfo.VesselTankDetail> vesselTankDetails = new ArrayList<>();
@@ -571,73 +817,37 @@ public class LoadablePlanServiceTest {
     assertEquals(false, replyBuilder.getBallastFrontTanksList().isEmpty());
   }
 
-  private Optional<LoadablePattern> getLP() {
-    LoadablePattern loadablePattern = new LoadablePattern();
-    loadablePattern.setId(1L);
-    loadablePattern.setLoadableStudy(getLS());
-    return Optional.of(loadablePattern);
-  }
+  @Test
+  void testGetLoadablePlanDetails() throws GenericServiceException {
+    Long vesselId = 1L;
+    List<Long> tankCategory = new ArrayList<>();
+    tankCategory.add(1L);
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    LoadableStudy.LoadablePlanDetailsRequest request =
+        LoadableStudy.LoadablePlanDetailsRequest.newBuilder().setLoadablePatternId(1L).build();
+    LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder =
+        LoadableStudy.LoadablePlanDetailsReply.newBuilder();
+    Mockito.when(
+            this.loadablePatternRepository.findByIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLP());
+    Mockito.when(
+            loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getOLS());
+    doReturn(true)
+        .when(spyService)
+        .validateLoadableStudyForConfimPlan(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
+    doNothing()
+        .when(spyService)
+        .buildLoadablePlanDetails(
+            any(Optional.class), any(LoadableStudy.LoadablePlanDetailsReply.Builder.class));
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
 
-  private com.cpdss.loadablestudy.entity.LoadableStudy getLS() {
-    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.entity.LoadableStudy();
-    loadableStudy.setId(1L);
-    loadableStudy.setVesselXId(1L);
-    return loadableStudy;
-  }
-
-  // need grpc
-  //  @Test
-  //  void testGetLoadablePlanDetails() {
-  //    Long vesselId = 1L;
-  //    List<Long> tankCategory = new ArrayList<>();
-  //    tankCategory.add(1L);
-  //    LoadableStudy.LoadablePlanDetailsRequest request =
-  //        LoadableStudy.LoadablePlanDetailsRequest.newBuilder().setLoadablePatternId(1L).build();
-  //    LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder =
-  //        LoadableStudy.LoadablePlanDetailsReply.newBuilder();
-  //    Mockito.when(
-  //            this.loadablePatternRepository.findByIdAndIsActive(
-  //                Mockito.anyLong(), Mockito.anyBoolean()))
-  //        .thenReturn(getLP());
-  //    Mockito.when(
-  //            loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(),
-  // Mockito.anyBoolean()))
-  //        .thenReturn(getOLS());
-  //    try {
-  //      var loadablePlanDetailsReply =
-  //          this.loadablePlanService.getLoadablePlanDetails(request, replyBuilder);
-  //
-  //    } catch (GenericServiceException e) {
-  //      e.printStackTrace();
-  //    }
-  //  }
-
-  private Optional<com.cpdss.loadablestudy.entity.LoadableStudy> getOLS() {
-    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.entity.LoadableStudy();
-    loadableStudy.setId(1L);
-    loadableStudy.setPortRotations(getportR());
-    return Optional.of(loadableStudy);
-  }
-
-  private Set<LoadableStudyPortRotation> getportR() {
-    Set<LoadableStudyPortRotation> loadableStudyPortRotations = new HashSet<>();
-    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
-    loadableStudyPortRotation.setId(1L);
-    loadableStudyPortRotation.setOperation(getCargoOp());
-    loadableStudyPortRotation.setEta(LocalDateTime.now());
-    loadableStudyPortRotation.setEtd(LocalDateTime.now());
-    loadableStudyPortRotation.setLayCanTo(LocalDate.now());
-    loadableStudyPortRotation.setLayCanFrom(LocalDate.now());
-    loadableStudyPortRotations.add(loadableStudyPortRotation);
-    return loadableStudyPortRotations;
-  }
-
-  private CargoOperation getCargoOp() {
-    CargoOperation cargoOperation = new CargoOperation();
-    cargoOperation.setId(1L);
-    return cargoOperation;
+    var result = spyService.getLoadablePlanDetails(request, replyBuilder);
+    assertEquals(true, result.getConfirmPlanEligibility());
   }
 
   @Test
@@ -652,12 +862,6 @@ public class LoadablePlanServiceTest {
 
   @Test
   void testSaveComment() {
-    LoadablePlanComments entity = new LoadablePlanComments();
-    entity.setId(1L);
-    entity.setComments("1");
-    entity.setCreatedBy("1");
-    entity.setCreatedDateTime(LocalDateTime.now());
-    entity.setLastModifiedDateTime(LocalDateTime.now());
     LoadableStudy.SaveCommentRequest request =
         LoadableStudy.SaveCommentRequest.newBuilder().setUser(1L).build();
     LoadableStudy.SaveCommentReply.Builder replyBuilder =
@@ -668,5 +872,347 @@ public class LoadablePlanServiceTest {
         .thenReturn(getLP());
     var saveCommentReply = this.loadablePlanService.saveComment(request, replyBuilder);
     assertEquals("SUCCESS", replyBuilder.getResponseStatus().getStatus());
+  }
+
+  private List<LoadablePlanComments> getPlanCommentsList() {
+    List<LoadablePlanComments> planCommentsList = new ArrayList<>();
+    LoadablePlanComments entity = new LoadablePlanComments();
+    entity.setId(1L);
+    entity.setComments("1");
+    entity.setCreatedBy("1");
+    entity.setCreatedDateTime(LocalDateTime.now());
+    entity.setLastModifiedDateTime(LocalDateTime.now());
+    planCommentsList.add(entity);
+    return planCommentsList;
+  }
+
+  private LoadableQuantity getLoadableQuantity() {
+    LoadableQuantity quantity = new LoadableQuantity();
+    quantity.setTotalQuantity(new BigDecimal(1));
+    quantity.setLoadableStudyPortRotation(getPortRotation());
+    return quantity;
+  }
+
+  private List<Float> getLF() {
+    List<Float> fo = new ArrayList<>();
+    fo.add(1f);
+    return fo;
+  }
+
+  private List<VesselTanksTable> getVTTL() {
+    List<VesselTanksTable> vesselTanksTableList = new ArrayList<>();
+    VesselTanksTable vesselTanksTable = VesselTanksTable.builder().build();
+    vesselTanksTable.setTankNo("1");
+    vesselTanksTable.setFrameNoTo(1f);
+    vesselTanksTable.setFrameNoFrom(1f);
+    vesselTanksTable.setColorCode("1");
+    vesselTanksTable.setCargoCode("1");
+    vesselTanksTable.setUllage(1d);
+    vesselTanksTable.setLoadedPercentage(1d);
+    vesselTanksTable.setShipsNBbls(1d);
+    vesselTanksTable.setShipsMt(1d);
+    vesselTanksTable.setShipsKlAt15C(1d);
+
+    vesselTanksTableList.add(vesselTanksTable);
+    return vesselTanksTableList;
+  }
+
+  private Set<CargoNominationPortDetails> getCNPD() {
+    Set<CargoNominationPortDetails> cargoNominationPortDetails = new HashSet<>();
+    CargoNominationPortDetails cargoNominationPortDetails1 = new CargoNominationPortDetails();
+    cargoNominationPortDetails1.setPortId(1L);
+    cargoNominationPortDetails.add(cargoNominationPortDetails1);
+    return cargoNominationPortDetails;
+  }
+
+  private List<LoadablePatternAlgoStatus> getAlgoStatusList() {
+    List<LoadablePatternAlgoStatus> algoStatuses = new ArrayList<>();
+    LoadablePatternAlgoStatus algoStatus = new LoadablePatternAlgoStatus();
+    LoadableStudyStatus status = new LoadableStudyStatus();
+    status.setId(1l);
+    algoStatus.setLoadableStudyStatus(status);
+    algoStatuses.add(algoStatus);
+    return algoStatuses;
+  }
+
+  private VesselInfo.VesselReply getVesselReply() {
+    List<VesselInfo.VesselDetail> vesselDetailList = new ArrayList<>();
+    VesselInfo.VesselDetail vesselDetail =
+        VesselInfo.VesselDetail.newBuilder().setName("1").build();
+    vesselDetailList.add(vesselDetail);
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllVessels(vesselDetailList)
+            .build();
+    return vesselReply;
+  }
+
+  private VesselInfo.VesselTankResponse getVesselTankResponse() {
+    List<VesselInfo.VesselTankOrder> tankOrderList = new ArrayList<>();
+    VesselInfo.VesselTankOrder tankOrder =
+        VesselInfo.VesselTankOrder.newBuilder()
+            .setShortName("1")
+            .setTankDisplayOrder(1)
+            .setTankId(1l)
+            .build();
+    tankOrderList.add(tankOrder);
+
+    VesselInfo.VesselTankResponse response =
+        VesselInfo.VesselTankResponse.newBuilder()
+            .addAllVesselTankOrder(tankOrderList)
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    return response;
+  }
+
+  private Optional<com.cpdss.loadablestudy.entity.LoadableStudy> getOLS() {
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.entity.LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setPortRotations(getportR());
+    return Optional.of(loadableStudy);
+  }
+
+  private Set<LoadableStudyPortRotation> getportR() {
+    Set<LoadableStudyPortRotation> loadableStudyPortRotations = new HashSet<>();
+    loadableStudyPortRotations.add(getPortRotation());
+    return loadableStudyPortRotations;
+  }
+
+  private LoadableStudyPortRotation getPortRotation() {
+    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    loadableStudyPortRotation.setId(2L);
+    loadableStudyPortRotation.setOperation(getCargoOp());
+    loadableStudyPortRotation.setEta(LocalDateTime.now());
+    loadableStudyPortRotation.setEtd(LocalDateTime.now());
+    loadableStudyPortRotation.setLayCanTo(LocalDate.now());
+    loadableStudyPortRotation.setLayCanFrom(LocalDate.now());
+    loadableStudyPortRotation.setPortXId(1l);
+    return loadableStudyPortRotation;
+  }
+
+  private CargoOperation getCargoOp() {
+    CargoOperation cargoOperation = new CargoOperation();
+    cargoOperation.setId(1L);
+    return cargoOperation;
+  }
+
+  private Optional<LoadablePattern> getLP() {
+    LoadablePattern loadablePattern = new LoadablePattern();
+    loadablePattern.setId(1L);
+    loadablePattern.setLoadableStudy(getLS());
+    loadablePattern.setCaseNumber(1);
+    loadablePattern.setCreatedDate(LocalDate.now());
+    loadablePattern.setCaseNumber(1);
+    loadablePattern.setLoadableStudyStatus(1l);
+    return Optional.of(loadablePattern);
+  }
+
+  private com.cpdss.loadablestudy.entity.LoadableStudy getLS() {
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.entity.LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setVesselXId(1L);
+    Voyage voyage = new Voyage();
+    voyage.setVoyageNo("1");
+    VoyageStatus status = new VoyageStatus();
+    status.setId(1l);
+    voyage.setVoyageStatus(status);
+    loadableStudy.setVoyage(voyage);
+    return loadableStudy;
+  }
+
+  private List<LoadablePlanStowageDetailsTemp> getLPSDT() {
+    List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTemps = new ArrayList<>();
+    LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp =
+        new LoadablePlanStowageDetailsTemp();
+    loadablePlanStowageDetailsTemp.setId(1L);
+    loadablePlanStowageDetailsTemp.setCorrectedUllage(new BigDecimal(1));
+    loadablePlanStowageDetailsTemp.setCorrectionFactor(new BigDecimal(1));
+    loadablePlanStowageDetailsTemp.setFillingRatio(new BigDecimal(1));
+    loadablePlanStowageDetailsTemp.setQuantity(new BigDecimal(1));
+    loadablePlanStowageDetailsTemp.setRdgUllage(new BigDecimal(1));
+    loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(getLoadablePSD());
+    loadablePlanStowageDetailsTemps.add(loadablePlanStowageDetailsTemp);
+    return loadablePlanStowageDetailsTemps;
+  }
+
+  private List<LoadablePlanCommingleDetails> getLoadablePlanCommingleDetails() {
+    List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails = new ArrayList<>();
+    LoadablePlanCommingleDetails loadablePlanCommingleDetails1 = new LoadablePlanCommingleDetails();
+    loadablePlanCommingleDetails1.setId(1L);
+    loadablePlanCommingleDetails1.setApi("1");
+    loadablePlanCommingleDetails1.setCargo1Abbreviation("1");
+    loadablePlanCommingleDetails1.setCargo1Bbls60f("1");
+    loadablePlanCommingleDetails1.setCargo1BblsDbs("1");
+    loadablePlanCommingleDetails1.setCargo1Kl("1");
+    loadablePlanCommingleDetails1.setCargo1Lt("1");
+    loadablePlanCommingleDetails1.setCargo1Mt("1");
+    loadablePlanCommingleDetails1.setCargo1Percentage("1");
+    loadablePlanCommingleDetails1.setCargo2Abbreviation("1");
+    loadablePlanCommingleDetails1.setCargo2Bbls60f("1");
+    loadablePlanCommingleDetails1.setCargo1BblsDbs("1");
+    loadablePlanCommingleDetails1.setCargo2Kl("1");
+    loadablePlanCommingleDetails1.setCargo2Lt("1");
+    loadablePlanCommingleDetails1.setCargo2Mt("1");
+    loadablePlanCommingleDetails1.setCargo2Percentage("1");
+    loadablePlanCommingleDetails1.setGrade("1");
+    loadablePlanCommingleDetails1.setQuantity("1");
+    loadablePlanCommingleDetails1.setTankName("1");
+    loadablePlanCommingleDetails1.setSlopQuantity("1");
+    loadablePlanCommingleDetails1.setTemperature("1");
+    loadablePlanCommingleDetails1.setTankShortName("1");
+    loadablePlanCommingleDetails1.setCorrectedUllage("1");
+    loadablePlanCommingleDetails1.setCorrectionFactor("1");
+    loadablePlanCommingleDetails1.setFillingRatio("1");
+    loadablePlanCommingleDetails1.setRdgUllage("1");
+    loadablePlanCommingleDetails1.setTankId(1L);
+    loadablePlanCommingleDetails.add(loadablePlanCommingleDetails1);
+    return loadablePlanCommingleDetails;
+  }
+
+  private LoadablePlanStowageDetails getLoadablePSD() {
+    LoadablePlanStowageDetails loadablePlanStowageDetails = new LoadablePlanStowageDetails();
+    loadablePlanStowageDetails.setId(1L);
+    loadablePlanStowageDetails.setTankId(1l);
+    return loadablePlanStowageDetails;
+  }
+
+  private VesselInfo.VesselTankOrder getvesselTO() {
+    VesselInfo.VesselTankOrder vesselTankOrder =
+        VesselInfo.VesselTankOrder.newBuilder()
+            .setTankId(1L)
+            .setShortName("1")
+            .setTankDisplayOrder(1)
+            .build();
+    return vesselTankOrder;
+  }
+
+  private PortInfo.PortReply getPortReply() {
+    List<PortInfo.PortDetail> portDetailList = new ArrayList<>();
+    PortInfo.PortDetail portDetail =
+        PortInfo.PortDetail.newBuilder().setId(1l).setName("1").build();
+    portDetailList.add(portDetail);
+    PortInfo.PortReply reply =
+        PortInfo.PortReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .addAllPorts(portDetailList)
+            .build();
+    return reply;
+  }
+
+  private List<LoadablePlanQuantity> getLoadablePlanQuantities() {
+    List<LoadablePlanQuantity> loadablePlanQuantities = new ArrayList<>();
+    LoadablePlanQuantity loadablePlanQuantity = new LoadablePlanQuantity();
+    loadablePlanQuantity.setId(1L);
+    loadablePlanQuantity.setDifferenceColor("1");
+    loadablePlanQuantity.setDifferencePercentage("1");
+    loadablePlanQuantity.setEstimatedApi(new BigDecimal(1));
+    loadablePlanQuantity.setCargoNominationTemperature(new BigDecimal(1));
+    loadablePlanQuantity.setGrade("1");
+    loadablePlanQuantity.setLoadableBbls60f("1");
+    loadablePlanQuantity.setLoadableKl("1");
+    loadablePlanQuantity.setLoadableBblsDbs("1");
+    loadablePlanQuantity.setLoadableLt("1");
+    loadablePlanQuantity.setLoadableMt("1");
+    loadablePlanQuantity.setMaxTolerence("1");
+    loadablePlanQuantity.setMinTolerence("1");
+    loadablePlanQuantity.setOrderBbls60f("1");
+    loadablePlanQuantity.setOrderBblsDbs("1");
+    loadablePlanQuantity.setCargoXId(1L);
+    loadablePlanQuantity.setOrderQuantity(new BigDecimal(1));
+    loadablePlanQuantity.setSlopQuantity("1");
+    loadablePlanQuantity.setTimeRequiredForLoading("1");
+    loadablePlanQuantity.setCargoNominationId(1L);
+    loadablePlanQuantity.setCargoColor("1");
+    loadablePlanQuantity.setCargoAbbreviation("1");
+    loadablePlanQuantities.add(loadablePlanQuantity);
+    return loadablePlanQuantities;
+  }
+
+  private Optional<CargoNomination> getCargoNomination() {
+    CargoNomination cargoNomination = new CargoNomination();
+    cargoNomination.setCargoXId(1L);
+    cargoNomination.setId(1l);
+    cargoNomination.setQuantity(new BigDecimal(1));
+    cargoNomination.setApi(new BigDecimal(1));
+    cargoNomination.setTemperature(new BigDecimal(1));
+
+    cargoNomination.setCargoNominationPortDetails(getCNPD());
+    return Optional.of(cargoNomination);
+  }
+
+  private List<OperationsTable> getLOT() {
+    List<OperationsTable> operationsTables = new ArrayList<>();
+    OperationsTable operationsTable = OperationsTable.builder().build();
+    operationsTable.setOperation("1");
+    operationsTable.setPortName("1");
+    operationsTable.setCountry("1");
+    operationsTable.setLaycanRange("1");
+    operationsTable.setEta("1");
+    operationsTable.setEtd("1");
+    operationsTable.setArrFwdDraft(1d);
+    operationsTable.setArrAftDraft(1d);
+    operationsTable.setArrDisplacement(1d);
+    operationsTable.setDepFwdDraft(1d);
+    operationsTable.setDepAftDraft(1d);
+    operationsTable.setDepDisp(1d);
+    operationsTables.add(operationsTable);
+    return operationsTables;
+  }
+
+  private List<LoadablePlanBallastDetails> getLoadablePlanBallastDetails() {
+    List<LoadablePlanBallastDetails> loadablePlanBallastDetails = new ArrayList<>();
+    LoadablePlanBallastDetails loadablePlanBallastDetails1 = new LoadablePlanBallastDetails();
+    loadablePlanBallastDetails1.setId(1L);
+    loadablePlanBallastDetails1.setCorrectedLevel("1");
+    loadablePlanBallastDetails1.setCorrectionFactor("1");
+    loadablePlanBallastDetails1.setCubicMeter("1");
+    loadablePlanBallastDetails1.setInertia("1");
+    loadablePlanBallastDetails1.setLcg("1");
+    loadablePlanBallastDetails1.setMetricTon("1");
+    loadablePlanBallastDetails1.setPercentage("1");
+    loadablePlanBallastDetails1.setRdgLevel("1");
+    loadablePlanBallastDetails1.setSg("1");
+    loadablePlanBallastDetails1.setTankId(1L);
+    loadablePlanBallastDetails1.setTcg("1");
+    loadablePlanBallastDetails1.setVcg("1");
+    loadablePlanBallastDetails1.setTankName("1");
+    loadablePlanBallastDetails1.setColorCode("1");
+    loadablePlanBallastDetails.add(loadablePlanBallastDetails1);
+    return loadablePlanBallastDetails;
+  }
+
+  private List<CargosTable> getLCT() {
+    List<CargosTable> cargosTables = new ArrayList<>();
+    CargosTable cargosTable = CargosTable.builder().build();
+    cargosTable.setCargoCode("1");
+    cargosTable.setColorCode("1");
+    cargosTable.setLoadingPort("1");
+    cargosTable.setApi(1d);
+    cargosTable.setTemp(1d);
+    cargosTable.setCargoNomination(1d);
+    cargosTable.setTolerance("1");
+    cargosTable.setNBbls(1d);
+    cargosTable.setMt(1d);
+    cargosTable.setKl15C(1d);
+    cargosTable.setLt(1d);
+    cargosTable.setDiffBbls(1d);
+    cargosTable.setDiffPercentage(1d);
+    cargosTables.add(cargosTable);
+    return cargosTables;
+  }
+
+  private List<CargoNomination> getLCN() {
+    List<CargoNomination> cargoNominations = new ArrayList<>();
+    CargoNomination cargoNomination = new CargoNomination();
+    cargoNomination.setAbbreviation("1");
+    cargoNomination.setQuantity(new BigDecimal(1));
+    cargoNomination.setTemperature(new BigDecimal(1));
+    cargoNomination.setApi(new BigDecimal(1));
+    cargoNomination.setCargoNominationPortDetails(getCNPD());
+    cargoNominations.add(cargoNomination);
+    return cargoNominations;
   }
 }

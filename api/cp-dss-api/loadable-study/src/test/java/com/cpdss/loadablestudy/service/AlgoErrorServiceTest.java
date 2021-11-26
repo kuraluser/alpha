@@ -8,11 +8,7 @@ import static org.mockito.Mockito.when;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.scheduler.ScheduledTaskRequest;
 import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
-import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
-import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.*;
 import io.grpc.internal.testing.StreamRecorder;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +36,7 @@ public class AlgoErrorServiceTest {
   private static final String FAILED = "FAILED";
 
   @Test
-  void testsaveAlgoError() {
+  void testSaveAlgoError() {
     com.cpdss.common.generated.LoadableStudy.AlgoErrors request =
         LoadableStudy.AlgoErrors.newBuilder().setErrorHeading("1").setId(1l).build();
     AlgoErrorHeading heading = new AlgoErrorHeading();
@@ -58,7 +54,7 @@ public class AlgoErrorServiceTest {
   }
 
   @Test
-  void testsaveAlgoErrorWithException() {
+  void testSaveAlgoErrorWithException() {
     com.cpdss.common.generated.LoadableStudy.AlgoErrors request =
         LoadableStudy.AlgoErrors.newBuilder().setErrorHeading("1").setId(1l).build();
     AlgoErrorService spyService = Mockito.spy(this.algoErrorService);
