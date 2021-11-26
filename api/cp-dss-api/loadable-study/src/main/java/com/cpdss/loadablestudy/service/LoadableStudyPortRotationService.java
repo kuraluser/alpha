@@ -311,6 +311,7 @@ public class LoadableStudyPortRotationService {
         .ifPresent(layCanTo -> builder.setLayCanTo(layCanFormatter.format(layCanTo)));
     ofNullable(entity.getPortOrder()).ifPresent(builder::setPortOrder);
     ofNullable(entity.getPortRotationType()).ifPresent(builder::setPortRotationType);
+    ofNullable(entity.getVersion()).ifPresent(builder::setVersion);
     if (entity.getPortXId() != null && entity.getPortXId() > 0) {
       this.setPortTimezoneId(entity.getPortXId(), builder);
     }

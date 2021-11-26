@@ -992,6 +992,7 @@ message PortRotationDetail{
 	int64 percentage = 26;
 	repeated int64 tanks = 27;
 	string portRotationType=28;
+	int64 version = 29;
 	
 }
 

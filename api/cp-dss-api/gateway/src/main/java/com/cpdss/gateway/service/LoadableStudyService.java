@@ -959,6 +959,7 @@ public class LoadableStudyService {
                 });
       }
       port.setPortType(portDetail.getPortRotationType());
+      port.setVersion(portDetail.getVersion());
       response.getPortList().add(port);
       response.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));

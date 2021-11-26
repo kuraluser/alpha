@@ -79,4 +79,6 @@ public class PortRotation {
   private List<CargoNomination> cargoNominationList;
 
   private String portType;
+  
+  private Long version;
 }
