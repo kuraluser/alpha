@@ -236,7 +236,7 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   * @memberof LoadingDischargingDetailsComponent
   */
   trimValueChange(field) {
-    if (this.loadingDischargingDetailsForm.valid && this.loadingDischargingDetailsForm.value[field]) {
+    if (!this.fieldError(field)) {
       this.loadingDischargingDetailsResponse.trimAllowed[field] = this.loadingDischargingDetailsForm.value[field];
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
     }

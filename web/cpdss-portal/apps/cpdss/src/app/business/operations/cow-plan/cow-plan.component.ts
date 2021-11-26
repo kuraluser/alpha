@@ -156,7 +156,20 @@ export class CowPlanComponent implements OnInit {
       this.cowDetailsForm.controls.washTanksWithDifferentCargo.disable();
       this.cowDetailsForm.controls.tanksWashingWithDifferentCargo.disable();
       this.cowDetailsForm.controls?.cowPercentage.setValidators([Validators.required]);
+
+      this.cowDetailsForm.controls.cowStart.disable();
+      this.cowDetailsForm.controls.cowEnd.disable();
+      this.cowDetailsForm.controls.cowDuration.disable();
+      this.cowDetailsForm.controls.cowTrimMin.disable();
+      this.cowDetailsForm.controls.cowTrimMax.disable();
+
     } else {
+      this.cowDetailsForm.controls.cowStart.enable();
+      this.cowDetailsForm.controls.cowEnd.enable();
+      this.cowDetailsForm.controls.cowDuration.enable();
+      this.cowDetailsForm.controls.cowTrimMin.enable();
+      this.cowDetailsForm.controls.cowTrimMax.enable();
+
       this.cowDetailsForm.controls.cowPercentage.disable();
       this.cowDetailsForm.controls.allCOWTanks.enable();
       this.cowDetailsForm.controls.bottomCOWTanks.enable();
