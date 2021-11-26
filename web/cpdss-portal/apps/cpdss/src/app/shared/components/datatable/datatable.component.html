@@ -289,6 +289,15 @@
                                     <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
                                         <span>{{
                                             getMultiselectedDataAsLabel(rowData[col.field]?.value, col.fieldOptionLabel,col.maxSelectedLabels)}}</span>
+                                        <ng-container *ngIf="col.multiSelectShowTooltip && col.maxSelectedLabels && rowData[col.field]?.value.length > col.maxSelectedLabels">
+                                            <p-overlayPanel #op appendTo="body" styleClass="tank-tooltip multi-select-tooltip">
+                                                <ul *ngIf="rowData[col.field]?.value.length">
+                                                    <li class="col" *ngFor="let item of rowData[col.field]?.value">{{item.reason}}</li>
+                                                </ul>
+                                            </p-overlayPanel>
+                                            <span class="inline-block ml-10 pi pi-info-circle" (mouseenter)="op.toggle($event)"
+                                            (mouseleave)="op.toggle($event)"></span>
+                                        </ng-container>
                                     </ng-container>
                                 </ng-container>
 
@@ -366,7 +375,7 @@
                                             (onBlur)="onBlurDateTime($event,rowIndex, col.field,rowData, col)" (onClose)="onDatePanelClosed($event,rowIndex, col.field,rowData, col)"
                                             [formControlName]="col.field" (onInput)="coldatetime.hideOverlay();onInputTime=true"
                                             [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
-                                            inputId="{{col.field+'_'+rowIndex + 'input'}}" 
+                                            inputId="{{col.field+'_'+rowIndex + 'input'}}"
                                             id="{{col.field+'_'+rowIndex}}" [minDate]="col.minDate"
                                             [dateFormat]="col.dateFormat ? col.dateFormat : 'dd-mm-yy'"
                                             [hideOnDateTimeSelect]="false" #coldatetime>

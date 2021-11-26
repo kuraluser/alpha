@@ -392,6 +392,7 @@ export class LoadingDischargingTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.MULTISELECT,
         fieldOptionLabel: 'reason',
         maxSelectedLabels: 2,
+        multiSelectShowTooltip: true,
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_SELECT_REASON',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_REQUIRED'

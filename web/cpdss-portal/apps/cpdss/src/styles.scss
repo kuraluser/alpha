@@ -3190,19 +3190,24 @@ textarea{
 }
 .full-wash{
   display: inline-block;
-  height: 21px; 
+  height: 21px;
   width: 21px;
  }
  .top-wash{
   display: inline-block;
-   height: 19px; 
+   height: 19px;
    width: 18px;
   }
   .bottom-wash{
     display: inline-block;
-   height: 19px; 
+   height: 19px;
    width: 18px;
   }
 .text-faded{
   opacity: 0.5;
+}
+
+.multi-select-tooltip {
+  background: #f8f8f8 !important;
+  border: 1px solid #bebebe !important;
 }

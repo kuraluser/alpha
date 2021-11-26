@@ -15,6 +15,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { QuantityDecimalFormatPipeModule } from '../../pipes/quantity-decimal-format/quantity-decimal-format.module';
 import {InputMaskModule} from 'primeng/inputmask';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 /**
  * Module for DataTable
@@ -25,7 +26,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 @NgModule({
   declarations: [DatatableComponent],
   imports: [
-    CommonModule,  
+    CommonModule,
     ReactiveFormsModule,
     TableModule,
     DropdownModule,
@@ -39,7 +40,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     TooltipModule,
     QuantityDecimalFormatPipeModule,
     InputMaskModule,
-    MultiSelectModule
+    MultiSelectModule,
+    OverlayPanelModule
   ],
   exports: [DatatableComponent],
   providers: [DecimalPipe]
