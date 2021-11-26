@@ -7,8 +7,9 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 import { tankPreferenceDuplicationValidator } from '../directives/validator/tank-preference-duplication-validator.directive';
 import { IMode } from '../../../shared/models/common.model';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
-import { durationValidator } from '../directives/validator/duration-validator.directive';
+
 import { numberValidator } from '../../core/directives/number-validator.directive';
+import { compareDischargeTimeValidation } from '../directives/validator/compare-discharge-time-validator.directive';
 
 /**
  * Component class for COW plan setion
@@ -92,8 +93,8 @@ export class CowPlanComponent implements OnInit {
       allCOWTanks: this.fb.control(this.cowDetails?.allCOWTanks),
       selectedAllCOWTanks: this.joinDropOptionsToLabel(this.cowDetails?.allCOWTanks),
       tanksWashingWithDifferentCargo: this.fb.array([...tanksWashingWithDifferentCargo]),
-      cowStart: this.fb.control(this.cowDetails?.cowStart, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
-      cowEnd: this.fb.control(this.cowDetails?.cowEnd, [durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]),
+      cowStart: this.fb.control(this.cowDetails?.cowStart, [compareDischargeTimeValidation(this.cowDetails?.totalDuration,'cowEnd')]),
+      cowEnd: this.fb.control(this.cowDetails?.cowEnd, [compareDischargeTimeValidation(this.cowDetails?.totalDuration,'cowStart')]),
       cowDuration: this.fb.control(this.cowDetails?.cowDuration),
       cowTrimMin: this.fb.control(this.cowDetails?.cowTrimMin, [Validators.required, Validators.min(3.5), Validators.max(4.5), numberValidator(2, 1)]),
       cowTrimMax: this.fb.control(this.cowDetails?.cowTrimMax, [Validators.required, Validators.min(5.5), Validators.max(6.5), numberValidator(2, 1)]),
@@ -201,16 +202,17 @@ export class CowPlanComponent implements OnInit {
     const startTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowStart.value);
     const endTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowEnd.value);
     const duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
+    
     this.cowDetailsForm.controls.cowDuration.setValue(this.loadingDischargingTransformationService.convertMinutesToHHMM(duration));
     if (startTimeInMinutes) {
-      this.cowDetailsForm.controls?.cowEnd.setValidators([Validators.required, durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+      this.cowDetailsForm.controls?.cowEnd.setValidators([Validators.required, compareDischargeTimeValidation(this.cowDetails?.totalDuration,'cowStart')]);
     } else{
-      this.cowDetailsForm.controls?.cowEnd.setValidators([durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+      this.cowDetailsForm.controls?.cowEnd.setValidators([compareDischargeTimeValidation(this.cowDetails?.totalDuration,'cowStart')]);
     }
     if (endTimeInMinutes) {
-      this.cowDetailsForm.controls?.cowStart.setValidators([Validators.required, durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+      this.cowDetailsForm.controls?.cowStart.setValidators([Validators.required, compareDischargeTimeValidation(this.cowDetails?.totalDuration,'cowEnd')]);
     } else {
-      this.cowDetailsForm.controls?.cowStart.setValidators([durationValidator(Number(this.maxDuration[0]), Number(this.maxDuration[1]))]);
+      this.cowDetailsForm.controls?.cowStart.setValidators([compareDischargeTimeValidation(this.cowDetails?.totalDuration,'cowEnd')]);
     }
     this.cowDetailsForm.controls?.cowStart.updateValueAndValidity();
     this.cowDetailsForm.controls?.cowEnd.updateValueAndValidity();

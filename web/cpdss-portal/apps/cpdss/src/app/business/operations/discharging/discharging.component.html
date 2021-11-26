@@ -1,9 +1,14 @@
-<div class="container-fluid">
+<div class="container-fluid pt-5">
   <div class="row">
-    <div class="col text-uppercase pt-5">
+    <div class="pl-15 text-uppercase pt-5">
       {{selectedPortName}}
     </div>
-    <div class="col text-right">
+    <div class="col">
+      <div class="mb-5 text-right text-danger"><span class="error-icon mr-5">!</span>
+        {{'DISCHARGE_OPERATION_REGENARATE_INFO_MESSAGE' | translate}}
+      </div>
+    </div>
+    <div class="pr-15 text-right">
       <button class="btn btn-main mr-10" id="discharge-plan-view-error" [disabled]="disablePlanViewErrorBtn"
         (click)="viewError()">{{'DISCHARGING_INFORMATION_VIEW_ERROR_BUTTON_LABEL' |translate}}</button>
       <button class="btn btn-main mr-10" id="in-use" [disabled]="true">

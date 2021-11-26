@@ -2170,6 +2170,9 @@
   "DISCHARGE_STUDY_OHQ_NO_PORTS_AVAILABLE": "No ports available",
   "DISCHARGE_STUDY_NAME_MAX_LENGTH": "Maximum allowed character length is 100",
   "MIN_BALLAST_RATE_COMPARE": "Should be less than max ballasting rate",
-  "MAX_BALLAST_RATE_COMPARE": "Should be greater than min ballasting rate"
+  "MAX_BALLAST_RATE_COMPARE": "Should be greater than min ballasting rate",
+  "DISCHARGING_COW_START_DURATION_TIME": "Please enter valid cow start time",
+  "DISCHARGING_COW_END_DURATION_TIME": "Please enter valid cow end time",
+  "DISCHARGE_OPERATION_REGENARATE_INFO_MESSAGE": "If there is any change in discharging information, discharging rules, please regenerate the plan to get the updated figures."
 }
 

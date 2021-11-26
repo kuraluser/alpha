@@ -218,7 +218,7 @@ export class DischargeStudyViewPlanTransformationService {
     
     const unitConversion = {
       kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
-      bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
+      bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
     }
     _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color, true, false , false);
     _cargoDetailValuObject.bbls = new ValueObject<string>(unitConversion.bbls ? unitConversion.bbls?.toString() : '0', true, false);

@@ -92,6 +92,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
   errorPopup: boolean;
   errorMessage: IAlgoError[];
   isPlanConfirmed: IDischargeStudy;
+  isDischargePattern: boolean;
 
   @HostListener('window:beforeunload')
   canDeactivate(): Observable<boolean> | boolean {
@@ -133,7 +134,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
         localStorage.setItem("vesselId", this.vesselId.toString());
         localStorage.setItem("voyageId", this.voyageId.toString());
         localStorage.setItem("dischargeStudyId", this.dischargeStudyId.toString());
-
+        this.isDischargePattern = false;
         this.dischargeStudies = null;
 
 
@@ -152,6 +153,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     if (event.data?.syncType !== 'discharge-study-plan-status') {
       return;
     }
+    this.isDischargePattern = false;
     if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
       this.globalErrorHandler.sessionOutMessage();
     } else if (environment.name !== 'shore' && (event?.data?.status === '200' || event?.data?.responseStatus?.status === '200')) {
@@ -550,7 +552,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       selectedDischargeStudyName: this.selectedDischargeStudy?.name,
       processId: null
     }
-
+    this.isDischargePattern = true;
     try {
       const res = await this.dischargeStudyDetailsApiService.generateDischargePattern(this.vesselId, this.voyageId, this.dischargeStudyId).toPromise();
       if (res.responseStatus.status === '200') {
@@ -567,6 +569,7 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
       }
     }
     catch (errorResponse) {
+      this.isDischargePattern = false;
     }
     this.ngxSpinnerService.hide();
   }

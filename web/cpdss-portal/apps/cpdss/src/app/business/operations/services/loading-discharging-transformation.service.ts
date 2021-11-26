@@ -1273,13 +1273,15 @@ export class LoadingDischargingTransformationService {
         emptyTanks.push(dischargingInformation?.cargoTanks.find(tankObj => tankObj.id === tank?.tankId));
       }
     });
-
-    tanksWashingWithDifferentCargo.push({
-      cargo: { id: 0, abbreviation: 'NIL', cargoNominationId: 0 },
-      washingCargo: null,
-      tanks: null,
-      selectedTanks: emptyTanks
-    });
+    
+    if(emptyTanks?.length) {
+      tanksWashingWithDifferentCargo.push({
+        cargo: { id: 0, abbreviation: 'NIL', cargoNominationId: 0 },
+        washingCargo: null,
+        tanks: null,
+        selectedTanks: emptyTanks
+      });
+    }
 
     cowDetails.tanksWashingWithDifferentCargo = tanksWashingWithDifferentCargo?.map(cargoDetails => {
       const _cargoDetails: ITanksWashingWithDifferentCargoResponse = dischargingInformationResponse?.cowPlan?.cargoCow?.find(cargoObj => cargoObj?.cargoNominationId === cargoDetails?.cargo?.cargoNominationId);
@@ -1328,11 +1330,13 @@ export class LoadingDischargingTransformationService {
       },
       cowStart: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'invalidDuration': 'DISCHARGING_COW_DURATION_MAX_ERROR'
+        'invalidDuration': 'DISCHARGING_COW_DURATION_MAX_ERROR',
+        'invalidTime': 'DISCHARGING_COW_START_DURATION_TIME'
       },
       cowEnd: {
         'required': 'DISCHARGING_COW_REQUIRED',
-        'invalidDuration': 'DISCHARGING_COW_DURATION_MAX_ERROR'
+        'invalidDuration': 'DISCHARGING_COW_DURATION_MAX_ERROR',
+        'invalidTime': 'DISCHARGING_COW_END_DURATION_TIME'
       }
     }
   }
