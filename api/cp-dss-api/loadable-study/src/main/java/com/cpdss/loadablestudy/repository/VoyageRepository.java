@@ -93,6 +93,6 @@ public interface VoyageRepository
 
   @Transactional
   @Modifying
-  @Query("UPDATE Voyage vg SET vg.isActive = false WHERE vg.vessel_xid = ?1 and vg.is_active = true")
+  @Query("UPDATE Voyage vg SET vg.isActive = false WHERE vg.vesselXId = ?1 and vg.isActive = true")
   void deActivateAllVoyageByVesselId(Long vesselId);
 }
