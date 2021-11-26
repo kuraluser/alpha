@@ -1107,9 +1107,15 @@ export class LoadingDischargingTransformationService {
       });
     });
     dischargingInformation.cargoTanks = cargoTanks;
-
+    const dischargeQuantityCargoDetails = [];
+    dischargingInformationResponse?.cargoVesselTankDetails?.dischargeQuantityCargoDetails?.map(item => {
+      if (item.shipFigure) {
+        dischargeQuantityCargoDetails.push(item);
+      }
+    });
+    
     //Update cargo to be discharged details
-    const loadableQuantityCargoDetails: ILoadedCargo[] = this.getCargoToBeDischargedAsValueObject(dischargingInformationResponse?.cargoVesselTankDetails?.dischargeQuantityCargoDetails, listData);
+    const loadableQuantityCargoDetails: ILoadedCargo[] = this.getCargoToBeDischargedAsValueObject(dischargeQuantityCargoDetails, listData);
 
     dischargingInformation.cargoVesselTankDetails = {
       cargoConditions: dischargingInformationResponse?.cargoVesselTankDetails?.cargoConditions,

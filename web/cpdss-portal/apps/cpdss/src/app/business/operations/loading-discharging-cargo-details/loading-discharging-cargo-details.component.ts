@@ -8,6 +8,7 @@ import { ICargoVesselTankDetails } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DecimalPipe } from '@angular/common';
 
 /**
  * Component class for loading discharging berth component
@@ -52,6 +53,8 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestro
   cargoConditions: any = [];
   cargoQuantities: ICargoQuantities[];
   cargoTankOptions: ITankOptions = { isFullyFilled: false, showTooltip: true, isSelectable: false, showFillingPercentage: true, weightField: 'plannedWeight', showWeight: true, weightUnit: 'MT', commodityNameField: 'abbreviation', ullageField: 'correctedUllage', ullageUnit: AppConfigurationService?.settings?.ullageUnit, densityField: 'api', fillingPercentageField: 'fillingRatio' }
+  showComminglePopup = false;
+  commingleDetails: any[];
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _cargoVesselTankDetails: ICargoVesselTankDetails;
@@ -61,6 +64,7 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestro
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private quantityPipe: QuantityPipe,
     private translateService: TranslateService,
+    private _decimalPipe: DecimalPipe,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -96,5 +100,29 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestro
    */
   convertIntoSelectedUnit() {
     this.cargoTanks = this.loadingDischargingTransformationService.formatCargoTanks(this.cargoVesselTankDetails?.cargoTanks, this.cargoVesselTankDetails?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+  }
+
+  /**
+   * Handler for show commingle pop up
+   * @param {Event} data
+   * @memberof LoadingDischargingCargoDetailsComponent
+   */
+   showCommingle(data) {
+    this.cargoVesselTankDetails;
+    const commingleDetails = {...data};
+    let tankData;
+    this.cargoTanks.map(row => {
+      row.map(tank => {
+        if (tank.id === data.tankId) {
+          tankData = tank;
+        }
+      })
+    });
+    commingleDetails.tankName = tankData ? tankData.name : '';
+    commingleDetails.cargoQuantity = this._decimalPipe.transform(commingleDetails.cargo1Mt, '1.2-2') + '\n' + this._decimalPipe.transform(commingleDetails.cargo2Mt, '1.2-2');
+    commingleDetails.cargoPercentage = commingleDetails.cargo1Abbreviation + '-' + ((commingleDetails.cargo1Mt / commingleDetails.plannedWeight) * 100).toFixed(2) + '%\n' + commingleDetails.cargo2Abbreviation + '-' + ((commingleDetails.cargo2Mt / commingleDetails.plannedWeight) * 100).toFixed(2) + '%';
+    commingleDetails.quantity = this._decimalPipe.transform(commingleDetails.plannedWeight, '1.2-2');
+    this.commingleDetails = [commingleDetails];
+    this.showComminglePopup = true;
   }
 }
