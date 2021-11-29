@@ -356,7 +356,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       cowDuration: moment.duration(event?.cowDuration).asMinutes().toString(),
       needFreshCrudeStorage: event?.needFreshCrudeStorage,
       needFlushingOil: event?.needFlushingOil,
-      washTanksWithDifferentCargo: true,
+      washTanksWithDifferentCargo: event?.washTanksWithDifferentCargo,
       topCow: event?.topCOWTanks?.map(tank => tank.id),
       bottomCow: event?.bottomCOWTanks?.map(tank => tank.id),
       allCow: event?.allCOWTanks?.map(tank => tank.id),

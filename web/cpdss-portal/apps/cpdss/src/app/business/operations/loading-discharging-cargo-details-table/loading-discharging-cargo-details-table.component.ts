@@ -53,6 +53,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
   totalActual = 0;
   isTotalPositive = true;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
+  hasCommingle: boolean;
   readonly fieldType = DATATABLE_FIELD_TYPE;
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
@@ -78,6 +79,7 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
    * @memberof LoadingDischargingCargoDetailsTableComponent
    */
   setCargoDetails() {
+    this.hasCommingle = false;
     this.newCargoList = this.cargoConditions?.map(itm => ({
       ...this.cargoQuantities?.find((item) => item.abbreviation === itm.abbreviation),
       ...itm
@@ -108,11 +110,12 @@ export class LoadingDischargingCargoDetailsTableComponent implements OnInit {
       const formatedPlannedWeight = this.formateQuantity(cargoList.plannedWeight);
       const formatedActualWeight = this.formateQuantity(cargoList.actualWeight);
 
-      this.totalPlanned = formatedPlannedWeight + this.totalPlanned;
+      this.totalPlanned = cargoList?.isCommingleCargo ? this.totalPlanned :  formatedPlannedWeight + this.totalPlanned;
       const difference = (Number(formatedActualWeight - formatedPlannedWeight) / formatedPlannedWeight) * 100;
-      this.totalActual = formatedActualWeight + this.totalActual;
+      this.totalActual = cargoList?.isCommingleCargo ? this.totalActual : formatedActualWeight + this.totalActual;
       cargoList.difference = difference ? Number(difference) : 0;
       cargoList.isPositive = difference > 0 ? true : false;
+      this.hasCommingle = cargoList?.isCommingleCargo || this.hasCommingle;
     });
 
     this.totalPlanned = this.totalPlanned ? Number(this.totalPlanned) : 0;
