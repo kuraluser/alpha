@@ -9,4 +9,5 @@ public class PumpCategory {
   private Long id;
   private String pumpName;
   private String pumpType;
+  private Long pumpTypeId;
 }

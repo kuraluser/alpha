@@ -1005,7 +1005,9 @@ public class DischargingSequenceService {
                         .filter(pumpType -> pumpType.getId() == vesselPump.getPumpTypeId())
                         .findAny();
                 pumpTypeOpt.ifPresent(pumpType -> pumpCategory.setPumpType(pumpType.getName()));
-                if (DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES.contains(pumpCategory.getId())) {
+                pumpTypeOpt.ifPresent(pumpType -> pumpCategory.setPumpTypeId(pumpType.getId()));
+                if (DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES.contains(
+                    pumpCategory.getPumpTypeId())) {
                   cargoPumpCategories.add(pumpCategory);
                 } else {
                   ballastPumpCategories.add(pumpCategory);
