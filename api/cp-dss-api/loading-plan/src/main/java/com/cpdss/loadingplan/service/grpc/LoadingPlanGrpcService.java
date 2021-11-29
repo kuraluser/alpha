@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 /** @author pranav.k */
@@ -76,6 +77,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   public static final String FAILED = "FAILED";
   public static final Integer CONDITION_TYPE_DEP = 2;
   public static final Integer VALUE_TYPE_ACTUALS = 1;
+  public static final Long ULLAGE_UPDATE_VALIDATED_TRUE = 13L;
 
   @Override
   public void loadingPlanSynchronization(
@@ -383,6 +385,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     }
   }
 
+  @Transactional
   @SuppressWarnings("unlikely-arg-type")
   @Override
   public void validateStowageAndBillOfLadding(
@@ -416,80 +419,100 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           blList.stream()
               .collect(
                   Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
-      if (stowageDetails == null
-          || stowageDetails.isEmpty()
-          || !portWiseBL.keySet().containsAll(portIds)) {
-        builder.setStatus(LoadingPlanConstants.FAILED);
-        return;
-      }
-      Map<Long, List<PortLoadingPlanStowageDetails>> cargoWiseStowage =
-          stowageDetails.stream()
-              .filter(v -> v.getCargoNominationXId() != 0)
-              .collect(Collectors.groupingBy(PortLoadingPlanStowageDetails::getCargoNominationXId));
-      cargoWiseStowage.forEach(
-          (key, values) -> {
-            if (values.stream()
-                .noneMatch(
-                    v ->
-                        v.getQuantity() != null
-                            || v.getQuantity().compareTo(BigDecimal.ZERO) > 0)) {
-              builder.setStatus(LoadingPlanConstants.FAILED);
-              return;
-            }
-          });
+      // Bug fix 4564 : in case once validated ullage update is edited and not validated true again
+      // DS should not be created
+      // Adding if condition to check deparcher condition ullage update status 13 or not.13 : Ullage
+      // Update Validation Successful"
+      if (!blList.isEmpty()
+          && blList.stream()
+              .allMatch(
+                  bl ->
+                      bl.getLoadingInformation()
+                          .getDepartureStatus()
+                          .getId()
+                          .equals(ULLAGE_UPDATE_VALIDATED_TRUE))) {
+        if (stowageDetails == null
+            || stowageDetails.isEmpty()
+            || !portWiseBL.keySet().containsAll(portIds)) {
+          builder.setStatus(LoadingPlanConstants.FAILED);
+          return;
+        }
+        Map<Long, List<PortLoadingPlanStowageDetails>> cargoWiseStowage =
+            stowageDetails.stream()
+                .filter(v -> v.getCargoNominationXId() != 0)
+                .collect(
+                    Collectors.groupingBy(PortLoadingPlanStowageDetails::getCargoNominationXId));
+        cargoWiseStowage.forEach(
+            (key, values) -> {
+              if (values.stream()
+                  .noneMatch(
+                      v ->
+                          v.getQuantity() != null
+                              || v.getQuantity().compareTo(BigDecimal.ZERO) > 0)) {
+                builder.setStatus(LoadingPlanConstants.FAILED);
+                return;
+              }
+            });
 
-      portWiseCargosList.stream()
-          .forEach(
-              port -> {
-                try {
-                  List<com.cpdss.loadingplan.entity.BillOfLadding> bLValues =
-                      portWiseBL.get(port.getPortId());
-                  List<Long> dbCargos =
-                      stowageDetails.stream()
-                          .map(PortLoadingPlanStowageDetails::getCargoNominationXId)
-                          .distinct()
-                          .collect(Collectors.toList());
-                  List<Long> dbBLCargos =
-                      bLValues.stream()
-                          .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
-                          .distinct()
-                          .collect(Collectors.toList());
-                  // Checking if stowage details and bill of lading entries exists and quantity
-                  // parameters are greater than zero
-                  // Bug fix DSS 4458
-                  // Issue fix : for commingle cargos - cargo nomination id will not be present in
-                  // port loadable stowage details
-                  // so removing !dbCargos.containsAll(port.getCargoIdsList()) check since this will
-                  // always fail.
-                  if (!dbBLCargos.containsAll(port.getCargoIdsList())
-                      || (bLValues.stream()
-                          .anyMatch(
-                              bl ->
-                                  bl.getQuantityMt() == null
-                                      || bl.getQuantityMt().compareTo(BigDecimal.ZERO) < 0
-                                      || bl.getQuantityKl() == null
-                                      || bl.getQuantityKl().compareTo(BigDecimal.ZERO) < 0
-                                      || bl.getQuantityBbls() == null
-                                      || bl.getQuantityBbls().compareTo(BigDecimal.ZERO) < 0
-                                      || bl.getQuantityLT() == null
-                                      || bl.getQuantityLT().compareTo(BigDecimal.ZERO) < 0
-                                      || bl.getApi() == null
-                                      || bl.getApi().compareTo(BigDecimal.ZERO) < 0
-                                      || bl.getTemperature() == null
-                                      || bl.getTemperature().compareTo(BigDecimal.ZERO) < 0))) {
+        portWiseCargosList.stream()
+            .forEach(
+                port -> {
+                  try {
+                    List<com.cpdss.loadingplan.entity.BillOfLadding> bLValues =
+                        portWiseBL.get(port.getPortId());
+                    List<Long> dbCargos =
+                        stowageDetails.stream()
+                            .map(PortLoadingPlanStowageDetails::getCargoNominationXId)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    List<Long> dbBLCargos =
+                        bLValues.stream()
+                            .map(com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    // Checking if stowage details and bill of lading entries exists and quantity
+                    // parameters are greater than zero
+                    // Bug fix DSS 4458
+                    // Issue fix : for commingle cargos - cargo nomination id will not be present in
+                    // port loadable stowage details
+                    // so removing !dbCargos.containsAll(port.getCargoIdsList()) check since this
+                    // will
+                    // always fail.
+                    if (!dbBLCargos.containsAll(port.getCargoIdsList())
+                        || (bLValues.stream()
+                            .anyMatch(
+                                bl ->
+                                    bl.getQuantityMt() == null
+                                        || bl.getQuantityMt().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityKl() == null
+                                        || bl.getQuantityKl().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityBbls() == null
+                                        || bl.getQuantityBbls().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityLT() == null
+                                        || bl.getQuantityLT().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getApi() == null
+                                        || bl.getApi().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getTemperature() == null
+                                        || bl.getTemperature().compareTo(BigDecimal.ZERO) < 0))) {
+                      builder.setStatus(LoadingPlanConstants.FAILED);
+                      throw new GenericServiceException(
+                          "LS actuals or BL values are missing",
+                          "",
+                          HttpStatusCode.SERVICE_UNAVAILABLE);
+                    } else {
+                      builder.setStatus(LoadingPlanConstants.SUCCESS);
+                    }
+                    // Add check for Zero and null values
+                  } catch (Exception e) {
                     builder.setStatus(LoadingPlanConstants.FAILED);
-                    throw new GenericServiceException(
-                        "LS actuals or BL values are missing",
-                        "",
-                        HttpStatusCode.SERVICE_UNAVAILABLE);
-                  } else {
-                    builder.setStatus(LoadingPlanConstants.SUCCESS);
                   }
-                  // Add check for Zero and null values
-                } catch (Exception e) {
-                  builder.setStatus(LoadingPlanConstants.FAILED);
-                }
-              });
+                });
+      } else {
+        // One or more ports have its ullage update validation not successful
+        builder.setStatus(LoadingPlanConstants.FAILED);
+        throw new GenericServiceException(
+            "Ullage updated validation Pending", "", HttpStatusCode.SERVICE_UNAVAILABLE);
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
