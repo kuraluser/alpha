@@ -924,6 +924,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    * @memberof UllageUpdatePopupComponent
   */
   validateBlFigTable() {
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      return
+    }
     this.blFigure.items.map((form, mainIndex) => {
       if (!this.blEmptyCheck(form)) {
         form?.map((rowData, childIndex) => {
@@ -994,6 +997,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    * @memberof UllageUpdatePopupComponent
   */
   enableDisableBLFigure() {
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      return;
+    }
     this.ullageResponseData?.billOfLaddingList?.map(item => {
       let totQuantity = 0;
       this.ullageResponseData?.portPlanStowageDetails.map(stowage => {
@@ -1005,7 +1011,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.tableForm.controls.items['controls'].map(form => {
         form.controls.cargos.controls.map(child => {
           if (child.controls.cargoNominationId.value === item.cargoNominationId) {
-            if (totQuantity > 0) {
+            if (totQuantity > 0 ) {
               child.enable();
             } else {
               child.disable();
@@ -1227,7 +1233,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
         this.resetBlErrors(rowIndex, index);
       }
     } else {
-      if (!this.blEmptyCheck(row)) {
+      if (!this.blEmptyCheck(row) && this.operation === OPERATIONS.LOADING) {
         const error = this.setBlError(rowData, key);
         if (error) {
           control.setErrors({ rangeError: true });

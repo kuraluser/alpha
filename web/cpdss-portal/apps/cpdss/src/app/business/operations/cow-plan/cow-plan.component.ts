@@ -81,7 +81,6 @@ export class CowPlanComponent implements OnInit {
     }) ?? [];
 
     this.maxDuration = this.cowDetails?.totalDuration?.split(':');
-
     this.form?.setControl('cowDetails', this.fb.group({
       washTanksWithDifferentCargo: this.fb.control(this.cowDetails?.washTanksWithDifferentCargo),
       cowOption: this.fb.control(this.cowDetails?.cowOption, [Validators.required]),

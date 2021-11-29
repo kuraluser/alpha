@@ -94,7 +94,7 @@
             <div class="switch-wrapper">
               <span *ngIf="editMode"
                 class="switch-label">{{'DISCHARGING_SELECT_TANKS_FOR_WASHING_WITH_DIFFERENT_CARGO' | translate }}</span>
-              <span *ngIf="!editMode"
+              <span *ngIf="!editMode && cowDetails.washTanksWithDifferentCargo"
                 class="switch-label">{{'DISCHARGING_TANKS_FOR_WASHING_WITH_DIFFERENT_CARGO' | translate}}</span>
             </div>
           </h5>
@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" [hidden]="!editMode && !cowDetails.washTanksWithDifferentCargo">
         <div class="col" formArrayName="tanksWashingWithDifferentCargo">
           <div class="row">
             <label class="col-2 col-form-label">{{ 'DISCHARGING_CARGO' | translate}}</label>

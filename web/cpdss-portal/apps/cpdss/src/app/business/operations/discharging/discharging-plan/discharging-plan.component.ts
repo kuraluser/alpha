@@ -6,15 +6,15 @@ import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 
-import { AppConfigurationService } from '../../../../../shared/services/app-configuration/app-configuration.service';
-import { LoadingDischargingTransformationService } from '../../../services/loading-discharging-transformation.service';
-import { DischargingPlanApiService } from './../../../services/discharging-plan-api.service';
-import { OperationsApiService } from '../../../services/operations-api.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
+import { DischargingPlanApiService } from './../../services/discharging-plan-api.service';
+import { OperationsApiService } from '../../services/operations-api.service';
 
-import { IAlgoError, IAlgoResponse, ICargo, OPERATIONS } from '../../../../core/models/common.model';
-import { QUANTITY_UNIT } from '../../../../../shared/models/common.model';
-import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../../models/loading-discharging.model';
-import { IPermission } from './../../../../../shared/models/user-profile.model';
+import { IAlgoError, IAlgoResponse, ICargo, OPERATIONS } from '../../../core/models/common.model';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
+import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
+import { IPermission } from './../../../../shared/models/user-profile.model';
 
 /**
  * Component for Discharge-plan
