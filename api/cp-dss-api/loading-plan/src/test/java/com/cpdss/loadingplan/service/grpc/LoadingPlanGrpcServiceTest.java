@@ -10,6 +10,8 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.loadingplan.entity.BillOfLadding;
+import com.cpdss.loadingplan.entity.LoadingInformation;
+import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
@@ -591,6 +593,11 @@ public class LoadingPlanGrpcServiceTest {
     ladding.setQuantityLT(new BigDecimal(1));
     ladding.setApi(new BigDecimal(1));
     ladding.setTemperature(new BigDecimal(1));
+    LoadingInformation loadingInformation = new LoadingInformation();
+    LoadingInformationStatus loadingInformationStatus = new LoadingInformationStatus();
+    loadingInformationStatus.setId(13L);
+    loadingInformation.setDepartureStatus(loadingInformationStatus);
+    ladding.setLoadingInformation(loadingInformation);
     billOfLaddingList.add(ladding);
     return billOfLaddingList;
   }
