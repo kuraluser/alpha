@@ -282,6 +282,31 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
     return new ArrayList<>();
   }
 
+  @Override
+  public LoadableStudy.LoadingPlanCommonResponse fetchLoadablePlanCargoDetailsReplay(
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      Boolean isFilterOn,
+      Common.PLANNING_TYPE planning_type) {
+    LoadableStudy.LoadingPlanCommonResponse response =
+        this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
+            LoadableStudy.LoadingPlanIdRequest.newBuilder()
+                .setPatternId(patternId)
+                .setOperationType(operationType)
+                .setPortRotationId(portRotationId)
+                .setPortId(portId)
+                .setCargoNominationFilter(isFilterOn)
+                .setPlanningType(planning_type)
+                .build());
+
+    if (response.getResponseStatus().getStatus().equals(SUCCESS)) {
+      return response;
+    }
+    return null;
+  }
+
   public LoadableStudy.VoyageRequest buildVoyageRequest(Long vesselId) {
     LoadableStudy.VoyageRequest.Builder builder = LoadableStudy.VoyageRequest.newBuilder();
     builder.setVesselId(vesselId);

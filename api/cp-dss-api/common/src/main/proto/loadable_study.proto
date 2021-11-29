@@ -1562,6 +1562,7 @@ message LoadingPlanCommonResponse{
 	repeated LoadingSynopticResponse synopticData = 2;
 	repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 3;
 	repeated LoadablePlanBallastDetails loadablePlanBallastDetails = 4;
+	repeated SynopticalCargoRecord commingleCargo = 5;
 }
 
 message LoadingSynopticResponse{

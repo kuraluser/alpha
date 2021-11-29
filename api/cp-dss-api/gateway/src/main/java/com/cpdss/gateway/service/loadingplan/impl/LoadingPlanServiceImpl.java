@@ -301,16 +301,18 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             portRotation.get().getPortOrder(),
             portRotation.get().getId(),
             OPERATION_TYPE);
+
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
-    vesselTankDetails.setLoadableQuantityCargoDetails(
-        this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
-            vesselId,
-            activeVoyage.getPatternId(),
-            OPERATION_TYPE,
-            portRotation.get().getId(),
-            portRotation.get().getPortId(),
-            Common.PLANNING_TYPE.LOADABLE_STUDY,
-            false));
+    // Set missing cargo condition data for commingle cargos.
+    this.loadingInformationService.setCargoTobeLoadedAndCargoGrade(
+        vesselTankDetails,
+        vesselId,
+        activeVoyage.getPatternId(),
+        OPERATION_TYPE,
+        portRotation.get().getId(),
+        portRotation.get().getPortId(),
+        Common.PLANNING_TYPE.LOADABLE_STUDY,
+        false);
 
     // Manage Sequence
     LoadingSequences loadingSequences =

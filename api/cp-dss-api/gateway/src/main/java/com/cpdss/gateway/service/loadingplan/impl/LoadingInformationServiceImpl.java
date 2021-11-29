@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.PLANNING_TYPE;
@@ -25,32 +27,9 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
-import com.cpdss.gateway.domain.AlgoError;
-import com.cpdss.gateway.domain.AlgoErrorResponse;
-import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
-import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.UpdateUllage;
-import com.cpdss.gateway.domain.UploadTideDetailResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
-import com.cpdss.gateway.domain.loadingplan.BerthDetails;
-import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
-import com.cpdss.gateway.domain.loadingplan.LoadingDelays;
-import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatus;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
-import com.cpdss.gateway.domain.loadingplan.LoadingInformationResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingMachinesInUse;
-import com.cpdss.gateway.domain.loadingplan.LoadingRates;
-import com.cpdss.gateway.domain.loadingplan.LoadingSequences;
-import com.cpdss.gateway.domain.loadingplan.LoadingStages;
-import com.cpdss.gateway.domain.loadingplan.ReasonForDelay;
-import com.cpdss.gateway.domain.loadingplan.StageDuration;
-import com.cpdss.gateway.domain.loadingplan.StageOffset;
-import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
-import com.cpdss.gateway.domain.loadingplan.TrimAllowed;
-import com.cpdss.gateway.domain.loadingplan.VesselComponent;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.vessel.PumpType;
 import com.cpdss.gateway.domain.vessel.VesselPump;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
@@ -65,9 +44,7 @@ import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -615,6 +592,127 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
             patternId, operationType, portRotationId, portId, true, planningType);
     return this.buildLoadablePlanQuantity(list, vesselId, isDischarging);
+  }
+
+  @Override
+  public void setCargoTobeLoadedAndCargoGrade(
+      CargoVesselTankDetails var1,
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      PLANNING_TYPE planningType,
+      boolean b) {
+    LoadableStudy.LoadingPlanCommonResponse replay =
+        this.loadingPlanGrpcService.fetchLoadablePlanCargoDetailsReplay(
+            patternId, operationType, portRotationId, portId, true, planningType);
+
+    // Cargo To Loaded Grid
+    var1.setLoadableQuantityCargoDetails(
+        this.buildLoadablePlanQuantity(replay.getLoadableQuantityCargoDetailsList(), vesselId, b));
+
+    // We already have grade grid (cargo-condition), need to add commingle logic too.
+    if (!replay.getCommingleCargoList().isEmpty()) {
+
+      List<Cargo> cargos = new ArrayList<Cargo>();
+      var cargos2 = this.buildSynopticCargoToDTO(replay);
+      cargos2.stream()
+          .filter(o -> !o.getAbbreviation().equals(""))
+          .forEach(
+              item -> {
+                Cargo cargo = new Cargo();
+                cargo.setLpCargoDetailsId(item.getLpCargoDetailId());
+                cargo.setPlanQtyId(item.getPlanQtyId());
+                cargo.setPlanQtyCargoOrder(item.getPlanQtyCargoOrder());
+                cargo.setAbbreviation(item.getAbbreviation());
+                cargo.setActualWeight(item.getActualWeight());
+                cargo.setApi(String.valueOf(item.getApi()));
+                cargo.setId(item.getCargoId());
+                cargo.setPlannedWeight(item.getPlannedWeight());
+                cargo.setTemp(String.valueOf(item.getTemperature()));
+                cargos.add(cargo);
+              });
+
+      Map<String, Cargo> cargoMap = new HashMap<String, Cargo>();
+      cargos.forEach(
+          cargodata -> {
+            if (cargoMap.containsKey(cargodata.getAbbreviation())) {
+              Cargo cargodat = cargoMap.get(cargodata.getAbbreviation());
+              cargodat.setActualWeight(cargodat.getActualWeight().add(cargodata.getActualWeight()));
+              cargodat.setPlannedWeight(
+                  cargodat.getPlannedWeight().add(cargodata.getPlannedWeight()));
+              cargoMap.put(cargodata.getAbbreviation(), cargodat);
+            } else {
+              cargoMap.put(cargodata.getAbbreviation(), cargodata);
+            }
+          });
+
+      // Will check if the cargo Added or Not
+      // If added, commingle cargo qty will add to existing
+      // Else add as new cargo data.
+      for (Map.Entry<String, Cargo> mp : cargoMap.entrySet()) {
+        var locCargo =
+            var1.getCargoConditions().stream()
+                .filter(v -> v.getAbbreviation().equals(mp.getKey()))
+                .findFirst();
+        if (locCargo.isPresent()) {
+          // add quantity
+          var1.getCargoQuantities().stream()
+              .filter(v -> v.getAbbreviation().equals(mp.getKey()))
+              .forEach(
+                  v -> {
+                    v.setActualWeight(v.getActualWeight().add(mp.getValue().getActualWeight()));
+                    v.setPlannedWeight(v.getPlannedWeight().add(mp.getValue().getPlannedWeight()));
+                  });
+        } else {
+          // add to grid
+          var1.getCargoConditions().add(mp.getValue());
+        }
+      }
+    }
+  }
+
+  private List<SynopticalCargoBallastRecord> buildSynopticCargoToDTO(
+      LoadableStudy.LoadingPlanCommonResponse replay) {
+    List<SynopticalCargoBallastRecord> list = new ArrayList<>();
+    for (com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord protoRec :
+        replay.getCommingleCargoList()) {
+      SynopticalCargoBallastRecord rec = new SynopticalCargoBallastRecord();
+      rec.setLpCargoDetailId(protoRec.getLpCargoDetailId());
+      rec.setCargoNominationId(protoRec.getCargoNominationId());
+      rec.setTankId(protoRec.getTankId());
+      rec.setTankName(protoRec.getTankName());
+      rec.setActualWeight(
+          isEmpty(protoRec.getActualWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getActualWeight()));
+      rec.setPlannedWeight(
+          isEmpty(protoRec.getPlannedWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getPlannedWeight()));
+      // parameters for landing page
+      rec.setAbbreviation(protoRec.getCargoAbbreviation());
+      rec.setCargoId(protoRec.getCargoId());
+      rec.setColorCode(protoRec.getColorCode());
+      rec.setCorrectedUllage(
+          isEmpty(protoRec.getCorrectedUllage())
+              ? BigDecimal.ZERO
+              : new BigDecimal(protoRec.getCorrectedUllage()));
+      rec.setApi(isEmpty(protoRec.getApi()) ? BigDecimal.ZERO : new BigDecimal(protoRec.getApi()));
+      rec.setCapacity(
+          isEmpty(protoRec.getCapacity()) ? null : new BigDecimal(protoRec.getCapacity()));
+      rec.setIsCommingleCargo(
+          isEmpty(protoRec.getIsCommingleCargo()) ? null : protoRec.getIsCommingleCargo());
+      if (protoRec.getTemperature() != null && protoRec.getTemperature().length() > 0) {
+        rec.setTemperature(new BigDecimal(protoRec.getTemperature()));
+      }
+      rec.setFillingRatio(protoRec.getFillingRatio());
+      rec.setPlanQtyId(protoRec.getPlanQtyId());
+      rec.setPlanQtyCargoOrder(protoRec.getPlanQtyCargoOrder());
+      list.add(rec);
+    }
+    return list;
   }
 
   @Override

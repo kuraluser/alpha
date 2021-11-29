@@ -120,6 +120,7 @@ public class SynopticServiceUtils {
   @Autowired DischargePatternQuantityCargoPortwiseRepository disCargoQuantityRepository;
 
   @Autowired LoadablePlanCommingleDetailsPortwiseRepository commingleDetailsPortWiseRepository;
+
   /**
    * Save synoptical ballast data
    *
@@ -761,15 +762,59 @@ public class SynopticServiceUtils {
             request.getPortRotationId(),
             request.getOperationType());
         for (LoadablePlanComminglePortwiseDetails ccN : comCargoNomiId) {
-          System.out.println(ccN.getId() + "-" + ccN.getCargo2NominationId());
-          List<LoadablePlanQuantity> lpQList =
+
+          // Setting for Grade grid
+          LoadableStudy.SynopticalCargoRecord.Builder cargo1 =
+              LoadableStudy.SynopticalCargoRecord.newBuilder();
+          LoadableStudy.SynopticalCargoRecord.Builder cargo2 =
+              LoadableStudy.SynopticalCargoRecord.newBuilder();
+          cargo1.setTankId(ccN.getTankId());
+          cargo2.setTankId(ccN.getTankId());
+
+          cargo1.setLpCargoDetailId(ccN.getId());
+          cargo2.setLpCargoDetailId(ccN.getId());
+
+          cargo1.setPlannedWeight(ccN.getCargo1Mt());
+          cargo2.setPlannedWeight(ccN.getCargo2Mt());
+
+          cargo1.setPlanQtyCargoOrder(ccN.getLoadingOrder());
+          cargo2.setPlanQtyCargoOrder(ccN.getLoadingOrder());
+
+          cargo1.setCargoAbbreviation(ccN.getCargo1Abbreviation());
+          cargo2.setCargoAbbreviation(ccN.getCargo2Abbreviation());
+
+          cargo1.setApi(ccN.getApi());
+          cargo2.setApi(ccN.getApi());
+
+          cargo1.setCargoNominationId(ccN.getCargo1NominationId());
+          cargo2.setCargoNominationId(ccN.getCargo2NominationId());
+
+          cargo1.setTemperature(ccN.getTemperature());
+          cargo2.setTemperature(ccN.getTemperature());
+
+          // Setting for Cargo To be Loaded
+
+          List<LoadablePlanQuantity> lpQList1 =
+              this.loadablePlanQuantityRepository.findByPatternIdAndCargoNominationId(
+                  request.getPatternId(), ccN.getCargo1NominationId());
+          if (!lpQList1.isEmpty()) {
+            var lpQ = lpQList1.stream().findFirst();
+            cargo1.setCargoId(lpQ.get().getCargoXId());
+            cargo1.setColorCode(lpQ.get().getCargoColor());
+            builder.addCommingleCargo(cargo1.build());
+          }
+
+          List<LoadablePlanQuantity> lpQList2 =
               this.loadablePlanQuantityRepository.findByPatternIdAndCargoNominationId(
                   request.getPatternId(), ccN.getCargo2NominationId());
-          if (!lpQList.isEmpty()) {
+          if (!lpQList2.isEmpty()) {
             log.info(
                 "Commingle cargo - quantity details for Cargo Nomination - {}",
                 ccN.getCargo2NominationId());
-            var lpQ = lpQList.stream().findFirst();
+            var lpQ = lpQList2.stream().findFirst();
+            cargo2.setCargoId(lpQ.get().getCargoXId());
+            cargo2.setColorCode(lpQ.get().getCargoColor());
+            builder.addCommingleCargo(cargo2.build());
             if (!list.stream()
                 .anyMatch(
                     v -> v.getId().equals(lpQ.get().getId()))) { // Check if already in this list
