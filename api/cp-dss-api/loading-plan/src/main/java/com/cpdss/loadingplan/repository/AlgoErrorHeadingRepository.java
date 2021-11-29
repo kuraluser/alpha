@@ -30,6 +30,6 @@ public interface AlgoErrorHeadingRepository extends CommonCrudRepository<AlgoErr
   public List<AlgoErrorHeading> findByLoadingInformationIdAndConditionTypeAndIsActiveTrue(
       Long loadingInfoId, Integer conditionType);
 
-  @Query("SELECT ALE.id FROM AlgoErrorHeading ALE WHERE ALE.loading_information_xid.id = ?1")
+  @Query("SELECT ALE.id FROM AlgoErrorHeading ALE WHERE ALE.loadingInformation.id = ?1")
   List<Long> getAlgoErrorHeadingIdWithLoadingInformationId(Long id);
 }
