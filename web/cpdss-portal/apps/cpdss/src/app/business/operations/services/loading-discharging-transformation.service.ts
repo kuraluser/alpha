@@ -1250,7 +1250,8 @@ export class LoadingDischargingTransformationService {
     const startTimeInMinutes = Number(dischargingInformationResponse?.cowPlan?.cowStart);
     const endTimeInMinutes = Number(dischargingInformationResponse?.cowPlan?.cowEnd);
     const _duration = totalDurationInMinutes ? totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes : null;
-    cowDetails.cowDuration = this.convertMinutesToHHMM(Number(_duration)) ?? null;
+
+    cowDetails.cowDuration = this.convertMinutesToHHMM(Number(Number(dischargingInformationResponse?.cowPlan?.cowDuration))) ?? null;
 
     cowDetails.cowTrimMax = dischargingInformationResponse?.cowPlan?.cowTrimMax;
     cowDetails.cowTrimMin = dischargingInformationResponse?.cowPlan?.cowTrimMin;
@@ -1379,8 +1380,8 @@ export class LoadingDischargingTransformationService {
    * @memberof LoadingDischargingTransformationService
    */
   convertTimeStringToMinutes(time: string) {
-    const timeArr = time.split(':');
-    return Number(timeArr[0]) * 60 + Number(timeArr[1]);
+    const timeArr = time?.split(':');
+    return timeArr?.length === 2 ? Number(timeArr[0].replace(/_/g, '')) * 60 + Number(timeArr[1].replace(/_/g, '')) : null;
   }
 
   /**

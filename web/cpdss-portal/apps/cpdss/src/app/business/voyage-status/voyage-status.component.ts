@@ -237,7 +237,7 @@ export class VoyageStatusComponent implements OnInit, OnDestroy {
     const activeVoyage = this.voyageInfo?.find(voyage => voyage?.statusId === VOYAGE_STATUS.ACTIVE);
     if (activeVoyage) {
       const translationKeys = await this.translateService.get(['VOYAGE_STATUS_ACTIVE_END_WARNING', 'VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST', 'VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND']).toPromise();
-      if (activeVoyage?.noOfDays >= 0) {
+      if (activeVoyage?.noOfDays >= 0 && activeVoyage?.endDate?.split(' ')[0]) {
         this.messageService.add({ severity: 'warn', summary: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING'], detail: translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_FIRST'] + " " + activeVoyage?.endDate?.split(' ')[0] + ". " + translationKeys['VOYAGE_STATUS_ACTIVE_END_WARNING_MESSAGE_SECOND'], sticky: true });
       }
     }

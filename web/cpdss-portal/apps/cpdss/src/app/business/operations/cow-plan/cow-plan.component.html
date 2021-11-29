@@ -206,7 +206,7 @@
             <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_EST_COW_DURATION' | translate}}</label>
             <div class="col-3 pt-5">
               <p-inputMask *ngIf="editMode;else cowDuration" type="text" styleClass="form-control"
-                formControlName="cowDuration" mask="99:99" readonly>
+                formControlName="cowDuration" mask="99:99" readonly (onComplete)="updateCowDetails()">
               </p-inputMask>
               <ng-template #cowDuration>
                 <span>{{cowDetailsFormControl?.cowDuration?.value}}</span>

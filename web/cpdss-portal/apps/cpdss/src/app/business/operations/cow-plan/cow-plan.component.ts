@@ -214,9 +214,12 @@ export class CowPlanComponent implements OnInit {
     const totalDurationInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetails?.totalDuration);
     const startTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowStart.value);
     const endTimeInMinutes = this.loadingDischargingTransformationService.convertTimeStringToMinutes(this.cowDetailsForm.controls?.cowEnd.value);
-    const duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
-    
-    this.cowDetailsForm.controls.cowDuration.setValue(this.loadingDischargingTransformationService.convertMinutesToHHMM(duration));
+
+    let duration;
+    if(startTimeInMinutes || endTimeInMinutes) {
+      duration = totalDurationInMinutes - startTimeInMinutes - endTimeInMinutes;
+    }
+    this.cowDetailsForm.controls.cowDuration.setValue(this.loadingDischargingTransformationService.convertMinutesToHHMM(duration ? duration : null));
     if (startTimeInMinutes) {
       this.cowDetailsForm.controls?.cowEnd.setValidators([Validators.required, compareDischargeTimeValidation(this.cowDetails?.totalDuration,'cowStart')]);
     } else{

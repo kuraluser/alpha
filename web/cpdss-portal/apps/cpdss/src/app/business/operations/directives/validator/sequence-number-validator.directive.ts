@@ -8,7 +8,7 @@ import { AbstractControl, FormArray, FormControl, ValidationErrors, ValidatorFn 
  * @returns {ValidatorFn}
  */
 export const sequenceNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  if (!control.root || !control.parent || !control?.value) {
+  if (!control.root || !control.parent) {
     return null;
   }
   const currSequence = Number(control?.value);
