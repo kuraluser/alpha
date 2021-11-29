@@ -13,4 +13,8 @@ public class Eduction {
   private Map<String, String> tank;
   private Map<String, Object> pumpSelected;
   private Map<String, Object> ballastPumpSelected;
+
+  // For stripping in discharge sequence
+  private String tankShortName;
+  private Long tankId;
 }

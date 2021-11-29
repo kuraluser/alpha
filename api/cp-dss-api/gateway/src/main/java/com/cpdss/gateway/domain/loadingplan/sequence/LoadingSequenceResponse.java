@@ -30,4 +30,5 @@ public class LoadingSequenceResponse {
   private List<StabilityParam> stabilityParams;
   private List<CargoStage> cargoStages;
   private List<EductionOperation> ballastEduction;
+  private List<EductionOperation> cargoEduction;
 }

@@ -49,4 +49,9 @@ public class Sequence {
 
   @JsonProperty("Cleaning")
   private Cleaning cleaning;
+
+  @JsonProperty("TCP")
+  private Map<String, List<Pump>> tcp;
+
+  private List<Eduction> stripping;
 }

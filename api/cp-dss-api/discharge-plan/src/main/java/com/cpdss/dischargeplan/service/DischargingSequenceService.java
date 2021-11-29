@@ -44,6 +44,7 @@ import com.cpdss.dischargeplan.repository.DischargingPlanStowageDetailsRepositor
 import com.cpdss.dischargeplan.repository.DischargingSequenceRepository;
 import com.cpdss.dischargeplan.repository.DischargingSequenceStabiltyParametersRepository;
 import com.cpdss.dischargeplan.repository.EductionOperationRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -200,33 +201,37 @@ public class DischargingSequenceService {
               portWiseDetailsRepository.findByDischargingSequenceAndIsActiveTrueOrderById(
                   dischargeSequence);
           buildDischargingPlanPortWiseDetails(sequenceBuilder, dischargingPlanPortWiseDetails);
-          //			EductionOperation eductionOperation = eductionOperationRepository
-          //					.findByDischargingSequenceAndIsActiveTrue(dischargeSequence);
-          //			if (eductionOperation != null) {
-          //				buildEductionOperations(sequenceBuilder, eductionOperation);
-          //			}
+          List<EductionOperation> eductionOperations =
+              eductionOperationRepository.findByDischargingSequenceAndIsActiveTrue(
+                  dischargeSequence);
+          buildEductionOperations(sequenceBuilder, eductionOperations);
           builder.addDischargeSequences(sequenceBuilder.build());
         });
   }
 
   /**
    * @param sequenceBuilder
-   * @param eductionOperation
+   * @param eductionOperations
    */
   private void buildEductionOperations(
-      DischargingSequence.Builder sequenceBuilder, EductionOperation eductionOperation) {
-    log.info(
-        "Populating eduction operation, tanks: {}, pumps: {}",
-        eductionOperation.getTanksUsed(),
-        eductionOperation.getEductorsUsed());
-    EductorOperation.Builder builder = EductorOperation.newBuilder();
-    Optional.ofNullable(eductionOperation.getEductorsUsed())
-        .ifPresent(builder::setEductorPumpsUsed);
-    Optional.ofNullable(eductionOperation.getEndTime()).ifPresent(builder::setEndTime);
-    Optional.ofNullable(eductionOperation.getId()).ifPresent(builder::setId);
-    Optional.ofNullable(eductionOperation.getStartTime()).ifPresent(builder::setStartTime);
-    Optional.ofNullable(eductionOperation.getTanksUsed()).ifPresent(builder::setTanksUsed);
-    sequenceBuilder.setEductorOperation(builder.build());
+      DischargingSequence.Builder sequenceBuilder, List<EductionOperation> eductionOperations) {
+    List<EductorOperation> eductorOperations = new ArrayList<EductorOperation>();
+    eductionOperations.forEach(
+        eductionOperation -> {
+          log.info(
+              "Populating eduction operation, tanks: {}, pumps: {}",
+              eductionOperation.getTanksUsed(),
+              eductionOperation.getEductorsUsed());
+          EductorOperation.Builder builder = EductorOperation.newBuilder();
+          Optional.ofNullable(eductionOperation.getEductorsUsed())
+              .ifPresent(builder::setEductorPumpsUsed);
+          Optional.ofNullable(eductionOperation.getEndTime()).ifPresent(builder::setEndTime);
+          Optional.ofNullable(eductionOperation.getId()).ifPresent(builder::setId);
+          Optional.ofNullable(eductionOperation.getStartTime()).ifPresent(builder::setStartTime);
+          Optional.ofNullable(eductionOperation.getTanksUsed()).ifPresent(builder::setTanksUsed);
+          eductorOperations.add(builder.build());
+        });
+    sequenceBuilder.addAllEductorOperation(eductorOperations);
   }
 
   private void buildBallastOperations(

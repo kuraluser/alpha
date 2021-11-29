@@ -23,6 +23,7 @@ import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
 import com.cpdss.common.generated.discharge_plan.DischargingRate;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
@@ -165,6 +166,8 @@ public class DischargePlanAlgoService {
       dischargeStudyOperationServiceBlockingStub;
 
   @Autowired DischargingDelayRepository dischargingDelayRepository;
+
+  @Autowired EductionOperationRepository eductionOperationRepository;
 
   private static final Integer cowBottomTypeId = 2;
   private static final Integer cowTopTypeId = 3;
@@ -1186,10 +1189,34 @@ public class DischargePlanAlgoService {
         savedDischargingSequence, sequence.getDischargingPlanPortWiseDetailsList());
     saveCargoDischargingRates(savedDischargingSequence, sequence.getDischargingRatesList());
     savePumps(savedDischargingSequence, sequence.getBallastOperationsList());
-    savePumps(savedDischargingSequence, sequence.getCargoOperationsList());
     if (sequence.getCleaningTanks() != null) {
       saveCleaningDetails(dischargingInfo, sequence.getCleaningTanks());
     }
+    saveStrippingDetails(savedDischargingSequence, sequence.getEductorOperationList());
+  }
+
+  /**
+   * Saves Stripping details to DB
+   *
+   * @param dischargingSequence
+   * @param eductorOperationList
+   */
+  private void saveStrippingDetails(
+      DischargingSequence dischargingSequence,
+      List<LoadingPlanModels.EductorOperation> eductorOperationList) {
+    log.info("Save Stripping details for discharging sequence: {}", dischargingSequence.getId());
+    List<EductionOperation> eductionOperations = new ArrayList<EductionOperation>();
+    eductorOperationList.forEach(
+        eductorOperation -> {
+          EductionOperation eductionOperation = new EductionOperation();
+          eductionOperation.setIsActive(true);
+          eductionOperation.setDischargingSequence(dischargingSequence);
+          eductionOperation.setStartTime(eductorOperation.getStartTime());
+          eductionOperation.setEndTime(eductorOperation.getEndTime());
+          eductionOperation.setTanksUsed(eductorOperation.getTanksUsed());
+          eductionOperations.add(eductionOperation);
+        });
+    eductionOperationRepository.saveAll(eductionOperations);
   }
 
   /**
@@ -1396,7 +1423,8 @@ public class DischargePlanAlgoService {
   private void savePumps(
       DischargingSequence dischargingSequence, List<PumpOperation> ballastOperationsList) {
     log.info(
-        "Saving Ballast & Cargo Pumps for Discharging Sequence {}", dischargingSequence.getId());
+        "Saving Ballast, Cargo & TCP Pumps for Discharging Sequence {}",
+        dischargingSequence.getId());
     List<com.cpdss.dischargeplan.entity.BallastOperation> ballastOperations = new ArrayList<>();
     ballastOperationsList.forEach(
         pumpOperation -> {

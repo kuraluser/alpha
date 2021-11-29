@@ -108,6 +108,8 @@ public class DischargePlanAlgoServiceTest {
   @Value("${loadingplan.attachment.rootFolder}")
   private String rootFolder;
 
+  @MockBean private EductionOperationRepository eductionOperationRepository;
+
   // doubt at 594 List<LoadablePlanPortWiseDetails>
 
   //    @Test

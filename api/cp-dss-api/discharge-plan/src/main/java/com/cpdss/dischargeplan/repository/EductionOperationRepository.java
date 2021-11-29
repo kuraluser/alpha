@@ -4,6 +4,7 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargingSequence;
 import com.cpdss.dischargeplan.entity.EductionOperation;
+import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,6 @@ public interface EductionOperationRepository extends CommonCrudRepository<Educti
   @Query(value = "UPDATE EductionOperation SET isActive = false WHERE loadingSequence = ?1")
   public void deleteByLoadingSequence(DischargingSequence loadingSequence);
 
-  public EductionOperation findByDischargingSequenceAndIsActiveTrue(
+  public List<EductionOperation> findByDischargingSequenceAndIsActiveTrue(
       DischargingSequence loadingSequence);
 }

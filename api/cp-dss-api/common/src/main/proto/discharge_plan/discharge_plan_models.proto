@@ -398,7 +398,7 @@ message DischargingSequence {
   string cargoDischargingRate1 = 14;
   string cargoDischargingRate2 = 15;
   repeated PumpOperation ballastOperations = 16;
-  EductorOperation eductorOperation = 17;
+  repeated EductorOperation eductorOperation = 17;
   CleaningTanks cleaningTanks = 18;
   repeated PumpOperation cargoOperations = 19;
 }

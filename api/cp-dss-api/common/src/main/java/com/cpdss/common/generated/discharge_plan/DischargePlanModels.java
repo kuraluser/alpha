@@ -439,7 +439,7 @@ public final class DischargePlanModels {
           + "cargoDischargingRate1\030\016 \001(\t\022\035\n\025cargoDisc"
           + "hargingRate2\030\017 \001(\t\022)\n\021ballastOperations\030"
           + "\020 \003(\0132\016.PumpOperation\022+\n\020eductorOperatio"
-          + "n\030\021 \001(\0132\021.EductorOperation\022%\n\rcleaningTa"
+          + "n\030\021 \003(\0132\021.EductorOperation\022%\n\rcleaningTa"
           + "nks\030\022 \001(\0132\016.CleaningTanks\"\210\001\n\rCleaningTa"
           + "nks\022%\n\007topTank\030\001 \003(\0132\024.CleaningTankDetai"
           + "ls\022(\n\nbottomTank\030\002 \003(\0132\024.CleaningTankDet"
