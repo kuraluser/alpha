@@ -4,12 +4,7 @@ package com.cpdss.loadablestudy.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.time.LocalDateTime;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,4 +64,6 @@ public class Voyage extends EntityDoc {
 
   @Column(name = "end_timezone_xid")
   private Long endTimezoneId;
+
+  @Transient private String communicationRelatedEntityId;
 }

@@ -35,4 +35,7 @@ public interface AlgoErrorHeadingRepository
   @Modifying
   @Query("UPDATE AlgoErrorHeading SET isActive = ?1 WHERE loadableStudy.id = ?2")
   public void deleteAlgoErrorHeadingByLSId(Boolean isActive, Long loadableStudyId);
+
+  @Query("SELECT ALE.id FROM AlgoErrorHeading ALE WHERE ALE.loadableStudy.id = ?1")
+  List<Long> getAlgoErrorIdWithLoadableStudyId(Long id);
 }

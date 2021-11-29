@@ -3,12 +3,7 @@ package com.cpdss.loadablestudy.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.*;
 
 @Entity
@@ -39,4 +34,6 @@ public class AlgoErrorHeading extends EntityDoc {
   @JoinColumn(name = "loadable_study_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadableStudy loadableStudy;
+
+  @Transient private Long communicationRelatedEntityId;
 }

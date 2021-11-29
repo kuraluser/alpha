@@ -11,6 +11,7 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
@@ -22,6 +23,7 @@ import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
@@ -88,6 +90,7 @@ public class LoadicatorService {
   @Autowired private JsonTypeRepository jsonTypeRepository;
 
   @Autowired private AlgoService algoService;
+  @Autowired LoadableStudyStagingService loadableStudyStagingService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -972,6 +975,10 @@ public class LoadicatorService {
     this.saveLoadicatorAlgoResponse(request, algoResponse, objectMapper);
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
         this.loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
+    if (loadableStudyOpt.isEmpty()) {
+      log.error("Loadable Study not found in database");
+      throw new Exception("Loadable Study not found in database");
+    }
     Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
         this.loadableStudyCommunicationStatusRepository
             .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
@@ -1014,8 +1021,19 @@ public class LoadicatorService {
           loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
           if (enableCommunication && !env.equals("ship")) {
-            passResultToCommunication(
-                objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
+            JsonArray jsonArray =
+                loadableStudyStagingService.getCommunicationData(
+                    LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
+                    UUID.randomUUID().toString(),
+                    MessageTypes.ALGORESULT.getMessageType(),
+                    loadableStudyOpt.get().getId(),
+                    null);
+            log.info("Json Array in Loadable study service: " + jsonArray.toString());
+
+            communicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                loadableStudyOpt.get().getVesselXId(),
+                MessageTypes.ALGORESULT.getMessageType());
           }
         }
       } else {
@@ -1061,8 +1079,19 @@ public class LoadicatorService {
           LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
 
       if (enableCommunication && !env.equals("ship")) {
-        passResultToCommunication(
-            objectMapper, algoResponse, loadableStudyOpt, loadableStudyCommunicationStatus);
+        JsonArray jsonArray =
+            loadableStudyStagingService.getCommunicationData(
+                LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
+                UUID.randomUUID().toString(),
+                MessageTypes.ALGORESULT.getMessageType(),
+                loadableStudyOpt.get().getId(),
+                null);
+        log.info("Json Array in Loadable study service: " + jsonArray.toString());
+
+        communicationService.passRequestPayloadToEnvoyWriter(
+            jsonArray.toString(),
+            loadableStudyOpt.get().getVesselXId(),
+            MessageTypes.ALGORESULT.getMessageType());
       }
     }
     replyBuilder =

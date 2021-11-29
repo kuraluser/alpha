@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,4 +44,6 @@ public class CargoNominationPortDetails extends EntityDoc {
 
   @Column(name = "operation_xid")
   private Long operationId;
+
+  @Transient private Long communicationRelatedEntityId;
 }

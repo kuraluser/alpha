@@ -17,6 +17,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
 import com.cpdss.loadablestudy.entity.CowTypeMaster;
@@ -72,6 +73,7 @@ import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
@@ -180,6 +182,7 @@ public class LoadablePatternService {
   @Autowired JsonDataService jsonDataService;
   @Autowired CommunicationService communicationService;
   @Autowired private OnHandQuantityService onHandQuantityService;
+  @Autowired private LoadableStudyStagingService loadableStudyStagingService;
 
   @Autowired private CowTypeMasterRepository cowTypeMasterRepository;
 
@@ -407,13 +410,19 @@ public class LoadablePatternService {
           this.loadableStudyCommunicationStatusRepository
               .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
                   request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
-      if (loadableStudyCommunicationStatus.get() != null) {
+      JsonArray jsonArray =
+          loadableStudyStagingService.getCommunicationData(
+              LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
+              UUID.randomUUID().toString(),
+              MessageTypes.ALGORESULT.getMessageType(),
+              loadableStudyOpt.get().getId(),
+              null);
+      log.info("Json Array in Loadable study service: " + jsonArray.toString());
 
-        AlgoResponseCommunication.Builder algoRespComm = AlgoResponseCommunication.newBuilder();
-        algoRespComm.setLoadablePatternAlgoRequest(request);
-        algoRespComm.setMessageId(loadableStudyCommunicationStatus.get().getMessageUUID());
-        communicationService.passResultPayloadToEnvoyWriter(algoRespComm, loadableStudyOpt.get());
-      }
+      communicationService.passRequestPayloadToEnvoyWriter(
+          jsonArray.toString(),
+          loadableStudyOpt.get().getVesselXId(),
+          MessageTypes.ALGORESULT.getMessageType());
     }
 
     builder
@@ -1703,9 +1712,19 @@ public class LoadablePatternService {
           objectMapper.writeValueAsString(loadableStudy));
       if (enableCommunication && env.equals("ship")) {
         this.voyageService.buildVoyageDetails(modelMapper, loadableStudy);
+
+        JsonArray jsonArray =
+            loadableStudyStagingService.getCommunicationData(
+                LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
+                UUID.randomUUID().toString(),
+                MessageTypes.LOADABLESTUDY.getMessageType(),
+                loadableStudy.getId(),
+                null);
+        log.info("Json Array in Loadable study service: " + jsonArray.toString());
+
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
-                objectMapper.writeValueAsString(loadableStudy),
+                jsonArray.toString(),
                 loadableStudy.getVesselId(),
                 MessageTypes.LOADABLESTUDY.getMessageType());
         if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {

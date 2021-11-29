@@ -10,6 +10,7 @@ import com.cpdss.common.utils.StagingStatus;
 import com.google.gson.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -231,17 +232,19 @@ public class StagingService {
   }
 
   private void modifyAttributeValue(JsonObject jsonObj, String sourceKey, String targetKey) {
-    String[] rmFields = {"created_date_time", "last_modified_date_time"};
+    String[] dateTimeFields = {
+      "created_date_time", "last_modified_date_time", "voyage_start_date", "voyage_end_date"
+    };
     String[] timeFields = {"sunrise_time", "sunset_time", "start_time", "tide_time"};
-    String[] dateTimeFields = {"created_date", "last_modified_date", "tide_date"};
+    String[] dateFields = {"created_date", "last_modified_date", "tide_date"};
     String value = jsonObj.get(sourceKey) == null ? null : jsonObj.get(sourceKey).toString();
-    if (Arrays.stream(rmFields).anyMatch(sourceKey::equals)) {
+    if (Arrays.stream(dateTimeFields).anyMatch(sourceKey::equals)) {
       jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, true));
     } else if (Arrays.stream(timeFields).anyMatch(sourceKey::equals)
         && value != null
         && value.split(":").length == 3) {
       jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, true, true));
-    } else if (Arrays.stream(dateTimeFields).anyMatch(sourceKey::equals)) {
+    } else if (Arrays.stream(dateFields).anyMatch(sourceKey::equals)) {
       jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, false));
     } else {
       jsonObj.add(targetKey, jsonObj.get(sourceKey));
@@ -271,7 +274,12 @@ public class StagingService {
       SimpleDateFormat sourceFormat = new SimpleDateFormat(format);
       TimeZone utc = TimeZone.getTimeZone("UTC");
       sourceFormat.setTimeZone(utc);
-      Date convertedDate = sourceFormat.parse(dateTimeStr);
+      Date convertedDate = null;
+      try {
+        convertedDate = sourceFormat.parse(dateTimeStr);
+      } catch (ParseException e) {
+        convertedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(dateTimeStr);
+      }
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(convertedDate);
       dateObject.addProperty("year", calendar.get(Calendar.YEAR));

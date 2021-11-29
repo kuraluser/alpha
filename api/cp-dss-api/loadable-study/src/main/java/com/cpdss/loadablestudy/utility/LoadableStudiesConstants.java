@@ -4,6 +4,8 @@ package com.cpdss.loadablestudy.utility;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 public class LoadableStudiesConstants {
 
@@ -208,4 +210,71 @@ public class LoadableStudiesConstants {
   public static final String FAILED_WITH_EXC = "FAILED_WITH_EXC";
 
   public static final String ENV = "env";
+
+  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP =
+      Arrays.asList(
+          "loadable_study",
+          "json_data",
+          "loadable_pattern",
+          "algo_error_heading",
+          "algo_errors",
+          "loadable_plan_constraints",
+          "loadable_plan_quantity",
+          "loadable_plan_commingle_details",
+          "loadable_pattern_cargo_topping_off_sequence",
+          "loadable_plan_stowage_details",
+          "loadable_plan_ballast_details",
+          "loadable_plan_commingle_details_portwise",
+          "stability_parameters",
+          "loadable_pattern_cargo_details",
+          "loadable_plan_stowage_ballast_details",
+          "synoptical_table",
+          "loadicator_data_for_synoptical_table");
+  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
+      Arrays.asList(
+          "loadable_study",
+          "comingle_cargo",
+          "cargo_nomination",
+          "loadable_study_port_rotation",
+          "on_hand_quantity",
+          "on_board_quantity",
+          "loadable_quantity",
+          "synoptical_table",
+          "cargo_nomination_operation_details");
+
+  @Getter
+  @AllArgsConstructor
+  public enum LoadableStudyTables {
+    LOADABLE_STUDY("loadable_study"),
+    VOYAGE("voyage"),
+    // DUPLICATED_FROM_LOADABLE_STUDY("duplicated_from_loadable_study"),
+    // LOADABLE_STUDY_STATUS("loadable_study_status"),
+    COMINGLE_CARGO("comingle_cargo"),
+    CARGO_NOMINATION("cargo_nomination"),
+    LOADABLE_STUDY_PORT_ROTATION("loadable_study_port_rotation"),
+    ON_HAND_QUANTITY("on_hand_quantity"),
+    ON_BOARD_QUANTITY("on_board_quantity"),
+    LOADABLE_QUANTITY("loadable_quantity"),
+    SYNOPTICAL_TABLE("synoptical_table"),
+    JSON_DATA("json_data"),
+    LOADABLE_STUDY_ALGO_STATUS("loadable_study_algo_status"),
+    LOADABLE_PATTERN("loadable_pattern"),
+    ALGO_ERROR_HEADING("algo_error_heading"),
+    ALGO_ERRORS("algo_errors"),
+    LOADABLE_PLAN_CONSTRAINTS("loadable_plan_constraints"),
+    LOADABLE_PLAN_QUANTITY("loadable_plan_quantity"),
+    LOADABLE_PLAN_COMMINGLE_DETAILS("loadable_plan_commingle_details"),
+    LOADABLE_PATTERN_CARGO_TOPPING_OFF_SEQUENCE("loadable_pattern_cargo_topping_off_sequence"),
+    LOADABLE_PLAN_STOWAGE_DETAILS("loadable_plan_stowage_details"),
+    LOADABLE_PLAN_BALLAST_DETAILS("loadable_plan_ballast_details"),
+    LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE("loadable_plan_commingle_details_portwise"),
+    STABILITY_PARAMETERS("stability_parameters"),
+    LOADABLE_PATTERN_CARGO_DETAILS("loadable_pattern_cargo_details"),
+    LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS("loadable_plan_stowage_ballast_details"),
+    LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE("loadicator_data_for_synoptical_table"),
+    CARGO_NOMINATION_OPERATION_DETAILS("cargo_nomination_operation_details"),
+    COMMUNICATION_STATUS_UPDATE("communication_status_update");
+
+    public final String table;
+  }
 }

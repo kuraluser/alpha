@@ -18,8 +18,8 @@ public enum MessageTypes {
   ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT("Ullage_Update_Loadicator_Off_AlgoResult"),
   ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT("Ullage_Update_Loadicator_On_AlgoResult");
 
-  public static EnumSet<MessageTypes> ship = EnumSet.of(ALGORESULT, PATTERNDETAIL);
-  public static EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN);
+  public static EnumSet<MessageTypes> loadableShip = EnumSet.of(ALGORESULT, PATTERNDETAIL);
+  public static EnumSet<MessageTypes> loadableShore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN);
 
   public static EnumSet<MessageTypes> loadingShore = EnumSet.of(LOADINGPLAN, ULLAGE_UPDATE);
   public static EnumSet<MessageTypes> loadingShip =

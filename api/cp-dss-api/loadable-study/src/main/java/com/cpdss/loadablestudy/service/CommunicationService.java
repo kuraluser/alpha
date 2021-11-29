@@ -8,6 +8,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
@@ -55,6 +56,7 @@ public class CommunicationService {
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
   @Autowired private LoadicatorService loadicatorService;
+  @Autowired private LoadableStudyStagingService loadableStudyStagingService;
 
   // Repositories
   @Autowired
@@ -117,7 +119,7 @@ public class CommunicationService {
           log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
           // Get loadable study request and update shore
           if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType.getMessageType())) {
-            saveLoadableStudyShore(erReply);
+            saveLoadableStudyIntoStagingTable(erReply);
           }
           // Get validate plan request and update shore
           else if (MessageTypes.VALIDATEPLAN
@@ -144,6 +146,21 @@ public class CommunicationService {
             HttpStatusCode.INTERNAL_SERVER_ERROR,
             e);
       }
+    }
+  }
+
+  private void saveLoadableStudyIntoStagingTable(EnvoyReader.EnvoyReaderResultReply erReply) {
+    try {
+      String jsonResult = erReply.getPatternResultJson();
+      loadableStudyStagingService.save(jsonResult);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when save into the Loadingplan datatransfer table", e);
+
+    } catch (ResourceAccessException e) {
+      log.info("ResourceAccessException when save into the Loadingplan datatransfer table  ", e);
+
+    } catch (Exception e) {
+      log.error("Exception when save into the Loadingplan datatransfer table  ", e);
     }
   }
 
@@ -270,7 +287,7 @@ public class CommunicationService {
           log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
           // Get loadable study response and update ship
           if (MessageTypes.ALGORESULT.getMessageType().equals(messageType.getMessageType())) {
-            saveAlgoPatternFromShore(erReply);
+            saveLoadableStudyIntoStagingTable(erReply);
           }
           // Get stowage edit response and update ship
           else if (MessageTypes.PATTERNDETAIL

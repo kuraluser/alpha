@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -85,4 +86,6 @@ public class LoadablePlanStowageDetails extends EntityDoc {
 
   @Column(name = "cargo_nomination_temperature")
   private BigDecimal cargoNominationTemperature;
+
+  @Transient private Long communicationRelatedEntityId;
 }

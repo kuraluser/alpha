@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-
-import io.grpc.LoadBalancer;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,7 @@ public class LoadableStudyCommunicationData {
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
+
   @Autowired
   private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
@@ -50,56 +49,57 @@ public class LoadableStudyCommunicationData {
     loadablePatterns = new Gson().fromJson(jsonArray, listType);
     log.info("loadablePatterns list:{}", loadablePatterns);
     if (loadablePatterns != null && !loadablePatterns.isEmpty()) {
-     try{
-      for (LoadablePattern loadablePattern : loadablePatterns) {
-        log.info(
-                "loadableStudy id from loadablePattern staging id:{}",
-                loadablePattern.getCommunicationRelatedEntityId());
-        LoadableStudy ls = updateLoadableStudyStatus(loadablePattern.getCommunicationRelatedEntityId());
-        if (ls != null) {
-          try {
-            loadablePattern.setLoadableStudyStatus(2L);
-            loadablePattern.setLoadableStudy(ls);
-            log.info("LoadablePattern id to fetch:{}", loadablePattern.getId());
-            Optional<LoadablePattern> loadablePatternOpt =
-                    loadablePatternRepository.findById(loadablePattern.getId());
-            log.info("LoadablePattern get:{}", loadablePatternOpt);
-            loadablePattern.setVersion(
-                    loadablePatternOpt.isPresent() ? loadablePatternOpt.get().getVersion() : null);
-            log.info("Saved LoadablePattern:{}", loadablePattern);
-            loadablePatternRepository.save(loadablePattern);
-          }catch(Exception e){
-            log.error("error when updating LoadablePattern:{}",e);
+      try {
+        for (LoadablePattern loadablePattern : loadablePatterns) {
+          log.info(
+              "loadableStudy id from loadablePattern staging id:{}",
+              loadablePattern.getCommunicationRelatedEntityId());
+          LoadableStudy ls =
+              updateLoadableStudyStatus(loadablePattern.getCommunicationRelatedEntityId());
+          if (ls != null) {
+            try {
+              loadablePattern.setLoadableStudyStatus(2L);
+              loadablePattern.setLoadableStudy(ls);
+              log.info("LoadablePattern id to fetch:{}", loadablePattern.getId());
+              Optional<LoadablePattern> loadablePatternOpt =
+                  loadablePatternRepository.findById(loadablePattern.getId());
+              log.info("LoadablePattern get:{}", loadablePatternOpt);
+              loadablePattern.setVersion(
+                  loadablePatternOpt.isPresent() ? loadablePatternOpt.get().getVersion() : null);
+              log.info("Saved LoadablePattern:{}", loadablePattern);
+              loadablePatternRepository.save(loadablePattern);
+            } catch (Exception e) {
+              log.error("error when updating LoadablePattern:{}", e);
+            }
           }
         }
+      } catch (Exception e) {
+        log.error("error when updating:{}", e);
       }
-      }catch(Exception e){
-        log.error("error when updating:{}",e);
-     }
     }
   }
 
   private LoadableStudy updateLoadableStudyStatus(Long communicationRelatedEntityId) {
     LoadableStudy ls = null;
     Optional<LoadableStudy> loadableStudyOpt =
-            loadableStudyRepository.findById(communicationRelatedEntityId);
+        loadableStudyRepository.findById(communicationRelatedEntityId);
     log.info("loadableStudy get:{}", loadableStudyOpt);
     if (loadableStudyOpt.isPresent()) {
       try {
         LoadableStudy loadableStudy = loadableStudyOpt.get();
-        Optional<LoadableStudyStatus> loadableStudyStatus = loadableStudyStatusRepository.findById(2L);
+        Optional<LoadableStudyStatus> loadableStudyStatus =
+            loadableStudyStatusRepository.findById(2L);
         if (loadableStudyStatus.isPresent()) {
           log.info("LoadableStudyStatus get:{}", loadableStudyStatus.get());
           loadableStudy.setLoadableStudyStatus(loadableStudyStatus.get());
           ls = loadableStudyRepository.save(loadableStudy);
         }
-      }catch (Exception e){
-        log.error("error when updating LoadableStudy statys:{}",e);
+      } catch (Exception e) {
+        log.error("error when updating LoadableStudy statys:{}", e);
       }
     }
     return ls;
   }
-
 
   public void saveSynopticalTableLoadicatorData(String dataJson)
       throws ResourceAccessException, Exception {
@@ -188,7 +188,7 @@ public class LoadableStudyCommunicationData {
         log.info("Saved JsonData:{}", jsonDatas);
       }
     } catch (Exception e) {
-      log.error("Error occurred when saving json data part of loadingplan communication",e);
+      log.error("Error occurred when saving json data part of loadingplan communication", e);
     }
   }
 }

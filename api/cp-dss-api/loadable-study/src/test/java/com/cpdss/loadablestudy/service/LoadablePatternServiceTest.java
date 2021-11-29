@@ -10,6 +10,7 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.PatternDetails;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -40,6 +41,7 @@ public class LoadablePatternServiceTest {
   @MockBean private VoyageRepository voyageRepository;
   @MockBean private LoadableStudyRepository loadableStudyRepository;
   @MockBean private JsonDataRepository jsonDataRepository;
+  @MockBean private LoadableStudyStagingService loadableStudyStagingService;
 
   @MockBean
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;

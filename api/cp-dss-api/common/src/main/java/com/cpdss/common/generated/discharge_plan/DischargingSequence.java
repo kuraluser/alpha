@@ -24,6 +24,7 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     cargoDischargingRate2_ = "";
     ballastOperations_ = java.util.Collections.emptyList();
     eductorOperation_ = java.util.Collections.emptyList();
+    cargoOperations_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -244,6 +245,21 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
 
               break;
             }
+          case 154:
+            {
+              if (!((mutable_bitField0_ & 0x00000100) != 0)) {
+                cargoOperations_ =
+                    new java.util.ArrayList<
+                        com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>();
+                mutable_bitField0_ |= 0x00000100;
+              }
+              cargoOperations_.add(
+                  input.readMessage(
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation
+                          .parser(),
+                      extensionRegistry));
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -283,6 +299,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       }
       if (((mutable_bitField0_ & 0x00000080) != 0)) {
         eductorOperation_ = java.util.Collections.unmodifiableList(eductorOperation_);
+      }
+      if (((mutable_bitField0_ & 0x00000100) != 0)) {
+        cargoOperations_ = java.util.Collections.unmodifiableList(cargoOperations_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -739,6 +758,36 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     return getCleaningTanks();
   }
 
+  public static final int CARGOOPERATIONS_FIELD_NUMBER = 19;
+  private java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>
+      cargoOperations_;
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>
+      getCargoOperationsList() {
+    return cargoOperations_;
+  }
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  public java.util.List<
+          ? extends
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder>
+      getCargoOperationsOrBuilderList() {
+    return cargoOperations_;
+  }
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  public int getCargoOperationsCount() {
+    return cargoOperations_.size();
+  }
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation getCargoOperations(
+      int index) {
+    return cargoOperations_.get(index);
+  }
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder
+      getCargoOperationsOrBuilder(int index) {
+    return cargoOperations_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -806,6 +855,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     }
     if (cleaningTanks_ != null) {
       output.writeMessage(18, getCleaningTanks());
+    }
+    for (int i = 0; i < cargoOperations_.size(); i++) {
+      output.writeMessage(19, cargoOperations_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -878,6 +930,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     if (cleaningTanks_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(18, getCleaningTanks());
     }
+    for (int i = 0; i < cargoOperations_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(19, cargoOperations_.get(i));
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -917,6 +972,7 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     if (hasCleaningTanks()) {
       if (!getCleaningTanks().equals(other.getCleaningTanks())) return false;
     }
+    if (!getCargoOperationsList().equals(other.getCargoOperationsList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -981,6 +1037,10 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     if (hasCleaningTanks()) {
       hash = (37 * hash) + CLEANINGTANKS_FIELD_NUMBER;
       hash = (53 * hash) + getCleaningTanks().hashCode();
+    }
+    if (getCargoOperationsCount() > 0) {
+      hash = (37 * hash) + CARGOOPERATIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getCargoOperationsList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -1123,6 +1183,7 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         getDischargingPlanPortWiseDetailsFieldBuilder();
         getBallastOperationsFieldBuilder();
         getEductorOperationFieldBuilder();
+        getCargoOperationsFieldBuilder();
       }
     }
 
@@ -1200,6 +1261,12 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       } else {
         cleaningTanks_ = null;
         cleaningTanksBuilder_ = null;
+      }
+      if (cargoOperationsBuilder_ == null) {
+        cargoOperations_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000100);
+      } else {
+        cargoOperationsBuilder_.clear();
       }
       return this;
     }
@@ -1317,6 +1384,15 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         result.cleaningTanks_ = cleaningTanks_;
       } else {
         result.cleaningTanks_ = cleaningTanksBuilder_.build();
+      }
+      if (cargoOperationsBuilder_ == null) {
+        if (((bitField0_ & 0x00000100) != 0)) {
+          cargoOperations_ = java.util.Collections.unmodifiableList(cargoOperations_);
+          bitField0_ = (bitField0_ & ~0x00000100);
+        }
+        result.cargoOperations_ = cargoOperations_;
+      } else {
+        result.cargoOperations_ = cargoOperationsBuilder_.build();
       }
       onBuilt();
       return result;
@@ -1619,6 +1695,33 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       }
       if (other.hasCleaningTanks()) {
         mergeCleaningTanks(other.getCleaningTanks());
+      }
+      if (cargoOperationsBuilder_ == null) {
+        if (!other.cargoOperations_.isEmpty()) {
+          if (cargoOperations_.isEmpty()) {
+            cargoOperations_ = other.cargoOperations_;
+            bitField0_ = (bitField0_ & ~0x00000100);
+          } else {
+            ensureCargoOperationsIsMutable();
+            cargoOperations_.addAll(other.cargoOperations_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.cargoOperations_.isEmpty()) {
+          if (cargoOperationsBuilder_.isEmpty()) {
+            cargoOperationsBuilder_.dispose();
+            cargoOperationsBuilder_ = null;
+            cargoOperations_ = other.cargoOperations_;
+            bitField0_ = (bitField0_ & ~0x00000100);
+            cargoOperationsBuilder_ =
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                    ? getCargoOperationsFieldBuilder()
+                    : null;
+          } else {
+            cargoOperationsBuilder_.addAllMessages(other.cargoOperations_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -4094,6 +4197,242 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         cleaningTanks_ = null;
       }
       return cleaningTanksBuilder_;
+    }
+
+    private java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>
+        cargoOperations_ = java.util.Collections.emptyList();
+
+    private void ensureCargoOperationsIsMutable() {
+      if (!((bitField0_ & 0x00000100) != 0)) {
+        cargoOperations_ =
+            new java.util.ArrayList<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>(
+                cargoOperations_);
+        bitField0_ |= 0x00000100;
+      }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder>
+        cargoOperationsBuilder_;
+
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>
+        getCargoOperationsList() {
+      if (cargoOperationsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(cargoOperations_);
+      } else {
+        return cargoOperationsBuilder_.getMessageList();
+      }
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public int getCargoOperationsCount() {
+      if (cargoOperationsBuilder_ == null) {
+        return cargoOperations_.size();
+      } else {
+        return cargoOperationsBuilder_.getCount();
+      }
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation
+        getCargoOperations(int index) {
+      if (cargoOperationsBuilder_ == null) {
+        return cargoOperations_.get(index);
+      } else {
+        return cargoOperationsBuilder_.getMessage(index);
+      }
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder setCargoOperations(
+        int index, com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation value) {
+      if (cargoOperationsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCargoOperationsIsMutable();
+        cargoOperations_.set(index, value);
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder setCargoOperations(
+        int index,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder
+            builderForValue) {
+      if (cargoOperationsBuilder_ == null) {
+        ensureCargoOperationsIsMutable();
+        cargoOperations_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder addCargoOperations(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation value) {
+      if (cargoOperationsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCargoOperationsIsMutable();
+        cargoOperations_.add(value);
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder addCargoOperations(
+        int index, com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation value) {
+      if (cargoOperationsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCargoOperationsIsMutable();
+        cargoOperations_.add(index, value);
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder addCargoOperations(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder
+            builderForValue) {
+      if (cargoOperationsBuilder_ == null) {
+        ensureCargoOperationsIsMutable();
+        cargoOperations_.add(builderForValue.build());
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder addCargoOperations(
+        int index,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder
+            builderForValue) {
+      if (cargoOperationsBuilder_ == null) {
+        ensureCargoOperationsIsMutable();
+        cargoOperations_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder addAllCargoOperations(
+        java.lang.Iterable<
+                ? extends com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>
+            values) {
+      if (cargoOperationsBuilder_ == null) {
+        ensureCargoOperationsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoOperations_);
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder clearCargoOperations() {
+      if (cargoOperationsBuilder_ == null) {
+        cargoOperations_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.clear();
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public Builder removeCargoOperations(int index) {
+      if (cargoOperationsBuilder_ == null) {
+        ensureCargoOperationsIsMutable();
+        cargoOperations_.remove(index);
+        onChanged();
+      } else {
+        cargoOperationsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder
+        getCargoOperationsBuilder(int index) {
+      return getCargoOperationsFieldBuilder().getBuilder(index);
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder
+        getCargoOperationsOrBuilder(int index) {
+      if (cargoOperationsBuilder_ == null) {
+        return cargoOperations_.get(index);
+      } else {
+        return cargoOperationsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder>
+        getCargoOperationsOrBuilderList() {
+      if (cargoOperationsBuilder_ != null) {
+        return cargoOperationsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(cargoOperations_);
+      }
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder
+        addCargoOperationsBuilder() {
+      return getCargoOperationsFieldBuilder()
+          .addBuilder(
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation
+                  .getDefaultInstance());
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder
+        addCargoOperationsBuilder(int index) {
+      return getCargoOperationsFieldBuilder()
+          .addBuilder(
+              index,
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation
+                  .getDefaultInstance());
+    }
+    /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+    public java.util.List<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder>
+        getCargoOperationsBuilderList() {
+      return getCargoOperationsFieldBuilder().getBuilderList();
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder>
+        getCargoOperationsFieldBuilder() {
+      if (cargoOperationsBuilder_ == null) {
+        cargoOperationsBuilder_ =
+            new com.google.protobuf.RepeatedFieldBuilderV3<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation.Builder,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder>(
+                cargoOperations_,
+                ((bitField0_ & 0x00000100) != 0),
+                getParentForChildren(),
+                isClean());
+        cargoOperations_ = null;
+      }
+      return cargoOperationsBuilder_;
     }
 
     @java.lang.Override

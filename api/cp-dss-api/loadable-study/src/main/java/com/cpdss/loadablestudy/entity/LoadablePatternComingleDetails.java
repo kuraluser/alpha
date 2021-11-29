@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,4 +70,6 @@ public class LoadablePatternComingleDetails extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Transient private Long communicationRelatedEntityId;
 }

@@ -3113,7 +3113,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           log.info("vesselId get:{}", vesselId);
           voyageRepository.deActivateAllVoyageByVesselId(vesselId, 2L, 3L);
           log.info("Deactivated voyages against this vesselId:{}", vesselId);
-        }catch(Exception e){
+        } catch (Exception e) {
           log.error("Error occurred when deactivating voyages against vessel", e);
         }
         Optional<VoyageStatus> voyageStatus =
@@ -3121,7 +3121,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         if (voyageStatus.isPresent()) {
           voyage.setVoyageStatus(voyageStatus.get());
           voyageRepository.save(voyage);
-          log.info("Voyage activated:{}",voyage);
+          log.info("Voyage activated:{}", voyage);
           replyBuilder.setResponseStatus(
               Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
         }
@@ -3299,7 +3299,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
     try {
-      log.info("json data request:{}",request.getId());
+      log.info("json data request:{}", request.getId());
       String jsonData = jsonDataRepository.getJsonDataWithLoadingInfoId(request.getId());
       log.info("json data get:{}", jsonData.length());
       if (jsonData != null) {
@@ -3313,7 +3313,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
     } catch (Exception e) {
-      log.error("Error occurred when get json data",e);
+      log.error("Error occurred when get json data", e);
     }
   }
 

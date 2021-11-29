@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -88,4 +89,6 @@ public class LoadablePatternCargoDetails extends EntityDoc {
 
   @Column(name = "actual_rdg_ullage")
   private BigDecimal actualRdgUllage;
+
+  @Transient private Long communicationRelatedEntityId;
 }

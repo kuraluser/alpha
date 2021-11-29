@@ -103,5 +103,6 @@ public class LoadableStudyPortRotation extends EntityDoc {
   private Boolean isbackloadingEnabled;
 
   @Transient private String portRotationType;
-  
+
+  @Transient private Long communicationRelatedEntityId;
 }

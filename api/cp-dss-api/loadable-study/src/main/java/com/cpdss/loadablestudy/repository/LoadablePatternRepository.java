@@ -82,4 +82,7 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
       value = "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_pattern u where id=?1",
       nativeQuery = true)
   String getLoadablePatternWithId(long id);
+
+  @Query("SELECT LP.id FROM LoadablePattern LP WHERE LP.loadableStudy.id = ?1")
+  List<Long> getLoadablePatternByLoadableStudyId(Long id);
 }

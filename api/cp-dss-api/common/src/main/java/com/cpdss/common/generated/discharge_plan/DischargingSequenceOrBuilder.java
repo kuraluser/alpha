@@ -229,4 +229,21 @@ public interface DischargingSequenceOrBuilder
   com.cpdss.common.generated.discharge_plan.CleaningTanks getCleaningTanks();
   /** <code>.CleaningTanks cleaningTanks = 18;</code> */
   com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder getCleaningTanksOrBuilder();
+
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  java.util.List<com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation>
+      getCargoOperationsList();
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation getCargoOperations(
+      int index);
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  int getCargoOperationsCount();
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  java.util.List<
+          ? extends
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder>
+      getCargoOperationsOrBuilderList();
+  /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
+  com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder
+      getCargoOperationsOrBuilder(int index);
 }

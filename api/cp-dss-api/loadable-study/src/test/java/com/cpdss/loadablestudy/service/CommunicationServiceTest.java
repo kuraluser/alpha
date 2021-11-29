@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
@@ -45,6 +46,7 @@ public class CommunicationServiceTest {
   @MockBean private LoadablePlanService loadablePlanService;
   @MockBean private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
   @MockBean private LoadicatorService loadicatorService;
+  @MockBean private LoadableStudyStagingService loadableStudyStagingService;
 
   @MockBean
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
@@ -66,7 +68,7 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = MessageTypes.shore;
+    EnumSet<MessageTypes> shore = MessageTypes.loadableShip;
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -88,7 +90,7 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = MessageTypes.shore;
+    EnumSet<MessageTypes> shore = MessageTypes.loadableShore;
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())

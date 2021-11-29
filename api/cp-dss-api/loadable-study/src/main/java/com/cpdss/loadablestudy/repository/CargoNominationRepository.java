@@ -41,4 +41,7 @@ public interface CargoNominationRepository extends CommonCrudRepository<CargoNom
 
   @Query("SELECT MIN(priority) FROM CargoNomination where id in ?1")
   public Long getMaxPriorityCargoNominationIn(List<Long> cargoNominationIds);
+
+  @Query("SELECT CN.id FROM CargoNomination CN WHERE CN.loadableStudyXId = ?1")
+  List<Long> getIdsByLoadableStudyId(Long id);
 }

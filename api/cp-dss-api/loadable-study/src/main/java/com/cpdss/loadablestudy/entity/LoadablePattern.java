@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.util.Collection;
 import javax.persistence.*;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

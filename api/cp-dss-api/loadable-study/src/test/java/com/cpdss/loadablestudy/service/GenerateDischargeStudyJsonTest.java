@@ -11,11 +11,8 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
-import com.cpdss.loadablestudy.domain.AlgoResponse;
-import com.cpdss.loadablestudy.domain.DischargeStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -56,7 +53,6 @@ public class GenerateDischargeStudyJsonTest {
   @MockBean private CowHistoryRepository cowHistoryRepository;
   @MockBean private LoadableStudyRuleService loadableStudyRuleService;
   private static final String SUCCESS = "SUCCESS";
-
 
   @Test
   void testUpdateProcessIdForDischargeStudy() {

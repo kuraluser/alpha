@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
@@ -69,6 +70,7 @@ public class LoadicatorServiceTest {
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private LoadicatorServiceGrpc.LoadicatorServiceBlockingStub loadicatorServiceGrpc;
   @MockBean private AlgoService algoService;
+  @MockBean private LoadableStudyStagingService loadableStudyStagingService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
