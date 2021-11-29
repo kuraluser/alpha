@@ -888,7 +888,7 @@ public class DischargePlanAlgoService {
   /**
    * Fetches Loading Information Status based on status ID.
    *
-   * @param dischargingInformationProcessingStartedId
+   * @param dischargingInformationStatusId
    * @return
    * @throws GenericServiceException
    */
@@ -930,7 +930,7 @@ public class DischargePlanAlgoService {
    * Saves the Loading Information ALGO Request JSON to DB.
    *
    * @param algoRequest
-   * @param loadingInfoId
+   * @param dischargingInfoId
    * @throws GenericServiceException
    */
   public void saveDischargingInformationRequestJson(
@@ -1185,7 +1185,8 @@ public class DischargePlanAlgoService {
     saveDischargingPlanPortWiseDetails(
         savedDischargingSequence, sequence.getDischargingPlanPortWiseDetailsList());
     saveCargoDischargingRates(savedDischargingSequence, sequence.getDischargingRatesList());
-    saveBallastPumps(savedDischargingSequence, sequence.getBallastOperationsList());
+    savePumps(savedDischargingSequence, sequence.getBallastOperationsList());
+    savePumps(savedDischargingSequence, sequence.getCargoOperationsList());
     if (sequence.getCleaningTanks() != null) {
       saveCleaningDetails(dischargingInfo, sequence.getCleaningTanks());
     }
@@ -1386,9 +1387,16 @@ public class DischargePlanAlgoService {
     }
   }
 
-  private void saveBallastPumps(
+  /**
+   * Saves cargo and ballast pump details
+   *
+   * @param dischargingSequence
+   * @param ballastOperationsList
+   */
+  private void savePumps(
       DischargingSequence dischargingSequence, List<PumpOperation> ballastOperationsList) {
-    log.info("Saving Ballast Pumps for Loading Sequence {}", dischargingSequence.getId());
+    log.info(
+        "Saving Ballast & Cargo Pumps for Discharging Sequence {}", dischargingSequence.getId());
     List<com.cpdss.dischargeplan.entity.BallastOperation> ballastOperations = new ArrayList<>();
     ballastOperationsList.forEach(
         pumpOperation -> {
@@ -1401,7 +1409,7 @@ public class DischargePlanAlgoService {
     ballastOperationRepository.saveAll(ballastOperations);
   }
   /**
-   * @param savedPortWiseDetails
+   * @param dischargingPlanPortWiseDetails
    * @param loadingPlanCommingleDetailsList
    */
   private void saveDischargingPlanCommingleDetails(
@@ -1643,8 +1651,8 @@ public class DischargePlanAlgoService {
   /**
    * @param conditionType
    * @param heading
-   * @param loadingInformation
-   * @param errorDetails
+   * @param dischargingInformation
+   * @param errors
    */
   public void saveAlgoErrors(
       DischargeInformation dischargingInformation,

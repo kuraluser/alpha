@@ -52,4 +52,19 @@ public class GatewayConstants {
   public static final String DICHARGE_STUDY = "DS";
 
   public static final String BALLAST_COLOR = "#01717D";
+
+  public static final Long CARGO_PUMP_TYPE_ID = 1L;
+  public static final Long BALLAST_PUMP_TYPE_ID = 2L;
+  public static final Long GS_PUMP_TYPE_ID = 3L;
+  public static final Long IG_PUMP_TYPE_ID = 4L;
+  public static final Long STRIPPING_PUMP_TYPE_ID = 5L;
+  public static final Long STRIP_EDUCTOR_TYPE_ID = 6L;
+  public static final Long COW_PUMP_TYPE_ID = 7L;
+  public static final Long BALLAST_EDUCTOR_TYPE_ID = 8L;
+  public static final Long TANK_CLEANING_PUMP_TYPE_ID = 9L;
+
+  public static final List<Long> DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES =
+      Arrays.asList(CARGO_PUMP_TYPE_ID, STRIPPING_PUMP_TYPE_ID, TANK_CLEANING_PUMP_TYPE_ID);
+  public static final List<Long> DISCHARGING_SEQUENCE_BALLAST_PUMP_CATEGORIES =
+      Arrays.asList(BALLAST_PUMP_TYPE_ID);
 }

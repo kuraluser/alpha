@@ -400,6 +400,7 @@ message DischargingSequence {
   repeated PumpOperation ballastOperations = 16;
   EductorOperation eductorOperation = 17;
   CleaningTanks cleaningTanks = 18;
+  repeated PumpOperation cargoOperations = 19;
 }
 
 message CleaningTanks {

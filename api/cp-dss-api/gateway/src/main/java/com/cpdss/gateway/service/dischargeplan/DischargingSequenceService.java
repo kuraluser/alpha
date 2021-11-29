@@ -1,6 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
+import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_SEQUENCE_BALLAST_PUMP_CATEGORIES;
+import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
@@ -368,7 +371,8 @@ public class DischargingSequenceService {
                             sequenceBuilder.setCargoDischargingRate2("0");
                           } else sequenceBuilder.setCargoDischargingRate2(rate2);
                         });
-              this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder);
+              this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder, true);
+              this.buildBallastOperations(sequence.getCargo(), pumps, sequenceBuilder, false);
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildDischargingRates(
                   sequence.getTankWiseCargoDischargingRates(), sequenceBuilder);
@@ -639,7 +643,8 @@ public class DischargingSequenceService {
   private void buildBallastOperations(
       Map<String, List<Pump>> ballasts,
       List<VesselPump> pumps,
-      DischargingSequence.Builder sequenceBuilder) {
+      DischargingSequence.Builder sequenceBuilder,
+      Boolean isBallast) {
     if (ballasts != null) {
       for (Entry<String, List<Pump>> entry : ballasts.entrySet()) {
         long pumpId = 0;
@@ -665,7 +670,11 @@ public class DischargingSequenceService {
             Optional<VesselPump> vesselPumpOpt =
                 pumps.stream().filter(pump -> pump.getId() == builder.getPumpXId()).findFirst();
             vesselPumpOpt.ifPresent(vesselPump -> builder.setPumpName(vesselPump.getPumpName()));
-            sequenceBuilder.addBallastOperations(builder.build());
+            if (isBallast) {
+              sequenceBuilder.addBallastOperations(builder.build());
+            } else {
+              sequenceBuilder.addCargoOperations(builder.build());
+            }
           }
         }
       }
@@ -959,7 +968,7 @@ public class DischargingSequenceService {
       Long vesselId, LoadingSequenceResponse response, List<BallastPump> ballastPumps) {
     List<PumpCategory> ballastPumpCategories = new ArrayList<>();
     List<PumpCategory> cargoPumpCategories = new ArrayList<>();
-    log.info("Populating ballast pumps and categories");
+    log.info("Populating ballast pumps, cargo pumps and categories");
     VesselIdRequest.Builder builder = VesselIdRequest.newBuilder();
     builder.setVesselId(vesselId);
     Set<Long> usedPumpIds =
@@ -976,11 +985,10 @@ public class DischargingSequenceService {
                 pumpCategory.setPumpName(vesselPump.getPumpCode());
                 Optional<PumpType> pumpTypeOpt =
                     pumpsResponse.getPumpTypeList().stream()
-                        .filter(pumpType -> pumpType.getId() == vesselPump.getId())
+                        .filter(pumpType -> pumpType.getId() == vesselPump.getPumpTypeId())
                         .findAny();
                 pumpTypeOpt.ifPresent(pumpType -> pumpCategory.setPumpType(pumpType.getName()));
-                pumpTypeOpt.ifPresent(pumpType -> pumpCategory.setId(pumpType.getId()));
-                if (pumpCategory.getId().equals(cargoPumpType)) {
+                if (DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES.contains(pumpCategory.getId())) {
                   cargoPumpCategories.add(pumpCategory);
                 } else {
                   ballastPumpCategories.add(pumpCategory);
@@ -991,11 +999,25 @@ public class DischargingSequenceService {
     response.setCargoPumpCategories(cargoPumpCategories);
     response.setBallastPumps(
         ballastPumps.stream()
-            .filter(pump -> !pump.getPumpId().equals(cargoPumpType))
+            .filter(
+                pump ->
+                    DISCHARGING_SEQUENCE_BALLAST_PUMP_CATEGORIES.contains(
+                        pumpsResponse.getVesselPumpList().stream()
+                            .filter(vesselPump -> vesselPump.getId() == pump.getPumpId())
+                            .map(vesselPump -> vesselPump.getPumpTypeId())
+                            .findFirst()
+                            .get()))
             .collect(Collectors.toList()));
     response.setCargoPumps(
         ballastPumps.stream()
-            .filter(pump -> pump.getPumpId().equals(cargoPumpType))
+            .filter(
+                pump ->
+                    DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES.contains(
+                        pumpsResponse.getVesselPumpList().stream()
+                            .filter(vesselPump -> vesselPump.getId() == pump.getPumpId())
+                            .map(vesselPump -> vesselPump.getPumpTypeId())
+                            .findFirst()
+                            .get()))
             .collect(Collectors.toList()));
   }
 

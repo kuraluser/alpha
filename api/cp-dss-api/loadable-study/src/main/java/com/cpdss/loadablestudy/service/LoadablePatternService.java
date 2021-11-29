@@ -836,6 +836,14 @@ public class LoadablePatternService {
                   loadablePattern.getLoadableStudy().getId(),
                   loadableQuantityCommingleCargoDetailsList.get(i).getCargo1NominationId(),
                   loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId());
+      if (commingleCargoOpt.isEmpty()) {
+        commingleCargoOpt =
+            commingleCargoRepository
+                .findByLoadableStudyXIdAndCargoNomination1IdAndCargoNomination2IdAndIsActiveTrue(
+                    loadablePattern.getLoadableStudy().getId(),
+                    loadableQuantityCommingleCargoDetailsList.get(i).getCargo2NominationId(),
+                    loadableQuantityCommingleCargoDetailsList.get(i).getCargo1NominationId());
+      }
       commingleCargoOpt.ifPresent(
           commingle -> loadablePlanCommingleDetails.setGrade(commingle.getAbbreviation()));
       loadablePlanCommingleDetails.setIsActive(true);
@@ -1492,6 +1500,14 @@ public class LoadablePatternService {
                         loadablePattern.getLoadableStudy().getId(),
                         it.getCargo1NominationId(),
                         it.getCargo2NominationId());
+            if (commingleCargoOpt.isEmpty()) {
+              commingleCargoOpt =
+                  commingleCargoRepository
+                      .findByLoadableStudyXIdAndCargoNomination1IdAndCargoNomination2IdAndIsActiveTrue(
+                          loadablePattern.getLoadableStudy().getId(),
+                          it.getCargo2NominationId(),
+                          it.getCargo1NominationId());
+            }
             commingleCargoOpt.ifPresent(
                 commingle ->
                     loadablePlanComminglePortwiseDetails.setGrade(commingle.getAbbreviation()));

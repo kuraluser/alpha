@@ -37,7 +37,7 @@ public class Sequence {
   // for discharging
   private List cargoValves;
   private List ballastValves;
-  private Map<String, List<Cargo>> cargo;
+  private Map<String, List<Pump>> cargo;
 
   @JsonProperty("cargoDischargingRateM3_Hr")
   private Map<String, String> stageWiseCargoDischargingRates;
