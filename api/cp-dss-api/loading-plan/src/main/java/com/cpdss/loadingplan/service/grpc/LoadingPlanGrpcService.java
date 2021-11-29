@@ -457,8 +457,11 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   // Checking if stowage details and bill of lading entries exists and quantity
                   // parameters are greater than zero
                   // Bug fix DSS 4458
-                  if (!dbCargos.containsAll(port.getCargoIdsList())
-                      || !dbBLCargos.containsAll(port.getCargoIdsList())
+                  // Issue fix : for commingle cargos - cargo nomination id will not be present in
+                  // port loadable stowage details
+                  // so removing !dbCargos.containsAll(port.getCargoIdsList()) check since this will
+                  // always fail.
+                  if (!dbBLCargos.containsAll(port.getCargoIdsList())
                       || (bLValues.stream()
                           .anyMatch(
                               bl ->
