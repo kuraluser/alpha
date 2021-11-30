@@ -5,7 +5,7 @@ services:
     volumes:
     - type: bind
       source: ${VOL_SOURCE}
-      target: /data
+      target: /mnt
     environment: 
     - DB_HOST=${DB_HOST}
     - DB_NAME=${DB_NAME} 

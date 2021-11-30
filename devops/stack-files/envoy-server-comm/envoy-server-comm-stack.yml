@@ -5,7 +5,7 @@ services:
     volumes:
     - type: bind
       source: ${VOL_SOURCE}
-      target: /data
+      target: /mnt
     ports: 
     - 81:81
     environment: 
