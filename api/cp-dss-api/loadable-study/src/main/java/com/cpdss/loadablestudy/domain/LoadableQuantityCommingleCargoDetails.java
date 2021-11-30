@@ -22,6 +22,8 @@ public class LoadableQuantityCommingleCargoDetails {
   private String cargo2Abbreviation;
   private String cargo1Percentage;
   private String cargo2Percentage;
+  private String colorCode;
+  private String abbreviation;
 
   @JsonInclude(Include.NON_NULL)
   private String cargo1Bblsdbs;
@@ -41,9 +43,21 @@ public class LoadableQuantityCommingleCargoDetails {
   @JsonInclude(Include.NON_NULL)
   private String cargo2LT;
 
+  private Long cargo1Id;
+
+  private Long cargo2Id;
+
   private String cargo1MT;
 
   private String cargo2MT;
+
+  private String cargo1M3;
+
+  private String cargo2M3;
+
+  private String cargo1Ullage;
+
+  private String cargo2Ullage;
 
   @JsonInclude(Include.NON_NULL)
   private String cargo1KL;

@@ -23,6 +23,7 @@ import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselTankRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankResponse;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
@@ -38,6 +39,7 @@ import com.cpdss.loadablestudy.domain.CowHistory;
 import com.cpdss.loadablestudy.domain.DischargeStudyAlgoJson;
 import com.cpdss.loadablestudy.domain.DischargeStudyPortRotationJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanStowageDetailsJson;
+import com.cpdss.loadablestudy.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.loadablestudy.domain.LoadableStudyInstruction;
 import com.cpdss.loadablestudy.domain.OnHandQuantity;
 import com.cpdss.loadablestudy.domain.PortDetails;
@@ -398,7 +400,12 @@ public class GenerateDischargeStudyJson {
     ArrivalConditionJson arrivalCondition = new ArrivalConditionJson();
 
     arrivalCondition.setLoadableQuantityCargoDetails(new ArrayList<>()); // For future
-    arrivalCondition.setLoadableQuantityCommingleCargoDetails(new ArrayList<>()); // For future
+
+    ofNullable(loadingPlanReply.getPortLoadingPlanCommingleDetailsList())
+        .ifPresent(
+            loadingPlanCommingleDetailsReply ->
+                arrivalCondition.setLoadableQuantityCommingleCargoDetails(
+                    getCommingleCargoDetails(loadingPlanCommingleDetailsReply)));
 
     ofNullable(loadingPlanReply.getPortLoadingPlanStabilityParametersList())
         .ifPresent(
@@ -419,6 +426,43 @@ public class GenerateDischargeStudyJson {
                     getLoadablePlanStowageDetails(loadablePlanBallastFromloadingPlanReply)));
 
     return arrivalCondition;
+  }
+
+  private List<LoadableQuantityCommingleCargoDetails> getCommingleCargoDetails(
+      List<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsReply) {
+    List<LoadableQuantityCommingleCargoDetails> commingleDetailsList = new ArrayList<>();
+    loadingPlanCommingleDetailsReply =
+        loadingPlanCommingleDetailsReply.stream()
+            .filter(item -> item.getConditionType() == 2L && item.getValueType() == 1L)
+            .collect(Collectors.toList());
+    loadingPlanCommingleDetailsReply.forEach(
+        item -> {
+          LoadableQuantityCommingleCargoDetails commingleDetails =
+              new LoadableQuantityCommingleCargoDetails();
+          ofNullable(item.getId()).ifPresent(commingleDetails::setId);
+          ofNullable(item.getApi()).ifPresent(commingleDetails::setApi);
+          ofNullable(item.getTemperature()).ifPresent(commingleDetails::setTemp);
+          ofNullable(item.getQuantityMT()).ifPresent(commingleDetails::setQuantity);
+          ofNullable(item.getTankName()).ifPresent(commingleDetails::setTankName);
+          ofNullable(item.getTankId()).ifPresent(commingleDetails::setTankId);
+          ofNullable(item.getUllage()).ifPresent(commingleDetails::setCorrectedUllage);
+          ofNullable(item.getColorCode()).ifPresent(commingleDetails::setColorCode);
+          ofNullable(item.getAbbreviation()).ifPresent(commingleDetails::setAbbreviation);
+          ofNullable(item.getQuantity1MT()).ifPresent(commingleDetails::setCargo1MT);
+          ofNullable(item.getQuantity2MT()).ifPresent(commingleDetails::setCargo2MT);
+          ofNullable(item.getQuantity1M3()).ifPresent(commingleDetails::setCargo1M3);
+          ofNullable(item.getQuantity2M3()).ifPresent(commingleDetails::setCargo2M3);
+          ofNullable(item.getUllage1()).ifPresent(commingleDetails::setCargo1Ullage);
+          ofNullable(item.getUllage2()).ifPresent(commingleDetails::setCargo2Ullage);
+          ofNullable(item.getCargo1Id()).ifPresent(commingleDetails::setCargo1Id);
+          ofNullable(item.getCargo2Id()).ifPresent(commingleDetails::setCargo2Id);
+          ofNullable(item.getCargoNomination1Id())
+              .ifPresent(commingleDetails::setCargo1NominationId);
+          ofNullable(item.getCargoNomination2Id())
+              .ifPresent(commingleDetails::setCargo2NominationId);
+          commingleDetailsList.add(commingleDetails);
+        });
+    return commingleDetailsList;
   }
 
   private List<LoadablePlanStowageDetailsJson> getLoadablePlanStowageDetails(
