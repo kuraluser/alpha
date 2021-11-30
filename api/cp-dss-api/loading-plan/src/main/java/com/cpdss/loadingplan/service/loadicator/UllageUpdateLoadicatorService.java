@@ -828,16 +828,20 @@ public class UllageUpdateLoadicatorService {
         loadingInformation, conditionType);
     algoErrorsRepository.deleteByLoadingInformationAndConditionType(
         loadingInformation, conditionType);
-    loadingPlanAlgoService.saveAlgoErrorEntity(
-        loadingInformation,
-        AlgoErrorHeaderConstants.LOADICATOR_ERRORS,
-        conditionType,
-        errorDetails);
-    loadingPlanAlgoService.saveAlgoErrorEntity(
-        loadingInformation,
-        AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
-        conditionType,
-        judgement);
+    if (!errorDetails.isEmpty()) {
+      loadingPlanAlgoService.saveAlgoErrorEntity(
+          loadingInformation,
+          AlgoErrorHeaderConstants.LOADICATOR_ERRORS,
+          conditionType,
+          errorDetails);
+    }
+    if (!judgement.isEmpty()) {
+      loadingPlanAlgoService.saveAlgoErrorEntity(
+          loadingInformation,
+          AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS,
+          conditionType,
+          judgement);
+    }
   }
 
   private void saveLoadingPlanAlgoErrors(
