@@ -382,6 +382,26 @@ public class DischargeInformationService {
     this.setDischargeCargoNominationId(vesselTankDetails);
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
 
+    // Call No. 3 To Loading Info for quantity in BBLS (by passing LS pattern ID)
+    var lsInfoCargo =
+        this.loadingInformationService.getLoadingInfoCargoDetailsByPattern(
+            activeVoyage.getPatternId());
+    vesselTankDetails
+        .getDischargeQuantityCargoDetails()
+        .forEach(
+            v -> {
+              lsInfoCargo
+                  .getBillOfLaddingList()
+                  .forEach(
+                      bol -> {
+                        if (bol.getCargoAbbrevation().equals(v.getCargoAbbreviation())) {
+                          if (bol.getQuantityBbls() != null) {
+                            v.setBlFigure(new BigDecimal(bol.getQuantityBbls()));
+                          }
+                        }
+                      });
+            });
+
     // discharge sequence (reason/delay)
     LoadingSequences dischargeSequences =
         this.infoBuilderService.buildDischargeSequencesAndDelayFromMessage(

@@ -2718,6 +2718,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.newBuilder();
     ResponseStatus.Builder repBuilder = ResponseStatus.newBuilder();
     try {
+      log.info("RPC call to Get Synoptic Data For Operation Module");
       this.synopticService.fetchLoadingInformationSynopticDetails(request, builder, repBuilder);
     } catch (Exception e) {
       e.printStackTrace();

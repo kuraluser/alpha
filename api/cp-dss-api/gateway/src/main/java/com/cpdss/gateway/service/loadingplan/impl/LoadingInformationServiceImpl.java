@@ -631,6 +631,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 cargo.setId(item.getCargoId());
                 cargo.setPlannedWeight(item.getPlannedWeight());
                 cargo.setTemp(String.valueOf(item.getTemperature()));
+                cargo.setColorCode(item.getColorCode());
                 cargos.add(cargo);
               });
 
@@ -850,7 +851,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setEstimatedTemp(lqcd.getEstimatedTemp());
       cargoDetails.setGrade(lqcd.getGrade());
       cargoDetails.setId(lqcd.getId());
-      cargoDetails.setMaxDischargingRate(this.getLoadingRateFromVesselService(vesselId));
+      // cargoDetails.setMaxDischargingRate(this.getLoadingRateFromVesselService(vesselId));
+      cargoDetails.setMaxDischargingRate(lqcd.getDischargingRate());
       cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
       cargoDetails.setTimeRequiredForDischarging(lqcd.getTimeRequiredForDischarging());
 

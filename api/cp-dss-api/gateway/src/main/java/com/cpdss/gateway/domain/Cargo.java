@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
 import lombok.Data;
 
@@ -19,4 +20,7 @@ public class Cargo {
   private Long lpCargoDetailsId;
   private Long planQtyId;
   private Integer planQtyCargoOrder;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private String colorCode;
 }

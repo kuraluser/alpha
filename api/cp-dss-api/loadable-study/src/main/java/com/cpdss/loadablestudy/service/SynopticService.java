@@ -51,6 +51,7 @@ import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsRe
 import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.Utils;
 import com.cpdss.loadablestudy.domain.OperationsTable;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.PortOperationTable;
@@ -195,9 +196,10 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     // Not passing operation type and portId when calling for getting ballast details
     if (!StringUtils.isEmpty(request.getOperationType())) {
       if (request.getPlanningType().equals(Common.PLANNING_TYPE.LOADABLE_STUDY)) {
-        // synpoticServiceUtils details based on port, and operation type
+        log.info("Loading operation - payload \n {}", Utils.toJson(request));
         synpoticServiceUtils.buildCargoToBeLoadedForPort(request, builder, repBuilder);
       } else if (request.getPlanningType().equals(Common.PLANNING_TYPE.DISCHARGE_STUDY)) {
+        log.info("Discharging operation - payload \n {}", Utils.toJson(request));
         synpoticServiceUtils.buildCargoToBeDischargedFroPort(request, builder, repBuilder);
       }
     }

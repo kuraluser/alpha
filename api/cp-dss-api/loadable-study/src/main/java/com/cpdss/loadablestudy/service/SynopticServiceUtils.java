@@ -655,22 +655,10 @@ public class SynopticServiceUtils {
               .ifPresent(v -> builder1.setEstimatedTemp(v.toString()));
           Optional.ofNullable(var1.getCargoNominationTemperature())
               .ifPresent(v -> builder1.setCargoNominationTemperature(v.toString()));
-
-          // Optional.ofNullable(var1.getOrderBblsDbs()).ifPresent(builder1::setOrderBblsdbs);
-          // Optional.ofNullable(var1.getOrderBbls60f()).ifPresent(builder1::setOrderBbls60F);
-          // Optional.ofNullable(var1.getMinTolerence()).ifPresent(builder1::setMinTolerence);
-          // Optional.ofNullable(var1.getMaxTolerence()).ifPresent(builder1::setMaxTolerence);
-          // Optional.ofNullable(var1.getLoadableBblsDbs()).ifPresent(builder1::setLoadableBblsdbs);
-          // Optional.ofNullable(var1.getLoadableBbls60f()).ifPresent(builder1::setLoadableBbls60F);
-
-          // Optional.ofNullable(var1.getLoadableLt()).ifPresent(builder1::setLoadableLT);
           Optional.ofNullable(var1.getDischargeMT())
               .ifPresent(value1 -> builder1.setDischargeMT(value1.toString()));
-          // Optional.ofNullable(var1.getLoadableKl()).ifPresent(builder1::setLoadableKL);
           Optional.ofNullable(var1.getDifferencePercentage())
               .ifPresent(value -> builder1.setDifferencePercentage(value.toString()));
-          // Optional.ofNullable(var1.getDifferenceColor()).ifPresent(builder1::setDifferenceColor);
-
           Optional.ofNullable(var1.getCargoId()).ifPresent(builder1::setCargoId);
           Optional.ofNullable(var1.getCargoAbbreviation())
               .ifPresent(builder1::setCargoAbbreviation);
@@ -679,7 +667,6 @@ public class SynopticServiceUtils {
           Optional.ofNullable(var1.getLoadingOrder()).ifPresent(builder1::setLoadingOrder);
           Optional.ofNullable(var1.getSlopQuantity())
               .ifPresent(value -> builder1.setSlopQuantity(value.toString()));
-
           Optional.ofNullable(var1.getOrderedQuantity())
               .ifPresent(
                   v -> {
@@ -690,13 +677,14 @@ public class SynopticServiceUtils {
                   v -> {
                     builder1.setCargoNominationQuantity(v.toString());
                   });
-
           Optional.ofNullable(var1.getCargoNominationId())
               .ifPresent(builder1::setCargoNominationId);
           Optional.ofNullable(var1.getDischargeCargoNominationId())
               .ifPresent(builder1::setDscargoNominationId);
           Optional.ofNullable(var1.getTimeRequiredForDischarging())
               .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
+          Optional.ofNullable(var1.getDischargingRate())
+              .ifPresent(value -> builder1.setDischargingRate(value.toString()));
 
           Optional.ofNullable(var1.getIsCommingled()).ifPresent(builder1::setIsCommingled);
           Optional.ofNullable(var1.getIfProtested()).ifPresent(builder1::setIfProtested);
