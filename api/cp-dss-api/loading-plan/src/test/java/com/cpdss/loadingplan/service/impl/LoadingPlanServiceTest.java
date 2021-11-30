@@ -9,6 +9,7 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.*;
@@ -22,11 +23,14 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /** @Author ravi.r */
+@TestPropertySource(properties = "cpdss.communication.enable = false")
 @SpringJUnitConfig(classes = {LoadingPlanService.class})
 class LoadingPlanServiceTest {
 
@@ -74,6 +78,17 @@ class LoadingPlanServiceTest {
   @MockBean
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
       synopticalOperationServiceBlockingStub;
+
+  @MockBean private LoadingPlanCommunicationService loadingPlancommunicationService;
+  @MockBean private LoadingPlanStagingService loadingPlanStagingService;
+
+  @MockBean
+  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
+
+  @MockBean LoadingInformationStatusRepository loadingInfoStatusRepository;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";

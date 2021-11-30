@@ -12,6 +12,7 @@ public enum MessageTypes {
   ALGORESULT("AlgoResult"),
   VALIDATEPLAN("ValidatePlan"),
   PATTERNDETAIL("PatternDetail"),
+  LOADINGPLAN_SAVE("LoadingPlan_Save"),
   LOADINGPLAN("LoadingPlan"),
   LOADINGPLAN_ALGORESULT("LoadingPlan_AlgoResult"),
   ULLAGE_UPDATE("Ullage_Update"),
@@ -21,7 +22,7 @@ public enum MessageTypes {
   public static EnumSet<MessageTypes> loadableShip = EnumSet.of(ALGORESULT, PATTERNDETAIL);
   public static EnumSet<MessageTypes> loadableShore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN);
 
-  public static EnumSet<MessageTypes> loadingShore = EnumSet.of(LOADINGPLAN, ULLAGE_UPDATE);
+  public static EnumSet<MessageTypes> loadingShore = EnumSet.of(LOADINGPLAN_SAVE, LOADINGPLAN, ULLAGE_UPDATE);
   public static EnumSet<MessageTypes> loadingShip =
       EnumSet.of(
           LOADINGPLAN_ALGORESULT,

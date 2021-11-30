@@ -210,6 +210,7 @@ public class LoadingPlanCommunicationService {
             .filter(
                 dataTransfer ->
                     Arrays.asList(
+                            MessageTypes.LOADINGPLAN_SAVE.getMessageType(),
                             MessageTypes.LOADINGPLAN.getMessageType(),
                             MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType())
                         .contains(dataTransfer.getProcessGroupId()))

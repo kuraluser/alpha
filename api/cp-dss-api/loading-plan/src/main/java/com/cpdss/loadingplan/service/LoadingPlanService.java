@@ -4,6 +4,7 @@ package com.cpdss.loadingplan.service;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
 import com.cpdss.common.generated.LoadableStudy.SynopticalCommingleRecord;
@@ -16,7 +17,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSync
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
+import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
@@ -24,16 +28,17 @@ import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.LoadingPlanUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -42,6 +47,12 @@ import org.springframework.util.StringUtils;
 @Transactional
 @Service
 public class LoadingPlanService {
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -98,6 +109,13 @@ public class LoadingPlanService {
   @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
   @Autowired private LoadingPlanAlgoService loadingPlanAlgoService;
   @Autowired private LoadingPlanRuleService loadingPlanRuleService;
+  @Autowired private LoadingPlanCommunicationService loadingPlancommunicationService;
+  @Autowired private LoadingPlanStagingService loadingPlanStagingService;
+
+  @Autowired
+  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
+
+  @Autowired LoadingInformationStatusRepository loadingInfoStatusRepository;
 
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
@@ -134,6 +152,48 @@ public class LoadingPlanService {
               + request.getLoadingInformationDetail().getPortId()
               + " of Loadable pattern "
               + request.getLoadingInformationDetail().getLoadablePatternId());
+      log.info("Communication Started for LoadingInfo when voyage activated");
+      if (enableCommunication && env.equals("ship")) {
+        String processId = UUID.randomUUID().toString();
+        JsonArray jsonArray =
+            loadingPlanStagingService.getCommunicationData(
+                Arrays.asList("loading_information"),
+                processId,
+                MessageTypes.LOADINGPLAN_SAVE.getMessageType(),
+                savedLoadingInformation.getId(),
+                null);
+
+        log.info("Json Array in Loading plan service: " + jsonArray.toString());
+        EnvoyWriter.WriterReply ewReply =
+            loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                savedLoadingInformation.getVesselXId(),
+                MessageTypes.LOADINGPLAN_SAVE.getMessageType());
+
+        if (LoadingPlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+          LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+              new LoadingPlanCommunicationStatus();
+          if (ewReply.getMessageId() != null) {
+            loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+            loadingPlanCommunicationStatus.setCommunicationStatus(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+          }
+          loadingPlanCommunicationStatus.setReferenceId(savedLoadingInformation.getId());
+          loadingPlanCommunicationStatus.setMessageType(
+              MessageTypes.LOADINGPLAN_SAVE.getMessageType());
+          loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
+              this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+          log.info("Communication table updated : " + loadingPlanCommunicationStat.getId());
+          // Set Loading Status
+          Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+              loadingInfoStatusRepository.findByIdAndIsActive(
+                  LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE, true);
+          loadingInformationRepository.updateLoadingInfoWithInfoStatus(
+              loadingInfoStatusOpt.get(), false, false, savedLoadingInformation.getId());
+        }
+      }
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setMessage("Successfully saved loading information in database")

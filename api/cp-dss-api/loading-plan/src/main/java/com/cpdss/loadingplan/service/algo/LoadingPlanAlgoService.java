@@ -230,9 +230,9 @@ public class LoadingPlanAlgoService {
         loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
         loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
         loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-        LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
+        LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
             this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
-        log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
+        log.info("Communication table update : " + loadingPlanCommunicationStat.getId());
       }
     } else {
       log.info("Create algo request:" + request);
