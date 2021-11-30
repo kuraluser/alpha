@@ -180,6 +180,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
     this.selectedPort = port;
     await localStorage.setItem('selectedPortName', port?.name);
     localStorage.setItem('selectedPortId', port?.portId?.toString());
+    localStorage.setItem('portVersion', port?.version ? port?.version?.toString() : '');
     this.loadingDischargingTransformationService.isDischargeStarted(false);
     this.operationId = port?.operationId;
     this.loadingDischargingTransformationService.portRotationId = port?.portRotationId;

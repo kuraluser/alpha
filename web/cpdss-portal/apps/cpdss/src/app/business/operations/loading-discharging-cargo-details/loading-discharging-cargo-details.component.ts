@@ -108,7 +108,6 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestro
    * @memberof LoadingDischargingCargoDetailsComponent
    */
    showCommingle(data) {
-    this.cargoVesselTankDetails;
     const commingleDetails = {...data};
     let tankData;
     this.cargoTanks.map(row => {

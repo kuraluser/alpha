@@ -35,6 +35,7 @@ export class DepartureConditionPanelComponent implements OnInit {
   trimValue = 0;
   freeboard = 0;
   manifoldHeight: number;
+  hasCommingle = false;
 
   readonly QUANTITY_UNIT = QUANTITY_UNIT;
   readonly LENGTH_UNIT = LENGTH_UNIT;
@@ -49,11 +50,12 @@ export class DepartureConditionPanelComponent implements OnInit {
   * @memberof DepartureConditionPanelComponent
   */
   formatData() {
+    this.hasCommingle = false;
     this.departureConditionCargoInfo = [];
     const commingleArray = [];
     this.departureConditionCargoTotalQuantity = 0;
     this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
-      if (com.conditionType === 2) {
+      if (com.conditionType === 2 && com.valueType === 2) {
         commingleArray.push({ abbreviation: com.abbreviation, colorCode: com.colorCode, quantity: 0, tankId: com.tankId });
       }
     });
@@ -74,7 +76,7 @@ export class DepartureConditionPanelComponent implements OnInit {
         }
       });
       this.departureConditionCargoTotalQuantity += cargoQuantity;
-      this.departureConditionCargoInfo.push({ abbreviation: cargo.cargoAbbreviation, colorCode: cargo.colorCode, quantity: cargoQuantity });
+      this.departureConditionCargoInfo.push({ abbreviation: cargo.cargoAbbreviation, colorCode: cargo.colorCode, quantity: cargoQuantity, cargoNominationId: cargo.cargoNominationId });
     });
     commingleArray?.map(com => {
       this.loadingDischargingPlanData?.planStowageDetails?.map(item => {
@@ -86,6 +88,21 @@ export class DepartureConditionPanelComponent implements OnInit {
         }
       });
     });
+    this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
+      this.departureConditionCargoInfo?.map(cargo => {
+        if (cargo.cargoNominationId === com.cargoNomination1Id) {
+          if (com.valueType === 2) {
+            cargo.quantity += com.quantity1MT;
+          }
+        }
+        if (cargo.cargoNominationId === com.cargoNomination2Id) {
+          if (com.valueType === 2) {
+            cargo.quantity += com.quantity2MT;
+          }
+        }
+      });
+    });
+    this.hasCommingle = commingleArray?.length ? true : false;
     this.departureConditionCargoInfo = [...commingleArray, ...this.departureConditionCargoInfo];
     let ballastQuantity = 0;
     this.loadingDischargingPlanData?.planBallastDetails?.map(item => {

@@ -520,6 +520,7 @@ export interface IEditPortRotation {
     portTime?: string;
     operation?: string;
     portType?: string;
+    version?: number;
 }
 
 /**
@@ -533,6 +534,7 @@ export class IVoyagePortDetails {
     operationId?: number;
     name?: string;
     portType?: string;
+    version?: number;
 }
 
 /**

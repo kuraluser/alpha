@@ -62,6 +62,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
   disablePlanViewErrorBtn = true;
   errorMessage: IAlgoError[];
   errorPopUp = false;
+  version: string;
 
 
   private ngUnsubscribe: Subject<any> = new Subject();
@@ -98,8 +99,9 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
         this.portRotationId = Number(params.get('portRotationId'));
         localStorage.setItem("vesselId", this.vesselId.toString());
         localStorage.setItem("voyageId", this.voyageId.toString());
-        localStorage.removeItem("loadableStudyId")
+        localStorage.removeItem("loadableStudyId");
         this.selectedPortName = localStorage.getItem('selectedPortName');
+        this.version = localStorage.getItem('portVersion');
         this.tabPermission();
       });
   }
@@ -317,6 +319,9 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     if (!value) { return };
     this.currentTab = tab;
     this.loadingDischargingTransformationService.setTabChange(tab);
+    if (tab === OPERATION_TAB.INSTRUCTION) {
+      this.dischargingInstructionComplete = true;
+    }
   }
 
   /**

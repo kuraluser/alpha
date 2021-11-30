@@ -59,6 +59,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
   loadingSequenceTabPermission: IPermission;
   loadingPlanTabPermission: IPermission;
   generatePlanPermission: IPermission;
+  version: string;
 
   readonly SIMULATOR_REQUEST_TYPE = SIMULATOR_REQUEST_TYPE;
 
@@ -102,6 +103,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
         localStorage.setItem("vesselId", this.vesselId.toString());
         localStorage.setItem("voyageId", this.voyageId.toString());
         this.selectedPortName = localStorage.getItem('selectedPortName');
+        this.version = localStorage.getItem('portVersion');
         this.tabPermission();
         localStorage.setItem('rate_unit', RATE_UNIT.BBLS_PER_HR);
       });
@@ -263,6 +265,9 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     if (!value) { return };
     this.currentTab = tab;
     this.loadingDischargingTransformationService.setTabChange(tab);
+    if (tab === OPERATION_TAB.INSTRUCTION) {
+      this.loadingInstructionComplete = true;
+    }
   }
 
   /**

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { TranslateModule } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { DepartureConditionPanelComponent } from './departure-condition-panel.component';
 import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.module';
@@ -17,7 +18,8 @@ import { QuantityDecimalFormatPipeModule } from '../../../shared/pipes/quantity-
   imports: [
     CommonModule,
     TranslateModule,
-    QuantityDecimalFormatPipeModule
+    QuantityDecimalFormatPipeModule,
+    TooltipModule
   ],
   exports: [DepartureConditionPanelComponent]
 })

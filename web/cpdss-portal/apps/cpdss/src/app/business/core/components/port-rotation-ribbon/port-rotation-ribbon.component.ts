@@ -165,7 +165,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "portRotationId": port.id,
       "operationId": port?.operationId,
       'name': port?.name,
-      'portType': port.portType
+      'portType': port.portType,
+      'version': port.version
     }
     const index = this.portList.indexOf(port);
     this.resetPreviousPort(index);
@@ -527,7 +528,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "portRotationId": this.portList[0].id,
       "operationId": this.portList[0].operationId,
       'name': this.portList[0].name,
-      'portType': this.portList[0].portType
+      'portType': this.portList[0].portType,
+      'version': this.portList[0].version
     }
     this.portList[0].isFocused = true;
     this.portList[0].isSelected = true;

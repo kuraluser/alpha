@@ -7,7 +7,10 @@
             <div class="pull-right pt-5 pb-5">{{cargo?.quantity | quantityDecimalFormat: 'MT'}} {{QUANTITY_UNIT.MT}}</div>
         </div>
         <div class="row no-gutters">
-            <div class="col pt-5 pb-5">{{'LOADABLE_PLAN_ARRIVAL_CONDITION_TOTAL_CARGO'| translate}}</div>
+            <div class="col pt-5 pb-5">{{'LOADABLE_PLAN_ARRIVAL_CONDITION_TOTAL_CARGO'| translate}}
+                <span *ngIf="hasCommingle" class="inline-block ml-5 v-middle pointer pi pi-info-circle"
+                pTooltip="{{ 'CARGO_PRIORITY_GRID_FOOTER_TOTAL_COMMINGLE_INFO' | translate}}" tooltipPosition="top"></span>
+            </div>
             <div class="text-right pt-5 pb-5">{{arrivalConditionCargoTotalQuantity | quantityDecimalFormat: 'MT'}} {{QUANTITY_UNIT.MT}}</div>
         </div>
         <div class="row no-gutters">

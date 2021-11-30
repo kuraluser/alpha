@@ -110,11 +110,9 @@ export class LoadingPlanComponent implements OnInit, OnDestroy {
   */
   setCommingleCargo() {
     if (this.loadingPlanDetails?.planCommingleDetails?.length && this.loadingPlanDetails?.planStowageDetails?.length) {
-      const filterCommingle = this.loadingPlanDetails?.planCommingleDetails?.filter(item => item.valueType === 2);
-      this.loadingPlanDetails.planCommingleDetails = [...filterCommingle];
+      this.loadingPlanDetails?.planStowageDetails.map(plan => {
       this.loadingPlanDetails?.planCommingleDetails.map(item => {
-        this.loadingPlanDetails?.planStowageDetails.map(plan => {
-          if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType) {
+          if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType && plan.valueType === item.valueType) {
             plan.isCommingleCargo = true;
             plan.quantityMT = item.quantityMT;
             plan.api = item.api;

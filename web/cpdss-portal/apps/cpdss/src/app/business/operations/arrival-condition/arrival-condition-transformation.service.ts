@@ -101,6 +101,7 @@ export class ArrivalConditionTransformationService {
     data.actualWeight = 0;
     data.plannedWeight = 0;
     data.colorCode = loadableQuantityCargoDetails.colorCode;
+    data.cargoNominationId = loadableQuantityCargoDetails.cargoNominationId;
     return data;
   }
 
