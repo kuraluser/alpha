@@ -139,11 +139,11 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
       this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
 
 
-      if (this.loadingInformationData.loadingInfoStatusId == 5 || this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7 || this.loadingInformationData.loadingInfoStatusId == 2 || this.loadingInformationData.loadingInfoStatusId == 0 || this.loadingInformationData.loadingInfoStatusId == 1) {
+      if (this.loadingInformationData.loadingInfoStatusId === 5 || this.loadingInformationData.loadingInfoStatusId === 6 || this.loadingInformationData.loadingInfoStatusId === 7 || this.loadingInformationData.loadingInfoStatusId === 2 || this.loadingInformationData.loadingInfoStatusId === 0 || this.loadingInformationData.loadingInfoStatusId === 1) {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
         this.loadingDischargingTransformationService.inProcessing.next(false);
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
-        if(this.loadingInformationData.loadingInfoStatusId == 6 || this.loadingInformationData.loadingInfoStatusId == 7){
+        if(this.loadingInformationData.loadingInfoStatusId === 6 || this.loadingInformationData.loadingInfoStatusId === 7){
           this.loadingDischargingTransformationService.disableViewErrorButton.next(false);
         } else {
           this.loadingDischargingTransformationService.disableViewErrorButton.next(true);

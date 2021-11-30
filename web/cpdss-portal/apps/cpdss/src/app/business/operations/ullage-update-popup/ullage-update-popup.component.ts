@@ -197,22 +197,6 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       data.portPlanRobDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanRobDetails : data?.portDischargePlanRobDetails;
       data.planCommingleDetails = this.operation === OPERATIONS.LOADING ? data?.loadablePlanCommingleDetails : data?.dischargePlanCommingleDetails;
 
-      // if (data?.isPlannedValues) {
-      //   data.portPlanStowageDetails?.map(item => {
-      //     item.quantity = 0;
-      //     item.ullage = 0;
-      //     item.temperature = 0;
-      //     item.api = 0;
-      //   });
-      //   data.portPlanBallastDetails?.map(item => {
-      //     item.quantity = 0;
-      //     item.sounding = 0;
-      //   });
-      //   data.portPlanRobDetails?.map(item => {
-      //     item.quantity = 0;
-      //     item.density = 0;
-      //   });
-      // }
       this.gradeDropdown = [];
       if (this.operation === OPERATIONS.LOADING) {
         data?.billOfLaddingList?.map(item => {

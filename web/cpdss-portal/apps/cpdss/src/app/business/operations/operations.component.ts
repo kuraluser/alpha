@@ -32,7 +32,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
   vessel: IVessel;
   voyages: Voyage[];
   showAddPortPopup = false;
-  generatePatternStatus: boolean;
+  disableRulesPopupBtn: boolean;
   isRuleModalVisible = false;
   get selectedVoyage(): Voyage {
     return this._selectedVoyage;
@@ -79,7 +79,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
       }
     });
     this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.pipe(takeUntil(this._ngUnsubscribe)).subscribe((status) => {
-      this.generatePatternStatus = status;
+      this.disableRulesPopupBtn = status;
     });
   }
 

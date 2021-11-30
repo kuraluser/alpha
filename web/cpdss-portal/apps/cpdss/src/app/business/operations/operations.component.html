@@ -23,7 +23,7 @@
                 (click)="addPort()">{{'OPERATIONS_ADD_PORT_BUTTON_LABEL' | translate}}</a>
         </div> -->
         <button id="rulesButton" *ngIf="selectedVoyage" class="btn btn-main  mr-10"
-          (click)="isRuleModalVisible = !isRuleModalVisible">{{'RULES'|translate}}</button>
+          (click)="isRuleModalVisible = !isRuleModalVisible" [disabled]="disableRulesPopupBtn">{{'RULES'|translate}}</button>
     </div>
     <div class="row">
         <div class="col">

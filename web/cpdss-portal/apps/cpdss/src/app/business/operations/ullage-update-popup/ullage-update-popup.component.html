@@ -379,11 +379,11 @@
                 <button type="button" class="btn btn-main" (click)="closeDialog()" id="update-ullage-popup-cancel"
                     focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
                 <button (click)="saveUllage(false)" class="btn btn-main" id="update-ullagey-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="isDischargeStarted || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'SAVE' |
+                    form="fg_newLoadableStudy" autofocus focusTrap [disabled]="(isDischargeStarted && operation === OPERATIONS.LOADING) || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'SAVE' |
                     translate}}</button>
                 <button (click)="saveUllage(true)" class="btn btn-main" id="update-ullage-popup-save-validate"
                     form="fg_newLoadableStudy" autofocus focusTrap
-                    [disabled]="isDischargeStarted || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
+                    [disabled]="(isDischargeStarted && operation === OPERATIONS.LOADING) || !permission?.edit || ullageStatus === ULLAGE_STATUS_VALUE.IN_PROGRESS || ullageStatus === ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS">{{'ULLAGE_UPDATE_SAVE_AND_VALIDATE_LABEL' |
                     translate}}</button>
             </div>
         </div>

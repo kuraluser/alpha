@@ -441,7 +441,6 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
       type: 'discharge-ullage-update-status',
       status: value.status,
       portRotationId: this.portRotationId
-
     }
     navigator.serviceWorker.controller.postMessage({ type: 'discharge-ullage-update-status', data });
   }
