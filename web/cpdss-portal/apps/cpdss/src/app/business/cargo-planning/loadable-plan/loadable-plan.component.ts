@@ -744,9 +744,10 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
    */
   async export() {
     this.loadablePlanApiService.export(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).subscribe((data) => {
-      const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' })
+      const fileName = data.headers.get('content-disposition').split('filename=')[1];
+      const blob = new Blob([data.body], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' })
       const fileurl = window.URL.createObjectURL(blob)
-      saveAs(fileurl, 'Report.xlsx')
+      saveAs(fileurl, fileName);
     });
   }
 

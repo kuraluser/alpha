@@ -41,7 +41,7 @@ export class LoadingPlanApiService {
  * @memberof LoadingPlanApiService
  */
  downloadLoadingPlanTemplate(vesselId: number, voyageId: number, loadingInfoId: number, portRotationId: number,data):Observable<any>{
-    return this.commonApiService.post<ILoadingPlanDetails,any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}/report`,data, { responseType: 'blob' as 'json' });
+    return this.commonApiService.postFile<ILoadingPlanDetails,any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}/report`,data, { responseType: 'blob' as 'json' });
 
   }
 }

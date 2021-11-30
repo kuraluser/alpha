@@ -137,7 +137,7 @@ export class LoadablePlanApiService {
   * Export data
   */
   export(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<any> {
-    return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patten/${loadablePatternId}/report`, {responseType: 'blob' as 'json'});
+    return this.commonApiService.getFile<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/loadable-patten/${loadablePatternId}/report`, {responseType: 'blob' as 'json'});
   }
 
   /**

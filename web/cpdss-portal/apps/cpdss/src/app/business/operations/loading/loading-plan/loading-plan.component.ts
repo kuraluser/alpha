@@ -188,9 +188,10 @@ export class LoadingPlanComponent implements OnInit, OnDestroy {
   downloadLoadingPlanTemplate() {
     this.ngxSpinnerService.show();
     this.loadingPlanApiService.downloadLoadingPlanTemplate(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId, this.loadingPlanDetailsTemp).subscribe((result) => {
-      const blob = new Blob([result], { type: result.type })
+      const fileName = result.headers.get('content-disposition').split('filename=')[1];
+      const blob = new Blob([result.body], { type: result.type });
       const fileurl = window.URL.createObjectURL(blob);
-      saveAs(fileurl, 'Loading-Plan.xlsx');
+      saveAs(fileurl, fileName);
       this.ngxSpinnerService.hide();
     });
   }

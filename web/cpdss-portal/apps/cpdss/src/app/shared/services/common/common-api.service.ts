@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -28,6 +28,22 @@ export class CommonApiService {
   get<T>(apiUri: string, options?: any): Observable<T> {
     const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
     return this.http.get<T>(this.apiGetter(apiUri), {headers:httpHeaders , responseType: options?.responseType});
+  }
+
+  /**
+   *  Common file get request handler
+   */
+   getFile<T>(apiUri: string, options?: any): Observable<HttpResponse<T>> {
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    return this.http.get<T>(this.apiGetter(apiUri), { headers:httpHeaders , responseType: options?.responseType, observe: 'response'});
+  }
+
+  /**
+   *  file download post request handler
+   */
+   postFile<N, T>(apiUri: string, body: N, options?: any): Observable<HttpResponse<T>> {
+    const httpHeaders = new HttpHeaders().set('Content-Type', 'application/json')
+    return this.http.post<T>(this.apiGetter(apiUri), body,{ headers:httpHeaders, responseType: options?.responseType, observe: 'response'});
   }
 
   /**
