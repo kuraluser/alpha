@@ -183,8 +183,8 @@ public class DischargeStudyService {
     details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
     details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
     details.setCargo2KL(lqccd.getCargo2KL());
-    details.setCargo2LT(lqccd.getQuantity2MT());
-    details.setCargo2MT(lqccd.getCargo2MT());
+    details.setCargo2LT(lqccd.getCargo2LT());
+    details.setCargo2MT(lqccd.getQuantity2MT());
     details.setCargo2Percentage(lqccd.getCargo2Percentage());
     details.setGrade(lqccd.getGrade());
     details.setQuantity(lqccd.getQuantity());
@@ -200,7 +200,7 @@ public class DischargeStudyService {
     Optional.ofNullable(lqccd.getQuantity1M3())
         .ifPresent(value -> details.setQuantity1M3(new BigDecimal(value)));
     Optional.ofNullable(lqccd.getQuantity2M3())
-        .ifPresent(value -> details.setQuantity1M3(new BigDecimal(value)));
+        .ifPresent(value -> details.setQuantity2M3(new BigDecimal(value)));
     Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(details::setCargo1NominationId);
     Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(details::setCargo2NominationId);
     return details;
