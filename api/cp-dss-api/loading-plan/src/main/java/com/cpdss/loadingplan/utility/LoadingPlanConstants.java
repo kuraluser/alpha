@@ -55,7 +55,8 @@ public class LoadingPlanConstants {
     LOADING_PORT_TIDE_DETAILS("loading_port_tide_details"),
     ALGO_ERROR_HEADING("algo_error_heading"),
     ALGO_ERRORS("algo_errors"),
-    LOADING_INSTRUCTIONS("loading_instructions");
+    LOADING_INSTRUCTIONS("loading_instructions"),
+    SYNOPTICAL_TABLE("synoptical_table");
 
     public final String table;
   }
@@ -83,4 +84,17 @@ public class LoadingPlanConstants {
 
   public static final List<String> loadingPlanCommWithAlgoErrorsList =
       Arrays.asList("algo_error_heading", "algo_errors");
+
+  public static final List<String> loadingPlanGenerationCommList =
+      Arrays.asList(
+          "loading_information",
+          "cargo_topping_off_sequence",
+          "loading_berth_details",
+          "loading_delay",
+          "loading_machinary_in_use",
+          "voyage",
+          "loadable_pattern",
+          "loading_port_tide_details",
+          "loading_instructions",
+          "synoptical_table");
 }

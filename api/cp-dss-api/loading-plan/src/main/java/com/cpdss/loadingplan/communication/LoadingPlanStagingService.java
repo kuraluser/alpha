@@ -51,6 +51,7 @@ public class LoadingPlanStagingService extends StagingService {
   List<Long> loadingSequenceIds = null;
   Long voyageId = null;
   Long loadablePatternId = null;
+  Long synopticalTableXId = null;
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
    *
@@ -703,6 +704,32 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case synoptical_table:
+          {
+            if (synopticalTableXId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(synopticalTableXId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub.getSynopticalDataForCommunication(
+                      builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray synopticalTableData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      synopticalTableData);
+                }
+              }
+            }
+            break;
+          }
       }
     }
     return array;
@@ -734,6 +761,7 @@ public class LoadingPlanStagingService extends StagingService {
           JsonParser.parseString(loadingInformationJson).getAsJsonArray().get(0).getAsJsonObject();
       voyageId = loadingInfoJsonObj.get("voyage_xid").getAsLong();
       loadablePatternId = loadingInfoJsonObj.get("loadable_pattern_xid").getAsLong();
+      synopticalTableXId = loadingInfoJsonObj.get("synoptical_table_xid").getAsLong();
       Long stageOffsetId = loadingInfoJsonObj.get("stages_min_amount_xid").getAsLong();
       Long stageDurationId = loadingInfoJsonObj.get("stages_duration_xid").getAsLong();
       Long loadingInformationStatusId = loadingInfoJsonObj.get("loading_status_xid").getAsLong();

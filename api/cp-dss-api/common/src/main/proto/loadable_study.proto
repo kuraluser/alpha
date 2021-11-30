@@ -226,6 +226,11 @@ service LoadableStudyService {
 	rpc getJsonDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 
 	rpc saveJsonDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc getSynopticalDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveSynopticalDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
 }
 
 service SynopticalOperationService{

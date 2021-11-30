@@ -3112,14 +3112,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         try {
           Long vesselId = voyage.getVesselXId();
           List<Voyage> voyageList = voyageRepository.findByVesselXIdAndVoyageStatusId(vesselId, 3L);
-          Optional<VoyageStatus> voyageStatus =
-                  voyageStatusRepository.findById(2L);
-          for (Voyage v: voyageList) {
+          Optional<VoyageStatus> voyageStatus = voyageStatusRepository.findById(2L);
+          for (Voyage v : voyageList) {
             v.setVoyageStatus(voyageStatus.get());
           }
           voyageRepository.saveAll(voyageList);
-         // log.info("vesselId get:{}", vesselId);
-          //voyageRepository.deActivateAllVoyageByVesselId(vesselId, 2L, 3L);
+          // log.info("vesselId get:{}", vesselId);
+          // voyageRepository.deActivateAllVoyageByVesselId(vesselId, 2L, 3L);
           log.info("Deactivated voyages against this vesselId:{}", voyageList);
         } catch (Exception e) {
           log.error("Error occurred when deactivating voyages against vessel", e);
@@ -3339,6 +3338,69 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
     try {
       loadableStudyCommunicationData.saveJsonDataForCommunication(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * get SynopticalTable Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getSynopticalDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+
+    String synopticalTableData =
+        synopticalTableRepository.getSynopticalTableDataWithId(request.getId());
+    if (synopticalTableData != null) {
+      replyBuilder.setDataJson(synopticalTableData);
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder().setMessage("No SynopticalTableData Found").build());
+    }
+    responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
+  }
+
+  /**
+   * save SynopticalTable Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveSynopticalDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveSynopticalTableData(request.getDataJson());
       replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (ResourceAccessException e) {
       e.printStackTrace();

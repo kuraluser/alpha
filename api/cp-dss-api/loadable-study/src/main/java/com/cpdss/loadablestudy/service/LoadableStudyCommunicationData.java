@@ -32,11 +32,13 @@ public class LoadableStudyCommunicationData {
   @Autowired private SynopticalTableRepository synopticalTableRepository;
   @Autowired private JsonDataRepository jsonDataRepository;
   @Autowired private JsonTypeRepository jsonTypeRepository;
+  @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
 
   Type listType = null;
   List<LoadablePattern> loadablePatterns = null;
   List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDatas = null;
   List<JsonData> jsonDatas = null;
+  List<SynopticalTable> synopticalTables = null;
 
   public void saveLoadablePattern(String dataJson) throws ResourceAccessException, Exception {
     HashMap<String, String> map =
@@ -189,6 +191,42 @@ public class LoadableStudyCommunicationData {
       }
     } catch (Exception e) {
       log.error("Error occurred when saving json data part of loadingplan communication", e);
+    }
+  }
+
+  public void saveSynopticalTableData(String dataJson) {
+    try {
+      HashMap<String, String> map =
+          loadableStudyStagingService.getAttributeMapping(new SynopticalTable());
+      JsonArray jsonArray =
+          removeJsonFields(
+              JsonParser.parseString(dataJson).getAsJsonArray(), map, "port_rotation_xid");
+      log.info("SynopticalTable json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<SynopticalTable>>() {}.getType();
+      synopticalTables = new Gson().fromJson(jsonArray, listType);
+      log.info("SynopticalTable list:{}", synopticalTables);
+      if (synopticalTables != null && !synopticalTables.isEmpty()) {
+        for (SynopticalTable synopticalTable : synopticalTables) {
+          log.info(
+              "LoadableStudyPortRotation id :{}",
+              synopticalTable.getCommunicationRelatedEntityId());
+          Optional<LoadableStudyPortRotation> loadableStudyPortRotation =
+              loadableStudyPortRotationRepository.findById(
+                  synopticalTable.getCommunicationRelatedEntityId());
+          if (loadableStudyPortRotation.isPresent()) {
+            Optional<SynopticalTable> synopticalTableOpt =
+                synopticalTableRepository.findById(synopticalTable.getId());
+            log.info("SynopticalTable get by id:{}", synopticalTableOpt);
+            synopticalTable.setVersion(
+                synopticalTableOpt.isPresent() ? synopticalTableOpt.get().getVersion() : null);
+            synopticalTable.setLoadableStudyPortRotation(loadableStudyPortRotation.get());
+          }
+        }
+        synopticalTableRepository.saveAll(synopticalTables);
+        log.info("Saved SynopticalTable:{}", synopticalTables);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving SynopticalTable part of loadingplan communication", e);
     }
   }
 }

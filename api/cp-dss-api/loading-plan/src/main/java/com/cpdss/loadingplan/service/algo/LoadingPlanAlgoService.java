@@ -205,16 +205,7 @@ public class LoadingPlanAlgoService {
       processId = UUID.randomUUID().toString();
       JsonArray jsonArray =
           loadingPlanStagingService.getCommunicationData(
-              Arrays.asList(
-                  "loading_information",
-                  "cargo_topping_off_sequence",
-                  "loading_berth_details",
-                  "loading_delay",
-                  "loading_machinary_in_use",
-                  "voyage",
-                  "loadable_pattern",
-                  "loading_port_tide_details",
-                  "loading_instructions"),
+              com.cpdss.loadingplan.utility.LoadingPlanConstants.loadingPlanGenerationCommList,
               processId,
               MessageTypes.LOADINGPLAN.getMessageType(),
               loadingInfoOpt.get().getId(),

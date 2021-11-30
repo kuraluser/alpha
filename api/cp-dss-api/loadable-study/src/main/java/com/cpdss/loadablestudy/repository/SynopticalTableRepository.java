@@ -81,4 +81,9 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
 
   @Query("SELECT ST.id FROM SynopticalTable ST WHERE ST.loadableStudyXId = ?1")
   List<Long> getIdsByLoadableStudyId(Long id);
+
+  @Query(
+      value = "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM synoptical_table u where id=?1",
+      nativeQuery = true)
+  String getSynopticalTableDataWithId(Long id);
 }

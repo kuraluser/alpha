@@ -233,9 +233,25 @@ public class StagingService {
 
   private void modifyAttributeValue(JsonObject jsonObj, String sourceKey, String targetKey) {
     String[] dateTimeFields = {
-            "created_date_time", "last_modified_date_time", "voyage_start_date", "voyage_end_date"
+      "created_date_time",
+      "last_modified_date_time",
+      "voyage_start_date",
+      "voyage_end_date",
+      "eta_actual",
+      "etd_actual"
     };
-    String[] timeFields = {"sunrise_time", "sunset_time", "start_time", "tide_time"};
+    String[] timeFields = {
+      "sunrise_time",
+      "sunset_time",
+      "start_time",
+      "tide_time",
+      "time_of_sunrise",
+      "time_of_sunset",
+      "hw_tide_time_from",
+      "hw_tide_time_to",
+      "lw_tide_time_from",
+      "lw_tide_time_to"
+    };
     String[] dateFields = {"created_date", "last_modified_date"};
     String value = jsonObj.get(sourceKey) == null ? null : jsonObj.get(sourceKey).toString();
     if (Arrays.stream(dateTimeFields).anyMatch(sourceKey::equals)) {

@@ -308,6 +308,7 @@ public class LoadingPlanCommunicationService {
       String loadablePattern = null;
       String loadicatorDataForSynoptical = null;
       String jsonData = null;
+      String synopticalData = null;
       List<PortTideDetail> portTideDetailList = null;
       List<AlgoErrorHeading> algoErrorHeadings = null;
       List<AlgoErrors> algoErrors = null;
@@ -854,6 +855,12 @@ public class LoadingPlanCommunicationService {
               loadingInstructions = new Gson().fromJson(jsonArray, listType);
               idMap.put(
                   LoadingPlanTables.LOADING_INSTRUCTIONS.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case synoptical_table:
+            {
+              synopticalData = dataTransferString;
+              idMap.put(LoadingPlanTables.SYNOPTICAL_TABLE.getTable(), dataTransferStage.getId());
               break;
             }
         }
@@ -1953,6 +1960,29 @@ public class LoadingPlanCommunicationService {
               processId,
               StagingStatus.FAILED.getStatus(),
               e.getMessage());
+        }
+      }
+      if (synopticalData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info("SynopticalData get from staging table:{}", synopticalData);
+        builder.setDataJson(synopticalData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveSynopticalDataForCommunication(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("SynopticalData saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.SYNOPTICAL_TABLE.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.SYNOPTICAL_TABLE.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
         }
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(
