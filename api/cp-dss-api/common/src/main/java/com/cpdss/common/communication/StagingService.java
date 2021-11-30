@@ -238,7 +238,12 @@ public class StagingService {
       "voyage_start_date",
       "voyage_end_date",
       "eta_actual",
-      "etd_actual"
+      "etd_actual",
+      "actual_start_date",
+      "actual_end_date",
+      "eta",
+      "etd",
+      "updated_time",
     };
     String[] timeFields = {
       "sunrise_time",
@@ -252,7 +257,7 @@ public class StagingService {
       "lw_tide_time_from",
       "lw_tide_time_to"
     };
-    String[] dateFields = {"created_date", "last_modified_date"};
+    String[] dateFields = {"created_date", "last_modified_date", "lay_can_from", "lay_can_to"};
     String value = jsonObj.get(sourceKey) == null ? null : jsonObj.get(sourceKey).toString();
     if (Arrays.stream(dateTimeFields).anyMatch(sourceKey::equals)) {
       jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, true));

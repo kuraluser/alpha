@@ -22,7 +22,8 @@ public enum MessageTypes {
   public static EnumSet<MessageTypes> loadableShip = EnumSet.of(ALGORESULT, PATTERNDETAIL);
   public static EnumSet<MessageTypes> loadableShore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN);
 
-  public static EnumSet<MessageTypes> loadingShore = EnumSet.of(LOADINGPLAN_SAVE, LOADINGPLAN, ULLAGE_UPDATE);
+  public static EnumSet<MessageTypes> loadingShore =
+      EnumSet.of(LOADINGPLAN_SAVE, LOADINGPLAN, ULLAGE_UPDATE);
   public static EnumSet<MessageTypes> loadingShip =
       EnumSet.of(
           LOADINGPLAN_ALGORESULT,

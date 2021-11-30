@@ -498,6 +498,108 @@ public final class PortInfoServiceGrpc {
     return getGetAllCountriesMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getGetAllCargoPortMappingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAllCargoPortMapping",
+      requestType = com.cpdss.common.generated.PortInfo.CargoPortRequest.class,
+      responseType = com.cpdss.common.generated.PortInfo.CargoPortReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getGetAllCargoPortMappingMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.CargoPortRequest,
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        getGetAllCargoPortMappingMethod;
+    if ((getGetAllCargoPortMappingMethod = PortInfoServiceGrpc.getGetAllCargoPortMappingMethod)
+        == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetAllCargoPortMappingMethod = PortInfoServiceGrpc.getGetAllCargoPortMappingMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetAllCargoPortMappingMethod =
+              getGetAllCargoPortMappingMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.CargoPortRequest,
+                          com.cpdss.common.generated.PortInfo.CargoPortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetAllCargoPortMapping"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetAllCargoPortMapping"))
+                      .build();
+        }
+      }
+    }
+    return getGetAllCargoPortMappingMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getGetAllCargoPortMappingByIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAllCargoPortMappingById",
+      requestType = com.cpdss.common.generated.PortInfo.CargoPortRequest.class,
+      responseType = com.cpdss.common.generated.PortInfo.CargoPortReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getGetAllCargoPortMappingByIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.CargoPortRequest,
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        getGetAllCargoPortMappingByIdMethod;
+    if ((getGetAllCargoPortMappingByIdMethod =
+            PortInfoServiceGrpc.getGetAllCargoPortMappingByIdMethod)
+        == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetAllCargoPortMappingByIdMethod =
+                PortInfoServiceGrpc.getGetAllCargoPortMappingByIdMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetAllCargoPortMappingByIdMethod =
+              getGetAllCargoPortMappingByIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.CargoPortRequest,
+                          com.cpdss.common.generated.PortInfo.CargoPortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetAllCargoPortMappingById"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetAllCargoPortMappingById"))
+                      .build();
+        }
+      }
+    }
+    return getGetAllCargoPortMappingByIdMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static PortInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub> factory =
@@ -632,6 +734,24 @@ public final class PortInfoServiceGrpc {
           getGetAllCountriesMethod(), responseObserver);
     }
 
+    /** */
+    public void getAllCargoPortMapping(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetAllCargoPortMappingMethod(), responseObserver);
+    }
+
+    /** */
+    public void getAllCargoPortMappingById(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetAllCargoPortMappingByIdMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -703,6 +823,20 @@ public final class PortInfoServiceGrpc {
                   new MethodHandlers<
                       com.google.protobuf.Empty, com.cpdss.common.generated.PortInfo.CountryReply>(
                       this, METHODID_GET_ALL_COUNTRIES)))
+          .addMethod(
+              getGetAllCargoPortMappingMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.CargoPortRequest,
+                      com.cpdss.common.generated.PortInfo.CargoPortReply>(
+                      this, METHODID_GET_ALL_CARGO_PORT_MAPPING)))
+          .addMethod(
+              getGetAllCargoPortMappingByIdMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.CargoPortRequest,
+                      com.cpdss.common.generated.PortInfo.CargoPortReply>(
+                      this, METHODID_GET_ALL_CARGO_PORT_MAPPING_BY_ID)))
           .build();
     }
   }
@@ -828,6 +962,28 @@ public final class PortInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getAllCargoPortMapping(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAllCargoPortMappingMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getAllCargoPortMappingById(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAllCargoPortMappingByIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -911,6 +1067,20 @@ public final class PortInfoServiceGrpc {
         com.google.protobuf.Empty request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllCountriesMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.CargoPortReply getAllCargoPortMapping(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAllCargoPortMappingMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.CargoPortReply getAllCargoPortMappingById(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAllCargoPortMappingByIdMethod(), getCallOptions(), request);
     }
   }
 
@@ -1010,6 +1180,22 @@ public final class PortInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllCountriesMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        getAllCargoPortMapping(com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAllCargoPortMappingMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        getAllCargoPortMappingById(com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAllCargoPortMappingByIdMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_PORT_INFO = 0;
@@ -1022,6 +1208,8 @@ public final class PortInfoServiceGrpc {
   private static final int METHODID_GET_CARGO_INFO_BY_PORT_IDS = 7;
   private static final int METHODID_GET_LOADING_PLAN_BERTH_DATA = 8;
   private static final int METHODID_GET_ALL_COUNTRIES = 9;
+  private static final int METHODID_GET_ALL_CARGO_PORT_MAPPING = 10;
+  private static final int METHODID_GET_ALL_CARGO_PORT_MAPPING_BY_ID = 11;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1102,6 +1290,18 @@ public final class PortInfoServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CountryReply>)
                   responseObserver);
           break;
+        case METHODID_GET_ALL_CARGO_PORT_MAPPING:
+          serviceImpl.getAllCargoPortMapping(
+              (com.cpdss.common.generated.PortInfo.CargoPortRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ALL_CARGO_PORT_MAPPING_BY_ID:
+          serviceImpl.getAllCargoPortMappingById(
+              (com.cpdss.common.generated.PortInfo.CargoPortRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1176,6 +1376,8 @@ public final class PortInfoServiceGrpc {
                       .addMethod(getGetCargoInfoByPortIdsMethod())
                       .addMethod(getGetLoadingPlanBerthDataMethod())
                       .addMethod(getGetAllCountriesMethod())
+                      .addMethod(getGetAllCargoPortMappingMethod())
+                      .addMethod(getGetAllCargoPortMappingByIdMethod())
                       .build();
         }
       }
