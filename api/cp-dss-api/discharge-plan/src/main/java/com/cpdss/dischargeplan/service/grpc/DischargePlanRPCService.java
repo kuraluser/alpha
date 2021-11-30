@@ -712,7 +712,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       List<PortDischargingPlanBallastTempDetails> tempBallast =
           portLoadingPlanBallastTempDetailsRepository
               .findByDischargingInformationAndConditionTypeAndIsActive(
-                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getDischargingInfoId(),
                   request.getUpdateUllage(0).getArrivalDepartutre(),
                   true);
       List<PortDischargingPlanBallastTempDetails> updatedBallast =
@@ -723,7 +723,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       List<PortDischargingPlanStowageTempDetails> tempStowage =
           portLoadingPlanStowageTempDetailsRepository
               .findByDischargingInformationAndConditionTypeAndIsActive(
-                  request.getUpdateUllage(0).getLoadingInformationId(),
+                  request.getUpdateUllage(0).getDischargingInfoId(),
                   request.getUpdateUllage(0).getArrivalDepartutre(),
                   true);
       List<PortDischargingPlanStowageTempDetails> updatedStowage =
@@ -733,7 +733,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
       // update and save ROB
       List<PortDischargingPlanRobDetails> tempRob =
           pdpRobDetailsRepository.findByDischargingInformationAndConditionTypeAndIsActive(
-              request.getRobUpdate(0).getLoadingInformationId(),
+              request.getRobUpdate(0).getDischargingInformationId(),
               request.getRobUpdate(0).getArrivalDepartutre(),
               true);
       List<PortDischargingPlanRobDetails> updatedRob =
