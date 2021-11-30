@@ -138,8 +138,12 @@ public class DischargingSequenceService {
           Optional.ofNullable(param.getList())
               .ifPresent(list -> paramBuilder.setList(String.valueOf(list)));
           Optional.ofNullable(param.getTime()).ifPresent(paramBuilder::setTime);
-          // Optional.ofNullable(param.getGomValue()).ifPresent(value ->
-          // paramBuilder.setGomValue(value.toString())); TODO
+          Optional.ofNullable(param.getGomValue())
+              .ifPresent(value -> paramBuilder.setGomValue(value.toString()));
+          Optional.ofNullable(param.getBmFrameNumber())
+              .ifPresent(bmFrameNo -> paramBuilder.setBmFrameNumber(bmFrameNo.toString()));
+          Optional.ofNullable(param.getSfFrameNumber())
+              .ifPresent(sfFrameNo -> paramBuilder.setSfFrameNumber(sfFrameNo.toString()));
           builder.addDischargeSequenceStabilityParameters(paramBuilder.build());
         });
   }

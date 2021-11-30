@@ -59,4 +59,13 @@ public class DischargingSequenceStabilityParameters extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "gom_value")
+  private BigDecimal gomValue;
+
+  @Column(name = "sf_frame_number")
+  private BigDecimal sfFrameNumber;
+
+  @Column(name = "bm_frame_number")
+  private BigDecimal bmFrameNumber;
 }

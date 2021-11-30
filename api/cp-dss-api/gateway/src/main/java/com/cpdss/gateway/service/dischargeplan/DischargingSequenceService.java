@@ -1144,6 +1144,32 @@ public class DischargingSequenceService {
                           .add(
                               Arrays.asList(
                                   portEta + (param.getTime() * 60 * 1000), param.getGomValue())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("gm"))
+              .forEach(
+                  gom ->
+                      gom.getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000), param.getGomValue())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("sfFrameNumber"))
+              .forEach(
+                  gom ->
+                      gom.getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000),
+                                  param.getSfFrameNumber())));
+          stabilityParams.stream()
+              .filter(stabilityParam -> stabilityParam.getName().equals("bmFrameNumber"))
+              .forEach(
+                  gom ->
+                      gom.getData()
+                          .add(
+                              Arrays.asList(
+                                  portEta + (param.getTime() * 60 * 1000),
+                                  param.getBmFrameNumber())));
         });
   }
 
@@ -1470,7 +1496,15 @@ public class DischargingSequenceService {
     StabilityParam gom = new StabilityParam();
     gom.setName("gomValue");
     gom.setData(new ArrayList<>());
-    stabilityParams.addAll(Arrays.asList(foreDraft, aftDraft, trim, ukc, gm, sf, bm, gom));
+    StabilityParam bmFrameNumber = new StabilityParam();
+    bmFrameNumber.setName("bmFrameNumber");
+    bmFrameNumber.setData(new ArrayList<>());
+    StabilityParam sfFrameNumber = new StabilityParam();
+    sfFrameNumber.setName("sfFrameNumber");
+    sfFrameNumber.setData(new ArrayList<>());
+    stabilityParams.addAll(
+        Arrays.asList(
+            foreDraft, aftDraft, trim, ukc, gm, sf, bm, gom, bmFrameNumber, sfFrameNumber));
   }
 
   private Map<Long, CargoNominationDetail> getCargoNominationDetails(Set<Long> cargoNominationIds)

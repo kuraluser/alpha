@@ -902,6 +902,16 @@ public class LoadicatorService {
         StringUtils.isEmpty(result.getCalculatedTrimPlanned())
             ? null
             : new BigDecimal(result.getCalculatedTrimPlanned()));
+    stbParam.setGomValue(
+        StringUtils.isEmpty(result.getGomValue()) ? null : new BigDecimal(result.getGomValue()));
+    stbParam.setBmFrameNumber(
+        StringUtils.isEmpty(result.getBmFrameNumber())
+            ? null
+            : new BigDecimal(result.getBmFrameNumber()));
+    stbParam.setSfFrameNumber(
+        StringUtils.isEmpty(result.getSfFrameNumber())
+            ? null
+            : new BigDecimal(result.getSfFrameNumber()));
   }
 
   public void buildPortDischargePlanStabilityParams(

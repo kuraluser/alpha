@@ -120,7 +120,7 @@ public class LoadingSequenceService {
     Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
     List<CargoStage> cargoStages = new ArrayList<CargoStage>();
     List<EductionOperation> ballastEduction = new ArrayList<EductionOperation>();
-    inititalizeStabilityParams(stabilityParams);
+    initializeStabilityParams(stabilityParams);
 
     PortDetail portDetail = getPortInfo(reply.getPortId());
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
@@ -339,7 +339,7 @@ public class LoadingSequenceService {
   /**
    * @param loadingSequence
    * @param portEta
-   * @param ballastEduction
+   * @param ballastEductions
    */
   private void buildEduction(
       LoadingSequence loadingSequence, Long portEta, List<EductionOperation> ballastEductions) {
@@ -377,7 +377,7 @@ public class LoadingSequenceService {
    * @param stageNumber
    * @param portEta
    * @param start
-   * @param temp
+   * @param end
    * @param cargoStages
    */
   private void addCommingleCargoStage(
@@ -475,7 +475,7 @@ public class LoadingSequenceService {
    * @param cargo
    * @param portEta
    * @param start
-   * @param time
+   * @param end
    * @return
    */
   private Integer buildCommingleCargo(
@@ -613,7 +613,7 @@ public class LoadingSequenceService {
   }
 
   /** @param stabilityParams */
-  private void inititalizeStabilityParams(List<StabilityParam> stabilityParams) {
+  private void initializeStabilityParams(List<StabilityParam> stabilityParams) {
     StabilityParam foreDraft = new StabilityParam();
     foreDraft.setName("fore_draft");
     foreDraft.setData(new ArrayList<>());

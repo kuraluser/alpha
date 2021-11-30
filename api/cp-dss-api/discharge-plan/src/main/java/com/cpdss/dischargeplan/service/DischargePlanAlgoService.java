@@ -1304,6 +1304,7 @@ public class DischargePlanAlgoService {
           cargoDischargingRateRepository.deleteByDischargingSequence(dischargingSequence);
           deballastingRateRepository.deleteByDischargingSequence(dischargingSequence);
           deleteDischargingPlanPortWiseDetailsByDischargingSequence(dischargingSequence);
+          eductionOperationRepository.deleteByDischargingSequence(dischargingSequence);
         });
   }
 
