@@ -49,7 +49,6 @@ public class LoadingPlanStagingService extends StagingService {
   LoadingInformation loadingInformation = null;
   List<Long> loadingPlanPortWiseDetailsIds = null;
   List<Long> loadingSequenceIds = null;
-  List<Long> algoErrorHeadingsIds = null;
   Long voyageId = null;
   Long loadablePatternId = null;
   /**
@@ -656,8 +655,6 @@ public class LoadingPlanStagingService extends StagingService {
             String algoErrorHeadingJson =
                 loadingPlanStagingRepository.getAlgoErrorHeadingWithLoadingId(Id);
             if (algoErrorHeadingJson != null) {
-              algoErrorHeadingsIds =
-                  algoErrorHeadingRepository.getAlgoErrorHeadingIdWithLoadingInformationId(Id);
               JsonArray algoErrorHeading =
                   JsonParser.parseString(algoErrorHeadingJson).getAsJsonArray();
               addIntoProcessedList(
@@ -673,21 +670,18 @@ public class LoadingPlanStagingService extends StagingService {
           }
         case algo_errors:
           {
-            if (algoErrorHeadingsIds != null && !algoErrorHeadingsIds.isEmpty()) {
-              String algoErrorsJson =
-                  loadingPlanStagingRepository.getAlgoErrorsWithAlgoErrorHeadingIds(
-                      algoErrorHeadingsIds);
-              if (algoErrorsJson != null) {
-                JsonArray algoErrors = JsonParser.parseString(algoErrorsJson).getAsJsonArray();
-                addIntoProcessedList(
-                    array,
-                    object,
-                    processIdentifier,
-                    processId,
-                    processGroupId,
-                    processedList,
-                    algoErrors);
-              }
+            String algoErrorsJson =
+                loadingPlanStagingRepository.getAlgoErrorsWithAlgoErrorHeadingIds(Id);
+            if (algoErrorsJson != null) {
+              JsonArray algoErrors = JsonParser.parseString(algoErrorsJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  algoErrors);
             }
             break;
           }

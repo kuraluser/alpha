@@ -59,4 +59,28 @@ public class LoadingPlanConstants {
 
     public final String table;
   }
+
+  public static final List<String> loadingPlanCommunicationList =
+      Arrays.asList(
+          "loading_information",
+          "loading_sequence",
+          "loading_plan_portwise_details",
+          "port_loading_plan_stability_parameters",
+          "port_loading_plan_rob_details",
+          "loading_plan_ballast_details",
+          "loading_plan_rob_details",
+          "port_loading_plan_stowage_ballast_details",
+          "port_loading_plan_stowage_ballast_details_temp",
+          "port_loading_plan_stowage_details",
+          "port_loading_plan_stowage_details_temp",
+          "loading_plan_stowage_details",
+          "loading_sequence_stability_parameters",
+          "loading_plan_stability_parameters",
+          "ballast_operation",
+          "eduction_operation",
+          "cargo_loading_rate",
+          "json_data");
+
+  public static final List<String> loadingPlanCommWithAlgoErrorsList =
+      Arrays.asList("algo_error_heading", "algo_errors");
 }

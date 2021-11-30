@@ -12,8 +12,6 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
-import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
-import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoResponse;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;

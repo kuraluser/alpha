@@ -167,9 +167,9 @@ public interface LoadingPlanStagingRepository extends StagingRepository {
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM algo_errors u where error_heading_xid IN ?1",
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM algo_errors u inner join algo_error_heading h on u.error_heading_xid = h.id where h.loading_information_xid=?1",
       nativeQuery = true)
-  String getAlgoErrorsWithAlgoErrorHeadingIds(List<Long> algoErrorHeadingsIds);
+  String getAlgoErrorsWithAlgoErrorHeadingIds(Long id);
 
   @Query(
       value =

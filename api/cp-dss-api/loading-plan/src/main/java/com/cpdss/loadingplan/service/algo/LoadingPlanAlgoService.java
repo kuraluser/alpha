@@ -423,6 +423,12 @@ public class LoadingPlanAlgoService {
 
     if (!request.getAlgoErrorsList().isEmpty()) {
       saveAlgoErrors(loadingInfoOpt.get(), request);
+      log.info("Communication side started with Algo Errors");
+      if (enableCommunication && !env.equals("ship")) {
+        loadingPlanCommunication(
+            com.cpdss.loadingplan.utility.LoadingPlanConstants.loadingPlanCommWithAlgoErrorsList,
+            loadingInfoOpt.get());
+      }
     }
 
     if (!request.getLoadingSequencesList().isEmpty()) {
@@ -465,56 +471,44 @@ public class LoadingPlanAlgoService {
       }
       log.info("Communication side started");
       if (enableCommunication && !env.equals("ship") && !request.getHasLoadicator()) {
-        JsonArray jsonArray =
-            loadingPlanStagingService.getCommunicationData(
-                Arrays.asList(
-                    "loading_information",
-                    "loading_sequence",
-                    "loading_plan_portwise_details",
-                    "port_loading_plan_stability_parameters",
-                    "port_loading_plan_rob_details",
-                    "loading_plan_ballast_details",
-                    "loading_plan_rob_details",
-                    "port_loading_plan_stowage_ballast_details",
-                    "port_loading_plan_stowage_ballast_details_temp",
-                    "port_loading_plan_stowage_details",
-                    "port_loading_plan_stowage_details_temp",
-                    "loading_plan_stowage_details",
-                    "loading_sequence_stability_parameters",
-                    "loading_plan_stability_parameters",
-                    "ballast_operation",
-                    "eduction_operation",
-                    "cargo_loading_rate",
-                    "json_data",
-                    "algo_error_heading",
-                    "algo_errors"),
-                UUID.randomUUID().toString(),
-                MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
-                loadingInfoOpt.get().getId(),
-                null);
-        log.info("Json Array in After Algo call: " + jsonArray.toString());
-        EnvoyWriter.WriterReply ewReply =
-            loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
-                jsonArray.toString(),
-                loadingInfoOpt.get().getVesselXId(),
-                MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
-        log.info("------- Envoy writer has called successfully in shore: " + ewReply.toString());
-        LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
-            new LoadingPlanCommunicationStatus();
-        if (ewReply.getMessageId() != null) {
-          loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-          loadingPlanCommunicationStatus.setCommunicationStatus(
-              CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
-        }
-        loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
-        loadingPlanCommunicationStatus.setMessageType(
-            MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
-        loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-        LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
-            this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
-        log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
+        loadingPlanCommunication(
+            com.cpdss.loadingplan.utility.LoadingPlanConstants.loadingPlanCommunicationList,
+            loadingInfoOpt.get());
       }
     }
+  }
+
+  private void loadingPlanCommunication(
+      List<String> loadingPlanCommunicationList, LoadingInformation loadingInformation)
+      throws GenericServiceException {
+    JsonArray jsonArray =
+        loadingPlanStagingService.getCommunicationData(
+            loadingPlanCommunicationList,
+            UUID.randomUUID().toString(),
+            MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
+            loadingInformation.getId(),
+            null);
+    log.info("Json Array in After Algo call: " + jsonArray.toString());
+    EnvoyWriter.WriterReply ewReply =
+        loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
+            jsonArray.toString(),
+            loadingInformation.getVesselXId(),
+            MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+    log.info("------- Envoy writer has called successfully in shore: " + ewReply.toString());
+    LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+        new LoadingPlanCommunicationStatus();
+    if (ewReply.getMessageId() != null) {
+      loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+      loadingPlanCommunicationStatus.setCommunicationStatus(
+          CommunicationStatus.RECEIVED_WITH_HASH_VERIFIED.getId());
+    }
+    loadingPlanCommunicationStatus.setReferenceId(loadingInformation.getId());
+    loadingPlanCommunicationStatus.setMessageType(
+        MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
+    loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+    LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
+        this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+    log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());
   }
 
   private void saveAlgoErrors(LoadingInformation loadingInformation, LoadingPlanSaveRequest request)

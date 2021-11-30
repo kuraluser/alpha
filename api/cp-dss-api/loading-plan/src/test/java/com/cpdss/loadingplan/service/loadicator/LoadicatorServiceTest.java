@@ -16,7 +16,6 @@ import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
 import com.cpdss.loadingplan.service.LoadingPlanService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
-import com.google.gson.JsonArray;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;

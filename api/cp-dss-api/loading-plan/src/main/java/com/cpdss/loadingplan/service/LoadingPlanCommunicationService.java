@@ -11,6 +11,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
+import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.domain.VoyageActivate;
 import com.cpdss.loadingplan.entity.*;
@@ -311,7 +312,7 @@ public class LoadingPlanCommunicationService {
       List<AlgoErrorHeading> algoErrorHeadings = null;
       List<AlgoErrors> algoErrors = null;
       List<LoadingInstruction> loadingInstructions = null;
-
+      LoadingInformation loadingInfoError = null;
       loadingPlanStagingService.updateStatusForProcessId(
           processId, StagingStatus.IN_PROGRESS.getStatus());
       log.info(
@@ -817,6 +818,7 @@ public class LoadingPlanCommunicationService {
             {
               HashMap<String, String> map =
                   loadingPlanStagingService.getAttributeMapping(new AlgoErrorHeading());
+              loadingInfoError = getLoadingInformation(dataTransferString);
               JsonArray jsonArray =
                   removeJsonFields(
                       JsonParser.parseString(dataTransferString).getAsJsonArray(),
@@ -1853,8 +1855,13 @@ public class LoadingPlanCommunicationService {
               e.getMessage());
         }
       }
-      if (loadingInfo != null && algoErrorHeadings != null && !algoErrorHeadings.isEmpty()) {
+      if (algoErrorHeadings != null && !algoErrorHeadings.isEmpty()) {
         try {
+          Optional<LoadingInformationStatus> loadingInfoErrorStatus =
+              loadingInfoStatusRepository.findById(
+                  LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
+          loadingInfoError.setLoadingInformationStatus(loadingInfoErrorStatus.get());
+          loadingInfoError = loadingInformationRepository.save(loadingInfoError);
           for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
             Optional<AlgoErrorHeading> algoErrorHeadingOptional =
                 algoErrorHeadingRepository.findById(algoErrorHeading.getId());
@@ -1862,9 +1869,15 @@ public class LoadingPlanCommunicationService {
                 algoErrorHeadingOptional.isPresent()
                     ? algoErrorHeadingOptional.get().getVersion()
                     : null);
-            algoErrorHeading.setLoadingInformation(loadingInfo);
+            algoErrorHeading.setLoadingInformation(loadingInfoError);
           }
           algoErrorHeadingRepository.saveAll(algoErrorHeadings);
+          try {
+            loadingInformationAlgoStatusRepository.updateLoadingInformationAlgoStatus(
+                7L, loadingInfo.getId());
+          } catch (Exception e) {
+            log.error("Error when updating LoadingInformationAlgoStatus:{}", e);
+          }
           log.info("Saved AlgoErrorHeading:" + algoErrorHeadings);
         } catch (ResourceAccessException e) {
           updateStatusInExceptionCase(
@@ -2007,5 +2020,16 @@ public class LoadingPlanCommunicationService {
       jsonArray.add(jsonObj);
     }
     return jsonArray;
+  }
+
+  private LoadingInformation getLoadingInformation(String json) {
+    Long loadingInfo =
+        JsonParser.parseString(json)
+            .getAsJsonArray()
+            .get(0)
+            .getAsJsonObject()
+            .get("loading_information_xid")
+            .getAsLong();
+    return loadingInformationRepository.findById(loadingInfo).get();
   }
 }
