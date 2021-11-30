@@ -17,6 +17,12 @@ service CargoInfoService {
 	
 	rpc GetCargoInfosByCargoIds (CargoListRequest) returns (CargoReply) {
 	}
+
+	rpc GetCargoInfoDetailed (CargoRequest) returns (CargoDetailedReply) {
+    }
+
+    rpc GetCargoInfoDetailedById (CargoRequest) returns (CargoByIdDetailedReply) {
+    }
 	
 }
 message CargoListRequest{
@@ -52,4 +58,35 @@ message CargoDetail {
 message CargoReply {
 	ResponseStatus responseStatus = 1;
 	repeated CargoDetail cargos = 2;
+}
+
+message CargoDetailedReply {
+	ResponseStatus responseStatus = 1;
+	repeated CargoDetailed cargos = 2;
+}
+
+message CargoByIdDetailedReply {
+	ResponseStatus responseStatus = 1;
+	CargoDetailed cargo = 2;
+}
+
+message CargoDetailed {
+	int64 id = 1;
+    string name = 2;
+    string abbreviation = 3;
+    string api = 4;
+    string type = 5;
+    string assayDate = 6;
+    string temp = 7;
+    string reidVapourPressure = 8;
+    string gas = 9;
+    string totalWax = 10;
+    string pourPoint = 11;
+    string cloudPoint = 12;
+    string viscosity = 13;
+    string cowCodes = 14;
+    string hydrogenSulfideOil = 15;
+    string hydrogenSulfideVapour = 16;
+    string benzene = 17;
+    string specialInstrictionsRemark = 18;
 }

@@ -25,7 +25,7 @@ public class CargoPortMapping extends EntityDoc {
   @Column(name = "cargo_xid")
   private Long cargoXId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "port_xid")
   private PortInfo portInfo;
 }

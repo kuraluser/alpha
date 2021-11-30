@@ -33,6 +33,10 @@ service PortInfoService {
 	rpc GetLoadingPlanBerthData(BerthIdsRequest) returns (LoadingAlgoBerthData);
 	
 	rpc GetAllCountries(google.protobuf.Empty) returns (CountryReply) {}
+
+	rpc GetAllCargoPortMapping (CargoPortRequest) returns (CargoPortReply) {}
+
+	rpc GetAllCargoPortMappingById (CargoPortRequest) returns (CargoPortReply) {}
 	
 }
 
@@ -179,4 +183,26 @@ message Country{
 message CountryReply{
 	repeated Country countries = 1;
 	ResponseStatus responseStatus = 2;
+}
+
+message CargoPortRequest {
+	int64 companyId = 1;
+	int64 cargoId = 2;
+}
+
+message CargoPortReply {
+	ResponseStatus responseStatus = 1;
+	repeated CargoPortMappingDetail ports = 2;
+}
+
+message CargoPortMappingDetail {
+    int64 id = 1;
+    int64 companyId = 2;
+    int64 cargoId = 3;
+    int64 portId = 4;
+    string portName = 5;
+    string portCode = 6;
+    string maxAirDraft = 7;
+    string maxDraft = 8;
+    string waterDensity = 9;
 }

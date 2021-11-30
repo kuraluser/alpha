@@ -8,4 +8,6 @@ import java.util.List;
 public interface CargoRepository extends CommonCrudRepository<Cargo, Long> {;
 
   public List<Cargo> findByIdIn(List<Long> ids);
+
+  public List<Cargo> findByIsActive(Boolean isActive);
 }

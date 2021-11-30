@@ -156,4 +156,77 @@ public class CargoService extends CargoInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void getCargoInfoDetailed(com.cpdss.common.generated.CargoInfo.CargoRequest request,
+                                   io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailedReply> responseObserver) {
+    CargoInfo.CargoDetailedReply.Builder cargoReply = CargoInfo.CargoDetailedReply.newBuilder();
+    try {
+      List<Cargo> cargos = cargoRepository.findAll();
+      System.out.println(cargos.size());
+      cargos.forEach(
+              cargo -> {
+                CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
+                buildCargoDetailed(cargo, cargoDetail);
+                cargoReply.addCargos(cargoDetail);
+              });
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      cargoReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getCargoInfoByPage method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      cargoReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(cargoReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void buildCargoDetailed(Cargo cargo, CargoInfo.CargoDetailed.Builder cargoDetail) {
+    cargoDetail.setAbbreviation(cargo.getAbbreviation() == null ? "" : cargo.getAbbreviation());
+    cargoDetail.setApi(cargo.getApi() == null ? "": cargo.getApi());
+    cargoDetail.setId(cargo.getId());
+    cargoDetail.setName(cargo.getCrudeType() == null ? "" : cargo.getCrudeType());
+    cargoDetail.setBenzene(cargo.getBenzene() == null ? "" : cargo.getBenzene());
+    cargoDetail.setCloudPoint(cargo.getMaxCloudPoint() == null ? "" : cargo.getMaxCloudPoint());
+    cargoDetail.setType(cargo.getCrudeType() == null ? "" : cargo.getCrudeType());
+    cargoDetail.setTemp(cargo.getMinLoadTemp() == null ? "" : cargo.getMinLoadTemp());
+    cargoDetail.setGas(cargo.getGasC4() == null ? "" : cargo.getGasC4());
+    cargoDetail.setTotalWax(cargo.getTotalWax() == null ? "" : cargo.getTotalWax());
+    cargoDetail.setPourPoint(cargo.getMaxPourPoint() == null ? "" : cargo.getMaxPourPoint());
+    cargoDetail.setCloudPoint(cargo.getMaxCloudPoint() == null ? "" : cargo.getMaxCloudPoint());
+    cargoDetail.setViscosity(cargo.getViscocityT1() == null ? "" : cargo.getViscocityT1());
+    cargoDetail.setCowCodes(cargo.getCowCodeRecommendedSummer() == null ? "" : cargo.getCowCodeRecommendedSummer());
+    cargoDetail.setHydrogenSulfideOil(cargo.getH2sOilPhase() == null ? "" : cargo.getH2sOilPhase());
+    cargoDetail.setHydrogenSulfideVapour(cargo.getH2sVapourPhaseConfirmed() == null ? "" : cargo.getH2sVapourPhaseConfirmed());
+    cargoDetail.setSpecialInstrictionsRemark(cargo.getRemarks() == null ? "" : cargo.getRemarks());
+    // cargoDetail.setReidVapourPressure(cargo.)
+  }
+
+  @Override
+  public void getCargoInfoDetailedById(com.cpdss.common.generated.CargoInfo.CargoRequest request,
+                                       io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply> responseObserver) {
+    CargoInfo.CargoByIdDetailedReply.Builder cargoReply = CargoInfo.CargoByIdDetailedReply.newBuilder();
+    try {
+      System.out.println(request.getCargoId());
+      Optional<Cargo> cargo = cargoRepository.findById(request.getCargoId());
+      CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
+      buildCargoDetailed(cargo.get(), cargoDetail);
+      cargoReply.setCargo(cargoDetail);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      cargoReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getCargoInfoByPage method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      cargoReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(cargoReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
 }

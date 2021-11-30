@@ -15,4 +15,6 @@ public interface CargoPortMappingRepository extends CommonCrudRepository<CargoPo
   List<PortInfo> getPortsInfo(long cargoId);
 
   public List<CargoPortMapping> findByportInfo_idIn(List<Long> portIds);
+
+  public List<CargoPortMapping> findByCargoXId(long cargoId);
 }

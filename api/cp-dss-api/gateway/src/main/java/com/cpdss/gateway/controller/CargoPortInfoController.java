@@ -8,6 +8,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.CargosResponse;
 import com.cpdss.gateway.domain.PortsResponse;
 import com.cpdss.gateway.domain.TimezoneRestResponse;
+import com.cpdss.gateway.domain.cargomaster.CargoDetailedResponse;
+import com.cpdss.gateway.domain.cargomaster.CargosDetailedResponse;
 import com.cpdss.gateway.service.CargoPortInfoService;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
@@ -153,4 +155,55 @@ public class CargoPortInfoController {
     }
     return response;
   }
+
+  /**
+   * Retrieve detailed cargos information from cargo master
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/cargos")
+  public CargosDetailedResponse getDetailedCargos(@RequestHeader HttpHeaders headers) throws CommonRestException {
+    CargosDetailedResponse response = null;
+    try {
+      log.info("getCargos: {}", getClientIp());
+      response = cargoPortInfoService.getCargosDetailed(headers);
+    } catch (Exception e) {
+      log.error("Error in getCargos ", e);
+      throw new CommonRestException(
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              headers,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              e.getMessage(),
+              e);
+    }
+    return response;
+  }
+
+  /**
+   * Retrieve detailed cargos information from cargo master
+   *
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/cargos/{cargoId}")
+  public CargoDetailedResponse getDetailedCargoById(@PathVariable Long cargoId,@RequestHeader HttpHeaders headers) throws CommonRestException {
+    CargoDetailedResponse response = null;
+    try {
+      log.info("getCargos: {}", getClientIp());
+      response = cargoPortInfoService.getCargosDetailedById(headers,cargoId);
+    } catch (Exception e) {
+      log.error("Error in getCargos ", e);
+      throw new CommonRestException(
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              headers,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              e.getMessage(),
+              e);
+    }
+    return response;
+  }
+
 }
