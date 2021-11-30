@@ -6081,7 +6081,12 @@ public class LoadableStudyService {
                                       .sorted(
                                           Comparator.comparingInt(
                                               CargoHistoryDetail::getLoadedMonth))
-                                      .filter(distinctByKey(CargoHistoryDetail::getLoadedMonth))
+                                      .filter(
+                                          distinctByKey(
+                                              cargoHistoryDetail ->
+                                                  cargoHistoryDetail.getLoadingPortId()
+                                                      + "-"
+                                                      + cargoHistoryDetail.getLoadedMonth()))
                                       .collect(toList())))));
       filteredMap
           .entrySet()
