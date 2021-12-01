@@ -1345,6 +1345,12 @@ export class LoadingDischargingTransformationService {
         'required': 'DISCHARGING_COW_REQUIRED',
         'invalidDuration': 'DISCHARGING_COW_DURATION_MAX_ERROR',
         'invalidTime': 'DISCHARGING_COW_END_DURATION_TIME'
+      },
+      washingTank: {
+        'required': 'DISCHARGING_WASHING_TANK_REQUIRED',
+      },
+      washingCargo: {
+        'required': 'DISCHARGING_WASHING_CARGO_REQUIRED',
       }
     }
   }

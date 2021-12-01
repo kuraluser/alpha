@@ -122,16 +122,18 @@
                   [ngStyle]="{'background': cargoDetails?.cargo?.colorCode }">{{cargoDetails?.cargo?.abbreviation}}</span>
               </div>
 
-              <div class="col-6 mb-5">
+              <div class="col-6 mb-5 error-icon-wrapper">
                 <p-multiSelect *ngIf="editMode;else selectedTanks" [options]="cargoDetails?.selectedTanks"
                   optionLabel="shortName" styleClass="form-control" formControlName="tanks" (onChange)="onChange($event)" id="tanks_{{index}}" appendTo="body" resetFilterOnHide="true" defaultLabel="{{'DISCHARGING_COW_SELECT_TANKS' | translate}}">
                 </p-multiSelect>
+                <cpdss-portal-validation-error [errors]="fieldErrorCargo(index,'tanks')" [errorMessages]="errorMesages?.washingCargo">
+                </cpdss-portal-validation-error>
                 <ng-template #selectedTanks>
                   <span>{{joinDropOptionsToLabel(cargoDetails?.tanks)}}</span>
                 </ng-template>
               </div>
 
-              <div class="col-4 mb-5">
+              <div class="col-4 mb-5 error-icon-wrapper">
                 <p-dropdown *ngIf="editMode;else washingCargo" [options]="loadedCargos" optionLabel="abbreviation" placeholder="{{ 'DISCHARGING_COW_SELECT_CARGO'| translate }}"
                   formControlName="washingCargo" styleClass="form-control dropdown-closable" [showClear]="true" (onChange)="onWashingCargoChange($event, index)">
                   <ng-template pTemplate="selectedItem">
@@ -149,6 +151,8 @@
                     </span>
                   </ng-template>
                 </p-dropdown>
+                <cpdss-portal-validation-error [errors]="fieldErrorCargo(index,'washingCargo')" [errorMessages]="errorMesages?.washingTank">
+                </cpdss-portal-validation-error>
                 <ng-template #washingCargo>
                   <span *ngIf="cargoDetails?.washingCargo">
                     <i class="color-rounded align-text-bottom mr-5"

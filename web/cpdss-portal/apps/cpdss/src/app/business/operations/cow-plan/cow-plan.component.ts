@@ -100,6 +100,7 @@ export class CowPlanComponent implements OnInit {
       needFreshCrudeStorage: this.fb.control(this.cowDetails?.needFreshCrudeStorage),
       needFlushingOil: this.fb.control(this.cowDetails?.needFlushingOil),
     }));
+    this.setWashWithDifferentCargoChangeValidation(this.cowDetails?.washTanksWithDifferentCargo);
   }
 
   /**
@@ -187,7 +188,44 @@ export class CowPlanComponent implements OnInit {
    */
   onWashWithDifferentCargoChange(event) {
     this.enableDisableTanksWashWithDifferentCargoFields(event?.checked);
+    this.setWashWithDifferentCargoChangeValidation(event?.checked);
     this.updateCowDetails();
+  }
+
+  /**
+   * Method to check for field errors
+   *
+   * @param {string} formControlName
+   * @param {number} index
+   * @return {ValidationErrors}
+   * @memberof CowPlanComponent
+  */
+  fieldErrorCargo(index: number,formControlName: string): ValidationErrors{
+    const formArray = this.cowDetailsForm.controls.tanksWashingWithDifferentCargo as FormArray;
+    return formArray.at(index).get(formControlName).invalid ? formArray.at(index).get(formControlName)?.errors : null;; 
+  }
+  /**
+   * Set validation for washing cargo
+   *
+   * @param {*} event
+   * @memberof CowPlanComponent
+   */
+  setWashWithDifferentCargoChangeValidation(status: boolean) {
+    const validation = status ? [Validators.required] : [];
+    const formArray = this.cowDetailsForm.controls.tanksWashingWithDifferentCargo as FormArray; 
+    const recursiveFunc = (form: FormGroup | FormArray) => {
+      Object.keys(form.controls).forEach(field => {
+        const control = form.get(field);
+        if (control instanceof FormControl) {
+          control.setValidators(validation);
+          control.updateValueAndValidity();
+        }
+        if (control instanceof FormGroup) {
+          recursiveFunc(control);
+        } 
+      });
+    }
+    recursiveFunc(formArray);
   }
 
   /**
