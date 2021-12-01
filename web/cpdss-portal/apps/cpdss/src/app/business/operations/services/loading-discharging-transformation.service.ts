@@ -614,7 +614,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'convertedOrderedQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
-        numberType: 'quantity',
+        numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
@@ -627,7 +627,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'shipFigure',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
-        numberType: 'quantity',
+        numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
 
@@ -647,7 +647,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'convertedSlopQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_SLOP_QTY',
-        numberType: 'quantity',
+        numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       }
@@ -697,7 +697,7 @@ export class LoadingDischargingTransformationService {
       {
         field: 'shipFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SHIP_FIGURE',
-        numberType: 'quantity',
+        numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
@@ -1113,7 +1113,7 @@ export class LoadingDischargingTransformationService {
         dischargeQuantityCargoDetails.push(item);
       }
     });
-    
+
     //Update cargo to be discharged details
     const loadableQuantityCargoDetails: ILoadedCargo[] = this.getCargoToBeDischargedAsValueObject(dischargeQuantityCargoDetails, listData);
 
@@ -1281,7 +1281,7 @@ export class LoadingDischargingTransformationService {
         emptyTanks.push(dischargingInformation?.cargoTanks.find(tankObj => tankObj.id === tank?.tankId));
       }
     });
-    
+
     if(emptyTanks?.length) {
       tanksWashingWithDifferentCargo.push({
         cargo: { id: 0, abbreviation: 'NIL', cargoNominationId: 0 },
