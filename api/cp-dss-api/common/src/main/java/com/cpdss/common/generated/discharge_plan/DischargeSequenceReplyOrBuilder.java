@@ -118,4 +118,19 @@ public interface DischargeSequenceReplyOrBuilder
    * @return The portRotationId.
    */
   long getPortRotationId();
+
+  /**
+   * <code>.CleaningTanks cleaningTanks = 11;</code>
+   *
+   * @return Whether the cleaningTanks field is set.
+   */
+  boolean hasCleaningTanks();
+  /**
+   * <code>.CleaningTanks cleaningTanks = 11;</code>
+   *
+   * @return The cleaningTanks.
+   */
+  com.cpdss.common.generated.discharge_plan.CleaningTanks getCleaningTanks();
+  /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+  com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder getCleaningTanksOrBuilder();
 }

@@ -31,4 +31,5 @@ public class LoadingSequenceResponse {
   private List<CargoStage> cargoStages;
   private List<EductionOperation> ballastEduction;
   private List<EductionOperation> cargoEduction;
+  private CleaningTank cleaningTanks;
 }

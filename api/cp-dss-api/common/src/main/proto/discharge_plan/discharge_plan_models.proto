@@ -380,6 +380,7 @@ message DischargeSequenceReply {
   repeated LoadingPlanStabilityParameters dischargeSequenceStabilityParameters = 8;
   ResponseStatus responseStatus = 9;
   int64 portRotationId = 10;
+  CleaningTanks cleaningTanks = 11;
 }
 message DischargingSequence {
   int64 cargoNominationId = 1;

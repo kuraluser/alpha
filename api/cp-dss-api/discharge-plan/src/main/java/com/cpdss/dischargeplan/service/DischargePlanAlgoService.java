@@ -1122,6 +1122,7 @@ public class DischargePlanAlgoService {
     portDischargingPlanStowageTempDetailsRepository.deleteByDischargingInformationId(id);
     portDischargingPlanBallastTempDetailsRepository.deleteByDischargingInformationId(id);
     portDischargingPlanCommingleDetailsRepository.deleteByDischargingInformationId(id);
+    cowTankDetailRepository.deleteByDischargingInformationId(id);
   }
 
   private void saveDischargingSequenceStabilityParams(
@@ -1233,7 +1234,8 @@ public class DischargePlanAlgoService {
       bottomTankList.forEach(
           item -> {
             CowTankDetail cowTankDetail =
-                buildCowTankDetails(item, cowBottomTypeId, dischargingInfo.getId());
+                buildCowTankDetails(
+                    item, Common.COW_TYPE.BOTTOM_COW_VALUE, dischargingInfo.getId());
             cowTankDetails.add(cowTankDetail);
           });
     }
@@ -1242,7 +1244,7 @@ public class DischargePlanAlgoService {
       fullTankList.forEach(
           item -> {
             CowTankDetail cowTankDetail =
-                buildCowTankDetails(item, cowFullTypeId, dischargingInfo.getId());
+                buildCowTankDetails(item, Common.COW_TYPE.ALL_COW_VALUE, dischargingInfo.getId());
             cowTankDetails.add(cowTankDetail);
           });
     }
@@ -1251,7 +1253,7 @@ public class DischargePlanAlgoService {
       topTankList.forEach(
           item -> {
             CowTankDetail cowTankDetail =
-                buildCowTankDetails(item, cowTopTypeId, dischargingInfo.getId());
+                buildCowTankDetails(item, Common.COW_TYPE.TOP_COW_VALUE, dischargingInfo.getId());
             cowTankDetails.add(cowTankDetail);
           });
     }

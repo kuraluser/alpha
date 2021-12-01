@@ -1,49 +1,23 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
+
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
-import com.cpdss.common.generated.discharge_plan.DischargePlanPortWiseDetails;
-import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
-import com.cpdss.common.generated.discharge_plan.DischargingRate;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.discharge_plan.DischargingSequence;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
-import com.cpdss.dischargeplan.entity.BallastOperation;
-import com.cpdss.dischargeplan.entity.CargoDischargingRate;
-import com.cpdss.dischargeplan.entity.DeballastingRate;
+import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.DischargingPlanBallastDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanCommingleDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanPortWiseDetails;
-import com.cpdss.dischargeplan.entity.DischargingPlanRobDetails;
 import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
-import com.cpdss.dischargeplan.entity.DischargingPlanStowageDetails;
-import com.cpdss.dischargeplan.entity.DischargingSequenceStabilityParameters;
-import com.cpdss.dischargeplan.entity.EductionOperation;
-import com.cpdss.dischargeplan.repository.BallastOperationRepository;
-import com.cpdss.dischargeplan.repository.CargoDischargingRateRepository;
-import com.cpdss.dischargeplan.repository.DeballastingRateRepository;
-import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanBallastDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanCommingleDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanPortWiseDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanRobDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanStabilityParametersRepository;
-import com.cpdss.dischargeplan.repository.DischargingPlanStowageDetailsRepository;
-import com.cpdss.dischargeplan.repository.DischargingSequenceRepository;
-import com.cpdss.dischargeplan.repository.DischargingSequenceStabiltyParametersRepository;
-import com.cpdss.dischargeplan.repository.EductionOperationRepository;
+import com.cpdss.dischargeplan.repository.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -68,6 +42,7 @@ public class DischargingSequenceService {
   @Autowired DischargingPlanStabilityParametersRepository stabilityParametersRepository;
   @Autowired DischargingPlanStowageDetailsRepository stowageDetailsRepository;
   @Autowired EductionOperationRepository eductionOperationRepository;
+  @Autowired CowTankDetailRepository cowTankDetailRepository;
 
   @Autowired
   DischargingSequenceStabiltyParametersRepository dischargingSequenceStabilityParamsRepository;
@@ -115,6 +90,54 @@ public class DischargingSequenceService {
         dischargingSequenceStabilityParamsRepository
             .findByDischargingInformationAndIsActiveOrderByTime(dischargingInfoOpt.get(), true);
     buildDischargingSequenceStabilityParameters(stabilityParameters, builder);
+    List<CowTankDetail> cowTankDetails =
+        cowTankDetailRepository.findByDischargingXidAndIsActiveTrue(
+            dischargingInfoOpt.get().getId());
+    buildCowTankDetails(cowTankDetails, builder);
+  }
+
+  /**
+   * Builds cow tank details message
+   *
+   * @param cowTankDetails
+   * @param builder
+   */
+  private void buildCowTankDetails(
+      List<CowTankDetail> cowTankDetails, DischargeSequenceReply.Builder builder) {
+    log.info("Populating COW tank details");
+    CleaningTanks.Builder cleaningTanksBuilder = CleaningTanks.newBuilder();
+    List<CleaningTankDetails> topTanks = new ArrayList<CleaningTankDetails>();
+    List<CleaningTankDetails> bottomTanks = new ArrayList<CleaningTankDetails>();
+    List<CleaningTankDetails> fullTanks = new ArrayList<CleaningTankDetails>();
+    cowTankDetails.forEach(
+        cowTankDetail -> {
+          CleaningTankDetails.Builder tankDetailsBuilder = CleaningTankDetails.newBuilder();
+          Optional.ofNullable(cowTankDetail.getTankXid()).ifPresent(tankDetailsBuilder::setTankId);
+          Optional.ofNullable(cowTankDetail.getTimeEnd())
+              .ifPresent(timeEnd -> tankDetailsBuilder.setTimeEnd(timeEnd.toString()));
+          Optional.ofNullable(cowTankDetail.getTimeStart())
+              .ifPresent(timeStart -> tankDetailsBuilder.setTimeStart(timeStart.toString()));
+          Optional.ofNullable(cowTankDetail.getTankShortName())
+              .ifPresent(tankDetailsBuilder::setTankShortName);
+          switch (cowTankDetail.getCowTypeXid()) {
+            case Common.COW_TYPE.ALL_COW_VALUE:
+              fullTanks.add(tankDetailsBuilder.build());
+              break;
+            case Common.COW_TYPE.TOP_COW_VALUE:
+              topTanks.add(tankDetailsBuilder.build());
+              break;
+            case Common.COW_TYPE.BOTTOM_COW_VALUE:
+              bottomTanks.add(tankDetailsBuilder.build());
+              break;
+            default:
+              log.error("Unidentified COW type discovered while populating COW tanks");
+              break;
+          }
+        });
+    cleaningTanksBuilder.addAllBottomTank(bottomTanks);
+    cleaningTanksBuilder.addAllFullTank(fullTanks);
+    cleaningTanksBuilder.addAllTopTank(topTanks);
+    builder.setCleaningTanks(cleaningTanksBuilder.build());
   }
 
   private void buildDischargingSequenceStabilityParameters(

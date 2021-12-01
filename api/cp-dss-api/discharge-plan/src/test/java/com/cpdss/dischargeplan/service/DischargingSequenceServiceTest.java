@@ -39,6 +39,7 @@ public class DischargingSequenceServiceTest {
   @MockBean DischargingPlanRobDetailsRepository robDetailsRepository;
   @MockBean DischargingPlanStabilityParametersRepository stabilityParametersRepository;
   @MockBean DischargingPlanStowageDetailsRepository stowageDetailsRepository;
+  @MockBean CowTankDetailRepository cowTankDetailRepository;
 
   @MockBean
   DischargingSequenceStabiltyParametersRepository dischargingSequenceStabilityParamsRepository;

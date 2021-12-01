@@ -5,6 +5,7 @@ import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_SEQUENCE_BAL
 import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
@@ -719,6 +720,8 @@ public class DischargingSequenceService {
     Set<TankCategory> ballastTankCategories = new LinkedHashSet<TankCategory>();
     List<CargoStage> cargoStages = new ArrayList<CargoStage>();
     List<EductionOperation> cargoEductions = new ArrayList<EductionOperation>();
+    CleaningTank cleaningTank = new CleaningTank();
+
     inititalizeStabilityParams(stabilityParams);
 
     PortDetail portDetail = getPortInfo(reply.getPortId());
@@ -886,6 +889,7 @@ public class DischargingSequenceService {
     this.buildPumpDetails(vesselId, response, allPumps);
     this.removeEmptyBallasts(ballasts, ballastTankCategories);
     this.removeEmptyCargos(cargos, cargoTankCategories);
+    this.buildCleaningTanks(reply, portEta, cleaningTank);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -906,6 +910,80 @@ public class DischargingSequenceService {
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
     response.setCargoEduction(cargoEductions);
+    response.setCleaningTanks(cleaningTank);
+  }
+
+  /**
+   * Builds cleaning tank details
+   *
+   * @param reply
+   * @param portEta
+   * @param cleaningTank
+   */
+  private void buildCleaningTanks(
+      DischargeSequenceReply reply, Long portEta, CleaningTank cleaningTank) {
+    log.info("Building cleaning tank details");
+    cleaningTank.setTopTanks(new ArrayList<>());
+    cleaningTank.setBottomTanks(new ArrayList<>());
+    cleaningTank.setTopTanks(new ArrayList<>());
+    reply
+        .getCleaningTanks()
+        .getBottomTankList()
+        .forEach(
+            bottomTank ->
+                addCowTanks(bottomTank, portEta, cleaningTank, Common.COW_TYPE.BOTTOM_COW_VALUE));
+    reply
+        .getCleaningTanks()
+        .getFullTankList()
+        .forEach(
+            fullTank ->
+                addCowTanks(fullTank, portEta, cleaningTank, Common.COW_TYPE.ALL_COW_VALUE));
+    reply
+        .getCleaningTanks()
+        .getTopTankList()
+        .forEach(
+            topTank -> addCowTanks(topTank, portEta, cleaningTank, Common.COW_TYPE.TOP_COW_VALUE));
+  }
+
+  /**
+   * Builds COW tank details
+   *
+   * @param tankDetails
+   * @param portEta
+   * @param cleaningTank
+   * @param cowTypeId
+   */
+  private void addCowTanks(
+      com.cpdss.common.generated.discharge_plan.CleaningTankDetails tankDetails,
+      Long portEta,
+      CleaningTank cleaningTank,
+      int cowTypeId) {
+    CowTankDetail cowTankDetail = new CowTankDetail();
+    buildCowTankDetails(tankDetails, portEta, cowTankDetail);
+    switch (cowTypeId) {
+      case Common.COW_TYPE.ALL_COW_VALUE:
+        cleaningTank.getFullTanks().add(cowTankDetail);
+        break;
+      case Common.COW_TYPE.TOP_COW_VALUE:
+        cleaningTank.getTopTanks().add(cowTankDetail);
+        break;
+      case Common.COW_TYPE.BOTTOM_COW_VALUE:
+        cleaningTank.getBottomTanks().add(cowTankDetail);
+        break;
+      default:
+        log.error("Unidentified COW type encountered while building COW details");
+        break;
+    }
+  }
+
+  private void buildCowTankDetails(
+      com.cpdss.common.generated.discharge_plan.CleaningTankDetails tankDetails,
+      Long portEta,
+      CowTankDetail cowTankDetail) {
+    cowTankDetail.setTankId(tankDetails.getTankId());
+    cowTankDetail.setTankName(tankDetails.getTankShortName());
+    cowTankDetail.setEndTime(portEta + (Long.valueOf(tankDetails.getTimeEnd()) * 60 * 1000));
+    cowTankDetail.setStartTime(portEta + (Long.valueOf(tankDetails.getTimeStart()) * 60 * 1000));
   }
 
   private void removeEmptyBallasts(

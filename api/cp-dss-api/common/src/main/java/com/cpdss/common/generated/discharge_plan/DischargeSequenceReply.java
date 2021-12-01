@@ -131,6 +131,23 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
               portRotationId_ = input.readInt64();
               break;
             }
+          case 90:
+            {
+              com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder subBuilder = null;
+              if (cleaningTanks_ != null) {
+                subBuilder = cleaningTanks_.toBuilder();
+              }
+              cleaningTanks_ =
+                  input.readMessage(
+                      com.cpdss.common.generated.discharge_plan.CleaningTanks.parser(),
+                      extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(cleaningTanks_);
+                cleaningTanks_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -371,6 +388,32 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     return portRotationId_;
   }
 
+  public static final int CLEANINGTANKS_FIELD_NUMBER = 11;
+  private com.cpdss.common.generated.discharge_plan.CleaningTanks cleaningTanks_;
+  /**
+   * <code>.CleaningTanks cleaningTanks = 11;</code>
+   *
+   * @return Whether the cleaningTanks field is set.
+   */
+  public boolean hasCleaningTanks() {
+    return cleaningTanks_ != null;
+  }
+  /**
+   * <code>.CleaningTanks cleaningTanks = 11;</code>
+   *
+   * @return The cleaningTanks.
+   */
+  public com.cpdss.common.generated.discharge_plan.CleaningTanks getCleaningTanks() {
+    return cleaningTanks_ == null
+        ? com.cpdss.common.generated.discharge_plan.CleaningTanks.getDefaultInstance()
+        : cleaningTanks_;
+  }
+  /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+  public com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder
+      getCleaningTanksOrBuilder() {
+    return getCleaningTanks();
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -415,6 +458,9 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     if (portRotationId_ != 0L) {
       output.writeInt64(10, portRotationId_);
     }
+    if (cleaningTanks_ != null) {
+      output.writeMessage(11, getCleaningTanks());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -457,6 +503,9 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     if (portRotationId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, portRotationId_);
     }
+    if (cleaningTanks_ != null) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(11, getCleaningTanks());
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -487,6 +536,10 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       if (!getResponseStatus().equals(other.getResponseStatus())) return false;
     }
     if (getPortRotationId() != other.getPortRotationId()) return false;
+    if (hasCleaningTanks() != other.hasCleaningTanks()) return false;
+    if (hasCleaningTanks()) {
+      if (!getCleaningTanks().equals(other.getCleaningTanks())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -524,6 +577,10 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     }
     hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
+    if (hasCleaningTanks()) {
+      hash = (37 * hash) + CLEANINGTANKS_FIELD_NUMBER;
+      hash = (53 * hash) + getCleaningTanks().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -697,6 +754,12 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       }
       portRotationId_ = 0L;
 
+      if (cleaningTanksBuilder_ == null) {
+        cleaningTanks_ = null;
+      } else {
+        cleaningTanks_ = null;
+        cleaningTanksBuilder_ = null;
+      }
       return this;
     }
 
@@ -758,6 +821,11 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
         result.responseStatus_ = responseStatusBuilder_.build();
       }
       result.portRotationId_ = portRotationId_;
+      if (cleaningTanksBuilder_ == null) {
+        result.cleaningTanks_ = cleaningTanks_;
+      } else {
+        result.cleaningTanks_ = cleaningTanksBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -890,6 +958,9 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       }
       if (other.getPortRotationId() != 0L) {
         setPortRotationId(other.getPortRotationId());
+      }
+      if (other.hasCleaningTanks()) {
+        mergeCleaningTanks(other.getCleaningTanks());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1861,6 +1932,127 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       portRotationId_ = 0L;
       onChanged();
       return this;
+    }
+
+    private com.cpdss.common.generated.discharge_plan.CleaningTanks cleaningTanks_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.CleaningTanks,
+            com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder,
+            com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder>
+        cleaningTanksBuilder_;
+    /**
+     * <code>.CleaningTanks cleaningTanks = 11;</code>
+     *
+     * @return Whether the cleaningTanks field is set.
+     */
+    public boolean hasCleaningTanks() {
+      return cleaningTanksBuilder_ != null || cleaningTanks_ != null;
+    }
+    /**
+     * <code>.CleaningTanks cleaningTanks = 11;</code>
+     *
+     * @return The cleaningTanks.
+     */
+    public com.cpdss.common.generated.discharge_plan.CleaningTanks getCleaningTanks() {
+      if (cleaningTanksBuilder_ == null) {
+        return cleaningTanks_ == null
+            ? com.cpdss.common.generated.discharge_plan.CleaningTanks.getDefaultInstance()
+            : cleaningTanks_;
+      } else {
+        return cleaningTanksBuilder_.getMessage();
+      }
+    }
+    /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+    public Builder setCleaningTanks(com.cpdss.common.generated.discharge_plan.CleaningTanks value) {
+      if (cleaningTanksBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        cleaningTanks_ = value;
+        onChanged();
+      } else {
+        cleaningTanksBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+    public Builder setCleaningTanks(
+        com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder builderForValue) {
+      if (cleaningTanksBuilder_ == null) {
+        cleaningTanks_ = builderForValue.build();
+        onChanged();
+      } else {
+        cleaningTanksBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+    public Builder mergeCleaningTanks(
+        com.cpdss.common.generated.discharge_plan.CleaningTanks value) {
+      if (cleaningTanksBuilder_ == null) {
+        if (cleaningTanks_ != null) {
+          cleaningTanks_ =
+              com.cpdss.common.generated.discharge_plan.CleaningTanks.newBuilder(cleaningTanks_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          cleaningTanks_ = value;
+        }
+        onChanged();
+      } else {
+        cleaningTanksBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+    public Builder clearCleaningTanks() {
+      if (cleaningTanksBuilder_ == null) {
+        cleaningTanks_ = null;
+        onChanged();
+      } else {
+        cleaningTanks_ = null;
+        cleaningTanksBuilder_ = null;
+      }
+
+      return this;
+    }
+    /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+    public com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder
+        getCleaningTanksBuilder() {
+
+      onChanged();
+      return getCleaningTanksFieldBuilder().getBuilder();
+    }
+    /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+    public com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder
+        getCleaningTanksOrBuilder() {
+      if (cleaningTanksBuilder_ != null) {
+        return cleaningTanksBuilder_.getMessageOrBuilder();
+      } else {
+        return cleaningTanks_ == null
+            ? com.cpdss.common.generated.discharge_plan.CleaningTanks.getDefaultInstance()
+            : cleaningTanks_;
+      }
+    }
+    /** <code>.CleaningTanks cleaningTanks = 11;</code> */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.CleaningTanks,
+            com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder,
+            com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder>
+        getCleaningTanksFieldBuilder() {
+      if (cleaningTanksBuilder_ == null) {
+        cleaningTanksBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.cpdss.common.generated.discharge_plan.CleaningTanks,
+                com.cpdss.common.generated.discharge_plan.CleaningTanks.Builder,
+                com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder>(
+                getCleaningTanks(), getParentForChildren(), isClean());
+        cleaningTanks_ = null;
+      }
+      return cleaningTanksBuilder_;
     }
 
     @java.lang.Override
