@@ -178,19 +178,20 @@ public class DischargeStudyService {
     details.setCargo1KL(lqccd.getCargo1KL());
     details.setCargo1LT(lqccd.getCargo1LT());
     details.setCargo1MT(lqccd.getQuantity1MT());
-    details.setCargo1Percentage(lqccd.getCargo1Percentage());
     details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
     details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
     details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
     details.setCargo2KL(lqccd.getCargo2KL());
     details.setCargo2LT(lqccd.getCargo2LT());
     details.setCargo2MT(lqccd.getQuantity2MT());
-    details.setCargo2Percentage(lqccd.getCargo2Percentage());
     details.setGrade(lqccd.getGrade());
     details.setQuantity(lqccd.getQuantity());
     details.setTankName(lqccd.getTankName());
     details.setTemp(lqccd.getTemp());
     details.setTankShortName(lqccd.getTankShortName());
+    // Bug fix 4677
+    details.setCargo1Percentage(lqccd.getCargo1Abbreviation() + "-" + lqccd.getCargo1Percentage());
+    details.setCargo2Percentage(lqccd.getCargo2Abbreviation() + "-" + lqccd.getCargo2Percentage());
     Optional.ofNullable(lqccd.getCargo1Id()).ifPresent(details::setCargo1Id);
     Optional.ofNullable(lqccd.getCargo2Id()).ifPresent(details::setCargo2Id);
     Optional.ofNullable(lqccd.getQuantity1MT())
