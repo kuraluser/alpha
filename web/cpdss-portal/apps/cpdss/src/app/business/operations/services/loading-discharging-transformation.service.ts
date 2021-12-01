@@ -718,7 +718,7 @@ export class LoadingDischargingTransformationService {
         field: 'slopQuantity',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberType: 'quantity',
+        numberFormat: quantityNumberFormat,
         errorMessages: {
           'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
           'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
