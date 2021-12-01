@@ -1122,7 +1122,6 @@ public class DischargePlanAlgoService {
     portDischargingPlanStowageTempDetailsRepository.deleteByDischargingInformationId(id);
     portDischargingPlanBallastTempDetailsRepository.deleteByDischargingInformationId(id);
     portDischargingPlanCommingleDetailsRepository.deleteByDischargingInformationId(id);
-    cowTankDetailRepository.deleteByDischargingInformationId(id);
   }
 
   private void saveDischargingSequenceStabilityParams(
@@ -1307,6 +1306,7 @@ public class DischargePlanAlgoService {
           deballastingRateRepository.deleteByDischargingSequence(dischargingSequence);
           deleteDischargingPlanPortWiseDetailsByDischargingSequence(dischargingSequence);
           eductionOperationRepository.deleteByDischargingSequence(dischargingSequence);
+          cowTankDetailRepository.deleteByDischargingInformationId(dischargingInfoId);
         });
   }
 

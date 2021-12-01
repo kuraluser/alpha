@@ -925,7 +925,7 @@ public class DischargingSequenceService {
     log.info("Building cleaning tank details");
     cleaningTank.setTopTanks(new ArrayList<>());
     cleaningTank.setBottomTanks(new ArrayList<>());
-    cleaningTank.setTopTanks(new ArrayList<>());
+    cleaningTank.setFullTanks(new ArrayList<>());
     reply
         .getCleaningTanks()
         .getBottomTankList()
