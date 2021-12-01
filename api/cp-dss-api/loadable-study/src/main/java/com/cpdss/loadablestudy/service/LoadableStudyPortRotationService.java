@@ -971,8 +971,12 @@ public class LoadableStudyPortRotationService {
                     dataMap.add(
                         new VoyagePorts(
                             String.valueOf(loadableStudyPortRotation.getPortXId()),
-                            String.valueOf(loadableStudyPortRotation.getEta()),
-                            String.valueOf(loadableStudyPortRotation.getEtd()),
+                            loadableStudyPortRotation.getEta() != null
+                                ? String.valueOf(loadableStudyPortRotation.getEta())
+                                : null,
+                            loadableStudyPortRotation.getEtd() != null
+                                ? String.valueOf(loadableStudyPortRotation.getEtd())
+                                : null,
                             String.valueOf(loadableStudyPortRotation.getPortOrder()),
                             String.valueOf(loadableStudyPortRotation.getOperation().getName()),
                             null,
