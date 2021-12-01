@@ -242,6 +242,36 @@ public class LoadableStudiesConstants {
           "synoptical_table",
           "cargo_nomination_operation_details");
 
+  public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
+      Arrays.asList(
+          "loadable_study",
+          "loadable_pattern",
+          "loadable_study_port_rotation",
+          "loadable_plan_stowage_details",
+          "loadable_plan_ballast_details",
+          "loadable_plan_commingle_details",
+          "stability_parameters");
+
+  public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP =
+      Arrays.asList(
+          "loadable_study",
+          "json_data",
+          "loadable_pattern",
+          "algo_error_heading",
+          "algo_errors",
+          "loadable_plan_constraints",
+          "loadable_plan_quantity",
+          "loadable_plan_commingle_details",
+          "loadable_pattern_cargo_topping_off_sequence",
+          "loadable_plan_stowage_details",
+          "loadable_plan_ballast_details",
+          "loadable_plan_commingle_details_portwise",
+          "stability_parameters",
+          "loadable_pattern_cargo_details",
+          "loadable_plan_stowage_ballast_details",
+          "synoptical_table",
+          "loadicator_data_for_synoptical_table");
+
   @Getter
   @AllArgsConstructor
   public enum LoadableStudyTables {

@@ -15,6 +15,7 @@ import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -618,7 +619,9 @@ public class LoadicatorServiceTest {
     when(this.loadableStudyCommunicationStatusRepository.save(
             any(LoadableStudyCommunicationStatus.class)))
         .thenReturn(status);
-
+    when(loadableStudyStagingService.getCommunicationData(
+            anyList(), anyString(), anyString(), anyLong(), any()))
+        .thenReturn(new JsonArray());
     ReflectionTestUtils.setField(loadicatorService, "loadicatorUrl", "url");
     ReflectionTestUtils.setField(loadicatorService, "rootFolder", "D:\\");
     ReflectionTestUtils.setField(loadicatorService, "enableCommunication", true);

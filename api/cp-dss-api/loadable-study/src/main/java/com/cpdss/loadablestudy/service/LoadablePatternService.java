@@ -1024,38 +1024,50 @@ public class LoadablePatternService {
             + request.getHasLodicator());
     //
     // objectMapper.writeValueAsString(loadablePatternAlgoRequest));
-    if (!env.equals("ship") && enableCommunication && !request.getHasLodicator()) {
-      Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
-          this.loadableStudyCommunicationStatusRepository
-              .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
-                  loadablePatternOpt.get().getId(), MessageTypes.VALIDATEPLAN.getMessageType());
-      log.info(
-          " ------message Id in shore : "
-              + patternValidateCommunicationStatus.get().getMessageUUID());
-      loadablePatternAlgoRequest.setMessageId(
-          patternValidateCommunicationStatus.get().getMessageUUID());
-      EnvoyWriter.WriterReply ewReply =
-          communicationService.passRequestPayloadToEnvoyWriter(
-              objectMapper.writeValueAsString(loadablePatternAlgoRequest),
-              loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
-              MessageTypes.PATTERNDETAIL.getMessageType());
-      if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+    if (!env.equals("ship") && enableCommunication) {
+      if (!request.getHasLodicator() || !request.getValidated()) {
+        Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
+            this.loadableStudyCommunicationStatusRepository
+                .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
+                    loadablePatternOpt.get().getId(), MessageTypes.VALIDATEPLAN.getMessageType());
         log.info(
-            "------- Envoy writer has called successfully in algo call back: "
-                + ewReply.toString());
-        LoadableStudyCommunicationStatus lsCommunicationStatus =
-            new LoadableStudyCommunicationStatus();
-        if (ewReply.getMessageId() != null) {
-          lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-          lsCommunicationStatus.setCommunicationStatus(
-              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+            " ------message Id in shore : "
+                + patternValidateCommunicationStatus.get().getMessageUUID());
+        loadablePatternAlgoRequest.setMessageId(
+            patternValidateCommunicationStatus.get().getMessageUUID());
+        com.cpdss.loadablestudy.entity.LoadableStudy lsCommunication =
+            loadablePatternOpt.get().getLoadableStudy();
+        JsonArray jsonArray =
+            loadableStudyStagingService.getCommunicationData(
+                LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP,
+                UUID.randomUUID().toString(),
+                MessageTypes.PATTERNDETAIL.getMessageType(),
+                lsCommunication.getId(),
+                null);
+        log.info("Json Array in Stowage Edit Algocall back service: " + jsonArray.toString());
+        EnvoyWriter.WriterReply ewReply =
+            communicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                lsCommunication.getVesselXId(),
+                MessageTypes.PATTERNDETAIL.getMessageType());
+        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          log.info(
+              "------- Envoy writer has called successfully in algo call back: "
+                  + ewReply.toString());
+          LoadableStudyCommunicationStatus lsCommunicationStatus =
+              new LoadableStudyCommunicationStatus();
+          if (ewReply.getMessageId() != null) {
+            lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+            lsCommunicationStatus.setCommunicationStatus(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+          }
+          lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getId());
+          lsCommunicationStatus.setMessageType(MessageTypes.PATTERNDETAIL.getMessageType());
+          lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
+              this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+          log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
         }
-        lsCommunicationStatus.setReferenceId(loadablePatternOpt.get().getId());
-        lsCommunicationStatus.setMessageType(MessageTypes.PATTERNDETAIL.getMessageType());
-        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-        LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
-            this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
-        log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
       }
     }
 

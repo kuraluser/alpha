@@ -10,7 +10,9 @@ import lombok.Getter;
 public enum MessageTypes {
   LOADABLESTUDY("LoadableStudy"),
   ALGORESULT("AlgoResult"),
+  //ship to shore stowage
   VALIDATEPLAN("ValidatePlan"),
+  //shore to ship stowage
   PATTERNDETAIL("PatternDetail"),
   LOADINGPLAN_SAVE("LoadingPlan_Save"),
   LOADINGPLAN("LoadingPlan"),

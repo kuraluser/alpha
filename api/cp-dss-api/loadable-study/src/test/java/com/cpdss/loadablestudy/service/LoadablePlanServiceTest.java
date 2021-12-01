@@ -9,6 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
@@ -103,6 +104,7 @@ public class LoadablePlanServiceTest {
   private static final String SUCCESS = "SUCCESS";
   @MockBean AlgoService algoService;
   @MockBean private VoyageRepository voyageRepository;
+  @MockBean private LoadableStudyStagingService loadableStudyStagingService;
 
   @Test
   void testBuildLoadablePlanQuantity() {

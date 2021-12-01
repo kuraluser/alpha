@@ -32,7 +32,7 @@ public class TaskListener implements ExecuteTaskListener {
   public static final String DOWNLOAD_TASK_PREFIX = "DOWNLOAD_RESULT_";
   public static final String STATUS_CHECK_TASK_PREFIX = "STATUS_CHECK_";
   public static final String LOADABLE_DATA_UPDATE_TASK_PREFIX = "LOADABLE_DATA_UPDATE";
-
+  public static final String STOWAGE_DATA_UPDATE_TASK_PREFIX = "STOWAGE_DATA_UPDATE";
   /**
    * Task Listener
    *
@@ -65,7 +65,7 @@ public class TaskListener implements ExecuteTaskListener {
               taskReqParams.get(ENV));
         }
       }
-      // Save data from staging table to corresponding tables
+      // Save LoadableStudy data from staging table to corresponding tables
       else if (taskName.startsWith(LOADABLE_DATA_UPDATE_TASK_PREFIX)) {
         loadableStudyCommunicationService.getLoadableStudyStagingData(
             StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get(ENV), taskName);
@@ -74,9 +74,18 @@ public class TaskListener implements ExecuteTaskListener {
         loadableStudyCommunicationService.getLoadableStudyStagingData(
             StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get(ENV), taskName);
       }
+      // Save stowage data from staging table to corresponding tables
+      else if (taskName.startsWith(STOWAGE_DATA_UPDATE_TASK_PREFIX)) {
+        loadableStudyCommunicationService.getStowageStagingData(
+            StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get(ENV), taskName);
+        loadableStudyCommunicationService.getStowageStagingData(
+            StagingStatus.RETRY.getStatus(), taskReqParams.get(ENV), taskName);
+        loadableStudyCommunicationService.getStowageStagingData(
+            StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get(ENV), taskName);
+      }
       // Status check task - fallback mechanism on timeout
       else if (taskName.startsWith(STATUS_CHECK_TASK_PREFIX)) {
-        communicationService.checkLoadableStudyStatus(taskReqParams);
+        // communicationService.checkLoadableStudyStatus(taskReqParams);
       }
       // Task configured in DB but not implemented
       else {

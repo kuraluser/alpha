@@ -1054,13 +1054,16 @@ public class LoadicatorService {
                   algoResponse, loadableStudyOpt.get(), request.getIsPattern(), false);
           log.info("LoadablePattern algo status process id: " + algoResponse.getProcessId());
           if (enableCommunication && !env.equals("ship")) {
-            passPatternWithLodicatorToEnvoyWriter(
-                request,
-                request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
-                loadableStudyOpt,
-                synopticalTableLoadicatorDataList,
-                algoResponse.getProcessId(),
-                algoResponse.getFeedbackLoopCount());
+            communicationForShoreToShip(loadableStudyOpt.get());
+            // region Old Communication Code
+            /*  passPatternWithLodicatorToEnvoyWriter(
+            request,
+            request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
+            loadableStudyOpt,
+            synopticalTableLoadicatorDataList,
+            algoResponse.getProcessId(),
+            algoResponse.getFeedbackLoopCount());*/
+            // endregion
           }
         }
       }
@@ -1713,5 +1716,48 @@ public class LoadicatorService {
     entity.setManifoldHeight(
         isEmpty(result.getManifoldHeight()) ? null : new BigDecimal(result.getManifoldHeight()));
     return entity;
+  }
+
+  private void communicationForShoreToShip(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) throws GenericServiceException {
+    if (!env.equals("ship") && enableCommunication) {
+      Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
+          this.loadableStudyCommunicationStatusRepository
+              .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
+                  loadableStudy.getId(), MessageTypes.VALIDATEPLAN.getMessageType());
+      // com.cpdss.loadablestudy.entity.LoadableStudy lsCommunication =
+      // loadablePattern.getLoadableStudy();
+      JsonArray jsonArray =
+          loadableStudyStagingService.getCommunicationData(
+              LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP,
+              UUID.randomUUID().toString(),
+              MessageTypes.PATTERNDETAIL.getMessageType(),
+              loadableStudy.getId(),
+              null);
+      log.info("Json Array in Stowage Edit Algocall back service: " + jsonArray.toString());
+      EnvoyWriter.WriterReply ewReply =
+          communicationService.passRequestPayloadToEnvoyWriter(
+              jsonArray.toString(),
+              loadableStudy.getVesselXId(),
+              MessageTypes.PATTERNDETAIL.getMessageType());
+      if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+        log.info(
+            "------- Envoy writer has called successfully in algo call back: "
+                + ewReply.toString());
+        LoadableStudyCommunicationStatus lsCommunicationStatus =
+            new LoadableStudyCommunicationStatus();
+        if (ewReply.getMessageId() != null) {
+          lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+          lsCommunicationStatus.setCommunicationStatus(
+              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+        }
+        lsCommunicationStatus.setReferenceId(loadableStudy.getId());
+        lsCommunicationStatus.setMessageType(MessageTypes.PATTERNDETAIL.getMessageType());
+        lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
+            this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+        log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
+      }
+    }
   }
 }

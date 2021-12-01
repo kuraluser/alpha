@@ -134,6 +134,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.TransactionStatus;
@@ -146,6 +147,7 @@ import org.springframework.web.client.RestTemplate;
  *
  * <p>Class for writing test cases for loadable study
  */
+@TestPropertySource(properties = "cpdss.communication.enable = false")
 @SpringJUnitConfig(classes = {LoadableStudyService.class})
 class LoadableStudyServiceTest {
 
@@ -255,6 +257,9 @@ class LoadableStudyServiceTest {
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String VOYAGE = "VOYAGE";

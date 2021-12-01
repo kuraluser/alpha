@@ -94,6 +94,7 @@ public class LoadableStudyCommunicationService {
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @Autowired private LoadablePatternService loadablePatternService;
+  @Autowired private LoadablePlanService loadablePlanService;
   // endregion
 
   // region Declarations
@@ -153,6 +154,26 @@ public class LoadableStudyCommunicationService {
     }
   }
 
+  public void getStowageStagingData(String status, String env, String taskName)
+      throws GenericServiceException {
+    log.info("Inside getStowageStagingData for env:{} and status:{}", env, status);
+    String retryStatus = getRetryStatus(status);
+    List<DataTransferStage> dataTransferStagesWithStatus = getDataTransferWithStatus(status);
+    List<DataTransferStage> dataTransferStages =
+        dataTransferStagesWithStatus.stream()
+            .filter(
+                dataTransfer ->
+                    Arrays.asList(
+                            MessageTypes.VALIDATEPLAN.getMessageType(),
+                            MessageTypes.PATTERNDETAIL.getMessageType())
+                        .contains(dataTransfer.getProcessGroupId()))
+            .collect(Collectors.toList());
+    log.info("DataTransferStages in STOWAGE_DATA_UPDATE task:" + dataTransferStages);
+    if (!dataTransferStages.isEmpty()) {
+      processStagingData(dataTransferStages, env, retryStatus);
+    }
+  }
+
   private String getRetryStatus(String status) {
     String retryStatus = StagingStatus.RETRY.getStatus();
     if (status.equals(retryStatus)) {
@@ -186,7 +207,7 @@ public class LoadableStudyCommunicationService {
   public void processStagingData(
       List<DataTransferStage> dataTransferStages, String env, String retryStatus)
       throws GenericServiceException {
-    log.info("Inside getStagingData");
+    log.info("Inside processStagingData");
     Map<String, List<DataTransferStage>> dataTransferByProcessId =
         dataTransferStages.stream().collect(Collectors.groupingBy(DataTransferStage::getProcessId));
     log.info("processId group:" + dataTransferByProcessId);
@@ -607,16 +628,27 @@ public class LoadableStudyCommunicationService {
       log.info("updated status to completed for processId:" + processId);
 
       // Generate pattern with communicated data at shore
-      if (CPDSS_BUILD_ENV_SHORE.equals(env)
-          && MessageTypes.LOADABLESTUDY.getMessageType().equals(processGroupId)) {
-        com.cpdss.common.generated.LoadableStudy.AlgoRequest algoRequest =
-            com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
-                .setLoadableStudyId(loadableStudyStage.getId())
-                .build();
-        com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
-            com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
+      if (CPDSS_BUILD_ENV_SHORE.equals(env)) {
         try {
-          loadablePatternService.generateLoadablePatterns(algoRequest, algoReply);
+          if (processGroupId.equals(MessageTypes.LOADABLESTUDY.getMessageType())) {
+            com.cpdss.common.generated.LoadableStudy.AlgoRequest algoRequest =
+                com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
+                    .setLoadableStudyId(loadableStudyStage.getId())
+                    .build();
+            com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
+                com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
+            loadablePatternService.generateLoadablePatterns(algoRequest, algoReply);
+            log.info("Invoking generateLoadablePatterns method.");
+          } else if (processGroupId.equals(MessageTypes.VALIDATEPLAN.getMessageType())) {
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest algoRequest =
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder()
+                    .setLoadablePatternId(loadablePatternStage.get(0).getId())
+                    .build();
+            com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
+                com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
+            loadablePlanService.validateLoadablePlan(algoRequest, algoReply);
+            log.info("Invoking validateLoadablePlan method.");
+          }
         } catch (IOException e) {
           log.error("Exception calling generate loadable patterns.", e);
           throw new GenericServiceException(

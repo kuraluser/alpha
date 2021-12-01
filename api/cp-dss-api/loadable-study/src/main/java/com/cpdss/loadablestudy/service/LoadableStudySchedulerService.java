@@ -134,6 +134,33 @@ public class LoadableStudySchedulerService {
               }
             })
         .start();
+    new Thread(
+            () -> {
+              try {
+                Thread.sleep(15 * 1000);
+                System.out.println("EXECUTING");
+                LocalDateTime dateTime = LocalDateTime.now();
+                LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
+                ScheduledTaskProperties properties = new ScheduledTaskProperties();
+                properties.setTaskName("STOWAGE_DATA_UPDATE" + environment);
+                properties.setTaskFrequency(30);
+                properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+                properties.setTaskStartDate(dateTime.toLocalDate());
+                properties.setTaskStartTime(dateTime.toLocalTime());
+                properties.setTaskEndDate(endDateTime.toLocalDate());
+                properties.setTaskEndTime(endDateTime.toLocalTime());
+                properties.setTaskURI("loadable-study-service:" + port);
+                Map<String, String> requestParam = new HashMap<>();
+                requestParam.put("env", environment);
+                properties.setTaskReqParam(requestParam);
+                if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
+                  scheduledTaskRequest.createScheduledTaskRequest(properties);
+
+              } catch (InterruptedException | GenericServiceException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
   }
 
   private List<SchedulerRequest> getAllVessel() {

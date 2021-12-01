@@ -12,6 +12,7 @@ import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.CargoNomination;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.gson.JsonArray;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -115,6 +117,8 @@ public class LoadablePlanService {
 
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @Autowired private LoadableStudyStagingService loadableStudyStagingService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -2703,24 +2707,34 @@ public class LoadablePlanService {
                   + ".json"),
           loadabalePatternValidateRequest);
       log.info("------- Payload has successfully saved in file");
-      log.info("-------Communication status for stowage Edit : " + enableCommunication);
+      log.info("-------Communication started for stowage Edit : " + enableCommunication);
       if (enableCommunication && env.equals("ship")) {
-
+        com.cpdss.loadablestudy.entity.LoadableStudy lsCommunication =
+            loadablePatternOpt.get().getLoadableStudy();
+        JsonArray jsonArray =
+            loadableStudyStagingService.getCommunicationData(
+                LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE,
+                UUID.randomUUID().toString(),
+                MessageTypes.VALIDATEPLAN.getMessageType(),
+                lsCommunication.getId(),
+                null);
+        log.info("Json Array in Stowage Edit service: " + jsonArray.toString());
+        EnvoyWriter.WriterReply ewReply =
+            communicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                lsCommunication.getVesselXId(),
+                MessageTypes.VALIDATEPLAN.getMessageType());
         // LoadabalePatternValidateRequest communicationServiceRequest
         // =loadabalePatternValidateRequest;
         // buildCommunicationServiceRequest(communicationServiceRequest, loadablePatternOpt.get());
-        List<LoadablePattern> loadablePatternList =
+        /*   List<LoadablePattern> loadablePatternList =
             loadablePatternRepository.findByLoadableStudyAndIsActive(
                 loadablePatternOpt.get().getLoadableStudy(), true);
         List<LoadablePatternDto> loadablePatternDtoList =
             Arrays.asList(modelMapper.map(loadablePatternList, LoadablePatternDto[].class));
         loadabalePatternValidateRequest.setLoadablePatternDtoList(loadablePatternDtoList);
-        voyageService.buildVoyageDetails(modelMapper, loadableStudy);
-        EnvoyWriter.WriterReply ewReply =
-            communicationService.passRequestPayloadToEnvoyWriter(
-                objectMapper.writeValueAsString(loadabalePatternValidateRequest),
-                loadableStudy.getVesselId(),
-                MessageTypes.VALIDATEPLAN.getMessageType());
+        voyageService.buildVoyageDetails(modelMapper, loadableStudy);*/
+        //
         log.info("------- After envoy writer calling");
         if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
           log.info("------- Envoy writer has called successfully : " + ewReply.toString());

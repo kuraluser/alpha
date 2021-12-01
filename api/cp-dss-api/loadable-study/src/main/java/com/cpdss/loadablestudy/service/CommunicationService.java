@@ -117,15 +117,12 @@ public class CommunicationService {
 
         if (!erReply.getPatternResultJson().isEmpty()) {
           log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
-          // Get loadable study request and update shore
-          if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType.getMessageType())) {
+          // Get request and save to staging table
+          if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType.getMessageType())
+              || (MessageTypes.VALIDATEPLAN
+                  .getMessageType()
+                  .equals(messageType.getMessageType()))) {
             saveLoadableStudyIntoStagingTable(erReply);
-          }
-          // Get validate plan request and update shore
-          else if (MessageTypes.VALIDATEPLAN
-              .getMessageType()
-              .equals(messageType.getMessageType())) {
-            saveValidatePlanRequestShore(erReply);
           }
         } else {
           log.debug(
@@ -293,7 +290,7 @@ public class CommunicationService {
           else if (MessageTypes.PATTERNDETAIL
               .getMessageType()
               .equals(messageType.getMessageType())) {
-            savePatternInShipSide(erReply);
+            saveLoadableStudyIntoStagingTable(erReply);
           }
         } else {
           log.debug(
