@@ -1432,7 +1432,7 @@ public class LoadicatorService {
             true,
             feedBackLoop,
             algoResponse.getFeedbackLoopCount(),
-            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID);
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
         loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
             LOADABLE_PATTERN_VALIDATION_FAILED_ID, algoResponse.getProcessId(), true);
       } else {
@@ -1477,7 +1477,7 @@ public class LoadicatorService {
       if (loadablePatterns.isEmpty()) {
         saveJudgements(loadableStudy.getId(), judgements, false);
         this.updateFeedbackLoopParameters(
-            algoResponse.getLoadicatorResults().getLoadablePatternId(),
+            loadableStudy.getId(),
             false,
             feedBackLoop,
             algoResponse.getFeedbackLoopCount(),
@@ -1486,7 +1486,7 @@ public class LoadicatorService {
             LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, algoResponse.getProcessId(), true);
       } else {
         this.updateFeedbackLoopParameters(
-            algoResponse.getLoadicatorResults().getLoadablePatternId(),
+            loadableStudy.getId(),
             false,
             feedBackLoop,
             algoResponse.getFeedbackLoopCount(),
