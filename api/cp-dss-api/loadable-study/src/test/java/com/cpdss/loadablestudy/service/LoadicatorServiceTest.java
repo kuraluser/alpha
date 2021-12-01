@@ -71,6 +71,8 @@ public class LoadicatorServiceTest {
   @MockBean private LoadicatorServiceGrpc.LoadicatorServiceBlockingStub loadicatorServiceGrpc;
   @MockBean private AlgoService algoService;
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
+  @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @MockBean AlgoErrorsRepository algoErrorsRepository;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";

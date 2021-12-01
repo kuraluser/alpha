@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -26,4 +27,5 @@ public class LoadicatorResultDetails {
 
   private String freeboard;
   private String manifoldHeight;
+  private List<String> judgement;
 }

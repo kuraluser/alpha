@@ -1006,6 +1006,7 @@ public class DischargePlanAlgoService {
       List<DischargingSequence> oldLoadingSequences =
           dischargingSequenceRepository.findByDischargeInformationAndIsActive(
               dischargingInfo, true);
+      cowTankDetailRepository.deleteByDischargingInformationId(dischargingInfo.getId());
       // Saving Loading Sequence
       request.getDischargingSequencesList().stream()
           .forEach(
@@ -1227,7 +1228,6 @@ public class DischargePlanAlgoService {
    */
   private void saveCleaningDetails(
       DischargeInformation dischargingInfo, CleaningTanks cleaningTanks) {
-    cowTankDetailRepository.deleteByDischargingInformationId(dischargingInfo.getId());
     List<CowTankDetail> cowTankDetails = new ArrayList<>();
     List<CleaningTankDetails> bottomTankList = cleaningTanks.getBottomTankList();
     if (!bottomTankList.isEmpty()) {
@@ -1307,7 +1307,6 @@ public class DischargePlanAlgoService {
           deballastingRateRepository.deleteByDischargingSequence(dischargingSequence);
           deleteDischargingPlanPortWiseDetailsByDischargingSequence(dischargingSequence);
           eductionOperationRepository.deleteByDischargingSequence(dischargingSequence);
-          cowTankDetailRepository.deleteByDischargingInformationId(dischargingInfoId);
         });
   }
 

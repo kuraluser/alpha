@@ -982,8 +982,8 @@ public class DischargingSequenceService {
       CowTankDetail cowTankDetail) {
     cowTankDetail.setTankId(tankDetails.getTankId());
     cowTankDetail.setTankName(tankDetails.getTankShortName());
-    cowTankDetail.setEndTime(portEta + (Long.valueOf(tankDetails.getTimeEnd()) * 60 * 1000));
-    cowTankDetail.setStartTime(portEta + (Long.valueOf(tankDetails.getTimeStart()) * 60 * 1000));
+    cowTankDetail.setEnd(portEta + (Long.valueOf(tankDetails.getTimeEnd()) * 60 * 1000));
+    cowTankDetail.setStart(portEta + (Long.valueOf(tankDetails.getTimeStart()) * 60 * 1000));
   }
 
   private void removeEmptyBallasts(

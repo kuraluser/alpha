@@ -8,6 +8,6 @@ public class CowTankDetail {
 
   private Long tankId;
   private String tankName;
-  private Long startTime;
-  private Long endTime;
+  private Long start;
+  private Long end;
 }

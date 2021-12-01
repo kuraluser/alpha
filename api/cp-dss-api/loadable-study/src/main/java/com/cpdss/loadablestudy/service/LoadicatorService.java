@@ -5,6 +5,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
@@ -115,6 +116,10 @@ public class LoadicatorService {
 
   @GrpcClient("loadicatorService")
   private LoadicatorServiceGrpc.LoadicatorServiceBlockingStub loadicatorService;
+
+  @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
+
+  @Autowired AlgoErrorsRepository algoErrorsRepository;
 
   public void saveLodicatorDataForSynoptical(
       com.cpdss.loadablestudy.entity.LoadablePattern loadablePattern,
@@ -1011,15 +1016,8 @@ public class LoadicatorService {
           }
         } else {
           log.info("Feedback Loop ended for loadable study " + request.getLoadableStudyId());
-          this.updateFeedbackLoopParameters(
-              request.getLoadableStudyId(),
-              false,
-              false,
-              algoResponse.getFeedbackLoopCount(),
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
-          this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-          loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
+          this.saveloadicatorDataForSynopticalTable(
+              algoResponse, loadableStudyOpt.get(), request.getIsPattern(), false);
           if (enableCommunication && !env.equals("ship")) {
             JsonArray jsonArray =
                 loadableStudyStagingService.getCommunicationData(
@@ -1051,16 +1049,9 @@ public class LoadicatorService {
           log.info(
               "Feedback loop ended for loadable pattern "
                   + request.getLoadicatorPatternDetails(0).getLoadablePatternId());
-          this.updateFeedbackLoopParameters(
-              request.getLoadicatorPatternDetails(0).getLoadablePatternId(),
-              true,
-              false,
-              algoResponse.getFeedbackLoopCount(),
-              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
           List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
-              this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
-          loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-              LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
+              this.saveloadicatorDataForSynopticalTable(
+                  algoResponse, loadableStudyOpt.get(), request.getIsPattern(), false);
           log.info("LoadablePattern algo status process id: " + algoResponse.getProcessId());
           if (enableCommunication && !env.equals("ship")) {
             passPatternWithLodicatorToEnvoyWriter(
@@ -1074,7 +1065,8 @@ public class LoadicatorService {
         }
       }
     } else {
-      this.saveloadicatorDataForSynopticalTable(algoResponse, request.getIsPattern());
+      this.saveloadicatorDataForSynopticalTable(
+          algoResponse, loadableStudyOpt.get(), request.getIsPattern(), false);
       loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
           LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
 
@@ -1397,43 +1389,150 @@ public class LoadicatorService {
    * Save data for synoptical table
    *
    * @param algoResponse
+   * @param loadableStudy
    */
   private List<SynopticalTableLoadicatorData> saveloadicatorDataForSynopticalTable(
-      LoadicatorAlgoResponse algoResponse, Boolean isPattern) {
+      LoadicatorAlgoResponse algoResponse,
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
+      Boolean isPattern,
+      Boolean feedBackLoop) {
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
+    List<String> judgements = new ArrayList<String>();
     if (isPattern) {
-      algoResponse
-          .getLoadicatorResults()
-          .getLoadicatorResultDetails()
-          .forEach(
-              result -> {
-                this.synopticalTableLoadicatorDataRepository
-                    .deleteBySynopticalTableAndLoadablePatternId(
-                        this.synopticalTableRepository.getOne(result.getSynopticalId()),
-                        algoResponse.getLoadicatorResults().getLoadablePatternId());
-                entities.add(
-                    this.createSynopticalTableLoadicatorDataEntity(
-                        algoResponse.getLoadicatorResults(), result));
-              });
+      Boolean isValid = true;
+      for (LoadicatorResultDetails result :
+          algoResponse.getLoadicatorResults().getLoadicatorResultDetails()) {
+        this.synopticalTableLoadicatorDataRepository.deleteBySynopticalTableAndLoadablePatternId(
+            this.synopticalTableRepository.getOne(result.getSynopticalId()),
+            algoResponse.getLoadicatorResults().getLoadablePatternId());
+        entities.add(
+            this.createSynopticalTableLoadicatorDataEntity(
+                algoResponse.getLoadicatorResults(), result));
+        if (result.getJudgement() != null && !result.getJudgement().isEmpty()) {
+          isValid = false;
+          SynopticalTable synopticalTable =
+              synopticalTableRepository.getOne(result.getSynopticalId());
+          judgements.addAll(
+              result.getJudgement().stream()
+                  .map(
+                      err ->
+                          String.format(
+                              "Port %d (%s) : %s",
+                              synopticalTable.getPortXid(),
+                              synopticalTable.getOperationType(),
+                              err))
+                  .collect(Collectors.toList()));
+        }
+      }
+      if (!isValid) {
+        saveJudgements(
+            algoResponse.getLoadicatorResults().getLoadablePatternId(), judgements, true);
+        this.updateFeedbackLoopParameters(
+            algoResponse.getLoadicatorResults().getLoadablePatternId(),
+            true,
+            feedBackLoop,
+            algoResponse.getFeedbackLoopCount(),
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID);
+        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+            LOADABLE_PATTERN_VALIDATION_FAILED_ID, algoResponse.getProcessId(), true);
+      } else {
+        this.updateFeedbackLoopParameters(
+            algoResponse.getLoadicatorResults().getLoadablePatternId(),
+            true,
+            feedBackLoop,
+            algoResponse.getFeedbackLoopCount(),
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+        loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
+            LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, algoResponse.getProcessId(), true);
+      }
     } else {
       for (LoadicatorPatternDetailsResults patternDetails :
           algoResponse.getLoadicatorResultsPatternWise()) {
-        patternDetails
-            .getLoadicatorResultDetails()
-            .forEach(
-                result -> {
-                  entities.add(
-                      this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
-                  LoadablePattern loadablePattern =
-                      loadablePatternRepository.getOne(patternDetails.getLoadablePatternId());
-                  loadablePattern.setIsActive(true);
-                  loadablePatternRepository.save(loadablePattern);
-                });
+        Boolean isValid = true;
+        for (LoadicatorResultDetails result : patternDetails.getLoadicatorResultDetails()) {
+          entities.add(this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
+          LoadablePattern loadablePattern =
+              loadablePatternRepository.getOne(patternDetails.getLoadablePatternId());
+          if (result.getJudgement() != null && !result.getJudgement().isEmpty()) {
+            isValid = false;
+            SynopticalTable synopticalTable =
+                synopticalTableRepository.getOne(result.getSynopticalId());
+            judgements.addAll(
+                result.getJudgement().stream()
+                    .map(
+                        err ->
+                            String.format(
+                                "Port %d (%s) : %s",
+                                synopticalTable.getPortXid(),
+                                synopticalTable.getOperationType(),
+                                err))
+                    .collect(Collectors.toList()));
+          }
+          loadablePattern.setIsActive(isValid);
+          loadablePatternRepository.save(loadablePattern);
+        }
+      }
+      List<LoadablePattern> loadablePatterns =
+          loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
+      if (loadablePatterns.isEmpty()) {
+        saveJudgements(loadableStudy.getId(), judgements, false);
+        this.updateFeedbackLoopParameters(
+            algoResponse.getLoadicatorResults().getLoadablePatternId(),
+            false,
+            feedBackLoop,
+            algoResponse.getFeedbackLoopCount(),
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID);
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, algoResponse.getProcessId(), true);
+      } else {
+        this.updateFeedbackLoopParameters(
+            algoResponse.getLoadicatorResults().getLoadablePatternId(),
+            false,
+            feedBackLoop,
+            algoResponse.getFeedbackLoopCount(),
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
+        loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
+            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
       }
     }
+
     List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
         synopticalTableLoadicatorDataRepository.saveAll(entities);
     return synopticalTableLoadicatorDataList;
+  }
+
+  /**
+   * Saves Judgements from ALGO
+   *
+   * @param entityId
+   * @param judgements
+   * @param isPattern
+   */
+  private void saveJudgements(Long entityId, List<String> judgements, Boolean isPattern) {
+    AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
+    algoErrorHeading.setErrorHeading(AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS);
+    if (isPattern) {
+      algoErrorHeadingRepository.deleteAlgoErrorHeading(false, entityId);
+      Optional<LoadablePattern> loadablePatternOpt =
+          loadablePatternRepository.findByIdAndIsActive(entityId, true);
+      algoErrorHeading.setLoadablePattern(loadablePatternOpt.get());
+    } else {
+      algoErrorHeadingRepository.deleteAlgoErrorHeadingByLSId(false, entityId);
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
+          loadableStudyRepository.findByIdAndIsActive(entityId, true);
+      algoErrorHeading.setLoadableStudy(loadableStudyOpt.get());
+    }
+    algoErrorHeading.setIsActive(true);
+    algoErrorHeadingRepository.save(algoErrorHeading);
+    judgements.forEach(
+        error -> {
+          com.cpdss.loadablestudy.entity.AlgoErrors algoErrors =
+              new com.cpdss.loadablestudy.entity.AlgoErrors();
+          algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          algoErrors.setErrorMessage(error);
+          algoErrors.setIsActive(true);
+          algoErrors = algoErrorsRepository.save(algoErrors);
+        });
   }
 
   /**
