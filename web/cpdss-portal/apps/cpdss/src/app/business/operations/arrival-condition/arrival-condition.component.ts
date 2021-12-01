@@ -133,7 +133,7 @@ export class ArrivalConditionComponent implements OnInit, OnDestroy {
     this.cargoConditions = [];
     const commingleArray = [];
     this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
-      if (com.conditionType === 1 && com.valueType === 1) {
+      if (com.conditionType === 1 && com.valueType === 2) {
         commingleArray.push(
           {
             abbreviation: com.abbreviation,
