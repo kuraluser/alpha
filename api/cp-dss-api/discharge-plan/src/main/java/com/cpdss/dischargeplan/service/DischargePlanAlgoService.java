@@ -1227,6 +1227,7 @@ public class DischargePlanAlgoService {
    */
   private void saveCleaningDetails(
       DischargeInformation dischargingInfo, CleaningTanks cleaningTanks) {
+    cowTankDetailRepository.deleteByDischargingInformationId(dischargingInfo.getId());
     List<CowTankDetail> cowTankDetails = new ArrayList<>();
     List<CleaningTankDetails> bottomTankList = cleaningTanks.getBottomTankList();
     if (!bottomTankList.isEmpty()) {
