@@ -52,6 +52,8 @@ public class DischargingSequenceService {
   @GrpcClient("loadableStudyService")
   LoadableStudyServiceBlockingStub loadableStudyGrpcService;
 
+  @Autowired DischargingDriveTankRepository dischargingDriveTankRepository;
+
   /**
    * Get Sequences
    *
@@ -94,6 +96,35 @@ public class DischargingSequenceService {
         cowTankDetailRepository.findByDischargingXidAndIsActiveTrue(
             dischargingInfoOpt.get().getId());
     buildCowTankDetails(cowTankDetails, builder);
+    List<DischargingDriveTank> dischargingDriveTanks =
+        dischargingDriveTankRepository.findByDischargingInformationAndIsActiveTrue(
+            dischargingInfoOpt.get());
+    buildDriveTankDetails(dischargingDriveTanks, builder);
+  }
+
+  /**
+   * Builds Drive tank details message
+   *
+   * @param dischargingDriveTanks
+   * @param builder
+   */
+  private void buildDriveTankDetails(
+      List<DischargingDriveTank> dischargingDriveTanks, DischargeSequenceReply.Builder builder) {
+    log.info("Building Drive tank details");
+    List<DriveTankDetail> driveTankDetailList = new ArrayList<>();
+    dischargingDriveTanks.forEach(
+        dischargingDriveTank -> {
+          DriveTankDetail.Builder tankBuilder = DriveTankDetail.newBuilder();
+          Optional.ofNullable(dischargingDriveTank.getTankId()).ifPresent(tankBuilder::setTankId);
+          Optional.ofNullable(dischargingDriveTank.getEndTime())
+              .ifPresent(endTime -> tankBuilder.setTimeEnd(endTime.toString()));
+          Optional.ofNullable(dischargingDriveTank.getStartTime())
+              .ifPresent(startTime -> tankBuilder.setTimeStart(startTime.toString()));
+          Optional.ofNullable(dischargingDriveTank.getTankShortName())
+              .ifPresent(tankBuilder::setTankShortName);
+          driveTankDetailList.add(tankBuilder.build());
+        });
+    builder.addAllDriveTankDetails(driveTankDetailList);
   }
 
   /**

@@ -110,6 +110,8 @@ public class DischargePlanAlgoServiceTest {
 
   @MockBean private EductionOperationRepository eductionOperationRepository;
 
+  @MockBean private DischargingDriveTankRepository dischargingDriveTankRepository;
+
   // doubt at 594 List<LoadablePlanPortWiseDetails>
 
   //    @Test

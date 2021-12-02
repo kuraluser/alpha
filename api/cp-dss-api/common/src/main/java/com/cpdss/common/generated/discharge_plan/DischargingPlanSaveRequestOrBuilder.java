@@ -222,4 +222,18 @@ public interface DischargingPlanSaveRequestOrBuilder
    */
   com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetailsOrBuilder
       getPortDischargingPlanCommingleDetailsOrBuilder(int index);
+
+  /** <code>repeated .DriveTankDetail driveTankDetails = 13;</code> */
+  java.util.List<com.cpdss.common.generated.discharge_plan.DriveTankDetail>
+      getDriveTankDetailsList();
+  /** <code>repeated .DriveTankDetail driveTankDetails = 13;</code> */
+  com.cpdss.common.generated.discharge_plan.DriveTankDetail getDriveTankDetails(int index);
+  /** <code>repeated .DriveTankDetail driveTankDetails = 13;</code> */
+  int getDriveTankDetailsCount();
+  /** <code>repeated .DriveTankDetail driveTankDetails = 13;</code> */
+  java.util.List<? extends com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder>
+      getDriveTankDetailsOrBuilderList();
+  /** <code>repeated .DriveTankDetail driveTankDetails = 13;</code> */
+  com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder getDriveTankDetailsOrBuilder(
+      int index);
 }

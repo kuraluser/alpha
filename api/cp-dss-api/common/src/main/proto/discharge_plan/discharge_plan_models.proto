@@ -351,6 +351,7 @@ message DischargingPlanSaveRequest {
   bool hasLoadicator = 10;
   string dischargingPlanDetailsFromAlgo = 11;
   repeated LoadingPlanCommingleDetails portDischargingPlanCommingleDetails = 12;
+  repeated DriveTankDetail driveTankDetails = 13;
 }
 message DischargingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
@@ -381,6 +382,7 @@ message DischargeSequenceReply {
   ResponseStatus responseStatus = 9;
   int64 portRotationId = 10;
   CleaningTanks cleaningTanks = 11;
+  repeated DriveTankDetail driveTankDetails = 12;
 }
 message DischargingSequence {
   int64 cargoNominationId = 1;
@@ -402,6 +404,13 @@ message DischargingSequence {
   repeated EductorOperation eductorOperation = 17;
   CleaningTanks cleaningTanks = 18;
   repeated PumpOperation cargoOperations = 19;
+}
+
+message DriveTankDetail {
+  string tankShortName = 1;
+  int64 tankId = 2;
+  string timeStart = 3;
+  string timeEnd = 4;
 }
 
 message CleaningTanks {

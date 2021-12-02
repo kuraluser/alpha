@@ -17,12 +17,7 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.CleaningTankDetails;
-import com.cpdss.common.generated.discharge_plan.CleaningTanks;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
-import com.cpdss.common.generated.discharge_plan.DischargeRuleReply;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingRate;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
@@ -64,6 +59,10 @@ import com.cpdss.dischargeplan.domain.vessel.VesselBottomLine;
 import com.cpdss.dischargeplan.domain.vessel.VesselManifold;
 import com.cpdss.dischargeplan.domain.vessel.VesselPump;
 import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.dischargeplan.entity.DischargeInformation;
+import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
+import com.cpdss.dischargeplan.entity.DischargingSequence;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -83,6 +82,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -168,6 +168,8 @@ public class DischargePlanAlgoService {
   @Autowired DischargingDelayRepository dischargingDelayRepository;
 
   @Autowired EductionOperationRepository eductionOperationRepository;
+
+  @Autowired DischargingDriveTankRepository dischargingDriveTankRepository;
 
   private static final Integer cowBottomTypeId = 2;
   private static final Integer cowTopTypeId = 3;
@@ -1055,6 +1057,38 @@ public class DischargePlanAlgoService {
         dischargingInfo, request.getPortDischargingPlanStabilityParametersList());
     savePortStowageDetails(dischargingInfo, request.getPortDischargingPlanStowageDetailsList());
     savePortCommingleDetails(dischargingInfo, request.getPortDischargingPlanCommingleDetailsList());
+    saveDriveTankDetails(dischargingInfo, request.getDriveTankDetailsList());
+  }
+
+  /**
+   * Saves drive tank details to DB
+   *
+   * @param dischargingInfo
+   * @param driveTankDetailsList
+   */
+  private void saveDriveTankDetails(
+      DischargeInformation dischargingInfo, List<DriveTankDetail> driveTankDetailsList) {
+    log.info("Saving Drive Tanks for Discharging Information {}", dischargingInfo.getId());
+    List<DischargingDriveTank> driveTanks = new ArrayList<DischargingDriveTank>();
+    driveTankDetailsList.forEach(
+        driveTankDetail -> {
+          DischargingDriveTank dischargingDriveTank = new DischargingDriveTank();
+          dischargingDriveTank.setDischargingInformation(dischargingInfo);
+          dischargingDriveTank.setTankId(driveTankDetail.getTankId());
+          dischargingDriveTank.setIsActive(true);
+          dischargingDriveTank.setTankShortName(driveTankDetail.getTankShortName());
+          dischargingDriveTank.setStartTime(
+              StringUtils.hasLength(driveTankDetail.getTimeStart())
+                  ? Integer.valueOf(driveTankDetail.getTimeStart())
+                  : null);
+          dischargingDriveTank.setEndTime(
+              StringUtils.hasLength(driveTankDetail.getTimeEnd())
+                  ? Integer.valueOf(driveTankDetail.getTimeEnd())
+                  : null);
+          driveTanks.add(dischargingDriveTank);
+        });
+
+    dischargingDriveTankRepository.saveAll(driveTanks);
   }
 
   private void savePortStowageDetails(
@@ -1124,6 +1158,7 @@ public class DischargePlanAlgoService {
     portDischargingPlanStowageTempDetailsRepository.deleteByDischargingInformationId(id);
     portDischargingPlanBallastTempDetailsRepository.deleteByDischargingInformationId(id);
     portDischargingPlanCommingleDetailsRepository.deleteByDischargingInformationId(id);
+    dischargingDriveTankRepository.deleteByDischargingInformationId(id);
   }
 
   private void saveDischargingSequenceStabilityParams(

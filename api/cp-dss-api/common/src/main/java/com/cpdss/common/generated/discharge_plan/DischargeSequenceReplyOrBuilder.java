@@ -133,4 +133,18 @@ public interface DischargeSequenceReplyOrBuilder
   com.cpdss.common.generated.discharge_plan.CleaningTanks getCleaningTanks();
   /** <code>.CleaningTanks cleaningTanks = 11;</code> */
   com.cpdss.common.generated.discharge_plan.CleaningTanksOrBuilder getCleaningTanksOrBuilder();
+
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  java.util.List<com.cpdss.common.generated.discharge_plan.DriveTankDetail>
+      getDriveTankDetailsList();
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  com.cpdss.common.generated.discharge_plan.DriveTankDetail getDriveTankDetails(int index);
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  int getDriveTankDetailsCount();
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  java.util.List<? extends com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder>
+      getDriveTankDetailsOrBuilderList();
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder getDriveTankDetailsOrBuilder(
+      int index);
 }

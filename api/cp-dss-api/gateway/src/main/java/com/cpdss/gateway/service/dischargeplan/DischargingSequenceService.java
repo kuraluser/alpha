@@ -24,12 +24,8 @@ import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
-import com.cpdss.common.generated.discharge_plan.CleaningTanks;
-import com.cpdss.common.generated.discharge_plan.DischargePlanPortWiseDetails;
-import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest.Builder;
-import com.cpdss.common.generated.discharge_plan.DischargingRate;
-import com.cpdss.common.generated.discharge_plan.DischargingSequence;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
@@ -124,6 +120,7 @@ public class DischargingSequenceService {
                 this.buildSequences(
                     event, sequenceNumber, pumpsResponse.getVesselPumpList(), builder);
               });
+      this.buildDriveTank(dischargingPlanAlgoRequest.getEvents(), builder);
     }
 
     if (dischargingPlanAlgoRequest.getPlans() != null) {
@@ -159,6 +156,27 @@ public class DischargingSequenceService {
         log.error("Could not parse Dischgarging Plan Details from ALGO");
       }
     }
+  }
+
+  /**
+   * Builds drive tank details
+   *
+   * @param events
+   * @param builder
+   */
+  private void buildDriveTank(List<Event> events, Builder builder) {
+    List<DriveTankDetail> driveTankDetailList = new ArrayList<>();
+    for (Event event : events) {
+      if (StringUtils.hasLength(event.getDriveTank())) {
+        DriveTankDetail.Builder tankBuilder = DriveTankDetail.newBuilder();
+        tankBuilder.setTankShortName(event.getDriveTank());
+        tankBuilder.setTimeEnd(
+            event.getSequence().get(event.getSequence().size() - 1).getTimeEnd());
+        tankBuilder.setTimeStart(event.getSequence().get(0).getTimeStart());
+        driveTankDetailList.add(tankBuilder.build());
+      }
+    }
+    builder.addAllDriveTankDetails(driveTankDetailList);
   }
 
   private void buildAlgoErrors(List<AlgoError> errors, Builder builder) {
@@ -721,6 +739,7 @@ public class DischargingSequenceService {
     List<CargoStage> cargoStages = new ArrayList<CargoStage>();
     List<EductionOperation> cargoEductions = new ArrayList<EductionOperation>();
     CleaningTank cleaningTank = new CleaningTank();
+    List<DriveTank> driveTanks = new ArrayList<>();
 
     inititalizeStabilityParams(stabilityParams);
 
@@ -890,6 +909,7 @@ public class DischargingSequenceService {
     this.removeEmptyBallasts(ballasts, ballastTankCategories);
     this.removeEmptyCargos(cargos, cargoTankCategories);
     this.buildCleaningTanks(reply, portEta, cleaningTank);
+    this.buildDriveTanks(reply, portEta, driveTanks);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -911,6 +931,41 @@ public class DischargingSequenceService {
     response.setCargoStages(cargoStages);
     response.setCargoEduction(cargoEductions);
     response.setCleaningTanks(cleaningTank);
+    response.setDriveTanks(driveTanks);
+  }
+
+  /**
+   * Builds drive tank details
+   *
+   * @param reply
+   * @param portEta
+   * @param driveTanks
+   */
+  private void buildDriveTanks(
+      DischargeSequenceReply reply, Long portEta, List<DriveTank> driveTanks) {
+    log.info("Building drive tank details");
+    reply
+        .getDriveTankDetailsList()
+        .forEach(
+            driveTankDetail -> {
+              driveTanks.add(this.createDriveTanks(driveTankDetail, portEta));
+            });
+  }
+
+  /**
+   * Creates drive tank object
+   *
+   * @param driveTankDetail
+   * @param portEta
+   * @return
+   */
+  private DriveTank createDriveTanks(DriveTankDetail driveTankDetail, Long portEta) {
+    DriveTank driveTank = new DriveTank();
+    driveTank.setTankId(driveTankDetail.getTankId());
+    driveTank.setTankName(driveTankDetail.getTankShortName());
+    driveTank.setEnd(portEta + (Long.valueOf(driveTankDetail.getTimeEnd()) * 60 * 1000));
+    driveTank.setStart(portEta + (Long.valueOf(driveTankDetail.getTimeStart()) * 60 * 1000));
+    return driveTank;
   }
 
   /**

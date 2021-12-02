@@ -1402,6 +1402,9 @@ public class LoadicatorService {
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
       Boolean isPattern,
       Boolean feedBackLoop) {
+    log.info(
+        "================= Judgement check {} =================",
+        judgementEnabled ? "enabled" : "disabled");
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
     List<String> judgements = new ArrayList<String>();
     if (isPattern) {

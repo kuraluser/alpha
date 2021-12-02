@@ -48,6 +48,8 @@ public class DischargingSequenceServiceTest {
 
   @MockBean LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub loadableStudyGrpcService;
 
+  @MockBean DischargingDriveTankRepository dischargingDriveTankRepository;
+
   @Test
   void testGetDischargingSequences() {
     LoadingPlanModels.LoadingSequenceRequest request =

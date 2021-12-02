@@ -16,6 +16,7 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     startDate_ = "";
     dischargeSequences_ = java.util.Collections.emptyList();
     dischargeSequenceStabilityParameters_ = java.util.Collections.emptyList();
+    driveTankDetails_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -148,6 +149,20 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
 
               break;
             }
+          case 98:
+            {
+              if (!((mutable_bitField0_ & 0x00000004) != 0)) {
+                driveTankDetails_ =
+                    new java.util.ArrayList<
+                        com.cpdss.common.generated.discharge_plan.DriveTankDetail>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              driveTankDetails_.add(
+                  input.readMessage(
+                      com.cpdss.common.generated.discharge_plan.DriveTankDetail.parser(),
+                      extensionRegistry));
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -168,6 +183,9 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       if (((mutable_bitField0_ & 0x00000002) != 0)) {
         dischargeSequenceStabilityParameters_ =
             java.util.Collections.unmodifiableList(dischargeSequenceStabilityParameters_);
+      }
+      if (((mutable_bitField0_ & 0x00000004) != 0)) {
+        driveTankDetails_ = java.util.Collections.unmodifiableList(driveTankDetails_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -414,6 +432,34 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     return getCleaningTanks();
   }
 
+  public static final int DRIVETANKDETAILS_FIELD_NUMBER = 12;
+  private java.util.List<com.cpdss.common.generated.discharge_plan.DriveTankDetail>
+      driveTankDetails_;
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  public java.util.List<com.cpdss.common.generated.discharge_plan.DriveTankDetail>
+      getDriveTankDetailsList() {
+    return driveTankDetails_;
+  }
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  public java.util.List<
+          ? extends com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder>
+      getDriveTankDetailsOrBuilderList() {
+    return driveTankDetails_;
+  }
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  public int getDriveTankDetailsCount() {
+    return driveTankDetails_.size();
+  }
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  public com.cpdss.common.generated.discharge_plan.DriveTankDetail getDriveTankDetails(int index) {
+    return driveTankDetails_.get(index);
+  }
+  /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+  public com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder
+      getDriveTankDetailsOrBuilder(int index) {
+    return driveTankDetails_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -461,6 +507,9 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     if (cleaningTanks_ != null) {
       output.writeMessage(11, getCleaningTanks());
     }
+    for (int i = 0; i < driveTankDetails_.size(); i++) {
+      output.writeMessage(12, driveTankDetails_.get(i));
+    }
     unknownFields.writeTo(output);
   }
 
@@ -506,6 +555,10 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     if (cleaningTanks_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(11, getCleaningTanks());
     }
+    for (int i = 0; i < driveTankDetails_.size(); i++) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(12, driveTankDetails_.get(i));
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -540,6 +593,7 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     if (hasCleaningTanks()) {
       if (!getCleaningTanks().equals(other.getCleaningTanks())) return false;
     }
+    if (!getDriveTankDetailsList().equals(other.getDriveTankDetailsList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -580,6 +634,10 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
     if (hasCleaningTanks()) {
       hash = (37 * hash) + CLEANINGTANKS_FIELD_NUMBER;
       hash = (53 * hash) + getCleaningTanks().hashCode();
+    }
+    if (getDriveTankDetailsCount() > 0) {
+      hash = (37 * hash) + DRIVETANKDETAILS_FIELD_NUMBER;
+      hash = (53 * hash) + getDriveTankDetailsList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -716,6 +774,7 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
         getDischargeSequencesFieldBuilder();
         getDischargeSequenceStabilityParametersFieldBuilder();
+        getDriveTankDetailsFieldBuilder();
       }
     }
 
@@ -759,6 +818,12 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       } else {
         cleaningTanks_ = null;
         cleaningTanksBuilder_ = null;
+      }
+      if (driveTankDetailsBuilder_ == null) {
+        driveTankDetails_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+      } else {
+        driveTankDetailsBuilder_.clear();
       }
       return this;
     }
@@ -825,6 +890,15 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
         result.cleaningTanks_ = cleaningTanks_;
       } else {
         result.cleaningTanks_ = cleaningTanksBuilder_.build();
+      }
+      if (driveTankDetailsBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0)) {
+          driveTankDetails_ = java.util.Collections.unmodifiableList(driveTankDetails_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.driveTankDetails_ = driveTankDetails_;
+      } else {
+        result.driveTankDetails_ = driveTankDetailsBuilder_.build();
       }
       onBuilt();
       return result;
@@ -961,6 +1035,33 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
       }
       if (other.hasCleaningTanks()) {
         mergeCleaningTanks(other.getCleaningTanks());
+      }
+      if (driveTankDetailsBuilder_ == null) {
+        if (!other.driveTankDetails_.isEmpty()) {
+          if (driveTankDetails_.isEmpty()) {
+            driveTankDetails_ = other.driveTankDetails_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureDriveTankDetailsIsMutable();
+            driveTankDetails_.addAll(other.driveTankDetails_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.driveTankDetails_.isEmpty()) {
+          if (driveTankDetailsBuilder_.isEmpty()) {
+            driveTankDetailsBuilder_.dispose();
+            driveTankDetailsBuilder_ = null;
+            driveTankDetails_ = other.driveTankDetails_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+            driveTankDetailsBuilder_ =
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                    ? getDriveTankDetailsFieldBuilder()
+                    : null;
+          } else {
+            driveTankDetailsBuilder_.addAllMessages(other.driveTankDetails_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -2053,6 +2154,233 @@ public final class DischargeSequenceReply extends com.google.protobuf.GeneratedM
         cleaningTanks_ = null;
       }
       return cleaningTanksBuilder_;
+    }
+
+    private java.util.List<com.cpdss.common.generated.discharge_plan.DriveTankDetail>
+        driveTankDetails_ = java.util.Collections.emptyList();
+
+    private void ensureDriveTankDetailsIsMutable() {
+      if (!((bitField0_ & 0x00000004) != 0)) {
+        driveTankDetails_ =
+            new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.DriveTankDetail>(
+                driveTankDetails_);
+        bitField0_ |= 0x00000004;
+      }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.DriveTankDetail,
+            com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder,
+            com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder>
+        driveTankDetailsBuilder_;
+
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.DriveTankDetail>
+        getDriveTankDetailsList() {
+      if (driveTankDetailsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(driveTankDetails_);
+      } else {
+        return driveTankDetailsBuilder_.getMessageList();
+      }
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public int getDriveTankDetailsCount() {
+      if (driveTankDetailsBuilder_ == null) {
+        return driveTankDetails_.size();
+      } else {
+        return driveTankDetailsBuilder_.getCount();
+      }
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public com.cpdss.common.generated.discharge_plan.DriveTankDetail getDriveTankDetails(
+        int index) {
+      if (driveTankDetailsBuilder_ == null) {
+        return driveTankDetails_.get(index);
+      } else {
+        return driveTankDetailsBuilder_.getMessage(index);
+      }
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder setDriveTankDetails(
+        int index, com.cpdss.common.generated.discharge_plan.DriveTankDetail value) {
+      if (driveTankDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDriveTankDetailsIsMutable();
+        driveTankDetails_.set(index, value);
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder setDriveTankDetails(
+        int index,
+        com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder builderForValue) {
+      if (driveTankDetailsBuilder_ == null) {
+        ensureDriveTankDetailsIsMutable();
+        driveTankDetails_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder addDriveTankDetails(
+        com.cpdss.common.generated.discharge_plan.DriveTankDetail value) {
+      if (driveTankDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDriveTankDetailsIsMutable();
+        driveTankDetails_.add(value);
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder addDriveTankDetails(
+        int index, com.cpdss.common.generated.discharge_plan.DriveTankDetail value) {
+      if (driveTankDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDriveTankDetailsIsMutable();
+        driveTankDetails_.add(index, value);
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder addDriveTankDetails(
+        com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder builderForValue) {
+      if (driveTankDetailsBuilder_ == null) {
+        ensureDriveTankDetailsIsMutable();
+        driveTankDetails_.add(builderForValue.build());
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder addDriveTankDetails(
+        int index,
+        com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder builderForValue) {
+      if (driveTankDetailsBuilder_ == null) {
+        ensureDriveTankDetailsIsMutable();
+        driveTankDetails_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder addAllDriveTankDetails(
+        java.lang.Iterable<? extends com.cpdss.common.generated.discharge_plan.DriveTankDetail>
+            values) {
+      if (driveTankDetailsBuilder_ == null) {
+        ensureDriveTankDetailsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, driveTankDetails_);
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder clearDriveTankDetails() {
+      if (driveTankDetailsBuilder_ == null) {
+        driveTankDetails_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public Builder removeDriveTankDetails(int index) {
+      if (driveTankDetailsBuilder_ == null) {
+        ensureDriveTankDetailsIsMutable();
+        driveTankDetails_.remove(index);
+        onChanged();
+      } else {
+        driveTankDetailsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder
+        getDriveTankDetailsBuilder(int index) {
+      return getDriveTankDetailsFieldBuilder().getBuilder(index);
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder
+        getDriveTankDetailsOrBuilder(int index) {
+      if (driveTankDetailsBuilder_ == null) {
+        return driveTankDetails_.get(index);
+      } else {
+        return driveTankDetailsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder>
+        getDriveTankDetailsOrBuilderList() {
+      if (driveTankDetailsBuilder_ != null) {
+        return driveTankDetailsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(driveTankDetails_);
+      }
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder
+        addDriveTankDetailsBuilder() {
+      return getDriveTankDetailsFieldBuilder()
+          .addBuilder(
+              com.cpdss.common.generated.discharge_plan.DriveTankDetail.getDefaultInstance());
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder
+        addDriveTankDetailsBuilder(int index) {
+      return getDriveTankDetailsFieldBuilder()
+          .addBuilder(
+              index,
+              com.cpdss.common.generated.discharge_plan.DriveTankDetail.getDefaultInstance());
+    }
+    /** <code>repeated .DriveTankDetail driveTankDetails = 12;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder>
+        getDriveTankDetailsBuilderList() {
+      return getDriveTankDetailsFieldBuilder().getBuilderList();
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.DriveTankDetail,
+            com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder,
+            com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder>
+        getDriveTankDetailsFieldBuilder() {
+      if (driveTankDetailsBuilder_ == null) {
+        driveTankDetailsBuilder_ =
+            new com.google.protobuf.RepeatedFieldBuilderV3<
+                com.cpdss.common.generated.discharge_plan.DriveTankDetail,
+                com.cpdss.common.generated.discharge_plan.DriveTankDetail.Builder,
+                com.cpdss.common.generated.discharge_plan.DriveTankDetailOrBuilder>(
+                driveTankDetails_,
+                ((bitField0_ & 0x00000004) != 0),
+                getParentForChildren(),
+                isClean());
+        driveTankDetails_ = null;
+      }
+      return driveTankDetailsBuilder_;
     }
 
     @java.lang.Override
