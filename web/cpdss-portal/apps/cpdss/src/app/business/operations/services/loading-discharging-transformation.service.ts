@@ -6,7 +6,7 @@ import { QUANTITY_UNIT, RATE_UNIT, ValueObject } from '../../../shared/models/co
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank, OPERATIONS } from '../../core/models/common.model';
-import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage, IEduction, ITankData, ITank as ISequenceTank, IDischargingRate } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
+import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage, IEduction, ITankData, ITank as ISequenceTank, IDischargingRate, ICOW } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
 import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays, ITanksWashingWithDifferentCargo, ITanksWashingWithDifferentCargoResponse, ILoadedCargoResponse } from '../models/loading-discharging.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
@@ -845,12 +845,61 @@ export class LoadingDischargingTransformationService {
         "quantityM3": gravity.quantityM3 ?? 0,
         "rate": gravity.rate ?? 0,
         "rateM3PerHr": gravity.rate ?? 0,
-        "id": "gravity" + pump.pumpName // NB:- id must be unique
+        "id": "gravity-" + pump.pumpName // NB:- id must be unique
       }
       ballastPumps?.push(data);
     });
 
     return ballastPumps;
+  }
+
+  /**
+   * Set COW tanks in cargo sequence
+   *
+   * @param {ITankData[]} cargos
+   * @param {ICOW} cleaningTanks
+   * @return {*}  {ITankData[]}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setCargoCOW(cargos: ITankData[], cleaningTanks: ICOW): ITankData[] {
+    for (const key in cleaningTanks) {
+      if (Object.prototype.hasOwnProperty.call(cleaningTanks, key)) {
+        const tanks: ITankData[] = cleaningTanks[key];
+        let className;
+        switch (key) {
+          case 'bottomTanks':
+            className = 'bottom-wash';
+            break;
+
+          case 'fullTanks':
+            className = 'full-wash';
+            break;
+
+          case 'topTanks':
+            className = 'top-wash';
+            break;
+
+          default:
+            break;
+        }
+        if(className) {
+          tanks?.forEach(tank => {
+            const data = {
+                "tankId": tank?.tankId,
+                "start": tank?.start,
+                "end": tank?.end,
+                "className": className,
+                "color": 'transparent',
+                "id": "cow-" + tank?.tankName // NB:- id must be unique
+              }
+              cargos?.push(data);
+          });
+        }
+
+      }
+    }
+
+    return cargos;
   }
 
   /**
@@ -869,7 +918,7 @@ export class LoadingDischargingTransformationService {
       const end = stageTickPositions[index + 1];
       const rate = new Set<number>();
       cargoRates?.forEach(element => {
-        if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end < element.endTime)) {
+        if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end <= element.endTime)) {
           if(type === OPERATIONS.LOADING){
             element.loadingRates.forEach(rate.add, rate);
           } else {
@@ -878,6 +927,9 @@ export class LoadingDischargingTransformationService {
         }
       });
       const rateArr = Array.from(rate);
+      if (rateArr.length > 2) {
+        rateArr.splice(1, rateArr?.length / 2);
+      }
       if (type === OPERATIONS.LOADING) {
         _cargoLoadingRates.push({ startTime: start, endTime: end, loadingRatesM3PerHr: rateArr, loadingRates: rateArr });
       } else {
@@ -946,7 +998,8 @@ export class LoadingDischargingTransformationService {
       cargo.quantityMT = cargo.quantity;
       return cargo;
     });
-    sequenceData.cargos = this.setEduction(sequenceData?.cargos, sequenceData?.cargoEduction, sequenceData.cargoTankCategories, 'cargo')
+    sequenceData.cargos = this.setEduction(sequenceData?.cargos, sequenceData?.cargoEduction, sequenceData.cargoTankCategories, 'cargo');
+    sequenceData.cargos = this.setCargoCOW(sequenceData?.cargos, sequenceData?.cleaningTanks);
 
     sequenceData.cargoStages = sequenceData?.cargoStages?.map(stage => {
       stage.cargos = stage.cargos.map(cargo => {
@@ -998,7 +1051,7 @@ export class LoadingDischargingTransformationService {
    */
   transformSequenceDataToSelectedUnit(sequenceData: ISequenceData, quantityUnitTo: QUANTITY_UNIT, rateUnitTo: RATE_UNIT = null): ISequenceData {
     sequenceData.cargos = sequenceData?.cargos?.map(cargo => {
-      cargo.quantity = this.quantityPipe.transform(cargo.quantityMT, QUANTITY_UNIT.MT, quantityUnitTo, cargo?.api);
+      cargo.quantity = this.quantityPipe.transform(cargo.quantityMT, QUANTITY_UNIT.MT, quantityUnitTo, cargo?.api, -1);
       return cargo;
     });
     sequenceData.cargoStages = sequenceData?.cargoStages?.map(stage => {

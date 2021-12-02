@@ -341,6 +341,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       "SEQUENCE_CHART_LOADING_RATE",
       "SEQUENCE_CHART_DEBALLASTING_RATE",
       "SEQUENCE_CHART_DISCHARGING_RATE",
+      "SEQUENCE_CHART_BALLASTING_RATE",
       "SEQUENCE_CHART_FLOW_RATE",
       "SEQUENCE_CHART_AGGEGATE",
       "SEQUENCE_CHART_DRAFT",
@@ -450,7 +451,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                 return this.point?.options?.className ? `<i class="pi ${this.point.options.className} sequence-icon"></i>` : undefined;
               },
               useHTML: true,
-              align: 'center'
+              align: 'left',
+              padding: 0,
+              className: 'cow-labels'
             }]
         }
       },
@@ -628,10 +631,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                     tempRateArray.push(item?.toFixed());
                   });
                   const rate = tempRateArray.join('/');
-                  categoryLabel =
-                    `<div class="font-main  text-center pl-5 pr-5">
-                      <div class="">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
-                  </div>`;
+                  if (rate) {
+                    categoryLabel =
+                      `<div class="font-main  text-center pl-5 pr-5">
+                          <div class="">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
+                      </div>`;
+                  }
                 }
                 return categoryLabel;
               }
@@ -729,7 +734,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         className: 'sequence-chart-tooltip container-fluid',
         formatter: function () {
           let tooltipContent, cargoNames, duration, startingTime, endingTime, quantity, ullage, isCOW = false;
-          if (this?.point.options.className === "pi-sort-up") {
+          const min = LoadingDischargingSequenceChartComponent.minXAxisValue;
+          startingTime = (this?.point?.start - min) / (1000 * 60 * 60);
+          endingTime = (this?.point?.end - min) / (1000 * 60 * 60);
+          duration = (this?.point?.end - min) / (1000 * 60 * 60);
+
+          if (this?.point?.options?.id?.includes('cow')) {
             isCOW = true;
             tooltipContent = `
               <table>
@@ -737,13 +747,17 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                   <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_COW_ANGLE']}</th>
                   <td>150&deg</td>
                 </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_STARTING_TIME']}</th>
+                  <td>${startingTime.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_ENDING_TIME']}</th>
+                  <td>${endingTime.toFixed(2)}</td>
+                </tr>
               </table>`;
           } else {
             cargoNames = this?.point?.abbreviation;
-            const min = LoadingDischargingSequenceChartComponent.minXAxisValue;
-            startingTime = (this?.point?.start - min) / (1000 * 60 * 60);
-            endingTime = (this?.point?.end - min) / (1000 * 60 * 60);
-            duration = (this?.point?.end - min) / (1000 * 60 * 60);
             quantity = this?.point?.quantity;
             ullage = this?.point?.ullage;
 
@@ -931,10 +945,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                       tempRateArray.push(item?.toFixed());
                     });
                     const rate = tempRateArray.join('/');
-                    categoryLabel =
-                      `<div class="font-main  text-center pl-5 pr-5">
-                      <div class="">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
-                  </div>`;
+                    if (rate) {
+                      categoryLabel =
+                        `<div class="font-main  text-center pl-5 pr-5">
+                            <div class="">${rate} ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}</div>
+                        </div>`;
+                    }
                   }
                   return categoryLabel;
                 }
@@ -1303,7 +1319,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
 
     this.ballastPumpSequenceChartSeries = [{
       type: 'gantt',
-      name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DEBALLASTING_RATE'] : LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DISCHARGING_RATE']}`,
+      name: `${LoadingDischargingSequenceChartComponent._operation === OPERATIONS.LOADING ? LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DEBALLASTING_RATE'] : LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BALLASTING_RATE']}`,
       custom: LoadingDischargingSequenceChartComponent.sequenceData?.cargoStages,
       showInLegend: false,
       data: ballastPumpSequenceSeriesData
@@ -1990,7 +2006,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    */
   drawTable = function (event) {
     LoadingDischargingSequenceChartComponent._ngxSpinnerService.show();
-    const chart = this,
+    const chart: Highcharts.Chart = this,
       series = chart.series,
       renderer = chart.renderer,
       fontSize = Number(Highcharts.SVGRenderer.prototype.getStyle().fontSize.replace('px', '')),
@@ -2042,7 +2058,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       series.forEach((item, i) => {
         if (series[i].data[category_index]) {
           cellWidth = series[i].data[category_index].plotX;
-          let text = series[i].data[category_index]?.y;
+          let text = series[i].data[category_index]?.y.toString();
           text = LoadingDischargingSequenceChartComponent.getTextWithFrameNo(series[i].name, category_index, text);
 
           const x = chart.plotLeft + series[i].data[category_index].plotX;
@@ -2051,6 +2067,16 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           const attr = {
             align: 'center',
           };
+          switch (series[i].name) {
+            case LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_SF']:
+
+            case LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BM']:
+              attr['translateY'] = -7.5;
+              break;
+            default:
+
+              break;
+          }
           if (distanceLeft < 36 && distanceRight < 36) {
             attr['textLength'] = dataLabelFixedWidth / 2;
           } else if (distanceLeft < 36 && (!distanceRight || distanceRight > 36)) {

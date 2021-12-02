@@ -224,6 +224,7 @@ export interface ISequenceData {
   gravity?: IPumpData;
   ballastEduction?: IEduction[];
   cargoEduction?: IEduction[];
+  cleaningTanks: ICOW;
 }
 
 /**
@@ -323,4 +324,16 @@ export interface IEduction {
   timeEnd: number;
   tanks: number[];
   pumpSelected: number[];
+}
+
+/**
+ * Interface for COW tanks
+ *
+ * @export
+ * @interface ICOW
+ */
+export interface ICOW {
+  bottomTanks: ITankData[];
+  fullTanks: ITankData[];
+  topTanks: ITankData[];
 }
