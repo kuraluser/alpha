@@ -44,6 +44,9 @@ export interface IDischargingInformationResponse {
   cargoVesselTankDetails: ICargoVesselTankDetailsResponse;
   dischargeInfoId: number;
   dischargeInfoStatusId?: number;
+  dischargePatternId?: number;
+  dischargePlanArrStatusId?: number;
+  dischargePlanDepStatusId?: number;
   synopticTableId: number;
   isDischargeInfoComplete: boolean;
   isDischargeInstructionsComplete: boolean,

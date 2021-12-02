@@ -5,7 +5,7 @@ import { AppConfigurationService } from '../../../../shared/services/app-configu
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { ICargo, OPERATIONS, OPERATIONS_PLAN_STATUS } from '../../../core/models/common.model';
-import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData, IDischargingInformationSaveResponse, ILoadingDischargingDetails, ICOWDetails, IDischargingInformationPostData, IPostDischargeStageTime, ILoadedCargo, ILoadingDischargingDelays } from '../../models/loading-discharging.model';
+import { IStageOffset, IStageDuration, IDischargingInformation, IDischargeOperationListData, IDischargingInformationSaveResponse, ILoadingDischargingDetails, ICOWDetails, IDischargingInformationPostData, IPostDischargeStageTime, ILoadedCargo, ILoadingDischargingDelays, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { RulesService } from '../../services/rules.service';
@@ -162,6 +162,12 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
         }
       } else {
         this.disableSaveButton = true;
+        this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
+        this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
+        this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(true);
+      }
+
+      if(dischargingInformationResponse?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS){
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
         this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
         this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(true);
