@@ -425,6 +425,7 @@ public class DischargePlanAlgoService {
           ld.setQuantity(delay.getQuantity());
           ld.setReasonForDelayIds(
               delay.getDischargingDelayReasons().stream()
+                  .filter(DischargingDelayReason::getIsActive)
                   .map(v -> v.getReasonForDelay().getId())
                   .collect(Collectors.toList()));
           dischargeDelays.add(ld);
