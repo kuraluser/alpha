@@ -291,6 +291,7 @@ public class LoadableStudiesConstants {
     LOADABLE_PATTERN("loadable_pattern"),
     ALGO_ERROR_HEADING("algo_error_heading"),
     ALGO_ERRORS("algo_errors"),
+    LOADABLE_PLAN("loadable_plan"),
     LOADABLE_PLAN_CONSTRAINTS("loadable_plan_constraints"),
     LOADABLE_PLAN_QUANTITY("loadable_plan_quantity"),
     LOADABLE_PLAN_COMMINGLE_DETAILS("loadable_plan_commingle_details"),

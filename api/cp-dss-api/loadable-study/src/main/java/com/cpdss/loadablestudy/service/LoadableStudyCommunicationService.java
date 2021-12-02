@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 
 // endregion
 
@@ -131,6 +132,7 @@ public class LoadableStudyCommunicationService {
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
+  String current_table_name = "";
   // endregion
 
   // region Get Methods
@@ -231,6 +233,8 @@ public class LoadableStudyCommunicationService {
         if (dataTransferStage.getProcessIdentifier().equals("loading_information")
             || dataTransferStage.getProcessIdentifier().equals("pyuser")) {
           data = JsonParser.parseString(dataTransferString).getAsJsonArray().get(0).toString();
+        } else if (dataTransferStage.getProcessIdentifier().equals("json_data")) {
+          data = JsonParser.parseString(dataTransferString).getAsJsonArray().toString();
         } else {
           data = replaceString(dataTransferString);
         }
@@ -595,38 +599,47 @@ public class LoadableStudyCommunicationService {
       }
 
       // Save all -save order should not be changed
-      saveVoyage();
-      saveLoadableStudy();
-      saveCargoNomination();
-      saveCargoNominationOperationDetails();
-      saveCommingleCargo();
-      saveLoadableStudyPortRotation();
-      saveOnHandQuantity();
-      saveOnBoardQuantity();
-      saveLoadableQuantity();
-      saveSynopticalTable();
-      saveJsonData();
-      saveLoadableStudyAlgoStatus();
-      saveLoadablePattern();
-      saveAlgoErrorHeading();
-      saveAlgoErrors();
-      saveLoadablePlanConstraints();
-      saveLoadablePlanQuantity();
-      saveLoadablePlanCommingleDetails();
-      saveLoadablePatternCargoToppingOffSequence();
-      saveLoadablePlanStowageDetails();
-      saveLoadablePlanBallastDetails();
-      saveLoadablePlanCommingleDetailsPortwise();
-      saveCommunicationStatusUpdate();
-      saveStabilityParameter();
-      saveLoadablePatternCargoDetails();
-      saveLoadablePlanStowageBallastDetails();
-      saveSynopticalTableLoadicatorData();
-
+      try {
+        saveVoyage();
+        saveLoadableStudy();
+        saveCargoNomination();
+        saveCargoNominationOperationDetails();
+        saveCommingleCargo();
+        saveLoadableStudyPortRotation();
+        saveOnHandQuantity();
+        saveOnBoardQuantity();
+        saveLoadableQuantity();
+        saveSynopticalTable();
+        saveJsonData();
+        saveLoadableStudyAlgoStatus();
+        saveLoadablePattern();
+        saveAlgoErrorHeading();
+        saveAlgoErrors();
+        saveLoadablePlanConstraints();
+        saveLoadablePlanQuantity();
+        saveLoadablePlanCommingleDetails();
+        saveLoadablePatternCargoToppingOffSequence();
+        saveLoadablePlanStowageDetails();
+        saveLoadablePlanBallastDetails();
+        saveLoadablePlanCommingleDetailsPortwise();
+        saveCommunicationStatusUpdate();
+        saveStabilityParameter();
+        saveLoadablePatternCargoDetails();
+        saveLoadablePlanStowageBallastDetails();
+        saveSynopticalTableLoadicatorData();
+      } catch (ResourceAccessException e) {
+        updateStatusInExceptionCase(
+            idMap.get(current_table_name), processId, retryStatus, e.getMessage());
+      } catch (Exception e) {
+        updateStatusInExceptionCase(
+            idMap.get(current_table_name),
+            processId,
+            StagingStatus.FAILED.getStatus(),
+            e.getMessage());
+      }
       loadableStudyStagingService.updateStatusCompletedForProcessId(
           processId, StagingStatus.COMPLETED.getStatus());
       log.info("updated status to completed for processId:" + processId);
-
       // Generate pattern with communicated data at shore
       if (CPDSS_BUILD_ENV_SHORE.equals(env)) {
         try {
@@ -666,6 +679,7 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable study */
   private void saveLoadableStudy() {
+    current_table_name = LoadableStudyTables.VOYAGE.getTable();
     if (loadableStudyStage != null) {
       Optional<LoadableStudy> optionalLoadableStudy =
           loadableStudyRepository.findById(loadableStudyStage.getId());
@@ -681,6 +695,7 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save voyage */
   private void saveVoyage() {
+    current_table_name = LoadableStudyTables.VOYAGE.getTable();
     if (null == voyageStage) {
       log.info("Communication XXXXXXX  Voyage is empty");
       voyageStage = voyageRepository.findById(voyageId).orElse(null);
@@ -695,7 +710,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save commingle cargo */
   private void saveCommingleCargo() {
-    if (null == commingleCargoStage) {
+    current_table_name = LoadableStudyTables.COMINGLE_CARGO.getTable();
+    if (null == commingleCargoStage || commingleCargoStage.isEmpty()) {
       log.info("Communication XXXXXXX  CommingleCargo is empty");
       return;
     }
@@ -713,7 +729,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save cargo nomination */
   private void saveCargoNomination() {
-    if (null == cargoNominationStage) {
+    current_table_name = LoadableStudyTables.CARGO_NOMINATION.getTable();
+    if (null == cargoNominationStage || cargoNominationStage.isEmpty()) {
       log.info("Communication XXXXXXX  CargoNomination is empty");
       return;
     }
@@ -731,7 +748,9 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save cargo nomination operation details */
   private void saveCargoNominationOperationDetails() {
-    if (null == cargoNominationOperationDetailsStage) {
+    current_table_name = LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS.getTable();
+    if (null == cargoNominationOperationDetailsStage
+        || cargoNominationOperationDetailsStage.isEmpty()) {
       log.info("Communication XXXXXXX  CargoNomination Operation Details is empty");
       return;
     }
@@ -756,7 +775,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable study port rotation */
   private void saveLoadableStudyPortRotation() {
-    if (null == loadableStudyPortRotationStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_STUDY_PORT_ROTATION.getTable();
+    if (null == loadableStudyPortRotationStage || loadableStudyPortRotationStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadableStudyPortRotation is empty");
       return;
     }
@@ -779,61 +799,70 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save on hand quantity */
   private void saveOnHandQuantity() {
-    if (null != onHandQuantityStage && !onBoardQuantityStage.isEmpty()) {
-      for (OnHandQuantity ohqStage : onHandQuantityStage) {
-        ohqStage.setVersion(null);
-        ohqStage.setLoadableStudy(loadableStudyStage);
-        Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
-        ohq.ifPresent(onHandQuantity -> ohqStage.setVersion(onHandQuantity.getVersion()));
-        for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
-          Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
-              loadableStudyPortRotationRepository.findById(lspr.getId());
-          loadableStudyPortRotationOpt.ifPresent(ohqStage::setPortRotation);
-        }
-      }
-
-      onHandQuantityStage = onHandQuantityRepository.saveAll(onHandQuantityStage);
-      log.info("Communication #######  OnHandQuantity saved with id:" + onHandQuantityStage);
+    current_table_name = LoadableStudyTables.ON_HAND_QUANTITY.getTable();
+    if (null == onHandQuantityStage || onHandQuantityStage.isEmpty()) {
+      log.info("Communication XXXXXXX  OnHandQuantity is empty");
+      return;
     }
+    for (OnHandQuantity ohqStage : onHandQuantityStage) {
+      ohqStage.setVersion(null);
+      ohqStage.setLoadableStudy(loadableStudyStage);
+      Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
+      ohq.ifPresent(onHandQuantity -> ohqStage.setVersion(onHandQuantity.getVersion()));
+      for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
+        Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
+            loadableStudyPortRotationRepository.findById(lspr.getId());
+        loadableStudyPortRotationOpt.ifPresent(ohqStage::setPortRotation);
+      }
+    }
+    onHandQuantityStage = onHandQuantityRepository.saveAll(onHandQuantityStage);
+    log.info("Communication #######  OnHandQuantity saved with id:" + onHandQuantityStage);
   }
 
   /** Method to save on board quantity */
   private void saveOnBoardQuantity() {
-    if (null != onBoardQuantityStage && !onBoardQuantityStage.isEmpty()) {
-      for (OnBoardQuantity obqStage : onBoardQuantityStage) {
-        obqStage.setVersion(null);
-        obqStage.setLoadableStudy(loadableStudyStage);
-        Optional<OnBoardQuantity> ohq = onBoardQuantityRepository.findById(obqStage.getId());
-        ohq.ifPresent(onBoardQuantity -> obqStage.setVersion(onBoardQuantity.getVersion()));
-      }
-
-      onBoardQuantityStage = onBoardQuantityRepository.saveAll(onBoardQuantityStage);
-      log.info("Communication #######  onBoardQuantity saved with id:" + onBoardQuantityStage);
+    current_table_name = LoadableStudyTables.ON_BOARD_QUANTITY.getTable();
+    if (null == onBoardQuantityStage || onBoardQuantityStage.isEmpty()) {
+      log.info("Communication XXXXXXX  onBoardQuantity is empty");
+      return;
     }
+    for (OnBoardQuantity obqStage : onBoardQuantityStage) {
+      obqStage.setVersion(null);
+      obqStage.setLoadableStudy(loadableStudyStage);
+      Optional<OnBoardQuantity> ohq = onBoardQuantityRepository.findById(obqStage.getId());
+      ohq.ifPresent(onBoardQuantity -> obqStage.setVersion(onBoardQuantity.getVersion()));
+    }
+
+    onBoardQuantityStage = onBoardQuantityRepository.saveAll(onBoardQuantityStage);
+    log.info("Communication #######  onBoardQuantity saved with id:" + onBoardQuantityStage);
   }
 
   /** Method to save loadable quantity */
   private void saveLoadableQuantity() {
-    if (null != loadableQuantityStage && !loadableQuantityStage.isEmpty()) {
-      for (LoadableQuantity lqStage : loadableQuantityStage) {
-        lqStage.setVersion(null);
-        lqStage.setLoadableStudyXId(loadableStudyStage);
-        Optional<LoadableQuantity> lq = loadableQuantityRepository.findById(lqStage.getId());
-        lq.ifPresent(loadableQuantity -> lqStage.setVersion(loadableQuantity.getVersion()));
-
-        Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
-            loadableStudyPortRotationRepository.findById(lqStage.getCommunicationRelatedEntityId());
-        loadableStudyPortRotationOpt.ifPresent(lqStage::setLoadableStudyPortRotation);
-      }
-
-      loadableQuantityStage = loadableQuantityRepository.saveAll(loadableQuantityStage);
-      log.info("Communication #######  loadableQuantity saved with id:" + loadableQuantityStage);
+    current_table_name = LoadableStudyTables.LOADABLE_QUANTITY.getTable();
+    if (null == loadableQuantityStage || loadableQuantityStage.isEmpty()) {
+      log.info("Communication XXXXXXX  loadableQuantity is empty");
+      return;
     }
+    for (LoadableQuantity lqStage : loadableQuantityStage) {
+      lqStage.setVersion(null);
+      lqStage.setLoadableStudyXId(loadableStudyStage);
+      Optional<LoadableQuantity> lq = loadableQuantityRepository.findById(lqStage.getId());
+      lq.ifPresent(loadableQuantity -> lqStage.setVersion(loadableQuantity.getVersion()));
+
+      Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
+          loadableStudyPortRotationRepository.findById(lqStage.getCommunicationRelatedEntityId());
+      loadableStudyPortRotationOpt.ifPresent(lqStage::setLoadableStudyPortRotation);
+    }
+
+    loadableQuantityStage = loadableQuantityRepository.saveAll(loadableQuantityStage);
+    log.info("Communication #######  loadableQuantity saved with id:" + loadableQuantityStage);
   }
 
   /** Method to save synoptical table */
   private void saveSynopticalTable() {
-    if (null == synopticalTableStage) {
+    current_table_name = LoadableStudyTables.SYNOPTICAL_TABLE.getTable();
+    if (null == synopticalTableStage || synopticalTableStage.isEmpty()) {
       log.info("Communication XXXXXXX  synopticalTable is empty");
       return;
     }
@@ -854,55 +883,62 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save json data */
   private void saveJsonData() {
-    if (null != jsonDataStage && !jsonDataStage.isEmpty()) {
-      jsonDataStage.forEach(
-          jsonData -> {
-            Optional<JsonType> jsonType =
-                jsonTypeRepository.findById(jsonData.getCommunicationRelatedEntityId());
-            if (jsonType.isPresent()) {
-              jsonData.setJsonTypeXId(jsonType.get());
-              Optional<JsonData> jData = jsonDataRepository.findById(jsonData.getId());
-              jsonData.setVersion(jData.map(EntityDoc::getVersion).orElse(null));
-            } else {
-              log.info(
-                  "Communication XXXXXXX  JsonData is not saved , Json Type is not found : "
-                      + jsonData.getCommunicationRelatedEntityId());
-            }
-          });
-      jsonDataStage = jsonDataRepository.saveAll(jsonDataStage);
-      log.info("Communication #######  JsonData saved");
+    current_table_name = LoadableStudyTables.JSON_DATA.getTable();
+    if (null == jsonDataStage || jsonDataStage.isEmpty()) {
+      log.info("Communication XXXXXXX  JSON_DATA is empty");
+      return;
     }
+    jsonDataStage.forEach(
+        jsonData -> {
+          Optional<JsonType> jsonType =
+              jsonTypeRepository.findById(jsonData.getCommunicationRelatedEntityId());
+          if (jsonType.isPresent()) {
+            jsonData.setJsonTypeXId(jsonType.get());
+            Optional<JsonData> jData = jsonDataRepository.findById(jsonData.getId());
+            jsonData.setVersion(jData.map(EntityDoc::getVersion).orElse(null));
+          } else {
+            log.info(
+                "Communication XXXXXXX  JsonData is not saved , Json Type is not found : "
+                    + jsonData.getCommunicationRelatedEntityId());
+          }
+        });
+    jsonDataStage = jsonDataRepository.saveAll(jsonDataStage);
+    log.info("Communication #######  JsonData saved");
   }
 
   /** Method to save loadable study algo status */
   private void saveLoadableStudyAlgoStatus() {
-    if (null != loadableStudyAlgoStatusStage) {
-      Optional<LoadableStudyStatus> loadableStudyStatus =
-          loadableStudyStatusRepository.findById(
-              loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
-      if (loadableStudyStatus.isPresent()) {
-        loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
-        loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
-        Optional<LoadableStudyAlgoStatus> algoStatus =
-            loadableStudyAlgoStatusRepository.findById(loadableStudyAlgoStatusStage.getId());
-        loadableStudyAlgoStatusStage.setVersion(algoStatus.map(EntityDoc::getVersion).orElse(null));
+    current_table_name = LoadableStudyTables.LOADABLE_STUDY_ALGO_STATUS.getTable();
+    if (null == loadableStudyAlgoStatusStage) {
+      log.info("Communication XXXXXXX  LOADABLE_STUDY_ALGO_STATUS is empty");
+      return;
+    }
+    Optional<LoadableStudyStatus> loadableStudyStatus =
+        loadableStudyStatusRepository.findById(
+            loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
+    if (loadableStudyStatus.isPresent()) {
+      loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
+      loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
+      Optional<LoadableStudyAlgoStatus> algoStatus =
+          loadableStudyAlgoStatusRepository.findById(loadableStudyAlgoStatusStage.getId());
+      loadableStudyAlgoStatusStage.setVersion(algoStatus.map(EntityDoc::getVersion).orElse(null));
 
-        loadableStudyAlgoStatusStage =
-            loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
-        log.info(
-            "Communication #######  loadableStudyAlgoStatus saved with id:"
-                + loadableStudyAlgoStatusStage.getId());
-      } else {
-        log.info(
-            "Communication XXXXXXX  loadableStudyAlgoStatus is not saved , loadableStudyStatus is not found : "
-                + loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
-      }
+      loadableStudyAlgoStatusStage =
+          loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
+      log.info(
+          "Communication #######  loadableStudyAlgoStatus saved with id:"
+              + loadableStudyAlgoStatusStage.getId());
+    } else {
+      log.info(
+          "Communication XXXXXXX  loadableStudyAlgoStatus is not saved , loadableStudyStatus is not found : "
+              + loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
     }
   }
 
   /** Method to save loadable plan */
   private void saveLoadablePlan() {
-    if (null == loadablePlanStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN.getTable();
+    if (null == loadablePlanStage || loadablePlanStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlan is empty");
       return;
     }
@@ -919,7 +955,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable pattern */
   private void saveLoadablePattern() {
-    if (null == loadablePatternStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PATTERN.getTable();
+    if (null == loadablePatternStage || loadablePatternStage.isEmpty()) {
       log.info("Communication XXXXXXX  loadablePattern is empty");
       return;
     }
@@ -936,17 +973,25 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save algo error heading */
   private void saveAlgoErrorHeading() {
-    if (null == algoErrorHeadingStage) {
+    current_table_name = LoadableStudyTables.ALGO_ERROR_HEADING.getTable();
+    if (null == algoErrorHeadingStage || algoErrorHeadingStage.isEmpty()) {
       log.info("Communication XXXXXXX  AlgoErrorHeading  is empty");
       return;
     }
     for (AlgoErrorHeading arStage : algoErrorHeadingStage) {
-      arStage.setLoadableStudy(loadableStudyStage);
+      log.info("Communication +++++++  AlgoErrorHeading  id : " + arStage.getId());
       Optional<AlgoErrorHeading> algoErrorHeadingOptional =
           algoErrorHeadingRepository.findById(arStage.getId());
       arStage.setVersion(algoErrorHeadingOptional.map(EntityDoc::getVersion).orElse(null));
-      arStage.setLoadablePattern(
-          getLoadablePattern(arStage.getCommunicationRelatedEntityId()).orElse(null));
+      log.info(
+          "Communication +++++++  AlgoErrorHeading  CommunicationRelatedEntityId : "
+              + arStage.getCommunicationRelatedEntityId());
+      if (arStage.getCommunicationRelatedEntityId() != null) {
+        arStage.setLoadablePattern(
+            getLoadablePattern(arStage.getCommunicationRelatedEntityId()).orElse(null));
+      } else {
+        arStage.setLoadableStudy(loadableStudyStage);
+      }
     }
 
     algoErrorHeadingStage = algoErrorHeadingRepository.saveAll(algoErrorHeadingStage);
@@ -955,28 +1000,29 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save algo errors */
   private void saveAlgoErrors() {
-    if (algoErrorsStage != null) {
-      for (AlgoErrors ae : algoErrorsStage) {
-        Optional<AlgoErrors> algoErrorsOptional = algoErrorsRepository.findById(ae.getId());
-        ae.setVersion(algoErrorsOptional.map(EntityDoc::getVersion).orElse(null));
+    current_table_name = LoadableStudyTables.ALGO_ERRORS.getTable();
+    if (null == algoErrorsStage || algoErrorsStage.isEmpty()) {
+      log.info("Communication XXXXXXX  ALGO_ERRORS  is empty");
+      return;
+    }
+    for (AlgoErrors ae : algoErrorsStage) {
+      Optional<AlgoErrors> algoErrorsOptional = algoErrorsRepository.findById(ae.getId());
+      ae.setVersion(algoErrorsOptional.map(EntityDoc::getVersion).orElse(null));
 
-        for (AlgoErrorHeading aeh : algoErrorHeadingStage) {
-          if (Objects.equals(aeh.getId(), ae.getCommunicationRelatedEntityId())) {
-            ae.setAlgoErrorHeading(aeh);
-          }
+      for (AlgoErrorHeading aeh : algoErrorHeadingStage) {
+        if (Objects.equals(aeh.getId(), ae.getCommunicationRelatedEntityId())) {
+          ae.setAlgoErrorHeading(aeh);
         }
       }
-
-      algoErrorsStage = algoErrorsRepository.saveAll(algoErrorsStage);
-      log.info("Communication #######  AlgoErrors  saved");
-    } else {
-      log.info("Communication XXXXXXX  AlgoErrors  is empty");
     }
+    algoErrorsStage = algoErrorsRepository.saveAll(algoErrorsStage);
+    log.info("Communication #######  AlgoErrors  saved");
   }
 
   /** Method to save loadable plan constraints */
   private void saveLoadablePlanConstraints() {
-    if (null == loadablePlanConstraintsStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_CONSTRAINTS.getTable();
+    if (null == loadablePlanConstraintsStage || loadablePlanConstraintsStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlanConstraints is empty");
       return;
     }
@@ -996,7 +1042,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable plan quantity */
   private void saveLoadablePlanQuantity() {
-    if (null == loadablePlanQuantityStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_QUANTITY.getTable();
+    if (null == loadablePlanQuantityStage || loadablePlanQuantityStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlanQuantity is empty");
       return;
     }
@@ -1015,7 +1062,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable plan commingle details */
   private void saveLoadablePlanCommingleDetails() {
-    if (null == loadablePlanCommingleDetailsStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_COMMINGLE_DETAILS.getTable();
+    if (null == loadablePlanCommingleDetailsStage || loadablePlanCommingleDetailsStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlanCommingleDetails is empty");
       return;
     }
@@ -1032,7 +1080,9 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable pattern cargo topping off sequence */
   private void saveLoadablePatternCargoToppingOffSequence() {
-    if (null == loadablePatternCargoToppingOffSequenceStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PATTERN_CARGO_TOPPING_OFF_SEQUENCE.getTable();
+    if (null == loadablePatternCargoToppingOffSequenceStage
+        || loadablePatternCargoToppingOffSequenceStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePatternCargoToppingOffSequence is empty");
       return;
     }
@@ -1056,6 +1106,7 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable plan stowage details */
   private void saveLoadablePlanStowageDetails() {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS.getTable();
     if (null == loadablePlanStowageDetailsStage || loadablePlanStowageDetailsStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlanStowageDetails is empty");
       return;
@@ -1080,7 +1131,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable plan ballast details */
   private void saveLoadablePlanBallastDetails() {
-    if (loadablePlanBallastDetailsStage == null) {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_BALLAST_DETAILS.getTable();
+    if (loadablePlanBallastDetailsStage == null || loadablePlanBallastDetailsStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlanBallastDetails is empty");
       return;
     }
@@ -1099,7 +1151,9 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable plan commingle details port-wise */
   private void saveLoadablePlanCommingleDetailsPortwise() {
-    if (null == loadablePlanComminglePortwiseDetailsStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable();
+    if (null == loadablePlanComminglePortwiseDetailsStage
+        || loadablePlanComminglePortwiseDetailsStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlanComminglePortwiseDetails is empty");
       return;
     }
@@ -1123,16 +1177,28 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save communication status update table */
   private void saveCommunicationStatusUpdate() {
-    if (null != loadableStudyCommunicationStatusStage
-        && !loadableStudyCommunicationStatusStage.isEmpty()) {
-      loadableStudyCommunicationStatusRepository.saveAll(loadableStudyCommunicationStatusStage);
-      log.info("Communication #######  communication_status_update table saved");
+    current_table_name = LoadableStudyTables.COMMUNICATION_STATUS_UPDATE.getTable();
+    if (null == loadableStudyCommunicationStatusStage
+        || loadableStudyCommunicationStatusStage.isEmpty()) {
+      log.info("Communication XXXXXXX  COMMUNICATION_STATUS_UPDATE is empty");
+      return;
     }
+    for (LoadableStudyCommunicationStatus loadableStudyCommunicationStatus :
+        loadableStudyCommunicationStatusStage) {
+      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatusOptional =
+          loadableStudyCommunicationStatusRepository.findById(
+              loadableStudyCommunicationStatus.getId());
+      loadableStudyCommunicationStatus.setVersion(
+          loadableStudyCommunicationStatusOptional.map(EntityDoc::getVersion).orElse(null));
+    }
+    loadableStudyCommunicationStatusRepository.saveAll(loadableStudyCommunicationStatusStage);
+    log.info("Communication #######  communication_status_update table saved");
   }
 
   /** Method to save stability parameter */
   private void saveStabilityParameter() {
-    if (null == stabilityParametersStage) {
+    current_table_name = LoadableStudyTables.STABILITY_PARAMETERS.getTable();
+    if (null == stabilityParametersStage || stabilityParametersStage.isEmpty()) {
       log.info("Communication XXXXXXX  StabilityParameters is empty");
       return;
     }
@@ -1151,7 +1217,8 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable pattern cargo details */
   private void saveLoadablePatternCargoDetails() {
-    if (null == loadablePatternCargoDetailsStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable();
+    if (null == loadablePatternCargoDetailsStage || loadablePatternCargoDetailsStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePatternCargoDetails is empty");
       return;
     }
@@ -1168,7 +1235,9 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable plan stowage ballast details */
   private void saveLoadablePlanStowageBallastDetails() {
-    if (null == loadablePlanStowageBallastDetailsStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable();
+    if (null == loadablePlanStowageBallastDetailsStage
+        || loadablePlanStowageBallastDetailsStage.isEmpty()) {
       log.info("Communication XXXXXXX  LoadablePlanStowageBallastDetails is empty");
       return;
     }
@@ -1188,7 +1257,9 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save synoptical table loadicator data */
   private void saveSynopticalTableLoadicatorData() {
-    if (null == synopticalTableLoadicatorDataStage) {
+    current_table_name = LoadableStudyTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable();
+    if (null == synopticalTableLoadicatorDataStage
+        || synopticalTableLoadicatorDataStage.isEmpty()) {
       log.info("Communication XXXXXXX  SynopticalTableLoadicatorData is empty");
       return;
     }
@@ -1295,5 +1366,6 @@ public class LoadableStudyCommunicationService {
     JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
     return jsonArray.get(0).getAsJsonObject().get("loadable_study_status_xid").getAsLong();
   }
+
   // endregion
 }

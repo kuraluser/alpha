@@ -243,7 +243,7 @@ public class StagingService {
       "actual_end_date",
       "eta",
       "etd",
-      "updated_time",
+      "updated_time"
     };
     String[] timeFields = {
       "sunrise_time",
