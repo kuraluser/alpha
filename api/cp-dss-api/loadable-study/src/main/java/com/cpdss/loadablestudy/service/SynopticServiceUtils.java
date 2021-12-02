@@ -487,12 +487,12 @@ public class SynopticServiceUtils {
     if ((!generatedPatterns.isEmpty() || !confirmedPatterns.isEmpty())
         && ((SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
                 && ohqEntity.getArrivalQuantity() != null
-                && !Integer.toString(ohqEntity.getArrivalQuantity().intValue())
-                    .equals(ohqRecord.getPlannedWeight()))
+                && ohqEntity.getArrivalQuantity().doubleValue()
+                    != Double.parseDouble(ohqRecord.getPlannedWeight()))
             || (SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE.equals(entity.getOperationType())
                 && ohqEntity.getDepartureQuantity() != null
-                && !Integer.toString(ohqEntity.getDepartureQuantity().intValue())
-                    .equals(ohqRecord.getPlannedWeight())))) {
+                && ohqEntity.getDepartureQuantity().doubleValue()
+                    != Double.parseDouble(ohqRecord.getPlannedWeight())))) {
 
       throw new GenericServiceException(
           "Cannot update planned values for plan generated loadable study",
