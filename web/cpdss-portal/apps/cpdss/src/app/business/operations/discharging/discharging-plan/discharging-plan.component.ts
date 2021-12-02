@@ -15,6 +15,7 @@ import { IAlgoError, IAlgoResponse, ICargo, OPERATIONS } from '../../../core/mod
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
 import { IPermission } from './../../../../shared/models/user-profile.model';
+import { saveAs } from 'file-saver';
 
 /**
  * Component for Discharge-plan
@@ -49,6 +50,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
 
   dischargingPlanDetails: IDischargingPlanDetailsResponse;
+  dischargingplanDetailstemp: IDischargingPlanDetailsResponse;
   dischargingInformation: IDischargingInformation;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
   loadedCargos: ICargo[];
@@ -126,6 +128,7 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
       const dischargePlanResponse: IDischargingPlanDetailsResponse = await this.dischargingPlanApiService.getDischargingPlanDetails(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId).toPromise();
       if (dischargePlanResponse.responseStatus.status === "200") {
         this.dischargingPlanDetails = dischargePlanResponse;
+        this.dischargingplanDetailstemp = { ...dischargePlanResponse };
         this.setCommingleCargo();
         this.dischargingInformation = this.loadingDischargingTransformationService.transformDischargingInformation(this.dischargingPlanDetails.dischargingInformation, this.listData);
         if (this.dischargingPlanForm === undefined) {
@@ -195,7 +198,14 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
    * @memberof DischargingPlanComponent
    */
   downloadDischargePlanTemplate(): void {
-    // TODO : will use this once download excel API available.
+    this.ngxSpinnerService.show();
+    this.dischargingPlanApiService.getDischargePlanTemplate(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId, this.dischargingplanDetailstemp).subscribe((result) => {
+      const fileName = result.headers.get('content-disposition').split('filename=')[1];
+      const blob = new Blob([result.body], { type: result.type });
+      const fileurl = window.URL.createObjectURL(blob);
+      saveAs(fileurl, fileName);
+      this.ngxSpinnerService.hide();
+    });
   }
 
 }
