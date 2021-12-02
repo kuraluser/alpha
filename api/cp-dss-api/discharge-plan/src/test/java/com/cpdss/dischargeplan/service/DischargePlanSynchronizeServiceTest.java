@@ -10,9 +10,7 @@ import com.cpdss.common.generated.discharge_plan.DSCowDetails;
 import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
 import com.cpdss.common.generated.discharge_plan.PortData;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
-import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
-import com.cpdss.dischargeplan.repository.DischargeRulesRepository;
+import com.cpdss.dischargeplan.repository.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +42,10 @@ public class DischargePlanSynchronizeServiceTest {
   @MockBean private DischargePlanAlgoService dischargePlanAlgoService;
 
   @MockBean private DischargeRuleService dischargeRuleService;
+
+  @MockBean DischargingStagesMinAmountRepository dischargingStagesMinAmountRepository;
+
+  @MockBean DischargingStagesDurationRepository dischargingStagesDurationRepository;
 
   @Test
   void testsaveDischargeInformation() {

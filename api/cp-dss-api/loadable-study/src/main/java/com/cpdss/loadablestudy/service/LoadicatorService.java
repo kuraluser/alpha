@@ -1465,7 +1465,8 @@ public class LoadicatorService {
                     .map(
                         err ->
                             String.format(
-                                "Port %d (%s) : %s",
+                                "CASE %d: Port %d (%s) : %s",
+                                loadablePattern.getCaseNumber(),
                                 synopticalTable.getPortXid(),
                                 synopticalTable.getOperationType(),
                                 err))

@@ -236,7 +236,7 @@ public class DischargePlanAlgoService {
       // post discharge rate
       PostDischargeRates postDischargeRates = new PostDischargeRates();
       BeanUtils.copyProperties(entity, postDischargeRates);
-      disDto.setPostDischargeRates(postDischargeRates);
+      disDto.setPostDischargeStages(postDischargeRates);
 
       // discharge cargo details, LoadablePlanPortWiseDetails (OHQ, OBQ)
       this.buildDischargePlanPortWiseDetails(algoRequest, entity);

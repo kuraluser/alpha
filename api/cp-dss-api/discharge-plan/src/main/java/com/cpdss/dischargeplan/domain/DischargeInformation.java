@@ -31,6 +31,6 @@ public class DischargeInformation {
   private DischargeStages dischargeStages;
   private DischargeSequences dischargeSequences;
   private CowPlan cowPlan;
-  private PostDischargeRates postDischargeRates;
+  private PostDischargeRates postDischargeStages;
   private List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetails;
 }

@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo;
@@ -12,15 +12,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.rules.RuleMasterSection;
-import com.cpdss.dischargeplan.entity.CowPlanDetail;
-import com.cpdss.dischargeplan.entity.CowTankDetail;
-import com.cpdss.dischargeplan.entity.DischargeInformation;
-import com.cpdss.dischargeplan.entity.DischargePlanRuleInput;
-import com.cpdss.dischargeplan.entity.DischargePlanRules;
-import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
-import com.cpdss.dischargeplan.repository.CowPlanDetailRepository;
-import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
-import com.cpdss.dischargeplan.repository.DischargeRulesRepository;
+import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.dischargeplan.repository.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +42,9 @@ public class DischargePlanSynchronizeService {
   @Autowired DischargePlanAlgoService dischargePlanAlgoService;
 
   @Autowired private DischargeRuleService dischargeRuleService;
+
+  @Autowired DischargingStagesMinAmountRepository dischargingStagesMinAmountRepository;
+  @Autowired DischargingStagesDurationRepository dischargingStagesDurationRepository;
 
   public void saveDischargeInformation(DischargeStudyDataTransferRequest request)
       throws GenericServiceException {
@@ -88,6 +84,19 @@ public class DischargePlanSynchronizeService {
         e.printStackTrace();
       }
 
+      // Adding default stage details
+      Optional<DischargingStagesMinAmount> defaultOffsetOpt =
+          dischargingStagesMinAmountRepository.findByMinAmountAndIsActiveTrue(
+              DEFAULT_STAGE_OFFSET_VALUE);
+      Optional<DischargingStagesDuration> defaultDurationOpt =
+          dischargingStagesDurationRepository.findByDurationAndIsActiveTrue(
+              DEFAULT_STAGE_DURATION_VALUE);
+      if (defaultOffsetOpt.isPresent()) {
+        dischargeInformation.setDischargingStagesMinAmount(defaultOffsetOpt.get());
+      }
+      if (defaultDurationOpt.isPresent()) {
+        dischargeInformation.setDischargingStagesDuration(defaultDurationOpt.get());
+      }
       infos.add(dischargeInformation);
       log.info("Discharge Study Synchronization Port Data - {}", Utils.toJson(port));
     }

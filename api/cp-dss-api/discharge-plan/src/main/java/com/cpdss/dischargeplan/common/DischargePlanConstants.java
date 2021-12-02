@@ -55,4 +55,8 @@ public class DischargePlanConstants {
   // discharge Plan Value Types
   public static final Integer DISCHARGE_PLAN_ACTUAL_TYPE_VALUE = 1;
   public static final Integer DISCHARGE_PLAN_PLANNED_TYPE_VALUE = 2;
+
+  // Default stage details
+  public static final Integer DEFAULT_STAGE_OFFSET_VALUE = 4;
+  public static final Integer DEFAULT_STAGE_DURATION_VALUE = 4;
 }
