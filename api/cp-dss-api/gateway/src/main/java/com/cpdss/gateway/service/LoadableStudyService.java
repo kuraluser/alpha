@@ -927,7 +927,7 @@ public class LoadableStudyService {
       // Fetch distance, eta/etd actual values from synoptical table
       SynopticalTableRequest synopticalRequest =
           SynopticalTableRequest.newBuilder()
-              .setLoadableStudyId(loadableStudyId)
+              .setLoadableStudyId(portDetail.getLoadableStudyId())
               .setPortId(portDetail.getPortId())
               .build();
       SynopticalTableReply synopticalDataReply =
