@@ -214,6 +214,7 @@ public class LoadableStudyCommunicationService {
         dataTransferStages.stream().collect(Collectors.groupingBy(DataTransferStage::getProcessId));
     log.info("processId group:" + dataTransferByProcessId);
     for (Map.Entry<String, List<DataTransferStage>> entry : dataTransferByProcessId.entrySet()) {
+      clear();
       HashMap<String, Long> idMap = new HashMap<>();
       String processId = entry.getKey();
 
@@ -230,8 +231,7 @@ public class LoadableStudyCommunicationService {
         Type listType = null;
         String dataTransferString = dataTransferStage.getData();
         String data = null;
-        if (dataTransferStage.getProcessIdentifier().equals("loading_information")
-            || dataTransferStage.getProcessIdentifier().equals("pyuser")) {
+        if (dataTransferStage.getProcessIdentifier().equals("pyuser")) {
           data = JsonParser.parseString(dataTransferString).getAsJsonArray().get(0).toString();
         } else if (dataTransferStage.getProcessIdentifier().equals("json_data")) {
           data = JsonParser.parseString(dataTransferString).getAsJsonArray().toString();
@@ -1365,6 +1365,41 @@ public class LoadableStudyCommunicationService {
   private Long getLoadableStudyStatusId(String json) {
     JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
     return jsonArray.get(0).getAsJsonObject().get("loadable_study_status_xid").getAsLong();
+  }
+
+  private void clear() {
+    loadableStudyStage = null;
+    voyageStage = null;
+    commingleCargoStage = null;
+    cargoNominationStage = null;
+    loadableStudyPortRotationStage = null;
+    onHandQuantityStage = null;
+    onBoardQuantityStage = null;
+    loadableQuantityStage = null;
+    synopticalTableStage = null;
+    jsonDataStage = null;
+    loadableStudyAlgoStatusStage = null;
+    loadablePatternStage = null;
+    algoErrorHeadingStage = null;
+    algoErrorsStage = null;
+    loadablePlanConstraintsStage = null;
+    loadablePlanQuantityStage = null;
+    loadablePlanCommingleDetailsStage = null;
+    loadablePatternCargoToppingOffSequenceStage = null;
+    loadablePlanStowageDetailsStage = null;
+    loadablePlanBallastDetailsStage = null;
+    loadablePlanComminglePortwiseDetailsStage = null;
+    stabilityParametersStage = null;
+    loadablePatternCargoDetailsStage = null;
+    loadablePlanStowageBallastDetailsStage = null;
+    synopticalTableLoadicatorDataStage = null;
+    loadablePlanStage = null;
+    cargoNominationOperationDetailsStage = null;
+    loadableStudyCommunicationStatusStage = null;
+    idMap = new HashMap<>();
+    voyageId = 0L;
+    loadableStudyStatusId = 0L;
+    current_table_name = "";
   }
 
   // endregion
