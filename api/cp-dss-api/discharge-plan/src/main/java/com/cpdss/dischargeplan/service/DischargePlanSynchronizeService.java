@@ -43,6 +43,8 @@ public class DischargePlanSynchronizeService {
 
   @Autowired private DischargeRuleService dischargeRuleService;
 
+  @Autowired DischargingMachineryInUseService dischargingMachineryInUseService;
+
   @Autowired DischargingStagesMinAmountRepository dischargingStagesMinAmountRepository;
   @Autowired DischargingStagesDurationRepository dischargingStagesDurationRepository;
 
@@ -102,10 +104,18 @@ public class DischargePlanSynchronizeService {
     }
     List<DischargeInformation> listOfDischargeInformationList =
         dischargeInformationRepository.saveAll(infos);
+
+    // Collect all machine for this vessel
+    VesselInfo.VesselPumpsResponse rpcReplay =
+        this.vesselInfoGrpcService.getVesselPumpsByVesselId(
+            VesselInfo.VesselIdRequest.newBuilder().setVesselId(request.getVesselId()).build());
+
     listOfDischargeInformationList.forEach(
         dischargeInformationService -> {
           try {
             saveRulesAgainstDischargingInformation(dischargeInformationService);
+            this.dischargingMachineryInUseService.saveMachineInUseByDsInfo(
+                dischargeInformationService, rpcReplay);
             log.info("Discharge Info Id : ", dischargeInformationService.getId());
           } catch (GenericServiceException e) {
             e.printStackTrace();

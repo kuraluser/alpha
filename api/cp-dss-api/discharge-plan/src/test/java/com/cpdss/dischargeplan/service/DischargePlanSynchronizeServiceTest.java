@@ -47,6 +47,9 @@ public class DischargePlanSynchronizeServiceTest {
 
   @MockBean DischargingStagesDurationRepository dischargingStagesDurationRepository;
 
+  @MockBean DischargingMachineryInUseService dischargingMachineryInUseService;
+
+
   @Test
   void testsaveDischargeInformation() {
     List<PortData> list = new ArrayList<>();

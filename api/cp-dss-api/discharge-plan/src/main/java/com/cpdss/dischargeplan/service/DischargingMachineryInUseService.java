@@ -2,12 +2,14 @@
 package com.cpdss.dischargeplan.service;
 
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingMachineryInUse;
 import com.cpdss.dischargeplan.repository.DischargeInformationRepository;
 import com.cpdss.dischargeplan.repository.DischargingMachineryInUseRepository;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -61,5 +63,57 @@ public class DischargingMachineryInUseService {
         this.dischargingMachineryInUseRepository.save(lmVar1.get());
       }
     }
+  }
+
+  public void saveMachineInUseByDsInfo(
+      DischargeInformation dsInfo, VesselInfo.VesselPumpsResponse rpcReplay) {
+    log.info("Save All machines in DS Info Id - {}", dsInfo.getId());
+    List<DischargingMachineryInUse> newMachines = new ArrayList<>();
+    // Save vessel pump
+    for (var pump : rpcReplay.getVesselPumpList()) {
+      if (pump.getId() != 0) {
+        DischargingMachineryInUse inUse = new DischargingMachineryInUse();
+        inUse.setIsUsing(true);
+        inUse.setIsActive(true);
+        inUse.setMachineXid(pump.getId());
+        inUse.setMachineTypeXid(Common.MachineType.VESSEL_PUMP_VALUE);
+        inUse.setCapacity(
+            pump.getPumpCapacity().isEmpty()
+                ? BigDecimal.ZERO
+                : new BigDecimal(pump.getPumpCapacity()));
+        inUse.setDischargingInformation(dsInfo);
+        newMachines.add(inUse);
+      }
+    }
+
+    // Save manifolds
+    for (var mani : rpcReplay.getVesselManifoldList()) {
+      if (mani.getId() != 0) {
+        DischargingMachineryInUse inUse = new DischargingMachineryInUse();
+        inUse.setIsUsing(true);
+        inUse.setIsActive(true);
+        inUse.setMachineXid(mani.getId());
+        inUse.setMachineTypeXid(Common.MachineType.MANIFOLD_VALUE);
+        inUse.setCapacity(BigDecimal.ZERO);
+        inUse.setDischargingInformation(dsInfo);
+        newMachines.add(inUse);
+      }
+    }
+
+    // Save bottom lines
+    for (var bott : rpcReplay.getVesselBottomLineList()) {
+      if (bott.getId() != 0) {
+        DischargingMachineryInUse inUse = new DischargingMachineryInUse();
+        inUse.setIsUsing(true);
+        inUse.setIsActive(true);
+        inUse.setMachineXid(bott.getId());
+        inUse.setMachineTypeXid(Common.MachineType.BOTTOM_LINE_VALUE);
+        inUse.setCapacity(BigDecimal.ZERO);
+        inUse.setDischargingInformation(dsInfo);
+        newMachines.add(inUse);
+      }
+    }
+    dischargingMachineryInUseRepository.saveAll(newMachines);
+    log.info("Total machines saves - {}", newMachines.size());
   }
 }
