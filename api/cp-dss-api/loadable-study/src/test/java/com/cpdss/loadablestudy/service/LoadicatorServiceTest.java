@@ -30,7 +30,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
-@TestPropertySource(properties = "cpdss.communication.enable = false")
+@TestPropertySource(
+    properties = {"cpdss.communication.enable = false", "cpdss.judgement.enable = true"})
 @SpringJUnitConfig(classes = {LoadicatorService.class})
 public class LoadicatorServiceTest {
 

@@ -50,4 +50,5 @@ public class LoadablePlanCommingleDetails {
   private Long cargoNomination2Id;
   private Long cargo1Id;
   private Long cargo2Id;
+  private Double ullage;
 }

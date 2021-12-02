@@ -2076,6 +2076,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                         ? null
                         : Double.parseDouble(commingleDetail.getUllage2()));
                 commingle.setColorCode(commingleDetail.getColorCode());
+                commingle.setUllage(
+                    commingleDetail.getUllage().isEmpty()
+                        ? null
+                        : Double.parseDouble(commingleDetail.getUllage()));
                 Optional<VesselInfo.VesselTankDetail> tankDetail =
                     sortedTankList.stream()
                         .filter(

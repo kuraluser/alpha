@@ -105,6 +105,9 @@ public class LoadicatorService {
   @Value("${cpdss.build.env}")
   private String env;
 
+  @Value("${cpdss.judgement.enable}")
+  private boolean judgementEnabled;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -1411,7 +1414,7 @@ public class LoadicatorService {
         entities.add(
             this.createSynopticalTableLoadicatorDataEntity(
                 algoResponse.getLoadicatorResults(), result));
-        if (result.getJudgement() != null && !result.getJudgement().isEmpty()) {
+        if (judgementEnabled && result.getJudgement() != null && !result.getJudgement().isEmpty()) {
           isValid = false;
           SynopticalTable synopticalTable =
               synopticalTableRepository.getOne(result.getSynopticalId());
@@ -1456,7 +1459,9 @@ public class LoadicatorService {
           entities.add(this.createSynopticalTableLoadicatorDataEntity(patternDetails, result));
           LoadablePattern loadablePattern =
               loadablePatternRepository.getOne(patternDetails.getLoadablePatternId());
-          if (result.getJudgement() != null && !result.getJudgement().isEmpty()) {
+          if (judgementEnabled
+              && result.getJudgement() != null
+              && !result.getJudgement().isEmpty()) {
             isValid = false;
             SynopticalTable synopticalTable =
                 synopticalTableRepository.getOne(result.getSynopticalId());

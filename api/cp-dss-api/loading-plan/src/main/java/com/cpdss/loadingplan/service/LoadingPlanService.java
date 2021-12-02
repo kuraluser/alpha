@@ -1413,6 +1413,8 @@ public class LoadingPlanService {
         portWiseCommingleDetail.getConditionType() == null
             ? ""
             : portWiseCommingleDetail.getConditionType().toString());
+    newBuilder.setUllage(
+        portWiseCommingleDetail.getUllage() == null ? "" : portWiseCommingleDetail.getUllage());
     return newBuilder;
   }
 }
