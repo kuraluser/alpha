@@ -22,6 +22,7 @@ public class CowPlan {
   private Boolean needFreshCrudeStorage;
   private Boolean needFlushingOil;
 
+  private Boolean washTanksWithDifferentCargo;
   private List<Long> topCowTankIds;
   private List<Long> bottomCowTankIds;
   private List<Long> allCowTankIds;

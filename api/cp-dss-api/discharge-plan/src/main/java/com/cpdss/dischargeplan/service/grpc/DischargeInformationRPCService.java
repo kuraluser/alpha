@@ -19,7 +19,6 @@ import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.entity.CowPlanDetail;
 import com.cpdss.dischargeplan.entity.CowTankDetail;
 import com.cpdss.dischargeplan.entity.CowWithDifferentCargo;
-import com.cpdss.dischargeplan.entity.DischargingBerthDetail;
 import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
 import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanBallastDetails;
@@ -46,6 +45,9 @@ import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargingBerthService;
 import com.cpdss.dischargeplan.service.DischargingDelayService;
 import com.cpdss.dischargeplan.service.DischargingMachineryInUseService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -213,16 +215,44 @@ public class DischargeInformationRPCService
             .ifPresent(dischargingInformation::setDischargeSlopTanksFirst);
         Optional.ofNullable(disEntity.getDischargeCommingleCargoSeparately())
             .ifPresent(dischargingInformation::setDischargeCommingledCargoSeparately);
+        if (disEntity.getDischargingPlanDetailsFromAlgo() != null) {
+          try {
+            com.cpdss.dischargeplan.domain.DischargeInformation dischargeInformationFromAlgo =
+                new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                    .readValue(
+                        disEntity.getDischargingPlanDetailsFromAlgo(),
+                        com.cpdss.dischargeplan.domain.DischargeInformation.class);
+
+            // Set Discharge Berths
+            this.informationBuilderService.buildDischargeBerthDetails(
+                disEntity, dischargeInformationFromAlgo.getBerthDetails(), dischargingInformation);
+
+            // Set Cow Plan
+            this.informationBuilderService.buildCowPlan(
+                dischargeInformationFromAlgo.getCowPlan(), dischargingInformation);
+
+            // Set Machine In Use
+            this.informationBuilderService.buildMachineInUse(
+                disEntity,
+                dischargeInformationFromAlgo.getMachineryInUses(),
+                dischargingInformation);
+          } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+          }
+        }
+
         // Set Discharge Rates
         this.informationBuilderService.buildDischargeRateMessageFromEntity(
             disEntity, dischargingInformation);
 
         // Set Discharge berth
-        List<DischargingBerthDetail> listVarB =
-            this.dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(
-                disEntity.getId());
-        this.informationBuilderService.buildDischargeBerthMessageFromEntity(
-            disEntity, listVarB, dischargingInformation);
+        //        List<DischargingBerthDetail> listVarB =
+        //
+        // this.dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(
+        //                disEntity.getId());
+        //        this.informationBuilderService.buildDischargeBerthMessageFromEntity(
+        //            disEntity, listVarB, dischargingInformation);
 
         // Set Stages
         this.informationBuilderService.buildDischargeStageMessageFromEntity(
@@ -241,12 +271,12 @@ public class DischargeInformationRPCService
             disEntity, dischargingInformation);
 
         // set Pump and Machine Details
-        this.informationBuilderService.buildMachineInUseMessageFromEntity(
-            disEntity, dischargingInformation);
+        //        this.informationBuilderService.buildMachineInUseMessageFromEntity(
+        //            disEntity, dischargingInformation);
 
         // Set Cow Details
-        this.informationBuilderService.buildCowPlanMessageFromEntity(
-            disEntity, dischargingInformation);
+        //        this.informationBuilderService.buildCowPlanMessageFromEntity(
+        //            disEntity, dischargingInformation);
         builder.setDischargingInformation(dischargingInformation.build());
 
         // <---Cargo Details Start-->

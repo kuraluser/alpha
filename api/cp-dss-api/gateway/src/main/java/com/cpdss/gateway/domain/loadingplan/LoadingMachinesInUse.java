@@ -13,4 +13,7 @@ public class LoadingMachinesInUse {
   private BigDecimal capacity;
   private Boolean isUsing;
   private Integer machineTypeId;
+  private String machineName;
+  private String machineTypeName;
+  private String tankTypeName;
 }
