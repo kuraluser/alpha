@@ -59,6 +59,7 @@ public class LoadableStudyStagingService extends StagingService {
     List<Long> loadablePlanIds = null;
     List<Long> synopticalTableIds = null;
     List<Long> cargoNominationIds = null;
+    Long voyageId = null;
     for (String processIdentifier : processIdentifierList) {
       if (processedList.contains(processIdentifier)) {
         log.info("Table already fetched :" + processIdentifier);
@@ -73,7 +74,7 @@ public class LoadableStudyStagingService extends StagingService {
             if (loadableStudyJson != null) {
               JsonArray loadableStudy = JsonParser.parseString(loadableStudyJson).getAsJsonArray();
               JsonObject loadableStudyJsonObj = loadableStudy.get(0).getAsJsonObject();
-              Long voyageId = loadableStudyJsonObj.get("voyage_xid").getAsLong();
+              voyageId = loadableStudyJsonObj.get("voyage_xid").getAsLong();
               if (voyageId != null) {
                 String voyageJson = loadableStudyStagingRepository.getVoyageWithId(voyageId);
                 if (voyageJson != null) {
@@ -598,6 +599,48 @@ public class LoadableStudyStagingService extends StagingService {
                   processGroupId,
                   processedList,
                   communicationStatusUpdateData);
+            }
+            break;
+          }
+        case cow_history:
+          {
+            if (voyageId != null) {
+              String cowHistoryJson =
+                  loadableStudyStagingRepository.getCowHistoryWithVoyageId(voyageId);
+              if (cowHistoryJson != null) {
+                JsonArray cowHistory = JsonParser.parseString(cowHistoryJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    cowHistory);
+              }
+            }
+            break;
+          }
+        case discharge_quantity_cargo_details:
+          {
+            if (loadablePatternIds != null && !loadablePatternIds.isEmpty()) {
+              String dischargePatternQuantityCargoPortwiseDetailsJson =
+                  loadableStudyStagingRepository
+                      .getDischargePatternQuantityCargoPortwiseDetailsWithLoadablePatternId(
+                          loadablePatternIds);
+              if (dischargePatternQuantityCargoPortwiseDetailsJson != null) {
+                JsonArray dischargePatternQuantityCargoPortwiseDetails =
+                    JsonParser.parseString(dischargePatternQuantityCargoPortwiseDetailsJson)
+                        .getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    dischargePatternQuantityCargoPortwiseDetails);
+              }
             }
             break;
           }

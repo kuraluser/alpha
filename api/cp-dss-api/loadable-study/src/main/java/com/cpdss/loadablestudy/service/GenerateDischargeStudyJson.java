@@ -11,6 +11,7 @@ import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.ActiveVoyage;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
@@ -30,11 +31,10 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTank
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.loadablestudy.domain.AlgoResponse;
-import com.cpdss.loadablestudy.domain.ArrivalConditionJson;
+import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
+import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.domain.CargoNomination;
-import com.cpdss.loadablestudy.domain.CargoNominationOperationDetails;
-import com.cpdss.loadablestudy.domain.CowDetail;
 import com.cpdss.loadablestudy.domain.CowHistory;
 import com.cpdss.loadablestudy.domain.DischargeStudyAlgoJson;
 import com.cpdss.loadablestudy.domain.DischargeStudyPortRotationJson;
@@ -42,35 +42,20 @@ import com.cpdss.loadablestudy.domain.LoadablePlanStowageDetailsJson;
 import com.cpdss.loadablestudy.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.loadablestudy.domain.LoadableStudyInstruction;
 import com.cpdss.loadablestudy.domain.OnHandQuantity;
-import com.cpdss.loadablestudy.domain.PortDetails;
-import com.cpdss.loadablestudy.domain.RuleMasterSection;
-import com.cpdss.loadablestudy.domain.StabilityParameter;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
+import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
-import com.cpdss.loadablestudy.entity.PortInstruction;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.CowHistoryRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.PortInstructionRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.cpdss.loadablestudy.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
@@ -98,6 +83,12 @@ public class GenerateDischargeStudyJson {
 
   @Value("${algo.dischargestudy.api.url}")
   private String dischargeStudyUrl;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   @Autowired private PortInstructionRepository portInstructionRepository;
 
@@ -136,6 +127,13 @@ public class GenerateDischargeStudyJson {
 
   @Autowired JsonDataService jsonDataService;
 
+  @Autowired private CommunicationService communicationService;
+
+  @Autowired
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @Autowired LoadableStudyStagingService loadableStudyStagingService;
+
   public AlgoReply.Builder generateDischargePatterns(
       AlgoRequest request, AlgoReply.Builder replyBuilder)
       throws GenericServiceException, JsonGenerationException, JsonMappingException, IOException {
@@ -143,34 +141,72 @@ public class GenerateDischargeStudyJson {
     Optional<LoadableStudy> loadableStudyOpt =
         loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     if (loadableStudyOpt.isPresent()) {
+      String processId = null;
+      Long status = null;
+      if (enableCommunication && env.equals("ship")) {
+        processId = UUID.randomUUID().toString();
+        status = LoadableStudiesConstants.DISCHARGE_STUDY_COMMUNICATED_TO_SHORE;
+        JsonArray jsonArray =
+            loadableStudyStagingService.getCommunicationData(
+                LoadableStudiesConstants.DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
+                processId,
+                MessageTypes.DISCHARGESTUDY.getMessageType(),
+                loadableStudyOpt.get().getId(),
+                null);
 
-      DischargeStudyAlgoJson AlgoJsonPayload =
-          this.generateDischargeStudyJson(request.getLoadableStudyId(), loadableStudyOpt.get());
+        log.info(
+            "Json Array in DischargeStudy service from ship to shore: " + jsonArray.toString());
+        EnvoyWriter.WriterReply ewReply =
+            communicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                loadableStudyOpt.get().getVesselXId(),
+                MessageTypes.DISCHARGESTUDY.getMessageType());
 
-      ObjectMapper objectMapper = new ObjectMapper();
-      objectMapper.writeValue(
-          new File(
-              this.rootFolder + "/json/dischargeStudy_" + request.getLoadableStudyId() + ".json"),
-          AlgoJsonPayload);
-      jsonDataService.saveJsonToDatabase(
-          request.getLoadableStudyId(),
-          DISCHARGE_STUDY_REQUEST,
-          objectMapper.writeValueAsString(AlgoJsonPayload));
-
-      // Invoking Algo service
-      AlgoResponse algoResponse =
-          restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
-
-      updateProcessIdForDischargeStudy(
-          algoResponse.getProcessId(),
-          loadableStudyOpt.get(),
-          LOADABLE_STUDY_PROCESSING_STARTED_ID);
-
-      loadableStudyRepository.updateLoadableStudyStatus(
-          LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
-
+        if (LoadableStudiesConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+          LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
+              new LoadableStudyCommunicationStatus();
+          if (ewReply.getMessageId() != null) {
+            loadableStudyCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+            loadableStudyCommunicationStatus.setCommunicationStatus(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+          }
+          loadableStudyCommunicationStatus.setReferenceId(loadableStudyOpt.get().getId());
+          loadableStudyCommunicationStatus.setMessageType(
+              MessageTypes.DISCHARGESTUDY.getMessageType());
+          loadableStudyCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          LoadableStudyCommunicationStatus loadingPlanCommunication =
+              this.loadableStudyCommunicationStatusRepository.save(
+                  loadableStudyCommunicationStatus);
+          log.info("Communication table update : " + loadingPlanCommunication.getId());
+          loadableStudyRepository.updateLoadableStudyStatus(status, loadableStudyOpt.get().getId());
+        }
+      } else {
+        log.info("Before Create algo payload");
+        DischargeStudyAlgoJson AlgoJsonPayload =
+            this.generateDischargeStudyJson(request.getLoadableStudyId(), loadableStudyOpt.get());
+        log.info("Algo payload created:{}", AlgoJsonPayload);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(
+            new File(
+                this.rootFolder + "/json/dischargeStudy_" + request.getLoadableStudyId() + ".json"),
+            AlgoJsonPayload);
+        jsonDataService.saveJsonToDatabase(
+            request.getLoadableStudyId(),
+            DISCHARGE_STUDY_REQUEST,
+            objectMapper.writeValueAsString(AlgoJsonPayload));
+        log.info("Before Algo call");
+        // Invoking Algo service
+        AlgoResponse algoResponse =
+            restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
+        processId = algoResponse.getProcessId();
+        log.info("Algo response :{}", algoResponse);
+        status = LOADABLE_STUDY_PROCESSING_STARTED_ID;
+        loadableStudyRepository.updateLoadableStudyStatus(status, loadableStudyOpt.get().getId());
+      }
+      updateProcessIdForDischargeStudy(processId, loadableStudyOpt.get(), status);
       replyBuilder
-          .setProcesssId(algoResponse.getProcessId())
+          .setProcesssId(processId)
           .setResponseStatus(
               Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
 

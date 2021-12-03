@@ -19,7 +19,8 @@ public enum MessageTypes {
   LOADINGPLAN_ALGORESULT("LoadingPlan_AlgoResult"),
   ULLAGE_UPDATE("Ullage_Update"),
   ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT("Ullage_Update_Loadicator_Off_AlgoResult"),
-  ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT("Ullage_Update_Loadicator_On_AlgoResult");
+  ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT("Ullage_Update_Loadicator_On_AlgoResult"),
+  DISCHARGESTUDY("DischargeStudy");
 
   public static EnumSet<MessageTypes> loadableShip = EnumSet.of(ALGORESULT, PATTERNDETAIL);
   public static EnumSet<MessageTypes> loadableShore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN);
@@ -31,6 +32,9 @@ public enum MessageTypes {
           LOADINGPLAN_ALGORESULT,
           ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT,
           ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT);
+
+  public static EnumSet<MessageTypes> dischargeStudyShip = EnumSet.of(ALGORESULT);
+  public static EnumSet<MessageTypes> dischargeStudyShore = EnumSet.of(DISCHARGESTUDY);
 
   private final String messageType;
 }

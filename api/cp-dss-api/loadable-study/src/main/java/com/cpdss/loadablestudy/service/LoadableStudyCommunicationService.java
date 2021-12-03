@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
@@ -39,7 +40,7 @@ Purpose - Communicating Lodable study related tables to ship to shore and vice v
 @Log4j2
 @Service
 @Transactional
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class LoadableStudyCommunicationService {
 
   // region Autowired
@@ -96,6 +97,13 @@ public class LoadableStudyCommunicationService {
 
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private LoadablePlanService loadablePlanService;
+  @Autowired private CowHistoryRepository cowHistoryRepository;
+
+  @Autowired
+  private DischargePatternQuantityCargoPortwiseRepository
+      dischargePatternQuantityCargoPortwiseRepository;
+
+  @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   // endregion
 
   // region Declarations
@@ -129,6 +137,9 @@ public class LoadableStudyCommunicationService {
   private List<LoadablePlan> loadablePlanStage = null;
   private List<CargoNominationPortDetails> cargoNominationOperationDetailsStage = null;
   private List<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatusStage = null;
+  private List<CowHistory> cowHistoryStage = null;
+  private List<DischargePatternQuantityCargoPortwiseDetails>
+      dischargePatternQuantityCargoPortwiseDetailsStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -171,6 +182,24 @@ public class LoadableStudyCommunicationService {
                         .contains(dataTransfer.getProcessGroupId()))
             .collect(Collectors.toList());
     log.info("DataTransferStages in STOWAGE_DATA_UPDATE task:" + dataTransferStages);
+    if (!dataTransferStages.isEmpty()) {
+      processStagingData(dataTransferStages, env, retryStatus);
+    }
+  }
+
+  public void getDischargeStudyStagingData(String status, String env, String taskName)
+      throws GenericServiceException {
+    log.info("Inside getDischargeStudyStagingData for env:{} and status:{}", env, status);
+    String retryStatus = getRetryStatus(status);
+    List<DataTransferStage> dataTransferStagesWithStatus = getDataTransferWithStatus(status);
+    List<DataTransferStage> dataTransferStages =
+        dataTransferStagesWithStatus.stream()
+            .filter(
+                dataTransfer ->
+                    Arrays.asList(MessageTypes.DISCHARGESTUDY.getMessageType())
+                        .contains(dataTransfer.getProcessGroupId()))
+            .collect(Collectors.toList());
+    log.info("DataTransferStages in DISCHARGE_STUDY_DATA_UPDATE task:" + dataTransferStages);
     if (!dataTransferStages.isEmpty()) {
       processStagingData(dataTransferStages, env, retryStatus);
     }
@@ -595,6 +624,34 @@ public class LoadableStudyCommunicationService {
                       null);
               break;
             }
+          case cow_history:
+            {
+              Type type = new TypeToken<ArrayList<CowHistory>>() {}.getType();
+              cowHistoryStage =
+                  bindDataToEntity(
+                      new CowHistory(),
+                      type,
+                      LoadableStudyTables.COW_HISTORY,
+                      data,
+                      dataTransferStage.getId(),
+                      null);
+              break;
+            }
+          case discharge_quantity_cargo_details:
+            {
+              Type type =
+                  new TypeToken<
+                      ArrayList<DischargePatternQuantityCargoPortwiseDetails>>() {}.getType();
+              dischargePatternQuantityCargoPortwiseDetailsStage =
+                  bindDataToEntity(
+                      new DischargePatternQuantityCargoPortwiseDetails(),
+                      type,
+                      LoadableStudyTables.DISCHARGE_QUANTITY_CARGO_DETAILS,
+                      data,
+                      dataTransferStage.getId(),
+                      null);
+              break;
+            }
         }
       }
 
@@ -627,6 +684,8 @@ public class LoadableStudyCommunicationService {
         saveLoadablePatternCargoDetails();
         saveLoadablePlanStowageBallastDetails();
         saveSynopticalTableLoadicatorData();
+        saveCowHistory();
+        saveDischargePatternQuantityCargoPortwiseDetails();
       } catch (ResourceAccessException e) {
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
@@ -661,6 +720,15 @@ public class LoadableStudyCommunicationService {
                 com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
             loadablePlanService.validateLoadablePlan(algoRequest, algoReply);
             log.info("Invoking validateLoadablePlan method.");
+          } else if (processGroupId.equals(MessageTypes.DISCHARGESTUDY.getMessageType())) {
+            com.cpdss.common.generated.LoadableStudy.AlgoRequest algoRequest =
+                com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
+                    .setLoadableStudyId(loadableStudyStage.getId())
+                    .build();
+            com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
+                com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
+            generateDischargeStudyJson.generateDischargePatterns(algoRequest, algoReply);
+            log.info("Invoking generateDischargePatterns method in Discharge Study.");
           }
         } catch (IOException e) {
           log.error("Exception calling generate loadable patterns.", e);
@@ -1278,6 +1346,41 @@ public class LoadableStudyCommunicationService {
         synopticalTableLoadicatorDataRepository.saveAll(synopticalTableLoadicatorDataStage);
     log.info("Communication #######  SynopticalTableLoadicatorData are saved");
   }
+  /** Method to save CowHistory table */
+  private void saveCowHistory() {
+    current_table_name = LoadableStudyTables.COW_HISTORY.getTable();
+    if (null == cowHistoryStage || cowHistoryStage.isEmpty()) {
+      log.info("Communication XXXXXXX  CowHistoryData is empty");
+      return;
+    }
+    for (CowHistory cowHistory : cowHistoryStage) {
+      Optional<CowHistory> cowHistoryOptional = cowHistoryRepository.findById(cowHistory.getId());
+      cowHistory.setVersion(cowHistoryOptional.map(EntityDoc::getVersion).orElse(null));
+    }
+    cowHistoryRepository.saveAll(cowHistoryStage);
+    log.info("Communication #######  CowHistory are saved");
+  }
+
+  /** Method to save DischargePatternQuantityCargoPortwiseDetails table */
+  private void saveDischargePatternQuantityCargoPortwiseDetails() {
+    current_table_name = LoadableStudyTables.DISCHARGE_QUANTITY_CARGO_DETAILS.getTable();
+    if (null == dischargePatternQuantityCargoPortwiseDetailsStage
+        || dischargePatternQuantityCargoPortwiseDetailsStage.isEmpty()) {
+      log.info("Communication XXXXXXX  DischargePatternQuantityCargoPortwiseDetails is empty");
+      return;
+    }
+    for (DischargePatternQuantityCargoPortwiseDetails dischargenQuantityDetails :
+        dischargePatternQuantityCargoPortwiseDetailsStage) {
+      Optional<DischargePatternQuantityCargoPortwiseDetails> dischargenQuantityDetailsOptional =
+          dischargePatternQuantityCargoPortwiseRepository.findById(
+              dischargenQuantityDetails.getId());
+      dischargenQuantityDetails.setVersion(
+          dischargenQuantityDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+    }
+    dischargePatternQuantityCargoPortwiseRepository.saveAll(
+        dischargePatternQuantityCargoPortwiseDetailsStage);
+    log.info("Communication #######  DischargePatternQuantityCargoPortwiseDetails are saved");
+  }
 
   /**
    * Method to update status in exception
@@ -1396,6 +1499,8 @@ public class LoadableStudyCommunicationService {
     loadablePlanStage = null;
     cargoNominationOperationDetailsStage = null;
     loadableStudyCommunicationStatusStage = null;
+    cowHistoryStage = null;
+    dischargePatternQuantityCargoPortwiseDetailsStage = null;
     idMap = new HashMap<>();
     voyageId = 0L;
     loadableStudyStatusId = 0L;
