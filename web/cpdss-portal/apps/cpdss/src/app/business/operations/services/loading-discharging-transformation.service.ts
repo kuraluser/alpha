@@ -612,6 +612,7 @@ export class LoadingDischargingTransformationService {
         field: 'maxLoadingRate',
         header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE',
         fieldColumnClass: 'text-right',
+        numberFormat: '1.0-0',
         fieldClass: 'text-right no-ediable-field'
       },
       {
@@ -689,11 +690,13 @@ export class LoadingDischargingTransformationService {
       },
       {
         field: 'maxDischargingRate',
+        numberFormat: '1.0-0',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_MAX_DISCHARGE_RATE'
       },
       {
         field: 'blFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_BL_FIGURE',
+        numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },

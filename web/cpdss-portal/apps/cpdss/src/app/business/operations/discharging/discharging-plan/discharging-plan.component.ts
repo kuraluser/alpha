@@ -153,13 +153,15 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
     if (this.dischargingPlanDetails?.planCommingleDetails?.length && this.dischargingPlanDetails?.planStowageDetails?.length) {
       this.dischargingPlanDetails?.planCommingleDetails.map(item => {
         this.dischargingPlanDetails?.planStowageDetails.map(plan => {
-          if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType) {
+          if (Number(item.tankId) === Number(plan.tankId) && item.conditionType === plan.conditionType && plan.valueType === item.valueType) {
             plan.isCommingleCargo = true;
             plan.quantityMT = item.quantityMT;
             plan.api = item.api;
             plan.temperature = item.temperature;
             plan.abbreviation = item.abbreviation;
             plan.cargoNominationId = null;
+            plan.colorCode = item.colorCode;
+            plan.ullage = item.ullage;
           }
         });
       });

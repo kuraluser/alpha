@@ -120,6 +120,7 @@ export class LoadingPlanComponent implements OnInit, OnDestroy {
             plan.abbreviation = item.abbreviation;
             plan.cargoNominationId = null;
             plan.colorCode = item.colorCode;
+            plan.ullage = item.ullage;
           }
         });
       });

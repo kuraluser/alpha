@@ -879,7 +879,7 @@ export interface IPlanStowageDetails {
   tankId: string;
   tankName: string;
   temperature: string | number;
-  ullage: string;
+  ullage: string | number;
   valueType: number;
   isCommingleCargo?: boolean;
   abbreviation?: string;

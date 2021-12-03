@@ -218,7 +218,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           data.portPlanStowageDetails?.map(stowage => {
             if (Number(item.tankId) === Number(stowage.tankId)) {
               stowage.isCommingleCargo = true;
-              stowage.quantity =  item.quantity1MT;
+              stowage.quantity = item.quantity1MT;
               stowage.quantityMT = item.quantity1MT;
               stowage.actualWeight = item.quantity1MT;
               stowage.api = item.api;
@@ -235,6 +235,19 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
               commingleStowages[commingleStowages?.length - 1].actualWeight = item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].quantity = item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].ullage = item.ullage2;
+
+              if (item.ullage2 > item.ullage1) {
+                stowage.ullage = item.ullage;
+                stowage.quantity = item.quantity;
+                stowage.quantityMT = item.quantity;
+                stowage.actualWeight = item.quantity;
+
+              } else {
+                commingleStowages[commingleStowages?.length - 1].ullage = item.ullage;
+                commingleStowages[commingleStowages?.length - 1].quantityMT = item.quantity;
+                commingleStowages[commingleStowages?.length - 1].actualWeight = item.quantity;
+                commingleStowages[commingleStowages?.length - 1].quantity = item.quantity;
+              }
             }
           });
         });
@@ -995,7 +1008,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       this.tableForm.controls.items['controls'].map(form => {
         form.controls.cargos.controls.map(child => {
           if (child.controls.cargoNominationId.value === item.cargoNominationId) {
-            if (totQuantity > 0 ) {
+            if (totQuantity > 0) {
               child.enable();
             } else {
               child.disable();
