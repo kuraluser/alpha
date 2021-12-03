@@ -556,7 +556,8 @@ export class LoadingDischargingTransformationService {
       },
       initialTrim: {
         'required': 'LOADING_DETAILS_INITIAL_TRIM_REQUIRED',
-        'max': 'LOADING_DETAILS_INITIAL_TRIM_MAX'
+        'max': 'LOADING_DETAILS_INITIAL_TRIM_MAX',
+        'min': 'LOADING_DETAILS_INITIAL_TRIM_MIN',
       },
       maximumTrim: {
         'required': 'LOADING_DETAILS_MAX_TRIM_REQUIRED',
@@ -565,11 +566,13 @@ export class LoadingDischargingTransformationService {
       },
       finalTrim: {
         'required': 'LOADING_DETAILS_FINAL_TRIM_REQUIRED',
-        'max': 'LOADING_DETAILS_FINAL_TRIM_MAX'
+        'max': 'LOADING_DETAILS_FINAL_TRIM_MAX',
+        'min': 'LOADING_DETAILS_FINAL_TRIM_MIN',
       },
       strippingTrim: {
         'required': 'LOADING_DETAILS_TOP_OFF_TRIM_REQUIRED',
-        'max': 'LOADING_DETAILS_TOP_OFF_TRIM_MAX'
+        'max': 'LOADING_DETAILS_TOP_OFF_TRIM_MAX',
+        'min': 'LOADING_DETAILS_TOP_OFF_TRIM_MIN',
       }
     }
   }
