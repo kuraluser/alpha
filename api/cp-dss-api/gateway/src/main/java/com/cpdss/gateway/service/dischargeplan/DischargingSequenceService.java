@@ -167,9 +167,11 @@ public class DischargingSequenceService {
   private void buildDriveTank(List<Event> events, Builder builder) {
     List<DriveTankDetail> driveTankDetailList = new ArrayList<>();
     for (Event event : events) {
-      if (StringUtils.hasLength(event.getDriveTank())) {
+      if (event.getDriveTank() != null
+          && StringUtils.hasLength(event.getDriveTank().getTankShortName())) {
         DriveTankDetail.Builder tankBuilder = DriveTankDetail.newBuilder();
-        tankBuilder.setTankShortName(event.getDriveTank());
+        tankBuilder.setTankId(event.getDriveTank().getTankId());
+        tankBuilder.setTankShortName(event.getDriveTank().getTankShortName());
         tankBuilder.setTimeEnd(
             event.getSequence().get(event.getSequence().size() - 1).getTimeEnd());
         tankBuilder.setTimeStart(event.getSequence().get(0).getTimeStart());

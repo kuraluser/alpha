@@ -15,6 +15,8 @@ ext{
     imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-loading-plan'
     containerNameVal = System.getenv('CONTAINER_NAME') ?: "loading-plan-container"
     serviceNameVal = System.getenv('SERVICE_NAME') ?: 'loading-plan-service'
+
+    enableJudgement = System.getenv('ENABLE_JUDGEMENT') ?: ""
 }
 
 appConfig {
@@ -53,7 +55,8 @@ appConfig {
             rollbackOnUpdateFailure = true
         }
         environment = ['GRPC_PORT': "8090", 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword,
-                       'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,'COMM_TIME_LIMIT':commTimeLimit]
+                       'ATTACHMENT_ROOT_PATH': '/data', 'ALGO_BASE_URL': algoBaseURL, 'ENABLE_COMM': enableComm, 'CPDSS_BUILD_ENV': cpdssBuildEnv,
+                       'COMM_TIME_LIMIT':commTimeLimit, 'ENABLE_JUDGEMENT': enableJudgement]
     }
     javaMainClass = "com.cpdss.loadingplan.Application"
    

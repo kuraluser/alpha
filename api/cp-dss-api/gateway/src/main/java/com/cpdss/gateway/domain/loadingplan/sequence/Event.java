@@ -9,5 +9,5 @@ public class Event {
 
   private Long cargoNominationId;
   private List<Sequence> sequence;
-  private String driveTank;
+  private DriveTank driveTank;
 }

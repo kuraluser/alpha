@@ -19,11 +19,15 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+@TestPropertySource(
+    properties = {"cpdss.communication.enable = false", "cpdss.judgement.enable = true"})
 @SpringJUnitConfig(classes = {LoadicatorService.class})
 public class LoadicatorServiceTest {
 
@@ -69,6 +73,12 @@ public class LoadicatorServiceTest {
   @MockBean private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
 
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+
+  @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @MockBean AlgoErrorsRepository algoErrorsRepository;
+
+  @Value(value = "${cpdss.judgement.enable}")
+  private boolean judgementEnabled;
 
   @Test
   void testGetVesselDetailsForLoadicator() {

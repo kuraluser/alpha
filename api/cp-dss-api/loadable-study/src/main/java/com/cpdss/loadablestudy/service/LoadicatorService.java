@@ -1434,6 +1434,9 @@ public class LoadicatorService {
         }
       }
       if (!isValid) {
+        log.error(
+            "Judgement check failed for loadable pattern {}",
+            algoResponse.getLoadicatorResults().getLoadablePatternId());
         saveJudgements(
             algoResponse.getLoadicatorResults().getLoadablePatternId(), judgements, true);
         this.updateFeedbackLoopParameters(
@@ -1480,6 +1483,12 @@ public class LoadicatorService {
                                 err))
                     .collect(Collectors.toList()));
           }
+          if (!isValid) {
+            log.error(
+                "Judgement check failed for loadable pattern {}, CASE {}",
+                loadablePattern.getId(),
+                loadablePattern.getCaseNumber());
+          }
           loadablePattern.setIsActive(isValid);
           loadablePatternRepository.save(loadablePattern);
         }
@@ -1487,6 +1496,7 @@ public class LoadicatorService {
       List<LoadablePattern> loadablePatterns =
           loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
       if (loadablePatterns.isEmpty()) {
+        log.error("Judgement check failed for loadable study {}", loadableStudy.getId());
         saveJudgements(loadableStudy.getId(), judgements, false);
         this.updateFeedbackLoopParameters(
             loadableStudy.getId(),

@@ -3,6 +3,7 @@ package com.cpdss.dischargeplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
@@ -52,6 +53,9 @@ public class LoadicatorService {
   @Value(value = "${loadingplan.attachment.rootFolder}")
   private String rootFolder;
 
+  @Value(value = "${cpdss.judgement.enable}")
+  private boolean judgementEnabled;
+
   @Autowired DischargeInformationRepository dischargeInformationRepository;
 
   @Autowired RestTemplate restTemplate;
@@ -93,10 +97,14 @@ public class LoadicatorService {
 
   @Autowired DischargeInformationService dischargeInformationService;
 
+  @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
+
+  @Autowired AlgoErrorsRepository algoErrorsRepository;
+
   /**
    * get vessel detail for loadicator
    *
-   * @param loadableStudyEntity
+   * @param dischargeInformation
    * @return
    * @throws GenericServiceException
    */
@@ -231,7 +239,7 @@ public class LoadicatorService {
   /**
    * Get cargo details
    *
-   * @param loadableStudyEntity
+   * @param dischargeInformation
    * @return
    * @throws GenericServiceException
    */
@@ -260,7 +268,7 @@ public class LoadicatorService {
   /**
    * Get port info for loadicator
    *
-   * @param loadableStudyEntity
+   * @param dischargeInformation
    * @return
    * @throws GenericServiceException
    */
@@ -470,7 +478,7 @@ public class LoadicatorService {
    * Returns whether there is a grade switch without delay at the given time. If there are multiple
    * portWiseDetails for the same time, then it is actually due to a grade switch without any delay
    *
-   * @param loadingPlanPortWiseDetails
+   * @param dischargingPlanPortWiseDetails
    * @param time
    * @return
    */
@@ -652,6 +660,11 @@ public class LoadicatorService {
       DischargingInfoLoadicatorDataRequest request,
       com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply.Builder reply)
       throws GenericServiceException {
+
+    Boolean isValid = true;
+    Long statusId;
+    List<String> judgements = new ArrayList<>();
+
     Optional<DischargeInformation> dischargeInfoOpt =
         dischargeInformationRepository.findByIdAndIsActiveTrue(
             request.getDischargingInformationId());
@@ -674,10 +687,42 @@ public class LoadicatorService {
         // Save new stability data into tables
         saveDischargeSequenceStabilityParameters(dischargeInfoOpt.get(), lar);
 
+        log.info(
+            "=============== Judgement Check {} ===============",
+            judgementEnabled ? "enabled" : "disabled");
+        if (judgementEnabled
+            && lar.getLoadicatorResults() != null
+            && !lar.getLoadicatorResults().isEmpty()) {
+          for (LoadicatorResult loadicatorResult : lar.getLoadicatorResults()) {
+            if (loadicatorResult.getJudgement() != null
+                && !loadicatorResult.getJudgement().isEmpty()) {
+              log.error("Judgement check failed for time {}", loadicatorResult.getTime());
+              isValid = false;
+              loadicatorResult
+                  .getJudgement()
+                  .forEach(
+                      judgement -> {
+                        judgements.add(
+                            String.format("Time %d : %s", loadicatorResult.getTime(), judgement));
+                      });
+            }
+          }
+        }
+
+        if (isValid) {
+          statusId = DischargePlanConstants.PLAN_GENERATED_ID;
+          dischargeInformationService.updateIsDischargingSequenceGeneratedStatus(
+              dischargeInfoOpt.get().getId(), true);
+          dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
+              dischargeInfoOpt.get().getId(), true);
+        } else {
+          statusId = DischargePlanConstants.DISCHARGING_INFORMATION_ERROR_OCCURRED_ID;
+          saveJudgements(dischargeInfoOpt.get(), judgements);
+        }
+
         // Update status after new data comes in
         Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-            dischargePlanAlgoService.getDischargingInformationStatus(
-                DischargePlanConstants.PLAN_GENERATED_ID);
+            dischargePlanAlgoService.getDischargingInformationStatus(statusId);
         dischargeInformationService.updateDischargingInformationStatuses(
             dischargingInfoStatusOpt.get(),
             dischargingInfoStatusOpt.get(),
@@ -685,10 +730,6 @@ public class LoadicatorService {
             dischargeInfoOpt.get().getId());
         dischargePlanAlgoService.updateDischargingInfoAlgoStatus(
             dischargeInfoOpt.get(), request.getProcessId(), dischargingInfoStatusOpt.get(), null);
-        dischargeInformationService.updateIsDischargingSequenceGeneratedStatus(
-            dischargeInfoOpt.get().getId(), true);
-        dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
-            dischargeInfoOpt.get().getId(), true);
       } catch (HttpStatusCodeException e) {
         // Update status after error occurs
         log.error("Error occured in ALGO side while calling loadicator_results API");
@@ -705,6 +746,20 @@ public class LoadicatorService {
     } else { // Update Ullage Loadicator Data
       ullageupdateLoadicatorService.getLoadicatorData(request, dischargeInfoOpt.get());
     }
+  }
+
+  /**
+   * Saves judgements to DB
+   *
+   * @param dischargeInformation
+   * @param judgements
+   */
+  private void saveJudgements(DischargeInformation dischargeInformation, List<String> judgements) {
+    log.info("Saving judgements of discharging information {}", dischargeInformation.getId());
+    algoErrorHeadingRepository.deleteByDischargingInformation(dischargeInformation);
+    algoErrorsRepository.deleteByLoadingInformation(dischargeInformation);
+    dischargePlanAlgoService.saveAlgoErrors(
+        dischargeInformation, AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS, null, judgements);
   }
 
   public void saveDischargeSequenceStabilityParameters(

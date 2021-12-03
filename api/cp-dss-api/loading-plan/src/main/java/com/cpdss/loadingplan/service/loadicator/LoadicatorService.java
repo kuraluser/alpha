@@ -3,6 +3,7 @@ package com.cpdss.loadingplan.service.loadicator;
 
 import static java.lang.String.valueOf;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
@@ -76,6 +77,9 @@ public class LoadicatorService {
   @Value("${cpdss.build.env}")
   private String env;
 
+  @Value("${cpdss.judgement.enable}")
+  private boolean judgementEnabled;
+
   @Autowired LoadingInformationRepository loadingInformationRepository;
   @Autowired LoadingSequenceRepository loadingSequenceRepository;
   @Autowired LoadingPlanPortWiseDetailsRepository loadingPlanPortWiseDetailsRepository;
@@ -116,6 +120,9 @@ public class LoadicatorService {
   @Autowired LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
   @Autowired private LoadingPlanCommunicationService communicationService;
   @Autowired LoadingPlanCommunicationService loadingPlancommunicationService;
+
+  @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired AlgoErrorsRepository algoErrorsRepository;
 
   public void saveLoadicatorInfo(LoadingInformation loadingInformation, String processId)
       throws GenericServiceException {
@@ -623,7 +630,7 @@ public class LoadicatorService {
   /**
    * Get port info for loadicator
    *
-   * @param loadableStudyEntity
+   * @param loadingInformation
    * @return
    * @throws GenericServiceException
    */
@@ -651,7 +658,7 @@ public class LoadicatorService {
   /**
    * get vessel detail for loadicator
    *
-   * @param loadableStudyEntity
+   * @param loadingInformation
    * @return
    * @throws GenericServiceException
    */
@@ -679,7 +686,7 @@ public class LoadicatorService {
   /**
    * Get cargo details
    *
-   * @param loadableStudyEntity
+   * @param loadingInformation
    * @return
    * @throws GenericServiceException
    */
@@ -711,6 +718,11 @@ public class LoadicatorService {
               .Builder
           reply)
       throws GenericServiceException, IllegalAccessException, InvocationTargetException {
+
+    Boolean isValid = true;
+    Long statusId;
+    List<String> judgements = new ArrayList<>();
+
     Optional<LoadingInformation> loadingInfoOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(request.getLoadingInformationId());
     if (loadingInfoOpt.isEmpty()) {
@@ -730,13 +742,45 @@ public class LoadicatorService {
       try {
         LoadicatorAlgoResponse algoResponse =
             restTemplate.postForObject(loadicatorUrl, algoRequest, LoadicatorAlgoResponse.class);
-        saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
 
+        saveLoadicatorResponseJson(algoResponse, loadingInfoOpt.get().getId());
         saveLoadingSequenceStabilityParameters(loadingInfoOpt.get(), algoResponse);
 
+        log.info(
+            "=============== Judgement Check {} ===============",
+            judgementEnabled ? "enabled" : "disabled");
+        if (judgementEnabled
+            && algoResponse.getLoadicatorResults() != null
+            && !algoResponse.getLoadicatorResults().isEmpty()) {
+          for (LoadicatorResult loadicatorResult : algoResponse.getLoadicatorResults()) {
+            if (loadicatorResult.getJudgement() != null
+                && !loadicatorResult.getJudgement().isEmpty()) {
+              log.error("Judgement check failed for time {}", loadicatorResult.getTime());
+              isValid = false;
+              loadicatorResult
+                  .getJudgement()
+                  .forEach(
+                      judgement -> {
+                        judgements.add(
+                            String.format("Time %d : %s", loadicatorResult.getTime(), judgement));
+                      });
+            }
+          }
+        }
+
+        if (isValid) {
+          statusId = LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID;
+          loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
+              loadingInfoOpt.get().getId(), true);
+          loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
+              loadingInfoOpt.get().getId(), true);
+        } else {
+          statusId = LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID;
+          saveJudgements(loadingInfoOpt.get(), judgements);
+        }
+
         Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-            loadingPlanAlgoService.getLoadingInformationStatus(
-                LoadingPlanConstants.LOADING_INFORMATION_PLAN_GENERATED_ID);
+            loadingPlanAlgoService.getLoadingInformationStatus(statusId);
         loadingInformationRepository.updateLoadingInformationStatuses(
             loadingInfoStatusOpt.get(),
             loadingInfoStatusOpt.get(),
@@ -744,10 +788,6 @@ public class LoadicatorService {
             loadingInfoOpt.get().getId());
         loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), loadingInfoStatusOpt.get());
-        loadingInformationRepository.updateIsLoadingSequenceGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
-        loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
-            loadingInfoOpt.get().getId(), true);
         try {
           log.info("Communication side started for loadicator on");
           if (enableCommunication && !env.equals("ship")) {
@@ -788,9 +828,23 @@ public class LoadicatorService {
   }
 
   /**
+   * Saves judgements to DB
+   *
+   * @param loadingInformation
+   * @param judgements
+   */
+  private void saveJudgements(LoadingInformation loadingInformation, List<String> judgements) {
+    log.info("Saving judgements for loading information {}", loadingInformation.getId());
+    algoErrorHeadingRepository.deleteByLoadingInformation(loadingInformation);
+    algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
+    loadingPlanAlgoService.saveAlgoErrorEntity(
+        loadingInformation, AlgoErrorHeaderConstants.ALGO_STABILITY_ERRORS, null, judgements);
+  }
+
+  /**
    * Saves the Loadicator Response JSON to DB.
    *
-   * @param algoRequest
+   * @param algoResponse
    * @param loadingInfoId
    * @throws GenericServiceException
    */
@@ -1056,7 +1110,7 @@ public class LoadicatorService {
 
   /**
    * @param loadingInformation
-   * @param loadicatorResult
+   * @param result
    * @param portStabilityParameters
    * @param conditionType
    * @param oldStabilityOpt

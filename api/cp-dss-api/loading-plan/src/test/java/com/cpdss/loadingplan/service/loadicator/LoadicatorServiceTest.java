@@ -28,7 +28,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
-@TestPropertySource(properties = "cpdss.communication.enable = false")
+@TestPropertySource(
+    properties = {"cpdss.communication.enable = false", "cpdss.judgement.enable = true"})
 @SpringJUnitConfig(
     classes = {
       LoadicatorService.class,
@@ -64,8 +65,14 @@ public class LoadicatorServiceTest {
   @MockBean LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
   @MockBean private LoadingPlanCommunicationService communicationService;
 
+  @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @MockBean AlgoErrorsRepository algoErrorsRepository;
+
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
+
+  @Value("${cpdss.judgement.enable}")
+  private boolean judgementEnabled;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
