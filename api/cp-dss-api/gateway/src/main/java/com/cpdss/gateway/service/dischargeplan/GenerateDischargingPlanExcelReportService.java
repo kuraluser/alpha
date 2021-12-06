@@ -44,6 +44,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.Ballast;
 import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
+import com.cpdss.gateway.domain.loadingplan.sequence.DriveTank;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingRateForSequence;
@@ -445,7 +446,7 @@ public class GenerateDischargingPlanExcelReportService {
       for (col = 5; col <= 5 + (data.getCargoTobeDischarged().size() * 5); col += 5) {
         row = 61;
         cell = sheet.getRow(row).getCell(col);
-        setCargoColor(workbook, sheet, cell, null, data.getCargoTobeLoaded(), null);
+        setCargoColor(workbook, sheet, cell, null, data.getCargoTobeDischarged(), null);
       }
     }
   }
@@ -456,7 +457,7 @@ public class GenerateDischargingPlanExcelReportService {
       XSSFSheet sheet,
       XSSFCell cell,
       List<CargoQuantity> cargoDetails,
-      List<CargoTobeLoaded> cargoTobeLoaded,
+      List<CargoTobeLoaded> cargoTobeDischarged,
       List<TankCategoryForSequence> cargoListSequence) {
     String cellValue = getCellValue(cell);
     if (cellValue != null && !cellValue.isBlank()) {
@@ -466,9 +467,9 @@ public class GenerateDischargingPlanExcelReportService {
         if (opt.isPresent()) {
           fillColor(workbook, cell, opt.get().getColorCode());
         }
-      } else if (cargoTobeLoaded != null) {
+      } else if (cargoTobeDischarged != null) {
         Optional<CargoTobeLoaded> opt =
-            cargoTobeLoaded.stream()
+            cargoTobeDischarged.stream()
                 .filter(item -> cellValue.equals(item.getCargoName()))
                 .findFirst();
         if (opt.isPresent()) {
@@ -1031,7 +1032,11 @@ public class GenerateDischargingPlanExcelReportService {
             getDischargingRate(
                 dischargingSequenceResponse.getCargoDischargingRates(),
                 dischargingSequenceResponse.getStageTickPositions()));
-        sheetThree.setDriveOilTanks(null); // TODO
+        sheetThree.setDriveOilTanks(
+            getDriveOilTanks(
+                dischargingSequenceResponse.getStageTickPositions(),
+                dischargingSequenceResponse.getCargoTankCategories(),
+                dischargingSequenceResponse.getDriveTanks()));
         sheetThree.setTankToTanks(null); // TODO
       }
       sheetThree.setBallastTanks(
@@ -1063,6 +1068,45 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
+   * Drive oil tank details
+   *
+   * @param stageTickPositions
+   * @param cargoTankCategories
+   * @param driveTanks
+   * @return
+   */
+  private List<String> getDriveOilTanks(
+      Set<Long> stageTickPositions,
+      List<TankCategory> cargoTankCategories,
+      List<DriveTank> driveTanks) {
+    List<String> driveOilTanks = new ArrayList<>();
+    List<Long> positions = getListFromSet(stageTickPositions);
+    IntStream.range(0, positions.size() - 1)
+        .forEach(
+            i -> {
+              driveOilTanks.add("");
+            });
+    for (DriveTank tank : driveTanks) {
+      for (int i = 0; i < positions.size() - 1; i++) {
+        if (tank.getStart() >= positions.get(i)) {
+          driveOilTanks.set(
+              i,
+              driveOilTanks.get(i).isBlank()
+                  ? tank.getTankName()
+                  : driveOilTanks.get(i) + "," + tank.getTankName());
+        } else if (tank.getStart() < positions.get(i) && tank.getEnd() >= positions.get(i + 1)) {
+          driveOilTanks.set(
+              i,
+              driveOilTanks.get(i).isBlank()
+                  ? tank.getTankName()
+                  : driveOilTanks.get(i) + "," + tank.getTankName());
+        }
+      }
+    }
+    return driveOilTanks;
+  }
+
+  /**
    * Cargo Pump details
    *
    * @param stageTickPositions
@@ -1088,11 +1132,11 @@ public class GenerateDischargingPlanExcelReportService {
         List<String> rates = new ArrayList<>();
         List<QuantityLoadingStatus> pumpStatusList = new ArrayList<>();
         Optional<BallastPump> pumpMatch = Optional.empty();
-        //				// Finding ullage and values in first tick position
-        //				pumpMatch = pumpList.stream().filter(pump ->
+        // // Finding ullage and values in first tick position
+        // pumpMatch = pumpList.stream().filter(pump ->
         // pump.getStart().equals(positionList.get(0))
-        //						&& pump.getEnd().equals(positionList.get(0))).findFirst();
-        //				setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
+        // && pump.getEnd().equals(positionList.get(0))).findFirst();
+        // setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
         for (Long position : positionList) {
           pumpMatch =
               pumpList.stream()
@@ -1419,7 +1463,7 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
-   * Finding loading rate
+   * Finding discharging rate
    *
    * @param cargoLoadingRates
    * @param stageTickPositions
