@@ -104,6 +104,7 @@ public class LoadableStudyCommunicationService {
       dischargePatternQuantityCargoPortwiseRepository;
 
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
+  @Autowired private VoyageStatusRepository voyageStatusRepository;
   // endregion
 
   // region Declarations
@@ -143,6 +144,7 @@ public class LoadableStudyCommunicationService {
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
+  Long voyageStatusId;
   String current_table_name = "";
   // endregion
 
@@ -271,6 +273,7 @@ public class LoadableStudyCommunicationService {
           case voyage:
             {
               Type type = new TypeToken<Voyage>() {}.getType();
+              voyageStatusId = getVoyageStatus(data);
               voyageStage =
                   bindDataToEntity(
                       new Voyage(),
@@ -741,6 +744,11 @@ public class LoadableStudyCommunicationService {
       }
     }
   }
+
+  private Long getVoyageStatus(String json) {
+    JsonArray jsonArray = JsonParser.parseString(json).getAsJsonArray();
+    return jsonArray.get(0).getAsJsonObject().get("voyage_status").getAsLong();
+  }
   // endregion
 
   // region Save Methods
@@ -769,9 +777,14 @@ public class LoadableStudyCommunicationService {
       voyageStage = voyageRepository.findById(voyageId).orElse(null);
       return;
     }
+
     Optional<Voyage> optionalVoyage = voyageRepository.findById(voyageStage.getId());
     voyageStage.setVersion(optionalVoyage.map(EntityDoc::getVersion).orElse(null));
 
+    Optional<VoyageStatus> voyageStatus = voyageStatusRepository.findById(voyageStatusId);
+    if (voyageStatus.isPresent()) {
+      voyageStage.setVoyageStatus(voyageStatus.get());
+    }
     voyageStage = voyageRepository.save(voyageStage);
     log.info("Communication #######  Voyage saved with id:" + voyageStage.getId());
   }
