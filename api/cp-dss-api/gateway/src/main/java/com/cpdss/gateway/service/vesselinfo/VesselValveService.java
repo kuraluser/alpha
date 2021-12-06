@@ -186,4 +186,23 @@ public class VesselValveService {
             .collect(Collectors.toList());
     return resp;
   }
+
+  public Object buildVesselValveSSCargoValve(
+      List<VesselInfo.VesselValveStrippingSequenceCargoValve> vvSSCargoValveList) {
+    var resp =
+        vvSSCargoValveList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    v -> toCamelCase("sequence_" + v.getSequenceNumber()),
+                    () -> new TreeMap<>(new EductorStageNumberComparator()),
+                    Collectors.mapping(
+                        v -> {
+                          VesselValveStrippingSequenceCargoValve obj =
+                              new VesselValveStrippingSequenceCargoValve();
+                          BeanUtils.copyProperties(v, obj);
+                          return obj;
+                        },
+                        Collectors.toList())));
+    return resp;
+  }
 }

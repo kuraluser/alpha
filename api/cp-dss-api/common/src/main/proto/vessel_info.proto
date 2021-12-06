@@ -564,6 +564,7 @@ message BendingMomentType1 {
 		repeated VesselValveEducationProcess vvEducationEntities = 3;
 		repeated VesselValveAirPurgeSequence vvAirPurgeSequence = 4;
 		repeated VesselValveStrippingSequence vvStrippingSequence = 5;
+		repeated VesselValveStrippingSequenceCargoValve vvSSCargoValve = 6;
 	}
 
 	message VesselValveStrippingSequence {
@@ -622,6 +623,20 @@ message BendingMomentType1 {
 		 string vesselName = 20;
 		 int32 vesselTankXid = 21;
 		 int64 vesselXid = 23;
+		 string manifoldName = 30;
+		 string manifoldSide = 31;
+	}
+
+	message VesselValveStrippingSequenceCargoValve {
+		int64 id = 1;
+		int64 vesselId = 2;
+		string vesselName = 3;
+		int32 pipeLineId = 4;
+		string pipeLineName = 5;
+		string colour = 6;
+		int32 valveId = 7;
+		string valve = 8;
+		int32 sequenceNumber = 9;
 	}
 
 	message VesselValveEducationProcess {

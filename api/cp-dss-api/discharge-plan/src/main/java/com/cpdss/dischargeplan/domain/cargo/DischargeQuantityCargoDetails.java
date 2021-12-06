@@ -60,4 +60,5 @@ public class DischargeQuantityCargoDetails {
   private Long cargoId;
   private Long cargoNominationId;
   private Long dsCargoNominationId;
+  private Boolean isCommingledDischarge;
 }

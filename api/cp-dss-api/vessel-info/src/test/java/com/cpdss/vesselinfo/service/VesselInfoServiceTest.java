@@ -30,6 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @ExtendWith(MockitoExtension.class)
 class VesselInfoServiceTest {
@@ -70,6 +71,7 @@ class VesselInfoServiceTest {
   @Mock VesselBottomLineRepository vesselBottomLineRepository;
   @Mock VesselValveAirPurgeSequenceRepository airPurgeSequenceRepository;
   @Mock VesselValveStrippingSequenceRepository strippingSequenceRepository;
+  @Mock VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
