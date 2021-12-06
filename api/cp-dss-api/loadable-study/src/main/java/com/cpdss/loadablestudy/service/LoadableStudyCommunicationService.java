@@ -1350,7 +1350,7 @@ public class LoadableStudyCommunicationService {
       sTableLoadicatorData.setVersion(
           sTableLoadicatorDataOptional.map(EntityDoc::getVersion).orElse(null));
       for (SynopticalTable st : synopticalTableStage) {
-        if (Objects.equals(st.getCommunicationRelatedEntityId(), sTableLoadicatorData.getId())) {
+        if (Objects.equals(sTableLoadicatorData.getCommunicationRelatedEntityId(), st.getId())) {
           sTableLoadicatorData.setSynopticalTable(st);
         }
       }
