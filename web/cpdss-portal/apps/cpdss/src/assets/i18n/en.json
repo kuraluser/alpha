@@ -2082,6 +2082,7 @@
   "ULLAGE_UPDATE_FILE_SIZE_ERROR": "File size should be less than 2Mb",
   "ULLAGE_UPDATE_EXCEL_EMPTY_FILE": "Empty file uploaded",
   "ULLAGE_UPDATE_PLAN_COMMUNICATED_TO_SHORE": "Ullage update communicated to Shore",
+  "ULLAGE_UPDATE_COMMINGLE_TOTAL_MESSAGE": "Note: The quantity of other cargo in commingled tank is excluded from the total calculation.",
   "FILE_REPOSITORY": "Files",
   "FILE_REPOSITORY_SL": "SL",
   "FILE_REPOSITORY_VOY_NO": "VOY NO.",
