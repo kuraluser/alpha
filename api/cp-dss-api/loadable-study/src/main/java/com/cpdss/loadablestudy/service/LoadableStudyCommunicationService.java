@@ -624,7 +624,7 @@ public class LoadableStudyCommunicationService {
                       LoadableStudyTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE,
                       data,
                       dataTransferStage.getId(),
-                      null);
+                      "synoptical_table_xid");
               break;
             }
           case cow_history:
