@@ -53,6 +53,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -682,6 +683,8 @@ public class GenerateDischargeStudyJson {
             ofNullable(item.getSegregationXId()).ifPresent(nomination::setSegregationId);
             nomination.setIsCondensateCargo(null); // for future
             nomination.setIsHrvpCargo(null); // for future
+            nomination.setSequenceNo(item.getSequenceNo());
+            nomination.setEmptyMaxNoOfTanks(item.getEmptyMaxNoOfTanks());
             cargoNominationList.add(nomination);
           });
       log.info("Found {} items", cargoNominationList.size());
@@ -725,7 +728,9 @@ public class GenerateDischargeStudyJson {
                 portRotation.setPortOrder(port.getPortOrder());
                 portRotation.setCowDetails(getCowDetails(dischargeStudyId, port.getId()));
                 portRotation.setInstructions(getPortInstructions(port, instructionsDetails));
-
+                portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
+                portRotation.setFreshCrudeOilQuantity(new BigDecimal(port.getFreshCrudeOilQuantity()));
+                portRotation.setFreshCrudeOilTime(new BigDecimal(port.getFreshCrudeOilTime()));
                 portRotationList.add(portRotation);
               });
       log.info("Found {} items", portRotationList.size());

@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
 
@@ -39,6 +40,12 @@ public class DischargeStudyPortRotationJson {
   private Long portOrder;
 
   private CowDetail cowDetails;
+
+  private Boolean freshCrudeOil;
+
+  private BigDecimal freshCrudeOilQuantity;
+
+  private BigDecimal freshCrudeOilTime;
 
   private List<LoadableStudyInstruction> instructions;
 }

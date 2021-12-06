@@ -652,11 +652,11 @@ public class DischargeStudyService {
     portDetails.addAllInstructionId(portCargo.getInstructionId());
     dsBackLoadingDetail.setPortDetails(portDetails.build());
     dsBackLoadingDetail.addAllPortCargoDetails(
-        createPortWiseCargoNoination(portCargo.getCargoNominationList()));
+        createPortWiseCargoNomination(portCargo.getCargoNominationList()));
     builder.addDsBackLoading(dsBackLoadingDetail.build());
   }
 
-  private List<CargoNominationDetail> createPortWiseCargoNoination(
+  private List<CargoNominationDetail> createPortWiseCargoNomination(
       List<CargoNomination> cargoNominationList) {
     List<CargoNominationDetail> cargoList = new ArrayList<>();
     cargoNominationList.forEach(
@@ -670,6 +670,8 @@ public class DischargeStudyService {
           cargoNomination.setCargoId(cargo.getCargoId());
           cargoNomination.setApi(cargo.getApi().toString());
           cargoNomination.setTemperature(cargo.getTemperature().toString());
+          cargoNomination.setSequenceNo(cargo.getSequenceNo());
+          cargoNomination.setEmptyMaxNoOfTanks(cargo.getEmptyMaxNoOfTanks());
           cargoList.add(cargoNomination.build());
         });
 

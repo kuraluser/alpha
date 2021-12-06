@@ -137,11 +137,11 @@ public class CargoNominationService {
     // Fetching max quantity from Bill of Ladding
     getMaxQuantityMTFromBillofLadding(cargos);
     cargos
-        .parallelStream()
+        .stream()
         .forEach(
             cargo -> {
               CargoNomination newCargo =
-                  createDsCargoNomination(dischargeStudyId, cargo, portId, operationId);
+                  createDsCargoNomination(dischargeStudyId, cargo, portId, operationId,dischargeStudycargos.size());
               log.info(
                   "ds save API DS cargo... cargo id ::  "
                       + newCargo.getCargoXId()
@@ -157,7 +157,7 @@ public class CargoNominationService {
   }
 
   public CargoNomination createDsCargoNomination(
-      Long dischargeStudyId, CargoNomination cargo, Long portId, Long operationId) {
+          Long dischargeStudyId, CargoNomination cargo, Long portId, Long operationId, int seqNo) {
     CargoNomination dischargeStudyCargo = new CargoNomination();
     dischargeStudyCargo.setAbbreviation(cargo.getAbbreviation());
     dischargeStudyCargo.setApi(cargo.getApi());
@@ -173,6 +173,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
+    dischargeStudyCargo.setSequenceNo(Long.valueOf(seqNo));
     dischargeStudyCargo.setCargoNominationPortDetails(
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId, operationId));
     return dischargeStudyCargo;

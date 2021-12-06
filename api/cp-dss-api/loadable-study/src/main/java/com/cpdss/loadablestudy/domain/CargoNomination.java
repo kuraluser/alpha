@@ -37,4 +37,8 @@ public class CargoNomination {
   private Boolean isCondensateCargo;
 
   private Boolean isHrvpCargo;
+
+  private Long sequenceNo;
+
+  private Boolean emptyMaxNoOfTanks;
 }

@@ -81,4 +81,10 @@ public class PortRotation {
   private String portType;
 
   private Long version;
+
+  private Boolean freshCrudeOil;
+
+  private BigDecimal freshCrudeOilQuantity;
+
+  private BigDecimal  freshCrudeOilTime;
 }
