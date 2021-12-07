@@ -729,7 +729,8 @@ public class GenerateDischargeStudyJson {
                 portRotation.setCowDetails(getCowDetails(dischargeStudyId, port.getId()));
                 portRotation.setInstructions(getPortInstructions(port, instructionsDetails));
                 portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
-                portRotation.setFreshCrudeOilQuantity(new BigDecimal(port.getFreshCrudeOilQuantity()));
+                portRotation.setFreshCrudeOilQuantity(
+                    new BigDecimal(port.getFreshCrudeOilQuantity()));
                 portRotation.setFreshCrudeOilTime(new BigDecimal(port.getFreshCrudeOilTime()));
                 portRotationList.add(portRotation);
               });
