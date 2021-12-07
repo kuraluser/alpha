@@ -105,4 +105,13 @@ public class LoadableStudyPortRotation extends EntityDoc {
   @Transient private String portRotationType;
 
   @Transient private Long communicationRelatedEntityId;
+
+  @Column(name = "fresh_crude_oil")
+  private Boolean freshCrudeOil;
+
+  @Column(name = "fresh_crude_oil_quantity")
+  private BigDecimal freshCrudeOilQuantity;
+
+  @Column(name = "fresh_crude_oil_time")
+  private BigDecimal freshCrudeOilTime;
 }

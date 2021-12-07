@@ -24,6 +24,9 @@ public class VesselValveSeq {
   private String pumpName;
   private String pumpType;
 
+  private String manifoldName;
+  private String manifoldSide;
+
   public VesselValveSeq getInstance(VesselValveSequence v) {
     VesselValveSeq vq = new VesselValveSeq();
     vq.valveCategory = v.getValveCategory();
@@ -40,6 +43,9 @@ public class VesselValveSeq {
     vq.pumpCode = v.getPumpCode();
     vq.pumpName = v.getPumpName();
     vq.pumpType = v.getPumpType();
+
+    vq.manifoldName = v.getManifoldName();
+    vq.manifoldSide = v.getManifoldSide();
     return vq;
   }
 }

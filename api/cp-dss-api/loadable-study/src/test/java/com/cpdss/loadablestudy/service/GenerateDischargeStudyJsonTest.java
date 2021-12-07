@@ -11,6 +11,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
@@ -22,10 +23,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+@TestPropertySource(properties = "cpdss.build.env = ship")
+@TestPropertySource(properties = "cpdss.communication.enable = false")
 @SpringJUnitConfig(
     classes = {
       GenerateDischargeStudyJson.class,
@@ -52,6 +56,13 @@ public class GenerateDischargeStudyJsonTest {
   @MockBean CargoNominationService cargoNominationService;
   @MockBean private CowHistoryRepository cowHistoryRepository;
   @MockBean private LoadableStudyRuleService loadableStudyRuleService;
+  @MockBean private CommunicationService communicationService;
+
+  @MockBean
+  private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @MockBean LoadableStudyStagingService loadableStudyStagingService;
+
   private static final String SUCCESS = "SUCCESS";
 
   @Test

@@ -67,4 +67,7 @@ public class VesselValveSequence implements Serializable {
   private String pumpCode;
   private String pumpName;
   private String pumpType;
+
+  private String manifoldName;
+  private String manifoldSide;
 }

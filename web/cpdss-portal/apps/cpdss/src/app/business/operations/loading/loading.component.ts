@@ -266,7 +266,12 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     this.currentTab = tab;
     this.loadingDischargingTransformationService.setTabChange(tab);
     if (tab === OPERATION_TAB.INSTRUCTION) {
-      this.loadingInstructionComplete = true;
+      if(!this.loadingInstructionComplete){
+        this.loadingInstructionComplete = true;
+        if(this.loadingInformationComplete){
+          this.disableGenerateLoadableButton = false;
+        }
+      }
     }
   }
 

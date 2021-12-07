@@ -48,7 +48,7 @@
         </div>
         <div class="row pt-20">
             <div class="col-5 auto-layout">
-                <cpdss-portal-datatable [showTotalClass]="'text-left'" [showTotal]="true" [scrollable]="false"
+                <cpdss-portal-datatable [showTotalTooltip]="showManualTotal" [totalToolTipKey]="'ULLAGE_UPDATE_COMMINGLE_TOTAL_MESSAGE'" [totalValue]="cargoActualSum" [showManualTotal]="showManualTotal" [showTotalClass]="'text-left'" [showTotal]="true" [scrollable]="false"
                     *ngIf="selectedTab === tankType.CARGO" [value]="cargoQuantities" [filterable]="false"
                     [tableId]="'cargo_list'" [selectionMode]="selectionMode" (columnClick)="onRowSelection($event)"
                     [(selection)]="selectedTank" (editComplete)="cargoEditCompleted($event)" [form]="cargoTankForm"

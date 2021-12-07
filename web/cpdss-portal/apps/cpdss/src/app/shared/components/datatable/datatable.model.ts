@@ -268,3 +268,21 @@ export enum DATATABLE_BUTTON {
     VIEW_BUTTON = 'View',
     EDIT_BUTTON = 'Edit'
 }
+
+
+
+/**
+ * Interface for state pagination , filter and sort
+ *
+ * @export
+ * @interface IDataStateChange
+ */
+export interface IDataStateChange {
+  filter?: Object;
+  name: string;
+  desc: string;
+  pageSize: string;
+  page: number;
+  sortBy: string;
+  orderBy: string;
+}

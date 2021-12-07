@@ -123,7 +123,7 @@ public class CargoNominationServiceTest {
     Long operationId = 1L;
     var cargonomination =
         this.cargoNominationService.createDsCargoNomination(
-            dischargeStudyId, cargo, portId, operationId);
+            dischargeStudyId, cargo, portId, operationId, 1);
     assertEquals(cargonomination.getCargoXId(), cargo.getCargoXId());
   }
 

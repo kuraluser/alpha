@@ -8,7 +8,7 @@ import { IAPITempPopupData, ICargoDetails, ICargoLoadingInformation } from '../.
 import { CargoMasterApiService } from '../../services/cargo-master-api.service';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
-import { ICountry } from '../../../../shared/models/common.model';
+import { ICountry, IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { IPort } from '../../../core/models/common.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -36,6 +36,7 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   ports: IPort[];
   apiTempPopupData: IAPITempPopupData;
   openAPITemperatureHistoryPopup = false;
+  saveBtnPermissionContext: IPermissionContext;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
@@ -50,91 +51,13 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
       this.cargoId = Number(params.get('cargoId'));
+      this.saveBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], actions: this.cargoId ? [PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT]: [PERMISSION_ACTION.ADD] };
     });
-
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoMasterComponent']);
     this.countries = await this.timeZoneTransformationService.getCountries().toPromise();
     this.ports = await this.cargoMasterApiService.getPorts().toPromise();
-    this.cargo = this.cargoId ? {
-      id: 1,
-      name: 'Cargo 1',
-      abbreviation: 'c1',
-      api: 21,
-      ports: [
-        {
-          "id": 2065,
-          "name": "5 WEST",
-          "code": "FEW",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        },
-        {
-          "id": 2001,
-          "name": "AABENRAA",
-          "code": "AAB",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        },
-        {
-          "id": 1,
-          "name": "AALBORG",
-          "code": "AAL",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        }
-      ],
-      type: 'c',
-      assay_date: '21-03-2021',
-      temp: '107',
-      reid_vapour_pressure: null,
-      gas: null,
-      total_wax: null,
-      pour_point: null,
-      cloud_point: null,
-      viscosity: null,
-      cow_codes: null,
-      hydrogen_sulfide_oil: null,
-      hydrogen_sulfide_vapour: null,
-      benzene: null,
-      special_instrictions_remark: null,
-      loadingInformation: [
-        {
-          id: 1,
-          country: {
-            id: 1,
-            name: "India",
-            code: "IND"
-          },
-          port: {
-            "id": 2065,
-            "name": "5 WEST",
-            "code": "FEW",
-            "waterDensity": 1.025,
-            "maxAirDraft": 48,
-            "maxDraft": 20
-          }
-        },
-        {
-          id: 2,
-          country: {
-            id: 2,
-            name: "Australia",
-            code: "AUS"
-          },
-          port: {
-            "id": 2001,
-            "name": "AABENRAA",
-            "code": "AAB",
-            "waterDensity": 1.025,
-            "maxAirDraft": 48,
-            "maxDraft": 20
-          }
-        }
-      ]
-    } : null;
+    const result = await this.cargoMasterApiService.getCargo(this.cargoId).toPromise();
+    this.cargo = this.cargoId ? result?.cargo : null;
     this.initForm(this.cargo);
   }
 
@@ -154,20 +77,20 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
     this.cargoDetailsForm = this.fb.group({
       type: this.fb.control(cargo?.type),
       abbreviation: this.fb.control(cargo?.abbreviation),
-      assay_date: this.fb.control(cargo?.assay_date),
+      assayDate: this.fb.control(cargo?.assayDate),
       api: this.fb.control(cargo?.api),
-      reid_vapour_pressure: this.fb.control(cargo?.reid_vapour_pressure),
+      reidVapourPressure: this.fb.control(cargo?.reidVapourPressure),
       gas: this.fb.control(cargo?.gas),
-      total_wax: this.fb.control(cargo?.total_wax),
-      pour_point: this.fb.control(cargo?.pour_point),
-      cloud_point: this.fb.control(cargo?.cloud_point),
+      totalWax: this.fb.control(cargo?.totalWax),
+      pourPoint: this.fb.control(cargo?.pourPoint),
+      cloudPoint: this.fb.control(cargo?.cloudPoint),
       viscosity: this.fb.control(cargo?.viscosity),
       temp: this.fb.control(cargo?.temp),
-      cow_codes: this.fb.control(cargo?.cow_codes),
-      hydrogen_sulfide_oil: this.fb.control(cargo?.hydrogen_sulfide_oil),
-      hydrogen_sulfide_vapour: this.fb.control(cargo?.hydrogen_sulfide_vapour),
+      cowCodes: this.fb.control(cargo?.cowCodes),
+      hydrogenSulfideOil: this.fb.control(cargo?.hydrogenSulfideOil),
+      hydrogenSulfideVapour: this.fb.control(cargo?.hydrogenSulfideVapour),
       benzene: this.fb.control(cargo?.benzene),
-      special_instrictions_remark: this.fb.control(cargo?.special_instrictions_remark),
+      specialInstrictionsRemark: this.fb.control(cargo?.specialInstrictionsRemark),
       loadingInformation: this.fb.array(loadingInformationForm)
     });
   }

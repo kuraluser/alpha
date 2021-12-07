@@ -111,6 +111,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   selectedTank: any;
   percentageFilled: string;
   selectedPortName: string;
+  showManualTotal = false;
 
   showAs = {
     id: 1, label: 'Actual'
@@ -150,6 +151,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   selectedCargo: any;
   billOfLaddingRemovedList: any = [];
+  cargoActualSum :any = 0;
 
   selectedTab = TANKTYPE.CARGO;
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -191,7 +193,6 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       } else {
         data = await this.ullageUpdateApiService.getDischargePlanUllageDetails(this.vesselId, this.patternId, this.portRotationId, status).toPromise();
       }
-
       data.portPlanStowageDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanStowageDetails : data?.portDischargePlanStowageDetails;
       data.portPlanBallastDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanBallastDetails : data?.portDischargePlanBallastDetails;
       data.portPlanRobDetails = this.operation === OPERATIONS.LOADING ? data?.portLoadablePlanRobDetails : data?.portDischargePlanRobDetails;
@@ -397,9 +398,27 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       let actualTemp = 0;
       let actualTempCount = 0;
       let avgCount = 0;
+      const commingleData = this.ullageResponseData?.portPlanStowageDetails?.filter(item => item.isCommingleCargo);
+      this.showManualTotal = false;
       this.ullageResponseData?.portPlanStowageDetails.map(item => {
         if (bl.cargoNominationId === item.cargoNominationId) {
-          actualQuantity += Number(item.quantity);
+          if (item.isCommingleCargo) {
+            this.showManualTotal = this.selectedCargo.cargoNominationId === bl.cargoNominationId;
+            commingleData?.map(com => {
+              if (com.tankId === item.tankId && item.cargoNominationId !== com.cargoNominationId) {
+                if ((item.ullage && com.ullage && item.ullage > com.ullage) || (item.ullage && !com.ullage)) {
+                  actualQuantity += Number(item.quantity);
+                } else if (item.ullage && item.ullage < com.ullage) {
+                  const individualQty = item.quantityMT - com.quantityMT;
+                  if (individualQty) {
+                    actualQuantity += individualQty;
+                  }
+                }
+              }
+            });
+          } else {
+            actualQuantity += Number(item.quantity);
+          }
           actualAPi += Number(item.api);
           if (Number(item.api) > 0) {
             avgCount++;
@@ -437,6 +456,10 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           }
         })
       });
+
+      if (bl.cargoNominationId === this.selectedCargo.cargoNominationId) {
+        this.cargoActualSum = this.decimalPipe.transform(actualQuantity, AppConfigurationService.settings.quantityNumberFormatMT);
+      }
 
       this.cargoQuantityList?.map(cargo => {
         if (cargo.cargoNominationId === bl.cargoNominationId) {
@@ -857,6 +880,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
     this.setCargoQuantities();
     this.getCargoTankFormGroup();
     this.checkFillingError();
+    this.updateCargoQuantiyData();
   }
 
   /**

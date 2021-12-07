@@ -31,5 +31,8 @@ public enum ProcessIdentifiers {
   loadable_plan_stowage_ballast_details,
   loadicator_data_for_synoptical_table,
   cargo_nomination_operation_details,
-  communication_status_update
+  communication_status_update,
+  port_instructions,
+  cow_history,
+  discharge_quantity_cargo_details
 }

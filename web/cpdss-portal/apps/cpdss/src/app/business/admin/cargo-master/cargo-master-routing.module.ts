@@ -9,13 +9,9 @@ const routes: Routes = [
     component: CargoMasterComponent
   },
   {
-    path: 'cargo/:cargoId',
+    path: ':cargoId',
     component: CargoDetailsComponent
-  },
-  {
-    path: 'cargo',
-    component: CargoDetailsComponent
-  },
+  }
 
 ];
 

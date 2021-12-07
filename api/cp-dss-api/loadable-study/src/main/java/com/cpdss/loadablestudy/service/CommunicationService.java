@@ -119,9 +119,10 @@ public class CommunicationService {
           log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
           // Get request and save to staging table
           if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType.getMessageType())
-              || (MessageTypes.VALIDATEPLAN
-                  .getMessageType()
-                  .equals(messageType.getMessageType()))) {
+              || (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType.getMessageType())
+                  || MessageTypes.DISCHARGESTUDY
+                      .getMessageType()
+                      .equals(messageType.getMessageType()))) {
             saveLoadableStudyIntoStagingTable(erReply);
           }
         } else {

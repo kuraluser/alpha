@@ -53,4 +53,8 @@ public class CargoNomination {
   private BigDecimal maxQuantity;
 
   private BigDecimal dischargeTime;
+
+  private Long sequenceNo;
+
+  private Boolean emptyMaxNoOfTanks;
 }

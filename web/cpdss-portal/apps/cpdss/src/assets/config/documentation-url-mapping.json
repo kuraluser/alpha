@@ -28,7 +28,7 @@
   "/business/admin/port-listing/add-port": "port-master.htm",
   "/business/admin/rules": "manage-rule.htm",
   "/business/admin/cargo-master": "cargo-master.htm",
-  "/business/admin/cargo-master/cargo/:cargoId": "cargo-master.htm",
+  "/business/admin/cargo-master/:cargoId": "cargo-master.htm",
   "/business/admin/cargo-master/cargo": "cargo-master.htm",
   "/business/admin/vessel-information": "vessel-informations.htm",
   "/business/admin/vessel-information/vessel/:vesselId": "vessel-informations.htm",

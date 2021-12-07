@@ -19,8 +19,10 @@ public class DischargingPlanExcelDischargingSequenceDetails {
   private List<TankCategoryForSequence> ballastTanks;
   private StabilityParamsOfLoadingSequence stabilityParams;
   private List<LoadingRateForSequence> dischargingRates;
-  private List<?> driveOilTanks;
-  private List<?> cargoPumps;
+  private List<String> driveOilTanks;
+  private List<?> tankToTanks;
+  private List<CargoPumpDetailsForSequence> cargoPumps;
+  private List<CargoPumpDetailsForSequence> ballastPumps;
   private List<String> tickPoints;
   private List<TankWithSequenceDetails> ballastTankUllage;
 }

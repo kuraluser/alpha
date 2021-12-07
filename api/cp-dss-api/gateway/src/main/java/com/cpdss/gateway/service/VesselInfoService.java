@@ -555,6 +555,9 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
       response.put(
           "strippingSequence",
           this.vesselValveService.buildVesselValveStrippingSeq(reply.getVvStrippingSequenceList()));
+      response.put(
+          "strippingSequenceCargoValve",
+          this.vesselValveService.buildVesselValveSSCargoValve(reply.getVvSSCargoValveList()));
 
       log.info("Vessel Valve Sequence data size {}", response.size());
       return response;

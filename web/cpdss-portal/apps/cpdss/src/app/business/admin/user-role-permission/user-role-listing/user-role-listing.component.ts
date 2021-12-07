@@ -6,8 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { NgxSpinnerService } from 'ngx-spinner';
 
-import { IRoleDetails, IRoleResponse, IRoleDeleteResponse, IDataStateChange } from '../../models/user-role-permission.model';
-import { IDataTableColumn, DATATABLE_ACTION } from '../../../../shared/components/datatable/datatable.model';
+import { IRoleDetails, IRoleResponse, IRoleDeleteResponse } from '../../models/user-role-permission.model';
+import { IDataTableColumn, DATATABLE_ACTION, IDataStateChange } from '../../../../shared/components/datatable/datatable.model';
 
 import { UserRolePermissionApiService } from '../../services/user-role-permission-api.service';
 import { UserRolePermissionTransformationService } from '../../services/user-role-permission-transformation.service';
