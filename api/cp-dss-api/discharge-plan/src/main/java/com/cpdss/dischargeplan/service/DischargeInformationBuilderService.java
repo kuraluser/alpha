@@ -1219,24 +1219,42 @@ public class DischargeInformationBuilderService {
                           ::setCowWithCargoEnable); // radio button for enable/disable CWC section
 
               //               tank wise details
-              if (!cowPlan1.getTopCowTankIds().isEmpty()) {
-                this.buildCowTankDetailsFromAlgo(
-                    Common.COW_TYPE.TOP_COW, builder1, cowPlan.getTopCowTankIds());
-              }
+              Optional.ofNullable(cowPlan1.getTopCowTankIds())
+                  .ifPresent(
+                      topCowTankIds -> {
+                        if (!topCowTankIds.isEmpty()) {
+                          this.buildCowTankDetailsFromAlgo(
+                              Common.COW_TYPE.TOP_COW, builder1, topCowTankIds);
+                        }
+                      });
 
-              if (!cowPlan1.getBottomCowTankIds().isEmpty()) {
-                this.buildCowTankDetailsFromAlgo(
-                    Common.COW_TYPE.BOTTOM_COW, builder1, cowPlan.getBottomCowTankIds());
-              }
+              Optional.ofNullable(cowPlan1.getBottomCowTankIds())
+                  .ifPresent(
+                      bottomCowTankIds -> {
+                        if (!bottomCowTankIds.isEmpty()) {
+                          this.buildCowTankDetailsFromAlgo(
+                              Common.COW_TYPE.BOTTOM_COW, builder1, bottomCowTankIds);
+                        }
+                      });
 
-              if (!cowPlan1.getAllCowTankIds().isEmpty()) {
-                this.buildCowTankDetailsFromAlgo(
-                    Common.COW_TYPE.ALL_COW, builder1, cowPlan.getAllCowTankIds());
-              }
-              if (!cowPlan1.getCargoCowTankIds().isEmpty()) {
-                this.buildCowTankDetailsFromAlgo(
-                    Common.COW_TYPE.CARGO, builder1, cowPlan1.getCargoCowTankIds());
-              }
+              Optional.ofNullable(cowPlan1.getAllCowTankIds())
+                  .ifPresent(
+                      allCowTankIds -> {
+                        if (!allCowTankIds.isEmpty()) {
+                          this.buildCowTankDetailsFromAlgo(
+                              Common.COW_TYPE.ALL_COW, builder1, allCowTankIds);
+                        }
+                      });
+
+              Optional.ofNullable(cowPlan1.getCargoCowTankIds())
+                  .ifPresent(
+                      cargoForCowDetails -> {
+                        if (!cargoForCowDetails.isEmpty()) {
+                          this.buildCowTankDetailsFromAlgo(
+                              Common.COW_TYPE.CARGO, builder1, cargoForCowDetails);
+                        }
+                      });
+
               builder.setCowPlan(builder1.build());
             });
   }
