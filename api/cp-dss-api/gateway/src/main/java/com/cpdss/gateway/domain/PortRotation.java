@@ -66,13 +66,9 @@ public class PortRotation {
 
   private List<BackLoading> backLoading = new ArrayList<>(Arrays.asList(new BackLoading()));
 
-  private Long cowId;
-
-  private Long percentage;
+  private Boolean cow;
 
   private BigDecimal dischargeRate;
-
-  private List<Long> tanks = new ArrayList<>();
 
   private List<Long> instructionId = new ArrayList<>();
 
