@@ -1012,7 +1012,7 @@ public class GenerateLoadingPlanExcelReportService {
         IntStream.range(0, stageTickPositions.size())
             .forEach(i -> tanksUllageObj.getUllage().add(""));
         IntStream.range(0, stageTickPositions.size())
-            .forEach(i -> tanksUllageObj.getStatus().add(new QuantityLoadingStatus(false, "", "")));
+            .forEach(i -> tanksUllageObj.getStatus().add(new QuantityLoadingStatus(false, "", "",false,"")));
       }
       tank.setCargoTankUllage(tanksUllageObj);
     }
@@ -1071,7 +1071,7 @@ public class GenerateLoadingPlanExcelReportService {
         IntStream.range(0, stageTickPositions.size())
             .forEach(i -> tanksUllageObj.getUllage().add(""));
         IntStream.range(0, stageTickPositions.size())
-            .forEach(i -> tanksUllageObj.getStatus().add(new QuantityLoadingStatus(false, "", "")));
+            .forEach(i -> tanksUllageObj.getStatus().add(new QuantityLoadingStatus(false, "", "",false,"")));
       }
       tank.setCargoTankUllage(tanksUllageObj);
     }
