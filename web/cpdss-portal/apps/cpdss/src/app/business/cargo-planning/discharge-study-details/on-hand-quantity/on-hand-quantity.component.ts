@@ -308,7 +308,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
       fuelTypeName: this.fb.control(ohqTankDetail.fuelTypeName, Validators.required),
       tankName: this.fb.control(ohqTankDetail.tankName, Validators.required),
       tankId: this.fb.control(ohqTankDetail.tankId, Validators.required),
-      density: this.fb.control(ohqTankDetail.density.value, [Validators.required, Validators.min(0) , numberValidator(2, 2, false), groupTotalValidator('density', 'fuelTypeId', selectedPortOHQTankDetails)]),
+      density: this.fb.control(ohqTankDetail.density.value, [Validators.required, Validators.min(0.5), Validators.max(1.1), numberValidator(2, 2, false), groupTotalValidator('density', 'fuelTypeId', selectedPortOHQTankDetails)]),
       arrivalQuantity: this.fb.control(ohqTankDetail.arrivalQuantity.value, [Validators.required, Validators.min(0) , numberValidator(2, 7, false), groupTotalValidator('arrivalQuantity', 'fuelTypeId', selectedPortOHQTankDetails), maximumVolumeValidator('density', ohqTankDetail)]),
       departureQuantity: this.fb.control(ohqTankDetail.departureQuantity.value, [Validators.required, Validators.min(0) ,numberValidator(2, 7, false), groupTotalValidator('departureQuantity', 'fuelTypeId', selectedPortOHQTankDetails), maximumVolumeValidator('density', ohqTankDetail)]),
     });

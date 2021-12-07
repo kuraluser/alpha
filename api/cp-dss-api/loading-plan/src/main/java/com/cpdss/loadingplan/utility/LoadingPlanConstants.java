@@ -83,7 +83,7 @@ public class LoadingPlanConstants {
           "json_data");
 
   public static final List<String> loadingPlanCommWithAlgoErrorsList =
-      Arrays.asList("algo_error_heading", "algo_errors");
+      Arrays.asList("loading_information", "algo_error_heading", "algo_errors");
 
   public static final List<String> loadingPlanGenerationCommList =
       Arrays.asList(

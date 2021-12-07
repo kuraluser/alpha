@@ -33,6 +33,10 @@ public class TaskListener implements ExecuteTaskListener {
   public static final String STATUS_CHECK_TASK_PREFIX = "STATUS_CHECK_";
   public static final String LOADABLE_DATA_UPDATE_TASK_PREFIX = "LOADABLE_DATA_UPDATE";
   public static final String STOWAGE_DATA_UPDATE_TASK_PREFIX = "STOWAGE_DATA_UPDATE";
+  public static final String DISCHARGE_STUDY_DOWNLOAD_TASK_PREFIX =
+      "DISCHARGE_STUDY_DOWNLOAD_RESULT";
+  public static final String DISCHARGE_STUDY_DATA_UPDATE_TASK_PREFIX =
+      "DISCHARGE_STUDY_DATA_UPDATE";
   /**
    * Task Listener
    *
@@ -86,6 +90,30 @@ public class TaskListener implements ExecuteTaskListener {
       // Status check task - fallback mechanism on timeout
       else if (taskName.startsWith(STATUS_CHECK_TASK_PREFIX)) {
         // communicationService.checkLoadableStudyStatus(taskReqParams);
+      }
+      // Download result task for Discharge Study
+      else if (taskName.startsWith(DISCHARGE_STUDY_DOWNLOAD_TASK_PREFIX)) {
+        if (CPDSS_BUILD_ENV_SHIP.equals(taskReqParams.get(ENV))) {
+          communicationService.getDataFromCommInShipSide(
+              taskName, taskReqParams, MessageTypes.dischargeStudyShip);
+        } else if (CPDSS_BUILD_ENV_SHORE.equals(taskReqParams.get(ENV))) {
+          communicationService.getDataFromCommInShoreSide(
+              taskName, taskReqParams, MessageTypes.dischargeStudyShore);
+        } else {
+          log.error(
+              "Invalid env configured in task_req_param_attributes. Task: {}, Env: {}",
+              taskName,
+              taskReqParams.get(ENV));
+        }
+      }
+      // Save data from staging table to corresponding tables
+      else if (taskName.startsWith(DISCHARGE_STUDY_DATA_UPDATE_TASK_PREFIX)) {
+        loadableStudyCommunicationService.getDischargeStudyStagingData(
+            StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get(ENV), taskName);
+        loadableStudyCommunicationService.getDischargeStudyStagingData(
+            StagingStatus.RETRY.getStatus(), taskReqParams.get(ENV), taskName);
+        loadableStudyCommunicationService.getDischargeStudyStagingData(
+            StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get(ENV), taskName);
       }
       // Task configured in DB but not implemented
       else {

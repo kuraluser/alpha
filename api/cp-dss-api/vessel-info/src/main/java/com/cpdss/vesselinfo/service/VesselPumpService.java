@@ -177,6 +177,8 @@ public class VesselPumpService {
         Optional.ofNullable(vvs.getVesselName()).ifPresent(builder::setVesselName);
         Optional.ofNullable(vvs.getVesselTankXid()).ifPresent(builder::setVesselTankXid);
         Optional.ofNullable(vvs.getVesselXid()).ifPresent(builder::setVesselXid);
+        Optional.ofNullable(vvs.getManifoldName()).ifPresent(builder::setManifoldName);
+        Optional.ofNullable(vvs.getManifoldSide()).ifPresent(builder::setManifoldSide);
       } catch (Exception e) {
         log.error("Failed to build message for vessel valve sequence");
         e.printStackTrace();
@@ -274,6 +276,27 @@ public class VesselPumpService {
       response.add(builder.build());
     }
     log.info("Vessel Valve RPC build StrippingSequence - Size {}", response.size());
+    return response;
+  }
+
+  public Iterable<VesselInfo.VesselValveStrippingSequenceCargoValve> buildVVSSCargoValve(
+      List<VesselValveStrippingSequenceCargoValve> allByVesselId) {
+    List<VesselInfo.VesselValveStrippingSequenceCargoValve> response = new ArrayList<>();
+    for (var a : allByVesselId) {
+      VesselInfo.VesselValveStrippingSequenceCargoValve.Builder builder =
+          VesselInfo.VesselValveStrippingSequenceCargoValve.newBuilder();
+      Optional.ofNullable(a.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(a.getVesselId()).ifPresent(builder::setVesselId);
+      Optional.ofNullable(a.getVesselName()).ifPresent(builder::setVesselName);
+      Optional.ofNullable(a.getPipeLineId()).ifPresent(builder::setPipeLineId);
+      Optional.ofNullable(a.getPipeLineName()).ifPresent(builder::setPipeLineName);
+      Optional.ofNullable(a.getColour()).ifPresent(builder::setColour);
+      Optional.ofNullable(a.getValve()).ifPresent(builder::setValve);
+      Optional.ofNullable(a.getValveId()).ifPresent(builder::setValveId);
+      Optional.ofNullable(a.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
+      response.add(builder.build());
+    }
+    log.info("Vessel Valve RPC build StrippingSequenceCargoValve - Size {}", response.size());
     return response;
   }
 }

@@ -150,6 +150,7 @@ public class LoadableStudiesConstants {
   public static final Long LOADABLE_STUDY_COMMUNICATED_TO_SHORE = 21L;
   public static final Long PROCESSING_WITH_SHIP_SIDE_ALGO = 22L;
   public static final Long PATTERN_COMMUNICATED_TO_SHORE = 23L;
+  public static final Long DISCHARGE_STUDY_COMMUNICATED_TO_SHORE = 24L;
   public static final String ERRO_CALLING_ALGO = "ERROR_CALLING_ALGO";
   public static final int CASE_1 = 1;
   public static final int CASE_2 = 2;
@@ -229,7 +230,9 @@ public class LoadableStudiesConstants {
           "loadable_pattern_cargo_details",
           "loadable_plan_stowage_ballast_details",
           "synoptical_table",
-          "loadicator_data_for_synoptical_table");
+          "loadicator_data_for_synoptical_table",
+          "discharge_quantity_cargo_details");
+
   public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
       Arrays.asList(
           "loadable_study",
@@ -304,8 +307,22 @@ public class LoadableStudiesConstants {
     LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS("loadable_plan_stowage_ballast_details"),
     LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE("loadicator_data_for_synoptical_table"),
     CARGO_NOMINATION_OPERATION_DETAILS("cargo_nomination_operation_details"),
-    COMMUNICATION_STATUS_UPDATE("communication_status_update");
+    COMMUNICATION_STATUS_UPDATE("communication_status_update"),
+    PORT_INSTRUCTIONS("port_instructions"),
+    COW_HISTORY("cow_history"),
+    DISCHARGE_QUANTITY_CARGO_DETAILS("discharge_quantity_cargo_details");
 
     public final String table;
   }
+
+  public static List<String> DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
+      Arrays.asList(
+          "loadable_study",
+          "loadable_quantity",
+          "loadable_study_port_rotation",
+          "cargo_nomination",
+          "cargo_nomination_operation_details",
+          "on_hand_quantity",
+          "cow_history",
+          "synoptical_table");
 }

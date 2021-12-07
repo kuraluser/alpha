@@ -400,6 +400,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     portRotation.setSynopticalTable(loadableStudyPortRotation.getSynopticalTable());
     portRotation.setTimeOfStay(loadableStudyPortRotation.getTimeOfStay());
     portRotation.setVersion(loadableStudyPortRotation.getVersion());
+    portRotation.setFreshCrudeOil(loadableStudyPortRotation.getFreshCrudeOil());
+    portRotation.setFreshCrudeOilQuantity(loadableStudyPortRotation.getFreshCrudeOilQuantity());
+    portRotation.setFreshCrudeOilTime(loadableStudyPortRotation.getFreshCrudeOilTime());
     return portRotation;
   }
 
@@ -695,6 +698,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     portRotation.setMaxDraft(new BigDecimal(portRequestDetail.getMaxDraft()));
                     portRotation.setIsbackloadingEnabled(
                         portRequestDetail.getIsBackLoadingEnabled());
+                    portRotation.setFreshCrudeOil(portRequestDetail.getFreshCrudeOil());
+                    portRotation.setFreshCrudeOilQuantity(new BigDecimal(portRequestDetail.getFreshCrudeOilQuantity()));
+                    portRotation.setFreshCrudeOilTime(new BigDecimal(portRequestDetail.getFreshCrudeOilTime()));
                   }
                 });
             updateCowDetails(
@@ -717,37 +723,41 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 portCargoId,
                 dischargestudyId);
 
-            cargoNominations.forEach(
-                cargoRequest -> {
-                  Long portId = dbPortRoation.getPortXId();
-                  if (cargoRequest.getId() != -1) {
-                    Optional<CargoNomination> optionalCargoNomination =
-                        dbCargos
-                            .parallelStream()
-                            .filter(
-                                cargoNomination -> cargoNomination.getId() == cargoRequest.getId())
-                            .findFirst();
-                    if (!optionalCargoNomination.isPresent()) {
-                      return;
-                    }
-                    updateCargoNominationToSave(
-                        cargoRequest,
-                        optionalCargoNomination.get(),
-                        cargoNominationsToSave,
-                        portId);
-                  } else {
-                    CargoNomination cargoNomination = new CargoNomination();
-                    cargoNomination.setLoadableStudyXId(dischargestudyId);
-                    cargoNomination.setPriority(1L);
-                    cargoNomination.setIsActive(true);
-                    cargoNomination.setCargoNominationPortDetails(
-                        cargoNominationService.createCargoNominationPortDetails(
-                            cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
-                    cargoNomination.setIsBackloading(true);
-                    updateCargoNominationToSave(
-                        cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+            for(int i = 0; i < cargoNominations.size(); i++){
+                CargoNominationDetail cargoRequest = cargoNominations.get(i);
+                Long portId = dbPortRoation.getPortXId();
+                if (cargoRequest.getId() != -1) {
+                  Optional<CargoNomination> optionalCargoNomination =
+                      dbCargos
+                          .parallelStream()
+                          .filter(
+                              cargoNomination -> cargoNomination.getId() == cargoRequest.getId())
+                          .findFirst();
+                  if (!optionalCargoNomination.isPresent()) {
+                    return;
                   }
-                });
+                  optionalCargoNomination.get().setSequenceNo(cargoRequest.getSequenceNo());
+                  optionalCargoNomination.get().setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
+                  updateCargoNominationToSave(
+                      cargoRequest,
+                      optionalCargoNomination.get(),
+                      cargoNominationsToSave,
+                      portId);
+                } else {
+                  CargoNomination cargoNomination = new CargoNomination();
+                  cargoNomination.setLoadableStudyXId(dischargestudyId);
+                  cargoNomination.setPriority(1L);
+                  cargoNomination.setIsActive(true);
+                  cargoNomination.setCargoNominationPortDetails(
+                      cargoNominationService.createCargoNominationPortDetails(
+                          cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
+                  cargoNomination.setIsBackloading(true);
+                  cargoNomination.setSequenceNo(Long.valueOf(i));
+                  cargoNomination.setEmptyMaxNoOfTanks(false);
+                  updateCargoNominationToSave(
+                      cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+                }
+            }
             List<Long> requestIds =
                 cargoNominations.stream()
                     .map(CargoNominationDetail::getId)

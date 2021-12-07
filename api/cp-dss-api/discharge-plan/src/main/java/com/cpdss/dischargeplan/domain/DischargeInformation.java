@@ -33,4 +33,11 @@ public class DischargeInformation {
   private CowPlan cowPlan;
   private PostDischargeRates postDischargeStages;
   private List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetails;
+
+  // For Discharge Information
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Boolean dischargeSlopTanksFirst = false; // default unchecked;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private Boolean dischargeCommingledCargoSeparately = false; // default unchecked
 }

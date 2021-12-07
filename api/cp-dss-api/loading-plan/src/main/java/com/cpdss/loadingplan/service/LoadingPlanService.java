@@ -187,11 +187,12 @@ public class LoadingPlanService {
               this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
           log.info("Communication table updated : " + loadingPlanCommunicationStat.getId());
           // Set Loading Status
-          Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-              loadingInfoStatusRepository.findByIdAndIsActive(
-                  LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE, true);
-          loadingInformationRepository.updateLoadingInfoWithInfoStatus(
-              loadingInfoStatusOpt.get(), false, false, savedLoadingInformation.getId());
+          //          Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          //              loadingInfoStatusRepository.findByIdAndIsActive(
+          //                  LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE, true);
+          //          loadingInformationRepository.updateLoadingInfoWithInfoStatus(
+          //              loadingInfoStatusOpt.get(), false, false,
+          // savedLoadingInformation.getId());
         }
       }
       builder.setResponseStatus(

@@ -29,6 +29,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.dischargeplan.domain.*;
 import com.cpdss.dischargeplan.domain.rules.RuleMasterData;
 import com.cpdss.dischargeplan.domain.rules.RuleType;
 import com.cpdss.dischargeplan.entity.CowPlanDetail;
@@ -1082,5 +1083,209 @@ public class DischargeInformationBuilderService {
           HttpStatusCode.BAD_REQUEST);
     }
     return portLoadingPlanCommingleDetails;
+  }
+
+  /**
+   * Building discharge berth details from saved json of algo response
+   *
+   * @param disEntity
+   * @param dischargeBerthDetails
+   * @param builder
+   */
+  public void buildDischargeBerthDetails(
+      DischargeInformation disEntity,
+      DischargeBerthDetails dischargeBerthDetails,
+      com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
+
+    Optional.ofNullable(dischargeBerthDetails)
+        .ifPresent(
+            dischargeBerthDetails1 ->
+                Optional.ofNullable(dischargeBerthDetails1.getSelectedBerths())
+                    .ifPresent(
+                        berthDetailsList ->
+                            berthDetailsList.forEach(
+                                berthDetails -> {
+                                  DischargeBerths.Builder builder1 = DischargeBerths.newBuilder();
+                                  Optional.ofNullable(disEntity.getId())
+                                      .ifPresent(builder1::setDischargeInfoId);
+                                  Optional.ofNullable(berthDetails.getDischargeBerthId())
+                                      .ifPresent(builder1::setId);
+                                  Optional.ofNullable(berthDetails.getBerthId())
+                                      .ifPresent(builder1::setBerthId);
+                                  Optional.ofNullable(berthDetails.getMaxShipDepth())
+                                      .ifPresent(v -> builder1.setDepth(v.toString()));
+                                  Optional.ofNullable(berthDetails.getMaxManifoldHeight())
+                                      .ifPresent(v -> builder1.setMaxManifoldHeight(v.toString()));
+                                  Optional.ofNullable(berthDetails.getMaxManifoldPressure())
+                                      .ifPresent(
+                                          v -> builder1.setMaxManifoldPressure(v.toString()));
+                                  Optional.ofNullable(berthDetails.getHoseConnections())
+                                      .ifPresent(builder1::setHoseConnections);
+                                  Optional.ofNullable(berthDetails.getSeaDraftLimitation())
+                                      .ifPresent(v -> builder1.setSeaDraftLimitation(v.toString()));
+                                  Optional.ofNullable(berthDetails.getSeaDraftLimitation())
+                                      .ifPresent(v -> builder1.setSeaDraftLimitation(v.toString()));
+                                  Optional.ofNullable(berthDetails.getAirDraftLimitation())
+                                      .ifPresent(v -> builder1.setAirDraftLimitation(v.toString()));
+                                  Optional.ofNullable(berthDetails.getAirPurge())
+                                      .ifPresent(builder1::setAirPurge);
+                                  Optional.ofNullable(berthDetails.getCargoCirculation())
+                                      .ifPresent(builder1::setCargoCirculation);
+                                  Optional.ofNullable(berthDetails.getLineDisplacement())
+                                      .ifPresent(v -> builder1.setLineDisplacement(v.toString()));
+                                  Optional.ofNullable(berthDetails.getRegulationAndRestriction())
+                                      .ifPresent(builder1::setSpecialRegulationRestriction);
+                                  Optional.ofNullable(berthDetails.getItemsToBeAgreedWith())
+                                      .ifPresent(builder1::setItemsToBeAgreedWith);
+
+                                  builder.addBerthDetails(builder1.build());
+                                })));
+  }
+
+  /**
+   * Building discharge machine in use details from saved json of algo response
+   *
+   * @param disEntity
+   * @param machineryInUses
+   * @param builder
+   */
+  public void buildMachineInUse(
+      DischargeInformation disEntity,
+      CargoMachineryInUse machineryInUses,
+      com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
+
+    Optional.ofNullable(machineryInUses)
+        .ifPresent(
+            cargoMachineryInUses ->
+                Optional.ofNullable(cargoMachineryInUses.getMachinesInUses())
+                    .ifPresent(
+                        dischargeMachinesInUses ->
+                            dischargeMachinesInUses.forEach(
+                                dischargingMachineryInUse -> {
+                                  LoadingPlanModels.LoadingMachinesInUse.Builder builder1 =
+                                      LoadingPlanModels.LoadingMachinesInUse.newBuilder();
+                                  builder1.setId(dischargingMachineryInUse.getId());
+                                  builder1.setLoadingInfoId(disEntity.getId());
+                                  builder1.setMachineId(dischargingMachineryInUse.getMachineId());
+                                  builder1.setMachineTypeValue(
+                                      dischargingMachineryInUse.getMachineTypeId());
+                                  Optional.ofNullable(dischargingMachineryInUse.getCapacity())
+                                      .ifPresent(value -> builder1.setCapacity(value.toString()));
+                                  builder.addMachineInUse(builder1.build());
+                                })));
+    log.info("Setting Machine in use");
+  }
+
+  /**
+   * Building discharge cow plan details from saved json of algo response
+   *
+   * @param cowPlan
+   * @param builder
+   */
+  public void buildCowPlan(
+      com.cpdss.dischargeplan.domain.CowPlan cowPlan,
+      com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
+
+    Optional.ofNullable(cowPlan)
+        .ifPresent(
+            cowPlan1 -> {
+              CowPlan.Builder builder1 = CowPlan.newBuilder();
+              Optional.ofNullable(cowPlan1.getCowOptionTypeValue())
+                  .ifPresent(
+                      optionType ->
+                          builder1.setCowOptionType(Common.COW_OPTION_TYPE.forNumber(optionType)));
+              Optional.ofNullable(cowPlan1.getCowPercentage())
+                  .ifPresent(percentage -> builder1.setCowTankPercent(percentage.toString()));
+              Optional.ofNullable(cowPlan1.getCowStartTime())
+                  .ifPresent(startTime -> builder1.setCowStartTime(startTime.toString()));
+              Optional.ofNullable(cowPlan1.getCowEndTime())
+                  .ifPresent(endTime -> builder1.setCowEndTime(endTime.toString()));
+              Optional.ofNullable(cowPlan1.getEstimatedCowDuration())
+                  .ifPresent(duration -> builder1.setEstCowDuration(duration.toString()));
+
+              Optional.ofNullable(cowPlan1.getCowMinTrim())
+                  .ifPresent(minTrim -> builder1.setTrimCowMin(minTrim.toString()));
+              Optional.ofNullable(cowPlan1.getCowMaxTrim())
+                  .ifPresent(maxTrim -> builder1.setTrimCowMax(maxTrim.toString()));
+
+              Optional.ofNullable(cowPlan1.getNeedFreshCrudeStorage())
+                  .ifPresent(builder1::setNeedFreshCrudeStorage);
+              Optional.ofNullable(cowPlan1.getNeedFlushingOil())
+                  .ifPresent(builder1::setNeedFlushingOil);
+
+              Optional.ofNullable(cowPlan1.getWashTanksWithDifferentCargo())
+                  .ifPresent(
+                      builder1
+                          ::setCowWithCargoEnable); // radio button for enable/disable CWC section
+
+              //               tank wise details
+              if (!cowPlan1.getTopCowTankIds().isEmpty()) {
+                this.buildCowTankDetailsFromAlgo(
+                    Common.COW_TYPE.TOP_COW, builder1, cowPlan.getTopCowTankIds());
+              }
+
+              if (!cowPlan1.getBottomCowTankIds().isEmpty()) {
+                this.buildCowTankDetailsFromAlgo(
+                    Common.COW_TYPE.BOTTOM_COW, builder1, cowPlan.getBottomCowTankIds());
+              }
+
+              if (!cowPlan1.getAllCowTankIds().isEmpty()) {
+                this.buildCowTankDetailsFromAlgo(
+                    Common.COW_TYPE.ALL_COW, builder1, cowPlan.getAllCowTankIds());
+              }
+              if (!cowPlan1.getCargoCowTankIds().isEmpty()) {
+                this.buildCowTankDetailsFromAlgo(
+                    Common.COW_TYPE.CARGO, builder1, cowPlan1.getCargoCowTankIds());
+              }
+              builder.setCowPlan(builder1.build());
+            });
+  }
+
+  /**
+   * Building Cow Details from algo response
+   *
+   * @param cow_type
+   * @param builder
+   * @param list
+   */
+  private void buildCowTankDetailsFromAlgo(
+      final Common.COW_TYPE cow_type, CowPlan.Builder builder, Collection list) {
+    CowTankDetails.Builder tankDetails = CowTankDetails.newBuilder();
+    tankDetails.setCowType(cow_type);
+    switch (cow_type) {
+      case TOP_COW:
+      case BOTTOM_COW:
+      case ALL_COW:
+        {
+          List<Long> ls1 = new ArrayList<>(list); // cast from generic list
+          tankDetails.addAllTankIds(ls1);
+        }
+        break;
+      case CARGO:
+        {
+          List<CargoForCowDetails> cargoForCowDetails =
+              new ArrayList<>(list); // cast from generic list
+
+          var gp1 =
+              cargoForCowDetails.stream()
+                  .collect(Collectors.groupingBy(CargoForCowDetails::getCargoId)); // group by cargo
+          for (Map.Entry<Long, List<CargoForCowDetails>> map1 : gp1.entrySet()) {
+            CargoForCowDetails firstItem = map1.getValue().stream().findFirst().get();
+            CargoForCow.Builder cargoForCow = CargoForCow.newBuilder();
+            cargoForCow.setCargoId(firstItem.getCargoId());
+            cargoForCow.setCargoNominationId(firstItem.getCargoNominationId());
+            cargoForCow.setWashingCargoId(firstItem.getWashingCargoId());
+            cargoForCow.setWashingCargoNominationId(firstItem.getWashingCargoNominationId());
+            cargoForCow.addAllTankIds(firstItem.getTankIds());
+            tankDetails.addCargoForCow(cargoForCow.build());
+          }
+        }
+        break;
+      default:
+        {
+          log.info("Default case for build cow tank details");
+        }
+    }
+    builder.addCowTankDetails(tankDetails.build());
   }
 }

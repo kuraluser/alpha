@@ -59,6 +59,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+
+import com.google.api.Http;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -112,6 +114,7 @@ public class DischargeStudyService {
     LoadableStudy.LoadablePatternConfirmedReply patternReply =
         loadableStudyServiceBlockingStub.getLoadablePatternByVoyageAndStatus(
             loadableStudyRequest.build());
+    System.out.println(patternReply);
     if (patternReply != null
         && patternReply.getResponseStatus() != null
         && SUCCESS.equalsIgnoreCase(patternReply.getResponseStatus().getStatus())) {
@@ -120,11 +123,12 @@ public class DischargeStudyService {
       requestBuilder.setLoadablePatternId(patternReply.getPattern().getLoadablePatternId());
       LoadingInformationSynopticalReply grpcReply =
           loadingInfoServiceBlockingStub.getLoadigInformationByVoyage(requestBuilder.build());
+      System.out.println(grpcReply);
       if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Failed to fetch getDischargeStudyByVoyage",
             grpcReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
       LoadableStudy.LoadablePlanDetailsRequest.Builder loadablePlanRequest =
           LoadableStudy.LoadablePlanDetailsRequest.newBuilder();
@@ -484,10 +488,11 @@ public class DischargeStudyService {
           portRotation.setOperationId(port.getOperationId());
           portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
           portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
-          portRotation.setCowId(port.getCowId());
-          portRotation.setPercentage(port.getPercentage());
-          portRotation.setTanks(port.getTanksList());
+          portRotation.setCow(false);
           portRotation.setInstructionId(port.getInstructionIdList());
+          portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
+          portRotation.setFreshCrudeOilQuantity(port.getFreshCrudeOilQuantity().isEmpty() ? null : new BigDecimal(port.getFreshCrudeOilQuantity()));
+          portRotation.setFreshCrudeOilTime(port.getFreshCrudeOilTime().isEmpty() ? null : new BigDecimal(port.getFreshCrudeOilTime()));
           portRotation.setDischargeRate(new BigDecimal(0));
           if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
             List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
@@ -495,6 +500,9 @@ public class DischargeStudyService {
             buildCargoNomination(cargoNominationDetailList, portRotation);
           }
           response.getPortList().add(portRotation);
+          response.setCowId(Long.valueOf(0));
+          response.setPercentage(BigDecimal.ZERO);
+          response.setTanks(new ArrayList<>());
         });
   }
 
@@ -555,6 +563,8 @@ public class DischargeStudyService {
                           && !cargoNominationDetail.getMaxQuantity().isBlank()
                       ? new BigDecimal(cargoNominationDetail.getMaxQuantity())
                       : new BigDecimal(0));
+              cargoNomination.setSequenceNo(cargoNominationDetail.getSequenceNo());
+              cargoNomination.setEmptyMaxNoOfTanks(cargoNominationDetail.getEmptyMaxNoOfTanks());
               cargoNominations.add(cargoNomination);
             });
     cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
@@ -644,19 +654,19 @@ public class DischargeStudyService {
     if (portCargo.getIsBackLoadingEnabled()) {
       portDetails.addAllBackLoading(createBackLoading(portCargo.getBackLoading()));
     }
-    portDetails.setCowId(portCargo.getCowId());
-    portDetails.setPercentage(portCargo.getPercentage());
-    if (portCargo.getCowId() == 2) {
-      portDetails.addAllTanks(portCargo.getTanks());
-    }
+//    portDetails.setCowId(portCargo.getCowId());
+//    portDetails.setPercentage(portCargo.getPercentage());
+//    if (portCargo.getCowId() == 2) {
+//      portDetails.addAllTanks(portCargo.getTanks());
+//    }
     portDetails.addAllInstructionId(portCargo.getInstructionId());
     dsBackLoadingDetail.setPortDetails(portDetails.build());
     dsBackLoadingDetail.addAllPortCargoDetails(
-        createPortWiseCargoNoination(portCargo.getCargoNominationList()));
+        createPortWiseCargoNomination(portCargo.getCargoNominationList()));
     builder.addDsBackLoading(dsBackLoadingDetail.build());
   }
 
-  private List<CargoNominationDetail> createPortWiseCargoNoination(
+  private List<CargoNominationDetail> createPortWiseCargoNomination(
       List<CargoNomination> cargoNominationList) {
     List<CargoNominationDetail> cargoList = new ArrayList<>();
     cargoNominationList.forEach(
@@ -670,6 +680,8 @@ public class DischargeStudyService {
           cargoNomination.setCargoId(cargo.getCargoId());
           cargoNomination.setApi(cargo.getApi().toString());
           cargoNomination.setTemperature(cargo.getTemperature().toString());
+          cargoNomination.setSequenceNo(cargo.getSequenceNo());
+          cargoNomination.setEmptyMaxNoOfTanks(cargo.getEmptyMaxNoOfTanks());
           cargoList.add(cargoNomination.build());
         });
 

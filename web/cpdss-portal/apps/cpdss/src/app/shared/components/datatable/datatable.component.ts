@@ -121,6 +121,14 @@ export class DatatableComponent implements OnInit {
 
   @Input() showTotalClass: string;
 
+  @Input() showManualTotal = false;
+
+  @Input() totalValue: number;
+
+  @Input() showTotalTooltip: false;
+
+  @Input() totalToolTipKey: string;
+
   @Input()
   set loading(loading: boolean) {
     this._loading = loading;

@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IDataTableColumn } from '../../shared/components/datatable/datatable.model';
+import { IDataStateChange, IDataTableColumn } from '../../shared/components/datatable/datatable.model';
 import { VoyageListTransformationService } from './services/voyage-list-transformation.service';
 import { IVoyageList, IVoyageListResponse } from './models/voyage-list.model'
 import { VoyageListApiService } from './services/voyage-list-api.service';
-import { IDataStateChange } from '../admin/models/user-role-permission.model';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { IVessel } from '../core/models/vessel-details.model';

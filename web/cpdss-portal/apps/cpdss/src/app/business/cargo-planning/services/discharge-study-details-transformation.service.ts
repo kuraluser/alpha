@@ -612,6 +612,7 @@ export class DischargeStudyDetailsTransformationService {
           errorMessages: {
             'required': 'OHQ_VALUE_REQUIRED',
             'min': 'OHQ_MIN_VALUE',
+            'max': 'OHQ_MAX_VALUE',
             'groupTotal': 'OHQ_GROUP_TOTAL',
             'pattern': 'OHQ_PATTERN_ERROR',
             'invalidNumber': 'OHQ_VALUE_INVALID'

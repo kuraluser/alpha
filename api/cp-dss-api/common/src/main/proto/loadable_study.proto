@@ -936,6 +936,8 @@ message CargoNominationDetail {
 	string maxQuantity = 20;
 	string dischargingRate = 21;
 	string dischargingTime = 22;
+	int64 sequenceNo = 23;
+	bool emptyMaxNoOfTanks = 24;
 }
 
 message CargoNominationRequest {
@@ -998,6 +1000,9 @@ message PortRotationDetail{
 	repeated int64 tanks = 27;
 	string portRotationType=28;
 	int64 version = 29;
+	bool freshCrudeOil = 30;
+	string freshCrudeOilQuantity = 31;
+	string freshCrudeOilTime = 32;
 	
 }
 

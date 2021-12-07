@@ -203,6 +203,17 @@ export interface ITimeZoneResponse {
 }
 
 /**
+ * Interface for countries API response
+ *
+ * @export
+ * @interface ICountriesResponse
+ */
+export interface ICountriesResponse {
+  responseStatus: IResponseStatus;
+  countrys: ICountry[];
+}
+
+/**
  * Interface for list time zones
  *
  * @export

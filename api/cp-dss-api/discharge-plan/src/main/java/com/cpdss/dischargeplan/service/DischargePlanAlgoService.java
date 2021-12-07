@@ -64,6 +64,7 @@ import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.entity.DischargingSequence;
 import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.repository.*;
+import com.cpdss.dischargeplan.repository.projections.PortTideAlgo;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -171,6 +172,8 @@ public class DischargePlanAlgoService {
 
   @Autowired DischargingDriveTankRepository dischargingDriveTankRepository;
 
+  @Autowired PortTideDetailsRepository portTideDetailsRepository;
+
   private static final Integer cowBottomTypeId = 2;
   private static final Integer cowTopTypeId = 3;
   private static final Integer cowFullTypeId = 1;
@@ -195,6 +198,9 @@ public class DischargePlanAlgoService {
       disDto.setDischargeInfoId(entity.getId());
       disDto.setSynopticTableId(entity.getSynopticTableXid());
       algoRequest.setPortRotationId(entity.getPortRotationXid());
+      disDto.setDischargeCommingledCargoSeparately(entity.getDischargeCommingleCargoSeparately());
+      disDto.setDischargeSlopTanksFirst(entity.getDischargeSlopTankFirst());
+
       // discharge details
       DischargeDetails dischargeDetails = new DischargeDetails();
       dischargeDetails.setStartTime(
@@ -247,13 +253,19 @@ public class DischargePlanAlgoService {
       disDto.setDischargeQuantityCargoDetails(buildCargoVesselTankDetails(entity));
 
       // Build hourly based tide details which upload from loading info page - TO DO
-      // buildPortTideDetails(algoRequest, loadingInfoOpt.get().getPortXId());
+      algoRequest.setPortTideDetails(buildPortTideDetails(entity.getId(), entity.getPortXid()));
 
       // Build Discharging Rule, service is in discharging-plan (self)
       buildDischargingRules(algoRequest, entity);
 
       algoRequest.setDischargeInformation(disDto);
     }
+  }
+
+  private List<PortTideAlgo> buildPortTideDetails(Long id, Long portXid) {
+    var list = portTideDetailsRepository.findByDischargingXidAndPortXidAndIsActiveTrue(id, portXid);
+    log.info("Discharging port tide details - Size {}", list.size());
+    return list.isEmpty() ? null : list;
   }
 
   /**
@@ -665,14 +677,12 @@ public class DischargePlanAlgoService {
                         .ifPresent(dto::setLineDisplacement);
 
                     // Call 1 to Port info, set value from berth table
-                    // Setting berth name and ukc
+                    // Setting berth name
                     this.getBerthDetailsByPortIdAndBerthId(
                         var.getDischargingInformation().getPortXid(), var.getBerthXid(), dto);
 
                     // Call 2 to Port info, set value from port table
-                    if (dto.getUkc() == null) {
-                      this.getPortInfoIntoBerthData(var.getBerthXid(), dto);
-                    }
+                    this.getPortInfoIntoBerthData(var.getBerthXid(), dto);
                     return dto;
                   })
               .collect(Collectors.toList()));
@@ -886,6 +896,9 @@ public class DischargePlanAlgoService {
                   .ifPresent(loadableQuantity::setDsCargoNominationId);
               Optional.of(cargo.getEstimatedAPI()).ifPresent(loadableQuantity::setEstimatedAPI);
               Optional.of(cargo.getEstimatedTemp()).ifPresent(loadableQuantity::setEstimatedTemp);
+              Optional.of(cargo.getSlopQuantity()).ifPresent(loadableQuantity::setSlopQuantity);
+              Optional.of(cargo.getIsCommingled())
+                  .ifPresent(loadableQuantity::setIsCommingledDischarge);
               loadableQuantityCargoDetails.add(loadableQuantity);
             });
     return loadableQuantityCargoDetails;
@@ -1666,17 +1679,26 @@ public class DischargePlanAlgoService {
         request.getLoadableStudystatusId(), request.getProcesssId());
   }
 
-  /** If Berth table don't have UKC data, then it will get data from Port */
+  /**
+   * Controlling Depth for Port Set UKC from berth, if not available Set UKC from port.
+   *
+   * @param berthId Long
+   * @param berthDetails BerthDetails
+   */
   private void getPortInfoIntoBerthData(Long berthId, BerthDetails berthDetails) {
     PortInfo.LoadingAlgoBerthData portReply =
         this.portInfoServiceBlockingStub.getLoadingPlanBerthData(
             PortInfo.BerthIdsRequest.newBuilder().addBerthIds(berthId).build());
     if (portReply != null && portReply.getResponseStatus().getStatus().equals("SUCCESS")) {
-      if (!portReply.getPortUKC().isEmpty()) { // If berth UKC not available
+      if (!portReply.getPortControllingDepth().isEmpty()) {
+        berthDetails.setControllingDepth(portReply.getPortControllingDepth());
+      }
+      if (!portReply.getBerthUKC().isEmpty()) {
+        berthDetails.setUkc(portReply.getBerthUKC());
+      } else if (!portReply.getPortUKC().isEmpty()) {
         berthDetails.setUkc(portReply.getPortUKC());
-        log.info("Setting UKC from port Info Table");
       } else {
-        log.error("Setting UKC from port Info Table - Failed, Data - {}", portReply);
+        log.error("Failed to set UKC Berth Id - {}", berthId);
       }
     }
   }

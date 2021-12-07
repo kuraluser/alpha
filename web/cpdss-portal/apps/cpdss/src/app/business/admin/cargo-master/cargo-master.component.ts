@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
+import { IDataStateChange, IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { ICargoDetails } from '../models/cargo.model';
-import { IPermissionContext , PERMISSION_ACTION } from '../../../shared/models/common.model';
-import { IDataStateChange } from '../models/user-role-permission.model';
+import { ICargoDetails, ICargosResponse } from '../models/cargo.model';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { CargoMasterTransformationService } from '../services/cargo-master-transformation.service';
+import { CargoMasterApiService } from '../services/cargo-master-api.service';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 /**
  * Component class for cargo master
@@ -20,7 +23,7 @@ import { CargoMasterTransformationService } from '../services/cargo-master-trans
   templateUrl: './cargo-master.component.html',
   styleUrls: ['./cargo-master.component.scss']
 })
-export class CargoMasterComponent implements OnInit {
+export class CargoMasterComponent implements OnInit, OnDestroy {
   get cargos(): ICargoDetails[] {
     return this._cargos;
   }
@@ -38,124 +41,38 @@ export class CargoMasterComponent implements OnInit {
   addCargoBtnPermissionContext: IPermissionContext;
 
   private _cargos: ICargoDetails[];
+  private state$ = new BehaviorSubject<IDataStateChange>(<IDataStateChange>{});
 
   constructor(private permissionsService: PermissionsService,
     private cargoMasterTransformationService: CargoMasterTransformationService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private cargoMasterApiService: CargoMasterApiService,
+    private ngxSpinnerService: NgxSpinnerService
   ) { }
 
-  ngOnInit(): void {
-    this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };;
+  async ngOnInit(): Promise<void> {
+    this.ngxSpinnerService.show();
+    this.first = 0;
+    this.currentPage = 0;
+    this.pageState = <IDataStateChange>{};
+    this.state$.pipe(
+      debounceTime(1000), // By setting this we can avoid multiple api calls
+      switchMap(() => {
+        return this.cargoMasterApiService.getCargos(this.pageState);
+      })
+    ).subscribe((response: ICargosResponse) => {
+      this.setCurrentPageDetails(response);
+      this.loading = false;
+    });
+
+    this.addCargoBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
     const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoMasterComponent']);
     this.columns = this.cargoMasterTransformationService.getCargosDatatableColumns(permission);
-    this.cargos = [{
-      id: 1,
-      name: 'Cargo 1',
-      abbreviation: 'c1',
-      api: 21,
-      ports: [
-        {
-          "id": 2065,
-          "name": "5 WEST",
-          "code": "FEW",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        },
-        {
-          "id": 2001,
-          "name": "AABENRAA",
-          "code": "AAB",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        },
-        {
-          "id": 1,
-          "name": "AALBORG",
-          "code": "AAL",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        }
-      ],
-      type: 'c',
-      assay_date: '21-03-2021',
-      temp: '107',
-      countries: [{
-        id: 1,
-        name: "India",
-        code: "IND"
-      }, {
-        id: 2,
-        name: "Australia",
-        code: "Aus"
-      }
-      ],
-      reid_vapour_pressure: null,
-      gas: null,
-      total_wax: null,
-      pour_point: null,
-      cloud_point: null,
-      viscosity: null,
-      cow_codes: null,
-      hydrogen_sulfide_oil: null,
-      hydrogen_sulfide_vapour: null,
-      benzene: null,
-      special_instrictions_remark: null
-    },
-    {
-      id: 2,
-      name: 'Cargo 2',
-      abbreviation: 'c2',
-      api: 22,
-      ports: [
-        {
-          "id": 2065,
-          "name": "5 WEST",
-          "code": "FEW",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        },
-        {
-          "id": 2001,
-          "name": "AABENRAA",
-          "code": "AAB",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        },
-        {
-          "id": 1,
-          "name": "AALBORG",
-          "code": "AAL",
-          "waterDensity": 1.025,
-          "maxAirDraft": 48,
-          "maxDraft": 20
-        }
-      ],
-      type: 'c',
-      assay_date: '21-03-2021',
-      temp: '107',
-      countries: [{
-        id: 2,
-        name: "Australia",
-        code: "AUS"
-      }],
-      reid_vapour_pressure: null,
-      gas: null,
-      total_wax: null,
-      pour_point: null,
-      cloud_point: null,
-      viscosity: null,
-      cow_codes: null,
-      hydrogen_sulfide_oil: null,
-      hydrogen_sulfide_vapour: null,
-      benzene: null,
-      special_instrictions_remark: null
-    }];
+  }
+
+  ngOnDestroy() {
+    this.state$.unsubscribe();
   }
 
   /**
@@ -164,7 +81,7 @@ export class CargoMasterComponent implements OnInit {
    * @memberof CargoMasterComponent
    */
   addCargo() {
-    this.router.navigate(['cargo'], { relativeTo: this.activatedRoute });
+    this.router.navigate([0], { relativeTo: this.activatedRoute });
   }
 
   /**
@@ -174,7 +91,26 @@ export class CargoMasterComponent implements OnInit {
    * @memberof CargoMasterComponent
    */
   ediCargo(event: IDataTableEvent) {
-    this.router.navigate(['cargo', event?.data?.id], { relativeTo: this.activatedRoute });
+    this.router.navigate([event?.data?.id], { relativeTo: this.activatedRoute });
+  }
+
+  /**
+  * Set current page details User Details
+  * @memberof CargoMasterComponent
+  */
+  async setCurrentPageDetails(response: ICargosResponse) {
+    this.ngxSpinnerService.hide();
+    if (response.responseStatus.status === '200') {
+      this.totalRecords = response?.totalElements;
+      const cargos = response?.cargos;
+      if (this.totalRecords && !cargos?.length) {
+        this.loading = true;
+        this.currentPage = this.currentPage ? this.currentPage - 1 : 0;
+        this.pageState['page'] = this.currentPage;
+        this.state$.next(this.pageState);
+      }
+      this.cargos = cargos;
+    }
   }
 
 }

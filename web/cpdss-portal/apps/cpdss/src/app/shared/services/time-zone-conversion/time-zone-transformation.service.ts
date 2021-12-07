@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { CommonApiService } from '../common/common-api.service';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
-import { ICountry, IDateTimeFormatOptions, IMonth, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
+import { ICountriesResponse, ICountry, IDateTimeFormatOptions, IMonth, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
 import * as moment from 'moment';
 
 /**
@@ -19,6 +19,7 @@ import * as moment from 'moment';
 export class TimeZoneTransformationService {
 
   private _timezonesDetails: ITimeZone[];
+  private _countries: ICountry[];
   private momentInputStringFormat = 'DD-MM-YYYY HH:mm';
   private dateTimeFormatArray = [
     {
@@ -172,16 +173,14 @@ export class TimeZoneTransformationService {
    * @memberof TimeZoneTransformationService
    */
   getCountries(): Observable<ICountry[]> {
-    return of([{
-      id: 1,
-      name: "India",
-      code: "IND"
-    },
-    {
-      id: 2,
-      name: "Australia",
-      code: "AUS"
-    }])
+    if (this._countries) {
+      return of(this._countries);
+    } else {
+      return this.commonAPiService.get<ICountriesResponse>('countries').pipe(map((response) => {
+        this._countries = response?.countrys;
+        return this._countries;
+      }));
+    }
   }
 
   /**

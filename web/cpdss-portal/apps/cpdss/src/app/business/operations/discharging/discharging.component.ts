@@ -320,7 +320,12 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
     this.currentTab = tab;
     this.loadingDischargingTransformationService.setTabChange(tab);
     if (tab === OPERATION_TAB.INSTRUCTION) {
-      this.dischargingInstructionComplete = true;
+      if(!this.dischargingInstructionComplete){
+        this.dischargingInstructionComplete = true;
+        if(this.dischargingInformationComplete){
+          this.disablePlanGenerateBtn = false;
+        }
+      }
     }
   }
 

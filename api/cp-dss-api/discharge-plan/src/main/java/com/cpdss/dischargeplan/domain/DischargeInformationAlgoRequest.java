@@ -5,6 +5,7 @@ import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
 import com.cpdss.dischargeplan.domain.cargo.OnHandQuantity;
 import com.cpdss.dischargeplan.domain.rules.RuleResponse;
+import com.cpdss.dischargeplan.repository.projections.PortTideAlgo;
 import java.util.List;
 import lombok.Data;
 
@@ -21,6 +22,6 @@ public class DischargeInformationAlgoRequest {
   private List<DischargePlanPortWiseDetails> planPortWiseDetails;
   private List<OnHandQuantity> onHandQuantity;
   private List<OnBoardQuantity> onBoardQuantity;
-  // private List<PortTideAlgo> portTideDetails;
+  private List<PortTideAlgo> portTideDetails;
   private RuleResponse dischargingRules;
 }

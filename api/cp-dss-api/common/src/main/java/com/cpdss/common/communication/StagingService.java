@@ -34,7 +34,7 @@ public class StagingService {
   private static final String CREATED_OR_UPDATED_BY = "communication";
   private static final String DATA = "data";
   private static final String META_DATA = "meta_data";
-
+  private String[] exceptionalAttributesNames = {"eta","etd"};
   public StagingService(StagingRepository stagingRepository) {
     this.stagingRepository = stagingRepository;
   }
@@ -224,6 +224,8 @@ public class StagingService {
         if (!key.equals(attributeMap.get(key))) {
           modifyAttributeValue(jsonObj, key, attributeMap.get(key));
           jsonObj.remove(key);
+        }else if(Arrays.stream(exceptionalAttributesNames).anyMatch(key::equals)){
+          modifyAttributeValue(jsonObj, key, attributeMap.get(key));
         }
       }
       array.add(jsonObj);

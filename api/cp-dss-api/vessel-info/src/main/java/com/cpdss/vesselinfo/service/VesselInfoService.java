@@ -145,6 +145,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired VesselValveAirPurgeSequenceRepository airPurgeSequenceRepository;
   @Autowired VesselValveStrippingSequenceRepository strippingSequenceRepository;
   @Autowired private VesselParticularService vesselParticularService;
+  @Autowired VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -2377,7 +2378,9 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       builder.addAllVvStrippingSequence(
           vesselPumpService.buildVesselValveStrippingSequence(
               strippingSequenceRepository.findAllByVesselId(request.getVesselId())));
-
+      builder.addAllVvSSCargoValve(
+          vesselPumpService.buildVVSSCargoValve(
+              sequenceCargoValveRepository.findAllByVesselId(request.getVesselId())));
     } catch (Exception e) {
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
