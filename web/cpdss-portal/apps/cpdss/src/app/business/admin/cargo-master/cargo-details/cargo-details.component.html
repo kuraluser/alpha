@@ -5,7 +5,7 @@
         <h5 class="main-head inline-block">{{(cargoId ? 'EDIT_CARGO_TITLE' : 'ADD_CARGO_TITLE')| translate}}</h5>
       </div>
       <div class="col-6">
-        <button id="cargo_save" class="btn btn-main float-right">{{'CARGO_DETAILS_SAVE_BUTTON'|
+        <button id="cargo_save" class="btn btn-main float-right" *cpdssPortalPermission="saveBtnPermissionContext">{{'CARGO_DETAILS_SAVE_BUTTON'|
           translate}}</button>
         <button id="cargo_save_cancel" class="btn btn-main mr-10 float-right"
           (click)="cancel()">{{'CARGO_DETAILS_CANCEL_BUTTON'|
@@ -37,10 +37,10 @@
       </div>
       <div class="col-4">
         <div class="form-group row">
-          <label for="cargo_assay_date" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_ASSAY_DATE' |
+          <label for="cargo_assayDate" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_assayDate' |
             translate}}</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="cargo_assay_date" formControlName="assay_date">
+            <input type="text" class="form-control" id="cargo_assayDate" formControlName="assayDate">
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@
             translate}}</label>
           <div class="col-sm-7">
             <input type="text" class="form-control" id="cargo_reid_vapour_pressure"
-              formControlName="reid_vapour_pressure">
+              formControlName="reidVapourPressure">
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@
           <label for="cargo_total_wax" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_TOTAL_WAX' |
             translate}}</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="cargo_total_wax" formControlName="total_wax">
+            <input type="text" class="form-control" id="cargo_total_wax" formControlName="totalWax">
           </div>
         </div>
       </div>
@@ -88,7 +88,7 @@
           <label for="cargo_pour_point" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_POUR_POINT' |
             translate}}</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="cargo_pour_point" formControlName="pour_point">
+            <input type="text" class="form-control" id="cargo_pour_point" formControlName="pourPoint">
           </div>
         </div>
       </div>
@@ -97,7 +97,7 @@
           <label for="cargo_cloud_point" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CLOUD_POINT' |
             translate}}</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="cargo_cloud_point" formControlName="cloud_point">
+            <input type="text" class="form-control" id="cargo_cloud_point" formControlName="cloudPoint">
           </div>
         </div>
       </div>
@@ -121,10 +121,10 @@
       </div>
       <div class="col-4">
         <div class="form-group row">
-          <label for="cargo_cow_codes" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_COW_CODES' |
+          <label for="cargo_cowCodes" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_cowCodes' |
             translate}}</label>
           <div class="col-sm-7">
-            <input type="text" class="form-control" id="cargo_cow_codes" formControlName="cow_codes">
+            <input type="text" class="form-control" id="cargo_cowCodes" formControlName="cowCodes">
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@
             translate}}</label>
           <div class="col-sm-7">
             <input type="text" class="form-control" id="cargo_hydrogen_sulfide_oil"
-              formControlName="hydrogen_sulfide_oil">
+              formControlName="hydrogenSulfideOil">
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@
             translate}}</label>
           <div class="col-sm-7">
             <input type="text" class="form-control" id="cargo_hydrogen_sulfide_vapour"
-              formControlName="hydrogen_sulfide_vapour">
+              formControlName="hydrogenSulfideVapour">
           </div>
         </div>
       </div>
@@ -167,7 +167,7 @@
             translate}}</label>
           <div class="col-sm-10">
             <textarea class="form-control" id="cargo_special_instrictions_remark" [rows]="5"
-              formControlName="special_instrictions_remark"
+              formControlName="specialInstrictionsRemark"
               placeholder="{{'CARGO_DETAILS_SPECIAL_INSTRUCTIONS_REMARK_PLACEHOLDER' | translate}}"></textarea>
           </div>
         </div>

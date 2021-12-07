@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { IDataStateChange } from '../../../shared/components/datatable/datatable.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { IDataStateChange } from '../../admin/models/user-role-permission.model';
 import { IVoyageListResponse, IVoyageStatusResponse } from '../models/voyage-list.model';
 
 /**
@@ -18,11 +18,11 @@ export class VoyageListApiService {
 
 
   /**
-   * 
+   *
    * @param {number} vesselId
-   * @param {IDataStateChange} options 
-   * @param {string} fromStartDate 
-   * @param {string} toStartDate 
+   * @param {IDataStateChange} options
+   * @param {string} fromStartDate
+   * @param {string} toStartDate
    * Get api for voyage list
    */
   getVoyageList(vesselId: number, options: IDataStateChange, fromStartDate?: string, toStartDate?: string): Observable<IVoyageListResponse> {
@@ -36,10 +36,10 @@ export class VoyageListApiService {
   }
 
   /**
-  * 
+  *
   * @param {number} vesselId
-  * @param {number} voyageId 
-  * @param {string} startDate 
+  * @param {number} voyageId
+  * @param {string} startDate
   * start voyage api
   */
   startVoyage(vesselId: number, voyageId: number, startDate: string): Observable<IVoyageStatusResponse> {
@@ -51,10 +51,10 @@ export class VoyageListApiService {
   }
 
   /**
-  * 
+  *
   * @param {number} vesselId
-  * @param {number} voyageId 
-  * @param {string} endDate 
+  * @param {number} voyageId
+  * @param {string} endDate
   * stop voyage api
   */
   endVoyage(vesselId: number, voyageId: number, endDate: string): Observable<IVoyageStatusResponse> {

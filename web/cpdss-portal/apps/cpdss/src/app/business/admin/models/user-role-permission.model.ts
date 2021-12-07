@@ -23,8 +23,8 @@ export interface IUserRolePermissionResponse {
  */
 export interface IRoleDetails {
     id: number;
-    name: string; 
-    description: string; 
+    name: string;
+    description: string;
     companyId: string;
 }
 
@@ -80,13 +80,13 @@ export interface IUserDetail {
  * @interface ITreeNodeData
  */
 export interface ITreeNodeData {
-    name: string; 
-    add: boolean; 
-    edit: boolean; 
-    delete: boolean; 
+    name: string;
+    add: boolean;
+    edit: boolean;
+    delete: boolean;
     view: boolean;
     id: number;
-    moduleId: number; 
+    moduleId: number;
     isChecked: boolean;
     isAddVisible: boolean;
     isDeleteVisible: boolean;
@@ -149,7 +149,7 @@ export interface IUserRoleModel {
 }
 
 /**
- * Interface for saved user response 
+ * Interface for saved user response
  *
  * @export
  * @interface ISaveUserRoleResponse
@@ -161,7 +161,7 @@ export interface ISaveUserRoleResponse {
     message: string;
 }
 /**
- * Interface for user permission 
+ * Interface for user permission
  *
  * @export
  * @interface IUserPermissionModel
@@ -210,20 +210,4 @@ export interface ISavePermissionResponse {
     responseStatus: IResponseStatus;
     roleId: number;
     message: string;
-}
-
-/**
- * Interface for state pagination , filter and sort
- *
- * @export
- * @interface IDataStateChange
- */
-export interface IDataStateChange {
-    filter?: Object;
-    name: string;
-    desc: string;
-    pageSize: string;
-    page: number;
-    sortBy: string;
-    orderBy: string;
 }

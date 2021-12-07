@@ -70,15 +70,15 @@ export class CargoMasterTransformationService {
         filterByServer: true
       },
       {
-        field: 'assay_date',
-        header: 'CARGO_LIST_ASSAY_DATE',
+        field: 'assayDate',
+        header: 'CARGO_LIST_assayDate',
         filter: true,
-        filterPlaceholder: 'SEARCH_CARGO_ASSAY_DATE',
+        filterPlaceholder: 'SEARCH_CARGO_assayDate',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'assay_date',
+        filterField: 'assayDate',
         sortable: true,
-        sortField: 'assay_date',
+        sortField: 'assayDate',
         filterByServer: true
       },
       {
@@ -159,10 +159,10 @@ export class CargoMasterTransformationService {
    * @memberof CargoMasterTransformationService
    */
   formatCargo(cargo: ICargoDetails) {
-    cargo.portsNameArray = cargo.ports.map(lport => lport.name);
-    cargo.portsLabel = cargo.portsNameArray.join();
-    cargo.countriesNameArray = cargo.countries.map(country => country.name);
-    cargo.countriesLabel = cargo.countriesNameArray.join();
+    cargo.portsNameArray = cargo.ports?.map(lport => lport.name);
+    cargo.portsLabel = cargo.portsNameArray?.join();
+    cargo.countriesNameArray = cargo.countries?.map(country => country.name);
+    cargo.countriesLabel = cargo.countriesNameArray?.join();
 
     return cargo;
   }

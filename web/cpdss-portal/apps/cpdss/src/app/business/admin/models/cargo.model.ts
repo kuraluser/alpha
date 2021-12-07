@@ -16,18 +16,18 @@ export interface ICargoDetails extends ICargo {
   countriesNameArray?: Array<string>;
   countriesLabel?: string;
   type?: string;
-  assay_date: string;
-  reid_vapour_pressure: string;
+  assayDate: string;
+  reidVapourPressure: string;
   gas: string;
-  total_wax: string;
-  pour_point: string;
-  cloud_point: string;
+  totalWax: string;
+  pourPoint: string;
+  cloudPoint: string;
   viscosity: string;
-  cow_codes: string;
-  hydrogen_sulfide_oil: string;
-  hydrogen_sulfide_vapour: string;
+  cowCodes: string;
+  hydrogenSulfideOil: string;
+  hydrogenSulfideVapour: string;
   benzene: string;
-  special_instrictions_remark: string;
+  specialInstrictionsRemark: string;
 }
 
 /**
@@ -125,4 +125,28 @@ export interface ICargoAPITempHistoryResponse {
 export interface IAPITempHistoryRequest {
   cargoId: number;
   loadingPortIds: number[];
+}
+
+
+/**
+ * Interface for cargos api response
+ *
+ * @export
+ * @interface ICargosResponse
+ */
+export interface ICargosResponse {
+  responseStatus: IResponseStatus;
+  cargos: ICargoDetails[];
+  totalElements: number;
+}
+
+/**
+ * Interface for cargo details api response
+ *
+ * @export
+ * @interface ICargoResponse
+ */
+export interface ICargoResponse {
+  responseStatus: IResponseStatus;
+  cargo: ICargoDetails;
 }
