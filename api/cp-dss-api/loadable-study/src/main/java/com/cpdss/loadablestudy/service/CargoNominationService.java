@@ -639,7 +639,10 @@ public class CargoNominationService {
                 .ifPresent(val -> builder.setApi(String.valueOf(val)));
             Optional.ofNullable(cargoNomination.getTemperature())
                 .ifPresent(val -> builder.setTemperature(String.valueOf(val)));
-
+            Optional.ofNullable(cargoNomination.getSequenceNo())
+                    .ifPresent(val -> builder.setSequenceNo(val));
+            Optional.ofNullable(cargoNomination.getEmptyMaxNoOfTanks())
+                    .ifPresent(val -> builder.setEmptyMaxNoOfTanks(val));
             ofNullable(cargoNomination.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object

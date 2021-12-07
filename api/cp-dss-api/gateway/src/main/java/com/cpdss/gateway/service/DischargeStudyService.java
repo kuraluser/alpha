@@ -59,6 +59,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+
+import com.google.api.Http;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -124,7 +126,7 @@ public class DischargeStudyService {
         throw new GenericServiceException(
             "Failed to fetch getDischargeStudyByVoyage",
             grpcReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
       LoadableStudy.LoadablePlanDetailsRequest.Builder loadablePlanRequest =
           LoadableStudy.LoadablePlanDetailsRequest.newBuilder();
