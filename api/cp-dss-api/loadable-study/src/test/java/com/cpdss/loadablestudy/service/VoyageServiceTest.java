@@ -11,6 +11,7 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -47,8 +48,10 @@ public class VoyageServiceTest {
   @MockBean private SynopticService synopticService;
   @MockBean private CargoNominationService cargoNominationService;
   @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
+  @MockBean private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanService;
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
+  @MockBean private SynopticalTableRepository synopticalTableRepository;
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
   @Test
@@ -286,6 +289,7 @@ public class VoyageServiceTest {
             cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLCN());
+
     var result = voyageService.saveVoyageStatus(request, replyBuilder);
     assertEquals(SUCCESS, result.build().getResponseStatus().getStatus());
     verify(voyageRepository).save(any(Voyage.class));

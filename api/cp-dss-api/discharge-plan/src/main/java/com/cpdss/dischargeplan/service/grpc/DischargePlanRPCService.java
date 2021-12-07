@@ -46,8 +46,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.grpc.stub.StreamObserver;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -62,6 +65,9 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargePlanServiceImplBase {
 
+  public static final Integer CONDITION_TYPE_DEP = 2;
+  public static final Integer VALUE_TYPE_ACTUALS = 1;
+  public static final Long ULLAGE_UPDATE_VALIDATED_TRUE = 13L;
   @Autowired DischargePlanSynchronizeService dischargePlanSynchronizeService;
 
   @Autowired DischargePlanAlgoService dischargePlanAlgoService;
@@ -1001,6 +1007,143 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .setMessage(e.getMessage())
               .setStatus(DischargePlanConstants.FAILED)
               .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Validation of stowage and bill of ladding
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void validateStowageAndBillOfLadding(
+      LoadingPlanModels.StowageAndBillOfLaddingValidationRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      List<LoadingPlanModels.PortWiseCargo> portWiseCargosList = request.getPortWiseCargosList();
+      List<Long> portRotationIds =
+          portWiseCargosList.stream()
+              .map(LoadingPlanModels.PortWiseCargo::getPortRotationId)
+              .collect(Collectors.toList());
+      List<Long> portIds =
+          portWiseCargosList.stream()
+              .map(LoadingPlanModels.PortWiseCargo::getPortId)
+              .collect(Collectors.toList());
+      List<Long> cargoIds =
+          portWiseCargosList.stream()
+              .flatMap(port -> port.getCargoIdsList().stream())
+              .distinct()
+              .collect(Collectors.toList());
+      List<PortDischargingPlanStowageDetails> stowageDetails =
+          portDischargingPlanStowageDetailsRepository
+              .findByPortRotationXIdAndConditionTypeAndValueTypeAndIsActive(
+                  portRotationIds.get(portRotationIds.size() - 1),
+                  CONDITION_TYPE_DEP,
+                  VALUE_TYPE_ACTUALS, true);
+      List<BillOfLadding> blList =
+          billOfLaddingRepo.findByCargoNominationIdInAndIsActive(cargoIds, true);
+      Map<Long, List<BillOfLadding>> portWiseBL =
+          blList.stream().collect(Collectors.groupingBy(BillOfLadding::getPortId));
+
+      if (!blList.isEmpty()
+          && blList.stream()
+              .allMatch(
+                  bl ->
+                      bl.getDischargeInformation()
+                          .getDepartureStatusId()
+                          .equals(ULLAGE_UPDATE_VALIDATED_TRUE))) {
+        if (stowageDetails == null
+            || stowageDetails.isEmpty()
+            || !portWiseBL.keySet().containsAll(portIds)) {
+          builder.setStatus(DischargePlanConstants.FAILED);
+          return;
+        }
+        Map<Long, List<PortDischargingPlanStowageDetails>> cargoWiseStowage =
+            stowageDetails.stream()
+                .filter(v -> v.getCargoNominationXId() != 0)
+                .collect(
+                    Collectors.groupingBy(
+                        PortDischargingPlanStowageDetails::getCargoNominationXId));
+        cargoWiseStowage.forEach(
+            (key, values) -> {
+              if (values.stream()
+                  .noneMatch(
+                      v ->
+                          v.getQuantity() != null
+                              || v.getQuantity().compareTo(BigDecimal.ZERO) > 0)) {
+                builder.setStatus(DischargePlanConstants.FAILED);
+              }
+            });
+
+        portWiseCargosList.stream()
+            .forEach(
+                port -> {
+                  try {
+                    List<BillOfLadding> bLValues = portWiseBL.get(port.getPortId());
+                    List<Long> dbCargos =
+                        stowageDetails.stream()
+                            .map(PortDischargingPlanStowageDetails::getCargoNominationXId)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    List<Long> dbBLCargos =
+                        bLValues.stream()
+                            .map(BillOfLadding::getCargoNominationId)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    // Checking if stowage details and bill of lading entries exists and quantity
+                    // parameters are greater than zero
+                    // Bug fix DSS 4458
+                    // Issue fix : for commingle cargos - cargo nomination id will not be present in
+                    // port loadable stowage details
+                    // so removing !dbCargos.containsAll(port.getCargoIdsList()) check since this
+                    // will
+                    // always fail.
+                    if (!dbBLCargos.containsAll(port.getCargoIdsList())
+                        || (bLValues.stream()
+                            .anyMatch(
+                                bl ->
+                                    bl.getQuantityMt() == null
+                                        || bl.getQuantityMt().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityKl() == null
+                                        || bl.getQuantityKl().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityBbls() == null
+                                        || bl.getQuantityBbls().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityLT() == null
+                                        || bl.getQuantityLT().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getApi() == null
+                                        || bl.getApi().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getTemperature() == null
+                                        || bl.getTemperature().compareTo(BigDecimal.ZERO) < 0))) {
+                      builder.setStatus(DischargePlanConstants.FAILED);
+                      throw new GenericServiceException(
+                          "LS actuals or BL values are missing",
+                          "",
+                          HttpStatusCode.SERVICE_UNAVAILABLE);
+                    } else {
+                      builder.setStatus(DischargePlanConstants.SUCCESS);
+                    }
+                    // Add check for Zero and null values
+                  } catch (Exception e) {
+                    builder.setStatus(DischargePlanConstants.FAILED);
+                  }
+                });
+      } else {
+        // One or more ports have its ullage update validation not successful
+        builder.setStatus(DischargePlanConstants.FAILED);
+        throw new GenericServiceException(
+            "Ullage updated validation Pending", "", HttpStatusCode.SERVICE_UNAVAILABLE);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setStatus(DischargePlanConstants.FAILED);
+      builder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      builder.setMessage(e.getMessage());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
