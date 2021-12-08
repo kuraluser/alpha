@@ -750,7 +750,7 @@ public class GenerateDischargeStudyJson {
       cowDetail.setType(reply.getCowType());
       cowDetail.setPercentage(reply.getPercentage());
 
-      if (!reply.getTankIds().isBlank()) {
+      if (reply.getTankIds() != null && !reply.getTankIds().isBlank()) {
         List<Long> tankIdList =
             Stream.of(reply.getTankIds().split(","))
                 .map(Long::parseLong)
