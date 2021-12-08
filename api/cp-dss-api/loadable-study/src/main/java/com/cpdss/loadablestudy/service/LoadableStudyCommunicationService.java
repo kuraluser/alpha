@@ -50,6 +50,7 @@ public class LoadableStudyCommunicationService {
   @Autowired private CommingleCargoRepository commingleCargoRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+  @Autowired private LoadableStudyPortRotationCommuncationRepository loadableStudyPortRotationCommuncationRepository;
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
@@ -112,7 +113,7 @@ public class LoadableStudyCommunicationService {
   private Voyage voyageStage = null;
   private List<CommingleCargo> commingleCargoStage = null;
   private List<CargoNomination> cargoNominationStage = null;
-  private List<LoadableStudyPortRotation> loadableStudyPortRotationStage = null;
+  private List<LoadableStudyPortRotationCommunication> loadableStudyPortRotationStage = null;
   private List<OnHandQuantity> onHandQuantityStage = null;
   private List<OnBoardQuantity> onBoardQuantityStage = null;
   private List<LoadableQuantity> loadableQuantityStage = null;
@@ -314,7 +315,7 @@ public class LoadableStudyCommunicationService {
             }
           case loadable_study_port_rotation:
             {
-              Type type = new TypeToken<ArrayList<LoadableStudyPortRotation>>() {}.getType();
+              Type type = new TypeToken<ArrayList<LoadableStudyPortRotationCommunication>>() {}.getType();
               loadableStudyPortRotationStage =
                   bindDataToEntity(
                       new LoadableStudyPortRotation(),
@@ -861,12 +862,14 @@ public class LoadableStudyCommunicationService {
       log.info("Communication XXXXXXX  LoadableStudyPortRotation is empty");
       return;
     }
-    for (LoadableStudyPortRotation lsprStage : loadableStudyPortRotationStage) {
+    for (LoadableStudyPortRotationCommunication lsprStage : loadableStudyPortRotationStage) {
       Optional<LoadableStudyPortRotation> loadableStudyPortRotation =
           loadableStudyPortRotationRepository.findById(lsprStage.getId());
-      lsprStage.setVersion(null);
-      loadableStudyPortRotation.ifPresent(
-          studyPortRotation -> lsprStage.setVersion(studyPortRotation.getVersion()));
+      lsprStage.setVersion(
+              loadableStudyPortRotation.map(EntityDoc::getVersion).orElse(null));
+      //lsprStage.setVersion(null);
+//      loadableStudyPortRotation.ifPresent(
+//          studyPortRotation -> lsprStage.setVersion(studyPortRotation.getVersion()));
       lsprStage.setLoadableStudy(loadableStudyStage);
       Optional<CargoOperation> cargoOperationOpt =
           cargoOperationRepository.findById(lsprStage.getCommunicationRelatedEntityId());
@@ -874,7 +877,7 @@ public class LoadableStudyCommunicationService {
     }
 
     loadableStudyPortRotationStage =
-        loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotationStage);
+            loadableStudyPortRotationCommuncationRepository.saveAll(loadableStudyPortRotationStage);
     log.info("Communication #######  LoadableStudyPortRotation saved ");
   }
 
@@ -890,7 +893,7 @@ public class LoadableStudyCommunicationService {
       ohqStage.setLoadableStudy(loadableStudyStage);
       Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
       ohq.ifPresent(onHandQuantity -> ohqStage.setVersion(onHandQuantity.getVersion()));
-      for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
+      for (LoadableStudyPortRotationCommunication lspr : loadableStudyPortRotationStage) {
         Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
             loadableStudyPortRotationRepository.findById(lspr.getId());
         loadableStudyPortRotationOpt.ifPresent(ohqStage::setPortRotation);

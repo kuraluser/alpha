@@ -97,4 +97,31 @@ public class LoadingPlanConstants {
           "loading_port_tide_details",
           "loading_instructions",
           "synoptical_table");
+
+  public static final List<String> ULLAGE_UPDATE_SHIP_TO_SHORE =
+      Arrays.asList(
+          "loading_information",
+          "port_loading_plan_stowage_ballast_details_temp",
+          "port_loading_plan_stowage_details_temp",
+          "port_loadable_plan_commingle_details_temp",
+          "port_loading_plan_rob_details",
+          "bill_of_ladding");
+
+  public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_ON =
+      Arrays.asList(
+          "loading_information",
+          "port_loading_plan_stowage_details",
+          "port_loading_plan_stowage_ballast_details",
+          "port_loadable_plan_commingle_details",
+          "port_loading_plan_stability_parameters",
+          "pyuser");
+
+  public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF =
+      Arrays.asList(
+          "loading_information",
+          "port_loading_plan_stowage_details",
+          "port_loading_plan_stowage_ballast_details",
+          "port_loadable_plan_commingle_details",
+          "port_loading_plan_stability_parameters",
+          "pyuser");
 }
