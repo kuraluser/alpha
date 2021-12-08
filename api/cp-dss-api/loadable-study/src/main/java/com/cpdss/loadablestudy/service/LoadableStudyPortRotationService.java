@@ -722,9 +722,16 @@ public class LoadableStudyPortRotationService {
               builder.setEta(String.valueOf(port.getEta()));
               builder.setEtd(String.valueOf(port.getEtd()));
               builder.setPortOrder(port.getPortOrder());
-              builder.setFreshCrudeOil(port.getFreshCrudeOil() != null ? port.getFreshCrudeOil() : false);
-              builder.setFreshCrudeOilQuantity(port.getFreshCrudeOilQuantity() != null? port.getFreshCrudeOilQuantity().toString() : "");
-              builder.setFreshCrudeOilTime(port.getFreshCrudeOilTime() != null? port.getFreshCrudeOilTime().toString() : "");
+              builder.setFreshCrudeOil(
+                  port.getFreshCrudeOil() != null ? port.getFreshCrudeOil() : false);
+              builder.setFreshCrudeOilQuantity(
+                  port.getFreshCrudeOilQuantity() != null
+                      ? port.getFreshCrudeOilQuantity().toString()
+                      : "");
+              builder.setFreshCrudeOilTime(
+                  port.getFreshCrudeOilTime() != null
+                      ? port.getFreshCrudeOilTime().toString()
+                      : "");
               if (port.getIsbackloadingEnabled() != null) {
                 builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
                 if (backloadingDataByportIds.get(port.getId()) != null) {

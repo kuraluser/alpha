@@ -38,4 +38,10 @@ public interface LoadableStudyAlgoStatusRepository
 
   public List<LoadableStudyAlgoStatus> findByLoadableStudyIdAndIsActive(
       Long loadableStudyId, Boolean isActive);
+
+  @Query(
+      value =
+          "select * from loadable_study_algo_status where loadabale_studyxid= ?1 and last_modified_date_time is not null order by last_modified_date_time desc limit 1",
+      nativeQuery = true)
+  public LoadableStudyAlgoStatus findByLoadableStudyId(Long loadableStudyId);
 }

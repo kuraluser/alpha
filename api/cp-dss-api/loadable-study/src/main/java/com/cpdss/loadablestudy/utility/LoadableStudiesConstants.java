@@ -231,7 +231,8 @@ public class LoadableStudiesConstants {
           "loadable_plan_stowage_ballast_details",
           "synoptical_table",
           "loadicator_data_for_synoptical_table",
-          "discharge_quantity_cargo_details");
+          "discharge_quantity_cargo_details",
+          "loadable_study_algo_status");
 
   public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
       Arrays.asList(
@@ -273,7 +274,8 @@ public class LoadableStudiesConstants {
           "loadable_pattern_cargo_details",
           "loadable_plan_stowage_ballast_details",
           "synoptical_table",
-          "loadicator_data_for_synoptical_table");
+          "loadicator_data_for_synoptical_table",
+          "loadable_study_algo_status");
 
   @Getter
   @AllArgsConstructor

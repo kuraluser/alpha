@@ -50,7 +50,11 @@ public class LoadableStudyCommunicationService {
   @Autowired private CommingleCargoRepository commingleCargoRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
-  @Autowired private LoadableStudyPortRotationCommuncationRepository loadableStudyPortRotationCommuncationRepository;
+
+  @Autowired
+  private LoadableStudyPortRotationCommuncationRepository
+      loadableStudyPortRotationCommuncationRepository;
+
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
@@ -113,7 +117,9 @@ public class LoadableStudyCommunicationService {
   private Voyage voyageStage = null;
   private List<CommingleCargo> commingleCargoStage = null;
   private List<CargoNomination> cargoNominationStage = null;
-  private List<LoadableStudyPortRotationCommunication> loadableStudyPortRotationStage = null;
+  private List<LoadableStudyPortRotation> loadableStudyPortRotationStage = null;
+  private List<LoadableStudyPortRotationCommunication> loadableStudyPortRotationStageCommunication =
+      null;
   private List<OnHandQuantity> onHandQuantityStage = null;
   private List<OnBoardQuantity> onBoardQuantityStage = null;
   private List<LoadableQuantity> loadableQuantityStage = null;
@@ -315,8 +321,9 @@ public class LoadableStudyCommunicationService {
             }
           case loadable_study_port_rotation:
             {
-              Type type = new TypeToken<ArrayList<LoadableStudyPortRotationCommunication>>() {}.getType();
-              loadableStudyPortRotationStage =
+              Type type =
+                  new TypeToken<ArrayList<LoadableStudyPortRotationCommunication>>() {}.getType();
+              loadableStudyPortRotationStageCommunication =
                   bindDataToEntity(
                       new LoadableStudyPortRotation(),
                       type,
@@ -858,26 +865,27 @@ public class LoadableStudyCommunicationService {
   /** Method to save loadable study port rotation */
   private void saveLoadableStudyPortRotation() {
     current_table_name = LoadableStudyTables.LOADABLE_STUDY_PORT_ROTATION.getTable();
-    if (null == loadableStudyPortRotationStage || loadableStudyPortRotationStage.isEmpty()) {
+    if (null == loadableStudyPortRotationStageCommunication
+        || loadableStudyPortRotationStageCommunication.isEmpty()) {
       log.info("Communication XXXXXXX  LoadableStudyPortRotation is empty");
       return;
     }
-    for (LoadableStudyPortRotationCommunication lsprStage : loadableStudyPortRotationStage) {
-      Optional<LoadableStudyPortRotation> loadableStudyPortRotation =
-          loadableStudyPortRotationRepository.findById(lsprStage.getId());
-      lsprStage.setVersion(
-              loadableStudyPortRotation.map(EntityDoc::getVersion).orElse(null));
-      //lsprStage.setVersion(null);
-//      loadableStudyPortRotation.ifPresent(
-//          studyPortRotation -> lsprStage.setVersion(studyPortRotation.getVersion()));
+    for (LoadableStudyPortRotationCommunication lsprStage :
+        loadableStudyPortRotationStageCommunication) {
+      Optional<LoadableStudyPortRotationCommunication> loadableStudyPortRotation =
+          loadableStudyPortRotationCommuncationRepository.findById(lsprStage.getId());
+      lsprStage.setVersion(null);
+      loadableStudyPortRotation.ifPresent(
+          studyPortRotation -> lsprStage.setVersion(studyPortRotation.getVersion()));
       lsprStage.setLoadableStudy(loadableStudyStage);
       Optional<CargoOperation> cargoOperationOpt =
           cargoOperationRepository.findById(lsprStage.getCommunicationRelatedEntityId());
       cargoOperationOpt.ifPresent(lsprStage::setOperation);
     }
-
+    loadableStudyPortRotationCommuncationRepository.saveAll(
+        loadableStudyPortRotationStageCommunication);
     loadableStudyPortRotationStage =
-            loadableStudyPortRotationCommuncationRepository.saveAll(loadableStudyPortRotationStage);
+        loadableStudyPortRotationRepository.findByLoadableStudy(loadableStudyStage);
     log.info("Communication #######  LoadableStudyPortRotation saved ");
   }
 
@@ -893,7 +901,7 @@ public class LoadableStudyCommunicationService {
       ohqStage.setLoadableStudy(loadableStudyStage);
       Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
       ohq.ifPresent(onHandQuantity -> ohqStage.setVersion(onHandQuantity.getVersion()));
-      for (LoadableStudyPortRotationCommunication lspr : loadableStudyPortRotationStage) {
+      for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
         Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
             loadableStudyPortRotationRepository.findById(lspr.getId());
         loadableStudyPortRotationOpt.ifPresent(ohqStage::setPortRotation);
@@ -1001,17 +1009,26 @@ public class LoadableStudyCommunicationService {
         loadableStudyStatusRepository.findById(
             loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
     if (loadableStudyStatus.isPresent()) {
-      loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
-      loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
-      Optional<LoadableStudyAlgoStatus> algoStatus =
-          loadableStudyAlgoStatusRepository.findById(loadableStudyAlgoStatusStage.getId());
-      loadableStudyAlgoStatusStage.setVersion(algoStatus.map(EntityDoc::getVersion).orElse(null));
+      LoadableStudyAlgoStatus algoStatus =
+          loadableStudyAlgoStatusRepository.findByLoadableStudyId(
+              loadableStudyAlgoStatusStage.getLoadableStudy().getId());
+      if (algoStatus != null) {
+        algoStatus.setLoadableStudyStatus(loadableStudyStatus.get());
+        algoStatus.setGeneratedFromShore(true);
+        loadableStudyAlgoStatusStage = loadableStudyAlgoStatusRepository.save(algoStatus);
+        log.info(
+            "Communication #######  loadableStudyAlgoStatus saved with id:" + algoStatus.getId());
+      } else {
+        loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
+        loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
+        loadableStudyAlgoStatusStage.setVersion(null);
+        loadableStudyAlgoStatusStage =
+            loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
+        log.info(
+            "Communication #######  loadableStudyAlgoStatus saved with id:"
+                + loadableStudyAlgoStatusStage.getId());
+      }
 
-      loadableStudyAlgoStatusStage =
-          loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
-      log.info(
-          "Communication #######  loadableStudyAlgoStatus saved with id:"
-              + loadableStudyAlgoStatusStage.getId());
     } else {
       log.info(
           "Communication XXXXXXX  loadableStudyAlgoStatus is not saved , loadableStudyStatus is not found : "

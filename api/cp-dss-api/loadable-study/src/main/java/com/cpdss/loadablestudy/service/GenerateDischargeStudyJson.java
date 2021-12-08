@@ -730,8 +730,13 @@ public class GenerateDischargeStudyJson {
                 portRotation.setInstructions(getPortInstructions(port, instructionsDetails));
                 portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
                 portRotation.setFreshCrudeOilQuantity(
-                        port.getFreshCrudeOilQuantity().isEmpty() ? null : new BigDecimal(port.getFreshCrudeOilQuantity()));
-                portRotation.setFreshCrudeOilTime(port.getFreshCrudeOilTime().isEmpty() ? null : new BigDecimal(port.getFreshCrudeOilTime()));
+                    port.getFreshCrudeOilQuantity().isEmpty()
+                        ? null
+                        : new BigDecimal(port.getFreshCrudeOilQuantity()));
+                portRotation.setFreshCrudeOilTime(
+                    port.getFreshCrudeOilTime().isEmpty()
+                        ? null
+                        : new BigDecimal(port.getFreshCrudeOilTime()));
                 portRotationList.add(portRotation);
               });
       log.info("Found {} items", portRotationList.size());
