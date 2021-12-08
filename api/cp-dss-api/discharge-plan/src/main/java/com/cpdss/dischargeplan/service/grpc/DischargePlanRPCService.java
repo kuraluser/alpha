@@ -538,6 +538,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           portWiseBallastDetail.getSounding() != null
               ? portWiseBallastDetail.getSounding().toString()
               : "");
+      newBuilder.setSg(
+          portWiseBallastDetail.getSg() != null ? portWiseBallastDetail.getSg().toString() : "");
       builder.addPortLoadingPlanBallastTempDetails(newBuilder);
     }
   }

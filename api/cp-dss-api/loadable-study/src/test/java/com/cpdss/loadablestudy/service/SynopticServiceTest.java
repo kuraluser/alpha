@@ -1667,6 +1667,7 @@ public class SynopticServiceTest {
             any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
             any(SynopticalTable.class),
             any(LoadableStudy.SynopticalRecord.class),
+            anyBoolean(),
             anyBoolean());
 
     synopticService.updateSynopticalTable(getSynopticalTableRequest(), responseObserver);

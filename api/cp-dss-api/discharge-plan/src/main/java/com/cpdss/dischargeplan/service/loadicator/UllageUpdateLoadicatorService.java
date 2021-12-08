@@ -309,7 +309,7 @@ public class UllageUpdateLoadicatorService {
   /**
    * @param judgement
    * @param dischargeInformation
-   * @param arrivalDepartutre
+   * @param conditionType
    */
   private void saveLoadingPlanAlgoErrors(
       List<String> judgement, DischargeInformation dischargeInformation, int conditionType) {
@@ -438,6 +438,7 @@ public class UllageUpdateLoadicatorService {
       request.setOperationType(DischargePlanConstants.DEPARTURE_CONDITION_TYPE);
     }
     request.setVesselId(dischargeInformation.getVesselXid());
+    request.setFromOperations(true);
     SynopticalRecord.Builder synopticalData = SynopticalRecord.newBuilder();
     synopticalData.setPortId(dischargeInformation.getPortXid());
     synopticalData.setPortRotationId(dischargeInformation.getPortRotationXid());
@@ -923,7 +924,7 @@ public class UllageUpdateLoadicatorService {
    */
   public void getLoadicatorData(
       DischargingInfoLoadicatorDataRequest request, DischargeInformation dischargeInformation)
-      throws GenericServiceException {
+      throws GenericServiceException, InvocationTargetException, IllegalAccessException {
     log.info("Update Ullage Loadicator Data Received - Process Id {}", request.getProcessId());
     UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
 
@@ -965,6 +966,7 @@ public class UllageUpdateLoadicatorService {
             lar,
             request.getConditionType(),
             DischargePlanConstants.DISCHARGE_PLAN_ACTUAL_TYPE_VALUE);
+        this.saveUpdatedDischargingPlanDetails(dischargeInformation, request.getConditionType());
       }
     } catch (HttpStatusCodeException e) {
       log.error("Error occured in ALGO side while calling loadicator_results API");

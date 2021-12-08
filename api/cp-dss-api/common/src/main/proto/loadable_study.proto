@@ -1368,7 +1368,8 @@ message SynopticalTableRequest{
 	int64 portId = 4;
 	repeated SynopticalRecord synopticalRecord = 5;
 	int64 loadablePatternId = 6;
-	string operationType = 7;	
+	string operationType = 7;
+	bool fromOperations = 8;
 }
 
 message SynopticalTableReply{

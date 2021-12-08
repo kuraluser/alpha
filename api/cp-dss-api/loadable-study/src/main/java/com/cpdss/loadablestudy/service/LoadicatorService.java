@@ -1421,6 +1421,14 @@ public class LoadicatorService {
           isValid = false;
           SynopticalTable synopticalTable =
               synopticalTableRepository.getOne(result.getSynopticalId());
+          if (synopticalTable
+                  .getLoadableStudyPortRotation()
+                  .getOperation()
+                  .getId()
+                  .equals(DISCHARGING_OPERATION_ID)
+              && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
+            isValid = true;
+          }
           judgements.addAll(
               result.getJudgement().stream()
                   .map(
@@ -1471,6 +1479,14 @@ public class LoadicatorService {
             isValid = false;
             SynopticalTable synopticalTable =
                 synopticalTableRepository.getOne(result.getSynopticalId());
+            if (synopticalTable
+                    .getLoadableStudyPortRotation()
+                    .getOperation()
+                    .getId()
+                    .equals(DISCHARGING_OPERATION_ID)
+                && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
+              isValid = true;
+            }
             judgements.addAll(
                 result.getJudgement().stream()
                     .map(

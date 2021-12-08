@@ -1449,21 +1449,23 @@ public class DischargingSequenceService {
       LoadingPlanTankDetails stowage,
       Optional<VesselTankDetail> tankDetailOpt,
       Set<TankCategory> cargoTankCategories) {
-    TankCategory tankCategory = new TankCategory();
-    tankDetailOpt.ifPresent(
-        tank -> {
-          tankCategory.setTankName(tank.getShortName());
-          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
-        });
-    if (cargoTankCategories.stream().anyMatch(cargo -> cargo.getId().equals(stowage.getTankId()))) {
-      cargoTankCategories.removeIf(cargo -> cargo.getId().equals(stowage.getTankId()));
+    if (!cargoTankCategories.stream()
+        .anyMatch(cargo -> cargo.getId().equals(stowage.getTankId()))) {
+      TankCategory tankCategory = new TankCategory();
+      tankDetailOpt.ifPresent(
+          tank -> {
+            tankCategory.setTankName(tank.getShortName());
+            tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
+          });
+      tankCategory.setId(stowage.getTankId());
+      tankCategory.setQuantity(
+          StringUtils.isEmpty(stowage.getQuantity())
+              ? null
+              : new BigDecimal(stowage.getQuantity()));
+      tankCategory.setUllage(
+          StringUtils.isEmpty(stowage.getUllage()) ? null : new BigDecimal(stowage.getUllage()));
+      cargoTankCategories.add(tankCategory);
     }
-    tankCategory.setId(stowage.getTankId());
-    tankCategory.setQuantity(
-        StringUtils.isEmpty(stowage.getQuantity()) ? null : new BigDecimal(stowage.getQuantity()));
-    tankCategory.setUllage(
-        StringUtils.isEmpty(stowage.getUllage()) ? null : new BigDecimal(stowage.getUllage()));
-    cargoTankCategories.add(tankCategory);
   }
 
   private Integer buildCommingleSequence(
@@ -1549,24 +1551,25 @@ public class DischargingSequenceService {
       LoadingPlanCommingleDetails commingle,
       Optional<VesselTankDetail> tankDetailOpt,
       Set<TankCategory> cargoTankCategories) {
-    TankCategory tankCategory = new TankCategory();
-    tankDetailOpt.ifPresent(
-        tank -> {
-          tankCategory.setTankName(tank.getShortName());
-          tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
-        });
-    if (cargoTankCategories.stream()
+    if (!cargoTankCategories.stream()
         .anyMatch(cargo -> cargo.getId().equals(commingle.getTankId()))) {
-      cargoTankCategories.removeIf(cargo -> cargo.getId().equals(commingle.getTankId()));
+      TankCategory tankCategory = new TankCategory();
+      tankDetailOpt.ifPresent(
+          tank -> {
+            tankCategory.setTankName(tank.getShortName());
+            tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
+          });
+      tankCategory.setId(commingle.getTankId());
+      tankCategory.setQuantity(
+          StringUtils.isEmpty(commingle.getQuantityMT())
+              ? null
+              : new BigDecimal(commingle.getQuantityMT()));
+      tankCategory.setUllage(
+          StringUtils.isEmpty(commingle.getUllage())
+              ? null
+              : new BigDecimal(commingle.getUllage()));
+      cargoTankCategories.add(tankCategory);
     }
-    tankCategory.setId(commingle.getTankId());
-    tankCategory.setQuantity(
-        StringUtils.isEmpty(commingle.getQuantityMT())
-            ? null
-            : new BigDecimal(commingle.getQuantityMT()));
-    tankCategory.setUllage(
-        StringUtils.isEmpty(commingle.getUllage()) ? null : new BigDecimal(commingle.getUllage()));
-    cargoTankCategories.add(tankCategory);
   }
 
   private Integer buildBallastSequence(

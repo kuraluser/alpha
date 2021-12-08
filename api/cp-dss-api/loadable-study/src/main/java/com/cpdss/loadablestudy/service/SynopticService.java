@@ -313,7 +313,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
    * @param vesselLoadableQuantityDetails
    * @param loadableStudy
    * @param portRotations
-   * @param patternId
+   * @param patternIds
    * @param replyBuilder
    */
   public void buildSynopticalTableReply(
@@ -1723,7 +1723,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       }
       synpoticServiceUtils.saveSynopticalCargoData(
           request, loadableStudyOpt.get(), entity, record, false);
-      synpoticServiceUtils.saveSynopticalOhqData(loadableStudyOpt.get(), entity, record, false);
+      synpoticServiceUtils.saveSynopticalOhqData(
+          loadableStudyOpt.get(), entity, record, false, request.getFromOperations());
     }
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
@@ -2032,7 +2033,11 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
         synpoticServiceUtils.saveSynopticalCargoData(
             request, loadableStudy.get(), synopticalData.get(), synopticalRecord, true);
         synpoticServiceUtils.saveSynopticalOhqData(
-            loadableStudy.get(), synopticalData.get(), synopticalRecord, true);
+            loadableStudy.get(),
+            synopticalData.get(),
+            synopticalRecord,
+            true,
+            request.getFromOperations());
         synpoticServiceUtils.saveSynopticalCommingleData(request, synopticalData, synopticalRecord);
       }
       replyBuilder.setStatus(SUCCESS);

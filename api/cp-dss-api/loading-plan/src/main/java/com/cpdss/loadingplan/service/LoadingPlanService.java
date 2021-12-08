@@ -896,8 +896,8 @@ public class LoadingPlanService {
    * Updates loading information status based on the condition i.e. Arrival / Departure.
    *
    * @param loadingInformationId
-   * @param arrivalDepartutre
-   * @param updateUllageValidationPendingId
+   * @param arrivalDeparture
+   * @param statusId
    * @throws GenericServiceException
    */
   private void updateLoadingPlanStatusForUllageUpdate(
@@ -1054,6 +1054,7 @@ public class LoadingPlanService {
       request.setOperationType(DEP);
     }
     request.setVesselId(loadingInformation.getVesselXId());
+    request.setFromOperations(true);
     SynopticalRecord.Builder synopticalData = SynopticalRecord.newBuilder();
     synopticalData.setPortId(loadingInformation.getPortXId());
     synopticalData.setPortRotationId(loadingInformation.getPortRotationXId());

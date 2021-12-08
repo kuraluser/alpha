@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -659,7 +660,7 @@ public class LoadicatorService {
   public void getLoadicatorData(
       DischargingInfoLoadicatorDataRequest request,
       com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply.Builder reply)
-      throws GenericServiceException {
+      throws GenericServiceException, InvocationTargetException, IllegalAccessException {
 
     Boolean isValid = true;
     Long statusId;
