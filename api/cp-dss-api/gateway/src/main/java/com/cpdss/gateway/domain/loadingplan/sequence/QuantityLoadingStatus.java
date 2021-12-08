@@ -13,4 +13,6 @@ public class QuantityLoadingStatus {
   private Boolean present;
   private String colorCode;
   private String cargoName;
+  private Boolean cowWashStatus;
+  private String cowType;
 }

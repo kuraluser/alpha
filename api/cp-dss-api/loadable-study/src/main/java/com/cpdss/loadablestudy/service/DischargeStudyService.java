@@ -562,7 +562,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
         loadableStudy.setIsPortsComplete(false);
 
-        // Port complete status becomes false even when all the mandatory fields are available for
+        // Port complete status becomes false even when all the mandatory fields are
+        // available for
         // all ports, need to set the port complete status properly on save.
         Boolean isPortRotationComplete = true;
         for (LoadableStudyPortRotation portRotation :
@@ -699,8 +700,16 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     portRotation.setIsbackloadingEnabled(
                         portRequestDetail.getIsBackLoadingEnabled());
                     portRotation.setFreshCrudeOil(portRequestDetail.getFreshCrudeOil());
-                    portRotation.setFreshCrudeOilQuantity(new BigDecimal(portRequestDetail.getFreshCrudeOilQuantity()));
-                    portRotation.setFreshCrudeOilTime(new BigDecimal(portRequestDetail.getFreshCrudeOilTime()));
+                    if (portRequestDetail.getFreshCrudeOilQuantity() != null
+                        && !portRequestDetail.getFreshCrudeOilQuantity().isBlank()) {
+                      portRotation.setFreshCrudeOilQuantity(
+                          new BigDecimal(portRequestDetail.getFreshCrudeOilQuantity()));
+                    }
+                    if (portRequestDetail.getFreshCrudeOilTime() != null
+                        && !portRequestDetail.getFreshCrudeOilTime().isBlank()) {
+                      portRotation.setFreshCrudeOilTime(
+                          new BigDecimal(portRequestDetail.getFreshCrudeOilTime()));
+                    }
                   }
                 });
             updateCowDetails(
@@ -723,40 +732,38 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 portCargoId,
                 dischargestudyId);
 
-            for(int i = 0; i < cargoNominations.size(); i++){
-                CargoNominationDetail cargoRequest = cargoNominations.get(i);
-                Long portId = dbPortRoation.getPortXId();
-                if (cargoRequest.getId() != -1) {
-                  Optional<CargoNomination> optionalCargoNomination =
-                      dbCargos
-                          .parallelStream()
-                          .filter(
-                              cargoNomination -> cargoNomination.getId() == cargoRequest.getId())
-                          .findFirst();
-                  if (!optionalCargoNomination.isPresent()) {
-                    return;
-                  }
-                  optionalCargoNomination.get().setSequenceNo(cargoRequest.getSequenceNo());
-                  optionalCargoNomination.get().setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
-                  updateCargoNominationToSave(
-                      cargoRequest,
-                      optionalCargoNomination.get(),
-                      cargoNominationsToSave,
-                      portId);
-                } else {
-                  CargoNomination cargoNomination = new CargoNomination();
-                  cargoNomination.setLoadableStudyXId(dischargestudyId);
-                  cargoNomination.setPriority(1L);
-                  cargoNomination.setIsActive(true);
-                  cargoNomination.setCargoNominationPortDetails(
-                      cargoNominationService.createCargoNominationPortDetails(
-                          cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
-                  cargoNomination.setIsBackloading(true);
-                  cargoNomination.setSequenceNo(Long.valueOf(i));
-                  cargoNomination.setEmptyMaxNoOfTanks(false);
-                  updateCargoNominationToSave(
-                      cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+            for (int i = 0; i < cargoNominations.size(); i++) {
+              CargoNominationDetail cargoRequest = cargoNominations.get(i);
+              Long portId = dbPortRoation.getPortXId();
+              if (cargoRequest.getId() != -1) {
+                Optional<CargoNomination> optionalCargoNomination =
+                    dbCargos
+                        .parallelStream()
+                        .filter(cargoNomination -> cargoNomination.getId() == cargoRequest.getId())
+                        .findFirst();
+                if (!optionalCargoNomination.isPresent()) {
+                  return;
                 }
+                optionalCargoNomination.get().setSequenceNo(cargoRequest.getSequenceNo());
+                optionalCargoNomination
+                    .get()
+                    .setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
+                updateCargoNominationToSave(
+                    cargoRequest, optionalCargoNomination.get(), cargoNominationsToSave, portId);
+              } else {
+                CargoNomination cargoNomination = new CargoNomination();
+                cargoNomination.setLoadableStudyXId(dischargestudyId);
+                cargoNomination.setPriority(1L);
+                cargoNomination.setIsActive(true);
+                cargoNomination.setCargoNominationPortDetails(
+                    cargoNominationService.createCargoNominationPortDetails(
+                        cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
+                cargoNomination.setIsBackloading(true);
+                cargoNomination.setSequenceNo(Long.valueOf(i));
+                cargoNomination.setEmptyMaxNoOfTanks(false);
+                updateCargoNominationToSave(
+                    cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+              }
             }
             List<Long> requestIds =
                 cargoNominations.stream()
@@ -1621,7 +1628,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         if (voyage != null) {
           if (voyage.getActualEndDate() != null) {
             DateTimeFormatter dft = DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT);
-            // Changing to actual end Date : previous implementation was voyage planned end date.
+            // Changing to actual end Date : previous implementation was voyage planned end
+            // date.
             String endDate = voyage.getActualEndDate().format(dft);
             cowBuilder.setVoyageEndDate(endDate);
           }
