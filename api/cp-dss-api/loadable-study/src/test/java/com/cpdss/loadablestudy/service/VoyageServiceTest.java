@@ -25,10 +25,12 @@ import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(classes = {VoyageService.class})
+@TestPropertySource(properties = "cpdss.voyage.validation.enable = false")
 public class VoyageServiceTest {
 
   @Autowired private VoyageService voyageService;
