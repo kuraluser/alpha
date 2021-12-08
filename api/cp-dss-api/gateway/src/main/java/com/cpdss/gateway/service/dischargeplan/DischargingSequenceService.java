@@ -873,6 +873,9 @@ public class DischargingSequenceService {
 
       Integer loadEnd = temp - (temp % (reply.getInterval() * 60)) + (reply.getInterval() * 60);
       response.setMaxXAxisValue(portEta + (loadEnd * 60 * 1000));
+      if (!stageTickPositions.contains(response.getMaxXAxisValue())) {
+        stageTickPositions.add(response.getMaxXAxisValue());
+      }
       response.setInterval(reply.getInterval());
       // Adding cargo loading rates TODO
       this.buildCargoDischargeRates(dischargeSeq, portEta, stageTickPositions, cargoDischargeRates);
@@ -911,7 +914,7 @@ public class DischargingSequenceService {
     this.removeEmptyBallasts(ballasts, ballastTankCategories);
     this.removeEmptyCargos(cargos, cargoTankCategories);
     this.buildCleaningTanks(reply, portEta, cleaningTank);
-    this.buildDriveTanks(reply, portEta, driveTanks);
+    this.buildDriveTanks(reply, portEta, response.getMaxXAxisValue(), driveTanks);
 
     response.setCargos(cargos);
     response.setBallasts(ballasts);
@@ -941,16 +944,17 @@ public class DischargingSequenceService {
    *
    * @param reply
    * @param portEta
+   * @param maxXAxisValue
    * @param driveTanks
    */
   private void buildDriveTanks(
-      DischargeSequenceReply reply, Long portEta, List<DriveTank> driveTanks) {
+      DischargeSequenceReply reply, Long portEta, Long maxXAxisValue, List<DriveTank> driveTanks) {
     log.info("Building drive tank details");
     reply
         .getDriveTankDetailsList()
         .forEach(
             driveTankDetail -> {
-              driveTanks.add(this.createDriveTanks(driveTankDetail, portEta));
+              driveTanks.add(this.createDriveTanks(driveTankDetail, portEta, maxXAxisValue));
             });
   }
 
@@ -959,13 +963,19 @@ public class DischargingSequenceService {
    *
    * @param driveTankDetail
    * @param portEta
+   * @param maxXAxisValue
    * @return
    */
-  private DriveTank createDriveTanks(DriveTankDetail driveTankDetail, Long portEta) {
+  private DriveTank createDriveTanks(
+      DriveTankDetail driveTankDetail, Long portEta, Long maxXAxisValue) {
     DriveTank driveTank = new DriveTank();
     driveTank.setTankId(driveTankDetail.getTankId());
     driveTank.setTankName(driveTankDetail.getTankShortName());
-    driveTank.setEnd(portEta + (Long.valueOf(driveTankDetail.getTimeEnd()) * 60 * 1000));
+    if ((portEta + (Long.valueOf(driveTankDetail.getTimeEnd()) * 60 * 1000) > maxXAxisValue)) {
+      driveTank.setEnd(maxXAxisValue);
+    } else {
+      driveTank.setEnd(portEta + (Long.valueOf(driveTankDetail.getTimeEnd()) * 60 * 1000));
+    }
     driveTank.setStart(portEta + (Long.valueOf(driveTankDetail.getTimeStart()) * 60 * 1000));
     return driveTank;
   }
