@@ -1421,7 +1421,8 @@ public class LoadicatorService {
           isValid = false;
           SynopticalTable synopticalTable =
               synopticalTableRepository.getOne(result.getSynopticalId());
-          if (synopticalTable
+          if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
+              && synopticalTable
                   .getLoadableStudyPortRotation()
                   .getOperation()
                   .getId()
@@ -1479,7 +1480,8 @@ public class LoadicatorService {
             isValid = false;
             SynopticalTable synopticalTable =
                 synopticalTableRepository.getOne(result.getSynopticalId());
-            if (synopticalTable
+            if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
+                && synopticalTable
                     .getLoadableStudyPortRotation()
                     .getOperation()
                     .getId()
