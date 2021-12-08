@@ -6,6 +6,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableModule } from 'primeng/table';
+import { InputMaskModule } from 'primeng/inputmask';
 import { VesselInfoModule } from '../../core/components/vessel-info/vessel-info.module';
 import { ErrorLogPopupModule } from '../../core/components/error-log-popup/error-log-popup.module';
 import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
@@ -45,6 +46,7 @@ import { DischargeStudyDetailsTransformationService } from '../services/discharg
     QuantityPipeModule,
     ValidationErrorModule,
     ErrorLogPopupModule,
+    InputMaskModule,
     DischargeStudyDetailsRoutingModule
   ],
   providers: [
