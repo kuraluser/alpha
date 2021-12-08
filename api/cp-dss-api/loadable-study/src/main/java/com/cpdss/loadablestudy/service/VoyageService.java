@@ -86,6 +86,9 @@ public class VoyageService {
   @Value("${loadablestudy.voyage.day.difference}")
   private String dayDifference;
 
+  @Value("${cpdss.voyage.validation.enable}")
+  private boolean validationBeforeVoyageClosureEnabled;
+
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
 
@@ -630,47 +633,50 @@ public class VoyageService {
             HttpStatusCode.BAD_REQUEST);
       }
 
-      // Validations before closing the voyage
-      // 1. ETA Actual and ETD Actual check for all port rotations
-      List<com.cpdss.loadablestudy.entity.LoadableStudy> dischargeStudies =
-          loadableStudyStream
-              .filter(
-                  loadableStudyElement ->
-                      (loadableStudyElement.getLoadableStudyStatus() != null
-                          && STATUS_CONFIRMED.equalsIgnoreCase(
-                              loadableStudyElement.getLoadableStudyStatus().getName())
-                          && loadableStudyElement.getPlanningTypeXId() == PLANNING_TYPE_DISCHARGE))
-              .collect(Collectors.toList());
-      if (dischargeStudies.isEmpty()) {
-        throw new GenericServiceException(
-            "No confirmed discharge study",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
+      if (validationBeforeVoyageClosureEnabled) {
+        // Validations before closing the voyage
+        // 1. ETA Actual and ETD Actual check for all port rotations
+        List<com.cpdss.loadablestudy.entity.LoadableStudy> dischargeStudies =
+            loadableStudyStream
+                .filter(
+                    loadableStudyElement ->
+                        (loadableStudyElement.getLoadableStudyStatus() != null
+                            && STATUS_CONFIRMED.equalsIgnoreCase(
+                                loadableStudyElement.getLoadableStudyStatus().getName())
+                            && loadableStudyElement.getPlanningTypeXId()
+                                == PLANNING_TYPE_DISCHARGE))
+                .collect(Collectors.toList());
+        if (dischargeStudies.isEmpty()) {
+          throw new GenericServiceException(
+              "No confirmed discharge study",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
 
-      com.cpdss.loadablestudy.entity.LoadableStudy dischargeStudy = dischargeStudies.get(0);
+        com.cpdss.loadablestudy.entity.LoadableStudy dischargeStudy = dischargeStudies.get(0);
 
-      List<LoadableStudyPortRotation> loadableStudyPortRotations =
-          this.loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
-              dischargeStudy.getId(), true);
-      for (LoadableStudyPortRotation loadableStudyPortRotation : loadableStudyPortRotations) {
-        List<SynopticalTable> synopticalTables =
-            this.synopticalTableRepository
-                .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
-                    dischargeStudy.getId(), loadableStudyPortRotation.getId(), true);
-        for (SynopticalTable synopticalTable : synopticalTables) {
-          if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
-            throw new GenericServiceException(
-                "No Actual ETA/ETD values found",
-                CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
-                HttpStatusCode.BAD_REQUEST);
+        List<LoadableStudyPortRotation> loadableStudyPortRotations =
+            this.loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+                dischargeStudy.getId(), true);
+        for (LoadableStudyPortRotation loadableStudyPortRotation : loadableStudyPortRotations) {
+          List<SynopticalTable> synopticalTables =
+              this.synopticalTableRepository
+                  .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
+                      dischargeStudy.getId(), loadableStudyPortRotation.getId(), true);
+          for (SynopticalTable synopticalTable : synopticalTables) {
+            if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
+              throw new GenericServiceException(
+                  "No Actual ETA/ETD values found",
+                  CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
+                  HttpStatusCode.BAD_REQUEST);
+            }
           }
         }
-      }
 
-      // 2. Update Ullage verified for last DS port
-      // 3. Updated bl figure for all cargo
-      validateActuals(dischargeStudy);
+        // 2. Update Ullage verified for last DS port
+        // 3. Updated bl figure for all cargo
+        validateActuals(dischargeStudy);
+      }
 
       voyageEntity.setVoyageStatus(status.get());
 
