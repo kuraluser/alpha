@@ -11,16 +11,13 @@ import com.cpdss.gateway.domain.TimezoneRestResponse;
 import com.cpdss.gateway.domain.cargomaster.CargoDetailedResponse;
 import com.cpdss.gateway.domain.cargomaster.CargosDetailedResponse;
 import com.cpdss.gateway.service.CargoPortInfoService;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -164,19 +161,28 @@ public class CargoPortInfoController {
    * @throws CommonRestException
    */
   @GetMapping("/master/cargos")
-  public CargosDetailedResponse getDetailedCargos(@RequestHeader HttpHeaders headers) throws CommonRestException {
+  public CargosDetailedResponse getDetailedCargos(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "crudeType") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
     CargosDetailedResponse response = null;
     try {
       log.info("getCargos: {}", getClientIp());
-      response = cargoPortInfoService.getCargosDetailed(headers);
+      response =
+          cargoPortInfoService.getCargosDetailed(
+              page, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
     } catch (Exception e) {
       log.error("Error in getCargos ", e);
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
     return response;
   }
@@ -189,21 +195,21 @@ public class CargoPortInfoController {
    * @throws CommonRestException
    */
   @GetMapping("/master/cargos/{cargoId}")
-  public CargoDetailedResponse getDetailedCargoById(@PathVariable Long cargoId,@RequestHeader HttpHeaders headers) throws CommonRestException {
+  public CargoDetailedResponse getDetailedCargoById(
+      @PathVariable Long cargoId, @RequestHeader HttpHeaders headers) throws CommonRestException {
     CargoDetailedResponse response = null;
     try {
       log.info("getCargos: {}", getClientIp());
-      response = cargoPortInfoService.getCargosDetailedById(headers,cargoId);
+      response = cargoPortInfoService.getCargosDetailedById(headers, cargoId);
     } catch (Exception e) {
       log.error("Error in getCargos ", e);
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
     return response;
   }
-
 }

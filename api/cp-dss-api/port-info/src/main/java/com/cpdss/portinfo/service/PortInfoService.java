@@ -569,15 +569,33 @@ public class PortInfoService extends PortInfoServiceImplBase {
                 com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
             Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
             Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
-            if(portMapping.getPortInfo() == null){
+            if (portMapping.getPortInfo() == null) {
               System.out.println("NULLLLLLLLLLLLLLLLLLLLLL");
             } else {
-              portDetail.setPortId(portMapping.getPortInfo().getId() == null ? 0 : portMapping.getPortInfo().getId());
-              portDetail.setPortName(portMapping.getPortInfo().getName() == null ? "" : portMapping.getPortInfo().getName());
-              portDetail.setPortCode(portMapping.getPortInfo().getCode() == null ? "" : portMapping.getPortInfo().getCode());
-              portDetail.setWaterDensity(portMapping.getPortInfo().getDensitySeaWater() == null ? "" : portMapping.getPortInfo().getDensitySeaWater().toString());
-              portDetail.setMaxDraft(portMapping.getPortInfo().getMaxPermissibleDraft() == null ? "" : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
-              portDetail.setMaxAirDraft(portMapping.getPortInfo().getMaxPermissibleDraft() == null ? "" : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
+              portDetail.setPortId(
+                  portMapping.getPortInfo().getId() == null
+                      ? 0
+                      : portMapping.getPortInfo().getId());
+              portDetail.setPortName(
+                  portMapping.getPortInfo().getName() == null
+                      ? ""
+                      : portMapping.getPortInfo().getName());
+              portDetail.setPortCode(
+                  portMapping.getPortInfo().getCode() == null
+                      ? ""
+                      : portMapping.getPortInfo().getCode());
+              portDetail.setWaterDensity(
+                  portMapping.getPortInfo().getDensitySeaWater() == null
+                      ? ""
+                      : portMapping.getPortInfo().getDensitySeaWater().toString());
+              portDetail.setMaxDraft(
+                  portMapping.getPortInfo().getMaxPermissibleDraft() == null
+                      ? ""
+                      : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
+              portDetail.setMaxAirDraft(
+                  portMapping.getPortInfo().getMaxPermissibleDraft() == null
+                      ? ""
+                      : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
             }
             replyBuilder.addPorts(portDetail);
           });
@@ -598,29 +616,30 @@ public class PortInfoService extends PortInfoServiceImplBase {
   /** Retrieves the port info from cargoportmapping table for a particular cargo */
   @Override
   public void getAllCargoPortMappingById(
-          com.cpdss.common.generated.PortInfo.CargoPortRequest request,
-          StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver) {
+      com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver) {
     com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder =
-            com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
+        com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
     try {
-      List<CargoPortMapping> portMappings = this.cargoPortMappingRepository.findByCargoXId(request.getCargoId());
+      List<CargoPortMapping> portMappings =
+          this.cargoPortMappingRepository.findByCargoXId(request.getCargoId());
       portMappings.forEach(
-              portMapping -> {
-                com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.Builder portDetail =
-                        com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
-                Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
-                Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
-                Optional.ofNullable(portMapping.getPortInfo().getId()).ifPresent(portDetail::setPortId);
-                Optional.ofNullable(portMapping.getPortInfo().getName())
-                        .ifPresent(portDetail::setPortName);
-                Optional.ofNullable(portMapping.getPortInfo().getCode())
-                        .ifPresent(portDetail::setPortCode);
-                Optional.ofNullable(portMapping.getPortInfo().getDensitySeaWater())
-                        .ifPresent(density -> portDetail.setWaterDensity(density.toString()));
-                Optional.ofNullable(portMapping.getPortInfo().getMaxPermissibleDraft())
-                        .ifPresent(draft -> portDetail.setMaxDraft(draft.toString()));
-                replyBuilder.addPorts(portDetail);
-              });
+          portMapping -> {
+            com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.Builder portDetail =
+                com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
+            Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
+            Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
+            Optional.ofNullable(portMapping.getPortInfo().getId()).ifPresent(portDetail::setPortId);
+            Optional.ofNullable(portMapping.getPortInfo().getName())
+                .ifPresent(portDetail::setPortName);
+            Optional.ofNullable(portMapping.getPortInfo().getCode())
+                .ifPresent(portDetail::setPortCode);
+            Optional.ofNullable(portMapping.getPortInfo().getDensitySeaWater())
+                .ifPresent(density -> portDetail.setWaterDensity(density.toString()));
+            Optional.ofNullable(portMapping.getPortInfo().getMaxPermissibleDraft())
+                .ifPresent(draft -> portDetail.setMaxDraft(draft.toString()));
+            replyBuilder.addPorts(portDetail);
+          });
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus(SUCCESS);
       replyBuilder.setResponseStatus(responseStatus);
@@ -634,5 +653,4 @@ public class PortInfoService extends PortInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
-
 }

@@ -82,5 +82,5 @@ public class PortRotation {
 
   private BigDecimal freshCrudeOilQuantity;
 
-  private BigDecimal  freshCrudeOilTime;
+  private BigDecimal freshCrudeOilTime;
 }
