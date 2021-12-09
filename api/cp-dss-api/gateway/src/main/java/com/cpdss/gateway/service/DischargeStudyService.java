@@ -423,7 +423,22 @@ public class DischargeStudyService {
       Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
       throws GenericServiceException {
     DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
+
     response.setDischargeStudyId(dischargeStudyId);
+    LoadableStudy.DischargeCowRequest.Builder studyReq = LoadableStudy.DischargeCowRequest.newBuilder();
+    studyReq.setDischargeStudyId(dischargeStudyId);
+    LoadableStudy.DischargeCowResponse dischargeStudyCowDetails =  dischargeStudyOperationServiceBlockingStub.getDischargeCowDetails(studyReq.build());
+    if (!SUCCESS.equals(dischargeStudyCowDetails.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+              "failed to get Port Rotation",
+              dischargeStudyCowDetails.getResponseStatus().getCode(),
+              HttpStatusCode.valueOf(
+                      Integer.valueOf(dischargeStudyCowDetails.getResponseStatus().getCode())));
+    }
+    System.out.println(dischargeStudyCowDetails.getCowId());
+    response.setCowId(dischargeStudyCowDetails.getCowId());
+    response.setPercentage(dischargeStudyCowDetails.getPercentage().isEmpty() ? null : new BigDecimal(dischargeStudyCowDetails.getPercentage()));
+    response.setTanks(dischargeStudyCowDetails.getTanksList());
     response.setPortList(new ArrayList<>());
     log.info(
         "Inside getDischargeStudyCargoByVoyage gateway service with correlationId : "
@@ -505,9 +520,6 @@ public class DischargeStudyService {
             buildCargoNomination(cargoNominationDetailList, portRotation);
           }
           response.getPortList().add(portRotation);
-          response.setCowId(Long.valueOf(0));
-          response.setPercentage(BigDecimal.ZERO);
-          response.setTanks(new ArrayList<>());
         });
   }
 
@@ -622,6 +634,9 @@ public class DischargeStudyService {
     DishargeStudyBackLoadingSaveRequest.Builder builder =
         DishargeStudyBackLoadingSaveRequest.newBuilder();
     builder.setDischargeStudyId(request.getDischargeStudyId());
+    builder.setCowId(request.getCowId());
+    builder.setPercentage(request.getPercentage() == null ? null : request.getPercentage().longValue());
+    builder.addAllTanks(request.getTanks());
     request
         .getPortList()
         .forEach(
@@ -668,7 +683,9 @@ public class DischargeStudyService {
     portDetails.setFreshCrudeOil(portCargo.getFreshCrudeOil());
     Optional.ofNullable(portCargo.getFreshCrudeOilQuantity())
         .ifPresent(item -> portDetails.setFreshCrudeOilQuantity(item.toString()));
-    portDetails.setFreshCrudeOilTime(portCargo.getFreshCrudeOilTime().toString());
+    Optional.ofNullable(portCargo.getFreshCrudeOilTime())
+            .ifPresent(item -> portDetails.setFreshCrudeOilTime(item.toString()));
+    portDetails.setCow(portCargo.getCow());
     dsBackLoadingDetail.setPortDetails(portDetails.build());
     dsBackLoadingDetail.addAllPortCargoDetails(
         createPortWiseCargoNomination(portCargo.getCargoNominationList()));

@@ -403,6 +403,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     portRotation.setFreshCrudeOil(loadableStudyPortRotation.getFreshCrudeOil());
     portRotation.setFreshCrudeOilQuantity(loadableStudyPortRotation.getFreshCrudeOilQuantity());
     portRotation.setFreshCrudeOilTime(loadableStudyPortRotation.getFreshCrudeOilTime());
+    portRotation.setCowRequired(false);
     return portRotation;
   }
 
@@ -710,14 +711,17 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                       portRotation.setFreshCrudeOilTime(
                           new BigDecimal(portRequestDetail.getFreshCrudeOilTime()));
                     }
+                    portRotation.setCowRequired(portRequestDetail.getCow());
                   }
                 });
             updateCowDetails(
                 cowDetailForThePort,
                 cowDetailsToSave,
-                portRequestDetail,
-                portCargoId,
-                dischargestudyId);
+                request.getCowId(),
+                request.getPercentage(),
+                request.getTanksList(),
+                dischargestudyId,
+                portCargoId);
             updateInsrtuctions(
                 dischargestudyId,
                 portWiseInstructions,
@@ -1000,27 +1004,22 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     portInstructionsToSave.add(newInstruction);
   }
 
-  private void updateCowDetails(
-      Map<Long, DischargeStudyCowDetail> cowDetailForThePort,
-      List<DischargeStudyCowDetail> cowDetailsToSave,
-      PortRotationDetail portDetail,
-      long portCargoId,
-      long dischargestudyId) {
+  private void updateCowDetails(Map<Long, DischargeStudyCowDetail> cowDetailForThePort, List<DischargeStudyCowDetail> cowDetailsToSave, long cowId, long percentage, List<Long> tanksList, long dischargestudyId, long portCargoId) {
     DischargeStudyCowDetail dischargeStudyCowDetail = null;
     if (cowDetailForThePort.containsKey(portCargoId)) {
       dischargeStudyCowDetail = cowDetailForThePort.get(portCargoId);
     } else {
       dischargeStudyCowDetail = new DischargeStudyCowDetail();
-      dischargeStudyCowDetail.setPortId(portCargoId);
+//      dischargeStudyCowDetail.setPortId(portCargoId);
       dischargeStudyCowDetail.setDischargeStudyStudyId(dischargestudyId);
     }
-    dischargeStudyCowDetail.setCowType(portDetail.getCowId());
-    if (portDetail.getCowId() == 1) {
-      dischargeStudyCowDetail.setPercentage(portDetail.getPercentage());
+    dischargeStudyCowDetail.setCowType(cowId);
+    if (cowId == 1) {
+      dischargeStudyCowDetail.setPercentage(percentage);
       dischargeStudyCowDetail.setTankIds("");
-    } else if (portDetail.getCowId() == 2) {
+    } else if (cowId == 2) {
       String numberString =
-          portDetail.getTanksList().stream().map(String::valueOf).collect(Collectors.joining(","));
+          tanksList.stream().map(String::valueOf).collect(Collectors.joining(","));
       dischargeStudyCowDetail.setTankIds(numberString);
       dischargeStudyCowDetail.setPercentage(null);
     }
@@ -1643,6 +1642,43 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .setStatus(FAILED)
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception when confirmPlan Loadable Study Status"));
+
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargeCowDetails(com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request,
+              io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.DischargeCowResponse> responseObserver){
+    com.cpdss.common.generated.LoadableStudy.DischargeCowResponse.Builder replyBuilder =
+            com.cpdss.common.generated.LoadableStudy.DischargeCowResponse.newBuilder();
+    try {
+      DischargeStudyCowDetail cowDetails =
+              cowDetailService.getCowDetailForDS(request.getDischargeStudyId());
+      System.out.println(cowDetails.getCowType());
+      replyBuilder.setCowId(cowDetails.getCowType());
+      if (cowDetails.getPercentage() != null) {
+        replyBuilder.setPercentage(cowDetails.getPercentage().toString());
+      }
+      if (cowDetails.getTankIds() != null && !cowDetails.getTankIds().isEmpty()) {
+        List<String> tanks = Arrays.asList(cowDetails.getTankIds().split(","));
+        replyBuilder.addAllTanks(
+                tanks.stream()
+                        .map(tank -> Long.parseLong(tank))
+                        .collect(Collectors.toList()));
+      }
+      replyBuilder.setResponseStatus(
+              ResponseStatus.newBuilder()
+              .setStatus(SUCCESS));
+    } catch (Exception e) {
+      log.error("Exception when getting cow details ", e);
+      replyBuilder.setResponseStatus(
+              ResponseStatus.newBuilder()
+                      .setStatus(FAILED)
+                      .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                      .setMessage("Exception when getting cow details"));
 
     } finally {
       responseObserver.onNext(replyBuilder.build());

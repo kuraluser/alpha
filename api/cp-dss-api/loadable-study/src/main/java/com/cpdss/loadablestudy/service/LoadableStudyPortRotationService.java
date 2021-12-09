@@ -707,8 +707,7 @@ public class LoadableStudyPortRotationService {
             backLoadingService.getBackloadingDataByportIds(request.getLoadableStudyId(), lsprIds);
         Map<Long, List<DischargeStudyPortInstruction>> instructionsForThePort =
             portInstructionService.getPortWiseInstructions(request.getLoadableStudyId(), lsprIds);
-        Map<Long, DischargeStudyCowDetail> cowDetails =
-            cowDetailService.getCowDetailForThePort(request.getLoadableStudyId(), lsprIds);
+
 
         ports.forEach(
             port -> {
@@ -748,20 +747,6 @@ public class LoadableStudyPortRotationService {
                     instructionsForThePort.get(port.getId()).stream()
                         .map(DischargeStudyPortInstruction::getPortInstructionId)
                         .collect(Collectors.toList()));
-              }
-              if (cowDetails.get(port.getId()) != null) {
-                DischargeStudyCowDetail cow = cowDetails.get(port.getId());
-                builder.setCowId(cow.getCowType());
-                if (cow.getPercentage() != null) {
-                  builder.setPercentage(cow.getPercentage());
-                }
-                if (cow.getTankIds() != null && !cow.getTankIds().isEmpty()) {
-                  List<String> tanks = Arrays.asList(cow.getTankIds().split(","));
-                  builder.addAllTanks(
-                      tanks.stream()
-                          .map(tank -> Long.parseLong(tank))
-                          .collect(Collectors.toList()));
-                }
               }
 
               portRotationReplyBuilder.addPorts(builder);
