@@ -1010,8 +1010,7 @@ public class LoadableStudyCommunicationService {
             loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
     if (loadableStudyStatus.isPresent()) {
       LoadableStudyAlgoStatus algoStatus =
-          loadableStudyAlgoStatusRepository.findByLoadableStudyId(
-              loadableStudyAlgoStatusStage.getLoadableStudy().getId());
+          loadableStudyAlgoStatusRepository.findByLoadableStudyId(loadableStudyStage.getId());
       if (algoStatus != null) {
         algoStatus.setLoadableStudyStatus(loadableStudyStatus.get());
         algoStatus.setGeneratedFromShore(true);
@@ -1538,6 +1537,7 @@ public class LoadableStudyCommunicationService {
     voyageId = 0L;
     loadableStudyStatusId = 0L;
     current_table_name = "";
+    loadableStudyPortRotationStageCommunication = null;
   }
 
   // endregion
