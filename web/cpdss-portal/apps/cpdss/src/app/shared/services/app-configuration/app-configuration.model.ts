@@ -25,7 +25,7 @@ export interface IAppConfiguration {
   ullageUnit: string;
   restrictMaxNumberOfCargo?: boolean;
   maxCargoLimit?: number;
-  simulatorDomainUrl: string;
+  vesselNoImageUrl: string;
   unitConversionConstant: number;
   documentationSiteMapping?: IDictionary<string>;
 }
