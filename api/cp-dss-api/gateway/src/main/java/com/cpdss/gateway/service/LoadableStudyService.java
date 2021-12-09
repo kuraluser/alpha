@@ -4234,6 +4234,7 @@ public class LoadableStudyService {
               synopticalRecord.setSf(str.getSf());
               synopticalRecord.setList(str.getList());
               synopticalRecord.setConstantPlanned(str.getConstantPlanned());
+              synopticalRecord.setConstantActual(str.getConstantActual());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
@@ -5284,6 +5285,8 @@ public class LoadableStudyService {
         bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());
         bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
         bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
+        bunkerConditions.setConstantActual(synopticalRecord.get().getConstantActual());
+        bunkerConditions.setConstantPlanned(synopticalRecord.get().getConstantPlanned());
         voyageStatusResponse.setBunkerConditions(bunkerConditions);
         // build ballast quantities
         if (!CollectionUtils.isEmpty(synopticalRecord.get().getBallast())) {
