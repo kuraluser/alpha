@@ -3,13 +3,13 @@ import { DepartureConditionTransformationService } from './departure-condition-t
 import { ITankOptions, IVoyagePortDetails, TANKTYPE, ICargo, OPERATIONS, ICargoQuantities, IShipCargoTank, IBallastQuantities, IShipBallastTank, IShipBunkerTank } from '../../core/models/common.model';
 import { QUANTITY_UNIT, ICargoConditions } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
-import { DecimalPipe } from '@angular/common';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ULLAGE_STATUS, ULLAGE_STATUS_TEXT, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 
 /**
  * Component class for departure condition block
@@ -96,7 +96,7 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
     private departureConditionTransformationService: DepartureConditionTransformationService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private quantityPipe: QuantityPipe,
-    private _decimalPipe: DecimalPipe
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe
   ) { }
 
   ngOnInit(): void {
@@ -431,12 +431,14 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
         }
       })
     });
-    commingleDetails.tankName = tankData ? tankData.name : '';
+    commingleDetails.tankName = tankData ? tankData.shortName : '';
     const cargoNomination1 = this.loadingDischargingPlanData?.currentPortCargos?.find(item => item.cargoNominationId === commingleDetails.cargoNomination1Id);
     const cargoNomination2 = this.loadingDischargingPlanData?.currentPortCargos?.find(item => item.cargoNominationId === commingleDetails.cargoNomination2Id);
-    commingleDetails.cargoQuantity = this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantity1MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2') + '\n' + this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantity2MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2');
+    const cargo1Quantity = this.quantityPipe.transform(commingleDetails.quantity1MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api, commingleDetails?.temperature, -1);
+    const cargo2Quantity = this.quantityPipe.transform(commingleDetails.quantity2MT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api, commingleDetails?.temperature, -1);
+    commingleDetails.cargoQuantity = this.quantityDecimalFormatPipe.transform(cargo1Quantity) + '\n' + this.quantityDecimalFormatPipe.transform(cargo2Quantity);
     commingleDetails.cargoPercentage = cargoNomination1.cargoAbbreviation + '-' + ((commingleDetails.quantity1MT / commingleDetails.quantityMT) * 100).toFixed(2) + '%\n' + cargoNomination2.cargoAbbreviation + '-' + ((commingleDetails.quantity2MT / commingleDetails.quantityMT) * 100).toFixed(2) + '%';
-    commingleDetails.quantity = this._decimalPipe.transform(this.quantityPipe.transform(commingleDetails.quantityMT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api), '1.2-2');
+    commingleDetails.quantity = this.quantityDecimalFormatPipe.transform(this.quantityPipe.transform(commingleDetails.quantityMT, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api, commingleDetails?.temperature, -1));
     this.commingleDetails = [commingleDetails];
     this.showComminglePopup = true;
   }
