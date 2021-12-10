@@ -157,7 +157,12 @@ public class CargoPortInfoController {
    * Retrieve detailed cargos information from cargo master
    *
    * @param headers
-   * @return
+   * @param pageSize
+   * @param page
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
    * @throws CommonRestException
    */
   @GetMapping("/master/cargos")
@@ -169,7 +174,7 @@ public class CargoPortInfoController {
       @RequestParam(required = false, defaultValue = "asc") String orderBy,
       @RequestParam Map<String, String> params)
       throws CommonRestException {
-    CargosDetailedResponse response = null;
+    CargosDetailedResponse response;
     try {
       log.info("getCargos: {}", getClientIp());
       response =
