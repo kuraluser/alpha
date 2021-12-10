@@ -63,6 +63,17 @@ public class GenerateDischargeStudyJsonTest {
 
   @MockBean LoadableStudyStagingService loadableStudyStagingService;
 
+  @MockBean LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+
+  @MockBean LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
+
+  @MockBean
+  LoadablePlanCommingleDetailsPortwiseRepository loadablePlanCommingleDetailsPortwiseRepository;
+
+  @MockBean SynopticalTableRepository synopticalTableRepository;
+
+  @MockBean SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
+
   private static final String SUCCESS = "SUCCESS";
 
   @Test
@@ -169,6 +180,45 @@ public class GenerateDischargeStudyJsonTest {
     when(this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
             any(VesselInfo.VesselRuleRequest.class)))
         .thenReturn(getVesselRuleReply());
+    when(loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(getLPOpt());
+    when(this.loadablePatternCargoDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(new ArrayList<>());
+    when(this.loadablePlanStowageBallastDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(getBallastDetails());
+    when(this.loadablePlanCommingleDetailsPortwiseRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(new ArrayList<>());
+    when(this.synopticalTableRepository
+            .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(getSynopticalTableOpt());
+    when(this.synopticalTableLoadicatorDataRepository
+            .findByloadablePatternIdAndSynopticalTableAndIsActive(
+                anyLong(), any(SynopticalTable.class), anyBoolean()))
+        .thenReturn(getSynopticalTableLoadicatorData());
+    ReflectionTestUtils.setField(
+        spyService, "synopticalTableRepository", synopticalTableRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "synopticalTableLoadicatorDataRepository",
+        synopticalTableLoadicatorDataRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternCargoDetailsRepository", loadablePatternCargoDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanStowageBallastDetailsRepository",
+        loadablePlanStowageBallastDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsPortwiseRepository",
+        loadablePlanCommingleDetailsPortwiseRepository);
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     ReflectionTestUtils.setField(spyService, "cowHistoryRepository", cowHistoryRepository);
     ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
@@ -180,6 +230,8 @@ public class GenerateDischargeStudyJsonTest {
         voyageService, "cargoNominationRepository", cargoNominationRepository);
     ReflectionTestUtils.setField(
         voyageService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
     ReflectionTestUtils.setField(voyageService, "formatter", formatter);
 
     ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
@@ -192,8 +244,25 @@ public class GenerateDischargeStudyJsonTest {
 
     var result = spyService.generateDischargeStudyJson(1l, getLoadableStudyEntity());
     assertEquals(
-        "1",
-        result.getLoadablePlanPortWiseDetails().getLoadablePlanBallastDetails().get(0).getApi());
+        1L, result.getLoadablePlanPortWiseDetails().getLoadablePlanBallastDetails().get(0).getId());
+  }
+
+  private List<LoadablePlanStowageBallastDetails> getBallastDetails() {
+    List<LoadablePlanStowageBallastDetails> ballastDetails = new ArrayList<>();
+    LoadablePlanStowageBallastDetails ballast = new LoadablePlanStowageBallastDetails();
+    ballast.setId(1L);
+    ballastDetails.add(ballast);
+    return ballastDetails;
+  }
+
+  private SynopticalTableLoadicatorData getSynopticalTableLoadicatorData() {
+    return new SynopticalTableLoadicatorData();
+  }
+
+  private Optional<SynopticalTable> getSynopticalTableOpt() {
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setId(1L);
+    return Optional.of(synopticalTable);
   }
 
   private VesselInfo.VesselRuleReply getVesselRuleReply() {
@@ -313,6 +382,18 @@ public class GenerateDischargeStudyJsonTest {
     return list;
   }
 
+  private Optional<LoadablePattern> getLPOpt() {
+    LoadablePattern loadablePattern = new LoadablePattern();
+    loadablePattern.setId(1L);
+    loadablePattern.setCaseNumber(1);
+    loadablePattern.setLoadableStudyStatus(1L);
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.entity.LoadableStudy();
+    loadableStudy.setId(1L);
+    loadablePattern.setLoadableStudy(loadableStudy);
+    return Optional.of(loadablePattern);
+  }
+
   private com.cpdss.loadablestudy.entity.LoadableStudy getLoadableStudyEntity() {
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
         new com.cpdss.loadablestudy.entity.LoadableStudy();
@@ -345,7 +426,7 @@ public class GenerateDischargeStudyJsonTest {
 
   private CargoOperation getCO() {
     CargoOperation cargoOperation = new CargoOperation();
-    cargoOperation.setId(1L);
+    cargoOperation.setId(2L);
     return cargoOperation;
   }
 

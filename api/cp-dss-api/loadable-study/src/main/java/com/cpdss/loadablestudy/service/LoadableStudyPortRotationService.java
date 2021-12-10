@@ -708,7 +708,6 @@ public class LoadableStudyPortRotationService {
         Map<Long, List<DischargeStudyPortInstruction>> instructionsForThePort =
             portInstructionService.getPortWiseInstructions(request.getLoadableStudyId(), lsprIds);
 
-
         ports.forEach(
             port -> {
               com.cpdss.common.generated.LoadableStudy.PortRotationDetail.Builder builder =

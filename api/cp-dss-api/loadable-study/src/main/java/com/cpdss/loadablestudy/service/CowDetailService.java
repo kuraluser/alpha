@@ -35,13 +35,13 @@ public class CowDetailService {
     dischargeStudyCowDetailRepository.saveAll(cowDetailsToSave);
   }
 
-  public DischargeStudyCowDetail getCowDetailForDS(
-          long dischargestudyId) {
+  public DischargeStudyCowDetail getCowDetailForDS(long dischargestudyId) {
 
-//    return
-        DischargeStudyCowDetail cow =     dischargeStudyCowDetailRepository.findFirstByDischargeStudyStudyIdAndIsActive(
-                    dischargestudyId, true);
-        System.out.println(cow.getCowType());
-        return cow;
+    //    return
+    DischargeStudyCowDetail cow =
+        dischargeStudyCowDetailRepository.findFirstByDischargeStudyStudyIdAndIsActive(
+            dischargestudyId, true);
+    System.out.println(cow.getCowType());
+    return cow;
   }
 }
