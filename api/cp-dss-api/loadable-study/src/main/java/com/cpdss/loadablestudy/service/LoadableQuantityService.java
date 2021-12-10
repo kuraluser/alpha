@@ -235,7 +235,8 @@ public class LoadableQuantityService {
         VesselInfo.VesselRequest.newBuilder()
             .setVesselId(loadableStudy.get().getVesselXId())
             .setVesselDraftConditionId(loadableStudy.get().getLoadLineXId())
-            .setDraftExtreme(loadableStudy.get().getDraftMark().toString())
+            .setDraftExtreme(String.valueOf(loadableStudy.get().getDraftMark()))
+            .setDraftForTpc(draftRestriction1)
             .build();
     VesselInfo.VesselReply vesselReply = this.getVesselDetailsById(replyBuilder);
     String selectedZone = "";

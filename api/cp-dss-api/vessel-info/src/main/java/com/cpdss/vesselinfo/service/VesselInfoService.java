@@ -290,7 +290,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .findFirst();
       List<BigDecimal> tpc =
           hydrostaticTableRepository.getTPCFromDraf(
-              request.getVesselId(), new BigDecimal(request.getDraftExtreme()), true);
+              request.getVesselId(), new BigDecimal(request.getDraftForTpc()), true);
       if (null != vesselDetails) {
         Optional.ofNullable(hydrostaticTable.get().getDisplacement())
             .ifPresent(item -> builder.setDisplacmentDraftRestriction(item.toString()));

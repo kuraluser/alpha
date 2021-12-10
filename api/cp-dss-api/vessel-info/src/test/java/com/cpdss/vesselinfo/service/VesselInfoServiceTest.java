@@ -30,7 +30,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @ExtendWith(MockitoExtension.class)
 class VesselInfoServiceTest {
@@ -525,6 +524,7 @@ class VesselInfoServiceTest {
             .setVesselId(1L)
             .setVesselDraftConditionId(1L)
             .setDraftExtreme("1")
+            .setDraftForTpc("1")
             .build();
     Mockito.when(
             this.vesselRepository.findVesselDetailsById(

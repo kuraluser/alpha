@@ -115,6 +115,7 @@ message VesselRequest {
 	int64 vesselDraftConditionId = 3;
 	string draftExtreme = 4;
 	repeated int64 tankCategories = 5;
+	string draftForTpc = 6;
 }
 
 message LoadLineDetail {
