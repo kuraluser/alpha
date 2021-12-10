@@ -225,6 +225,7 @@ export interface ISequenceData {
   ballastEduction?: IEduction[];
   cargoEduction?: IEduction[];
   cleaningTanks: ICOW;
+  driveTanks?: ITankData[];
 }
 
 /**

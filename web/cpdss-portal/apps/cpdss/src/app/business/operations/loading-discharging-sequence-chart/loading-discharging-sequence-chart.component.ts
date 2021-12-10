@@ -340,6 +340,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       "SEQUENCE_CHART_TOTAL",
       "SEQUENCE_CHART_LOADING_RATE",
       "SEQUENCE_CHART_DEBALLASTING_RATE",
+      "SEQUENCE_CHART_DRIVE_OIL_TANK",
       "SEQUENCE_CHART_DISCHARGING_RATE",
       "SEQUENCE_CHART_BALLASTING_RATE",
       "SEQUENCE_CHART_FLOW_RATE",
@@ -640,6 +641,53 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                 }
                 return categoryLabel;
               }
+            },
+          }
+        },
+        {
+          visible: LoadingDischargingSequenceChartComponent._operation === OPERATIONS.DISCHARGING,
+          title: {
+            text: `${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_DRIVE_OIL_TANK']}`,
+          },
+          grid: {
+            enabled: true,
+            // borderWidth: 0
+          },
+          opposite: false,
+          lineWidth: 0,
+          lineColor: 'transparent',
+          tickPositions: this.stageTickPositions,
+          tickColor: '#000d20',
+          offset: '30',
+          className: 'sequence-drive-oil-tanks',
+          labels: {
+            useHTML: true,
+            align: 'right',
+            formatter: function () {
+              let categoryLabel;
+              if (!this.isLast) {
+                const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
+                const nextTick = this.axis.tickPositions[equalIndex + 1];
+                const stage = LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks?.find((data: any) => {
+                  console.log((Number(data.start) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, (Number(data.end) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, (Number(this.value) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, (Number(nextTick) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, this.value <= data.end, data.end <= nextTick);
+                  return this.value <= data.end && data.end <= nextTick;
+                }
+                );
+                const lastStage = LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks[LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks.length - 1];
+                if (stage) {
+                  categoryLabel = stage?.tankName;
+                } else if (equalIndex + 1 === this.axis.tickPositions?.length - 1 && lastStage.end >= nextTick) {
+                  categoryLabel = lastStage?.tankName;
+                }
+
+                if (categoryLabel) {
+                  categoryLabel =
+                    `<div class="font-main text-center pl-5 pr-5">
+                          <div class="">${categoryLabel}</div>
+                    </div>`;
+                }
+              }
+              return categoryLabel;
             },
           }
         },
