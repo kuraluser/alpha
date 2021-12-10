@@ -19,12 +19,12 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.cargomaster.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.cpdss.gateway.domain.cargomaster.*;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.http.HttpHeaders;
@@ -257,112 +257,164 @@ public class CargoPortInfoService {
     return tzRep;
   }
 
-  public CargosDetailedResponse getCargosDetailed(HttpHeaders headers) throws GenericServiceException {
+  /**
+   * Fetching all master cargos with Pagination, Sorting and Filtering
+   *
+   * @param page
+   * @param pageSize
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @param correlationIdHeader
+   * @return
+   * @throws GenericServiceException
+   */
+  public CargosDetailedResponse getCargosDetailed(
+      int page,
+      int pageSize,
+      String sortBy,
+      String orderBy,
+      Map<String, String> params,
+      String correlationIdHeader)
+      throws GenericServiceException {
     CargosDetailedResponse cargosResponse = new CargosDetailedResponse();
     // Retrieve cargo information from cargo master
-    CargoRequest cargoRequest = CargoRequest.newBuilder().build();
-    CargoInfo.CargoDetailedReply cargoReply = cargoInfoServiceBlockingStub.getCargoInfoDetailed(cargoRequest);
+    CargoRequest.Builder cargoRequestBuilder = CargoRequest.newBuilder();
+    cargoRequestBuilder.setPage(page);
+    cargoRequestBuilder.setPageSize(pageSize);
+    cargoRequestBuilder.setSortBy(sortBy);
+    cargoRequestBuilder.setOrderBy(orderBy);
+    cargoRequestBuilder.setCompanyId(1L);
+    params.forEach(
+        (key, value) ->
+            cargoRequestBuilder.addParam(
+                CargoInfo.Param.newBuilder().setKey(key).setValue(value).build()));
+    CargoInfo.CargoDetailedReply cargoReply =
+        cargoInfoServiceBlockingStub.getCargoInfoDetailed(cargoRequestBuilder.build());
     if (cargoReply != null
-            && cargoReply.getResponseStatus() != null
-            && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-        System.out.println(cargoReply.getCargosCount());
+        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
       // Get all cargo port mappings
       List<PortInfo.CargoPortMappingDetail> cargoPortMappings = this.getAllPortCargoMappings();
-      System.out.println(cargoPortMappings.size());
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
       commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+      commonSuccessResponse.setCorrelationId(correlationIdHeader);
       cargosResponse.setResponseStatus(commonSuccessResponse);
-      cargosResponse = buildCargoDetailedResponse(cargosResponse, cargoReply, cargoPortMappings);
+      buildCargoDetailedResponse(cargosResponse, cargoReply, cargoPortMappings);
     } else {
       throw new GenericServiceException(
-              "Error in calling cargo service",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargosResponse;
   }
 
-  private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappings() throws GenericServiceException {
+  private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappings()
+      throws GenericServiceException {
     PortInfo.CargoPortRequest cargoPortRequest = PortInfo.CargoPortRequest.newBuilder().build();
-    PortInfo.CargoPortReply cargoPortReply = this.portInfoServiceBlockingStub.getAllCargoPortMapping(cargoPortRequest);
+    PortInfo.CargoPortReply cargoPortReply =
+        this.portInfoServiceBlockingStub.getAllCargoPortMapping(cargoPortRequest);
     System.out.println(cargoPortReply.getPorts(0));
-    if (cargoPortReply == null
-            || cargoPortReply.getResponseStatus() == null
-            || !SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())){
+    if (!SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-              "Error in retrieving all cargo mappings",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
+          "Error in retrieving all cargo mappings",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoPortReply.getPortsList();
   }
 
-  private CargosDetailedResponse buildCargoDetailedResponse(CargosDetailedResponse cargosResponse, CargoInfo.CargoDetailedReply cargoReply, List<PortInfo.CargoPortMappingDetail> cargoPortMappings) {
-  if (cargoReply != null && !cargoReply.getCargosList().isEmpty()) {
-    List<CargoDetailed> cargoList = new ArrayList<>();
-    cargoReply
-            .getCargosList()
-            .forEach(
-                    cargo -> {
-                      CargoDetailed cargoDetail = new CargoDetailed();
-                        cargoDetail.setAbbreviation(cargo.getAbbreviation() == null ? "" : cargo.getAbbreviation());
-                        cargoDetail.setApi(cargo.getApi() == null ? "": cargo.getApi());
-                        cargoDetail.setId(cargo.getId());
-                        cargoDetail.setName(cargo.getName());
-                        cargoDetail.setBenzene(cargo.getBenzene());
-                        cargoDetail.setCloudPoint(cargo.getCloudPoint());
-                        cargoDetail.setType(cargo.getType());
-                        cargoDetail.setTemp(cargo.getTemp());
-                        cargoDetail.setReidVapourPressure(cargo.getReidVapourPressure());
-                        cargoDetail.setGas(cargo.getGas());
-                        cargoDetail.setTotalWax(cargo.getTotalWax());
-                        cargoDetail.setPourPoint(cargo.getPourPoint());
-                        cargoDetail.setCloudPoint(cargo.getCloudPoint());
-                        cargoDetail.setViscosity(cargo.getViscosity());
-                        cargoDetail.setCowCodes(cargo.getCowCodes());
-                        cargoDetail.setHydrogenSulfideOil(cargo.getHydrogenSulfideOil());
-                        cargoDetail.setHydrogenSulfideVapour(cargo.getHydrogenSulfideVapour());
-                        cargoDetail.setSpecialInstrictionsRemark(cargo.getSpecialInstrictionsRemark());
-                        // adding ports that are mapped to this cargo
-                        List<PortInfo.CargoPortMappingDetail> cargoPorts = cargoPortMappings.stream().filter(cargoPortMappingDetail -> cargoPortMappingDetail.getCargoId() == cargo.getId()).collect(Collectors.toList());
-                        List<CargoPortMapping> cargoPortMappingList = this.buildMappings(cargoPorts);
-                        cargoDetail.setLoadingInformation(cargoPortMappingList);
-                        cargoList.add(cargoDetail);
-                    });
-    cargosResponse.setCargos(cargoList);
+  /**
+   * Build CargosDetailedResponse
+   *
+   * @param cargosResponse
+   * @param cargoReply
+   * @param cargoPortMappings
+   */
+  private void buildCargoDetailedResponse(
+      CargosDetailedResponse cargosResponse,
+      CargoInfo.CargoDetailedReply cargoReply,
+      List<PortInfo.CargoPortMappingDetail> cargoPortMappings) {
+    if (cargoReply != null && !cargoReply.getCargosList().isEmpty()) {
+      List<CargoDetailed> cargoList = new ArrayList<>();
+      cargoReply
+          .getCargosList()
+          .forEach(
+              cargo -> {
+                CargoDetailed cargoDetail = new CargoDetailed();
+                cargoDetail.setAbbreviation(cargo.getAbbreviation());
+                cargoDetail.setApi(cargo.getApi());
+                cargoDetail.setId(cargo.getId());
+                cargoDetail.setName(cargo.getName());
+                cargoDetail.setBenzene(cargo.getBenzene());
+                cargoDetail.setCloudPoint(cargo.getCloudPoint());
+                cargoDetail.setType(cargo.getType());
+                cargoDetail.setTemp(cargo.getTemp());
+                cargoDetail.setReidVapourPressure(cargo.getReidVapourPressure());
+                cargoDetail.setGas(cargo.getGas());
+                cargoDetail.setTotalWax(cargo.getTotalWax());
+                cargoDetail.setPourPoint(cargo.getPourPoint());
+                cargoDetail.setCloudPoint(cargo.getCloudPoint());
+                cargoDetail.setViscosity(cargo.getViscosity());
+                cargoDetail.setCowCodes(cargo.getCowCodes());
+                cargoDetail.setHydrogenSulfideOil(cargo.getHydrogenSulfideOil());
+                cargoDetail.setHydrogenSulfideVapour(cargo.getHydrogenSulfideVapour());
+                cargoDetail.setSpecialInstrictionsRemark(cargo.getSpecialInstrictionsRemark());
+                // adding ports that are mapped to this cargo
+                List<PortInfo.CargoPortMappingDetail> cargoPorts =
+                    cargoPortMappings.stream()
+                        .filter(
+                            cargoPortMappingDetail ->
+                                cargoPortMappingDetail.getCargoId() == cargo.getId())
+                        .collect(Collectors.toList());
+                List<CargoPortMapping> cargoPortMappingList = this.buildMappings(cargoPorts);
+                cargoDetail.setLoadingInformation(cargoPortMappingList);
+                cargoList.add(cargoDetail);
+              });
+      cargosResponse.setCargos(cargoList);
+      cargosResponse.setTotalElements(cargoReply.getTotalElements());
+    }
   }
-  return cargosResponse;
-}
 
+    /**
+     * Build cargoPortMappingList
+     * @param cargoPorts
+     * @return
+     */
   private List<CargoPortMapping> buildMappings(List<PortInfo.CargoPortMappingDetail> cargoPorts) {
     List<CargoPortMapping> cargoPortMappingList = new ArrayList<>();
-    cargoPorts.stream().forEach( cargoPort -> {
-      CargoPortMapping cargoPortMapping = new CargoPortMapping();
-      cargoPortMapping.setId(cargoPort.getId());
-      CargoPort port = new CargoPort();
-      port.setId(cargoPort.getPortId());
-      port.setCode(cargoPort.getPortCode());
-      port.setName(cargoPort.getPortName());
-      port.setMaxAirDraft(cargoPort.getMaxAirDraft());
-      port.setMaxDraft(cargoPort.getMaxDraft());
-      port.setWaterDensity(cargoPort.getWaterDensity());
-      cargoPortMapping.setPort(port);
-      cargoPortMappingList.add(cargoPortMapping);
-    });
+    cargoPorts.stream()
+        .forEach(
+            cargoPort -> {
+              CargoPortMapping cargoPortMapping = new CargoPortMapping();
+              cargoPortMapping.setId(cargoPort.getId());
+              CargoPort port = new CargoPort();
+              port.setId(cargoPort.getPortId());
+              port.setCode(cargoPort.getPortCode());
+              port.setName(cargoPort.getPortName());
+              port.setMaxAirDraft(cargoPort.getMaxAirDraft());
+              port.setMaxDraft(cargoPort.getMaxDraft());
+              port.setWaterDensity(cargoPort.getWaterDensity());
+              cargoPortMapping.setPort(port);
+              cargoPortMappingList.add(cargoPortMapping);
+            });
     return cargoPortMappingList;
   }
 
-  public CargoDetailedResponse getCargosDetailedById(HttpHeaders headers, Long cargoId) throws GenericServiceException {
+  public CargoDetailedResponse getCargosDetailedById(HttpHeaders headers, Long cargoId)
+      throws GenericServiceException {
     CargoDetailedResponse cargoResponse = new CargoDetailedResponse();
     // Retrieve cargo information from cargo master
     CargoRequest cargoRequest = CargoRequest.newBuilder().setCargoId(cargoId).build();
-    CargoInfo.CargoByIdDetailedReply cargoReply = cargoInfoServiceBlockingStub.getCargoInfoDetailedById(cargoRequest);
+    CargoInfo.CargoByIdDetailedReply cargoReply =
+        cargoInfoServiceBlockingStub.getCargoInfoDetailedById(cargoRequest);
     if (cargoReply != null
-            && cargoReply.getResponseStatus() != null
-            && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+        && cargoReply.getResponseStatus() != null
+        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
       System.out.println(cargoReply.getCargo());
       // Get all cargo port mappings
-      List<PortInfo.CargoPortMappingDetail> cargoPortMappings = this.getAllPortCargoMappingsById(cargoId);
+      List<PortInfo.CargoPortMappingDetail> cargoPortMappings =
+          this.getAllPortCargoMappingsById(cargoId);
       System.out.println(cargoPortMappings.size());
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
       commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
@@ -370,18 +422,21 @@ public class CargoPortInfoService {
       cargoResponse = buildCargoByIdDetailedResponse(cargoResponse, cargoReply, cargoPortMappings);
     } else {
       throw new GenericServiceException(
-              "Error in calling cargo service",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoResponse;
   }
 
-  private CargoDetailedResponse buildCargoByIdDetailedResponse(CargoDetailedResponse cargoResponse, CargoInfo.CargoByIdDetailedReply cargoReply, List<PortInfo.CargoPortMappingDetail> cargoPortMappings) {
+  private CargoDetailedResponse buildCargoByIdDetailedResponse(
+      CargoDetailedResponse cargoResponse,
+      CargoInfo.CargoByIdDetailedReply cargoReply,
+      List<PortInfo.CargoPortMappingDetail> cargoPortMappings) {
     CargoInfo.CargoDetailed cargo = cargoReply.getCargo();
     CargoDetailed cargoDetail = new CargoDetailed();
     cargoDetail.setAbbreviation(cargo.getAbbreviation() == null ? "" : cargo.getAbbreviation());
-    cargoDetail.setApi(cargo.getApi() == null ? "": cargo.getApi());
+    cargoDetail.setApi(cargo.getApi() == null ? "" : cargo.getApi());
     cargoDetail.setId(cargo.getId());
     cargoDetail.setName(cargo.getName());
     cargoDetail.setBenzene(cargo.getBenzene());
@@ -404,16 +459,19 @@ public class CargoPortInfoService {
     return cargoResponse;
   }
 
-  private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappingsById(Long cargoId) throws GenericServiceException {
-    PortInfo.CargoPortRequest cargoPortRequest = PortInfo.CargoPortRequest.newBuilder().setCargoId(cargoId).build();
-    PortInfo.CargoPortReply cargoPortReply = this.portInfoServiceBlockingStub.getAllCargoPortMappingById(cargoPortRequest);
+  private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappingsById(Long cargoId)
+      throws GenericServiceException {
+    PortInfo.CargoPortRequest cargoPortRequest =
+        PortInfo.CargoPortRequest.newBuilder().setCargoId(cargoId).build();
+    PortInfo.CargoPortReply cargoPortReply =
+        this.portInfoServiceBlockingStub.getAllCargoPortMappingById(cargoPortRequest);
     if (cargoPortReply == null
-            || cargoPortReply.getResponseStatus() == null
-            || !SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())){
+        || cargoPortReply.getResponseStatus() == null
+        || !SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-              "Error in retrieving all cargo mappings",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
+          "Error in retrieving all cargo mappings",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoPortReply.getPortsList();
   }
