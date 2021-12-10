@@ -3423,4 +3423,75 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  /**
+   * get LoadableStudyPortRotation Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getLoadableStudyPortRotationDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    String loadableStudyPortRotationData = null;
+    Optional<LoadableStudyPortRotation> loadableStudyPortRotation =
+        loadableStudyPortRotationRepository.findById(request.getId());
+    if (loadableStudyPortRotation.isPresent()) {
+      Long loadableStudyId = loadableStudyPortRotation.get().getLoadableStudy().getId();
+      loadableStudyPortRotationData =
+          loadableStudyPortRotationRepository.getLoadableStudyPortRotationWithLoadableStudyId(
+              loadableStudyId);
+    }
+    if (loadableStudyPortRotationData != null) {
+      replyBuilder.setDataJson(loadableStudyPortRotationData);
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("No LoadableStudyPortRotation Found")
+              .build());
+    }
+    responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
+  }
+
+  /**
+   * save LoadableStudyPortRotation Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveLoadableStudyPortRotationDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveLoadableStudyPortRotationData(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

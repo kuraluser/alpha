@@ -56,7 +56,8 @@ public class LoadingPlanConstants {
     ALGO_ERROR_HEADING("algo_error_heading"),
     ALGO_ERRORS("algo_errors"),
     LOADING_INSTRUCTIONS("loading_instructions"),
-    SYNOPTICAL_TABLE("synoptical_table");
+    SYNOPTICAL_TABLE("synoptical_table"),
+    LOADABLE_STUDY_PORT_ROTATION("loadable_study_port_rotation");
 
     public final String table;
   }
@@ -96,7 +97,8 @@ public class LoadingPlanConstants {
           "loadable_pattern",
           "loading_port_tide_details",
           "loading_instructions",
-          "synoptical_table");
+          "synoptical_table",
+          "loadable_study_port_rotation");
 
   public static final List<String> ULLAGE_UPDATE_SHIP_TO_SHORE =
       Arrays.asList(

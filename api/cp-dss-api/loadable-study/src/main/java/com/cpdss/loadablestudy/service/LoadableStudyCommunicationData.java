@@ -25,6 +25,7 @@ public class LoadableStudyCommunicationData {
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private LoadableStudyStatusRepository loadableStudyStatusRepository;
+  @Autowired private CargoOperationRepository cargoOperationRepository;
 
   @Autowired
   private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
@@ -34,11 +35,16 @@ public class LoadableStudyCommunicationData {
   @Autowired private JsonTypeRepository jsonTypeRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
 
+  @Autowired
+  private LoadableStudyPortRotationCommuncationRepository
+      loadableStudyPortRotationCommuncationRepository;
+
   Type listType = null;
   List<LoadablePattern> loadablePatterns = null;
   List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDatas = null;
   List<JsonData> jsonDatas = null;
   List<SynopticalTable> synopticalTables = null;
+  List<LoadableStudyPortRotationCommunication> loadableStudyPortRotations = null;
 
   public void saveLoadablePattern(String dataJson) throws ResourceAccessException, Exception {
     HashMap<String, String> map =
@@ -228,5 +234,79 @@ public class LoadableStudyCommunicationData {
     } catch (Exception e) {
       log.error("Error occurred when saving SynopticalTable part of loadingplan communication", e);
     }
+  }
+
+  public void saveLoadableStudyPortRotationData(String dataJson) {
+    try {
+      HashMap<String, String> map =
+          loadableStudyStagingService.getAttributeMapping(
+              new LoadableStudyPortRotationCommunication());
+      JsonArray jsonArray =
+          removeJsonFieldsForLoadableStudyPortRotation(
+              JsonParser.parseString(dataJson).getAsJsonArray(),
+              map,
+              "loadable_study_xid",
+              "operation_xid");
+      log.info("LoadableStudyPortRotation json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<LoadableStudyPortRotationCommunication>>() {}.getType();
+      loadableStudyPortRotations = new Gson().fromJson(jsonArray, listType);
+      log.info("LoadableStudyPortRotation list:{}", loadableStudyPortRotations);
+      for (LoadableStudyPortRotationCommunication loadableStudyPortRotation :
+          loadableStudyPortRotations) {
+        Long loadableStudyIdForPort = loadableStudyPortRotation.getCommunicationLoadbleStudyId();
+        Long cargoOperationIdForPort = loadableStudyPortRotation.getCommunicationRelatedEntityId();
+        log.info(
+            "LoadableStudy id: {} and CargoOperation id: {} ",
+            loadableStudyIdForPort,
+            cargoOperationIdForPort);
+        if (loadableStudyIdForPort != null && cargoOperationIdForPort != null) {
+          Optional<LoadableStudy> loadableStudy =
+              loadableStudyRepository.findById(loadableStudyIdForPort);
+          Optional<CargoOperation> cargoOperation =
+              cargoOperationRepository.findById(cargoOperationIdForPort);
+          if (loadableStudy.isPresent() && cargoOperation.isPresent()) {
+            Optional<LoadableStudyPortRotationCommunication> loadableStudyPortRotationOpt =
+                loadableStudyPortRotationCommuncationRepository.findById(
+                    loadableStudyPortRotation.getId());
+            log.info(
+                "LoadableStudyPortRotation get by id:{}",
+                loadableStudyPortRotationOpt.get().getId());
+            loadableStudyPortRotation.setVersion(
+                loadableStudyPortRotationOpt.isPresent()
+                    ? loadableStudyPortRotationOpt.get().getVersion()
+                    : null);
+            loadableStudyPortRotation.setLoadableStudy(loadableStudy.get());
+            loadableStudyPortRotation.setOperation(cargoOperation.get());
+          }
+        }
+      }
+      loadableStudyPortRotationCommuncationRepository.saveAll(loadableStudyPortRotations);
+      log.info("Saved LoadableStudyPortRotation:{}", loadableStudyPortRotations);
+    } catch (Exception e) {
+      log.error(
+          "Error occurred when saving LoadableStudyPortRotation as part of loadingplan communication",
+          e);
+    }
+  }
+
+  private JsonArray removeJsonFieldsForLoadableStudyPortRotation(
+      JsonArray array, HashMap<String, String> map, String... xIds) {
+    JsonArray json = loadableStudyStagingService.getAsEntityJson(map, array);
+    JsonArray jsonArray = new JsonArray();
+    for (JsonElement jsonElement : json) {
+      final JsonObject jsonObj = jsonElement.getAsJsonObject();
+      if (xIds != null) {
+        for (String xId : xIds) {
+          if (xId.equals("loadable_study_xid")) {
+            jsonObj.add("communicationLoadbleStudyId", jsonObj.get(xId));
+          } else if (xId.equals("operation_xid")) {
+            jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
+          }
+          jsonObj.remove(xId);
+        }
+      }
+      jsonArray.add(jsonObj);
+    }
+    return jsonArray;
   }
 }

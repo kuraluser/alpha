@@ -97,4 +97,6 @@ public class LoadableStudyPortRotationCommunication extends EntityDoc {
 
   @Column(name = "fresh_crude_oil_time")
   private BigDecimal freshCrudeOilTime;
+
+  @Transient private Long communicationLoadbleStudyId;
 }

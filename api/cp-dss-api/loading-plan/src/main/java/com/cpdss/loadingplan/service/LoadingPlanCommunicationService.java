@@ -310,6 +310,7 @@ public class LoadingPlanCommunicationService {
       String loadicatorDataForSynoptical = null;
       String jsonData = null;
       String synopticalData = null;
+      String loadableStudyPortRotationData = null;
       List<PortTideDetail> portTideDetailList = null;
       List<AlgoErrorHeading> algoErrorHeadings = null;
       List<AlgoErrors> algoErrors = null;
@@ -862,6 +863,14 @@ public class LoadingPlanCommunicationService {
             {
               synopticalData = dataTransferString;
               idMap.put(LoadingPlanTables.SYNOPTICAL_TABLE.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case loadable_study_port_rotation:
+            {
+              loadableStudyPortRotationData = dataTransferString;
+              idMap.put(
+                  LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable(),
+                  dataTransferStage.getId());
               break;
             }
         }
@@ -1981,6 +1990,31 @@ public class LoadingPlanCommunicationService {
         } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
           updateStatusInExceptionCase(
               idMap.get(LoadingPlanTables.SYNOPTICAL_TABLE.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadableStudyPortRotationData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info(
+            "LoadableStudyPortRotation get from staging table:{}", loadableStudyPortRotationData);
+        builder.setDataJson(loadableStudyPortRotationData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveLoadableStudyPortRotationDataForCommunication(
+                builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("LoadableStudyPortRotation saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable()),
               processId,
               StagingStatus.FAILED.getStatus(),
               reply.getResponseStatus().getMessage());

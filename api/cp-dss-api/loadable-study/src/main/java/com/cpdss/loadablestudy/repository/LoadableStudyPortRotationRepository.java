@@ -179,4 +179,10 @@ public interface LoadableStudyPortRotationRepository
 
   @Query("SELECT LSPR FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1")
   public List<LoadableStudyPortRotation> findByLoadableStudy(final LoadableStudy loadableStudy);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_port_rotation u where loadable_study_xid=?1",
+      nativeQuery = true)
+  String getLoadableStudyPortRotationWithLoadableStudyId(Long id);
 }

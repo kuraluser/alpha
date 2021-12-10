@@ -231,6 +231,9 @@ service LoadableStudyService {
 
 	rpc saveSynopticalDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 
+	rpc getLoadableStudyPortRotationDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadableStudyPortRotationDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 }
 
 service SynopticalOperationService{
