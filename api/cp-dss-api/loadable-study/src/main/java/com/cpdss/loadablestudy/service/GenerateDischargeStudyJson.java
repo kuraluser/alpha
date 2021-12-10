@@ -391,26 +391,27 @@ public class GenerateDischargeStudyJson {
             this.loadableStudyRepository.findByIdAndIsActive(
                 dischargeStudyOpt.get().getConfirmedLoadableStudyId(), true);
 
-        //        Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation>
-        //            optionalLoadableStudyWithMAXPortOrder =
-        //                respectiveLoadableStudyOpt.get().getPortRotations().stream()
-        //                    .filter(item -> item.getOperation().getId() == 1L)
-        //                    .max(
-        //                        Comparator.comparing(
-        //                            com.cpdss.loadablestudy.entity.LoadableStudyPortRotation
-        //                                ::getPortOrder));
-        //      We will be taking the first discharging port's arrival condition.
-        log.info(
-            "Fetching discharge port of confirmed loadable study {}",
-            respectiveLoadableStudyOpt.get().getId());
         Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation>
             optionalLoadableStudyWithMAXPortOrder =
                 respectiveLoadableStudyOpt.get().getPortRotations().stream()
-                    .filter(item -> item.getOperation().getId() == DISCHARGING_OPERATION_ID)
-                    .min(
+                    .filter(item -> item.getOperation().getId() == 1L)
+                    .max(
                         Comparator.comparing(
                             com.cpdss.loadablestudy.entity.LoadableStudyPortRotation
                                 ::getPortOrder));
+        //      We will be taking the first discharging port's arrival condition.
+        //        log.info(
+        //            "Fetching discharge port of confirmed loadable study {}",
+        //            respectiveLoadableStudyOpt.get().getId());
+        //        Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation>
+        //            optionalLoadableStudyWithMAXPortOrder =
+        //                respectiveLoadableStudyOpt.get().getPortRotations().stream()
+        //                    .filter(item -> item.getOperation().getId() ==
+        // DISCHARGING_OPERATION_ID)
+        //                    .min(
+        //                        Comparator.comparing(
+        //                            com.cpdss.loadablestudy.entity.LoadableStudyPortRotation
+        //                                ::getPortOrder));
         if (optionalLoadableStudyWithMAXPortOrder.isEmpty()) {
           log.error("No port rotation details found for DischargeID  {} ", dischargeStudyId);
           throw new GenericServiceException(
@@ -418,39 +419,40 @@ public class GenerateDischargeStudyJson {
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
               HttpStatusCode.BAD_REQUEST);
         } else {
-          //          log.info(
-          //              "Requesting loading plan for port rotation id {}",
-          //              optionalLoadableStudyWithMAXPortOrder.get().getId());
-          //
-          // com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
-          //                  .Builder
-          //              LoadingInformationRequest =
-          //                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
-          //                      .LoadingInformationRequest.newBuilder();
-          //          LoadingInformationRequest.setCompanyId(1L);
-          //          LoadingInformationRequest.setVesselId(vesselId);
-          //          LoadingInformationRequest.setVoyageId(activeVoyage.getId());
-          //          LoadingInformationRequest.setLoadingPatternId(activeVoyage.getPatternId());
-          //          LoadingInformationRequest.setPortRotationId(
-          //              optionalLoadableStudyWithMAXPortOrder.get().getId());
-          //          LoadingPlanReply loadingPlanReply =
-          //              loadingPlanGrpcService.getLoadingPlan(LoadingInformationRequest.build());
-          //          if (!SUCCESS.equals(loadingPlanReply.getResponseStatus().getStatus())) {
-          //            log.error(
-          //                "No Loading plan found for port rotaion id {} ",
-          //                optionalLoadableStudyWithMAXPortOrder.get().getId());
-          //            throw new GenericServiceException(
-          //                "No Loading plan found for port rotaion",
-          //                CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          //                HttpStatusCode.BAD_REQUEST);
-          //          } else {
-          //            return buildArrivalCondition(loadingPlanReply);
-          //          }
           log.info(
-              "Building port wise details for port rotation {}",
+              "Requesting loading plan for port rotation id {}",
               optionalLoadableStudyWithMAXPortOrder.get().getId());
-          return buildArrivalConditionFromLoadableStudy(
-              respectiveLoadableStudyOpt.get(), optionalLoadableStudyWithMAXPortOrder.get());
+
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationRequest
+                  .Builder
+              LoadingInformationRequest =
+                  com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingInformationRequest.newBuilder();
+          LoadingInformationRequest.setCompanyId(1L);
+          LoadingInformationRequest.setVesselId(vesselId);
+          LoadingInformationRequest.setVoyageId(activeVoyage.getId());
+          LoadingInformationRequest.setLoadingPatternId(activeVoyage.getPatternId());
+          LoadingInformationRequest.setPortRotationId(
+              optionalLoadableStudyWithMAXPortOrder.get().getId());
+          LoadingPlanReply loadingPlanReply =
+              loadingPlanGrpcService.getLoadingPlan(LoadingInformationRequest.build());
+          if (!SUCCESS.equals(loadingPlanReply.getResponseStatus().getStatus())) {
+            log.error(
+                "No Loading plan found for port rotaion id {} ",
+                optionalLoadableStudyWithMAXPortOrder.get().getId());
+            throw new GenericServiceException(
+                "No Loading plan found for port rotaion",
+                CommonErrorCodes.E_HTTP_BAD_REQUEST,
+                HttpStatusCode.BAD_REQUEST);
+          } else {
+            return buildArrivalCondition(loadingPlanReply);
+          }
+          //          log.info(
+          //              "Building port wise details for port rotation {}",
+          //              optionalLoadableStudyWithMAXPortOrder.get().getId());
+          //          return buildArrivalConditionFromLoadableStudy(
+          //              respectiveLoadableStudyOpt.get(),
+          // optionalLoadableStudyWithMAXPortOrder.get());
         }
       }
     } else {
@@ -945,7 +947,8 @@ public class GenerateDischargeStudyJson {
                 portRotation.setEtd(port.getEtd());
                 portRotation.setPortOrder(port.getPortOrder());
                 portRotation.setCow(port.getCow());
-//                portRotation.setCowDetails(getCowDetails(dischargeStudyId, port.getId()));
+                //                portRotation.setCowDetails(getCowDetails(dischargeStudyId,
+                // port.getId()));
                 portRotation.setInstructions(getPortInstructions(port, instructionsDetails));
                 portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
                 portRotation.setFreshCrudeOilQuantity(
@@ -965,8 +968,7 @@ public class GenerateDischargeStudyJson {
 
   private CowDetail getCowDetails(Long dischargeStudyId) {
     log.info("Getting Cow details for {}", dischargeStudyId);
-    DischargeStudyCowDetail reply =
-        cowDetailService.getCowDetailForDS(dischargeStudyId);
+    DischargeStudyCowDetail reply = cowDetailService.getCowDetailForDS(dischargeStudyId);
     if (reply != null) {
       CowDetail cowDetail = new CowDetail();
       cowDetail.setId(reply.getId());

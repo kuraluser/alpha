@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -247,7 +246,8 @@ public class GenerateDischargeStudyJsonTest {
 
     var result = spyService.generateDischargeStudyJson(1l, getLoadableStudyEntity());
     assertEquals(
-        1L, result.getLoadablePlanPortWiseDetails().getLoadablePlanBallastDetails().get(0).getId());
+        "1",
+        result.getLoadablePlanPortWiseDetails().getLoadablePlanBallastDetails().get(0).getApi());
   }
 
   private List<LoadablePlanStowageBallastDetails> getBallastDetails() {
