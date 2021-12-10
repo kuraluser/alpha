@@ -635,7 +635,7 @@ public class DischargeStudyService {
         DishargeStudyBackLoadingSaveRequest.newBuilder();
     builder.setDischargeStudyId(request.getDischargeStudyId());
     builder.setCowId(request.getCowId());
-    builder.setPercentage(request.getPercentage() == null ? null : request.getPercentage().longValue());
+    builder.setPercentage(request.getPercentage() == null ? Long.valueOf(0) : request.getPercentage().longValue());
     builder.addAllTanks(request.getTanks());
     request
         .getPortList()

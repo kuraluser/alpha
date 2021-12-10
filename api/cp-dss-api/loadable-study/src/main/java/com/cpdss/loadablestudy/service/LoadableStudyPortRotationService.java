@@ -730,7 +730,7 @@ public class LoadableStudyPortRotationService {
                   port.getFreshCrudeOilTime() != null
                       ? port.getFreshCrudeOilTime().toString()
                       : "");
-              builder.setCow(port.getCowRequired());
+              builder.setCow(port.getCowRequired() == null ? false : port.getCowRequired());
               if (port.getIsbackloadingEnabled() != null) {
                 builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
                 if (backloadingDataByportIds.get(port.getId()) != null) {
