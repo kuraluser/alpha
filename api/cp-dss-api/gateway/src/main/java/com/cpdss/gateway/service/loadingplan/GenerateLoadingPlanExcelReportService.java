@@ -13,6 +13,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTank;
+import com.cpdss.gateway.domain.dischargeplan.CargoPumpDetailsForSequence;
 import com.cpdss.gateway.domain.filerepo.FileRepoReply;
 import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
@@ -34,6 +35,7 @@ import com.cpdss.gateway.domain.loadingplan.TankCargoDetails;
 import com.cpdss.gateway.domain.loadingplan.TankRow;
 import com.cpdss.gateway.domain.loadingplan.VesselParticularsForExcel;
 import com.cpdss.gateway.domain.loadingplan.sequence.Ballast;
+import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
 import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
@@ -100,12 +102,12 @@ public class GenerateLoadingPlanExcelReportService {
   public static final String YES = "Yes";
   public static final String NO = "No";
 
-  public String SUB_FOLDER_NAME = "/reports";
-  public String TEMPLATES_FILE_LOCATION = "/reports/Vessel_{type}_Loading_Plan_Template.xlsx";
-  // public String TEMPLATES_FILE_LOCATION =
-  // "/reports/Vessel_1_Loading_Plan_Template.xlsx";
-  public String OUTPUT_FILE_LOCATION = "/reports/Vessel_{id}_Loading_Plan_{voy}_{port}.xlsx";
-  public String TEMP_LOCATION = "temp.xlsx";
+  public String SUB_FOLDER_NAME = "/reports/loading";
+  public String TEMPLATES_FILE_LOCATION =
+      "/reports/loading/Vessel_{type}_Loading_Plan_Template.xlsx";
+  public String OUTPUT_FILE_LOCATION =
+      "/reports/loading/Vessel_{id}_Loading_Plan_{voy}_{port}.xlsx";
+  public String TEMP_LOCATION = "temp_loading.xlsx";
   public final Integer START_ROW = 14;
   public final Integer END_ROW = 71;
   public final Integer END_COLUMN = 25;
@@ -119,7 +121,13 @@ public class GenerateLoadingPlanExcelReportService {
   public final String UFPT = "UFPT";
   public final String LFPT = "LFPT";
   public final Long GS_PUMP_ID = 3L;
+  public final String GS_PUMP_COLOR_CODE = "#ac6ffc";
   public final Long IGS_PUMP_ID = 4L;
+  public final String IGS_PUMP_COLOR_CODE = "#f274c0";
+  public final Long STRIPPING_PUMP_ID = 5L;
+  public final String STRIPPING_PUMP_COLOR_CODE = "#fcc986";
+  public final String DEFAULT_PUMP_COLOR_CODE = "#7099c2";
+  public Long BALLAST_PUMP_IDS[] = {GS_PUMP_ID, IGS_PUMP_ID, STRIPPING_PUMP_ID};
   public final Long BALLAST_PUMP_ID = 2L;
   public String voyageDate = null;
 
@@ -199,7 +207,7 @@ public class GenerateLoadingPlanExcelReportService {
 
         // Adding password protection code commented for temporary
         // GenerateProtectedFile.setPasswordToWorkbook(
-        //    workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
+        // workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
         // outFile);
         workbook.write(outFile);
         resultFileStream.close();
@@ -272,7 +280,7 @@ public class GenerateLoadingPlanExcelReportService {
       setCargoColor(workbook, sheet, cell, null, null, data.getCargoTanks());
     }
     // Sequence diagram color cargo
-    for (row = 6; row <= 70; row++) {
+    for (row = 6; row <= 74; row++) {
       for (col = 4; col <= 4 + (data.getTickPoints().size() * 2); col++) {
         cell = sheet.getRow(row).getCell(col);
         setCargoColor(workbook, sheet, cell, null, null, null);
@@ -949,12 +957,119 @@ public class GenerateLoadingPlanExcelReportService {
             loadingSequenceResponse.getBallasts(),
             sheetThree.getBallastTanks());
       }
+      sheetThree.setBallastPumps(
+          getBallastPumpDetails(
+              loadingSequenceResponse.getStageTickPositions(),
+              loadingSequenceResponse.getBallastPumps(),
+              Arrays.asList(BALLAST_PUMP_IDS)));
       sheetThree.setStabilityParams(
           getStabilityParams(
               loadingSequenceResponse.getStabilityParams(), sheetThree.getTickPoints().size()));
     }
     log.info("Building sheet 3 : completed");
     return sheetThree;
+  }
+
+  /**
+   * Ballast Pump details
+   *
+   * @param stageTickPositions
+   * @param list
+   * @param ballastPumps
+   */
+  private List<CargoPumpDetailsForSequence> getBallastPumpDetails(
+      Set<Long> stageTickPositions, List<BallastPump> ballastPumps, List<Long> pumpIds) {
+    List<Long> positionList = getListFromSet(stageTickPositions);
+    List<CargoPumpDetailsForSequence> ballastPumpDetailsList = new ArrayList<>();
+    for (Long pumpId : pumpIds) {
+      CargoPumpDetailsForSequence ballastPumpObj = new CargoPumpDetailsForSequence();
+      TankWithSequenceDetails ballastPumpDetailsObj = new TankWithSequenceDetails();
+      ballastPumpDetailsObj.setTankId(pumpId);
+      ballastPumpDetailsObj.setUllage(new ArrayList<>());
+      ballastPumpDetailsObj.setStatus(new ArrayList<>());
+      List<BallastPump> pumpList =
+          ballastPumps.stream()
+              .filter(item -> item.getPumpId().equals(pumpId))
+              .collect(Collectors.toList());
+      if (!pumpList.isEmpty()) {
+        // rates not needed for excel added for future use only
+        List<String> rates = new ArrayList<>();
+        List<QuantityLoadingStatus> pumpStatusList = new ArrayList<>();
+        Optional<BallastPump> pumpMatch = Optional.empty();
+        // checking if 0th position have a mapping
+        pumpMatch =
+            pumpList.stream()
+                .filter(
+                    pumpItem ->
+                        pumpItem.getStart().equals(positionList.get(0))
+                            && pumpItem.getEnd().equals(positionList.get(0)))
+                .findFirst();
+        setBallastPumpDetails(pumpMatch, rates, pumpStatusList);
+        for (int i = 0; i < positionList.size(); i++) {
+          Long start = positionList.get(i);
+          if (!start.equals(positionList.get(positionList.size() - 1))) {
+            Long end = positionList.get(i + 1);
+            pumpMatch =
+                pumpList.stream()
+                    .filter(pumpItem -> pumpItem.getStart() >= start && pumpItem.getEnd() <= end)
+                    .findFirst();
+            setBallastPumpDetails(pumpMatch, rates, pumpStatusList);
+          }
+        }
+        ballastPumpDetailsObj.setUllage(rates);
+        ballastPumpDetailsObj.setStatus(pumpStatusList);
+      } else {
+        // setting empty values for look and feel
+        IntStream.range(0, stageTickPositions.size())
+            .forEach(i -> ballastPumpDetailsObj.getUllage().add(""));
+        IntStream.range(0, stageTickPositions.size())
+            .forEach(
+                i ->
+                    ballastPumpDetailsObj
+                        .getStatus()
+                        .add(new QuantityLoadingStatus(false, "", "", false, "")));
+      }
+      ballastPumpObj.setCargoTankUllage(ballastPumpDetailsObj);
+      ballastPumpDetailsList.add(ballastPumpObj);
+    }
+    return ballastPumpDetailsList;
+  }
+
+  /**
+   * Method to set cargo pump data against a tick position
+   *
+   * @param cargoMatch
+   * @param ullages
+   * @param quantityStatusList
+   */
+  private void setBallastPumpDetails(
+      Optional<BallastPump> pumpMatch,
+      List<String> rates,
+      List<QuantityLoadingStatus> pumpStatusList) {
+    QuantityLoadingStatus pumpStatus = new QuantityLoadingStatus();
+    if (pumpMatch.isPresent()) {
+      if (pumpMatch.get().getQuantityM3() != null && pumpMatch.get().getRate() != null) {
+        rates.add(pumpMatch.get().getRate().toString());
+        pumpStatus.setPresent(true);
+        pumpStatus.setColorCode(getPumpColourCode(pumpMatch.get().getPumpId()));
+      } else {
+        pumpStatus.setPresent(false);
+      }
+    } else {
+      rates.add("");
+      pumpStatus.setPresent(false);
+    }
+    pumpStatusList.add(pumpStatus);
+  }
+
+  private String getPumpColourCode(Long pumpId) {
+    return pumpId.equals(GS_PUMP_ID)
+        ? GS_PUMP_COLOR_CODE
+        : pumpId.equals(IGS_PUMP_ID)
+            ? IGS_PUMP_COLOR_CODE
+            : pumpId.equals(STRIPPING_PUMP_ID)
+                ? STRIPPING_PUMP_COLOR_CODE
+                : DEFAULT_PUMP_COLOR_CODE;
   }
 
   /**

@@ -55,7 +55,6 @@ public class ExcelExportUtility {
             + " file using "
             + inputFileLocation
             + " template.");
-    //		String outFile = rootFolder + outputFileLocation;
     String outFile = outputFileLocation;
     OutputStream outStream = new FileOutputStream(outFile);
 
