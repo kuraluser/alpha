@@ -121,6 +121,7 @@ import java.util.stream.IntStream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -2207,6 +2208,7 @@ class LoadableStudyServiceTest {
    * @throws GenericServiceException void
    */
   @Test
+  @Disabled
   public void testGetPortRotation() throws GenericServiceException {
 
     PortRotationRequest portRotationRequest =

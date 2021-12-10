@@ -39,7 +39,7 @@ public class DischargeStudyPortRotationJson {
 
   private Long portOrder;
 
-  private CowDetail cowDetails;
+  private Boolean cow;
 
   private Boolean freshCrudeOil;
 

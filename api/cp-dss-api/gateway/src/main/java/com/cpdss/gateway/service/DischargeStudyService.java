@@ -430,7 +430,7 @@ public class DischargeStudyService {
     LoadableStudy.DischargeCowResponse dischargeStudyCowDetails =  dischargeStudyOperationServiceBlockingStub.getDischargeCowDetails(studyReq.build());
     if (!SUCCESS.equals(dischargeStudyCowDetails.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-              "failed to get Port Rotation",
+              "Failed to fetch cow details",
               dischargeStudyCowDetails.getResponseStatus().getCode(),
               HttpStatusCode.valueOf(
                       Integer.valueOf(dischargeStudyCowDetails.getResponseStatus().getCode())));
@@ -502,7 +502,6 @@ public class DischargeStudyService {
           portRotation.setOperationId(port.getOperationId());
           portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
           portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
-          portRotation.setCow(false);
           portRotation.setInstructionId(port.getInstructionIdList());
           portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
           portRotation.setFreshCrudeOilQuantity(
@@ -513,6 +512,7 @@ public class DischargeStudyService {
               port.getFreshCrudeOilTime().isEmpty()
                   ? null
                   : new BigDecimal(port.getFreshCrudeOilTime()));
+          portRotation.setCow(port.getCow());
           portRotation.setDischargeRate(new BigDecimal(0));
           if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
             List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =

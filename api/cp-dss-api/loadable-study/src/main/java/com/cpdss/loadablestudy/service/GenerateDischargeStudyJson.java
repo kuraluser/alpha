@@ -254,6 +254,7 @@ public class GenerateDischargeStudyJson {
     dischargeStudyAlgoJson.setVoyageNo(loadableStudy.getVoyage().getVoyageNo());
     dischargeStudyAlgoJson.setVesselId(loadableStudy.getVesselXId());
     dischargeStudyAlgoJson.setName(loadableStudy.getName());
+    dischargeStudyAlgoJson.setCowDetails(getCowDetails(dischargeStudyId));
 
     List<LoadableStudyInstruction> instructionsDetails = getAllLoadableStudyInstruction();
     dischargeStudyAlgoJson.setInstructionMaster(instructionsDetails);
@@ -943,7 +944,8 @@ public class GenerateDischargeStudyJson {
                 portRotation.setEta(port.getEta());
                 portRotation.setEtd(port.getEtd());
                 portRotation.setPortOrder(port.getPortOrder());
-                portRotation.setCowDetails(getCowDetails(dischargeStudyId, port.getId()));
+                portRotation.setCow(port.getCow());
+//                portRotation.setCowDetails(getCowDetails(dischargeStudyId, port.getId()));
                 portRotation.setInstructions(getPortInstructions(port, instructionsDetails));
                 portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
                 portRotation.setFreshCrudeOilQuantity(
@@ -961,17 +963,15 @@ public class GenerateDischargeStudyJson {
     }
   }
 
-  private CowDetail getCowDetails(Long dischargeStudyId, Long portId) {
-    log.info("Getting Cow details for {}", portId);
+  private CowDetail getCowDetails(Long dischargeStudyId) {
+    log.info("Getting Cow details for {}", dischargeStudyId);
     DischargeStudyCowDetail reply =
-        cowDetailService.getCowDetailForOnePort(dischargeStudyId, portId);
+        cowDetailService.getCowDetailForDS(dischargeStudyId);
     if (reply != null) {
-
       CowDetail cowDetail = new CowDetail();
       cowDetail.setId(reply.getId());
       cowDetail.setType(reply.getCowType());
       cowDetail.setPercentage(reply.getPercentage());
-
       if (reply.getTankIds() != null && !reply.getTankIds().isBlank()) {
         List<Long> tankIdList =
             Stream.of(reply.getTankIds().split(","))
@@ -991,7 +991,7 @@ public class GenerateDischargeStudyJson {
       }
       return cowDetail;
     }
-    log.info("No COW Details found for port ID  :{}", portId);
+    log.info("No COW Details found for DS  :{}", dischargeStudyId);
     return null;
   }
 

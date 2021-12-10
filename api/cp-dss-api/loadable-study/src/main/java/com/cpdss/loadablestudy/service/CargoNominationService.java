@@ -141,12 +141,14 @@ public class CargoNominationService {
             cargo -> {
               CargoNomination newCargo =
                   createDsCargoNomination(
-                      dischargeStudyId, cargo, portId, operationId, dischargeStudycargos.size());
+                      dischargeStudyId, cargo, portId, operationId, dischargeStudycargos.size() + 1);
               log.info(
                   "ds save API DS cargo... cargo id ::  "
                       + newCargo.getCargoXId()
                       + " , abb::"
-                      + newCargo.getAbbreviation());
+                      + newCargo.getAbbreviation()
+                      + " seq:"
+                      + newCargo.getSequenceNo());
               dischargeStudycargos.add(newCargo);
             });
     List<CargoNomination> savedCargos = cargoNominationRepository.saveAll(dischargeStudycargos);
@@ -174,6 +176,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
     dischargeStudyCargo.setSequenceNo(Long.valueOf(seqNo));
+    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
     dischargeStudyCargo.setCargoNominationPortDetails(
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId, operationId));
     return dischargeStudyCargo;
