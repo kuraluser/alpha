@@ -266,7 +266,7 @@ public class CargoPortInfoService {
    * @param orderBy
    * @param params
    * @param correlationIdHeader
-   * @return
+   * @return cargosResponse
    * @throws GenericServiceException
    */
   public CargosDetailedResponse getCargosDetailed(
@@ -309,13 +309,21 @@ public class CargoPortInfoService {
     return cargosResponse;
   }
 
+  /**
+   * Fetching all cargo port mappings
+   *
+   * @return cargoPortReply.getPortsList()
+   * @throws GenericServiceException
+   */
   private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappings()
       throws GenericServiceException {
     PortInfo.CargoPortRequest cargoPortRequest = PortInfo.CargoPortRequest.newBuilder().build();
     PortInfo.CargoPortReply cargoPortReply =
         this.portInfoServiceBlockingStub.getAllCargoPortMapping(cargoPortRequest);
     System.out.println(cargoPortReply.getPorts(0));
-    if (!SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
+    if (cargoPortReply == null
+        || cargoPortReply.getResponseStatus() == null
+        || !SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Error in retrieving all cargo mappings",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
@@ -325,7 +333,7 @@ public class CargoPortInfoService {
   }
 
   /**
-   * Build CargosDetailedResponse
+   * Building CargoDetailedResponse
    *
    * @param cargosResponse
    * @param cargoReply
@@ -342,13 +350,13 @@ public class CargoPortInfoService {
           .forEach(
               cargo -> {
                 CargoDetailed cargoDetail = new CargoDetailed();
-                cargoDetail.setAbbreviation(cargo.getAbbreviation());
-                cargoDetail.setApi(cargo.getApi());
+                cargoDetail.setAbbreviation(
+                    cargo.getAbbreviation() == null ? "" : cargo.getAbbreviation());
+                cargoDetail.setApi(cargo.getApi() == null ? "" : cargo.getApi());
                 cargoDetail.setId(cargo.getId());
                 cargoDetail.setName(cargo.getName());
                 cargoDetail.setBenzene(cargo.getBenzene());
                 cargoDetail.setCloudPoint(cargo.getCloudPoint());
-                cargoDetail.setType(cargo.getType());
                 cargoDetail.setTemp(cargo.getTemp());
                 cargoDetail.setReidVapourPressure(cargo.getReidVapourPressure());
                 cargoDetail.setGas(cargo.getGas());
@@ -376,11 +384,12 @@ public class CargoPortInfoService {
     }
   }
 
-    /**
-     * Build cargoPortMappingList
-     * @param cargoPorts
-     * @return
-     */
+  /**
+   * Build CargoPortMappingList
+   *
+   * @param cargoPorts
+   * @return cargoPortMappingList
+   */
   private List<CargoPortMapping> buildMappings(List<PortInfo.CargoPortMappingDetail> cargoPorts) {
     List<CargoPortMapping> cargoPortMappingList = new ArrayList<>();
     cargoPorts.stream()
@@ -441,7 +450,6 @@ public class CargoPortInfoService {
     cargoDetail.setName(cargo.getName());
     cargoDetail.setBenzene(cargo.getBenzene());
     cargoDetail.setCloudPoint(cargo.getCloudPoint());
-    cargoDetail.setType(cargo.getType());
     cargoDetail.setTemp(cargo.getTemp());
     cargoDetail.setReidVapourPressure(cargo.getReidVapourPressure());
     cargoDetail.setGas(cargo.getGas());

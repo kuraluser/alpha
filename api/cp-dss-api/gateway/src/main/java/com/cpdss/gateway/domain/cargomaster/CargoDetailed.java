@@ -10,8 +10,6 @@ public class CargoDetailed {
   private String name;
   private String abbreviation;
   private String api;
-  private String type;
-  private String assayDate;
   private String temp;
   private String reidVapourPressure;
   private String gas;
