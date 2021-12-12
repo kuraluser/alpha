@@ -19,10 +19,13 @@ service CargoInfoService {
 	}
 
 	rpc GetCargoInfoDetailed (CargoRequest) returns (CargoDetailedReply) {
-    }
+	}
 
-    rpc GetCargoInfoDetailedById (CargoRequest) returns (CargoByIdDetailedReply) {
-    }
+	rpc GetCargoInfoDetailedById (CargoRequest) returns (CargoByIdDetailedReply) {
+	}
+
+	rpc DeleteCargoById (CargoRequest) returns (CargoByIdDetailedReply) {
+	}
 	
 }
 message CargoListRequest{

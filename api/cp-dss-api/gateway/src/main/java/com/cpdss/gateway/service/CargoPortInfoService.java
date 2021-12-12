@@ -321,9 +321,7 @@ public class CargoPortInfoService {
     PortInfo.CargoPortReply cargoPortReply =
         this.portInfoServiceBlockingStub.getAllCargoPortMapping(cargoPortRequest);
     System.out.println(cargoPortReply.getPorts(0));
-    if (cargoPortReply == null
-        || cargoPortReply.getResponseStatus() == null
-        || !SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
+    if (!SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Error in retrieving all cargo mappings",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
@@ -350,9 +348,8 @@ public class CargoPortInfoService {
           .forEach(
               cargo -> {
                 CargoDetailed cargoDetail = new CargoDetailed();
-                cargoDetail.setAbbreviation(
-                    cargo.getAbbreviation() == null ? "" : cargo.getAbbreviation());
-                cargoDetail.setApi(cargo.getApi() == null ? "" : cargo.getApi());
+                cargoDetail.setAbbreviation(cargo.getAbbreviation());
+                cargoDetail.setApi(cargo.getApi());
                 cargoDetail.setId(cargo.getId());
                 cargoDetail.setName(cargo.getName());
                 cargoDetail.setBenzene(cargo.getBenzene());
@@ -418,17 +415,14 @@ public class CargoPortInfoService {
     CargoInfo.CargoByIdDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.getCargoInfoDetailedById(cargoRequest);
     if (cargoReply != null
-        && cargoReply.getResponseStatus() != null
         && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-      System.out.println(cargoReply.getCargo());
       // Get all cargo port mappings
       List<PortInfo.CargoPortMappingDetail> cargoPortMappings =
           this.getAllPortCargoMappingsById(cargoId);
-      System.out.println(cargoPortMappings.size());
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
       commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
       cargoResponse.setResponseStatus(commonSuccessResponse);
-      cargoResponse = buildCargoByIdDetailedResponse(cargoResponse, cargoReply, cargoPortMappings);
+      buildCargoByIdDetailedResponse(cargoResponse, cargoReply, cargoPortMappings);
     } else {
       throw new GenericServiceException(
           "Error in calling cargo service",
@@ -438,14 +432,14 @@ public class CargoPortInfoService {
     return cargoResponse;
   }
 
-  private CargoDetailedResponse buildCargoByIdDetailedResponse(
+  private void buildCargoByIdDetailedResponse(
       CargoDetailedResponse cargoResponse,
       CargoInfo.CargoByIdDetailedReply cargoReply,
       List<PortInfo.CargoPortMappingDetail> cargoPortMappings) {
     CargoInfo.CargoDetailed cargo = cargoReply.getCargo();
     CargoDetailed cargoDetail = new CargoDetailed();
-    cargoDetail.setAbbreviation(cargo.getAbbreviation() == null ? "" : cargo.getAbbreviation());
-    cargoDetail.setApi(cargo.getApi() == null ? "" : cargo.getApi());
+    cargoDetail.setAbbreviation(cargo.getAbbreviation());
+    cargoDetail.setApi(cargo.getApi());
     cargoDetail.setId(cargo.getId());
     cargoDetail.setName(cargo.getName());
     cargoDetail.setBenzene(cargo.getBenzene());
@@ -464,7 +458,6 @@ public class CargoPortInfoService {
     List<CargoPortMapping> mappings = this.buildMappings(cargoPortMappings);
     cargoDetail.setLoadingInformation(mappings);
     cargoResponse.setCargo(cargoDetail);
-    return cargoResponse;
   }
 
   private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappingsById(Long cargoId)
@@ -482,5 +475,35 @@ public class CargoPortInfoService {
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoPortReply.getPortsList();
+  }
+
+  /**
+   * Deleting Cargo using cargoId
+   *
+   * @param correlationIdHeader
+   * @param cargoId
+   * @return cargoResponse
+   * @throws GenericServiceException
+   */
+  public CargoDetailedResponse deleteCargoById(String correlationIdHeader, Long cargoId)
+      throws GenericServiceException {
+
+    CargoDetailedResponse cargoResponse = new CargoDetailedResponse();
+    CargoRequest cargoRequest = CargoRequest.newBuilder().setCargoId(cargoId).build();
+    CargoInfo.CargoByIdDetailedReply cargoReply =
+        cargoInfoServiceBlockingStub.deleteCargoById(cargoRequest);
+    if (cargoReply != null
+        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+      commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+      commonSuccessResponse.setCorrelationId(correlationIdHeader);
+      cargoResponse.setResponseStatus(commonSuccessResponse);
+    } else {
+      throw new GenericServiceException(
+          "Error in deleting cargo",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return cargoResponse;
   }
 }

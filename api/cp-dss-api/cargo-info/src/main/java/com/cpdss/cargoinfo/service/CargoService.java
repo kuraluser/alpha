@@ -202,7 +202,6 @@ public class CargoService extends CargoInfoServiceImplBase {
       Page<Cargo> pagedResult = this.cargoRepository.findAll(specification, paging);
 
       List<Cargo> cargos = pagedResult.toList();
-      System.out.println(cargos.size());
       cargos.forEach(
           cargo -> {
             CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
@@ -250,7 +249,6 @@ public class CargoService extends CargoInfoServiceImplBase {
     cargoDetail.setHydrogenSulfideVapour(
         cargo.getH2sVapourPhaseConfirmed() == null ? "" : cargo.getH2sVapourPhaseConfirmed());
     cargoDetail.setSpecialInstrictionsRemark(cargo.getRemarks() == null ? "" : cargo.getRemarks());
-    // cargoDetail.setReidVapourPressure(cargo.)
   }
 
   @Override
@@ -261,7 +259,6 @@ public class CargoService extends CargoInfoServiceImplBase {
     CargoInfo.CargoByIdDetailedReply.Builder cargoReply =
         CargoInfo.CargoByIdDetailedReply.newBuilder();
     try {
-      System.out.println(request.getCargoId());
       Optional<Cargo> cargo = cargoRepository.findById(request.getCargoId());
       CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
       buildCargoDetailed(cargo.get(), cargoDetail);
@@ -271,6 +268,39 @@ public class CargoService extends CargoInfoServiceImplBase {
       cargoReply.setResponseStatus(responseStatus);
     } catch (Exception e) {
       log.error("Error in getCargoInfoByPage method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      cargoReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(cargoReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Deletion of cargo using cargoId
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void deleteCargoById(
+      com.cpdss.common.generated.CargoInfo.CargoRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+          responseObserver) {
+    CargoInfo.CargoByIdDetailedReply.Builder cargoReply =
+        CargoInfo.CargoByIdDetailedReply.newBuilder();
+    try {
+      Integer numberOfRowsUpdated = this.cargoRepository.deleteByCargoId(request.getCargoId());
+      if (numberOfRowsUpdated == 0) {
+        log.info("No rows updated!");
+      }
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      cargoReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in deleting cargo by id method ", e);
+      e.printStackTrace();
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus("FAILURE");
       cargoReply.setResponseStatus(responseStatus);

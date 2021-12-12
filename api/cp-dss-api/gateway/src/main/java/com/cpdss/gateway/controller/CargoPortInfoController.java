@@ -202,12 +202,39 @@ public class CargoPortInfoController {
   @GetMapping("/master/cargos/{cargoId}")
   public CargoDetailedResponse getDetailedCargoById(
       @PathVariable Long cargoId, @RequestHeader HttpHeaders headers) throws CommonRestException {
-    CargoDetailedResponse response = null;
+    CargoDetailedResponse response;
     try {
       log.info("getCargos: {}", getClientIp());
       response = cargoPortInfoService.getCargosDetailedById(headers, cargoId);
     } catch (Exception e) {
       log.error("Error in getCargos ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
+
+  /**
+   * Delete API for deletion of cargo using cargoId
+   *
+   * @param cargoId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @DeleteMapping("/master/cargos/{cargoId}")
+  public CargoDetailedResponse deleteCargoById(
+      @PathVariable Long cargoId, @RequestHeader HttpHeaders headers) throws CommonRestException {
+    CargoDetailedResponse response;
+    try {
+      log.info("Deleting cargo with id: {}", cargoId);
+      response = cargoPortInfoService.deleteCargoById(CORRELATION_ID_HEADER, cargoId);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,
