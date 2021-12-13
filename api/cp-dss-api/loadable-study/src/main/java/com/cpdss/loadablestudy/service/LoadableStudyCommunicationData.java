@@ -166,7 +166,7 @@ public class LoadableStudyCommunicationData {
   }
 
   /**
-   * save json Data for loadingplan communication
+   * save json Data for loadingplan/dischargeplan communication
    *
    * @param dataJson
    */
@@ -196,7 +196,7 @@ public class LoadableStudyCommunicationData {
         log.info("Saved JsonData:{}", jsonDatas);
       }
     } catch (Exception e) {
-      log.error("Error occurred when saving json data part of loadingplan communication", e);
+      log.error("Error occurred when saving json data part of loadingplan/dischargeplan communication", e);
     }
   }
 

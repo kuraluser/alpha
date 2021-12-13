@@ -58,8 +58,6 @@ public class StagingService {
           final JsonObject metaData = obj.getAsJsonObject(META_DATA);
           DataTransferStage dataTransferStage =
               new Gson().fromJson(metaData, DataTransferStage.class);
-          // Gson gson = new GsonBuilder().setPrettyPrinting().create();
-          // dataTransferStage.setData(gson.toJson(data));
           dataTransferStage.setData(data.toString());
           dataTransferStage.setStatus(STATUS);
           dataTransferStage.setProcessType(PROCESS_TYPE);

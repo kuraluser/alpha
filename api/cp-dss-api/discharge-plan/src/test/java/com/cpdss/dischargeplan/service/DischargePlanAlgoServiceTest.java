@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
@@ -19,10 +20,15 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+@TestPropertySource(properties = "cpdss.communication.enable = false")
 @SpringJUnitConfig(classes = {DischargePlanAlgoService.class})
 public class DischargePlanAlgoServiceTest {
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
 
   @Autowired DischargePlanAlgoService dischargePlanAlgoService;
 
@@ -111,6 +117,12 @@ public class DischargePlanAlgoServiceTest {
   @MockBean private EductionOperationRepository eductionOperationRepository;
 
   @MockBean private DischargingDriveTankRepository dischargingDriveTankRepository;
+  @MockBean private DischargePlanCommunicationService dischargePlanCommunicationService;
+
+  @MockBean
+  private DischargePlanCommunicationStatusRepository dischargePlanCommunicationStatusRepository;
+
+  @MockBean private DischargePlanStagingService dischargePlanStagingService;
 
   @MockBean PortTideDetailsRepository portTideDetailsRepository;
 

@@ -4330,6 +4330,61 @@ public final class LoadableStudyServiceGrpc {
     return getSaveLoadableStudyPortRotationDataForCommunicationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetJsonDataForDischargePlanCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getJsonDataForDischargePlanCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetJsonDataForDischargePlanCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetJsonDataForDischargePlanCommunicationMethod;
+    if ((getGetJsonDataForDischargePlanCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetJsonDataForDischargePlanCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetJsonDataForDischargePlanCommunicationMethod =
+                LoadableStudyServiceGrpc.getGetJsonDataForDischargePlanCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetJsonDataForDischargePlanCommunicationMethod =
+              getGetJsonDataForDischargePlanCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "getJsonDataForDischargePlanCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getJsonDataForDischargePlanCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetJsonDataForDischargePlanCommunicationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -5162,6 +5217,16 @@ public final class LoadableStudyServiceGrpc {
           getSaveLoadableStudyPortRotationDataForCommunicationMethod(), responseObserver);
     }
 
+    /** */
+    public void getJsonDataForDischargePlanCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetJsonDataForDischargePlanCommunicationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -5759,6 +5824,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
                       this, METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION_DATA_FOR_COMMUNICATION)))
+          .addMethod(
+              getGetJsonDataForDischargePlanCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_GET_JSON_DATA_FOR_DISCHARGE_PLAN_COMMUNICATION)))
           .build();
     }
   }
@@ -6733,6 +6805,19 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getJsonDataForDischargePlanCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(getGetJsonDataForDischargePlanCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -7394,6 +7479,17 @@ public final class LoadableStudyServiceGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(),
           getSaveLoadableStudyPortRotationDataForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getJsonDataForDischargePlanCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getGetJsonDataForDischargePlanCommunicationMethod(),
           getCallOptions(),
           request);
     }
@@ -8173,6 +8269,17 @@ public final class LoadableStudyServiceGrpc {
                   getSaveLoadableStudyPortRotationDataForCommunicationMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getJsonDataForDischargePlanCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(getGetJsonDataForDischargePlanCommunicationMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -8259,6 +8366,7 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_SYNOPTICAL_DATA_FOR_COMMUNICATION = 81;
   private static final int METHODID_GET_LOADABLE_STUDY_PORT_ROTATION_DATA_FOR_COMMUNICATION = 82;
   private static final int METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION_DATA_FOR_COMMUNICATION = 83;
+  private static final int METHODID_GET_JSON_DATA_FOR_DISCHARGE_PLAN_COMMUNICATION = 84;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -8859,6 +8967,13 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
                   responseObserver);
           break;
+        case METHODID_GET_JSON_DATA_FOR_DISCHARGE_PLAN_COMMUNICATION:
+          serviceImpl.getJsonDataForDischargePlanCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -9007,6 +9122,7 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveSynopticalDataForCommunicationMethod())
                       .addMethod(getGetLoadableStudyPortRotationDataForCommunicationMethod())
                       .addMethod(getSaveLoadableStudyPortRotationDataForCommunicationMethod())
+                      .addMethod(getGetJsonDataForDischargePlanCommunicationMethod())
                       .build();
         }
       }

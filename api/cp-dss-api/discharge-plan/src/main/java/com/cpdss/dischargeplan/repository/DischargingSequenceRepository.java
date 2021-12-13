@@ -34,4 +34,6 @@ public interface DischargingSequenceRepository
       "SELECT DISTINCT cargoNominationXId FROM DischargingSequence WHERE dischargeInformation = ?1 AND isActive = ?2")
   public List<Long> findToBeDischargedCargoNominationIdBydischargeInformationAndIsActive(
       DischargeInformation dischargeInformation, Boolean isActive);
+
+  List<DischargingSequence> findByDischargeInformationId(Long dischargeInformationId);
 }

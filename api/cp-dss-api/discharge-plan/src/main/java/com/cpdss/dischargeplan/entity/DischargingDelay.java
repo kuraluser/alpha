@@ -47,4 +47,6 @@ public class DischargingDelay extends EntityDoc {
 
   @Column(name = "sequence_number")
   private Long sequenceNo;
+
+  @Transient private Long communicationRelatedEntityId;
 }

@@ -35,4 +35,8 @@ public interface DischargingPlanPortWiseDetailsRepository
   public List<DischargingPlanPortWiseDetails>
       findByDischargeInformationIdAndToLoadicatorAndIsActive(
           Long dischargingInfoId, Boolean toLoadicator, Boolean isActive);
+
+  @Query(
+      "SELECT DPPWD.id FROM DischargingPlanPortWiseDetails DPPWD WHERE DPPWD.dischargingSequence.id IN ?1")
+  List<Long> findByDischargingSequenceIds(List<Long> dischargingSequenceIds);
 }

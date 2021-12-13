@@ -94,4 +94,6 @@ public class PortDischargingPlanBallastDetails extends EntityDoc {
 
   @Column(name = "sounding")
   private BigDecimal sounding;
+
+  @Transient private Long communicationRelatedEntityId;
 }

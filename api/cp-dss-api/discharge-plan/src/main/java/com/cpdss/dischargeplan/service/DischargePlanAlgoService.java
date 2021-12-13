@@ -5,18 +5,11 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc;
-import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
-import com.cpdss.common.generated.LoadableStudyServiceGrpc;
-import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
@@ -28,8 +21,11 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.dischargeplan.common.CommunicationStatus;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.common.RuleUtility;
+import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.domain.BerthDetails;
 import com.cpdss.dischargeplan.domain.CargoForCowDetails;
 import com.cpdss.dischargeplan.domain.CargoMachineryInUse;
@@ -68,14 +64,12 @@ import com.cpdss.dischargeplan.repository.projections.PortTideAlgo;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -168,10 +162,22 @@ public class DischargePlanAlgoService {
 
   @Autowired DischargingDelayRepository dischargingDelayRepository;
 
+  @Value("${cpdss.build.env}")
+  private String env;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
+  @Autowired private DischargePlanCommunicationService dischargePlanCommunicationService;
+
+  @Autowired
+  private DischargePlanCommunicationStatusRepository dischargePlanCommunicationStatusRepository;
+
+  @Autowired private DischargePlanStagingService dischargePlanStagingService;
+
   @Autowired EductionOperationRepository eductionOperationRepository;
 
   @Autowired DischargingDriveTankRepository dischargingDriveTankRepository;
-
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
 
   private static final Integer cowBottomTypeId = 2;
@@ -1016,6 +1022,13 @@ public class DischargePlanAlgoService {
 
     if (!request.getAlgoErrorsList().isEmpty()) {
       saveAlgoErrors(dischargingInfo, request);
+      if (!env.equals("ship") && enableCommunication) {
+        log.info("Discharge Plan communication Started when Algo errors occurred.");
+        dischargeAlgoPlanCallBackCommunicationCall(
+            dischargingInfo,
+            com.cpdss.dischargeplan.service.utility.DischargePlanConstants
+                .DISCHARGE_PLAN_ALGO_ERRORS_SHORE_TO_SHIP);
+      }
     }
 
     if (!request.getDischargingSequencesList().isEmpty()) {
@@ -1057,6 +1070,13 @@ public class DischargePlanAlgoService {
             dischargingInfo.getId(), true);
         dischargeInformationService.updateIsDischargingPlanGeneratedStatus(
             dischargingInfo.getId(), true);
+      }
+      if (!env.equals("ship") && enableCommunication) {
+        log.info("Discharge Plan communication Started.");
+        dischargeAlgoPlanCallBackCommunicationCall(
+            dischargingInfo,
+            com.cpdss.dischargeplan.service.utility.DischargePlanConstants
+                .DISCHARGE_PLAN_SHORE_TO_SHIP);
       }
     }
   }
@@ -1781,5 +1801,44 @@ public class DischargePlanAlgoService {
         AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR,
         conditionType,
         errors);
+  }
+
+  private void dischargeAlgoPlanCallBackCommunicationCall(
+      DischargeInformation dischargeInformation, List<String> processIdentifiers)
+      throws GenericServiceException {
+    JsonArray jsonArray =
+        dischargePlanStagingService.getCommunicationData(
+            processIdentifiers,
+            UUID.randomUUID().toString(),
+            MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType(),
+            dischargeInformation.getId(),
+            null);
+    log.info("Json Array in Loading plan service: " + jsonArray.toString());
+    EnvoyWriter.WriterReply ewReply =
+        dischargePlanCommunicationService.passRequestPayloadToEnvoyWriter(
+            jsonArray.toString(),
+            dischargeInformation.getVesselXid(),
+            MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType());
+
+    if (DischargePlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+      log.info("------- Envoy writer has called successfully : " + ewReply);
+      DischargePlanCommunicationStatus dischargePlanCommunicationStatus =
+          new DischargePlanCommunicationStatus();
+      if (ewReply.getMessageId() != null) {
+        dischargePlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+        dischargePlanCommunicationStatus.setCommunicationStatus(
+            CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+      }
+      dischargePlanCommunicationStatus.setReferenceId(dischargeInformation.getId());
+      dischargePlanCommunicationStatus.setMessageType(
+          MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType());
+      dischargePlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+      DischargePlanCommunicationStatus loadableStudyCommunicationStatus =
+          dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
+      log.info("Communication table update : " + dischargePlanCommunicationStatus.getId());
+      log.info(
+          "DischargePlanCommunicationStatus table updated id : "
+              + loadableStudyCommunicationStatus.getId());
+    }
   }
 }

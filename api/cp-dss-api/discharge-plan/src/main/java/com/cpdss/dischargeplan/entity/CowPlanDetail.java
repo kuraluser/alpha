@@ -61,4 +61,6 @@ public class CowPlanDetail extends EntityDoc {
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "discharging_xid", referencedColumnName = "id")
   private DischargeInformation dischargeInformation;
+
+  @Transient private Long communicationRelatedEntityId;
 }

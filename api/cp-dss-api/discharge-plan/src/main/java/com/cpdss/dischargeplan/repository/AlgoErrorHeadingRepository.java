@@ -30,4 +30,6 @@ public interface AlgoErrorHeadingRepository extends CommonCrudRepository<AlgoErr
       "UPDATE AlgoErrorHeading SET isActive = false WHERE dischargingInformation = ?1 AND conditionType = ?2")
   public void deleteByDischargingInformationAndConditionType(
       DischargeInformation dischargingInformation, Integer conditionType);
+
+  List<AlgoErrorHeading> findByDischargingInformationId(Long id);
 }
