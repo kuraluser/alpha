@@ -3495,18 +3495,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     }
   }
 
-/**
+  /**
    * get json Data for DischargePlan communication
    *
    * @param request
    * @param responseObserver
    */
   public void getJsonDataForDischargePlanCommunication(
-          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
-          StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
-                  responseObserver) {
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
     com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
-            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
     try {
       log.info("json data request:{}", request.getId());
       String jsonData = jsonDataRepository.getJsonDataWithReferenceId(request.getId());
@@ -3514,10 +3514,10 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       if (jsonData != null) {
         replyBuilder.setDataJson(jsonData);
         replyBuilder.setResponseStatus(
-                Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       } else {
         replyBuilder.setResponseStatus(
-                Common.ResponseStatus.newBuilder().setMessage("No JsonData Found").build());
+            Common.ResponseStatus.newBuilder().setMessage("No JsonData Found").build());
       }
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();

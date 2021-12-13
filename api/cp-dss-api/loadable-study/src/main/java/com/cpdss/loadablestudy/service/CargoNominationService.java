@@ -141,7 +141,11 @@ public class CargoNominationService {
             cargo -> {
               CargoNomination newCargo =
                   createDsCargoNomination(
-                      dischargeStudyId, cargo, portId, operationId, dischargeStudycargos.size() + 1);
+                      dischargeStudyId,
+                      cargo,
+                      portId,
+                      operationId,
+                      dischargeStudycargos.size() + 1);
               log.info(
                   "ds save API DS cargo... cargo id ::  "
                       + newCargo.getCargoXId()

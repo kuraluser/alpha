@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 import javax.persistence.EntityManager;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -314,8 +313,7 @@ public class LoadableStudyPortRotationServiceTest {
         .thenReturn(backloadingDataByportIds);
     when(portInstructionService.getPortWiseInstructions(Mockito.anyLong(), Mockito.anyList()))
         .thenReturn(instructionsForThePort);
-    when(cowDetailService.getCowDetailForDS(Mockito.anyLong()))
-        .thenReturn(dischargeStudyCowDetail);
+    when(cowDetailService.getCowDetailForDS(Mockito.anyLong())).thenReturn(dischargeStudyCowDetail);
     var result =
         loadableStudyPortRotationService.getPortRotationByLoadableStudyId(
             request, portRotationReplyBuilder);
