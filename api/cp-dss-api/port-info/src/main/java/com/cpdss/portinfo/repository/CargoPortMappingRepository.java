@@ -5,6 +5,7 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.portinfo.domain.PortInfo;
 import com.cpdss.portinfo.entity.CargoPortMapping;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 
 /** Repository class for CargoPortMapping table */
@@ -17,4 +18,16 @@ public interface CargoPortMappingRepository extends CommonCrudRepository<CargoPo
   public List<CargoPortMapping> findByportInfo_idIn(List<Long> portIds);
 
   public List<CargoPortMapping> findByCargoXId(long cargoId);
+
+  /**
+   * Fetching CargoPortMapping
+   * @param cargoId
+   * @param portId
+   * @param isActive
+   * @return cargoPortMapping
+   */
+  @Query(
+      "SELECT C FROM CargoPortMapping C WHERE C.cargoXId = :cargoId AND C.portInfo.id = :portId AND C.isActive = :isActive")
+  Optional<CargoPortMapping> findByCargoXIdAndPortIdAndIsActive(
+      Long cargoId, Long portId, Boolean isActive);
 }

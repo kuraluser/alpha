@@ -309,4 +309,73 @@ public class CargoService extends CargoInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  /**
+   * Saving new Cargo / Editing existing cargo details
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void saveCargo(
+      CargoInfo.CargoDetailed request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+          responseObserver) {
+
+    CargoInfo.CargoByIdDetailedReply.Builder cargoReply =
+        CargoInfo.CargoByIdDetailedReply.newBuilder();
+
+    try {
+      Cargo cargo;
+      if (request.getId() == 0) {
+        cargo = new Cargo();
+      } else {
+        cargo = this.cargoRepository.getById(request.getId());
+      }
+
+      buildCargoEntity(request, cargo);
+      Cargo savedCargo = this.cargoRepository.save(cargo);
+      CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
+      buildCargoDetailed(savedCargo, cargoDetail);
+      cargoReply.setCargo(cargoDetail.build());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      cargoReply.setResponseStatus(responseStatus);
+
+    } catch (Exception e) {
+      log.error("Error in saveCargo method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      cargoReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(cargoReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Building cargo entity
+   *
+   * @param request
+   * @param cargo
+   */
+  private void buildCargoEntity(CargoInfo.CargoDetailed request, Cargo cargo) {
+
+    cargo.setCrudeType(request.getName());
+    cargo.setApi(request.getApi());
+    cargo.setFromRvp(request.getReidVapourPressure());
+    cargo.setGasC4(request.getGas());
+    cargo.setTotalWax(request.getTotalWax());
+    cargo.setMaxPourPoint(request.getPourPoint());
+    cargo.setMaxCloudPoint(request.getCloudPoint());
+    cargo.setViscocityT1(request.getViscosity());
+    cargo.setMinLoadTemp(request.getTemp());
+    cargo.setCowCodeRecommendedSummer(request.getCowCodes());
+    cargo.setH2sOilPhase(request.getHydrogenSulfideOil());
+    cargo.setH2sVapourPhaseConfirmed(request.getHydrogenSulfideVapour());
+    cargo.setBenzene(request.getBenzene());
+    cargo.setRemarks(request.getSpecialInstrictionsRemark());
+    cargo.setAbbreviation(request.getAbbreviation());
+    cargo.setIsActive(true);
+  }
 }

@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -505,5 +506,103 @@ public class CargoPortInfoService {
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return cargoResponse;
+  }
+
+  /**
+   * Saving new Cargo / Editing existing cargo details
+   *
+   * @param correlationIdHeader
+   * @param cargoId
+   * @param cargoDetailed
+   * @return cargoResponse
+   * @throws GenericServiceException
+   */
+  public CargoDetailedResponse saveCargo(
+      String correlationIdHeader, Long cargoId, CargoDetailed cargoDetailed)
+      throws GenericServiceException {
+    CargoDetailedResponse cargoResponse = new CargoDetailedResponse();
+    CargoInfo.CargoDetailed.Builder cargoRequest = CargoInfo.CargoDetailed.newBuilder();
+    buildCargoDetailed(cargoDetailed, cargoId, cargoRequest);
+    CargoInfo.CargoByIdDetailedReply cargoReply =
+        cargoInfoServiceBlockingStub.saveCargo(cargoRequest.build());
+
+    PortInfo.CargoPortMappingRequest.Builder cargoPortMappingRequest =
+        PortInfo.CargoPortMappingRequest.newBuilder();
+    buildCargoPortMappingRequest(cargoReply, cargoPortMappingRequest, cargoDetailed);
+    PortInfo.CargoPortReply cargoPortReply =
+        this.portInfoServiceBlockingStub.saveAllCargoPortMappings(cargoPortMappingRequest.build());
+
+    if (cargoReply != null
+        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())
+        && cargoPortReply != null
+        && SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
+
+      CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+      commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+      commonSuccessResponse.setCorrelationId(correlationIdHeader);
+      cargoResponse.setResponseStatus(commonSuccessResponse);
+      buildCargoByIdDetailedResponse(cargoResponse, cargoReply, cargoPortReply.getPortsList());
+    } else {
+      throw new GenericServiceException(
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return cargoResponse;
+  }
+
+  /**
+   * Building cargo port mapping request
+   *
+   * @param cargoReply
+   * @param cargoPortMappingRequest
+   * @param cargoDetailed
+   */
+  private void buildCargoPortMappingRequest(
+      CargoInfo.CargoByIdDetailedReply cargoReply,
+      PortInfo.CargoPortMappingRequest.Builder cargoPortMappingRequest,
+      CargoDetailed cargoDetailed) {
+
+    Optional.ofNullable(cargoDetailed.getLoadingInformation())
+        .ifPresent(
+            cargoPortMappings -> {
+              cargoPortMappings.forEach(
+                  cargoPortMapping -> {
+                    PortInfo.CargoPortMapping cargoPortMappingGenerated =
+                        PortInfo.CargoPortMapping.newBuilder()
+                            .setCargoId(cargoReply.getCargo().getId())
+                            .setPortId(cargoPortMapping.getPort().getId())
+                            .build();
+                    cargoPortMappingRequest.addCargoPortMapping(cargoPortMappingGenerated);
+                  });
+            });
+  }
+
+  /**
+   * Building Cargo detailed builder
+   *
+   * @param cargoDetailed
+   * @param cargoId
+   * @param cargoRequest
+   */
+  private void buildCargoDetailed(
+      CargoDetailed cargoDetailed, Long cargoId, CargoInfo.CargoDetailed.Builder cargoRequest) {
+
+    cargoRequest.setId(cargoId);
+    cargoRequest.setName(cargoDetailed.getName());
+    cargoRequest.setAbbreviation(cargoDetailed.getAbbreviation());
+    cargoRequest.setApi(cargoDetailed.getApi());
+    cargoRequest.setTemp(cargoDetailed.getTemp());
+    cargoRequest.setReidVapourPressure(cargoDetailed.getReidVapourPressure());
+    cargoRequest.setGas(cargoDetailed.getGas());
+    cargoRequest.setTotalWax(cargoDetailed.getTotalWax());
+    cargoRequest.setPourPoint(cargoDetailed.getPourPoint());
+    cargoRequest.setCloudPoint(cargoDetailed.getCloudPoint());
+    cargoRequest.setViscosity(cargoDetailed.getViscosity());
+    cargoRequest.setCowCodes(cargoDetailed.getCowCodes());
+    cargoRequest.setHydrogenSulfideOil(cargoDetailed.getHydrogenSulfideOil());
+    cargoRequest.setHydrogenSulfideVapour(cargoDetailed.getHydrogenSulfideVapour());
+    cargoRequest.setBenzene(cargoDetailed.getBenzene());
+    cargoRequest.setSpecialInstrictionsRemark(cargoDetailed.getSpecialInstrictionsRemark());
   }
 }

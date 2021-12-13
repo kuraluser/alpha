@@ -8,6 +8,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.CargosResponse;
 import com.cpdss.gateway.domain.PortsResponse;
 import com.cpdss.gateway.domain.TimezoneRestResponse;
+import com.cpdss.gateway.domain.cargomaster.CargoDetailed;
 import com.cpdss.gateway.domain.cargomaster.CargoDetailedResponse;
 import com.cpdss.gateway.domain.cargomaster.CargosDetailedResponse;
 import com.cpdss.gateway.service.CargoPortInfoService;
@@ -235,6 +236,37 @@ public class CargoPortInfoController {
       response = cargoPortInfoService.deleteCargoById(CORRELATION_ID_HEADER, cargoId);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
+
+  /**
+   * API for saving a new cargo or editing an existing one
+   *
+   * @param cargoId
+   * @param headers
+   * @param cargoDetailed
+   * @return response
+   * @throws CommonRestException
+   */
+  @PostMapping("/master/cargos/{cargoId}")
+  public CargoDetailedResponse saveCargo(
+      @PathVariable Long cargoId,
+      @RequestHeader HttpHeaders headers,
+      @RequestBody CargoDetailed cargoDetailed)
+      throws CommonRestException {
+    CargoDetailedResponse response;
+    try {
+      log.info("save/edit cargo");
+      response = cargoPortInfoService.saveCargo(CORRELATION_ID_HEADER, cargoId, cargoDetailed);
+    } catch (Exception e) {
+      log.error("Error in saveCargo ", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

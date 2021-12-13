@@ -37,7 +37,9 @@ service PortInfoService {
 	rpc GetAllCargoPortMapping (CargoPortRequest) returns (CargoPortReply) {}
 
 	rpc GetAllCargoPortMappingById (CargoPortRequest) returns (CargoPortReply) {}
-	
+
+	rpc SaveAllCargoPortMappings (CargoPortMappingRequest) returns (CargoPortReply) {}
+
 }
 
 message BerthIdsRequest {
@@ -205,4 +207,8 @@ message CargoPortMappingDetail {
     string maxAirDraft = 7;
     string maxDraft = 8;
     string waterDensity = 9;
+}
+
+message CargoPortMappingRequest {
+	repeated CargoPortMapping cargoPortMapping = 1;
 }
