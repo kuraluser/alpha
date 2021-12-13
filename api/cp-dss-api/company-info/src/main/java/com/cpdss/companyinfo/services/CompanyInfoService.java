@@ -8,10 +8,7 @@ import com.cpdss.companyinfo.domain.CompanyInfoResponse;
 import com.cpdss.companyinfo.entity.Carousals;
 import com.cpdss.companyinfo.entity.Company;
 import com.cpdss.companyinfo.repository.CompanyRepository;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,17 +58,18 @@ public class CompanyInfoService {
     return response;
   }
 
-  public CompanyInfoResponse findShipCarousals() throws GenericServiceException {
+  public CompanyInfoResponse findShipCarousals(final String domain) throws GenericServiceException {
     log.debug("inside findCarousel");
-    List<Company> companyList = this.companyRepository.findAll();
-    if (null == companyList) {
+    Optional<Company> companyOptional =
+        this.companyRepository.findByIsActiveAndDomain(true, domain);
+    if (!companyOptional.isPresent()) {
       log.error("Company does not exist");
       throw new GenericServiceException(
           "Company  could not be found",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-    Company company = companyList.get(0);
+    Company company = companyOptional.get();
     CompanyInfoResponse response = this.setCompanyInfo(company);
     log.debug("Found company, company: {}", response);
     return response;
