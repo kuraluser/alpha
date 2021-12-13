@@ -146,6 +146,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired VesselValveStrippingSequenceRepository strippingSequenceRepository;
   @Autowired private VesselParticularService vesselParticularService;
   @Autowired VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
+  @Autowired VesselCowService vesselCowService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -715,6 +716,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder pumpDetailsBuilder =
             com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.newBuilder();
         this.vesselPumpService.getVesselPumpsAndTypes(pumpDetailsBuilder, vessel.getId());
+        this.vesselCowService.buildVesselCowParameters(replyBuilder, vessel);
+
         replyBuilder.addAllPumpType(pumpDetailsBuilder.getPumpTypeList());
         replyBuilder.addAllVesselPump(pumpDetailsBuilder.getVesselPumpList());
         replyBuilder.addAllTankType(pumpDetailsBuilder.getTankTypeList());

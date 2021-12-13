@@ -17,4 +17,7 @@ public class VesselValveAirPurge {
   private int valveId;
   private Boolean isShut;
   private Boolean isCopWarmup;
+
+  private String manifoldName;
+  private String manifoldSide;
 }

@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -375,7 +376,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
    * @param correlationId
    * @return VesselDetailsResponse
    */
-  @Cacheable(value = "vesselDetails", key = "{#vesselId, #enableValveSeq}")
+  //@Cacheable(value = "vesselDetails", key = "{#vesselId, #enableValveSeq}")
   public VesselDetailsResponse getVesselsDetails(
       Long vesselId, String correlationId, boolean enableValveSeq) throws GenericServiceException {
     VesselDetailsResponse vesselDetailsResponse = new VesselDetailsResponse();
@@ -473,6 +474,9 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
               }
             });
 
+    // Vessel Cow Parameters
+    vesselDetailsResponse.setVesselCowParameters(this.buildVesselCowParameters(vesselAlgoReply.getVesselCowParametersList()));
+
     // Keep this valve section below
     if (enableValveSeq)
       vesselDetailsResponse.setVesselValveSequence(this.getVesselValveSequenceData(vesselId));
@@ -480,7 +484,18 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
     return vesselDetailsResponse;
   }
 
-  private List<VesselPumpTankMapping> buildVesselPumpTankMappingResponse(
+    private List<VesselCowParameters> buildVesselCowParameters(List<VesselInfo.VesselCowParameters> vcpList) {
+      List<VesselCowParameters> list = new ArrayList<>();
+      for (VesselInfo.VesselCowParameters var : vcpList) {
+          VesselCowParameters var2 = new VesselCowParameters();
+          BeanUtils.copyProperties(var, var2);
+          list.add(var2);
+      }
+      log.info("Vessel Cow parameters set with size - {}", vcpList.size());
+      return list;
+    }
+
+    private List<VesselPumpTankMapping> buildVesselPumpTankMappingResponse(
       VesselAlgoReply vesselAlgoReply) {
     List<VesselPumpTankMapping> vesselPumpTankMappings = new ArrayList<>();
     Set<Long> pumpIds = new HashSet<>();

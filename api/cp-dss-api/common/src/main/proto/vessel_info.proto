@@ -239,12 +239,27 @@ message VesselReply {
 		repeated SelectableParameter selectableParameter = 10;
 
 		repeated PumpType pumpType = 11;
-        repeated VesselPump vesselPump = 12;
-        repeated TankType tankType = 13;
-        repeated VesselComponent vesselManifold = 14;
-        repeated VesselComponent vesselBottomLine = 15;
-        repeated VesselPumpTankMapping vesselPumpTankMapping = 16;
+		repeated VesselPump vesselPump = 12;
+    repeated TankType tankType = 13;
+		repeated VesselComponent vesselManifold = 14;
+		repeated VesselComponent vesselBottomLine = 15;
+		repeated VesselPumpTankMapping vesselPumpTankMapping = 16;
+		repeated VesselCowParameters vesselCowParameters = 17;
+}
 
+message VesselCowParameters{
+	int64 id = 1;
+	int64  vesselId = 2;
+	string topCowMinDuration = 3;
+	string topCowMaxDuration = 4;
+	string bottomCowMinDuration = 5;
+	string bottomCowMaxDuration = 6;
+	string fullCowMinDuration = 7;
+	string fullCowMaxDuration = 8;
+	string topWashMinAngle = 9;
+	string topWashMaxAngle = 10;
+	string bottomWashMinAngle = 11;
+	string bottomWashMaxAngle = 12;
 }
 
 message VesselPumpTankMapping {
@@ -578,6 +593,8 @@ message BendingMomentType1 {
 		int32 valveId = 7;
 		string valve = 8;
 		int32 sequenceNumber = 9;
+		string manifoldName = 10;
+		string manifoldSide = 11;
 	}
 
 	message VesselValveAirPurgeSequence {
@@ -593,6 +610,8 @@ message BendingMomentType1 {
 		int32 valveId = 10;
 		bool isShut = 11;
 		bool isCopWarmup = 12;
+		string manifoldName = 13;
+		string manifoldSide = 14;
 	}
 
 	message VesselValveSequence{
@@ -638,6 +657,8 @@ message BendingMomentType1 {
 		int32 valveId = 7;
 		string valve = 8;
 		int32 sequenceNumber = 9;
+		string manifoldName = 10;
+		string manifoldSide = 11;
 	}
 
 	message VesselValveEducationProcess {
@@ -658,6 +679,8 @@ message BendingMomentType1 {
 		int32 valveSide = 15;
 		int64 vesselTankId = 16;
 		string tankShortName = 17;
+		string manifoldName = 18;
+		string manifoldSide = 19;
 	}
 	
 	message LoadingInfoRulesRequest {

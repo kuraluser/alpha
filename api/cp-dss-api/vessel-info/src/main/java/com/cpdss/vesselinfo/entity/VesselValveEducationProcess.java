@@ -75,4 +75,10 @@ public class VesselValveEducationProcess {
 
   @Column(name = "tank_short_name")
   private String tankShortName;
+
+  @Column(name = "manifold_name")
+  private String manifoldName;
+
+  @Column(name = "manifold_side")
+  private String manifoldSide;
 }

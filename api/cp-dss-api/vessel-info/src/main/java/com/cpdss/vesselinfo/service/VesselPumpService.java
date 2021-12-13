@@ -216,6 +216,8 @@ public class VesselPumpService {
         Optional.ofNullable(vvEp.getVesselTankId()).ifPresent(builder::setVesselTankId);
         Optional.ofNullable(vvEp.getTankShortName()).ifPresent(builder::setTankShortName);
 
+        Optional.ofNullable(vvEp.getManifoldName()).ifPresent(builder::setManifoldName);
+        Optional.ofNullable(vvEp.getManifoldSide()).ifPresent(builder::setManifoldSide);
         list.add(builder.build());
       } catch (Exception e) {
         log.error("Failed to build message for vessel valve educator");
@@ -245,6 +247,8 @@ public class VesselPumpService {
         Optional.ofNullable(vvA.getValveId()).ifPresent(builder::setValveId);
         Optional.ofNullable(vvA.getIsShut()).ifPresent(builder::setIsShut);
         Optional.ofNullable(vvA.getIsCopWarmup()).ifPresent(builder::setIsCopWarmup);
+        Optional.ofNullable(vvA.getManifoldName()).ifPresent(builder::setManifoldName);
+        Optional.ofNullable(vvA.getManifoldSide()).ifPresent(builder::setManifoldSide);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -270,6 +274,8 @@ public class VesselPumpService {
         Optional.ofNullable(vvS.getValveId()).ifPresent(builder::setValveId);
         Optional.ofNullable(vvS.getValve()).ifPresent(builder::setValve);
         Optional.ofNullable(vvS.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
+        Optional.ofNullable(vvS.getManifoldName()).ifPresent(builder::setManifoldName);
+        Optional.ofNullable(vvS.getManifoldSide()).ifPresent(builder::setManifoldSide);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -294,6 +300,8 @@ public class VesselPumpService {
       Optional.ofNullable(a.getValve()).ifPresent(builder::setValve);
       Optional.ofNullable(a.getValveId()).ifPresent(builder::setValveId);
       Optional.ofNullable(a.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
+      Optional.ofNullable(a.getManifoldName()).ifPresent(builder::setManifoldName);
+      Optional.ofNullable(a.getManifoldSide()).ifPresent(builder::setManifoldSide);
       response.add(builder.build());
     }
     log.info("Vessel Valve RPC build StrippingSequenceCargoValve - Size {}", response.size());

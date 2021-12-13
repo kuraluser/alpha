@@ -71,6 +71,7 @@ class VesselInfoServiceTest {
   @Mock VesselValveAirPurgeSequenceRepository airPurgeSequenceRepository;
   @Mock VesselValveStrippingSequenceRepository strippingSequenceRepository;
   @Mock VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
+  @Mock VesselCowService vesselCowService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";

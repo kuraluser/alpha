@@ -49,4 +49,10 @@ public class VesselValveAirPurgeSequence implements Serializable {
 
   @Column(name = "is_cop_warm_up")
   private Boolean isCopWarmup;
+
+  @Column(name = "manifold_name")
+  private String manifoldName;
+
+  @Column(name = "manifold_side")
+  private String manifoldSide;
 }

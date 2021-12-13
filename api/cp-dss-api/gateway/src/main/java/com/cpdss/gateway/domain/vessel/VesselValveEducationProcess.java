@@ -28,4 +28,7 @@ public class VesselValveEducationProcess {
   private Integer valveSide;
   private Long vesselTankId;
   private String tankShortName;
+
+  private String manifoldName;
+  private String manifoldSide;
 }

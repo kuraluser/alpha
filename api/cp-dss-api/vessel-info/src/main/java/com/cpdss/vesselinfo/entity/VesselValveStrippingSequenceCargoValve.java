@@ -41,4 +41,10 @@ public class VesselValveStrippingSequenceCargoValve {
 
   @Column(name = "sequence_number")
   private Integer sequenceNumber;
+
+  @Column(name = "manifold_name")
+  private String manifoldName;
+
+  @Column(name = "manifold_side")
+  private String manifoldSide;
 }

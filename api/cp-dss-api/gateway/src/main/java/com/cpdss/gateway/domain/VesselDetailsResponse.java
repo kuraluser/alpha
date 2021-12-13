@@ -40,4 +40,6 @@ public class VesselDetailsResponse {
   private List<VesselManiFold> vesselManifold;
   private List<VesselBottomLine> vesselBottomLine;
   private List<VesselPumpTankMapping> vesselPumpTankMappings;
+
+  private List<VesselCowParameters> vesselCowParameters;
 }

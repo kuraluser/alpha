@@ -14,4 +14,7 @@ public class VesselValveStrippingSequenceCargoValve {
   private Integer valveId;
   private String valve;
   private Integer sequenceNumber;
+
+  private String manifoldName;
+  private String manifoldSide;
 }
