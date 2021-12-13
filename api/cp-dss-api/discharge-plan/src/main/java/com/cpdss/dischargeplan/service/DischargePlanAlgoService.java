@@ -180,6 +180,8 @@ public class DischargePlanAlgoService {
   @Autowired DischargingDriveTankRepository dischargingDriveTankRepository;
   @Autowired PortTideDetailsRepository portTideDetailsRepository;
 
+  @Autowired DischargingTankTransferRepository dischargingTankTransferRepository;
+
   private static final Integer cowBottomTypeId = 2;
   private static final Integer cowTopTypeId = 3;
   private static final Integer cowFullTypeId = 1;
@@ -1263,6 +1265,52 @@ public class DischargePlanAlgoService {
       saveCleaningDetails(dischargingInfo, sequence.getCleaningTanks());
     }
     saveStrippingDetails(savedDischargingSequence, sequence.getEductorOperationList());
+    saveTankTransfers(savedDischargingSequence, sequence.getTankTransfersList());
+  }
+
+  /**
+   * Saves tank transfers of a Discharging Sequence;
+   *
+   * @param dischargingSequence
+   * @param tankTransfersList
+   */
+  private void saveTankTransfers(
+      DischargingSequence dischargingSequence, List<TankTransfer> tankTransfersList) {
+    log.info("Save Tank transfers for discharging sequence: {}", dischargingSequence.getId());
+    List<DischargingTankTransfer> dischargingTankTransfers = new ArrayList<>();
+    tankTransfersList.forEach(
+        tankTransfer -> {
+          DischargingTankTransfer dischargingTankTransfer = new DischargingTankTransfer();
+          dischargingTankTransfer.setDischargingSequence(dischargingSequence);
+          dischargingTankTransfer.setCargoNominationId(tankTransfer.getCargoNominationId());
+          dischargingTankTransfer.setToTankId(tankTransfer.getToTankId());
+          dischargingTankTransfer.setFromTankIds(
+              tankTransfer.getFromTankIdsList().stream()
+                  .map(tankId -> tankId.toString())
+                  .collect(Collectors.joining(",")));
+          dischargingTankTransfer.setIsActive(true);
+          dischargingTankTransfer.setEndQuantity(
+              StringUtils.hasLength(tankTransfer.getEndQuantity())
+                  ? new BigDecimal(tankTransfer.getEndQuantity())
+                  : null);
+          dischargingTankTransfer.setEndUllage(
+              StringUtils.hasLength(tankTransfer.getEndUllage())
+                  ? new BigDecimal(tankTransfer.getEndUllage())
+                  : null);
+          dischargingTankTransfer.setPurpose(tankTransfer.getPurpose());
+          dischargingTankTransfer.setTimeEnd(tankTransfer.getTimeEnd());
+          dischargingTankTransfer.setStartQuantity(
+              StringUtils.hasLength(tankTransfer.getStartQuantity())
+                  ? new BigDecimal(tankTransfer.getStartQuantity())
+                  : null);
+          dischargingTankTransfer.setStartUllage(
+              StringUtils.hasLength(tankTransfer.getStartUllage())
+                  ? new BigDecimal(tankTransfer.getStartUllage())
+                  : null);
+          dischargingTankTransfer.setTimeStart(tankTransfer.getTimeStart());
+          dischargingTankTransfers.add(dischargingTankTransfer);
+        });
+    dischargingTankTransferRepository.saveAll(dischargingTankTransfers);
   }
 
   /**
@@ -1376,6 +1424,7 @@ public class DischargePlanAlgoService {
           deballastingRateRepository.deleteByDischargingSequence(dischargingSequence);
           deleteDischargingPlanPortWiseDetailsByDischargingSequence(dischargingSequence);
           eductionOperationRepository.deleteByDischargingSequence(dischargingSequence);
+          dischargingTankTransferRepository.deleteByDischargingSequence(dischargingSequence);
         });
   }
 

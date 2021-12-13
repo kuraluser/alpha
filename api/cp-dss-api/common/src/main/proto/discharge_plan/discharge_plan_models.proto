@@ -404,6 +404,20 @@ message DischargingSequence {
   repeated EductorOperation eductorOperation = 17;
   CleaningTanks cleaningTanks = 18;
   repeated PumpOperation cargoOperations = 19;
+  repeated TankTransfer tankTransfers = 20;
+}
+
+message TankTransfer {
+  repeated int64 fromTankIds = 1;
+  int64 toTankId = 2;
+  int32 timeStart = 3;
+  int32 timeEnd = 4;
+  int64 cargoNominationId = 5;
+  string startQuantity = 6;
+  string endQuantity = 7;
+  string startUllage = 8;
+  string endUllage = 9;
+  string purpose = 10;
 }
 
 message DriveTankDetail {

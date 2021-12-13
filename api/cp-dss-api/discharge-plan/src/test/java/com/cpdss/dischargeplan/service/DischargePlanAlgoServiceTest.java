@@ -126,6 +126,8 @@ public class DischargePlanAlgoServiceTest {
 
   @MockBean PortTideDetailsRepository portTideDetailsRepository;
 
+  @MockBean DischargingTankTransferRepository dischargingTankTransferRepository;
+
   // doubt at 594 List<LoadablePlanPortWiseDetails>
 
   //    @Test

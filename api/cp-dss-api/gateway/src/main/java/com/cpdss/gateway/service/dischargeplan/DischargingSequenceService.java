@@ -1,8 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
-import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_SEQUENCE_BALLAST_PUMP_CATEGORIES;
-import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_SEQUENCE_CARGO_PUMP_CATEGORIES;
+import static com.cpdss.gateway.common.GatewayConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -39,9 +38,11 @@ import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.Cleaning;
 import com.cpdss.gateway.domain.CleaningTankDetails;
+import com.cpdss.gateway.domain.Tank;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanPortWiseDetails;
+import com.cpdss.gateway.domain.dischargeplan.TransferDetail;
 import com.cpdss.gateway.domain.loadingplan.sequence.*;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
@@ -430,8 +431,50 @@ public class DischargingSequenceService {
                       });
               sequenceBuilder.setCleaningTanks(cleaningTanksBuilder);
               buildStrippingDetails(sequence.getStripping(), sequenceBuilder);
+              buildTankTransferDetails(sequence.getTransfer(), sequenceBuilder);
               builder.addDischargingSequences(sequenceBuilder.build());
             });
+  }
+
+  /**
+   * Builds tank transfer details
+   *
+   * @param transfer
+   * @param sequenceBuilder
+   */
+  private void buildTankTransferDetails(
+      List<Transfer> transfer, DischargingSequence.Builder sequenceBuilder) {
+    List<TankTransfer> tankTransfers = new ArrayList<>();
+    if (transfer != null) {
+      transfer.forEach(
+          transferDetails -> {
+            TankTransfer.Builder builder = TankTransfer.newBuilder();
+            Optional.ofNullable(transferDetails.getEndQuantity())
+                .ifPresent(builder::setEndQuantity);
+            Optional.ofNullable(transferDetails.getCargoNominationId())
+                .ifPresent(builder::setCargoNominationId);
+            Optional.ofNullable(transferDetails.getFromTankId())
+                .ifPresent(builder::addAllFromTankIds);
+            Optional.ofNullable(transferDetails.getPurpose()).ifPresent(builder::setPurpose);
+            builder.setTimeEnd(
+                StringUtils.hasLength(transferDetails.getTimeEnd())
+                    ? Integer.valueOf(transferDetails.getTimeEnd())
+                    : 0);
+            builder.setTimeStart(
+                StringUtils.hasLength(transferDetails.getTimeStart())
+                    ? Integer.valueOf(transferDetails.getTimeStart())
+                    : 0);
+            Optional.ofNullable(transferDetails.getEndUllage()).ifPresent(builder::setEndUllage);
+            Optional.ofNullable(transferDetails.getStartQuantity())
+                .ifPresent(builder::setStartQuantity);
+            Optional.ofNullable(transferDetails.getStartUllage())
+                .ifPresent(builder::setStartUllage);
+            Optional.ofNullable(transferDetails.getToTankId())
+                .ifPresent(toTankId -> builder.setToTankId(toTankId.get(0)));
+            tankTransfers.add(builder.build());
+          });
+    }
+    sequenceBuilder.addAllTankTransfers(tankTransfers);
   }
 
   /**
@@ -742,7 +785,8 @@ public class DischargingSequenceService {
     List<EductionOperation> cargoEductions = new ArrayList<EductionOperation>();
     CleaningTank cleaningTank = new CleaningTank();
     List<DriveTank> driveTanks = new ArrayList<>();
-
+    List<TransferDetail> transferDetails = new ArrayList<>();
+    List<TransferDetail> freshOilTanks = new ArrayList<>();
     inititalizeStabilityParams(stabilityParams);
 
     PortDetail portDetail = getPortInfo(reply.getPortId());
@@ -895,6 +939,8 @@ public class DischargingSequenceService {
               });
 
       dischargeRates.addAll(dischargeSeq.getDischargingRatesList());
+      this.buildTankTransferDetailsAndFreshOil(
+          dischargeSeq, portEta, vesselTankMap, cargoNomDetails, transferDetails, freshOilTanks);
     }
 
     if (gravityList.size() > 0) {
@@ -937,6 +983,65 @@ public class DischargingSequenceService {
     response.setCargoEduction(cargoEductions);
     response.setCleaningTanks(cleaningTank);
     response.setDriveTanks(driveTanks);
+    response.setTransfers(transferDetails);
+    response.setFreshOilTanks(freshOilTanks);
+  }
+
+  /**
+   * Builds Tank transfers and fresh oil details.
+   *
+   * @param dischargeSeq
+   * @param portEta
+   * @param vesselTankMap
+   * @param cargoNomDetails
+   * @param transferDetails
+   * @param freshOilTanks
+   */
+  private void buildTankTransferDetailsAndFreshOil(
+      DischargingSequence dischargeSeq,
+      Long portEta,
+      Map<Long, VesselTankDetail> vesselTankMap,
+      Map<Long, CargoNominationDetail> cargoNomDetails,
+      List<TransferDetail> transferDetails,
+      List<TransferDetail> freshOilTanks) {
+    dischargeSeq
+        .getTankTransfersList()
+        .forEach(
+            transfer -> {
+              TransferDetail transferDetail = new TransferDetail();
+              transferDetail.setEnd(portEta + (Long.valueOf(transfer.getTimeEnd()) * 60 * 1000));
+              transferDetail.setStart(
+                  portEta + (Long.valueOf(transfer.getTimeStart()) * 60 * 1000));
+              List<Tank> fromTanks = new ArrayList<>();
+              transfer
+                  .getFromTankIdsList()
+                  .forEach(
+                      tankId -> {
+                        Tank tank = new Tank();
+                        tank.setTankId(tankId);
+                        VesselTankDetail vesselTankDetail = vesselTankMap.get(tankId);
+                        tank.setShortName(vesselTankDetail.getShortName());
+                        fromTanks.add(tank);
+                      });
+              transferDetail.setFromTanks(fromTanks);
+              Tank tank = new Tank();
+              tank.setTankId(transfer.getToTankId());
+              VesselTankDetail vesselTankDetail = vesselTankMap.get(transfer.getToTankId());
+              tank.setShortName(vesselTankDetail.getShortName());
+              transferDetail.setToTank(tank);
+              CargoNominationDetail cargoNominationDetail =
+                  cargoNomDetails.get(transfer.getCargoNominationId());
+              com.cpdss.gateway.domain.Cargo cargo = new com.cpdss.gateway.domain.Cargo();
+              cargo.setAbbreviation(cargoNominationDetail.getAbbreviation());
+              cargo.setColorCode(cargoNominationDetail.getColor());
+              cargo.setName(cargoNominationDetail.getCargoName());
+              transferDetail.setCargo(cargo);
+              if (transfer.getPurpose().equals(TANK_TRANSFER_PURPOSE_STRIP)) {
+                transferDetails.add(transferDetail);
+              } else if (transfer.getPurpose().equals(TANK_TRANSFER_PURPOSE_FRESH_OIL)) {
+                freshOilTanks.add(transferDetail);
+              }
+            });
   }
 
   /**

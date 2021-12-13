@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.loadingplan.sequence;
 
+import com.cpdss.gateway.domain.dischargeplan.TransferDetail;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.List;
@@ -33,4 +34,6 @@ public class LoadingSequenceResponse {
   private List<EductionOperation> cargoEduction;
   private CleaningTank cleaningTanks;
   private List<DriveTank> driveTanks;
+  private List<TransferDetail> transfers;
+  private List<TransferDetail> freshOilTanks;
 }

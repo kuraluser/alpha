@@ -425,19 +425,24 @@ public class DischargeStudyService {
     DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
 
     response.setDischargeStudyId(dischargeStudyId);
-    LoadableStudy.DischargeCowRequest.Builder studyReq = LoadableStudy.DischargeCowRequest.newBuilder();
+    LoadableStudy.DischargeCowRequest.Builder studyReq =
+        LoadableStudy.DischargeCowRequest.newBuilder();
     studyReq.setDischargeStudyId(dischargeStudyId);
-    LoadableStudy.DischargeCowResponse dischargeStudyCowDetails =  dischargeStudyOperationServiceBlockingStub.getDischargeCowDetails(studyReq.build());
+    LoadableStudy.DischargeCowResponse dischargeStudyCowDetails =
+        dischargeStudyOperationServiceBlockingStub.getDischargeCowDetails(studyReq.build());
     if (!SUCCESS.equals(dischargeStudyCowDetails.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-              "Failed to fetch cow details",
-              dischargeStudyCowDetails.getResponseStatus().getCode(),
-              HttpStatusCode.valueOf(
-                      Integer.valueOf(dischargeStudyCowDetails.getResponseStatus().getCode())));
+          "Failed to fetch cow details",
+          dischargeStudyCowDetails.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(dischargeStudyCowDetails.getResponseStatus().getCode())));
     }
     System.out.println(dischargeStudyCowDetails.getCowId());
     response.setCowId(dischargeStudyCowDetails.getCowId());
-    response.setPercentage(dischargeStudyCowDetails.getPercentage().isEmpty() ? null : new BigDecimal(dischargeStudyCowDetails.getPercentage()));
+    response.setPercentage(
+        dischargeStudyCowDetails.getPercentage().isEmpty()
+            ? null
+            : new BigDecimal(dischargeStudyCowDetails.getPercentage()));
     response.setTanks(dischargeStudyCowDetails.getTanksList());
     response.setPortList(new ArrayList<>());
     log.info(
@@ -635,7 +640,8 @@ public class DischargeStudyService {
         DishargeStudyBackLoadingSaveRequest.newBuilder();
     builder.setDischargeStudyId(request.getDischargeStudyId());
     builder.setCowId(request.getCowId());
-    builder.setPercentage(request.getPercentage() == null ? Long.valueOf(0) : request.getPercentage().longValue());
+    builder.setPercentage(
+        request.getPercentage() == null ? Long.valueOf(0) : request.getPercentage().longValue());
     builder.addAllTanks(request.getTanks());
     request
         .getPortList()
@@ -684,7 +690,7 @@ public class DischargeStudyService {
     Optional.ofNullable(portCargo.getFreshCrudeOilQuantity())
         .ifPresent(item -> portDetails.setFreshCrudeOilQuantity(item.toString()));
     Optional.ofNullable(portCargo.getFreshCrudeOilTime())
-            .ifPresent(item -> portDetails.setFreshCrudeOilTime(item.toString()));
+        .ifPresent(item -> portDetails.setFreshCrudeOilTime(item.toString()));
     portDetails.setCow(portCargo.getCow());
     dsBackLoadingDetail.setPortDetails(portDetails.build());
     dsBackLoadingDetail.addAllPortCargoDetails(

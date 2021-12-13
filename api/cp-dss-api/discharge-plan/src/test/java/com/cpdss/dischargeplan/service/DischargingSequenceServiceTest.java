@@ -50,6 +50,8 @@ public class DischargingSequenceServiceTest {
 
   @MockBean DischargingDriveTankRepository dischargingDriveTankRepository;
 
+  @MockBean DischargingTankTransferRepository dischargingTankTransferRepository;
+
   @Test
   void testGetDischargingSequences() {
     LoadingPlanModels.LoadingSequenceRequest request =

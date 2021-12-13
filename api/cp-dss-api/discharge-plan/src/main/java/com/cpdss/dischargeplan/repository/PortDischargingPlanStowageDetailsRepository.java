@@ -42,5 +42,4 @@ public interface PortDischargingPlanStowageDetailsRepository
   @Query(
       "FROM PortDischargingPlanStowageDetails pdpsd WHERE pdpsd.dischargingInformation.id = ?1 AND pdpsd.conditionType = 2 AND pdpsd.valueType = 2 AND pdpsd.isActive = true")
   List<PortDischargingPlanStowageDetails> findCargoHistoryData(Long infoId);
-
 }

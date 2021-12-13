@@ -25,6 +25,7 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     ballastOperations_ = java.util.Collections.emptyList();
     eductorOperation_ = java.util.Collections.emptyList();
     cargoOperations_ = java.util.Collections.emptyList();
+    tankTransfers_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -260,6 +261,20 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
                       extensionRegistry));
               break;
             }
+          case 162:
+            {
+              if (!((mutable_bitField0_ & 0x00000200) != 0)) {
+                tankTransfers_ =
+                    new java.util.ArrayList<
+                        com.cpdss.common.generated.discharge_plan.TankTransfer>();
+                mutable_bitField0_ |= 0x00000200;
+              }
+              tankTransfers_.add(
+                  input.readMessage(
+                      com.cpdss.common.generated.discharge_plan.TankTransfer.parser(),
+                      extensionRegistry));
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -302,6 +317,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       }
       if (((mutable_bitField0_ & 0x00000100) != 0)) {
         cargoOperations_ = java.util.Collections.unmodifiableList(cargoOperations_);
+      }
+      if (((mutable_bitField0_ & 0x00000200) != 0)) {
+        tankTransfers_ = java.util.Collections.unmodifiableList(tankTransfers_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -788,6 +806,32 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     return cargoOperations_.get(index);
   }
 
+  public static final int TANKTRANSFERS_FIELD_NUMBER = 20;
+  private java.util.List<com.cpdss.common.generated.discharge_plan.TankTransfer> tankTransfers_;
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  public java.util.List<com.cpdss.common.generated.discharge_plan.TankTransfer>
+      getTankTransfersList() {
+    return tankTransfers_;
+  }
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  public java.util.List<? extends com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder>
+      getTankTransfersOrBuilderList() {
+    return tankTransfers_;
+  }
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  public int getTankTransfersCount() {
+    return tankTransfers_.size();
+  }
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  public com.cpdss.common.generated.discharge_plan.TankTransfer getTankTransfers(int index) {
+    return tankTransfers_.get(index);
+  }
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  public com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder getTankTransfersOrBuilder(
+      int index) {
+    return tankTransfers_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -858,6 +902,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     }
     for (int i = 0; i < cargoOperations_.size(); i++) {
       output.writeMessage(19, cargoOperations_.get(i));
+    }
+    for (int i = 0; i < tankTransfers_.size(); i++) {
+      output.writeMessage(20, tankTransfers_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -933,6 +980,9 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     for (int i = 0; i < cargoOperations_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(19, cargoOperations_.get(i));
     }
+    for (int i = 0; i < tankTransfers_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(20, tankTransfers_.get(i));
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -973,6 +1023,7 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
       if (!getCleaningTanks().equals(other.getCleaningTanks())) return false;
     }
     if (!getCargoOperationsList().equals(other.getCargoOperationsList())) return false;
+    if (!getTankTransfersList().equals(other.getTankTransfersList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -1041,6 +1092,10 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
     if (getCargoOperationsCount() > 0) {
       hash = (37 * hash) + CARGOOPERATIONS_FIELD_NUMBER;
       hash = (53 * hash) + getCargoOperationsList().hashCode();
+    }
+    if (getTankTransfersCount() > 0) {
+      hash = (37 * hash) + TANKTRANSFERS_FIELD_NUMBER;
+      hash = (53 * hash) + getTankTransfersList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -1184,6 +1239,7 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         getBallastOperationsFieldBuilder();
         getEductorOperationFieldBuilder();
         getCargoOperationsFieldBuilder();
+        getTankTransfersFieldBuilder();
       }
     }
 
@@ -1267,6 +1323,12 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         bitField0_ = (bitField0_ & ~0x00000100);
       } else {
         cargoOperationsBuilder_.clear();
+      }
+      if (tankTransfersBuilder_ == null) {
+        tankTransfers_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000200);
+      } else {
+        tankTransfersBuilder_.clear();
       }
       return this;
     }
@@ -1393,6 +1455,15 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         result.cargoOperations_ = cargoOperations_;
       } else {
         result.cargoOperations_ = cargoOperationsBuilder_.build();
+      }
+      if (tankTransfersBuilder_ == null) {
+        if (((bitField0_ & 0x00000200) != 0)) {
+          tankTransfers_ = java.util.Collections.unmodifiableList(tankTransfers_);
+          bitField0_ = (bitField0_ & ~0x00000200);
+        }
+        result.tankTransfers_ = tankTransfers_;
+      } else {
+        result.tankTransfers_ = tankTransfersBuilder_.build();
       }
       onBuilt();
       return result;
@@ -1720,6 +1791,33 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
                     : null;
           } else {
             cargoOperationsBuilder_.addAllMessages(other.cargoOperations_);
+          }
+        }
+      }
+      if (tankTransfersBuilder_ == null) {
+        if (!other.tankTransfers_.isEmpty()) {
+          if (tankTransfers_.isEmpty()) {
+            tankTransfers_ = other.tankTransfers_;
+            bitField0_ = (bitField0_ & ~0x00000200);
+          } else {
+            ensureTankTransfersIsMutable();
+            tankTransfers_.addAll(other.tankTransfers_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.tankTransfers_.isEmpty()) {
+          if (tankTransfersBuilder_.isEmpty()) {
+            tankTransfersBuilder_.dispose();
+            tankTransfersBuilder_ = null;
+            tankTransfers_ = other.tankTransfers_;
+            bitField0_ = (bitField0_ & ~0x00000200);
+            tankTransfersBuilder_ =
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                    ? getTankTransfersFieldBuilder()
+                    : null;
+          } else {
+            tankTransfersBuilder_.addAllMessages(other.tankTransfers_);
           }
         }
       }
@@ -4433,6 +4531,226 @@ public final class DischargingSequence extends com.google.protobuf.GeneratedMess
         cargoOperations_ = null;
       }
       return cargoOperationsBuilder_;
+    }
+
+    private java.util.List<com.cpdss.common.generated.discharge_plan.TankTransfer> tankTransfers_ =
+        java.util.Collections.emptyList();
+
+    private void ensureTankTransfersIsMutable() {
+      if (!((bitField0_ & 0x00000200) != 0)) {
+        tankTransfers_ =
+            new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.TankTransfer>(
+                tankTransfers_);
+        bitField0_ |= 0x00000200;
+      }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.TankTransfer,
+            com.cpdss.common.generated.discharge_plan.TankTransfer.Builder,
+            com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder>
+        tankTransfersBuilder_;
+
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.TankTransfer>
+        getTankTransfersList() {
+      if (tankTransfersBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(tankTransfers_);
+      } else {
+        return tankTransfersBuilder_.getMessageList();
+      }
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public int getTankTransfersCount() {
+      if (tankTransfersBuilder_ == null) {
+        return tankTransfers_.size();
+      } else {
+        return tankTransfersBuilder_.getCount();
+      }
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransfer getTankTransfers(int index) {
+      if (tankTransfersBuilder_ == null) {
+        return tankTransfers_.get(index);
+      } else {
+        return tankTransfersBuilder_.getMessage(index);
+      }
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder setTankTransfers(
+        int index, com.cpdss.common.generated.discharge_plan.TankTransfer value) {
+      if (tankTransfersBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTankTransfersIsMutable();
+        tankTransfers_.set(index, value);
+        onChanged();
+      } else {
+        tankTransfersBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder setTankTransfers(
+        int index, com.cpdss.common.generated.discharge_plan.TankTransfer.Builder builderForValue) {
+      if (tankTransfersBuilder_ == null) {
+        ensureTankTransfersIsMutable();
+        tankTransfers_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        tankTransfersBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder addTankTransfers(com.cpdss.common.generated.discharge_plan.TankTransfer value) {
+      if (tankTransfersBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTankTransfersIsMutable();
+        tankTransfers_.add(value);
+        onChanged();
+      } else {
+        tankTransfersBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder addTankTransfers(
+        int index, com.cpdss.common.generated.discharge_plan.TankTransfer value) {
+      if (tankTransfersBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTankTransfersIsMutable();
+        tankTransfers_.add(index, value);
+        onChanged();
+      } else {
+        tankTransfersBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder addTankTransfers(
+        com.cpdss.common.generated.discharge_plan.TankTransfer.Builder builderForValue) {
+      if (tankTransfersBuilder_ == null) {
+        ensureTankTransfersIsMutable();
+        tankTransfers_.add(builderForValue.build());
+        onChanged();
+      } else {
+        tankTransfersBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder addTankTransfers(
+        int index, com.cpdss.common.generated.discharge_plan.TankTransfer.Builder builderForValue) {
+      if (tankTransfersBuilder_ == null) {
+        ensureTankTransfersIsMutable();
+        tankTransfers_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        tankTransfersBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder addAllTankTransfers(
+        java.lang.Iterable<? extends com.cpdss.common.generated.discharge_plan.TankTransfer>
+            values) {
+      if (tankTransfersBuilder_ == null) {
+        ensureTankTransfersIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, tankTransfers_);
+        onChanged();
+      } else {
+        tankTransfersBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder clearTankTransfers() {
+      if (tankTransfersBuilder_ == null) {
+        tankTransfers_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000200);
+        onChanged();
+      } else {
+        tankTransfersBuilder_.clear();
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public Builder removeTankTransfers(int index) {
+      if (tankTransfersBuilder_ == null) {
+        ensureTankTransfersIsMutable();
+        tankTransfers_.remove(index);
+        onChanged();
+      } else {
+        tankTransfersBuilder_.remove(index);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransfer.Builder getTankTransfersBuilder(
+        int index) {
+      return getTankTransfersFieldBuilder().getBuilder(index);
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder
+        getTankTransfersOrBuilder(int index) {
+      if (tankTransfersBuilder_ == null) {
+        return tankTransfers_.get(index);
+      } else {
+        return tankTransfersBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder>
+        getTankTransfersOrBuilderList() {
+      if (tankTransfersBuilder_ != null) {
+        return tankTransfersBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(tankTransfers_);
+      }
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransfer.Builder
+        addTankTransfersBuilder() {
+      return getTankTransfersFieldBuilder()
+          .addBuilder(com.cpdss.common.generated.discharge_plan.TankTransfer.getDefaultInstance());
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransfer.Builder addTankTransfersBuilder(
+        int index) {
+      return getTankTransfersFieldBuilder()
+          .addBuilder(
+              index, com.cpdss.common.generated.discharge_plan.TankTransfer.getDefaultInstance());
+    }
+    /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.TankTransfer.Builder>
+        getTankTransfersBuilderList() {
+      return getTankTransfersFieldBuilder().getBuilderList();
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.TankTransfer,
+            com.cpdss.common.generated.discharge_plan.TankTransfer.Builder,
+            com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder>
+        getTankTransfersFieldBuilder() {
+      if (tankTransfersBuilder_ == null) {
+        tankTransfersBuilder_ =
+            new com.google.protobuf.RepeatedFieldBuilderV3<
+                com.cpdss.common.generated.discharge_plan.TankTransfer,
+                com.cpdss.common.generated.discharge_plan.TankTransfer.Builder,
+                com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder>(
+                tankTransfers_,
+                ((bitField0_ & 0x00000200) != 0),
+                getParentForChildren(),
+                isClean());
+        tankTransfers_ = null;
+      }
+      return tankTransfersBuilder_;
     }
 
     @java.lang.Override

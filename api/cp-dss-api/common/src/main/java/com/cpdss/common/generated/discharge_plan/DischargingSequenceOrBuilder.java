@@ -246,4 +246,17 @@ public interface DischargingSequenceOrBuilder
   /** <code>repeated .PumpOperation cargoOperations = 19;</code> */
   com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperationOrBuilder
       getCargoOperationsOrBuilder(int index);
+
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  java.util.List<com.cpdss.common.generated.discharge_plan.TankTransfer> getTankTransfersList();
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  com.cpdss.common.generated.discharge_plan.TankTransfer getTankTransfers(int index);
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  int getTankTransfersCount();
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  java.util.List<? extends com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder>
+      getTankTransfersOrBuilderList();
+  /** <code>repeated .TankTransfer tankTransfers = 20;</code> */
+  com.cpdss.common.generated.discharge_plan.TankTransferOrBuilder getTankTransfersOrBuilder(
+      int index);
 }
