@@ -110,6 +110,7 @@ public class LoadableStudyCommunicationService {
 
   @Autowired LoadableStudyRuleRepository loadableStudyRuleRepository;
   @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+  @Autowired LoadablePlanCommentsRepository loadablePlanCommentsRepository;
 
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
@@ -153,6 +154,7 @@ public class LoadableStudyCommunicationService {
       dischargePatternQuantityCargoPortwiseDetailsStage = null;
   private List<LoadableStudyRules> loadableStudyRulesStage = null;
   private List<LoadableStudyRuleInput> loadableStudyRuleInputsStage = null;
+  private List<LoadablePlanComments> loadablePlanCommentsStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -694,6 +696,19 @@ public class LoadableStudyCommunicationService {
                       "loadable_study_rule_xid");
               break;
             }
+          case loadable_plan_comments:
+            {
+              Type type = new TypeToken<ArrayList<LoadablePlanComments>>() {}.getType();
+              loadablePlanCommentsStage =
+                  bindDataToEntity(
+                      new LoadablePlanComments(),
+                      type,
+                      LoadableStudyTables.LOADABLE_PLAN_COMMENTS,
+                      data,
+                      dataTransferStage.getId(),
+                      "loadable_pattern_xid");
+              break;
+            }
         }
       }
 
@@ -730,6 +745,7 @@ public class LoadableStudyCommunicationService {
         saveDischargePatternQuantityCargoPortwiseDetails();
         saveLoadableStudyRules();
         saveLoadableStudyRuleInputs();
+        saveLoadablePlanComments();
       } catch (ResourceAccessException e) {
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
@@ -1496,6 +1512,38 @@ public class LoadableStudyCommunicationService {
   }
 
   /**
+   * Method to save loadable_plan_comments table
+   *
+   * @throws GenericServiceException Exception when pattern not found
+   */
+  private void saveLoadablePlanComments() throws GenericServiceException {
+    if (null != loadablePlanCommentsStage) {
+      // Set detached entities
+      for (LoadablePlanComments comment : loadablePlanCommentsStage) {
+        LoadablePattern loadablePattern =
+            loadablePatternRepository
+                .findById(comment.getCommunicationRelatedEntityId())
+                .orElseThrow(
+                    () ->
+                        new GenericServiceException(
+                            String.format(
+                                "Loadable pattern not found for Id: %d",
+                                comment.getCommunicationRelatedEntityId()),
+                            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                            HttpStatusCode.INTERNAL_SERVER_ERROR));
+        ;
+        comment.setLoadablePattern(loadablePattern);
+      }
+
+      // Save data
+      loadablePlanCommentsRepository.saveAll(loadablePlanCommentsStage);
+      log.info(
+          "Communication #######  loadable_plan_comments saved. Entries: {}",
+          loadablePlanCommentsStage.size());
+    }
+  }
+
+  /**
    * Method to update status in exception
    *
    * @param id id value
@@ -1621,6 +1669,7 @@ public class LoadableStudyCommunicationService {
     loadableStudyPortRotationStageCommunication = null;
     loadableStudyRulesStage = null;
     loadableStudyRuleInputsStage = null;
+    loadablePlanCommentsStage = null;
   }
 
   // endregion

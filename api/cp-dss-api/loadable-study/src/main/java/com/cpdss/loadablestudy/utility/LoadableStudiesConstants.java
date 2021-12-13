@@ -223,8 +223,8 @@ public class LoadableStudiesConstants {
           "loadable_quantity",
           "synoptical_table",
           "cargo_nomination_operation_details",
-          "loadable_study_rules",
-          "loadable_study_rule_input");
+          LoadableStudyTables.LOADABLE_STUDY_RULES.getTable(),
+          LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable());
 
   public static List<String> LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP =
       Arrays.asList(
@@ -256,7 +256,8 @@ public class LoadableStudiesConstants {
           "loadable_plan_stowage_details",
           "loadable_plan_ballast_details",
           "loadable_plan_commingle_details",
-          "stability_parameters");
+          "stability_parameters",
+          LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable());
 
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP =
       Arrays.asList(
@@ -316,7 +317,8 @@ public class LoadableStudiesConstants {
     COW_HISTORY("cow_history"),
     DISCHARGE_QUANTITY_CARGO_DETAILS("discharge_quantity_cargo_details"),
     LOADABLE_STUDY_RULES("loadable_study_rules"),
-    LOADABLE_STUDY_RULE_INPUT("loadable_study_rule_input");
+    LOADABLE_STUDY_RULE_INPUT("loadable_study_rule_input"),
+    LOADABLE_PLAN_COMMENTS("loadable_plan_comments");
 
     public final String table;
   }

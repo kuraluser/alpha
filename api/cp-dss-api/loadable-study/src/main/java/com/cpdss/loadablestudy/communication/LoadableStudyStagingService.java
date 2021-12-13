@@ -680,6 +680,24 @@ public class LoadableStudyStagingService extends StagingService {
             }
             break;
           }
+        case loadable_plan_comments:
+          {
+            String loadablePlanCommentsJson =
+                loadableStudyStagingRepository.getLoadablePlanComments(Id);
+            if (null != loadablePlanCommentsJson) {
+              JsonArray loadablePlanComments =
+                  JsonParser.parseString(loadablePlanCommentsJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadablePlanComments);
+            }
+            break;
+          }
       }
     }
     return array;

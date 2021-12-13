@@ -36,5 +36,6 @@ public enum ProcessIdentifiers {
   cow_history,
   discharge_quantity_cargo_details,
   loadable_study_rules,
-  loadable_study_rule_input
+  loadable_study_rule_input,
+  loadable_plan_comments
 }
