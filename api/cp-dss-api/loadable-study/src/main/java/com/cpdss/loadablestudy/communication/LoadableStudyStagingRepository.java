@@ -195,4 +195,16 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
       nativeQuery = true)
   String getDischargePatternQuantityCargoPortwiseDetailsWithLoadablePatternId(
       List<Long> loadablePatternIds);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_rules u where loadable_study_xid=?1",
+      nativeQuery = true)
+  String getLoadableStudyRules(long loadableStudyId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_rule_input u where loadable_study_rule_xid IN (SELECT  id FROM loadable_study_rules where loadable_study_xid=?1)",
+      nativeQuery = true)
+  String getLoadableStudyRuleInput(long loadableStudyId);
 }

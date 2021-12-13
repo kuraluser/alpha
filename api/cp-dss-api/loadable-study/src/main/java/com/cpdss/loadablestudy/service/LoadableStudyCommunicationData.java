@@ -196,7 +196,9 @@ public class LoadableStudyCommunicationData {
         log.info("Saved JsonData:{}", jsonDatas);
       }
     } catch (Exception e) {
-      log.error("Error occurred when saving json data part of loadingplan/dischargeplan communication", e);
+      log.error(
+          "Error occurred when saving json data part of loadingplan/dischargeplan communication",
+          e);
     }
   }
 

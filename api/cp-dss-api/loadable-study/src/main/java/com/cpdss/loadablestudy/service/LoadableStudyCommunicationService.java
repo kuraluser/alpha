@@ -108,6 +108,9 @@ public class LoadableStudyCommunicationService {
   private DischargePatternQuantityCargoPortwiseRepository
       dischargePatternQuantityCargoPortwiseRepository;
 
+  @Autowired LoadableStudyRuleRepository loadableStudyRuleRepository;
+  @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
   // endregion
@@ -148,6 +151,8 @@ public class LoadableStudyCommunicationService {
   private List<CowHistory> cowHistoryStage = null;
   private List<DischargePatternQuantityCargoPortwiseDetails>
       dischargePatternQuantityCargoPortwiseDetailsStage = null;
+  private List<LoadableStudyRules> loadableStudyRulesStage = null;
+  private List<LoadableStudyRuleInput> loadableStudyRuleInputsStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -663,6 +668,32 @@ public class LoadableStudyCommunicationService {
                       null);
               break;
             }
+          case loadable_study_rules:
+            {
+              Type type = new TypeToken<ArrayList<LoadableStudyRules>>() {}.getType();
+              loadableStudyRulesStage =
+                  bindDataToEntity(
+                      new LoadableStudyRules(),
+                      type,
+                      LoadableStudyTables.LOADABLE_STUDY_RULES,
+                      data,
+                      dataTransferStage.getId(),
+                      "loadable_study_xid");
+              break;
+            }
+          case loadable_study_rule_input:
+            {
+              Type type = new TypeToken<ArrayList<LoadableStudyRuleInput>>() {}.getType();
+              loadableStudyRuleInputsStage =
+                  bindDataToEntity(
+                      new LoadableStudyRuleInput(),
+                      type,
+                      LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT,
+                      data,
+                      dataTransferStage.getId(),
+                      "loadable_study_rule_xid");
+              break;
+            }
         }
       }
 
@@ -697,6 +728,8 @@ public class LoadableStudyCommunicationService {
         saveSynopticalTableLoadicatorData();
         saveCowHistory();
         saveDischargePatternQuantityCargoPortwiseDetails();
+        saveLoadableStudyRules();
+        saveLoadableStudyRuleInputs();
       } catch (ResourceAccessException e) {
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
@@ -1412,6 +1445,53 @@ public class LoadableStudyCommunicationService {
     dischargePatternQuantityCargoPortwiseRepository.saveAll(
         dischargePatternQuantityCargoPortwiseDetailsStage);
     log.info("Communication #######  DischargePatternQuantityCargoPortwiseDetails are saved");
+  }
+
+  /** Method to save loadable_study_rules table */
+  private void saveLoadableStudyRules() {
+    if (null != loadableStudyRulesStage) {
+      // Set detached entities
+      for (LoadableStudyRules loadableStudyRules : loadableStudyRulesStage) {
+        loadableStudyRules.setLoadableStudy(loadableStudyStage);
+      }
+
+      // Save data
+      loadableStudyRuleRepository.saveAll(loadableStudyRulesStage);
+      log.info(
+          "Communication #######  loadable_study_rules saved. Entries: {}",
+          loadableStudyRulesStage.size());
+    }
+  }
+
+  /**
+   * Method to save loadable_study_rule_input table
+   *
+   * @throws GenericServiceException Exception when rule not found
+   */
+  private void saveLoadableStudyRuleInputs() throws GenericServiceException {
+    if (null != loadableStudyRuleInputsStage) {
+      for (LoadableStudyRuleInput loadableStudyRuleInput : loadableStudyRuleInputsStage) {
+        // Set detached entities
+        LoadableStudyRules loadableStudyRule =
+            loadableStudyRuleRepository
+                .findById(loadableStudyRuleInput.getCommunicationRelatedEntityId())
+                .orElseThrow(
+                    () ->
+                        new GenericServiceException(
+                            String.format(
+                                "Loadable study rule not found for Id: %d",
+                                loadableStudyRuleInput.getCommunicationRelatedEntityId()),
+                            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                            HttpStatusCode.INTERNAL_SERVER_ERROR));
+        loadableStudyRuleInput.setLoadableStudyRuleXId(loadableStudyRule);
+      }
+
+      // Save data
+      loadableStudyRuleInputRepository.saveAll(loadableStudyRuleInputsStage);
+      log.info(
+          "Communication #######  loadable_study_rule_input saved. Entries: {}",
+          loadableStudyRuleInputsStage.size());
+    }
   }
 
   /**

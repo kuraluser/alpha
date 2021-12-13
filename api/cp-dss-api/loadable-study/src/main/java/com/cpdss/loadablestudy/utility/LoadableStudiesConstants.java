@@ -212,6 +212,20 @@ public class LoadableStudiesConstants {
 
   public static final String ENV = "env";
 
+  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
+      Arrays.asList(
+          "loadable_study",
+          "comingle_cargo",
+          "cargo_nomination",
+          "loadable_study_port_rotation",
+          "on_hand_quantity",
+          "on_board_quantity",
+          "loadable_quantity",
+          "synoptical_table",
+          "cargo_nomination_operation_details",
+          "loadable_study_rules",
+          "loadable_study_rule_input");
+
   public static List<String> LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP =
       Arrays.asList(
           "loadable_study",
@@ -233,18 +247,6 @@ public class LoadableStudiesConstants {
           "loadicator_data_for_synoptical_table",
           "discharge_quantity_cargo_details",
           "loadable_study_algo_status");
-
-  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
-      Arrays.asList(
-          "loadable_study",
-          "comingle_cargo",
-          "cargo_nomination",
-          "loadable_study_port_rotation",
-          "on_hand_quantity",
-          "on_board_quantity",
-          "loadable_quantity",
-          "synoptical_table",
-          "cargo_nomination_operation_details");
 
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
       Arrays.asList(
@@ -312,7 +314,9 @@ public class LoadableStudiesConstants {
     COMMUNICATION_STATUS_UPDATE("communication_status_update"),
     PORT_INSTRUCTIONS("port_instructions"),
     COW_HISTORY("cow_history"),
-    DISCHARGE_QUANTITY_CARGO_DETAILS("discharge_quantity_cargo_details");
+    DISCHARGE_QUANTITY_CARGO_DETAILS("discharge_quantity_cargo_details"),
+    LOADABLE_STUDY_RULES("loadable_study_rules"),
+    LOADABLE_STUDY_RULE_INPUT("loadable_study_rule_input");
 
     public final String table;
   }

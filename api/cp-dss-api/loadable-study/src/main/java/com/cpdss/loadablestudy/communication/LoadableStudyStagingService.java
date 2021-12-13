@@ -644,6 +644,42 @@ public class LoadableStudyStagingService extends StagingService {
             }
             break;
           }
+        case loadable_study_rules:
+          {
+            String loadableStudyRulesJson =
+                loadableStudyStagingRepository.getLoadableStudyRules(Id);
+            if (null != loadableStudyRulesJson) {
+              JsonArray loadableStudyRules =
+                  JsonParser.parseString(loadableStudyRulesJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadableStudyRules);
+            }
+            break;
+          }
+        case loadable_study_rule_input:
+          {
+            String loadableStudyRuleInputJson =
+                loadableStudyStagingRepository.getLoadableStudyRuleInput(Id);
+            if (null != loadableStudyRuleInputJson) {
+              JsonArray loadableStudyRuleInput =
+                  JsonParser.parseString(loadableStudyRuleInputJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadableStudyRuleInput);
+            }
+            break;
+          }
       }
     }
     return array;
