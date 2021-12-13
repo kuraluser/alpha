@@ -609,8 +609,10 @@ public class GenerateDischargeStudyJson {
               .ifPresent(rdgUllage -> ballastDetailsJson.setSounding(rdgUllage.toString()));
           Optional.ofNullable(ballastDetail.getVolume())
               .ifPresent(volume -> ballastDetailsJson.setQuantityM3(volume.toString()));
-          Optional.ofNullable(ballastDetail.getQuantity())
-              .ifPresent(quantity -> ballastDetailsJson.setQuantity(quantity.toString()));
+          ballastDetailsJson.setQuantity(
+              ballastDetail.getQuantity() == null
+                  ? BigDecimal.ZERO.toString()
+                  : ballastDetail.getQuantity().toString());
           Optional.ofNullable(ballastDetail.getId()).ifPresent(id -> ballastDetailsJson.setId(id));
           Optional.ofNullable(ballastDetail.getTankXId())
               .ifPresent(tankId -> ballastDetailsJson.setTankId(tankId));
