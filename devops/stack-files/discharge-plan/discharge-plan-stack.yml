@@ -17,6 +17,8 @@ services:
     - REST_PORT=8080
     - GRPC_PORT=8090
     - ENABLE_JUDGEMENT=${ENABLE_JUDGEMENT}
+    - ENABLE_COMM=${ENABLE_COMM}
+    - CPDSS_BUILD_ENV=${CPDSS_BUILD_ENV}
     dns: 8.8.8.8
     healthcheck:
       test: "wget --no-verbose --spider http://localhost:8080/actuator/health || exit 1"
