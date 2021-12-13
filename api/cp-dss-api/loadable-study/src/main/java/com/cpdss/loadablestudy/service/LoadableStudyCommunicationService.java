@@ -935,9 +935,9 @@ public class LoadableStudyCommunicationService {
       Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
       ohq.ifPresent(onHandQuantity -> ohqStage.setVersion(onHandQuantity.getVersion()));
       for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
-        Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
-            loadableStudyPortRotationRepository.findById(lspr.getId());
-        loadableStudyPortRotationOpt.ifPresent(ohqStage::setPortRotation);
+        if (Objects.equals(ohqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
+          ohqStage.setPortRotation(lspr);
+        }
       }
     }
     onHandQuantityStage = onHandQuantityRepository.saveAll(onHandQuantityStage);
@@ -974,10 +974,11 @@ public class LoadableStudyCommunicationService {
       lqStage.setLoadableStudyXId(loadableStudyStage);
       Optional<LoadableQuantity> lq = loadableQuantityRepository.findById(lqStage.getId());
       lq.ifPresent(loadableQuantity -> lqStage.setVersion(loadableQuantity.getVersion()));
-
-      Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
-          loadableStudyPortRotationRepository.findById(lqStage.getCommunicationRelatedEntityId());
-      loadableStudyPortRotationOpt.ifPresent(lqStage::setLoadableStudyPortRotation);
+      for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
+        if (Objects.equals(lqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
+          lqStage.setLoadableStudyPortRotation(lspr);
+        }
+      }
     }
 
     loadableQuantityStage = loadableQuantityRepository.saveAll(loadableQuantityStage);
@@ -1618,6 +1619,8 @@ public class LoadableStudyCommunicationService {
     loadableStudyStatusId = 0L;
     current_table_name = "";
     loadableStudyPortRotationStageCommunication = null;
+    loadableStudyRulesStage = null;
+    loadableStudyRuleInputsStage = null;
   }
 
   // endregion

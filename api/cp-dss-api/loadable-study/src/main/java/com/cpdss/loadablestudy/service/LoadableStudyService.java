@@ -3436,14 +3436,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           responseObserver) {
     com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    log.info("Inside getLoadableStudyPortRotationDataForCommunication method");
     String loadableStudyPortRotationData = null;
-    Optional<LoadableStudyPortRotation> loadableStudyPortRotation =
-        loadableStudyPortRotationRepository.findById(request.getId());
-    if (loadableStudyPortRotation.isPresent()) {
-      Long loadableStudyId = loadableStudyPortRotation.get().getLoadableStudy().getId();
+    log.info("portXid:{} and patternId:{}", request.getId(), request.getLoadablePatternId());
+    Optional<LoadablePattern> loadablePattern =
+        loadablePatternRepository.findById(request.getLoadablePatternId());
+    if (loadablePattern.isPresent()) {
+      Long loadableStudyId = loadablePattern.get().getLoadableStudy().getId();
+      log.info("portXid:{} and loadableStudyId:{}", request.getId(), loadableStudyId);
       loadableStudyPortRotationData =
-          loadableStudyPortRotationRepository.getLoadableStudyPortRotationWithLoadableStudyId(
-              loadableStudyId);
+          loadableStudyPortRotationRepository
+              .getLoadableStudyPortRotationWithPortIdAndLoadableStudyId(
+                  request.getId(), loadableStudyId);
     }
     if (loadableStudyPortRotationData != null) {
       replyBuilder.setDataJson(loadableStudyPortRotationData);

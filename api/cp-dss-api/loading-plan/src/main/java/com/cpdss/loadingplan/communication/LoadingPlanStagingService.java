@@ -733,10 +733,11 @@ public class LoadingPlanStagingService extends StagingService {
           }
         case loadable_study_port_rotation:
           {
-            if (portXId != null) {
+            if (portXId != null && loadablePatternId != null) {
               LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
                   LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
               builder.setId(portXId);
+              builder.setLoadablePatternId(loadablePatternId);
               LoadableStudy.LoadableStudyCommunicationReply reply =
                   this.loadableStudyServiceBlockingStub
                       .getLoadableStudyPortRotationDataForCommunication(builder.build());

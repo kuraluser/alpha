@@ -1711,6 +1711,7 @@ message VoyageActivateReply {
 message LoadableStudyCommunicationRequest{
 	int64 id=1;
 	string dataJson=2;
+	int64 loadablePatternId=3;
 }
 
 message LoadableStudyCommunicationReply {
