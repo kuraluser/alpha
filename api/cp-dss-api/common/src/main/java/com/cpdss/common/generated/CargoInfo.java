@@ -11320,7 +11320,7 @@ public final class CargoInfo {
           + "ity\030\r \001(\t\022\020\n\010cowCodes\030\016 \001(\t\022\032\n\022hydrogenS"
           + "ulfideOil\030\017 \001(\t\022\035\n\025hydrogenSulfideVapour"
           + "\030\020 \001(\t\022\017\n\007benzene\030\021 \001(\t\022!\n\031specialInstri"
-          + "ctionsRemark\030\022 \001(\t2\266\003\n\020CargoInfoService\022"
+          + "ctionsRemark\030\022 \001(\t2\356\003\n\020CargoInfoService\022"
           + ",\n\014GetCargoInfo\022\r.CargoRequest\032\013.CargoRe"
           + "ply\"\000\022>\n\024GetCargoInfoByPaging\022\027.CargoReq"
           + "uestWithPaging\032\013.CargoReply\"\000\0226\n\020GetCarg"
@@ -11331,8 +11331,9 @@ public final class CargoInfo {
           + "dReply\"\000\022D\n\030GetCargoInfoDetailedById\022\r.C"
           + "argoRequest\032\027.CargoByIdDetailedReply\"\000\022;"
           + "\n\017DeleteCargoById\022\r.CargoRequest\032\027.Cargo"
-          + "ByIdDetailedReply\"\000B\036\n\032com.cpdss.common."
-          + "generatedP\000b\006proto3"
+          + "ByIdDetailedReply\"\000\0226\n\tSaveCargo\022\016.Cargo"
+          + "Detailed\032\027.CargoByIdDetailedReply\"\000B\036\n\032c"
+          + "om.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

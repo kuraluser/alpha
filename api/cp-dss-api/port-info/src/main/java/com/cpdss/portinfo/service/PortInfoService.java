@@ -26,10 +26,7 @@ import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -623,28 +620,96 @@ public class PortInfoService extends PortInfoServiceImplBase {
     try {
       List<CargoPortMapping> portMappings =
           this.cargoPortMappingRepository.findByCargoXId(request.getCargoId());
-      portMappings.forEach(
-          portMapping -> {
-            com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.Builder portDetail =
-                com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
-            Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
-            Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
-            Optional.ofNullable(portMapping.getPortInfo().getId()).ifPresent(portDetail::setPortId);
-            Optional.ofNullable(portMapping.getPortInfo().getName())
-                .ifPresent(portDetail::setPortName);
-            Optional.ofNullable(portMapping.getPortInfo().getCode())
-                .ifPresent(portDetail::setPortCode);
-            Optional.ofNullable(portMapping.getPortInfo().getDensitySeaWater())
-                .ifPresent(density -> portDetail.setWaterDensity(density.toString()));
-            Optional.ofNullable(portMapping.getPortInfo().getMaxPermissibleDraft())
-                .ifPresent(draft -> portDetail.setMaxDraft(draft.toString()));
-            replyBuilder.addPorts(portDetail);
-          });
-      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-      responseStatus.setStatus(SUCCESS);
-      replyBuilder.setResponseStatus(responseStatus);
+      buildCargoPortReply(portMappings, replyBuilder);
+
     } catch (Exception e) {
       log.error("Error in getPortInfoByCargoId method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Building cargo port reply
+   *
+   * @param portMappings
+   * @param replyBuilder
+   */
+  private void buildCargoPortReply(
+      List<CargoPortMapping> portMappings,
+      com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder) {
+
+    portMappings.forEach(
+        portMapping -> {
+          com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.Builder portDetail =
+              com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
+          Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
+          Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
+          Optional.ofNullable(portMapping.getPortInfo().getId()).ifPresent(portDetail::setPortId);
+          Optional.ofNullable(portMapping.getPortInfo().getName())
+              .ifPresent(portDetail::setPortName);
+          Optional.ofNullable(portMapping.getPortInfo().getCode())
+              .ifPresent(portDetail::setPortCode);
+          Optional.ofNullable(portMapping.getPortInfo().getDensitySeaWater())
+              .ifPresent(density -> portDetail.setWaterDensity(density.toString()));
+          Optional.ofNullable(portMapping.getPortInfo().getMaxPermissibleDraft())
+              .ifPresent(draft -> portDetail.setMaxDraft(draft.toString()));
+          replyBuilder.addPorts(portDetail);
+        });
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(SUCCESS);
+    replyBuilder.setResponseStatus(responseStatus);
+  }
+
+  /**
+   * Saving all cargo port mappings
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void saveAllCargoPortMappings(
+      com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver) {
+    com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder =
+        com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
+    try {
+
+      List<CargoPortMapping> portMappings = new ArrayList<>();
+
+      Optional.of(request.getCargoPortMappingList())
+          .ifPresent(
+              cargoPortMappings -> {
+                cargoPortMappings.forEach(
+                    cargoPortMapping -> {
+                      Optional<PortInfo> portInfoWrapper =
+                          this.portRepository.findByIdAndIsActiveTrue(cargoPortMapping.getPortId());
+                      portInfoWrapper.ifPresent(
+                          portInfo -> {
+                            Optional<CargoPortMapping> cargoPortMappingWrapper =
+                                this.cargoPortMappingRepository.findByCargoXIdAndPortIdAndIsActive(
+                                    cargoPortMapping.getCargoId(),
+                                    cargoPortMapping.getPortId(),
+                                    true);
+                            if (cargoPortMappingWrapper.isEmpty()) {
+                              CargoPortMapping cargoPortMappingEntity = new CargoPortMapping();
+                              cargoPortMappingEntity.setCargoXId(cargoPortMapping.getCargoId());
+                              cargoPortMappingEntity.setPortInfo(portInfo);
+                              portMappings.add(
+                                  this.cargoPortMappingRepository.save(cargoPortMappingEntity));
+                            }
+                          });
+                    });
+              });
+
+      buildCargoPortReply(portMappings, replyBuilder);
+
+    } catch (Exception e) {
+      log.error("Error in save Cargo Port Mapping method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus(FAILED);
       replyBuilder.setResponseStatus(responseStatus);
