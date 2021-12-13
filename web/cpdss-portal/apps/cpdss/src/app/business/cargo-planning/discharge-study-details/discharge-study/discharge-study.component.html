@@ -4,7 +4,7 @@
             <ng-container>
                 <label class="mb-0 pl-15 form-label">{{ 'DISCHARGE_STUDY_COW' | translate }}</label>
                     <div class="pl-15">
-                        <p-dropdown id="cow_dropdown" appendTo="body" styleClass="form-control" [options]="mode"
+                        <p-dropdown id="cow_dropdown" appendTo="body" styleClass="form-control" [options]="cowList"
                             formControlName="cow" filter="true" optionLabel="name" resetFilterOnHide="true"
                             [readonly]="!editMode" (onChange)="setCowValidation()"></p-dropdown>
                     </div>
@@ -18,7 +18,7 @@
                         </div>
                     </ng-container>
                     <ng-container *ngIf="getFormFeildValue('cow')?.value?.id === 2">
-                        <label class="mb-0 pl-15">{{ 'DISCHARGE_STUDY_DISCHARGE_TANK' | translate }}</label>
+                        <label class="mb-0 pl-15 pr-15">{{ 'DISCHARGE_STUDY_DISCHARGE_TANK' | translate }}</label>
                         <div>
                             <p-multiSelect id="tank_dropdown" styleClass="form-control" [options]="tank" appendTo="body"
                                 formControlName="tank" optionLabel="shortName" resetFilterOnHide="true"
@@ -27,9 +27,7 @@
                         </div>
                     </ng-container>
             </ng-container>
-            <div class="col text-right btn-position"><button (click)="saveDischargeStudy()" [disabled]="!editMode"
-                    class="btn btn-main">{{'DISCHARGE_STUDY_SAVE' | translate}}</button>
-            </div>
+           
         </div>
         <div formArrayName="portDetails">
             <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last"
@@ -49,7 +47,7 @@
                     <div class="pr-15">
                         {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION' | translate }}
                     </div>
-                    <div class="error-icon-wrapper"> 
+                    <div class="error-icon-wrapper pr-15"> 
                         <input type="text" class="form-control" formControlName="maxDraft"
                             cpdssPortalNumberDecimal id="maxDraft" [readonly]="!editMode"
                             (change)="onChange($event,'maxDraft',portIndex)" />
@@ -104,7 +102,7 @@
                     <div class="pl-5 pr-15">
                         {{'DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY' | translate}}
                     </div>
-                    <div class="error-icon-wrapper">
+                    <div class="error-icon-wrapper pr-15">
                         <input type="text" [attr.disabled]="!editMode ? 'disabled' : null" class="form-control" formControlName="freshCrudeOilQuantity" cpdssPortalNumberDecimal
                             id="freshCrudeOilQuantity" (change)="onChange($event,'freshCrudeOilQuantity',portIndex)"/>
                         <cpdss-portal-validation-error [errors]="fieldError(portIndex,'freshCrudeOilQuantity')"
@@ -114,7 +112,7 @@
                     <div class="pl-5 pr-15">
                         {{'DISCHARGE_STUDY_FRESH_CRUDE_OIL_TIME' | translate}}
                     </div>
-                    <div class="error-icon-wrapper">
+                    <div class="error-icon-wrapper pr-15">
                         <p-inputMask  [disabled]="!editMode ? 'disabled' : null" type="text" styleClass="form-control"
                             formControlName="freshCrudeOilTime" mask="99:99" (onComplete)="onChange($event,'freshCrudeOilTime',portIndex)" (onBlur)="onChange($event,'freshCrudeOilTime',portIndex)">
                         </p-inputMask>

@@ -136,8 +136,6 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
         localStorage.setItem("dischargeStudyId", this.dischargeStudyId.toString());
         this.isDischargePattern = false;
         this.dischargeStudies = null;
-
-
         this.tabPermission();
         this.getDischargeStudies(this.vesselId, this.voyageId, this.dischargeStudyId);
       });
@@ -594,6 +592,14 @@ export class DischargeStudyDetailsComponent implements OnInit, OnDestroy {
     } else {
       return this.dischargeStudyComplete;
     }
+  }
+
+  /**
+    * save discharge study
+    * @memberof DischargeStudyDetailsComponent
+  */
+  saveDischargeStudy() {
+    this.dischargeStudy.saveDischargeStudy();
   }
 
 }

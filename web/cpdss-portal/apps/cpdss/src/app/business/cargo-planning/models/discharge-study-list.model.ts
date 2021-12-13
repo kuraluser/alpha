@@ -356,9 +356,9 @@ export interface IDischargeStudyPortListDetails {
     isBackLoadingEnabled: boolean;
     backLoading: IDischargeStudyBackLoadingDetails[];
     operationId: number;
-    freshCrudeOilQuantity: number;
-    freshCrudeOil: boolean;
-    freshCrudeOilTime: number;
+    freshCrudeOilQuantity?: number;
+    freshCrudeOil?: boolean;
+    freshCrudeOilTime?: number;
     cow: boolean;
     cargoNominationList: IDischargeStudyCargoNominationList[];
 }

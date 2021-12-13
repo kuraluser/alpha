@@ -4,7 +4,7 @@
         <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last" formGroupName="{{portIndex}}">
             <div class="row mb-10">
                 <div class="col">
-                    {{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}} : <span class="sub-head-color"> {{portDetail.portName}}</span>
+                    {{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}  <span class="sub-head-color"> {{portDetail.portName}}</span>
                 </div>
             </div>
             <div class="row mb-15">
@@ -17,14 +17,20 @@
                     {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION_VIEW_PLAN' | translate }}
                     <span class="ml-5 sub-head-color">{{getFeild(portIndex,'draftRestriction')}}</span>
                 </div>
-                <div  class="pl-15 pr-15">
-                    {{ 'DISCHARGE_STUDY_COW_VIEW_PLAN' | translate }}
-                    <span class="ml-5 sub-head-color">{{getFeild(portIndex,'cow','name')}}</span>
-                </div>
+
                 <div  class="pl-15 pr-15">
                     {{'DISCHARGE_STUDY_VIEW_DISCHARGE_RATE' | translate}}
                     <span class="ml-5 sub-head-color">{{getFeild(portIndex,'dischargeRate')}}
                     {{'DISCHARGE_STUDY_VIEW_DISCHARGE_RATE_UNIT' | translate}}</span>
+                </div>
+                <div  class="pl-15 pr-15" *ngIf="portDetail.tank?.length">
+                    {{ 'DISCHARGE_STUDY_DISCHARGE_COW_TANK' | translate }}
+                    <span class="ml-5 sub-head-color" pTooltip="{{portDetail.tank?.toString()}}"
+                    tooltipPosition="top">
+                        <ng-container *ngFor="let tank of portDetail.tank;let tankIndex = index">
+                            <span *ngIf="tankIndex < 4">{{ tank }} {{tankIndex < 3 ? ',' : '' }}</span>
+                        </ng-container>
+                    </span>
                 </div>
             </div>
             <div>

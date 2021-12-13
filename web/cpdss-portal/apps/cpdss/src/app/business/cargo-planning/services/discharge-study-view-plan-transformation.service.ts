@@ -32,9 +32,9 @@ export class DischargeStudyViewPlanTransformationService {
   getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
     return [
       {
-        field: 'slNo',
-        header: 'DISCHARGE_STUDY_VIEW_PLAN_DISCHARGE_SL',
-        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        field: 'sequenceNo',
+        header: 'DISCHARGE_STUDY_VIEW_PLAN_DISCHARGE_SEQUENCE_NO',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER
       },
       {
         field: 'color',
@@ -199,6 +199,7 @@ export class DischargeStudyViewPlanTransformationService {
     _portDetail.backLoadingDetails = portDetail.backLoading ? portDetail.backLoading?.map((backLoadingDetail) => {
       return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData, isNewValue);
     }) : [];
+    _portDetail.tank = listData.tank?.length ? listData.tank?.filter(tankDetails =>  portDetail.tanks?.some(tankId => tankId === tankDetails.id)).map(tank => tank.shortName) : [];
     return _portDetail;
   }
 
@@ -230,6 +231,7 @@ export class DischargeStudyViewPlanTransformationService {
     _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true, false);
     _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);
     _cargoDetailValuObject.temp = new ValueObject<number>(cargoDetail.temperature);
+    _cargoDetailValuObject.sequenceNo = new ValueObject<number>(cargoDetail.sequenceNo);
     return _cargoDetailValuObject;
   }
 

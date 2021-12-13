@@ -1033,7 +1033,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getPortDetailAsValueObject(portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any,cargoDetails:IPortCargoDetails): IPortDetailValueObject {
+    getPortDetailAsValueObject(portDetailsValueAsObject:IPortDetailValueObject[], portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any,cargoDetails:IPortCargoDetails): IPortDetailValueObject {
       const _portDetail = <IPortDetailValueObject>{};
       _portDetail.id = portDetail.id;
       _portDetail.portTimezoneId = portDetail.portTimezoneId;
@@ -1056,7 +1056,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _portDetail.maxDraft = portDetail.maxDraft;
       _portDetail.cargoDetail  = portDetail.cargoNominationList ? portDetail.cargoNominationList?.map((cargoDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,cargoDetail);
-        return this.getCargoDetailsAsValueObject(cargoDetail,listData,storedKey,true);
+        return this.getCargoDetailsAsValueObject(portDetailsValueAsObject,cargoDetail,listData,storedKey,true);
       }) : [];
       
       _portDetail.enableBackToLoading = portDetail.isBackLoadingEnabled  && !isLastIndex ? true : false;
@@ -1142,11 +1142,20 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getCargoDetailsAsValueObject(cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
+    getCargoDetailsAsValueObject(portDetailsValueAsObject:IPortDetailValueObject[] ,cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
       const _cargoDetailValuObject = <IPortCargo>{};
       const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
-      const isKlEditable = mode?.id === 2 ? true : false;
+      const isKlEditable = mode?.id === 2 || mode?.id === 1 ? true : false;
+      //Note: - mode 3 need to be confirmed
+      // let isAutoAvailable;
+      // if(mode?.id === 3) {
+      //   isAutoAvailable = portDetailsValueAsObject?.find((portDetailValueAsObject) => {
+      //     return portDetailValueAsObject.cargoDetail?.some((cargo) =>{
+      //       return cargo.storedKey?.value === storedKey && cargo.mode.value?.id === 1;
+      //     })
+      //   })
+      // }
       
       const unitConversion = {
         kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
@@ -1155,13 +1164,19 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _cargoDetailValuObject.sequenceNo = new ValueObject<string>(cargoDetail.sequenceNo , true , false);
       _cargoDetailValuObject.emptyMaxNoOfTanks = new ValueObject<boolean>(cargoDetail.emptyMaxNoOfTanks ?? false, true, false),
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
-      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
+      //Note: - mode 3 need to be confirmed
+      // (isAutoAvailable && mode?.id === 3)
+      _cargoDetailValuObject.bbls = new ValueObject<string>(mode?.id === 2 ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
-      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
+      //Note: - mode 3 need to be confirmed
+      // (isAutoAvailable && mode?.id === 3)
+      _cargoDetailValuObject.kl = new ValueObject<string>(mode?.id === 2  ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
       _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
-      _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
+      //Note: - mode 3 need to be confirmed
+      // (isAutoAvailable && mode?.id === 3)
+      _cargoDetailValuObject.mt = new ValueObject<string>(mode?.id === 2 ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
       _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);

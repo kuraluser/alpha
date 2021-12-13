@@ -96,9 +96,7 @@ export class ViewPlanComponent implements OnInit {
     await this.setDropDownDetails();
     const instruction = await this.dischargePlanApiService.getInstructionDetails().toPromise();
     const tankList = await this.dischargePlanApiService.getTankDetails(this.vesselId).toPromise();
-    const portCargoDetails = await this.dischargePlanApiService.getPortCargoDetails(this.dischargeStudyId).toPromise();
-
-
+    
     this.instructions = instruction.instructions;
     this.tank = tankList.cargoVesselTanks;
 
@@ -161,6 +159,7 @@ export class ViewPlanComponent implements OnInit {
   */
   private initDischargeStudyFormGroup(portDetail: any): FormGroup {
     return this.fb.group({
+      sequenceNo:this.fb.control(portDetail?.sequenceNo),
       isBackLoadingEnabled:this.fb.control(portDetail?.isBackLoadingEnabled),
       portName: this.fb.control(portDetail?.portName),
       instruction: this.fb.control(portDetail?.instruction),
