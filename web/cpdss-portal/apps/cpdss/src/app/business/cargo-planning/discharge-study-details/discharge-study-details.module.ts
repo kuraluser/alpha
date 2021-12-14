@@ -22,6 +22,8 @@ import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { ValidationErrorModule } from '../../../shared/components/validation-error/validation-error.module';
 import { DischargeStudyDetailsApiService } from '../services/discharge-study-details-api.service';
 import { DischargeStudyDetailsTransformationService } from '../services/discharge-study-details-transformation.service';
+import { NumberDirectiveModule } from './../../../shared/directives/number-directive/number-directive.module';
+
 /**
  * Routing Module for Discharge Study Details Screen
  *
@@ -47,6 +49,7 @@ import { DischargeStudyDetailsTransformationService } from '../services/discharg
     ValidationErrorModule,
     ErrorLogPopupModule,
     InputMaskModule,
+    NumberDirectiveModule,
     DischargeStudyDetailsRoutingModule
   ],
   providers: [

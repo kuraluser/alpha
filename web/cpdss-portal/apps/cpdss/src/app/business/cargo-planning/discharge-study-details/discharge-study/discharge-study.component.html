@@ -50,7 +50,7 @@
                     <div class="error-icon-wrapper pr-15"> 
                         <input type="text" class="form-control" formControlName="maxDraft"
                             cpdssPortalNumberDecimal id="maxDraft" [readonly]="!editMode"
-                            (change)="onChange($event,'maxDraft',portIndex)" />
+                            (change)="onChange($event,'maxDraft',portIndex)" cpdssPortalNumberDecimal [negative]="false"/>
                         <cpdss-portal-validation-error [errors]="fieldError(portIndex,'maxDraft')"
                             [errorMessages]="errorMessages.maxDraft">
                         </cpdss-portal-validation-error>

@@ -251,7 +251,7 @@ export class DischargeStudyComponent implements OnInit {
  * @memberof DischargeStudyComponent
  */
   private initDischargeStudyFormGroup(portDetail: any, portIndex: number): FormGroup {
-    const freshCrudeValidationQty = portDetail?.freshCrudeOil ? [Validators.required,Validators.min(10), Validators.max(1000)] : [];
+    const freshCrudeValidationQty = portDetail?.freshCrudeOil ? [Validators.required,Validators.min(10), numberValidator(2, 4), Validators.max(1000)] : [];
     const freshCrudeValidationTime = portDetail?.freshCrudeOil ? [Validators.required, compareTimeValidator('10:00')] : [];
     return this.fb.group({
       freshCrudeOil: this.fb.control(portDetail?.freshCrudeOil),
@@ -588,7 +588,9 @@ export class DischargeStudyComponent implements OnInit {
         selectedPortCargo['kl'].isEditMode = true;
       }
     }
+    
     this.checkFormFieldValidity();
+    selectedPortCargo['emptyMaxNoOfTanks'].isEditMode = true;
     this.portDetails = [...portDetails];
   }
 
@@ -642,7 +644,7 @@ export class DischargeStudyComponent implements OnInit {
                     field.markAsTouched();
                     field.markAsDirty();
                     const mode = this.getFormControl(portIndex, key, itemIndex, 'mode');
-                    if (this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode?.value?.id === 1 && innerKey === 'kl')) {
+                    if ((this.getFormControl(portIndex, key, itemIndex, innerKey)?.valid || (mode?.value?.id === 1 && innerKey === 'kl')) && innerKey !== 'emptyMaxNoOfTanks') {
                       item[innerKey].isEditMode = false;
                     } else {
                       item[innerKey].isEditMode = true;
@@ -1223,7 +1225,7 @@ export class DischargeStudyComponent implements OnInit {
       const freshCrudeOilTime = this.getFeild(index, 'freshCrudeOilTime');
       
       if(freshCrudeOil.value) {
-        freshCrudeOilQuantity.setValidators([Validators.required,Validators.min(10), Validators.max(1000)]);
+        freshCrudeOilQuantity.setValidators([Validators.required,Validators.min(10), Validators.max(1000), numberValidator(2,null,false)]);
         freshCrudeOilQuantity.updateValueAndValidity();
         freshCrudeOilTime.setValidators([Validators.required, compareTimeValidator('10:00')]);
         freshCrudeOilTime.updateValueAndValidity();

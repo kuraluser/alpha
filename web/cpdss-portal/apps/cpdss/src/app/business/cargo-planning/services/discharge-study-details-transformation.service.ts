@@ -1162,7 +1162,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
         bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
       }
       _cargoDetailValuObject.sequenceNo = new ValueObject<string>(cargoDetail.sequenceNo , true , false);
-      _cargoDetailValuObject.emptyMaxNoOfTanks = new ValueObject<boolean>(cargoDetail.emptyMaxNoOfTanks ?? false, true, false),
+      _cargoDetailValuObject.emptyMaxNoOfTanks = new ValueObject<boolean>(cargoDetail.emptyMaxNoOfTanks ?? false, true, true),
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
       //Note: - mode 3 need to be confirmed
       // (isAutoAvailable && mode?.id === 3)
@@ -1262,7 +1262,8 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       freshCrudeOilQuantity: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
         'min': 'DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY_MIN',
-        'max': 'DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY_MAX'
+        'max': 'DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY_MAX',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR'
       },
       freshCrudeOilTime: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
