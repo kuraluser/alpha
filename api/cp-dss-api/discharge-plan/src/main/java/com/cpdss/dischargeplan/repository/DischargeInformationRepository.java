@@ -10,10 +10,12 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+@Primary
 public interface DischargeInformationRepository
     extends CommonCrudRepository<DischargeInformation, Long> {
 
@@ -125,4 +127,14 @@ public interface DischargeInformationRepository
   Optional<DischargeInformation>
       findByVesselXidAndDischargingPatternXidAndPortRotationXidAndIsActive(
           long vesselId, long patternId, long portRotationId, boolean isActive);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE DischargeInformation SET dischargingInformationStatus = ?1, isDischargingSequenceGenerated=?2, isDischargingPlanGenerated=?3 WHERE id = ?4")
+  void updateDischargingInfoWithInfoStatus(
+      DischargingInformationStatus dischargingInformationStatus,
+      boolean sequenceGenerated,
+      boolean planGenerated,
+      Long id);
 }

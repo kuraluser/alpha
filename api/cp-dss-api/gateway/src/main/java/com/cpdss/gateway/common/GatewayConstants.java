@@ -67,4 +67,7 @@ public class GatewayConstants {
       Arrays.asList(CARGO_PUMP_TYPE_ID, STRIPPING_PUMP_TYPE_ID, TANK_CLEANING_PUMP_TYPE_ID);
   public static final List<Long> DISCHARGING_SEQUENCE_BALLAST_PUMP_CATEGORIES =
       Arrays.asList(BALLAST_PUMP_TYPE_ID);
+
+  public static final String TANK_TRANSFER_PURPOSE_STRIP = "strip";
+  public static final String TANK_TRANSFER_PURPOSE_FRESH_OIL = "freshOil";
 }

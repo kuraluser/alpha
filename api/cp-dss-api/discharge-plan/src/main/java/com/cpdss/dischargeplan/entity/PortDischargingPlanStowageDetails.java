@@ -94,4 +94,6 @@ public class PortDischargingPlanStowageDetails extends EntityDoc {
 
   @Column(name = "actual_planned")
   private Integer valueType;
+
+  @Transient private Long communicationRelatedEntityId;
 }

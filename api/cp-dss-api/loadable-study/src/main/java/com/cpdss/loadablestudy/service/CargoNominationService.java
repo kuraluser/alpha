@@ -136,17 +136,23 @@ public class CargoNominationService {
     List<CargoNomination> dischargeStudycargos = new ArrayList<>();
     // Fetching max quantity from Bill of Ladding
     getMaxQuantityMTFromBillofLadding(cargos);
-    cargos
-        .stream()
+    cargos.stream()
         .forEach(
             cargo -> {
               CargoNomination newCargo =
-                  createDsCargoNomination(dischargeStudyId, cargo, portId, operationId,dischargeStudycargos.size());
+                  createDsCargoNomination(
+                      dischargeStudyId,
+                      cargo,
+                      portId,
+                      operationId,
+                      dischargeStudycargos.size() + 1);
               log.info(
                   "ds save API DS cargo... cargo id ::  "
                       + newCargo.getCargoXId()
                       + " , abb::"
-                      + newCargo.getAbbreviation());
+                      + newCargo.getAbbreviation()
+                      + " seq:"
+                      + newCargo.getSequenceNo());
               dischargeStudycargos.add(newCargo);
             });
     List<CargoNomination> savedCargos = cargoNominationRepository.saveAll(dischargeStudycargos);
@@ -157,7 +163,7 @@ public class CargoNominationService {
   }
 
   public CargoNomination createDsCargoNomination(
-          Long dischargeStudyId, CargoNomination cargo, Long portId, Long operationId, int seqNo) {
+      Long dischargeStudyId, CargoNomination cargo, Long portId, Long operationId, int seqNo) {
     CargoNomination dischargeStudyCargo = new CargoNomination();
     dischargeStudyCargo.setAbbreviation(cargo.getAbbreviation());
     dischargeStudyCargo.setApi(cargo.getApi());
@@ -174,6 +180,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
     dischargeStudyCargo.setSequenceNo(Long.valueOf(seqNo));
+    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
     dischargeStudyCargo.setCargoNominationPortDetails(
         createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId, operationId));
     return dischargeStudyCargo;
@@ -640,9 +647,9 @@ public class CargoNominationService {
             Optional.ofNullable(cargoNomination.getTemperature())
                 .ifPresent(val -> builder.setTemperature(String.valueOf(val)));
             Optional.ofNullable(cargoNomination.getSequenceNo())
-                    .ifPresent(val -> builder.setSequenceNo(val));
+                .ifPresent(val -> builder.setSequenceNo(val));
             Optional.ofNullable(cargoNomination.getEmptyMaxNoOfTanks())
-                    .ifPresent(val -> builder.setEmptyMaxNoOfTanks(val));
+                .ifPresent(val -> builder.setEmptyMaxNoOfTanks(val));
             ofNullable(cargoNomination.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object

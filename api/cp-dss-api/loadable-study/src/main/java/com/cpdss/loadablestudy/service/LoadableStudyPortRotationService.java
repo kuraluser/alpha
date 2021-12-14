@@ -707,8 +707,6 @@ public class LoadableStudyPortRotationService {
             backLoadingService.getBackloadingDataByportIds(request.getLoadableStudyId(), lsprIds);
         Map<Long, List<DischargeStudyPortInstruction>> instructionsForThePort =
             portInstructionService.getPortWiseInstructions(request.getLoadableStudyId(), lsprIds);
-        Map<Long, DischargeStudyCowDetail> cowDetails =
-            cowDetailService.getCowDetailForThePort(request.getLoadableStudyId(), lsprIds);
 
         ports.forEach(
             port -> {
@@ -722,9 +720,17 @@ public class LoadableStudyPortRotationService {
               builder.setEta(String.valueOf(port.getEta()));
               builder.setEtd(String.valueOf(port.getEtd()));
               builder.setPortOrder(port.getPortOrder());
-              builder.setFreshCrudeOil(port.getFreshCrudeOil() != null ? port.getFreshCrudeOil() : false);
-              builder.setFreshCrudeOilQuantity(port.getFreshCrudeOilQuantity() != null? port.getFreshCrudeOilQuantity().toString() : "");
-              builder.setFreshCrudeOilTime(port.getFreshCrudeOilTime() != null? port.getFreshCrudeOilTime().toString() : "");
+              builder.setFreshCrudeOil(
+                  port.getFreshCrudeOil() != null ? port.getFreshCrudeOil() : false);
+              builder.setFreshCrudeOilQuantity(
+                  port.getFreshCrudeOilQuantity() != null
+                      ? port.getFreshCrudeOilQuantity().toString()
+                      : "");
+              builder.setFreshCrudeOilTime(
+                  port.getFreshCrudeOilTime() != null
+                      ? port.getFreshCrudeOilTime().toString()
+                      : "");
+              builder.setCow(port.getCowRequired() == null ? false : port.getCowRequired());
               if (port.getIsbackloadingEnabled() != null) {
                 builder.setIsBackLoadingEnabled(port.getIsbackloadingEnabled());
                 if (backloadingDataByportIds.get(port.getId()) != null) {
@@ -741,20 +747,6 @@ public class LoadableStudyPortRotationService {
                     instructionsForThePort.get(port.getId()).stream()
                         .map(DischargeStudyPortInstruction::getPortInstructionId)
                         .collect(Collectors.toList()));
-              }
-              if (cowDetails.get(port.getId()) != null) {
-                DischargeStudyCowDetail cow = cowDetails.get(port.getId());
-                builder.setCowId(cow.getCowType());
-                if (cow.getPercentage() != null) {
-                  builder.setPercentage(cow.getPercentage());
-                }
-                if (cow.getTankIds() != null && !cow.getTankIds().isEmpty()) {
-                  List<String> tanks = Arrays.asList(cow.getTankIds().split(","));
-                  builder.addAllTanks(
-                      tanks.stream()
-                          .map(tank -> Long.parseLong(tank))
-                          .collect(Collectors.toList()));
-                }
               }
 
               portRotationReplyBuilder.addPorts(builder);

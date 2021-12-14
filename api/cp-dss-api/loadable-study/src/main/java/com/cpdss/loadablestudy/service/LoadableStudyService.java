@@ -3325,7 +3325,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   }
 
   /**
-   * save json Data for loadingplan communication
+   * save json Data for loadingplan/dischargeplan communication
    *
    * @param request
    * @param responseObserver
@@ -3421,6 +3421,112 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * get LoadableStudyPortRotation Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getLoadableStudyPortRotationDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    log.info("Inside getLoadableStudyPortRotationDataForCommunication method");
+    String loadableStudyPortRotationData = null;
+    log.info("portXid:{} and patternId:{}", request.getId(), request.getLoadablePatternId());
+    Optional<LoadablePattern> loadablePattern =
+        loadablePatternRepository.findById(request.getLoadablePatternId());
+    if (loadablePattern.isPresent()) {
+      Long loadableStudyId = loadablePattern.get().getLoadableStudy().getId();
+      log.info("portXid:{} and loadableStudyId:{}", request.getId(), loadableStudyId);
+      loadableStudyPortRotationData =
+          loadableStudyPortRotationRepository
+              .getLoadableStudyPortRotationWithPortIdAndLoadableStudyId(
+                  request.getId(), loadableStudyId);
+    }
+    if (loadableStudyPortRotationData != null) {
+      replyBuilder.setDataJson(loadableStudyPortRotationData);
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } else {
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("No LoadableStudyPortRotation Found")
+              .build());
+    }
+    responseObserver.onNext(replyBuilder.build());
+    responseObserver.onCompleted();
+  }
+
+  /**
+   * save LoadableStudyPortRotation Data for loadingplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveLoadableStudyPortRotationDataForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveLoadableStudyPortRotationData(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * get json Data for DischargePlan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getJsonDataForDischargePlanCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      log.info("json data request:{}", request.getId());
+      String jsonData = jsonDataRepository.getJsonDataWithReferenceId(request.getId());
+      log.info("json data get:{}", jsonData.length());
+      if (jsonData != null) {
+        replyBuilder.setDataJson(jsonData);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setMessage("No JsonData Found").build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get json data", e);
     }
   }
 }

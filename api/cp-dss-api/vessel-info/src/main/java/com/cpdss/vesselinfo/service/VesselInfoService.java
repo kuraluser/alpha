@@ -146,6 +146,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired VesselValveStrippingSequenceRepository strippingSequenceRepository;
   @Autowired private VesselParticularService vesselParticularService;
   @Autowired VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
+  @Autowired VesselCowService vesselCowService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -290,7 +291,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .findFirst();
       List<BigDecimal> tpc =
           hydrostaticTableRepository.getTPCFromDraf(
-              request.getVesselId(), new BigDecimal(request.getDraftExtreme()), true);
+              request.getVesselId(), new BigDecimal(request.getDraftForTpc()), true);
       if (null != vesselDetails) {
         Optional.ofNullable(hydrostaticTable.get().getDisplacement())
             .ifPresent(item -> builder.setDisplacmentDraftRestriction(item.toString()));
@@ -715,6 +716,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.Builder pumpDetailsBuilder =
             com.cpdss.common.generated.VesselInfo.VesselPumpsResponse.newBuilder();
         this.vesselPumpService.getVesselPumpsAndTypes(pumpDetailsBuilder, vessel.getId());
+        this.vesselCowService.buildVesselCowParameters(replyBuilder, vessel);
+
         replyBuilder.addAllPumpType(pumpDetailsBuilder.getPumpTypeList());
         replyBuilder.addAllVesselPump(pumpDetailsBuilder.getVesselPumpList());
         replyBuilder.addAllTankType(pumpDetailsBuilder.getTankTypeList());

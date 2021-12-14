@@ -176,4 +176,13 @@ public interface LoadableStudyPortRotationRepository
 
   List<LoadableStudyPortRotation> findByLoadableStudyAndOperation_idNotAndIsActive(
       LoadableStudy loadableStudy, Long dischargingOperationId, boolean isActive);
+
+  @Query("SELECT LSPR FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1")
+  public List<LoadableStudyPortRotation> findByLoadableStudy(final LoadableStudy loadableStudy);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_port_rotation u where loadable_study_xid=?2 and port_xid=?1",
+      nativeQuery = true)
+  String getLoadableStudyPortRotationWithPortIdAndLoadableStudyId(Long id, Long loadableStudyId);
 }

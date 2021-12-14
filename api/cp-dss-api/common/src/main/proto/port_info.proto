@@ -5,6 +5,7 @@ option java_package = "com.cpdss.common.generated";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "cargo_info.proto";
 import "google/protobuf/empty.proto";
 
 service PortInfoService {
@@ -37,7 +38,11 @@ service PortInfoService {
 	rpc GetAllCargoPortMapping (CargoPortRequest) returns (CargoPortReply) {}
 
 	rpc GetAllCargoPortMappingById (CargoPortRequest) returns (CargoPortReply) {}
-	
+
+	rpc SaveAllCargoPortMappings (CargoPortMappingRequest) returns (CargoPortReply) {}
+
+	rpc GetPortInfoDetailed (PortRequest) returns (PortReply) {}
+
 }
 
 message BerthIdsRequest {
@@ -74,6 +79,11 @@ message PortRequest {
 	int64 vesselId = 2;
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
+	int32 page = 6;
+	int32 pageSize = 7;
+	string sortBy = 8;
+	string orderBy = 9;
+	repeated Param param = 10;
 }
 
 message PortRequestWithPaging{
@@ -119,6 +129,7 @@ message PortDetail {
 message PortReply {
 	ResponseStatus responseStatus = 1;
 	repeated PortDetail ports = 2;
+	int64 totalElements = 3;
 }
 
 message GetPortInfoByCargoIdRequest{
@@ -205,4 +216,8 @@ message CargoPortMappingDetail {
     string maxAirDraft = 7;
     string maxDraft = 8;
     string waterDensity = 9;
+}
+
+message CargoPortMappingRequest {
+	repeated CargoPortMapping cargoPortMapping = 1;
 }

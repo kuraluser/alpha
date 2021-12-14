@@ -621,7 +621,7 @@ public class LoadicatorServiceTest {
             any(LoadableStudyCommunicationStatus.class)))
         .thenReturn(status);
     when(loadableStudyStagingService.getCommunicationData(
-            anyList(), anyString(), anyString(), anyLong(), any()))
+            anyList(), anyString(), anyString(), anyLong()))
         .thenReturn(new JsonArray());
     ReflectionTestUtils.setField(loadicatorService, "loadicatorUrl", "url");
     ReflectionTestUtils.setField(loadicatorService, "rootFolder", "D:\\");

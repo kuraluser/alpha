@@ -71,9 +71,9 @@ export class CargoMasterTransformationService {
       },
       {
         field: 'assayDate',
-        header: 'CARGO_LIST_assayDate',
+        header: 'CARGO_LIST_ASSAY_DATE',
         filter: true,
-        filterPlaceholder: 'SEARCH_CARGO_assayDate',
+        filterPlaceholder: 'SEARCH_CARGO_ASSAY_DATE',
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'assayDate',

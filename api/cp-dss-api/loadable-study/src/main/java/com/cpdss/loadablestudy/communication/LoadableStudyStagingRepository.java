@@ -63,9 +63,9 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_algo_status u where loadabale_studyxid=?1",
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_algo_status u where id in (SELECT id FROM loadable_study_algo_status WHERE loadabale_studyxid=?1 ORDER BY last_modified_date_time DESC LIMIT 1)",
       nativeQuery = true)
-  String getLoadableStudyAlgoStatusWithLoadableStudyId(Long id);
+  String getLoadableStudyAlgoStatusWithLoadableStudyId(Long loadableStudyId);
 
   @Query(
       value =
@@ -78,6 +78,12 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_pattern u where loadablestudy_xid=?1",
       nativeQuery = true)
   String getLoadablePatternWithLoadableStudyId(Long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_pattern u where id IN ?1",
+      nativeQuery = true)
+  String getLoadablePatterns(List<Long> loadablePatternIds);
 
   @Query(
       value =
@@ -195,4 +201,28 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
       nativeQuery = true)
   String getDischargePatternQuantityCargoPortwiseDetailsWithLoadablePatternId(
       List<Long> loadablePatternIds);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_rules u where loadable_study_xid=?1",
+      nativeQuery = true)
+  String getLoadableStudyRules(long loadableStudyId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_rule_input u where loadable_study_rule_xid IN (SELECT  id FROM loadable_study_rules where loadable_study_xid=?1)",
+      nativeQuery = true)
+  String getLoadableStudyRuleInput(long loadableStudyId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_plan_comments u WHERE u.loadable_pattern_xid IN (?1)",
+      nativeQuery = true)
+  String getLoadablePlanComments(List<Long> loadablePatternIds);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_plan_stowage_details_temp u WHERE u.loadable_pattern_xid IN ?1",
+      nativeQuery = true)
+  String getLoadablePlanStowageDetailsTemp(List<Long> loadablePatternIds);
 }

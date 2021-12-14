@@ -57,6 +57,7 @@ export class LoadablePlanTransformationService {
       { field: 'ballastPlanned', header: 'ETA_ETD_BALLAST' },
       { field: 'plannedFWTotal', header: 'ETA_ETD_FRESH_WATER' },
       { field: 'othersPlanned', header: 'ETA_ETD_OTHERS' },
+      { field: 'constantPlanned', header: 'ETA_ETD_CONSTANT' },
       { field: 'totalDwtPlanned', header: 'ETA_ETD_TOTAL_DWT' },
       { field: 'displacementPlanned', header: 'ETA_ETD_DISPLACEMENT' },
       { field: 'specificGravity', header: 'ETA_ETD_DENSITY' },
@@ -562,6 +563,7 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.plannedDOTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedDOTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.plannedFWTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedFWTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.othersPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.othersPlanned,QUANTITY_UNIT.MT);
+    _synopticalRecord.constantPlanned = this.quantityDecimalFormatPipe.transform(synopticalRecord?.constantPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.totalDwtPlanned = this.quantityDecimalFormatPipe.transform(totalDwtPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.displacementPlanned = this.quantityDecimalFormatPipe.transform(displacementPlanned,QUANTITY_UNIT.MT);
     _synopticalRecord.specificGravity = this.decimalConvertion(_decimalPipe, synopticalRecord.specificGravity, AppConfigurationService.settings?.sgNumberFormat);

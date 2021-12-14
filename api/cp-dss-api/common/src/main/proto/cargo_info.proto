@@ -19,11 +19,16 @@ service CargoInfoService {
 	}
 
 	rpc GetCargoInfoDetailed (CargoRequest) returns (CargoDetailedReply) {
-    }
+	}
 
-    rpc GetCargoInfoDetailedById (CargoRequest) returns (CargoByIdDetailedReply) {
-    }
-	
+	rpc GetCargoInfoDetailedById (CargoRequest) returns (CargoByIdDetailedReply) {
+	}
+
+	rpc DeleteCargoById (CargoRequest) returns (CargoByIdDetailedReply) {
+	}
+
+	rpc SaveCargo (CargoDetailed) returns (CargoByIdDetailedReply) {
+	}
 }
 message CargoListRequest{
 	repeated int64 id = 1;
@@ -39,6 +44,16 @@ message CargoRequest {
 	int64 voyageId = 3;
 	int64 loadableStudyId = 4;
 	int64 cargoId = 5;
+	int32 page = 6;
+	int32 pageSize = 7;
+	string sortBy = 8;
+	string orderBy = 9;
+	repeated Param param = 10;
+}
+
+message Param {
+	string key = 1;
+	string value = 2;
 }
 
 message CargoRequestWithPaging{
@@ -63,6 +78,7 @@ message CargoReply {
 message CargoDetailedReply {
 	ResponseStatus responseStatus = 1;
 	repeated CargoDetailed cargos = 2;
+	int64 totalElements = 3;
 }
 
 message CargoByIdDetailedReply {

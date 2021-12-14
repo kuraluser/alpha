@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { TranslateModule } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { DischargePlanComponent } from './discharge-plan.component';
 import { ViewPlanComponent } from './view-plan/view-plan.component';
@@ -30,6 +31,7 @@ import { DatatableModule } from '../../../shared/components/datatable/datatable.
     FormsModule,
     ReactiveFormsModule,
     MultiSelectModule,
+    TooltipModule,
     DropdownModule,
     TranslateModule,
     QuantityPipeModule,

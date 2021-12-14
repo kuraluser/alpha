@@ -19,13 +19,16 @@ import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.repository.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -53,6 +56,8 @@ public class DischargingSequenceService {
   LoadableStudyServiceBlockingStub loadableStudyGrpcService;
 
   @Autowired DischargingDriveTankRepository dischargingDriveTankRepository;
+
+  @Autowired DischargingTankTransferRepository dischargingTankTransferRepository;
 
   /**
    * Get Sequences
@@ -263,8 +268,54 @@ public class DischargingSequenceService {
               eductionOperationRepository.findByDischargingSequenceAndIsActiveTrue(
                   dischargeSequence);
           buildEductionOperations(sequenceBuilder, eductionOperations);
+
+          List<DischargingTankTransfer> dischargingTankTransfers =
+              dischargingTankTransferRepository.findByDischargingSequenceAndIsActiveTrue(
+                  dischargeSequence);
+          buildTankTransfers(sequenceBuilder, dischargingTankTransfers);
           builder.addDischargeSequences(sequenceBuilder.build());
         });
+  }
+
+  /**
+   * Builds Tank Transfer details
+   *
+   * @param sequenceBuilder
+   * @param dischargingTankTransfers
+   */
+  private void buildTankTransfers(
+      DischargingSequence.Builder sequenceBuilder,
+      List<DischargingTankTransfer> dischargingTankTransfers) {
+    log.info("Populating Discharging Tank Transfers");
+    List<TankTransfer> tankTransfers = new ArrayList<>();
+    dischargingTankTransfers.forEach(
+        dischargingTankTransfer -> {
+          TankTransfer.Builder builder = TankTransfer.newBuilder();
+          Optional.ofNullable(dischargingTankTransfer.getCargoNominationId())
+              .ifPresent(builder::setCargoNominationId);
+          Optional.ofNullable(dischargingTankTransfer.getToTankId())
+              .ifPresent(builder::setToTankId);
+          builder.addAllFromTankIds(
+              StringUtils.hasLength(dischargingTankTransfer.getFromTankIds())
+                  ? Arrays.asList(dischargingTankTransfer.getFromTankIds().split(",")).stream()
+                      .map(tankId -> Long.valueOf(tankId))
+                      .collect(Collectors.toList())
+                  : new ArrayList<Long>());
+          Optional.ofNullable(dischargingTankTransfer.getTimeEnd()).ifPresent(builder::setTimeEnd);
+          Optional.ofNullable(dischargingTankTransfer.getTimeStart())
+              .ifPresent(builder::setTimeStart);
+          Optional.ofNullable(dischargingTankTransfer.getPurpose()).ifPresent(builder::setPurpose);
+          Optional.ofNullable(dischargingTankTransfer.getEndQuantity())
+              .ifPresent(endQuantity -> builder.setEndQuantity(endQuantity.toString()));
+          Optional.ofNullable(dischargingTankTransfer.getEndUllage())
+              .ifPresent(endUllage -> builder.setEndUllage(endUllage.toString()));
+          Optional.ofNullable(dischargingTankTransfer.getStartQuantity())
+              .ifPresent(startQuantity -> builder.setStartQuantity(startQuantity.toString()));
+          Optional.ofNullable(dischargingTankTransfer.getStartUllage())
+              .ifPresent(startUllage -> builder.setStartUllage(startUllage.toString()));
+          tankTransfers.add(builder.build());
+        });
+    sequenceBuilder.addAllTankTransfers(tankTransfers);
   }
 
   /**

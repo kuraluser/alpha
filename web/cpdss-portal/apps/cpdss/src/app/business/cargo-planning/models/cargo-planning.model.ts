@@ -924,6 +924,8 @@ export interface ICargoHistoryDetails {
     plannedDOTotal: number;
     plannedFWTotal: number;
     othersPlanned: number;
+    constantPlanned: number;
+    constantActual: number;
     totalDwtPlanned: number;
     displacementPlanned: number;
     specificGravity: number;
@@ -936,5 +938,4 @@ export interface ICargoHistoryDetails {
     sf: number;
     bm: number;
     list: number;
-    constantPlanned: number;
 }

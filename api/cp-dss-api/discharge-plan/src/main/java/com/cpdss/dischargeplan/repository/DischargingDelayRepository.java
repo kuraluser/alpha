@@ -14,4 +14,6 @@ public interface DischargingDelayRepository extends CommonCrudRepository<Dischar
   List<DischargingDelay> findByDischargingInformationIdAndIsActive(Long id, boolean b);
 
   Optional<DischargingDelay> findByIdAndIsActive(long id, boolean b);
+
+  List<DischargingDelay> findByDischargingInformationId(Long id);
 }

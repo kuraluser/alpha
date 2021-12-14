@@ -54,4 +54,6 @@ public class Sequence {
   private Map<String, List<Pump>> tcp;
 
   private List<Eduction> stripping;
+
+  private List<Transfer> transfer;
 }

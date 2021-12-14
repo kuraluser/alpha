@@ -310,11 +310,13 @@ public class LoadingPlanCommunicationService {
       String loadicatorDataForSynoptical = null;
       String jsonData = null;
       String synopticalData = null;
+      String loadableStudyPortRotationData = null;
       List<PortTideDetail> portTideDetailList = null;
       List<AlgoErrorHeading> algoErrorHeadings = null;
       List<AlgoErrors> algoErrors = null;
       List<LoadingInstruction> loadingInstructions = null;
       LoadingInformation loadingInfoError = null;
+      LoadingInformationAlgoStatus loadingInformationAlgoStatus = null;
       loadingPlanStagingService.updateStatusForProcessId(
           processId, StagingStatus.IN_PROGRESS.getStatus());
       log.info(
@@ -864,6 +866,30 @@ public class LoadingPlanCommunicationService {
               idMap.put(LoadingPlanTables.SYNOPTICAL_TABLE.getTable(), dataTransferStage.getId());
               break;
             }
+          case loadable_study_port_rotation:
+            {
+              loadableStudyPortRotationData = dataTransferString;
+              idMap.put(
+                  LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable(),
+                  dataTransferStage.getId());
+              break;
+            }
+          case loading_information_algo_status:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingInformationAlgoStatus());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_information_status_xid");
+              listType = new TypeToken<ArrayList<LoadingInformationAlgoStatus>>() {}.getType();
+              loadingInformationAlgoStatus = new Gson().fromJson(jsonArray, listType);
+              idMap.put(
+                  LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable(),
+                  dataTransferStage.getId());
+              break;
+            }
         }
       }
       LoadingInformation loadingInfo = null;
@@ -914,12 +940,6 @@ public class LoadingPlanCommunicationService {
           }
           loadingInformation.setVersion(version);
           loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
-          try {
-            loadingInformationAlgoStatusRepository.updateLoadingInformationAlgoStatus(
-                5L, loadingInfo.getId());
-          } catch (Exception e) {
-            log.error("Error when updating LoadingInformationAlgoStatus:{}", e);
-          }
           log.info("LoadingInformation saved with id:" + loadingInfo.getId());
         } catch (ResourceAccessException e) {
           log.info("ResourceAccessException for LOADING_INFORMATION" + e.getMessage());
@@ -1880,12 +1900,6 @@ public class LoadingPlanCommunicationService {
             algoErrorHeading.setLoadingInformation(loadingInfoError);
           }
           algoErrorHeadingRepository.saveAll(algoErrorHeadings);
-          try {
-            loadingInformationAlgoStatusRepository.updateLoadingInformationAlgoStatus(
-                7L, loadingInfo.getId());
-          } catch (Exception e) {
-            log.error("Error when updating LoadingInformationAlgoStatus:{}", e);
-          }
           log.info("Saved AlgoErrorHeading:" + algoErrorHeadings);
         } catch (ResourceAccessException e) {
           updateStatusInExceptionCase(
@@ -1984,6 +1998,77 @@ public class LoadingPlanCommunicationService {
               processId,
               StagingStatus.FAILED.getStatus(),
               reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadableStudyPortRotationData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info(
+            "LoadableStudyPortRotation get from staging table:{}", loadableStudyPortRotationData);
+        builder.setDataJson(loadableStudyPortRotationData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveLoadableStudyPortRotationDataForCommunication(
+                builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("LoadableStudyPortRotation saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadingInformationAlgoStatus != null) {
+        try {
+          Optional<LoadingInformationStatus> loadingInfoStatus =
+              loadingInfoStatusRepository.findById(
+                  loadingInformationAlgoStatus.getCommunicationRelatedEntityId());
+          if (loadingInfoStatus.isPresent()) {
+            LoadingInformationAlgoStatus algoStatus =
+                loadingInformationAlgoStatusRepository.findByLoadingInformationId(
+                    loadingInfo.getId());
+            if (algoStatus != null) {
+              algoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
+              if (loadingInformationAlgoStatus.getProcessId() != null) {
+                algoStatus.setProcessId(loadingInformationAlgoStatus.getProcessId());
+              }
+              loadingInformationAlgoStatusRepository.save(algoStatus);
+              log.info(
+                  "Communication #######  LoadingInformationAlgoStatus saved with id:"
+                      + algoStatus.getId());
+            }
+            loadingInformationAlgoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
+            if (loadingInformationAlgoStatus.getProcessId() != null) {
+              loadingInformationAlgoStatus.setProcessId(
+                  loadingInformationAlgoStatus.getProcessId());
+            }
+            loadingInformationAlgoStatus.setLoadingInformation(loadingInfo);
+            loadingInformationAlgoStatus.setVersion(null);
+            loadingInformationAlgoStatus =
+                loadingInformationAlgoStatusRepository.save(loadingInformationAlgoStatus);
+            log.info(
+                "Communication #######  LoadingInformationAlgoStatus saved with id:"
+                    + loadingInformationAlgoStatus.getId());
+          }
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
         }
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(

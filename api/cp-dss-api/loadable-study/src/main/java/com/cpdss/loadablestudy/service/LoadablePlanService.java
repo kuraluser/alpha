@@ -2716,8 +2716,7 @@ public class LoadablePlanService {
                 LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE,
                 UUID.randomUUID().toString(),
                 MessageTypes.VALIDATEPLAN.getMessageType(),
-                lsCommunication.getId(),
-                null);
+                lsCommunication.getId());
         log.info("Json Array in Stowage Edit service: " + jsonArray.toString());
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(

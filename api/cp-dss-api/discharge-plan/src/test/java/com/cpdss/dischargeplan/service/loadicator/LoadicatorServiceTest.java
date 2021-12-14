@@ -6,11 +6,13 @@ import static org.junit.Assert.assertEquals;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.domain.algo.LoadicatorStage;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
+import com.cpdss.dischargeplan.service.DischargePlanCommunicationService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -77,8 +79,18 @@ public class LoadicatorServiceTest {
   @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @MockBean AlgoErrorsRepository algoErrorsRepository;
 
+  @MockBean private DischargePlanCommunicationService dischargePlanCommunicationService;
+
+  @MockBean
+  private DischargePlanCommunicationStatusRepository dischargePlanCommunicationStatusRepository;
+
+  @MockBean private DischargePlanStagingService dischargePlanStagingService;
+
   @Value(value = "${cpdss.judgement.enable}")
   private boolean judgementEnabled;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
 
   @Test
   void testGetVesselDetailsForLoadicator() {

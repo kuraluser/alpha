@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.cargoinfo.service;
 
+import com.cpdss.cargoinfo.domain.CargoSpecification;
+import com.cpdss.cargoinfo.domain.FilterCriteria;
 import com.cpdss.cargoinfo.entity.Cargo;
 import com.cpdss.cargoinfo.repository.CargoRepository;
 import com.cpdss.common.generated.CargoInfo;
@@ -11,9 +13,7 @@ import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceImplBase;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import io.grpc.stub.StreamObserver;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -157,22 +159,59 @@ public class CargoService extends CargoInfoServiceImplBase {
     }
   }
 
+  /**
+   * Retrieve all Master cargos with Pagination, Sorting and Filtering
+   *
+   * @param request
+   * @param responseObserver
+   */
   @Override
-  public void getCargoInfoDetailed(com.cpdss.common.generated.CargoInfo.CargoRequest request,
-                                   io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailedReply> responseObserver) {
+  public void getCargoInfoDetailed(
+      com.cpdss.common.generated.CargoInfo.CargoRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoDetailedReply>
+          responseObserver) {
     CargoInfo.CargoDetailedReply.Builder cargoReply = CargoInfo.CargoDetailedReply.newBuilder();
     try {
-      List<Cargo> cargos = cargoRepository.findAll();
-      System.out.println(cargos.size());
+
+      // Filtering
+      List<String> filterKeys =
+          Arrays.asList("id", "crudeType", "abbreviation", "companyId", "api", "minLoadTemp");
+      Map<String, String> params = new HashMap<>();
+      request.getParamList().forEach(param -> params.put(param.getKey(), param.getValue()));
+      Map<String, String> filterParams =
+          params.entrySet().stream()
+              .filter(e -> filterKeys.contains(e.getKey()))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      Specification<Cargo> specification =
+          Specification.where(new CargoSpecification(new FilterCriteria("isActive", ":", true)));
+
+      for (Map.Entry<String, String> entry : filterParams.entrySet()) {
+        String filterKey = entry.getKey();
+        String value = entry.getValue();
+        specification =
+            specification.and(new CargoSpecification(new FilterCriteria(filterKey, "like", value)));
+      }
+
+      // Paging and sorting
+      Pageable paging =
+          PageRequest.of(
+              request.getPage(),
+              request.getPageSize(),
+              Sort.by(
+                  Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+      Page<Cargo> pagedResult = this.cargoRepository.findAll(specification, paging);
+
+      List<Cargo> cargos = pagedResult.toList();
       cargos.forEach(
-              cargo -> {
-                CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
-                buildCargoDetailed(cargo, cargoDetail);
-                cargoReply.addCargos(cargoDetail);
-              });
+          cargo -> {
+            CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
+            buildCargoDetailed(cargo, cargoDetail);
+            cargoReply.addCargos(cargoDetail);
+          });
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus("SUCCESS");
       cargoReply.setResponseStatus(responseStatus);
+      cargoReply.setTotalElements(pagedResult.getTotalElements());
     } catch (Exception e) {
       log.error("Error in getCargoInfoByPage method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
@@ -184,9 +223,15 @@ public class CargoService extends CargoInfoServiceImplBase {
     }
   }
 
+  /**
+   * Building CargoDetail
+   *
+   * @param cargo
+   * @param cargoDetail
+   */
   private void buildCargoDetailed(Cargo cargo, CargoInfo.CargoDetailed.Builder cargoDetail) {
     cargoDetail.setAbbreviation(cargo.getAbbreviation() == null ? "" : cargo.getAbbreviation());
-    cargoDetail.setApi(cargo.getApi() == null ? "": cargo.getApi());
+    cargoDetail.setApi(cargo.getApi() == null ? "" : cargo.getApi());
     cargoDetail.setId(cargo.getId());
     cargoDetail.setName(cargo.getCrudeType() == null ? "" : cargo.getCrudeType());
     cargoDetail.setBenzene(cargo.getBenzene() == null ? "" : cargo.getBenzene());
@@ -198,19 +243,22 @@ public class CargoService extends CargoInfoServiceImplBase {
     cargoDetail.setPourPoint(cargo.getMaxPourPoint() == null ? "" : cargo.getMaxPourPoint());
     cargoDetail.setCloudPoint(cargo.getMaxCloudPoint() == null ? "" : cargo.getMaxCloudPoint());
     cargoDetail.setViscosity(cargo.getViscocityT1() == null ? "" : cargo.getViscocityT1());
-    cargoDetail.setCowCodes(cargo.getCowCodeRecommendedSummer() == null ? "" : cargo.getCowCodeRecommendedSummer());
+    cargoDetail.setCowCodes(
+        cargo.getCowCodeRecommendedSummer() == null ? "" : cargo.getCowCodeRecommendedSummer());
     cargoDetail.setHydrogenSulfideOil(cargo.getH2sOilPhase() == null ? "" : cargo.getH2sOilPhase());
-    cargoDetail.setHydrogenSulfideVapour(cargo.getH2sVapourPhaseConfirmed() == null ? "" : cargo.getH2sVapourPhaseConfirmed());
+    cargoDetail.setHydrogenSulfideVapour(
+        cargo.getH2sVapourPhaseConfirmed() == null ? "" : cargo.getH2sVapourPhaseConfirmed());
     cargoDetail.setSpecialInstrictionsRemark(cargo.getRemarks() == null ? "" : cargo.getRemarks());
-    // cargoDetail.setReidVapourPressure(cargo.)
   }
 
   @Override
-  public void getCargoInfoDetailedById(com.cpdss.common.generated.CargoInfo.CargoRequest request,
-                                       io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply> responseObserver) {
-    CargoInfo.CargoByIdDetailedReply.Builder cargoReply = CargoInfo.CargoByIdDetailedReply.newBuilder();
+  public void getCargoInfoDetailedById(
+      com.cpdss.common.generated.CargoInfo.CargoRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+          responseObserver) {
+    CargoInfo.CargoByIdDetailedReply.Builder cargoReply =
+        CargoInfo.CargoByIdDetailedReply.newBuilder();
     try {
-      System.out.println(request.getCargoId());
       Optional<Cargo> cargo = cargoRepository.findById(request.getCargoId());
       CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
       buildCargoDetailed(cargo.get(), cargoDetail);
@@ -229,4 +277,105 @@ public class CargoService extends CargoInfoServiceImplBase {
     }
   }
 
+  /**
+   * Deletion of cargo using cargoId
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void deleteCargoById(
+      com.cpdss.common.generated.CargoInfo.CargoRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+          responseObserver) {
+    CargoInfo.CargoByIdDetailedReply.Builder cargoReply =
+        CargoInfo.CargoByIdDetailedReply.newBuilder();
+    try {
+      Integer numberOfRowsUpdated = this.cargoRepository.deleteByCargoId(request.getCargoId());
+      if (numberOfRowsUpdated == 0) {
+        log.info("No rows updated!");
+      }
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      cargoReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in deleting cargo by id method ", e);
+      e.printStackTrace();
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      cargoReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(cargoReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Saving new Cargo / Editing existing cargo details
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void saveCargo(
+      CargoInfo.CargoDetailed request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+          responseObserver) {
+
+    CargoInfo.CargoByIdDetailedReply.Builder cargoReply =
+        CargoInfo.CargoByIdDetailedReply.newBuilder();
+
+    try {
+      Cargo cargo;
+      if (request.getId() == 0) {
+        cargo = new Cargo();
+      } else {
+        cargo = this.cargoRepository.getById(request.getId());
+      }
+
+      buildCargoEntity(request, cargo);
+      Cargo savedCargo = this.cargoRepository.save(cargo);
+      CargoInfo.CargoDetailed.Builder cargoDetail = CargoInfo.CargoDetailed.newBuilder();
+      buildCargoDetailed(savedCargo, cargoDetail);
+      cargoReply.setCargo(cargoDetail.build());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      cargoReply.setResponseStatus(responseStatus);
+
+    } catch (Exception e) {
+      log.error("Error in saveCargo method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      cargoReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(cargoReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Building cargo entity
+   *
+   * @param request
+   * @param cargo
+   */
+  private void buildCargoEntity(CargoInfo.CargoDetailed request, Cargo cargo) {
+
+    cargo.setCrudeType(request.getName());
+    cargo.setApi(request.getApi());
+    cargo.setFromRvp(request.getReidVapourPressure());
+    cargo.setGasC4(request.getGas());
+    cargo.setTotalWax(request.getTotalWax());
+    cargo.setMaxPourPoint(request.getPourPoint());
+    cargo.setMaxCloudPoint(request.getCloudPoint());
+    cargo.setViscocityT1(request.getViscosity());
+    cargo.setMinLoadTemp(request.getTemp());
+    cargo.setCowCodeRecommendedSummer(request.getCowCodes());
+    cargo.setH2sOilPhase(request.getHydrogenSulfideOil());
+    cargo.setH2sVapourPhaseConfirmed(request.getHydrogenSulfideVapour());
+    cargo.setBenzene(request.getBenzene());
+    cargo.setRemarks(request.getSpecialInstrictionsRemark());
+    cargo.setAbbreviation(request.getAbbreviation());
+    cargo.setIsActive(true);
+  }
 }

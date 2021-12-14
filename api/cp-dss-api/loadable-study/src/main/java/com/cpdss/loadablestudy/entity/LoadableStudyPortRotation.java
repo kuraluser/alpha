@@ -114,4 +114,7 @@ public class LoadableStudyPortRotation extends EntityDoc {
 
   @Column(name = "fresh_crude_oil_time")
   private BigDecimal freshCrudeOilTime;
+
+  @Column(name = "cow_required")
+  private Boolean cowRequired;
 }

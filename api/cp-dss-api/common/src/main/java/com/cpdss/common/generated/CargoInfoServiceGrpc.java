@@ -308,6 +308,100 @@ public final class CargoInfoServiceGrpc {
     return getGetCargoInfoDetailedByIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoRequest,
+          com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+      getDeleteCargoByIdMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DeleteCargoById",
+      requestType = com.cpdss.common.generated.CargoInfo.CargoRequest.class,
+      responseType = com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoRequest,
+          com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+      getDeleteCargoByIdMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.CargoInfo.CargoRequest,
+            com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+        getDeleteCargoByIdMethod;
+    if ((getDeleteCargoByIdMethod = CargoInfoServiceGrpc.getDeleteCargoByIdMethod) == null) {
+      synchronized (CargoInfoServiceGrpc.class) {
+        if ((getDeleteCargoByIdMethod = CargoInfoServiceGrpc.getDeleteCargoByIdMethod) == null) {
+          CargoInfoServiceGrpc.getDeleteCargoByIdMethod =
+              getDeleteCargoByIdMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.CargoInfo.CargoRequest,
+                          com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DeleteCargoById"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new CargoInfoServiceMethodDescriptorSupplier("DeleteCargoById"))
+                      .build();
+        }
+      }
+    }
+    return getDeleteCargoByIdMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoDetailed,
+          com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+      getSaveCargoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveCargo",
+      requestType = com.cpdss.common.generated.CargoInfo.CargoDetailed.class,
+      responseType = com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.CargoInfo.CargoDetailed,
+          com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+      getSaveCargoMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.CargoInfo.CargoDetailed,
+            com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+        getSaveCargoMethod;
+    if ((getSaveCargoMethod = CargoInfoServiceGrpc.getSaveCargoMethod) == null) {
+      synchronized (CargoInfoServiceGrpc.class) {
+        if ((getSaveCargoMethod = CargoInfoServiceGrpc.getSaveCargoMethod) == null) {
+          CargoInfoServiceGrpc.getSaveCargoMethod =
+              getSaveCargoMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.CargoInfo.CargoDetailed,
+                          com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveCargo"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoDetailed
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new CargoInfoServiceMethodDescriptorSupplier("SaveCargo"))
+                      .build();
+        }
+      }
+    }
+    return getSaveCargoMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static CargoInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<CargoInfoServiceStub> factory =
@@ -406,6 +500,23 @@ public final class CargoInfoServiceGrpc {
           getGetCargoInfoDetailedByIdMethod(), responseObserver);
     }
 
+    /** */
+    public void deleteCargoById(
+        com.cpdss.common.generated.CargoInfo.CargoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDeleteCargoByIdMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveCargo(
+        com.cpdss.common.generated.CargoInfo.CargoDetailed request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSaveCargoMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -451,6 +562,20 @@ public final class CargoInfoServiceGrpc {
                       com.cpdss.common.generated.CargoInfo.CargoRequest,
                       com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>(
                       this, METHODID_GET_CARGO_INFO_DETAILED_BY_ID)))
+          .addMethod(
+              getDeleteCargoByIdMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.CargoInfo.CargoRequest,
+                      com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>(
+                      this, METHODID_DELETE_CARGO_BY_ID)))
+          .addMethod(
+              getSaveCargoMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.CargoInfo.CargoDetailed,
+                      com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>(
+                      this, METHODID_SAVE_CARGO)))
           .build();
     }
   }
@@ -532,6 +657,26 @@ public final class CargoInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void deleteCargoById(
+        com.cpdss.common.generated.CargoInfo.CargoRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteCargoByIdMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveCargo(
+        com.cpdss.common.generated.CargoInfo.CargoDetailed request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveCargoMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /** */
@@ -587,6 +732,20 @@ public final class CargoInfoServiceGrpc {
         com.cpdss.common.generated.CargoInfo.CargoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoInfoDetailedByIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply deleteCargoById(
+        com.cpdss.common.generated.CargoInfo.CargoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteCargoByIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply saveCargo(
+        com.cpdss.common.generated.CargoInfo.CargoDetailed request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveCargoMethod(), getCallOptions(), request);
     }
   }
 
@@ -650,6 +809,22 @@ public final class CargoInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoInfoDetailedByIdMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+        deleteCargoById(com.cpdss.common.generated.CargoInfo.CargoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteCargoByIdMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>
+        saveCargo(com.cpdss.common.generated.CargoInfo.CargoDetailed request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveCargoMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_CARGO_INFO = 0;
@@ -658,6 +833,8 @@ public final class CargoInfoServiceGrpc {
   private static final int METHODID_GET_CARGO_INFOS_BY_CARGO_IDS = 3;
   private static final int METHODID_GET_CARGO_INFO_DETAILED = 4;
   private static final int METHODID_GET_CARGO_INFO_DETAILED_BY_ID = 5;
+  private static final int METHODID_DELETE_CARGO_BY_ID = 6;
+  private static final int METHODID_SAVE_CARGO = 7;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -709,6 +886,20 @@ public final class CargoInfoServiceGrpc {
         case METHODID_GET_CARGO_INFO_DETAILED_BY_ID:
           serviceImpl.getCargoInfoDetailedById(
               (com.cpdss.common.generated.CargoInfo.CargoRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>)
+                  responseObserver);
+          break;
+        case METHODID_DELETE_CARGO_BY_ID:
+          serviceImpl.deleteCargoById(
+              (com.cpdss.common.generated.CargoInfo.CargoRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_CARGO:
+          serviceImpl.saveCargo(
+              (com.cpdss.common.generated.CargoInfo.CargoDetailed) request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.CargoInfo.CargoByIdDetailedReply>)
                   responseObserver);
@@ -783,6 +974,8 @@ public final class CargoInfoServiceGrpc {
                       .addMethod(getGetCargoInfosByCargoIdsMethod())
                       .addMethod(getGetCargoInfoDetailedMethod())
                       .addMethod(getGetCargoInfoDetailedByIdMethod())
+                      .addMethod(getDeleteCargoByIdMethod())
+                      .addMethod(getSaveCargoMethod())
                       .build();
         }
       }

@@ -16,7 +16,10 @@ import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
+import com.cpdss.dischargeplan.common.CommunicationStatus;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
+import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.domain.algo.*;
 import com.cpdss.dischargeplan.domain.algo.LDIntactStability;
 import com.cpdss.dischargeplan.domain.algo.LDStrength;
@@ -24,12 +27,16 @@ import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
+import com.cpdss.dischargeplan.service.DischargePlanCommunicationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +62,12 @@ public class LoadicatorService {
 
   @Value(value = "${cpdss.judgement.enable}")
   private boolean judgementEnabled;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
+  @Value("${cpdss.build.env}")
+  private String env;
 
   @Autowired DischargeInformationRepository dischargeInformationRepository;
 
@@ -100,6 +113,12 @@ public class LoadicatorService {
   @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
 
   @Autowired AlgoErrorsRepository algoErrorsRepository;
+  @Autowired private DischargePlanCommunicationService dischargePlanCommunicationService;
+
+  @Autowired
+  private DischargePlanCommunicationStatusRepository dischargePlanCommunicationStatusRepository;
+
+  @Autowired private DischargePlanStagingService dischargePlanStagingService;
 
   /**
    * get vessel detail for loadicator
@@ -659,7 +678,7 @@ public class LoadicatorService {
   public void getLoadicatorData(
       DischargingInfoLoadicatorDataRequest request,
       com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply.Builder reply)
-      throws GenericServiceException {
+      throws GenericServiceException, InvocationTargetException, IllegalAccessException {
 
     Boolean isValid = true;
     Long statusId;
@@ -730,6 +749,18 @@ public class LoadicatorService {
             dischargeInfoOpt.get().getId());
         dischargePlanAlgoService.updateDischargingInfoAlgoStatus(
             dischargeInfoOpt.get(), request.getProcessId(), dischargingInfoStatusOpt.get(), null);
+        try {
+          log.info("Communication side started for loadicator on");
+          if (enableCommunication && !env.equals("ship")) {
+            dischargeAlgoPlanCallBackCommunicationCall(
+                dischargeInfoOpt.get(),
+                com.cpdss.dischargeplan.service.utility.DischargePlanConstants
+                    .DISCHARGE_PLAN_SHORE_TO_SHIP);
+          }
+        } catch (Exception e) {
+          log.error(
+              "Error occured when communicate DischargePlan with loadicator on", e.getMessage());
+        }
       } catch (HttpStatusCodeException e) {
         // Update status after error occurs
         log.error("Error occured in ALGO side while calling loadicator_results API");
@@ -742,6 +773,17 @@ public class LoadicatorService {
             dischargeInfoOpt.get(), request.getProcessId(), errorOccurredStatusOpt.get(), null);
         dischargePlanAlgoService.saveAlgoInternalError(
             dischargeInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
+        try {
+          log.info("Communication side started for loadicator on With Algo Errors");
+          if (enableCommunication && !env.equals("ship")) {
+            dischargeAlgoPlanCallBackCommunicationCall(
+                dischargeInfoOpt.get(),
+                com.cpdss.dischargeplan.service.utility.DischargePlanConstants
+                    .DISCHARGE_PLAN_ALGO_ERRORS_SHORE_TO_SHIP);
+          }
+        } catch (Exception ex) {
+          log.error("Error occured when communicate algo errors", ex.getMessage());
+        }
       }
     } else { // Update Ullage Loadicator Data
       ullageupdateLoadicatorService.getLoadicatorData(request, dischargeInfoOpt.get());
@@ -1013,5 +1055,44 @@ public class LoadicatorService {
       newEntity.setFreeboard(stability.getFreeboard());
       newEntity.setManifoldHeight(stability.getManifoldHeight());
     });*/
+  }
+
+  private void dischargeAlgoPlanCallBackCommunicationCall(
+      DischargeInformation dischargeInformation, List<String> processIdentifiers)
+      throws GenericServiceException {
+    JsonArray jsonArray =
+        dischargePlanStagingService.getCommunicationData(
+            processIdentifiers,
+            UUID.randomUUID().toString(),
+            MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType(),
+            dischargeInformation.getId(),
+            null);
+    log.info("Json Array in Loading plan service: " + jsonArray.toString());
+    EnvoyWriter.WriterReply ewReply =
+        dischargePlanCommunicationService.passRequestPayloadToEnvoyWriter(
+            jsonArray.toString(),
+            dischargeInformation.getVesselXid(),
+            MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType());
+
+    if (DischargePlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+      log.info("------- Envoy writer has called successfully : " + ewReply);
+      DischargePlanCommunicationStatus dischargePlanCommunicationStatus =
+          new DischargePlanCommunicationStatus();
+      if (ewReply.getMessageId() != null) {
+        dischargePlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+        dischargePlanCommunicationStatus.setCommunicationStatus(
+            CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+      }
+      dischargePlanCommunicationStatus.setReferenceId(dischargeInformation.getId());
+      dischargePlanCommunicationStatus.setMessageType(
+          MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType());
+      dischargePlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+      DischargePlanCommunicationStatus loadableStudyCommunicationStatus =
+          dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
+      log.info("Communication table update : " + dischargePlanCommunicationStatus.getId());
+      log.info(
+          "DischargePlanCommunicationStatus table updated id : "
+              + loadableStudyCommunicationStatus.getId());
+    }
   }
 }

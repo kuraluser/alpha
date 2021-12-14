@@ -56,7 +56,9 @@ public class LoadingPlanConstants {
     ALGO_ERROR_HEADING("algo_error_heading"),
     ALGO_ERRORS("algo_errors"),
     LOADING_INSTRUCTIONS("loading_instructions"),
-    SYNOPTICAL_TABLE("synoptical_table");
+    SYNOPTICAL_TABLE("synoptical_table"),
+    LOADABLE_STUDY_PORT_ROTATION("loadable_study_port_rotation"),
+    LOADING_INFORMATION_ALGO_STATUS("loading_information_algo_status");
 
     public final String table;
   }
@@ -80,10 +82,16 @@ public class LoadingPlanConstants {
           "ballast_operation",
           "eduction_operation",
           "cargo_loading_rate",
-          "json_data");
+          "json_data",
+          "algo_error_heading",
+          "algo_errors");
 
   public static final List<String> loadingPlanCommWithAlgoErrorsList =
-      Arrays.asList("loading_information", "algo_error_heading", "algo_errors");
+      Arrays.asList(
+          "loading_information",
+          "loading_information_algo_status",
+          "algo_error_heading",
+          "algo_errors");
 
   public static final List<String> loadingPlanGenerationCommList =
       Arrays.asList(
@@ -96,5 +104,40 @@ public class LoadingPlanConstants {
           "loadable_pattern",
           "loading_port_tide_details",
           "loading_instructions",
-          "synoptical_table");
+          "synoptical_table",
+          "loadable_study_port_rotation");
+
+  public static final List<String> ULLAGE_UPDATE_SHIP_TO_SHORE =
+      Arrays.asList(
+          "loading_information",
+          "port_loading_plan_stowage_ballast_details_temp",
+          "port_loading_plan_stowage_details_temp",
+          "port_loadable_plan_commingle_details_temp",
+          "port_loading_plan_rob_details",
+          "bill_of_ladding");
+
+  public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_ON =
+      Arrays.asList(
+          "loading_information",
+          "port_loading_plan_stowage_details",
+          "port_loading_plan_stowage_ballast_details",
+          "port_loadable_plan_commingle_details",
+          "port_loading_plan_stability_parameters",
+          "pyuser");
+
+  public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF =
+      Arrays.asList(
+          "loading_information",
+          "port_loading_plan_stowage_details",
+          "port_loading_plan_stowage_ballast_details",
+          "port_loadable_plan_commingle_details",
+          "port_loading_plan_stability_parameters",
+          "pyuser");
+
+  public static final List<String> ULLAGE_UPDATE_ALGO_ERRORS =
+      Arrays.asList(
+          "loading_information",
+          "loading_information_algo_status",
+          "algo_error_heading",
+          "algo_errors");
 }

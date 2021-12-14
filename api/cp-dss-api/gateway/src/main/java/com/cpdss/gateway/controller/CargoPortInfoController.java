@@ -8,19 +8,17 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.CargosResponse;
 import com.cpdss.gateway.domain.PortsResponse;
 import com.cpdss.gateway.domain.TimezoneRestResponse;
+import com.cpdss.gateway.domain.cargomaster.CargoDetailed;
 import com.cpdss.gateway.domain.cargomaster.CargoDetailedResponse;
 import com.cpdss.gateway.domain.cargomaster.CargosDetailedResponse;
 import com.cpdss.gateway.service.CargoPortInfoService;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -160,23 +158,37 @@ public class CargoPortInfoController {
    * Retrieve detailed cargos information from cargo master
    *
    * @param headers
-   * @return
+   * @param pageSize
+   * @param page
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
    * @throws CommonRestException
    */
   @GetMapping("/master/cargos")
-  public CargosDetailedResponse getDetailedCargos(@RequestHeader HttpHeaders headers) throws CommonRestException {
-    CargosDetailedResponse response = null;
+  public CargosDetailedResponse getDetailedCargos(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "crudeType") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+    CargosDetailedResponse response;
     try {
       log.info("getCargos: {}", getClientIp());
-      response = cargoPortInfoService.getCargosDetailed(headers);
+      response =
+          cargoPortInfoService.getCargosDetailed(
+              page, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
     } catch (Exception e) {
       log.error("Error in getCargos ", e);
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
     return response;
   }
@@ -189,21 +201,118 @@ public class CargoPortInfoController {
    * @throws CommonRestException
    */
   @GetMapping("/master/cargos/{cargoId}")
-  public CargoDetailedResponse getDetailedCargoById(@PathVariable Long cargoId,@RequestHeader HttpHeaders headers) throws CommonRestException {
-    CargoDetailedResponse response = null;
+  public CargoDetailedResponse getDetailedCargoById(
+      @PathVariable Long cargoId, @RequestHeader HttpHeaders headers) throws CommonRestException {
+    CargoDetailedResponse response;
     try {
       log.info("getCargos: {}", getClientIp());
-      response = cargoPortInfoService.getCargosDetailedById(headers,cargoId);
+      response = cargoPortInfoService.getCargosDetailedById(headers, cargoId);
     } catch (Exception e) {
       log.error("Error in getCargos ", e);
       throw new CommonRestException(
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              headers,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e.getMessage(),
-              e);
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
     }
     return response;
   }
 
+  /**
+   * Delete API for deletion of cargo using cargoId
+   *
+   * @param cargoId
+   * @param headers
+   * @return
+   * @throws CommonRestException
+   */
+  @DeleteMapping("/master/cargos/{cargoId}")
+  public CargoDetailedResponse deleteCargoById(
+      @PathVariable Long cargoId, @RequestHeader HttpHeaders headers) throws CommonRestException {
+    CargoDetailedResponse response;
+    try {
+      log.info("Deleting cargo with id: {}", cargoId);
+      response = cargoPortInfoService.deleteCargoById(CORRELATION_ID_HEADER, cargoId);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
+
+  /**
+   * API for saving a new cargo or editing an existing one
+   *
+   * @param cargoId
+   * @param headers
+   * @param cargoDetailed
+   * @return response
+   * @throws CommonRestException
+   */
+  @PostMapping("/master/cargos/{cargoId}")
+  public CargoDetailedResponse saveCargo(
+      @PathVariable Long cargoId,
+      @RequestHeader HttpHeaders headers,
+      @RequestBody CargoDetailed cargoDetailed)
+      throws CommonRestException {
+    CargoDetailedResponse response;
+    try {
+      log.info("save/edit cargo");
+      response = cargoPortInfoService.saveCargo(CORRELATION_ID_HEADER, cargoId, cargoDetailed);
+    } catch (Exception e) {
+      log.error("Error in saveCargo ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
+
+  /**
+   * Retrieve ports information from port info
+   *
+   * @param headers
+   * @param pageSize
+   * @param page
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/ports")
+  public PortsResponse getDetailedPorts(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "name") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+    PortsResponse response;
+    try {
+      log.info("getDetailedPorts");
+      response =
+          this.cargoPortInfoService.getPortsDetailed(
+              page, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+    } catch (Exception e) {
+      log.error("Error in getPortsDetailed ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
 }

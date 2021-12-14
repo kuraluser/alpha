@@ -41,10 +41,9 @@ public interface LoadingInformationAlgoStatusRepository
   public void updateLoadingInformationAlgoStatus(
       Long loadingInformationStatusId, Long loadingInfoId, String processId);
 
-  @Transactional
-  @Modifying
   @Query(
-      "UPDATE LoadingInformationAlgoStatus SET loadingInformationStatus.id = ?1 WHERE loadingInformation.id = ?2")
-  public void updateLoadingInformationAlgoStatus(
-      Long loadingInformationStatusId, Long loadingInfoId);
+      value =
+          "select * from loading_information_algo_status where loading_information_xid= ?1 and last_modified_date_time is not null order by last_modified_date_time desc limit 1",
+      nativeQuery = true)
+  LoadingInformationAlgoStatus findByLoadingInformationId(Long id);
 }

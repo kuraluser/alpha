@@ -34,4 +34,13 @@ public class CowDetailService {
   public void saveAll(List<DischargeStudyCowDetail> cowDetailsToSave) {
     dischargeStudyCowDetailRepository.saveAll(cowDetailsToSave);
   }
+
+  public DischargeStudyCowDetail getCowDetailForDS(long dischargestudyId) {
+
+    //    return
+    DischargeStudyCowDetail cow =
+        dischargeStudyCowDetailRepository.findFirstByDischargeStudyStudyIdAndIsActive(
+            dischargestudyId, true);
+    return cow;
+  }
 }

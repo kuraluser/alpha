@@ -13,6 +13,7 @@ import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -20,18 +21,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.domain.VoyageDto;
 import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
-import com.cpdss.loadablestudy.repository.CargoHistoryRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.VoyageHistoryRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
-import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.repository.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -91,8 +81,13 @@ public class VoyageService {
 
   @Autowired private CargoNominationService cargoNominationService;
 
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
+
   @Value("${loadablestudy.voyage.day.difference}")
   private String dayDifference;
+
+  @Value("${cpdss.voyage.validation.enable}")
+  private boolean validationBeforeVoyageClosureEnabled;
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
@@ -102,6 +97,10 @@ public class VoyageService {
 
   @GrpcClient("cargoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
+
+  @GrpcClient("dischargeInformationService")
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
+      dischargePlanServiceBlockingStub;
 
   @Autowired CargoService cargoService;
 
@@ -633,6 +632,52 @@ public class VoyageService {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      if (validationBeforeVoyageClosureEnabled) {
+        // Validations before closing the voyage
+        // 1. ETA Actual and ETD Actual check for all port rotations
+        List<com.cpdss.loadablestudy.entity.LoadableStudy> dischargeStudies =
+            loadableStudyStream
+                .filter(
+                    loadableStudyElement ->
+                        (loadableStudyElement.getLoadableStudyStatus() != null
+                            && STATUS_CONFIRMED.equalsIgnoreCase(
+                                loadableStudyElement.getLoadableStudyStatus().getName())
+                            && loadableStudyElement.getPlanningTypeXId()
+                                == PLANNING_TYPE_DISCHARGE))
+                .collect(Collectors.toList());
+        if (dischargeStudies.isEmpty()) {
+          throw new GenericServiceException(
+              "No confirmed discharge study",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+
+        com.cpdss.loadablestudy.entity.LoadableStudy dischargeStudy = dischargeStudies.get(0);
+
+        List<LoadableStudyPortRotation> loadableStudyPortRotations =
+            this.loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+                dischargeStudy.getId(), true);
+        for (LoadableStudyPortRotation loadableStudyPortRotation : loadableStudyPortRotations) {
+          List<SynopticalTable> synopticalTables =
+              this.synopticalTableRepository
+                  .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
+                      dischargeStudy.getId(), loadableStudyPortRotation.getId(), true);
+          for (SynopticalTable synopticalTable : synopticalTables) {
+            if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
+              throw new GenericServiceException(
+                  "No Actual ETA/ETD values found",
+                  CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
+                  HttpStatusCode.BAD_REQUEST);
+            }
+          }
+        }
+
+        // 2. Update Ullage verified for last DS port
+        // 3. Updated bl figure for all cargo
+        validateActuals(dischargeStudy);
+      }
+
       voyageEntity.setVoyageStatus(status.get());
 
       if (request.getActualEndDate().isEmpty()) {
@@ -682,6 +727,53 @@ public class VoyageService {
     }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  /**
+   * Validation of ullage update and bill of ladding before closure of voyage
+   *
+   * @param loadableStudy
+   * @throws GenericServiceException
+   */
+  private void validateActuals(com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy)
+      throws GenericServiceException {
+
+    List<CargoNomination> cargoNominations =
+        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudy.getId());
+    List<LoadableStudyPortRotation> ports =
+        loadableStudyPortRotationRepository
+            .findByLoadableStudyAndIsActive(loadableStudy.getId(), true).stream()
+            .filter(p -> p.getOperation().getId().equals(LOADING_OPERATION_ID))
+            .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
+            .collect(Collectors.toList());
+    LoadingPlanModels.StowageAndBillOfLaddingValidationRequest.Builder request =
+        LoadingPlanModels.StowageAndBillOfLaddingValidationRequest.newBuilder();
+    ports.forEach(
+        port -> {
+          LoadingPlanModels.PortWiseCargo.Builder portBuilder =
+              LoadingPlanModels.PortWiseCargo.newBuilder();
+          portBuilder.setPortRotationId(port.getId());
+          portBuilder.setPortId(port.getPortXId());
+          List<Long> cargoIds =
+              cargoNominations.stream()
+                  .filter(
+                      cargo ->
+                          cargo.getCargoNominationPortDetails().stream()
+                              .anyMatch(portData -> portData.getPortId().equals(port.getPortXId())))
+                  .map(CargoNomination::getId)
+                  .collect(Collectors.toList());
+
+          portBuilder.addAllCargoIds(cargoIds);
+          request.addPortWiseCargos(portBuilder);
+        });
+    Common.ResponseStatus response =
+        this.dischargePlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
+    if (!SUCCESS.equalsIgnoreCase(response.getStatus())) {
+      throw new GenericServiceException(
+          "No Atcuals",
+          CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
+          HttpStatusCode.BAD_REQUEST);
+    }
   }
 
   private void buildLoadingPlanSyncDetails(

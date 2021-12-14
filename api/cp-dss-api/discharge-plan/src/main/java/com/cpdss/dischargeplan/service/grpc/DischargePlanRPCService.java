@@ -9,6 +9,7 @@ import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
@@ -34,8 +35,11 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDet
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.Utils;
+import com.cpdss.dischargeplan.common.CommunicationStatus;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
+import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.domain.algo.DischargingInformationAlgoResponse;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
@@ -44,10 +48,16 @@ import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
 import io.grpc.stub.StreamObserver;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -62,6 +72,9 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargePlanServiceImplBase {
 
+  public static final Integer CONDITION_TYPE_DEP = 2;
+  public static final Integer VALUE_TYPE_ACTUALS = 1;
+  public static final Long ULLAGE_UPDATE_VALIDATED_TRUE = 13L;
   @Autowired DischargePlanSynchronizeService dischargePlanSynchronizeService;
 
   @Autowired DischargePlanAlgoService dischargePlanAlgoService;
@@ -106,6 +119,19 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   @Value(value = "${algo.planGenerationUrl}")
   private String planGenerationUrl;
 
+  @Autowired private DischargePlanStagingService dischargePlanStagingService;
+
+  @Autowired private DischargePlanCommunicationService dischargePlanCommunicationService;
+
+  @Autowired
+  private DischargePlanCommunicationStatusRepository dischargePlanCommunicationStatusRepository;
+
+  @Value("${cpdss.build.env}")
+  private String env;
+
+  @Value("${cpdss.communication.enable}")
+  private boolean enableCommunication;
+
   @Override
   public void dischargePlanSynchronization(
       DischargeStudyDataTransferRequest request, StreamObserver<ResponseStatus> responseObserver) {
@@ -148,17 +174,6 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
         new com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest();
     try {
       log.info("Generate Discharge Plan RPC: Payload", Utils.toJson(request));
-
-      // build DTO object
-      this.dischargePlanAlgoService.buildDischargeInformation(request, algoRequest);
-
-      // Save Above JSON In LS json data Table
-      dischargePlanAlgoService.saveDischargingInformationRequestJson(
-          algoRequest, request.getDischargeInfoId());
-      ObjectMapper objectMapper = new ObjectMapper();
-      String ss = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoRequest);
-      builder.setRequestAsJsonString(ss);
-      log.info("algo request payload - {}", ss);
       com.cpdss.dischargeplan.entity.DischargeInformation dischargeInformation =
           dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
       if (dischargeInformation == null) {
@@ -168,23 +183,90 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
             HttpStatusCode.BAD_REQUEST);
       }
       // Call To Algo End Point for Loading
+      String processId = null;
+      Long status = null;
+      if (enableCommunication && env.equals("ship")) {
+        status = DischargePlanConstants.DISCHARGE_INFORMATION_COMMUNICATED_TO_SHORE;
+      } else {
+        status = DischargePlanConstants.DISCHARGING_INFORMATION_PROCESSING_STARTED_ID;
+      }
+      log.info("DischargingInformation status:{}", status);
+      Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+          dischargePlanAlgoService.getDischargingInformationStatus(status);
       try {
-        DischargingInformationAlgoResponse response =
-            restTemplate.postForObject(
-                planGenerationUrl, algoRequest, DischargingInformationAlgoResponse.class);
-        // Set Loading Status
-        Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-            dischargePlanAlgoService.getDischargingInformationStatus(
-                DischargePlanConstants.DISCHARGING_INFORMATION_PROCESSING_STARTED_ID);
-        dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
-        dischargeInformation.setIsDischargingPlanGenerated(false);
-        dischargeInformation.setIsDischargingSequenceGenerated(false);
-        dischargeInformationRepository.save(dischargeInformation);
+        if (env.equals("ship") && enableCommunication) {
+          log.info("Communication side started for generate DischargePlan");
+          // =================  Algo changes =======================
+          processId = UUID.randomUUID().toString();
+          JsonArray jsonArray =
+              dischargePlanStagingService.getCommunicationData(
+                  com.cpdss.dischargeplan.service.utility.DischargePlanConstants
+                      .DISCHARGE_PLAN_SHIP_TO_SHORE,
+                  processId,
+                  MessageTypes.DISCHARGEPLAN.getMessageType(),
+                  dischargeInformation.getId(),
+                  null);
+          log.info("Json Array in Discharging plan service: " + jsonArray.toString());
+          EnvoyWriter.WriterReply ewReply =
+              dischargePlanCommunicationService.passRequestPayloadToEnvoyWriter(
+                  jsonArray.toString(),
+                  dischargeInformation.getVesselXid(),
+                  MessageTypes.DISCHARGEPLAN.getMessageType());
+
+          if (DischargePlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+            log.info("------- Envoy writer has called successfully : " + ewReply);
+            DischargePlanCommunicationStatus dischargePlanCommunicationStatus =
+                new DischargePlanCommunicationStatus();
+            if (ewReply.getMessageId() != null) {
+              dischargePlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+              dischargePlanCommunicationStatus.setCommunicationStatus(
+                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+            }
+            dischargePlanCommunicationStatus.setReferenceId(dischargeInformation.getId());
+            dischargePlanCommunicationStatus.setMessageType(
+                MessageTypes.DISCHARGEPLAN.getMessageType());
+            dischargePlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+            DischargePlanCommunicationStatus dischargePlanCommunication =
+                dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
+            log.info(
+                "DischargePlanCommunicationStatus table updated id : "
+                    + dischargePlanCommunication.getId());
+            // Set Discharging Status
+            dischargeInformationRepository.updateDischargingInfoWithInfoStatus(
+                dischargingInfoStatusOpt.get(), false, false, dischargeInformation.getId());
+          }
+          // end of communication code
+
+        } else {
+          // build DTO object
+          this.dischargePlanAlgoService.buildDischargeInformation(request, algoRequest);
+
+          // Save Above JSON In LS json data Table
+          dischargePlanAlgoService.saveDischargingInformationRequestJson(
+              algoRequest, request.getDischargeInfoId());
+          ObjectMapper objectMapper = new ObjectMapper();
+          String ss = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoRequest);
+          builder.setRequestAsJsonString(ss);
+          log.info("algo request payload - {}", ss);
+          log.info("Call To Algo End Point for Discharging");
+          // Call To Algo End Point for Loading
+          DischargingInformationAlgoResponse response =
+              restTemplate.postForObject(
+                  planGenerationUrl, algoRequest, DischargingInformationAlgoResponse.class);
+          processId = response.getProcessId();
+          log.info("DischargingInformationAlgoResponse:{}", response);
+          // Set Loading Status
+          dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
+          dischargeInformation.setIsDischargingPlanGenerated(false);
+          dischargeInformation.setIsDischargingSequenceGenerated(false);
+          dischargeInformationRepository.save(dischargeInformation);
+        }
         dischargePlanAlgoService.createDischargingInformationAlgoStatus(
-            dischargeInformation, response.getProcessId(), dischargingInfoStatusOpt.get(), null);
-        builder.setProcessId(response.getProcessId());
+            dischargeInformation, processId, dischargingInfoStatusOpt.get(), null);
+        builder.setProcessId(processId);
         builder.setResponseStatus(
             Common.ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+
       } catch (HttpStatusCodeException e) {
         log.error("Error occured in ALGO side while calling new_loadable API");
         Optional<DischargingInformationStatus> errorOccurredStatusOpt =
@@ -532,6 +614,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           portWiseBallastDetail.getSounding() != null
               ? portWiseBallastDetail.getSounding().toString()
               : "");
+      newBuilder.setSg(
+          portWiseBallastDetail.getSg() != null ? portWiseBallastDetail.getSg().toString() : "");
       builder.addPortLoadingPlanBallastTempDetails(newBuilder);
     }
   }
@@ -1001,6 +1085,145 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .setMessage(e.getMessage())
               .setStatus(DischargePlanConstants.FAILED)
               .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Validation of stowage and bill of ladding
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void validateStowageAndBillOfLadding(
+      LoadingPlanModels.StowageAndBillOfLaddingValidationRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+
+    ResponseStatus.Builder builder = ResponseStatus.newBuilder();
+    try {
+      List<LoadingPlanModels.PortWiseCargo> portWiseCargosList = request.getPortWiseCargosList();
+      List<Long> portRotationIds =
+          portWiseCargosList.stream()
+              .map(LoadingPlanModels.PortWiseCargo::getPortRotationId)
+              .collect(Collectors.toList());
+      List<Long> portIds =
+          portWiseCargosList.stream()
+              .map(LoadingPlanModels.PortWiseCargo::getPortId)
+              .collect(Collectors.toList());
+      List<Long> cargoIds =
+          portWiseCargosList.stream()
+              .flatMap(port -> port.getCargoIdsList().stream())
+              .distinct()
+              .collect(Collectors.toList());
+      List<PortDischargingPlanStowageDetails> stowageDetails =
+          portDischargingPlanStowageDetailsRepository
+              .findByPortRotationXIdAndConditionTypeAndValueTypeAndIsActive(
+                  portRotationIds.get(portRotationIds.size() - 1),
+                  CONDITION_TYPE_DEP,
+                  VALUE_TYPE_ACTUALS,
+                  true);
+      List<BillOfLadding> blList =
+          billOfLaddingRepo.findByCargoNominationIdInAndIsActive(cargoIds, true);
+      Map<Long, List<BillOfLadding>> portWiseBL =
+          blList.stream().collect(Collectors.groupingBy(BillOfLadding::getPortId));
+
+      if (!blList.isEmpty()
+          && blList.stream()
+              .allMatch(
+                  bl ->
+                      bl.getDischargeInformation()
+                          .getDepartureStatusId()
+                          .equals(ULLAGE_UPDATE_VALIDATED_TRUE))) {
+        if (stowageDetails == null
+            || stowageDetails.isEmpty()
+            || !portWiseBL.keySet().containsAll(portIds)) {
+          builder.setStatus(DischargePlanConstants.FAILED);
+          return;
+        }
+        Map<Long, List<PortDischargingPlanStowageDetails>> cargoWiseStowage =
+            stowageDetails.stream()
+                .filter(v -> v.getCargoNominationXId() != 0)
+                .collect(
+                    Collectors.groupingBy(
+                        PortDischargingPlanStowageDetails::getCargoNominationXId));
+        cargoWiseStowage.forEach(
+            (key, values) -> {
+              if (values.stream()
+                  .noneMatch(
+                      v ->
+                          v.getQuantity() != null
+                              || v.getQuantity().compareTo(BigDecimal.ZERO) > 0)) {
+                builder.setStatus(DischargePlanConstants.FAILED);
+              }
+            });
+
+        portWiseCargosList.stream()
+            .forEach(
+                port -> {
+                  try {
+                    List<BillOfLadding> bLValues = portWiseBL.get(port.getPortId());
+                    List<Long> dbCargos =
+                        stowageDetails.stream()
+                            .map(PortDischargingPlanStowageDetails::getCargoNominationXId)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    List<Long> dbBLCargos =
+                        bLValues.stream()
+                            .map(BillOfLadding::getCargoNominationId)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    // Checking if stowage details and bill of lading entries exists and quantity
+                    // parameters are greater than zero
+                    // Bug fix DSS 4458
+                    // Issue fix : for commingle cargos - cargo nomination id will not be present in
+                    // port loadable stowage details
+                    // so removing !dbCargos.containsAll(port.getCargoIdsList()) check since this
+                    // will
+                    // always fail.
+                    if (!dbBLCargos.containsAll(port.getCargoIdsList())
+                        || (bLValues.stream()
+                            .anyMatch(
+                                bl ->
+                                    bl.getQuantityMt() == null
+                                        || bl.getQuantityMt().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityKl() == null
+                                        || bl.getQuantityKl().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityBbls() == null
+                                        || bl.getQuantityBbls().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getQuantityLT() == null
+                                        || bl.getQuantityLT().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getApi() == null
+                                        || bl.getApi().compareTo(BigDecimal.ZERO) < 0
+                                        || bl.getTemperature() == null
+                                        || bl.getTemperature().compareTo(BigDecimal.ZERO) < 0))) {
+                      builder.setStatus(DischargePlanConstants.FAILED);
+                      throw new GenericServiceException(
+                          "LS actuals or BL values are missing",
+                          "",
+                          HttpStatusCode.SERVICE_UNAVAILABLE);
+                    } else {
+                      builder.setStatus(DischargePlanConstants.SUCCESS);
+                    }
+                    // Add check for Zero and null values
+                  } catch (Exception e) {
+                    builder.setStatus(DischargePlanConstants.FAILED);
+                  }
+                });
+      } else {
+        // One or more ports have its ullage update validation not successful
+        builder.setStatus(DischargePlanConstants.FAILED);
+        throw new GenericServiceException(
+            "Ullage updated validation Pending", "", HttpStatusCode.SERVICE_UNAVAILABLE);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setStatus(DischargePlanConstants.FAILED);
+      builder.setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value());
+      builder.setMessage(e.getMessage());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

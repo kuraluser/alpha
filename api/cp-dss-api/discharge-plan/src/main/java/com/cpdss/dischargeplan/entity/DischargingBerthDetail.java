@@ -58,4 +58,6 @@ public class DischargingBerthDetail extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "discharging_xid")
   private DischargeInformation dischargingInformation;
+
+  @Transient private Long communicationRelatedEntityId;
 }

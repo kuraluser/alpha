@@ -4226,6 +4226,58 @@ public final class PortInfo {
      * @return The loadableStudyId.
      */
     long getLoadableStudyId();
+
+    /**
+     * <code>int32 page = 6;</code>
+     *
+     * @return The page.
+     */
+    int getPage();
+
+    /**
+     * <code>int32 pageSize = 7;</code>
+     *
+     * @return The pageSize.
+     */
+    int getPageSize();
+
+    /**
+     * <code>string sortBy = 8;</code>
+     *
+     * @return The sortBy.
+     */
+    java.lang.String getSortBy();
+    /**
+     * <code>string sortBy = 8;</code>
+     *
+     * @return The bytes for sortBy.
+     */
+    com.google.protobuf.ByteString getSortByBytes();
+
+    /**
+     * <code>string orderBy = 9;</code>
+     *
+     * @return The orderBy.
+     */
+    java.lang.String getOrderBy();
+    /**
+     * <code>string orderBy = 9;</code>
+     *
+     * @return The bytes for orderBy.
+     */
+    com.google.protobuf.ByteString getOrderByBytes();
+
+    /** <code>repeated .Param param = 10;</code> */
+    java.util.List<com.cpdss.common.generated.CargoInfo.Param> getParamList();
+    /** <code>repeated .Param param = 10;</code> */
+    com.cpdss.common.generated.CargoInfo.Param getParam(int index);
+    /** <code>repeated .Param param = 10;</code> */
+    int getParamCount();
+    /** <code>repeated .Param param = 10;</code> */
+    java.util.List<? extends com.cpdss.common.generated.CargoInfo.ParamOrBuilder>
+        getParamOrBuilderList();
+    /** <code>repeated .Param param = 10;</code> */
+    com.cpdss.common.generated.CargoInfo.ParamOrBuilder getParamOrBuilder(int index);
   }
   /** Protobuf type {@code PortRequest} */
   public static final class PortRequest extends com.google.protobuf.GeneratedMessageV3
@@ -4238,7 +4290,11 @@ public final class PortInfo {
       super(builder);
     }
 
-    private PortRequest() {}
+    private PortRequest() {
+      sortBy_ = "";
+      orderBy_ = "";
+      param_ = java.util.Collections.emptyList();
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -4259,6 +4315,7 @@ public final class PortInfo {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -4289,6 +4346,41 @@ public final class PortInfo {
                 loadableStudyId_ = input.readInt64();
                 break;
               }
+            case 48:
+              {
+                page_ = input.readInt32();
+                break;
+              }
+            case 56:
+              {
+                pageSize_ = input.readInt32();
+                break;
+              }
+            case 66:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                sortBy_ = s;
+                break;
+              }
+            case 74:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                orderBy_ = s;
+                break;
+              }
+            case 82:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  param_ = new java.util.ArrayList<com.cpdss.common.generated.CargoInfo.Param>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                param_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.CargoInfo.Param.parser(), extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -4303,6 +4395,9 @@ public final class PortInfo {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          param_ = java.util.Collections.unmodifiableList(param_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -4365,6 +4460,122 @@ public final class PortInfo {
       return loadableStudyId_;
     }
 
+    public static final int PAGE_FIELD_NUMBER = 6;
+    private int page_;
+    /**
+     * <code>int32 page = 6;</code>
+     *
+     * @return The page.
+     */
+    public int getPage() {
+      return page_;
+    }
+
+    public static final int PAGESIZE_FIELD_NUMBER = 7;
+    private int pageSize_;
+    /**
+     * <code>int32 pageSize = 7;</code>
+     *
+     * @return The pageSize.
+     */
+    public int getPageSize() {
+      return pageSize_;
+    }
+
+    public static final int SORTBY_FIELD_NUMBER = 8;
+    private volatile java.lang.Object sortBy_;
+    /**
+     * <code>string sortBy = 8;</code>
+     *
+     * @return The sortBy.
+     */
+    public java.lang.String getSortBy() {
+      java.lang.Object ref = sortBy_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sortBy_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string sortBy = 8;</code>
+     *
+     * @return The bytes for sortBy.
+     */
+    public com.google.protobuf.ByteString getSortByBytes() {
+      java.lang.Object ref = sortBy_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        sortBy_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ORDERBY_FIELD_NUMBER = 9;
+    private volatile java.lang.Object orderBy_;
+    /**
+     * <code>string orderBy = 9;</code>
+     *
+     * @return The orderBy.
+     */
+    public java.lang.String getOrderBy() {
+      java.lang.Object ref = orderBy_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        orderBy_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string orderBy = 9;</code>
+     *
+     * @return The bytes for orderBy.
+     */
+    public com.google.protobuf.ByteString getOrderByBytes() {
+      java.lang.Object ref = orderBy_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        orderBy_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PARAM_FIELD_NUMBER = 10;
+    private java.util.List<com.cpdss.common.generated.CargoInfo.Param> param_;
+    /** <code>repeated .Param param = 10;</code> */
+    public java.util.List<com.cpdss.common.generated.CargoInfo.Param> getParamList() {
+      return param_;
+    }
+    /** <code>repeated .Param param = 10;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.CargoInfo.ParamOrBuilder>
+        getParamOrBuilderList() {
+      return param_;
+    }
+    /** <code>repeated .Param param = 10;</code> */
+    public int getParamCount() {
+      return param_.size();
+    }
+    /** <code>repeated .Param param = 10;</code> */
+    public com.cpdss.common.generated.CargoInfo.Param getParam(int index) {
+      return param_.get(index);
+    }
+    /** <code>repeated .Param param = 10;</code> */
+    public com.cpdss.common.generated.CargoInfo.ParamOrBuilder getParamOrBuilder(int index) {
+      return param_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -4391,6 +4602,21 @@ public final class PortInfo {
       if (loadableStudyId_ != 0L) {
         output.writeInt64(4, loadableStudyId_);
       }
+      if (page_ != 0) {
+        output.writeInt32(6, page_);
+      }
+      if (pageSize_ != 0) {
+        output.writeInt32(7, pageSize_);
+      }
+      if (!getSortByBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, sortBy_);
+      }
+      if (!getOrderByBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 9, orderBy_);
+      }
+      for (int i = 0; i < param_.size(); i++) {
+        output.writeMessage(10, param_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4412,6 +4638,21 @@ public final class PortInfo {
       if (loadableStudyId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, loadableStudyId_);
       }
+      if (page_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(6, page_);
+      }
+      if (pageSize_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(7, pageSize_);
+      }
+      if (!getSortByBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, sortBy_);
+      }
+      if (!getOrderByBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, orderBy_);
+      }
+      for (int i = 0; i < param_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, param_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4432,6 +4673,11 @@ public final class PortInfo {
       if (getVesselId() != other.getVesselId()) return false;
       if (getVoyageId() != other.getVoyageId()) return false;
       if (getLoadableStudyId() != other.getLoadableStudyId()) return false;
+      if (getPage() != other.getPage()) return false;
+      if (getPageSize() != other.getPageSize()) return false;
+      if (!getSortBy().equals(other.getSortBy())) return false;
+      if (!getOrderBy().equals(other.getOrderBy())) return false;
+      if (!getParamList().equals(other.getParamList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4451,6 +4697,18 @@ public final class PortInfo {
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVoyageId());
       hash = (37 * hash) + LOADABLESTUDYID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getLoadableStudyId());
+      hash = (37 * hash) + PAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getPage();
+      hash = (37 * hash) + PAGESIZE_FIELD_NUMBER;
+      hash = (53 * hash) + getPageSize();
+      hash = (37 * hash) + SORTBY_FIELD_NUMBER;
+      hash = (53 * hash) + getSortBy().hashCode();
+      hash = (37 * hash) + ORDERBY_FIELD_NUMBER;
+      hash = (53 * hash) + getOrderBy().hashCode();
+      if (getParamCount() > 0) {
+        hash = (37 * hash) + PARAM_FIELD_NUMBER;
+        hash = (53 * hash) + getParamList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4582,7 +4840,9 @@ public final class PortInfo {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getParamFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -4596,6 +4856,20 @@ public final class PortInfo {
 
         loadableStudyId_ = 0L;
 
+        page_ = 0;
+
+        pageSize_ = 0;
+
+        sortBy_ = "";
+
+        orderBy_ = "";
+
+        if (paramBuilder_ == null) {
+          param_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          paramBuilder_.clear();
+        }
         return this;
       }
 
@@ -4622,10 +4896,24 @@ public final class PortInfo {
       public com.cpdss.common.generated.PortInfo.PortRequest buildPartial() {
         com.cpdss.common.generated.PortInfo.PortRequest result =
             new com.cpdss.common.generated.PortInfo.PortRequest(this);
+        int from_bitField0_ = bitField0_;
         result.companyId_ = companyId_;
         result.vesselId_ = vesselId_;
         result.voyageId_ = voyageId_;
         result.loadableStudyId_ = loadableStudyId_;
+        result.page_ = page_;
+        result.pageSize_ = pageSize_;
+        result.sortBy_ = sortBy_;
+        result.orderBy_ = orderBy_;
+        if (paramBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            param_ = java.util.Collections.unmodifiableList(param_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.param_ = param_;
+        } else {
+          result.param_ = paramBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -4690,6 +4978,47 @@ public final class PortInfo {
         if (other.getLoadableStudyId() != 0L) {
           setLoadableStudyId(other.getLoadableStudyId());
         }
+        if (other.getPage() != 0) {
+          setPage(other.getPage());
+        }
+        if (other.getPageSize() != 0) {
+          setPageSize(other.getPageSize());
+        }
+        if (!other.getSortBy().isEmpty()) {
+          sortBy_ = other.sortBy_;
+          onChanged();
+        }
+        if (!other.getOrderBy().isEmpty()) {
+          orderBy_ = other.orderBy_;
+          onChanged();
+        }
+        if (paramBuilder_ == null) {
+          if (!other.param_.isEmpty()) {
+            if (param_.isEmpty()) {
+              param_ = other.param_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureParamIsMutable();
+              param_.addAll(other.param_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.param_.isEmpty()) {
+            if (paramBuilder_.isEmpty()) {
+              paramBuilder_.dispose();
+              paramBuilder_ = null;
+              param_ = other.param_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              paramBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getParamFieldBuilder()
+                      : null;
+            } else {
+              paramBuilder_.addAllMessages(other.param_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -4719,6 +5048,8 @@ public final class PortInfo {
         }
         return this;
       }
+
+      private int bitField0_;
 
       private long companyId_;
       /**
@@ -4850,6 +5181,429 @@ public final class PortInfo {
         loadableStudyId_ = 0L;
         onChanged();
         return this;
+      }
+
+      private int page_;
+      /**
+       * <code>int32 page = 6;</code>
+       *
+       * @return The page.
+       */
+      public int getPage() {
+        return page_;
+      }
+      /**
+       * <code>int32 page = 6;</code>
+       *
+       * @param value The page to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPage(int value) {
+
+        page_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 page = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPage() {
+
+        page_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int pageSize_;
+      /**
+       * <code>int32 pageSize = 7;</code>
+       *
+       * @return The pageSize.
+       */
+      public int getPageSize() {
+        return pageSize_;
+      }
+      /**
+       * <code>int32 pageSize = 7;</code>
+       *
+       * @param value The pageSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPageSize(int value) {
+
+        pageSize_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 pageSize = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPageSize() {
+
+        pageSize_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sortBy_ = "";
+      /**
+       * <code>string sortBy = 8;</code>
+       *
+       * @return The sortBy.
+       */
+      public java.lang.String getSortBy() {
+        java.lang.Object ref = sortBy_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sortBy_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string sortBy = 8;</code>
+       *
+       * @return The bytes for sortBy.
+       */
+      public com.google.protobuf.ByteString getSortByBytes() {
+        java.lang.Object ref = sortBy_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          sortBy_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string sortBy = 8;</code>
+       *
+       * @param value The sortBy to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSortBy(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        sortBy_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sortBy = 8;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearSortBy() {
+
+        sortBy_ = getDefaultInstance().getSortBy();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string sortBy = 8;</code>
+       *
+       * @param value The bytes for sortBy to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSortByBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        sortBy_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object orderBy_ = "";
+      /**
+       * <code>string orderBy = 9;</code>
+       *
+       * @return The orderBy.
+       */
+      public java.lang.String getOrderBy() {
+        java.lang.Object ref = orderBy_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          orderBy_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string orderBy = 9;</code>
+       *
+       * @return The bytes for orderBy.
+       */
+      public com.google.protobuf.ByteString getOrderByBytes() {
+        java.lang.Object ref = orderBy_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          orderBy_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string orderBy = 9;</code>
+       *
+       * @param value The orderBy to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOrderBy(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        orderBy_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string orderBy = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearOrderBy() {
+
+        orderBy_ = getDefaultInstance().getOrderBy();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string orderBy = 9;</code>
+       *
+       * @param value The bytes for orderBy to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOrderByBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        orderBy_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<com.cpdss.common.generated.CargoInfo.Param> param_ =
+          java.util.Collections.emptyList();
+
+      private void ensureParamIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          param_ = new java.util.ArrayList<com.cpdss.common.generated.CargoInfo.Param>(param_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.CargoInfo.Param,
+              com.cpdss.common.generated.CargoInfo.Param.Builder,
+              com.cpdss.common.generated.CargoInfo.ParamOrBuilder>
+          paramBuilder_;
+
+      /** <code>repeated .Param param = 10;</code> */
+      public java.util.List<com.cpdss.common.generated.CargoInfo.Param> getParamList() {
+        if (paramBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(param_);
+        } else {
+          return paramBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public int getParamCount() {
+        if (paramBuilder_ == null) {
+          return param_.size();
+        } else {
+          return paramBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public com.cpdss.common.generated.CargoInfo.Param getParam(int index) {
+        if (paramBuilder_ == null) {
+          return param_.get(index);
+        } else {
+          return paramBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder setParam(int index, com.cpdss.common.generated.CargoInfo.Param value) {
+        if (paramBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureParamIsMutable();
+          param_.set(index, value);
+          onChanged();
+        } else {
+          paramBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder setParam(
+          int index, com.cpdss.common.generated.CargoInfo.Param.Builder builderForValue) {
+        if (paramBuilder_ == null) {
+          ensureParamIsMutable();
+          param_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          paramBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder addParam(com.cpdss.common.generated.CargoInfo.Param value) {
+        if (paramBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureParamIsMutable();
+          param_.add(value);
+          onChanged();
+        } else {
+          paramBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder addParam(int index, com.cpdss.common.generated.CargoInfo.Param value) {
+        if (paramBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureParamIsMutable();
+          param_.add(index, value);
+          onChanged();
+        } else {
+          paramBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder addParam(com.cpdss.common.generated.CargoInfo.Param.Builder builderForValue) {
+        if (paramBuilder_ == null) {
+          ensureParamIsMutable();
+          param_.add(builderForValue.build());
+          onChanged();
+        } else {
+          paramBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder addParam(
+          int index, com.cpdss.common.generated.CargoInfo.Param.Builder builderForValue) {
+        if (paramBuilder_ == null) {
+          ensureParamIsMutable();
+          param_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          paramBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder addAllParam(
+          java.lang.Iterable<? extends com.cpdss.common.generated.CargoInfo.Param> values) {
+        if (paramBuilder_ == null) {
+          ensureParamIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, param_);
+          onChanged();
+        } else {
+          paramBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder clearParam() {
+        if (paramBuilder_ == null) {
+          param_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          paramBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public Builder removeParam(int index) {
+        if (paramBuilder_ == null) {
+          ensureParamIsMutable();
+          param_.remove(index);
+          onChanged();
+        } else {
+          paramBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public com.cpdss.common.generated.CargoInfo.Param.Builder getParamBuilder(int index) {
+        return getParamFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public com.cpdss.common.generated.CargoInfo.ParamOrBuilder getParamOrBuilder(int index) {
+        if (paramBuilder_ == null) {
+          return param_.get(index);
+        } else {
+          return paramBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.CargoInfo.ParamOrBuilder>
+          getParamOrBuilderList() {
+        if (paramBuilder_ != null) {
+          return paramBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(param_);
+        }
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public com.cpdss.common.generated.CargoInfo.Param.Builder addParamBuilder() {
+        return getParamFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.CargoInfo.Param.getDefaultInstance());
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public com.cpdss.common.generated.CargoInfo.Param.Builder addParamBuilder(int index) {
+        return getParamFieldBuilder()
+            .addBuilder(index, com.cpdss.common.generated.CargoInfo.Param.getDefaultInstance());
+      }
+      /** <code>repeated .Param param = 10;</code> */
+      public java.util.List<com.cpdss.common.generated.CargoInfo.Param.Builder>
+          getParamBuilderList() {
+        return getParamFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.CargoInfo.Param,
+              com.cpdss.common.generated.CargoInfo.Param.Builder,
+              com.cpdss.common.generated.CargoInfo.ParamOrBuilder>
+          getParamFieldBuilder() {
+        if (paramBuilder_ == null) {
+          paramBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.CargoInfo.Param,
+                  com.cpdss.common.generated.CargoInfo.Param.Builder,
+                  com.cpdss.common.generated.CargoInfo.ParamOrBuilder>(
+                  param_, ((bitField0_ & 0x00000001) != 0), getParentForChildren(), isClean());
+          param_ = null;
+        }
+        return paramBuilder_;
       }
 
       @java.lang.Override
@@ -10619,6 +11373,13 @@ public final class PortInfo {
         getPortsOrBuilderList();
     /** <code>repeated .PortDetail ports = 2;</code> */
     com.cpdss.common.generated.PortInfo.PortDetailOrBuilder getPortsOrBuilder(int index);
+
+    /**
+     * <code>int64 totalElements = 3;</code>
+     *
+     * @return The totalElements.
+     */
+    long getTotalElements();
   }
   /** Protobuf type {@code PortReply} */
   public static final class PortReply extends com.google.protobuf.GeneratedMessageV3
@@ -10693,6 +11454,11 @@ public final class PortInfo {
                     input.readMessage(
                         com.cpdss.common.generated.PortInfo.PortDetail.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 24:
+              {
+                totalElements_ = input.readInt64();
                 break;
               }
             default:
@@ -10779,6 +11545,17 @@ public final class PortInfo {
       return ports_.get(index);
     }
 
+    public static final int TOTALELEMENTS_FIELD_NUMBER = 3;
+    private long totalElements_;
+    /**
+     * <code>int64 totalElements = 3;</code>
+     *
+     * @return The totalElements.
+     */
+    public long getTotalElements() {
+      return totalElements_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -10799,6 +11576,9 @@ public final class PortInfo {
       for (int i = 0; i < ports_.size(); i++) {
         output.writeMessage(2, ports_.get(i));
       }
+      if (totalElements_ != 0L) {
+        output.writeInt64(3, totalElements_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -10813,6 +11593,9 @@ public final class PortInfo {
       }
       for (int i = 0; i < ports_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, ports_.get(i));
+      }
+      if (totalElements_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, totalElements_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -10835,6 +11618,7 @@ public final class PortInfo {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
       if (!getPortsList().equals(other.getPortsList())) return false;
+      if (getTotalElements() != other.getTotalElements()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -10854,6 +11638,8 @@ public final class PortInfo {
         hash = (37 * hash) + PORTS_FIELD_NUMBER;
         hash = (53 * hash) + getPortsList().hashCode();
       }
+      hash = (37 * hash) + TOTALELEMENTS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getTotalElements());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11005,6 +11791,8 @@ public final class PortInfo {
         } else {
           portsBuilder_.clear();
         }
+        totalElements_ = 0L;
+
         return this;
       }
 
@@ -11046,6 +11834,7 @@ public final class PortInfo {
         } else {
           result.ports_ = portsBuilder_.build();
         }
+        result.totalElements_ = totalElements_;
         onBuilt();
         return result;
       }
@@ -11127,6 +11916,9 @@ public final class PortInfo {
               portsBuilder_.addAllMessages(other.ports_);
             }
           }
+        }
+        if (other.getTotalElements() != 0L) {
+          setTotalElements(other.getTotalElements());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -11482,6 +12274,39 @@ public final class PortInfo {
           ports_ = null;
         }
         return portsBuilder_;
+      }
+
+      private long totalElements_;
+      /**
+       * <code>int64 totalElements = 3;</code>
+       *
+       * @return The totalElements.
+       */
+      public long getTotalElements() {
+        return totalElements_;
+      }
+      /**
+       * <code>int64 totalElements = 3;</code>
+       *
+       * @param value The totalElements to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTotalElements(long value) {
+
+        totalElements_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 totalElements = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTotalElements() {
+
+        totalElements_ = 0L;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -24235,6 +25060,780 @@ public final class PortInfo {
     }
   }
 
+  public interface CargoPortMappingRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:CargoPortMappingRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    java.util.List<com.cpdss.common.generated.PortInfo.CargoPortMapping> getCargoPortMappingList();
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    com.cpdss.common.generated.PortInfo.CargoPortMapping getCargoPortMapping(int index);
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    int getCargoPortMappingCount();
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    java.util.List<? extends com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder>
+        getCargoPortMappingOrBuilderList();
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder getCargoPortMappingOrBuilder(
+        int index);
+  }
+  /** Protobuf type {@code CargoPortMappingRequest} */
+  public static final class CargoPortMappingRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:CargoPortMappingRequest)
+      CargoPortMappingRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use CargoPortMappingRequest.newBuilder() to construct.
+    private CargoPortMappingRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private CargoPortMappingRequest() {
+      cargoPortMapping_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new CargoPortMappingRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private CargoPortMappingRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  cargoPortMapping_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.PortInfo.CargoPortMapping>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                cargoPortMapping_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.PortInfo.CargoPortMapping.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          cargoPortMapping_ = java.util.Collections.unmodifiableList(cargoPortMapping_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_CargoPortMappingRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo
+          .internal_static_CargoPortMappingRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.class,
+              com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.Builder.class);
+    }
+
+    public static final int CARGOPORTMAPPING_FIELD_NUMBER = 1;
+    private java.util.List<com.cpdss.common.generated.PortInfo.CargoPortMapping> cargoPortMapping_;
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    public java.util.List<com.cpdss.common.generated.PortInfo.CargoPortMapping>
+        getCargoPortMappingList() {
+      return cargoPortMapping_;
+    }
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder>
+        getCargoPortMappingOrBuilderList() {
+      return cargoPortMapping_;
+    }
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    public int getCargoPortMappingCount() {
+      return cargoPortMapping_.size();
+    }
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    public com.cpdss.common.generated.PortInfo.CargoPortMapping getCargoPortMapping(int index) {
+      return cargoPortMapping_.get(index);
+    }
+    /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+    public com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder
+        getCargoPortMappingOrBuilder(int index) {
+      return cargoPortMapping_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      for (int i = 0; i < cargoPortMapping_.size(); i++) {
+        output.writeMessage(1, cargoPortMapping_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < cargoPortMapping_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(1, cargoPortMapping_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.CargoPortMappingRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.CargoPortMappingRequest other =
+          (com.cpdss.common.generated.PortInfo.CargoPortMappingRequest) obj;
+
+      if (!getCargoPortMappingList().equals(other.getCargoPortMappingList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getCargoPortMappingCount() > 0) {
+        hash = (37 * hash) + CARGOPORTMAPPING_FIELD_NUMBER;
+        hash = (53 * hash) + getCargoPortMappingList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code CargoPortMappingRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:CargoPortMappingRequest)
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo
+            .internal_static_CargoPortMappingRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo
+            .internal_static_CargoPortMappingRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.class,
+                com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getCargoPortMappingFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (cargoPortMappingBuilder_ == null) {
+          cargoPortMapping_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          cargoPortMappingBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo
+            .internal_static_CargoPortMappingRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.CargoPortMappingRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.CargoPortMappingRequest build() {
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.CargoPortMappingRequest buildPartial() {
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest result =
+            new com.cpdss.common.generated.PortInfo.CargoPortMappingRequest(this);
+        int from_bitField0_ = bitField0_;
+        if (cargoPortMappingBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            cargoPortMapping_ = java.util.Collections.unmodifiableList(cargoPortMapping_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.cargoPortMapping_ = cargoPortMapping_;
+        } else {
+          result.cargoPortMapping_ = cargoPortMappingBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.CargoPortMappingRequest) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.CargoPortMappingRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.CargoPortMappingRequest other) {
+        if (other
+            == com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.getDefaultInstance())
+          return this;
+        if (cargoPortMappingBuilder_ == null) {
+          if (!other.cargoPortMapping_.isEmpty()) {
+            if (cargoPortMapping_.isEmpty()) {
+              cargoPortMapping_ = other.cargoPortMapping_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureCargoPortMappingIsMutable();
+              cargoPortMapping_.addAll(other.cargoPortMapping_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.cargoPortMapping_.isEmpty()) {
+            if (cargoPortMappingBuilder_.isEmpty()) {
+              cargoPortMappingBuilder_.dispose();
+              cargoPortMappingBuilder_ = null;
+              cargoPortMapping_ = other.cargoPortMapping_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              cargoPortMappingBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getCargoPortMappingFieldBuilder()
+                      : null;
+            } else {
+              cargoPortMappingBuilder_.addAllMessages(other.cargoPortMapping_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.CargoPortMappingRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.util.List<com.cpdss.common.generated.PortInfo.CargoPortMapping>
+          cargoPortMapping_ = java.util.Collections.emptyList();
+
+      private void ensureCargoPortMappingIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          cargoPortMapping_ =
+              new java.util.ArrayList<com.cpdss.common.generated.PortInfo.CargoPortMapping>(
+                  cargoPortMapping_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.CargoPortMapping,
+              com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder,
+              com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder>
+          cargoPortMappingBuilder_;
+
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.CargoPortMapping>
+          getCargoPortMappingList() {
+        if (cargoPortMappingBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(cargoPortMapping_);
+        } else {
+          return cargoPortMappingBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public int getCargoPortMappingCount() {
+        if (cargoPortMappingBuilder_ == null) {
+          return cargoPortMapping_.size();
+        } else {
+          return cargoPortMappingBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public com.cpdss.common.generated.PortInfo.CargoPortMapping getCargoPortMapping(int index) {
+        if (cargoPortMappingBuilder_ == null) {
+          return cargoPortMapping_.get(index);
+        } else {
+          return cargoPortMappingBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder setCargoPortMapping(
+          int index, com.cpdss.common.generated.PortInfo.CargoPortMapping value) {
+        if (cargoPortMappingBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoPortMappingIsMutable();
+          cargoPortMapping_.set(index, value);
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder setCargoPortMapping(
+          int index, com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder builderForValue) {
+        if (cargoPortMappingBuilder_ == null) {
+          ensureCargoPortMappingIsMutable();
+          cargoPortMapping_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder addCargoPortMapping(
+          com.cpdss.common.generated.PortInfo.CargoPortMapping value) {
+        if (cargoPortMappingBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoPortMappingIsMutable();
+          cargoPortMapping_.add(value);
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder addCargoPortMapping(
+          int index, com.cpdss.common.generated.PortInfo.CargoPortMapping value) {
+        if (cargoPortMappingBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCargoPortMappingIsMutable();
+          cargoPortMapping_.add(index, value);
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder addCargoPortMapping(
+          com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder builderForValue) {
+        if (cargoPortMappingBuilder_ == null) {
+          ensureCargoPortMappingIsMutable();
+          cargoPortMapping_.add(builderForValue.build());
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder addCargoPortMapping(
+          int index, com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder builderForValue) {
+        if (cargoPortMappingBuilder_ == null) {
+          ensureCargoPortMappingIsMutable();
+          cargoPortMapping_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder addAllCargoPortMapping(
+          java.lang.Iterable<? extends com.cpdss.common.generated.PortInfo.CargoPortMapping>
+              values) {
+        if (cargoPortMappingBuilder_ == null) {
+          ensureCargoPortMappingIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoPortMapping_);
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder clearCargoPortMapping() {
+        if (cargoPortMappingBuilder_ == null) {
+          cargoPortMapping_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public Builder removeCargoPortMapping(int index) {
+        if (cargoPortMappingBuilder_ == null) {
+          ensureCargoPortMappingIsMutable();
+          cargoPortMapping_.remove(index);
+          onChanged();
+        } else {
+          cargoPortMappingBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder
+          getCargoPortMappingBuilder(int index) {
+        return getCargoPortMappingFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder
+          getCargoPortMappingOrBuilder(int index) {
+        if (cargoPortMappingBuilder_ == null) {
+          return cargoPortMapping_.get(index);
+        } else {
+          return cargoPortMappingBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder>
+          getCargoPortMappingOrBuilderList() {
+        if (cargoPortMappingBuilder_ != null) {
+          return cargoPortMappingBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(cargoPortMapping_);
+        }
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder
+          addCargoPortMappingBuilder() {
+        return getCargoPortMappingFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.PortInfo.CargoPortMapping.getDefaultInstance());
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder
+          addCargoPortMappingBuilder(int index) {
+        return getCargoPortMappingFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.PortInfo.CargoPortMapping.getDefaultInstance());
+      }
+      /** <code>repeated .CargoPortMapping cargoPortMapping = 1;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder>
+          getCargoPortMappingBuilderList() {
+        return getCargoPortMappingFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.CargoPortMapping,
+              com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder,
+              com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder>
+          getCargoPortMappingFieldBuilder() {
+        if (cargoPortMappingBuilder_ == null) {
+          cargoPortMappingBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.PortInfo.CargoPortMapping,
+                  com.cpdss.common.generated.PortInfo.CargoPortMapping.Builder,
+                  com.cpdss.common.generated.PortInfo.CargoPortMappingOrBuilder>(
+                  cargoPortMapping_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          cargoPortMapping_ = null;
+        }
+        return cargoPortMappingBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:CargoPortMappingRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:CargoPortMappingRequest)
+    private static final com.cpdss.common.generated.PortInfo.CargoPortMappingRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.CargoPortMappingRequest();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CargoPortMappingRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CargoPortMappingRequest> PARSER =
+        new com.google.protobuf.AbstractParser<CargoPortMappingRequest>() {
+          @java.lang.Override
+          public CargoPortMappingRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CargoPortMappingRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<CargoPortMappingRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CargoPortMappingRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.CargoPortMappingRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_BerthIdsRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -24323,6 +25922,10 @@ public final class PortInfo {
       internal_static_CargoPortMappingDetail_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_CargoPortMappingDetail_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_CargoPortMappingRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CargoPortMappingRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -24332,103 +25935,112 @@ public final class PortInfo {
 
   static {
     java.lang.String[] descriptorData = {
-      "\n\017port_info.proto\032\014common.proto\032\033google/"
-          + "protobuf/empty.proto\"#\n\017BerthIdsRequest\022"
-          + "\020\n\010berthIds\030\001 \003(\003\"\276\001\n\024LoadingAlgoBerthDa"
-          + "ta\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
-          + "tus\022\016\n\006portId\030\002 \001(\003\022\017\n\007berthId\030\003 \001(\003\022\034\n\024"
-          + "portControllingDepth\030\004 \001(\t\022\017\n\007portUKC\030\005 "
-          + "\001(\t\022\033\n\023portSeawaterDensity\030\006 \001(\t\022\020\n\010bert"
-          + "hUKC\030\007 \001(\t\"\\\n\nCargoInfos\022%\n\ncargoPorts\030\001"
-          + " \003(\0132\021.CargoPortMapping\022\'\n\016responseStatu"
-          + "s\030\002 \001(\0132\017.ResponseStatus\"3\n\020CargoPortMap"
-          + "ping\022\017\n\007cargoId\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\")\n"
-          + "\033GetPortInfoByPortIdsRequest\022\n\n\002id\030\001 \003(\003"
-          + "\"]\n\013PortRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010ve"
-          + "sselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017loadab"
-          + "leStudyId\030\004 \001(\003\"6\n\025PortRequestWithPaging"
-          + "\022\016\n\006offset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\267\005\n\nPort"
-          + "Detail\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\014\n\004code"
-          + "\030\003 \001(\t\022\024\n\014waterDensity\030\004 \001(\t\022\020\n\010maxDraft"
-          + "\030\005 \001(\t\022\023\n\013maxAirDraft\030\006 \001(\t\022\031\n\021averageTi"
-          + "deHeight\030\007 \001(\t\022\022\n\ntideHeight\030\010 \001(\t\022\022\n\nhw"
-          + "TideFrom\030\t \001(\t\022\020\n\010hwTideTo\030\n \001(\t\022\022\n\nlwTi"
-          + "deFrom\030\013 \001(\t\022\020\n\010lwTideTo\030\014 \001(\t\022\026\n\016hwTide"
-          + "TimeFrom\030\r \001(\t\022\024\n\014hwTideTimeTo\030\016 \001(\t\022\026\n\016"
-          + "lwTideTimeFrom\030\017 \001(\t\022\024\n\014lwTideTimeTo\030\020 \001"
-          + "(\t\022\023\n\013sunriseTime\030\021 \001(\t\022\022\n\nsunsetTime\030\022 "
-          + "\001(\t\022\020\n\010timezone\030\023 \001(\t\022\031\n\021timezoneOffsetV"
-          + "al\030\024 \001(\t\022\022\n\ntimezoneId\030\025 \001(\003\022\034\n\024timezone"
-          + "Abbreviation\030\026 \001(\t\022\023\n\013countryName\030\027 \001(\t\022"
-          + "\030\n\020controllingDepth\030\030 \001(\t\022\032\n\022underKeelCl"
-          + "earance\030\031 \001(\t\022\013\n\003lat\030\032 \001(\t\022\013\n\003lon\030\033 \001(\t\022"
-          + "\"\n\014berthDetails\030\034 \003(\0132\014.BerthDetail\022\026\n\016t"
-          + "ideHeightFrom\030\035 \001(\t\022\024\n\014tideHeightTo\030\036 \001("
-          + "\t\022\033\n\023maxPermissibleDraft\030\037 \001(\t\022\021\n\tcountr"
-          + "yId\030  \001(\003\"P\n\tPortReply\022\'\n\016responseStatus"
-          + "\030\001 \001(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013"
-          + ".PortDetail\".\n\033GetPortInfoByCargoIdReque"
-          + "st\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPortInfoByCarg"
-          + "oIdReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
-          + "nseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\"\022\n"
-          + "\020PortEmptyRequest\"S\n\010Timezone\022\n\n\002id\030\001 \001("
-          + "\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offsetValue\030\003 \001(\t"
-          + "\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020TimezoneRespon"
-          + "se\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
-          + "tus\022\034\n\ttimezones\030\002 \003(\0132\t.Timezone\"\037\n\rPor"
-          + "tIdRequest\022\016\n\006portId\030\001 \001(\003\"Z\n\021BerthInfoR"
-          + "esponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Respon"
-          + "seStatus\022\034\n\006berths\030\002 \003(\0132\014.BerthDetail\"\241"
-          + "\003\n\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001"
-          + "(\003\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016maxShipChan"
-          + "nel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShipD"
-          + "epth\030\005 \001(\t\022\032\n\022seaDraftLimitation\030\006 \001(\t\022\032"
-          + "\n\022airDraftLimitation\030\007 \001(\t\022\031\n\021maxManifol"
-          + "dHeight\030\010 \001(\t\022 \n\030regulationAndRestrictio"
-          + "n\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010maxDraft\030\013 \001("
-          + "\t\022\030\n\020lineDisplacement\030\r \001(\t\022\026\n\016hoseConne"
-          + "ction\030\016 \001(\t\022\016\n\006maxDwt\030\017 \001(\t\022\013\n\003ukc\030\020 \001(\t"
-          + "\022\027\n\017berthDatumDepth\030\021 \001(\t\022\037\n\027portMaxPerm"
-          + "issibleDraft\030\022 \001(\t\"*\n\007Country\022\n\n\002id\030\001 \001("
-          + "\003\022\023\n\013countryName\030\002 \001(\t\"T\n\014CountryReply\022\033"
-          + "\n\tcountries\030\001 \003(\0132\010.Country\022\'\n\016responseS"
-          + "tatus\030\002 \001(\0132\017.ResponseStatus\"6\n\020CargoPor"
-          + "tRequest\022\021\n\tcompanyId\030\001 \001(\003\022\017\n\007cargoId\030\002"
-          + " \001(\003\"a\n\016CargoPortReply\022\'\n\016responseStatus"
-          + "\030\001 \001(\0132\017.ResponseStatus\022&\n\005ports\030\002 \003(\0132\027"
-          + ".CargoPortMappingDetail\"\271\001\n\026CargoPortMap"
-          + "pingDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001("
-          + "\003\022\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010po"
-          + "rtName\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t\022\023\n\013maxAir"
-          + "Draft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\024\n\014waterDe"
-          + "nsity\030\t \001(\t2\234\006\n\017PortInfoService\022)\n\013GetPo"
-          + "rtInfo\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024Ge"
-          + "tPortInfoByCargoId\022\034.GetPortInfoByCargoI"
-          + "dRequest\032\032.GetPortInfoByCargoIdReply\"\000\022B"
-          + "\n\024GetPortInfoByPortIds\022\034.GetPortInfoByPo"
-          + "rtIdsRequest\032\n.PortReply\"\000\022G\n\031GetPortInf"
-          + "oDetailsForAlgo\022\034.GetPortInfoByPortIdsRe"
-          + "quest\032\n.PortReply\"\000\0225\n\013GetTimezone\022\021.Por"
-          + "tEmptyRequest\032\021.TimezoneResponse\"\000\022;\n\023Ge"
-          + "tPortInfoByPaging\022\026.PortRequestWithPagin"
-          + "g\032\n.PortReply\"\000\022?\n\027GetBerthDetailsByPort"
-          + "Id\022\016.PortIdRequest\032\022.BerthInfoResponse\"\000"
-          + "\022D\n\025GetCargoInfoByPortIds\022\034.GetPortInfoB"
-          + "yPortIdsRequest\032\013.CargoInfos\"\000\022B\n\027GetLoa"
-          + "dingPlanBerthData\022\020.BerthIdsRequest\032\025.Lo"
-          + "adingAlgoBerthData\022:\n\017GetAllCountries\022\026."
-          + "google.protobuf.Empty\032\r.CountryReply\"\000\022>"
-          + "\n\026GetAllCargoPortMapping\022\021.CargoPortRequ"
-          + "est\032\017.CargoPortReply\"\000\022B\n\032GetAllCargoPor"
-          + "tMappingById\022\021.CargoPortRequest\032\017.CargoP"
-          + "ortReply\"\000B\036\n\032com.cpdss.common.generated"
-          + "P\000b\006proto3"
+      "\n\017port_info.proto\032\014common.proto\032\020cargo_i"
+          + "nfo.proto\032\033google/protobuf/empty.proto\"#"
+          + "\n\017BerthIdsRequest\022\020\n\010berthIds\030\001 \003(\003\"\276\001\n\024"
+          + "LoadingAlgoBerthData\022\'\n\016responseStatus\030\001"
+          + " \001(\0132\017.ResponseStatus\022\016\n\006portId\030\002 \001(\003\022\017\n"
+          + "\007berthId\030\003 \001(\003\022\034\n\024portControllingDepth\030\004"
+          + " \001(\t\022\017\n\007portUKC\030\005 \001(\t\022\033\n\023portSeawaterDen"
+          + "sity\030\006 \001(\t\022\020\n\010berthUKC\030\007 \001(\t\"\\\n\nCargoInf"
+          + "os\022%\n\ncargoPorts\030\001 \003(\0132\021.CargoPortMappin"
+          + "g\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStat"
+          + "us\"3\n\020CargoPortMapping\022\017\n\007cargoId\030\001 \001(\003\022"
+          + "\016\n\006portId\030\002 \001(\003\")\n\033GetPortInfoByPortIdsR"
+          + "equest\022\n\n\002id\030\001 \003(\003\"\265\001\n\013PortRequest\022\021\n\tco"
+          + "mpanyId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\020\n\010voyag"
+          + "eId\030\003 \001(\003\022\027\n\017loadableStudyId\030\004 \001(\003\022\014\n\004pa"
+          + "ge\030\006 \001(\005\022\020\n\010pageSize\030\007 \001(\005\022\016\n\006sortBy\030\010 \001"
+          + "(\t\022\017\n\007orderBy\030\t \001(\t\022\025\n\005param\030\n \003(\0132\006.Par"
+          + "am\"6\n\025PortRequestWithPaging\022\016\n\006offset\030\001 "
+          + "\001(\003\022\r\n\005limit\030\002 \001(\003\"\267\005\n\nPortDetail\022\n\n\002id\030"
+          + "\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022\024\n\014wat"
+          + "erDensity\030\004 \001(\t\022\020\n\010maxDraft\030\005 \001(\t\022\023\n\013max"
+          + "AirDraft\030\006 \001(\t\022\031\n\021averageTideHeight\030\007 \001("
+          + "\t\022\022\n\ntideHeight\030\010 \001(\t\022\022\n\nhwTideFrom\030\t \001("
+          + "\t\022\020\n\010hwTideTo\030\n \001(\t\022\022\n\nlwTideFrom\030\013 \001(\t\022"
+          + "\020\n\010lwTideTo\030\014 \001(\t\022\026\n\016hwTideTimeFrom\030\r \001("
+          + "\t\022\024\n\014hwTideTimeTo\030\016 \001(\t\022\026\n\016lwTideTimeFro"
+          + "m\030\017 \001(\t\022\024\n\014lwTideTimeTo\030\020 \001(\t\022\023\n\013sunrise"
+          + "Time\030\021 \001(\t\022\022\n\nsunsetTime\030\022 \001(\t\022\020\n\010timezo"
+          + "ne\030\023 \001(\t\022\031\n\021timezoneOffsetVal\030\024 \001(\t\022\022\n\nt"
+          + "imezoneId\030\025 \001(\003\022\034\n\024timezoneAbbreviation\030"
+          + "\026 \001(\t\022\023\n\013countryName\030\027 \001(\t\022\030\n\020controllin"
+          + "gDepth\030\030 \001(\t\022\032\n\022underKeelClearance\030\031 \001(\t"
+          + "\022\013\n\003lat\030\032 \001(\t\022\013\n\003lon\030\033 \001(\t\022\"\n\014berthDetai"
+          + "ls\030\034 \003(\0132\014.BerthDetail\022\026\n\016tideHeightFrom"
+          + "\030\035 \001(\t\022\024\n\014tideHeightTo\030\036 \001(\t\022\033\n\023maxPermi"
+          + "ssibleDraft\030\037 \001(\t\022\021\n\tcountryId\030  \001(\003\"g\n\t"
+          + "PortReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022\032\n\005ports\030\002 \003(\0132\013.PortDetail\022\025"
+          + "\n\rtotalElements\030\003 \001(\003\".\n\033GetPortInfoByCa"
+          + "rgoIdRequest\022\017\n\007cargoId\030\001 \001(\003\"`\n\031GetPort"
+          + "InfoByCargoIdReply\022\'\n\016responseStatus\030\001 \001"
+          + "(\0132\017.ResponseStatus\022\032\n\005ports\030\002 \003(\0132\013.Por"
+          + "tDetail\"\022\n\020PortEmptyRequest\"S\n\010Timezone\022"
+          + "\n\n\002id\030\001 \001(\003\022\020\n\010timezone\030\002 \001(\t\022\023\n\013offsetV"
+          + "alue\030\003 \001(\t\022\024\n\014abbreviation\030\004 \001(\t\"Y\n\020Time"
+          + "zoneResponse\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
+          + "esponseStatus\022\034\n\ttimezones\030\002 \003(\0132\t.Timez"
+          + "one\"\037\n\rPortIdRequest\022\016\n\006portId\030\001 \001(\003\"Z\n\021"
+          + "BerthInfoResponse\022\'\n\016responseStatus\030\001 \001("
+          + "\0132\017.ResponseStatus\022\034\n\006berths\030\002 \003(\0132\014.Ber"
+          + "thDetail\"\241\003\n\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006"
+          + "portId\030\002 \001(\003\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016m"
+          + "axShipChannel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024"
+          + "\n\014maxShipDepth\030\005 \001(\t\022\032\n\022seaDraftLimitati"
+          + "on\030\006 \001(\t\022\032\n\022airDraftLimitation\030\007 \001(\t\022\031\n\021"
+          + "maxManifoldHeight\030\010 \001(\t\022 \n\030regulationAnd"
+          + "Restriction\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010max"
+          + "Draft\030\013 \001(\t\022\030\n\020lineDisplacement\030\r \001(\t\022\026\n"
+          + "\016hoseConnection\030\016 \001(\t\022\016\n\006maxDwt\030\017 \001(\t\022\013\n"
+          + "\003ukc\030\020 \001(\t\022\027\n\017berthDatumDepth\030\021 \001(\t\022\037\n\027p"
+          + "ortMaxPermissibleDraft\030\022 \001(\t\"*\n\007Country\022"
+          + "\n\n\002id\030\001 \001(\003\022\023\n\013countryName\030\002 \001(\t\"T\n\014Coun"
+          + "tryReply\022\033\n\tcountries\030\001 \003(\0132\010.Country\022\'\n"
+          + "\016responseStatus\030\002 \001(\0132\017.ResponseStatus\"6"
+          + "\n\020CargoPortRequest\022\021\n\tcompanyId\030\001 \001(\003\022\017\n"
+          + "\007cargoId\030\002 \001(\003\"a\n\016CargoPortReply\022\'\n\016resp"
+          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022&\n\005por"
+          + "ts\030\002 \003(\0132\027.CargoPortMappingDetail\"\271\001\n\026Ca"
+          + "rgoPortMappingDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcomp"
+          + "anyId\030\002 \001(\003\022\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004"
+          + " \001(\003\022\020\n\010portName\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t"
+          + "\022\023\n\013maxAirDraft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022"
+          + "\024\n\014waterDensity\030\t \001(\t\"F\n\027CargoPortMappin"
+          + "gRequest\022+\n\020cargoPortMapping\030\001 \003(\0132\021.Car"
+          + "goPortMapping2\230\007\n\017PortInfoService\022)\n\013Get"
+          + "PortInfo\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024"
+          + "GetPortInfoByCargoId\022\034.GetPortInfoByCarg"
+          + "oIdRequest\032\032.GetPortInfoByCargoIdReply\"\000"
+          + "\022B\n\024GetPortInfoByPortIds\022\034.GetPortInfoBy"
+          + "PortIdsRequest\032\n.PortReply\"\000\022G\n\031GetPortI"
+          + "nfoDetailsForAlgo\022\034.GetPortInfoByPortIds"
+          + "Request\032\n.PortReply\"\000\0225\n\013GetTimezone\022\021.P"
+          + "ortEmptyRequest\032\021.TimezoneResponse\"\000\022;\n\023"
+          + "GetPortInfoByPaging\022\026.PortRequestWithPag"
+          + "ing\032\n.PortReply\"\000\022?\n\027GetBerthDetailsByPo"
+          + "rtId\022\016.PortIdRequest\032\022.BerthInfoResponse"
+          + "\"\000\022D\n\025GetCargoInfoByPortIds\022\034.GetPortInf"
+          + "oByPortIdsRequest\032\013.CargoInfos\"\000\022B\n\027GetL"
+          + "oadingPlanBerthData\022\020.BerthIdsRequest\032\025."
+          + "LoadingAlgoBerthData\022:\n\017GetAllCountries\022"
+          + "\026.google.protobuf.Empty\032\r.CountryReply\"\000"
+          + "\022>\n\026GetAllCargoPortMapping\022\021.CargoPortRe"
+          + "quest\032\017.CargoPortReply\"\000\022B\n\032GetAllCargoP"
+          + "ortMappingById\022\021.CargoPortRequest\032\017.Carg"
+          + "oPortReply\"\000\022G\n\030SaveAllCargoPortMappings"
+          + "\022\030.CargoPortMappingRequest\032\017.CargoPortRe"
+          + "ply\"\000\0221\n\023GetPortInfoDetailed\022\014.PortReque"
+          + "st\032\n.PortReply\"\000B\036\n\032com.cpdss.common.gen"
+          + "eratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
             descriptorData,
             new com.google.protobuf.Descriptors.FileDescriptor[] {
               com.cpdss.common.generated.Common.getDescriptor(),
+              com.cpdss.common.generated.CargoInfo.getDescriptor(),
               com.google.protobuf.EmptyProto.getDescriptor(),
             });
     internal_static_BerthIdsRequest_descriptor = getDescriptor().getMessageTypes().get(0);
@@ -24478,7 +26090,15 @@ public final class PortInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortRequest_descriptor,
             new java.lang.String[] {
-              "CompanyId", "VesselId", "VoyageId", "LoadableStudyId",
+              "CompanyId",
+              "VesselId",
+              "VoyageId",
+              "LoadableStudyId",
+              "Page",
+              "PageSize",
+              "SortBy",
+              "OrderBy",
+              "Param",
             });
     internal_static_PortRequestWithPaging_descriptor = getDescriptor().getMessageTypes().get(6);
     internal_static_PortRequestWithPaging_fieldAccessorTable =
@@ -24530,7 +26150,7 @@ public final class PortInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortReply_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "Ports",
+              "ResponseStatus", "Ports", "TotalElements",
             });
     internal_static_GetPortInfoByCargoIdRequest_descriptor =
         getDescriptor().getMessageTypes().get(9);
@@ -24647,7 +26267,15 @@ public final class PortInfo {
               "MaxDraft",
               "WaterDensity",
             });
+    internal_static_CargoPortMappingRequest_descriptor = getDescriptor().getMessageTypes().get(22);
+    internal_static_CargoPortMappingRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_CargoPortMappingRequest_descriptor,
+            new java.lang.String[] {
+              "CargoPortMapping",
+            });
     com.cpdss.common.generated.Common.getDescriptor();
+    com.cpdss.common.generated.CargoInfo.getDescriptor();
     com.google.protobuf.EmptyProto.getDescriptor();
   }
 

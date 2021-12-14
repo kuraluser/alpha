@@ -10,7 +10,7 @@ import { PermissionDirectiveModule } from './../../../shared/directives/permissi
 import { LengthConverterModule } from './../../../shared/pipes/length-converter/length-converter.module';
 import { VesselInformationRoutingModule } from './vessel-information-routing.module';
 import { VesselInformationComponent } from './vessel-information.component';
-import { VesselManagementComponent } from './Vessel-management/vessel-management/vessel-management.component';
+import { VesselManagementComponent } from './Vessel-management/vessel-management.component';
 import { CargoTankLayoutModule } from '../../core/components/cargo-tank-layout/cargo-tank-layout.module';
 import { BallastLayoutModule } from '../../core/components/ballast-layout/ballast-layout.module';
 import { BunkeringLayoutModule } from '../../core/components/bunkering-layout/bunkering-layout.module';

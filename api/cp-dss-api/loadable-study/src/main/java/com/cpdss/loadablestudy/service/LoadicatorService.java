@@ -1027,8 +1027,7 @@ public class LoadicatorService {
                     LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
                     UUID.randomUUID().toString(),
                     MessageTypes.ALGORESULT.getMessageType(),
-                    loadableStudyOpt.get().getId(),
-                    null);
+                    loadableStudyOpt.get().getId());
             log.info("Json Array in Loadable study service: " + jsonArray.toString());
 
             communicationService.passRequestPayloadToEnvoyWriter(
@@ -1082,8 +1081,7 @@ public class LoadicatorService {
                 LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
                 UUID.randomUUID().toString(),
                 MessageTypes.ALGORESULT.getMessageType(),
-                loadableStudyOpt.get().getId(),
-                null);
+                loadableStudyOpt.get().getId());
         log.info("Json Array in Loadable study service: " + jsonArray.toString());
 
         communicationService.passRequestPayloadToEnvoyWriter(
@@ -1421,6 +1419,15 @@ public class LoadicatorService {
           isValid = false;
           SynopticalTable synopticalTable =
               synopticalTableRepository.getOne(result.getSynopticalId());
+          if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
+              && synopticalTable
+                  .getLoadableStudyPortRotation()
+                  .getOperation()
+                  .getId()
+                  .equals(DISCHARGING_OPERATION_ID)
+              && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
+            isValid = true;
+          }
           judgements.addAll(
               result.getJudgement().stream()
                   .map(
@@ -1471,6 +1478,15 @@ public class LoadicatorService {
             isValid = false;
             SynopticalTable synopticalTable =
                 synopticalTableRepository.getOne(result.getSynopticalId());
+            if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)
+                && synopticalTable
+                    .getLoadableStudyPortRotation()
+                    .getOperation()
+                    .getId()
+                    .equals(DISCHARGING_OPERATION_ID)
+                && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
+              isValid = true;
+            }
             judgements.addAll(
                 result.getJudgement().stream()
                     .map(
@@ -1751,8 +1767,7 @@ public class LoadicatorService {
               LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP,
               UUID.randomUUID().toString(),
               MessageTypes.PATTERNDETAIL.getMessageType(),
-              loadableStudy.getId(),
-              null);
+              loadableStudy.getId());
       log.info("Json Array in Stowage Edit Algocall back service: " + jsonArray.toString());
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(

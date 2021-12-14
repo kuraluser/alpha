@@ -144,7 +144,7 @@ public class SynopticServiceUtilsTest {
             anyBoolean()))
         .thenReturn(ohqList);
     synopticServiceUtils.saveSynopticalOhqData(
-        getLoadableStudyEntity(), getSynopticalTable(), getSynopticalRecord(), true);
+        getLoadableStudyEntity(), getSynopticalTable(), getSynopticalRecord(), true, false);
     verify(this.onHandQuantityRepository).saveAll(anyList());
   }
 

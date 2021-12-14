@@ -27,6 +27,8 @@ subprojects {
     apply plugin: 'com.diffplug.gradle.spotless'
     apply plugin: 'jacoco'
 
+    ext['log4j2.version'] = '2.15.0'
+
     // Applying sonarlint plugin
     sonarlint {
         ignoreFailures = true

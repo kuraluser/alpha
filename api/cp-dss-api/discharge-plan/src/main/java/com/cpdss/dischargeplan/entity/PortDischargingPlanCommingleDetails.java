@@ -1,11 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +20,6 @@ public class PortDischargingPlanCommingleDetails extends PortDischargingPlanComm
   @ManyToOne(cascade = {CascadeType.ALL})
   @JoinColumn(name = "discharging_xid", referencedColumnName = "id")
   private DischargeInformation dischargingInformation;
+
+  @Transient private Long communicationRelatedEntityId;
 }

@@ -16,4 +16,6 @@ public class VesselValveEdu {
   private String stageName;
   private String valveTypeName;
   private String tankShortName;
+  private String manifoldName;
+  private String manifoldSide;
 }

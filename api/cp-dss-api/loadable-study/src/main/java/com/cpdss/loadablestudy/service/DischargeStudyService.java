@@ -227,6 +227,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       DischargeStudyCowDetail dischargeStudyCowDetail = new DischargeStudyCowDetail();
       dischargeStudyCowDetail.setCowType(1L);
       dischargeStudyCowDetail.setPercentage(25L);
+      dischargeStudyCowDetail.setDischargeStudyStudyId(savedDischargeStudy.getId());
+      System.out.println(dischargeStudyCowDetail.getDischargeStudyStudyId());
       cowDetailService.saveAll(Arrays.asList(dischargeStudyCowDetail));
       builder.setId(savedDischargeStudy.getId());
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -403,6 +405,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     portRotation.setFreshCrudeOil(loadableStudyPortRotation.getFreshCrudeOil());
     portRotation.setFreshCrudeOilQuantity(loadableStudyPortRotation.getFreshCrudeOilQuantity());
     portRotation.setFreshCrudeOilTime(loadableStudyPortRotation.getFreshCrudeOilTime());
+    portRotation.setCowRequired(false);
     return portRotation;
   }
 
@@ -562,7 +565,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
         loadableStudy.setIsPortsComplete(false);
 
-        // Port complete status becomes false even when all the mandatory fields are available for
+        // Port complete status becomes false even when all the mandatory fields are
+        // available for
         // all ports, need to set the port complete status properly on save.
         Boolean isPortRotationComplete = true;
         for (LoadableStudyPortRotation portRotation :
@@ -669,8 +673,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       List<Long> portRotationIds =
           portRotations.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList());
 
-      Map<Long, DischargeStudyCowDetail> cowDetailForThePort =
-          cowDetailService.getCowDetailForThePort(dischargestudyId, portRotationIds);
+      DischargeStudyCowDetail cowDetailForThePort =
+          cowDetailService.getCowDetailForDS(dischargestudyId);
       Map<Long, List<DischargeStudyPortInstruction>> portWiseInstructions =
           portInstructionService.getPortWiseInstructions(dischargestudyId, portRotationIds);
       List<CargoNomination> dbCargos = cargoNominationService.getCargoNominations(dischargestudyId);
@@ -699,15 +703,25 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     portRotation.setIsbackloadingEnabled(
                         portRequestDetail.getIsBackLoadingEnabled());
                     portRotation.setFreshCrudeOil(portRequestDetail.getFreshCrudeOil());
-                    portRotation.setFreshCrudeOilQuantity(new BigDecimal(portRequestDetail.getFreshCrudeOilQuantity()));
-                    portRotation.setFreshCrudeOilTime(new BigDecimal(portRequestDetail.getFreshCrudeOilTime()));
+                    if (portRequestDetail.getFreshCrudeOilQuantity() != null
+                        && !portRequestDetail.getFreshCrudeOilQuantity().isBlank()) {
+                      portRotation.setFreshCrudeOilQuantity(
+                          new BigDecimal(portRequestDetail.getFreshCrudeOilQuantity()));
+                    }
+                    if (portRequestDetail.getFreshCrudeOilTime() != null
+                        && !portRequestDetail.getFreshCrudeOilTime().isBlank()) {
+                      portRotation.setFreshCrudeOilTime(
+                          new BigDecimal(portRequestDetail.getFreshCrudeOilTime()));
+                    }
+                    portRotation.setCowRequired(portRequestDetail.getCow());
                   }
                 });
             updateCowDetails(
                 cowDetailForThePort,
                 cowDetailsToSave,
-                portRequestDetail,
-                portCargoId,
+                request.getCowId(),
+                request.getPercentage(),
+                request.getTanksList(),
                 dischargestudyId);
             updateInsrtuctions(
                 dischargestudyId,
@@ -723,40 +737,38 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 portCargoId,
                 dischargestudyId);
 
-            for(int i = 0; i < cargoNominations.size(); i++){
-                CargoNominationDetail cargoRequest = cargoNominations.get(i);
-                Long portId = dbPortRoation.getPortXId();
-                if (cargoRequest.getId() != -1) {
-                  Optional<CargoNomination> optionalCargoNomination =
-                      dbCargos
-                          .parallelStream()
-                          .filter(
-                              cargoNomination -> cargoNomination.getId() == cargoRequest.getId())
-                          .findFirst();
-                  if (!optionalCargoNomination.isPresent()) {
-                    return;
-                  }
-                  optionalCargoNomination.get().setSequenceNo(cargoRequest.getSequenceNo());
-                  optionalCargoNomination.get().setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
-                  updateCargoNominationToSave(
-                      cargoRequest,
-                      optionalCargoNomination.get(),
-                      cargoNominationsToSave,
-                      portId);
-                } else {
-                  CargoNomination cargoNomination = new CargoNomination();
-                  cargoNomination.setLoadableStudyXId(dischargestudyId);
-                  cargoNomination.setPriority(1L);
-                  cargoNomination.setIsActive(true);
-                  cargoNomination.setCargoNominationPortDetails(
-                      cargoNominationService.createCargoNominationPortDetails(
-                          cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
-                  cargoNomination.setIsBackloading(true);
-                  cargoNomination.setSequenceNo(Long.valueOf(i));
-                  cargoNomination.setEmptyMaxNoOfTanks(false);
-                  updateCargoNominationToSave(
-                      cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+            for (int i = 0; i < cargoNominations.size(); i++) {
+              CargoNominationDetail cargoRequest = cargoNominations.get(i);
+              Long portId = dbPortRoation.getPortXId();
+              if (cargoRequest.getId() != -1) {
+                Optional<CargoNomination> optionalCargoNomination =
+                    dbCargos
+                        .parallelStream()
+                        .filter(cargoNomination -> cargoNomination.getId() == cargoRequest.getId())
+                        .findFirst();
+                if (!optionalCargoNomination.isPresent()) {
+                  return;
                 }
+                optionalCargoNomination.get().setSequenceNo(cargoRequest.getSequenceNo());
+                optionalCargoNomination
+                    .get()
+                    .setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
+                updateCargoNominationToSave(
+                    cargoRequest, optionalCargoNomination.get(), cargoNominationsToSave, portId);
+              } else {
+                CargoNomination cargoNomination = new CargoNomination();
+                cargoNomination.setLoadableStudyXId(dischargestudyId);
+                cargoNomination.setPriority(1L);
+                cargoNomination.setIsActive(true);
+                cargoNomination.setCargoNominationPortDetails(
+                    cargoNominationService.createCargoNominationPortDetails(
+                        cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
+                cargoNomination.setIsBackloading(true);
+                cargoNomination.setSequenceNo(Long.valueOf(i));
+                cargoNomination.setEmptyMaxNoOfTanks(false);
+                updateCargoNominationToSave(
+                    cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+              }
             }
             List<Long> requestIds =
                 cargoNominations.stream()
@@ -792,6 +804,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   });
             }
           });
+      System.out.println(cowDetailsToSave.size());
+      System.out.println(cowDetailsToSave.get(0));
       cowDetailService.saveAll(cowDetailsToSave);
       portInstructionService.saveAll(portInstructionsToSave);
       backLoadingService.saveAll(backLoadingToSave);
@@ -994,26 +1008,27 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   }
 
   private void updateCowDetails(
-      Map<Long, DischargeStudyCowDetail> cowDetailForThePort,
+      DischargeStudyCowDetail cowDetailForThePort,
       List<DischargeStudyCowDetail> cowDetailsToSave,
-      PortRotationDetail portDetail,
-      long portCargoId,
+      long cowId,
+      long percentage,
+      List<Long> tanksList,
       long dischargestudyId) {
     DischargeStudyCowDetail dischargeStudyCowDetail = null;
-    if (cowDetailForThePort.containsKey(portCargoId)) {
-      dischargeStudyCowDetail = cowDetailForThePort.get(portCargoId);
+    if (cowDetailForThePort.getCowType() != null) {
+      dischargeStudyCowDetail = cowDetailForThePort;
     } else {
       dischargeStudyCowDetail = new DischargeStudyCowDetail();
-      dischargeStudyCowDetail.setPortId(portCargoId);
+      //      dischargeStudyCowDetail.setPortId(portCargoId);
       dischargeStudyCowDetail.setDischargeStudyStudyId(dischargestudyId);
     }
-    dischargeStudyCowDetail.setCowType(portDetail.getCowId());
-    if (portDetail.getCowId() == 1) {
-      dischargeStudyCowDetail.setPercentage(portDetail.getPercentage());
+    dischargeStudyCowDetail.setCowType(cowId);
+    if (cowId == 1) {
+      dischargeStudyCowDetail.setPercentage(percentage);
       dischargeStudyCowDetail.setTankIds("");
-    } else if (portDetail.getCowId() == 2) {
+    } else if (cowId == 2) {
       String numberString =
-          portDetail.getTanksList().stream().map(String::valueOf).collect(Collectors.joining(","));
+          tanksList.stream().map(String::valueOf).collect(Collectors.joining(","));
       dischargeStudyCowDetail.setTankIds(numberString);
       dischargeStudyCowDetail.setPercentage(null);
     }
@@ -1621,7 +1636,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         if (voyage != null) {
           if (voyage.getActualEndDate() != null) {
             DateTimeFormatter dft = DateTimeFormatter.ofPattern(VOYAGE_DATE_FORMAT);
-            // Changing to actual end Date : previous implementation was voyage planned end date.
+            // Changing to actual end Date : previous implementation was voyage planned end
+            // date.
             String endDate = voyage.getActualEndDate().format(dft);
             cowBuilder.setVoyageEndDate(endDate);
           }
@@ -1635,6 +1651,48 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .setStatus(FAILED)
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception when confirmPlan Loadable Study Status"));
+
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargeCowDetails(
+      com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.LoadableStudy.DischargeCowResponse>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.DischargeCowResponse.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.DischargeCowResponse.newBuilder();
+    try {
+      DischargeStudyCowDetail cowDetails =
+          cowDetailService.getCowDetailForDS(request.getDischargeStudyId());
+      if (cowDetails == null) {
+        replyBuilder.setResponseStatus(
+            ResponseStatus.newBuilder()
+                .setStatus(FAILED)
+                .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+                .setMessage("No cow details found"));
+      } else {
+        replyBuilder.setCowId(cowDetails.getCowType());
+        if (cowDetails.getPercentage() != null) {
+          replyBuilder.setPercentage(cowDetails.getPercentage().toString());
+        }
+        if (cowDetails.getTankIds() != null && !cowDetails.getTankIds().isEmpty()) {
+          List<String> tanks = Arrays.asList(cowDetails.getTankIds().split(","));
+          replyBuilder.addAllTanks(
+              tanks.stream().map(tank -> Long.parseLong(tank)).collect(Collectors.toList()));
+        }
+        replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+      }
+    } catch (Exception e) {
+      log.error("Exception when getting cow details ", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when getting cow details"));
 
     } finally {
       responseObserver.onNext(replyBuilder.build());

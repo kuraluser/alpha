@@ -43,4 +43,6 @@ public class CowTankDetail extends EntityDoc {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "cow_plan_details_xid")
   private CowPlanDetail cowPlanDetail;
+
+  @Transient private Long communicationRelatedEntityId;
 }

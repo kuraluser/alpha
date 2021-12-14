@@ -28,4 +28,7 @@ public class CargoPortMapping extends EntityDoc {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "port_xid")
   private PortInfo portInfo;
+
+  @Column(name = "is_active")
+  private Boolean isActive;
 }

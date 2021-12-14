@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.service;
 // region Import
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
@@ -50,6 +51,11 @@ public class LoadableStudyCommunicationService {
   @Autowired private CommingleCargoRepository commingleCargoRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
   @Autowired private LoadableStudyPortRotationRepository loadableStudyPortRotationRepository;
+
+  @Autowired
+  private LoadableStudyPortRotationCommuncationRepository
+      loadableStudyPortRotationCommuncationRepository;
+
   @Autowired private OnHandQuantityRepository onHandQuantityRepository;
   @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
   @Autowired private LoadableQuantityRepository loadableQuantityRepository;
@@ -103,6 +109,11 @@ public class LoadableStudyCommunicationService {
   private DischargePatternQuantityCargoPortwiseRepository
       dischargePatternQuantityCargoPortwiseRepository;
 
+  @Autowired LoadableStudyRuleRepository loadableStudyRuleRepository;
+  @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
+  @Autowired LoadablePlanCommentsRepository loadablePlanCommentsRepository;
+  @Autowired LoadablePlanStowageDetailsTempRepository loadablePlanStowageDetailsTempRepository;
+
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
   // endregion
@@ -113,6 +124,8 @@ public class LoadableStudyCommunicationService {
   private List<CommingleCargo> commingleCargoStage = null;
   private List<CargoNomination> cargoNominationStage = null;
   private List<LoadableStudyPortRotation> loadableStudyPortRotationStage = null;
+  private List<LoadableStudyPortRotationCommunication> loadableStudyPortRotationStageCommunication =
+      null;
   private List<OnHandQuantity> onHandQuantityStage = null;
   private List<OnBoardQuantity> onBoardQuantityStage = null;
   private List<LoadableQuantity> loadableQuantityStage = null;
@@ -141,6 +154,10 @@ public class LoadableStudyCommunicationService {
   private List<CowHistory> cowHistoryStage = null;
   private List<DischargePatternQuantityCargoPortwiseDetails>
       dischargePatternQuantityCargoPortwiseDetailsStage = null;
+  private List<LoadableStudyRules> loadableStudyRulesStage = null;
+  private List<LoadableStudyRuleInput> loadableStudyRuleInputsStage = null;
+  private List<LoadablePlanComments> loadablePlanCommentsStage = null;
+  private List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -314,8 +331,9 @@ public class LoadableStudyCommunicationService {
             }
           case loadable_study_port_rotation:
             {
-              Type type = new TypeToken<ArrayList<LoadableStudyPortRotation>>() {}.getType();
-              loadableStudyPortRotationStage =
+              Type type =
+                  new TypeToken<ArrayList<LoadableStudyPortRotationCommunication>>() {}.getType();
+              loadableStudyPortRotationStageCommunication =
                   bindDataToEntity(
                       new LoadableStudyPortRotation(),
                       type,
@@ -655,6 +673,61 @@ public class LoadableStudyCommunicationService {
                       null);
               break;
             }
+          case loadable_study_rules:
+            {
+              Type type = new TypeToken<ArrayList<LoadableStudyRules>>() {}.getType();
+              loadableStudyRulesStage =
+                  bindDataToEntity(
+                      new LoadableStudyRules(),
+                      type,
+                      LoadableStudyTables.LOADABLE_STUDY_RULES,
+                      data,
+                      dataTransferStage.getId(),
+                      "loadable_study_xid");
+              break;
+            }
+          case loadable_study_rule_input:
+            {
+              Type type = new TypeToken<ArrayList<LoadableStudyRuleInput>>() {}.getType();
+              loadableStudyRuleInputsStage =
+                  bindDataToEntity(
+                      new LoadableStudyRuleInput(),
+                      type,
+                      LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT,
+                      data,
+                      dataTransferStage.getId(),
+                      "loadable_study_rule_xid");
+              break;
+            }
+          case loadable_plan_comments:
+            {
+              Type type = new TypeToken<ArrayList<LoadablePlanComments>>() {}.getType();
+              loadablePlanCommentsStage =
+                  bindDataToEntity(
+                      new LoadablePlanComments(),
+                      type,
+                      LoadableStudyTables.LOADABLE_PLAN_COMMENTS,
+                      data,
+                      dataTransferStage.getId(),
+                      "loadable_pattern_xid");
+              break;
+            }
+          case loadable_plan_stowage_details_temp:
+            {
+              Type type = new TypeToken<ArrayList<LoadablePlanStowageDetailsTemp>>() {}.getType();
+              loadablePlanStowageDetailsTempStage =
+                  bindDataToEntity(
+                      new LoadablePlanStowageDetailsTemp(),
+                      type,
+                      LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS_TEMP,
+                      data,
+                      dataTransferStage.getId(),
+                      "stowage_details_xid",
+                      "ballast_details_xid",
+                      "loadable_pattern_xid",
+                      "loadable_plan_commingle_details_xid");
+              break;
+            }
         }
       }
 
@@ -689,6 +762,10 @@ public class LoadableStudyCommunicationService {
         saveSynopticalTableLoadicatorData();
         saveCowHistory();
         saveDischargePatternQuantityCargoPortwiseDetails();
+        saveLoadableStudyRules();
+        saveLoadableStudyRuleInputs();
+        saveLoadablePlanComments();
+        saveLoadablePlanStowageDetailsTemp();
       } catch (ResourceAccessException e) {
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
@@ -857,13 +934,15 @@ public class LoadableStudyCommunicationService {
   /** Method to save loadable study port rotation */
   private void saveLoadableStudyPortRotation() {
     current_table_name = LoadableStudyTables.LOADABLE_STUDY_PORT_ROTATION.getTable();
-    if (null == loadableStudyPortRotationStage || loadableStudyPortRotationStage.isEmpty()) {
+    if (null == loadableStudyPortRotationStageCommunication
+        || loadableStudyPortRotationStageCommunication.isEmpty()) {
       log.info("Communication XXXXXXX  LoadableStudyPortRotation is empty");
       return;
     }
-    for (LoadableStudyPortRotation lsprStage : loadableStudyPortRotationStage) {
-      Optional<LoadableStudyPortRotation> loadableStudyPortRotation =
-          loadableStudyPortRotationRepository.findById(lsprStage.getId());
+    for (LoadableStudyPortRotationCommunication lsprStage :
+        loadableStudyPortRotationStageCommunication) {
+      Optional<LoadableStudyPortRotationCommunication> loadableStudyPortRotation =
+          loadableStudyPortRotationCommuncationRepository.findById(lsprStage.getId());
       lsprStage.setVersion(null);
       loadableStudyPortRotation.ifPresent(
           studyPortRotation -> lsprStage.setVersion(studyPortRotation.getVersion()));
@@ -872,9 +951,10 @@ public class LoadableStudyCommunicationService {
           cargoOperationRepository.findById(lsprStage.getCommunicationRelatedEntityId());
       cargoOperationOpt.ifPresent(lsprStage::setOperation);
     }
-
+    loadableStudyPortRotationCommuncationRepository.saveAll(
+        loadableStudyPortRotationStageCommunication);
     loadableStudyPortRotationStage =
-        loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotationStage);
+        loadableStudyPortRotationRepository.findByLoadableStudy(loadableStudyStage);
     log.info("Communication #######  LoadableStudyPortRotation saved ");
   }
 
@@ -891,9 +971,9 @@ public class LoadableStudyCommunicationService {
       Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
       ohq.ifPresent(onHandQuantity -> ohqStage.setVersion(onHandQuantity.getVersion()));
       for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
-        Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
-            loadableStudyPortRotationRepository.findById(lspr.getId());
-        loadableStudyPortRotationOpt.ifPresent(ohqStage::setPortRotation);
+        if (Objects.equals(ohqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
+          ohqStage.setPortRotation(lspr);
+        }
       }
     }
     onHandQuantityStage = onHandQuantityRepository.saveAll(onHandQuantityStage);
@@ -930,10 +1010,11 @@ public class LoadableStudyCommunicationService {
       lqStage.setLoadableStudyXId(loadableStudyStage);
       Optional<LoadableQuantity> lq = loadableQuantityRepository.findById(lqStage.getId());
       lq.ifPresent(loadableQuantity -> lqStage.setVersion(loadableQuantity.getVersion()));
-
-      Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
-          loadableStudyPortRotationRepository.findById(lqStage.getCommunicationRelatedEntityId());
-      loadableStudyPortRotationOpt.ifPresent(lqStage::setLoadableStudyPortRotation);
+      for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
+        if (Objects.equals(lqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
+          lqStage.setLoadableStudyPortRotation(lspr);
+        }
+      }
     }
 
     loadableQuantityStage = loadableQuantityRepository.saveAll(loadableQuantityStage);
@@ -998,17 +1079,24 @@ public class LoadableStudyCommunicationService {
         loadableStudyStatusRepository.findById(
             loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
     if (loadableStudyStatus.isPresent()) {
+      loadableStudyAlgoStatusRepository
+          .findByLoadableStudyId(loadableStudyStage.getId())
+          .ifPresentOrElse(
+              loadableStudyAlgoStatus -> {
+                loadableStudyAlgoStatusStage = loadableStudyAlgoStatus;
+              },
+              () -> {
+                loadableStudyAlgoStatusStage.setVersion(null);
+                loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
+              });
+      loadableStudyAlgoStatusStage.setGeneratedFromShore(true);
       loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
-      loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
-      Optional<LoadableStudyAlgoStatus> algoStatus =
-          loadableStudyAlgoStatusRepository.findById(loadableStudyAlgoStatusStage.getId());
-      loadableStudyAlgoStatusStage.setVersion(algoStatus.map(EntityDoc::getVersion).orElse(null));
-
       loadableStudyAlgoStatusStage =
           loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
       log.info(
           "Communication #######  loadableStudyAlgoStatus saved with id:"
               + loadableStudyAlgoStatusStage.getId());
+
     } else {
       log.info(
           "Communication XXXXXXX  loadableStudyAlgoStatus is not saved , loadableStudyStatus is not found : "
@@ -1395,6 +1483,156 @@ public class LoadableStudyCommunicationService {
     log.info("Communication #######  DischargePatternQuantityCargoPortwiseDetails are saved");
   }
 
+  /** Method to save loadable_study_rules table */
+  private void saveLoadableStudyRules() {
+    if (null != loadableStudyRulesStage) {
+      // Set detached entities
+      for (LoadableStudyRules loadableStudyRules : loadableStudyRulesStage) {
+        loadableStudyRules.setLoadableStudy(loadableStudyStage);
+      }
+
+      // Save data
+      loadableStudyRuleRepository.saveAll(loadableStudyRulesStage);
+      log.info(
+          "Communication #######  loadable_study_rules saved. Entries: {}",
+          loadableStudyRulesStage.size());
+    }
+  }
+
+  /**
+   * Method to save loadable_study_rule_input table
+   *
+   * @throws GenericServiceException Exception when rule not found
+   */
+  private void saveLoadableStudyRuleInputs() throws GenericServiceException {
+    if (null != loadableStudyRuleInputsStage) {
+      for (LoadableStudyRuleInput loadableStudyRuleInput : loadableStudyRuleInputsStage) {
+        // Set detached entities
+        LoadableStudyRules loadableStudyRule =
+            loadableStudyRuleRepository
+                .findById(loadableStudyRuleInput.getCommunicationRelatedEntityId())
+                .orElseThrow(
+                    () ->
+                        new GenericServiceException(
+                            String.format(
+                                "Loadable study rule not found for Id: %d",
+                                loadableStudyRuleInput.getCommunicationRelatedEntityId()),
+                            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                            HttpStatusCode.INTERNAL_SERVER_ERROR));
+        loadableStudyRuleInput.setLoadableStudyRuleXId(loadableStudyRule);
+      }
+
+      // Save data
+      loadableStudyRuleInputRepository.saveAll(loadableStudyRuleInputsStage);
+      log.info(
+          "Communication #######  loadable_study_rule_input saved. Entries: {}",
+          loadableStudyRuleInputsStage.size());
+    }
+  }
+
+  /**
+   * Method to save loadable_plan_comments table
+   *
+   * @throws GenericServiceException Exception when pattern not found
+   */
+  private void saveLoadablePlanComments() throws GenericServiceException {
+    if (null != loadablePlanCommentsStage) {
+      // Set detached entities
+      for (LoadablePlanComments comment : loadablePlanCommentsStage) {
+        LoadablePattern loadablePattern =
+            loadablePatternRepository
+                .findById(comment.getCommunicationRelatedEntityId())
+                .orElseThrow(
+                    () ->
+                        new GenericServiceException(
+                            String.format(
+                                "Loadable pattern not found for Id: %d",
+                                comment.getCommunicationRelatedEntityId()),
+                            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                            HttpStatusCode.INTERNAL_SERVER_ERROR));
+        ;
+        comment.setLoadablePattern(loadablePattern);
+      }
+
+      // Save data
+      loadablePlanCommentsRepository.saveAll(loadablePlanCommentsStage);
+      log.info(
+          "Communication #######  loadable_plan_comments saved. Entries: {}",
+          loadablePlanCommentsStage.size());
+    }
+  }
+
+  /** Method to save loadable_plan_stowage_details_temp table */
+  private void saveLoadablePlanStowageDetailsTemp() {
+
+    if (null != loadablePlanStowageDetailsTempStage) {
+      for (LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp :
+          loadablePlanStowageDetailsTempStage) {
+        // Set stowage details
+        loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(
+            emptyIfNull(loadablePlanStowageDetailsStage).stream()
+                .filter(
+                    loadablePlanStowageDetails ->
+                        loadablePlanStowageDetails
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("stowage_details_xid")))
+                .findFirst()
+                .orElse(null));
+
+        // Set ballast details
+        loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(
+            emptyIfNull(loadablePlanBallastDetailsStage).stream()
+                .filter(
+                    loadablePlanBallastDetails ->
+                        loadablePlanBallastDetails
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("ballast_details_xid")))
+                .findFirst()
+                .orElse(null));
+
+        // Set loadable_pattern details
+        loadablePlanStowageDetailsTemp.setLoadablePattern(
+            emptyIfNull(loadablePatternStage).stream()
+                .filter(
+                    loadablePattern ->
+                        loadablePattern
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("loadable_pattern_xid")))
+                .findFirst()
+                .orElse(null));
+
+        // Set loadable_plan_commingle details
+        loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(
+            loadablePlanCommingleDetailsStage.stream()
+                .filter(
+                    loadablePlanCommingleDetails ->
+                        loadablePlanCommingleDetails
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("loadable_plan_commingle_details_xid")))
+                .findFirst()
+                .orElse(null));
+      }
+
+      // Save data
+      loadablePlanStowageDetailsTempRepository.saveAll(loadablePlanStowageDetailsTempStage);
+      log.info(
+          "Communication #######  loadable_plan_stowage_details_temp saved. Entries: {}",
+          loadablePlanStowageDetailsTempStage.size());
+    }
+  }
+
   /**
    * Method to update status in exception
    *
@@ -1450,16 +1688,20 @@ public class LoadableStudyCommunicationService {
       JsonArray array, HashMap<String, String> map, List<String> xIds) {
     JsonArray json = loadableStudyStagingService.getAsEntityJson(map, array);
     JsonArray jsonArray = new JsonArray();
+    JsonObject communicationRelatedIdMap = new JsonObject();
     for (JsonElement jsonElement : json) {
       final JsonObject jsonObj = jsonElement.getAsJsonObject();
       if (xIds != null) {
         for (String xId : xIds) {
           if (xIds.size() == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
+          } else {
+            communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
           }
           jsonObj.remove(xId);
         }
       }
+      jsonObj.add("communicationRelatedIdMap", communicationRelatedIdMap);
       jsonArray.add(jsonObj);
     }
     return jsonArray;
@@ -1518,6 +1760,11 @@ public class LoadableStudyCommunicationService {
     voyageId = 0L;
     loadableStudyStatusId = 0L;
     current_table_name = "";
+    loadableStudyPortRotationStageCommunication = null;
+    loadableStudyRulesStage = null;
+    loadableStudyRuleInputsStage = null;
+    loadablePlanCommentsStage = null;
+    loadablePlanStowageDetailsTempStage = null;
   }
 
   // endregion

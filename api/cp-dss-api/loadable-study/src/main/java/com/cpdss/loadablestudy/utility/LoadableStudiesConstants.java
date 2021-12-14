@@ -212,6 +212,20 @@ public class LoadableStudiesConstants {
 
   public static final String ENV = "env";
 
+  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
+      Arrays.asList(
+          "loadable_study",
+          "comingle_cargo",
+          "cargo_nomination",
+          "loadable_study_port_rotation",
+          "on_hand_quantity",
+          "on_board_quantity",
+          "loadable_quantity",
+          "synoptical_table",
+          "cargo_nomination_operation_details",
+          LoadableStudyTables.LOADABLE_STUDY_RULES.getTable(),
+          LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable());
+
   public static List<String> LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP =
       Arrays.asList(
           "loadable_study",
@@ -231,29 +245,19 @@ public class LoadableStudiesConstants {
           "loadable_plan_stowage_ballast_details",
           "synoptical_table",
           "loadicator_data_for_synoptical_table",
-          "discharge_quantity_cargo_details");
-
-  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
-      Arrays.asList(
-          "loadable_study",
-          "comingle_cargo",
-          "cargo_nomination",
-          "loadable_study_port_rotation",
-          "on_hand_quantity",
-          "on_board_quantity",
-          "loadable_quantity",
-          "synoptical_table",
-          "cargo_nomination_operation_details");
+          "discharge_quantity_cargo_details",
+          "loadable_study_algo_status");
 
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
       Arrays.asList(
-          "loadable_study",
-          "loadable_pattern",
-          "loadable_study_port_rotation",
           "loadable_plan_stowage_details",
           "loadable_plan_ballast_details",
+          "loadable_pattern",
           "loadable_plan_commingle_details",
-          "stability_parameters");
+          "loadable_plan_stowage_details_temp",
+          "stability_parameters",
+          "loadable_plan_quantity",
+          LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable());
 
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP =
       Arrays.asList(
@@ -273,7 +277,8 @@ public class LoadableStudiesConstants {
           "loadable_pattern_cargo_details",
           "loadable_plan_stowage_ballast_details",
           "synoptical_table",
-          "loadicator_data_for_synoptical_table");
+          "loadicator_data_for_synoptical_table",
+          "loadable_study_algo_status");
 
   @Getter
   @AllArgsConstructor
@@ -310,7 +315,11 @@ public class LoadableStudiesConstants {
     COMMUNICATION_STATUS_UPDATE("communication_status_update"),
     PORT_INSTRUCTIONS("port_instructions"),
     COW_HISTORY("cow_history"),
-    DISCHARGE_QUANTITY_CARGO_DETAILS("discharge_quantity_cargo_details");
+    DISCHARGE_QUANTITY_CARGO_DETAILS("discharge_quantity_cargo_details"),
+    LOADABLE_STUDY_RULES("loadable_study_rules"),
+    LOADABLE_STUDY_RULE_INPUT("loadable_study_rule_input"),
+    LOADABLE_PLAN_COMMENTS("loadable_plan_comments"),
+    LOADABLE_PLAN_STOWAGE_DETAILS_TEMP("loadable_plan_stowage_details_temp");
 
     public final String table;
   }

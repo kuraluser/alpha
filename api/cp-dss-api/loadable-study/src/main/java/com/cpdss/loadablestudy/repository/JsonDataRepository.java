@@ -19,4 +19,10 @@ public interface JsonDataRepository extends CommonCrudRepository<JsonData, Long>
               + "and json_type_xid in (24, 25)",
       nativeQuery = true)
   String getJsonDataWithLoadingInfoId(long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM json_data u where reference_xid=?1",
+      nativeQuery = true)
+  String getJsonDataWithReferenceId(long id);
 }

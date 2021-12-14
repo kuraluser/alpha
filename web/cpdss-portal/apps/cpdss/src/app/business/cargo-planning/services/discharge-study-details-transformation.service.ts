@@ -17,7 +17,7 @@ import { TimeZoneTransformationService } from '../../../shared/services/time-zon
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject } from '../models/cargo-planning.model';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode } from '../../../shared/models/common.model';
-import { IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails , IPortCargoDetails } from '../models/discharge-study-list.model';
+import { ICowDetailsValueObject , IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails , IPortCargoDetails } from '../models/discharge-study-list.model';
 import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo, OPERATIONS } from '../../core/models/common.model';
 
 
@@ -813,9 +813,14 @@ export class DischargeStudyDetailsTransformationService {
 getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
   return [
     {
-      field: 'slNo',
-      header: 'DISCHARGE_STUDY_DISCHARGE_SL',
-      fieldType: DATATABLE_FIELD_TYPE.SLNO,
+      field: 'sequenceNo',
+      header: 'DISCHARGE_STUDY_DISCHARGE_SEQUENCE_NO',
+      fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+      errorMessages: {
+        'required': 'DISCHARGING_STUDY_SEQUENCE_REQUIRED',
+        'invalidNumber': 'DISCHARGING_STUDY_SEQUENCE_SEQUENCE_NO_INVALID',
+        'invalidSequenceNumber': 'DISCHARGING_STUDY_SEQUENCE_SEQUENCE_NO_INVALID_VALUE'
+      }
     },
     {
       field: 'color',
@@ -879,6 +884,12 @@ getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
       editable: true,
       listName: 'mode',
       fieldOptionLabel: 'name'
+    },
+    {
+      field: 'emptyMaxNoOfTanks',
+      header: 'DISCHARGE_STUDY_EMPTY_MAX_NO_OF_TANKS',
+      fieldType: DATATABLE_FIELD_TYPE.CHECKBOX,
+      editable: true
     }
   ]
 }
@@ -1022,11 +1033,12 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getPortDetailAsValueObject(portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any,cargoDetails:IPortCargoDetails): IPortDetailValueObject {
+    getPortDetailAsValueObject(portDetailsValueAsObject:IPortDetailValueObject[], portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any,cargoDetails:IPortCargoDetails): IPortDetailValueObject {
       const _portDetail = <IPortDetailValueObject>{};
       _portDetail.id = portDetail.id;
       _portDetail.portTimezoneId = portDetail.portTimezoneId;
       _portDetail.operationId  = portDetail.operationId;
+      _portDetail.cow  = portDetail.cow ?? false;
       _portDetail.port = listData.portList.find((port) =>{
         if(port.id === portDetail.portId) {
           return port;
@@ -1044,32 +1056,61 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _portDetail.maxDraft = portDetail.maxDraft;
       _portDetail.cargoDetail  = portDetail.cargoNominationList ? portDetail.cargoNominationList?.map((cargoDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,cargoDetail);
-        return this.getCargoDetailsAsValueObject(cargoDetail,listData,storedKey,true);
+        return this.getCargoDetailsAsValueObject(portDetailsValueAsObject,cargoDetail,listData,storedKey,true);
       }) : [];
-      _portDetail.cow = listData.mode.find(modeDetails => modeDetails.id === portDetail.cowId);
-      if(!_portDetail.cow) {
-        _portDetail.cow = listData.mode[0];
-        _portDetail.percentage = { value: 25, name: '25%' };
-      } else if(portDetail.cowId === 1) {
-        _portDetail.percentage = listData.percentageList.find((item) => {
-          return item.value === portDetail.percentage;
-        })
-        _portDetail.tank = [];
-      } else {
-        _portDetail.percentage = null;
-        _portDetail.tank = listData?.tank.filter((tankDetail) => {
-          return portDetail.tanks.some((items) => {
-            return items === tankDetail.id
-          })
-        })
-      }
+      
       _portDetail.enableBackToLoading = portDetail.isBackLoadingEnabled  && !isLastIndex ? true : false;
       _portDetail.backLoadingDetails =  portDetail?.backLoading ? portDetail?.backLoading?.map((backLoadingDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,backLoadingDetail);
         return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData , storedKey ,cargoDetails, isNewValue);
       }) : [];
+      _portDetail.freshCrudeOilQuantity = portDetail.freshCrudeOilQuantity ?? null;
+      _portDetail.freshCrudeOilTime = portDetail.freshCrudeOilTime ? this.convertMinutesToHHMM(portDetail.freshCrudeOilTime) : '00:00';
+      _portDetail.freshCrudeOil = portDetail.freshCrudeOil ?? false ;
       return _portDetail;
     }
+
+    /**
+   * Method to convert loadable plan tank details to value object
+   *
+   * @param {number} tanks
+   * @param {number} percentage
+   * @param {number} cowId
+   * @returns {ICowDetailsValueObject}
+   * @memberof DischargeStudyDetailsTransformationService
+   */
+    getDischargeStudyCowDetails(cowId:number,percentage: number,tanks:number[],listData:IDischargeStudyDropdownData): ICowDetailsValueObject{
+      const _cowDetails = <ICowDetailsValueObject>{};
+      _cowDetails.cow = listData.mode.find(modeDetails => modeDetails.id === cowId);
+      if(!_cowDetails.cow) {
+        _cowDetails.cow = listData.mode[0];
+        _cowDetails.percentage = { value: 100, name: '100%' };
+      } else if(cowId === 1) {
+        _cowDetails.percentage = listData.percentageList.find((item) => {
+          return item.value === percentage;
+        })
+        _cowDetails.tank = [];
+      } else {
+        _cowDetails.percentage = null;
+        _cowDetails.tank = listData?.tank.filter((tankDetail) => {
+          return tanks.some((items) => {
+            return items === tankDetail.id
+          })
+        })
+      }
+      return _cowDetails;
+    }
+
+  /**
+  * Convert minutes to HH:MM format
+  *
+  * @param {number} minutes
+  * @return {*}  {string}
+  * @memberof DischargeStudyDetailsTransformationService
+  */
+  convertMinutesToHHMM(minutes: number): string {
+    return `0${Math.floor(minutes / 60)}`.slice(-2) + ':' + ('0' + minutes % 60).slice(-2)
+  }
 
     /**
    * Method to set stored key for unique color
@@ -1101,24 +1142,41 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getCargoDetailsAsValueObject(cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
+    getCargoDetailsAsValueObject(portDetailsValueAsObject:IPortDetailValueObject[] ,cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
       const _cargoDetailValuObject = <IPortCargo>{};
       const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
-      const isKlEditable = mode?.id === 2 ? true : false;
+      const isKlEditable = mode?.id === 2 || mode?.id === 1 ? true : false;
+      //Note: - mode 3 need to be confirmed
+      // let isAutoAvailable;
+      // if(mode?.id === 3) {
+      //   isAutoAvailable = portDetailsValueAsObject?.find((portDetailValueAsObject) => {
+      //     return portDetailValueAsObject.cargoDetail?.some((cargo) =>{
+      //       return cargo.storedKey?.value === storedKey && cargo.mode.value?.id === 1;
+      //     })
+      //   })
+      // }
       
       const unitConversion = {
         kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
         bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
       }
+      _cargoDetailValuObject.sequenceNo = new ValueObject<string>(cargoDetail.sequenceNo , true , false);
+      _cargoDetailValuObject.emptyMaxNoOfTanks = new ValueObject<boolean>(cargoDetail.emptyMaxNoOfTanks ?? false, true, true),
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
-      _cargoDetailValuObject.bbls = new ValueObject<string>(isKlEditable ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
+      //Note: - mode 3 need to be confirmed
+      // (isAutoAvailable && mode?.id === 3)
+      _cargoDetailValuObject.bbls = new ValueObject<string>(mode?.id === 2 ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
-      _cargoDetailValuObject.kl = new ValueObject<string>(isKlEditable ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
+      //Note: - mode 3 need to be confirmed
+      // (isAutoAvailable && mode?.id === 3)
+      _cargoDetailValuObject.kl = new ValueObject<string>(mode?.id === 2  ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
       _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
-      _cargoDetailValuObject.mt = new ValueObject<string>(isKlEditable ? cargoDetail.quantity +'' : '-', true , false);
+      //Note: - mode 3 need to be confirmed
+      // (isAutoAvailable && mode?.id === 3)
+      _cargoDetailValuObject.mt = new ValueObject<string>(mode?.id === 2 ? cargoDetail.quantity +'' : '-', true , false);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
       _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);
@@ -1134,9 +1192,11 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @param {IMode} mode
    * @memberof DischargeStudyDetailsTransformationService
    */
-    setNewCargoInPortAsValuObject(backLoadingDetails: any , mode: IMode) : IPortCargo {
+    setNewCargoInPortAsValuObject(backLoadingDetails: any , sequenceNo: string, mode: IMode) : IPortCargo {
       return {
         id: new ValueObject<string>(backLoadingDetails.id.value),
+        sequenceNo: new ValueObject<string>(sequenceNo, true, false),
+        emptyMaxNoOfTanks: new ValueObject<boolean>(false, true, false),
         storedKey: new ValueObject<string>(backLoadingDetails.storedKey.value),
         maxKl: new ValueObject<number>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
         abbreviation: new ValueObject<string>(backLoadingDetails.abbreviation.value, true , false),
@@ -1198,6 +1258,16 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       },
       tank: {
         'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+      },
+      freshCrudeOilQuantity: {
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'min': 'DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY_MIN',
+        'max': 'DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY_MAX',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR'
+      },
+      freshCrudeOilTime: {
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'maxTimeLimitExceed': 'DISCHARGE_STUDY_CRUDE_OIL_TIME_ERROR'
       }
     }
   }
@@ -1230,20 +1300,23 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
           case 'maxDraft':
             _portDetails.maxDraft = portItems.maxDraft;
             break;
-          case 'cow':
-            _portDetails.cowId = portItems.cow.id;
-            break;
-          case 'percentage':
-            _portDetails.percentage = portItems.percentage?.value ? portItems.percentage?.value : 0;
-            break;
-          case 'tank':
-            _portDetails.tanks = portItems.tank?.length ? portItems.tank.map(tankItem =>  tankItem.id) : [];
-            break;
           case 'instruction':
             _portDetails.instructionId = [portItems.instruction.id];
             break;
+          case 'cow':
+              _portDetails.cow = portItems.cow;
+              break;
           case 'enableBackToLoading':
             _portDetails.isBackLoadingEnabled = portItems.enableBackToLoading;
+            break;
+          case 'freshCrudeOil':
+              _portDetails.freshCrudeOil = portItems.freshCrudeOil;
+              break;
+          case 'freshCrudeOilQuantity':
+              _portDetails.freshCrudeOilQuantity = portItems.freshCrudeOilQuantity;
+            break;
+          case 'freshCrudeOilTime':
+              _portDetails.freshCrudeOilTime = this.convertTimeStringToMinutes(portItems.freshCrudeOilTime);
             break;
           case 'cargoDetail':
             _portDetails.cargoNominationList = portItems.cargoDetail.map(item =>  this.getCargoNominationList(item));
@@ -1258,6 +1331,18 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
   }
 
   /**
+   * Converting time string to minutes
+   *
+   * @param {string} time
+   * @return {*}
+   * @memberof DischargeStudyDetailsTransformationService
+   */
+   convertTimeStringToMinutes(time: string) {
+    const timeArr = time?.split(':');
+    return timeArr?.length === 2 ? Number(timeArr[0].replace(/_/g, '')) * 60 + Number(timeArr[1].replace(/_/g, '')) : null;
+  }
+
+  /**
    * Method to get value to save cargo nomination in discharge study
    *
    * @param {IPortCargo} cargoDetails
@@ -1269,6 +1354,12 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
     for (const key in cargoDetails) {
       if (Object.prototype.hasOwnProperty.call(cargoDetails, key)) {
         switch(key) {
+          case 'sequenceNo':
+            _cargoDetails.sequenceNo = cargoDetails.sequenceNo.value;
+            break;
+          case 'emptyMaxNoOfTanks':
+              _cargoDetails.emptyMaxNoOfTanks = cargoDetails.emptyMaxNoOfTanks.value;
+              break;
           case 'mt':
             _cargoDetails.quantity = cargoDetails.mode.value.id === 1  ? 0 : +cargoDetails.mt.value;
             break;

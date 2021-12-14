@@ -4,16 +4,16 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { AppConfigurationService } from '../../../../../shared/services/app-configuration/app-configuration.service';
-import { VesselInformationApiService } from '../../../services/vessel-information-api.service';
-import { TimeZoneTransformationService } from './../../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
+import { VesselInformationApiService } from '../../services/vessel-information-api.service';
+import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
-import { IVesselDetailsResponse } from '../../../models/vessel-info.model';
-import { IShipBallastTank, IShipBunkerTank, IShipCargoTank, ITankOptions, TANKTYPE } from '../../../../core/models/common.model';
-import { IDateTimeFormatOptions } from '../../../../../shared/models/common.model';
+import { IVesselDetailsResponse } from '../../models/vessel-info.model';
+import { IShipBallastTank, IShipBunkerTank, IShipCargoTank, ITankOptions, TANKTYPE } from '../../../core/models/common.model';
+import { IDateTimeFormatOptions } from '../../../../shared/models/common.model';
 
 /**
- * Component for Vessel details management 
+ * Component for Vessel details management
  *
  * @export
  * @class VesselManagementComponent
@@ -36,6 +36,7 @@ export class VesselManagementComponent implements OnInit, OnDestroy {
   rearBunkerTanks: IShipBunkerTank[][];
   selectedTab = TANKTYPE.CARGO;
   readonly tankType = TANKTYPE;
+  readonly noImageUrl = AppConfigurationService.settings?.vesselNoImageUrl;
   private ngUnsubscribe: Subject<any> = new Subject();
 
   tankOptions: ITankOptions = {

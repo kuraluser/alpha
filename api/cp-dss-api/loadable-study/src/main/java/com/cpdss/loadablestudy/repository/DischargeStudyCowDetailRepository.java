@@ -12,4 +12,7 @@ public interface DischargeStudyCowDetailRepository
 
   public DischargeStudyCowDetail findByDischargeStudyStudyIdAndPortIdAndIsActive(
       Long dischargestudyId, Long portId, Boolean isActive);
+
+  DischargeStudyCowDetail findFirstByDischargeStudyStudyIdAndIsActive(
+      long dischargestudyId, boolean isActive);
 }

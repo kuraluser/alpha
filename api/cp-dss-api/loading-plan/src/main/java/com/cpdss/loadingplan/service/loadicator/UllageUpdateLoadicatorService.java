@@ -161,13 +161,7 @@ public class UllageUpdateLoadicatorService {
     if (enableCommunication && env.equals("ship")) {
       JsonArray jsonArray =
           loadingPlanStagingService.getCommunicationData(
-              Arrays.asList(
-                  "loading_information",
-                  "port_loading_plan_stowage_ballast_details_temp",
-                  "port_loading_plan_stowage_details_temp",
-                  "port_loadable_plan_commingle_details_temp",
-                  "port_loading_plan_rob_details",
-                  "bill_of_ladding"),
+              com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_SHIP_TO_SHORE,
               processId,
               MessageTypes.ULLAGE_UPDATE.getMessageType(),
               loadingInfoOpt.get().getId(),
@@ -435,6 +429,17 @@ public class UllageUpdateLoadicatorService {
             algoResponse.getLoadicatorResults().get(0).getJudgement(),
             loadingInformation,
             conditionType);
+        // algoerror communication
+        try {
+          log.info("Communication side started for ullage update loadicator on With Algo Errors");
+          ullageUpdateSaveForCommunication(
+              com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
+              loadingInformation.getId(),
+              MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+              null);
+        } catch (Exception ex) {
+          log.error("Error occured when communicate algo errors", ex.getMessage());
+        }
       } else {
         saveLoadingPlanStabilityParameters(
             loadingInformation,
@@ -449,6 +454,8 @@ public class UllageUpdateLoadicatorService {
         loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInformation, conditionType);
         log.info("Ullage update with loadicator off after algo call for communication tables");
         ullageUpdateSaveForCommunication(
+            com.cpdss.loadingplan.utility.LoadingPlanConstants
+                .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF,
             loadingInformation.getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
             algoResponse.getProcessId());
@@ -462,21 +469,26 @@ public class UllageUpdateLoadicatorService {
           conditionType);
       loadingPlanAlgoService.saveAlgoInternalError(
           loadingInformation, conditionType, Lists.newArrayList(e.getResponseBodyAsString()));
+      try {
+        log.info("Communication side started for ullage update loadicator off With Algo Errors");
+        ullageUpdateSaveForCommunication(
+            com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
+            loadingInformation.getId(),
+            MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
+            null);
+      } catch (Exception ex) {
+        log.error("Error occured when communicate algo errors", ex.getMessage());
+      }
     }
   }
 
   private void ullageUpdateSaveForCommunication(
-      Long loadingInfoId, String messageType, String pyUserId) throws GenericServiceException {
+      List<String> processIdentifiers, Long loadingInfoId, String messageType, String pyUserId)
+      throws GenericServiceException {
     if (enableCommunication && !env.equals("ship")) {
       JsonArray jsonArray =
           loadingPlanStagingService.getCommunicationData(
-              Arrays.asList(
-                  "loading_information",
-                  "port_loading_plan_stowage_details",
-                  "port_loading_plan_stowage_ballast_details",
-                  "port_loadable_plan_commingle_details",
-                  "port_loading_plan_stability_parameters",
-                  "pyuser"),
+              processIdentifiers,
               UUID.randomUUID().toString(),
               messageType,
               loadingInfoId,
@@ -768,6 +780,17 @@ public class UllageUpdateLoadicatorService {
             algoResponse.getLoadicatorResults().get(0).getJudgement(),
             loadingInfoOpt.get(),
             request.getConditionType());
+        // algo error communication
+        try {
+          log.info("Communication side started for ullage update loadicator on With Algo Errors");
+          ullageUpdateSaveForCommunication(
+              com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
+              loadingInfoOpt.get().getId(),
+              MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+              null);
+        } catch (Exception ex) {
+          log.error("Error occured when communicate algo errors", ex.getMessage());
+        }
       } else {
         saveLoadingPlanStabilityParameters(
             loadingInfoOpt.get(),
@@ -783,6 +806,8 @@ public class UllageUpdateLoadicatorService {
             request.getConditionType());
         log.info("Ullage update with loadicator on after algo call for communication tables");
         ullageUpdateSaveForCommunication(
+            com.cpdss.loadingplan.utility.LoadingPlanConstants
+                .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_ON,
             loadingInfoOpt.get().getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
             algoResponse.getProcessId());
@@ -798,6 +823,17 @@ public class UllageUpdateLoadicatorService {
           loadingInfoOpt.get(),
           request.getConditionType(),
           Lists.newArrayList(e.getResponseBodyAsString()));
+      try {
+        log.info(
+            "Communication side started for ullage update loadicator on With Algo Internal Errors");
+        ullageUpdateSaveForCommunication(
+            com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
+            loadingInfoOpt.get().getId(),
+            MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+            null);
+      } catch (Exception ex) {
+        log.error("Error occured when communicate algo errors", ex.getMessage());
+      }
     }
   }
 

@@ -3214,3 +3214,11 @@ textarea{
   background: #f8f8f8 !important;
   border: 1px solid #bebebe !important;
 }
+
+.table-head-v-top .p-datatable-thead tr th {
+  vertical-align: top;
+}
+
+.form-label {
+  padding-top: 2px;
+}

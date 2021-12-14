@@ -59,8 +59,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-
-import com.google.api.Http;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -133,10 +131,11 @@ public class DischargeStudyService {
       LoadableStudy.LoadablePlanDetailsRequest.Builder loadablePlanRequest =
           LoadableStudy.LoadablePlanDetailsRequest.newBuilder();
       loadablePlanRequest.setLoadablePatternId(patternReply.getPattern().getLoadablePatternId());
-      // Changing commingle details flow - need to fetch actual commingle data from loading plan
-      //      LoadableStudy.LoadableCommingleDetailsReply loadableCommingleDetailsReply =
-      //          loadableStudyServiceBlockingStub.getLoadableCommingleByPatternId(
-      //              loadablePlanRequest.build());
+      // Changing commingle details flow - need to fetch actual commingle data from
+      // loading plan
+      // LoadableStudy.LoadableCommingleDetailsReply loadableCommingleDetailsReply =
+      // loadableStudyServiceBlockingStub.getLoadableCommingleByPatternId(
+      // loadablePlanRequest.build());
 
       LoadablePlanCommingleCargoDetailsReply loadableCommingleDetailsReply =
           loadingPlanServiceBlockingStub.getLoadingPlanCommingleDetails(requestBuilder.build());
@@ -424,7 +423,27 @@ public class DischargeStudyService {
       Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
       throws GenericServiceException {
     DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
+
     response.setDischargeStudyId(dischargeStudyId);
+    LoadableStudy.DischargeCowRequest.Builder studyReq =
+        LoadableStudy.DischargeCowRequest.newBuilder();
+    studyReq.setDischargeStudyId(dischargeStudyId);
+    LoadableStudy.DischargeCowResponse dischargeStudyCowDetails =
+        dischargeStudyOperationServiceBlockingStub.getDischargeCowDetails(studyReq.build());
+    if (!SUCCESS.equals(dischargeStudyCowDetails.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to fetch cow details",
+          dischargeStudyCowDetails.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.valueOf(dischargeStudyCowDetails.getResponseStatus().getCode())));
+    }
+    System.out.println(dischargeStudyCowDetails.getCowId());
+    response.setCowId(dischargeStudyCowDetails.getCowId());
+    response.setPercentage(
+        dischargeStudyCowDetails.getPercentage().isEmpty()
+            ? null
+            : new BigDecimal(dischargeStudyCowDetails.getPercentage()));
+    response.setTanks(dischargeStudyCowDetails.getTanksList());
     response.setPortList(new ArrayList<>());
     log.info(
         "Inside getDischargeStudyCargoByVoyage gateway service with correlationId : "
@@ -488,11 +507,17 @@ public class DischargeStudyService {
           portRotation.setOperationId(port.getOperationId());
           portRotation.setIsBackLoadingEnabled(port.getIsBackLoadingEnabled());
           portRotation.setBackLoading(buildBackLoading(port.getBackLoadingList()));
-          portRotation.setCow(false);
           portRotation.setInstructionId(port.getInstructionIdList());
           portRotation.setFreshCrudeOil(port.getFreshCrudeOil());
-          portRotation.setFreshCrudeOilQuantity(port.getFreshCrudeOilQuantity().isEmpty() ? null : new BigDecimal(port.getFreshCrudeOilQuantity()));
-          portRotation.setFreshCrudeOilTime(port.getFreshCrudeOilTime().isEmpty() ? null : new BigDecimal(port.getFreshCrudeOilTime()));
+          portRotation.setFreshCrudeOilQuantity(
+              port.getFreshCrudeOilQuantity().isEmpty()
+                  ? null
+                  : new BigDecimal(port.getFreshCrudeOilQuantity()));
+          portRotation.setFreshCrudeOilTime(
+              port.getFreshCrudeOilTime().isEmpty()
+                  ? null
+                  : new BigDecimal(port.getFreshCrudeOilTime()));
+          portRotation.setCow(port.getCow());
           portRotation.setDischargeRate(new BigDecimal(0));
           if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
             List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
@@ -500,9 +525,6 @@ public class DischargeStudyService {
             buildCargoNomination(cargoNominationDetailList, portRotation);
           }
           response.getPortList().add(portRotation);
-          response.setCowId(Long.valueOf(0));
-          response.setPercentage(BigDecimal.ZERO);
-          response.setTanks(new ArrayList<>());
         });
   }
 
@@ -617,6 +639,10 @@ public class DischargeStudyService {
     DishargeStudyBackLoadingSaveRequest.Builder builder =
         DishargeStudyBackLoadingSaveRequest.newBuilder();
     builder.setDischargeStudyId(request.getDischargeStudyId());
+    builder.setCowId(request.getCowId());
+    builder.setPercentage(
+        request.getPercentage() == null ? Long.valueOf(0) : request.getPercentage().longValue());
+    builder.addAllTanks(request.getTanks());
     request
         .getPortList()
         .forEach(
@@ -654,12 +680,18 @@ public class DischargeStudyService {
     if (portCargo.getIsBackLoadingEnabled()) {
       portDetails.addAllBackLoading(createBackLoading(portCargo.getBackLoading()));
     }
-//    portDetails.setCowId(portCargo.getCowId());
-//    portDetails.setPercentage(portCargo.getPercentage());
-//    if (portCargo.getCowId() == 2) {
-//      portDetails.addAllTanks(portCargo.getTanks());
-//    }
+    //    portDetails.setCowId(portCargo.getCowId());
+    //    portDetails.setPercentage(portCargo.getPercentage());
+    //    if (portCargo.getCowId() == 2) {
+    //      portDetails.addAllTanks(portCargo.getTanks());
+    //    }
     portDetails.addAllInstructionId(portCargo.getInstructionId());
+    portDetails.setFreshCrudeOil(portCargo.getFreshCrudeOil());
+    Optional.ofNullable(portCargo.getFreshCrudeOilQuantity())
+        .ifPresent(item -> portDetails.setFreshCrudeOilQuantity(item.toString()));
+    Optional.ofNullable(portCargo.getFreshCrudeOilTime())
+        .ifPresent(item -> portDetails.setFreshCrudeOilTime(item.toString()));
+    portDetails.setCow(portCargo.getCow());
     dsBackLoadingDetail.setPortDetails(portDetails.build());
     dsBackLoadingDetail.addAllPortCargoDetails(
         createPortWiseCargoNomination(portCargo.getCargoNominationList()));

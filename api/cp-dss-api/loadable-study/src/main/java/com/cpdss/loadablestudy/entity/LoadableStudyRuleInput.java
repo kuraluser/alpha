@@ -47,4 +47,6 @@ public class LoadableStudyRuleInput extends EntityDoc {
 
   @Column(name = "is_mandatory")
   private Boolean isMandatory;
+
+  @Transient private Long communicationRelatedEntityId;
 }

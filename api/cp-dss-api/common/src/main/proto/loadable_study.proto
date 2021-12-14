@@ -231,6 +231,11 @@ service LoadableStudyService {
 
 	rpc saveSynopticalDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 
+	rpc getLoadableStudyPortRotationDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadableStudyPortRotationDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+	
+	rpc getJsonDataForDischargePlanCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 }
 
 service SynopticalOperationService{
@@ -246,7 +251,9 @@ service DischargeStudyOperationService {
   rpc GenerateDischargePatterns (AlgoRequest) returns (AlgoReply) {}
   rpc GetDischargePlanDetails(LoadablePlanDetailsRequest) returns (CargoNominationReply) {}
   rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {}
-	rpc getCowHistoryByVesselId(CowHistoryRequest) returns (CowHistoryReply);
+  rpc getCowHistoryByVesselId(CowHistoryRequest) returns (CowHistoryReply);
+  rpc getDischargeCowDetails(DischargeCowRequest) returns (DischargeCowResponse) {}
+
 }
 
 service PortInstructionService {
@@ -995,14 +1002,12 @@ message PortRotationDetail{
 	bool isBackLoadingEnabled = 22;
 	repeated BackLoading backLoading = 23;
 	repeated int64 instructionId = 24;
-	int64 cowId = 25;
-	int64 percentage = 26;
-	repeated int64 tanks = 27;
-	string portRotationType=28;
-	int64 version = 29;
-	bool freshCrudeOil = 30;
-	string freshCrudeOilQuantity = 31;
-	string freshCrudeOilTime = 32;
+	bool cow = 25;
+	string portRotationType=26;
+	int64 version = 27;
+	bool freshCrudeOil = 28;
+	string freshCrudeOilQuantity = 29;
+	string freshCrudeOilTime = 30;
 	
 }
 
@@ -1368,7 +1373,8 @@ message SynopticalTableRequest{
 	int64 portId = 4;
 	repeated SynopticalRecord synopticalRecord = 5;
 	int64 loadablePatternId = 6;
-	string operationType = 7;	
+	string operationType = 7;
+	bool fromOperations = 8;
 }
 
 message SynopticalTableReply{
@@ -1650,6 +1656,9 @@ message	VoyagePorts{
 message DishargeStudyBackLoadingSaveRequest {
 	repeated DishargeStudyBackLoadingDetail dsBackLoading= 1;
 	int64 dischargeStudyId = 2;
+	int64 cowId = 25;
+    int64 percentage = 26;
+    repeated int64 tanks = 27;
 }
 message DishargeStudyBackLoadingDetail {
 	PortRotationDetail portDetails=1;
@@ -1702,6 +1711,7 @@ message VoyageActivateReply {
 message LoadableStudyCommunicationRequest{
 	int64 id=1;
 	string dataJson=2;
+	int64 loadablePatternId=3;
 }
 
 message LoadableStudyCommunicationReply {
@@ -1726,4 +1736,15 @@ message VoyageInfoRequest{
 message VoyageInfoReply{
 	ResponseStatus responseStatus = 1;
 	VoyageDetail voyageDetail = 2;
+}
+
+message DischargeCowRequest{
+    int64 dischargeStudyId = 1;
+}
+
+message DischargeCowResponse{
+	ResponseStatus responseStatus = 1;
+    int64 cowId = 2;
+    string percentage = 3;
+    repeated int64 tanks = 4;
 }

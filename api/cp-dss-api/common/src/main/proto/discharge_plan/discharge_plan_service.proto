@@ -56,6 +56,7 @@ service DischargePlanService{
   rpc GetLoadicatorData(DischargingInfoLoadicatorDataRequest) returns (DischargingInfoLoadicatorDataReply) {}
   rpc GetDischargingInfoAlgoErrors(AlgoErrorRequest) returns (AlgoErrorReply) {}
   rpc getDischargePlanCargoHistory(CargoHistoryOpsRequest) returns (CargoHistoryResponse) {}
+  rpc ValidateStowageAndBillOfLadding(StowageAndBillOfLaddingValidationRequest) returns (ResponseStatus) {}
 }
 
 service DischargingInstructionService {

@@ -1042,7 +1042,7 @@ export class LoadingDischargingTransformationService {
     sequenceData.tickPositions = this.setTickPositions(sequenceData?.minXAxisValue, sequenceData?.maxXAxisValue);
     sequenceData.cargoLoadingRates = <ILoadingRate[]>this.setCargoRate(sequenceData?.stageTickPositions, sequenceData?.cargoLoadingRates, OPERATIONS.LOADING);
     sequenceData.cargoDischargingRates = <IDischargingRate[]>this.setCargoRate(sequenceData?.stageTickPositions, sequenceData?.cargoDischargingRates, OPERATIONS.DISCHARGING);
-    sequenceData.ballasts = this.setEduction(sequenceData?.ballasts, sequenceData?.ballastEduction, sequenceData.ballastTankCategories, 'ballast')
+    sequenceData.ballasts = this.setEduction(sequenceData?.ballasts, sequenceData?.ballastEduction, sequenceData.ballastTankCategories, 'ballast');
     return { ...sequenceData };
   }
 

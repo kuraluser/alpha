@@ -8,7 +8,7 @@ import { ICargoVesselTankDetails } from '../models/loading-discharging.model';
 import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DecimalPipe } from '@angular/common';
+import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 
 /**
  * Component class for loading discharging berth component
@@ -64,7 +64,7 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestro
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private quantityPipe: QuantityPipe,
     private translateService: TranslateService,
-    private _decimalPipe: DecimalPipe,
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -107,8 +107,8 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestro
    * @param {Event} data
    * @memberof LoadingDischargingCargoDetailsComponent
    */
-   showCommingle(data) {
-    const commingleDetails = {...data};
+  showCommingle(data) {
+    const commingleDetails = { ...data };
     let tankData;
     this.cargoTanks.map(row => {
       row.map(tank => {
@@ -117,10 +117,12 @@ export class LoadingDischargingCargoDetailsComponent implements OnInit, OnDestro
         }
       })
     });
-    commingleDetails.tankName = tankData ? tankData.name : '';
-    commingleDetails.cargoQuantity = this._decimalPipe.transform(commingleDetails.cargo1Mt, '1.2-2') + '\n' + this._decimalPipe.transform(commingleDetails.cargo2Mt, '1.2-2');
-    commingleDetails.cargoPercentage = commingleDetails.cargo1Abbreviation + '-' + ((commingleDetails.cargo1Mt / commingleDetails.plannedWeight) * 100).toFixed(2) + '%\n' + commingleDetails.cargo2Abbreviation + '-' + ((commingleDetails.cargo2Mt / commingleDetails.plannedWeight) * 100).toFixed(2) + '%';
-    commingleDetails.quantity = this._decimalPipe.transform(commingleDetails.plannedWeight, '1.2-2');
+    commingleDetails.tankName = tankData ? tankData.shortName : '';
+    const cargo1Quantity = this.quantityPipe.transform(commingleDetails.cargo1Mt, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api, commingleDetails?.temperature, -1);
+    const cargo2Quantity = this.quantityPipe.transform(commingleDetails.cargo2Mt, AppConfigurationService.settings.baseUnit, this.currentQuantitySelectedUnit, commingleDetails?.api, commingleDetails?.temperature, -1);
+    commingleDetails.cargoQuantity = this.quantityDecimalFormatPipe.transform(cargo1Quantity) + '\n' + this.quantityDecimalFormatPipe.transform(cargo2Quantity);
+    commingleDetails.cargoPercentage = commingleDetails.cargo1Abbreviation + '-' + ((cargo1Quantity / commingleDetails.plannedWeight) * 100).toFixed(2) + '%\n' + commingleDetails.cargo2Abbreviation + '-' + ((cargo2Quantity / commingleDetails.plannedWeight) * 100).toFixed(2) + '%';
+    commingleDetails.quantity = this.quantityDecimalFormatPipe.transform(commingleDetails.plannedWeight);
     this.commingleDetails = [commingleDetails];
     this.showComminglePopup = true;
   }

@@ -19,6 +19,7 @@ services:
     - ENABLE_COMM=${ENABLE_COMM}
     - COMM_TIME_LIMIT=${COMM_TIME_LIMIT}
     - ENABLE_JUDGEMENT=${ENABLE_JUDGEMENT}
+    - ENABLE_VOYAGE_CLOSE_VALIDATION=${ENABLE_VOYAGE_CLOSE_VALIDATION}
     dns: 8.8.8.8
     healthcheck:
       test: "wget --no-verbose --spider http://localhost:8080/actuator/health || exit 1"

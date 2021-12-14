@@ -108,7 +108,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   errorPopup: boolean;
   errorMessage: IAlgoError[];
   isServiceWorkerCallActive = false;
-  isRuleModalVisible: boolean = false;
+  isRuleModalVisible = false;
   dischargingPortData: any = [];
   loadLineChange: boolean;
 
@@ -1006,7 +1006,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
     if (loadableQuantityResult.responseStatus.status === "200") {
       let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
-      let databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
+      const databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
 
       if (loadableQuantityResult.caseNo === 1) {
         calculatedTotQty = loadableQuantityResult.loadableQuantity.foConInSZ === '' ? '0' : calculatedTotQty;
@@ -1196,7 +1196,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 
       if (dateParts?.length) {
         dateString = Number(dateParts[1]) + "/" + Number(dateParts[0]) + "/" + Number(dateParts[2]) + " " + dateTimeParts[1];
-        var modifiedDate = moment.utc(dateString).toDate();
+        const modifiedDate = moment.utc(dateString).toDate();
         const addProcessingTimeout = new Date(modifiedDate.getTime() + 600);
         const now = new Date();
         if (addProcessingTimeout < now) {

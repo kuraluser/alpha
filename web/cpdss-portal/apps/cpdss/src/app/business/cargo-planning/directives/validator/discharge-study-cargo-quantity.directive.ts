@@ -15,6 +15,8 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
   let calculatedTotalQuantity = 0;
   let maxQuantity;
   let isAutoModeAvailable;
+  //Note: - mode 3 need to be confirmed
+  // const isEntireRemainingStatus;
   let noCargoFoundtStatus;
   let isQuantityAutoCorrect;
 
@@ -27,9 +29,13 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
           totalParentQuantityIndex = itemIndex;
           if(backLoadingItems.get('mode').value.id === 2) {
             calculatedTotalQuantity += Number(backLoadingItems.get('kl').value);
-          } else {
+          } else if(backLoadingItems.get('mode').value.id === 1) {
             isAutoModeAvailable = true;
-          }
+          } 
+          //Note: - mode 3 need to be confirmed
+          // else if(backLoadingItems.get('mode').value.id === 3) {
+          //   isEntireRemainingStatus = true;
+          // }
           maxQuantity = Number(backLoadingItems.get('maxKl').value);
         }
       })
@@ -50,7 +56,11 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
         if (control.parent.value.color && cargoDetailItems.get('storedKey').value === control.parent.value.storedKey) {
           if(cargoDetailItems.get('mode').value?.id === 1) {
             isAutoModeAvailable = true;
-          }
+          } 
+          //Note: - mode 3 need to be confirmed
+          // else if(cargoDetailItems.get('mode').value?.id === 3) {
+          //   isEntireRemainingStatus = true;
+          // }
           return cargoDetailItems;
         }
       })

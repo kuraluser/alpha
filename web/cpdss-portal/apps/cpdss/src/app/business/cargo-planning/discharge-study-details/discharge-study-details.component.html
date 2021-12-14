@@ -90,6 +90,10 @@
                 [(ngModel)]="selectedDischargeStudy" filter="true" optionLabel="name"
                 (onChange)="onDischargeStudyChange($event)" resetFilterOnHide="true"></p-dropdown>
         </div>
+        <div class="col text-right btn-position" *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.DISCHARGE_STUDY">
+            <button (click)="saveDischargeStudy()" [disabled]="!dischargeStudy?.editMode"
+            class="btn btn-main">{{'DISCHARGE_STUDY_SAVE' | translate}}</button>
+        </div>
     </div>
     <div class="pr-15 clearfix">
         <ng-container

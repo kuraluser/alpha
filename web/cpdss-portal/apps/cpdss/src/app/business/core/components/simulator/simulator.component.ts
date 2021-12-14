@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import '../../../../../assets/simulator-js/load';
 declare var load: any;
@@ -37,6 +38,7 @@ export class SimulatorComponent implements OnInit {
   constructor(
     private vesselsApiService: VesselsApiService,
     private simulatorApiService: SimulatorApiService,
+    private messageService: MessageService,
     private translateService: TranslateService
   ) { }
 
@@ -64,6 +66,7 @@ export class SimulatorComponent implements OnInit {
    * @memberof SimulatorComponent
    */
   async onLoadSimulator(selectdeUserRole: string, currentVessel: IVessel) {
+    const translationKeys = await this.translateService.get(['SOMETHING_WENT_WRONG_ERROR', 'SIMULATOR_LOADICATOR_DATA_NULL']).toPromise();
     const userDetails = JSON.parse(localStorage.getItem('userDetails'));
     const simulatorInputURL = decodeURIComponent(localStorage.getItem('simulatorSiteUrl'));
 
@@ -97,7 +100,11 @@ export class SimulatorComponent implements OnInit {
             requestType: this.requestType,
             url: simulatorInputURL
           };
-          this.launchSimulator(data);
+          if (loadingSeqJSON.loadicatorJson) {
+            this.launchSimulator(data);
+          } else {
+            this.messageService.add({ severity: 'error', summary: translationKeys['SOMETHING_WENT_WRONG_ERROR'], detail: translationKeys['SIMULATOR_LOADICATOR_DATA_NULL'] });
+          }
         }
         break;
     }

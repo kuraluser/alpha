@@ -661,6 +661,65 @@ public final class DischargePlanServiceGrpc {
     return getGetDischargePlanCargoHistoryMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .StowageAndBillOfLaddingValidationRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getValidateStowageAndBillOfLaddingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ValidateStowageAndBillOfLadding",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .StowageAndBillOfLaddingValidationRequest.class,
+      responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+              .StowageAndBillOfLaddingValidationRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getValidateStowageAndBillOfLaddingMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getValidateStowageAndBillOfLaddingMethod;
+    if ((getValidateStowageAndBillOfLaddingMethod =
+            DischargePlanServiceGrpc.getValidateStowageAndBillOfLaddingMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getValidateStowageAndBillOfLaddingMethod =
+                DischargePlanServiceGrpc.getValidateStowageAndBillOfLaddingMethod)
+            == null) {
+          DischargePlanServiceGrpc.getValidateStowageAndBillOfLaddingMethod =
+              getValidateStowageAndBillOfLaddingMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .StowageAndBillOfLaddingValidationRequest,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "ValidateStowageAndBillOfLadding"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .StowageAndBillOfLaddingValidationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier(
+                              "ValidateStowageAndBillOfLadding"))
+                      .build();
+        }
+      }
+    }
+    return getValidateStowageAndBillOfLaddingMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargePlanServiceStub> factory =
@@ -823,6 +882,17 @@ public final class DischargePlanServiceGrpc {
           getGetDischargePlanCargoHistoryMethod(), responseObserver);
     }
 
+    /** */
+    public void validateStowageAndBillOfLadding(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest
+            request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getValidateStowageAndBillOfLaddingMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -915,6 +985,14 @@ public final class DischargePlanServiceGrpc {
                       com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
                       com.cpdss.common.generated.Common.CargoHistoryResponse>(
                       this, METHODID_GET_DISCHARGE_PLAN_CARGO_HISTORY)))
+          .addMethod(
+              getValidateStowageAndBillOfLaddingMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .StowageAndBillOfLaddingValidationRequest,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING)))
           .build();
     }
   }
@@ -1073,6 +1151,19 @@ public final class DischargePlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void validateStowageAndBillOfLadding(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest
+            request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getValidateStowageAndBillOfLaddingMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1179,6 +1270,15 @@ public final class DischargePlanServiceGrpc {
         com.cpdss.common.generated.Common.CargoHistoryOpsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargePlanCargoHistoryMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.ResponseStatus validateStowageAndBillOfLadding(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .StowageAndBillOfLaddingValidationRequest
+            request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getValidateStowageAndBillOfLaddingMethod(), getCallOptions(), request);
     }
   }
 
@@ -1308,6 +1408,18 @@ public final class DischargePlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargePlanCargoHistoryMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        validateStowageAndBillOfLadding(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .StowageAndBillOfLaddingValidationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getValidateStowageAndBillOfLaddingMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
@@ -1322,6 +1434,7 @@ public final class DischargePlanServiceGrpc {
   private static final int METHODID_GET_LOADICATOR_DATA = 9;
   private static final int METHODID_GET_DISCHARGING_INFO_ALGO_ERRORS = 10;
   private static final int METHODID_GET_DISCHARGE_PLAN_CARGO_HISTORY = 11;
+  private static final int METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING = 12;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1427,6 +1540,14 @@ public final class DischargePlanServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>)
                   responseObserver);
           break;
+        case METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING:
+          serviceImpl.validateStowageAndBillOfLadding(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .StowageAndBillOfLaddingValidationRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1504,6 +1625,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getGetLoadicatorDataMethod())
                       .addMethod(getGetDischargingInfoAlgoErrorsMethod())
                       .addMethod(getGetDischargePlanCargoHistoryMethod())
+                      .addMethod(getValidateStowageAndBillOfLaddingMethod())
                       .build();
         }
       }

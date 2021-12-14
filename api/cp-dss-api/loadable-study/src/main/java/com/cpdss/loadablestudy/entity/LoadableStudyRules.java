@@ -63,4 +63,6 @@ public class LoadableStudyRules extends EntityDoc {
 
   @Column(name = "numeric_scale")
   private Long numericScale;
+
+  @Transient private Long communicationRelatedEntityId;
 }

@@ -32,6 +32,7 @@ import { IDischargeStudy } from './discharge-study-list.model';
     cow: IMode;
     dischargeRate: number,
     isBackLoadingEnabled: boolean;
+    tank: string[];
     backLoadingDetails: IBackLoadingDetails[];
 }
 /**
@@ -71,6 +72,7 @@ export interface IBackLoadingDetails {
     api: ValueObject<number>;
     temp: ValueObject<number>;
     maxKl: ValueObject<number>;
+    sequenceNo: ValueObject<number>;
     abbreviation: ValueObject<string>;
 }
 
@@ -141,4 +143,5 @@ export interface IBackLoadingDetails {
     api: number;
     temperature: number;
     dischargeTime: number;
+    sequenceNo: number;
 }

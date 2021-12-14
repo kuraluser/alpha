@@ -600,6 +600,104 @@ public final class PortInfoServiceGrpc {
     return getGetAllCargoPortMappingByIdMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortMappingRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getSaveAllCargoPortMappingsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveAllCargoPortMappings",
+      requestType = com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.class,
+      responseType = com.cpdss.common.generated.PortInfo.CargoPortReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortMappingRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getSaveAllCargoPortMappingsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.CargoPortMappingRequest,
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        getSaveAllCargoPortMappingsMethod;
+    if ((getSaveAllCargoPortMappingsMethod = PortInfoServiceGrpc.getSaveAllCargoPortMappingsMethod)
+        == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getSaveAllCargoPortMappingsMethod =
+                PortInfoServiceGrpc.getSaveAllCargoPortMappingsMethod)
+            == null) {
+          PortInfoServiceGrpc.getSaveAllCargoPortMappingsMethod =
+              getSaveAllCargoPortMappingsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.CargoPortMappingRequest,
+                          com.cpdss.common.generated.PortInfo.CargoPortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveAllCargoPortMappings"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortMappingRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("SaveAllCargoPortMappings"))
+                      .build();
+        }
+      }
+    }
+    return getSaveAllCargoPortMappingsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoDetailedMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetPortInfoDetailed",
+      requestType = com.cpdss.common.generated.PortInfo.PortRequest.class,
+      responseType = com.cpdss.common.generated.PortInfo.PortReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.PortRequest,
+          com.cpdss.common.generated.PortInfo.PortReply>
+      getGetPortInfoDetailedMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.PortRequest,
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getGetPortInfoDetailedMethod;
+    if ((getGetPortInfoDetailedMethod = PortInfoServiceGrpc.getGetPortInfoDetailedMethod) == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetPortInfoDetailedMethod = PortInfoServiceGrpc.getGetPortInfoDetailedMethod)
+            == null) {
+          PortInfoServiceGrpc.getGetPortInfoDetailedMethod =
+              getGetPortInfoDetailedMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.PortRequest,
+                          com.cpdss.common.generated.PortInfo.PortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetPortInfoDetailed"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.PortReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetPortInfoDetailed"))
+                      .build();
+        }
+      }
+    }
+    return getGetPortInfoDetailedMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static PortInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub> factory =
@@ -752,6 +850,24 @@ public final class PortInfoServiceGrpc {
           getGetAllCargoPortMappingByIdMethod(), responseObserver);
     }
 
+    /** */
+    public void saveAllCargoPortMappings(
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveAllCargoPortMappingsMethod(), responseObserver);
+    }
+
+    /** */
+    public void getPortInfoDetailed(
+        com.cpdss.common.generated.PortInfo.PortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetPortInfoDetailedMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -837,6 +953,20 @@ public final class PortInfoServiceGrpc {
                       com.cpdss.common.generated.PortInfo.CargoPortRequest,
                       com.cpdss.common.generated.PortInfo.CargoPortReply>(
                       this, METHODID_GET_ALL_CARGO_PORT_MAPPING_BY_ID)))
+          .addMethod(
+              getSaveAllCargoPortMappingsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.CargoPortMappingRequest,
+                      com.cpdss.common.generated.PortInfo.CargoPortReply>(
+                      this, METHODID_SAVE_ALL_CARGO_PORT_MAPPINGS)))
+          .addMethod(
+              getGetPortInfoDetailedMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.PortRequest,
+                      com.cpdss.common.generated.PortInfo.PortReply>(
+                      this, METHODID_GET_PORT_INFO_DETAILED)))
           .build();
     }
   }
@@ -984,6 +1114,28 @@ public final class PortInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveAllCargoPortMappings(
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveAllCargoPortMappingsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getPortInfoDetailed(
+        com.cpdss.common.generated.PortInfo.PortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetPortInfoDetailedMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1081,6 +1233,20 @@ public final class PortInfoServiceGrpc {
         com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllCargoPortMappingByIdMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.CargoPortReply saveAllCargoPortMappings(
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveAllCargoPortMappingsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.PortReply getPortInfoDetailed(
+        com.cpdss.common.generated.PortInfo.PortRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetPortInfoDetailedMethod(), getCallOptions(), request);
     }
   }
 
@@ -1196,6 +1362,23 @@ public final class PortInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllCargoPortMappingByIdMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        saveAllCargoPortMappings(
+            com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveAllCargoPortMappingsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.PortReply>
+        getPortInfoDetailed(com.cpdss.common.generated.PortInfo.PortRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetPortInfoDetailedMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_PORT_INFO = 0;
@@ -1210,6 +1393,8 @@ public final class PortInfoServiceGrpc {
   private static final int METHODID_GET_ALL_COUNTRIES = 9;
   private static final int METHODID_GET_ALL_CARGO_PORT_MAPPING = 10;
   private static final int METHODID_GET_ALL_CARGO_PORT_MAPPING_BY_ID = 11;
+  private static final int METHODID_SAVE_ALL_CARGO_PORT_MAPPINGS = 12;
+  private static final int METHODID_GET_PORT_INFO_DETAILED = 13;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1302,6 +1487,18 @@ public final class PortInfoServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_ALL_CARGO_PORT_MAPPINGS:
+          serviceImpl.saveAllCargoPortMappings(
+              (com.cpdss.common.generated.PortInfo.CargoPortMappingRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_PORT_INFO_DETAILED:
+          serviceImpl.getPortInfoDetailed(
+              (com.cpdss.common.generated.PortInfo.PortRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1378,6 +1575,8 @@ public final class PortInfoServiceGrpc {
                       .addMethod(getGetAllCountriesMethod())
                       .addMethod(getGetAllCargoPortMappingMethod())
                       .addMethod(getGetAllCargoPortMappingByIdMethod())
+                      .addMethod(getSaveAllCargoPortMappingsMethod())
+                      .addMethod(getGetPortInfoDetailedMethod())
                       .build();
         }
       }

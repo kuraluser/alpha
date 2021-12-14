@@ -96,22 +96,6 @@ public class VesselValveService {
   public Object buildVesselValveEductorResponse(
       List<VesselInfo.VesselValveEducationProcess> grpcSource) {
     List<VesselValveEducationProcess> sourceList = buildVesselValveEductorDomain(grpcSource);
-    /*    Object aa =
-    sourceList.stream()
-        .collect(
-            Collectors.groupingBy(
-                v -> toCamelCase(v.getStepName()),
-                Collectors.groupingBy(
-                    v -> toCamelCase(v.getStageName()),
-                    Collectors.groupingBy(
-                        v -> toCamelCase("stage_" + v.getStageNumber()),
-                        Collectors.groupingBy(
-                            v -> toCamelCase(v.getEductorName()),
-                            Collectors.groupingBy(
-                                v -> "sequence_" + v.getSequenceNumber(),
-                                Collectors.mapping(
-                                    v -> createValveEdu(v), Collectors.toList())))))));*/
-
     Object groupedData =
         sourceList.stream()
             .collect(
@@ -143,7 +127,9 @@ public class VesselValveService {
         v.getValveId(),
         v.getStageName(),
         v.getValveTypeName(),
-        v.getTankShortName());
+        v.getTankShortName(),
+        v.getManifoldName(),
+        v.getManifoldSide());
   }
 
   public List<VesselValveEducationProcess> buildVesselValveEductorDomain(

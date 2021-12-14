@@ -15,6 +15,8 @@ import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfo.TimezoneResponse;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.portinfo.domain.FilterCriteria;
+import com.cpdss.portinfo.domain.PortInfoSpecification;
 import com.cpdss.portinfo.entity.BerthInfo;
 import com.cpdss.portinfo.entity.BerthManifold;
 import com.cpdss.portinfo.entity.CargoPortMapping;
@@ -26,14 +28,16 @@ import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
 /** Service with operations related to port information */
@@ -569,15 +573,33 @@ public class PortInfoService extends PortInfoServiceImplBase {
                 com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
             Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
             Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
-            if(portMapping.getPortInfo() == null){
+            if (portMapping.getPortInfo() == null) {
               System.out.println("NULLLLLLLLLLLLLLLLLLLLLL");
             } else {
-              portDetail.setPortId(portMapping.getPortInfo().getId() == null ? 0 : portMapping.getPortInfo().getId());
-              portDetail.setPortName(portMapping.getPortInfo().getName() == null ? "" : portMapping.getPortInfo().getName());
-              portDetail.setPortCode(portMapping.getPortInfo().getCode() == null ? "" : portMapping.getPortInfo().getCode());
-              portDetail.setWaterDensity(portMapping.getPortInfo().getDensitySeaWater() == null ? "" : portMapping.getPortInfo().getDensitySeaWater().toString());
-              portDetail.setMaxDraft(portMapping.getPortInfo().getMaxPermissibleDraft() == null ? "" : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
-              portDetail.setMaxAirDraft(portMapping.getPortInfo().getMaxPermissibleDraft() == null ? "" : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
+              portDetail.setPortId(
+                  portMapping.getPortInfo().getId() == null
+                      ? 0
+                      : portMapping.getPortInfo().getId());
+              portDetail.setPortName(
+                  portMapping.getPortInfo().getName() == null
+                      ? ""
+                      : portMapping.getPortInfo().getName());
+              portDetail.setPortCode(
+                  portMapping.getPortInfo().getCode() == null
+                      ? ""
+                      : portMapping.getPortInfo().getCode());
+              portDetail.setWaterDensity(
+                  portMapping.getPortInfo().getDensitySeaWater() == null
+                      ? ""
+                      : portMapping.getPortInfo().getDensitySeaWater().toString());
+              portDetail.setMaxDraft(
+                  portMapping.getPortInfo().getMaxPermissibleDraft() == null
+                      ? ""
+                      : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
+              portDetail.setMaxAirDraft(
+                  portMapping.getPortInfo().getMaxPermissibleDraft() == null
+                      ? ""
+                      : portMapping.getPortInfo().getMaxPermissibleDraft().toString());
             }
             replyBuilder.addPorts(portDetail);
           });
@@ -598,32 +620,15 @@ public class PortInfoService extends PortInfoServiceImplBase {
   /** Retrieves the port info from cargoportmapping table for a particular cargo */
   @Override
   public void getAllCargoPortMappingById(
-          com.cpdss.common.generated.PortInfo.CargoPortRequest request,
-          StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver) {
+      com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver) {
     com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder =
-            com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
+        com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
     try {
-      List<CargoPortMapping> portMappings = this.cargoPortMappingRepository.findByCargoXId(request.getCargoId());
-      portMappings.forEach(
-              portMapping -> {
-                com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.Builder portDetail =
-                        com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
-                Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
-                Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
-                Optional.ofNullable(portMapping.getPortInfo().getId()).ifPresent(portDetail::setPortId);
-                Optional.ofNullable(portMapping.getPortInfo().getName())
-                        .ifPresent(portDetail::setPortName);
-                Optional.ofNullable(portMapping.getPortInfo().getCode())
-                        .ifPresent(portDetail::setPortCode);
-                Optional.ofNullable(portMapping.getPortInfo().getDensitySeaWater())
-                        .ifPresent(density -> portDetail.setWaterDensity(density.toString()));
-                Optional.ofNullable(portMapping.getPortInfo().getMaxPermissibleDraft())
-                        .ifPresent(draft -> portDetail.setMaxDraft(draft.toString()));
-                replyBuilder.addPorts(portDetail);
-              });
-      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-      responseStatus.setStatus(SUCCESS);
-      replyBuilder.setResponseStatus(responseStatus);
+      List<CargoPortMapping> portMappings =
+          this.cargoPortMappingRepository.findByCargoXId(request.getCargoId());
+      buildCargoPortReply(portMappings, replyBuilder);
+
     } catch (Exception e) {
       log.error("Error in getPortInfoByCargoId method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
@@ -635,4 +640,179 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
+  /**
+   * Building cargo port reply
+   *
+   * @param portMappings
+   * @param replyBuilder
+   */
+  private void buildCargoPortReply(
+      List<CargoPortMapping> portMappings,
+      com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder) {
+
+    portMappings.forEach(
+        portMapping -> {
+          com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.Builder portDetail =
+              com.cpdss.common.generated.PortInfo.CargoPortMappingDetail.newBuilder();
+          Optional.ofNullable(portMapping.getId()).ifPresent(portDetail::setId);
+          Optional.ofNullable(portMapping.getCargoXId()).ifPresent(portDetail::setCargoId);
+          Optional.ofNullable(portMapping.getPortInfo().getId()).ifPresent(portDetail::setPortId);
+          Optional.ofNullable(portMapping.getPortInfo().getName())
+              .ifPresent(portDetail::setPortName);
+          Optional.ofNullable(portMapping.getPortInfo().getCode())
+              .ifPresent(portDetail::setPortCode);
+          Optional.ofNullable(portMapping.getPortInfo().getDensitySeaWater())
+              .ifPresent(density -> portDetail.setWaterDensity(density.toString()));
+          Optional.ofNullable(portMapping.getPortInfo().getMaxPermissibleDraft())
+              .ifPresent(draft -> portDetail.setMaxDraft(draft.toString()));
+          replyBuilder.addPorts(portDetail);
+        });
+    ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+    responseStatus.setStatus(SUCCESS);
+    replyBuilder.setResponseStatus(responseStatus);
+  }
+
+  /**
+   * Saving all cargo port mappings
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void saveAllCargoPortMappings(
+      com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request,
+      StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver) {
+    com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder =
+        com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
+    try {
+
+      List<CargoPortMapping> portMappings = new ArrayList<>();
+
+      Optional.of(request.getCargoPortMappingList())
+          .ifPresent(
+              cargoPortMappings -> {
+                cargoPortMappings.forEach(
+                    cargoPortMapping -> {
+                      Optional<PortInfo> portInfoWrapper =
+                          this.portRepository.findByIdAndIsActiveTrue(cargoPortMapping.getPortId());
+                      portInfoWrapper.ifPresent(
+                          portInfo -> {
+                            Optional<CargoPortMapping> cargoPortMappingWrapper =
+                                this.cargoPortMappingRepository.findByCargoXIdAndPortIdAndIsActive(
+                                    cargoPortMapping.getCargoId(),
+                                    cargoPortMapping.getPortId(),
+                                    true);
+                            if (cargoPortMappingWrapper.isEmpty()) {
+                              CargoPortMapping cargoPortMappingEntity = new CargoPortMapping();
+                              cargoPortMappingEntity.setCargoXId(cargoPortMapping.getCargoId());
+                              cargoPortMappingEntity.setPortInfo(portInfo);
+                              portMappings.add(
+                                  this.cargoPortMappingRepository.save(cargoPortMappingEntity));
+                            }
+                          });
+                    });
+              });
+
+      buildCargoPortReply(portMappings, replyBuilder);
+
+    } catch (Exception e) {
+      log.error("Error in save Cargo Port Mapping method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Retrieve all Master cargos with Pagination, Sorting and Filtering
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getPortInfoDetailed(
+      PortRequest request, io.grpc.stub.StreamObserver<PortReply> responseObserver) {
+    PortReply.Builder portReplyBuilder = PortReply.newBuilder();
+    try {
+
+      // Filtering
+      List<String> filterKeys =
+          Arrays.asList("id", "name", "code", "densitySeaWater", "timezone", "country");
+      Map<String, String> params = new HashMap<>();
+      request.getParamList().forEach(param -> params.put(param.getKey(), param.getValue()));
+      Map<String, String> filterParams =
+          params.entrySet().stream()
+              .filter(e -> filterKeys.contains(e.getKey()))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      Specification<PortInfo> specification =
+          Specification.where(new PortInfoSpecification(new FilterCriteria("isActive", ":", true)));
+
+      for (Map.Entry<String, String> entry : filterParams.entrySet()) {
+        String filterKey = entry.getKey();
+        String value = entry.getValue();
+        specification =
+            specification.and(
+                new PortInfoSpecification(new FilterCriteria(filterKey, "like", value)));
+      }
+
+      // Paging and sorting
+      Pageable paging =
+          PageRequest.of(
+              request.getPage(),
+              request.getPageSize(),
+              Sort.by(
+                  Sort.Direction.valueOf(request.getOrderBy().toUpperCase()), request.getSortBy()));
+      Page<PortInfo> pagedResult = this.portRepository.findAll(specification, paging);
+
+      List<PortInfo> ports = pagedResult.toList();
+      ports.forEach(
+          portInfo -> {
+            PortDetail.Builder portDetail = PortDetail.newBuilder();
+            buildCargoDetailed(portInfo, portDetail);
+            portReplyBuilder.addPorts(portDetail);
+          });
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      portReplyBuilder.setResponseStatus(responseStatus);
+      portReplyBuilder.setTotalElements(pagedResult.getTotalElements());
+    } catch (Exception e) {
+      log.error("Error in getPortInfoDetailed method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      portReplyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(portReplyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Building port info detail
+   *
+   * @param portInfo
+   * @param portDetail
+   */
+  private void buildCargoDetailed(PortInfo portInfo, PortDetail.Builder portDetail) {
+
+    Optional.ofNullable(portInfo.getId()).ifPresent(portDetail::setId);
+    Optional.ofNullable(portInfo.getName()).ifPresent(portDetail::setName);
+    Optional.ofNullable(portInfo.getCode()).ifPresent(portDetail::setCode);
+    Optional.ofNullable(portInfo.getDensitySeaWater())
+        .ifPresent(waterDensity -> portDetail.setWaterDensity(String.valueOf(waterDensity)));
+
+    if (portInfo.getTimezone() != null) {
+      portDetail.setTimezone(portInfo.getTimezone().getTimezone());
+      portDetail.setTimezoneOffsetVal(portInfo.getTimezone().getOffsetValue());
+      portDetail.setTimezoneId(portInfo.getTimezone().getId());
+      portDetail.setTimezoneAbbreviation(portInfo.getTimezone().getAbbreviation());
+    }
+
+    Optional.ofNullable(portInfo.getCountry())
+        .ifPresent(item -> portDetail.setCountryName(portInfo.getCountry().getName()));
+    Optional.ofNullable(portInfo.getCountry())
+        .ifPresent(item -> portDetail.setCountryId(portInfo.getCountry().getId()));
+  }
 }

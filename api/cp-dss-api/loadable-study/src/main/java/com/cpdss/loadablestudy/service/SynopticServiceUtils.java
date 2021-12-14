@@ -202,7 +202,8 @@ public class SynopticServiceUtils {
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
       SynopticalTable entity,
       LoadableStudy.SynopticalRecord record,
-      boolean isUpdate)
+      boolean isUpdate,
+      boolean fromOperations)
       throws GenericServiceException {
     List<OnHandQuantity> ohqEntities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
@@ -233,19 +234,23 @@ public class SynopticServiceUtils {
         this.validateSaveSynopticalOhqData(ohqEntity, entity, ohqRecord, loadableStudy);
       }
       if (SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
-        ohqEntity.setArrivalQuantity(
-            isEmpty(ohqRecord.getPlannedWeight())
-                ? null
-                : new BigDecimal(ohqRecord.getPlannedWeight()));
+        if (!fromOperations) {
+          ohqEntity.setArrivalQuantity(
+              isEmpty(ohqRecord.getPlannedWeight())
+                  ? null
+                  : new BigDecimal(ohqRecord.getPlannedWeight()));
+        }
         ohqEntity.setActualArrivalQuantity(
             isEmpty(ohqRecord.getActualWeight())
                 ? null
                 : new BigDecimal(ohqRecord.getActualWeight()));
       } else {
-        ohqEntity.setDepartureQuantity(
-            isEmpty(ohqRecord.getPlannedWeight())
-                ? null
-                : new BigDecimal(ohqRecord.getPlannedWeight()));
+        if (!fromOperations) {
+          ohqEntity.setDepartureQuantity(
+              isEmpty(ohqRecord.getPlannedWeight())
+                  ? null
+                  : new BigDecimal(ohqRecord.getPlannedWeight()));
+        }
         ohqEntity.setActualDepartureQuantity(
             isEmpty(ohqRecord.getActualWeight())
                 ? null

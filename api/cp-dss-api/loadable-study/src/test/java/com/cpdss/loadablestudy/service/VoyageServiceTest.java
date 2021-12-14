@@ -11,6 +11,7 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -24,10 +25,12 @@ import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(classes = {VoyageService.class})
+@TestPropertySource(properties = "cpdss.voyage.validation.enable = false")
 public class VoyageServiceTest {
 
   @Autowired private VoyageService voyageService;
@@ -47,8 +50,10 @@ public class VoyageServiceTest {
   @MockBean private SynopticService synopticService;
   @MockBean private CargoNominationService cargoNominationService;
   @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
+  @MockBean private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanService;
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
+  @MockBean private SynopticalTableRepository synopticalTableRepository;
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
   @Test
@@ -286,6 +291,7 @@ public class VoyageServiceTest {
             cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLCN());
+
     var result = voyageService.saveVoyageStatus(request, replyBuilder);
     assertEquals(SUCCESS, result.build().getResponseStatus().getStatus());
     verify(voyageRepository).save(any(Voyage.class));

@@ -220,7 +220,7 @@ public class CargoService {
   public LoadableStudy.PurposeOfCommingleReply.Builder getPurposeOfCommingle(
       LoadableStudy.PurposeOfCommingleRequest request,
       LoadableStudy.PurposeOfCommingleReply.Builder reply) {
-    Iterable<PurposeOfCommingle> purposeList = purposeOfCommingleRepository.findAll();
+    Iterable<PurposeOfCommingle> purposeList = purposeOfCommingleRepository.findByIsActive(true);
     purposeList.forEach(
         purposeEntity -> {
           com.cpdss.common.generated.LoadableStudy.PurposeOfCommingle.Builder purpose =

@@ -12,7 +12,9 @@ import lombok.Data;
 @JsonInclude(Include.NON_EMPTY)
 public class CargosDetailedResponse {
 
-    private CommonSuccessResponse responseStatus;
+  private CommonSuccessResponse responseStatus;
 
-    private List<CargoDetailed> cargos;
+  private List<CargoDetailed> cargos;
+
+  private Long totalElements;
 }

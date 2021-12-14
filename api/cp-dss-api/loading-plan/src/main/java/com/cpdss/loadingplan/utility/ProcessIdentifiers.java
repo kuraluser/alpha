@@ -40,5 +40,7 @@ public enum ProcessIdentifiers {
   algo_error_heading,
   algo_errors,
   loading_instructions,
-  synoptical_table;
+  synoptical_table,
+  loadable_study_port_rotation,
+  loading_information_algo_status;
 }

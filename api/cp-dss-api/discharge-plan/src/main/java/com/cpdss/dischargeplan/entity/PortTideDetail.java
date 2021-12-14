@@ -24,8 +24,8 @@ public class PortTideDetail extends EntityDoc {
   @Column(name = "cargo_xid")
   private Long cargoXid;
 
-  @Column(name = "created_by")
-  private String createdBy;
+  /*  @Column(name = "created_by")
+  private String createdBy;*/
 
   @Column(name = "is_active")
   private Boolean isActive;

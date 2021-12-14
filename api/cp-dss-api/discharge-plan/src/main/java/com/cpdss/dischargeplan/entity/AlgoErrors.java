@@ -2,11 +2,7 @@
 package com.cpdss.dischargeplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,4 +27,6 @@ public class AlgoErrors extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Transient private Long communicationRelatedEntityId;
 }

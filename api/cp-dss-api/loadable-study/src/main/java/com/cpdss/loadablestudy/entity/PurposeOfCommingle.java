@@ -21,4 +21,7 @@ public class PurposeOfCommingle extends EntityDoc {
 
   @Column(name = "purpose")
   private String purpose;
+
+  @Column(name = "is_active")
+  private Boolean isActive;
 }

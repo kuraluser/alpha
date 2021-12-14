@@ -52,6 +52,7 @@ public class LoadingPlanStagingService extends StagingService {
   Long voyageId = null;
   Long loadablePatternId = null;
   Long synopticalTableXId = null;
+  Long portXId = null;
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
    *
@@ -730,6 +731,50 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case loadable_study_port_rotation:
+          {
+            if (portXId != null && loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(portXId);
+              builder.setLoadablePatternId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub
+                      .getLoadableStudyPortRotationDataForCommunication(builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray loadableStudyPortRotationData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      loadableStudyPortRotationData);
+                }
+              }
+            }
+          }
+        case loading_information_algo_status:
+          {
+            String loadingInformationAlgoStatusJson =
+                loadingPlanStagingRepository.getLoadingInformationAlgoStatusWithLoadingId(Id);
+            if (loadingInformationAlgoStatusJson != null) {
+              JsonArray loadingInformationAlgoStatus =
+                  JsonParser.parseString(loadingInformationAlgoStatusJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadingInformationAlgoStatus);
+            }
+            break;
+          }
       }
     }
     return array;
@@ -762,6 +807,7 @@ public class LoadingPlanStagingService extends StagingService {
       voyageId = loadingInfoJsonObj.get("voyage_xid").getAsLong();
       loadablePatternId = loadingInfoJsonObj.get("loadable_pattern_xid").getAsLong();
       synopticalTableXId = loadingInfoJsonObj.get("synoptical_table_xid").getAsLong();
+      portXId = loadingInfoJsonObj.get("port_xid").getAsLong();
       Long stageOffsetId = loadingInfoJsonObj.get("stages_min_amount_xid").getAsLong();
       Long stageDurationId = loadingInfoJsonObj.get("stages_duration_xid").getAsLong();
       Long loadingInformationStatusId = loadingInfoJsonObj.get("loading_status_xid").getAsLong();

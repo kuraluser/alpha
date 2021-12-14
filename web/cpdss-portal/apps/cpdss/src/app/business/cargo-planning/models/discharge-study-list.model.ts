@@ -202,11 +202,24 @@ export interface IPortDetailValueObject {
     operationId: number;
     maxDraft: number;
     cargoDetail: IPortCargo[];
+    enableBackToLoading: boolean;
+    freshCrudeOil: boolean;
+    cow: boolean;
+    freshCrudeOilQuantity: number;
+    freshCrudeOilTime: string;
+    backLoadingDetails: IBackLoadingDetails[];
+}
+
+/**
+ * Interface for cow details value object
+ *
+ * @export
+ * @interface ICowDetailsValueObject
+ */
+export interface ICowDetailsValueObject {
     cow: IMode;
     percentage: IPercentage;
     tank: ITankDetails[];
-    enableBackToLoading: boolean;
-    backLoadingDetails: IBackLoadingDetails[];
 }
 
 export interface IBackLoadingDetails {
@@ -244,6 +257,8 @@ export interface IPortCargo {
     maxKl: ValueObject<number>;
     abbreviation: ValueObject<string>;
     storedKey: ValueObject<string>;
+    sequenceNo: ValueObject<string>;
+    emptyMaxNoOfTanks: ValueObject<boolean>;
 }
 
 
@@ -320,6 +335,9 @@ export interface IDischargeStudiesResponse {
     responseStatus: IResponse;
     dischargeStudyId: number;
     loadableQuantity: number;
+    cowId: number;
+    percentage: number;
+    tanks: number[];
     portList: IDischargeStudyPortListDetails[];
 }
 
@@ -334,13 +352,14 @@ export interface IDischargeStudyPortListDetails {
     portId: number;
     maxDraft: number;
     portTimezoneId: number;
-    cowId: number;
-    percentage: number;
     instructionId: number[];
     isBackLoadingEnabled: boolean;
     backLoading: IDischargeStudyBackLoadingDetails[];
-    tanks: number[];
     operationId: number;
+    freshCrudeOilQuantity?: number;
+    freshCrudeOil?: boolean;
+    freshCrudeOilTime?: number;
+    cow: boolean;
     cargoNominationList: IDischargeStudyCargoNominationList[];
 }
 
@@ -377,6 +396,8 @@ export interface IDischargeStudyCargoNominationList {
     api: number;
     temperature: number;
     mode: number;
+    sequenceNo: string;
+    emptyMaxNoOfTanks: boolean;
 }
 
 /**

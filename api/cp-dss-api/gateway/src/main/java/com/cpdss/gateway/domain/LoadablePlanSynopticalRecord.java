@@ -31,4 +31,5 @@ public class LoadablePlanSynopticalRecord {
   private BigDecimal sf;
   private BigDecimal list;
   private BigDecimal constantPlanned;
+  private BigDecimal constantActual;
 }
