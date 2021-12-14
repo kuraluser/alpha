@@ -262,6 +262,7 @@ export interface ISynopticalRecordArrangeModel {
     plannedDOTotal: string,
     plannedFWTotal: string,
     othersPlanned: string,
+    constantPlanned: string,
     totalDwtPlanned: string,
     displacementPlanned: string,
     specificGravity: number,

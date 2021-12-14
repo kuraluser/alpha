@@ -99,7 +99,20 @@ export class DatePopUpComponent implements OnInit {
   */
   async startStopVoyage() {
     this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_EXIST', 'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_CONFIRM_LOADABLE_STUDY', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP', 'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_SUMMARY', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_DETAILS', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_CONFIRM_LABEL', 'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_REJECTION_LABEL']).toPromise();
+    const translationKeys = await this.translateService.get([
+      'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_EXIST',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_CONFIRM_LOADABLE_STUDY',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_START',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_SUMMARY',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_DETAILS',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_CONFIRM_LABEL',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_BL_ULLAGE_UPDATE',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_ETA_ETD_ACTUAL',
+      'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_REJECTION_LABEL']).toPromise();
     const formattedDate = this.timeZoneTransformationService.formatDateTime(this.defaultDate, { customFormat: 'DD-MM-YYYY HH:mm' });
     if (this.isStart) {
       try {
@@ -115,8 +128,7 @@ export class DatePopUpComponent implements OnInit {
       catch (error) {
         if (error.error.errorCode === 'ERR-RICO-108') {
           this.messageService.add({ severity: 'error', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_EXIST'] });
-        }
-        else if (error.error.errorCode === 'ERR-RICO-109') {
+        } else if (error.error.errorCode === 'ERR-RICO-109') {
           this.messageService.add({ severity: 'error', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_CONFIRM_LOADABLE_STUDY'] });
         }
       }
@@ -142,6 +154,11 @@ export class DatePopUpComponent implements OnInit {
               this.messageService.add({ severity: 'success', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESS'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_SUCCESSFULLY_STOP'] });
             }
           } catch (error) {
+            if(error.error.errorCode === 'ERR-RICO-151') {
+              this.messageService.add({ severity: 'error', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_BL_ULLAGE_UPDATE'] });
+            } else if (error?.error?.errorCode === 'ERR-RICO-326') {
+              this.messageService.add({ severity: 'error', summary: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR'], detail: translationKeys['VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_ETA_ETD_ACTUAL']});
+            }
           }
           this.closeDialog(true);
           this.ngxSpinnerService.hide();

@@ -17,8 +17,6 @@ export class ParameterListComponent implements OnInit {
   @Input() get cargoConditions(): ICargoConditions[] {
     return this._cargoConditions;
   }
-
-
   set cargoConditions(cargoConditions: ICargoConditions[]) {
     this._cargoConditions = cargoConditions;
     this.getParameterList();
@@ -27,7 +25,6 @@ export class ParameterListComponent implements OnInit {
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
-
   set currentQuantitySelectedUnit(value: QUANTITY_UNIT) {
     this.prevQuantitySelectedUnit = this.currentQuantitySelectedUnit ?? AppConfigurationService.settings.baseUnit;
     this._currentQuantitySelectedUnit = value;
@@ -68,6 +65,7 @@ export class ParameterListComponent implements OnInit {
     let oilWeight = 0;
     oilWeight = this.bunkerConditions?.fuelOilWeight + this.bunkerConditions?.dieselOilWeight;
     this.parameterList.push({ parameters: 'VOYAGE_STATUS_PARAMETER_LIST_FUEL_AND_DIESEL', value: oilWeight, numberFormat: AppConfigurationService.settings.quantityNumberFormatMT })
+
     for (const [key, value] of Object.entries(this.bunkerConditions)) {
       let newKey = null;
       let numberFormat = '';
@@ -92,6 +90,10 @@ export class ParameterListComponent implements OnInit {
           numberFormat = AppConfigurationService.settings?.sgNumberFormat;
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_SPECIFIC_GRAVITY";
           break;
+        case "constantActual":
+          newKey = "VOYAGE_STATUS_PARAMETER_LIST_CONSTANT";
+          numberFormat = AppConfigurationService.settings.quantityNumberFormatMT
+          break;
         case "totalDwtWeight":
           newKey = "VOYAGE_STATUS_PARAMETER_LIST_TOTAL_DWT_WEIGHT";
           numberFormat = AppConfigurationService.settings.quantityNumberFormatMT
@@ -102,6 +104,13 @@ export class ParameterListComponent implements OnInit {
       if (newKey) {
         this.parameterList.push({ parameters: newKey, value: value, numberFormat: numberFormat })
       }
+      const totDwtInitIndex = this.parameterList.findIndex(item => item.parameters === 'VOYAGE_STATUS_PARAMETER_LIST_TOTAL_DWT_WEIGHT');
+      const totDwtTemp = this.parameterList.splice(totDwtInitIndex, 1);
+      this.parameterList.splice(this.parameterList.length - 1, 0 , totDwtTemp[0]);
+
+      const displacementIndex = this.parameterList.findIndex(item => item.parameters === 'VOYAGE_STATUS_PARAMETER_LIST_DISPLACEMENT');
+      const displacemenTemp = this.parameterList.splice(displacementIndex, 1);
+      this.parameterList.splice(this.parameterList.length, 0 , displacemenTemp[0]);
     }
   }
 
