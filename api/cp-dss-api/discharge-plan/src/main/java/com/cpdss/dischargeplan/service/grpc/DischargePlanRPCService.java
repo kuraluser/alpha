@@ -292,8 +292,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
               .setStatus(DischargePlanConstants.FAILED)
               .build());
     } finally {
-      //    responseObserver.onNext(builder.build());
-      //  responseObserver.onCompleted();
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
     }
   }
 
