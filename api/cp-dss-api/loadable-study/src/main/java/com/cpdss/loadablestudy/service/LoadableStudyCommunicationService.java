@@ -1059,24 +1059,23 @@ public class LoadableStudyCommunicationService {
         loadableStudyStatusRepository.findById(
             loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
     if (loadableStudyStatus.isPresent()) {
-      LoadableStudyAlgoStatus algoStatus =
-          loadableStudyAlgoStatusRepository.findByLoadableStudyId(loadableStudyStage.getId());
-      if (algoStatus != null) {
-        algoStatus.setLoadableStudyStatus(loadableStudyStatus.get());
-        algoStatus.setGeneratedFromShore(true);
-        loadableStudyAlgoStatusStage = loadableStudyAlgoStatusRepository.save(algoStatus);
-        log.info(
-            "Communication #######  loadableStudyAlgoStatus saved with id:" + algoStatus.getId());
-      } else {
-        loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
-        loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
-        loadableStudyAlgoStatusStage.setVersion(null);
-        loadableStudyAlgoStatusStage =
-            loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
-        log.info(
-            "Communication #######  loadableStudyAlgoStatus saved with id:"
-                + loadableStudyAlgoStatusStage.getId());
-      }
+      loadableStudyAlgoStatusRepository
+          .findByLoadableStudyId(loadableStudyStage.getId())
+          .ifPresentOrElse(
+              loadableStudyAlgoStatus -> {
+                loadableStudyAlgoStatusStage = loadableStudyAlgoStatus;
+              },
+              () -> {
+                loadableStudyAlgoStatusStage.setVersion(null);
+                loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
+              });
+      loadableStudyAlgoStatusStage.setGeneratedFromShore(true);
+      loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
+      loadableStudyAlgoStatusStage =
+          loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
+      log.info(
+          "Communication #######  loadableStudyAlgoStatus saved with id:"
+              + loadableStudyAlgoStatusStage.getId());
 
     } else {
       log.info(
