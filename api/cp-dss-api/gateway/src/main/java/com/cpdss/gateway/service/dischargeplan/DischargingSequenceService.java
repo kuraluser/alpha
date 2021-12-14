@@ -1036,6 +1036,22 @@ public class DischargingSequenceService {
               cargo.setColorCode(cargoNominationDetail.getColor());
               cargo.setName(cargoNominationDetail.getCargoName());
               transferDetail.setCargo(cargo);
+              transferDetail.setStartQuantity(
+                  StringUtils.hasLength(transfer.getStartQuantity())
+                      ? new BigDecimal(transfer.getStartQuantity())
+                      : null);
+              transferDetail.setStartUllage(
+                  StringUtils.hasLength(transfer.getStartUllage())
+                      ? new BigDecimal(transfer.getStartUllage())
+                      : null);
+              transferDetail.setEndQuantity(
+                  StringUtils.hasLength(transfer.getEndQuantity())
+                      ? new BigDecimal(transfer.getEndQuantity())
+                      : null);
+              transferDetail.setEndUllage(
+                  StringUtils.hasLength(transfer.getEndUllage())
+                      ? new BigDecimal(transfer.getEndUllage())
+                      : null);
               if (transfer.getPurpose().equals(TANK_TRANSFER_PURPOSE_STRIP)) {
                 transferDetails.add(transferDetail);
               } else if (transfer.getPurpose().equals(TANK_TRANSFER_PURPOSE_FRESH_OIL)) {
