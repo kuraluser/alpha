@@ -251,8 +251,10 @@ public class LoadableStudiesConstants {
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
       Arrays.asList(
           "loadable_plan_stowage_details",
-          "loadable_plan_stowage_details_temp",
           "loadable_plan_ballast_details",
+          "loadable_pattern",
+          "loadable_plan_commingle_details",
+          "loadable_plan_stowage_details_temp",
           "stability_parameters",
           "loadable_plan_quantity",
           LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable());
@@ -316,7 +318,8 @@ public class LoadableStudiesConstants {
     DISCHARGE_QUANTITY_CARGO_DETAILS("discharge_quantity_cargo_details"),
     LOADABLE_STUDY_RULES("loadable_study_rules"),
     LOADABLE_STUDY_RULE_INPUT("loadable_study_rule_input"),
-    LOADABLE_PLAN_COMMENTS("loadable_plan_comments");
+    LOADABLE_PLAN_COMMENTS("loadable_plan_comments"),
+    LOADABLE_PLAN_STOWAGE_DETAILS_TEMP("loadable_plan_stowage_details_temp");
 
     public final String table;
   }

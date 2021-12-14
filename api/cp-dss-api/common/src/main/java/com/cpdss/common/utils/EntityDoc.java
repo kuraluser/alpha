@@ -3,12 +3,14 @@ package com.cpdss.common.utils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,4 +66,6 @@ public abstract class EntityDoc implements Doc, Identifiable<Long> {
   @UpdateTimestamp
   @Column(name = "last_modified_date_time", columnDefinition = "TIMESTAMP")
   private LocalDateTime lastModifiedDateTime;
+
+  @Transient private Map<String, Long> communicationRelatedIdMap;
 }

@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.service;
 // region Import
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
@@ -111,6 +112,7 @@ public class LoadableStudyCommunicationService {
   @Autowired LoadableStudyRuleRepository loadableStudyRuleRepository;
   @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
   @Autowired LoadablePlanCommentsRepository loadablePlanCommentsRepository;
+  @Autowired LoadablePlanStowageDetailsTempRepository loadablePlanStowageDetailsTempRepository;
 
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
@@ -155,6 +157,7 @@ public class LoadableStudyCommunicationService {
   private List<LoadableStudyRules> loadableStudyRulesStage = null;
   private List<LoadableStudyRuleInput> loadableStudyRuleInputsStage = null;
   private List<LoadablePlanComments> loadablePlanCommentsStage = null;
+  private List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -709,6 +712,22 @@ public class LoadableStudyCommunicationService {
                       "loadable_pattern_xid");
               break;
             }
+          case loadable_plan_stowage_details_temp:
+            {
+              Type type = new TypeToken<ArrayList<LoadablePlanStowageDetailsTemp>>() {}.getType();
+              loadablePlanStowageDetailsTempStage =
+                  bindDataToEntity(
+                      new LoadablePlanStowageDetailsTemp(),
+                      type,
+                      LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS_TEMP,
+                      data,
+                      dataTransferStage.getId(),
+                      "stowage_details_xid",
+                      "ballast_details_xid",
+                      "loadable_pattern_xid",
+                      "loadable_plan_commingle_details_xid");
+              break;
+            }
         }
       }
 
@@ -746,6 +765,7 @@ public class LoadableStudyCommunicationService {
         saveLoadableStudyRules();
         saveLoadableStudyRuleInputs();
         saveLoadablePlanComments();
+        saveLoadablePlanStowageDetailsTemp();
       } catch (ResourceAccessException e) {
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
@@ -1542,6 +1562,77 @@ public class LoadableStudyCommunicationService {
     }
   }
 
+  /** Method to save loadable_plan_stowage_details_temp table */
+  private void saveLoadablePlanStowageDetailsTemp() {
+
+    if (null != loadablePlanStowageDetailsTempStage) {
+      for (LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp :
+          loadablePlanStowageDetailsTempStage) {
+        // Set stowage details
+        loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(
+            emptyIfNull(loadablePlanStowageDetailsStage).stream()
+                .filter(
+                    loadablePlanStowageDetails ->
+                        loadablePlanStowageDetails
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("stowage_details_xid")))
+                .findFirst()
+                .orElse(null));
+
+        // Set ballast details
+        loadablePlanStowageDetailsTemp.setLoadablePlanBallastDetails(
+            emptyIfNull(loadablePlanBallastDetailsStage).stream()
+                .filter(
+                    loadablePlanBallastDetails ->
+                        loadablePlanBallastDetails
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("ballast_details_xid")))
+                .findFirst()
+                .orElse(null));
+
+        // Set loadable_pattern details
+        loadablePlanStowageDetailsTemp.setLoadablePattern(
+            emptyIfNull(loadablePatternStage).stream()
+                .filter(
+                    loadablePattern ->
+                        loadablePattern
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("loadable_pattern_xid")))
+                .findFirst()
+                .orElse(null));
+
+        // Set loadable_plan_commingle details
+        loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(
+            loadablePlanCommingleDetailsStage.stream()
+                .filter(
+                    loadablePlanCommingleDetails ->
+                        loadablePlanCommingleDetails
+                            .getId()
+                            .equals(
+                                loadablePlanStowageDetailsTemp
+                                    .getCommunicationRelatedIdMap()
+                                    .get("loadable_plan_commingle_details_xid")))
+                .findFirst()
+                .orElse(null));
+      }
+
+      // Save data
+      loadablePlanStowageDetailsTempRepository.saveAll(loadablePlanStowageDetailsTempStage);
+      log.info(
+          "Communication #######  loadable_plan_stowage_details_temp saved. Entries: {}",
+          loadablePlanStowageDetailsTempStage.size());
+    }
+  }
+
   /**
    * Method to update status in exception
    *
@@ -1597,16 +1688,20 @@ public class LoadableStudyCommunicationService {
       JsonArray array, HashMap<String, String> map, List<String> xIds) {
     JsonArray json = loadableStudyStagingService.getAsEntityJson(map, array);
     JsonArray jsonArray = new JsonArray();
+    JsonObject communicationRelatedIdMap = new JsonObject();
     for (JsonElement jsonElement : json) {
       final JsonObject jsonObj = jsonElement.getAsJsonObject();
       if (xIds != null) {
         for (String xId : xIds) {
           if (xIds.size() == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
+          } else {
+            communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
           }
           jsonObj.remove(xId);
         }
       }
+      jsonObj.add("communicationRelatedIdMap", communicationRelatedIdMap);
       jsonArray.add(jsonObj);
     }
     return jsonArray;
@@ -1669,6 +1764,7 @@ public class LoadableStudyCommunicationService {
     loadableStudyRulesStage = null;
     loadableStudyRuleInputsStage = null;
     loadablePlanCommentsStage = null;
+    loadablePlanStowageDetailsTempStage = null;
   }
 
   // endregion
