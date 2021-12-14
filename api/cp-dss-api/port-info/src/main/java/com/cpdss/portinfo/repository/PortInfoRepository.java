@@ -5,10 +5,12 @@ import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.portinfo.entity.PortInfo;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 /** Repository for the portinfo table in port master */
-public interface PortInfoRepository extends CommonCrudRepository<PortInfo, Long> {
+public interface PortInfoRepository
+    extends CommonCrudRepository<PortInfo, Long>, JpaSpecificationExecutor<PortInfo> {
 
   List<PortInfo> findByIdInAndIsActive(List<Long> primaryKey, Boolean isActive);
 

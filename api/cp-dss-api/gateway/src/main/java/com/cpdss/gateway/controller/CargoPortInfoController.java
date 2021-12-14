@@ -276,4 +276,43 @@ public class CargoPortInfoController {
     }
     return response;
   }
+
+  /**
+   * Retrieve ports information from port info
+   *
+   * @param headers
+   * @param pageSize
+   * @param page
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/ports")
+  public PortsResponse getDetailedPorts(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "name") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+    PortsResponse response;
+    try {
+      log.info("getDetailedPorts");
+      response =
+          this.cargoPortInfoService.getPortsDetailed(
+              page, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+    } catch (Exception e) {
+      log.error("Error in getPortsDetailed ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
 }
