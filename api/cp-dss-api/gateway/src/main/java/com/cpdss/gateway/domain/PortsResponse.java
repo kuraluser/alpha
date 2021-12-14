@@ -15,4 +15,6 @@ public class PortsResponse {
   private CommonSuccessResponse responseStatus;
 
   private List<Port> ports;
+
+  private Long totalElements;
 }
