@@ -57,7 +57,8 @@ public class LoadingPlanConstants {
     ALGO_ERRORS("algo_errors"),
     LOADING_INSTRUCTIONS("loading_instructions"),
     SYNOPTICAL_TABLE("synoptical_table"),
-    LOADABLE_STUDY_PORT_ROTATION("loadable_study_port_rotation");
+    LOADABLE_STUDY_PORT_ROTATION("loadable_study_port_rotation"),
+    LOADING_INFORMATION_ALGO_STATUS("loading_information_algo_status");
 
     public final String table;
   }
@@ -81,10 +82,16 @@ public class LoadingPlanConstants {
           "ballast_operation",
           "eduction_operation",
           "cargo_loading_rate",
-          "json_data");
+          "json_data",
+          "algo_error_heading",
+          "algo_errors");
 
   public static final List<String> loadingPlanCommWithAlgoErrorsList =
-      Arrays.asList("loading_information", "algo_error_heading", "algo_errors");
+      Arrays.asList(
+          "loading_information",
+          "loading_information_algo_status",
+          "algo_error_heading",
+          "algo_errors");
 
   public static final List<String> loadingPlanGenerationCommList =
       Arrays.asList(
@@ -126,4 +133,11 @@ public class LoadingPlanConstants {
           "port_loadable_plan_commingle_details",
           "port_loading_plan_stability_parameters",
           "pyuser");
+
+  public static final List<String> ULLAGE_UPDATE_ALGO_ERRORS =
+      Arrays.asList(
+          "loading_information",
+          "loading_information_algo_status",
+          "algo_error_heading",
+          "algo_errors");
 }

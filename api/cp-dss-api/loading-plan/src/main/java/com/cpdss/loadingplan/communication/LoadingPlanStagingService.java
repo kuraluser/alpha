@@ -757,6 +757,24 @@ public class LoadingPlanStagingService extends StagingService {
               }
             }
           }
+        case loading_information_algo_status:
+          {
+            String loadingInformationAlgoStatusJson =
+                loadingPlanStagingRepository.getLoadingInformationAlgoStatusWithLoadingId(Id);
+            if (loadingInformationAlgoStatusJson != null) {
+              JsonArray loadingInformationAlgoStatus =
+                  JsonParser.parseString(loadingInformationAlgoStatusJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadingInformationAlgoStatus);
+            }
+            break;
+          }
       }
     }
     return array;
