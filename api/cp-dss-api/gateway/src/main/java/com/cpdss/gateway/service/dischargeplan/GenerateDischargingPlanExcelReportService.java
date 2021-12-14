@@ -121,7 +121,7 @@ public class GenerateDischargingPlanExcelReportService {
       "/reports/discharging/Vessel_{type}_Discharging_Plan_Template.xlsx";
   public String OUTPUT_FILE_LOCATION =
       "/reports/discharging/Vessel_{id}_Discharging_Plan_{voy}_{port}.xlsx";
-  public String TEMP_LOCATION = "temp.xlsx";
+  public String TEMP_LOCATION = "temp_discharging.xlsx";
   public final Integer START_ROW = 14;
   public final Integer END_ROW = 69;
   public final Integer END_COLUMN = 25;
@@ -129,7 +129,6 @@ public class GenerateDischargingPlanExcelReportService {
   public String SHEET_NAMES[] = {"CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3"};
   public Long INSTRUCTION_ORDER[] = {1L, 2L, 3L, 4L, 5L};
   public Long CARGO_PUMP_IDS[] = {1L, 2L, 3L, 6L, 29L};
-  public Long BALLAST_PUMP_IDS[] = {4L, 5L};
   public List<TankCargoDetails> cargoTanks = null;
   public List<TankCargoDetails> ballastTanks = null;
   public CargoMachineryInUse cargoMachinery = null;
@@ -137,11 +136,16 @@ public class GenerateDischargingPlanExcelReportService {
   public final String UFPT = "UFPT";
   public final String LFPT = "LFPT";
   public final Long GS_PUMP_ID = 3L;
+  public final String GS_PUMP_COLOR_CODE = "#ac6ffc";
   public final Long IGS_PUMP_ID = 4L;
+  public final String IGS_PUMP_COLOR_CODE = "#f274c0";
+  public final Long STRIPPING_PUMP_ID = 5L;
+  public final String STRIPPING_PUMP_COLOR_CODE = "#fcc986";
   public final Long BALLAST_PUMP_ID = 2L;
   public final Long CARGO_PUMP_ID = 1L;
-  public final Long STRIPPING_PUMP_ID = 5L;
   public final String CARGO_PUMP_COLOR_CODE = "#ea8343";
+  public final String DEFAULT_PUMP_COLOR_CODE = "#7099c2";
+  public Long BALLAST_PUMP_IDS[] = {GS_PUMP_ID, IGS_PUMP_ID, STRIPPING_PUMP_ID};
   public final String COW_FULL = "*FULL*";
   public String COW_FULL_ICON = "/reports/discharging/full_wash_icon.png";
   public final String COW_TOP = "*TOP*";
@@ -503,10 +507,10 @@ public class GenerateDischargingPlanExcelReportService {
         }
       } else {
         if (cellValue.contains("#")) {
-          fillColor(workbook, cell, cellValue.split(",")[0]);
+          fillColor(workbook, cell, cellValue.split(" ")[0]);
         }
         if (cellValue.contains("*")) {
-          // drawCow(workbook, cell, sheet, cellValue.split(",")[1]);
+          drawCow(workbook, cell, sheet, cellValue.split(" ")[1]);
         }
         if (cellValue.contains("*") || cellValue.contains("#")) {
           cell.setCellValue("");
@@ -528,17 +532,17 @@ public class GenerateDischargingPlanExcelReportService {
     try {
       InputStream inputStream = null;
       if (type.equals(COW_FULL)) {
-        inputStream = new FileInputStream(COW_FULL_ICON);
+        inputStream = this.getClass().getResourceAsStream(COW_FULL_ICON);
       } else if (type.equals(COW_TOP)) {
-        inputStream = new FileInputStream(COW_TOP_ICON);
+        inputStream = this.getClass().getResourceAsStream(COW_TOP_ICON);
       } else if (type.equals(COW_BOTTOM)) {
-        inputStream = new FileInputStream(COW_BOTTOM_ICON);
+        inputStream = this.getClass().getResourceAsStream(COW_BOTTOM_ICON);
       }
       if (inputStream != null) {
         byte[] bytes = IOUtils.toByteArray(inputStream);
         // Adds a picture to the workbook
         int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
-        inputStream.close();
+
         // Returns an object that handles instantiating concrete classes
         XSSFCreationHelper helper = workbook.getCreationHelper();
         // Creates the top-level drawing patriarch.
@@ -548,19 +552,13 @@ public class GenerateDischargingPlanExcelReportService {
         // create an anchor with upper left cell _and_ bottom right cell
         anchor.setCol1(cell.getColumnIndex());
         anchor.setRow1(cell.getRowIndex());
-        //				anchor.setCol2(2);
-        //				anchor.setRow2(3);
+        anchor.setCol2(cell.getColumnIndex());
+        anchor.setRow2(cell.getRowIndex());
         // Creates a picture
         XSSFPicture pict = drawing.createPicture(anchor, pictureIdx);
         // Reset the image to the original size
-        // pict.resize(); //don't do that. Let the anchor resize the image!
-        // set width to n character widths = count characters * 256
-        // int widthUnits = 20*256;
-        // sheet.setColumnWidth(1, widthUnits);
-
-        // set height to n points in twips = n * 20
-        // short heightUnits = 60*20;
-        // cell.getRow().setHeight(heightUnits);
+        pict.resize();
+        inputStream.close();
       } else {
         log.info("COW icons missing - skipping cow plan rendering");
       }
@@ -1212,18 +1210,25 @@ public class GenerateDischargingPlanExcelReportService {
         List<String> rates = new ArrayList<>();
         List<QuantityLoadingStatus> pumpStatusList = new ArrayList<>();
         Optional<BallastPump> pumpMatch = Optional.empty();
-        // // Finding ullage and values in first tick position
-        // pumpMatch = pumpList.stream().filter(pump ->
-        // pump.getStart().equals(positionList.get(0))
-        // && pump.getEnd().equals(positionList.get(0))).findFirst();
-        // setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
-        for (Long position : positionList) {
-          pumpMatch =
-              pumpList.stream()
-                  .filter(
-                      pumpItem -> pumpItem.getStart() >= position && pumpItem.getEnd() > position)
-                  .findFirst();
-          setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
+        // checking if 0th position have a mapping
+        pumpMatch =
+            pumpList.stream()
+                .filter(
+                    pumpItem ->
+                        pumpItem.getStart().equals(positionList.get(0))
+                            && pumpItem.getEnd().equals(positionList.get(0)))
+                .findFirst();
+        setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
+        for (int i = 0; i < positionList.size(); i++) {
+          Long start = positionList.get(i);
+          if (!start.equals(positionList.get(positionList.size() - 1))) {
+            Long end = positionList.get(i + 1);
+            pumpMatch =
+                pumpList.stream()
+                    .filter(pumpItem -> pumpItem.getStart() >= start && pumpItem.getEnd() <= end)
+                    .findFirst();
+            setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
+          }
         }
         cargoPumpDetailsObj.setUllage(rates);
         cargoPumpDetailsObj.setStatus(pumpStatusList);
@@ -1260,7 +1265,7 @@ public class GenerateDischargingPlanExcelReportService {
       if (pumpMatch.get().getQuantityM3() != null && pumpMatch.get().getRate() != null) {
         rates.add(pumpMatch.get().getRate().toString());
         pumpStatus.setPresent(true);
-        pumpStatus.setColorCode(CARGO_PUMP_COLOR_CODE);
+        pumpStatus.setColorCode(getPumpColourCode(pumpMatch.get().getPumpId()));
       } else {
         pumpStatus.setPresent(false);
       }
@@ -1271,6 +1276,15 @@ public class GenerateDischargingPlanExcelReportService {
     pumpStatusList.add(pumpStatus);
   }
 
+  private String getPumpColourCode(Long pumpId) {
+    return pumpId.equals(GS_PUMP_ID)
+        ? GS_PUMP_COLOR_CODE
+        : pumpId.equals(IGS_PUMP_ID)
+            ? IGS_PUMP_COLOR_CODE
+            : pumpId.equals(STRIPPING_PUMP_ID)
+                ? STRIPPING_PUMP_COLOR_CODE
+                : DEFAULT_PUMP_COLOR_CODE;
+  }
   /**
    * Get sounding of ballast tanks in each tick position
    *
@@ -1382,32 +1396,40 @@ public class GenerateDischargingPlanExcelReportService {
                   .filter(cowTank -> cowTank.getTankId().equals(tank.getId()))
                   .collect(Collectors.toList()));
         }
-        // Finding ullage and values in first tick position
-        cargoMatch =
-            cargoListOfpresentTank.stream()
-                .filter(
-                    cargo ->
-                        cargo.getStart().equals(positionList.get(0))
-                            && cargo.getEnd().equals(positionList.get(0)))
-                .findFirst();
-        setUllageAndQuantityCargo(
-            cargoMatch,
-            ullages,
-            quantityStatusList,
-            positionList.get(0),
-            cleaningTankOfPresentTank);
+        if (positionList.size() > 0) {
+          // Finding ullage and values in first tick position
+          cargoMatch =
+              cargoListOfpresentTank.stream()
+                  .filter(
+                      cargo ->
+                          cargo.getStart().equals(positionList.get(0))
+                              && cargo.getEnd().equals(positionList.get(0)))
+                  .findFirst();
+
+          setUllageAndQuantityCargo(
+              cargoMatch,
+              ullages,
+              quantityStatusList,
+              positionList.get(0),
+              positionList.get(0),
+              cleaningTankOfPresentTank);
+        }
 
         // Finding ullage in each tick position
-        for (Long position : positionList) {
+        for (int i = 1; i < positionList.size() - 1; i++) {
           // avoiding last tick position since this is not needed for sequence
-          if (!positionList.get(positionList.size() - 1).equals(position)) {
-            cargoMatch =
-                cargoListOfpresentTank.stream()
-                    .filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position)
-                    .findFirst();
-            setUllageAndQuantityCargo(
-                cargoMatch, ullages, quantityStatusList, position, cleaningTankOfPresentTank);
-          }
+          Long position = positionList.get(i);
+          cargoMatch =
+              cargoListOfpresentTank.stream()
+                  .filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position)
+                  .findFirst();
+          setUllageAndQuantityCargo(
+              cargoMatch,
+              ullages,
+              quantityStatusList,
+              position,
+              positionList.get(i + 1),
+              cleaningTankOfPresentTank);
         }
         tanksUllageObj.setUllage(ullages);
         tanksUllageObj.setStatus(quantityStatusList);
@@ -1427,14 +1449,18 @@ public class GenerateDischargingPlanExcelReportService {
     }
   }
 
-  /** Method to set cow data against a tick position */
+  /**
+   * Method to set cow data against a tick position
+   *
+   * @param end
+   */
   private void setCowPlanStatus(
-      QuantityLoadingStatus dischargingStatus, Long position, CleaningTank cleaningTank) {
-    if (getCowTankDetailForTank(cleaningTank.getFullTanks(), position)) {
+      QuantityLoadingStatus dischargingStatus, Long start, Long end, CleaningTank cleaningTank) {
+    if (getCowTankDetailForTank(cleaningTank.getFullTanks(), start, end)) {
       dischargingStatus.setCowType(COW_FULL);
-    } else if (getCowTankDetailForTank(cleaningTank.getTopTanks(), position)) {
+    } else if (getCowTankDetailForTank(cleaningTank.getTopTanks(), start, end)) {
       dischargingStatus.setCowType(COW_TOP);
-    } else if (getCowTankDetailForTank(cleaningTank.getBottomTanks(), position)) {
+    } else if (getCowTankDetailForTank(cleaningTank.getBottomTanks(), start, end)) {
       dischargingStatus.setCowType(COW_BOTTOM);
     }
     if (dischargingStatus.getCowType() != null) {
@@ -1460,13 +1486,15 @@ public class GenerateDischargingPlanExcelReportService {
    * @param cleaningTank
    * @param position
    * @param position
+   * @param long1
    * @param cleaningTank
    */
   private void setUllageAndQuantityCargo(
       Optional<Cargo> cargoMatch,
       List<String> ullages,
       List<QuantityLoadingStatus> quantityStatusList,
-      Long position,
+      Long start,
+      Long end,
       CleaningTank cleaningTank) {
     QuantityLoadingStatus dischargingStatus = new QuantityLoadingStatus();
     if (cargoMatch.isPresent()) {
@@ -1492,7 +1520,7 @@ public class GenerateDischargingPlanExcelReportService {
         && (!cleaningTank.getFullTanks().isEmpty()
             || !cleaningTank.getTopTanks().isEmpty()
             || !cleaningTank.getBottomTanks().isEmpty())) {
-      setCowPlanStatus(dischargingStatus, position, cleaningTank);
+      setCowPlanStatus(dischargingStatus, start, end, cleaningTank);
     }
     quantityStatusList.add(dischargingStatus);
   }
@@ -1502,12 +1530,13 @@ public class GenerateDischargingPlanExcelReportService {
    *
    * @param cowTanks
    * @param position
+   * @param end
    * @return
    * @return
    */
-  private boolean getCowTankDetailForTank(List<CowTankDetail> cowTanks, Long position) {
+  private boolean getCowTankDetailForTank(List<CowTankDetail> cowTanks, Long start, Long end) {
     for (CowTankDetail cowTank : cowTanks) {
-      if (cowTank.getStart() <= position && cowTank.getEnd() >= position) {
+      if (cowTank.getStart() >= start && cowTank.getEnd() <= end) {
         return true;
       }
     }
