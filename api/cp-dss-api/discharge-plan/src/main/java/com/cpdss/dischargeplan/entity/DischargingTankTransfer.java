@@ -52,6 +52,6 @@ public class DischargingTankTransfer extends EntityDoc {
   private Boolean isActive;
 
   @ManyToOne
-  @JoinColumn(name = "discharging_sequences_xid", referencedColumnName = "id", nullable = true)
+  @JoinColumn(name = "discharging_sequence_xid", referencedColumnName = "id", nullable = true)
   private DischargingSequence dischargingSequence;
 }
