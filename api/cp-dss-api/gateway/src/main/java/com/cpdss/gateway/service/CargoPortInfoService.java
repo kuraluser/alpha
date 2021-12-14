@@ -650,6 +650,7 @@ public class CargoPortInfoService {
       commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
       commonSuccessResponse.setCorrelationId(correlationIdHeader);
       cargosResponse.setResponseStatus(commonSuccessResponse);
+      cargosResponse.setTotalElements(portReply.getTotalElements());
       buildPortsResponse(cargosResponse, portReply);
     } else {
       throw new GenericServiceException(
