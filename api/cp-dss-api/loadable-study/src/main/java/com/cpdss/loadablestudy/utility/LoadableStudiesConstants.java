@@ -250,13 +250,11 @@ public class LoadableStudiesConstants {
 
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
       Arrays.asList(
-          "loadable_study",
-          "loadable_pattern",
-          "loadable_study_port_rotation",
           "loadable_plan_stowage_details",
+          "loadable_plan_stowage_details_temp",
           "loadable_plan_ballast_details",
-          "loadable_plan_commingle_details",
           "stability_parameters",
+          "loadable_plan_quantity",
           LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable());
 
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP =

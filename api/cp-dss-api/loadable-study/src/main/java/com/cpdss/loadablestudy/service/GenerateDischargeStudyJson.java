@@ -163,8 +163,7 @@ public class GenerateDischargeStudyJson {
                 LoadableStudiesConstants.DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
                 processId,
                 MessageTypes.DISCHARGESTUDY.getMessageType(),
-                loadableStudyOpt.get().getId(),
-                null);
+                loadableStudyOpt.get().getId());
 
         log.info(
             "Json Array in DischargeStudy service from ship to shore: " + jsonArray.toString());

@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.communication;
 
 import com.cpdss.common.communication.StagingService;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
@@ -13,6 +14,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +44,15 @@ public class LoadableStudyStagingService extends StagingService {
    * @param processId - processId
    * @param processGroupId - processGroupId
    * @param Id- id
-   * @param pyUserId- processId of algoResponse
    * @return JsonArray
    */
   public JsonArray getCommunicationData(
-      List<String> processIdentifierList,
-      String processId,
-      String processGroupId,
-      Long Id,
-      String pyUserId) {
+      List<String> processIdentifierList, String processId, String processGroupId, Long Id) {
     log.info("LoadingPlanStaging Service processidentifier list:" + processIdentifierList);
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
     List<Long> algoErrorHeadingsIds = null;
-    List<Long> loadablePatternIds = null;
+    List<Long> loadablePatternIds = getLoadablePatternIds(Id, processGroupId);
     List<Long> loadablePlanIds = null;
     List<Long> synopticalTableIds = null;
     List<Long> cargoNominationIds = null;
@@ -239,10 +236,8 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_pattern:
           {
             String loadablePatternJson =
-                loadableStudyStagingRepository.getLoadablePatternWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getLoadablePatterns(loadablePatternIds);
             if (loadablePatternJson != null) {
-              loadablePatternIds =
-                  loadablePatternRepository.getLoadablePatternByLoadableStudyId(Id);
               JsonArray loadablePattern =
                   JsonParser.parseString(loadablePatternJson).getAsJsonArray();
               addIntoProcessedList(
@@ -384,7 +379,6 @@ public class LoadableStudyStagingService extends StagingService {
           }
         case loadable_plan_stowage_details:
           {
-            loadablePatternIds = loadablePatternRepository.getLoadablePatternByLoadableStudyId(Id);
             if (null != loadablePatternIds && !loadablePatternIds.isEmpty()) {
               String loadablePlanStowageDetailsJson =
                   loadableStudyStagingRepository
@@ -406,7 +400,6 @@ public class LoadableStudyStagingService extends StagingService {
           }
         case loadable_plan_ballast_details:
           {
-            loadablePatternIds = loadablePatternRepository.getLoadablePatternByLoadableStudyId(Id);
             if (loadablePatternIds != null && !loadablePatternIds.isEmpty()) {
               String loadablePlanBallastDetailsJson =
                   loadableStudyStagingRepository.getLoadablePlanBallastDetailsWithLoadablePatternId(
@@ -683,7 +676,7 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_plan_comments:
           {
             String loadablePlanCommentsJson =
-                loadableStudyStagingRepository.getLoadablePlanComments(Id);
+                loadableStudyStagingRepository.getLoadablePlanComments(loadablePatternIds);
             if (null != loadablePlanCommentsJson) {
               JsonArray loadablePlanComments =
                   JsonParser.parseString(loadablePlanCommentsJson).getAsJsonArray();
@@ -695,6 +688,25 @@ public class LoadableStudyStagingService extends StagingService {
                   processGroupId,
                   processedList,
                   loadablePlanComments);
+            }
+            break;
+          }
+        case loadable_plan_stowage_details_temp:
+          {
+            String loadablePlanStowageDetailsTempJson =
+                loadableStudyStagingRepository.getLoadablePlanStowageDetailsTemp(
+                    loadablePatternIds);
+            if (null != loadablePlanStowageDetailsTempJson) {
+              JsonArray loadablePlanStowageDetailsTemp =
+                  JsonParser.parseString(loadablePlanStowageDetailsTempJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadablePlanStowageDetailsTemp);
             }
             break;
           }
@@ -746,5 +758,21 @@ public class LoadableStudyStagingService extends StagingService {
       jsonObject.add("data", array);
     }
     return jsonObject;
+  }
+
+  /**
+   * Method to get loadable pattern ids based on the message type
+   *
+   * @param id id value
+   * @param messageType message type value
+   * @return list of loadable pattern ids for the given id
+   */
+  private List<Long> getLoadablePatternIds(Long id, String messageType) {
+    if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType)) {
+      return loadablePatternRepository.getLoadablePatternIds(id);
+    } else if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)) {
+      return Collections.singletonList(id);
+    }
+    return Collections.emptyList();
   }
 }

@@ -415,8 +415,7 @@ public class LoadablePatternService {
               LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
               UUID.randomUUID().toString(),
               MessageTypes.ALGORESULT.getMessageType(),
-              loadableStudyOpt.get().getId(),
-              null);
+              loadableStudyOpt.get().getId());
       log.info("Json Array in Loadable study service: " + jsonArray.toString());
 
       communicationService.passRequestPayloadToEnvoyWriter(
@@ -1042,8 +1041,7 @@ public class LoadablePatternService {
                 LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP,
                 UUID.randomUUID().toString(),
                 MessageTypes.PATTERNDETAIL.getMessageType(),
-                lsCommunication.getId(),
-                null);
+                lsCommunication.getId());
         log.info("Json Array in Stowage Edit Algocall back service: " + jsonArray.toString());
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
@@ -1730,8 +1728,7 @@ public class LoadablePatternService {
                 LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
                 UUID.randomUUID().toString(),
                 MessageTypes.LOADABLESTUDY.getMessageType(),
-                loadableStudy.getId(),
-                null);
+                loadableStudy.getId());
         log.info("Json Array in Loadable study service: " + jsonArray.toString());
 
         EnvoyWriter.WriterReply ewReply =

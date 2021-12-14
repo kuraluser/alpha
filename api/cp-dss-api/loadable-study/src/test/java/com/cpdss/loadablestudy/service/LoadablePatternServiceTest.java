@@ -801,7 +801,7 @@ public class LoadablePatternServiceTest {
     when(toppingOffSequenceRepository.save(any(LoadablePatternCargoToppingOffSequence.class)))
         .thenReturn(new LoadablePatternCargoToppingOffSequence());
     when(loadableStudyStagingService.getCommunicationData(
-            anyList(), anyString(), anyString(), anyLong(), any()))
+            anyList(), anyString(), anyString(), anyLong()))
         .thenReturn(new JsonArray());
     ReflectionTestUtils.setField(spyService, "enableCommunication", true);
     ReflectionTestUtils.setField(spyService, "env", "env");

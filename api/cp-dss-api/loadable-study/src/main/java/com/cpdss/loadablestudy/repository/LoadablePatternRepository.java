@@ -84,5 +84,5 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
   String getLoadablePatternWithId(long id);
 
   @Query("SELECT LP.id FROM LoadablePattern LP WHERE LP.loadableStudy.id = ?1")
-  List<Long> getLoadablePatternByLoadableStudyId(Long id);
+  List<Long> getLoadablePatternIds(Long loadableStudyId);
 }
