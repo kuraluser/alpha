@@ -13,7 +13,7 @@ export function keycloakShoreInitializer(keycloak: KeycloakService, http: HttpCl
                 const hostname = window.location.hostname.split('.')[0];
                 let hostUrl = '';
 
-                hostUrl = environment.name === 'ship' ?  'company/carousals' : 'companies/' + hostname + '/idp-info';
+                hostUrl = environment.name === 'ship' ?  'company/carousals?domain=' + hostname : 'companies/' + hostname + '/idp-info';
 
                 const appSettings: IAppConfiguration = await appConfig.load();
 
