@@ -605,4 +605,58 @@ public class CargoPortInfoService {
     cargoRequest.setBenzene(cargoDetailed.getBenzene());
     cargoRequest.setSpecialInstrictionsRemark(cargoDetailed.getSpecialInstrictionsRemark());
   }
+
+  /**
+   * Get all ports information
+   *
+   * @param page
+   * @param pageSize
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @param correlationIdHeader
+   * @return
+   * @throws GenericServiceException
+   */
+  public PortsResponse getPortsDetailed(
+      int page,
+      int pageSize,
+      String sortBy,
+      String orderBy,
+      Map<String, String> params,
+      String correlationIdHeader)
+      throws GenericServiceException {
+
+    PortsResponse cargosResponse = new PortsResponse();
+    // Retrieve ports information from port info
+    PortRequest.Builder portRequestBuilder =
+        PortRequest.newBuilder()
+            .setPage(page)
+            .setPageSize(pageSize)
+            .setSortBy(sortBy)
+            .setOrderBy(orderBy)
+            .setCompanyId(1L);
+    params.forEach(
+        (key, value) ->
+            portRequestBuilder.addParam(
+                CargoInfo.Param.newBuilder().setKey(key).setValue(value).build()));
+
+    PortReply portReply =
+        portInfoServiceBlockingStub.getPortInfoDetailed(portRequestBuilder.build());
+
+    if (portReply != null && SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
+
+      CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+      commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+      commonSuccessResponse.setCorrelationId(correlationIdHeader);
+      cargosResponse.setResponseStatus(commonSuccessResponse);
+      buildPortsResponse(cargosResponse, portReply);
+    } else {
+      throw new GenericServiceException(
+          "Error in calling port service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return cargosResponse;
+  }
 }

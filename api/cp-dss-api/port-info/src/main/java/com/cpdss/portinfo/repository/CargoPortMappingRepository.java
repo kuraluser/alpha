@@ -21,6 +21,7 @@ public interface CargoPortMappingRepository extends CommonCrudRepository<CargoPo
 
   /**
    * Fetching CargoPortMapping
+   *
    * @param cargoId
    * @param portId
    * @param isActive
