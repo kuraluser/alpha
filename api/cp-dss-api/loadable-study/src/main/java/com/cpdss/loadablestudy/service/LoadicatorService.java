@@ -1056,7 +1056,9 @@ public class LoadicatorService {
                   algoResponse, loadableStudyOpt.get(), request.getIsPattern(), false);
           log.info("LoadablePattern algo status process id: " + algoResponse.getProcessId());
           if (enableCommunication && !env.equals("ship")) {
-            communicationForShoreToShip(loadableStudyOpt.get());
+            communicationForShoreToShip(
+                loadableStudyOpt.get(),
+                request.getLoadicatorPatternDetails(0).getLoadablePatternId());
             // region Old Communication Code
             /*  passPatternWithLodicatorToEnvoyWriter(
             request,
@@ -1754,7 +1756,8 @@ public class LoadicatorService {
   }
 
   private void communicationForShoreToShip(
-      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) throws GenericServiceException {
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy, Long patternId)
+      throws GenericServiceException {
     if (!env.equals("ship") && enableCommunication) {
       Optional<LoadableStudyCommunicationStatus> patternValidateCommunicationStatus =
           this.loadableStudyCommunicationStatusRepository
@@ -1767,7 +1770,7 @@ public class LoadicatorService {
               LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP,
               UUID.randomUUID().toString(),
               MessageTypes.PATTERNDETAIL.getMessageType(),
-              loadableStudy.getId());
+              patternId);
       log.info("Json Array in Stowage Edit Algocall back service: " + jsonArray.toString());
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(

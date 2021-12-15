@@ -278,7 +278,7 @@ public class LoadableStudiesConstants {
           "loadable_plan_stowage_ballast_details",
           "synoptical_table",
           "loadicator_data_for_synoptical_table",
-          "loadable_study_algo_status");
+          "loadable_pattern_algo_status");
 
   @Getter
   @AllArgsConstructor
@@ -319,7 +319,8 @@ public class LoadableStudiesConstants {
     LOADABLE_STUDY_RULES("loadable_study_rules"),
     LOADABLE_STUDY_RULE_INPUT("loadable_study_rule_input"),
     LOADABLE_PLAN_COMMENTS("loadable_plan_comments"),
-    LOADABLE_PLAN_STOWAGE_DETAILS_TEMP("loadable_plan_stowage_details_temp");
+    LOADABLE_PLAN_STOWAGE_DETAILS_TEMP("loadable_plan_stowage_details_temp"),
+    LOADABLE_PATTERN_ALGO_STATUS("loadable_pattern_algo_status");
 
     public final String table;
   }
