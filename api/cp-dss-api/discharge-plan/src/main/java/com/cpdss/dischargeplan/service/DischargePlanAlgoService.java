@@ -683,6 +683,8 @@ public class DischargePlanAlgoService {
                     Optional.ofNullable(var.getIsAirPurge()).ifPresent(dto::setAirPurge);
                     Optional.ofNullable(var.getLineContentDisplacement())
                         .ifPresent(dto::setLineDisplacement);
+                    Optional.ofNullable(var.getHoseConnections())
+                        .ifPresent(dto::setHoseConnections);
 
                     // Call 1 to Port info, set value from berth table
                     // Setting berth name

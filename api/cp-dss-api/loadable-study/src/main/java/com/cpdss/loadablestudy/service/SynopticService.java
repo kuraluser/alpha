@@ -926,6 +926,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               .ifPresent(ullage -> cargoBuilder.setCorrectedUllage(valueOf(ullage)));
           Optional.ofNullable(commingleTankDataOpt.get().getApi())
               .ifPresent(api -> cargoBuilder.setApi(valueOf(api)));
+          Optional.ofNullable(commingleTankDataOpt.get().getTemperature())
+              .ifPresent(cargoBuilder::setTemperature);
           ofNullable(commingleTankDataOpt.get().getFillingRatio())
               .ifPresent(cargoBuilder::setFillingRatio);
 
