@@ -1708,7 +1708,8 @@ public class LoadablePatternService {
       loadableStudyService.buildSynopticalTable(request.getLoadableStudyId(), loadableStudy);
 
       // Voyage History
-      loadableStudy.setVoyageCargoHistories(cargoService.buildPreviousVoyageDetails());
+      loadableStudy.setVoyageCargoHistories(
+          cargoService.buildPreviousVoyageDetails(loadableStudyOpt.get().getVesselXId()));
       ObjectMapper objectMapper = new ObjectMapper();
 
       objectMapper.writeValue(

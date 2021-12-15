@@ -10,6 +10,7 @@ import com.cpdss.common.generated.CargoInfoServiceGrpc;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
+import com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
@@ -101,6 +102,8 @@ public class VoyageService {
   @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
       dischargePlanServiceBlockingStub;
+
+  private final Long ACTIVE_VOYAGE = 3L;
 
   @Autowired CargoService cargoService;
 
@@ -356,12 +359,31 @@ public class VoyageService {
     return builder;
   }
 
-  public LoadableStudy.VoyageListReply.Builder getVoyagesByVessel(
+  /**
+   * Method to return only active voyages against a vessel
+   *
+   * @param request
+   * @param builder
+   * @return
+   */
+  public LoadableStudy.VoyageListReply.Builder getActiveVoyagesByVessel(
       LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder) {
-
+    log.info("Fetching list of ACTIVE voyages for vessel : {}", request.getVesselId());
     List<Voyage> entityList =
-        this.voyageRepository.findByVesselXIdAndIsActiveOrderByCreatedDateTimeDesc(
-            request.getVesselId(), true);
+        this.voyageRepository
+            .findByVesselXIdAndIsActiveAndVoyageStatus_IdOrderByCreatedDateTimeDesc(
+                request.getVesselId(), true, ACTIVE_VOYAGE);
+    return voyageResponseBuilder(entityList, builder);
+  }
+
+  /**
+   * Builder method to return voyage list
+   *
+   * @param entityList
+   * @param builder
+   * @return
+   */
+  private Builder voyageResponseBuilder(List<Voyage> entityList, Builder builder) {
     for (Voyage entity : entityList) {
       LoadableStudy.VoyageDetail.Builder detailbuilder = LoadableStudy.VoyageDetail.newBuilder();
       detailbuilder.setId(entity.getId());
@@ -396,8 +418,8 @@ public class VoyageService {
           confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_DISCHARGE);
           if (confirmedStudy.isPresent()) {
             detailbuilder.setConfirmedDischargeStudyId(confirmedStudy.get().getId());
-            //            Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
-            //            Optional.ofNullable(noOfDays).ifPresent(item ->
+            // Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
+            // Optional.ofNullable(noOfDays).ifPresent(item ->
             // detailbuilder.setNoOfDays(item));
           }
         } else {
@@ -414,6 +436,21 @@ public class VoyageService {
     }
     builder.setResponseStatus(LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).build());
     return builder;
+  }
+
+  /**
+   * Return all voyages on a vessel
+   *
+   * @param request
+   * @param builder
+   * @return
+   */
+  public LoadableStudy.VoyageListReply.Builder getVoyagesByVessel(
+      LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder) {
+    List<Voyage> entityList =
+        this.voyageRepository.findByVesselXIdAndIsActiveOrderByCreatedDateTimeDesc(
+            request.getVesselId(), true);
+    return voyageResponseBuilder(entityList, builder);
   }
 
   private Optional<com.cpdss.loadablestudy.entity.LoadableStudy> getConfirmedStudy(
@@ -1045,13 +1082,15 @@ public class VoyageService {
       detailbuilder.setStatus(
           entity.getVoyageStatus() != null ? entity.getVoyageStatus().getName() : "");
 
-      // Check any loadableStudy for that voyage is in confirmed status for active voyages
+      // Check any loadableStudy for that voyage is in confirmed status for active
+      // voyages
       boolean containsKey = loadableStudyMap.containsKey(entity.getId());
       if (containsKey) {
         com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
             loadableStudyMap.get(entity.getId());
         detailbuilder.setConfirmedLoadableStudyId(loadableStudy.getId());
-        // loading ports wil not be available for discharging. SO based on the planning type id,
+        // loading ports wil not be available for discharging. SO based on the planning
+        // type id,
         // populating the discharging ports and loading ports
         if (loadableStudy.getPlanningTypeXId() == 1) {
           addLoadingPorts(loadingPortHashMap, portsList, detailbuilder, loadableStudy);
