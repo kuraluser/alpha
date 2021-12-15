@@ -435,7 +435,7 @@ public class LoadableStudyCommunicationService {
                       LoadableStudyTables.LOADABLE_PATTERN,
                       data,
                       dataTransferStage.getId(),
-                      "loadablePatternXId");
+                      "loadablestudy_xid");
               break;
             }
           case algo_error_heading:
@@ -1158,7 +1158,16 @@ public class LoadableStudyCommunicationService {
     for (LoadablePattern lp : loadablePatternStage) {
       Optional<LoadablePattern> loadablePatternOptional =
           loadablePatternRepository.findById(lp.getId());
-      lp.setLoadableStudy(loadableStudyStage);
+
+      // Set loadable study
+      Optional.ofNullable(loadableStudyStage)
+          .ifPresentOrElse(
+              loadableStudy -> lp.setLoadableStudy(loadableStudyStage),
+              () ->
+                  lp.setLoadableStudy(
+                      loadableStudyRepository
+                          .findById(lp.getCommunicationRelatedEntityId())
+                          .orElse(null)));
       lp.setVersion(loadablePatternOptional.map(EntityDoc::getVersion).orElse(null));
     }
 
@@ -1669,7 +1678,7 @@ public class LoadableStudyCommunicationService {
 
         // Set loadable_plan_commingle details
         loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(
-            loadablePlanCommingleDetailsStage.stream()
+            emptyIfNull(loadablePlanCommingleDetailsStage).stream()
                 .filter(
                     loadablePlanCommingleDetails ->
                         loadablePlanCommingleDetails
@@ -1802,7 +1811,9 @@ public class LoadableStudyCommunicationService {
           if (xIds.size() == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
           } else {
-            communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            if (!"null".equals(jsonObj.get(xId).toString())) {
+              communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            }
           }
           jsonObj.remove(xId);
         }

@@ -1818,7 +1818,9 @@ public class DischargePlanCommunicationService {
           if (xIds.length == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
           } else {
-            communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            if (!"null".equals(jsonObj.get(xId).toString())) {
+              communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            }
           }
           jsonObj.remove(xId);
         }
