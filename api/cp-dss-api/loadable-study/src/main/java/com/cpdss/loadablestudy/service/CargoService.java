@@ -604,14 +604,15 @@ public class CargoService {
     }
   }
 
-  public List<VoyageHistoryDto> buildPreviousVoyageDetails() throws GenericServiceException {
-
+  public List<VoyageHistoryDto> buildPreviousVoyageDetails(Long vesselId)
+      throws GenericServiceException {
+    log.info("Fetching recent closed voyages of vessel : {}", vesselId);
     List<VoyageHistoryDto> response = new ArrayList<>();
     var vyStatus = voyageStatusRepository.getById(CLOSE_VOYAGE_STATUS);
     var lsStatus = loadableStudyStatusRepository.findById(LS_STATUS_CONFIRMED);
 
     Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "actualEndDate"));
-    var voyageList = voyageRepository.findRecentClosedVoyageDetails(vyStatus, 1l, pageable);
+    var voyageList = voyageRepository.findRecentClosedVoyageDetails(vyStatus, vesselId, pageable);
     if (!voyageList.isEmpty()) {
       for (Voyage entity : voyageList) {
         Optional<com.cpdss.loadablestudy.entity.LoadableStudy> ls =
