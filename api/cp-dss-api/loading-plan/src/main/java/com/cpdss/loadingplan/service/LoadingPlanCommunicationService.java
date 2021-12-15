@@ -2,12 +2,14 @@
 package com.cpdss.loadingplan.service;
 
 import static com.cpdss.loadingplan.utility.LoadingPlanConstants.*;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
@@ -112,6 +114,8 @@ public class LoadingPlanCommunicationService {
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired private AlgoErrorsRepository algoErrorsRepository;
   @Autowired private LoadingInstructionRepository loadingInstructionRepository;
+  @Autowired private LoadingDelayReasonRepository loadingDelayReasonRepository;
+  @Autowired private ReasonForDelayRepository reasonForDelayRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -282,6 +286,7 @@ public class LoadingPlanCommunicationService {
       List<CargoToppingOffSequence> cargoToppingOffSequences = null;
       List<LoadingBerthDetail> loadingBerthDetails = null;
       List<LoadingDelay> loadingDelays = null;
+      List<LoadingDelayReason> loadingDelayReasons = null;
       List<LoadingMachineryInUse> loadingMachineryInUses = null;
       VoyageActivate voyageActivate = null;
       // Pattern save tablesloadingPlanPortWiseDetailsList
@@ -456,6 +461,22 @@ public class LoadingPlanCommunicationService {
               listType = new TypeToken<ArrayList<LoadingDelay>>() {}.getType();
               loadingDelays = new Gson().fromJson(jsonArray, listType);
               idMap.put(LoadingPlanTables.LOADING_DELAY.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case loading_delay_reason:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingDelayReason());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_delay_xid",
+                      "reason_xid");
+              listType = new TypeToken<ArrayList<LoadingDelayReason>>() {}.getType();
+              loadingDelayReasons = new Gson().fromJson(jsonArray, listType);
+              idMap.put(
+                  LoadingPlanTables.LOADING_DELAY_REASON.getTable(), dataTransferStage.getId());
               break;
             }
           case loading_machinary_in_use:
@@ -1041,6 +1062,54 @@ public class LoadingPlanCommunicationService {
                 e.getMessage());
           }
         }
+
+        if (loadingDelayReasons != null) {
+          try {
+            for (LoadingDelayReason loadingDelayReason : loadingDelayReasons) {
+              Optional<LoadingDelayReason> loadingDelayReasonObj =
+                  loadingDelayReasonRepository.findById(loadingDelayReason.getId());
+              loadingDelayReason.setVersion(
+                  loadingDelayReasonObj.map(EntityDoc::getVersion).orElse(null));
+              // Set Loading Delay details
+              loadingDelayReason.setLoadingDelay(
+                  emptyIfNull(loadingDelays).stream()
+                      .filter(
+                          loadingDelay ->
+                              loadingDelay
+                                  .getId()
+                                  .equals(
+                                      loadingDelayReason
+                                          .getCommunicationRelatedIdMap()
+                                          .get("loading_delay_xid")))
+                      .findFirst()
+                      .orElse(null));
+              Long reasonForDelay =
+                  loadingDelayReason.getCommunicationRelatedIdMap().get("reason_xid");
+              if (reasonForDelay != null) {
+                Optional<ReasonForDelay> reasonForDelayOpt =
+                    reasonForDelayRepository.findByIdAndIsActiveTrue(reasonForDelay);
+                if (reasonForDelayOpt.isPresent()) {
+                  loadingDelayReason.setReasonForDelay(reasonForDelayOpt.get());
+                }
+              }
+            }
+            loadingDelayReasonRepository.saveAll(loadingDelayReasons);
+            log.info("LoadingDelayReason saved :" + loadingDelayReasons);
+          } catch (ResourceAccessException e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_DELAY_REASON.getTable()),
+                processId,
+                retryStatus,
+                e.getMessage());
+          } catch (Exception e) {
+            updateStatusInExceptionCase(
+                idMap.get(LoadingPlanTables.LOADING_DELAY_REASON.getTable()),
+                processId,
+                StagingStatus.FAILED.getStatus(),
+                e.getMessage());
+          }
+        }
+
         if (loadingMachineryInUses != null) {
           try {
             for (LoadingMachineryInUse loadingMachineryInUse : loadingMachineryInUses) {
@@ -2045,10 +2114,6 @@ public class LoadingPlanCommunicationService {
                       + algoStatus.getId());
             }
             loadingInformationAlgoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
-            if (loadingInformationAlgoStatus.getProcessId() != null) {
-              loadingInformationAlgoStatus.setProcessId(
-                  loadingInformationAlgoStatus.getProcessId());
-            }
             loadingInformationAlgoStatus.setLoadingInformation(loadingInfo);
             loadingInformationAlgoStatus.setVersion(null);
             loadingInformationAlgoStatus =
@@ -2123,16 +2188,20 @@ public class LoadingPlanCommunicationService {
   private JsonArray removeJsonFields(JsonArray array, HashMap<String, String> map, String... xIds) {
     JsonArray json = loadingPlanStagingService.getAsEntityJson(map, array);
     JsonArray jsonArray = new JsonArray();
+    JsonObject communicationRelatedIdMap = new JsonObject();
     for (JsonElement jsonElement : json) {
       final JsonObject jsonObj = jsonElement.getAsJsonObject();
       if (xIds != null) {
         for (String xId : xIds) {
           if (xIds.length == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
+          } else {
+            communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
           }
           jsonObj.remove(xId);
         }
       }
+      jsonObj.add("communicationRelatedIdMap", communicationRelatedIdMap);
       jsonArray.add(jsonObj);
     }
     return jsonArray;

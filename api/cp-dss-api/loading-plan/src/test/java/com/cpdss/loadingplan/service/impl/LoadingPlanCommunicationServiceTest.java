@@ -93,6 +93,8 @@ public class LoadingPlanCommunicationServiceTest {
   @MockBean private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @MockBean private AlgoErrorsRepository algoErrorsRepository;
   @MockBean private LoadingInstructionRepository loadingInstructionRepository;
+  @MockBean private LoadingDelayReasonRepository loadingDelayReasonRepository;
+  @MockBean private ReasonForDelayRepository reasonForDelayRepository;
 
   @MockBean
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub

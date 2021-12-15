@@ -138,6 +138,24 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case loading_delay_reason:
+          {
+            String loadingDelayReasonJson =
+                loadingPlanStagingRepository.getLoadingDelayReasonWithLoadingId(Id);
+            if (loadingDelayReasonJson != null) {
+              JsonArray loadingDelayReason =
+                  JsonParser.parseString(loadingDelayReasonJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadingDelayReason);
+            }
+            break;
+          }
         case loading_machinary_in_use:
           {
             String loadingMachineryInUseJson =
