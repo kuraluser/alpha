@@ -1,15 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IDataStateChange, IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
+import { IDataStateChange, IDataTableColumn, IDataTableEvent, IDataTablePageChangeEvent } from '../../../shared/components/datatable/datatable.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
-import { ICargoDetails, ICargosResponse } from '../models/cargo.model';
+import { ICargoDetails, ICargosResponse, IDeleteCargoResponse } from '../models/cargo.model';
 import { IPermissionContext, PERMISSION_ACTION } from '../../../shared/models/common.model';
 import { CargoMasterTransformationService } from '../services/cargo-master-transformation.service';
 import { CargoMasterApiService } from '../services/cargo-master-api.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { TranslateService } from '@ngx-translate/core';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 /**
  * Component class for cargo master
@@ -48,7 +50,10 @@ export class CargoMasterComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cargoMasterApiService: CargoMasterApiService,
-    private ngxSpinnerService: NgxSpinnerService
+    private ngxSpinnerService: NgxSpinnerService,
+    private translateService: TranslateService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -113,4 +118,74 @@ export class CargoMasterComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Event handler for datatable change
+   *
+   * @param {IDataTablePageChangeEvent} event
+   * @memberof CargoMasterComponent
+   */
+  onDataStateChange(event: IDataTablePageChangeEvent) {
+    this.pageState = {
+      filter: event.filter,
+      name: event.filter?.name,
+      pageSize: event.paginator.rows,
+      page: event.paginator.currentPage,
+      sortBy: event.sort.sortField,
+      orderBy: event.sort.sortOrder,
+    };
+    this.loading = true;
+    this.state$.next(this.pageState);
+  }
+
+  /**
+   * Event handel for column click
+   *
+   * @param {IDataTableEvent} event
+   * @memberof CargoMasterComponent
+   */
+  onColumnClick(event: IDataTableEvent) {
+    if (event?.field !== 'actions') {
+      this.ediCargo(event);
+    }
+  }
+
+  /**
+   * Event handler for delete action
+   *
+   * @param {IDataTableEvent} event
+   * @memberof CargoMasterComponent
+   */
+  onDeleteRow(event: IDataTableEvent) {
+    const cargoId = event.data?.id;
+    const translationKeys = this.translateService.instant(['CARGO_DELETE_SUMMARY', 'CARGO_DELETE_DETAILS', 'CARGO_DELETE_CONFIRM_LABEL', 'CARGO_DELETE_REJECT_LABEL', 'CARGO_DELETE_SUCCESSFULLY', 'CARGO_DELETED_SUCCESS']);
+
+    this.confirmationService.confirm({
+      key: 'confirmation-alert',
+      header: translationKeys['CARGO_DELETE_SUMMARY'],
+      message: translationKeys['CARGO_DELETE_DETAILS'],
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: translationKeys['CARGO_DELETE_CONFIRM_LABEL'],
+      acceptIcon: 'pi',
+      acceptButtonStyleClass: 'btn btn-main mr-5',
+      rejectVisible: true,
+      rejectLabel: translationKeys['CARGO_DELETE_REJECT_LABEL'],
+      rejectIcon: 'pi',
+      rejectButtonStyleClass: 'btn btn-main',
+      accept: async () => {
+        this.ngxSpinnerService.show();
+        try {
+          const cargoDeleteRes: IDeleteCargoResponse = await this.cargoMasterApiService.deleteCargo(cargoId).toPromise();
+          this.ngxSpinnerService.hide();
+          if (cargoDeleteRes.responseStatus.status === '200') {
+            this.state$.next(this.pageState);
+            this.messageService.add({ severity: 'success', summary: translationKeys['CARGO_DELETED_SUCCESS'], detail: translationKeys['CARGO_DELETE_SUCCESSFULLY'] });
+          }
+          this.ngxSpinnerService.hide();
+        }
+        catch (error) {
+          this.ngxSpinnerService.hide();
+        }
+      }
+    });
+  }
 }

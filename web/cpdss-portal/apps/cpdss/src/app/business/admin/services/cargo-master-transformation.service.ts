@@ -3,6 +3,7 @@ import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DAT
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoDetails } from '../models/cargo.model';
 import { AdminModule } from '../admin.module';
+import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
 
 /**
  * Service for transformation of cargo master data
@@ -46,18 +47,6 @@ export class CargoMasterTransformationService {
         filterByServer: true
       },
       {
-        field: 'type',
-        header: 'CARGO_LIST_TYPE',
-        filter: true,
-        filterPlaceholder: 'SEARCH_CARGO_TYPE',
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'type',
-        sortable: true,
-        sortField: 'type',
-        filterByServer: true
-      },
-      {
         field: 'abbreviation',
         header: 'CARGO_LIST_ABBREVIATION',
         filter: true,
@@ -67,18 +56,6 @@ export class CargoMasterTransformationService {
         filterField: 'abbreviation',
         sortable: true,
         sortField: 'abbreviation',
-        filterByServer: true
-      },
-      {
-        field: 'assayDate',
-        header: 'CARGO_LIST_ASSAY_DATE',
-        filter: true,
-        filterPlaceholder: 'SEARCH_CARGO_ASSAY_DATE',
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'assayDate',
-        sortable: true,
-        sortField: 'assayDate',
         filterByServer: true
       },
       {
@@ -106,19 +83,7 @@ export class CargoMasterTransformationService {
         filterByServer: true
       },
       {
-        field: 'countries',
-        header: 'CARGO_LIST_COUNTRY',
-        filter: true,
-        filterPlaceholder: 'SEARCH_CARGO_COUNTRY',
-        fieldType: DATATABLE_FIELD_TYPE.ARRAY,
-        filterType: DATATABLE_FILTER_TYPE.ARRAY,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        arrayLabelField: 'countriesLabel',
-        arrayFilterField: 'countriesNameArray',
-        filterByServer: true
-      },
-      {
-        field: 'ports',
+        field: 'loadingInformation',
         header: 'CARGO_LIST_PORTS',
         filter: true,
         filterPlaceholder: 'SEARCH_CARGO_PORT',
@@ -126,7 +91,7 @@ export class CargoMasterTransformationService {
         filterType: DATATABLE_FILTER_TYPE.ARRAY,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         arrayLabelField: 'portsLabel',
-        arrayFilterField: 'portsNameArray',
+        arrayFilterField: 'port',
         filterByServer: true
       },
     ];
@@ -159,11 +124,8 @@ export class CargoMasterTransformationService {
    * @memberof CargoMasterTransformationService
    */
   formatCargo(cargo: ICargoDetails) {
-    cargo.portsNameArray = cargo.ports?.map(lport => lport.name);
-    cargo.portsLabel = cargo.portsNameArray?.join();
-    cargo.countriesNameArray = cargo.countries?.map(country => country.name);
-    cargo.countriesLabel = cargo.countriesNameArray?.join();
-
+    cargo.port = cargo.loadingInformation?.map(info => info?.port?.name);
+    cargo.portsLabel = cargo.port?.join();
     return cargo;
   }
 
@@ -194,5 +156,61 @@ export class CargoMasterTransformationService {
         numberFormat: '1.2-2'
       }
     ]
+  }
+
+  /**
+   * Set validation error messages for cargo details
+   *
+   * @return {*}  {IValidationErrorMessagesSet}
+   * @memberof CargoMasterTransformationService
+   */
+  setValidationErrorMessage(): IValidationErrorMessagesSet {
+    return {
+      name: {
+        'required': 'CARGO_DETAILS_REQUIRED',
+        'specialCharacter': 'CARGO_DETAILS_NAME_INVALID_PATTERN',
+        'maxlength': 'CARGO_DETAILS_NAME_MAX_LENGTH'
+      },
+      abbreviation: {
+        'required': 'CARGO_DETAILS_REQUIRED',
+        'maxlength': 'CARGO_DETAILS_ABBREVIATION_MAX_LENGTH'
+      },
+      api: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      reidVapourPressure: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      gas: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      totalWax: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      pourPoint: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      cloudPoint: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      viscosity: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      temp: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      cowCodes: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      hydrogenSulfideOil: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      hydrogenSulfideVapour: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+      benzene: {
+        'invalidNumber': 'CARGO_DETAILS_INVALID'
+      },
+    }
   }
 }

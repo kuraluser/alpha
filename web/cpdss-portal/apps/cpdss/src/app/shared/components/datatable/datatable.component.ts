@@ -388,7 +388,7 @@ export class DatatableComponent implements OnInit {
       rowData[col.field].isEditMode = true;
     }
   }
-  
+
   /**
    * Handler for cell tab on focus event
    * @param event
@@ -578,7 +578,7 @@ export class DatatableComponent implements OnInit {
   }
 
   /**
-   * Method for options for icon 
+   * Method for options for icon
    *
    * @param {*} rowData
    * @param {*} col
@@ -1058,8 +1058,8 @@ export class DatatableComponent implements OnInit {
    * @returns
    * @memberof DatatableComponent
    */
-  filterData($event, col) {
-    this.filterObject[col.filterField] = ($event.target.value).trim();
+  filterData($event, col, field) {
+    this.filterObject[field] = ($event.target.value).trim();
     if (col?.filterByServer) {
       this._first = 0;
       this._currentPage = 0;
@@ -1068,7 +1068,7 @@ export class DatatableComponent implements OnInit {
       this.currentPageChange.emit(this._currentPage);
       this.dataStateChange.emit(data);
     } else {
-      this.datatable.filter(($event.target.value).trim(), col?.filterField ? col?.filterField : col.field, col.filterMatchMode)
+      this.datatable.filter(($event.target.value).trim(), field, col.filterMatchMode)
     }
   }
 
@@ -1138,7 +1138,7 @@ export class DatatableComponent implements OnInit {
     } else {
       return `${multiSelectedArray?.length} items selected`;
     }
-    
+
   }
 
   /**

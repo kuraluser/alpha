@@ -9,14 +9,13 @@ import { ICargo, IPort } from '../../core/models/common.model';
  * @extends {ICargo}
  */
 export interface ICargoDetails extends ICargo {
-  portsNameArray?: Array<string>;
+  port?: Array<string>;
   portsLabel?: string;
   loadingInformation?: ICargoLoadingInformation[];
   countries?: ICountry[];
   countriesNameArray?: Array<string>;
   countriesLabel?: string;
   type?: string;
-  assayDate: string;
   reidVapourPressure: string;
   gas: string;
   totalWax: string;
@@ -150,3 +149,26 @@ export interface ICargoResponse {
   responseStatus: IResponseStatus;
   cargo: ICargoDetails;
 }
+
+/**
+ * Interface for save cargo response
+ *
+ * @export
+ * @interface ISaveCargoResponse
+ */
+export interface ISaveCargoResponse {
+  responseStatus: IResponseStatus;
+  id: number;
+  cargo: ICargoDetails;
+}
+
+/**
+ * Interface for cargo delete api response
+ *
+ * @export
+ * @interface IDeleteCargoResponse
+ */
+export interface IDeleteCargoResponse {
+  responseStatus: IResponseStatus;
+}
+
