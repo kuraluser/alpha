@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { DatePopUpComponent } from './date-pop-up/date-pop-up.component';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { VesselInfoModule } from '../core/components/vessel-info/vessel-info.module';
 import { NewVoyagePopupModule } from '../core/components/new-voyage-popup/new-voyage-popup.module';
 import { PermissionDirectiveModule } from '../../shared/directives/permission/permission-directive.module';
 import { ValidationErrorModule } from '../../shared/components/validation-error/validation-error.module';
@@ -35,6 +36,7 @@ import { ValidationErrorModule } from '../../shared/components/validation-error/
     TooltipModule,
     NewVoyagePopupModule,
     PermissionDirectiveModule,
+    VesselInfoModule,
     ValidationErrorModule
   ],
   exports: [DatePopUpComponent],

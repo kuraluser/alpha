@@ -1,5 +1,9 @@
 <div class="container-fluid">
     <div class="row mb-15">
+        <div class="col vessel-info-wrapper">
+            <cpdss-portal-vessel-info *ngIf="vesselDetails" [vesselDetails]="vesselDetails"></cpdss-portal-vessel-info>
+        </div>
+        
         <div class="pl-15">
             <h5 class="main-head inline-block">{{ 'VOYAGE_LIST' | translate }}</h5>
             <label class="ml-20 mr-10 col-form-label">
