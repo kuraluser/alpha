@@ -5,6 +5,7 @@ package com.cpdss.loadablestudy.service;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
@@ -1485,10 +1486,18 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable_study_rules table */
   private void saveLoadableStudyRules() {
-    if (null != loadableStudyRulesStage) {
-      // Set detached entities
+    current_table_name = LoadableStudyTables.LOADABLE_STUDY_RULES.getTable();
+
+    if (!isEmpty(loadableStudyRulesStage)) {
       for (LoadableStudyRules loadableStudyRules : loadableStudyRulesStage) {
+        // Set detached entities
+        Optional<LoadableStudyRules> loadableStudyRulesOpt =
+            loadableStudyRuleRepository.findById(loadableStudyRules.getId());
         loadableStudyRules.setLoadableStudy(loadableStudyStage);
+
+        // Set version
+        loadableStudyRules.setVersion(
+            loadableStudyRulesOpt.map(EntityDoc::getVersion).orElse(null));
       }
 
       // Save data
@@ -1505,7 +1514,9 @@ public class LoadableStudyCommunicationService {
    * @throws GenericServiceException Exception when rule not found
    */
   private void saveLoadableStudyRuleInputs() throws GenericServiceException {
-    if (null != loadableStudyRuleInputsStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable();
+
+    if (!isEmpty(loadableStudyRuleInputsStage)) {
       for (LoadableStudyRuleInput loadableStudyRuleInput : loadableStudyRuleInputsStage) {
         // Set detached entities
         LoadableStudyRules loadableStudyRule =
@@ -1520,6 +1531,12 @@ public class LoadableStudyCommunicationService {
                             CommonErrorCodes.E_GEN_INTERNAL_ERR,
                             HttpStatusCode.INTERNAL_SERVER_ERROR));
         loadableStudyRuleInput.setLoadableStudyRuleXId(loadableStudyRule);
+
+        // Set version
+        Optional<LoadableStudyRuleInput> loadableStudyRuleInputOpt =
+            loadableStudyRuleInputRepository.findById(loadableStudyRuleInput.getId());
+        loadableStudyRuleInput.setVersion(
+            loadableStudyRuleInputOpt.map(EntityDoc::getVersion).orElse(null));
       }
 
       // Save data
@@ -1536,9 +1553,11 @@ public class LoadableStudyCommunicationService {
    * @throws GenericServiceException Exception when pattern not found
    */
   private void saveLoadablePlanComments() throws GenericServiceException {
-    if (null != loadablePlanCommentsStage) {
-      // Set detached entities
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable();
+
+    if (!isEmpty(loadablePlanCommentsStage)) {
       for (LoadablePlanComments comment : loadablePlanCommentsStage) {
+        // Set detached entities
         LoadablePattern loadablePattern =
             loadablePatternRepository
                 .findById(comment.getCommunicationRelatedEntityId())
@@ -1550,8 +1569,12 @@ public class LoadableStudyCommunicationService {
                                 comment.getCommunicationRelatedEntityId()),
                             CommonErrorCodes.E_GEN_INTERNAL_ERR,
                             HttpStatusCode.INTERNAL_SERVER_ERROR));
-        ;
         comment.setLoadablePattern(loadablePattern);
+
+        // Set version
+        Optional<LoadablePlanComments> commentOpt =
+            loadablePlanCommentsRepository.findById(comment.getId());
+        comment.setVersion(commentOpt.map(EntityDoc::getVersion).orElse(null));
       }
 
       // Save data
@@ -1564,10 +1587,19 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable_plan_stowage_details_temp table */
   private void saveLoadablePlanStowageDetailsTemp() {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS_TEMP.getTable();
 
-    if (null != loadablePlanStowageDetailsTempStage) {
+    if (!isEmpty(loadablePlanStowageDetailsTempStage)) {
       for (LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp :
           loadablePlanStowageDetailsTempStage) {
+
+        // Set version
+        Optional<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempOpt =
+            loadablePlanStowageDetailsTempRepository.findById(
+                loadablePlanStowageDetailsTemp.getId());
+        loadablePlanStowageDetailsTemp.setVersion(
+            loadablePlanStowageDetailsTempOpt.map(EntityDoc::getVersion).orElse(null));
+
         // Set stowage details
         loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(
             emptyIfNull(loadablePlanStowageDetailsStage).stream()
