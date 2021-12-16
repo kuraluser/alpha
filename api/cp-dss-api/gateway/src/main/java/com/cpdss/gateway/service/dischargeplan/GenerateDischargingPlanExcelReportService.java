@@ -75,6 +75,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -1627,7 +1628,9 @@ public class GenerateDischargingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    return tankList;
+    return tankList.stream()
+        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+        .collect(Collectors.toList());
   }
 
   private List<TankCategoryForSequence> getBallastTanks(

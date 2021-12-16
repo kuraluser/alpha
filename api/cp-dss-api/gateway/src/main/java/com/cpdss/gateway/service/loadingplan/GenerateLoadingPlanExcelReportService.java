@@ -26,6 +26,7 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInstructionGroup;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructionSubHeader;
 import com.cpdss.gateway.domain.loadingplan.LoadingInstructions;
+import com.cpdss.gateway.domain.loadingplan.LoadingPlanCommingleDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingInstructionDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingPlanDetails;
@@ -67,13 +68,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.apache.commons.io.IOUtils;
@@ -469,12 +473,37 @@ public class GenerateLoadingPlanExcelReportService {
           fillColor(workbook, cell, opt.get().getColorCode());
         }
       } else if (cargoListSequence != null) {
-        Optional<TankCategoryForSequence> opt =
-            cargoListSequence.stream()
-                .filter(item -> cellValue.equals(item.getCargoName()))
-                .findFirst();
-        if (opt.isPresent()) {
-          fillColor(workbook, cell, opt.get().getColorCode());
+        // Commingle tanks color
+        Optional<TankCategoryForSequence> opt = Optional.empty();
+        Supplier<Stream<TankCategoryForSequence>> streamSupplier =
+            () -> cargoListSequence.stream().filter(item -> (item.isCommingled()));
+        if (!streamSupplier.get().equals(Stream.empty())) {
+          opt =
+              streamSupplier
+                  .get()
+                  .filter(item -> item.getCommingleCargoName1().equals(cellValue))
+                  .findFirst();
+          if (opt.isPresent()) {
+            fillColor(workbook, cell, opt.get().getCommingleCargoColor1());
+          } else {
+            opt =
+                streamSupplier
+                    .get()
+                    .filter(item -> item.getCommingleCargoName2().equals(cellValue))
+                    .findFirst();
+            if (opt.isPresent()) {
+              fillColor(workbook, cell, opt.get().getCommingleCargoColor2());
+            }
+          }
+        }
+        if (opt.isEmpty()) {
+          opt =
+              cargoListSequence.stream()
+                  .filter(item -> cellValue.equals(item.getCargoName()))
+                  .findFirst();
+          if (opt.isPresent()) {
+            fillColor(workbook, cell, opt.get().getColorCode());
+          }
         }
       } else {
         if (cellValue.contains("#")) {
@@ -1161,25 +1190,25 @@ public class GenerateLoadingPlanExcelReportService {
       if (!cargoListOfpresentTank.isEmpty()) {
         List<String> ullages = new ArrayList<>();
         List<QuantityLoadingStatus> quantityStatusList = new ArrayList<>();
-        Optional<Cargo> cargoMatch = Optional.empty();
+        List<Cargo> cargoMatchList = new ArrayList<>();
         // Finding ullage and values in first tick position
-        cargoMatch =
+        cargoMatchList =
             cargoListOfpresentTank.stream()
                 .filter(
                     cargo ->
                         cargo.getStart().equals(positionList.get(0))
                             && cargo.getEnd().equals(positionList.get(0)))
-                .findFirst();
-        setUllageAndQuantityCargo(cargoMatch, ullages, quantityStatusList);
+                .collect(Collectors.toList());
+        setUllageAndQuantityCargo(cargoMatchList, ullages, quantityStatusList);
         // Finding ullage in each tick position
         for (Long position : positionList) {
           // avoiding last tick position since this is not needed for sequence
           if (!positionList.get(positionList.size() - 1).equals(position)) {
-            cargoMatch =
+            cargoMatchList =
                 cargoListOfpresentTank.stream()
                     .filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position)
-                    .findFirst();
-            setUllageAndQuantityCargo(cargoMatch, ullages, quantityStatusList);
+                    .collect(Collectors.toList());
+            setUllageAndQuantityCargo(cargoMatchList, ullages, quantityStatusList);
           }
         }
         tanksUllageObj.setUllage(ullages);
@@ -1217,10 +1246,21 @@ public class GenerateLoadingPlanExcelReportService {
    * @param quantityStatusList
    */
   private void setUllageAndQuantityCargo(
-      Optional<Cargo> cargoMatch,
+      List<Cargo> cargoMatchList,
       List<String> ullages,
       List<QuantityLoadingStatus> quantityStatusList) {
     QuantityLoadingStatus loadingStatus = new QuantityLoadingStatus();
+    Optional<Cargo> cargoMatch = Optional.empty();
+    if (cargoMatchList.size() > 1) {
+      // If commingle is present list will have 2 items
+      cargoMatch =
+          cargoMatchList.stream()
+              .filter(item -> item.getQuantity().compareTo(BigDecimal.ZERO) > 0)
+              .findAny();
+    } else if (cargoMatchList.size() > 0) {
+      // If no commingle is present list will have 1 items
+      cargoMatch = Optional.of(cargoMatchList.get(0));
+    }
     if (cargoMatch.isPresent()) {
       ullages.add(cargoMatch.get().getUllage().toString());
       if (cargoMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
@@ -1300,6 +1340,7 @@ public class GenerateLoadingPlanExcelReportService {
       TankCategoryForSequence tankCategoryObj = new TankCategoryForSequence();
       tankCategoryObj.setId(cargoTank.getId());
       tankCategoryObj.setTankName(cargoTank.getTankName());
+      tankCategoryObj.setCommingled(false);
       cargoTankCategories.forEach(
           item -> {
             if (item.getId().equals(cargoTank.getId())) {
@@ -1314,8 +1355,29 @@ public class GenerateLoadingPlanExcelReportService {
                                   && cargo.getQuantity().compareTo(BigDecimal.ZERO) > 0)
                       .findFirst();
               if (cargoOpt.isPresent()) {
-                tankCategoryObj.setCargoName(cargoOpt.get().getAbbreviation());
-                tankCategoryObj.setColorCode(cargoOpt.get().getColor());
+                // Checking if commingled cargo tank
+                Optional<Cargo> commingleCargoOpt =
+                    cargos.stream()
+                        .filter(
+                            cargo ->
+                                cargo.getTankId().equals(cargoOpt.get().getTankId())
+                                    && cargo.getIsCommingle()
+                                    && !cargoOpt.get().getCargoId().equals(cargo.getCargoId()))
+                        .findFirst();
+                if (commingleCargoOpt.isPresent()) {
+                  tankCategoryObj.setCommingled(true);
+                  tankCategoryObj.setCommingleCargoName1(cargoOpt.get().getAbbreviation());
+                  tankCategoryObj.setCommingleCargoColor1(cargoOpt.get().getColor());
+                  tankCategoryObj.setCommingleCargoName2(commingleCargoOpt.get().getAbbreviation());
+                  tankCategoryObj.setCommingleCargoColor2(commingleCargoOpt.get().getColor());
+                  tankCategoryObj.setCargoName("");
+                } else {
+                  tankCategoryObj.setCommingled(false);
+                  tankCategoryObj.setCargoName(cargoOpt.get().getAbbreviation());
+                  tankCategoryObj.setColorCode(cargoOpt.get().getColor());
+                  tankCategoryObj.setCommingleCargoName1("");
+                  tankCategoryObj.setCommingleCargoName2("");
+                }
               } else {
                 tankCategoryObj.setCargoName("");
               }
@@ -1323,7 +1385,9 @@ public class GenerateLoadingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    return tankList;
+    return tankList.stream()
+        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+        .collect(Collectors.toList());
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
@@ -1889,12 +1953,21 @@ public class GenerateLoadingPlanExcelReportService {
                                 && psd.getConditionType().equals(conditionType)
                                 && psd.getValueType().equals(2))
                     .findAny();
+            Optional<LoadingPlanCommingleDetails> loadingPlanCommingleDetails =
+                requestPayload.getPlanCommingleDetails().stream()
+                    .filter(
+                        pcd ->
+                            pcd.getTankId().equals(item.getId())
+                                && pcd.getConditionType().equals(conditionType)
+                                && pcd.getValueType().equals(2))
+                    .findAny();
             TankCargoDetails tankCargoDetails = new TankCargoDetails();
             tankCargoDetails.setTankName(item.getShortName());
             tankCargoDetails.setId(item.getId());
             // Adding cargo details in this tank
             setCargoTankValues(
                 loadingPlanStowageDetails,
+                loadingPlanCommingleDetails,
                 loadableQuantityCargoDetailsList,
                 tankCargoDetails,
                 item.getFullCapacityCubm());
@@ -1910,9 +1983,14 @@ public class GenerateLoadingPlanExcelReportService {
     vesselCondition.setCargoBottomTanks(getTankAgainstPossision(tankCargoDetailsList, "S"));
   }
 
-  /** Populates cargo values in to each tank */
+  /**
+   * Populates cargo values in to each tank
+   *
+   * @param loadingPlanCommingleDetails
+   */
   private void setCargoTankValues(
       Optional<LoadingPlanStowageDetails> loadingPlanStowageDetails,
+      Optional<LoadingPlanCommingleDetails> loadingPlanCommingleDetails,
       List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList,
       TankCargoDetails tankCargoDetails,
       String tankFullCapacity) {
@@ -1927,20 +2005,6 @@ public class GenerateLoadingPlanExcelReportService {
       Optional.ofNullable(loadingPlanStowageDetails.get().getUllage())
           .ifPresent(tankCargoDetails::setUllage);
 
-      if (tankCargoDetails.getQuantity() > 0
-          && tankCargoDetails.getTemperature() != null
-          && !tankCargoDetails.getTemperature().isBlank()
-          && tankCargoDetails.getApi() != null
-          && !tankCargoDetails.getApi().isBlank()) {
-        tankCargoDetails.setFillingRatio(
-            getFillingRatio(
-                tankCargoDetails.getQuantity(),
-                tankCargoDetails.getApi(),
-                tankCargoDetails.getTemperature(),
-                tankFullCapacity));
-      } else {
-        tankCargoDetails.setFillingRatio("0");
-      }
       if (!loadingPlanStowageDetails.get().getColorCode().isEmpty()
           && !loadingPlanStowageDetails.get().getAbbreviation().isEmpty()) {
         Optional.ofNullable(loadingPlanStowageDetails.get().getColorCode())
@@ -1963,11 +2027,44 @@ public class GenerateLoadingPlanExcelReportService {
         }
       }
 
+    } else if (loadingPlanCommingleDetails.isPresent()) {
+      // If tank does not have details in stowage checking if it is a commingled tank
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getQuantityMT())
+          .ifPresent(i -> tankCargoDetails.setQuantity(i.doubleValue()));
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getApi())
+          .ifPresent(i -> tankCargoDetails.setApi(i.toString()));
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getTemperature())
+          .ifPresent(i -> tankCargoDetails.setTemperature(i.toString()));
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getUllage())
+          .ifPresent(i -> tankCargoDetails.setUllage(i.toString()));
+
+      if (!loadingPlanCommingleDetails.get().getColorCode().isEmpty()
+          && !loadingPlanCommingleDetails.get().getAbbreviation().isEmpty()) {
+        Optional.ofNullable(loadingPlanCommingleDetails.get().getColorCode())
+            .ifPresent(tankCargoDetails::setColorCode);
+        Optional.ofNullable(loadingPlanCommingleDetails.get().getAbbreviation())
+            .ifPresent(tankCargoDetails::setCargoName);
+      }
     } else {
+      // Handling empty tank scenario
       tankCargoDetails.setQuantity(0.0);
       tankCargoDetails.setCargoName("");
       tankCargoDetails.setColorCode("");
       tankCargoDetails.setUllage("0");
+      tankCargoDetails.setFillingRatio("0");
+    }
+    if (tankCargoDetails.getQuantity() > 0
+        && tankCargoDetails.getTemperature() != null
+        && !tankCargoDetails.getTemperature().isBlank()
+        && tankCargoDetails.getApi() != null
+        && !tankCargoDetails.getApi().isBlank()) {
+      tankCargoDetails.setFillingRatio(
+          getFillingRatio(
+              tankCargoDetails.getQuantity(),
+              tankCargoDetails.getApi(),
+              tankCargoDetails.getTemperature(),
+              tankFullCapacity));
+    } else {
       tankCargoDetails.setFillingRatio("0");
     }
   }
