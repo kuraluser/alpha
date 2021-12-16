@@ -287,9 +287,21 @@ public class CargoPortInfoService {
     cargoRequestBuilder.setOrderBy(orderBy);
     cargoRequestBuilder.setCompanyId(1L);
     params.forEach(
-        (key, value) ->
-            cargoRequestBuilder.addParam(
-                CargoInfo.Param.newBuilder().setKey(key).setValue(value).build()));
+        (key, value) -> {
+          String keyMapped;
+          switch (key) {
+            case "name":
+              keyMapped = "crudeType";
+              break;
+            case "temp":
+              keyMapped = "minLoadTemp";
+              break;
+            default:
+              keyMapped = key;
+          }
+          cargoRequestBuilder.addParam(
+              CargoInfo.Param.newBuilder().setKey(keyMapped).setValue(value).build());
+        });
     CargoInfo.CargoDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.getCargoInfoDetailed(cargoRequestBuilder.build());
     if (cargoReply != null

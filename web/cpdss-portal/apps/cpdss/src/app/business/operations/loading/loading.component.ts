@@ -18,6 +18,7 @@ import { AppConfigurationService } from '../../../shared/services/app-configurat
 import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { SIMULATOR_REQUEST_TYPE } from '../../core/components/simulator/simulator.model';
+import { saveAs } from 'file-saver';
 
 /**
  * Component class for loading component
@@ -519,6 +520,23 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
     } else {
       return this.loadingInformationComplete;
     }
+  }
+
+  /**
+   * Method to dowload byte array from and save as excel.
+   *
+   * @memberof LoadingComponent
+   */
+
+   downloadLoadingPlanTemplate() {
+    this.ngxSpinnerService.show();
+    this.operationsApiService.downloadPlanTemplate(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId, null).subscribe((result) => {
+      const fileName = result.headers.get('content-disposition').split('filename=')[1];
+      const blob = new Blob([result.body], { type: result.type });
+      const fileurl = window.URL.createObjectURL(blob);
+      saveAs(fileurl, fileName);
+      this.ngxSpinnerService.hide();
+    });
   }
 
 }

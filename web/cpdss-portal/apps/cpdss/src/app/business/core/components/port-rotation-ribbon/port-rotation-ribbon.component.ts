@@ -15,6 +15,7 @@ import { portTimeValidator } from '../../directives/port-time-validator.directiv
 import { IDateTimeFormatOptions, ITimeZone } from './../../../../shared/models/common.model';
 import { TimeZoneTransformationService } from './../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 import * as moment from 'moment';
+import { IPermission } from '../../../../shared/models/user-profile.model';
 
 /**
  * Component class of PortRotationRibbonComponent
@@ -49,6 +50,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
   @Input() groupSelection = false;
 
   @Input() showOperationType = false;
+  @Input() etaEtdPermision: IPermission;
 
   @Output() portSelection = new EventEmitter<IVoyagePortDetails>();
 
@@ -197,10 +199,12 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     if (![VOYAGE_STATUS.CLOSE].includes(this.voyageDetails?.statusId) && this.isDischargeStarted(port)) {
       const form = this.row(this.portList.indexOf(port));
       this.setInvalid(port, form)
+      let isDateEditable;
+      isDateEditable = this.etaEtdPermision?.edit !== undefined && !this.etaEtdPermision?.edit ?  false : true;
       if (port.isFutureDate === true) {
-        if (field === 'date') {
+        if (field === 'date' && isDateEditable) {
           port.isDateEditable = true;
-        } else if (field === 'time') {
+        } else if (field === 'time' && isDateEditable) {
           port.isTimeEditable = true;
         } else if (field === 'distance') {
           port.isDistanceEditable = true;

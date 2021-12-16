@@ -53,6 +53,7 @@ public class LoadableStudyStagingService extends StagingService {
     List<String> processedList = new ArrayList<>();
     List<Long> algoErrorHeadingsIds = null;
     List<Long> loadablePatternIds = getLoadablePatternIds(Id, processGroupId);
+    Long loadableStudyId = getLoadableStudyId(Id, processGroupId);
     List<Long> loadablePlanIds = null;
     List<Long> synopticalTableIds = null;
     List<Long> cargoNominationIds = null;
@@ -67,7 +68,8 @@ public class LoadableStudyStagingService extends StagingService {
       switch (ProcessIdentifiers.valueOf(processIdentifier)) {
         case loadable_study:
           {
-            String loadableStudyJson = loadableStudyStagingRepository.getLoadableStudyWithId(Id);
+            String loadableStudyJson =
+                loadableStudyStagingRepository.getLoadableStudyWithId(loadableStudyId);
             if (loadableStudyJson != null) {
               JsonArray loadableStudy = JsonParser.parseString(loadableStudyJson).getAsJsonArray();
               JsonObject loadableStudyJsonObj = loadableStudy.get(0).getAsJsonObject();
@@ -94,7 +96,8 @@ public class LoadableStudyStagingService extends StagingService {
         case comingle_cargo:
           {
             String comingleCargoJson =
-                loadableStudyStagingRepository.getCommingleCargoWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getCommingleCargoWithLoadableStudyId(
+                    loadableStudyId);
             if (comingleCargoJson != null) {
               JsonArray comingleCargo = JsonParser.parseString(comingleCargoJson).getAsJsonArray();
               addIntoProcessedList(
@@ -111,11 +114,13 @@ public class LoadableStudyStagingService extends StagingService {
         case cargo_nomination:
           {
             String cargoNominationJson =
-                loadableStudyStagingRepository.getCargoNominationWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getCargoNominationWithLoadableStudyId(
+                    loadableStudyId);
             if (cargoNominationJson != null) {
               JsonArray cargoNomination =
                   JsonParser.parseString(cargoNominationJson).getAsJsonArray();
-              cargoNominationIds = cargoNominationRepository.getIdsByLoadableStudyId(Id);
+              cargoNominationIds =
+                  cargoNominationRepository.getIdsByLoadableStudyId(loadableStudyId);
               addIntoProcessedList(
                   array,
                   object,
@@ -130,7 +135,8 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_study_port_rotation:
           {
             String loadableStudyPortRotationJson =
-                loadableStudyStagingRepository.getLoadableStudyPortRotationWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getLoadableStudyPortRotationWithLoadableStudyId(
+                    loadableStudyId);
             if (loadableStudyPortRotationJson != null) {
               JsonArray loadableStudyPortRotation =
                   JsonParser.parseString(loadableStudyPortRotationJson).getAsJsonArray();
@@ -148,7 +154,8 @@ public class LoadableStudyStagingService extends StagingService {
         case on_hand_quantity:
           {
             String onHandQuantityJson =
-                loadableStudyStagingRepository.getOnHandQuantityWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getOnHandQuantityWithLoadableStudyId(
+                    loadableStudyId);
             if (onHandQuantityJson != null) {
               JsonArray onHandQuantity =
                   JsonParser.parseString(onHandQuantityJson).getAsJsonArray();
@@ -166,7 +173,8 @@ public class LoadableStudyStagingService extends StagingService {
         case on_board_quantity:
           {
             String onBoardQuantityJson =
-                loadableStudyStagingRepository.getOnBoardQuantityWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getOnBoardQuantityWithLoadableStudyId(
+                    loadableStudyId);
             if (onBoardQuantityJson != null) {
               JsonArray onBoardQuantity =
                   JsonParser.parseString(onBoardQuantityJson).getAsJsonArray();
@@ -184,7 +192,8 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_quantity:
           {
             String loadableQuantityJson =
-                loadableStudyStagingRepository.getLoadableQuantityWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getLoadableQuantityWithLoadableStudyId(
+                    loadableStudyId);
             if (loadableQuantityJson != null) {
               JsonArray loadableQuantity =
                   JsonParser.parseString(loadableQuantityJson).getAsJsonArray();
@@ -201,7 +210,8 @@ public class LoadableStudyStagingService extends StagingService {
           }
         case json_data:
           {
-            String jsonDataJson = loadableStudyStagingRepository.getJsonDataWithLoadableStudyId(Id);
+            String jsonDataJson =
+                loadableStudyStagingRepository.getJsonDataWithLoadableStudyId(loadableStudyId);
             if (jsonDataJson != null) {
               JsonArray jsonData = JsonParser.parseString(jsonDataJson).getAsJsonArray();
               addIntoProcessedList(
@@ -218,7 +228,8 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_study_algo_status:
           {
             String loadableStudyAlgoStatusJson =
-                loadableStudyStagingRepository.getLoadableStudyAlgoStatusWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getLoadableStudyAlgoStatusWithLoadableStudyId(
+                    loadableStudyId);
             if (loadableStudyAlgoStatusJson != null) {
               JsonArray loadableStudyAlgoStatus =
                   JsonParser.parseString(loadableStudyAlgoStatusJson).getAsJsonArray();
@@ -254,10 +265,11 @@ public class LoadableStudyStagingService extends StagingService {
         case algo_error_heading:
           {
             String algoErrorHeadingJson =
-                loadableStudyStagingRepository.getAlgoErrorHeadingWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getAlgoErrorHeadingWithLoadableStudyId(
+                    loadableStudyId);
             if (algoErrorHeadingJson != null) {
               algoErrorHeadingsIds =
-                  algoErrorHeadingRepository.getAlgoErrorIdWithLoadableStudyId(Id);
+                  algoErrorHeadingRepository.getAlgoErrorIdWithLoadableStudyId(loadableStudyId);
               JsonArray algoErrorHeading =
                   JsonParser.parseString(algoErrorHeadingJson).getAsJsonArray();
               addIntoProcessedList(
@@ -487,7 +499,7 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_plan_stowage_ballast_details:
           {
             String loadablePlanJson =
-                loadableStudyStagingRepository.getLoadablePlanWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getLoadablePlanWithLoadableStudyId(loadableStudyId);
             ;
             if (loadablePlanJson != null) {
               JsonArray loadablePlan = JsonParser.parseString(loadablePlanJson).getAsJsonArray();
@@ -499,7 +511,7 @@ public class LoadableStudyStagingService extends StagingService {
                   processGroupId,
                   processedList,
                   loadablePlan);
-              loadablePlanIds = loadablePlanRepository.getLoadablePlanIdsByLSId(Id);
+              loadablePlanIds = loadablePlanRepository.getLoadablePlanIdsByLSId(loadableStudyId);
             }
             if (loadablePlanIds != null && !loadablePlanIds.isEmpty()) {
               String loadablePlanStowageBallastDetailsJson =
@@ -523,7 +535,8 @@ public class LoadableStudyStagingService extends StagingService {
         case synoptical_table:
           {
             String synopticalTableJson =
-                loadableStudyStagingRepository.getSynopticalTableWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getSynopticalTableWithLoadableStudyId(
+                    loadableStudyId);
             if (synopticalTableJson != null) {
               JsonArray synopticalTable =
                   JsonParser.parseString(synopticalTableJson).getAsJsonArray();
@@ -540,7 +553,7 @@ public class LoadableStudyStagingService extends StagingService {
           }
         case loadicator_data_for_synoptical_table:
           {
-            synopticalTableIds = synopticalTableRepository.getIdsByLoadableStudyId(Id);
+            synopticalTableIds = synopticalTableRepository.getIdsByLoadableStudyId(loadableStudyId);
             String synopticalTableLoadicatorDataJson =
                 loadableStudyStagingRepository.getSynopticalTblLoadicatorDataWithSynopticalTblId(
                     synopticalTableIds);
@@ -580,7 +593,8 @@ public class LoadableStudyStagingService extends StagingService {
         case communication_status_update:
           {
             String communicationStatusUpdateDataJson =
-                loadableStudyStagingRepository.getCommunicationStatusUpdateWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getCommunicationStatusUpdate(
+                    loadableStudyId, processGroupId);
             if (null != communicationStatusUpdateDataJson) {
               JsonArray communicationStatusUpdateData =
                   JsonParser.parseString(communicationStatusUpdateDataJson).getAsJsonArray();
@@ -640,7 +654,7 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_study_rules:
           {
             String loadableStudyRulesJson =
-                loadableStudyStagingRepository.getLoadableStudyRules(Id);
+                loadableStudyStagingRepository.getLoadableStudyRules(loadableStudyId);
             if (null != loadableStudyRulesJson) {
               JsonArray loadableStudyRules =
                   JsonParser.parseString(loadableStudyRulesJson).getAsJsonArray();
@@ -658,7 +672,7 @@ public class LoadableStudyStagingService extends StagingService {
         case loadable_study_rule_input:
           {
             String loadableStudyRuleInputJson =
-                loadableStudyStagingRepository.getLoadableStudyRuleInput(Id);
+                loadableStudyStagingRepository.getLoadableStudyRuleInput(loadableStudyId);
             if (null != loadableStudyRuleInputJson) {
               JsonArray loadableStudyRuleInput =
                   JsonParser.parseString(loadableStudyRuleInputJson).getAsJsonArray();
@@ -791,5 +805,20 @@ public class LoadableStudyStagingService extends StagingService {
       return Collections.singletonList(id);
     }
     return loadablePatternRepository.getLoadablePatternIds(id);
+  }
+
+  /**
+   * Method to get loadable study id based on message type
+   *
+   * @param id id value
+   * @param messageType message type value
+   * @return loadable study id
+   */
+  private Long getLoadableStudyId(Long id, String messageType) {
+    if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)
+        || MessageTypes.PATTERNDETAIL.getMessageType().equals(messageType)) {
+      return loadablePatternRepository.getLoadableStudyId(id);
+    }
+    return id;
   }
 }

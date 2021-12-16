@@ -10,14 +10,8 @@
         </div>
       </div>
 
-      <div class="col main-content-loading-and-discharging">
-        <div class="row pt-5 btn-wrapper">
-          <div class="col text-right">
-            <a type="button" (click)="downloadDischargePlanTemplate()" class="btn btn-main"><span
-                class="download-icon v-top mr-10"></span>{{'DOWNLOAD_TEMPLATE' | translate}}</a>
-          </div>
-        </div>
-
+      <div class="col main-content-loading-and-discharging pt-25">
+        
         <cpdss-portal-arrival-condition [permission]="permission" [vesselId]="vesselId"
           [portRotationId]="portRotationId" [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
           [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"

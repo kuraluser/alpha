@@ -38,7 +38,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <cpdss-portal-port-rotation-ribbon [vesselDetails]="vesselInfo" *ngIf="vesselInfo && selectedVoyage"
+                <cpdss-portal-port-rotation-ribbon [etaEtdPermision]="etaEtdPermision" [vesselDetails]="vesselInfo" *ngIf="vesselInfo && selectedVoyage"
                     [voyageDetails]="selectedVoyage" (portSelection)="getPortDetails($event)">
                 </cpdss-portal-port-rotation-ribbon>
             </div>

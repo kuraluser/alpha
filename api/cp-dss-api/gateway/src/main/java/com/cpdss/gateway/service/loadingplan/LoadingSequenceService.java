@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
+import static com.cpdss.gateway.common.GatewayConstants.*;
+
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
@@ -271,7 +273,7 @@ public class LoadingSequenceService {
     }
 
     this.populateAllCargoAndBallastTankCategories(
-        response, cargoTankCategories, ballastTankCategories);
+        response, cargoTankCategories, ballastTankCategories, vesselTankMap);
 
     this.updateCargoLoadingRateIntervals(cargoLoadingRates, stageTickPositions);
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
@@ -308,14 +310,37 @@ public class LoadingSequenceService {
    * @param response
    * @param cargoTankCategories
    * @param ballastTankCategories
+   * @param vesselTankMap
    */
   public void populateAllCargoAndBallastTankCategories(
       LoadingSequenceResponse response,
       Set<TankCategory> cargoTankCategories,
-      Set<TankCategory> ballastTankCategories) {
+      Set<TankCategory> ballastTankCategories,
+      Map<Long, VesselTankDetail> vesselTankMap) {
 
     List<TankCategory> allCargoTankCategories = new ArrayList<>(cargoTankCategories);
     List<TankCategory> allBallastTankCategories = new ArrayList<>(ballastTankCategories);
+    List<VesselTankDetail> vesseltanks = new ArrayList<>(vesselTankMap.values());
+    vesseltanks.forEach(
+        vesselTank -> {
+          TankCategory tankCategory = new TankCategory();
+          tankCategory.setId(vesselTank.getTankId());
+          tankCategory.setTankName(vesselTank.getShortName());
+          tankCategory.setQuantity(BigDecimal.ZERO);
+          if (vesselTank.getTankCategoryId() == CARGO_TANK_CATEGORY_ID
+              && allCargoTankCategories.stream()
+                      .filter(tank -> tank.getId() == vesselTank.getTankId())
+                      .count()
+                  == 0) {
+            allCargoTankCategories.add(tankCategory);
+          } else if (vesselTank.getTankCategoryId() == BALLAST_TANK_CATEGORY_ID
+              && allBallastTankCategories.stream()
+                      .filter(tank -> tank.getId() == vesselTank.getTankId())
+                      .count()
+                  == 0) {
+            allBallastTankCategories.add(tankCategory);
+          }
+        });
     response.setAllCargoTankCategories(allCargoTankCategories);
     response.setAllBallastTankCategories(allBallastTankCategories);
   }

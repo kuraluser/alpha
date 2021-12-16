@@ -21,6 +21,7 @@ import { IAlgoError, IAlgoResponse, ICargo, ICargoResponseModel, OPERATIONS_PLAN
 import { OPERATIONS } from '../../core/models/common.model';
 import { OPERATION_TAB } from '../models/operations.model';
 import { IGenerateDischargePlanResponse, ULLAGE_STATUS_VALUE } from '../models/loading-discharging.model';
+import { saveAs } from 'file-saver';
 
 /**
  * Component for discharging module
@@ -462,6 +463,22 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
    */
   viewError(): void {
     this.getAlgoErrorMessage(true, 0);
+  }
+
+  /**
+   * function to download discharge-plan file as xls
+   *
+   * @memberof DischargingComponent
+   */
+   downloadDischargePlanTemplate(): void {
+    this.ngxSpinnerService.show();
+    this.operationsApiService.downloadPlanTemplate(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId, null).subscribe((result) => {
+      const fileName = result.headers.get('content-disposition').split('filename=')[1];
+      const blob = new Blob([result.body], { type: result.type });
+      const fileurl = window.URL.createObjectURL(blob);
+      saveAs(fileurl, fileName);
+      this.ngxSpinnerService.hide();
+    });
   }
 
 }

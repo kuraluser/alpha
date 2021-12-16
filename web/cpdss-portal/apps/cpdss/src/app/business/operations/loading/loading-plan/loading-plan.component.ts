@@ -11,7 +11,6 @@ import { OperationsApiService } from '../../services/operations-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { saveAs } from 'file-saver';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -177,23 +176,5 @@ export class LoadingPlanComponent implements OnInit, OnDestroy {
    */
   viewError(status) {
     this.errorPopUp = status;
-  }
-
-
-  /**
-   * Method to dowload byte array from and save as excel.
-   *
-   * @memberof LoadingPlanComponent
-   */
-
-  downloadLoadingPlanTemplate() {
-    this.ngxSpinnerService.show();
-    this.loadingPlanApiService.downloadLoadingPlanTemplate(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId, this.loadingPlanDetailsTemp).subscribe((result) => {
-      const fileName = result.headers.get('content-disposition').split('filename=')[1];
-      const blob = new Blob([result.body], { type: result.type });
-      const fileurl = window.URL.createObjectURL(blob);
-      saveAs(fileurl, fileName);
-      this.ngxSpinnerService.hide();
-    });
   }
 }

@@ -1111,7 +1111,9 @@ export class LoadingDischargingTransformationService {
           return [data[0], Number((data[1] * AppConfigurationService.settings.unitConversionConstant).toFixed())];
         });
       } else {
-        tankFlowRate.data = [...tankFlowRate.dataM3PerHr];
+        tankFlowRate.data = tankFlowRate?.dataM3PerHr?.map(data => {
+          return [data[0], Number((data[1]).toFixed())];
+        });
       }
 
       return tankFlowRate;

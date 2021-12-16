@@ -1640,7 +1640,7 @@ public class LoadableStudyServiceShore {
     return entity;
   }
 
-  private void updateCommunicationStatus(
+  public void updateCommunicationStatus(
       String messageId, LoadableStudy loadableStudyEntity, Long loadablePatternId) {
     LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
     lsCommunicationStatus.setMessageUUID(messageId);

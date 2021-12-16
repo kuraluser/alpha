@@ -13,4 +13,5 @@ public class Tank {
   private String shortName;
   private String frameNumberFrom;
   private String frameNumberTo;
+  private String tankName;
 }

@@ -956,7 +956,7 @@ public class DischargingSequenceService {
     }
 
     loadingSequenceService.populateAllCargoAndBallastTankCategories(
-        response, cargoTankCategories, ballastTankCategories);
+        response, cargoTankCategories, ballastTankCategories, vesselTankMap);
 
     // Re using some methods in loading sequence here
     loadingSequenceService.updateCargoLoadingRateIntervals(cargoDischargeRates, stageTickPositions);
@@ -1044,14 +1044,14 @@ public class DischargingSequenceService {
                         Tank tank = new Tank();
                         tank.setTankId(tankId);
                         VesselTankDetail vesselTankDetail = vesselTankMap.get(tankId);
-                        tank.setShortName(vesselTankDetail.getShortName());
+                        tank.setTankName(vesselTankDetail.getShortName());
                         fromTanks.add(tank);
                       });
               transferDetail.setFromTanks(fromTanks);
               Tank tank = new Tank();
               tank.setTankId(transfer.getToTankId());
               VesselTankDetail vesselTankDetail = vesselTankMap.get(transfer.getToTankId());
-              tank.setShortName(vesselTankDetail.getShortName());
+              tank.setTankName(vesselTankDetail.getShortName());
               transferDetail.setToTank(tank);
               CargoNominationDetail cargoNominationDetail =
                   cargoNomDetails.get(transfer.getCargoNominationId());
@@ -1059,6 +1059,7 @@ public class DischargingSequenceService {
               cargo.setAbbreviation(cargoNominationDetail.getAbbreviation());
               cargo.setColorCode(cargoNominationDetail.getColor());
               cargo.setName(cargoNominationDetail.getCargoName());
+              cargo.setApi(cargoNominationDetail.getApi());
               transferDetail.setCargo(cargo);
               transferDetail.setStartQuantity(
                   StringUtils.hasLength(transfer.getStartQuantity())

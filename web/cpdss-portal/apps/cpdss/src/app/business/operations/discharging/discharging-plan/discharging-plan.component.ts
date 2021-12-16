@@ -15,7 +15,6 @@ import { IAlgoError, IAlgoResponse, ICargo, OPERATIONS } from '../../../core/mod
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { IDischargeOperationListData, IDischargingInformation, IDischargingPlanDetailsResponse, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
 import { IPermission } from './../../../../shared/models/user-profile.model';
-import { saveAs } from 'file-saver';
 
 /**
  * Component for Discharge-plan
@@ -193,21 +192,4 @@ export class DischargingPlanComponent implements OnInit, OnDestroy {
   viewError(status) {
     this.errorPopUp = status;
   }
-
-  /**
-   * function to download discharge-plan file as xls
-   *
-   * @memberof DischargingPlanComponent
-   */
-  downloadDischargePlanTemplate(): void {
-    this.ngxSpinnerService.show();
-    this.dischargingPlanApiService.getDischargePlanTemplate(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId, this.dischargingplanDetailstemp).subscribe((result) => {
-      const fileName = result.headers.get('content-disposition').split('filename=')[1];
-      const blob = new Blob([result.body], { type: result.type });
-      const fileurl = window.URL.createObjectURL(blob);
-      saveAs(fileurl, fileName);
-      this.ngxSpinnerService.hide();
-    });
-  }
-
 }

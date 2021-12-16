@@ -159,7 +159,7 @@ public class CargoPortInfoController {
    *
    * @param headers
    * @param pageSize
-   * @param page
+   * @param pageNo
    * @param sortBy
    * @param orderBy
    * @param params
@@ -170,7 +170,7 @@ public class CargoPortInfoController {
   public CargosDetailedResponse getDetailedCargos(
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
-      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int pageNo,
       @RequestParam(required = false, defaultValue = "crudeType") String sortBy,
       @RequestParam(required = false, defaultValue = "asc") String orderBy,
       @RequestParam Map<String, String> params)
@@ -180,7 +180,7 @@ public class CargoPortInfoController {
       log.info("getCargos: {}", getClientIp());
       response =
           cargoPortInfoService.getCargosDetailed(
-              page, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+              pageNo, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
     } catch (Exception e) {
       log.error("Error in getCargos ", e);
       throw new CommonRestException(
