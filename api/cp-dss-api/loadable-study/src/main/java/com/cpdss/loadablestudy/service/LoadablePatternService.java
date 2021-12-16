@@ -1041,7 +1041,7 @@ public class LoadablePatternService {
                 LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP,
                 UUID.randomUUID().toString(),
                 MessageTypes.PATTERNDETAIL.getMessageType(),
-                lsCommunication.getId());
+                loadablePatternOpt.get().getId());
         log.info("Json Array in Stowage Edit Algocall back service: " + jsonArray.toString());
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
@@ -1708,7 +1708,8 @@ public class LoadablePatternService {
       loadableStudyService.buildSynopticalTable(request.getLoadableStudyId(), loadableStudy);
 
       // Voyage History
-      loadableStudy.setVoyageCargoHistories(cargoService.buildPreviousVoyageDetails());
+      loadableStudy.setVoyageCargoHistories(
+          cargoService.buildPreviousVoyageDetails(loadableStudyOpt.get().getVesselXId()));
       ObjectMapper objectMapper = new ObjectMapper();
 
       objectMapper.writeValue(

@@ -2,9 +2,11 @@
 package com.cpdss.loadablestudy.service;
 
 // region Import
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
@@ -116,6 +118,7 @@ public class LoadableStudyCommunicationService {
 
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
+  @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   // endregion
 
   // region Declarations
@@ -158,6 +161,7 @@ public class LoadableStudyCommunicationService {
   private List<LoadableStudyRuleInput> loadableStudyRuleInputsStage = null;
   private List<LoadablePlanComments> loadablePlanCommentsStage = null;
   private List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempStage = null;
+  private LoadablePatternAlgoStatus loadablePatternAlgoStatusStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -431,7 +435,7 @@ public class LoadableStudyCommunicationService {
                       LoadableStudyTables.LOADABLE_PATTERN,
                       data,
                       dataTransferStage.getId(),
-                      "loadablePatternXId");
+                      "loadablestudy_xid");
               break;
             }
           case algo_error_heading:
@@ -728,6 +732,20 @@ public class LoadableStudyCommunicationService {
                       "loadable_plan_commingle_details_xid");
               break;
             }
+          case loadable_pattern_algo_status:
+            {
+              Type type = new TypeToken<LoadablePatternAlgoStatus>() {}.getType();
+              loadablePatternAlgoStatusStage =
+                  bindDataToEntity(
+                      new LoadablePatternAlgoStatus(),
+                      type,
+                      LoadableStudyTables.LOADABLE_PATTERN_ALGO_STATUS,
+                      data,
+                      dataTransferStage.getId(),
+                      "loadabale_pattern_xid",
+                      "loadable_study_status");
+              break;
+            }
         }
       }
 
@@ -766,6 +784,7 @@ public class LoadableStudyCommunicationService {
         saveLoadableStudyRuleInputs();
         saveLoadablePlanComments();
         saveLoadablePlanStowageDetailsTemp();
+        saveLoadablePatternAlgoStatus();
       } catch (ResourceAccessException e) {
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
@@ -817,6 +836,13 @@ public class LoadableStudyCommunicationService {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR,
               e);
+        }
+      } else if (CPDSS_BUILD_ENV_SHIP.equals(env)) {
+        if (MessageTypes.PATTERNDETAIL.getMessageType().equals(processGroupId)) {
+          Optional<LoadablePattern> loadablePatternOpt =
+              loadablePatternRepository.findById(loadablePatternStage.get(0).getId());
+          loadablePatternOpt.ifPresent(
+              loadablePattern -> loadablePatternService.deleteExistingPlanDetails(loadablePattern));
         }
       }
     }
@@ -1132,7 +1158,16 @@ public class LoadableStudyCommunicationService {
     for (LoadablePattern lp : loadablePatternStage) {
       Optional<LoadablePattern> loadablePatternOptional =
           loadablePatternRepository.findById(lp.getId());
-      lp.setLoadableStudy(loadableStudyStage);
+
+      // Set loadable study
+      Optional.ofNullable(loadableStudyStage)
+          .ifPresentOrElse(
+              loadableStudy -> lp.setLoadableStudy(loadableStudyStage),
+              () ->
+                  lp.setLoadableStudy(
+                      loadableStudyRepository
+                          .findById(lp.getCommunicationRelatedEntityId())
+                          .orElse(null)));
       lp.setVersion(loadablePatternOptional.map(EntityDoc::getVersion).orElse(null));
     }
 
@@ -1485,10 +1520,18 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable_study_rules table */
   private void saveLoadableStudyRules() {
-    if (null != loadableStudyRulesStage) {
-      // Set detached entities
+    current_table_name = LoadableStudyTables.LOADABLE_STUDY_RULES.getTable();
+
+    if (!isEmpty(loadableStudyRulesStage)) {
       for (LoadableStudyRules loadableStudyRules : loadableStudyRulesStage) {
+        // Set detached entities
+        Optional<LoadableStudyRules> loadableStudyRulesOpt =
+            loadableStudyRuleRepository.findById(loadableStudyRules.getId());
         loadableStudyRules.setLoadableStudy(loadableStudyStage);
+
+        // Set version
+        loadableStudyRules.setVersion(
+            loadableStudyRulesOpt.map(EntityDoc::getVersion).orElse(null));
       }
 
       // Save data
@@ -1505,7 +1548,9 @@ public class LoadableStudyCommunicationService {
    * @throws GenericServiceException Exception when rule not found
    */
   private void saveLoadableStudyRuleInputs() throws GenericServiceException {
-    if (null != loadableStudyRuleInputsStage) {
+    current_table_name = LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable();
+
+    if (!isEmpty(loadableStudyRuleInputsStage)) {
       for (LoadableStudyRuleInput loadableStudyRuleInput : loadableStudyRuleInputsStage) {
         // Set detached entities
         LoadableStudyRules loadableStudyRule =
@@ -1520,6 +1565,12 @@ public class LoadableStudyCommunicationService {
                             CommonErrorCodes.E_GEN_INTERNAL_ERR,
                             HttpStatusCode.INTERNAL_SERVER_ERROR));
         loadableStudyRuleInput.setLoadableStudyRuleXId(loadableStudyRule);
+
+        // Set version
+        Optional<LoadableStudyRuleInput> loadableStudyRuleInputOpt =
+            loadableStudyRuleInputRepository.findById(loadableStudyRuleInput.getId());
+        loadableStudyRuleInput.setVersion(
+            loadableStudyRuleInputOpt.map(EntityDoc::getVersion).orElse(null));
       }
 
       // Save data
@@ -1536,9 +1587,11 @@ public class LoadableStudyCommunicationService {
    * @throws GenericServiceException Exception when pattern not found
    */
   private void saveLoadablePlanComments() throws GenericServiceException {
-    if (null != loadablePlanCommentsStage) {
-      // Set detached entities
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable();
+
+    if (!isEmpty(loadablePlanCommentsStage)) {
       for (LoadablePlanComments comment : loadablePlanCommentsStage) {
+        // Set detached entities
         LoadablePattern loadablePattern =
             loadablePatternRepository
                 .findById(comment.getCommunicationRelatedEntityId())
@@ -1550,8 +1603,12 @@ public class LoadableStudyCommunicationService {
                                 comment.getCommunicationRelatedEntityId()),
                             CommonErrorCodes.E_GEN_INTERNAL_ERR,
                             HttpStatusCode.INTERNAL_SERVER_ERROR));
-        ;
         comment.setLoadablePattern(loadablePattern);
+
+        // Set version
+        Optional<LoadablePlanComments> commentOpt =
+            loadablePlanCommentsRepository.findById(comment.getId());
+        comment.setVersion(commentOpt.map(EntityDoc::getVersion).orElse(null));
       }
 
       // Save data
@@ -1564,10 +1621,19 @@ public class LoadableStudyCommunicationService {
 
   /** Method to save loadable_plan_stowage_details_temp table */
   private void saveLoadablePlanStowageDetailsTemp() {
+    current_table_name = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS_TEMP.getTable();
 
-    if (null != loadablePlanStowageDetailsTempStage) {
+    if (!isEmpty(loadablePlanStowageDetailsTempStage)) {
       for (LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp :
           loadablePlanStowageDetailsTempStage) {
+
+        // Set version
+        Optional<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempOpt =
+            loadablePlanStowageDetailsTempRepository.findById(
+                loadablePlanStowageDetailsTemp.getId());
+        loadablePlanStowageDetailsTemp.setVersion(
+            loadablePlanStowageDetailsTempOpt.map(EntityDoc::getVersion).orElse(null));
+
         // Set stowage details
         loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(
             emptyIfNull(loadablePlanStowageDetailsStage).stream()
@@ -1612,7 +1678,7 @@ public class LoadableStudyCommunicationService {
 
         // Set loadable_plan_commingle details
         loadablePlanStowageDetailsTemp.setLoadablePlanCommingleDetails(
-            loadablePlanCommingleDetailsStage.stream()
+            emptyIfNull(loadablePlanCommingleDetailsStage).stream()
                 .filter(
                     loadablePlanCommingleDetails ->
                         loadablePlanCommingleDetails
@@ -1630,6 +1696,55 @@ public class LoadableStudyCommunicationService {
       log.info(
           "Communication #######  loadable_plan_stowage_details_temp saved. Entries: {}",
           loadablePlanStowageDetailsTempStage.size());
+    }
+  }
+
+  /** Method to save loadable_pattern_algo_status table */
+  private void saveLoadablePatternAlgoStatus() {
+    current_table_name = LoadableStudyTables.LOADABLE_PATTERN_ALGO_STATUS.getTable();
+
+    if (null == loadablePatternAlgoStatusStage) {
+      log.info("Communication XXXXXXX  loadable_pattern_algo_status is empty");
+      return;
+    }
+    Optional<LoadableStudyStatus> loadableStudyStatus =
+        loadableStudyStatusRepository.findById(
+            loadablePatternAlgoStatusStage
+                .getCommunicationRelatedIdMap()
+                .get("loadable_study_status"));
+
+    // Update status for recent record
+    if (loadableStudyStatus.isPresent()) {
+      loadablePatternAlgoStatusRepository
+          .findByLoadablePatternId(
+              loadablePatternAlgoStatusStage
+                  .getCommunicationRelatedIdMap()
+                  .get("loadabale_pattern_xid"))
+          .ifPresentOrElse(
+              loadablePatternAlgoStatus -> {
+                loadablePatternAlgoStatusStage = loadablePatternAlgoStatus;
+              },
+              () -> {
+                loadablePatternAlgoStatusStage.setVersion(null);
+                Optional<LoadablePattern> loadablePattern =
+                    loadablePatternRepository.findById(
+                        loadablePatternAlgoStatusStage.getLoadablePattern().getId());
+                loadablePatternAlgoStatusStage.setLoadablePattern(loadablePattern.orElse(null));
+              });
+      loadablePatternAlgoStatusStage.setGenerateFromShore(true);
+      loadablePatternAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
+      loadablePatternAlgoStatusStage =
+          loadablePatternAlgoStatusRepository.save(loadablePatternAlgoStatusStage);
+      log.info(
+          "Communication #######  loadable_pattern_algo_status saved with id:"
+              + loadablePatternAlgoStatusStage.getId());
+
+    } else {
+      log.info(
+          "Communication XXXXXXX  loadable_pattern_algo_status is not saved , loadableStudyStatus is not found : "
+              + loadablePatternAlgoStatusStage
+                  .getCommunicationRelatedIdMap()
+                  .get("loadable_study_status"));
     }
   }
 
@@ -1696,7 +1811,9 @@ public class LoadableStudyCommunicationService {
           if (xIds.size() == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
           } else {
-            communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            if (!"null".equals(jsonObj.get(xId).toString())) {
+              communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            }
           }
           jsonObj.remove(xId);
         }
@@ -1765,6 +1882,7 @@ public class LoadableStudyCommunicationService {
     loadableStudyRuleInputsStage = null;
     loadablePlanCommentsStage = null;
     loadablePlanStowageDetailsTempStage = null;
+    loadablePatternAlgoStatusStage = null;
   }
 
   // endregion

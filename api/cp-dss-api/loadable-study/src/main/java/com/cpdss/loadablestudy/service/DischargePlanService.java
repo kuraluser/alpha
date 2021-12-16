@@ -5,12 +5,15 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.loadablestudy.domain.LoadabalePatternDetails;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +31,9 @@ public class DischargePlanService {
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @Autowired LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
 
@@ -57,6 +63,10 @@ public class DischargePlanService {
               reqBuilder.addId(port);
             });
     PortInfo.PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
+    VesselInfo.VesselRequest.Builder builder = VesselInfo.VesselRequest.newBuilder();
+    builder.setVesselId(loadablePattern.getLoadableStudy().getVesselXId());
+    builder.addTankCategories(2L);
+    VesselInfo.VesselReply vesselTanksReply = vesselInfoGrpcService.getVesselTanks(builder.build());
 
     List<com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails =
         new ArrayList<LoadablePlanPortWiseDetails>();
@@ -141,10 +151,43 @@ public class DischargePlanService {
                       false,
                       loadablePattern.getId()));
 
+              // ALGO needs all ballast tanks in the request.
+              addEmptytankstoCondition(arrivalCondition, vesselTanksReply);
+              addEmptytankstoCondition(departureCondition, vesselTanksReply);
+
               portWiseDetails.setArrivalCondition(arrivalCondition);
               portWiseDetails.setDepartureCondition(departureCondition);
               loadablePlanPortWiseDetails.add(portWiseDetails);
             });
     loadabalePatternValidateRequest.setLoadablePlanPortWiseDetails(loadablePlanPortWiseDetails);
+  }
+
+  /**
+   * Add empty tanks to Arrival/Departure condition of the ALGO request.
+   *
+   * @param portCondition
+   * @param vesselTanksReply
+   */
+  private void addEmptytankstoCondition(
+      LoadabalePatternDetails portCondition, VesselInfo.VesselReply vesselTanksReply) {
+    vesselTanksReply
+        .getVesselTanksList()
+        .forEach(
+            vesselTankDetail -> {
+              if (portCondition.getLoadablePlanBallastDetails().stream()
+                      .filter(ballast -> ballast.getTankId() == vesselTankDetail.getTankId())
+                      .collect(Collectors.toList())
+                      .size()
+                  == 0) {
+                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
+                    new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
+                details.setId(0L);
+                details.setQuantityMT(BigDecimal.ZERO.toString());
+                details.setTankId(vesselTankDetail.getTankId());
+                details.setColorCode(BALLAST_TANK_COLOR_CODE);
+                details.setSg(BigDecimal.ZERO.toString());
+                portCondition.getLoadablePlanBallastDetails().add(details);
+              }
+            });
   }
 }

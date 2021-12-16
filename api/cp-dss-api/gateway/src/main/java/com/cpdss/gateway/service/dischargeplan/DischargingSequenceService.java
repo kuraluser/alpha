@@ -383,6 +383,8 @@ public class DischargingSequenceService {
               this.buildBallastOperations(sequence.getBallast(), pumps, sequenceBuilder);
               this.buildBallastOperations(sequence.getCargo(), pumps, sequenceBuilder);
               this.buildBallastOperations(sequence.getTcp(), pumps, sequenceBuilder);
+              this.buildBallastOperations(sequence.getStp(), pumps, sequenceBuilder);
+              this.buildBallastOperations(sequence.getStped(), pumps, sequenceBuilder);
               this.buildDeballastingRates(sequence.getDeballastingRates(), sequenceBuilder);
               this.buildDischargingRates(
                   sequence.getTankWiseCargoDischargingRates(), sequenceBuilder);
@@ -913,6 +915,7 @@ public class DischargingSequenceService {
 
         start = temp;
         stageTickPositions.add(portEta + (temp * 60 * 1000));
+        this.removeShortStageTickPositions(stageTickPositions, reply.getInterval());
       }
 
       Integer loadEnd = temp - (temp % (reply.getInterval() * 60)) + (reply.getInterval() * 60);
@@ -920,6 +923,7 @@ public class DischargingSequenceService {
       if (!stageTickPositions.contains(response.getMaxXAxisValue())) {
         stageTickPositions.add(response.getMaxXAxisValue());
       }
+
       response.setInterval(reply.getInterval());
       // Adding cargo loading rates TODO
       this.buildCargoDischargeRates(dischargeSeq, portEta, stageTickPositions, cargoDischargeRates);
@@ -946,10 +950,13 @@ public class DischargingSequenceService {
     if (gravityList.size() > 0) {
       gravity.setPumpId(0L);
       gravity.setQuantityM3(null);
-      gravity.setRate(null);
+      gravity.setRate(gravityList.get(0).getRate());
       gravity.setStart(gravityList.get(0).getStart());
       gravity.setEnd(gravityList.get(gravityList.size() - 1).getEnd());
     }
+
+    loadingSequenceService.populateAllCargoAndBallastTankCategories(
+        response, cargoTankCategories, ballastTankCategories);
 
     // Re using some methods in loading sequence here
     loadingSequenceService.updateCargoLoadingRateIntervals(cargoDischargeRates, stageTickPositions);
@@ -975,9 +982,7 @@ public class DischargingSequenceService {
     List<VesselTankDetail> vesselTankDetails = new ArrayList<>(vesselTankMap.values());
     response.setBallastTankCategories(
         ballastTankCategories.stream()
-            .sorted(
-                Comparator.comparing(
-                    ballast -> vesselTankDetails.indexOf(vesselTankMap.get(ballast.getId()))))
+            .sorted(Comparator.comparing(TankCategory::getId))
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
     response.setCargoEduction(cargoEductions);
@@ -985,6 +990,25 @@ public class DischargingSequenceService {
     response.setDriveTanks(driveTanks);
     response.setTransfers(transferDetails);
     response.setFreshOilTanks(freshOilTanks);
+  }
+
+  /**
+   * Removes stage tick posisitons that are shorter than the intervals given
+   *
+   * @param stageTickPositions
+   * @param interval
+   */
+  private void removeShortStageTickPositions(Set<Long> stageTickPositions, int interval) {
+    List<Long> tickPositionList = new ArrayList<>(stageTickPositions);
+    for (Long tickPosition : tickPositionList) {
+      int index = tickPositionList.indexOf(tickPosition);
+      if (index > 0) {
+        Long previousTickPosition = tickPositionList.get(index - 1);
+        if ((tickPosition - previousTickPosition) < (interval * 60 * 1000)) {
+          stageTickPositions.remove(tickPosition);
+        }
+      }
+    }
   }
 
   /**

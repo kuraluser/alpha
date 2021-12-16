@@ -53,6 +53,14 @@ public class Sequence {
   @JsonProperty("TCP")
   private Map<String, List<Pump>> tcp;
 
+  // Stripping pump
+  @JsonProperty("STP")
+  private Map<String, List<Pump>> stp;
+
+  // Stripping eductor
+  @JsonProperty("STPED")
+  private Map<String, List<Pump>> stped;
+
   private List<Eduction> stripping;
 
   private List<Transfer> transfer;

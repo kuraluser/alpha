@@ -280,8 +280,8 @@ export enum DATATABLE_BUTTON {
 export interface IDataStateChange {
   filter?: Object;
   name: string;
-  desc: string;
-  pageSize: string;
+  desc?: string;
+  pageSize: number;
   page: number;
   sortBy: string;
   orderBy: string;

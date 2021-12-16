@@ -5,7 +5,7 @@ import { IDataStateChange } from '../../../shared/components/datatable/datatable
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 import { IPort, IPortsResponse } from '../../core/models/common.model';
 import { AdminModule } from '../admin.module';
-import { IAPITempHistoryRequest, ICargoAPITempHistoryResponse, ICargosResponse, ICargoResponse } from '../models/cargo.model';
+import { IAPITempHistoryRequest, ICargoAPITempHistoryResponse, ICargosResponse, ICargoResponse, ICargoDetails, ISaveCargoResponse, IDeleteCargoResponse } from '../models/cargo.model';
 
 /**
  * Service for handling api calls in cargo master
@@ -33,10 +33,10 @@ export class CargoMasterApiService {
   getCargos(options: IDataStateChange): Observable<ICargosResponse> {
     const filterString = options?.filter ? Object.keys(options?.filter).map(function (key) {
       if (options?.filter[key]) {
-        return key + "=" + options?.filter[key];
+        return "&" + key + "=" + options?.filter[key];
       }
-    }).join("&") : '';
-    const params = `pageSize=${options.pageSize ? options.pageSize : this._pageSize}&pageNo=${options.page ? options.page : this._page}${options.sortBy ? `&sortBy=${options.sortBy}` : ''}${options.orderBy ? `&orderBy=${options.orderBy}` : ''}${filterString ? '&' + filterString : ''}`
+    }) : '';
+    const params = `pageSize=${options.pageSize ? options.pageSize : this._pageSize}&pageNo=${options.page ? options.page : this._page}${options.sortBy ? `&sortBy=${options.sortBy}` : ''}${options.orderBy ? `&orderBy=${options.orderBy}` : ''}${filterString}`;
     return this.commonApiService.get<ICargosResponse>(`master/cargos?${params}`);
   }
 
@@ -66,6 +66,29 @@ export class CargoMasterApiService {
         return this._ports;
       }));
     }
+  }
+
+  /**
+   * Post api for saving cargo
+   *
+   * @param {ICargoDetails} cargo
+   * @param {number} cargoId
+   * @return {*}  {Observable<ISaveCargoResponse>}
+   * @memberof CargoMasterApiService
+   */
+  saveCargo(cargo: ICargoDetails, cargoId: number): Observable<ISaveCargoResponse> {
+    return this.commonApiService.post<ICargoDetails, ISaveCargoResponse>(`master/cargos/${cargoId}`, cargo);
+  }
+
+  /**
+   * Delete api for deleting cargo
+   *
+   * @param {number} cargoId
+   * @return {*}  {Observable<IDeleteCargoResponse>}
+   * @memberof CargoMasterApiService
+   */
+  deleteCargo(cargoId: number): Observable<IDeleteCargoResponse> {
+    return this.commonApiService.delete<IDeleteCargoResponse>(`master/cargos/${cargoId}`)
   }
 
   /**

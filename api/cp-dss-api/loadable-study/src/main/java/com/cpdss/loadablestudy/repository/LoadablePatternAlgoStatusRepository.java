@@ -36,4 +36,10 @@ public interface LoadablePatternAlgoStatusRepository
 
   public Optional<LoadablePatternAlgoStatus> findByLoadablePatternIdAndMessageIdAndIsActive(
       Long loadablePatternId, String messageId, Boolean isActive);
+
+  @Query(
+      value =
+          "select * from loadable_pattern_algo_status where loadabale_pattern_xid = ?1 and last_modified_date_time is not null order by last_modified_date_time desc limit 1",
+      nativeQuery = true)
+  Optional<LoadablePatternAlgoStatus> findByLoadablePatternId(Long loadablePatternId);
 }

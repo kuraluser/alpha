@@ -225,4 +225,10 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_plan_stowage_details_temp u WHERE u.loadable_pattern_xid IN ?1",
       nativeQuery = true)
   String getLoadablePlanStowageDetailsTemp(List<Long> loadablePatternIds);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_pattern_algo_status u where id in (SELECT id FROM loadable_pattern_algo_status WHERE loadabale_pattern_xid IN (?1) ORDER BY last_modified_date_time DESC LIMIT 1)",
+      nativeQuery = true)
+  String getLoadablePatternAlgoStatus(List<Long> loadablePatternId);
 }

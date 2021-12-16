@@ -710,6 +710,24 @@ public class LoadableStudyStagingService extends StagingService {
             }
             break;
           }
+        case loadable_pattern_algo_status:
+          {
+            String loadablePatternAlgoStatusJson =
+                loadableStudyStagingRepository.getLoadablePatternAlgoStatus(loadablePatternIds);
+            if (null != loadablePatternAlgoStatusJson) {
+              JsonArray loadablePatternAlgoStatus =
+                  JsonParser.parseString(loadablePatternAlgoStatusJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadablePatternAlgoStatus);
+            }
+            break;
+          }
       }
     }
     return array;
@@ -768,11 +786,10 @@ public class LoadableStudyStagingService extends StagingService {
    * @return list of loadable pattern ids for the given id
    */
   private List<Long> getLoadablePatternIds(Long id, String messageType) {
-    if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType)) {
-      return loadablePatternRepository.getLoadablePatternIds(id);
-    } else if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)) {
+    if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)
+        || MessageTypes.PATTERNDETAIL.getMessageType().equals(messageType)) {
       return Collections.singletonList(id);
     }
-    return Collections.emptyList();
+    return loadablePatternRepository.getLoadablePatternIds(id);
   }
 }

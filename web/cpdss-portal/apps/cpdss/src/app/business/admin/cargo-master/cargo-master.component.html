@@ -10,7 +10,7 @@
   <div class="row">
     <div class="col-12 user-listing-wrapper">
       <cpdss-portal-datatable *ngIf="cargos" [tableId]="'cargos'" [columns]="columns" [value]="cargos"
-        (columnClick)="ediCargo($event)" (deleteRow)="onDeleteRow($event)" (editRow)="ediCargo($event)"
+        (columnClick)="onColumnClick($event)" (deleteRow)="onDeleteRow($event)" (editRow)="ediCargo($event)"
         [filterable]="true" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [lazy]="true"
         (dataStateChange)="onDataStateChange($event)" [loading]="loading" [(currentPage)]="currentPage"
         [(first)]="first" [(reset)]="resetDataTable">

@@ -99,4 +99,7 @@ public interface VoyageRepository
 
   @Query("SELECT V from Voyage V WHERE V.vesselXId =?1 AND V.voyageStatus.id=?2")
   List<Voyage> findByVesselXIdAndVoyageStatusId(Long vesselId, Long voyageStatusId);
+
+  public List<Voyage> findByVesselXIdAndIsActiveAndVoyageStatus_IdOrderByCreatedDateTimeDesc(
+      long vesselId, boolean b, long l);
 }

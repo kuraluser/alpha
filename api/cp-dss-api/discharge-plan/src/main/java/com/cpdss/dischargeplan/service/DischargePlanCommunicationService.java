@@ -1,11 +1,14 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
@@ -1555,27 +1558,31 @@ public class DischargePlanCommunicationService {
       return;
     }
     if (dischargingDelays != null && !dischargingDelays.isEmpty()) {
-      for (DischargingDelay dischargingDelay : dischargingDelays) {
-        for (DischargingDelayReason dischargingDelayReason : dischargingDelayReasons) {
-          Long version = null;
-          if (dischargingDelay
-              .getId()
-              .equals(dischargingDelayReason.getDischargingDelay().getId())) {
-            Optional<DischargingDelayReason> dischargingDelayReasonObj =
-                dischargingDelayReasonRepository.findById(dischargingDelayReason.getId());
-            if (dischargingDelayReasonObj.isPresent()) {
-              version = dischargingDelayReasonObj.get().getVersion();
-            }
-            dischargingDelayReason.setVersion(version);
-            dischargingDelayReason.setDischargingDelay(dischargingDelay);
-            if (dischargingDelayReason.getCommunicationReasonForDelayId() != null) {
-              Optional<ReasonForDelay> reasonForDelayOpt =
-                  reasonForDelayRepository.findByIdAndIsActiveTrue(
-                      dischargingDelayReason.getCommunicationReasonForDelayId());
-              if (reasonForDelayOpt.isPresent()) {
-                dischargingDelayReason.setReasonForDelay(reasonForDelayOpt.get());
-              }
-            }
+      for (DischargingDelayReason dischargingDelayReason : dischargingDelayReasons) {
+        Optional<DischargingDelayReason> dischargingDelayReasonObj =
+            dischargingDelayReasonRepository.findById(dischargingDelayReason.getId());
+        dischargingDelayReason.setVersion(
+            dischargingDelayReasonObj.map(EntityDoc::getVersion).orElse(null));
+        // Set Loading Delay details
+        dischargingDelayReason.setDischargingDelay(
+            emptyIfNull(dischargingDelays).stream()
+                .filter(
+                    dischargingDelay ->
+                        dischargingDelay
+                            .getId()
+                            .equals(
+                                dischargingDelayReason
+                                    .getCommunicationRelatedIdMap()
+                                    .get("discharging_delay_xid")))
+                .findFirst()
+                .orElse(null));
+        Long reasonForDelay =
+            dischargingDelayReason.getCommunicationRelatedIdMap().get("reason_xid");
+        if (reasonForDelay != null) {
+          Optional<ReasonForDelay> reasonForDelayOpt =
+              reasonForDelayRepository.findByIdAndIsActiveTrue(reasonForDelay);
+          if (reasonForDelayOpt.isPresent()) {
+            dischargingDelayReason.setReasonForDelay(reasonForDelayOpt.get());
           }
         }
       }
@@ -1803,16 +1810,22 @@ public class DischargePlanCommunicationService {
   private JsonArray removeJsonFields(JsonArray array, HashMap<String, String> map, String... xIds) {
     JsonArray json = dischargePlanStagingService.getAsEntityJson(map, array);
     JsonArray jsonArray = new JsonArray();
+    JsonObject communicationRelatedIdMap = new JsonObject();
     for (JsonElement jsonElement : json) {
       final JsonObject jsonObj = jsonElement.getAsJsonObject();
       if (xIds != null) {
         for (String xId : xIds) {
           if (xIds.length == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
+          } else {
+            if (!"null".equals(jsonObj.get(xId).toString())) {
+              communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            }
           }
           jsonObj.remove(xId);
         }
       }
+      jsonObj.add("communicationRelatedIdMap", communicationRelatedIdMap);
       jsonArray.add(jsonObj);
     }
     return jsonArray;

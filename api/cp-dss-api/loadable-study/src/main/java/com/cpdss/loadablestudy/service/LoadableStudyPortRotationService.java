@@ -876,12 +876,10 @@ public class LoadableStudyPortRotationService {
                         .build();
                 com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder builders =
                     com.cpdss.common.generated.LoadableStudy.VoyageListReply.newBuilder();
-                List<com.cpdss.common.generated.LoadableStudy.VoyageDetail> de =
-                    voyageService.getVoyagesByVessel(requests, builders).getVoyagesList().stream()
-                        .filter(list -> list.getStatus().trim().equals("Active"))
-                        .collect(Collectors.toList());
-                if (de != null && !de.isEmpty()) {
-                  getVoyageData(vesselDetail, shoreBuilder, de);
+                List<com.cpdss.common.generated.LoadableStudy.VoyageDetail> activeVoyages =
+                    voyageService.getActiveVoyagesByVessel(requests, builders).getVoyagesList();
+                if (activeVoyages != null && !activeVoyages.isEmpty()) {
+                  getVoyageData(vesselDetail, shoreBuilder, activeVoyages);
                 }
                 builder.addShoreList(shoreBuilder);
               });
@@ -894,8 +892,8 @@ public class LoadableStudyPortRotationService {
   private void getVoyageData(
       VesselDetail vesselDetail,
       com.cpdss.common.generated.LoadableStudy.LoadableStudyShore.Builder shoreBuilder,
-      List<com.cpdss.common.generated.LoadableStudy.VoyageDetail> de) {
-    shoreBuilder.setVoyageId(de.get(0).getId());
+      List<com.cpdss.common.generated.LoadableStudy.VoyageDetail> activeVoyageList) {
+    shoreBuilder.setVoyageId(activeVoyageList.get(0).getId());
     // Gettting Lodablestudy detaild from Vessel
     Set<Long> distinctLodableStudyId =
         loadableStudyRepository.findByVesselXId(vesselDetail.getId()).stream()
@@ -907,7 +905,7 @@ public class LoadableStudyPortRotationService {
                         && det.getLoadableStudyStatus().getName().trim().equals("Confirmed")
                         && det.getVesselXId() == vesselDetail.getId()
                         && det.getVoyage() != null
-                        && det.getVoyage().getId() == de.get(0).getId())
+                        && det.getVoyage().getId() == activeVoyageList.get(0).getId())
             .map(EntityDoc::getId)
             .collect(Collectors.toSet());
     /* Voyage voy = new Voyage();
@@ -1016,7 +1014,6 @@ public class LoadableStudyPortRotationService {
                 : vyogeName + " - " + dataMap.get(i).getPortName();
       }
     }
-
     shoreBuilder.setVoyageName(vyogeName);
   }
 

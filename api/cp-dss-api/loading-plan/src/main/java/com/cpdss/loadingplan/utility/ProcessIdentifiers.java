@@ -19,6 +19,7 @@ public enum ProcessIdentifiers {
   cargo_topping_off_sequence,
   loading_berth_details,
   loading_delay,
+  loading_delay_reason,
   loading_machinary_in_use,
   stages_min_amount,
   stages_duration,

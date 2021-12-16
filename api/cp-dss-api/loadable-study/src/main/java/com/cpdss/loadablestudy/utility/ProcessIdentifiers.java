@@ -38,5 +38,6 @@ public enum ProcessIdentifiers {
   loadable_study_rules,
   loadable_study_rule_input,
   loadable_plan_comments,
-  loadable_plan_stowage_details_temp
+  loadable_plan_stowage_details_temp,
+  loadable_pattern_algo_status
 }
