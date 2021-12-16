@@ -185,9 +185,9 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM communication_status_update u where reference_id=?1",
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM communication_status_update u where id = (SELECT id FROM communication_status_update WHERE reference_id = ?1 and message_type = ?2 ORDER BY last_modified_date_time DESC LIMIT 1)",
       nativeQuery = true)
-  String getCommunicationStatusUpdateWithLoadableStudyId(long loadableStudyId);
+  String getCommunicationStatusUpdate(long loadableStudyId, String messageType);
 
   @Query(
       value =

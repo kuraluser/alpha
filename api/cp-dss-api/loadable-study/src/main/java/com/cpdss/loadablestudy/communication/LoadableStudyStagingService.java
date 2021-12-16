@@ -53,6 +53,7 @@ public class LoadableStudyStagingService extends StagingService {
     List<String> processedList = new ArrayList<>();
     List<Long> algoErrorHeadingsIds = null;
     List<Long> loadablePatternIds = getLoadablePatternIds(Id, processGroupId);
+    Long loadableStudyId = getLoadableStudyId(Id, processGroupId);
     List<Long> loadablePlanIds = null;
     List<Long> synopticalTableIds = null;
     List<Long> cargoNominationIds = null;
@@ -580,7 +581,8 @@ public class LoadableStudyStagingService extends StagingService {
         case communication_status_update:
           {
             String communicationStatusUpdateDataJson =
-                loadableStudyStagingRepository.getCommunicationStatusUpdateWithLoadableStudyId(Id);
+                loadableStudyStagingRepository.getCommunicationStatusUpdate(
+                    loadableStudyId, processGroupId);
             if (null != communicationStatusUpdateDataJson) {
               JsonArray communicationStatusUpdateData =
                   JsonParser.parseString(communicationStatusUpdateDataJson).getAsJsonArray();
@@ -791,5 +793,20 @@ public class LoadableStudyStagingService extends StagingService {
       return Collections.singletonList(id);
     }
     return loadablePatternRepository.getLoadablePatternIds(id);
+  }
+
+  /**
+   * Method to get loadable study id based on message type
+   *
+   * @param id id value
+   * @param messageType message type value
+   * @return loadable study id
+   */
+  private Long getLoadableStudyId(Long id, String messageType) {
+    if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)
+        || MessageTypes.PATTERNDETAIL.getMessageType().equals(messageType)) {
+      return loadablePatternRepository.getLoadableStudyId(id);
+    }
+    return id;
   }
 }

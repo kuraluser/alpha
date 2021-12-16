@@ -1382,8 +1382,7 @@ public class LoadableStudyCommunicationService {
   /** Method to save communication status update table */
   private void saveCommunicationStatusUpdate() {
     current_table_name = LoadableStudyTables.COMMUNICATION_STATUS_UPDATE.getTable();
-    if (null == loadableStudyCommunicationStatusStage
-        || loadableStudyCommunicationStatusStage.isEmpty()) {
+    if (isEmpty(loadableStudyCommunicationStatusStage)) {
       log.info("Communication XXXXXXX  COMMUNICATION_STATUS_UPDATE is empty");
       return;
     }
