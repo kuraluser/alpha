@@ -11,11 +11,15 @@
     <div class="pr-15 text-right">
       <button class="btn btn-main mr-10" id="discharge-plan-view-error" [disabled]="disablePlanViewErrorBtn"
         (click)="viewError()">{{'DISCHARGING_INFORMATION_VIEW_ERROR_BUTTON_LABEL' |translate}}</button>
-      <button class="btn btn-main mr-10" id="in-use" [disabled]="true">
+        <button [disabled]="!dischargePlanGenerated" (click)="downloadDischargePlanTemplate()" class="btn btn-main mr-10" id="download_excel">
+          <span class="download-icon v-top mr-10" ></span>
+          {{'DOWNLOAD_TEMPLATE' |translate}}
+        </button>
+      <button [hidden]="true" class="btn btn-main mr-10" id="in-use" [disabled]="true">
         <span class="pi pi-check check-rounded v-t-bottom"></span>
         {{'DISCHARGING_INFORMATION_IN_USE_BUTTON_LABEL' |translate}}
       </button>
-      <button class="btn btn-main mr-10" id="actual" [disabled]="true">
+      <button [hidden]="true" class="btn btn-main mr-10" id="actual" [disabled]="true">
         <span class="pi pi-check check-rounded v-t-bottom"></span>
         {{'DISCHARGING_INFORMATION_ACTUAL_BUTTON_LABEL' |translate}}
       </button>

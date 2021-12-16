@@ -85,4 +85,20 @@ export class OperationsApiService {
     return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-info/${infoId}/algo-errors/${conditionType}`);
   }
 
+  /**
+ * Method to get loading plan template.
+ *
+ * @param {number} vesselId
+ * @param {number} voyageId
+ * @param {number} loadingInfoId
+ * @param {number} portRotationId
+ * @param {*} data
+ * @return {*}  {Observable<any>}
+ * @memberof OperationsApiService
+ */
+ downloadPlanTemplate(vesselId: number, voyageId: number, loadingInfoId: number, portRotationId: number, data):Observable<any>{
+  return this.commonApiService.postFile<any,any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}/report`, data, { responseType: 'blob' as 'json' });
+
+}
+
 }
