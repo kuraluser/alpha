@@ -581,8 +581,7 @@ public class LoadableStudyStagingService extends StagingService {
         case communication_status_update:
           {
             String communicationStatusUpdateDataJson =
-                loadableStudyStagingRepository.getCommunicationStatusUpdate(
-                    loadableStudyId, processGroupId);
+                loadableStudyStagingRepository.getCommunicationStatusUpdate(Id, processGroupId);
             if (null != communicationStatusUpdateDataJson) {
               JsonArray communicationStatusUpdateData =
                   JsonParser.parseString(communicationStatusUpdateDataJson).getAsJsonArray();
