@@ -36,4 +36,6 @@ public class LoadingSequenceResponse {
   private List<DriveTank> driveTanks;
   private List<TransferDetail> transfers;
   private List<TransferDetail> freshOilTanks;
+  private List<TankCategory> allCargoTankCategories;
+  private List<TankCategory> allBallastTankCategories;
 }

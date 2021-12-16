@@ -678,7 +678,8 @@ public class LoadablePlanService {
                 cargoNomOpt.ifPresent(
                     cargoNomination -> details.setCargoId(cargoNomination.getCargoXId()));
                 details.setTankId((Long) obA[2]);
-                details.setQuantityMT(String.valueOf(obA[3]));
+                Optional.ofNullable(obA[3])
+                    .ifPresent(quantityMt -> details.setQuantityMT(String.valueOf(quantityMt)));
                 Optional.ofNullable(obA[4])
                     .ifPresent(colorCode -> details.setColorCode(String.valueOf(colorCode)));
                 Optional.ofNullable(obA[5])

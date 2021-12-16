@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -38,11 +40,14 @@ public class DischargePlanServiceTest {
   @MockBean LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
   @MockBean LoadablePlanService loadablePlanService;
 
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   @Test
   void testBuildDischargeablePlanPortWiseDetails() {
     DischargePlanService spyService = spy(DischargePlanService.class);
     LoadablePattern loadablePattern = new LoadablePattern();
     LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setVesselXId(1L);
     loadablePattern.setLoadableStudy(loadableStudy);
     loadablePattern.setId(1l);
     LoadabalePatternValidateRequest request = new LoadabalePatternValidateRequest();
@@ -94,6 +99,13 @@ public class DischargePlanServiceTest {
     when(loadablePlanService.addLoadablePlanCommingleDetails(anyList(), anyBoolean(), anyLong()))
         .thenReturn(stowageDetailsList);
 
+    VesselInfo.VesselTankDetail.Builder vesselTankBuilder =
+        VesselInfo.VesselTankDetail.newBuilder();
+    vesselTankBuilder.setTankId(1L);
+    VesselInfo.VesselReply vesselReply = VesselInfo.VesselReply.newBuilder().build();
+    when(vesselInfoGrpcService.getVesselTanks(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+
     ReflectionTestUtils.setField(
         spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
     ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
@@ -108,7 +120,7 @@ public class DischargePlanServiceTest {
         spyService,
         "loadablePlanCommingleDetailsPortwiseRepository",
         loadablePlanCommingleDetailsPortwiseRepository);
-
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     spyService.buildDischargeablePlanPortWiseDetails(loadablePattern, request);
     assertEquals(
         1l,

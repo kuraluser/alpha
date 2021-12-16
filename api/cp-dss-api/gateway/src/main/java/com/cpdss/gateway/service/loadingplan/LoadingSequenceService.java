@@ -270,6 +270,9 @@ public class LoadingSequenceService {
       gravity.setEnd(gravityList.get(gravityList.size() - 1).getEnd());
     }
 
+    this.populateAllCargoAndBallastTankCategories(
+        response, cargoTankCategories, ballastTankCategories);
+
     this.updateCargoLoadingRateIntervals(cargoLoadingRates, stageTickPositions);
     this.buildStabilityParamSequence(reply, portEta, stabilityParams);
     this.buildFlowRates(loadingRates, vesselTankMap, portEta, response);
@@ -297,6 +300,24 @@ public class LoadingSequenceService {
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
     response.setBallastEduction(ballastEduction);
+  }
+
+  /**
+   * Adds all the cargo tank categories including empty tanks.
+   *
+   * @param response
+   * @param cargoTankCategories
+   * @param ballastTankCategories
+   */
+  public void populateAllCargoAndBallastTankCategories(
+      LoadingSequenceResponse response,
+      Set<TankCategory> cargoTankCategories,
+      Set<TankCategory> ballastTankCategories) {
+
+    List<TankCategory> allCargoTankCategories = new ArrayList<>(cargoTankCategories);
+    List<TankCategory> allBallastTankCategories = new ArrayList<>(ballastTankCategories);
+    response.setAllCargoTankCategories(allCargoTankCategories);
+    response.setAllBallastTankCategories(allBallastTankCategories);
   }
 
   /** @param ballastEduction */
