@@ -27,7 +27,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <cpdss-portal-port-rotation-ribbon [vesselDetails]="vessel" *ngIf="vessel && selectedVoyage"
+            <cpdss-portal-port-rotation-ribbon [etaEtdPermision]="etaEtdPermision" [vesselDetails]="vessel" *ngIf="vessel && selectedVoyage"
                 [groupSelection]="true" [showOperationType]="true" [voyageDetails]="selectedVoyage"
                 (portSelection)="onPortSelection($event)">
             </cpdss-portal-port-rotation-ribbon>

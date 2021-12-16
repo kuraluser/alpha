@@ -43,6 +43,7 @@ export class VoyageStatusComponent implements OnInit, OnDestroy {
   VOYAGE_STATUS = VOYAGE_STATUS;
   newVoyagePermissionContext: IPermissionContext;
   editPortRotationPermissionContext: IPermissionContext;
+  etaEtdPermision: IPermission;
 
   get selectedVoyage(): Voyage {
     return this._selectedVoyage;
@@ -85,6 +86,7 @@ export class VoyageStatusComponent implements OnInit, OnDestroy {
    * @memberof VoyageStatusComponent
    */
   getPagePermission() {
+    this.etaEtdPermision = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['SynopticalTableETA/ETD'], false);
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['VoyageStatusComponent']);
     this.newVoyagePermissionContext = { key: AppConfigurationService.settings.permissionMapping['NewVoyage'], actions: [PERMISSION_ACTION.VIEW] };
     this.editPortRotationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['StatusEditPortRotation'], actions: [PERMISSION_ACTION.VIEW] };

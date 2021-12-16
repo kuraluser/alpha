@@ -8,6 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
 import { IVoyagePortDetails, Voyage, VOYAGE_STATUS, OPERATIONS } from '../core/models/common.model';
+import { IPermission } from '../../shared/models/user-profile.model';
 import { IVessel } from '../core/models/vessel-details.model';
 import { PortRotationService } from '../core/services/port-rotation.service';
 import { VesselsApiService } from '../core/services/vessels-api.service';
@@ -53,6 +54,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
   readonly OPERATION_TAB = OPERATION_TAB;
   currentTab: OPERATION_TAB = OPERATION_TAB.INFORMATION;
   selectedPort: IVoyagePortDetails;
+  etaEtdPermision: IPermission;
 
   private _selectedVoyage: Voyage;
   private _ngUnsubscribe: Subject<any> = new Subject();
@@ -70,6 +72,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this.etaEtdPermision = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['SynopticalTableETA/ETD'], false);
     this.getVesselInfo();
     this.initSubscriptions();
     this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['OperationsComponent']);
