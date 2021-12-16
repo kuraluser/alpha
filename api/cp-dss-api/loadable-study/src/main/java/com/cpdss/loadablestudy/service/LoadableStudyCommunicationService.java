@@ -106,6 +106,7 @@ public class LoadableStudyCommunicationService {
   @Autowired private LoadablePatternService loadablePatternService;
   @Autowired private LoadablePlanService loadablePlanService;
   @Autowired private CowHistoryRepository cowHistoryRepository;
+  @Autowired private LoadableStudyServiceShore loadableStudyServiceShore;
 
   @Autowired
   private DischargePatternQuantityCargoPortwiseRepository
@@ -773,7 +774,6 @@ public class LoadableStudyCommunicationService {
         saveLoadablePlanStowageDetails();
         saveLoadablePlanBallastDetails();
         saveLoadablePlanCommingleDetailsPortwise();
-        saveCommunicationStatusUpdate();
         saveStabilityParameter();
         saveLoadablePatternCargoDetails();
         saveLoadablePlanStowageBallastDetails();
@@ -785,6 +785,7 @@ public class LoadableStudyCommunicationService {
         saveLoadablePlanComments();
         saveLoadablePlanStowageDetailsTemp();
         saveLoadablePatternAlgoStatus();
+        saveCommunicationStatusUpdate(processGroupId);
       } catch (ResourceAccessException e) {
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
@@ -1380,22 +1381,12 @@ public class LoadableStudyCommunicationService {
   }
 
   /** Method to save communication status update table */
-  private void saveCommunicationStatusUpdate() {
-    current_table_name = LoadableStudyTables.COMMUNICATION_STATUS_UPDATE.getTable();
-    if (isEmpty(loadableStudyCommunicationStatusStage)) {
-      log.info("Communication XXXXXXX  communication_status_update is empty");
-      return;
+  private void saveCommunicationStatusUpdate(String messageType) {
+    if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)) {
+      loadableStudyServiceShore.updateCommunicationStatus(
+          UUID.randomUUID().toString(), null, loadablePatternStage.get(0).getId());
+      log.info("Communication #######  communication_status_update table saved");
     }
-    for (LoadableStudyCommunicationStatus loadableStudyCommunicationStatus :
-        loadableStudyCommunicationStatusStage) {
-      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatusOptional =
-          loadableStudyCommunicationStatusRepository.findById(
-              loadableStudyCommunicationStatus.getId());
-      loadableStudyCommunicationStatus.setVersion(
-          loadableStudyCommunicationStatusOptional.map(EntityDoc::getVersion).orElse(null));
-    }
-    loadableStudyCommunicationStatusRepository.saveAll(loadableStudyCommunicationStatusStage);
-    log.info("Communication #######  communication_status_update table saved");
   }
 
   /** Method to save stability parameter */
