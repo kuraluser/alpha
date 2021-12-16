@@ -956,7 +956,7 @@ public class DischargingSequenceService {
     }
 
     loadingSequenceService.populateAllCargoAndBallastTankCategories(
-        response, cargoTankCategories, ballastTankCategories);
+        response, cargoTankCategories, ballastTankCategories, vesselTankMap);
 
     // Re using some methods in loading sequence here
     loadingSequenceService.updateCargoLoadingRateIntervals(cargoDischargeRates, stageTickPositions);
@@ -1059,6 +1059,7 @@ public class DischargingSequenceService {
               cargo.setAbbreviation(cargoNominationDetail.getAbbreviation());
               cargo.setColorCode(cargoNominationDetail.getColor());
               cargo.setName(cargoNominationDetail.getCargoName());
+              cargo.setApi(cargoNominationDetail.getApi());
               transferDetail.setCargo(cargo);
               transferDetail.setStartQuantity(
                   StringUtils.hasLength(transfer.getStartQuantity())
