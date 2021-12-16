@@ -1044,7 +1044,7 @@ public class DischargingSequenceService {
                         Tank tank = new Tank();
                         tank.setTankId(tankId);
                         VesselTankDetail vesselTankDetail = vesselTankMap.get(tankId);
-                        tank.setShortName(vesselTankDetail.getShortName());
+                        tank.setTankName(vesselTankDetail.getShortName());
                         fromTanks.add(tank);
                       });
               transferDetail.setFromTanks(fromTanks);
