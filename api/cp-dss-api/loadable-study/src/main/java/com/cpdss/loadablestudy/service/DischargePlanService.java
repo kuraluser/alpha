@@ -13,6 +13,7 @@ import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -150,7 +151,10 @@ public class DischargePlanService {
                       false,
                       loadablePattern.getId()));
 
+              // ALGO needs all ballast tanks in the request.
               addEmptytankstoCondition(arrivalCondition, vesselTanksReply);
+              addEmptytankstoCondition(departureCondition, vesselTanksReply);
+
               portWiseDetails.setArrivalCondition(arrivalCondition);
               portWiseDetails.setDepartureCondition(departureCondition);
               loadablePlanPortWiseDetails.add(portWiseDetails);
@@ -161,7 +165,7 @@ public class DischargePlanService {
   /**
    * Add empty tanks to Arrival/Departure condition of the ALGO request.
    *
-   * @param arrivalCondition
+   * @param portCondition
    * @param vesselTanksReply
    */
   private void addEmptytankstoCondition(
@@ -178,10 +182,10 @@ public class DischargePlanService {
                 com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
                     new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
                 details.setId(0L);
-                details.setQuantityMT(null);
+                details.setQuantityMT(BigDecimal.ZERO.toString());
                 details.setTankId(vesselTankDetail.getTankId());
                 details.setColorCode(BALLAST_TANK_COLOR_CODE);
-                details.setSg(null);
+                details.setSg(BigDecimal.ZERO.toString());
                 portCondition.getLoadablePlanBallastDetails().add(details);
               }
             });
