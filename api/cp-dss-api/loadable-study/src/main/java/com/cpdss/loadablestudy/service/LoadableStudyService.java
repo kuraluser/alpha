@@ -3308,8 +3308,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       log.info("json data request:{}", request.getId());
       String jsonData = jsonDataRepository.getJsonDataWithLoadingInfoId(request.getId());
-      log.info("json data get:{}", jsonData.length());
       if (jsonData != null) {
+        log.info("json data get:{}", jsonData.length());
         replyBuilder.setDataJson(jsonData);
         replyBuilder.setResponseStatus(
             Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -3514,8 +3514,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       log.info("json data request:{}", request.getId());
       String jsonData = jsonDataRepository.getJsonDataWithReferenceId(request.getId());
-      log.info("json data get:{}", jsonData.length());
       if (jsonData != null) {
+        log.info("json data get:{}", jsonData.length());
         replyBuilder.setDataJson(jsonData);
         replyBuilder.setResponseStatus(
             Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
