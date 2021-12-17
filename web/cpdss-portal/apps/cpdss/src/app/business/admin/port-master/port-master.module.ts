@@ -12,6 +12,8 @@ import { NumberDirectiveModule } from '../../../shared/directives/number-directi
 import { AddBerthComponent } from './add-berth/add-berth.component';
 import { PortMasterMapComponent } from './port-master-map/port-master-map.component';
 import { DialogModule } from 'primeng/dialog';
+import { PermissionDirectiveModule } from '../../../shared/directives/permission/permission-directive.module';
+import { TableModule } from 'primeng/table';
 
 
 
@@ -24,16 +26,17 @@ import { DialogModule } from 'primeng/dialog';
   declarations: [PortListingComponent,AddPortComponent, AddBerthComponent, PortMasterMapComponent],
   imports: [
     CommonModule,
+    PortMasterRoutingModule,
     DialogModule,
     ReactiveFormsModule,
     FormsModule,
-    ValidationErrorModule,
-    PortMasterRoutingModule,
     DatatableModule,
+    ValidationErrorModule,
+    PermissionDirectiveModule,
     TranslateModule,
+    TableModule,
     DropdownModule,
     NumberDirectiveModule,
-    DatatableModule  
   ]
 })
 export class PortMasterModule { }

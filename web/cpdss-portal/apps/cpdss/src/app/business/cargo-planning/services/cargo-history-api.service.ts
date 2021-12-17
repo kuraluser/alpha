@@ -14,8 +14,8 @@ import { ICargoHistoryDataStateChange, ICargoHistoryResponse } from '../models/c
   providedIn: CargoPlanningModule
 })
 export class CargoHistoryApiService {
-  public page: number = 0;
-  public pageSize: number = 10;
+  private page = 0;
+  private pageSize = 10;
 
   constructor(private commonApiService: CommonApiService) { }
 
