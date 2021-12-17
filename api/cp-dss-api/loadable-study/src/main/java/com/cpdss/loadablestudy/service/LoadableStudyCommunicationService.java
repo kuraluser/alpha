@@ -2,7 +2,6 @@
 package com.cpdss.loadablestudy.service;
 
 // region Import
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
@@ -837,13 +836,6 @@ public class LoadableStudyCommunicationService {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR,
               e);
-        }
-      } else if (CPDSS_BUILD_ENV_SHIP.equals(env)) {
-        if (MessageTypes.PATTERNDETAIL.getMessageType().equals(processGroupId)) {
-          Optional<LoadablePattern> loadablePatternOpt =
-              loadablePatternRepository.findById(loadablePatternStage.get(0).getId());
-          loadablePatternOpt.ifPresent(
-              loadablePattern -> loadablePatternService.deleteExistingPlanDetails(loadablePattern));
         }
       }
     }
