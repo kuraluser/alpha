@@ -1102,6 +1102,7 @@ public class LoadableStudyCommunicationService {
           .findByLoadableStudyId(loadableStudyStage.getId())
           .ifPresentOrElse(
               loadableStudyAlgoStatus -> {
+                loadableStudyAlgoStatus.setProcessId(loadableStudyAlgoStatusStage.getProcessId());
                 loadableStudyAlgoStatusStage = loadableStudyAlgoStatus;
               },
               () -> {
