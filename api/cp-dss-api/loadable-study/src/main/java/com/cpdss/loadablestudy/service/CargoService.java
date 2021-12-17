@@ -254,23 +254,29 @@ public class CargoService {
         commingleCargoRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
     loadableStudy.setCommingleCargos(new ArrayList<>());
 
-    commingleCargos.forEach(
-        commingleCargo -> {
-          com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
-              modelMapper.map(commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
-          commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
-          commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
-          commingleCargoDto.setCargo1Percentage(
-              null != commingleCargo.getCargo1Pct()
-                  ? commingleCargo.getCargo1Pct().toString()
-                  : null);
-          commingleCargoDto.setCargo2Percentage(
-              null != commingleCargo.getCargo2Pct()
-                  ? commingleCargo.getCargo2Pct().toString()
-                  : null);
-          commingleCargoDto.setCommingleColour(commingleCargo.getCommingleColour());
-          loadableStudy.getCommingleCargos().add(commingleCargoDto);
-        });
+    commingleCargos.stream()
+        .filter( // Filters out deleted empty commingle entries.
+            commingleCargo ->
+                (commingleCargo.getCargoNomination1Id() != 0
+                    && commingleCargo.getCargoNomination2Id() != 0))
+        .forEach(
+            commingleCargo -> {
+              com.cpdss.loadablestudy.domain.CommingleCargo commingleCargoDto =
+                  modelMapper.map(
+                      commingleCargo, com.cpdss.loadablestudy.domain.CommingleCargo.class);
+              commingleCargoDto.setCargo1Id(commingleCargo.getCargo1Xid());
+              commingleCargoDto.setCargo2Id(commingleCargo.getCargo2Xid());
+              commingleCargoDto.setCargo1Percentage(
+                  null != commingleCargo.getCargo1Pct()
+                      ? commingleCargo.getCargo1Pct().toString()
+                      : null);
+              commingleCargoDto.setCargo2Percentage(
+                  null != commingleCargo.getCargo2Pct()
+                      ? commingleCargo.getCargo2Pct().toString()
+                      : null);
+              commingleCargoDto.setCommingleColour(commingleCargo.getCommingleColour());
+              loadableStudy.getCommingleCargos().add(commingleCargoDto);
+            });
   }
 
   public LoadableStudy.CommingleCargoReply.Builder getCommingleCargo(
