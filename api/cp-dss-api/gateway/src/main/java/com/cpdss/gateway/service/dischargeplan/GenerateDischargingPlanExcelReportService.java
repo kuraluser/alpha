@@ -1210,6 +1210,12 @@ public class GenerateDischargingPlanExcelReportService {
       if (!pumpList.isEmpty()) {
         List<String> rates = new ArrayList<>();
         List<QuantityLoadingStatus> pumpStatusList = new ArrayList<>();
+        IntStream.range(0, positionList.size())
+            .forEach(
+                i -> {
+                  QuantityLoadingStatus quantityLoadingStatus = new QuantityLoadingStatus();
+                  pumpStatusList.add(quantityLoadingStatus);
+                });
         Optional<BallastPump> pumpMatch = Optional.empty();
         // checking if 0th position have a mapping
         pumpMatch =
@@ -1219,16 +1225,12 @@ public class GenerateDischargingPlanExcelReportService {
                         pumpItem.getStart().equals(positionList.get(0))
                             && pumpItem.getEnd().equals(positionList.get(0)))
                 .findFirst();
-        setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
-        for (int i = 0; i < positionList.size(); i++) {
-          Long start = positionList.get(i);
-          if (!start.equals(positionList.get(positionList.size() - 1))) {
-            Long end = positionList.get(i + 1);
-            pumpMatch =
-                pumpList.stream()
-                    .filter(pumpItem -> pumpItem.getStart() >= start && pumpItem.getEnd() <= end)
-                    .findFirst();
-            setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
+        setCargoPumpDetails(pumpMatch, rates, pumpStatusList.get(0));
+        for (BallastPump pump : pumpList) {
+          for (int i = 1; i < positionList.size(); i++) {
+            if (pump.getStart() <= positionList.get(i) && pump.getEnd() >= positionList.get(i)) {
+              setCargoPumpDetails(Optional.of(pump), rates, pumpStatusList.get(i));
+            }
           }
         }
         cargoPumpDetailsObj.setUllage(rates);
@@ -1258,10 +1260,7 @@ public class GenerateDischargingPlanExcelReportService {
    * @param quantityStatusList
    */
   private void setCargoPumpDetails(
-      Optional<BallastPump> pumpMatch,
-      List<String> rates,
-      List<QuantityLoadingStatus> pumpStatusList) {
-    QuantityLoadingStatus pumpStatus = new QuantityLoadingStatus();
+      Optional<BallastPump> pumpMatch, List<String> rates, QuantityLoadingStatus pumpStatus) {
     if (pumpMatch.isPresent()) {
       if (pumpMatch.get().getQuantityM3() != null && pumpMatch.get().getRate() != null) {
         rates.add(pumpMatch.get().getRate().toString());
@@ -1274,7 +1273,6 @@ public class GenerateDischargingPlanExcelReportService {
       rates.add("");
       pumpStatus.setPresent(false);
     }
-    pumpStatusList.add(pumpStatus);
   }
 
   private String getPumpColourCode(Long pumpId) {
@@ -1499,7 +1497,7 @@ public class GenerateDischargingPlanExcelReportService {
       CleaningTank cleaningTank) {
     QuantityLoadingStatus dischargingStatus = new QuantityLoadingStatus();
     if (cargoMatch.isPresent()) {
-      ullages.add(cargoMatch.get().getUllage().toString());
+      ullages.add(cargoMatch.get().getUllage().toPlainString());
       if (cargoMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
           && cargoMatch.get().getCargoNominationId() > 0
           && cargoMatch.get().getColor() != null) {
@@ -1557,7 +1555,7 @@ public class GenerateDischargingPlanExcelReportService {
       List<QuantityLoadingStatus> ballastStatusList) {
     QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
     if (ballastMatch.isPresent()) {
-      ullages.add(ballastMatch.get().getSounding().toString());
+      ullages.add(ballastMatch.get().getSounding().toPlainString());
       if (ballastMatch.get().getColor() != null) {
         ballastStatus.setPresent(true);
         ballastStatus.setColorCode(ballastMatch.get().getColor());
@@ -1797,7 +1795,8 @@ public class GenerateDischargingPlanExcelReportService {
     // Condition type 1 is arrival
     sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
     sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
-    sheetOne.setCargoTobeDischarged(getCargoTobeDischarged(requestPayload));
+    sheetOne.setCargoTobeDischarged(
+        getCargoTobeDischarged(requestPayload.getDischargingInformation()));
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;
@@ -1947,13 +1946,10 @@ public class GenerateDischargingPlanExcelReportService {
    * @param requestPayload
    * @return
    */
-  private List<CargoTobeLoaded> getCargoTobeDischarged(DischargePlanResponse requestPayload) {
+  private List<CargoTobeLoaded> getCargoTobeDischarged(DischargeInformation requestPayload) {
     List<CargoTobeLoaded> cargoTobeDischargedList = new ArrayList<>();
     List<DischargeQuantityCargoDetails> dischargeQuantityCargoList =
-        requestPayload
-            .getDischargingInformation()
-            .getCargoVesselTankDetails()
-            .getDischargeQuantityCargoDetails();
+        requestPayload.getCargoVesselTankDetails().getDischargeQuantityCargoDetails();
     if (!dischargeQuantityCargoList.isEmpty()) {
       dischargeQuantityCargoList.forEach(
           item -> {

@@ -68,7 +68,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -961,7 +960,7 @@ public class GenerateLoadingPlanExcelReportService {
       // Getting all tanks present in sequence
       sheetThree.setCargoTanks(
           getCargoTanks(
-              loadingSequenceResponse.getCargoTankCategories(),
+              loadingSequenceResponse.getAllCargoTankCategories(),
               loadingSequenceResponse.getCargos()));
       if (sheetThree.getCargoTanks().size() > 0) {
         // Getting ullage mapped against each tank if present
@@ -978,7 +977,7 @@ public class GenerateLoadingPlanExcelReportService {
       }
       sheetThree.setBallastTanks(
           getBallastTanks(
-              loadingSequenceResponse.getBallastTankCategories(),
+              loadingSequenceResponse.getAllBallastTankCategories(),
               loadingSequenceResponse.getBallasts()));
       if (sheetThree.getBallastTanks().size() > 0) {
         getBallastTankUllageAndQuantity(
@@ -1024,6 +1023,12 @@ public class GenerateLoadingPlanExcelReportService {
         // rates not needed for excel added for future use only
         List<String> rates = new ArrayList<>();
         List<QuantityLoadingStatus> pumpStatusList = new ArrayList<>();
+        IntStream.range(0, positionList.size())
+            .forEach(
+                i -> {
+                  QuantityLoadingStatus quantityLoadingStatus = new QuantityLoadingStatus();
+                  pumpStatusList.add(quantityLoadingStatus);
+                });
         Optional<BallastPump> pumpMatch = Optional.empty();
         // checking if 0th position have a mapping
         pumpMatch =
@@ -1033,16 +1038,12 @@ public class GenerateLoadingPlanExcelReportService {
                         pumpItem.getStart().equals(positionList.get(0))
                             && pumpItem.getEnd().equals(positionList.get(0)))
                 .findFirst();
-        setBallastPumpDetails(pumpMatch, rates, pumpStatusList);
-        for (int i = 0; i < positionList.size(); i++) {
-          Long start = positionList.get(i);
-          if (!start.equals(positionList.get(positionList.size() - 1))) {
-            Long end = positionList.get(i + 1);
-            pumpMatch =
-                pumpList.stream()
-                    .filter(pumpItem -> pumpItem.getStart() >= start && pumpItem.getEnd() <= end)
-                    .findFirst();
-            setBallastPumpDetails(pumpMatch, rates, pumpStatusList);
+        setBallastPumpDetails(pumpMatch, rates, pumpStatusList.get(0));
+        for (BallastPump pump : pumpList) {
+          for (int i = 1; i < positionList.size(); i++) {
+            if (pump.getStart() <= positionList.get(i) && pump.getEnd() >= positionList.get(i)) {
+              setBallastPumpDetails(Optional.of(pump), rates, pumpStatusList.get(i));
+            }
           }
         }
         ballastPumpDetailsObj.setUllage(rates);
@@ -1072,10 +1073,7 @@ public class GenerateLoadingPlanExcelReportService {
    * @param quantityStatusList
    */
   private void setBallastPumpDetails(
-      Optional<BallastPump> pumpMatch,
-      List<String> rates,
-      List<QuantityLoadingStatus> pumpStatusList) {
-    QuantityLoadingStatus pumpStatus = new QuantityLoadingStatus();
+      Optional<BallastPump> pumpMatch, List<String> rates, QuantityLoadingStatus pumpStatus) {
     if (pumpMatch.isPresent()) {
       if (pumpMatch.get().getQuantityM3() != null && pumpMatch.get().getRate() != null) {
         rates.add(pumpMatch.get().getRate().toString());
@@ -1088,7 +1086,6 @@ public class GenerateLoadingPlanExcelReportService {
       rates.add("");
       pumpStatus.setPresent(false);
     }
-    pumpStatusList.add(pumpStatus);
   }
 
   private String getPumpColourCode(Long pumpId) {
@@ -1262,7 +1259,7 @@ public class GenerateLoadingPlanExcelReportService {
       cargoMatch = Optional.of(cargoMatchList.get(0));
     }
     if (cargoMatch.isPresent()) {
-      ullages.add(cargoMatch.get().getUllage().toString());
+      ullages.add(cargoMatch.get().getUllage().toPlainString());
       if (cargoMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
           && cargoMatch.get().getCargoNominationId() > 0
           && cargoMatch.get().getColor() != null) {
@@ -1292,7 +1289,7 @@ public class GenerateLoadingPlanExcelReportService {
       List<QuantityLoadingStatus> ballastStatusList) {
     QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
     if (ballastMatch.isPresent()) {
-      ullages.add(ballastMatch.get().getSounding().toString());
+      ullages.add(ballastMatch.get().getSounding().toPlainString());
       if (ballastMatch.get().getColor() != null) {
         ballastStatus.setPresent(true);
         ballastStatus.setColorCode(ballastMatch.get().getColor());
@@ -1364,7 +1361,7 @@ public class GenerateLoadingPlanExcelReportService {
                                     && cargo.getIsCommingle()
                                     && !cargoOpt.get().getCargoId().equals(cargo.getCargoId()))
                         .findFirst();
-                if (commingleCargoOpt.isPresent()) {
+                if (!commingleCargoOpt.isEmpty()) {
                   tankCategoryObj.setCommingled(true);
                   tankCategoryObj.setCommingleCargoName1(cargoOpt.get().getAbbreviation());
                   tankCategoryObj.setCommingleCargoColor1(cargoOpt.get().getColor());
@@ -1385,9 +1382,10 @@ public class GenerateLoadingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    return tankList.stream()
-        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
-        .collect(Collectors.toList());
+    //    return tankList.stream()
+    //        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+    //        .collect(Collectors.toList());
+    return tankList;
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
@@ -2127,7 +2125,7 @@ public class GenerateLoadingPlanExcelReportService {
     if (stabilityParam.isPresent()) {
       Optional.ofNullable(stabilityParam.get().getAftDraft()).ifPresent(vesselCondition::setDraftA);
       Optional.ofNullable(stabilityParam.get().getForeDraft())
-          .ifPresent(vesselCondition::setDraftA);
+          .ifPresent(vesselCondition::setDraftF);
       Optional.ofNullable(stabilityParam.get().getTrim()).ifPresent(vesselCondition::setTrim);
     }
   }
