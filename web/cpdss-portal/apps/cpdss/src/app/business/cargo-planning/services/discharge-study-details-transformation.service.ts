@@ -1196,7 +1196,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       return {
         id: new ValueObject<string>(backLoadingDetails.id.value),
         sequenceNo: new ValueObject<string>(sequenceNo, true, false),
-        emptyMaxNoOfTanks: new ValueObject<boolean>(false, true, false),
+        emptyMaxNoOfTanks: new ValueObject<boolean>(false, true, true),
         storedKey: new ValueObject<string>(backLoadingDetails.storedKey.value),
         maxKl: new ValueObject<number>(backLoadingDetails?.maxKl?.value ? backLoadingDetails.maxKl.value : 0, true , false),
         abbreviation: new ValueObject<string>(backLoadingDetails.abbreviation.value, true , false),
