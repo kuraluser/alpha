@@ -5,13 +5,7 @@ import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,7 +43,7 @@ public class PortInfo extends EntityDoc {
   @OneToMany(mappedBy = "portInfo", fetch = FetchType.EAGER)
   private Set<CargoPortMapping> cargoportmappingSet;
 
-  @OneToMany(mappedBy = "portInfo", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "portInfo", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<BerthInfo> berthInfoSet;
 
   @Column(name = "time_of_sunrise")
@@ -111,4 +105,7 @@ public class PortInfo extends EntityDoc {
 
   @Column(name = "max_permissible_ships_draftat_channel")
   private BigDecimal maxPermissibleDraft;
+
+  @Column(name = "ambient_temperature")
+  private BigDecimal ambientTemperature;
 }

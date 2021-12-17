@@ -3,33 +3,19 @@ package com.cpdss.portinfo.service;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.PortInfo.CargoInfos;
-import com.cpdss.common.generated.PortInfo.CountryReply;
+import com.cpdss.common.generated.PortInfo.*;
 import com.cpdss.common.generated.PortInfo.CountryReply.Builder;
-import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
-import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
-import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
-import com.cpdss.common.generated.PortInfo.PortDetail;
-import com.cpdss.common.generated.PortInfo.PortReply;
-import com.cpdss.common.generated.PortInfo.PortRequest;
-import com.cpdss.common.generated.PortInfo.TimezoneResponse;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.domain.FilterCriteria;
 import com.cpdss.portinfo.domain.PortInfoSpecification;
-import com.cpdss.portinfo.entity.BerthInfo;
-import com.cpdss.portinfo.entity.BerthManifold;
 import com.cpdss.portinfo.entity.CargoPortMapping;
-import com.cpdss.portinfo.entity.PortInfo;
+import com.cpdss.portinfo.entity.Country;
 import com.cpdss.portinfo.entity.Timezone;
+import com.cpdss.portinfo.entity.*;
 import com.cpdss.portinfo.repository.*;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +24,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /** Service with operations related to port information */
 @Log4j2
 @GrpcService
+@Transactional
 public class PortInfoService extends PortInfoServiceImplBase {
 
   @Autowired private PortInfoRepository portRepository;
@@ -814,5 +808,234 @@ public class PortInfoService extends PortInfoServiceImplBase {
         .ifPresent(item -> portDetail.setCountryName(portInfo.getCountry().getName()));
     Optional.ofNullable(portInfo.getCountry())
         .ifPresent(item -> portDetail.setCountryId(portInfo.getCountry().getId()));
+  }
+
+  @Override
+  public void savePortInfo(
+      PortDetail request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortInfoReply>
+          responseObserver) {
+    PortInfoReply.Builder portReply = PortInfoReply.newBuilder();
+
+    try {
+      PortInfo portInfo;
+      if (request.getId() == 0) {
+        portInfo = new PortInfo();
+      } else {
+        portInfo = this.portRepository.getById(request.getId());
+      }
+      buildPortEntity(request, portInfo);
+      PortInfo savePortInfo = this.portRepository.save(portInfo);
+      List<PortInfo> portInfoList = new ArrayList<>();
+      portInfoList.add(savePortInfo);
+      getPort(portReply, savePortInfo);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      portReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in savePort method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      portReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(portReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Single Port Response
+   *
+   * @param portReply
+   * @param portInfo
+   */
+  private void getPort(PortInfoReply.Builder portReply, PortInfo portInfo) {
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    PortDetail.Builder portDetail = PortDetail.newBuilder();
+    Optional.ofNullable(portInfo.getId()).ifPresent(portDetail::setId);
+    Optional.ofNullable(portInfo.getName()).ifPresent(portDetail::setName);
+    Optional.ofNullable(portInfo.getCode()).ifPresent(portDetail::setCode);
+    Optional.ofNullable(portInfo.getDensitySeaWater())
+        .ifPresent(waterDensity -> portDetail.setWaterDensity(String.valueOf(waterDensity)));
+    Optional.ofNullable(portInfo.getAverageTideHeight())
+        .ifPresent(
+            averageTideHeight ->
+                portDetail.setAverageTideHeight(String.valueOf(averageTideHeight)));
+    Optional.ofNullable(portInfo.getTideHeight())
+        .ifPresent(tideHeight -> portDetail.setTideHeight(String.valueOf(tideHeight)));
+
+    Optional.ofNullable(portInfo.getHwTideFrom())
+        .ifPresent(item -> portDetail.setHwTideFrom(String.valueOf(item)));
+    Optional.ofNullable(portInfo.getHwTideTo())
+        .ifPresent(item -> portDetail.setHwTideTo(String.valueOf(item)));
+    Optional.ofNullable(portInfo.getHwTideTimeFrom())
+        .ifPresent(item -> portDetail.setHwTideTimeFrom(timeFormatter.format(item)));
+    Optional.ofNullable(portInfo.getHwTideTimeTo())
+        .ifPresent(item -> portDetail.setHwTideTimeTo(timeFormatter.format(item)));
+
+    Optional.ofNullable(portInfo.getLwTideFrom())
+        .ifPresent(item -> portDetail.setLwTideFrom(String.valueOf(item)));
+    Optional.ofNullable(portInfo.getLwTideTo())
+        .ifPresent(item -> portDetail.setLwTideTo(String.valueOf(item)));
+    Optional.ofNullable(portInfo.getLwTideTimeFrom())
+        .ifPresent(item -> portDetail.setLwTideTimeFrom(timeFormatter.format(item)));
+    Optional.ofNullable(portInfo.getLwTideTimeTo())
+        .ifPresent(item -> portDetail.setLwTideTimeTo(timeFormatter.format(item)));
+
+    Optional.ofNullable(portInfo.getTimeOfSunrise())
+        .ifPresent(item -> portDetail.setSunriseTime(timeFormatter.format(item)));
+    Optional.ofNullable(portInfo.getTimeOfSunSet())
+        .ifPresent(item -> portDetail.setSunsetTime(timeFormatter.format(item)));
+
+    Optional.ofNullable(portInfo.getControllingDepth())
+        .ifPresent(v -> portDetail.setControllingDepth(v.toString()));
+    Optional.ofNullable(portInfo.getUnderKeelClearance())
+        .ifPresent(portDetail::setUnderKeelClearance);
+
+    if (portInfo.getTimezone() != null) {
+      portDetail.setTimezone(portInfo.getTimezone().getTimezone());
+      portDetail.setTimezoneOffsetVal(portInfo.getTimezone().getOffsetValue());
+      portDetail.setTimezoneId(portInfo.getTimezone().getId());
+      portDetail.setTimezoneAbbreviation(portInfo.getTimezone().getAbbreviation());
+    }
+
+    Optional.ofNullable(portInfo.getCountry())
+        .ifPresent(item -> portDetail.setCountryName(portInfo.getCountry().getName()));
+    Optional.ofNullable(portInfo.getCountry())
+        .ifPresent(item -> portDetail.setCountryId(portInfo.getCountry().getId()));
+
+    if (!portInfo.getBerthInfoSet().isEmpty()) {
+      Optional<BigDecimal> minDraftOfBerths =
+          portInfo.getBerthInfoSet().stream()
+              .filter(v -> v.getMaximumDraft() != null)
+              .map(BerthInfo::getMaximumDraft)
+              .min(BigDecimal::compareTo);
+      if (minDraftOfBerths.isPresent()) {
+        portDetail.setMaxDraft(minDraftOfBerths.get().toString());
+      }
+      Optional<BigDecimal> minAirDraftOfBerths =
+          portInfo.getBerthInfoSet().stream()
+              .filter(v -> v.getAirDraft() != null)
+              .map(BerthInfo::getAirDraft)
+              .min(BigDecimal::compareTo);
+      if (minAirDraftOfBerths.isPresent()) {
+        portDetail.setMaxAirDraft(minAirDraftOfBerths.get().toString());
+      }
+    }
+
+    Optional.ofNullable(portInfo.getLattitude())
+        .ifPresent(item -> portDetail.setLat(String.valueOf(item)));
+    Optional.ofNullable(portInfo.getLongitude())
+        .ifPresent(item -> portDetail.setLon(String.valueOf(item)));
+    // To set berth details for each portInfo in the response
+    Optional.ofNullable(portInfo.getTideHeightFrom())
+        .ifPresent(tideHeightFrom -> portDetail.setTideHeightFrom(String.valueOf(tideHeightFrom)));
+    Optional.ofNullable(portInfo.getTideHeightTo())
+        .ifPresent(tideHeightTo -> portDetail.setTideHeightTo(String.valueOf(tideHeightTo)));
+    Optional.ofNullable(portInfo.getMaxPermissibleDraft())
+        .ifPresent(draft -> portDetail.setMaxPermissibleDraft(String.valueOf(draft)));
+    Optional.ofNullable(portInfo.getAmbientTemperature())
+        .ifPresent(ambientTemp -> portDetail.setAmbientTemperature(String.valueOf(ambientTemp)));
+    Set<BerthInfo> berthInfoSet =
+        portInfo.getBerthInfoSet() == null ? new HashSet<>() : portInfo.getBerthInfoSet();
+    List<BerthInfo> berthList =
+        berthInfoSet.stream()
+            .filter(item -> item.getIsActive() != null && item.getIsActive().equals(true))
+            .collect(Collectors.toList());
+    buildBerthInfoResponse(berthList, portDetail);
+
+    portReply.setPort(portDetail);
+  }
+
+  private void buildPortEntity(PortDetail request, PortInfo portInfo) {
+
+    if (request.getId() == 0
+        || (portInfo.getCountry() != null
+            && portInfo.getCountry().getId() != request.getCountryId())) {
+      Country country = this.countryRepository.getById(request.getCountryId());
+      if (country != null) portInfo.setCountry(country);
+    }
+
+    portInfo.setDensitySeaWater(
+        isNullOrEmpty(request.getWaterDensity())
+            ? null
+            : new BigDecimal(request.getWaterDensity()));
+    portInfo.setMaxPermissibleDraft(
+        isNullOrEmpty(request.getMaxPermissibleDraft())
+            ? null
+            : new BigDecimal(request.getMaxPermissibleDraft()));
+    portInfo.setCode(request.getCode());
+    portInfo.setName(request.getName());
+    if (request.getId() == 0
+        || (portInfo.getTimezone() != null
+            && portInfo.getTimezone().getId() != request.getTimezoneId())) {
+      Timezone timezone = this.timezoneRepository.getById(request.getTimezoneId());
+      if (timezone != null) portInfo.setTimezone(timezone);
+    }
+
+    portInfo.setTideHeightTo(
+        isNullOrEmpty(request.getTideHeightTo())
+            ? null
+            : new BigDecimal(request.getTideHeightTo()));
+    portInfo.setTideHeightFrom(
+        isNullOrEmpty(request.getTideHeightFrom())
+            ? null
+            : new BigDecimal(request.getTideHeightFrom()));
+    portInfo.setLattitude(isNullOrEmpty(request.getLat()) ? null : request.getLat());
+    portInfo.setLongitude(isNullOrEmpty(request.getLon()) ? null : request.getLon());
+    portInfo.setAmbientTemperature(
+        isNullOrEmpty(request.getAmbientTemperature())
+            ? null
+            : new BigDecimal(request.getAmbientTemperature()));
+    portInfo.setIsActive(true);
+    Set<BerthInfo> berthInfoList =
+        setBerthInformationForThePorts(request.getBerthDetailsList(), portInfo);
+    portInfo.setBerthInfoSet(berthInfoList);
+  }
+
+  /**
+   * set BerthInformation for Ports
+   *
+   * @param berthDetailsList
+   * @param portInfo
+   * @return
+   */
+  private Set<BerthInfo> setBerthInformationForThePorts(
+      List<BerthDetail> berthDetailsList, PortInfo portInfo) {
+    Set<BerthInfo> berthList = new HashSet<>();
+    if (berthDetailsList == null) return berthList;
+    for (BerthDetail berth : berthDetailsList) {
+      BerthInfo berthResponse = new BerthInfo();
+      //      berthResponse.setId(berth.getId());
+      berthResponse.setBerthName(berth.getBerthName());
+      berthResponse.setBerthDatumDepth(
+          isNullOrEmpty(berth.getBerthDatumDepth())
+              ? null
+              : new BigDecimal(berth.getBerthDatumDepth()));
+      berthResponse.setMaximumDraft(
+          isNullOrEmpty(berth.getMaxDraft()) ? null : new BigDecimal(berth.getMaxDraft()));
+      berthResponse.setMaxShipDepth(
+          isNullOrEmpty(berth.getMaxShipDepth()) ? null : new BigDecimal(berth.getMaxShipDepth()));
+      berthResponse.setMaximumDwt(
+          isNullOrEmpty(berth.getMaxDwt()) ? null : new BigDecimal(berth.getMaxDwt()));
+      berthResponse.setMaximumLoa(
+          isNullOrEmpty(berth.getMaxLoa()) ? null : new BigDecimal(berth.getMaxLoa()));
+      berthResponse.setUnderKeelClearance(berth.getUkc());
+      berthResponse.setIsActive(true);
+      berthResponse.setPortInfo(portInfo);
+      berthList.add(berthResponse);
+    }
+    return berthList;
+  }
+
+  /**
+   * to check strting is null or empty
+   *
+   * @param value
+   * @return
+   */
+  public Boolean isNullOrEmpty(String value) {
+    if (value == null || value.trim().isEmpty()) return true;
+    return false;
   }
 }
