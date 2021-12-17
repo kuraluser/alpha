@@ -5,6 +5,7 @@ import com.cpdss.cargoinfo.domain.CargoSpecification;
 import com.cpdss.cargoinfo.domain.FilterCriteria;
 import com.cpdss.cargoinfo.entity.Cargo;
 import com.cpdss.cargoinfo.repository.CargoRepository;
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
 import com.cpdss.common.generated.CargoInfo.CargoListRequest;
@@ -12,6 +13,8 @@ import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceImplBase;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import io.grpc.stub.StreamObserver;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -326,6 +329,25 @@ public class CargoService extends CargoInfoServiceImplBase {
         CargoInfo.CargoByIdDetailedReply.newBuilder();
 
     try {
+
+      List<Cargo> cargos =
+          this.cargoRepository.findByCrudeTypeIgnoreCaseAndIsActiveTrue(request.getName());
+      if (!cargos.isEmpty()) {
+        throw new GenericServiceException(
+            "Cargo with the same name already exists",
+            CommonErrorCodes.E_CPDSS_CARGO_NAME_ALREADY_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      cargos =
+          this.cargoRepository.findByAbbreviationIgnoreCaseAndIsActiveTrue(
+              request.getAbbreviation());
+      if (!cargos.isEmpty()) {
+        throw new GenericServiceException(
+            "Cargo with the same abbreviation already exists",
+            CommonErrorCodes.E_CPDSS_CARGO_ABBREVIATION_ALREADY_EXISTS,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
       Cargo cargo;
       if (request.getId() == 0) {
         cargo = new Cargo();
@@ -342,6 +364,15 @@ public class CargoService extends CargoInfoServiceImplBase {
       responseStatus.setStatus("SUCCESS");
       cargoReply.setResponseStatus(responseStatus);
 
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      cargoReply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus("FAILURE")
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
     } catch (Exception e) {
       log.error("Error in saveCargo method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();

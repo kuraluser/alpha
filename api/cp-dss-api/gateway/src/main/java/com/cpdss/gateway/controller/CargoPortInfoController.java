@@ -270,6 +270,9 @@ public class CargoPortInfoController {
     try {
       log.info("save/edit cargo");
       response = cargoPortInfoService.saveCargo(CORRELATION_ID_HEADER, cargoId, cargoDetailed);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving cargo!", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Error in saveCargo ", e);
       throw new CommonRestException(

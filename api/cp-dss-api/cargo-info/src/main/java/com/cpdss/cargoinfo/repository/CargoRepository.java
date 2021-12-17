@@ -27,4 +27,20 @@ public interface CargoRepository
   @Modifying
   @Query("UPDATE Cargo SET isActive = false where id = :id")
   Integer deleteByCargoId(@Param("id") Long cargoId);
+
+  /**
+   * Fetch cargos using crudeType
+   *
+   * @param name
+   * @return cargoList
+   */
+  List<Cargo> findByCrudeTypeIgnoreCaseAndIsActiveTrue(String name);
+
+  /**
+   * Fetch cargos using abbreviation
+   *
+   * @param abbreviation
+   * @return cargoList
+   */
+  List<Cargo> findByAbbreviationIgnoreCaseAndIsActiveTrue(String abbreviation);
 }

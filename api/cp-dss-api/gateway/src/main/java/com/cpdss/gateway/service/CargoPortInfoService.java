@@ -558,15 +558,21 @@ public class CargoPortInfoService {
     CargoInfo.CargoByIdDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.saveCargo(cargoRequest.build());
 
+    if (cargoReply != null
+        && !SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save cargo!",
+          cargoReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(cargoReply.getResponseStatus().getHttpStatusCode()));
+    }
+
     PortInfo.CargoPortMappingRequest.Builder cargoPortMappingRequest =
         PortInfo.CargoPortMappingRequest.newBuilder();
     buildCargoPortMappingRequest(cargoReply, cargoPortMappingRequest, cargoDetailed);
     PortInfo.CargoPortReply cargoPortReply =
         this.portInfoServiceBlockingStub.saveAllCargoPortMappings(cargoPortMappingRequest.build());
 
-    if (cargoReply != null
-        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())
-        && cargoPortReply != null
+    if (cargoPortReply != null
         && SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
 
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
@@ -576,7 +582,7 @@ public class CargoPortInfoService {
       buildCargoByIdDetailedResponse(cargoResponse, cargoReply, cargoPortReply.getPortsList());
     } else {
       throw new GenericServiceException(
-          "Error in calling cargo service",
+          "Error in saving cargo port mappings!",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
