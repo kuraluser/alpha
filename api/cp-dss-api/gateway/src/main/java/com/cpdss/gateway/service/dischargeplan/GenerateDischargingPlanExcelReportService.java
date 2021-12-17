@@ -1626,9 +1626,10 @@ public class GenerateDischargingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    return tankList.stream()
-        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
-        .collect(Collectors.toList());
+    //    return tankList.stream()
+    //        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+    //        .collect(Collectors.toList());
+    return tankList;
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
