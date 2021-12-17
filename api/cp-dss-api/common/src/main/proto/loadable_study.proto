@@ -236,6 +236,8 @@ service LoadableStudyService {
 	rpc saveLoadableStudyPortRotationDataForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 	
 	rpc getJsonDataForDischargePlanCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc checkCargoUsage(CargoNominationCheckRequest) returns (CargoNominationCheckReply) {}
 }
 
 service SynopticalOperationService{
@@ -1747,4 +1749,12 @@ message DischargeCowResponse{
     int64 cowId = 2;
     string percentage = 3;
     repeated int64 tanks = 4;
+}
+
+message CargoNominationCheckRequest {
+	int64 cargoId = 1;
+}
+
+message CargoNominationCheckReply {
+	ResponseStatus responseStatus = 1;
 }

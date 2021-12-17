@@ -666,4 +666,26 @@ public class CargoService {
       return null;
     }
   }
+
+  /**
+   * Checking if cargo is used in any cargo nomination
+   *
+   * @param request
+   * @param replyBuilder
+   * @throws GenericServiceException
+   */
+  public void checkCargoUsage(
+      LoadableStudy.CargoNominationCheckRequest request,
+      LoadableStudy.CargoNominationCheckReply.Builder replyBuilder)
+      throws GenericServiceException {
+
+    List<CargoNomination> cargoNominations =
+        this.cargoNominationRepository.findByCargoXIdAndIsActiveTrue(request.getCargoId());
+    if (!cargoNominations.isEmpty()) {
+      throw new GenericServiceException(
+          "Cargo Nominations exist for this cargo id!",
+          CommonErrorCodes.E_CPDSS_CARGO_NOMINATIONS_EXIST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
 }

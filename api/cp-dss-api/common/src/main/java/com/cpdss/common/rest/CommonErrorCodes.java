@@ -72,4 +72,5 @@ public interface CommonErrorCodes {
   String E_CPDSS_ULLAGE_UPDATE_INVALID_VALUE = "325";
 
   String E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND = "326";
+  String E_CPDSS_CARGO_NOMINATIONS_EXIST = "327";
 }

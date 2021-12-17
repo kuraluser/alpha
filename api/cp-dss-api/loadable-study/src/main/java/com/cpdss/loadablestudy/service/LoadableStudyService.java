@@ -3529,4 +3529,43 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       log.error("Error occurred when get json data", e);
     }
   }
+
+  /**
+   * Checking if cargo is used in any cargo nomination
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void checkCargoUsage(
+      com.cpdss.common.generated.LoadableStudy.CargoNominationCheckRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply.newBuilder();
+    try {
+      this.cargoService.checkCargoUsage(request, replyBuilder);
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setHttpStatusCode(e.getStatus().value())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

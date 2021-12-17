@@ -44,4 +44,12 @@ public interface CargoNominationRepository extends CommonCrudRepository<CargoNom
 
   @Query("SELECT CN.id FROM CargoNomination CN WHERE CN.loadableStudyXId = ?1")
   List<Long> getIdsByLoadableStudyId(Long id);
+
+  /**
+   * Fetching CargoNomination using cargoId
+   *
+   * @param cargoId
+   * @return cargoNominationList
+   */
+  List<CargoNomination> findByCargoXIdAndIsActiveTrue(Long cargoId);
 }

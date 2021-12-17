@@ -234,6 +234,11 @@ public class CargoPortInfoController {
     try {
       log.info("Deleting cargo with id: {}", cargoId);
       response = cargoPortInfoService.deleteCargoById(CORRELATION_ID_HEADER, cargoId);
+
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when deleting cargo!", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new CommonRestException(

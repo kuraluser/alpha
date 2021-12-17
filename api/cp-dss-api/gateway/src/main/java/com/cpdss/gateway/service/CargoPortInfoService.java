@@ -6,6 +6,8 @@ import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
@@ -42,6 +44,10 @@ public class CargoPortInfoService {
 
   @GrpcClient("cargoInfoService")
   private CargoInfoServiceBlockingStub cargoInfoServiceBlockingStub;
+
+  @GrpcClient("loadableStudyService")
+  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
+      loadableStudyServiceBlockingStub;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -502,6 +508,20 @@ public class CargoPortInfoService {
       throws GenericServiceException {
 
     CargoDetailedResponse cargoResponse = new CargoDetailedResponse();
+
+    // Validation before delete to check if cargo is used in any cargo nomination
+    LoadableStudy.CargoNominationCheckRequest cargoNominationCheckRequest =
+        LoadableStudy.CargoNominationCheckRequest.newBuilder().setCargoId(cargoId).build();
+    LoadableStudy.CargoNominationCheckReply cargoNominationCheckReply =
+        this.loadableStudyServiceBlockingStub.checkCargoUsage(cargoNominationCheckRequest);
+    if (!SUCCESS.equalsIgnoreCase(cargoNominationCheckReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to delete cargo!",
+          cargoNominationCheckReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              cargoNominationCheckReply.getResponseStatus().getHttpStatusCode()));
+    }
+
     CargoRequest cargoRequest = CargoRequest.newBuilder().setCargoId(cargoId).build();
     CargoInfo.CargoByIdDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.deleteCargoById(cargoRequest);
