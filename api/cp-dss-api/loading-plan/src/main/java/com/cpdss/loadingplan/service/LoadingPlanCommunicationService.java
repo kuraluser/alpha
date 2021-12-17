@@ -904,8 +904,9 @@ public class LoadingPlanCommunicationService {
                       JsonParser.parseString(dataTransferString).getAsJsonArray(),
                       map,
                       "loading_information_status_xid");
-              listType = new TypeToken<ArrayList<LoadingInformationAlgoStatus>>() {}.getType();
-              loadingInformationAlgoStatus = new Gson().fromJson(jsonArray, listType);
+              listType = new TypeToken<LoadingInformationAlgoStatus>() {}.getType();
+              loadingInformationAlgoStatus =
+                  new Gson().fromJson(jsonArray.get(0).getAsJsonObject(), listType);
               idMap.put(
                   LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable(),
                   dataTransferStage.getId());
