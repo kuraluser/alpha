@@ -1319,7 +1319,7 @@ public class GenerateLoadingPlanExcelReportService {
     }
     return tickPoints.stream()
         .sorted()
-        .map(i -> String.format("%.2f", i))
+        .map(i -> UnitConversionUtility.setPrecision(i, 2))
         .collect(Collectors.toList());
   }
 
@@ -1414,6 +1414,9 @@ public class GenerateLoadingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
+    //    return tankList.stream()
+    //            .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+    //            .collect(Collectors.toList());
     return tankList;
   }
 
@@ -1725,13 +1728,16 @@ public class GenerateLoadingPlanExcelReportService {
             Optional.ofNullable(item.getCargoNominationQuantity())
                 .ifPresent(
                     value -> {
-                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
+                      if (item.getEstimatedAPI() != null
+                          && item.getCargoNominationTemperature() != null) {
                         cargoTobeLoaded.setNomination(
                             UnitConversionUtility.convertToBBLS(
                                     UnitTypes.MT,
-                                    Double.parseDouble(item.getEstimatedAPI()),
-                                    Double.parseDouble(item.getEstimatedTemp()),
-                                    Double.parseDouble(value))
+                                    Double.parseDouble(cargoTobeLoaded.getApi()),
+                                    Double.parseDouble(cargoTobeLoaded.getTemperature()),
+                                    Double.parseDouble(
+                                        UnitConversionUtility.setPrecision(
+                                            Double.parseDouble(value), 2)))
                                 .toString());
                       }
                     });
@@ -1748,8 +1754,8 @@ public class GenerateLoadingPlanExcelReportService {
                         cargoTobeLoaded.setSlopQuantity(
                             UnitConversionUtility.convertToBBLS(
                                     UnitTypes.MT,
-                                    Double.parseDouble(item.getEstimatedAPI()),
-                                    Double.parseDouble(item.getEstimatedTemp()),
+                                    Double.parseDouble(cargoTobeLoaded.getApi()),
+                                    Double.parseDouble(cargoTobeLoaded.getTemperature()),
                                     Double.parseDouble(value))
                                 .toString());
                       }
@@ -2117,7 +2123,8 @@ public class GenerateLoadingPlanExcelReportService {
               Double.parseDouble(api),
               Double.parseDouble(temperature),
               quantityBBLS);
-      return String.format("%.2f", (quantityOBSKL / Double.parseDouble(tankFullCapacity)) * 100);
+      return UnitConversionUtility.setPrecision(
+          (quantityOBSKL / Double.parseDouble(tankFullCapacity)) * 100, 2);
     }
     return "0";
   }

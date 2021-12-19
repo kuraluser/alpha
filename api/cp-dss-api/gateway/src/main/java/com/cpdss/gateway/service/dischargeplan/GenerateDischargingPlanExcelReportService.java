@@ -1098,7 +1098,7 @@ public class GenerateDischargingPlanExcelReportService {
       // Getting all tanks present in sequence
       sheetThree.setCargoTanks(
           getCargoTanks(
-              dischargingSequenceResponse.getCargoTankCategories(),
+              dischargingSequenceResponse.getAllCargoTankCategories(),
               dischargingSequenceResponse.getCargos()));
       if (sheetThree.getCargoTanks().size() > 0) {
         // Getting ullage mapped against each tank if present
@@ -1120,7 +1120,7 @@ public class GenerateDischargingPlanExcelReportService {
       }
       sheetThree.setBallastTanks(
           getBallastTanks(
-              dischargingSequenceResponse.getBallastTankCategories(),
+              dischargingSequenceResponse.getAllBallastTankCategories(),
               dischargingSequenceResponse.getBallasts()));
       if (sheetThree.getBallastTanks().size() > 0) {
         getBallastTankUllageAndQuantity(
@@ -1585,7 +1585,7 @@ public class GenerateDischargingPlanExcelReportService {
     }
     return tickPoints.stream()
         .sorted()
-        .map(i -> String.format("%.2f", i))
+        .map(i -> UnitConversionUtility.setPrecision(i, 2))
         .collect(Collectors.toList());
   }
 
@@ -1630,7 +1630,6 @@ public class GenerateDischargingPlanExcelReportService {
     return tankList.stream()
         .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
         .collect(Collectors.toList());
-    //		return tankList;
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
@@ -1658,6 +1657,9 @@ public class GenerateDischargingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
+    //    return tankList.stream()
+    //            .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+    //            .collect(Collectors.toList());
     return tankList;
   }
 
@@ -2338,7 +2340,8 @@ public class GenerateDischargingPlanExcelReportService {
               Double.parseDouble(api),
               Double.parseDouble(temperature),
               quantityBBLS);
-      return String.format("%.2f", (quantityOBSKL / Double.parseDouble(tankFullCapacity)) * 100);
+      return UnitConversionUtility.setPrecision(
+          (quantityOBSKL / Double.parseDouble(tankFullCapacity)) * 100, 2);
     }
     return "0";
   }
