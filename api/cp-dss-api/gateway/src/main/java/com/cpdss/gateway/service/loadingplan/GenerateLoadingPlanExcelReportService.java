@@ -68,6 +68,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -1259,7 +1260,7 @@ public class GenerateLoadingPlanExcelReportService {
       cargoMatch = Optional.of(cargoMatchList.get(0));
     }
     if (cargoMatch.isPresent()) {
-      ullages.add(cargoMatch.get().getUllage().toPlainString());
+      ullages.add(UnitConversionUtility.setPrecision(cargoMatch.get().getUllage(), 3));
       if (cargoMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
           && cargoMatch.get().getCargoNominationId() > 0
           && cargoMatch.get().getColor() != null) {
@@ -1289,7 +1290,7 @@ public class GenerateLoadingPlanExcelReportService {
       List<QuantityLoadingStatus> ballastStatusList) {
     QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
     if (ballastMatch.isPresent()) {
-      ullages.add(ballastMatch.get().getSounding().toPlainString());
+      ullages.add(UnitConversionUtility.setPrecision(ballastMatch.get().getSounding(), 3));
       if (ballastMatch.get().getColor() != null) {
         ballastStatus.setPresent(true);
         ballastStatus.setColorCode(ballastMatch.get().getColor());
@@ -1382,10 +1383,10 @@ public class GenerateLoadingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    //    return tankList.stream()
-    //        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
-    //        .collect(Collectors.toList());
-    return tankList;
+    return tankList.stream()
+        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+        .collect(Collectors.toList());
+    //    return tankList;
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
@@ -1706,22 +1707,53 @@ public class GenerateLoadingPlanExcelReportService {
             Optional.ofNullable(item.getCargoAbbreviation())
                 .ifPresent(cargoTobeLoaded::setCargoName);
             Optional.ofNullable(item.getColorCode()).ifPresent(cargoTobeLoaded::setColorCode);
-            Optional.ofNullable(item.getEstimatedAPI()).ifPresent(cargoTobeLoaded::setApi);
-            Optional.ofNullable(item.getEstimatedTemp()).ifPresent(cargoTobeLoaded::setTemperature);
+            Optional.ofNullable(item.getEstimatedAPI())
+                .ifPresent(
+                    value ->
+                        cargoTobeLoaded.setApi(
+                            UnitConversionUtility.setPrecision(Double.parseDouble(value), 2)));
+            Optional.ofNullable(item.getEstimatedTemp())
+                .ifPresent(
+                    value ->
+                        cargoTobeLoaded.setTemperature(
+                            UnitConversionUtility.setPrecision(Double.parseDouble(value), 2)));
             Optional.ofNullable(item.getLoadingPorts())
                 .ifPresent(
                     ports ->
                         cargoTobeLoaded.setLoadingPort(
                             ports.stream().collect(Collectors.joining(","))));
             Optional.ofNullable(item.getCargoNominationQuantity())
-                .ifPresent(cargoTobeLoaded::setNomination);
+                .ifPresent(
+                    value -> {
+                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
+                        cargoTobeLoaded.setNomination(
+                            UnitConversionUtility.convertToBBLS(
+                                    UnitTypes.MT,
+                                    Double.parseDouble(item.getEstimatedAPI()),
+                                    Double.parseDouble(item.getEstimatedTemp()),
+                                    Double.parseDouble(value))
+                                .toString());
+                      }
+                    });
             Optional.ofNullable(item.getLoadableMT()).ifPresent(cargoTobeLoaded::setShipLoadable);
             Optional.ofNullable(item.getMaxTolerence()).ifPresent(cargoTobeLoaded::setTolerance);
             Optional.ofNullable(item.getDifferencePercentage())
                 .ifPresent(cargoTobeLoaded::setDifference);
             Optional.ofNullable(item.getTimeRequiredForLoading())
                 .ifPresent(cargoTobeLoaded::setTimeRequiredForLoading);
-            Optional.ofNullable(item.getSlopQuantity()).ifPresent(cargoTobeLoaded::setSlopQuantity);
+            Optional.ofNullable(item.getSlopQuantity())
+                .ifPresent(
+                    value -> {
+                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
+                        cargoTobeLoaded.setSlopQuantity(
+                            UnitConversionUtility.convertToBBLS(
+                                    UnitTypes.MT,
+                                    Double.parseDouble(item.getEstimatedAPI()),
+                                    Double.parseDouble(item.getEstimatedTemp()),
+                                    Double.parseDouble(value))
+                                .toString());
+                      }
+                    });
             cargoTobeLoadedList.add(cargoTobeLoaded);
           });
     }
@@ -2114,7 +2146,7 @@ public class GenerateLoadingPlanExcelReportService {
    * @param planStabilityParams
    * @param conditionType
    */
-  private void setStabilityParamForReport(
+  public void setStabilityParamForReport(
       ArrivalDeparcherCondition vesselCondition,
       List<LoadingPlanStabilityParam> planStabilityParams,
       Integer conditionType) {

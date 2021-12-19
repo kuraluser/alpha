@@ -1284,6 +1284,7 @@ public class GenerateDischargingPlanExcelReportService {
                 ? STRIPPING_PUMP_COLOR_CODE
                 : DEFAULT_PUMP_COLOR_CODE;
   }
+
   /**
    * Get sounding of ballast tanks in each tick position
    *
@@ -1497,7 +1498,7 @@ public class GenerateDischargingPlanExcelReportService {
       CleaningTank cleaningTank) {
     QuantityLoadingStatus dischargingStatus = new QuantityLoadingStatus();
     if (cargoMatch.isPresent()) {
-      ullages.add(cargoMatch.get().getUllage().toPlainString());
+      ullages.add(UnitConversionUtility.setPrecision(cargoMatch.get().getUllage(), 3));
       if (cargoMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
           && cargoMatch.get().getCargoNominationId() > 0
           && cargoMatch.get().getColor() != null) {
@@ -1555,7 +1556,7 @@ public class GenerateDischargingPlanExcelReportService {
       List<QuantityLoadingStatus> ballastStatusList) {
     QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
     if (ballastMatch.isPresent()) {
-      ullages.add(ballastMatch.get().getSounding().toPlainString());
+      ullages.add(UnitConversionUtility.setPrecision(ballastMatch.get().getSounding(), 3));
       if (ballastMatch.get().getColor() != null) {
         ballastStatus.setPresent(true);
         ballastStatus.setColorCode(ballastMatch.get().getColor());
@@ -1626,10 +1627,10 @@ public class GenerateDischargingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    //    return tankList.stream()
-    //        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
-    //        .collect(Collectors.toList());
-    return tankList;
+    return tankList.stream()
+        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+        .collect(Collectors.toList());
+    //		return tankList;
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
@@ -1958,16 +1959,34 @@ public class GenerateDischargingPlanExcelReportService {
             Optional.ofNullable(item.getCargoAbbreviation())
                 .ifPresent(cargoTobeDischarged::setCargoName);
             Optional.ofNullable(item.getColorCode()).ifPresent(cargoTobeDischarged::setColorCode);
-            Optional.ofNullable(item.getEstimatedAPI()).ifPresent(cargoTobeDischarged::setApi);
+            Optional.ofNullable(item.getEstimatedAPI())
+                .ifPresent(
+                    value ->
+                        cargoTobeDischarged.setApi(
+                            UnitConversionUtility.setPrecision(Double.parseDouble(value), 2)));
             Optional.ofNullable(item.getEstimatedTemp())
-                .ifPresent(cargoTobeDischarged::setTemperature);
+                .ifPresent(
+                    value ->
+                        cargoTobeDischarged.setTemperature(
+                            UnitConversionUtility.setPrecision(Double.parseDouble(value), 2)));
             Optional.ofNullable(item.getLoadingPorts())
                 .ifPresent(
                     ports ->
                         cargoTobeDischarged.setLoadingPort(
                             ports.stream().collect(Collectors.joining(","))));
             Optional.ofNullable(item.getCargoNominationQuantity())
-                .ifPresent(cargoTobeDischarged::setNomination);
+                .ifPresent(
+                    value -> {
+                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
+                        cargoTobeDischarged.setNomination(
+                            UnitConversionUtility.convertToBBLS(
+                                    UnitTypes.MT,
+                                    Double.parseDouble(item.getEstimatedAPI()),
+                                    Double.parseDouble(item.getEstimatedTemp()),
+                                    Double.parseDouble(value))
+                                .toString());
+                      }
+                    });
             Optional.ofNullable(item.getDischargeMT())
                 .ifPresent(cargoTobeDischarged::setShipLoadable);
             Optional.ofNullable(item.getMaxTolerence())
@@ -1977,7 +1996,18 @@ public class GenerateDischargingPlanExcelReportService {
             Optional.ofNullable(item.getTimeRequiredForDischarging())
                 .ifPresent(cargoTobeDischarged::setTimeRequiredForDischarging);
             Optional.ofNullable(item.getSlopQuantity())
-                .ifPresent(cargoTobeDischarged::setSlopQuantity);
+                .ifPresent(
+                    value -> {
+                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
+                        cargoTobeDischarged.setSlopQuantity(
+                            UnitConversionUtility.convertToBBLS(
+                                    UnitTypes.MT,
+                                    Double.parseDouble(item.getEstimatedAPI()),
+                                    Double.parseDouble(item.getEstimatedTemp()),
+                                    Double.parseDouble(value))
+                                .toString());
+                      }
+                    });
             cargoTobeDischargedList.add(cargoTobeDischarged);
           });
     }
