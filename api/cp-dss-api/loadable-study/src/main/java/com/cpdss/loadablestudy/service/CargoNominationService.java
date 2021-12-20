@@ -120,7 +120,7 @@ public class CargoNominationService {
 
   public List<CargoNomination> getCargoNominations(Long loadableStudyId) {
     List<CargoNomination> cargos =
-        cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(loadableStudyId, true);
     return cargos;
   }
 
@@ -233,6 +233,7 @@ public class CargoNominationService {
     portDetail.setPortId(portId);
     portDetail.setOperationId(operationId);
     portDetail.setIsActive(true);
+    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
     portDetail.setCargoNomination(dischargeStudyCargo);
 
     if (cargo != null) {
@@ -616,7 +617,6 @@ public class CargoNominationService {
     List<CargoNomination> cargoNominationList =
         this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
             request.getLoadableStudyId(), true);
-
     List<ApiTempHistory> apiTempHistories =
         apiTempHistoryRepository.findByOrderByCreatedDateTimeDesc();
 
@@ -653,11 +653,14 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object
+            System.out.println(cargoNomination.getCargoNominationPortDetails());
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
+
               cargoNomination.getCargoNominationPortDetails().stream()
                   .filter(operation -> operation.getIsActive())
                   .forEach(
                       loadingPort -> {
+                        System.out.println(loadingPort.getPortId());
                         if (loadingPort.getIsActive()) {
                           LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
                               LoadableStudy.LoadingPortDetail.newBuilder();

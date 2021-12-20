@@ -437,7 +437,6 @@ public class DischargeStudyService {
           HttpStatusCode.valueOf(
               Integer.valueOf(dischargeStudyCowDetails.getResponseStatus().getCode())));
     }
-    System.out.println(dischargeStudyCowDetails.getCowId());
     response.setCowId(dischargeStudyCowDetails.getCowId());
     response.setPercentage(
         dischargeStudyCowDetails.getPercentage().isEmpty()
@@ -485,12 +484,12 @@ public class DischargeStudyService {
             .flatMap(
                 cargoNomination ->
                     cargoNomination.getLoadingPortDetailsList().stream()
-                        .map(port -> new AbstractMap.SimpleEntry<>(cargoNomination, port)))
+                        .map(port -> {
+                          return new AbstractMap.SimpleEntry<>(cargoNomination, port);}))
             .collect(
                 Collectors.groupingBy(
                     cargoNomination -> cargoNomination.getValue().getPortId(),
                     Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
-
     List<PortRotationDetail> discharginPorts =
         portRotationReply.getPortsList().stream()
             .filter(port -> port.getOperationId() == 2)
@@ -523,6 +522,8 @@ public class DischargeStudyService {
             List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
                 portIdsToCargoNominationMap.get(port.getPortId());
             buildCargoNomination(cargoNominationDetailList, portRotation);
+          } else {
+            portRotation.setCargoNominationList(new ArrayList<>());
           }
           response.getPortList().add(portRotation);
         });
@@ -589,7 +590,7 @@ public class DischargeStudyService {
               cargoNomination.setEmptyMaxNoOfTanks(cargoNominationDetail.getEmptyMaxNoOfTanks());
               cargoNominations.add(cargoNomination);
             });
-    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
+//    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
     portRotation.setCargoNominationList(cargoNominations);
   }
 

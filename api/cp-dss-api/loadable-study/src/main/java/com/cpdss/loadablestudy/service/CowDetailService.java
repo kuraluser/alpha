@@ -37,10 +37,9 @@ public class CowDetailService {
 
   public DischargeStudyCowDetail getCowDetailForDS(long dischargestudyId) {
 
-    //    return
-    DischargeStudyCowDetail cow =
-        dischargeStudyCowDetailRepository.findFirstByDischargeStudyStudyIdAndIsActive(
+    List<DischargeStudyCowDetail> cow =
+        dischargeStudyCowDetailRepository.findByDischargeStudyStudyIdAndIsActive(
             dischargestudyId, true);
-    return cow;
+    return cow.size() > 0 ? cow.get(0) : null;
   }
 }

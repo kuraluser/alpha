@@ -226,7 +226,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           createDischargeOnHandQuantity(onhandQuantity, savedDischargeport));
       DischargeStudyCowDetail dischargeStudyCowDetail = new DischargeStudyCowDetail();
       dischargeStudyCowDetail.setCowType(1L);
-      dischargeStudyCowDetail.setPercentage(25L);
+      dischargeStudyCowDetail.setPercentage(100L);
       dischargeStudyCowDetail.setDischargeStudyStudyId(savedDischargeStudy.getId());
       System.out.println(dischargeStudyCowDetail.getDischargeStudyStudyId());
       cowDetailService.saveAll(Arrays.asList(dischargeStudyCowDetail));
@@ -405,7 +405,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     portRotation.setFreshCrudeOil(loadableStudyPortRotation.getFreshCrudeOil());
     portRotation.setFreshCrudeOilQuantity(loadableStudyPortRotation.getFreshCrudeOilQuantity());
     portRotation.setFreshCrudeOilTime(loadableStudyPortRotation.getFreshCrudeOilTime());
-    portRotation.setCowRequired(false);
+    portRotation.setCowRequired(true);
     return portRotation;
   }
 
@@ -797,15 +797,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   }
                   cargoNominationsToSave.add(cargoToDisable);
                 });
-            if (cargoNominations.isEmpty() && !cargosForPort.isEmpty()) {
-              cargosForPort.forEach(
-                  dbCargo -> {
-                    dbCargo.setIsActive(false);
-                  });
-            }
           });
-      System.out.println(cowDetailsToSave.size());
-      System.out.println(cowDetailsToSave.get(0));
       cowDetailService.saveAll(cowDetailsToSave);
       portInstructionService.saveAll(portInstructionsToSave);
       backLoadingService.saveAll(backLoadingToSave);
@@ -1194,7 +1186,16 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     if (portRotations == null) {
       return;
     }
-
+    portRotations.stream()
+            .forEach(
+                    port -> {
+                      port.setIsbackloadingEnabled(false);
+                      port.setCowRequired(true);
+                      port.setFreshCrudeOil(false);
+                      port.setFreshCrudeOilQuantity(null);
+                      port.setFreshCrudeOilTime(null);
+                    });
+    loadableStudyPortRotationRepository.saveAll(portRotations);
     LoadableStudyPortRotation newPort = portRotations.get(portRotations.size() - 1);
 
     if (newPort.getId() != portRotationId) {
@@ -1252,6 +1253,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   private List<CargoNomination> createNewPortCargoNominations(
       long loadableStudyId, LoadableStudyPortRotation newPort) {
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
+    cargos.stream().forEach(cargo -> {
+      cargo.setEmptyMaxNoOfTanks(false);
+    });
     List<LoadableStudyPortRotation> ports =
         loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(loadableStudyId, true);
     Optional<LoadableStudyPortRotation> firstDischargingPort =
@@ -1380,6 +1384,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                   && !operation.getPortId().equals(dischargeStudyPortRotation.get().getPortXId())) {
                 operation.setQuantity(new BigDecimal(0));
                 operation.setMode(1L);
+
               } else {
                 operation.setQuantity(operation.getCargoNomination().getQuantity());
                 operation.setMode(2L);
@@ -1388,6 +1393,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargos.stream()
         .forEach(
             cargo -> {
+              cargo.setEmptyMaxNoOfTanks(false);
               if (cargo.getIsBackloading() != null && cargo.getIsBackloading()) {
                 cargo.setIsActive(false);
               }
@@ -1411,6 +1417,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         .forEach(
             port -> {
               port.setIsbackloadingEnabled(false);
+              port.setCowRequired(true);
+              port.setFreshCrudeOil(false);
+              port.setFreshCrudeOilQuantity(null);
+              port.setFreshCrudeOilTime(null);
             });
     loadableStudyPortRotationRepository.saveAll(dischargeStudyPortRotations);
   }
@@ -1668,6 +1678,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     try {
       DischargeStudyCowDetail cowDetails =
           cowDetailService.getCowDetailForDS(request.getDischargeStudyId());
+      log.info("Get cow details {}", request.getDischargeStudyId());
       if (cowDetails == null) {
         replyBuilder.setResponseStatus(
             ResponseStatus.newBuilder()

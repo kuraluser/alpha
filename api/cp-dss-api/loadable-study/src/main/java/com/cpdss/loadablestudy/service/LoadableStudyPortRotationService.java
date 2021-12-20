@@ -844,6 +844,9 @@ public class LoadableStudyPortRotationService {
                   operation.setIsActive(false);
                 }
               });
+      cargoNominations.stream().forEach(cargoNomination -> {
+        cargoNomination.setEmptyMaxNoOfTanks(false);
+      });
       cargoNominationService.saveAll(cargoNominations);
     }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
