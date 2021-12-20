@@ -2215,7 +2215,7 @@
   "DISCHARGE_STUDY_CRUDE_OIL_TIME_ERROR": "Time should be within limit 0 and 10 hour",
   "DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY_MIN": "Minimum 10 required",
   "DISCHARGE_STUDY_FRESH_CRUDE_OIL_QUANTITY_MAX": "Maximum 1000 is allowed",
-  "DISCHARGE_STUDY_PORT_COW": "Cow",
+  "DISCHARGE_STUDY_PORT_COW": "Consider Cow At This Port",
   "ENTIRE_REMAINING": "Entire/Remaining",
   "SIMULATOR_LOADICATOR_DATA_NULL": "Loadicator data not available"
 }

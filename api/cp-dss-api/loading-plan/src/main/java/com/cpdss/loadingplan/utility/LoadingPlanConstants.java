@@ -85,7 +85,8 @@ public class LoadingPlanConstants {
           "cargo_loading_rate",
           "json_data",
           "algo_error_heading",
-          "algo_errors");
+          "algo_errors",
+          "loading_information_algo_status");
 
   public static final List<String> loadingPlanCommWithAlgoErrorsList =
       Arrays.asList(
@@ -125,7 +126,8 @@ public class LoadingPlanConstants {
           "port_loading_plan_stowage_ballast_details",
           "port_loadable_plan_commingle_details",
           "port_loading_plan_stability_parameters",
-          "pyuser");
+          "pyuser",
+          "loading_information_algo_status");
 
   public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF =
       Arrays.asList(
@@ -134,7 +136,8 @@ public class LoadingPlanConstants {
           "port_loading_plan_stowage_ballast_details",
           "port_loadable_plan_commingle_details",
           "port_loading_plan_stability_parameters",
-          "pyuser");
+          "pyuser",
+          "loading_information_algo_status");
 
   public static final List<String> ULLAGE_UPDATE_ALGO_ERRORS =
       Arrays.asList(

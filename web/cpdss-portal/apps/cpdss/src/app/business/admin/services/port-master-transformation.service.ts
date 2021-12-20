@@ -68,7 +68,14 @@ export class PortMasterTransformationService {
    * @memberof PortMasterTransformationService
    */
   getPortListDatatableColumns(): IDataTableColumn[] {
-    return [
+    const columns: IDataTableColumn[] = [
+      {
+        field: 'slNo',
+        header: 'SL',
+        fieldType: DATATABLE_FIELD_TYPE.SLNO,
+        fieldHeaderClass: 'column-sl',
+        fieldClass: 'sl'
+      },
       {
         field: 'name',
         header: 'PORT_MASTER_PORT_NAME',
@@ -77,6 +84,7 @@ export class PortMasterTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'name',
+        filterByServer: true,
         sortable: true,
         sortField: 'name'
       },
@@ -88,6 +96,7 @@ export class PortMasterTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'code',
+        filterByServer: true,
         sortable: true,
         sortField: 'code'
       }
@@ -110,6 +119,7 @@ export class PortMasterTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'timezone',
+        filterByServer: true,
         sortable: true,
         sortField: 'timezone'
       },
@@ -118,9 +128,10 @@ export class PortMasterTransformationService {
         header: 'PORTMASTER_DENSITY_OF_WATER',
         filter: true,
         filterPlaceholder: 'PORT_MASTER_SEARCH_DENSITY_OF_WATER',
-        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'waterDensity',
+        filterByServer: true,
         sortable: true,
         sortField: 'waterDensity'
       }
@@ -147,6 +158,7 @@ export class PortMasterTransformationService {
       //   sortField: 'maximumDraft'
       // }
     ]
+    return columns;
   }
 
 
@@ -235,7 +247,7 @@ export class PortMasterTransformationService {
    * @memberof PortMasterTransformationService
    */
   getBerthGridColumns()  {
-    let columns :IDataTableColumn[] = 
+    let columns :IDataTableColumn[] =
     [
       {
         field: 'slNo',
@@ -276,7 +288,7 @@ export class PortMasterTransformationService {
         header: 'PORTMASTER_BERTH_MAXIMUM_LOA',
         filter: true,
         filterPlaceholder: '',
-        
+
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
         filterField: 'maxLoa',
         sortable: true,
@@ -317,7 +329,7 @@ export class PortMasterTransformationService {
         editable: true
       }
     ];
-    const actions: DATATABLE_ACTION[] = [];     
+    const actions: DATATABLE_ACTION[] = [];
       const action: IDataTableColumn = {
         field: 'actions',
         header: '',
@@ -325,7 +337,7 @@ export class PortMasterTransformationService {
         fieldValueIcon: '##',
         actions: actions
       };
-      columns = [...columns, action];  
+      columns = [...columns, action];
     return columns;
   }
 }

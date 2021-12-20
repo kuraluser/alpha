@@ -3308,8 +3308,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       log.info("json data request:{}", request.getId());
       String jsonData = jsonDataRepository.getJsonDataWithLoadingInfoId(request.getId());
-      log.info("json data get:{}", jsonData.length());
       if (jsonData != null) {
+        log.info("json data get:{}", jsonData.length());
         replyBuilder.setDataJson(jsonData);
         replyBuilder.setResponseStatus(
             Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -3514,8 +3514,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       log.info("json data request:{}", request.getId());
       String jsonData = jsonDataRepository.getJsonDataWithReferenceId(request.getId());
-      log.info("json data get:{}", jsonData.length());
       if (jsonData != null) {
+        log.info("json data get:{}", jsonData.length());
         replyBuilder.setDataJson(jsonData);
         replyBuilder.setResponseStatus(
             Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -3527,6 +3527,45 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       responseObserver.onCompleted();
     } catch (Exception e) {
       log.error("Error occurred when get json data", e);
+    }
+  }
+
+  /**
+   * Checking if cargo is used in any cargo nomination
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void checkCargoUsage(
+      com.cpdss.common.generated.LoadableStudy.CargoNominationCheckRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply.newBuilder();
+    try {
+      this.cargoService.checkCargoUsage(request, replyBuilder);
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setHttpStatusCode(e.getStatus().value())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
     }
   }
 }

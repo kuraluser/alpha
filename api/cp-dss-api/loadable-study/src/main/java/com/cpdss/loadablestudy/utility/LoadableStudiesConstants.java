@@ -257,8 +257,7 @@ public class LoadableStudiesConstants {
           "loadable_plan_stowage_details_temp",
           "stability_parameters",
           "loadable_plan_quantity",
-          LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable(),
-          LoadableStudyTables.COMMUNICATION_STATUS_UPDATE.getTable());
+          LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable());
 
   public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP =
       Arrays.asList(
@@ -280,7 +279,7 @@ public class LoadableStudiesConstants {
           "synoptical_table",
           "loadicator_data_for_synoptical_table",
           "loadable_pattern_algo_status",
-          LoadableStudyTables.COMMUNICATION_STATUS_UPDATE.getTable());
+          LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS_TEMP.getTable());
 
   @Getter
   @AllArgsConstructor

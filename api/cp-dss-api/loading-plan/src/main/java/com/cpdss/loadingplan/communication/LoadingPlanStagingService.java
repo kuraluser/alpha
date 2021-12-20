@@ -774,6 +774,7 @@ public class LoadingPlanStagingService extends StagingService {
                 }
               }
             }
+            break;
           }
         case loading_information_algo_status:
           {

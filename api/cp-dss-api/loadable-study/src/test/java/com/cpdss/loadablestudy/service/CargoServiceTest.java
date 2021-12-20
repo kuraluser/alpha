@@ -138,6 +138,8 @@ public class CargoServiceTest {
         new com.cpdss.loadablestudy.entity.CommingleCargo();
     commingleCargo.setCargo1Xid(1l);
     commingleCargo.setCargo2Xid(1l);
+    commingleCargo.setCargoNomination1Id(1L);
+    commingleCargo.setCargoNomination2Id(1L);
     commingleCargo.setCargo1Pct(new BigDecimal(1));
     commingleCargo.setCargo2Pct(new BigDecimal(1));
     commingleCargos.add(commingleCargo);

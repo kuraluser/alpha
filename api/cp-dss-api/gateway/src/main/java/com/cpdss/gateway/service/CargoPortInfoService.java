@@ -6,6 +6,8 @@ import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
+import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
@@ -42,6 +44,10 @@ public class CargoPortInfoService {
 
   @GrpcClient("cargoInfoService")
   private CargoInfoServiceBlockingStub cargoInfoServiceBlockingStub;
+
+  @GrpcClient("loadableStudyService")
+  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
+      loadableStudyServiceBlockingStub;
 
   private static final String SUCCESS = "SUCCESS";
 
@@ -502,6 +508,20 @@ public class CargoPortInfoService {
       throws GenericServiceException {
 
     CargoDetailedResponse cargoResponse = new CargoDetailedResponse();
+
+    // Validation before delete to check if cargo is used in any cargo nomination
+    LoadableStudy.CargoNominationCheckRequest cargoNominationCheckRequest =
+        LoadableStudy.CargoNominationCheckRequest.newBuilder().setCargoId(cargoId).build();
+    LoadableStudy.CargoNominationCheckReply cargoNominationCheckReply =
+        this.loadableStudyServiceBlockingStub.checkCargoUsage(cargoNominationCheckRequest);
+    if (!SUCCESS.equalsIgnoreCase(cargoNominationCheckReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to delete cargo!",
+          cargoNominationCheckReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              cargoNominationCheckReply.getResponseStatus().getHttpStatusCode()));
+    }
+
     CargoRequest cargoRequest = CargoRequest.newBuilder().setCargoId(cargoId).build();
     CargoInfo.CargoByIdDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.deleteCargoById(cargoRequest);
@@ -538,15 +558,21 @@ public class CargoPortInfoService {
     CargoInfo.CargoByIdDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.saveCargo(cargoRequest.build());
 
+    if (cargoReply != null
+        && !SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Failed to save cargo!",
+          cargoReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(cargoReply.getResponseStatus().getHttpStatusCode()));
+    }
+
     PortInfo.CargoPortMappingRequest.Builder cargoPortMappingRequest =
         PortInfo.CargoPortMappingRequest.newBuilder();
     buildCargoPortMappingRequest(cargoReply, cargoPortMappingRequest, cargoDetailed);
     PortInfo.CargoPortReply cargoPortReply =
         this.portInfoServiceBlockingStub.saveAllCargoPortMappings(cargoPortMappingRequest.build());
 
-    if (cargoReply != null
-        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())
-        && cargoPortReply != null
+    if (cargoPortReply != null
         && SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
 
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
@@ -556,7 +582,7 @@ public class CargoPortInfoService {
       buildCargoByIdDetailedResponse(cargoResponse, cargoReply, cargoPortReply.getPortsList());
     } else {
       throw new GenericServiceException(
-          "Error in calling cargo service",
+          "Error in saving cargo port mappings!",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }

@@ -3,21 +3,13 @@ package com.cpdss.gateway.service;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.PortInfo.BerthDetail;
-import com.cpdss.common.generated.PortInfo.Country;
-import com.cpdss.common.generated.PortInfo.CountryReply;
-import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
+import com.cpdss.common.generated.PortInfo.*;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest.Builder;
-import com.cpdss.common.generated.PortInfo.PortDetail;
-import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.CountryInfo;
-import com.cpdss.gateway.domain.CountrysResponse;
-import com.cpdss.gateway.domain.PortBerthInfoResponse;
-import com.cpdss.gateway.domain.PortDetailResponse;
-import com.cpdss.gateway.domain.PortDetails;
+import com.cpdss.gateway.domain.*;
 import com.google.protobuf.Empty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -173,5 +165,167 @@ public class PortInfoService {
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  /**
+   * Save/Update Port Info
+   *
+   * @param portId
+   * @param correlationId
+   * @param portDetailed
+   * @return
+   * @throws GenericServiceException
+   */
+  public PortDetailResponse savePortInfo(
+      Long portId, String correlationId, PortDetails portDetailed) throws GenericServiceException {
+    PortDetailResponse response = new PortDetailResponse();
+    PortDetail.Builder portDetailRequest = PortDetail.newBuilder();
+    buildPortDetailed(portDetailed, portId, portDetailRequest);
+    PortInfoReply portInfoReply =
+        portInfoServiceBlockingStub.savePortInfo(portDetailRequest.build());
+
+    if (portInfoReply == null
+        || !SUCCESS.equalsIgnoreCase(portInfoReply.getResponseStatus().getStatus()))
+      throw new GenericServiceException(
+          "Error in calling cargo service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+    buildPortInfoResponse(response, portInfoReply);
+    response.setResponseStatus(
+        new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    return response;
+  }
+
+  /**
+   * Building PortDetails Builder
+   *
+   * @param portDetailed
+   * @param portId
+   * @param portDetailRequest
+   */
+  private void buildPortDetailed(
+      PortDetails portDetailed, long portId, PortDetail.Builder portDetailRequest) {
+    portDetailRequest.setId(portId);
+    portDetailRequest.setCountryName(portDetailed.getCountry());
+    portDetailRequest.setCountryId(portDetailed.getCountryId());
+    portDetailRequest.setWaterDensity(
+        portDetailed.getDensityOfWater() == null
+            ? ""
+            : portDetailed.getDensityOfWater().toString());
+    portDetailRequest.setMaxPermissibleDraft(
+        portDetailed.getMaxPermissibleDraft() == null
+            ? ""
+            : portDetailed.getMaxPermissibleDraft().toString());
+    portDetailRequest.setCode(portDetailed.getPortCode());
+    portDetailRequest.setName(portDetailed.getPortName());
+    portDetailRequest.setTimezoneId(portDetailed.getTimezoneId());
+    portDetailRequest.setTimezone(portDetailed.getTimezone());
+    portDetailRequest.setTimezoneAbbreviation(portDetailed.getTimezoneAbbreviation());
+    portDetailRequest.setTimezoneOffsetVal(portDetailed.getTimezoneOffsetVal());
+    portDetailRequest.setTideHeightTo(
+        portDetailed.getTideHeightHigh() == null
+            ? ""
+            : portDetailed.getTideHeightHigh().toString());
+    portDetailRequest.setTideHeightFrom(
+        portDetailed.getTideHeightLow() == null ? "" : portDetailed.getTideHeightLow().toString());
+    portDetailRequest.setLat(
+        portDetailed.getLatitude().isEmpty() ? null : portDetailed.getLatitude());
+    portDetailRequest.setLon(
+        portDetailed.getLongitude().isEmpty() ? null : portDetailed.getLongitude());
+    portDetailRequest.setAmbientTemperature(
+        portDetailed.getAmbientTemperature() == null
+            ? ""
+            : portDetailed.getAmbientTemperature().toString());
+    buildBirthInfoForPort(portDetailed.getBerthInfo(), portDetailRequest);
+  }
+
+  /**
+   * Building BerthDetail builder
+   *
+   * @param portBerthInfoResponseList
+   * @param portDetailRequest
+   */
+  public void buildBirthInfoForPort(
+      List<PortBerthInfoResponse> portBerthInfoResponseList, PortDetail.Builder portDetailRequest) {
+    if (portBerthInfoResponseList == null) return;
+    portBerthInfoResponseList.forEach(
+        portBerthInfoResponse -> {
+          BerthDetail.Builder berthDetail = BerthDetail.newBuilder();
+          berthDetail.setId(portBerthInfoResponse.getBerthId());
+          berthDetail.setBerthName(portBerthInfoResponse.getBerthName());
+          berthDetail.setBerthDatumDepth(
+              portBerthInfoResponse.getDepthInDatum() == null
+                  ? ""
+                  : portBerthInfoResponse.getDepthInDatum().toString());
+          berthDetail.setMaxDwt(
+              portBerthInfoResponse.getMaxDwt() == null
+                  ? ""
+                  : portBerthInfoResponse.getMaxDwt().toString());
+          berthDetail.setMaxManifoldHeight(
+              portBerthInfoResponse.getMaxManifoldHeight() == null
+                  ? ""
+                  : portBerthInfoResponse.getMaxManifoldHeight().toString());
+          berthDetail.setMaxShipDepth(
+              portBerthInfoResponse.getMaxShipDepth() == null
+                  ? ""
+                  : portBerthInfoResponse.getMaxShipDepth().toString());
+          berthDetail.setPortId(portBerthInfoResponse.getPortId());
+          berthDetail.setRegulationAndRestriction(
+              portBerthInfoResponse.getRegulationAndRestriction());
+          berthDetail.setMaxLoa(
+              portBerthInfoResponse.getMaxLoa() == null
+                  ? ""
+                  : portBerthInfoResponse.getMaxLoa().toString());
+          berthDetail.setUkc(
+              portBerthInfoResponse.getMinUKC() == null ? "" : portBerthInfoResponse.getMinUKC());
+          portDetailRequest.addBerthDetails(berthDetail);
+        });
+  }
+
+  /**
+   * Preparing response
+   *
+   * @param response
+   * @param portInfoReply
+   */
+  public void buildPortInfoResponse(PortDetailResponse response, PortInfoReply portInfoReply) {
+    PortDetails portDetails = new PortDetails();
+    PortDetail portDetail = portInfoReply.getPort();
+    portDetails.setCountry(portDetail.getCountryName());
+    portDetails.setCountryId(portDetail.getCountryId());
+    portDetails.setDensityOfWater(
+        portDetail.getWaterDensity().isEmpty()
+            ? null
+            : new BigDecimal(portDetail.getWaterDensity()));
+    portDetails.setMaxPermissibleDraft(
+        portDetail.getMaxPermissibleDraft().isEmpty()
+            ? null
+            : new BigDecimal(portDetail.getMaxPermissibleDraft()));
+    portDetails.setPortCode(portDetail.getCode());
+    portDetails.setPortId(portDetail.getId());
+    portDetails.setPortName(portDetail.getName());
+    portDetails.setTimezoneId(portDetail.getTimezoneId());
+    portDetails.setTimezone(portDetail.getTimezone());
+    portDetails.setTimezoneAbbreviation(portDetail.getTimezoneAbbreviation());
+    portDetails.setTimezoneOffsetVal(portDetail.getTimezoneOffsetVal());
+    portDetails.setTideHeightHigh(
+        portDetail.getTideHeightTo().isEmpty()
+            ? null
+            : new BigDecimal(portDetail.getTideHeightTo()));
+    portDetails.setTideHeightLow(
+        portDetail.getTideHeightFrom().isEmpty()
+            ? null
+            : new BigDecimal(portDetail.getTideHeightFrom()));
+    portDetails.setLatitude(portDetail.getLat().isEmpty() ? null : portDetail.getLat());
+    portDetails.setLongitude(portDetail.getLon().isEmpty() ? null : portDetail.getLon());
+    portDetails.setAmbientTemperature(
+        portDetail.getAmbientTemperature().isEmpty()
+            ? null
+            : new BigDecimal(portDetail.getAmbientTemperature()));
+    List<PortBerthInfoResponse> berthList =
+        setBerthInformationForThePorts(portDetail.getBerthDetailsList());
+    portDetails.setBerthInfo(berthList);
+    response.setPortDetails(portDetails);
   }
 }

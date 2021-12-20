@@ -327,6 +327,7 @@ public class LoadingSequenceService {
           tankCategory.setId(vesselTank.getTankId());
           tankCategory.setTankName(vesselTank.getShortName());
           tankCategory.setQuantity(BigDecimal.ZERO);
+          tankCategory.setDisplayOrder(vesselTank.getTankDisplayOrder());
           if (vesselTank.getTankCategoryId() == CARGO_TANK_CATEGORY_ID
               && allCargoTankCategories.stream()
                       .filter(tank -> tank.getId() == vesselTank.getTankId())

@@ -43,6 +43,8 @@ service PortInfoService {
 
 	rpc GetPortInfoDetailed (PortRequest) returns (PortReply) {}
 
+	rpc SavePortInfo (PortDetail) returns (PortInfoReply){}
+
 }
 
 message BerthIdsRequest {
@@ -124,6 +126,7 @@ message PortDetail {
 	string tideHeightTo = 30;
 	string maxPermissibleDraft = 31;
 	int64 countryId = 32;
+	string ambientTemperature = 33;
 }
 
 message PortReply {
@@ -220,4 +223,9 @@ message CargoPortMappingDetail {
 
 message CargoPortMappingRequest {
 	repeated CargoPortMapping cargoPortMapping = 1;
+}
+
+message PortInfoReply {
+	ResponseStatus responseStatus = 1;
+	PortDetail port = 2;
 }
