@@ -52,6 +52,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingRateForSequence;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.QuantityLoadingStatus;
+import com.cpdss.gateway.domain.loadingplan.sequence.ShearingForce;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParamsOfLoadingSequence;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
@@ -1727,7 +1728,9 @@ public class GenerateDischargingPlanExcelReportService {
     List<String> trimList = new ArrayList<>();
     List<String> gmList = new ArrayList<>();
     List<String> sfList = new ArrayList<>();
+    List<String> sfFrNoList = new ArrayList<>();
     List<String> bmList = new ArrayList<>();
+    List<String> bmFrNoList = new ArrayList<>();
     List<String> ukcList = new ArrayList<>();
     for (StabilityParam stabilityParam : stabilityParams) {
       switch (stabilityParam.getName()) {
@@ -1746,8 +1749,14 @@ public class GenerateDischargingPlanExcelReportService {
         case "sf":
           matchStabilityParam(sfList, stabilityParam.getData(), size);
           break;
+        case "sfFrameNumber":
+          matchStabilityParam(sfFrNoList, stabilityParam.getData(), size);
+          break;
         case "bm":
           matchStabilityParam(bmList, stabilityParam.getData(), size);
+          break;
+        case "bmFrameNumber":
+          matchStabilityParam(bmFrNoList, stabilityParam.getData(), size);
           break;
         case "ukc":
           matchStabilityParam(ukcList, stabilityParam.getData(), size);
@@ -1756,25 +1765,45 @@ public class GenerateDischargingPlanExcelReportService {
           break;
       }
     }
+    List<ShearingForce> sf = new ArrayList<>();
     sequenceStability.setAfter(afterList);
     sequenceStability.setFw(fwList);
-    sequenceStability.setBm(bmList);
+    IntStream.range(0, size)
+        .forEach(
+            i -> {
+              ShearingForce listItem = new ShearingForce();
+              listItem.setFrameNumber(bmFrNoList.get(i));
+              listItem.setPercentage(bmList.get(i));
+              sf.add(listItem);
+            });
+    ;
+    sequenceStability.setBm(sf);
     sequenceStability.setGm(gmList);
     sequenceStability.setTrim(trimList);
     sequenceStability.setUkc(ukcList);
-    sequenceStability.setShearingForce(sfList);
-    sequenceStability.setShearingForce(sfList);
+    sf.clear();
+    IntStream.range(0, size)
+        .forEach(
+            i -> {
+              ShearingForce listItem = new ShearingForce();
+              listItem.setFrameNumber(sfFrNoList.get(i));
+              listItem.setPercentage(sfList.get(i));
+              sf.add(listItem);
+            });
+    ;
+    sequenceStability.setShearingForce(sf);
     return sequenceStability;
   }
 
   private void matchStabilityParam(List<String> paramsList, List<List> params, Integer size) {
     if (params.isEmpty()) {
       // Setting empty value for excel look and feel
-      IntStream.range(0, size).forEach(i -> paramsList.add(""));
+      IntStream.range(0, size).forEach(i -> paramsList.add("0.0"));
     } else {
       params.forEach(
           i -> {
-            paramsList.add(i.get(1).toString());
+            paramsList.add(
+                UnitConversionUtility.setPrecision(Double.parseDouble(i.get(1).toString()), 3));
           });
     }
   }
