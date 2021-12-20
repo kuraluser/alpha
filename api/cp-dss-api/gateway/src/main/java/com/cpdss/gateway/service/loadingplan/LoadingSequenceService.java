@@ -75,6 +75,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -751,19 +752,38 @@ public class LoadingSequenceService {
    */
   public void updateCargoLoadingRateIntervals(
       List<CargoLoadingRate> cargoLoadingRates, Set<Long> stageTickPositions) {
+    List<Long> stageTickList = new ArrayList<>(stageTickPositions);
     cargoLoadingRates.forEach(
         cargoLoadingRate -> {
           Optional<Long> startOpt =
               stageTickPositions.stream()
-                  .filter(pos -> pos < cargoLoadingRate.getStartTime())
+                  .filter(pos -> pos <= cargoLoadingRate.getStartTime())
                   .sorted(Comparator.reverseOrder())
                   .findFirst();
+          Integer startTickIndex = stageTickList.indexOf(startOpt.get());
           Optional<Long> endOpt =
               stageTickPositions.stream()
-                  .filter(pos -> pos > cargoLoadingRate.getEndTime())
+                  .filter(pos -> pos >= cargoLoadingRate.getEndTime())
                   .findFirst();
-          startOpt.ifPresent(cargoLoadingRate::setStartTime);
-          endOpt.ifPresent(cargoLoadingRate::setEndTime);
+          Integer endTickIndex = stageTickList.indexOf(endOpt.get());
+          if ((endTickIndex - startTickIndex) > 0) {
+            Integer tickIndexBetween = startTickIndex + 1;
+            Integer cargoIndex = cargoLoadingRates.indexOf(cargoLoadingRate);
+            startOpt.ifPresent(cargoLoadingRate::setStartTime);
+            cargoLoadingRate.setEndTime(stageTickList.get(tickIndexBetween));
+            CargoLoadingRate newCargoLoadingRate = new CargoLoadingRate();
+            BeanUtils.copyProperties(cargoLoadingRate, newCargoLoadingRate);
+            newCargoLoadingRate.setStartTime(stageTickList.get(tickIndexBetween));
+            endOpt.ifPresent(newCargoLoadingRate::setEndTime);
+            if ((cargoIndex + 1) <= (cargoLoadingRates.size() - 1)) {
+              cargoLoadingRates.add(cargoIndex + 1, newCargoLoadingRate);
+            } else {
+              cargoLoadingRates.add(newCargoLoadingRate);
+            }
+          } else {
+            startOpt.ifPresent(cargoLoadingRate::setStartTime);
+            endOpt.ifPresent(cargoLoadingRate::setEndTime);
+          }
         });
   }
 

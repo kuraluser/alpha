@@ -282,6 +282,7 @@ public class AlgoService {
       return responseType.cast(restTemplate.postForObject(url, request, responseType));
     } catch (HttpStatusCodeException e) {
       log.error("Encountered Error while calling {} in ALGO side", url);
+      e.printStackTrace();
       if (request.getClass() == com.cpdss.loadablestudy.domain.LoadableStudy.class) {
         loadableStudyRepository.updateLoadableStudyStatus(
             LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, id);
