@@ -744,6 +744,57 @@ public final class PortInfoServiceGrpc {
     return getSavePortInfoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getDeleteCargoPortMappingsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DeleteCargoPortMappings",
+      requestType = com.cpdss.common.generated.PortInfo.CargoPortRequest.class,
+      responseType = com.cpdss.common.generated.PortInfo.CargoPortReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.CargoPortRequest,
+          com.cpdss.common.generated.PortInfo.CargoPortReply>
+      getDeleteCargoPortMappingsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.CargoPortRequest,
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        getDeleteCargoPortMappingsMethod;
+    if ((getDeleteCargoPortMappingsMethod = PortInfoServiceGrpc.getDeleteCargoPortMappingsMethod)
+        == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getDeleteCargoPortMappingsMethod =
+                PortInfoServiceGrpc.getDeleteCargoPortMappingsMethod)
+            == null) {
+          PortInfoServiceGrpc.getDeleteCargoPortMappingsMethod =
+              getDeleteCargoPortMappingsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.CargoPortRequest,
+                          com.cpdss.common.generated.PortInfo.CargoPortReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "DeleteCargoPortMappings"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CargoPortReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("DeleteCargoPortMappings"))
+                      .build();
+        }
+      }
+    }
+    return getDeleteCargoPortMappingsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static PortInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub> factory =
@@ -923,6 +974,15 @@ public final class PortInfoServiceGrpc {
           getSavePortInfoMethod(), responseObserver);
     }
 
+    /** */
+    public void deleteCargoPortMappings(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getDeleteCargoPortMappingsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1029,6 +1089,13 @@ public final class PortInfoServiceGrpc {
                       com.cpdss.common.generated.PortInfo.PortDetail,
                       com.cpdss.common.generated.PortInfo.PortInfoReply>(
                       this, METHODID_SAVE_PORT_INFO)))
+          .addMethod(
+              getDeleteCargoPortMappingsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.CargoPortRequest,
+                      com.cpdss.common.generated.PortInfo.CargoPortReply>(
+                      this, METHODID_DELETE_CARGO_PORT_MAPPINGS)))
           .build();
     }
   }
@@ -1209,6 +1276,17 @@ public final class PortInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void deleteCargoPortMappings(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteCargoPortMappingsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1327,6 +1405,13 @@ public final class PortInfoServiceGrpc {
         com.cpdss.common.generated.PortInfo.PortDetail request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSavePortInfoMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.CargoPortReply deleteCargoPortMappings(
+        com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteCargoPortMappingsMethod(), getCallOptions(), request);
     }
   }
 
@@ -1467,6 +1552,14 @@ public final class PortInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSavePortInfoMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.CargoPortReply>
+        deleteCargoPortMappings(com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteCargoPortMappingsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_PORT_INFO = 0;
@@ -1484,6 +1577,7 @@ public final class PortInfoServiceGrpc {
   private static final int METHODID_SAVE_ALL_CARGO_PORT_MAPPINGS = 12;
   private static final int METHODID_GET_PORT_INFO_DETAILED = 13;
   private static final int METHODID_SAVE_PORT_INFO = 14;
+  private static final int METHODID_DELETE_CARGO_PORT_MAPPINGS = 15;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1594,6 +1688,12 @@ public final class PortInfoServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.PortInfoReply>)
                   responseObserver);
           break;
+        case METHODID_DELETE_CARGO_PORT_MAPPINGS:
+          serviceImpl.deleteCargoPortMappings(
+              (com.cpdss.common.generated.PortInfo.CargoPortRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1673,6 +1773,7 @@ public final class PortInfoServiceGrpc {
                       .addMethod(getSaveAllCargoPortMappingsMethod())
                       .addMethod(getGetPortInfoDetailedMethod())
                       .addMethod(getSavePortInfoMethod())
+                      .addMethod(getDeleteCargoPortMappingsMethod())
                       .build();
         }
       }

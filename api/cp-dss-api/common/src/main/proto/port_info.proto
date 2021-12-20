@@ -45,6 +45,8 @@ service PortInfoService {
 
 	rpc SavePortInfo (PortDetail) returns (PortInfoReply){}
 
+	rpc DeleteCargoPortMappings (CargoPortRequest) returns (CargoPortReply) {}
+
 }
 
 message BerthIdsRequest {

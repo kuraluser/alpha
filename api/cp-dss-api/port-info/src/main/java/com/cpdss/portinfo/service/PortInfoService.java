@@ -1038,4 +1038,37 @@ public class PortInfoService extends PortInfoServiceImplBase {
     if (value == null || value.trim().isEmpty()) return true;
     return false;
   }
+
+  /**
+   * Deleting cargo port mappings by cargoId
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void deleteCargoPortMappings(
+      CargoPortRequest request, StreamObserver<CargoPortReply> responseObserver) {
+    com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder =
+        com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
+    try {
+
+      Integer numberOfRowsUpdated =
+          this.cargoPortMappingRepository.deleteAllByCargoXId(request.getCargoId());
+      if (numberOfRowsUpdated == 0) {
+        log.info("No rows updated!");
+      }
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      replyBuilder.setResponseStatus(responseStatus);
+
+    } catch (Exception e) {
+      log.error("Error in save Cargo Port Mapping method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

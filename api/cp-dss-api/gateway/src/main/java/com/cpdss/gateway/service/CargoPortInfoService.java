@@ -522,21 +522,38 @@ public class CargoPortInfoService {
               cargoNominationCheckReply.getResponseStatus().getHttpStatusCode()));
     }
 
+    // Deleting cargo using cargo Id
     CargoRequest cargoRequest = CargoRequest.newBuilder().setCargoId(cargoId).build();
     CargoInfo.CargoByIdDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.deleteCargoById(cargoRequest);
     if (cargoReply != null
-        && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-      CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
-      commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
-      commonSuccessResponse.setCorrelationId(correlationIdHeader);
-      cargoResponse.setResponseStatus(commonSuccessResponse);
-    } else {
+        && !SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      log.error("Error in deleting cargo port mappings!");
       throw new GenericServiceException(
-          "Error in deleting cargo",
+          "Error in deleting cargo!",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
+
+    // Deleting cargo port mappings using cargo id
+    PortInfo.CargoPortRequest cargoPortRequest =
+        PortInfo.CargoPortRequest.newBuilder().setCargoId(cargoId).build();
+    PortInfo.CargoPortReply cargoPortReply =
+        portInfoServiceBlockingStub.deleteCargoPortMappings(cargoPortRequest);
+
+    if (cargoPortReply != null
+        && !SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
+      log.error("Error in deleting cargo port mappings!");
+      throw new GenericServiceException(
+          "Error in deleting cargo port mappings!",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    commonSuccessResponse.setCorrelationId(correlationIdHeader);
+    cargoResponse.setResponseStatus(commonSuccessResponse);
     return cargoResponse;
   }
 

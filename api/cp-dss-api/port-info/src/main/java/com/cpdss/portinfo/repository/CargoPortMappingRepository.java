@@ -6,7 +6,9 @@ import com.cpdss.portinfo.domain.PortInfo;
 import com.cpdss.portinfo.entity.CargoPortMapping;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 /** Repository class for CargoPortMapping table */
 public interface CargoPortMappingRepository extends CommonCrudRepository<CargoPortMapping, Long> {
@@ -31,4 +33,16 @@ public interface CargoPortMappingRepository extends CommonCrudRepository<CargoPo
       "SELECT C FROM CargoPortMapping C WHERE C.cargoXId = :cargoId AND C.portInfo.id = :portId AND C.isActive = :isActive")
   Optional<CargoPortMapping> findByCargoXIdAndPortIdAndIsActive(
       Long cargoId, Long portId, Boolean isActive);
+
+  /**
+   * Deleting cargo port mappings by cargoId
+   *
+   * @param cargoId
+   * @return numberOfRowsUpdated
+   */
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE CargoPortMapping SET isActive = false where cargoXId = :cargoId AND isActive = true")
+  Integer deleteAllByCargoXId(Long cargoId);
 }

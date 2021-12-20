@@ -26996,7 +26996,7 @@ public final class PortInfo {
           + "cargoPortMapping\030\001 \003(\0132\021.CargoPortMappin"
           + "g\"S\n\rPortInfoReply\022\'\n\016responseStatus\030\001 \001"
           + "(\0132\017.ResponseStatus\022\031\n\004port\030\002 \001(\0132\013.Port"
-          + "Detail2\307\007\n\017PortInfoService\022)\n\013GetPortInf"
+          + "Detail2\210\010\n\017PortInfoService\022)\n\013GetPortInf"
           + "o\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024GetPort"
           + "InfoByCargoId\022\034.GetPortInfoByCargoIdRequ"
           + "est\032\032.GetPortInfoByCargoIdReply\"\000\022B\n\024Get"
@@ -27020,8 +27020,10 @@ public final class PortInfo {
           + "oPortMappingRequest\032\017.CargoPortReply\"\000\0221"
           + "\n\023GetPortInfoDetailed\022\014.PortRequest\032\n.Po"
           + "rtReply\"\000\022-\n\014SavePortInfo\022\013.PortDetail\032\016"
-          + ".PortInfoReply\"\000B\036\n\032com.cpdss.common.gen"
-          + "eratedP\000b\006proto3"
+          + ".PortInfoReply\"\000\022?\n\027DeleteCargoPortMappi"
+          + "ngs\022\021.CargoPortRequest\032\017.CargoPortReply\""
+          + "\000B\036\n\032com.cpdss.common.generatedP\000b\006proto"
+          + "3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
