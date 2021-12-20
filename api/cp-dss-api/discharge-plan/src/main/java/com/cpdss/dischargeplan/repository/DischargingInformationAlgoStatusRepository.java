@@ -49,4 +49,10 @@ public interface DischargingInformationAlgoStatusRepository
   Optional<DischargingInformationAlgoStatus>
       findByProcessIdAndDischargeInformationIdAndConditionTypeAndIsActiveTrue(
           String pId, Long dId, Integer tId);
+
+  @Query(
+      value =
+          "select * from discharging_information_algo_status where discharging_information_xid= ?1 and last_modified_date_time is not null order by last_modified_date_time desc limit 1",
+      nativeQuery = true)
+  Optional<DischargingInformationAlgoStatus> findByDischargeInformationId(Long id);
 }

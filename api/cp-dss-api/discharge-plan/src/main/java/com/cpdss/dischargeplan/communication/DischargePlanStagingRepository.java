@@ -65,7 +65,7 @@ public interface DischargePlanStagingRepository extends StagingRepository {
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM discharging_information_algo_status u where discharging_information_xid=?1",
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM discharging_information_algo_status u where id in (SELECT id FROM discharging_information_algo_status WHERE discharging_information_xid=?1 ORDER BY last_modified_date_time DESC LIMIT 1)",
       nativeQuery = true)
   String getDischargingInformationAlgoStatusWithDischargeId(Long id);
 

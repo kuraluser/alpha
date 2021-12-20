@@ -29,8 +29,4 @@ public class DischargingDelayReason extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "reason_xid", referencedColumnName = "id")
   private ReasonForDelay reasonForDelay;
-
-  @Transient private Long communicationRelatedEntityId;
-
-  @Transient private Long CommunicationReasonForDelayId;
 }

@@ -41,8 +41,4 @@ public class BallastingRate extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
-
-  @Transient private Long communicationRelatedEntityId;
-
-  @Transient private Long communicationDischargingPlanPortWiseDetailsId;
 }

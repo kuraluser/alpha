@@ -103,8 +103,7 @@ public class DischargingDelayService {
       // Master Reason data
       Optional<ReasonForDelay> var1 = reasonForDelayRepository.findByIdAndIsActiveTrue(id);
       if (!var1.isEmpty()) {
-        delayReasons.add(
-            new DischargingDelayReason(true, dischargingDelay, var1.get(), null, null));
+        delayReasons.add(new DischargingDelayReason(true, dischargingDelay, var1.get()));
       } else {
         throw new Exception("Delay Reason master data not found for id - " + id);
       }

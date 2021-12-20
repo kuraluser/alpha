@@ -96,5 +96,9 @@ public class DischargePlanConstants {
           "json_data");
 
   public static List<String> DISCHARGE_PLAN_ALGO_ERRORS_SHORE_TO_SHIP =
-      Arrays.asList("discharging_information", "algo_error_heading", "algo_errors");
+      Arrays.asList(
+          "discharging_information",
+          "discharging_information_algo_status",
+          "algo_error_heading",
+          "algo_errors");
 }
