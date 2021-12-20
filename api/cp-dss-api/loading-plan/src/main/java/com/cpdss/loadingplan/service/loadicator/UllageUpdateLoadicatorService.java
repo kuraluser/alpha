@@ -436,7 +436,8 @@ public class UllageUpdateLoadicatorService {
               com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
               loadingInformation.getId(),
               MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
-              null);
+              null,
+              loadingInformation.getVesselXId());
         } catch (Exception ex) {
           log.error("Error occured when communicate algo errors", ex.getMessage());
         }
@@ -458,7 +459,8 @@ public class UllageUpdateLoadicatorService {
                 .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF,
             loadingInformation.getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
-            algoResponse.getProcessId());
+            algoResponse.getProcessId(),
+            loadingInformation.getVesselXId());
       }
     } catch (HttpStatusCodeException e) {
       log.error("Error occured in ALGO side while calling loadicator_results API");
@@ -475,7 +477,8 @@ public class UllageUpdateLoadicatorService {
             com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
             loadingInformation.getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
-            null);
+            null,
+            loadingInformation.getVesselXId());
       } catch (Exception ex) {
         log.error("Error occured when communicate algo errors", ex.getMessage());
       }
@@ -483,7 +486,11 @@ public class UllageUpdateLoadicatorService {
   }
 
   private void ullageUpdateSaveForCommunication(
-      List<String> processIdentifiers, Long loadingInfoId, String messageType, String pyUserId)
+      List<String> processIdentifiers,
+      Long loadingInfoId,
+      String messageType,
+      String pyUserId,
+      Long vesselId)
       throws GenericServiceException {
     if (enableCommunication && !env.equals("ship")) {
       JsonArray jsonArray =
@@ -496,7 +503,7 @@ public class UllageUpdateLoadicatorService {
       log.info("Json Array get in After Algo call: " + jsonArray.toString());
       EnvoyWriter.WriterReply ewReply =
           communicationService.passRequestPayloadToEnvoyWriter(
-              jsonArray.toString(), loadingInfoId, messageType);
+              jsonArray.toString(), vesselId, messageType);
       log.info("------- Envoy writer has called successfully in shore: " + ewReply.toString());
       LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
           new LoadingPlanCommunicationStatus();
@@ -787,7 +794,8 @@ public class UllageUpdateLoadicatorService {
               com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
               loadingInfoOpt.get().getId(),
               MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
-              null);
+              null,
+              loadingInfoOpt.get().getVesselXId());
         } catch (Exception ex) {
           log.error("Error occured when communicate algo errors", ex.getMessage());
         }
@@ -810,7 +818,8 @@ public class UllageUpdateLoadicatorService {
                 .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_ON,
             loadingInfoOpt.get().getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
-            algoResponse.getProcessId());
+            algoResponse.getProcessId(),
+            loadingInfoOpt.get().getVesselXId());
       }
     } catch (HttpStatusCodeException e) {
       log.error("Error occured in ALGO side while calling loadicator_results API");
@@ -830,7 +839,8 @@ public class UllageUpdateLoadicatorService {
             com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
             loadingInfoOpt.get().getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
-            null);
+            null,
+            loadingInfoOpt.get().getVesselXId());
       } catch (Exception ex) {
         log.error("Error occured when communicate algo errors", ex.getMessage());
       }
