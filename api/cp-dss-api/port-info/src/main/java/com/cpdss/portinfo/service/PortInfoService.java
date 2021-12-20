@@ -9,13 +9,18 @@ import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.domain.FilterCriteria;
 import com.cpdss.portinfo.domain.PortInfoSpecification;
+import com.cpdss.portinfo.entity.*;
 import com.cpdss.portinfo.entity.CargoPortMapping;
 import com.cpdss.portinfo.entity.Country;
 import com.cpdss.portinfo.entity.Timezone;
-import com.cpdss.portinfo.entity.*;
 import com.cpdss.portinfo.repository.*;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +31,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /** Service with operations related to port information */
 @Log4j2
@@ -700,6 +699,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
                               CargoPortMapping cargoPortMappingEntity = new CargoPortMapping();
                               cargoPortMappingEntity.setCargoXId(cargoPortMapping.getCargoId());
                               cargoPortMappingEntity.setPortInfo(portInfo);
+                              cargoPortMappingEntity.setIsActive(true);
                               portMappings.add(
                                   this.cargoPortMappingRepository.save(cargoPortMappingEntity));
                             }

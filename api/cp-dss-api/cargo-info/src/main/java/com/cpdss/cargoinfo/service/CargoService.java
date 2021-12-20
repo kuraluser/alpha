@@ -252,6 +252,7 @@ public class CargoService extends CargoInfoServiceImplBase {
     cargoDetail.setHydrogenSulfideVapour(
         cargo.getH2sVapourPhaseConfirmed() == null ? "" : cargo.getH2sVapourPhaseConfirmed());
     cargoDetail.setSpecialInstrictionsRemark(cargo.getRemarks() == null ? "" : cargo.getRemarks());
+    cargoDetail.setReidVapourPressure(cargo.getFromRvp() == null ? "" : cargo.getFromRvp());
   }
 
   @Override
