@@ -2,7 +2,6 @@
 package com.cpdss.loadingplan.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -86,6 +85,8 @@ class LoadingPlanServiceTest {
   private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
 
   @MockBean LoadingInformationStatusRepository loadingInfoStatusRepository;
+
+  @MockBean LoadingMachineInUseService loadingMachineInUseService;
 
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;

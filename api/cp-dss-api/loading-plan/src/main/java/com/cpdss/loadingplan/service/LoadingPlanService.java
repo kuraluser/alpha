@@ -2,16 +2,9 @@
 package com.cpdss.loadingplan.service;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.EnvoyWriter;
-import com.cpdss.common.generated.LoadableStudy.SynopticalBallastRecord;
-import com.cpdss.common.generated.LoadableStudy.SynopticalCargoRecord;
-import com.cpdss.common.generated.LoadableStudy.SynopticalCommingleRecord;
-import com.cpdss.common.generated.LoadableStudy.SynopticalOhqRecord;
-import com.cpdss.common.generated.LoadableStudy.SynopticalRecord;
-import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
-import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
+import com.cpdss.common.generated.LoadableStudy.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
@@ -120,6 +113,11 @@ public class LoadingPlanService {
   @GrpcClient("loadableStudyService")
   private SynopticalOperationServiceGrpc.SynopticalOperationServiceBlockingStub
       synopticalOperationServiceBlockingStub;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @Autowired LoadingMachineInUseService loadingMachineInUseService;
   /**
    * @param request
    * @param builder
@@ -131,6 +129,15 @@ public class LoadingPlanService {
       LoadingInformation savedLoadingInformation =
           loadingInformationService.saveLoadingInformationDetail(
               request.getLoadingInformationDetail(), loadingInformation);
+      // collect all machines and pumps for the vessel
+      VesselInfo.VesselPumpsResponse rpcReplay =
+          this.vesselInfoGrpcService.getVesselPumpsByVesselId(
+              VesselInfo.VesselIdRequest.newBuilder()
+                  .setVesselId(savedLoadingInformation.getVesselXId())
+                  .build());
+      // saving the machine information for loading
+      this.loadingMachineInUseService.saveMachineInUseByLoadingInfo(
+          savedLoadingInformation, rpcReplay);
       cargoToppingOffSequenceService.saveCargoToppingOffSequenceList(
           request.getCargoToppingOffSequencesList(), savedLoadingInformation);
       loadablePlanBallastDetailsService.saveLoadablePlanBallastDetailsList(
