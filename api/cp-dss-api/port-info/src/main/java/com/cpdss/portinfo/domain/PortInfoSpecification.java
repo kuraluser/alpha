@@ -44,6 +44,10 @@ public class PortInfoSpecification implements Specification<PortInfo> {
       }
       //      Partial match
       return builder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
+    } else if ("like-with-join".equalsIgnoreCase(criteria.getOperation())) {
+      return builder.like(
+          root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
+          "%" + criteria.getValue() + "%");
     }
     return null;
   }

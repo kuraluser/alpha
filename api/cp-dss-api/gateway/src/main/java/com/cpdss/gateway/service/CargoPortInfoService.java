@@ -692,9 +692,14 @@ public class CargoPortInfoService {
             .setOrderBy(orderBy)
             .setCompanyId(1L);
     params.forEach(
-        (key, value) ->
-            portRequestBuilder.addParam(
-                CargoInfo.Param.newBuilder().setKey(key).setValue(value).build()));
+        (key, value) -> {
+          String keyMapped = key;
+          if ("waterDensity".equals(key)) {
+            keyMapped = "densitySeaWater";
+          }
+          portRequestBuilder.addParam(
+              CargoInfo.Param.newBuilder().setKey(keyMapped).setValue(value).build());
+        });
 
     PortReply portReply =
         portInfoServiceBlockingStub.getPortInfoDetailed(portRequestBuilder.build());
@@ -708,6 +713,7 @@ public class CargoPortInfoService {
       cargosResponse.setTotalElements(portReply.getTotalElements());
       buildPortsResponse(cargosResponse, portReply);
     } else {
+      log.error("Error in calling port service");
       throw new GenericServiceException(
           "Error in calling port service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,

@@ -742,14 +742,35 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .filter(e -> filterKeys.contains(e.getKey()))
               .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       Specification<PortInfo> specification =
-          Specification.where(new PortInfoSpecification(new FilterCriteria("isActive", ":", true)));
+          Specification.where(
+              new PortInfoSpecification(new FilterCriteria("isActive", ":", true, "")));
 
       for (Map.Entry<String, String> entry : filterParams.entrySet()) {
         String filterKey = entry.getKey();
         String value = entry.getValue();
-        specification =
-            specification.and(
-                new PortInfoSpecification(new FilterCriteria(filterKey, "like", value)));
+        if (filterKey.equals("densitySeaWater")) {
+          specification =
+              specification.and(
+                  new PortInfoSpecification(new FilterCriteria(filterKey, ":", value, "")));
+        } else if (filterKey.equals("timezone")) {
+          if (value.contains(" ")) {
+            String[] valueArray = value.split(" ");
+            value = valueArray[0] + "%" + valueArray[1];
+          }
+          specification =
+              specification.and(
+                  new PortInfoSpecification(
+                      new FilterCriteria(filterKey, "like-with-join", value, "timezone")));
+        } else if (filterKey.equals("country")) {
+          specification =
+              specification.and(
+                  new PortInfoSpecification(
+                      new FilterCriteria("name", "like-with-join", value, "country")));
+        } else {
+          specification =
+              specification.and(
+                  new PortInfoSpecification(new FilterCriteria(filterKey, "like", value, "")));
+        }
       }
 
       // Paging and sorting
