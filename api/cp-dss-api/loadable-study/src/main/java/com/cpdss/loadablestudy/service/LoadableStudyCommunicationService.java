@@ -1262,18 +1262,27 @@ public class LoadableStudyCommunicationService {
   private void saveLoadablePlanCommingleDetails() {
     current_table_name = LoadableStudyTables.LOADABLE_PLAN_COMMINGLE_DETAILS.getTable();
     if (null == loadablePlanCommingleDetailsStage || loadablePlanCommingleDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlanCommingleDetails is empty");
+      log.info("Communication XXXXXXX  loadable_plan_commingle_details is empty");
       return;
     }
-    for (LoadablePlanCommingleDetails lpCommingDetail : loadablePlanCommingleDetailsStage) {
-      Optional<LoadablePlanCommingleDetails> lpCommingDetailsOptional =
-          loadablePlanCommingleDetailsRepository.findById(lpCommingDetail.getId());
-      lpCommingDetail.setVersion(lpCommingDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+    // Set relations and version
+    for (LoadablePlanCommingleDetails lpCommingleDetail : loadablePlanCommingleDetailsStage) {
+      Optional<LoadablePlanCommingleDetails> lpCommingleDetailsOptional =
+          loadablePlanCommingleDetailsRepository.findById(lpCommingleDetail.getId());
+      LoadablePattern loadablePattern =
+          loadablePatternRepository
+              .findById(lpCommingleDetail.getCommunicationRelatedEntityId())
+              .orElse(null);
+      lpCommingleDetail.setLoadablePattern(loadablePattern);
+      lpCommingleDetail.setVersion(
+          lpCommingleDetailsOptional.map(EntityDoc::getVersion).orElse(null));
     }
 
     loadablePlanCommingleDetailsStage =
         loadablePlanCommingleDetailsRepository.saveAll(loadablePlanCommingleDetailsStage);
-    log.info("Communication #######  LoadablePlanCommingleDetails are saved");
+    log.info(
+        "Communication #######  loadable_plan_commingle_details are saved. Entries: {}",
+        loadablePlanCommingleDetailsStage.size());
   }
 
   /** Method to save loadable pattern cargo topping off sequence */
