@@ -52,6 +52,7 @@ import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingRateForSequence;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.QuantityLoadingStatus;
+import com.cpdss.gateway.domain.loadingplan.sequence.ShearingForce;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
 import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParamsOfLoadingSequence;
 import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
@@ -75,6 +76,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -1097,7 +1099,7 @@ public class GenerateDischargingPlanExcelReportService {
       // Getting all tanks present in sequence
       sheetThree.setCargoTanks(
           getCargoTanks(
-              dischargingSequenceResponse.getCargoTankCategories(),
+              dischargingSequenceResponse.getAllCargoTankCategories(),
               dischargingSequenceResponse.getCargos()));
       if (sheetThree.getCargoTanks().size() > 0) {
         // Getting ullage mapped against each tank if present
@@ -1119,7 +1121,7 @@ public class GenerateDischargingPlanExcelReportService {
       }
       sheetThree.setBallastTanks(
           getBallastTanks(
-              dischargingSequenceResponse.getBallastTankCategories(),
+              dischargingSequenceResponse.getAllBallastTankCategories(),
               dischargingSequenceResponse.getBallasts()));
       if (sheetThree.getBallastTanks().size() > 0) {
         getBallastTankUllageAndQuantity(
@@ -1209,6 +1211,12 @@ public class GenerateDischargingPlanExcelReportService {
       if (!pumpList.isEmpty()) {
         List<String> rates = new ArrayList<>();
         List<QuantityLoadingStatus> pumpStatusList = new ArrayList<>();
+        IntStream.range(0, positionList.size())
+            .forEach(
+                i -> {
+                  QuantityLoadingStatus quantityLoadingStatus = new QuantityLoadingStatus();
+                  pumpStatusList.add(quantityLoadingStatus);
+                });
         Optional<BallastPump> pumpMatch = Optional.empty();
         // checking if 0th position have a mapping
         pumpMatch =
@@ -1218,16 +1226,12 @@ public class GenerateDischargingPlanExcelReportService {
                         pumpItem.getStart().equals(positionList.get(0))
                             && pumpItem.getEnd().equals(positionList.get(0)))
                 .findFirst();
-        setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
-        for (int i = 0; i < positionList.size(); i++) {
-          Long start = positionList.get(i);
-          if (!start.equals(positionList.get(positionList.size() - 1))) {
-            Long end = positionList.get(i + 1);
-            pumpMatch =
-                pumpList.stream()
-                    .filter(pumpItem -> pumpItem.getStart() >= start && pumpItem.getEnd() <= end)
-                    .findFirst();
-            setCargoPumpDetails(pumpMatch, rates, pumpStatusList);
+        setCargoPumpDetails(pumpMatch, rates, pumpStatusList.get(0));
+        for (BallastPump pump : pumpList) {
+          for (int i = 1; i < positionList.size(); i++) {
+            if (pump.getStart() <= positionList.get(i) && pump.getEnd() >= positionList.get(i)) {
+              setCargoPumpDetails(Optional.of(pump), rates, pumpStatusList.get(i));
+            }
           }
         }
         cargoPumpDetailsObj.setUllage(rates);
@@ -1257,10 +1261,7 @@ public class GenerateDischargingPlanExcelReportService {
    * @param quantityStatusList
    */
   private void setCargoPumpDetails(
-      Optional<BallastPump> pumpMatch,
-      List<String> rates,
-      List<QuantityLoadingStatus> pumpStatusList) {
-    QuantityLoadingStatus pumpStatus = new QuantityLoadingStatus();
+      Optional<BallastPump> pumpMatch, List<String> rates, QuantityLoadingStatus pumpStatus) {
     if (pumpMatch.isPresent()) {
       if (pumpMatch.get().getQuantityM3() != null && pumpMatch.get().getRate() != null) {
         rates.add(pumpMatch.get().getRate().toString());
@@ -1273,7 +1274,6 @@ public class GenerateDischargingPlanExcelReportService {
       rates.add("");
       pumpStatus.setPresent(false);
     }
-    pumpStatusList.add(pumpStatus);
   }
 
   private String getPumpColourCode(Long pumpId) {
@@ -1285,6 +1285,7 @@ public class GenerateDischargingPlanExcelReportService {
                 ? STRIPPING_PUMP_COLOR_CODE
                 : DEFAULT_PUMP_COLOR_CODE;
   }
+
   /**
    * Get sounding of ballast tanks in each tick position
    *
@@ -1498,7 +1499,7 @@ public class GenerateDischargingPlanExcelReportService {
       CleaningTank cleaningTank) {
     QuantityLoadingStatus dischargingStatus = new QuantityLoadingStatus();
     if (cargoMatch.isPresent()) {
-      ullages.add(cargoMatch.get().getUllage().toString());
+      ullages.add(UnitConversionUtility.setPrecision(cargoMatch.get().getUllage(), 3));
       if (cargoMatch.get().getQuantity().compareTo(BigDecimal.ZERO) > 0
           && cargoMatch.get().getCargoNominationId() > 0
           && cargoMatch.get().getColor() != null) {
@@ -1556,7 +1557,7 @@ public class GenerateDischargingPlanExcelReportService {
       List<QuantityLoadingStatus> ballastStatusList) {
     QuantityLoadingStatus ballastStatus = new QuantityLoadingStatus();
     if (ballastMatch.isPresent()) {
-      ullages.add(ballastMatch.get().getSounding().toString());
+      ullages.add(UnitConversionUtility.setPrecision(ballastMatch.get().getSounding(), 3));
       if (ballastMatch.get().getColor() != null) {
         ballastStatus.setPresent(true);
         ballastStatus.setColorCode(ballastMatch.get().getColor());
@@ -1585,7 +1586,7 @@ public class GenerateDischargingPlanExcelReportService {
     }
     return tickPoints.stream()
         .sorted()
-        .map(i -> String.format("%.2f", i))
+        .map(i -> UnitConversionUtility.setPrecision(i, 2))
         .collect(Collectors.toList());
   }
 
@@ -1627,7 +1628,9 @@ public class GenerateDischargingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    return tankList;
+    return tankList.stream()
+        .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+        .collect(Collectors.toList());
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
@@ -1655,6 +1658,9 @@ public class GenerateDischargingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
+    //    return tankList.stream()
+    //            .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
+    //            .collect(Collectors.toList());
     return tankList;
   }
 
@@ -1722,7 +1728,9 @@ public class GenerateDischargingPlanExcelReportService {
     List<String> trimList = new ArrayList<>();
     List<String> gmList = new ArrayList<>();
     List<String> sfList = new ArrayList<>();
+    List<String> sfFrNoList = new ArrayList<>();
     List<String> bmList = new ArrayList<>();
+    List<String> bmFrNoList = new ArrayList<>();
     List<String> ukcList = new ArrayList<>();
     for (StabilityParam stabilityParam : stabilityParams) {
       switch (stabilityParam.getName()) {
@@ -1741,8 +1749,14 @@ public class GenerateDischargingPlanExcelReportService {
         case "sf":
           matchStabilityParam(sfList, stabilityParam.getData(), size);
           break;
+        case "sfFrameNumber":
+          matchStabilityParam(sfFrNoList, stabilityParam.getData(), size);
+          break;
         case "bm":
           matchStabilityParam(bmList, stabilityParam.getData(), size);
+          break;
+        case "bmFrameNumber":
+          matchStabilityParam(bmFrNoList, stabilityParam.getData(), size);
           break;
         case "ukc":
           matchStabilityParam(ukcList, stabilityParam.getData(), size);
@@ -1751,25 +1765,45 @@ public class GenerateDischargingPlanExcelReportService {
           break;
       }
     }
+    List<ShearingForce> sf = new ArrayList<>();
     sequenceStability.setAfter(afterList);
     sequenceStability.setFw(fwList);
-    sequenceStability.setBm(bmList);
+    IntStream.range(0, size)
+        .forEach(
+            i -> {
+              ShearingForce listItem = new ShearingForce();
+              listItem.setFrameNumber(bmFrNoList.get(i));
+              listItem.setPercentage(bmList.get(i));
+              sf.add(listItem);
+            });
+    ;
+    sequenceStability.setBm(sf);
     sequenceStability.setGm(gmList);
     sequenceStability.setTrim(trimList);
     sequenceStability.setUkc(ukcList);
-    sequenceStability.setShearingForce(sfList);
-    sequenceStability.setShearingForce(sfList);
+    sf.clear();
+    IntStream.range(0, size)
+        .forEach(
+            i -> {
+              ShearingForce listItem = new ShearingForce();
+              listItem.setFrameNumber(sfFrNoList.get(i));
+              listItem.setPercentage(sfList.get(i));
+              sf.add(listItem);
+            });
+    ;
+    sequenceStability.setShearingForce(sf);
     return sequenceStability;
   }
 
   private void matchStabilityParam(List<String> paramsList, List<List> params, Integer size) {
     if (params.isEmpty()) {
       // Setting empty value for excel look and feel
-      IntStream.range(0, size).forEach(i -> paramsList.add(""));
+      IntStream.range(0, size).forEach(i -> paramsList.add("0.0"));
     } else {
       params.forEach(
           i -> {
-            paramsList.add(i.get(1).toString());
+            paramsList.add(
+                UnitConversionUtility.setPrecision(Double.parseDouble(i.get(1).toString()), 3));
           });
     }
   }
@@ -1794,7 +1828,8 @@ public class GenerateDischargingPlanExcelReportService {
     // Condition type 1 is arrival
     sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
     sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
-    sheetOne.setCargoTobeDischarged(getCargoTobeDischarged(requestPayload));
+    sheetOne.setCargoTobeDischarged(
+        getCargoTobeDischarged(requestPayload.getDischargingInformation()));
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;
@@ -1944,13 +1979,10 @@ public class GenerateDischargingPlanExcelReportService {
    * @param requestPayload
    * @return
    */
-  private List<CargoTobeLoaded> getCargoTobeDischarged(DischargePlanResponse requestPayload) {
+  private List<CargoTobeLoaded> getCargoTobeDischarged(DischargeInformation requestPayload) {
     List<CargoTobeLoaded> cargoTobeDischargedList = new ArrayList<>();
     List<DischargeQuantityCargoDetails> dischargeQuantityCargoList =
-        requestPayload
-            .getDischargingInformation()
-            .getCargoVesselTankDetails()
-            .getDischargeQuantityCargoDetails();
+        requestPayload.getCargoVesselTankDetails().getDischargeQuantityCargoDetails();
     if (!dischargeQuantityCargoList.isEmpty()) {
       dischargeQuantityCargoList.forEach(
           item -> {
@@ -1958,16 +1990,34 @@ public class GenerateDischargingPlanExcelReportService {
             Optional.ofNullable(item.getCargoAbbreviation())
                 .ifPresent(cargoTobeDischarged::setCargoName);
             Optional.ofNullable(item.getColorCode()).ifPresent(cargoTobeDischarged::setColorCode);
-            Optional.ofNullable(item.getEstimatedAPI()).ifPresent(cargoTobeDischarged::setApi);
+            Optional.ofNullable(item.getEstimatedAPI())
+                .ifPresent(
+                    value ->
+                        cargoTobeDischarged.setApi(
+                            UnitConversionUtility.setPrecision(Double.parseDouble(value), 2)));
             Optional.ofNullable(item.getEstimatedTemp())
-                .ifPresent(cargoTobeDischarged::setTemperature);
+                .ifPresent(
+                    value ->
+                        cargoTobeDischarged.setTemperature(
+                            UnitConversionUtility.setPrecision(Double.parseDouble(value), 2)));
             Optional.ofNullable(item.getLoadingPorts())
                 .ifPresent(
                     ports ->
                         cargoTobeDischarged.setLoadingPort(
                             ports.stream().collect(Collectors.joining(","))));
             Optional.ofNullable(item.getCargoNominationQuantity())
-                .ifPresent(cargoTobeDischarged::setNomination);
+                .ifPresent(
+                    value -> {
+                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
+                        cargoTobeDischarged.setNomination(
+                            UnitConversionUtility.convertToBBLS(
+                                    UnitTypes.MT,
+                                    Double.parseDouble(item.getEstimatedAPI()),
+                                    Double.parseDouble(item.getEstimatedTemp()),
+                                    Double.parseDouble(value))
+                                .toString());
+                      }
+                    });
             Optional.ofNullable(item.getDischargeMT())
                 .ifPresent(cargoTobeDischarged::setShipLoadable);
             Optional.ofNullable(item.getMaxTolerence())
@@ -1977,7 +2027,18 @@ public class GenerateDischargingPlanExcelReportService {
             Optional.ofNullable(item.getTimeRequiredForDischarging())
                 .ifPresent(cargoTobeDischarged::setTimeRequiredForDischarging);
             Optional.ofNullable(item.getSlopQuantity())
-                .ifPresent(cargoTobeDischarged::setSlopQuantity);
+                .ifPresent(
+                    value -> {
+                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
+                        cargoTobeDischarged.setSlopQuantity(
+                            UnitConversionUtility.convertToBBLS(
+                                    UnitTypes.MT,
+                                    Double.parseDouble(item.getEstimatedAPI()),
+                                    Double.parseDouble(item.getEstimatedTemp()),
+                                    Double.parseDouble(value))
+                                .toString());
+                      }
+                    });
             cargoTobeDischargedList.add(cargoTobeDischarged);
           });
     }
@@ -2308,7 +2369,8 @@ public class GenerateDischargingPlanExcelReportService {
               Double.parseDouble(api),
               Double.parseDouble(temperature),
               quantityBBLS);
-      return String.format("%.2f", (quantityOBSKL / Double.parseDouble(tankFullCapacity)) * 100);
+      return UnitConversionUtility.setPrecision(
+          (quantityOBSKL / Double.parseDouble(tankFullCapacity)) * 100, 2);
     }
     return "0";
   }

@@ -15,6 +15,11 @@ public class TankCategoryForSequence {
   private BigDecimal quantity;
   private BigDecimal ullage;
   private String cargoName;
+  private boolean commingled;
+  private String commingleCargoName1;
+  private String commingleCargoName2;
+  private String commingleCargoColor1;
+  private String commingleCargoColor2;
   private Integer displayOrder;
   private String colorCode;
   private TankWithSequenceDetails cargoTankUllage;

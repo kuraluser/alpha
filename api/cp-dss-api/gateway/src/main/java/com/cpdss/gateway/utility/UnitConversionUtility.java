@@ -55,4 +55,9 @@ public class UnitConversionUtility {
     }
     return conversionConstant;
   }
+
+  /** Set double value precision to required decimal places */
+  public static String setPrecision(Object value, Integer precision) {
+    return String.format("%." + precision + "f", value);
+  }
 }

@@ -16,7 +16,7 @@ public class StabilityParamsOfLoadingSequence {
   private List<String> trim;
   private List<String> gm;
   private List<String> ukc;
-  private List<String> shearingForce;
-  private List<String> bm;
+  private List<ShearingForce> shearingForce;
+  private List<ShearingForce> bm;
   private List<String> gomValue;
 }
