@@ -926,7 +926,6 @@ public class DischargingSequenceService {
         stageTickPositions.add(response.getMaxXAxisValue());
       }
       response.setInterval(reply.getInterval());
-      this.addFinalCargoStage(cargoStages, stageNumber, response);
 
       // Adding cargo loading rates
       this.buildCargoDischargeRates(dischargeSeq, portEta, stageTickPositions, cargoDischargeRates);
@@ -949,6 +948,8 @@ public class DischargingSequenceService {
       this.buildTankTransferDetailsAndFreshOil(
           dischargeSeq, portEta, vesselTankMap, cargoNomDetails, transferDetails, freshOilTanks);
     }
+
+    this.addFinalCargoStage(cargoStages, stageNumber, response);
 
     if (gravityList.size() > 0) {
       gravity.setPumpId(0L);
