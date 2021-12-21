@@ -669,7 +669,6 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                 const equalIndex = this.axis.tickPositions.findIndex(value => value === this.value);
                 const nextTick = this.axis.tickPositions[equalIndex + 1];
                 const stage = LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks?.find((data: any) => {
-                  console.log((Number(data.start) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, (Number(data.end) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, (Number(this.value) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, (Number(nextTick) - LoadingDischargingSequenceChartComponent.minXAxisValue) / 60 / 60 / 1000, this.value <= data.end, data.end <= nextTick);
                   return this.value <= data.end && data.end <= nextTick;
                 }
                 );
@@ -804,6 +803,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                   <td>${endingTime.toFixed(2)}</td>
                 </tr>
               </table>`;
+          } else if (this?.point?.options?.id?.includes('stripping')) {
+            return false;
           } else {
             cargoNames = this?.point?.abbreviation;
             quantity = this?.point?.quantity;
@@ -1827,7 +1828,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       }
 
       return series;
-    }).filter(param => param).sort((a,b) => a.index - b.index)];
+    }).filter(param => param).sort((a, b) => a.index - b.index)];
   }
 
   /**
@@ -1946,7 +1947,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         followPointer: true,
         enabled: true,
         xDateFormat: '%A, %b %e, %Y %H:%M',
-        pointFormatter: function() {
+        pointFormatter: function () {
           let text = this.y.toString();
           text = LoadingDischargingSequenceChartComponent.getTextWithFrameNo(this.series.name, this.index, text);
 
@@ -2004,12 +2005,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               points.splice(index - number, 1);
               number++;
             }
-          })
-          points?.forEach((point) => {
-            // point.onMouseOver(); May be needed in future
-            chart?.tooltip?.refresh(points); // Show the tooltip
-            // chart.xAxis[0].drawCrosshair(e, points[0]); // Show the crosshair may be needed in future
           });
+          chart?.tooltip?.refresh(points); // Show the tooltip
         } else {
           chart?.tooltip?.hide();
         }

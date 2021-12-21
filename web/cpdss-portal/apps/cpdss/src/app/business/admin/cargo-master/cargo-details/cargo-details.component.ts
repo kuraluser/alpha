@@ -179,13 +179,23 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   async save() {
     if (this.cargoDetailsForm.valid) {
       this.ngxSpinnerService.show();
-      const translationKeys = this.translateService.instant(['CARGO_SAVED_SUCCESSFULLY', 'CARGO_SAVE_SUCCESS']);
-      const result = await this.cargoMasterApiService.saveCargo(this.cargoDetailsForm.value, this.cargoId).toPromise();
-      this.cargo = result?.cargo;
-      this.cargoId = result?.id;
-      this.ngxSpinnerService.hide();
-      this.messageService.add({ severity: 'success', summary: translationKeys['CARGO_SAVE_SUCCESS'], detail: translationKeys['CARGO_SAVED_SUCCESSFULLY'] });
-      this.cancel();
+      const translationKeys = this.translateService.instant(['CARGO_SAVED_SUCCESSFULLY', 'CARGO_SAVE_SUCCESS', 'CARGO_SAVE_ERROR', 'CARGO_NAME_ALREADY_EXIST', 'CARGO_ABBREVIATION_ALREADY_EXIST']);
+      try {
+        const result = await this.cargoMasterApiService.saveCargo(this.cargoDetailsForm.value, this.cargoId).toPromise();
+        this.cargo = result?.cargo;
+        this.cargoId = result?.id;
+        this.ngxSpinnerService.hide();
+        this.messageService.add({ severity: 'success', summary: translationKeys['CARGO_SAVE_SUCCESS'], detail: translationKeys['CARGO_SAVED_SUCCESSFULLY'] });
+        this.cancel();
+      } catch (error) {
+        if (error?.error?.errorCode === 'ERR-RICO-328') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['CARGO_SAVE_ERROR'], detail: translationKeys['CARGO_NAME_ALREADY_EXIST'] });
+        } else if (error?.error?.errorCode === 'ERR-RICO-329') {
+          this.messageService.add({ severity: 'error', summary: translationKeys['CARGO_SAVE_ERROR'], detail: translationKeys['CARGO_ABBREVIATION_ALREADY_EXIST'] });
+        }
+        this.ngxSpinnerService.hide();
+      }
+
     } else {
       this.cargoDetailsForm.markAllAsTouched();
     }

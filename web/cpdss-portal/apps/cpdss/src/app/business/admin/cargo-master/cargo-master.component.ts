@@ -31,7 +31,7 @@ export class CargoMasterComponent implements OnInit, OnDestroy {
   }
 
   set cargos(value: ICargoDetails[]) {
-    this._cargos = value.map(cargo => this.cargoMasterTransformationService.formatCargo(cargo));
+    this._cargos = value?.map(cargo => this.cargoMasterTransformationService.formatCargo(cargo));
   }
 
   columns: IDataTableColumn[];
@@ -157,7 +157,7 @@ export class CargoMasterComponent implements OnInit, OnDestroy {
    */
   onDeleteRow(event: IDataTableEvent) {
     const cargoId = event.data?.id;
-    const translationKeys = this.translateService.instant(['CARGO_DELETE_SUMMARY', 'CARGO_DELETE_DETAILS', 'CARGO_DELETE_CONFIRM_LABEL', 'CARGO_DELETE_REJECT_LABEL', 'CARGO_DELETE_SUCCESSFULLY', 'CARGO_DELETED_SUCCESS']);
+    const translationKeys = this.translateService.instant(['CARGO_DELETE_SUMMARY', 'CARGO_DELETE_DETAILS', 'CARGO_DELETE_CONFIRM_LABEL', 'CARGO_DELETE_REJECT_LABEL', 'CARGO_DELETE_SUCCESSFULLY', 'CARGO_DELETED_SUCCESS', 'CARGO_DELETED_ERROR', 'CARGO_DELETED_ERROR_CARGO_MAPPED']);
 
     this.confirmationService.confirm({
       key: 'confirmation-alert',
@@ -183,6 +183,9 @@ export class CargoMasterComponent implements OnInit, OnDestroy {
           this.ngxSpinnerService.hide();
         }
         catch (error) {
+          if (error?.error?.errorCode === 'ERR-RICO-327') {
+            this.messageService.add({ severity: 'error', summary: translationKeys['CARGO_DELETED_ERROR'], detail: translationKeys['CARGO_DELETED_ERROR_CARGO_MAPPED'] });
+          }
           this.ngxSpinnerService.hide();
         }
       }

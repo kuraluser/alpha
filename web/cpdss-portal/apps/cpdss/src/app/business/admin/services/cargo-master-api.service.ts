@@ -31,12 +31,13 @@ export class CargoMasterApiService {
    * @memberof CargoMasterApiService
    */
   getCargos(options: IDataStateChange): Observable<ICargosResponse> {
-    const filterString = options?.filter ? Object.keys(options?.filter).map(function (key) {
+    const filterString = options?.filter ? Object.keys(options?.filter).reduce((_filterString, key) => {
       if (options?.filter[key]) {
-        return "&" + key + "=" + options?.filter[key];
+        _filterString += "&" + key + "=" + options?.filter[key];
+        return _filterString;
       }
-    }) : '';
-    const params = `pageSize=${options.pageSize ? options.pageSize : this._pageSize}&pageNo=${options.page ? options.page : this._page}${options.sortBy ? `&sortBy=${options.sortBy}` : ''}${options.orderBy ? `&orderBy=${options.orderBy}` : ''}${filterString}`;
+    }, '') : '';
+    const params = `pageSize=${options.pageSize ? options.pageSize : this._pageSize}&pageNo=${options.page ? options.page : this._page}${options.sortBy ? `&sortBy=${options.sortBy}` : ''}${options.orderBy ? `&orderBy=${options.orderBy}` : ''}${filterString??''}`;
     return this.commonApiService.get<ICargosResponse>(`master/cargos?${params}`);
   }
 
