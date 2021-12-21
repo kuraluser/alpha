@@ -633,7 +633,7 @@ public class LoadableStudyCommunicationService {
                       LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS,
                       data,
                       dataTransferStage.getId(),
-                      null);
+                      "loadable_plan_xid");
               break;
             }
           case loadicator_data_for_synoptical_table:
@@ -1434,7 +1434,7 @@ public class LoadableStudyCommunicationService {
     current_table_name = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable();
     if (null == loadablePlanStowageBallastDetailsStage
         || loadablePlanStowageBallastDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlanStowageBallastDetails is empty");
+      log.info("Communication XXXXXXX  {} is empty", current_table_name);
       return;
     }
     for (LoadablePlanStowageBallastDetails lpStowageBallastDetail :
@@ -1448,7 +1448,10 @@ public class LoadableStudyCommunicationService {
     }
 
     loadablePlanStowageBallastDetailsRepository.saveAll(loadablePlanStowageBallastDetailsStage);
-    log.info("Communication #######  LoadablePatternCargoDetails are saved");
+    log.info(
+        "Communication #######  {} are saved. Entries: {}",
+        current_table_name,
+        loadablePlanStowageBallastDetailsStage.size());
   }
 
   /** Method to save synoptical table loadicator data */

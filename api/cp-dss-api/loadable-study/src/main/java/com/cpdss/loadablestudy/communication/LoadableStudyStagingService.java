@@ -500,35 +500,31 @@ public class LoadableStudyStagingService extends StagingService {
           {
             String loadablePlanJson =
                 loadableStudyStagingRepository.getLoadablePlanWithLoadableStudyId(loadableStudyId);
-            ;
             if (loadablePlanJson != null) {
               JsonArray loadablePlan = JsonParser.parseString(loadablePlanJson).getAsJsonArray();
               addIntoProcessedList(
                   array,
                   object,
-                  "loadable_plan",
+                  ProcessIdentifiers.loadable_plan.name(),
                   processId,
                   processGroupId,
                   processedList,
                   loadablePlan);
-              loadablePlanIds = loadablePlanRepository.getLoadablePlanIdsByLSId(loadableStudyId);
             }
-            if (loadablePlanIds != null && !loadablePlanIds.isEmpty()) {
-              String loadablePlanStowageBallastDetailsJson =
-                  loadableStudyStagingRepository
-                      .getLoadablePlanStowageBallastDetailsWithLoadablePlanId(loadablePlanIds);
-              if (loadablePlanStowageBallastDetailsJson != null) {
-                JsonArray loadablePlanStowageBallastDetails =
-                    JsonParser.parseString(loadablePlanStowageBallastDetailsJson).getAsJsonArray();
-                addIntoProcessedList(
-                    array,
-                    object,
-                    processIdentifier,
-                    processId,
-                    processGroupId,
-                    processedList,
-                    loadablePlanStowageBallastDetails);
-              }
+            String loadablePlanStowageBallastDetailsJson =
+                loadableStudyStagingRepository.getLoadablePlanStowageBallastDetails(
+                    loadablePatternIds);
+            if (loadablePlanStowageBallastDetailsJson != null) {
+              JsonArray loadablePlanStowageBallastDetails =
+                  JsonParser.parseString(loadablePlanStowageBallastDetailsJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadablePlanStowageBallastDetails);
             }
             break;
           }

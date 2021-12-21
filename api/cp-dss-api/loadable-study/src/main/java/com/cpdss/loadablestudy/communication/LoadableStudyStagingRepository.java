@@ -167,9 +167,9 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_plan_stowage_ballast_details u where loadable_plan_xid IN ?1",
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_plan_stowage_ballast_details u where loadable_pattern_xid IN ?1",
       nativeQuery = true)
-  String getLoadablePlanStowageBallastDetailsWithLoadablePlanId(List<Long> loadablePlanIds);
+  String getLoadablePlanStowageBallastDetails(List<Long> loadablePatternIds);
 
   @Query(
       value =
