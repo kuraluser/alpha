@@ -28,13 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -673,10 +667,21 @@ public class VoyageService {
       }
 
       if (validationBeforeVoyageClosureEnabled) {
+
         // Validations before closing the voyage
         // 1. ETA Actual and ETD Actual check for all port rotations
+        Set<com.cpdss.loadablestudy.entity.LoadableStudy> allLoadableStudies =
+            voyageEntity.getLoadableStudies();
+        if (allLoadableStudies == null) {
+          log.error("No loadable/discharge studies found!");
+          throw new GenericServiceException(
+              "No loadable/discharge studies found!",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+
         List<com.cpdss.loadablestudy.entity.LoadableStudy> dischargeStudies =
-            loadableStudyStream
+            allLoadableStudies.stream()
                 .filter(
                     loadableStudyElement ->
                         (loadableStudyElement.getLoadableStudyStatus() != null
@@ -686,6 +691,7 @@ public class VoyageService {
                                 == PLANNING_TYPE_DISCHARGE))
                 .collect(Collectors.toList());
         if (dischargeStudies.isEmpty()) {
+          log.error("No confirmed discharge study");
           throw new GenericServiceException(
               "No confirmed discharge study",
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -704,6 +710,9 @@ public class VoyageService {
                       dischargeStudy.getId(), loadableStudyPortRotation.getId(), true);
           for (SynopticalTable synopticalTable : synopticalTables) {
             if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
+              log.error(
+                  "No Actual ETA/ETD values found in Synoptical Table id: {}",
+                  synopticalTable.getId());
               throw new GenericServiceException(
                   "No Actual ETA/ETD values found",
                   CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
