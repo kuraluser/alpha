@@ -472,7 +472,7 @@ export class DischargingComponent implements OnInit, OnDestroy, ComponentCanDeac
    */
    downloadDischargePlanTemplate(): void {
     this.ngxSpinnerService.show();
-    this.operationsApiService.downloadPlanTemplate(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId, null).subscribe((result) => {
+    this.operationsApiService.downloadPlanTemplate(this.vesselId, this.voyageId, this.dischargeInfoId, this.portRotationId, OPERATIONS.DISCHARGING, null).subscribe((result) => {
       const fileName = result.headers.get('content-disposition').split('filename=')[1];
       const blob = new Blob([result.body], { type: result.type });
       const fileurl = window.URL.createObjectURL(blob);

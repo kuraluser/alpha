@@ -89,18 +89,20 @@ export class DepartureConditionPanelComponent implements OnInit {
       });
     });
     this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
-      this.departureConditionCargoInfo?.map(cargo => {
-        if (cargo.cargoNominationId === com.cargoNomination1Id) {
-          if (com.valueType === 2) {
-            cargo.quantity += com.quantity1MT;
+      if (com.conditionType === 2) {
+        this.departureConditionCargoInfo?.map(cargo => {
+          if (cargo.cargoNominationId === com.cargoNomination1Id) {
+            if (com.valueType === 2) {
+              cargo.quantity += com.quantity1MT;
+            }
           }
-        }
-        if (cargo.cargoNominationId === com.cargoNomination2Id) {
-          if (com.valueType === 2) {
-            cargo.quantity += com.quantity2MT;
+          if (cargo.cargoNominationId === com.cargoNomination2Id) {
+            if (com.valueType === 2) {
+              cargo.quantity += com.quantity2MT;
+            }
           }
-        }
-      });
+        });
+      }
     });
     this.hasCommingle = commingleArray?.length ? true : false;
     this.departureConditionCargoInfo = [...commingleArray, ...this.departureConditionCargoInfo];

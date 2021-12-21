@@ -392,6 +392,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
    * @memberof UllageUpdatePopupComponent
    */
   updateCargoQuantiyData() {
+    this.showManualTotal = false;
     this.ullageResponseData?.billOfLaddingList.map(bl => {
       let actualQuantity = 0;
       let actualAPi = 0;
@@ -399,11 +400,9 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
       let actualTempCount = 0;
       let avgCount = 0;
       const commingleData = this.ullageResponseData?.portPlanStowageDetails?.filter(item => item.isCommingleCargo);
-      this.showManualTotal = false;
       this.ullageResponseData?.portPlanStowageDetails.map(item => {
         if (bl.cargoNominationId === item.cargoNominationId) {
           if (item.isCommingleCargo) {
-            this.showManualTotal = this.selectedCargo.cargoNominationId === bl.cargoNominationId;
             commingleData?.map(com => {
               if (com.tankId === item.tankId && item.cargoNominationId !== com.cargoNominationId) {
                 if ((item.ullage && com.ullage && item.ullage > com.ullage) || (item.ullage && !com.ullage)) {
@@ -411,6 +410,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
                 } else if (item.ullage && item.ullage < com.ullage) {
                   const individualQty = item.quantityMT - com.quantityMT;
                   if (individualQty) {
+                    this.showManualTotal = this.selectedCargo.cargoNominationId === bl.cargoNominationId ? true : false;
                     actualQuantity += individualQty;
                   }
                 }

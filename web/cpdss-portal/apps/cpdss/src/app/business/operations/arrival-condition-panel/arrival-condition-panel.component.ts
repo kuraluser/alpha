@@ -63,7 +63,7 @@ export class ArrivalConditionPanelComponent implements OnInit {
       let cargoQuantity = 0;
       this.loadingDischargingPlanData?.planStowageDetails?.map(item => {
         const currentPorCargoNominationId = this.loadingDischargingPlanData?.loadingInformation ? cargo.cargoNominationId : cargo.dischargeCargoNominationId;
-        if (item.conditionType === 1 && item.valueType === 2 && currentPorCargoNominationId === item.cargoNominationId ) {
+        if (item.conditionType === 1 && item.valueType === 2 && currentPorCargoNominationId === item.cargoNominationId) {
           if (item.isCommingleCargo) {
             commingleArray?.map(com => {
               if (com.tankId === item.tankId) {
@@ -89,18 +89,20 @@ export class ArrivalConditionPanelComponent implements OnInit {
       });
     });
     this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
-      this.arrivalConditionCargoInfo?.map(cargo => {
-        if (cargo.cargoNominationId === com.cargoNomination1Id) {
-          if (com.valueType === 2) {
-            cargo.quantity += com.quantity1MT;
+      if (com.conditionType === 1) {
+        this.arrivalConditionCargoInfo?.map(cargo => {
+          if (cargo.cargoNominationId === com.cargoNomination1Id) {
+            if (com.valueType === 2) {
+              cargo.quantity += com.quantity1MT;
+            }
           }
-        }
-        if (cargo.cargoNominationId === com.cargoNomination2Id) {
-          if (com.valueType === 2) {
-            cargo.quantity += com.quantity2MT;
+          if (cargo.cargoNominationId === com.cargoNomination2Id) {
+            if (com.valueType === 2) {
+              cargo.quantity += com.quantity2MT;
+            }
           }
-        }
-      });
+        });
+      }
     });
     this.hasCommingle = commingleArray?.length ? true : false;
     this.arrivalConditionCargoInfo = [...commingleArray, ...this.arrivalConditionCargoInfo];

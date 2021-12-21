@@ -530,7 +530,7 @@ export class LoadingComponent implements OnInit, OnDestroy, ComponentCanDeactiva
 
    downloadLoadingPlanTemplate() {
     this.ngxSpinnerService.show();
-    this.operationsApiService.downloadPlanTemplate(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId, null).subscribe((result) => {
+    this.operationsApiService.downloadPlanTemplate(this.vesselId, this.voyageId, this.loadingInfoId, this.portRotationId, OPERATIONS.LOADING, null).subscribe((result) => {
       const fileName = result.headers.get('content-disposition').split('filename=')[1];
       const blob = new Blob([result.body], { type: result.type });
       const fileurl = window.URL.createObjectURL(blob);

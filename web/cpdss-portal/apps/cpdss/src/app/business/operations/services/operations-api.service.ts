@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 
-import { IAlgoResponse, ICargoResponseModel } from '../../core/models/common.model';
+import { IAlgoResponse, ICargoResponseModel, OPERATIONS } from '../../core/models/common.model';
 import { IGenerateDischargePlanResponse } from '../models/loading-discharging.model';
 
 /**
@@ -81,7 +81,7 @@ export class OperationsApiService {
    * @return {*}  {Observable<IAlgoResponse>}
    * @memberof OperationsApiService
    */
-  getDischargePlanAlgoError(vesselId: number, voyageId: number, infoId: number, conditionType:number): Observable<IAlgoResponse> {
+  getDischargePlanAlgoError(vesselId: number, voyageId: number, infoId: number, conditionType: number): Observable<IAlgoResponse> {
     return this.commonApiService.get<IAlgoResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-info/${infoId}/algo-errors/${conditionType}`);
   }
 
@@ -90,15 +90,15 @@ export class OperationsApiService {
  *
  * @param {number} vesselId
  * @param {number} voyageId
- * @param {number} loadingInfoId
+ * @param {number} infoId
  * @param {number} portRotationId
  * @param {*} data
  * @return {*}  {Observable<any>}
  * @memberof OperationsApiService
  */
- downloadPlanTemplate(vesselId: number, voyageId: number, loadingInfoId: number, portRotationId: number, data):Observable<any>{
-  return this.commonApiService.postFile<any,any>(`vessels/${vesselId}/voyages/${voyageId}/loading-info/${loadingInfoId}/port-rotation/${portRotationId}/report`, data, { responseType: 'blob' as 'json' });
+  downloadPlanTemplate(vesselId: number, voyageId: number, infoId: number, portRotationId: number, operation: OPERATIONS, data): Observable<any> {
+    return this.commonApiService.postFile<any, any>(`vessels/${vesselId}/voyages/${voyageId}/${operation === OPERATIONS.DISCHARGING ? 'discharge' : 'loading'}-info/${infoId}/port-rotation/${portRotationId}/report`, data, { responseType: 'blob' as 'json' });
 
-}
+  }
 
 }

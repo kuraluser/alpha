@@ -209,29 +209,31 @@ export class ArrivalConditionComponent implements OnInit, OnDestroy {
       });
     });
     this.loadingDischargingPlanData?.planCommingleDetails?.map(com => {
-      this.cargoConditions?.map(cargo => {
-        if (cargo.cargoNominationId === com.cargoNomination1Id) {
-          if (com.valueType === 1) {
-            cargo.actualWeight = com.quantity1MT;
+      if (com.conditionType === 1) {
+        this.cargoConditions?.map(cargo => {
+          if (cargo.cargoNominationId === com.cargoNomination1Id) {
+            if (com.valueType === 1) {
+              cargo.actualWeight = com.quantity1MT;
+            }
+            if (com.valueType === 2) {
+              cargo.plannedWeight = com.quantity1MT;
+            }
           }
-          if (com.valueType === 2) {
-            cargo.plannedWeight = com.quantity1MT;
+          if (cargo.cargoNominationId === com.cargoNomination2Id) {
+            if (com.valueType === 1) {
+              cargo.actualWeight = com.quantity2MT;
+            }
+            if (com.valueType === 2) {
+              cargo.plannedWeight = com.quantity2MT;
+            }
           }
-        }
-        if (cargo.cargoNominationId === com.cargoNomination2Id) {
-          if (com.valueType === 1) {
-            cargo.actualWeight = com.quantity2MT;
-          }
-          if (com.valueType === 2) {
-            cargo.plannedWeight = com.quantity2MT;
-          }
-        }
-      });
+        });
+      }
     });
     this.cargoConditions = [...commingleArray, ...this.cargoConditions];
-    this.cargoConditions?.map(item=>{
-      this.loadingDischargingPlanData?.currentPortCargos?.map(pData=>{
-        if(pData.cargoNominationId === item.cargoNominationId){
+    this.cargoConditions?.map(item => {
+      this.loadingDischargingPlanData?.currentPortCargos?.map(pData => {
+        if (pData.cargoNominationId === item.cargoNominationId) {
           item.api = pData.estimatedAPI;
         }
       });
