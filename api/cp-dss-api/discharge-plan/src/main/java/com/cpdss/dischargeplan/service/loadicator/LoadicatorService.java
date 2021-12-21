@@ -1050,11 +1050,11 @@ public class LoadicatorService {
     newEntity.setConditionType(conditionType);
     newEntity.setPortRotationXId(dsInfo.getPortRotationXid());
     newEntity.setValueType(valueType);
-    /*oldEntity.ifPresent( // no column in table
-    stability -> {
-      newEntity.setFreeboard(stability.getFreeboard());
-      newEntity.setManifoldHeight(stability.getManifoldHeight());
-    });*/
+    oldEntity.ifPresent(
+        stability -> {
+          newEntity.setFreeboard(stability.getFreeboard());
+          newEntity.setManifoldHeight(stability.getManifoldHeight());
+        });
   }
 
   private void dischargeAlgoPlanCallBackCommunicationCall(
