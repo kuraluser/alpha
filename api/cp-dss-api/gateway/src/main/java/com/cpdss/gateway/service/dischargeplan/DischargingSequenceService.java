@@ -919,15 +919,15 @@ public class DischargingSequenceService {
       }
 
       this.populateStageTickPositions(reply, portEta, stageTickPositions);
-
       Integer loadEnd = temp - (temp % (reply.getInterval() * 60)) + (reply.getInterval() * 60);
       response.setMaxXAxisValue(portEta + (loadEnd * 60 * 1000));
       if (!stageTickPositions.contains(response.getMaxXAxisValue())) {
         stageTickPositions.add(response.getMaxXAxisValue());
       }
-
       response.setInterval(reply.getInterval());
-      // Adding cargo loading rates TODO
+      this.addFinalCargoStage(cargoStages, stageNumber, response);
+
+      // Adding cargo loading rates
       this.buildCargoDischargeRates(dischargeSeq, portEta, stageTickPositions, cargoDischargeRates);
 
       // Getting all types of pump details in ballast pump list
@@ -992,6 +992,26 @@ public class DischargingSequenceService {
     response.setDriveTanks(driveTanks);
     response.setTransfers(transferDetails);
     response.setFreshOilTanks(freshOilTanks);
+  }
+
+  /**
+   * Adds the final cargo stage to the cargo stages array.
+   *
+   * @param cargoStages
+   * @param stageNumber
+   * @param response
+   */
+  private void addFinalCargoStage(
+      List<CargoStage> cargoStages, AtomicInteger stageNumber, LoadingSequenceResponse response) {
+    if (cargoStages.size() > 0) {
+      // Adding final cargo stage.
+      CargoStage cargoStage = new CargoStage();
+      cargoStage.setName("Stage " + stageNumber.incrementAndGet());
+      cargoStage.setStart(cargoStages.get(cargoStages.size() - 1).getEnd());
+      cargoStage.setEnd(response.getMaxXAxisValue());
+      cargoStage.setCargos(new ArrayList<>());
+      cargoStages.add(cargoStage);
+    }
   }
 
   /**
