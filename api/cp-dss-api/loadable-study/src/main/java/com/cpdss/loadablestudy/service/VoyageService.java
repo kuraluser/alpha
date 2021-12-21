@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo;
@@ -147,9 +148,10 @@ public class VoyageService {
       if (voyage.getVoyageStatus() != null
           && (STATUS_ACTIVE.equalsIgnoreCase(voyage.getVoyageStatus().getName())
               || STATUS_CLOSE.equalsIgnoreCase(voyage.getVoyageStatus().getName()))) {
-
+        List<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudies =
+            loadableStudyRepository.findByListOfVoyage(List.of(voyage.getId()));
         Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedLs =
-            voyage.getLoadableStudies().stream()
+            emptyIfNull(loadableStudies).stream()
                 .filter(
                     ls ->
                         (ls.getLoadableStudyStatus() != null
@@ -159,7 +161,7 @@ public class VoyageService {
                 .findFirst();
 
         Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedDs =
-            voyage.getLoadableStudies().stream()
+            emptyIfNull(loadableStudies).stream()
                 .filter(
                     ds ->
                         (ds.getLoadableStudyStatus() != null

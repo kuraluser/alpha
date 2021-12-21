@@ -459,7 +459,8 @@ public class UllageUpdateLoadicatorService {
                 .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF,
             loadingInformation.getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
-            algoResponse.getProcessId(),
+            // algoResponse.getProcessId(),
+            processId,
             loadingInformation.getVesselXId());
       }
     } catch (HttpStatusCodeException e) {
@@ -818,7 +819,8 @@ public class UllageUpdateLoadicatorService {
                 .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_ON,
             loadingInfoOpt.get().getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
-            algoResponse.getProcessId(),
+            // algoResponse.getProcessId(),
+            request.getProcessId(),
             loadingInfoOpt.get().getVesselXId());
       }
     } catch (HttpStatusCodeException e) {
