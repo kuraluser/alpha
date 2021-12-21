@@ -914,9 +914,11 @@ public class DischargingSequenceService {
             cargoStages);
 
         start = temp;
-        stageTickPositions.add(portEta + (temp * 60 * 1000));
-        this.removeShortStageTickPositions(stageTickPositions, reply.getInterval());
+        //        stageTickPositions.add(portEta + (temp * 60 * 1000));
+        //        this.removeShortStageTickPositions(stageTickPositions, reply.getInterval());
       }
+
+      this.populateStageTickPositions(reply, portEta, stageTickPositions);
 
       Integer loadEnd = temp - (temp % (reply.getInterval() * 60)) + (reply.getInterval() * 60);
       response.setMaxXAxisValue(portEta + (loadEnd * 60 * 1000));
@@ -990,6 +992,23 @@ public class DischargingSequenceService {
     response.setDriveTanks(driveTanks);
     response.setTransfers(transferDetails);
     response.setFreshOilTanks(freshOilTanks);
+  }
+
+  /**
+   * Populates the stage tick positions for Discharge Sequence
+   *
+   * @param reply
+   * @param portEta
+   * @param stageTickPositions
+   */
+  private void populateStageTickPositions(
+      DischargeSequenceReply reply, Long portEta, Set<Long> stageTickPositions) {
+    reply
+        .getDischargeSequenceStabilityParametersList()
+        .forEach(
+            stabilityParameter -> {
+              stageTickPositions.add(portEta + (stabilityParameter.getTime() * 60 * 1000));
+            });
   }
 
   /**

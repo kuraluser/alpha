@@ -484,8 +484,10 @@ public class DischargeStudyService {
             .flatMap(
                 cargoNomination ->
                     cargoNomination.getLoadingPortDetailsList().stream()
-                        .map(port -> {
-                          return new AbstractMap.SimpleEntry<>(cargoNomination, port);}))
+                        .map(
+                            port -> {
+                              return new AbstractMap.SimpleEntry<>(cargoNomination, port);
+                            }))
             .collect(
                 Collectors.groupingBy(
                     cargoNomination -> cargoNomination.getValue().getPortId(),
@@ -590,7 +592,7 @@ public class DischargeStudyService {
               cargoNomination.setEmptyMaxNoOfTanks(cargoNominationDetail.getEmptyMaxNoOfTanks());
               cargoNominations.add(cargoNomination);
             });
-//    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
+    //    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
     portRotation.setCargoNominationList(cargoNominations);
   }
 

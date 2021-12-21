@@ -75,7 +75,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -251,9 +250,9 @@ public class LoadingSequenceService {
             cargoStages);
 
         start = temp;
-        stageTickPositions.add(portEta + (temp * 60 * 1000));
+        //        stageTickPositions.add(portEta + (temp * 60 * 1000));
       }
-
+      this.populateStageTickPositions(reply, portEta, stageTickPositions);
       Integer loadEnd = temp - (temp % (reply.getInterval() * 60)) + (reply.getInterval() * 60);
       response.setMaxXAxisValue(portEta + (loadEnd * 60 * 1000));
       response.setInterval(reply.getInterval());
@@ -303,6 +302,23 @@ public class LoadingSequenceService {
             .collect(Collectors.toList()));
     response.setCargoStages(cargoStages);
     response.setBallastEduction(ballastEduction);
+  }
+
+  /**
+   * Populates the stage tick positions for Discharge Sequence
+   *
+   * @param reply
+   * @param portEta
+   * @param stageTickPositions
+   */
+  private void populateStageTickPositions(
+      LoadingSequenceReply reply, Long portEta, Set<Long> stageTickPositions) {
+    reply
+        .getLoadingSequenceStabilityParametersList()
+        .forEach(
+            stabilityParameter -> {
+              stageTickPositions.add(portEta + (stabilityParameter.getTime() * 60 * 1000));
+            });
   }
 
   /**
@@ -629,6 +645,32 @@ public class LoadingSequenceService {
             cargoTankCategories.removeIf(category -> category.getId().equals(tankId));
           }
         });
+
+    // Removing empty tank entries that are commingled.
+    Set<Long> commingledTankIds =
+        cargos.stream()
+            .filter(cargo -> cargo.getIsCommingle())
+            .map(cargo -> cargo.getTankId())
+            .collect(Collectors.toSet());
+    commingledTankIds.forEach(
+        commingledTankId -> {
+          List<Cargo> tankWiseCommingleCargos =
+              cargos.stream()
+                  .filter(
+                      cargo -> cargo.getTankId().equals(commingledTankId) && cargo.getIsCommingle())
+                  .collect(Collectors.toList());
+          if (tankWiseCommingleCargos.size() > 0) {
+            Long commingleStart = tankWiseCommingleCargos.get(0).getStart();
+            Long commingleEnd =
+                tankWiseCommingleCargos.get(tankWiseCommingleCargos.size() - 1).getEnd();
+            cargos.removeIf(
+                cargo ->
+                    (cargo.getQuantity().compareTo(BigDecimal.ZERO) == 0)
+                        && cargo.getTankId().equals(commingledTankId)
+                        && cargo.getStart() >= commingleStart
+                        && cargo.getEnd() <= commingleEnd);
+          }
+        });
   }
 
   /**
@@ -753,38 +795,20 @@ public class LoadingSequenceService {
   public void updateCargoLoadingRateIntervals(
       List<CargoLoadingRate> cargoLoadingRates, Set<Long> stageTickPositions) {
     List<Long> stageTickList = new ArrayList<>(stageTickPositions);
-    cargoLoadingRates.forEach(
-        cargoLoadingRate -> {
-          Optional<Long> startOpt =
-              stageTickPositions.stream()
-                  .filter(pos -> pos <= cargoLoadingRate.getStartTime())
-                  .sorted(Comparator.reverseOrder())
-                  .findFirst();
-          Integer startTickIndex = stageTickList.indexOf(startOpt.get());
-          Optional<Long> endOpt =
-              stageTickPositions.stream()
-                  .filter(pos -> pos >= cargoLoadingRate.getEndTime())
-                  .findFirst();
-          Integer endTickIndex = stageTickList.indexOf(endOpt.get());
-          if ((endTickIndex - startTickIndex) > 0) {
-            Integer tickIndexBetween = startTickIndex + 1;
-            Integer cargoIndex = cargoLoadingRates.indexOf(cargoLoadingRate);
-            startOpt.ifPresent(cargoLoadingRate::setStartTime);
-            cargoLoadingRate.setEndTime(stageTickList.get(tickIndexBetween));
-            CargoLoadingRate newCargoLoadingRate = new CargoLoadingRate();
-            BeanUtils.copyProperties(cargoLoadingRate, newCargoLoadingRate);
-            newCargoLoadingRate.setStartTime(stageTickList.get(tickIndexBetween));
-            endOpt.ifPresent(newCargoLoadingRate::setEndTime);
-            if ((cargoIndex + 1) <= (cargoLoadingRates.size() - 1)) {
-              cargoLoadingRates.add(cargoIndex + 1, newCargoLoadingRate);
-            } else {
-              cargoLoadingRates.add(newCargoLoadingRate);
-            }
-          } else {
-            startOpt.ifPresent(cargoLoadingRate::setStartTime);
-            endOpt.ifPresent(cargoLoadingRate::setEndTime);
-          }
-        });
+    List<CargoLoadingRate> newCargoLoadingRates = new ArrayList<>();
+    for (CargoLoadingRate cargoLoadingRate : cargoLoadingRates) {
+      Optional<Long> startOpt =
+          stageTickPositions.stream()
+              .filter(pos -> pos <= cargoLoadingRate.getStartTime())
+              .sorted(Comparator.reverseOrder())
+              .findFirst();
+      Optional<Long> endOpt =
+          stageTickPositions.stream()
+              .filter(pos -> pos >= cargoLoadingRate.getEndTime())
+              .findFirst();
+      startOpt.ifPresent(cargoLoadingRate::setStartTime);
+      endOpt.ifPresent(cargoLoadingRate::setEndTime);
+    }
   }
 
   private void buildStabilityParamSequence(

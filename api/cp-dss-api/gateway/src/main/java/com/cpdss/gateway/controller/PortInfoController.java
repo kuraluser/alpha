@@ -10,13 +10,12 @@ import com.cpdss.gateway.domain.PortDetailResponse;
 import com.cpdss.gateway.domain.PortDetails;
 import com.cpdss.gateway.service.InstructionService;
 import com.cpdss.gateway.service.PortInfoService;
+import javax.validation.constraints.Min;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.Min;
 
 @Log4j2
 @Validated
