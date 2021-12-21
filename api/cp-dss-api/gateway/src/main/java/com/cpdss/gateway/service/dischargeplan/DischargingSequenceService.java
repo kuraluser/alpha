@@ -67,6 +67,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -1004,12 +1005,25 @@ public class DischargingSequenceService {
   private void addFinalCargoStage(
       List<CargoStage> cargoStages, AtomicInteger stageNumber, LoadingSequenceResponse response) {
     if (cargoStages.size() > 0) {
+      CargoStage lastCargoStage = cargoStages.get(cargoStages.size() - 1);
       // Adding final cargo stage.
       CargoStage cargoStage = new CargoStage();
       cargoStage.setName("Stage " + stageNumber.incrementAndGet());
-      cargoStage.setStart(cargoStages.get(cargoStages.size() - 1).getEnd());
+      cargoStage.setStart(lastCargoStage.getEnd());
       cargoStage.setEnd(response.getMaxXAxisValue());
       cargoStage.setCargos(new ArrayList<>());
+      List<Cargo> cargos = new ArrayList<>();
+      lastCargoStage
+          .getCargos()
+          .forEach(
+              cargo -> {
+                Cargo newCargo = new Cargo();
+                BeanUtils.copyProperties(cargo, newCargo);
+                newCargo.setQuantity(null);
+                newCargo.setUllage(null);
+                cargos.add(newCargo);
+              });
+      cargoStage.setCargos(cargos);
       cargoStages.add(cargoStage);
     }
   }
