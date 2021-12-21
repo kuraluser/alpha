@@ -325,8 +325,9 @@ public class LoadableQuantityService {
       Optional.ofNullable(loadableQuantity.get().getTotalQuantity())
           .ifPresent(
               totalQuantity -> loadableQuantityRequest.setTotalQuantity(totalQuantity.toString()));
-      Optional.ofNullable(loadableQuantity.get().getTpcatDraft())
-          .ifPresent(tpc -> loadableQuantityRequest.setTpc(tpc.toString()));
+      // DSS-5039 , tpc is not updating
+      Optional.ofNullable(vesselReply.getVesselLoadableQuantityDetails().getTpc())
+          .ifPresent(tpc -> loadableQuantityRequest.setTpc(tpc));
       Optional.ofNullable(loadableQuantity.get().getVesselAverageSpeed())
           .ifPresent(
               vesselAverageSpeed ->
