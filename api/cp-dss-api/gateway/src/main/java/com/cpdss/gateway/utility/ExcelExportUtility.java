@@ -62,8 +62,6 @@ public class ExcelExportUtility {
       if (inStream != null) {
         // Converting object in to excel context
         Context context = getContext(dataObj);
-        // TODO remove
-        //				bindDataUsingAreaListener(inStream, outStream, context);
 
         // Stamping values into excel template
         JxlsHelper.getInstance().processTemplate(inStream, outStream, context);

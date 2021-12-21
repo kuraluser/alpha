@@ -1424,6 +1424,12 @@ public class GenerateDischargingPlanExcelReportService {
               cargoListOfpresentTank.stream()
                   .filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position)
                   .findFirst();
+          if (cargoMatch.isEmpty()) {
+            cargoMatch =
+                cargoListOfpresentTank.stream()
+                    .filter(cargo -> cargo.getStart() < position && cargo.getEnd() > position)
+                    .findFirst();
+          }
           setUllageAndQuantityCargo(
               cargoMatch,
               ullages,
