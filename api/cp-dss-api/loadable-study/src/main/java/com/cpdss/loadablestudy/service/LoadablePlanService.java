@@ -695,7 +695,9 @@ public class LoadablePlanService {
             details.setId(lpsd.getId());
             details.setCargoNominationId(lpsd.getCargoNominationId());
             details.setTankId(lpsd.getTankId());
-            details.setQuantityMT(String.valueOf(lpsd.getPlannedQuantity()));
+            Optional.ofNullable(lpsd.getPlannedQuantity())
+                .ifPresent(
+                    quantityMt -> details.setQuantityMT(String.valueOf(lpsd.getPlannedQuantity())));
             details.setColorCode(lpsd.getColorCode());
             details.setAbbreviation(lpsd.getAbbreviation());
             Optional<CargoNomination> cargoNomOpt =
@@ -732,7 +734,8 @@ public class LoadablePlanService {
                 Object[] obA = (Object[]) lpsd;
                 details.setId((Long) obA[0]);
                 details.setTankId((Long) obA[1]);
-                details.setQuantityMT(String.valueOf(obA[2]));
+                Optional.ofNullable(obA[2])
+                    .ifPresent(quantityMt -> details.setQuantityMT(String.valueOf(obA[2])));
                 Optional.ofNullable(obA[3])
                     .ifPresent(colorCode -> details.setColorCode(String.valueOf(colorCode)));
                 Optional.ofNullable(obA[4]).ifPresent(sg -> details.setSg(String.valueOf(sg)));
@@ -745,7 +748,8 @@ public class LoadablePlanService {
                 new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
 
             details.setId(lpsd.getId());
-            details.setQuantityMT(String.valueOf(lpsd.getQuantity()));
+            Optional.ofNullable(lpsd.getQuantity())
+                .ifPresent(quantity -> details.setQuantityMT(String.valueOf(quantity)));
             details.setTankId(lpsd.getTankXId());
             details.setColorCode(lpsd.getColorCode());
             details.setSg(lpsd.getSg());
