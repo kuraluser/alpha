@@ -1386,7 +1386,7 @@ public class GenerateLoadingPlanExcelReportService {
     return tankList.stream()
         .sorted(Comparator.comparing(TankCategoryForSequence::getDisplayOrder))
         .collect(Collectors.toList());
-    //    return tankList;
+    // return tankList;
   }
 
   private List<TankCategoryForSequence> getBallastTanks(
@@ -1414,9 +1414,9 @@ public class GenerateLoadingPlanExcelReportService {
           });
       tankList.add(tankCategoryObj);
     }
-    //    return tankList.stream()
-    //            .sorted(Comparator.comparing(TankCategoryForSequence::getId))
-    //            .collect(Collectors.toList());
+    // return tankList.stream()
+    // .sorted(Comparator.comparing(TankCategoryForSequence::getId))
+    // .collect(Collectors.toList());
     return tankList;
   }
 
@@ -1548,8 +1548,12 @@ public class GenerateLoadingPlanExcelReportService {
     } else {
       params.forEach(
           i -> {
-            paramsList.add(
-                UnitConversionUtility.setPrecision(Double.parseDouble(i.get(1).toString()), 3));
+            if (i.get(1) != null && !i.get(1).toString().isBlank()) {
+              paramsList.add(
+                  UnitConversionUtility.setPrecision(Double.parseDouble(i.get(1).toString()), 3));
+            } else {
+              paramsList.add("0.0");
+            }
           });
     }
   }
@@ -1840,9 +1844,48 @@ public class GenerateLoadingPlanExcelReportService {
                                   && psd.getValueType().equals(2))
                       .mapToDouble(i -> Double.parseDouble(i.getQuantityMT()))
                       .sum();
+              // commingle cargo scenario adding commingled quantity to if any
+              if (!requestPayload.getPlanCommingleDetails().isEmpty()) {
+                totalQuantity =
+                    totalQuantity
+                        + requestPayload.getPlanCommingleDetails().stream()
+                            .filter(
+                                psd ->
+                                    psd.getConditionType().equals(conditionType)
+                                        && psd.getCargo1Id().equals(item.getCargoId())
+                                        && psd.getValueType().equals(2))
+                            .mapToDouble(i -> i.getQuantity1MT().doubleValue())
+                            .sum();
+                totalQuantity =
+                    totalQuantity
+                        + requestPayload.getPlanCommingleDetails().stream()
+                            .filter(
+                                psd ->
+                                    psd.getConditionType().equals(conditionType)
+                                        && psd.getCargo2Id().equals(item.getCargoId())
+                                        && psd.getValueType().equals(2))
+                            .mapToDouble(i -> i.getQuantity2MT().doubleValue())
+                            .sum();
+              }
               cargo.setQuantity(totalQuantity.toString());
               cargoQuantitylist.add(cargo);
             });
+    // Commingle cargo scenario getting commingled cargo as an item in cargo list
+    if (!requestPayload.getPlanCommingleDetails().isEmpty()) {
+      requestPayload.getPlanCommingleDetails().stream()
+          .filter(
+              psd -> psd.getConditionType().equals(conditionType) && psd.getValueType().equals(2))
+          .forEach(
+              item -> {
+                CargoQuantity cargo = new CargoQuantity();
+                Double totalQuantity = 0.0;
+                Optional.ofNullable(item.getAbbreviation()).ifPresent(cargo::setCargoName);
+                Optional.ofNullable(item.getColorCode()).ifPresent(cargo::setColorCode);
+                totalQuantity = item.getQuantityMT().doubleValue();
+                cargo.setQuantity(totalQuantity.toString());
+                cargoQuantitylist.add(cargo);
+              });
+    }
     vesselCondition.setCargoDetails(cargoQuantitylist);
     if (cargoNames == null) {
       cargoNames =
@@ -2058,8 +2101,25 @@ public class GenerateLoadingPlanExcelReportService {
       List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList,
       TankCargoDetails tankCargoDetails,
       String tankFullCapacity) {
+    if (loadingPlanCommingleDetails.isPresent()) {
+      // If tank does not have details in stowage checking if it is a commingled tank
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getQuantityMT())
+          .ifPresent(i -> tankCargoDetails.setQuantity(i.doubleValue()));
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getApi())
+          .ifPresent(i -> tankCargoDetails.setApi(i.toString()));
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getTemperature())
+          .ifPresent(i -> tankCargoDetails.setTemperature(i.toString()));
+      Optional.ofNullable(loadingPlanCommingleDetails.get().getUllage())
+          .ifPresent(i -> tankCargoDetails.setUllage(i.toString()));
 
-    if (loadingPlanStowageDetails.isPresent()) {
+      if (!loadingPlanCommingleDetails.get().getColorCode().isEmpty()
+          && !loadingPlanCommingleDetails.get().getAbbreviation().isEmpty()) {
+        Optional.ofNullable(loadingPlanCommingleDetails.get().getColorCode())
+            .ifPresent(tankCargoDetails::setColorCode);
+        Optional.ofNullable(loadingPlanCommingleDetails.get().getAbbreviation())
+            .ifPresent(tankCargoDetails::setCargoName);
+      }
+    } else if (loadingPlanStowageDetails.isPresent()) {
       Optional.ofNullable(loadingPlanStowageDetails.get().getQuantityMT())
           .ifPresent(i -> tankCargoDetails.setQuantity(Double.parseDouble(i)));
       Optional.ofNullable(loadingPlanStowageDetails.get().getApi())
@@ -2091,24 +2151,6 @@ public class GenerateLoadingPlanExcelReportService {
         }
       }
 
-    } else if (loadingPlanCommingleDetails.isPresent()) {
-      // If tank does not have details in stowage checking if it is a commingled tank
-      Optional.ofNullable(loadingPlanCommingleDetails.get().getQuantityMT())
-          .ifPresent(i -> tankCargoDetails.setQuantity(i.doubleValue()));
-      Optional.ofNullable(loadingPlanCommingleDetails.get().getApi())
-          .ifPresent(i -> tankCargoDetails.setApi(i.toString()));
-      Optional.ofNullable(loadingPlanCommingleDetails.get().getTemperature())
-          .ifPresent(i -> tankCargoDetails.setTemperature(i.toString()));
-      Optional.ofNullable(loadingPlanCommingleDetails.get().getUllage())
-          .ifPresent(i -> tankCargoDetails.setUllage(i.toString()));
-
-      if (!loadingPlanCommingleDetails.get().getColorCode().isEmpty()
-          && !loadingPlanCommingleDetails.get().getAbbreviation().isEmpty()) {
-        Optional.ofNullable(loadingPlanCommingleDetails.get().getColorCode())
-            .ifPresent(tankCargoDetails::setColorCode);
-        Optional.ofNullable(loadingPlanCommingleDetails.get().getAbbreviation())
-            .ifPresent(tankCargoDetails::setCargoName);
-      }
     } else {
       // Handling empty tank scenario
       tankCargoDetails.setQuantity(0.0);

@@ -1424,6 +1424,12 @@ public class GenerateDischargingPlanExcelReportService {
               cargoListOfpresentTank.stream()
                   .filter(cargo -> cargo.getStart().equals(position) && cargo.getEnd() > position)
                   .findFirst();
+          if (cargoMatch.isEmpty()) {
+            cargoMatch =
+                cargoListOfpresentTank.stream()
+                    .filter(cargo -> cargo.getStart() < position && cargo.getEnd() > position)
+                    .findFirst();
+          }
           setUllageAndQuantityCargo(
               cargoMatch,
               ullages,
@@ -1802,8 +1808,12 @@ public class GenerateDischargingPlanExcelReportService {
     } else {
       params.forEach(
           i -> {
-            paramsList.add(
-                UnitConversionUtility.setPrecision(Double.parseDouble(i.get(1).toString()), 3));
+            if (i.get(1) != null && !i.get(1).toString().isBlank()) {
+              paramsList.add(
+                  UnitConversionUtility.setPrecision(Double.parseDouble(i.get(1).toString()), 3));
+            } else {
+              paramsList.add("0.0");
+            }
           });
     }
   }
