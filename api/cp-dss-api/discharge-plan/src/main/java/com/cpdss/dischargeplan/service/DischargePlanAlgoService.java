@@ -420,6 +420,7 @@ public class DischargePlanAlgoService {
         delay -> {
           DischargeDelays ld = new DischargeDelays();
           ld.setCargoId(delay.getCargoXid());
+          ld.setSequenceNumber(delay.getSequenceNo());
           ld.setDsCargoNominationId(delay.getCargoNominationXid());
           ld.setDuration(delay.getDuration());
           ld.setId(delay.getId());
