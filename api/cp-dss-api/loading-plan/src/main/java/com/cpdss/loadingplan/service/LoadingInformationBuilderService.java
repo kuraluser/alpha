@@ -104,6 +104,8 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var1.getHoseConnections()).ifPresent(v -> builder.setHoseConnections(v));
       Optional.ofNullable(var1.getLineDisplacement())
           .ifPresent(v -> builder.setLineDisplacement(v.toString()));
+      Optional.ofNullable(var1.getDisplacement())
+          .ifPresent(v -> builder.setDisplacement(v.toString()));
       berths.add(builder.build());
     }
     return berths;

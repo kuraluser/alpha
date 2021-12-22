@@ -29,4 +29,5 @@ public class BerthDetails {
   private String maxManifoldPressure;
   private Boolean airPurge;
   private Boolean cargoCirculation;
+  private BigDecimal displacement;
 }

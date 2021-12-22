@@ -184,6 +184,8 @@ public class DischargeInformationBuilderService {
       var2.setAirPurge(lb.getAirPurge());
       var2.setCargoCirculation(lb.getCargoCirculation());
       var2.setMaxManifoldPressure(lb.getMaxManifoldPressure());
+      var2.setDisplacement(
+          lb.getDisplacement().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDisplacement()));
       list.add(var2);
     }
     log.info("Loading Plan Berth data added Size {}", var1.size());
@@ -707,6 +709,8 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(berth.getLineDisplacement()).ifPresent(builder::setLineDisplacement);
           Optional.ofNullable(berth.getAirPurge()).ifPresent(builder::setAirPurge);
           Optional.ofNullable(berth.getCargoCirculation()).ifPresent(builder::setCargoCirculation);
+          Optional.ofNullable(berth.getDisplacement())
+              .ifPresent(displacement -> builder.setDisplacement(displacement.toString()));
           berthList.add(builder.build());
         });
     return berthList;

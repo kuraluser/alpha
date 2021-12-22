@@ -60,4 +60,7 @@ public class DischargingBerthDetail extends EntityDoc {
   private DischargeInformation dischargingInformation;
 
   @Transient private Long communicationRelatedEntityId;
+
+  @Column(name = "displacement")
+  private BigDecimal displacement;
 }

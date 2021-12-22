@@ -17975,6 +17975,19 @@ public final class PortInfo {
      * @return The bytes for portMaxPermissibleDraft.
      */
     com.google.protobuf.ByteString getPortMaxPermissibleDraftBytes();
+
+    /**
+     * <code>string displacement = 19;</code>
+     *
+     * @return The displacement.
+     */
+    java.lang.String getDisplacement();
+    /**
+     * <code>string displacement = 19;</code>
+     *
+     * @return The bytes for displacement.
+     */
+    com.google.protobuf.ByteString getDisplacementBytes();
   }
   /** Protobuf type {@code BerthDetail} */
   public static final class BerthDetail extends com.google.protobuf.GeneratedMessageV3
@@ -18003,6 +18016,7 @@ public final class PortInfo {
       ukc_ = "";
       berthDatumDepth_ = "";
       portMaxPermissibleDraft_ = "";
+      displacement_ = "";
     }
 
     @java.lang.Override
@@ -18152,6 +18166,13 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 portMaxPermissibleDraft_ = s;
+                break;
+              }
+            case 154:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                displacement_ = s;
                 break;
               }
             default:
@@ -18744,6 +18765,41 @@ public final class PortInfo {
       }
     }
 
+    public static final int DISPLACEMENT_FIELD_NUMBER = 19;
+    private volatile java.lang.Object displacement_;
+    /**
+     * <code>string displacement = 19;</code>
+     *
+     * @return The displacement.
+     */
+    public java.lang.String getDisplacement() {
+      java.lang.Object ref = displacement_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        displacement_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string displacement = 19;</code>
+     *
+     * @return The bytes for displacement.
+     */
+    public com.google.protobuf.ByteString getDisplacementBytes() {
+      java.lang.Object ref = displacement_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        displacement_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -18812,6 +18868,9 @@ public final class PortInfo {
       if (!getPortMaxPermissibleDraftBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 18, portMaxPermissibleDraft_);
       }
+      if (!getDisplacementBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 19, displacement_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -18877,6 +18936,9 @@ public final class PortInfo {
         size +=
             com.google.protobuf.GeneratedMessageV3.computeStringSize(18, portMaxPermissibleDraft_);
       }
+      if (!getDisplacementBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, displacement_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -18911,6 +18973,7 @@ public final class PortInfo {
       if (!getUkc().equals(other.getUkc())) return false;
       if (!getBerthDatumDepth().equals(other.getBerthDatumDepth())) return false;
       if (!getPortMaxPermissibleDraft().equals(other.getPortMaxPermissibleDraft())) return false;
+      if (!getDisplacement().equals(other.getDisplacement())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -18958,6 +19021,8 @@ public final class PortInfo {
       hash = (53 * hash) + getBerthDatumDepth().hashCode();
       hash = (37 * hash) + PORTMAXPERMISSIBLEDRAFT_FIELD_NUMBER;
       hash = (53 * hash) + getPortMaxPermissibleDraft().hashCode();
+      hash = (37 * hash) + DISPLACEMENT_FIELD_NUMBER;
+      hash = (53 * hash) + getDisplacement().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -19131,6 +19196,8 @@ public final class PortInfo {
 
         portMaxPermissibleDraft_ = "";
 
+        displacement_ = "";
+
         return this;
       }
 
@@ -19175,6 +19242,7 @@ public final class PortInfo {
         result.ukc_ = ukc_;
         result.berthDatumDepth_ = berthDatumDepth_;
         result.portMaxPermissibleDraft_ = portMaxPermissibleDraft_;
+        result.displacement_ = displacement_;
         onBuilt();
         return result;
       }
@@ -19294,6 +19362,10 @@ public final class PortInfo {
         }
         if (!other.getPortMaxPermissibleDraft().isEmpty()) {
           portMaxPermissibleDraft_ = other.portMaxPermissibleDraft_;
+          onChanged();
+        }
+        if (!other.getDisplacement().isEmpty()) {
+          displacement_ = other.displacement_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -20561,6 +20633,82 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         portMaxPermissibleDraft_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object displacement_ = "";
+      /**
+       * <code>string displacement = 19;</code>
+       *
+       * @return The displacement.
+       */
+      public java.lang.String getDisplacement() {
+        java.lang.Object ref = displacement_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          displacement_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string displacement = 19;</code>
+       *
+       * @return The bytes for displacement.
+       */
+      public com.google.protobuf.ByteString getDisplacementBytes() {
+        java.lang.Object ref = displacement_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          displacement_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string displacement = 19;</code>
+       *
+       * @param value The displacement to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacement(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        displacement_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacement = 19;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDisplacement() {
+
+        displacement_ = getDefaultInstance().getDisplacement();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string displacement = 19;</code>
+       *
+       * @param value The bytes for displacement to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDisplacementBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        displacement_ = value;
         onChanged();
         return this;
       }
@@ -26969,7 +27117,7 @@ public final class PortInfo {
           + "s\022\034\n\ttimezones\030\002 \003(\0132\t.Timezone\"\037\n\rPortI"
           + "dRequest\022\016\n\006portId\030\001 \001(\003\"Z\n\021BerthInfoRes"
           + "ponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Response"
-          + "Status\022\034\n\006berths\030\002 \003(\0132\014.BerthDetail\"\241\003\n"
+          + "Status\022\034\n\006berths\030\002 \003(\0132\014.BerthDetail\"\267\003\n"
           + "\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003"
           + "\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016maxShipChanne"
           + "l\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShipDep"
@@ -26980,50 +27128,50 @@ public final class PortInfo {
           + "\030\n\020lineDisplacement\030\r \001(\t\022\026\n\016hoseConnect"
           + "ion\030\016 \001(\t\022\016\n\006maxDwt\030\017 \001(\t\022\013\n\003ukc\030\020 \001(\t\022\027"
           + "\n\017berthDatumDepth\030\021 \001(\t\022\037\n\027portMaxPermis"
-          + "sibleDraft\030\022 \001(\t\"*\n\007Country\022\n\n\002id\030\001 \001(\003\022"
-          + "\023\n\013countryName\030\002 \001(\t\"T\n\014CountryReply\022\033\n\t"
-          + "countries\030\001 \003(\0132\010.Country\022\'\n\016responseSta"
-          + "tus\030\002 \001(\0132\017.ResponseStatus\"6\n\020CargoPortR"
-          + "equest\022\021\n\tcompanyId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001"
-          + "(\003\"a\n\016CargoPortReply\022\'\n\016responseStatus\030\001"
-          + " \001(\0132\017.ResponseStatus\022&\n\005ports\030\002 \003(\0132\027.C"
-          + "argoPortMappingDetail\"\271\001\n\026CargoPortMappi"
-          + "ngDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022"
-          + "\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010port"
-          + "Name\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t\022\023\n\013maxAirDr"
-          + "aft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\024\n\014waterDens"
-          + "ity\030\t \001(\t\"F\n\027CargoPortMappingRequest\022+\n\020"
-          + "cargoPortMapping\030\001 \003(\0132\021.CargoPortMappin"
-          + "g\"S\n\rPortInfoReply\022\'\n\016responseStatus\030\001 \001"
-          + "(\0132\017.ResponseStatus\022\031\n\004port\030\002 \001(\0132\013.Port"
-          + "Detail2\210\010\n\017PortInfoService\022)\n\013GetPortInf"
-          + "o\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024GetPort"
-          + "InfoByCargoId\022\034.GetPortInfoByCargoIdRequ"
-          + "est\032\032.GetPortInfoByCargoIdReply\"\000\022B\n\024Get"
-          + "PortInfoByPortIds\022\034.GetPortInfoByPortIds"
-          + "Request\032\n.PortReply\"\000\022G\n\031GetPortInfoDeta"
-          + "ilsForAlgo\022\034.GetPortInfoByPortIdsRequest"
-          + "\032\n.PortReply\"\000\0225\n\013GetTimezone\022\021.PortEmpt"
-          + "yRequest\032\021.TimezoneResponse\"\000\022;\n\023GetPort"
-          + "InfoByPaging\022\026.PortRequestWithPaging\032\n.P"
-          + "ortReply\"\000\022?\n\027GetBerthDetailsByPortId\022\016."
-          + "PortIdRequest\032\022.BerthInfoResponse\"\000\022D\n\025G"
-          + "etCargoInfoByPortIds\022\034.GetPortInfoByPort"
-          + "IdsRequest\032\013.CargoInfos\"\000\022B\n\027GetLoadingP"
-          + "lanBerthData\022\020.BerthIdsRequest\032\025.Loading"
-          + "AlgoBerthData\022:\n\017GetAllCountries\022\026.googl"
-          + "e.protobuf.Empty\032\r.CountryReply\"\000\022>\n\026Get"
-          + "AllCargoPortMapping\022\021.CargoPortRequest\032\017"
-          + ".CargoPortReply\"\000\022B\n\032GetAllCargoPortMapp"
-          + "ingById\022\021.CargoPortRequest\032\017.CargoPortRe"
-          + "ply\"\000\022G\n\030SaveAllCargoPortMappings\022\030.Carg"
-          + "oPortMappingRequest\032\017.CargoPortReply\"\000\0221"
-          + "\n\023GetPortInfoDetailed\022\014.PortRequest\032\n.Po"
-          + "rtReply\"\000\022-\n\014SavePortInfo\022\013.PortDetail\032\016"
-          + ".PortInfoReply\"\000\022?\n\027DeleteCargoPortMappi"
-          + "ngs\022\021.CargoPortRequest\032\017.CargoPortReply\""
-          + "\000B\036\n\032com.cpdss.common.generatedP\000b\006proto"
-          + "3"
+          + "sibleDraft\030\022 \001(\t\022\024\n\014displacement\030\023 \001(\t\"*"
+          + "\n\007Country\022\n\n\002id\030\001 \001(\003\022\023\n\013countryName\030\002 \001"
+          + "(\t\"T\n\014CountryReply\022\033\n\tcountries\030\001 \003(\0132\010."
+          + "Country\022\'\n\016responseStatus\030\002 \001(\0132\017.Respon"
+          + "seStatus\"6\n\020CargoPortRequest\022\021\n\tcompanyI"
+          + "d\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\"a\n\016CargoPortRep"
+          + "ly\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseSta"
+          + "tus\022&\n\005ports\030\002 \003(\0132\027.CargoPortMappingDet"
+          + "ail\"\271\001\n\026CargoPortMappingDetail\022\n\n\002id\030\001 \001"
+          + "(\003\022\021\n\tcompanyId\030\002 \001(\003\022\017\n\007cargoId\030\003 \001(\003\022\016"
+          + "\n\006portId\030\004 \001(\003\022\020\n\010portName\030\005 \001(\t\022\020\n\010port"
+          + "Code\030\006 \001(\t\022\023\n\013maxAirDraft\030\007 \001(\t\022\020\n\010maxDr"
+          + "aft\030\010 \001(\t\022\024\n\014waterDensity\030\t \001(\t\"F\n\027Cargo"
+          + "PortMappingRequest\022+\n\020cargoPortMapping\030\001"
+          + " \003(\0132\021.CargoPortMapping\"S\n\rPortInfoReply"
+          + "\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatu"
+          + "s\022\031\n\004port\030\002 \001(\0132\013.PortDetail2\210\010\n\017PortInf"
+          + "oService\022)\n\013GetPortInfo\022\014.PortRequest\032\n."
+          + "PortReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.Ge"
+          + "tPortInfoByCargoIdRequest\032\032.GetPortInfoB"
+          + "yCargoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022"
+          + "\034.GetPortInfoByPortIdsRequest\032\n.PortRepl"
+          + "y\"\000\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPo"
+          + "rtInfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013"
+          + "GetTimezone\022\021.PortEmptyRequest\032\021.Timezon"
+          + "eResponse\"\000\022;\n\023GetPortInfoByPaging\022\026.Por"
+          + "tRequestWithPaging\032\n.PortReply\"\000\022?\n\027GetB"
+          + "erthDetailsByPortId\022\016.PortIdRequest\032\022.Be"
+          + "rthInfoResponse\"\000\022D\n\025GetCargoInfoByPortI"
+          + "ds\022\034.GetPortInfoByPortIdsRequest\032\013.Cargo"
+          + "Infos\"\000\022B\n\027GetLoadingPlanBerthData\022\020.Ber"
+          + "thIdsRequest\032\025.LoadingAlgoBerthData\022:\n\017G"
+          + "etAllCountries\022\026.google.protobuf.Empty\032\r"
+          + ".CountryReply\"\000\022>\n\026GetAllCargoPortMappin"
+          + "g\022\021.CargoPortRequest\032\017.CargoPortReply\"\000\022"
+          + "B\n\032GetAllCargoPortMappingById\022\021.CargoPor"
+          + "tRequest\032\017.CargoPortReply\"\000\022G\n\030SaveAllCa"
+          + "rgoPortMappings\022\030.CargoPortMappingReques"
+          + "t\032\017.CargoPortReply\"\000\0221\n\023GetPortInfoDetai"
+          + "led\022\014.PortRequest\032\n.PortReply\"\000\022-\n\014SaveP"
+          + "ortInfo\022\013.PortDetail\032\016.PortInfoReply\"\000\022?"
+          + "\n\027DeleteCargoPortMappings\022\021.CargoPortReq"
+          + "uest\032\017.CargoPortReply\"\000B\036\n\032com.cpdss.com"
+          + "mon.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -27214,6 +27362,7 @@ public final class PortInfo {
               "Ukc",
               "BerthDatumDepth",
               "PortMaxPermissibleDraft",
+              "Displacement",
             });
     internal_static_Country_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_Country_fieldAccessorTable =

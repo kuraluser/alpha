@@ -94,6 +94,7 @@ message LoadingBerths{
   string itemsToBeAgreedWith = 9; // Not added in gateway
   string hoseConnections = 10; // Not added in gateway
   string lineDisplacement = 11;
+  string displacement = 12;
 }
 
 message LoadingStages{

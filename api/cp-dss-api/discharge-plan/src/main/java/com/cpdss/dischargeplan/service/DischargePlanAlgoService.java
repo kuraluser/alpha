@@ -686,7 +686,7 @@ public class DischargePlanAlgoService {
                         .ifPresent(dto::setLineDisplacement);
                     Optional.ofNullable(var.getHoseConnections())
                         .ifPresent(dto::setHoseConnections);
-
+                    Optional.ofNullable(var.getDisplacement()).ifPresent(dto::setDisplacement);
                     // Call 1 to Port info, set value from berth table
                     // Setting berth name
                     this.getBerthDetailsByPortIdAndBerthId(

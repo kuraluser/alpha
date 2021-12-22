@@ -32,4 +32,5 @@ public class BerthDetails {
   private String ukc;
   private String controllingDepth;
   private String portMaxPermissibleDraft;
+  private BigDecimal displacement;
 }

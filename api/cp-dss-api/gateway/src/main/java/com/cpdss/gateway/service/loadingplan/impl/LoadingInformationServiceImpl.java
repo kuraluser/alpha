@@ -346,6 +346,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
           dto.setLineDisplacement(bd.getLineDisplacement());
           dto.setHoseConnections(bd.getHoseConnection());
+          dto.setDisplacement(
+              bd.getDisplacement().isEmpty()
+                  ? BigDecimal.ZERO
+                  : new BigDecimal(bd.getDisplacement()));
           berthDetails.add(dto);
         }
       } catch (Exception e) {
@@ -384,6 +388,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       var2.setItemsToBeAgreedWith(lb.getItemsToBeAgreedWith());
       var2.setHoseConnections(lb.getHoseConnections());
       var2.setLineDisplacement(lb.getLineDisplacement());
+      var2.setDisplacement(
+          lb.getDisplacement().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDisplacement()));
       list.add(var2);
     }
     log.info("Loading Plan Berth data added Size {}", var1.size());

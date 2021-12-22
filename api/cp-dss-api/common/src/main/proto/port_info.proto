@@ -189,6 +189,7 @@ message BerthDetail{
 	string ukc = 16;
 	string berthDatumDepth = 17;
 	string portMaxPermissibleDraft = 18;
+	string displacement = 19;
 }
 
 message Country{

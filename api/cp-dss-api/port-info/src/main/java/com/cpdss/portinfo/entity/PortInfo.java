@@ -108,4 +108,7 @@ public class PortInfo extends EntityDoc {
 
   @Column(name = "ambient_temperature")
   private BigDecimal ambientTemperature;
+
+  @Column(name = "displacement")
+  private BigDecimal displacement;
 }

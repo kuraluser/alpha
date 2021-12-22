@@ -100,6 +100,10 @@ public class LoadingBerthServiceImpl implements LoadingBerthService {
         berth.getLineDisplacement().isEmpty()
             ? BigDecimal.ZERO
             : new BigDecimal(berth.getLineDisplacement()));
+    loadingBerthDetail.setDisplacement(
+        berth.getDisplacement().isEmpty()
+            ? BigDecimal.ZERO
+            : new BigDecimal(berth.getDisplacement()));
     loadingBerthDetail.setIsActive(true);
   }
 }

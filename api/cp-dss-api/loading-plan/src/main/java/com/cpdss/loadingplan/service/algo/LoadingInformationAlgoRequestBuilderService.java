@@ -651,6 +651,10 @@ public class LoadingInformationAlgoRequestBuilderService {
           berthDetail.setMaxShipDepth(
               StringUtils.isEmpty(berth.getDepth()) ? null : new BigDecimal(berth.getDepth()));
           berthDetail.setLineDisplacement(berth.getLineDisplacement());
+          berthDetail.setDisplacement(
+              StringUtils.hasLength(berth.getDisplacement())
+                  ? new BigDecimal(berth.getDisplacement())
+                  : null);
           // Setting controllingDepth, underKeelClearance from port info
           this.getPortInfoIntoBerthData(berth.getBerthId(), berthDetail);
 
@@ -664,7 +668,6 @@ public class LoadingInformationAlgoRequestBuilderService {
    * grpc Call to port info, to get berth data
    *
    * @param portId
-   * @param PortInfo.PortInfoBerthInfoResponse
    */
   public PortInfo.BerthInfoResponse getBerthInfoByPortId(Long portId) {
     PortInfo.BerthInfoResponse response =

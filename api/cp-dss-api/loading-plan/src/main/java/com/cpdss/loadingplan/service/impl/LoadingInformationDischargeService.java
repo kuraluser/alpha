@@ -95,9 +95,9 @@ public class LoadingInformationDischargeService {
                                     && !bl.getApi().isEmpty()
                                     && (new BigDecimal(bl.getApi()).compareTo(BigDecimal.ZERO) > 0))
                         .mapToDouble(o -> Double.parseDouble(o.getApi()))
-                        .average().orElse(0.0)
-                        ;
-                    bolBuilder.setApi(String.valueOf(api));
+                        .average()
+                        .orElse(0.0);
+                bolBuilder.setApi(String.valueOf(api));
                 double temperature =
                     billOfLaddings1.stream()
                         .filter(
@@ -108,7 +108,8 @@ public class LoadingInformationDischargeService {
                                             .compareTo(BigDecimal.ZERO)
                                         > 0))
                         .mapToDouble(o -> Double.parseDouble(o.getTemperature()))
-                        .average().orElse(0.0);
+                        .average()
+                        .orElse(0.0);
                 bolBuilder.setTemperature(String.valueOf(temperature));
                 builder.addBillOfLadding(bolBuilder);
               });

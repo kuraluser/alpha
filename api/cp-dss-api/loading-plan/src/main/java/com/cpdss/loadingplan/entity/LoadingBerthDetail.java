@@ -51,4 +51,7 @@ public class LoadingBerthDetail extends EntityDoc {
   private BigDecimal lineDisplacement;
 
   @Transient private Long communicationRelatedEntityId;
+
+  @Column(name = "displacement")
+  private BigDecimal displacement;
 }

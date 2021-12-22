@@ -67,4 +67,7 @@ public class BerthInfo extends EntityDoc {
 
   @Column(name = "berth_chart_datum_depth")
   private BigDecimal berthDatumDepth;
+
+  @Column(name = "displacement")
+  private BigDecimal displacement;
 }

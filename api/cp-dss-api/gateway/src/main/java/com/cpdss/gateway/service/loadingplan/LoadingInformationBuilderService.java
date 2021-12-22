@@ -229,6 +229,8 @@ public class LoadingInformationBuilderService {
               .ifPresent(depth -> builder.setDepth(String.valueOf(depth)));
           Optional.ofNullable(berth.getLineDisplacement())
               .ifPresent(v -> builder.setLineDisplacement(v));
+          Optional.ofNullable(berth.getDisplacement())
+              .ifPresent(displacement -> builder.setDisplacement(String.valueOf(displacement)));
           berthList.add(builder.build());
         });
     return berthList;

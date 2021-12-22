@@ -146,6 +146,7 @@ message DischargeBerths {
   string lineDisplacement = 12;
   string specialRegulationRestriction = 13;
   string itemsToBeAgreedWith = 14;
+  string displacement = 15;
 }
 
 message DischargeMachinesInUse{

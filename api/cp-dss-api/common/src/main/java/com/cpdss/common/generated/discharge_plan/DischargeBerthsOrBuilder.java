@@ -163,4 +163,17 @@ public interface DischargeBerthsOrBuilder
    * @return The bytes for itemsToBeAgreedWith.
    */
   com.google.protobuf.ByteString getItemsToBeAgreedWithBytes();
+
+  /**
+   * <code>string displacement = 15;</code>
+   *
+   * @return The displacement.
+   */
+  java.lang.String getDisplacement();
+  /**
+   * <code>string displacement = 15;</code>
+   *
+   * @return The bytes for displacement.
+   */
+  com.google.protobuf.ByteString getDisplacementBytes();
 }

@@ -382,6 +382,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
         Optional.ofNullable(bi.getPortInfo().getMaxPermissibleDraft())
             .ifPresent(t -> builder2.setPortMaxPermissibleDraft(t.toString()));
       }
+      Optional.ofNullable(bi.getDisplacement())
+          .ifPresent(displacement -> builder2.setDisplacement(displacement.toString()));
       builder.addBerths(builder2);
     }
   }

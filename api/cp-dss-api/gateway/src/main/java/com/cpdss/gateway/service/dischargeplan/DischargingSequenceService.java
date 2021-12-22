@@ -920,10 +920,14 @@ public class DischargingSequenceService {
       }
 
       this.populateStageTickPositions(reply, portEta, stageTickPositions);
-      Integer loadEnd = temp - (temp % (reply.getInterval() * 60)) + (reply.getInterval() * 60);
-      response.setMaxXAxisValue(portEta + (loadEnd * 60 * 1000));
-      if (!stageTickPositions.contains(response.getMaxXAxisValue())) {
-        stageTickPositions.add(response.getMaxXAxisValue());
+      if (reply.getDischargeSequencesCount() > 0) {
+        DischargingSequence lastDischargingSequence =
+            reply.getDischargeSequencesList().get(reply.getDischargeSequencesCount() - 1);
+        Integer loadEnd = lastDischargingSequence.getEndTime();
+        response.setMaxXAxisValue(portEta + (loadEnd * 60 * 1000));
+        if (!stageTickPositions.contains(response.getMaxXAxisValue())) {
+          stageTickPositions.add(response.getMaxXAxisValue());
+        }
       }
       response.setInterval(reply.getInterval());
 

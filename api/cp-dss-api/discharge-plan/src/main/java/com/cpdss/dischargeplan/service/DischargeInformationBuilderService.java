@@ -541,7 +541,8 @@ public class DischargeInformationBuilderService {
               .ifPresent(builder1::setSpecialRegulationRestriction);
           Optional.ofNullable(source.getItemToBeAgreed())
               .ifPresent(builder1::setItemsToBeAgreedWith);
-
+          Optional.ofNullable(source.getDisplacement())
+              .ifPresent(v -> builder1.setDisplacement(v.toString()));
           builder.addBerthDetails(builder1.build());
         }
         log.info("Setting Discharge berths");

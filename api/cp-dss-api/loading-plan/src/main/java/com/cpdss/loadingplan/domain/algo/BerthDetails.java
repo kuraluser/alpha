@@ -30,4 +30,5 @@ public class BerthDetails {
   private String underKeelClearance; // Get from port
   private String seawaterDensity; // Get from port
   private String portMaxPermissibleDraft; // Get from port
+  private BigDecimal displacement;
 }

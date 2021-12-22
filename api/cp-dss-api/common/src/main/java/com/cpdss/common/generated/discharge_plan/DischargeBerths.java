@@ -22,6 +22,7 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     lineDisplacement_ = "";
     specialRegulationRestriction_ = "";
     itemsToBeAgreedWith_ = "";
+    displacement_ = "";
   }
 
   @java.lang.Override
@@ -139,6 +140,13 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
               java.lang.String s = input.readStringRequireUtf8();
 
               itemsToBeAgreedWith_ = s;
+              break;
+            }
+          case 122:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              displacement_ = s;
               break;
             }
           default:
@@ -551,6 +559,41 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     }
   }
 
+  public static final int DISPLACEMENT_FIELD_NUMBER = 15;
+  private volatile java.lang.Object displacement_;
+  /**
+   * <code>string displacement = 15;</code>
+   *
+   * @return The displacement.
+   */
+  public java.lang.String getDisplacement() {
+    java.lang.Object ref = displacement_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      displacement_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string displacement = 15;</code>
+   *
+   * @return The bytes for displacement.
+   */
+  public com.google.protobuf.ByteString getDisplacementBytes() {
+    java.lang.Object ref = displacement_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      displacement_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -607,6 +650,9 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     if (!getItemsToBeAgreedWithBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 14, itemsToBeAgreedWith_);
     }
+    if (!getDisplacementBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 15, displacement_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -660,6 +706,9 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     if (!getItemsToBeAgreedWithBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(14, itemsToBeAgreedWith_);
     }
+    if (!getDisplacementBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, displacement_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -691,6 +740,7 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     if (!getSpecialRegulationRestriction().equals(other.getSpecialRegulationRestriction()))
       return false;
     if (!getItemsToBeAgreedWith().equals(other.getItemsToBeAgreedWith())) return false;
+    if (!getDisplacement().equals(other.getDisplacement())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -730,6 +780,8 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     hash = (53 * hash) + getSpecialRegulationRestriction().hashCode();
     hash = (37 * hash) + ITEMSTOBEAGREEDWITH_FIELD_NUMBER;
     hash = (53 * hash) + getItemsToBeAgreedWith().hashCode();
+    hash = (37 * hash) + DISPLACEMENT_FIELD_NUMBER;
+    hash = (53 * hash) + getDisplacement().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -896,6 +948,8 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
 
       itemsToBeAgreedWith_ = "";
 
+      displacement_ = "";
+
       return this;
     }
 
@@ -937,6 +991,7 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
       result.lineDisplacement_ = lineDisplacement_;
       result.specialRegulationRestriction_ = specialRegulationRestriction_;
       result.itemsToBeAgreedWith_ = itemsToBeAgreedWith_;
+      result.displacement_ = displacement_;
       onBuilt();
       return result;
     }
@@ -1036,6 +1091,10 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
       }
       if (!other.getItemsToBeAgreedWith().isEmpty()) {
         itemsToBeAgreedWith_ = other.itemsToBeAgreedWith_;
+        onChanged();
+      }
+      if (!other.getDisplacement().isEmpty()) {
+        displacement_ = other.displacement_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -1931,6 +1990,82 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
       checkByteStringIsUtf8(value);
 
       itemsToBeAgreedWith_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object displacement_ = "";
+    /**
+     * <code>string displacement = 15;</code>
+     *
+     * @return The displacement.
+     */
+    public java.lang.String getDisplacement() {
+      java.lang.Object ref = displacement_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        displacement_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string displacement = 15;</code>
+     *
+     * @return The bytes for displacement.
+     */
+    public com.google.protobuf.ByteString getDisplacementBytes() {
+      java.lang.Object ref = displacement_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        displacement_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string displacement = 15;</code>
+     *
+     * @param value The displacement to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDisplacement(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      displacement_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string displacement = 15;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDisplacement() {
+
+      displacement_ = getDefaultInstance().getDisplacement();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string displacement = 15;</code>
+     *
+     * @param value The bytes for displacement to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDisplacementBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      displacement_ = value;
       onChanged();
       return this;
     }
