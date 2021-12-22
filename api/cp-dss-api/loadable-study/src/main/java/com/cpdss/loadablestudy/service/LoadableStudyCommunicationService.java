@@ -252,8 +252,16 @@ public class LoadableStudyCommunicationService {
     return loadablePatternRepository.findById(id);
   }
 
-  private Optional<LoadablePlan> getLoadablePlan(Long id) {
-    return loadablePlanRepository.findById(id);
+  /**
+   * Method to get loadable plan from loadable_plan Id
+   *
+   * @param loadablePlanId loadablePlanId
+   * @return LoadablePlan entity
+   */
+  private Optional<LoadablePlan> getLoadablePlan(Long loadablePlanId) {
+    return null != loadablePlanId
+        ? loadablePlanRepository.findById(loadablePlanId)
+        : Optional.empty();
   }
   // endregion
 
@@ -267,7 +275,6 @@ public class LoadableStudyCommunicationService {
     log.info("processId group:" + dataTransferByProcessId);
     for (Map.Entry<String, List<DataTransferStage>> entry : dataTransferByProcessId.entrySet()) {
       clear();
-      HashMap<String, Long> idMap = new HashMap<>();
       String processId = entry.getKey();
 
       loadableStudyStagingService.updateStatusForProcessId(
@@ -786,9 +793,14 @@ public class LoadableStudyCommunicationService {
         saveLoadablePatternAlgoStatus();
         saveCommunicationStatusUpdate(processGroupId);
       } catch (ResourceAccessException e) {
+        log.error(
+            "Save failed loadable study communication data: processId: {}. Sent for retry.",
+            processId,
+            e);
         updateStatusInExceptionCase(
             idMap.get(current_table_name), processId, retryStatus, e.getMessage());
       } catch (Exception e) {
+        log.error("Save failed loadable study communication data: processId: {}", processId, e);
         updateStatusInExceptionCase(
             idMap.get(current_table_name),
             processId,
@@ -1429,7 +1441,7 @@ public class LoadableStudyCommunicationService {
     log.info("Communication #######  LoadablePatternCargoDetails are saved");
   }
 
-  /** Method to save loadable plan stowage ballast details */
+  /** Method to save loadable_plan_stowage_ballast_details */
   private void saveLoadablePlanStowageBallastDetails() {
     current_table_name = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable();
     if (null == loadablePlanStowageBallastDetailsStage
@@ -1838,6 +1850,7 @@ public class LoadableStudyCommunicationService {
   }
 
   private void clear() {
+    idMap.clear();
     loadableStudyStage = null;
     voyageStage = null;
     commingleCargoStage = null;
