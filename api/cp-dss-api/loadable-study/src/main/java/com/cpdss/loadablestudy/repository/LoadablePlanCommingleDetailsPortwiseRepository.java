@@ -4,8 +4,10 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
 import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /** @Author Mohamed.thaiseer */
 public interface LoadablePlanCommingleDetailsPortwiseRepository
@@ -39,4 +41,10 @@ public interface LoadablePlanCommingleDetailsPortwiseRepository
           + "AND lpcdp.isActive = true ")
   List<LoadablePlanComminglePortwiseDetails> findCargoNominationIdsByPatternPortAndOperationType(
       Long patternId, Long portRId, String opType);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadablePlanComminglePortwiseDetails SET isActive = false WHERE loadablePattern.id = ?2")
+  void deleteByLoadablePatternId(Long loadablePatternId);
 }

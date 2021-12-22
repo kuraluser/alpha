@@ -1643,6 +1643,8 @@ public class LoadablePatternService {
     synopticalTableLoadicatorDataRepository.deleteByLoadablePatternId(
         false, loadablePattern.getId());
     cargoToppingOffSequenceRepository.deleteByLoadablePatternId(loadablePattern.getId());
+    loadablePlanCommingleDetailsPortwiseRepository.deleteByLoadablePatternId(
+        loadablePattern.getId());
   }
 
   public com.cpdss.common.generated.LoadableStudy.LoadablePatternReply.Builder
