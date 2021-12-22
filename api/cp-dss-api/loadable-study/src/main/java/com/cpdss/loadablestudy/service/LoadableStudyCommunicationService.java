@@ -119,6 +119,7 @@ public class LoadableStudyCommunicationService {
   @Autowired private GenerateDischargeStudyJson generateDischargeStudyJson;
   @Autowired private VoyageStatusRepository voyageStatusRepository;
   @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
+  @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   // endregion
 
   // region Declarations
@@ -162,6 +163,7 @@ public class LoadableStudyCommunicationService {
   private List<LoadablePlanComments> loadablePlanCommentsStage = null;
   private List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempStage = null;
   private LoadablePatternAlgoStatus loadablePatternAlgoStatusStage = null;
+  private List<DischargeStudyCowDetail> dischargeStudyCowDetailStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -753,6 +755,19 @@ public class LoadableStudyCommunicationService {
                       "loadable_study_status");
               break;
             }
+          case discharge_cow_details:
+            {
+              Type type = new TypeToken<ArrayList<DischargeStudyCowDetail>>() {}.getType();
+              dischargeStudyCowDetailStage =
+                  bindDataToEntity(
+                      new DischargeStudyCowDetail(),
+                      type,
+                      LoadableStudyTables.DISCHARGE_COW_DETAILS,
+                      data,
+                      dataTransferStage.getId(),
+                      null);
+              break;
+            }
         }
       }
 
@@ -761,7 +776,6 @@ public class LoadableStudyCommunicationService {
         saveVoyage();
         saveLoadableStudy();
         saveCargoNomination();
-        saveCargoNominationOperationDetails();
         saveCommingleCargo();
         saveLoadableStudyPortRotation();
         saveOnHandQuantity();
@@ -791,6 +805,7 @@ public class LoadableStudyCommunicationService {
         saveLoadablePlanComments();
         saveLoadablePlanStowageDetailsTemp();
         saveLoadablePatternAlgoStatus();
+        saveDischargeStudyCowDetail();
         saveCommunicationStatusUpdate(processGroupId);
       } catch (ResourceAccessException e) {
         log.error(
@@ -930,9 +945,33 @@ public class LoadableStudyCommunicationService {
               cargoNominationRepository.findById(cargoNomination.getId());
           cargoNomination.setVersion(
               optionalCargoNomination.map(EntityDoc::getVersion).orElse(null));
+          // setting cargoNomination to CargoNominationPortDetails
+          if (!isEmpty(cargoNominationOperationDetailsStage)) {
+            cargoNominationOperationDetailsStage.forEach(
+                cargoNominationOperationDetails -> {
+                  Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
+                      cargoNominationOperationDetailsRepository.findById(
+                          cargoNominationOperationDetails.getId());
+                  cargoNominationOperationDetails.setVersion(
+                      optionalCargoNominationOperationDetails
+                          .map(EntityDoc::getVersion)
+                          .orElse(null));
+
+                  if (cargoNomination
+                      .getId()
+                      .equals(cargoNominationOperationDetails.getCommunicationRelatedEntityId())) {
+                    cargoNominationOperationDetails.setCargoNomination(cargoNomination);
+                  }
+                });
+          }
+          // setting cargoNominationPortDetails to cargoNomination
+          Set<CargoNominationPortDetails> cargoNominationPortDetails =
+              new HashSet<>(cargoNominationOperationDetailsStage);
+          cargoNomination.setCargoNominationPortDetails(cargoNominationPortDetails);
         });
+
     cargoNominationStage = cargoNominationRepository.saveAll(cargoNominationStage);
-    log.info("Communication #######  CargoNomination saved");
+    log.info("Communication #######  CargoNomination and CargoNomination Operation Details saved");
   }
 
   /** Method to save cargo nomination operation details */
@@ -957,8 +996,7 @@ public class LoadableStudyCommunicationService {
                   cargoNominationOperationDetails.getCommunicationRelatedEntityId());
           optionalCargoNomination.ifPresent(cargoNominationOperationDetails::setCargoNomination);
         });
-    cargoNominationOperationDetailsStage =
-        cargoNominationOperationDetailsRepository.saveAll(cargoNominationOperationDetailsStage);
+    cargoNominationOperationDetailsRepository.saveAll(cargoNominationOperationDetailsStage);
     log.info("Communication #######  CargoNomination Operation Details saved");
   }
 
@@ -1754,6 +1792,24 @@ public class LoadableStudyCommunicationService {
                   .get("loadable_study_status"));
     }
   }
+  /** Method to save discharge_cow_details table */
+  private void saveDischargeStudyCowDetail() {
+    current_table_name = LoadableStudyTables.DISCHARGE_COW_DETAILS.getTable();
+    if (!isEmpty(dischargeStudyCowDetailStage)) {
+      for (DischargeStudyCowDetail dischargeStudyCowDetail : dischargeStudyCowDetailStage) {
+        // Set version
+        Optional<DischargeStudyCowDetail> dischargeStudyCowDetailOpt =
+            dischargeStudyCowDetailRepository.findById(dischargeStudyCowDetail.getId());
+        dischargeStudyCowDetail.setVersion(
+            dischargeStudyCowDetailOpt.map(EntityDoc::getVersion).orElse(null));
+      }
+      // Save data
+      dischargeStudyCowDetailRepository.saveAll(dischargeStudyCowDetailStage);
+      log.info(
+          "Communication #######  discharge_cow_details saved. Entries: {}",
+          dischargeStudyCowDetailStage.size());
+    }
+  }
 
   /**
    * Method to update status in exception
@@ -1765,6 +1821,7 @@ public class LoadableStudyCommunicationService {
    */
   private void updateStatusInExceptionCase(
       Long id, String processId, String status, String statusDescription) {
+    log.error("statusDescription:{}", statusDescription);
     loadableStudyStagingService.updateStatusAndStatusDescriptionForId(
         id, status, statusDescription, LocalDateTime.now());
     loadableStudyStagingService.updateStatusAndModifiedDateTimeForProcessId(
@@ -1891,6 +1948,7 @@ public class LoadableStudyCommunicationService {
     loadablePlanCommentsStage = null;
     loadablePlanStowageDetailsTempStage = null;
     loadablePatternAlgoStatusStage = null;
+    dischargeStudyCowDetailStage = null;
   }
 
   // endregion

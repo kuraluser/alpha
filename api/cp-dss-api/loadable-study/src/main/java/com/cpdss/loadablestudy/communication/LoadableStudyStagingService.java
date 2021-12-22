@@ -738,6 +738,25 @@ public class LoadableStudyStagingService extends StagingService {
             }
             break;
           }
+        case discharge_cow_details:
+          {
+            String dischargeStudyCowDetailJson =
+                loadableStudyStagingRepository.getDischargeStudyCowDetailWithDischargeStudyId(
+                    loadableStudyId);
+            if (dischargeStudyCowDetailJson != null) {
+              JsonArray dischargeStudyCowDetail =
+                  JsonParser.parseString(dischargeStudyCowDetailJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  dischargeStudyCowDetail);
+            }
+            break;
+          }
       }
     }
     return array;

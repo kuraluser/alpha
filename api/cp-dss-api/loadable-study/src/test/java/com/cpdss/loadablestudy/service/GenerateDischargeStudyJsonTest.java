@@ -75,6 +75,9 @@ public class GenerateDischargeStudyJsonTest {
 
   @MockBean SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
+  @MockBean
+  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
   private static final String SUCCESS = "SUCCESS";
 
   @Test

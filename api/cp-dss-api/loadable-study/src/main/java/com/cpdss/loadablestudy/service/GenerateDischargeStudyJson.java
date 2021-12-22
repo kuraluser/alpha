@@ -114,6 +114,9 @@ public class GenerateDischargeStudyJson {
 
   @Autowired private LoadableStudyRuleService loadableStudyRuleService;
 
+  @Autowired
+  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -845,9 +848,12 @@ public class GenerateDischargeStudyJson {
       List<CargoNominationOperationDetails> cargoNominationOperationDetailsList = new ArrayList<>();
       cargoNominationReply.forEach(
           item -> {
-            if (!CollectionUtils.isEmpty(item.getCargoNominationPortDetails())) {
-              Iterator<CargoNominationPortDetails> iterator =
-                  item.getCargoNominationPortDetails().iterator();
+            List<CargoNominationPortDetails> cargoNominationPortDetails =
+                cargoNominationOperationDetailsRepository.findByCargoNominationnAndIsActive(
+                    item, true);
+            if (!CollectionUtils.isEmpty(cargoNominationPortDetails)) {
+              log.info("CargoNominationPortDetails get:{}", cargoNominationPortDetails.size());
+              Iterator<CargoNominationPortDetails> iterator = cargoNominationPortDetails.iterator();
               while (iterator.hasNext()) {
                 CargoNominationPortDetails iteratorItem = iterator.next();
                 if (iteratorItem.getIsActive()) {

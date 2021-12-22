@@ -321,7 +321,8 @@ public class LoadableStudiesConstants {
     LOADABLE_STUDY_RULE_INPUT("loadable_study_rule_input"),
     LOADABLE_PLAN_COMMENTS("loadable_plan_comments"),
     LOADABLE_PLAN_STOWAGE_DETAILS_TEMP("loadable_plan_stowage_details_temp"),
-    LOADABLE_PATTERN_ALGO_STATUS("loadable_pattern_algo_status");
+    LOADABLE_PATTERN_ALGO_STATUS("loadable_pattern_algo_status"),
+    DISCHARGE_COW_DETAILS("discharge_cow_details");
 
     public final String table;
   }
@@ -335,5 +336,6 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS.getTable(),
           LoadableStudyTables.ON_HAND_QUANTITY.getTable(),
           LoadableStudyTables.COW_HISTORY.getTable(),
-          LoadableStudyTables.SYNOPTICAL_TABLE.getTable());
+          LoadableStudyTables.SYNOPTICAL_TABLE.getTable(),
+          LoadableStudyTables.DISCHARGE_COW_DETAILS.getTable());
 }
