@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain.dischargeplan;
 
 import com.cpdss.common.generated.Common;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
@@ -26,8 +27,15 @@ public class CowPlan {
   private Boolean needFlushingOil;
 
   private Boolean washTanksWithDifferentCargo;
+
+  @JsonAlias("topCowTankIds")
   private List<Long> topCow;
+
+  @JsonAlias("bottomCowTankIds")
   private List<Long> bottomCow;
+
+  @JsonAlias("allCowTankIds")
   private List<Long> allCow;
+
   private List<CargoForCowDetails> cargoCow;
 }

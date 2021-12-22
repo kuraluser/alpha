@@ -185,4 +185,9 @@ public interface LoadableStudyPortRotationRepository
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_port_rotation u where loadable_study_xid=?2 and port_xid=?1",
       nativeQuery = true)
   String getLoadableStudyPortRotationWithPortIdAndLoadableStudyId(Long id, Long loadableStudyId);
+
+  @Query(
+      value =
+          "SELECT DISTINCT portXId, lspr.loadableStudy.id, lspr.portOrder FROM LoadableStudyPortRotation lspr where lspr.loadableStudy.id IN ?1 AND lspr.operation.id = ?2 AND isActive = true ORDER BY lspr.portOrder ASC")
+  List<Object[]> getPortIdListForLSAndDSForVoyages(List<Long> ids, Long operationType);
 }

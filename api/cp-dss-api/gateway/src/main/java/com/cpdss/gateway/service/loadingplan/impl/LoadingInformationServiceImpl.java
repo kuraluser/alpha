@@ -659,13 +659,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                 .findFirst();
         if (locCargo.isPresent()) {
           // add quantity
-          var1.getCargoQuantities().stream()
-              .filter(v -> v.getAbbreviation().equals(mp.getKey()))
-              .forEach(
-                  v -> {
-                    v.setActualWeight(v.getActualWeight().add(mp.getValue().getActualWeight()));
-                    v.setPlannedWeight(v.getPlannedWeight().add(mp.getValue().getPlannedWeight()));
-                  });
+          for (var carQty : var1.getCargoConditions()) {
+            if (carQty.getAbbreviation().equals(mp.getKey())) {
+              carQty.setActualWeight(carQty.getActualWeight().add(mp.getValue().getActualWeight()));
+              carQty.setPlannedWeight(
+                  carQty.getPlannedWeight().add(mp.getValue().getPlannedWeight()));
+            }
+          }
         } else {
           // add to grid
           var1.getCargoConditions().add(mp.getValue());

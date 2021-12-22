@@ -2495,6 +2495,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Override
   public void getVoyages(VoyageRequest request, StreamObserver<VoyageListReply> responseObserver) {
     VoyageListReply.Builder builder = VoyageListReply.newBuilder();
+    log.info("Get Voyages - Payload \n {}", Utils.toJson(request));
     try {
       voyageService.getVoyages(request, builder);
     } catch (Exception e) {
