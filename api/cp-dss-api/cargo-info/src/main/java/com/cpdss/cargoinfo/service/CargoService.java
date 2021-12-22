@@ -331,27 +331,30 @@ public class CargoService extends CargoInfoServiceImplBase {
 
     try {
 
-      List<Cargo> cargos =
-          this.cargoRepository.findByCrudeTypeIgnoreCaseAndIsActiveTrue(request.getName());
-      if (!cargos.isEmpty()) {
-        throw new GenericServiceException(
-            "Cargo with the same name already exists",
-            CommonErrorCodes.E_CPDSS_CARGO_NAME_ALREADY_EXISTS,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      cargos =
-          this.cargoRepository.findByAbbreviationIgnoreCaseAndIsActiveTrue(
-              request.getAbbreviation());
-      if (!cargos.isEmpty()) {
-        throw new GenericServiceException(
-            "Cargo with the same abbreviation already exists",
-            CommonErrorCodes.E_CPDSS_CARGO_ABBREVIATION_ALREADY_EXISTS,
-            HttpStatusCode.BAD_REQUEST);
-      }
-
       Cargo cargo;
       if (request.getId() == 0) {
+
+        List<Cargo> cargos =
+            this.cargoRepository.findByCrudeTypeIgnoreCaseAndIsActiveTrue(request.getName());
+        if (!cargos.isEmpty()) {
+          log.error("Cargo with the same name already exists!");
+          throw new GenericServiceException(
+              "Cargo with the same name already exists!",
+              CommonErrorCodes.E_CPDSS_CARGO_NAME_ALREADY_EXISTS,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        cargos =
+            this.cargoRepository.findByAbbreviationIgnoreCaseAndIsActiveTrue(
+                request.getAbbreviation());
+        if (!cargos.isEmpty()) {
+          log.error("Cargo with the same abbreviation already exists!");
+          throw new GenericServiceException(
+              "Cargo with the same abbreviation already exists!",
+              CommonErrorCodes.E_CPDSS_CARGO_ABBREVIATION_ALREADY_EXISTS,
+              HttpStatusCode.BAD_REQUEST);
+        }
         cargo = new Cargo();
+
       } else {
         cargo = this.cargoRepository.getById(request.getId());
       }

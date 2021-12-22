@@ -577,6 +577,7 @@ public class CargoPortInfoService {
 
     if (cargoReply != null
         && !SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
+      log.error("Failed to save cargo!");
       throw new GenericServiceException(
           "Failed to save cargo!",
           cargoReply.getResponseStatus().getCode(),
@@ -590,6 +591,7 @@ public class CargoPortInfoService {
         this.portInfoServiceBlockingStub.saveAllCargoPortMappings(cargoPortMappingRequest.build());
 
     if (cargoPortReply != null
+        && cargoReply != null
         && SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
 
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
@@ -598,6 +600,7 @@ public class CargoPortInfoService {
       cargoResponse.setResponseStatus(commonSuccessResponse);
       buildCargoByIdDetailedResponse(cargoResponse, cargoReply, cargoPortReply.getPortsList());
     } else {
+      log.error("Error in saving cargo port mappings!");
       throw new GenericServiceException(
           "Error in saving cargo port mappings!",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
@@ -644,21 +647,35 @@ public class CargoPortInfoService {
       CargoDetailed cargoDetailed, Long cargoId, CargoInfo.CargoDetailed.Builder cargoRequest) {
 
     cargoRequest.setId(cargoId);
-    cargoRequest.setName(cargoDetailed.getName());
-    cargoRequest.setAbbreviation(cargoDetailed.getAbbreviation());
-    cargoRequest.setApi(cargoDetailed.getApi());
-    cargoRequest.setTemp(cargoDetailed.getTemp());
-    cargoRequest.setReidVapourPressure(cargoDetailed.getReidVapourPressure());
-    cargoRequest.setGas(cargoDetailed.getGas());
-    cargoRequest.setTotalWax(cargoDetailed.getTotalWax());
-    cargoRequest.setPourPoint(cargoDetailed.getPourPoint());
-    cargoRequest.setCloudPoint(cargoDetailed.getCloudPoint());
-    cargoRequest.setViscosity(cargoDetailed.getViscosity());
-    cargoRequest.setCowCodes(cargoDetailed.getCowCodes());
-    cargoRequest.setHydrogenSulfideOil(cargoDetailed.getHydrogenSulfideOil());
-    cargoRequest.setHydrogenSulfideVapour(cargoDetailed.getHydrogenSulfideVapour());
-    cargoRequest.setBenzene(cargoDetailed.getBenzene());
-    cargoRequest.setSpecialInstrictionsRemark(cargoDetailed.getSpecialInstrictionsRemark());
+    cargoRequest.setName(cargoDetailed.getName() == null ? "" : cargoDetailed.getName());
+    cargoRequest.setAbbreviation(
+        cargoDetailed.getAbbreviation() == null ? "" : cargoDetailed.getAbbreviation());
+    cargoRequest.setApi(cargoDetailed.getApi() == null ? "" : cargoDetailed.getApi());
+    cargoRequest.setTemp(cargoDetailed.getTemp() == null ? "" : cargoDetailed.getTemp());
+    cargoRequest.setReidVapourPressure(
+        cargoDetailed.getReidVapourPressure() == null ? "" : cargoDetailed.getReidVapourPressure());
+    cargoRequest.setGas(cargoDetailed.getGas() == null ? "" : cargoDetailed.getGas());
+    cargoRequest.setTotalWax(
+        cargoDetailed.getTotalWax() == null ? "" : cargoDetailed.getTotalWax());
+    cargoRequest.setPourPoint(
+        cargoDetailed.getPourPoint() == null ? "" : cargoDetailed.getPourPoint());
+    cargoRequest.setCloudPoint(
+        cargoDetailed.getCloudPoint() == null ? "" : cargoDetailed.getCloudPoint());
+    cargoRequest.setViscosity(
+        cargoDetailed.getViscosity() == null ? "" : cargoDetailed.getViscosity());
+    cargoRequest.setCowCodes(
+        cargoDetailed.getCowCodes() == null ? "" : cargoDetailed.getCowCodes());
+    cargoRequest.setHydrogenSulfideOil(
+        cargoDetailed.getHydrogenSulfideOil() == null ? "" : cargoDetailed.getHydrogenSulfideOil());
+    cargoRequest.setHydrogenSulfideVapour(
+        cargoDetailed.getHydrogenSulfideVapour() == null
+            ? ""
+            : cargoDetailed.getHydrogenSulfideVapour());
+    cargoRequest.setBenzene(cargoDetailed.getBenzene() == null ? "" : cargoDetailed.getBenzene());
+    cargoRequest.setSpecialInstrictionsRemark(
+        cargoDetailed.getSpecialInstrictionsRemark() == null
+            ? ""
+            : cargoDetailed.getSpecialInstrictionsRemark());
   }
 
   /**
