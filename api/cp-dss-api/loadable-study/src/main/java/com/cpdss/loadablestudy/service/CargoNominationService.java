@@ -120,7 +120,8 @@ public class CargoNominationService {
 
   public List<CargoNomination> getCargoNominations(Long loadableStudyId) {
     List<CargoNomination> cargos =
-        cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(loadableStudyId, true);
+        cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderByCreatedDateTime(
+            loadableStudyId, true);
     return cargos;
   }
 

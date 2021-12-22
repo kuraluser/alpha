@@ -1187,14 +1187,14 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       return;
     }
     portRotations.stream()
-            .forEach(
-                    port -> {
-                      port.setIsbackloadingEnabled(false);
-                      port.setCowRequired(true);
-                      port.setFreshCrudeOil(false);
-                      port.setFreshCrudeOilQuantity(null);
-                      port.setFreshCrudeOilTime(null);
-                    });
+        .forEach(
+            port -> {
+              port.setIsbackloadingEnabled(false);
+              port.setCowRequired(true);
+              port.setFreshCrudeOil(false);
+              port.setFreshCrudeOilQuantity(null);
+              port.setFreshCrudeOilTime(null);
+            });
     loadableStudyPortRotationRepository.saveAll(portRotations);
     LoadableStudyPortRotation newPort = portRotations.get(portRotations.size() - 1);
 
@@ -1253,9 +1253,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   private List<CargoNomination> createNewPortCargoNominations(
       long loadableStudyId, LoadableStudyPortRotation newPort) {
     List<CargoNomination> cargos = cargoNominationService.getCargoNominations(loadableStudyId);
-    cargos.stream().forEach(cargo -> {
-      cargo.setEmptyMaxNoOfTanks(false);
-    });
+    cargos.stream()
+        .forEach(
+            cargo -> {
+              cargo.setEmptyMaxNoOfTanks(false);
+            });
     List<LoadableStudyPortRotation> ports =
         loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(loadableStudyId, true);
     Optional<LoadableStudyPortRotation> firstDischargingPort =
