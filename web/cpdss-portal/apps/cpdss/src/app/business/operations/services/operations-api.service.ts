@@ -97,7 +97,7 @@ export class OperationsApiService {
  * @memberof OperationsApiService
  */
   downloadPlanTemplate(vesselId: number, voyageId: number, infoId: number, portRotationId: number, operation: OPERATIONS, data): Observable<any> {
-    return this.commonApiService.postFile<any, any>(`vessels/${vesselId}/voyages/${voyageId}/${operation === OPERATIONS.DISCHARGING ? 'discharge' : 'loading'}-info/${infoId}/port-rotation/${portRotationId}/report`, data, { responseType: 'blob' as 'json' });
+    return this.commonApiService.postFile<any, any>(`vessels/${vesselId}/voyages/${voyageId}/${operation === OPERATIONS.DISCHARGING ? 'discharging' : 'loading'}-info/${infoId}/port-rotation/${portRotationId}/report`, data, { responseType: 'blob' as 'json' });
 
   }
 
