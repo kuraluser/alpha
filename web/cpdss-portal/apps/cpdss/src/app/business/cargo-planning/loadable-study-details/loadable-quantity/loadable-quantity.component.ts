@@ -187,9 +187,8 @@ export class LoadableQuantityComponent implements OnInit {
     if (this.loadableQuantity.constant === '') {
       this.isNoConstant = true;
     }
-
     this.loadableQuantityForm.controls.portName.setValue(this.selectedPort);
-    this.loadableQuantityForm.controls.arrivalMaxDraft.setValue(this.loadableQuantity.draftRestriction);
+    this.loadableQuantityForm.controls.arrivalMaxDraft.setValue(Number(this.loadableQuantity?.draftRestriction ?? 0)?.toFixed(2));
     this.loadableQuantityForm.controls.dwt.setValue(this.loadableQuantity.dwt);
     this.loadableQuantityForm.controls.tpc.setValue(this.loadableQuantity.tpc);
     this.loadableQuantityForm.controls.estimateSag.setValue(this.loadableQuantity.estSagging);

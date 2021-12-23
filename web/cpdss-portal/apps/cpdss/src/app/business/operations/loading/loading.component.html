@@ -10,14 +10,14 @@
     </div>
     <div class="pr-15 text-right">
       <cpdss-portal-simulator *ngIf="vesselId && loadingInfoId && loadingSequenceComplete" [vesselId]="vesselId" [loadingInfoId]="loadingInfoId"
-        [requestType]="SIMULATOR_REQUEST_TYPE.LOADING_SEQUENCE" [buttonLabel]="'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL'">
+        [requestType]="SIMULATOR_REQUEST_TYPE.LOADING_SEQUENCE" [buttonLabel]="'LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL_OPERATION'">
       </cpdss-portal-simulator>
 
       <button class="btn btn-main mr-10" id="in_use" [disabled]="disableViewErrorButton"
         (click)="viewError(true)">{{'LOADING_INFORMATION_VIEW_ERROR' |translate}}</button>
         <button [disabled]="!loadingPlanComplete" (click)="downloadLoadingPlanTemplate()" class="btn btn-main mr-10" id="download_excel">
           <span class="download-icon v-top mr-10" ></span>
-          {{'DOWNLOAD_TEMPLATE' |translate}}
+          {{'DOWNLOAD_EXCEL' |translate}}
         </button>
       <button [hidden]="true" class="btn btn-main mr-10" id="in_use">
         <span class="pi pi-check check-rounded v-t-bottom"></span>
