@@ -9,7 +9,6 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
@@ -767,12 +766,6 @@ public class DischargingSequenceService {
     Map<Long, CargoNominationDetail> cargoNomDetails =
         this.getCargoNominationDetails(cargoNominationIds);
 
-    // Get ballast color details
-    List<LoadablePlanBallastDetails> ballastDetails = new ArrayList<>();
-    ballastDetails.addAll(
-        loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
-            reply.getDischargePatternId(), reply.getPortRotationId()));
-
     List<Cargo> cargos = new ArrayList<Cargo>();
     List<Ballast> ballasts = new ArrayList<Ballast>();
     List<BallastPump> allPumps = new ArrayList<BallastPump>();
@@ -799,15 +792,15 @@ public class DischargingSequenceService {
           StringUtils.isEmpty(reply.getStartDate())
               ? new Date().toInstant().toEpochMilli()
               : sdf.parse(reply.getStartDate()).toInstant().toEpochMilli());
-      if (!StringUtils.isEmpty(portDetail.getTimezoneOffsetVal())) {
-        response.setMinXAxisValue(
-            response.getMinXAxisValue()
-                + (long)
-                    (Float.valueOf(portDetail.getTimezoneOffsetVal()).floatValue()
-                        * 60
-                        * 60
-                        * 1000));
-      }
+      //      if (!StringUtils.isEmpty(portDetail.getTimezoneOffsetVal())) {
+      //        response.setMinXAxisValue(
+      //            response.getMinXAxisValue()
+      //                + (long)
+      //                    (Float.valueOf(portDetail.getTimezoneOffsetVal()).floatValue()
+      //                        * 60
+      //                        * 60
+      //                        * 1000));
+      //      }
     } catch (ParseException e) {
       e.printStackTrace();
       response.setMinXAxisValue(new Date().toInstant().toEpochMilli());
@@ -888,7 +881,6 @@ public class DischargingSequenceService {
                   portEta,
                   start,
                   portWiseDetails,
-                  ballastDetails,
                   ballasts,
                   ballastTankCategories,
                   dischargeSeq.getStageName());
@@ -1375,7 +1367,12 @@ public class DischargingSequenceService {
                             .map(vesselPump -> vesselPump.getPumpTypeId())
                             .findFirst()
                             .get()))
+            .filter(
+                pump ->
+                    pump.getRate().compareTo(BigDecimal.ZERO)
+                        > 0) // Filters out in active pump instances
             .collect(Collectors.toList()));
+
     response.setCargoPumps(
         ballastPumps.stream()
             .filter(
@@ -1792,20 +1789,12 @@ public class DischargingSequenceService {
       Long portEta,
       Integer start,
       DischargePlanPortWiseDetails portWiseDetails,
-      List<LoadablePlanBallastDetails> ballastDetails,
       List<Ballast> ballasts,
       Set<TankCategory> ballastTankCategories,
       String stageName) {
     Ballast ballastDto = new Ballast();
     Optional<VesselTankDetail> tankDetailOpt =
         Optional.ofNullable(vesselTankMap.get(ballast.getTankId()));
-    Optional<LoadablePlanBallastDetails> ballastDetailsOpt =
-        ballastDetails.stream()
-            .filter(
-                details ->
-                    (details.getTankId() == ballast.getTankId())
-                        && !StringUtils.isEmpty(details.getColorCode()))
-            .findFirst();
     Integer end =
         buildBallast(ballast, ballastDto, portEta, start, portWiseDetails.getTime(), stageName);
     TankCategory tankCategory = new TankCategory();
@@ -1816,7 +1805,7 @@ public class DischargingSequenceService {
           tankCategory.setTankName(tank.getShortName());
           tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
         });
-    ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
+    ballastDto.setColor(BALLAST_COLOR);
     ballastTankCategories.add(tankCategory);
     ballasts.add(ballastDto);
     return end;

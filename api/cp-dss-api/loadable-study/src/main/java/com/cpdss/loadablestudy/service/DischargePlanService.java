@@ -10,6 +10,7 @@ import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.loadablestudy.domain.LoadabalePatternDetails;
 import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
 import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails;
+import com.cpdss.loadablestudy.domain.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.*;
@@ -65,7 +66,8 @@ public class DischargePlanService {
     PortInfo.PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
     VesselInfo.VesselRequest.Builder builder = VesselInfo.VesselRequest.newBuilder();
     builder.setVesselId(loadablePattern.getLoadableStudy().getVesselXId());
-    builder.addTankCategories(2L);
+    builder.addTankCategories(CARGO_TANK_CATEGORY_ID);
+    builder.addTankCategories(BALLAST_TANK_CATEGORY_ID);
     VesselInfo.VesselReply vesselTanksReply = vesselInfoGrpcService.getVesselTanks(builder.build());
 
     List<com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetails> loadablePlanPortWiseDetails =
@@ -174,19 +176,33 @@ public class DischargePlanService {
         .getVesselTanksList()
         .forEach(
             vesselTankDetail -> {
-              if (portCondition.getLoadablePlanBallastDetails().stream()
-                      .filter(ballast -> ballast.getTankId() == vesselTankDetail.getTankId())
-                      .collect(Collectors.toList())
-                      .size()
-                  == 0) {
-                com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
-                    new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
-                details.setId(0L);
-                details.setQuantityMT(BigDecimal.ZERO.toString());
-                details.setTankId(vesselTankDetail.getTankId());
-                details.setColorCode(BALLAST_TANK_COLOR_CODE);
-                details.setSg(BigDecimal.ZERO.toString());
-                portCondition.getLoadablePlanBallastDetails().add(details);
+              if (vesselTankDetail.getTankCategoryId() == CARGO_TANK_CATEGORY_ID) {
+                if (portCondition.getLoadablePlanStowageDetails().stream()
+                        .filter(stowage -> stowage.getTankId() == vesselTankDetail.getTankId())
+                        .collect(Collectors.toList())
+                        .size()
+                    == 0) {
+                  LoadablePlanStowageDetails details = new LoadablePlanStowageDetails();
+                  details.setId(0L);
+                  details.setQuantityMT(null);
+                  details.setTankId(vesselTankDetail.getTankId());
+                  portCondition.getLoadablePlanStowageDetails().add(details);
+                }
+              } else {
+                if (portCondition.getLoadablePlanBallastDetails().stream()
+                        .filter(ballast -> ballast.getTankId() == vesselTankDetail.getTankId())
+                        .collect(Collectors.toList())
+                        .size()
+                    == 0) {
+                  com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
+                      new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
+                  details.setId(0L);
+                  details.setQuantityMT(BigDecimal.ZERO.toString());
+                  details.setTankId(vesselTankDetail.getTankId());
+                  details.setColorCode(BALLAST_TANK_COLOR_CODE);
+                  details.setSg(BigDecimal.ZERO.toString());
+                  portCondition.getLoadablePlanBallastDetails().add(details);
+                }
               }
             });
   }

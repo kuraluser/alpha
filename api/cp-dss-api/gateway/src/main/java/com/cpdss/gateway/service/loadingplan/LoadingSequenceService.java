@@ -8,7 +8,6 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrors;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanBallastDetails;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
@@ -105,10 +104,6 @@ public class LoadingSequenceService {
     Map<Long, CargoNominationDetail> cargoNomDetails =
         this.getCargoNominationDetails(cargoNominationIds);
 
-    List<LoadablePlanBallastDetails> ballastDetails = new ArrayList<>();
-    ballastDetails.addAll(
-        loadingPlanGrpcService.fetchLoadablePlanBallastDetails(
-            reply.getLoadablePatternId(), reply.getPortRotationId()));
     List<Cargo> cargos = new ArrayList<Cargo>();
     List<Ballast> ballasts = new ArrayList<Ballast>();
     List<BallastPump> ballastPumps = new ArrayList<BallastPump>();
@@ -131,15 +126,15 @@ public class LoadingSequenceService {
           StringUtils.isEmpty(reply.getStartDate())
               ? new Date().toInstant().toEpochMilli()
               : sdf.parse(reply.getStartDate()).toInstant().toEpochMilli());
-      if (!StringUtils.isEmpty(portDetail.getTimezoneOffsetVal())) {
-        response.setMinXAxisValue(
-            response.getMinXAxisValue()
-                + (long)
-                    (Float.valueOf(portDetail.getTimezoneOffsetVal()).floatValue()
-                        * 60
-                        * 60
-                        * 1000));
-      }
+      //      if (!StringUtils.isEmpty(portDetail.getTimezoneOffsetVal())) {
+      //        response.setMinXAxisValue(
+      //            response.getMinXAxisValue()
+      //                + (long)
+      //                    (Float.valueOf(portDetail.getTimezoneOffsetVal()).floatValue()
+      //                        * 60
+      //                        * 60
+      //                        * 1000));
+      //      }
     } catch (ParseException e) {
       e.printStackTrace();
       response.setMinXAxisValue(new Date().toInstant().toEpochMilli());
@@ -222,7 +217,6 @@ public class LoadingSequenceService {
                   portEta,
                   start,
                   portWiseDetails,
-                  ballastDetails,
                   ballasts,
                   ballastTankCategories,
                   loadingSequence.getStageName(),
@@ -378,7 +372,7 @@ public class LoadingSequenceService {
               buildBallastPump(operation, portEta, ballastPump);
               if (ballastPump.getPumpId() == 0L) {
                 gravityList.add(ballastPump);
-              } else {
+              } else if (ballastPump.getRate().compareTo(BigDecimal.ZERO) > 0) {
                 ballastPumps.add(ballastPump);
               }
             });
@@ -894,7 +888,6 @@ public class LoadingSequenceService {
       Long portEta,
       Integer start,
       LoadingPlanPortWiseDetails portWiseDetails,
-      List<LoadablePlanBallastDetails> ballastDetails,
       List<Ballast> ballasts,
       Set<TankCategory> ballastTankCategories,
       String stageName,
@@ -902,13 +895,6 @@ public class LoadingSequenceService {
     Ballast ballastDto = new Ballast();
     Optional<VesselTankDetail> tankDetailOpt =
         Optional.ofNullable(vesselTankMap.get(ballast.getTankId()));
-    Optional<LoadablePlanBallastDetails> ballastDetailsOpt =
-        ballastDetails.stream()
-            .filter(
-                details ->
-                    (details.getTankId() == ballast.getTankId())
-                        && !StringUtils.isEmpty(details.getColorCode()))
-            .findFirst();
     Integer end =
         buildBallast(
             ballast,
@@ -926,7 +912,7 @@ public class LoadingSequenceService {
           tankCategory.setTankName(tank.getShortName());
           tankCategory.setDisplayOrder(tank.getTankDisplayOrder());
         });
-    ballastDetailsOpt.ifPresent(details -> ballastDto.setColor(details.getColorCode()));
+    ballastDto.setColor(BALLAST_COLOR);
     ballastTankCategories.add(tankCategory);
     if (!(stageName.equals("topping")
         && (ballastDto.getSounding().compareTo(BigDecimal.ZERO) == 0))) {
