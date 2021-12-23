@@ -337,5 +337,7 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.ON_HAND_QUANTITY.getTable(),
           LoadableStudyTables.COW_HISTORY.getTable(),
           LoadableStudyTables.SYNOPTICAL_TABLE.getTable(),
-          LoadableStudyTables.DISCHARGE_COW_DETAILS.getTable());
+          LoadableStudyTables.DISCHARGE_COW_DETAILS.getTable(),
+          LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable(),
+          LoadableStudyTables.LOADABLE_PLAN_BALLAST_DETAILS.getTable());
 }
