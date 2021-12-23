@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.loadingplan.utility.LoadingPlanConstants.*;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
@@ -15,6 +16,7 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
+import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.domain.VoyageActivate;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
@@ -25,12 +27,14 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +45,12 @@ import org.springframework.web.client.ResourceAccessException;
 @Transactional
 @Scope(value = "prototype")
 public class LoadingPlanCommunicationService {
+
+  @Value("${cpdss.build.env}")
+  private String env;
+
+  @Value("${loadingplan.communication.timelimit}")
+  private Long timeLimit;
 
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
   @Autowired private LoadingInformationRepository loadingInformationRepository;
@@ -116,6 +126,9 @@ public class LoadingPlanCommunicationService {
   @Autowired private LoadingInstructionRepository loadingInstructionRepository;
   @Autowired private LoadingDelayReasonRepository loadingDelayReasonRepository;
   @Autowired private ReasonForDelayRepository reasonForDelayRepository;
+
+  @Autowired
+  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -2219,5 +2232,133 @@ public class LoadingPlanCommunicationService {
             .get("loading_information_xid")
             .getAsLong();
     return loadingInformationRepository.findById(loadingInfo).get();
+  }
+
+  /**
+   * Method to check communication status and call fallback mechanism on timeout
+   *
+   * @param taskReqParams map of params used by the scheduler
+   * @throws GenericServiceException Exception on failure
+   */
+  public void checkCommunicationStatus(final Map<String, String> taskReqParams)
+      throws GenericServiceException {
+
+    // Status check only enabled for ship. Shore not implemented as retrial not done at shore
+    if (isShip()) {
+
+      // Get loadable study messages in envoy-client
+      List<LoadingPlanCommunicationStatus> communicationStatusList =
+          loadingPlanCommunicationStatusRepository
+              .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
+                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
+                  MessageTypes.LOADINGPLAN.getMessageType())
+              .orElse(Collections.emptyList());
+
+      for (LoadingPlanCommunicationStatus communicationStatusRow : communicationStatusList) {
+
+        // TODO call cancel API of envoy-client
+
+        // Get status from envoy-client
+        checkEnvoyStatus(
+            communicationStatusRow.getMessageUUID(),
+            taskReqParams.get("ClientId"),
+            taskReqParams.get("ShipId"),
+            communicationStatusRow.getReferenceId());
+
+        LoadingInformation loadingInformation =
+            loadingInformationRepository
+                .findByIdAndIsActiveTrue(communicationStatusRow.getReferenceId())
+                .orElseThrow(RuntimeException::new);
+
+        // Check timer and update timeout
+        if (isCommunicationTimedOut(
+            loadingInformation.getId(), communicationStatusRow.getCreatedDateTime())) {
+          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.TIME_OUT.getId(), loadingInformation.getId());
+
+          // Call fallback mechanism on timeout
+          log.info("Algo call started for LoadingPlan");
+          LoadingPlanModels.LoadingInfoAlgoRequest.Builder builder =
+              LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder();
+          builder.setLoadingInfoId(loadingInformation.getId());
+          LoadingPlanModels.LoadingInfoAlgoReply.Builder algoReplyBuilder =
+              LoadingPlanModels.LoadingInfoAlgoReply.newBuilder();
+          loadingPlanAlgoService.generateLoadingPlan(builder.build(), algoReplyBuilder);
+
+          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.RETRY_AT_SOURCE.getId(), loadingInformation.getId());
+        }
+      }
+    }
+  }
+
+  /**
+   * Method to check message status in envoy service
+   *
+   * @param messageId messageId value
+   * @param clientId clientId value
+   * @param shipId shipId value
+   * @param referenceId referenceId value
+   * @throws GenericServiceException Exception on invalid response
+   */
+  private void checkEnvoyStatus(
+      final String messageId, final String clientId, final String shipId, final long referenceId)
+      throws GenericServiceException {
+    EnvoyWriter.EnvoyWriterRequest.Builder request = EnvoyWriter.EnvoyWriterRequest.newBuilder();
+    request.setMessageId(messageId);
+    request.setClientId(clientId);
+    request.setImoNumber(shipId);
+    EnvoyWriter.WriterReply statusReply = this.envoyWriterService.statusCheck(request.build());
+
+    // Check response status, code and message id
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())
+        || !Integer.toString(HttpStatusCode.OK.value()).equals(statusReply.getStatusCode())
+        || !messageId.equals(statusReply.getMessageId())) {
+      log.error(
+          "Invalid response from envoy-writer for retrial. Ref Id: {}, Message Id: {}, Response: {}",
+          referenceId,
+          messageId,
+          statusReply);
+      throw new GenericServiceException(
+          "Invalid response from envoy-writer for retrial. Message Id: " + messageId,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * Method to check if communication timed out
+   *
+   * @param referenceId reference id value
+   * @param createdTime communication record created time
+   * @return true if timed out and false otherwise
+   */
+  private boolean isCommunicationTimedOut(final long referenceId, final LocalDateTime createdTime) {
+    final long start = Timestamp.valueOf(createdTime).getTime();
+    // timeLimit is in seconds
+    final long end = start + timeLimit * 1000; // Convert time to ms
+    final long currentTime = System.currentTimeMillis();
+
+    if (currentTime > end) {
+      log.warn(
+          "Communication Timeout: {} minutes reached. Communication ignored. Generating at: {}. Ref Id: {}. Unix Times ::: Start: {} ms, End: {} ms, Current Time: {} ms.",
+          timeLimit / 60,
+          env,
+          referenceId,
+          start,
+          end,
+          currentTime);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Method to check whether the build env is ship or not
+   *
+   * @return true if the build env is ship and false otherwise
+   */
+  private boolean isShip() {
+    return CPDSS_BUILD_ENV_SHIP.equals(env);
   }
 }

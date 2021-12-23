@@ -18,10 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(classes = {LoadingPlanCommunicationService.class})
+@TestPropertySource(properties = "loadingplan.communication.timelimit=1800")
 public class LoadingPlanCommunicationServiceTest {
 
   @Autowired LoadingPlanCommunicationService loadingPlanCommunicationService;
@@ -95,6 +97,9 @@ public class LoadingPlanCommunicationServiceTest {
   @MockBean private LoadingInstructionRepository loadingInstructionRepository;
   @MockBean private LoadingDelayReasonRepository loadingDelayReasonRepository;
   @MockBean private ReasonForDelayRepository reasonForDelayRepository;
+
+  @MockBean
+  private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
 
   @MockBean
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub

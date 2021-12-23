@@ -66,4 +66,6 @@ public final class LoadingPlanConstants {
   public static final int PORT_TITLE_FONT_HEIGHT = 11;
   public static final List<String> PORT_EXCEL_TEMPLATE_TITLES =
       Arrays.asList(PORT, TIDE_DATE, TIDE_TIME, TIDE_HEIGHT);
+
+  public static final String CPDSS_BUILD_ENV_SHIP = "ship";
 }

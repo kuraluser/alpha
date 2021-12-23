@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.algo;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.CPDSS_BUILD_ENV_SHIP;
+
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyWriter;
@@ -544,6 +546,12 @@ public class LoadingPlanAlgoService {
       String processId,
       LoadingInformationStatus loadingInformationStatus)
       throws GenericServiceException {
+
+    // Update communication status table with final state
+    if (enableCommunication && CPDSS_BUILD_ENV_SHIP.equals(env)) {
+      loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+          CommunicationStatus.COMPLETED.getId(), loadingInformation.getId());
+    }
 
     this.loadingInfoAlgoStatusRepository.updateLoadingInformationAlgoStatus(
         loadingInformationStatus.getId(), loadingInformation.getId(), processId);
