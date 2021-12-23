@@ -9,30 +9,30 @@ import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingS
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdReply;
-import com.cpdss.common.generated.PortInfo.GetPortInfoByCargoIdRequest;
-import com.cpdss.common.generated.PortInfo.PortEmptyRequest;
-import com.cpdss.common.generated.PortInfo.PortReply;
-import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfo.Timezone;
-import com.cpdss.common.generated.PortInfo.TimezoneResponse;
+import com.cpdss.common.generated.PortInfo.*;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.cargomaster.CargoPortMapping;
 import com.cpdss.gateway.domain.cargomaster.*;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /** PortInfoService - service class for cargo and port info related operations */
 @Service
@@ -50,6 +50,7 @@ public class CargoPortInfoService {
       loadableStudyServiceBlockingStub;
 
   private static final String SUCCESS = "SUCCESS";
+  private static final String CARGO_DATE_FORMAT = "dd-MM-yyyy";
 
   /**
    * Retrieves the port information from port master for cargo
@@ -287,6 +288,12 @@ public class CargoPortInfoService {
     CargosDetailedResponse cargosResponse = new CargosDetailedResponse();
     // Retrieve cargo information from cargo master
     CargoRequest.Builder cargoRequestBuilder = CargoRequest.newBuilder();
+    if(sortBy != null && sortBy.equalsIgnoreCase("assayDate"))
+        sortBy = "lastUpdated";
+    else if(sortBy != null && sortBy.equalsIgnoreCase("name"))
+        sortBy = "crudeType";
+    else if(sortBy != null && sortBy.equalsIgnoreCase("temp"))
+        sortBy = "minLoadTemp";
     cargoRequestBuilder.setPage(page);
     cargoRequestBuilder.setPageSize(pageSize);
     cargoRequestBuilder.setSortBy(sortBy);
@@ -302,6 +309,9 @@ public class CargoPortInfoService {
             case "temp":
               keyMapped = "minLoadTemp";
               break;
+              case "assayDate":
+                  keyMapped = "lastUpdated";
+                  break;
             default:
               keyMapped = key;
           }
@@ -384,6 +394,9 @@ public class CargoPortInfoService {
                 cargoDetail.setHydrogenSulfideOil(cargo.getHydrogenSulfideOil());
                 cargoDetail.setHydrogenSulfideVapour(cargo.getHydrogenSulfideVapour());
                 cargoDetail.setSpecialInstrictionsRemark(cargo.getSpecialInstrictionsRemark());
+                cargoDetail.setAssayDate(StringUtils.isBlank(cargo.getAssayDate())? null :
+                        LocalDate.from(DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT)
+                                .parse(cargo.getAssayDate())));
                 // adding ports that are mapped to this cargo
                 List<PortInfo.CargoPortMappingDetail> cargoPorts =
                     cargoPortMappings.stream()

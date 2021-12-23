@@ -1,8 +1,11 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain.cargomaster;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class CargoDetailed {
@@ -23,4 +26,6 @@ public class CargoDetailed {
   private String benzene;
   private String specialInstrictionsRemark;
   private List<CargoPortMapping> loadingInformation;
+  @JsonFormat(pattern = "dd-MM-yyyy")
+  private LocalDate assayDate;
 }
