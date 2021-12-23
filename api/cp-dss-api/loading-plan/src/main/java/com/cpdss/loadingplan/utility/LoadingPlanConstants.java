@@ -127,7 +127,8 @@ public class LoadingPlanConstants {
           "port_loadable_plan_commingle_details",
           "port_loading_plan_stability_parameters",
           "pyuser",
-          "loading_information_algo_status");
+          "loading_information_algo_status",
+          "synoptical_table");
 
   public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF =
       Arrays.asList(
@@ -137,7 +138,8 @@ public class LoadingPlanConstants {
           "port_loadable_plan_commingle_details",
           "port_loading_plan_stability_parameters",
           "pyuser",
-          "loading_information_algo_status");
+          "loading_information_algo_status",
+          "synoptical_table");
 
   public static final List<String> ULLAGE_UPDATE_ALGO_ERRORS =
       Arrays.asList(
