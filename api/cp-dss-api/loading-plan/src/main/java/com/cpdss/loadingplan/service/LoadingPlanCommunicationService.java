@@ -2182,6 +2182,18 @@ public class LoadingPlanCommunicationService {
                 e);
           }
         }
+      } else if (isShip()) {
+        if (MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType().equals(processGroupId)
+            || MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT
+                .getMessageType()
+                .equals(processGroupId)
+            || MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT
+                .getMessageType()
+                .equals(processGroupId)) {
+          // Update communication status table with final state
+          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.COMPLETED.getId(), loadingInfo.getId());
+        }
       }
     }
   }
