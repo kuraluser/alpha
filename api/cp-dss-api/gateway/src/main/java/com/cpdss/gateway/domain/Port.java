@@ -3,8 +3,9 @@ package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.math.BigDecimal;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 @JsonInclude(Include.NON_EMPTY)
@@ -18,4 +19,6 @@ public class Port {
   private String timezone;
   private String timezoneOffsetVal;
   private String timezoneAbbreviation;
+  private String countryName;
+  private Long countryId;
 }

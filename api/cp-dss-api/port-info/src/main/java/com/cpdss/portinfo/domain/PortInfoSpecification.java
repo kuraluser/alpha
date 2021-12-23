@@ -2,14 +2,15 @@
 package com.cpdss.portinfo.domain;
 
 import com.cpdss.portinfo.entity.PortInfo;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * Class for role specification
@@ -45,6 +46,12 @@ public class PortInfoSpecification implements Specification<PortInfo> {
       //      Partial match
       return builder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
     } else if ("like-with-join".equalsIgnoreCase(criteria.getOperation())) {
+      if(criteria.getValue() instanceof String) {
+        String val = (String) criteria.getValue();
+        return builder.like(
+                root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
+                "%" + val.toUpperCase() + "%");
+      }
       return builder.like(
           root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
           "%" + criteria.getValue() + "%");

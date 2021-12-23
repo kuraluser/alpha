@@ -167,6 +167,8 @@ public class CargoPortInfoService {
                 port.setTimezone(portDetail.getTimezone());
                 port.setTimezoneOffsetVal(portDetail.getTimezoneOffsetVal());
                 port.setTimezoneAbbreviation(portDetail.getTimezoneAbbreviation());
+                port.setCountryId(portDetail.getCountryId());
+                port.setCountryName(portDetail.getCountryName());
                 portList.add(port);
               });
       portsResponse.setPorts(portList);

@@ -9,18 +9,13 @@ import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.portinfo.domain.FilterCriteria;
 import com.cpdss.portinfo.domain.PortInfoSpecification;
-import com.cpdss.portinfo.entity.*;
 import com.cpdss.portinfo.entity.CargoPortMapping;
 import com.cpdss.portinfo.entity.Country;
 import com.cpdss.portinfo.entity.Timezone;
+import com.cpdss.portinfo.entity.*;
 import com.cpdss.portinfo.repository.*;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +26,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /** Service with operations related to port information */
 @Log4j2
@@ -736,7 +737,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
       // Filtering
       List<String> filterKeys =
-          Arrays.asList("id", "name", "code", "densitySeaWater", "timezone", "country");
+          Arrays.asList("id", "name", "code", "densitySeaWater", "timezone", "countryName");
       Map<String, String> params = new HashMap<>();
       request.getParamList().forEach(param -> params.put(param.getKey(), param.getValue()));
       Map<String, String> filterParams =
@@ -763,7 +764,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
               specification.and(
                   new PortInfoSpecification(
                       new FilterCriteria(filterKey, "like-with-join", value, "timezone")));
-        } else if (filterKey.equals("country")) {
+        } else if (filterKey.equals("countryName")) {
           specification =
               specification.and(
                   new PortInfoSpecification(
