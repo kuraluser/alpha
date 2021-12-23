@@ -108,6 +108,12 @@ public class LoadicatorService {
   @Value("${cpdss.judgement.enable}")
   private boolean judgementEnabled;
 
+  @Value("${cpdss.loadicator.savefolder}")
+  private String saveFolder;
+
+  @Value("${cpdss.loadicator.datasave}")
+  private boolean dataSave;
+
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
@@ -463,6 +469,16 @@ public class LoadicatorService {
     Optional.ofNullable(synopticalEntity.getLoadableStudyPortRotation().getId())
         .ifPresent(stowagePlanBuilder::setPortRotationId);
     stowagePlanBuilder.setSynopticalId(synopticalEntity.getId());
+
+    Optional.ofNullable(loadableStudyEntity.getVoyage().getVoyageNo())
+        .ifPresent(stowagePlanBuilder::setVoyageNumber);
+    if (!vesselReply.getVesselsList().isEmpty()) {
+      stowagePlanBuilder.setVesselName(vesselReply.getVessels(0).getName());
+    }
+    Optional.ofNullable(synopticalEntity.getOperationType())
+        .ifPresent(stowagePlanBuilder::setCondition);
+    Optional.ofNullable(saveFolder).ifPresent(stowagePlanBuilder::setSaveFolder);
+    stowagePlanBuilder.setDataSave(dataSave);
   }
 
   /**

@@ -63,6 +63,53 @@ public final class LoadicatorServiceGrpc {
     return getSaveLoadicatorInfoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+      getGetZipOfDatFilesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetZipOfDatFiles",
+      requestType = com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+      getGetZipOfDatFilesMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+        getGetZipOfDatFilesMethod;
+    if ((getGetZipOfDatFilesMethod = LoadicatorServiceGrpc.getGetZipOfDatFilesMethod) == null) {
+      synchronized (LoadicatorServiceGrpc.class) {
+        if ((getGetZipOfDatFilesMethod = LoadicatorServiceGrpc.getGetZipOfDatFilesMethod) == null) {
+          LoadicatorServiceGrpc.getGetZipOfDatFilesMethod =
+              getGetZipOfDatFilesMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetZipOfDatFiles"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadicatorServiceMethodDescriptorSupplier("GetZipOfDatFiles"))
+                      .build();
+        }
+      }
+    }
+    return getGetZipOfDatFilesMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadicatorServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadicatorServiceStub> factory =
@@ -116,6 +163,16 @@ public final class LoadicatorServiceGrpc {
           getSaveLoadicatorInfoMethod(), responseObserver);
     }
 
+    /** */
+    public void getZipOfDatFiles(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetZipOfDatFilesMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -126,6 +183,13 @@ public final class LoadicatorServiceGrpc {
                       com.cpdss.common.generated.Loadicator.LoadicatorRequest,
                       com.cpdss.common.generated.Loadicator.LoadicatorReply>(
                       this, METHODID_SAVE_LOADICATOR_INFO)))
+          .addMethod(
+              getGetZipOfDatFilesMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>(
+                      this, METHODID_GET_ZIP_OF_DAT_FILES)))
           .build();
     }
   }
@@ -153,6 +217,18 @@ public final class LoadicatorServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getZipOfDatFiles(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetZipOfDatFilesMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -174,6 +250,13 @@ public final class LoadicatorServiceGrpc {
         com.cpdss.common.generated.Loadicator.LoadicatorRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveLoadicatorInfoMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply getZipOfDatFiles(
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetZipOfDatFilesMethod(), getCallOptions(), request);
     }
   }
 
@@ -197,9 +280,19 @@ public final class LoadicatorServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSaveLoadicatorInfoMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+        getZipOfDatFiles(
+            com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetZipOfDatFilesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_LOADICATOR_INFO = 0;
+  private static final int METHODID_GET_ZIP_OF_DAT_FILES = 1;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -222,6 +315,13 @@ public final class LoadicatorServiceGrpc {
           serviceImpl.saveLoadicatorInfo(
               (com.cpdss.common.generated.Loadicator.LoadicatorRequest) request,
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Loadicator.LoadicatorReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ZIP_OF_DAT_FILES:
+          serviceImpl.getZipOfDatFiles(
+              (com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>)
                   responseObserver);
           break;
         default:
@@ -289,6 +389,7 @@ public final class LoadicatorServiceGrpc {
                   io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
                       .setSchemaDescriptor(new LoadicatorServiceFileDescriptorSupplier())
                       .addMethod(getSaveLoadicatorInfoMethod())
+                      .addMethod(getGetZipOfDatFilesMethod())
                       .build();
         }
       }

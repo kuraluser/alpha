@@ -2305,4 +2305,49 @@ public class LoadableStudyController {
           e);
     }
   }
+
+  /**
+   * Download Zip of Dat Files From Loadicator
+   *
+   * @param headers
+   * @param vesselId
+   * @param loadablePatternId
+   * @return byteArrayResource
+   * @throws CommonRestException
+   */
+  @GetMapping(
+      value = "/vessel/{vesselId}/loadable-pattern/{loadablePatternId}/zip",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public HttpEntity<ByteArrayResource> downloadZipOfDatFilesFromLoadicator(
+      @RequestHeader HttpHeaders headers,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable Long loadablePatternId)
+      throws CommonRestException {
+
+    try {
+      // Set zip download headers
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(new MediaType("application", "force-download"));
+      httpHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=LoadicatorDats.zip");
+
+      // Send file after getting the zip from loadicator
+      return new HttpEntity<>(
+          new ByteArrayResource(
+              this.loadableStudyService.downloadZipOfDatFilesFromLoadicator(
+                  vesselId, loadablePatternId)),
+          httpHeaders);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException in downloadZipOfDatFilesFromLoadicator method", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception in downloadZipOfDatFilesFromLoadicator method", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
 }

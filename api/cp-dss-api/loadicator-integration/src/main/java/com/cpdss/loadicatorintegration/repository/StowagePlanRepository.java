@@ -36,4 +36,12 @@ public interface StowagePlanRepository extends CommonCrudRepository<StowagePlan,
 
   @Query("SELECT COUNT(id) FROM StowagePlan WHERE status != 3")
   public Long findCountOfStowagePlansToBeProcessed();
+
+  /**
+   * Find Stowage Plans using stowageId
+   *
+   * @param stowageId
+   * @return stowagePlans
+   */
+  List<StowagePlan> findByStowageId(Long stowageId);
 }

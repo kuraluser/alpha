@@ -97,6 +97,7 @@ import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
+import com.cpdss.common.generated.LoadicatorServiceGrpc;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceBlockingStub;
@@ -172,6 +173,9 @@ public class LoadableStudyService {
 
   @GrpcClient("envoyreadersrvice")
   private EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
+
+  @GrpcClient("loadicatorService")
+  private LoadicatorServiceGrpc.LoadicatorServiceBlockingStub loadicatorServiceBlockingStub;
 
   @Autowired UserService userService;
 
@@ -6402,5 +6406,39 @@ public class LoadableStudyService {
             .getVoyageDetail()
             .getVoyageNumber()
         + " - ";
+  }
+
+  /**
+   * Download Zip of Dat Files from Loadicator
+   *
+   * @param vesselId
+   * @param loadablePatternId
+   * @return loadablePlanReportReply.getData().toByteArray()
+   * @throws GenericServiceException
+   */
+  public byte[] downloadZipOfDatFilesFromLoadicator(Long vesselId, Long loadablePatternId)
+      throws GenericServiceException {
+
+    log.info("Inside downloadZipOfDatFilesFromLoadicator method!");
+
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest loadablePlanReportRequest =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder()
+            .setVesselId(vesselId)
+            .setLoadablePatternId(loadablePatternId)
+            .build();
+
+    // Get zip from loadicator
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply loadablePlanReportReply =
+        this.loadicatorServiceBlockingStub.getZipOfDatFiles(loadablePlanReportRequest);
+
+    if (!SUCCESS.equals(loadablePlanReportReply.getResponseStatus().getStatus())) {
+      log.error("Failed to generate zip of dat files from loadicator!");
+      throw new GenericServiceException(
+          "Failed to generate zip of dat files from loadicator",
+          loadablePlanReportReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(
+              Integer.parseInt(loadablePlanReportReply.getResponseStatus().getCode())));
+    }
+    return loadablePlanReportReply.getData().toByteArray();
   }
 }

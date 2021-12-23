@@ -31,7 +31,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 @TestPropertySource(
-    properties = {"cpdss.communication.enable = false", "cpdss.judgement.enable = true"})
+    properties = {
+      "cpdss.communication.enable = false",
+      "cpdss.judgement.enable = true",
+      "cpdss.loadicator.datasave = true"
+    })
 @SpringJUnitConfig(classes = {LoadicatorService.class})
 public class LoadicatorServiceTest {
 

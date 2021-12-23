@@ -2,6 +2,7 @@
 package com.cpdss.loadicatorintegration.service;
 
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.LDIntactStability;
 import com.cpdss.common.generated.LoadableStudy.LDStrength;
 import com.cpdss.common.generated.LoadableStudy.LDtrim;
@@ -36,9 +37,12 @@ import com.cpdss.loadicatorintegration.repository.LoadicatorStrengthRepository;
 import com.cpdss.loadicatorintegration.repository.LoadicatorTrimRepository;
 import com.cpdss.loadicatorintegration.repository.StowageDetailsRepository;
 import com.cpdss.loadicatorintegration.repository.StowagePlanRepository;
+import com.google.protobuf.ByteString;
 import io.grpc.Context;
 import io.grpc.stub.StreamObserver;
+import java.io.*;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,10 +52,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,6 +85,9 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   @GrpcClient("dischargingPlanService")
   private DischargePlanServiceBlockingStub dischargingPlanService;
+
+  @Value("${loadicator.dat.file.base.url}")
+  private String datFilesBaseUrl;
 
   private static final String FAILED = "FAILED";
   private static final String SUCCESS = "SUCCESS";
@@ -294,8 +304,11 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
         StringUtils.isEmpty(stowagePlanInfo.getDamageCal())
             ? null
             : stowagePlanInfo.getDamageCal());
-    stowagePlan.setDataSave(
-        StringUtils.isEmpty(stowagePlanInfo.getDataSave()) ? null : stowagePlanInfo.getDataSave());
+    stowagePlan.setDataSave(stowagePlanInfo.getDataSave());
+    stowagePlan.setVesselName(stowagePlanInfo.getVesselName());
+    stowagePlan.setVoyageNumber(stowagePlanInfo.getVoyageNumber());
+    stowagePlan.setCondition(stowagePlanInfo.getCondition());
+    stowagePlan.setSaveFolder(stowagePlanInfo.getSaveFolder());
     stowagePlan.setDeadweightConstant(
         StringUtils.isEmpty(stowagePlanInfo.getDeadweightConstant())
             ? null
@@ -733,5 +746,101 @@ public class LoadicatorService extends LoadicatorServiceImplBase {
 
   public LoadicatorDataReply getLoadicatorData(LoadicatorDataRequest build) {
     return loadableStudyService.getLoadicatorData(build);
+  }
+
+  /**
+   * Getting Zip of Dat Files
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getZipOfDatFiles(
+      LoadableStudy.LoadablePlanReportRequest request,
+      StreamObserver<LoadableStudy.LoadablePlanReportReply> responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder replyBuilder =
+        LoadableStudy.LoadablePlanReportReply.newBuilder();
+    try {
+
+      log.info("Inside getZipOfDatFiles method!");
+      createZipOfDatFiles(request, replyBuilder);
+      replyBuilder.setResponseStatus(
+          LoadableStudy.StatusReply.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build());
+    } catch (Exception e) {
+
+      log.error("Error creating zip of dat files!", e);
+      replyBuilder.setResponseStatus(
+          LoadableStudy.StatusReply.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Error creating zip of dat files!")
+              .setStatus(FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Creating Zip of Dat Files
+   *
+   * @param request
+   * @param replyBuilder
+   * @throws IOException
+   */
+  private void createZipOfDatFiles(
+      LoadableStudy.LoadablePlanReportRequest request,
+      LoadableStudy.LoadablePlanReportReply.Builder replyBuilder)
+      throws IOException {
+
+    log.info("Inside createZipOfDatFiles method!");
+
+    List<StowagePlan> stowagePlans =
+        this.stowagePlanRepository.findByStowageId(request.getLoadablePatternId());
+    List<URL> datFiles = new ArrayList<>();
+
+    for (StowagePlan stowagePlan : stowagePlans) {
+      if (stowagePlan.getFileName() != null) {
+        datFiles.add(new URL(datFilesBaseUrl + stowagePlan.getFileName()));
+      }
+    }
+
+    byte[] byteArray = zipDatFiles(datFiles);
+    replyBuilder.setData(ByteString.copyFrom(byteArray)).setSize(byteArray.length);
+  }
+
+  /**
+   * Zip the Input Dat Files using ByteArrayOutputStream and ZipOutputStream
+   *
+   * @param datFiles
+   * @return byteArrayOutputStream.toByteArray()
+   * @throws IOException
+   */
+  private byte[] zipDatFiles(List<URL> datFiles) throws IOException {
+
+    log.info("Inside zipDatFiles method!");
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+    ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream);
+
+    for (URL datFile : datFiles) {
+
+      InputStream inputStream = datFile.openStream();
+      zipOutputStream.putNextEntry(new ZipEntry(datFile.getFile()));
+      int length;
+      byte[] bytes = new byte[2048];
+      while ((length = inputStream.read(bytes)) > 0) {
+        zipOutputStream.write(bytes, 0, length);
+      }
+      zipOutputStream.closeEntry();
+    }
+
+    zipOutputStream.finish();
+    zipOutputStream.flush();
+    zipOutputStream.close();
+    bufferedOutputStream.close();
+    byteArrayOutputStream.close();
+
+    return byteArrayOutputStream.toByteArray();
   }
 }

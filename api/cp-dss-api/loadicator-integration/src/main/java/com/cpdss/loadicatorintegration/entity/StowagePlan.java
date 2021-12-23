@@ -93,4 +93,19 @@ public class StowagePlan extends EntityDoc {
 
   @Column(name = "port_rotation_xid")
   private Long portRotationId;
+
+  @Column(name = "voyage_number")
+  private String voyageNumber;
+
+  @Column(name = "vessel_name")
+  private String vesselName;
+
+  @Column(name = "save_folder")
+  private String saveFolder;
+
+  @Column(name = "condition")
+  private String condition;
+
+  @Column(name = "file_name")
+  private String fileName;
 }

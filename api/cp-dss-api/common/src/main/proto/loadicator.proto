@@ -5,11 +5,13 @@ option java_package = "com.cpdss.common.generated";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "loadable_study.proto";
 
 service LoadicatorService {
 
-	rpc saveLoadicatorInfo (LoadicatorRequest) returns (LoadicatorReply) {
-	}
+	rpc saveLoadicatorInfo (LoadicatorRequest) returns (LoadicatorReply) {}
+
+	rpc GetZipOfDatFiles (LoadablePlanReportRequest) returns (LoadablePlanReportReply) {}
 }
 
 message LoadicatorRequest{
@@ -47,6 +49,10 @@ message StowagePlan{
 	repeated BallastInfo ballastInfo = 24;
 	string seaWaterDensity = 25;
 	int64 portRotationId = 26;
+	string saveFolder = 27;
+	string vesselName = 28;
+	string voyageNumber = 29;
+	string condition = 30;
 }
 
 message StowageDetails{
