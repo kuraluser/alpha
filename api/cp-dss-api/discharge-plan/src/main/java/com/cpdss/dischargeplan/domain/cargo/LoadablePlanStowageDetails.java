@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoadablePlanStowageDetails {
   private Long id;
   private Long tankId;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String colorCode;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String abbreviation;
 
   @JsonInclude(JsonInclude.Include.NON_NULL)
