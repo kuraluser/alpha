@@ -17,6 +17,7 @@ import com.cpdss.portinfo.entity.Timezone;
 import com.cpdss.portinfo.repository.*;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
+import io.micrometer.core.instrument.util.StringUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.format.DateTimeFormatter;
@@ -561,8 +562,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
     com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder =
         com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
     try {
-      List<CargoPortMapping> portMappings = null;
-      if (request.getPortName() == null) {
+      List<CargoPortMapping> portMappings = new ArrayList<>();
+      if (StringUtils.isEmpty(request.getPortName())) {
         portMappings = this.cargoPortMappingRepository.findAll();
       } else {
         Specification<CargoPortMapping> specification =

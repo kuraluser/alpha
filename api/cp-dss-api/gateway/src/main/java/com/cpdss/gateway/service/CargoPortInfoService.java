@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -292,7 +293,7 @@ public class CargoPortInfoService {
     if (sortBy != null && sortBy.equalsIgnoreCase("assayDate")) sortBy = "lastUpdated";
     else if (sortBy != null && sortBy.equalsIgnoreCase("name")) sortBy = "crudeType";
     else if (sortBy != null && sortBy.equalsIgnoreCase("temp")) sortBy = "minLoadTemp";
-    String portName = null;
+    String portName = "";
     cargoRequestBuilder.setPage(page);
     cargoRequestBuilder.setPageSize(pageSize);
     cargoRequestBuilder.setSortBy(sortBy);
@@ -326,9 +327,9 @@ public class CargoPortInfoService {
     // Get all cargo port mappings
     List<PortInfo.CargoPortMappingDetail> cargoPortMappings =
         this.getAllPortCargoMappings(portName);
-    if (portName != null) {
+    if (!StringUtils.isEmpty(portName)) {
       // if No port is found while port filtering, sending response
-      if (cargoPortMappings != null && cargoPortMappings.isEmpty()) {
+      if (CollectionUtils.isEmpty(cargoPortMappings)) {
         CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
         commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
         commonSuccessResponse.setCorrelationId(correlationIdHeader);
@@ -369,11 +370,13 @@ public class CargoPortInfoService {
    */
   private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappings(String portName)
       throws GenericServiceException {
-    PortInfo.CargoPortRequest cargoPortRequest =
-        PortInfo.CargoPortRequest.newBuilder().setPortName(portName).build();
+    PortInfo.CargoPortRequest.Builder cargoPortRequestBuilder =
+        PortInfo.CargoPortRequest.newBuilder();
+    if (portName != null) cargoPortRequestBuilder.setPortName(portName);
+    PortInfo.CargoPortRequest cargoPortRequest = cargoPortRequestBuilder.setPortName(portName).build();
     PortInfo.CargoPortReply cargoPortReply =
         this.portInfoServiceBlockingStub.getAllCargoPortMapping(cargoPortRequest);
-    System.out.println(cargoPortReply.getPorts(0));
+    //    System.out.println(cargoPortReply.getPorts(0));
     if (!SUCCESS.equalsIgnoreCase(cargoPortReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Error in retrieving all cargo mappings",
