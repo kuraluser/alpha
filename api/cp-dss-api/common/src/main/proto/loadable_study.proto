@@ -1311,6 +1311,9 @@ message SynopticalCommingleRecord{
 	string spGravity = 7;
 	string colorCode = 8;
 	string fillingRatio = 9;
+
+	string cargo1ActualQty = 10;
+	string cargo2ActualQty = 11;
 }
 
 message SynopticalCargoRecord{

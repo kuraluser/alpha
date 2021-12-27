@@ -1104,6 +1104,10 @@ public class LoadingPlanService {
               SynopticalCommingleRecord.Builder commingleRecord =
                   SynopticalCommingleRecord.newBuilder();
               commingleRecord.setActualWeight(commingle.getQuantity());
+              Optional.ofNullable(commingle.getQuantity1MT())
+                  .ifPresent(commingleRecord::setCargo1ActualQty);
+              Optional.ofNullable(commingle.getQuantity2MT())
+                  .ifPresent(commingleRecord::setCargo2ActualQty);
               commingleRecord.setTankId(commingle.getTankId());
               synopticalData.addCommingle(commingleRecord);
             });

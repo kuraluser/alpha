@@ -137,5 +137,11 @@ public class LoadablePlanComminglePortwiseDetails extends EntityDoc {
   @Column(name = "commingle_colour")
   private String commingleColour;
 
+  @Column(name = "cargo1_actual_mt")
+  private BigDecimal cargo1ActualMT;
+
+  @Column(name = "cargo2_actual_mt")
+  private BigDecimal cargo2ActualMT;
+
   @Transient private Long communicationRelatedEntityId;
 }

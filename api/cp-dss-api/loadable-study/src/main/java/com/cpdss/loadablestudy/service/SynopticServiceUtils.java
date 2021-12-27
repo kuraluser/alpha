@@ -776,6 +776,13 @@ public class SynopticServiceUtils {
           cargo1.setCargoAbbreviation(ccN.getCargo1Abbreviation());
           cargo2.setCargoAbbreviation(ccN.getCargo2Abbreviation());
 
+          cargo1.setActualWeight(ccN.getActualQuantity().toString());
+          cargo2.setActualWeight(ccN.getActualQuantity().toString());
+
+          cargo1.setCargo1Mt(ccN.getCargo1ActualMT().toString());
+          cargo2.setCargo2Mt(ccN.getCargo2ActualMT().toString());
+
+
           cargo1.setApi(ccN.getApi());
           cargo2.setApi(ccN.getApi());
 
@@ -1215,6 +1222,10 @@ public class SynopticServiceUtils {
           LoadablePlanComminglePortwiseDetails ent = entityOpt.get();
           ent.setActualQuantity(
               isEmpty(rec.getActualWeight()) ? null : new BigDecimal(rec.getActualWeight()));
+          ent.setCargo1ActualMT(
+              rec.getCargo1ActualQty().isEmpty() ? null : new BigDecimal(rec.getCargo1ActualQty()));
+          ent.setCargo2ActualMT(
+              rec.getCargo2ActualQty().isEmpty() ? null : new BigDecimal(rec.getCargo2ActualQty()));
           toBeSaved.add(ent);
         } else {
           LoadablePlanComminglePortwiseDetails ent = new LoadablePlanComminglePortwiseDetails();
@@ -1227,6 +1238,10 @@ public class SynopticServiceUtils {
           ent.setPortRotationXid(synopticalData.get().getLoadableStudyPortRotation().getId());
           ent.setActualQuantity(
               isEmpty(rec.getActualWeight()) ? null : new BigDecimal(rec.getActualWeight()));
+          ent.setCargo1ActualMT(
+              rec.getCargo1ActualQty().isEmpty() ? null : new BigDecimal(rec.getCargo1ActualQty()));
+          ent.setCargo2ActualMT(
+              rec.getCargo2ActualQty().isEmpty() ? null : new BigDecimal(rec.getCargo2ActualQty()));
           toBeSaved.add(ent);
         }
       }
