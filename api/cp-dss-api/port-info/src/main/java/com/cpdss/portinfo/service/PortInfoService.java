@@ -7,15 +7,21 @@ import com.cpdss.common.generated.PortInfo.*;
 import com.cpdss.common.generated.PortInfo.CountryReply.Builder;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.portinfo.domain.CargoPortInfoSpecification;
 import com.cpdss.portinfo.domain.FilterCriteria;
 import com.cpdss.portinfo.domain.PortInfoSpecification;
+import com.cpdss.portinfo.entity.*;
 import com.cpdss.portinfo.entity.CargoPortMapping;
 import com.cpdss.portinfo.entity.Country;
 import com.cpdss.portinfo.entity.Timezone;
-import com.cpdss.portinfo.entity.*;
 import com.cpdss.portinfo.repository.*;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +32,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /** Service with operations related to port information */
 @Log4j2
@@ -561,7 +561,18 @@ public class PortInfoService extends PortInfoServiceImplBase {
     com.cpdss.common.generated.PortInfo.CargoPortReply.Builder replyBuilder =
         com.cpdss.common.generated.PortInfo.CargoPortReply.newBuilder();
     try {
-      List<CargoPortMapping> portMappings = this.cargoPortMappingRepository.findAll();
+      List<CargoPortMapping> portMappings = null;
+      if (request.getPortName() == null) {
+        portMappings = this.cargoPortMappingRepository.findAll();
+      } else {
+        Specification<CargoPortMapping> specification =
+            Specification.where(
+                new CargoPortInfoSpecification(
+                    new FilterCriteria(
+                        "name", "like-with-join", request.getPortName(), "portInfo")));
+        portMappings = this.cargoPortMappingRepository.findAll(specification);
+      }
+
       System.out.println(portMappings.size());
       portMappings.forEach(
           portMapping -> {

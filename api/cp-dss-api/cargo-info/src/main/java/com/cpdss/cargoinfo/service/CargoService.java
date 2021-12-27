@@ -16,6 +16,10 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import io.grpc.stub.StreamObserver;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +30,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /** Service with operations related to cargo information */
 @Log4j2
@@ -182,7 +181,15 @@ public class CargoService extends CargoInfoServiceImplBase {
 
       // Filtering
       List<String> filterKeys =
-          Arrays.asList("id", "crudeType", "abbreviation", "companyId", "api", "minLoadTemp","lastUpdated");
+          Arrays.asList(
+              "id",
+              "crudeType",
+              "abbreviation",
+              "companyId",
+              "api",
+              "minLoadTemp",
+              "lastUpdated",
+              "port");
       Map<String, String> params = new HashMap<>();
       request.getParamList().forEach(param -> params.put(param.getKey(), param.getValue()));
       Map<String, String> filterParams =
@@ -196,12 +203,22 @@ public class CargoService extends CargoInfoServiceImplBase {
         String filterKey = entry.getKey();
         String value = entry.getValue();
         // assayDate filter
-        if(filterKey != null && filterKey.equalsIgnoreCase("lastUpdated")){
-          LocalDate localDate = LocalDate.from(DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT).parse(value));
-            specification = specification.and(new CargoSpecification(new FilterCriteria(filterKey,":",localDate)));
+        if (filterKey.equalsIgnoreCase("lastUpdated")) {
+          LocalDate localDate =
+              LocalDate.from(DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT).parse(value));
+          specification =
+              specification.and(
+                  new CargoSpecification(new FilterCriteria(filterKey, ":", localDate)));
+          // port filter
+        } else if ("port".equalsIgnoreCase(filterKey)) {
+          specification =
+              specification.and(
+                  new CargoSpecification(
+                      new FilterCriteria("id", "in", request.getCargoXIdsList())));
         } else {
           specification =
-                  specification.and(new CargoSpecification(new FilterCriteria(filterKey, "like", value)));
+              specification.and(
+                  new CargoSpecification(new FilterCriteria(filterKey, "like", value)));
         }
       }
 
@@ -263,8 +280,10 @@ public class CargoService extends CargoInfoServiceImplBase {
         cargo.getH2sVapourPhaseConfirmed() == null ? "" : cargo.getH2sVapourPhaseConfirmed());
     cargoDetail.setSpecialInstrictionsRemark(cargo.getRemarks() == null ? "" : cargo.getRemarks());
     cargoDetail.setReidVapourPressure(cargo.getFromRvp() == null ? "" : cargo.getFromRvp());
-    cargoDetail.setAssayDate(cargo.getLastUpdated() == null? "" :
-            cargo.getLastUpdated().format(DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT)));
+    cargoDetail.setAssayDate(
+        cargo.getLastUpdated() == null
+            ? ""
+            : cargo.getLastUpdated().format(DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT)));
   }
 
   @Override

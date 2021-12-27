@@ -49,6 +49,7 @@ message CargoRequest {
 	string sortBy = 8;
 	string orderBy = 9;
 	repeated Param param = 10;
+	repeated int64 cargoXIds = 11;
 }
 
 message Param {

@@ -292,36 +292,60 @@ public class CargoPortInfoService {
     if (sortBy != null && sortBy.equalsIgnoreCase("assayDate")) sortBy = "lastUpdated";
     else if (sortBy != null && sortBy.equalsIgnoreCase("name")) sortBy = "crudeType";
     else if (sortBy != null && sortBy.equalsIgnoreCase("temp")) sortBy = "minLoadTemp";
+    String portName = null;
     cargoRequestBuilder.setPage(page);
     cargoRequestBuilder.setPageSize(pageSize);
     cargoRequestBuilder.setSortBy(sortBy);
     cargoRequestBuilder.setOrderBy(orderBy);
     cargoRequestBuilder.setCompanyId(1L);
-    params.forEach(
-        (key, value) -> {
-          String keyMapped;
-          switch (key) {
-            case "name":
-              keyMapped = "crudeType";
-              break;
-            case "temp":
-              keyMapped = "minLoadTemp";
-              break;
-            case "assayDate":
-              keyMapped = "lastUpdated";
-              break;
-            default:
-              keyMapped = key;
-          }
-          cargoRequestBuilder.addParam(
-              CargoInfo.Param.newBuilder().setKey(keyMapped).setValue(value).build());
-        });
+    for (Map.Entry<String, String> entry : params.entrySet()) {
+      String key = entry.getKey();
+      String value = entry.getValue();
+      String keyMapped;
+      switch (key) {
+        case "name":
+          keyMapped = "crudeType";
+          break;
+        case "temp":
+          keyMapped = "minLoadTemp";
+          break;
+        case "assayDate":
+          keyMapped = "lastUpdated";
+          break;
+        case "port":
+          portName = value;
+          keyMapped = key;
+          break;
+        default:
+          keyMapped = key;
+      }
+      cargoRequestBuilder.addParam(
+          CargoInfo.Param.newBuilder().setKey(keyMapped).setValue(value).build());
+    }
+
+    // Get all cargo port mappings
+    List<PortInfo.CargoPortMappingDetail> cargoPortMappings =
+        this.getAllPortCargoMappings(portName);
+    if (portName != null) {
+      // if No port is found while port filtering, sending response
+      if (cargoPortMappings != null && cargoPortMappings.isEmpty()) {
+        CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+        commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+        commonSuccessResponse.setCorrelationId(correlationIdHeader);
+        cargosResponse.setResponseStatus(commonSuccessResponse);
+        cargosResponse.setTotalElements(Long.valueOf("0"));
+        cargosResponse.setCargos(new ArrayList<CargoDetailed>());
+        return cargosResponse;
+      }
+      List<Long> cargoXidList =
+          cargoPortMappings.stream()
+              .collect(Collectors.mapping(CargoPortMappingDetail::getCargoId, Collectors.toList()));
+      cargoRequestBuilder.addAllCargoXIds(cargoXidList);
+    }
     CargoInfo.CargoDetailedReply cargoReply =
         cargoInfoServiceBlockingStub.getCargoInfoDetailed(cargoRequestBuilder.build());
     if (cargoReply != null
         && SUCCESS.equalsIgnoreCase(cargoReply.getResponseStatus().getStatus())) {
-      // Get all cargo port mappings
-      List<PortInfo.CargoPortMappingDetail> cargoPortMappings = this.getAllPortCargoMappings();
       CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
       commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
       commonSuccessResponse.setCorrelationId(correlationIdHeader);
@@ -337,14 +361,16 @@ public class CargoPortInfoService {
   }
 
   /**
-   * Fetching all cargo port mappings
+   * Fetching all cargo port mappings if port name is passed will fetch based on the port name,
+   * otherwise all ports pass portName as null for all cargo port mapping
    *
    * @return cargoPortReply.getPortsList()
    * @throws GenericServiceException
    */
-  private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappings()
+  private List<PortInfo.CargoPortMappingDetail> getAllPortCargoMappings(String portName)
       throws GenericServiceException {
-    PortInfo.CargoPortRequest cargoPortRequest = PortInfo.CargoPortRequest.newBuilder().build();
+    PortInfo.CargoPortRequest cargoPortRequest =
+        PortInfo.CargoPortRequest.newBuilder().setPortName(portName).build();
     PortInfo.CargoPortReply cargoPortReply =
         this.portInfoServiceBlockingStub.getAllCargoPortMapping(cargoPortRequest);
     System.out.println(cargoPortReply.getPorts(0));

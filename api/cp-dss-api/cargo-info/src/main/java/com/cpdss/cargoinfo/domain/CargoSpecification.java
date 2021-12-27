@@ -43,6 +43,8 @@ public class CargoSpecification implements Specification<Cargo> {
       }
       //      Partial match
       return builder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
+    } else if ("in".equalsIgnoreCase(criteria.getOperation())) {
+      return builder.in(root.get(criteria.getKey())).value(criteria.getValue());
     }
     return null;
   }

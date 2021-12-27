@@ -1572,6 +1572,26 @@ public final class CargoInfo {
         getParamOrBuilderList();
     /** <code>repeated .Param param = 10;</code> */
     com.cpdss.common.generated.CargoInfo.ParamOrBuilder getParamOrBuilder(int index);
+
+    /**
+     * <code>repeated int64 cargoXIds = 11;</code>
+     *
+     * @return A list containing the cargoXIds.
+     */
+    java.util.List<java.lang.Long> getCargoXIdsList();
+    /**
+     * <code>repeated int64 cargoXIds = 11;</code>
+     *
+     * @return The count of cargoXIds.
+     */
+    int getCargoXIdsCount();
+    /**
+     * <code>repeated int64 cargoXIds = 11;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The cargoXIds at the given index.
+     */
+    long getCargoXIds(int index);
   }
   /** Protobuf type {@code CargoRequest} */
   public static final class CargoRequest extends com.google.protobuf.GeneratedMessageV3
@@ -1588,6 +1608,7 @@ public final class CargoInfo {
       sortBy_ = "";
       orderBy_ = "";
       param_ = java.util.Collections.emptyList();
+      cargoXIds_ = emptyLongList();
     }
 
     @java.lang.Override
@@ -1680,6 +1701,29 @@ public final class CargoInfo {
                         com.cpdss.common.generated.CargoInfo.Param.parser(), extensionRegistry));
                 break;
               }
+            case 88:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  cargoXIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                cargoXIds_.addLong(input.readInt64());
+                break;
+              }
+            case 90:
+              {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000002) != 0) && input.getBytesUntilLimit() > 0) {
+                  cargoXIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  cargoXIds_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -1696,6 +1740,9 @@ public final class CargoInfo {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           param_ = java.util.Collections.unmodifiableList(param_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          cargoXIds_.makeImmutable(); // C
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1886,6 +1933,36 @@ public final class CargoInfo {
       return param_.get(index);
     }
 
+    public static final int CARGOXIDS_FIELD_NUMBER = 11;
+    private com.google.protobuf.Internal.LongList cargoXIds_;
+    /**
+     * <code>repeated int64 cargoXIds = 11;</code>
+     *
+     * @return A list containing the cargoXIds.
+     */
+    public java.util.List<java.lang.Long> getCargoXIdsList() {
+      return cargoXIds_;
+    }
+    /**
+     * <code>repeated int64 cargoXIds = 11;</code>
+     *
+     * @return The count of cargoXIds.
+     */
+    public int getCargoXIdsCount() {
+      return cargoXIds_.size();
+    }
+    /**
+     * <code>repeated int64 cargoXIds = 11;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The cargoXIds at the given index.
+     */
+    public long getCargoXIds(int index) {
+      return cargoXIds_.getLong(index);
+    }
+
+    private int cargoXIdsMemoizedSerializedSize = -1;
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -1900,6 +1977,7 @@ public final class CargoInfo {
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      getSerializedSize();
       if (companyId_ != 0L) {
         output.writeInt64(1, companyId_);
       }
@@ -1929,6 +2007,13 @@ public final class CargoInfo {
       }
       for (int i = 0; i < param_.size(); i++) {
         output.writeMessage(10, param_.get(i));
+      }
+      if (getCargoXIdsList().size() > 0) {
+        output.writeUInt32NoTag(90);
+        output.writeUInt32NoTag(cargoXIdsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < cargoXIds_.size(); i++) {
+        output.writeInt64NoTag(cargoXIds_.getLong(i));
       }
       unknownFields.writeTo(output);
     }
@@ -1969,6 +2054,19 @@ public final class CargoInfo {
       for (int i = 0; i < param_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, param_.get(i));
       }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < cargoXIds_.size(); i++) {
+          dataSize +=
+              com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(cargoXIds_.getLong(i));
+        }
+        size += dataSize;
+        if (!getCargoXIdsList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        cargoXIdsMemoizedSerializedSize = dataSize;
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1995,6 +2093,7 @@ public final class CargoInfo {
       if (!getSortBy().equals(other.getSortBy())) return false;
       if (!getOrderBy().equals(other.getOrderBy())) return false;
       if (!getParamList().equals(other.getParamList())) return false;
+      if (!getCargoXIdsList().equals(other.getCargoXIdsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2027,6 +2126,10 @@ public final class CargoInfo {
       if (getParamCount() > 0) {
         hash = (37 * hash) + PARAM_FIELD_NUMBER;
         hash = (53 * hash) + getParamList().hashCode();
+      }
+      if (getCargoXIdsCount() > 0) {
+        hash = (37 * hash) + CARGOXIDS_FIELD_NUMBER;
+        hash = (53 * hash) + getCargoXIdsList().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -2191,6 +2294,8 @@ public final class CargoInfo {
         } else {
           paramBuilder_.clear();
         }
+        cargoXIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -2236,6 +2341,11 @@ public final class CargoInfo {
         } else {
           result.param_ = paramBuilder_.build();
         }
+        if (((bitField0_ & 0x00000002) != 0)) {
+          cargoXIds_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.cargoXIds_ = cargoXIds_;
         onBuilt();
         return result;
       }
@@ -2343,6 +2453,16 @@ public final class CargoInfo {
               paramBuilder_.addAllMessages(other.param_);
             }
           }
+        }
+        if (!other.cargoXIds_.isEmpty()) {
+          if (cargoXIds_.isEmpty()) {
+            cargoXIds_ = other.cargoXIds_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureCargoXIdsIsMutable();
+            cargoXIds_.addAll(other.cargoXIds_);
+          }
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -2962,6 +3082,90 @@ public final class CargoInfo {
           param_ = null;
         }
         return paramBuilder_;
+      }
+
+      private com.google.protobuf.Internal.LongList cargoXIds_ = emptyLongList();
+
+      private void ensureCargoXIdsIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          cargoXIds_ = mutableCopy(cargoXIds_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+      /**
+       * <code>repeated int64 cargoXIds = 11;</code>
+       *
+       * @return A list containing the cargoXIds.
+       */
+      public java.util.List<java.lang.Long> getCargoXIdsList() {
+        return ((bitField0_ & 0x00000002) != 0)
+            ? java.util.Collections.unmodifiableList(cargoXIds_)
+            : cargoXIds_;
+      }
+      /**
+       * <code>repeated int64 cargoXIds = 11;</code>
+       *
+       * @return The count of cargoXIds.
+       */
+      public int getCargoXIdsCount() {
+        return cargoXIds_.size();
+      }
+      /**
+       * <code>repeated int64 cargoXIds = 11;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The cargoXIds at the given index.
+       */
+      public long getCargoXIds(int index) {
+        return cargoXIds_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 cargoXIds = 11;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The cargoXIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCargoXIds(int index, long value) {
+        ensureCargoXIdsIsMutable();
+        cargoXIds_.setLong(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 cargoXIds = 11;</code>
+       *
+       * @param value The cargoXIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addCargoXIds(long value) {
+        ensureCargoXIdsIsMutable();
+        cargoXIds_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 cargoXIds = 11;</code>
+       *
+       * @param values The cargoXIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllCargoXIds(java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureCargoXIdsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, cargoXIds_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 cargoXIds = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCargoXIds() {
+        cargoXIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -11293,47 +11497,48 @@ public final class CargoInfo {
           + "oListRequest\022\n\n\002id\030\001 \003(\003\"^\n\020CargoDetailR"
           + "eply\022!\n\013cargoDetail\030\001 \001(\0132\014.CargoDetail\022"
           + "\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStatus"
-          + "\"\307\001\n\014CargoRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010"
+          + "\"\332\001\n\014CargoRequest\022\021\n\tcompanyId\030\001 \001(\003\022\020\n\010"
           + "vesselId\030\002 \001(\003\022\020\n\010voyageId\030\003 \001(\003\022\027\n\017load"
           + "ableStudyId\030\004 \001(\003\022\017\n\007cargoId\030\005 \001(\003\022\014\n\004pa"
           + "ge\030\006 \001(\005\022\020\n\010pageSize\030\007 \001(\005\022\016\n\006sortBy\030\010 \001"
           + "(\t\022\017\n\007orderBy\030\t \001(\t\022\025\n\005param\030\n \003(\0132\006.Par"
-          + "am\"#\n\005Param\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\""
-          + "7\n\026CargoRequestWithPaging\022\016\n\006offset\030\001 \001("
-          + "\003\022\r\n\005limit\030\002 \001(\003\"\177\n\013CargoDetail\022\n\n\002id\030\001 "
-          + "\001(\003\022\021\n\tcrudeType\030\002 \001(\t\022\024\n\014abbreviation\030\003"
-          + " \001(\t\022\013\n\003api\030\004 \001(\t\022\031\n\021isCondensateCargo\030\005"
-          + " \001(\010\022\023\n\013isHrvpCargo\030\006 \001(\010\"S\n\nCargoReply\022"
-          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
-          + "\022\034\n\006cargos\030\002 \003(\0132\014.CargoDetail\"t\n\022CargoD"
-          + "etailedReply\022\'\n\016responseStatus\030\001 \001(\0132\017.R"
-          + "esponseStatus\022\036\n\006cargos\030\002 \003(\0132\016.CargoDet"
-          + "ailed\022\025\n\rtotalElements\030\003 \001(\003\"`\n\026CargoByI"
-          + "dDetailedReply\022\'\n\016responseStatus\030\001 \001(\0132\017"
-          + ".ResponseStatus\022\035\n\005cargo\030\002 \001(\0132\016.CargoDe"
-          + "tailed\"\361\002\n\rCargoDetailed\022\n\n\002id\030\001 \001(\003\022\014\n\004"
-          + "name\030\002 \001(\t\022\024\n\014abbreviation\030\003 \001(\t\022\013\n\003api\030"
-          + "\004 \001(\t\022\014\n\004type\030\005 \001(\t\022\021\n\tassayDate\030\006 \001(\t\022\014"
-          + "\n\004temp\030\007 \001(\t\022\032\n\022reidVapourPressure\030\010 \001(\t"
-          + "\022\013\n\003gas\030\t \001(\t\022\020\n\010totalWax\030\n \001(\t\022\021\n\tpourP"
-          + "oint\030\013 \001(\t\022\022\n\ncloudPoint\030\014 \001(\t\022\021\n\tviscos"
-          + "ity\030\r \001(\t\022\020\n\010cowCodes\030\016 \001(\t\022\032\n\022hydrogenS"
-          + "ulfideOil\030\017 \001(\t\022\035\n\025hydrogenSulfideVapour"
-          + "\030\020 \001(\t\022\017\n\007benzene\030\021 \001(\t\022!\n\031specialInstri"
-          + "ctionsRemark\030\022 \001(\t2\356\003\n\020CargoInfoService\022"
-          + ",\n\014GetCargoInfo\022\r.CargoRequest\032\013.CargoRe"
-          + "ply\"\000\022>\n\024GetCargoInfoByPaging\022\027.CargoReq"
-          + "uestWithPaging\032\013.CargoReply\"\000\0226\n\020GetCarg"
-          + "oInfoById\022\r.CargoRequest\032\021.CargoDetailRe"
-          + "ply\"\000\022;\n\027GetCargoInfosByCargoIds\022\021.Cargo"
-          + "ListRequest\032\013.CargoReply\"\000\022<\n\024GetCargoIn"
-          + "foDetailed\022\r.CargoRequest\032\023.CargoDetaile"
-          + "dReply\"\000\022D\n\030GetCargoInfoDetailedById\022\r.C"
-          + "argoRequest\032\027.CargoByIdDetailedReply\"\000\022;"
-          + "\n\017DeleteCargoById\022\r.CargoRequest\032\027.Cargo"
-          + "ByIdDetailedReply\"\000\0226\n\tSaveCargo\022\016.Cargo"
-          + "Detailed\032\027.CargoByIdDetailedReply\"\000B\036\n\032c"
-          + "om.cpdss.common.generatedP\000b\006proto3"
+          + "am\022\021\n\tcargoXIds\030\013 \003(\003\"#\n\005Param\022\013\n\003key\030\001 "
+          + "\001(\t\022\r\n\005value\030\002 \001(\t\"7\n\026CargoRequestWithPa"
+          + "ging\022\016\n\006offset\030\001 \001(\003\022\r\n\005limit\030\002 \001(\003\"\177\n\013C"
+          + "argoDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcrudeType\030\002 \001("
+          + "\t\022\024\n\014abbreviation\030\003 \001(\t\022\013\n\003api\030\004 \001(\t\022\031\n\021"
+          + "isCondensateCargo\030\005 \001(\010\022\023\n\013isHrvpCargo\030\006"
+          + " \001(\010\"S\n\nCargoReply\022\'\n\016responseStatus\030\001 \001"
+          + "(\0132\017.ResponseStatus\022\034\n\006cargos\030\002 \003(\0132\014.Ca"
+          + "rgoDetail\"t\n\022CargoDetailedReply\022\'\n\016respo"
+          + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\036\n\006carg"
+          + "os\030\002 \003(\0132\016.CargoDetailed\022\025\n\rtotalElement"
+          + "s\030\003 \001(\003\"`\n\026CargoByIdDetailedReply\022\'\n\016res"
+          + "ponseStatus\030\001 \001(\0132\017.ResponseStatus\022\035\n\005ca"
+          + "rgo\030\002 \001(\0132\016.CargoDetailed\"\361\002\n\rCargoDetai"
+          + "led\022\n\n\002id\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022\024\n\014abbrevi"
+          + "ation\030\003 \001(\t\022\013\n\003api\030\004 \001(\t\022\014\n\004type\030\005 \001(\t\022\021"
+          + "\n\tassayDate\030\006 \001(\t\022\014\n\004temp\030\007 \001(\t\022\032\n\022reidV"
+          + "apourPressure\030\010 \001(\t\022\013\n\003gas\030\t \001(\t\022\020\n\010tota"
+          + "lWax\030\n \001(\t\022\021\n\tpourPoint\030\013 \001(\t\022\022\n\ncloudPo"
+          + "int\030\014 \001(\t\022\021\n\tviscosity\030\r \001(\t\022\020\n\010cowCodes"
+          + "\030\016 \001(\t\022\032\n\022hydrogenSulfideOil\030\017 \001(\t\022\035\n\025hy"
+          + "drogenSulfideVapour\030\020 \001(\t\022\017\n\007benzene\030\021 \001"
+          + "(\t\022!\n\031specialInstrictionsRemark\030\022 \001(\t2\356\003"
+          + "\n\020CargoInfoService\022,\n\014GetCargoInfo\022\r.Car"
+          + "goRequest\032\013.CargoReply\"\000\022>\n\024GetCargoInfo"
+          + "ByPaging\022\027.CargoRequestWithPaging\032\013.Carg"
+          + "oReply\"\000\0226\n\020GetCargoInfoById\022\r.CargoRequ"
+          + "est\032\021.CargoDetailReply\"\000\022;\n\027GetCargoInfo"
+          + "sByCargoIds\022\021.CargoListRequest\032\013.CargoRe"
+          + "ply\"\000\022<\n\024GetCargoInfoDetailed\022\r.CargoReq"
+          + "uest\032\023.CargoDetailedReply\"\000\022D\n\030GetCargoI"
+          + "nfoDetailedById\022\r.CargoRequest\032\027.CargoBy"
+          + "IdDetailedReply\"\000\022;\n\017DeleteCargoById\022\r.C"
+          + "argoRequest\032\027.CargoByIdDetailedReply\"\000\0226"
+          + "\n\tSaveCargo\022\016.CargoDetailed\032\027.CargoByIdD"
+          + "etailedReply\"\000B\036\n\032com.cpdss.common.gener"
+          + "atedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -11370,6 +11575,7 @@ public final class CargoInfo {
               "SortBy",
               "OrderBy",
               "Param",
+              "CargoXIds",
             });
     internal_static_Param_descriptor = getDescriptor().getMessageTypes().get(3);
     internal_static_Param_fieldAccessorTable =
