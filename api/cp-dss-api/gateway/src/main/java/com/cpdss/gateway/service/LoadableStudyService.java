@@ -2884,7 +2884,7 @@ public class LoadableStudyService {
                             && record
                                 .getOperationType()
                                 .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
-                .max(Comparator.comparing(record -> record.getPortOrder()));
+                .min(Comparator.comparing(record -> record.getPortOrder()));
       }
 
       for (com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord :
