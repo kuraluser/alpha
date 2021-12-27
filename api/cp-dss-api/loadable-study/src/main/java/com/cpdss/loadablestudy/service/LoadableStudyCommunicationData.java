@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.common.communication.StagingService.setEntityDocFields;
+
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -72,8 +74,7 @@ public class LoadableStudyCommunicationData {
               Optional<LoadablePattern> loadablePatternOpt =
                   loadablePatternRepository.findById(loadablePattern.getId());
               log.info("LoadablePattern get:{}", loadablePatternOpt);
-              loadablePattern.setVersion(
-                  loadablePatternOpt.isPresent() ? loadablePatternOpt.get().getVersion() : null);
+              setEntityDocFields(loadablePattern, loadablePatternOpt);
               log.info("Saved LoadablePattern:{}", loadablePattern);
               loadablePatternRepository.save(loadablePattern);
             } catch (Exception e) {
@@ -136,10 +137,7 @@ public class LoadableStudyCommunicationData {
               synopticalTableLoadicatorDataRepository.findById(
                   synopticalTableLoadicatorData.getId());
           log.info("SynopticalTableLoadicatorData get:{}", synopticalTableLoadicatorDataOpt);
-          synopticalTableLoadicatorData.setVersion(
-              synopticalTableLoadicatorDataOpt.isPresent()
-                  ? synopticalTableLoadicatorDataOpt.get().getVersion()
-                  : null);
+          setEntityDocFields(synopticalTableLoadicatorData, synopticalTableLoadicatorDataOpt);
         }
       }
       log.info("Saved SynopticalTableLoadicatorDatas:{}", synopticalTableLoadicatorDatas);
@@ -188,7 +186,7 @@ public class LoadableStudyCommunicationData {
           if (jsonType.isPresent()) {
             Optional<JsonData> jsonDataOpt = jsonDataRepository.findById(jsonData.getId());
             log.info("jsonDataOpt get:{}", jsonDataOpt);
-            jsonData.setVersion(jsonDataOpt.isPresent() ? jsonDataOpt.get().getVersion() : null);
+            setEntityDocFields(jsonData, jsonDataOpt);
             jsonData.setJsonTypeXId(jsonType.get());
           }
         }
@@ -225,8 +223,7 @@ public class LoadableStudyCommunicationData {
             Optional<SynopticalTable> synopticalTableOpt =
                 synopticalTableRepository.findById(synopticalTable.getId());
             log.info("SynopticalTable get by id:{}", synopticalTableOpt);
-            synopticalTable.setVersion(
-                synopticalTableOpt.isPresent() ? synopticalTableOpt.get().getVersion() : null);
+            setEntityDocFields(synopticalTable, synopticalTableOpt);
             synopticalTable.setLoadableStudyPortRotation(loadableStudyPortRotation.get());
           }
         }
@@ -273,10 +270,7 @@ public class LoadableStudyCommunicationData {
             log.info(
                 "LoadableStudyPortRotation get by id:{}",
                 loadableStudyPortRotationOpt.get().getId());
-            loadableStudyPortRotation.setVersion(
-                loadableStudyPortRotationOpt.isPresent()
-                    ? loadableStudyPortRotationOpt.get().getVersion()
-                    : null);
+            setEntityDocFields(loadableStudyPortRotation, loadableStudyPortRotationOpt);
             loadableStudyPortRotation.setLoadableStudy(loadableStudy.get());
             loadableStudyPortRotation.setOperation(cargoOperation.get());
           }

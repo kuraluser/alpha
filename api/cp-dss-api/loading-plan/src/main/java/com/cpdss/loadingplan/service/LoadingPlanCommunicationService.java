@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service;
 
+import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.loadingplan.utility.LoadingPlanConstants.*;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
@@ -10,7 +11,6 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
@@ -967,13 +967,9 @@ public class LoadingPlanCommunicationService {
               loadingInformation.setDepartureStatus(departureStatusOpt.get());
             }
           }
-          Long version = null;
           Optional<LoadingInformation> loadingInfoObj =
               loadingInformationCommunicationRepository.findById(loadingInformation.getId());
-          if (loadingInfoObj.isPresent()) {
-            version = loadingInfoObj.get().getVersion();
-          }
-          loadingInformation.setVersion(version);
+          setEntityDocFields(loadingInformation, loadingInfoObj);
           loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
           log.info("LoadingInformation saved with id:" + loadingInfo.getId());
         } catch (ResourceAccessException e) {
@@ -995,13 +991,9 @@ public class LoadingPlanCommunicationService {
         if (cargoToppingOffSequences != null) {
           try {
             for (CargoToppingOffSequence cargoToppingOffSequence : cargoToppingOffSequences) {
-              Long version = null;
               Optional<CargoToppingOffSequence> cargoToppOffSeqObj =
                   cargoToppingOffSequenceRepository.findById(cargoToppingOffSequence.getId());
-              if (cargoToppOffSeqObj.isPresent()) {
-                version = cargoToppOffSeqObj.get().getVersion();
-              }
-              cargoToppingOffSequence.setVersion(version);
+              setEntityDocFields(cargoToppingOffSequence, cargoToppOffSeqObj);
               cargoToppingOffSequence.setLoadingInformation(loadingInfo);
             }
             cargoToppingOffSequenceRepository.saveAll(cargoToppingOffSequences);
@@ -1023,13 +1015,9 @@ public class LoadingPlanCommunicationService {
         if (loadingBerthDetails != null) {
           try {
             for (LoadingBerthDetail loadingBerthDetail : loadingBerthDetails) {
-              Long version = null;
               Optional<LoadingBerthDetail> loadingBerthDetailObj =
                   loadingBerthDetailsRepository.findById(loadingBerthDetail.getId());
-              if (loadingBerthDetailObj.isPresent()) {
-                version = loadingBerthDetailObj.get().getVersion();
-              }
-              loadingBerthDetail.setVersion(version);
+              setEntityDocFields(loadingBerthDetail, loadingBerthDetailObj);
               loadingBerthDetail.setLoadingInformation(loadingInfo);
             }
             loadingBerthDetailsRepository.saveAll(loadingBerthDetails);
@@ -1051,13 +1039,9 @@ public class LoadingPlanCommunicationService {
         if (loadingDelays != null) {
           try {
             for (LoadingDelay loadingDelay : loadingDelays) {
-              Long version = null;
               Optional<LoadingDelay> loadingDelayObj =
                   loadingDelayRepository.findById(loadingDelay.getId());
-              if (loadingDelayObj.isPresent()) {
-                version = loadingDelayObj.get().getVersion();
-              }
-              loadingDelay.setVersion(version);
+              setEntityDocFields(loadingDelay, loadingDelayObj);
               loadingDelay.setLoadingInformation(loadingInfo);
             }
             loadingDelayRepository.saveAll(loadingDelays);
@@ -1082,8 +1066,7 @@ public class LoadingPlanCommunicationService {
             for (LoadingDelayReason loadingDelayReason : loadingDelayReasons) {
               Optional<LoadingDelayReason> loadingDelayReasonObj =
                   loadingDelayReasonRepository.findById(loadingDelayReason.getId());
-              loadingDelayReason.setVersion(
-                  loadingDelayReasonObj.map(EntityDoc::getVersion).orElse(null));
+              setEntityDocFields(loadingDelayReason, loadingDelayReasonObj);
               // Set Loading Delay details
               loadingDelayReason.setLoadingDelay(
                   emptyIfNull(loadingDelays).stream()
@@ -1127,13 +1110,9 @@ public class LoadingPlanCommunicationService {
         if (loadingMachineryInUses != null) {
           try {
             for (LoadingMachineryInUse loadingMachineryInUse : loadingMachineryInUses) {
-              Long version = null;
               Optional<LoadingMachineryInUse> loadingMachineryInUseObj =
                   loadingMachineryInUseRepository.findById(loadingMachineryInUse.getId());
-              if (loadingMachineryInUseObj.isPresent()) {
-                version = loadingMachineryInUseObj.get().getVersion();
-              }
-              loadingMachineryInUse.setVersion(version);
+              setEntityDocFields(loadingMachineryInUse, loadingMachineryInUseObj);
               loadingMachineryInUse.setLoadingInformation(loadingInfo);
             }
             loadingMachineryInUseRepository.saveAll(loadingMachineryInUses);
@@ -1155,13 +1134,9 @@ public class LoadingPlanCommunicationService {
         if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
           try {
             for (LoadingSequence loadingSequence : loadingSequencesList) {
-              Long version = null;
               Optional<LoadingSequence> loadingSequenceObj =
                   loadingSequenceRepository.findById(loadingSequence.getId());
-              if (loadingSequenceObj.isPresent()) {
-                version = loadingSequenceObj.get().getVersion();
-              }
-              loadingSequence.setVersion(version);
+              setEntityDocFields(loadingSequence, loadingSequenceObj);
               loadingSequence.setLoadingInformation(loadingInfo);
             }
             loadingSequenceRepository.saveAll(loadingSequencesList);
@@ -1187,7 +1162,6 @@ public class LoadingPlanCommunicationService {
             for (LoadingSequence loadingSequence : loadingSequencesList) {
               for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
                   loadingPlanPortWiseDetailsList) {
-                Long version = null;
                 if (loadingSequence
                     .getId()
                     .equals(
@@ -1196,10 +1170,7 @@ public class LoadingPlanCommunicationService {
                   Optional<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailObj =
                       loadingPlanPortWiseDetailsRepository.findById(
                           loadingPlanPortWiseDetails.getId());
-                  if (loadingPlanPortWiseDetailObj.isPresent()) {
-                    version = loadingPlanPortWiseDetailObj.get().getVersion();
-                  }
-                  loadingPlanPortWiseDetails.setVersion(version);
+                  setEntityDocFields(loadingPlanPortWiseDetails, loadingPlanPortWiseDetailObj);
                   loadingPlanPortWiseDetails.setLoadingSequence(loadingSequence);
                 }
               }
@@ -1228,14 +1199,11 @@ public class LoadingPlanCommunicationService {
         try {
           for (PortLoadingPlanStabilityParameters portLoadingPlanStabilityParameters :
               portLoadingPlanStabilityParamList) {
-            Long version = null;
             Optional<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamObj =
                 portLoadingPlanStabilityParametersRepository.findById(
                     portLoadingPlanStabilityParameters.getId());
-            if (portLoadingPlanStabilityParamObj.isPresent()) {
-              version = portLoadingPlanStabilityParamObj.get().getVersion();
-            }
-            portLoadingPlanStabilityParameters.setVersion(version);
+            setEntityDocFields(
+                portLoadingPlanStabilityParameters, portLoadingPlanStabilityParamObj);
             portLoadingPlanStabilityParameters.setLoadingInformation(loadingInfo);
           }
           portLoadingPlanStabilityParametersRepository.saveAll(portLoadingPlanStabilityParamList);
@@ -1261,13 +1229,9 @@ public class LoadingPlanCommunicationService {
         try {
           for (PortLoadingPlanRobDetails portLoadingPlanRobDetails :
               portLoadingPlanRobDetailsList) {
-            Long version = null;
             Optional<PortLoadingPlanRobDetails> portLoadingPlanRobDetaObj =
                 portLoadingPlanRobDetailsRepository.findById(portLoadingPlanRobDetails.getId());
-            if (portLoadingPlanRobDetaObj.isPresent()) {
-              version = portLoadingPlanRobDetaObj.get().getVersion();
-            }
-            portLoadingPlanRobDetails.setVersion(version);
+            setEntityDocFields(portLoadingPlanRobDetails, portLoadingPlanRobDetaObj);
             portLoadingPlanRobDetails.setLoadingInformation(loadingInfo.getId());
           }
           portLoadingPlanRobDetailsRepository.saveAll(portLoadingPlanRobDetailsList);
@@ -1293,7 +1257,6 @@ public class LoadingPlanCommunicationService {
                 loadingPlanPortWiseDetailsList) {
               for (LoadingPlanBallastDetails loadingPlanBallastDetails :
                   loadingPlanBallastDetailsList) {
-                Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
                     .equals(
@@ -1302,10 +1265,7 @@ public class LoadingPlanCommunicationService {
                   Optional<LoadingPlanBallastDetails> loadingPlanBallastDetaObj =
                       loadingPlanBallastDetailsRepository.findById(
                           loadingPlanBallastDetails.getId());
-                  if (loadingPlanBallastDetaObj.isPresent()) {
-                    version = loadingPlanBallastDetaObj.get().getVersion();
-                  }
-                  loadingPlanBallastDetails.setVersion(version);
+                  setEntityDocFields(loadingPlanBallastDetails, loadingPlanBallastDetaObj);
                   loadingPlanBallastDetails.setLoadingPlanPortWiseDetails(
                       loadingPlanPortWiseDetails);
                 }
@@ -1334,17 +1294,13 @@ public class LoadingPlanCommunicationService {
             for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
                 loadingPlanPortWiseDetailsList) {
               for (LoadingPlanRobDetails loadingPlanRobDetails : loadingPlanRobDetailsList) {
-                Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
                     .equals(
                         Long.valueOf(loadingPlanRobDetails.getCommunicationRelatedEntityId()))) {
                   Optional<LoadingPlanRobDetails> loadingPlanRobDetaObj =
                       loadingPlanRobDetailsRepository.findById(loadingPlanRobDetails.getId());
-                  if (loadingPlanRobDetaObj.isPresent()) {
-                    version = loadingPlanRobDetaObj.get().getVersion();
-                  }
-                  loadingPlanRobDetails.setVersion(version);
+                  setEntityDocFields(loadingPlanRobDetails, loadingPlanRobDetaObj);
                   loadingPlanRobDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
                 }
               }
@@ -1372,14 +1328,10 @@ public class LoadingPlanCommunicationService {
         try {
           for (PortLoadingPlanBallastDetails portLoadingPlanBallastDetails :
               portLoadingPlanBallastDetailsList) {
-            Long version = null;
             Optional<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetaObj =
                 portLoadingPlanBallastDetailsRepository.findById(
                     portLoadingPlanBallastDetails.getId());
-            if (portLoadingPlanBallastDetaObj.isPresent()) {
-              version = portLoadingPlanBallastDetaObj.get().getVersion();
-            }
-            portLoadingPlanBallastDetails.setVersion(version);
+            setEntityDocFields(portLoadingPlanBallastDetails, portLoadingPlanBallastDetaObj);
             portLoadingPlanBallastDetails.setLoadingInformation(loadingInfo);
           }
           portLoadingPlanBallastDetailsRepository.saveAll(portLoadingPlanBallastDetailsList);
@@ -1405,14 +1357,11 @@ public class LoadingPlanCommunicationService {
           arrivalDeparture = portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
           for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
               portLoadingPlanBallastTempDetailsList) {
-            Long version = null;
             Optional<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetaObj =
                 portLoadingPlanBallastTempDetailsRepository.findById(
                     portLoadingPlanBallastTempDetails.getId());
-            if (portLoadingPlanBallastTempDetaObj.isPresent()) {
-              version = portLoadingPlanBallastTempDetaObj.get().getVersion();
-            }
-            portLoadingPlanBallastTempDetails.setVersion(version);
+            setEntityDocFields(
+                portLoadingPlanBallastTempDetails, portLoadingPlanBallastTempDetaObj);
             portLoadingPlanBallastTempDetails.setLoadingInformation(loadingInfo.getId());
           }
           portLoadingPlanBallastTempDetailsRepository.saveAll(
@@ -1441,14 +1390,10 @@ public class LoadingPlanCommunicationService {
         try {
           for (PortLoadingPlanStowageDetails portLoadingPlanStowageDetails :
               portLoadingPlanStowageDetailsList) {
-            Long version = null;
             Optional<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetaObj =
                 portLoadingPlanStowageDetailsRepository.findById(
                     portLoadingPlanStowageDetails.getId());
-            if (portLoadingPlanStowageDetaObj.isPresent()) {
-              version = portLoadingPlanStowageDetaObj.get().getVersion();
-            }
-            portLoadingPlanStowageDetails.setVersion(version);
+            setEntityDocFields(portLoadingPlanStowageDetails, portLoadingPlanStowageDetaObj);
             portLoadingPlanStowageDetails.setLoadingInformation(loadingInfo);
           }
           portLoadingPlanStowageDetailsRepository.saveAll(portLoadingPlanStowageDetailsList);
@@ -1473,14 +1418,11 @@ public class LoadingPlanCommunicationService {
         try {
           for (PortLoadingPlanStowageTempDetails portLoadingPlanStowageTempDetails :
               portLoadingPlanStowageTempDetailsList) {
-            Long version = null;
             Optional<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetaObj =
                 portLoadingPlanStowageTempDetailsRepository.findById(
                     portLoadingPlanStowageTempDetails.getId());
-            if (portLoadingPlanStowageTempDetaObj.isPresent()) {
-              version = portLoadingPlanStowageTempDetaObj.get().getVersion();
-            }
-            portLoadingPlanStowageTempDetails.setVersion(version);
+            setEntityDocFields(
+                portLoadingPlanStowageTempDetails, portLoadingPlanStowageTempDetaObj);
             portLoadingPlanStowageTempDetails.setLoadingInformation(loadingInfo.getId());
           }
           portLoadingPlanStowageTempDetailsRepository.saveAll(
@@ -1508,7 +1450,6 @@ public class LoadingPlanCommunicationService {
                 loadingPlanPortWiseDetailsList) {
               for (LoadingPlanStowageDetails loadingPlanStowageDetails :
                   loadingPlanStowageDetailsList) {
-                Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
                     .equals(
@@ -1517,10 +1458,7 @@ public class LoadingPlanCommunicationService {
                   Optional<LoadingPlanStowageDetails> loadingPlanStowageDetaObj =
                       loadingPlanStowageDetailsRepository.findById(
                           loadingPlanStowageDetails.getId());
-                  if (loadingPlanStowageDetaObj.isPresent()) {
-                    version = loadingPlanStowageDetaObj.get().getVersion();
-                  }
-                  loadingPlanStowageDetails.setVersion(version);
+                  setEntityDocFields(loadingPlanStowageDetails, loadingPlanStowageDetaObj);
                   loadingPlanStowageDetails.setLoadingPlanPortWiseDetails(
                       loadingPlanPortWiseDetails);
                 }
@@ -1549,14 +1487,11 @@ public class LoadingPlanCommunicationService {
         try {
           for (LoadingSequenceStabilityParameters loadingSequenceStabilityParameters :
               loadingSequenceStabilityParametersList) {
-            Long version = null;
             Optional<LoadingSequenceStabilityParameters> loadingSequenceStabilityParamObj =
                 loadingSequenceStabiltyParametersRepository.findById(
                     loadingSequenceStabilityParameters.getId());
-            if (loadingSequenceStabilityParamObj.isPresent()) {
-              version = loadingSequenceStabilityParamObj.get().getVersion();
-            }
-            loadingSequenceStabilityParameters.setVersion(version);
+            setEntityDocFields(
+                loadingSequenceStabilityParameters, loadingSequenceStabilityParamObj);
             loadingSequenceStabilityParameters.setLoadingInformation(loadingInfo);
           }
           loadingSequenceStabiltyParametersRepository.saveAll(
@@ -1585,7 +1520,6 @@ public class LoadingPlanCommunicationService {
                 loadingPlanPortWiseDetailsList) {
               for (LoadingPlanStabilityParameters loadingPlanStabilityParameters :
                   loadingPlanStabilityParametersList) {
-                Long version = null;
                 if (loadingPlanPortWiseDetails
                     .getId()
                     .equals(
@@ -1594,10 +1528,7 @@ public class LoadingPlanCommunicationService {
                   Optional<LoadingPlanStabilityParameters> loadingPlanStabilityParamObj =
                       loadingPlanStabilityParametersRepository.findById(
                           loadingPlanStabilityParameters.getId());
-                  if (loadingPlanStabilityParamObj.isPresent()) {
-                    version = loadingPlanStabilityParamObj.get().getVersion();
-                  }
-                  loadingPlanStabilityParameters.setVersion(version);
+                  setEntityDocFields(loadingPlanStabilityParameters, loadingPlanStabilityParamObj);
                   loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(
                       loadingPlanPortWiseDetails);
                 }
@@ -1626,14 +1557,11 @@ public class LoadingPlanCommunicationService {
         try {
           for (PortLoadingPlanCommingleTempDetails portLoadingPlanCommingleTempDetails :
               portLoadingPlanCommingleTempDetailsList) {
-            Long version = null;
             Optional<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetaObj =
                 portLoadingPlanCommingleTempDetailsRepository.findById(
                     portLoadingPlanCommingleTempDetails.getId());
-            if (portLoadingPlanCommingleTempDetaObj.isPresent()) {
-              version = portLoadingPlanCommingleTempDetaObj.get().getVersion();
-            }
-            portLoadingPlanCommingleTempDetails.setVersion(version);
+            setEntityDocFields(
+                portLoadingPlanCommingleTempDetails, portLoadingPlanCommingleTempDetaObj);
             portLoadingPlanCommingleTempDetails.setLoadingInformation(loadingInfo.getId());
           }
           portLoadingPlanCommingleTempDetailsRepository.saveAll(
@@ -1662,14 +1590,10 @@ public class LoadingPlanCommunicationService {
           arrivalDeparture = portLoadingPlanCommingleDetailsList.get(0).getConditionType();
           for (PortLoadingPlanCommingleDetails portLoadingPlanCommingleDetails :
               portLoadingPlanCommingleDetailsList) {
-            Long version = null;
             Optional<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetaObj =
                 portLoadingPlanCommingleDetailsRepository.findById(
                     portLoadingPlanCommingleDetails.getId());
-            if (portLoadingPlanCommingleDetaObj.isPresent()) {
-              version = portLoadingPlanCommingleDetaObj.get().getVersion();
-            }
-            portLoadingPlanCommingleDetails.setVersion(version);
+            setEntityDocFields(portLoadingPlanCommingleDetails, portLoadingPlanCommingleDetaObj);
             portLoadingPlanCommingleDetails.setLoadingInformation(loadingInfo);
           }
           portLoadingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetailsList);
@@ -1691,13 +1615,9 @@ public class LoadingPlanCommunicationService {
       if (loadingInfo != null && billOfLandingList != null && !billOfLandingList.isEmpty()) {
         try {
           for (BillOfLanding billOfLanding : billOfLandingList) {
-            Long version = null;
             Optional<BillOfLanding> BillOfLandingObj =
                 billOfLandingRepository.findById(billOfLanding.getId());
-            if (BillOfLandingObj.isPresent()) {
-              version = BillOfLandingObj.get().getVersion();
-            }
-            billOfLanding.setVersion(version);
+            setEntityDocFields(billOfLanding, BillOfLandingObj);
             billOfLanding.setLoadingId(loadingInfo.getId());
           }
           billOfLandingRepository.saveAll(billOfLandingList);
@@ -1812,16 +1732,12 @@ public class LoadingPlanCommunicationService {
           if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
             for (LoadingSequence loadingSequence : loadingSequencesList) {
               for (BallastOperation ballastOperation : ballastOperationList) {
-                Long version = null;
                 if (loadingSequence
                     .getId()
                     .equals(Long.valueOf(ballastOperation.getCommunicationRelatedEntityId()))) {
                   Optional<BallastOperation> ballastOperationObj =
                       ballastOperationRepository.findById(ballastOperation.getId());
-                  if (ballastOperationObj.isPresent()) {
-                    version = ballastOperationObj.get().getVersion();
-                  }
-                  ballastOperation.setVersion(version);
+                  setEntityDocFields(ballastOperation, ballastOperationObj);
                   ballastOperation.setLoadingSequence(loadingSequence);
                 }
               }
@@ -1848,16 +1764,12 @@ public class LoadingPlanCommunicationService {
           if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
             for (LoadingSequence loadingSequence : loadingSequencesList) {
               for (EductionOperation eductionOperation : eductionOperationList) {
-                Long version = null;
                 if (loadingSequence
                     .getId()
                     .equals(Long.valueOf(eductionOperation.getCommunicationRelatedEntityId()))) {
                   Optional<EductionOperation> eductionOperationObj =
                       eductionOperationRepository.findById(eductionOperation.getId());
-                  if (eductionOperationObj.isPresent()) {
-                    version = eductionOperationObj.get().getVersion();
-                  }
-                  eductionOperation.setVersion(version);
+                  setEntityDocFields(eductionOperation, eductionOperationObj);
                   eductionOperation.setLoadingSequence(loadingSequence);
                 }
               }
@@ -1884,16 +1796,12 @@ public class LoadingPlanCommunicationService {
           if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
             for (LoadingSequence loadingSequence : loadingSequencesList) {
               for (CargoLoadingRate cargoLoadingRate : cargoLoadingRateList) {
-                Long version = null;
                 if (loadingSequence
                     .getId()
                     .equals(Long.valueOf(cargoLoadingRate.getCommunicationRelatedEntityId()))) {
                   Optional<CargoLoadingRate> cargoLoadingRateObj =
                       cargoLoadingRateRepository.findById(cargoLoadingRate.getId());
-                  if (cargoLoadingRateObj.isPresent()) {
-                    version = cargoLoadingRateObj.get().getVersion();
-                  }
-                  cargoLoadingRate.setVersion(version);
+                  setEntityDocFields(cargoLoadingRate, cargoLoadingRateObj);
                   cargoLoadingRate.setLoadingSequence(loadingSequence);
                 }
               }
@@ -1941,13 +1849,9 @@ public class LoadingPlanCommunicationService {
       if (loadingInfo != null && portTideDetailList != null && !portTideDetailList.isEmpty()) {
         try {
           for (PortTideDetail portTideDetail : portTideDetailList) {
-            Long version = null;
             Optional<PortTideDetail> portTideDetailObj =
                 portTideDetailsRepository.findById(portTideDetail.getId());
-            if (portTideDetailObj.isPresent()) {
-              version = portTideDetailObj.get().getVersion();
-            }
-            portTideDetail.setVersion(version);
+            setEntityDocFields(portTideDetail, portTideDetailObj);
             portTideDetail.setLoadingXid(loadingInfo.getId());
           }
           portTideDetailsRepository.saveAll(portTideDetailList);
@@ -1976,10 +1880,7 @@ public class LoadingPlanCommunicationService {
           for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
             Optional<AlgoErrorHeading> algoErrorHeadingOptional =
                 algoErrorHeadingRepository.findById(algoErrorHeading.getId());
-            algoErrorHeading.setVersion(
-                algoErrorHeadingOptional.isPresent()
-                    ? algoErrorHeadingOptional.get().getVersion()
-                    : null);
+            setEntityDocFields(algoErrorHeading, algoErrorHeadingOptional);
             algoErrorHeading.setLoadingInformation(loadingInfoError);
           }
           algoErrorHeadingRepository.saveAll(algoErrorHeadings);
@@ -2008,10 +1909,7 @@ public class LoadingPlanCommunicationService {
                     .equals(Long.valueOf(algoError.getCommunicationRelatedEntityId()))) {
                   Optional<AlgoErrors> algoErrorsOptional =
                       algoErrorsRepository.findById(algoError.getId());
-                  algoError.setVersion(
-                      algoErrorsOptional.isPresent()
-                          ? algoErrorsOptional.get().getVersion()
-                          : null);
+                  setEntityDocFields(algoError, algoErrorsOptional);
                   algoError.setAlgoErrorHeading(algoErrorHeading);
                 }
               }
@@ -2038,10 +1936,7 @@ public class LoadingPlanCommunicationService {
           for (LoadingInstruction loadingInstruction : loadingInstructions) {
             Optional<LoadingInstruction> loadingInstructionOptional =
                 loadingInstructionRepository.findById(loadingInstruction.getId());
-            loadingInstruction.setVersion(
-                loadingInstructionOptional.isPresent()
-                    ? loadingInstructionOptional.get().getVersion()
-                    : null);
+            setEntityDocFields(loadingInstruction, loadingInstructionOptional);
             loadingInstruction.setLoadingXId(loadingInfo.getId());
           }
           loadingInstructionRepository.saveAll(loadingInstructions);
@@ -2129,7 +2024,7 @@ public class LoadingPlanCommunicationService {
             }
             loadingInformationAlgoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
             loadingInformationAlgoStatus.setLoadingInformation(loadingInfo);
-            loadingInformationAlgoStatus.setVersion(null);
+            setEntityDocFields(loadingInformationAlgoStatus, Optional.ofNullable(algoStatus));
             loadingInformationAlgoStatus =
                 loadingInformationAlgoStatusRepository.save(loadingInformationAlgoStatus);
             log.info(

@@ -11,7 +11,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
@@ -903,7 +902,7 @@ public class LoadableStudyCommunicationService {
     }
 
     Optional<Voyage> optionalVoyage = voyageRepository.findById(voyageStage.getId());
-    voyageStage.setVersion(optionalVoyage.map(EntityDoc::getVersion).orElse(null));
+    setEntityDocFields(voyageStage, optionalVoyage);
 
     Optional<VoyageStatus> voyageStatus = voyageStatusRepository.findById(voyageStatusId);
     if (voyageStatus.isPresent()) {
@@ -925,8 +924,7 @@ public class LoadableStudyCommunicationService {
         commingleCargo -> {
           Optional<CommingleCargo> optionalCommingleCargo =
               commingleCargoRepository.findById(commingleCargo.getId());
-          Long version = optionalCommingleCargo.map(EntityDoc::getVersion).orElse(null);
-          commingleCargo.setVersion(version);
+          setEntityDocFields(commingleCargo, optionalCommingleCargo);
         });
     commingleCargoStage = commingleCargoRepository.saveAll(commingleCargoStage);
     log.info("Communication #######  CommingleCargo saved with id:" + commingleCargoStage);
@@ -944,8 +942,7 @@ public class LoadableStudyCommunicationService {
         cargoNomination -> {
           Optional<CargoNomination> optionalCargoNomination =
               cargoNominationRepository.findById(cargoNomination.getId());
-          cargoNomination.setVersion(
-              optionalCargoNomination.map(EntityDoc::getVersion).orElse(null));
+          setEntityDocFields(cargoNomination, optionalCargoNomination);
           // setting cargoNomination to CargoNominationPortDetails
           if (!isEmpty(cargoNominationOperationDetailsStage)) {
             cargoNominationOperationDetailsStage.forEach(
@@ -953,10 +950,8 @@ public class LoadableStudyCommunicationService {
                   Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
                       cargoNominationOperationDetailsRepository.findById(
                           cargoNominationOperationDetails.getId());
-                  cargoNominationOperationDetails.setVersion(
-                      optionalCargoNominationOperationDetails
-                          .map(EntityDoc::getVersion)
-                          .orElse(null));
+                  setEntityDocFields(
+                      cargoNominationOperationDetails, optionalCargoNominationOperationDetails);
 
                   if (cargoNomination
                       .getId()
@@ -989,8 +984,8 @@ public class LoadableStudyCommunicationService {
           Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
               cargoNominationOperationDetailsRepository.findById(
                   cargoNominationOperationDetails.getId());
-          cargoNominationOperationDetails.setVersion(
-              optionalCargoNominationOperationDetails.map(EntityDoc::getVersion).orElse(null));
+          setEntityDocFields(
+              cargoNominationOperationDetails, optionalCargoNominationOperationDetails);
 
           Optional<CargoNomination> optionalCargoNomination =
               cargoNominationRepository.findById(
@@ -1013,9 +1008,7 @@ public class LoadableStudyCommunicationService {
         loadableStudyPortRotationStageCommunication) {
       Optional<LoadableStudyPortRotationCommunication> loadableStudyPortRotation =
           loadableStudyPortRotationCommuncationRepository.findById(lsprStage.getId());
-      lsprStage.setVersion(null);
-      loadableStudyPortRotation.ifPresent(
-          studyPortRotation -> lsprStage.setVersion(studyPortRotation.getVersion()));
+      setEntityDocFields(lsprStage, loadableStudyPortRotation);
       lsprStage.setLoadableStudy(loadableStudyStage);
       Optional<CargoOperation> cargoOperationOpt =
           cargoOperationRepository.findById(lsprStage.getCommunicationRelatedEntityId());
@@ -1036,10 +1029,9 @@ public class LoadableStudyCommunicationService {
       return;
     }
     for (OnHandQuantity ohqStage : onHandQuantityStage) {
-      ohqStage.setVersion(null);
       ohqStage.setLoadableStudy(loadableStudyStage);
       Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
-      ohq.ifPresent(onHandQuantity -> ohqStage.setVersion(onHandQuantity.getVersion()));
+      setEntityDocFields(ohqStage, ohq);
       for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
         if (Objects.equals(ohqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
           ohqStage.setPortRotation(lspr);
@@ -1058,10 +1050,9 @@ public class LoadableStudyCommunicationService {
       return;
     }
     for (OnBoardQuantity obqStage : onBoardQuantityStage) {
-      obqStage.setVersion(null);
       obqStage.setLoadableStudy(loadableStudyStage);
-      Optional<OnBoardQuantity> ohq = onBoardQuantityRepository.findById(obqStage.getId());
-      ohq.ifPresent(onBoardQuantity -> obqStage.setVersion(onBoardQuantity.getVersion()));
+      Optional<OnBoardQuantity> obqOpt = onBoardQuantityRepository.findById(obqStage.getId());
+      setEntityDocFields(obqStage, obqOpt);
     }
 
     onBoardQuantityStage = onBoardQuantityRepository.saveAll(onBoardQuantityStage);
@@ -1076,10 +1067,9 @@ public class LoadableStudyCommunicationService {
       return;
     }
     for (LoadableQuantity lqStage : loadableQuantityStage) {
-      lqStage.setVersion(null);
       lqStage.setLoadableStudyXId(loadableStudyStage);
       Optional<LoadableQuantity> lq = loadableQuantityRepository.findById(lqStage.getId());
-      lq.ifPresent(loadableQuantity -> lqStage.setVersion(loadableQuantity.getVersion()));
+      setEntityDocFields(lqStage, lq);
       for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
         if (Objects.equals(lqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
           lqStage.setLoadableStudyPortRotation(lspr);
@@ -1099,10 +1089,9 @@ public class LoadableStudyCommunicationService {
       return;
     }
     for (SynopticalTable stStage : synopticalTableStage) {
-      stStage.setVersion(null);
       stStage.setLoadableStudyXId(loadableStudyStage.getId());
       Optional<SynopticalTable> st = synopticalTableRepository.findById(stStage.getId());
-      st.ifPresent(synopticalTable -> stStage.setVersion(synopticalTable.getVersion()));
+      setEntityDocFields(stStage, st);
 
       Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
           loadableStudyPortRotationRepository.findById(stStage.getCommunicationRelatedEntityId());
@@ -1127,7 +1116,7 @@ public class LoadableStudyCommunicationService {
           if (jsonType.isPresent()) {
             jsonData.setJsonTypeXId(jsonType.get());
             Optional<JsonData> jData = jsonDataRepository.findById(jsonData.getId());
-            jsonData.setVersion(jData.map(EntityDoc::getVersion).orElse(null));
+            setEntityDocFields(jsonData, jData);
           } else {
             log.info(
                 "Communication XXXXXXX  JsonData is not saved , Json Type is not found : "
@@ -1157,9 +1146,9 @@ public class LoadableStudyCommunicationService {
                 loadableStudyAlgoStatusStage = loadableStudyAlgoStatus;
               },
               () -> {
-                loadableStudyAlgoStatusStage.setVersion(null);
                 loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage);
               });
+      setEntityDocFields(loadableStudyAlgoStatusStage, loadableStudyStatus);
       loadableStudyAlgoStatusStage.setGeneratedFromShore(true);
       loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
       loadableStudyAlgoStatusStage =
@@ -1184,7 +1173,7 @@ public class LoadableStudyCommunicationService {
     }
     for (LoadablePlan lPlan : loadablePlanStage) {
       Optional<LoadablePlan> loadablePlanOptional = loadablePlanRepository.findById(lPlan.getId());
-      lPlan.setVersion(loadablePlanOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lPlan, loadablePlanOptional);
       lPlan.setLoadablePatternXId(
           getLoadablePattern(lPlan.getCommunicationRelatedEntityId()).orElse(null));
 
@@ -1213,7 +1202,7 @@ public class LoadableStudyCommunicationService {
                       loadableStudyRepository
                           .findById(lp.getCommunicationRelatedEntityId())
                           .orElse(null)));
-      lp.setVersion(loadablePatternOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lp, loadablePatternOptional);
     }
 
     loadablePatternStage = loadablePatternRepository.saveAll(loadablePatternStage);
@@ -1231,7 +1220,7 @@ public class LoadableStudyCommunicationService {
       log.info("Communication +++++++  AlgoErrorHeading  id : " + arStage.getId());
       Optional<AlgoErrorHeading> algoErrorHeadingOptional =
           algoErrorHeadingRepository.findById(arStage.getId());
-      arStage.setVersion(algoErrorHeadingOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(arStage, algoErrorHeadingOptional);
       log.info(
           "Communication +++++++  AlgoErrorHeading  CommunicationRelatedEntityId : "
               + arStage.getCommunicationRelatedEntityId());
@@ -1256,7 +1245,7 @@ public class LoadableStudyCommunicationService {
     }
     for (AlgoErrors ae : algoErrorsStage) {
       Optional<AlgoErrors> algoErrorsOptional = algoErrorsRepository.findById(ae.getId());
-      ae.setVersion(algoErrorsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(ae, algoErrorsOptional);
 
       for (AlgoErrorHeading aeh : algoErrorHeadingStage) {
         if (Objects.equals(aeh.getId(), ae.getCommunicationRelatedEntityId())) {
@@ -1278,8 +1267,7 @@ public class LoadableStudyCommunicationService {
     for (LoadablePlanConstraints lpConstraint : loadablePlanConstraintsStage) {
       Optional<LoadablePlanConstraints> loadablePlanConstraintsOptional =
           loadablePlanConstraintsRespository.findById(lpConstraint.getId());
-      lpConstraint.setVersion(
-          loadablePlanConstraintsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpConstraint, loadablePlanConstraintsOptional);
       lpConstraint.setLoadablePattern(
           getLoadablePattern(lpConstraint.getCommunicationRelatedEntityId()).orElse(null));
     }
@@ -1299,8 +1287,7 @@ public class LoadableStudyCommunicationService {
     for (LoadablePlanQuantity lpQuantity : loadablePlanQuantityStage) {
       Optional<LoadablePlanQuantity> loadablePlanConstraintsOptional =
           loadablePlanQuantityRepository.findById(lpQuantity.getId());
-      lpQuantity.setVersion(
-          loadablePlanConstraintsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpQuantity, loadablePlanConstraintsOptional);
       lpQuantity.setLoadablePattern(
           getLoadablePattern(lpQuantity.getCommunicationRelatedEntityId()).orElse(null));
     }
@@ -1325,8 +1312,7 @@ public class LoadableStudyCommunicationService {
               .findById(lpCommingleDetail.getCommunicationRelatedEntityId())
               .orElse(null);
       lpCommingleDetail.setLoadablePattern(loadablePattern);
-      lpCommingleDetail.setVersion(
-          lpCommingleDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpCommingleDetail, lpCommingleDetailsOptional);
     }
 
     loadablePlanCommingleDetailsStage =
@@ -1349,8 +1335,7 @@ public class LoadableStudyCommunicationService {
       Optional<LoadablePatternCargoToppingOffSequence> lpCargoToppingOffSequenceOptional =
           loadablePatternCargoToppingOffSequenceRepository.findById(
               lpCargoToppingOffSequence.getId());
-      lpCargoToppingOffSequence.setVersion(
-          lpCargoToppingOffSequenceOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpCargoToppingOffSequence, lpCargoToppingOffSequenceOptional);
       lpCargoToppingOffSequence.setLoadablePattern(
           getLoadablePattern(lpCargoToppingOffSequence.getCommunicationRelatedEntityId())
               .orElse(null));
@@ -1372,7 +1357,7 @@ public class LoadableStudyCommunicationService {
     for (LoadablePlanStowageDetails lpStowageDetail : loadablePlanStowageDetailsStage) {
       Optional<LoadablePlanStowageDetails> lpStowageDetailsOptional =
           loadablePlanStowageDetailsRespository.findById(lpStowageDetail.getId());
-      lpStowageDetail.setVersion(lpStowageDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpStowageDetail, lpStowageDetailsOptional);
 
       LoadablePlan loadablePlan =
           getLoadablePlan(lpStowageDetail.getCommunicationRelatedEntityId()).orElse(null);
@@ -1397,7 +1382,7 @@ public class LoadableStudyCommunicationService {
     for (LoadablePlanBallastDetails lpBallastDetail : loadablePlanBallastDetailsStage) {
       Optional<LoadablePlanBallastDetails> lpBallastDetailsOptional =
           loadablePlanBallastDetailsRepository.findById(lpBallastDetail.getId());
-      lpBallastDetail.setVersion(lpBallastDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpBallastDetail, lpBallastDetailsOptional);
       lpBallastDetail.setLoadablePattern(
           getLoadablePattern(lpBallastDetail.getCommunicationRelatedEntityId()).orElse(null));
     }
@@ -1420,8 +1405,7 @@ public class LoadableStudyCommunicationService {
       Optional<LoadablePlanComminglePortwiseDetails> lpComminglePortwiseDetailsOptional =
           loadablePlanCommingleDetailsPortwiseRepository.findById(
               lpComminglePortwiseDetail.getId());
-      lpComminglePortwiseDetail.setVersion(
-          lpComminglePortwiseDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpComminglePortwiseDetail, lpComminglePortwiseDetailsOptional);
       lpComminglePortwiseDetail.setLoadablePattern(
           getLoadablePattern(lpComminglePortwiseDetail.getCommunicationRelatedEntityId())
               .orElse(null));
@@ -1452,8 +1436,7 @@ public class LoadableStudyCommunicationService {
     for (StabilityParameters stabilityParameter : stabilityParametersStage) {
       Optional<StabilityParameters> stabilityParametersOptional =
           stabilityParameterRepository.findById(stabilityParameter.getId());
-      stabilityParameter.setVersion(
-          stabilityParametersOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(stabilityParameter, stabilityParametersOptional);
       stabilityParameter.setLoadablePattern(
           getLoadablePattern(stabilityParameter.getCommunicationRelatedEntityId()).orElse(null));
     }
@@ -1472,8 +1455,7 @@ public class LoadableStudyCommunicationService {
     for (LoadablePatternCargoDetails lpCargoDetail : loadablePatternCargoDetailsStage) {
       Optional<LoadablePatternCargoDetails> loadablePatternCargoDetailsOptional =
           loadablePatternCargoDetailsRepository.findById(lpCargoDetail.getId());
-      lpCargoDetail.setVersion(
-          loadablePatternCargoDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpCargoDetail, loadablePatternCargoDetailsOptional);
     }
 
     loadablePatternCargoDetailsRepository.saveAll(loadablePatternCargoDetailsStage);
@@ -1492,8 +1474,7 @@ public class LoadableStudyCommunicationService {
         loadablePlanStowageBallastDetailsStage) {
       Optional<LoadablePlanStowageBallastDetails> loadablePatternCargoDetailsOptional =
           loadablePlanStowageBallastDetailsRepository.findById(lpStowageBallastDetail.getId());
-      lpStowageBallastDetail.setVersion(
-          loadablePatternCargoDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(lpStowageBallastDetail, loadablePatternCargoDetailsOptional);
       lpStowageBallastDetail.setLoadablePlan(
           getLoadablePlan(lpStowageBallastDetail.getCommunicationRelatedEntityId()).orElse(null));
     }
@@ -1516,8 +1497,7 @@ public class LoadableStudyCommunicationService {
     for (SynopticalTableLoadicatorData sTableLoadicatorData : synopticalTableLoadicatorDataStage) {
       Optional<SynopticalTableLoadicatorData> sTableLoadicatorDataOptional =
           synopticalTableLoadicatorDataRepository.findById(sTableLoadicatorData.getId());
-      sTableLoadicatorData.setVersion(
-          sTableLoadicatorDataOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(sTableLoadicatorData, sTableLoadicatorDataOptional);
       for (SynopticalTable st : synopticalTableStage) {
         if (Objects.equals(sTableLoadicatorData.getCommunicationRelatedEntityId(), st.getId())) {
           sTableLoadicatorData.setSynopticalTable(st);
@@ -1537,7 +1517,7 @@ public class LoadableStudyCommunicationService {
     }
     for (CowHistory cowHistory : cowHistoryStage) {
       Optional<CowHistory> cowHistoryOptional = cowHistoryRepository.findById(cowHistory.getId());
-      cowHistory.setVersion(cowHistoryOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(cowHistory, cowHistoryOptional);
     }
     cowHistoryRepository.saveAll(cowHistoryStage);
     log.info("Communication #######  CowHistory are saved");
@@ -1556,8 +1536,7 @@ public class LoadableStudyCommunicationService {
       Optional<DischargePatternQuantityCargoPortwiseDetails> dischargenQuantityDetailsOptional =
           dischargePatternQuantityCargoPortwiseRepository.findById(
               dischargenQuantityDetails.getId());
-      dischargenQuantityDetails.setVersion(
-          dischargenQuantityDetailsOptional.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(dischargenQuantityDetails, dischargenQuantityDetailsOptional);
     }
     dischargePatternQuantityCargoPortwiseRepository.saveAll(
         dischargePatternQuantityCargoPortwiseDetailsStage);
@@ -1576,8 +1555,7 @@ public class LoadableStudyCommunicationService {
         loadableStudyRules.setLoadableStudy(loadableStudyStage);
 
         // Set version
-        loadableStudyRules.setVersion(
-            loadableStudyRulesOpt.map(EntityDoc::getVersion).orElse(null));
+        setEntityDocFields(loadableStudyRules, loadableStudyRulesOpt);
       }
 
       // Save data
@@ -1615,8 +1593,7 @@ public class LoadableStudyCommunicationService {
         // Set version
         Optional<LoadableStudyRuleInput> loadableStudyRuleInputOpt =
             loadableStudyRuleInputRepository.findById(loadableStudyRuleInput.getId());
-        loadableStudyRuleInput.setVersion(
-            loadableStudyRuleInputOpt.map(EntityDoc::getVersion).orElse(null));
+        setEntityDocFields(loadableStudyRuleInput, loadableStudyRuleInputOpt);
       }
 
       // Save data
@@ -1654,7 +1631,7 @@ public class LoadableStudyCommunicationService {
         // Set version
         Optional<LoadablePlanComments> commentOpt =
             loadablePlanCommentsRepository.findById(comment.getId());
-        comment.setVersion(commentOpt.map(EntityDoc::getVersion).orElse(null));
+        setEntityDocFields(comment, commentOpt);
       }
 
       // Save data
@@ -1677,8 +1654,7 @@ public class LoadableStudyCommunicationService {
         Optional<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempOpt =
             loadablePlanStowageDetailsTempRepository.findById(
                 loadablePlanStowageDetailsTemp.getId());
-        loadablePlanStowageDetailsTemp.setVersion(
-            loadablePlanStowageDetailsTempOpt.map(EntityDoc::getVersion).orElse(null));
+        setEntityDocFields(loadablePlanStowageDetailsTemp, loadablePlanStowageDetailsTempOpt);
 
         // Set stowage details
         loadablePlanStowageDetailsTemp.setLoadablePlanStowageDetails(
@@ -1761,22 +1737,22 @@ public class LoadableStudyCommunicationService {
 
     // Update status for recent record
     if (loadableStudyStatus.isPresent()) {
-      loadablePatternAlgoStatusRepository
-          .findByLoadablePatternId(
+      Optional<LoadablePatternAlgoStatus> lpAlgoStatus =
+          loadablePatternAlgoStatusRepository.findByLoadablePatternId(
               loadablePatternAlgoStatusStage
                   .getCommunicationRelatedIdMap()
-                  .get("loadabale_pattern_xid"))
-          .ifPresentOrElse(
-              loadablePatternAlgoStatus -> {
-                loadablePatternAlgoStatusStage = loadablePatternAlgoStatus;
-              },
-              () -> {
-                loadablePatternAlgoStatusStage.setVersion(null);
-                Optional<LoadablePattern> loadablePattern =
-                    loadablePatternRepository.findById(
-                        loadablePatternAlgoStatusStage.getLoadablePattern().getId());
-                loadablePatternAlgoStatusStage.setLoadablePattern(loadablePattern.orElse(null));
-              });
+                  .get("loadabale_pattern_xid"));
+      lpAlgoStatus.ifPresentOrElse(
+          loadablePatternAlgoStatus -> {
+            loadablePatternAlgoStatusStage = loadablePatternAlgoStatus;
+          },
+          () -> {
+            Optional<LoadablePattern> loadablePattern =
+                loadablePatternRepository.findById(
+                    loadablePatternAlgoStatusStage.getLoadablePattern().getId());
+            loadablePatternAlgoStatusStage.setLoadablePattern(loadablePattern.orElse(null));
+          });
+      setEntityDocFields(loadablePatternAlgoStatusStage, lpAlgoStatus);
       loadablePatternAlgoStatusStage.setGenerateFromShore(true);
       loadablePatternAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
       loadablePatternAlgoStatusStage =
@@ -1801,8 +1777,7 @@ public class LoadableStudyCommunicationService {
         // Set version
         Optional<DischargeStudyCowDetail> dischargeStudyCowDetailOpt =
             dischargeStudyCowDetailRepository.findById(dischargeStudyCowDetail.getId());
-        dischargeStudyCowDetail.setVersion(
-            dischargeStudyCowDetailOpt.map(EntityDoc::getVersion).orElse(null));
+        setEntityDocFields(dischargeStudyCowDetail, dischargeStudyCowDetailOpt);
       }
       // Save data
       dischargeStudyCowDetailRepository.saveAll(dischargeStudyCowDetailStage);

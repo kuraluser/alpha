@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
@@ -8,7 +9,6 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.rest.CommonErrorCodes;
-import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
@@ -877,14 +877,11 @@ public class DischargePlanCommunicationService {
     }
     for (PortDischargingPlanCommingleDetails portDischargingPlanCommingleDetails :
         portDischargingPlanCommingleDetailsList) {
-      Long version = null;
       Optional<PortDischargingPlanCommingleDetails> portDischargingPlanCommingleDetailsObj =
           portDischargingPlanCommingleDetailsRepository.findById(
               portDischargingPlanCommingleDetails.getId());
-      if (portDischargingPlanCommingleDetailsObj.isPresent()) {
-        version = portDischargingPlanCommingleDetailsObj.get().getVersion();
-      }
-      portDischargingPlanCommingleDetails.setVersion(version);
+      setEntityDocFields(
+          portDischargingPlanCommingleDetails, portDischargingPlanCommingleDetailsObj);
       portDischargingPlanCommingleDetails.setDischargingInformation(dischargeInfo);
     }
     portDischargingPlanCommingleDetailsRepository.saveAll(portDischargingPlanCommingleDetailsList);
@@ -904,14 +901,10 @@ public class DischargePlanCommunicationService {
     }
     for (PortDischargingPlanStowageDetails portDischargingPlanStowageDetails :
         portDischargingPlanStowageDetailsList) {
-      Long version = null;
       Optional<PortDischargingPlanStowageDetails> portDischargingPlanStowageDetailsObj =
           portDischargingPlanStowageDetailsRepository.findById(
               portDischargingPlanStowageDetails.getId());
-      if (portDischargingPlanStowageDetailsObj.isPresent()) {
-        version = portDischargingPlanStowageDetailsObj.get().getVersion();
-      }
-      portDischargingPlanStowageDetails.setVersion(version);
+      setEntityDocFields(portDischargingPlanStowageDetails, portDischargingPlanStowageDetailsObj);
       portDischargingPlanStowageDetails.setDischargingInformation(dischargeInfo);
     }
     portDischargingPlanStowageDetailsRepository.saveAll(portDischargingPlanStowageDetailsList);
@@ -932,14 +925,11 @@ public class DischargePlanCommunicationService {
     }
     for (PortDischargingPlanStabilityParameters portDischargingPlanStabilityParameters :
         portDischargingPlanStabilityParamList) {
-      Long version = null;
       Optional<PortDischargingPlanStabilityParameters> portDischargingPlanStabilityParamObj =
           portDischargingPlanStabilityParametersRepository.findById(
               portDischargingPlanStabilityParameters.getId());
-      if (portDischargingPlanStabilityParamObj.isPresent()) {
-        version = portDischargingPlanStabilityParamObj.get().getVersion();
-      }
-      portDischargingPlanStabilityParameters.setVersion(version);
+      setEntityDocFields(
+          portDischargingPlanStabilityParameters, portDischargingPlanStabilityParamObj);
       portDischargingPlanStabilityParameters.setDischargingInformation(dischargeInfo);
     }
     portDischargingPlanStabilityParametersRepository.saveAll(portDischargingPlanStabilityParamList);
@@ -958,13 +948,9 @@ public class DischargePlanCommunicationService {
     }
     for (PortDischargingPlanRobDetails portDischargingPlanRobDetails :
         portDischargingPlanRobDetailsList) {
-      Long version = null;
       Optional<PortDischargingPlanRobDetails> portDischargingPlanRobDetailsObj =
           portDischargingPlanRobDetailsRepository.findById(portDischargingPlanRobDetails.getId());
-      if (portDischargingPlanRobDetailsObj.isPresent()) {
-        version = portDischargingPlanRobDetailsObj.get().getVersion();
-      }
-      portDischargingPlanRobDetails.setVersion(version);
+      setEntityDocFields(portDischargingPlanRobDetails, portDischargingPlanRobDetailsObj);
       portDischargingPlanRobDetails.setDischargingInformation(dischargeInfo.getId());
     }
     portDischargingPlanRobDetailsRepository.saveAll(portDischargingPlanRobDetailsList);
@@ -984,14 +970,10 @@ public class DischargePlanCommunicationService {
     }
     for (PortDischargingPlanBallastDetails portDischargingPlanBallastDetails :
         portDischargingPlanBallastDetailsList) {
-      Long version = null;
       Optional<PortDischargingPlanBallastDetails> portDischargingPlanBallastDetailsObj =
           portDischargingPlanBallastDetailsRepository.findById(
               portDischargingPlanBallastDetails.getId());
-      if (portDischargingPlanBallastDetailsObj.isPresent()) {
-        version = portDischargingPlanBallastDetailsObj.get().getVersion();
-      }
-      portDischargingPlanBallastDetails.setVersion(version);
+      setEntityDocFields(portDischargingPlanBallastDetails, portDischargingPlanBallastDetailsObj);
       portDischargingPlanBallastDetails.setDischargingInformation(dischargeInfo);
     }
     portDischargingPlanBallastDetailsRepository.saveAll(portDischargingPlanBallastDetailsList);
@@ -1010,14 +992,10 @@ public class DischargePlanCommunicationService {
     }
     for (DischargingSequenceStabilityParameters dischargingSequenceStabilityParam :
         dischargingSequenceStabilityParamList) {
-      Long version = null;
       Optional<DischargingSequenceStabilityParameters> dischargingSequenceStabilityParamObj =
           dischargingSequenceStabiltyParametersRepository.findById(
               dischargingSequenceStabilityParam.getId());
-      if (dischargingSequenceStabilityParamObj.isPresent()) {
-        version = dischargingSequenceStabilityParamObj.get().getVersion();
-      }
-      dischargingSequenceStabilityParam.setVersion(version);
+      setEntityDocFields(dischargingSequenceStabilityParam, dischargingSequenceStabilityParamObj);
       dischargingSequenceStabilityParam.setDischargingInformation(dischargeInfo);
     }
     dischargingSequenceStabiltyParametersRepository.saveAll(dischargingSequenceStabilityParamList);
@@ -1037,8 +1015,7 @@ public class DischargePlanCommunicationService {
       Optional<DischargingPlanCommingleDetails> dischargingPlanCommingleDetailObj =
           dischargingPlanCommingleDetailsRepository.findById(
               dischargingPlanCommingleDetail.getId());
-      dischargingPlanCommingleDetail.setVersion(
-          dischargingPlanCommingleDetailObj.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(dischargingPlanCommingleDetail, dischargingPlanCommingleDetailObj);
       // Set DischargingPlanPortWiseDetails details
       dischargingPlanCommingleDetail.setDischargingPlanPortWiseDetails(
           emptyIfNull(dischargingPlanPortWiseDetailsList).stream()
@@ -1071,8 +1048,7 @@ public class DischargePlanCommunicationService {
       Optional<DischargingPlanStabilityParameters> dischargingPlanStabilityParametersObj =
           dischargingPlanStabilityParametersRepository.findById(
               dischargingPlanStabilityParameters.getId());
-      dischargingPlanStabilityParameters.setVersion(
-          dischargingPlanStabilityParametersObj.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(dischargingPlanStabilityParameters, dischargingPlanStabilityParametersObj);
       // Set DischargingPlanPortWiseDetails details
       dischargingPlanStabilityParameters.setDischargingPlanPortWiseDetails(
           emptyIfNull(dischargingPlanPortWiseDetailsList).stream()
@@ -1102,8 +1078,7 @@ public class DischargePlanCommunicationService {
     for (DischargingPlanRobDetails dischargingPlanRobDetails : dischargingPlanRobDetailsList) {
       Optional<DischargingPlanRobDetails> dischargingPlanRobDetailsObj =
           dischargingPlanRobDetailsRepository.findById(dischargingPlanRobDetails.getId());
-      dischargingPlanRobDetails.setVersion(
-          dischargingPlanRobDetailsObj.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(dischargingPlanRobDetails, dischargingPlanRobDetailsObj);
       // Set DischargingPlanPortWiseDetails details
       dischargingPlanRobDetails.setDischargingPlanPortWiseDetails(
           emptyIfNull(dischargingPlanPortWiseDetailsList).stream()
@@ -1133,8 +1108,7 @@ public class DischargePlanCommunicationService {
         dischargingPlanBallastDetailsList) {
       Optional<DischargingPlanStowageDetails> dischargingPlanStowageDetailsObj =
           dischargingPlanStowageDetailsRepository.findById(dischargingPlanBallastDetails.getId());
-      dischargingPlanBallastDetails.setVersion(
-          dischargingPlanStowageDetailsObj.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(dischargingPlanBallastDetails, dischargingPlanStowageDetailsObj);
       // Set DischargingPlanPortWiseDetails details
       dischargingPlanBallastDetails.setDischargingPlanPortWiseDetails(
           emptyIfNull(dischargingPlanPortWiseDetailsList).stream()
@@ -1165,8 +1139,7 @@ public class DischargePlanCommunicationService {
         dischargingPlanStowageDetailsList) {
       Optional<DischargingPlanStowageDetails> dischargingPlanStowageDetailsObj =
           dischargingPlanStowageDetailsRepository.findById(dischargingPlanStowageDetails.getId());
-      dischargingPlanStowageDetails.setVersion(
-          dischargingPlanStowageDetailsObj.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(dischargingPlanStowageDetails, dischargingPlanStowageDetailsObj);
       // Set DischargingPlanPortWiseDetails details
       dischargingPlanStowageDetails.setDischargingPlanPortWiseDetails(
           emptyIfNull(dischargingPlanPortWiseDetailsList).stream()
@@ -1194,7 +1167,7 @@ public class DischargePlanCommunicationService {
     for (DeballastingRate deballastingRate : deballastingRates) {
       Optional<DeballastingRate> deballastingRateObj =
           deballastingRateRepository.findById(deballastingRate.getId());
-      deballastingRate.setVersion(deballastingRateObj.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(deballastingRate, deballastingRateObj);
       // Set Discharging Sequence details
       deballastingRate.setDischargingSequence(
           emptyIfNull(dischargingSequences).stream()
@@ -1235,7 +1208,7 @@ public class DischargePlanCommunicationService {
     for (BallastingRate ballastingRate : ballastingRates) {
       Optional<BallastingRate> ballastingRateObj =
           ballastingRateRepository.findById(ballastingRate.getId());
-      ballastingRate.setVersion(ballastingRateObj.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(ballastingRate, ballastingRateObj);
       // Set Discharging Sequence details
       ballastingRate.setDischargingSequence(
           emptyIfNull(dischargingSequences).stream()
@@ -1278,17 +1251,13 @@ public class DischargePlanCommunicationService {
       for (DischargingSequence dischargingSequence : dischargingSequences) {
         for (DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails :
             dischargingPlanPortWiseDetailsList) {
-          Long version = null;
           if (dischargingSequence
               .getId()
               .equals(dischargingPlanPortWiseDetails.getCommunicationRelatedEntityId())) {
             Optional<DischargingPlanPortWiseDetails> ballastOperationObj =
                 dischargingPlanPortWiseDetailsRepository.findById(
                     dischargingPlanPortWiseDetails.getId());
-            if (ballastOperationObj.isPresent()) {
-              version = ballastOperationObj.get().getVersion();
-            }
-            dischargingPlanPortWiseDetails.setVersion(version);
+            setEntityDocFields(dischargingPlanPortWiseDetails, ballastOperationObj);
             dischargingPlanPortWiseDetails.setDischargingSequence(dischargingSequence);
           }
         }
@@ -1309,16 +1278,12 @@ public class DischargePlanCommunicationService {
     if (dischargingSequences != null && !dischargingSequences.isEmpty()) {
       for (DischargingSequence dischargingSequence : dischargingSequences) {
         for (BallastOperation ballastOperation : ballastOperations) {
-          Long version = null;
           if (dischargingSequence
               .getId()
               .equals(ballastOperation.getCommunicationRelatedEntityId())) {
             Optional<BallastOperation> ballastOperationObj =
                 ballastOperationRepository.findById(ballastOperation.getId());
-            if (ballastOperationObj.isPresent()) {
-              version = ballastOperationObj.get().getVersion();
-            }
-            ballastOperation.setVersion(version);
+            setEntityDocFields(ballastOperation, ballastOperationObj);
             ballastOperation.setDischargingSequence(dischargingSequence);
           }
         }
@@ -1337,16 +1302,12 @@ public class DischargePlanCommunicationService {
     if (dischargingSequences != null && !dischargingSequences.isEmpty()) {
       for (DischargingSequence dischargingSequence : dischargingSequences) {
         for (CargoDischargingRate cargoDischargingRate : cargoDischargingRates) {
-          Long version = null;
           if (dischargingSequence
               .getId()
               .equals(cargoDischargingRate.getCommunicationRelatedEntityId())) {
             Optional<CargoDischargingRate> cargoDischargingRateObj =
                 cargoDischargingRateRepository.findById(cargoDischargingRate.getId());
-            if (cargoDischargingRateObj.isPresent()) {
-              version = cargoDischargingRateObj.get().getVersion();
-            }
-            cargoDischargingRate.setVersion(version);
+            setEntityDocFields(cargoDischargingRate, cargoDischargingRateObj);
             cargoDischargingRate.setDischargingSequence(dischargingSequence);
           }
         }
@@ -1364,13 +1325,9 @@ public class DischargePlanCommunicationService {
     }
     for (DischargingSequence dischargingSequence : dischargingSequences) {
       for (CargoValve cargoValve : cargoValves) {
-        Long version = null;
         if (dischargingSequence.getId().equals(cargoValve.getCommunicationRelatedEntityId())) {
           Optional<CargoValve> cargoValveObj = cargoValveRepository.findById(cargoValve.getId());
-          if (cargoValveObj.isPresent()) {
-            version = cargoValveObj.get().getVersion();
-          }
-          cargoValve.setVersion(version);
+          setEntityDocFields(cargoValve, cargoValveObj);
           cargoValve.setDischargingSequence(dischargingSequence);
         }
       }
@@ -1387,14 +1344,10 @@ public class DischargePlanCommunicationService {
     }
     for (DischargingSequence dischargingSequence : dischargingSequences) {
       for (BallastValve ballastValve : ballastValves) {
-        Long version = null;
         if (dischargingSequence.getId().equals(ballastValve.getCommunicationRelatedEntityId())) {
           Optional<BallastValve> ballastValveObj =
               ballastValveRepository.findById(ballastValve.getId());
-          if (ballastValveObj.isPresent()) {
-            version = ballastValveObj.get().getVersion();
-          }
-          ballastValve.setVersion(version);
+          setEntityDocFields(ballastValve, ballastValveObj);
           ballastValve.setDischargingSequence(dischargingSequence);
         }
       }
@@ -1412,13 +1365,9 @@ public class DischargePlanCommunicationService {
     if (algoErrorHeadings != null && !algoErrorHeadings.isEmpty()) {
       for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
         for (AlgoErrors algoError : algoErrors) {
-          Long version = null;
           if (algoErrorHeading.getId().equals(algoError.getCommunicationRelatedEntityId())) {
             Optional<AlgoErrors> algoErrorObj = algoErrorsRepository.findById(algoError.getId());
-            if (algoErrorObj.isPresent()) {
-              version = algoErrorObj.get().getVersion();
-            }
-            algoError.setVersion(version);
+            setEntityDocFields(algoError, algoErrorObj);
             algoError.setAlgoErrorHeading(algoErrorHeading);
           }
         }
@@ -1435,13 +1384,9 @@ public class DischargePlanCommunicationService {
       return;
     }
     for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
-      Long version = null;
       Optional<AlgoErrorHeading> algoErrorHeadingObj =
           algoErrorHeadingRepository.findById(algoErrorHeading.getId());
-      if (algoErrorHeadingObj.isPresent()) {
-        version = algoErrorHeadingObj.get().getVersion();
-      }
-      algoErrorHeading.setVersion(version);
+      setEntityDocFields(algoErrorHeading, algoErrorHeadingObj);
       algoErrorHeading.setDischargingInformation(dischargeInfo);
     }
     algoErrorHeadingRepository.saveAll(algoErrorHeadings);
@@ -1466,9 +1411,9 @@ public class DischargePlanCommunicationService {
                 dischargingInfoAlgoStatus = dischargingInfoAlgo;
               },
               () -> {
-                dischargingInfoAlgoStatus.setVersion(null);
                 dischargingInfoAlgoStatus.setDischargeInformation(dischargeInfo);
               });
+      setEntityDocFields(dischargingInfoAlgoStatus, dischargingInformationStatusOpt);
       dischargingInfoAlgoStatus.setDischargingInformationStatus(
           dischargingInformationStatusOpt.get());
       dischargingInformationAlgoStatusRepository.save(dischargingInfoAlgoStatus);
@@ -1487,13 +1432,9 @@ public class DischargePlanCommunicationService {
       return;
     }
     for (DischargingBerthDetail dischargingBerthDetail : dischargingBerthDetails) {
-      Long version = null;
       Optional<DischargingBerthDetail> dischargingBerthDetailObj =
           dischargeBerthDetailRepository.findById(dischargingBerthDetail.getId());
-      if (dischargingBerthDetailObj.isPresent()) {
-        version = dischargingBerthDetailObj.get().getVersion();
-      }
-      dischargingBerthDetail.setVersion(version);
+      setEntityDocFields(dischargingBerthDetail, dischargingBerthDetailObj);
       dischargingBerthDetail.setDischargingInformation(dischargeInfo);
     }
     dischargeBerthDetailRepository.saveAll(dischargingBerthDetails);
@@ -1507,13 +1448,9 @@ public class DischargePlanCommunicationService {
       return;
     }
     for (DischargingSequence dischargingSequence : dischargingSequences) {
-      Long version = null;
       Optional<DischargingSequence> dischargingSequenceObj =
           dischargingSequenceRepository.findById(dischargingSequence.getId());
-      if (dischargingSequenceObj.isPresent()) {
-        version = dischargingSequenceObj.get().getVersion();
-      }
-      dischargingSequence.setVersion(version);
+      setEntityDocFields(dischargingSequence, dischargingSequenceObj);
       dischargingSequence.setDischargeInformation(dischargeInfo);
     }
     dischargingSequenceRepository.saveAll(dischargingSequences);
@@ -1527,13 +1464,9 @@ public class DischargePlanCommunicationService {
       return;
     }
     for (PortTideDetail portTideDetail : portTideDetails) {
-      Long version = null;
       Optional<PortTideDetail> portTideDetailObj =
           portTideDetailsRepository.findById(portTideDetail.getId());
-      if (portTideDetailObj.isPresent()) {
-        version = portTideDetailObj.get().getVersion();
-      }
-      portTideDetail.setVersion(version);
+      setEntityDocFields(portTideDetail, portTideDetailObj);
     }
     portTideDetailsRepository.saveAll(portTideDetails);
     log.info("Communication ====  Saved PortTideDetail:" + portTideDetails);
@@ -1547,13 +1480,9 @@ public class DischargePlanCommunicationService {
       return;
     }
     for (DischargingMachineryInUse dischargingMachineryInUse : dischargingMachineryInUses) {
-      Long version = null;
       Optional<DischargingMachineryInUse> dischargingMachineryInUseObj =
           dischargingMachineryInUseRepository.findById(dischargingMachineryInUse.getId());
-      if (dischargingMachineryInUseObj.isPresent()) {
-        version = dischargingMachineryInUseObj.get().getVersion();
-      }
-      dischargingMachineryInUse.setVersion(version);
+      setEntityDocFields(dischargingMachineryInUse, dischargingMachineryInUseObj);
       dischargingMachineryInUse.setDischargingInformation(dischargeInfo);
     }
     dischargingMachineryInUseRepository.saveAll(dischargingMachineryInUses);
@@ -1570,8 +1499,7 @@ public class DischargePlanCommunicationService {
       for (DischargingDelayReason dischargingDelayReason : dischargingDelayReasons) {
         Optional<DischargingDelayReason> dischargingDelayReasonObj =
             dischargingDelayReasonRepository.findById(dischargingDelayReason.getId());
-        dischargingDelayReason.setVersion(
-            dischargingDelayReasonObj.map(EntityDoc::getVersion).orElse(null));
+        setEntityDocFields(dischargingDelayReason, dischargingDelayReasonObj);
         // Set Discharging Delay details
         dischargingDelayReason.setDischargingDelay(
             emptyIfNull(dischargingDelays).stream()
@@ -1607,13 +1535,9 @@ public class DischargePlanCommunicationService {
       return;
     }
     for (DischargingDelay dischargingDelay : dischargingDelays) {
-      Long version = null;
       Optional<DischargingDelay> dischargingDelayObj =
           dischargingDelayRepository.findById(dischargingDelay.getId());
-      if (dischargingDelayObj.isPresent()) {
-        version = dischargingDelayObj.get().getVersion();
-      }
-      dischargingDelay.setVersion(version);
+      setEntityDocFields(dischargingDelay, dischargingDelayObj);
       dischargingDelay.setDischargingInformation(dischargeInfo);
     }
     dischargingDelayRepository.saveAll(dischargingDelays);
@@ -1628,13 +1552,9 @@ public class DischargePlanCommunicationService {
     }
 
     for (CowTankDetail cowTankDetail : cowTankDetails) {
-      Long version = null;
       Optional<CowTankDetail> cowTankDetailObj =
           cowTankDetailRepository.findById(cowTankDetail.getId());
-      if (cowTankDetailObj.isPresent()) {
-        version = cowTankDetailObj.get().getVersion();
-      }
-      cowTankDetail.setVersion(version);
+      setEntityDocFields(cowTankDetail, cowTankDetailObj);
       cowTankDetail.setCowPlanDetail(cowPlanDetailObj);
     }
     cowTankDetailRepository.saveAll(cowTankDetails);
@@ -1648,13 +1568,9 @@ public class DischargePlanCommunicationService {
       return;
     }
     for (CowWithDifferentCargo cowWithDifferentCargo : cowWithDifferentCargos) {
-      Long version = null;
       Optional<CowWithDifferentCargo> cowWithDifferentCargoObj =
           cowWithDifferentCargoRepository.findById(cowWithDifferentCargo.getId());
-      if (cowWithDifferentCargoObj.isPresent()) {
-        version = cowWithDifferentCargoObj.get().getVersion();
-      }
-      cowWithDifferentCargo.setVersion(version);
+      setEntityDocFields(cowWithDifferentCargo, cowWithDifferentCargoObj);
       cowWithDifferentCargo.setCowPlanDetail(cowPlanDetailObj);
     }
     cowWithDifferentCargoRepository.saveAll(cowWithDifferentCargos);
@@ -1711,13 +1627,9 @@ public class DischargePlanCommunicationService {
     setDischargeInformationStatus();
     setDischargeStatusMinAmount();
     setDischargeStatusDuration();
-    Long version = null;
     Optional<DischargeInformation> dischargeInfoObj =
         dischargeCommunicationInformationRepository.findById(dischargeInformation.getId());
-    if (dischargeInfoObj.isPresent()) {
-      version = dischargeInfoObj.get().getVersion();
-    }
-    dischargeInformation.setVersion(version);
+    setEntityDocFields(dischargeInformation, dischargeInfoObj);
     dischargeInfo = dischargeCommunicationInformationRepository.save(dischargeInformation);
     log.info(
         "Communication ====  DischargeInformation saved with id:" + dischargeInformation.getId());

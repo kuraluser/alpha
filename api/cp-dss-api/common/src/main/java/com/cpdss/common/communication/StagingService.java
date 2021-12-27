@@ -331,7 +331,7 @@ public class StagingService {
    * Method to set entity doc fields to staging entity
    *
    * @param stagingEntity staging entity value
-   * @param actualEntity actual entity value
+   * @param actualEntity actual entity value - from table
    */
   public static void setEntityDocFields(
       final EntityDoc stagingEntity, final Optional<? extends EntityDoc> actualEntity) {
@@ -343,7 +343,9 @@ public class StagingService {
           stagingEntity.setVersion(entityDoc.getVersion());
         },
         () -> {
+          stagingEntity.setCreatedBy(CREATED_OR_UPDATED_BY);
           stagingEntity.setVersion(null);
         });
+    stagingEntity.setLastModifiedBy(CREATED_OR_UPDATED_BY);
   }
 }
