@@ -132,4 +132,16 @@ export class DischargePlanApiService {
   confirm(vesselId: number, voyageId: number, dischargeStudyId: number, dischargePatternId: number): Observable<IResponse> {
     return this.commonApiService.post<any, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/discharge-studies/${dischargeStudyId}/confirm-plan/${dischargePatternId}`, {});
   }
+
+  /**
+   * API to download .dat file
+   *
+   * @param {number} vesselId
+   * @param {number} dischargePatternId
+   * @return {*}  {Observable<any>}
+   * @memberof DischargePlanApiService
+   */
+   downloadDATfile(vesselId: number, dischargePatternId: number): Observable<any> {
+    return this.commonApiService.getFile<any>(`vessel/${vesselId}/loadable-pattern/${dischargePatternId}/zip`, { responseType: 'blob' as 'json' });
+  }
 }

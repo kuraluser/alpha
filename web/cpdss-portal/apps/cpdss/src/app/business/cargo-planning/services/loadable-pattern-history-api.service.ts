@@ -76,12 +76,26 @@ export class LoadablePatternHistoryApiService {
     return this.commonApiService.post<any, IResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/confirm-plan/${loadablePatternId}`, {});
   }
 
-   /**
-  *
-  * Get api for cargo details
-  */
-    getCargos(): Observable<ICargoResponseModel> {
-      return this.commonApiService.get<ICargoResponseModel>(`cargos`);
-    }
+  /**
+   * Get api for cargo details
+   *
+   * @return {*}  {Observable<ICargoResponseModel>}
+   * @memberof LoadablePatternHistoryApiService
+   */
+  getCargos(): Observable<ICargoResponseModel> {
+    return this.commonApiService.get<ICargoResponseModel>(`cargos`);
+  }
+
+  /**
+   * API to download .dat file
+   *
+   * @param {number} vesselId
+   * @param {number} loadablePatternId
+   * @return {*}  {Observable<any>}
+   * @memberof LoadablePatternHistoryApiService
+   */
+  downloadDATfile(vesselId: number, loadablePatternId: number): Observable<any> {
+    return this.commonApiService.getFile<any>(`vessel/${vesselId}/loadable-pattern/${loadablePatternId}/zip`, { responseType: 'blob' as 'json' });
+  }
 
 }

@@ -39,7 +39,7 @@
             <div class="row" *ngIf="loadablePatterns?.length && patternLoaded">
                 <div *ngFor="let loadablePattern of loadablePatterns; let i = index"
                     class="col-6 pb-15 pt-10 content-pattern">
-                    <cpdss-portal-pattern-case [selectedVoyage]="selectedVoyage" [loadablePlanPermissionContext]="loadablePlanPermissionContext" [loadablePattern]="loadablePattern" [tankList]="tankLists"
+                    <cpdss-portal-pattern-case [selectedVoyage]="selectedVoyage" [vesselId]="vesselId" [loadablePlanPermissionContext]="loadablePlanPermissionContext" [loadablePattern]="loadablePattern" [tankList]="tankLists"
                         [index]="i + 1" (displayCommingleDetailPopup)="displayCommingleDetailPopup($event)"
                         (displayPatternViewMorePopup)="displayPatternViewMorePopup($event)" (viewPlan)="viewPlan($event)" (confirmPlanClick)="onConfirmPlanClick($event)">
                     </cpdss-portal-pattern-case>

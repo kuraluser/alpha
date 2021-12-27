@@ -8,7 +8,7 @@
                     </cpdss-portal-vessel-info>
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col">
                     <label class="col-form-label pr-10 text-uppercase">{{
@@ -22,7 +22,7 @@
             <div class="row" *ngIf="dischargeStudies?.length">
                 <div class="col">
                     <label class="col-form-label pr-10 text-uppercase">{{ 'DISCHARGE_STUDY_LIST_DROPDOWN' | translate }}</label>
-        
+
                     <p-dropdown id="discharge_study_dropdown" appendTo="body" styleClass="dropdown-w-180" [options]="dischargeStudies"
                         [(ngModel)]="selectedDischargeStudy" filter="true" optionLabel="name"
                         (onChange)="onDischargeStudyChange($event)" resetFilterOnHide="true"></p-dropdown>
@@ -32,7 +32,10 @@
         <div class="col text-right">
             <div class="">
 
-                    <button class="btn btn-main mr-10" id="generate_plan" 
+                <button id="download_ds_dat_file" class="btn btn-main mr-10" (click)="downloadDatFile()">
+                <span class="download-icon v-top"></span>
+                {{'DOWNLOAD_DAT_FILE' | translate}}</button>
+                    <button class="btn btn-main mr-10" id="ds_confirm_plan"
                     [disabled]="selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED || !confirmPlanPermission || planConfirmed || VOYAGE_STATUS.ACTIVE !== selectedVoyage?.statusId"
                     [ngClass]="{'confirmed': selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED}"
                     *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE && isPlanGenerated"
@@ -41,13 +44,13 @@
                     {{ selectedDischargeStudy?.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED ? ('DISCHARGE_PLAN_CONFIRMED_PLAN_BUTTON_LABEL' |translate) :
                     ('DISCHARGE_STUDY_VIEW_CONFIRM_PLAN' |translate)}}
                 </button>
-    
-                <button id="view_plan" class="btn btn-main"
+
+                <button id="back_to_ds" class="btn btn-main"
                     (click)="backToDischargeStudy()">{{'DISCHARGE_STUDY_VIEW_BACK_TO_DISCHARGE_STUDY' | translate
                     }}</button>
             </div>
         </div>
-        
+
     </div>
     <div *ngIf="!dischargeStudies?.length && voyages">
         <p class="text-uppercase text-center text-danger">{{'DISCHARGE_STUDY_PORTS_VIEW_PLAN_NOT_AVAILABLE' | translate}}</p>
@@ -55,9 +58,9 @@
     <div *ngIf="dischargeStudies?.length && ![DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED,DISCHARGE_STUDY_STATUS.PLAN_GENERATED].includes(selectedDischargeStudy?.statusId)">
         <p class="text-uppercase text-center text-danger">{{'DISCHARGE_PLAN_VIEW_NO_PLAN_GENERATED' |translate}}</p>
     </div>
-  
+
     <cpdss-portal-view-plan *ngIf="ports && cargos && selectedDischargeStudy && [DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED,DISCHARGE_STUDY_STATUS.PLAN_GENERATED].includes(selectedDischargeStudy?.statusId)" [cargos]="cargos" [ports]="ports" [vesselId]="vesselId" [voyageId]="voyageId" [voyage]="selectedVoyage"
-        [dischargeStudyId]="dischargeStudyId" [dischargeStudy]="selectedDischargeStudy" (dischargeStudyPlan)="planDetails($event)" 
+        [dischargeStudyId]="dischargeStudyId" [dischargeStudy]="selectedDischargeStudy" (dischargeStudyPlan)="planDetails($event)"
         [(dischargePatternId)]="dischargePatternId"></cpdss-portal-view-plan>
 
 </div>

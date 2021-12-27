@@ -9,6 +9,7 @@ import { DischargePlanApiService } from '../services/discharge-plan-api.service'
 import { NgxSpinnerService } from 'ngx-spinner';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { saveAs } from 'file-saver';
 
 import { Voyage, ICargoResponseModel, ICargo } from '../../core/models/common.model';
 import { IVessel } from '../../core/models/vessel-details.model';
@@ -146,7 +147,7 @@ export class DischargePlanComponent implements OnInit , OnDestroy {
   }
 
   /**
-* Method to fetch all discharge 
+* Method to fetch all discharge
 *
 * @param {number} vesselId
 * @param {number} voyageId
@@ -170,7 +171,7 @@ export class DischargePlanComponent implements OnInit , OnDestroy {
         this.planConfirmed = true;
       }
     }
-    
+
     this.ngxSpinnerService.hide();
   }
 
@@ -264,7 +265,22 @@ export class DischargePlanComponent implements OnInit , OnDestroy {
         }
       }
     });
+  }
 
+  /**
+   * Method to download dat file
+   *
+   * @memberof DischargePlanComponent
+   */
+  downloadDatFile(): void {
+    this.ngxSpinnerService.show();
+    this.dischargePlanApiService.downloadDATfile(this.vesselId, this.dischargePatternId).subscribe((result) => {
+      const fileName = result.headers.get('content-disposition').split('filename=')[1];
+      const blob = new Blob([result.body], { type: result.type });
+      const fileurl = window.URL.createObjectURL(blob);
+      saveAs(fileurl, fileName);
+      this.ngxSpinnerService.hide();
+    });
   }
 
 }

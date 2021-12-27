@@ -13,10 +13,13 @@
                     [disabled]="!loadablePattern.validated || [VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_STARTED,VALIDATION_AND_SAVE_STATUS.LOADABLE_PLAN_FAILED].includes(loadablePattern.loadablePatternStatusId)"
                     (click)="onConfirmPlanClick(loadablePattern?.loadablePatternId)" id="pattern-history-confirm-btn"
                     *ngIf="loadablePattern?.loadableStudyStatusId !== LOADABLE_STUDY_STATUS.PLAN_CONFIRMED && selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">{{'LOADABLE_PATTERN_HISTORY_CONFIRM_PLAN_BUTTON_LABEL' | translate}}</button>
-                <button class="btn btn-main confirmed" *ngIf="loadablePattern?.loadableStudyStatusId === 2"
+                <button class="btn btn-main confirmed mr-10" *ngIf="loadablePattern?.loadableStudyStatusId === 2"
                     [disabled]="true">
                     <span class="pi pi-check check-rounded"></span>
                     {{'LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' | translate}}</button>
+                <button id="download_dat_file" class="btn btn-main" (click)="downloadDatFile()">
+                    <span class="download-icon v-top"></span>
+                    {{'DOWNLOAD_DAT_FILE' | translate}}</button>
             </div>
         </div>
     </div>

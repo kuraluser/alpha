@@ -45,12 +45,16 @@
                   <div class="row">
                     <div class="col">
                       <p-calendar appendTo="body" inputId="start_date" formControlName="start_date"
-                        dateFormat="{{createVoyageDateFormat}}" #startDateTime [minDate]="date" showTime="true"
+                        dateFormat="{{createVoyageDateFormat}}" #startDateTime showTime="true"
                         [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(startDateTime)"
                         (onInput)="onDateSelect(startDateTime)" [placeholder]="datePlaceHolder" focusTrap>
                         <p-footer>
-                          <button class="btn btn-main" (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
-                            | translate}}</button>
+                          <div class="row">
+                            <div class="col text-center">
+                              <button class="btn btn-main" (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                | translate}}</button>
+                            </div>
+                          </div>
                         </p-footer>
                       </p-calendar>
                     </div>
@@ -65,9 +69,9 @@
                 <div class="col-6">
                   <div class="row">
                     <div class="col">
-                      <p-dropdown [(ngModel)]="startDateTimeZone"  panelStyleClass="time-zone" id="new_voyage_start_date_time_zone"
-                        styleClass="form-control" appendTo="body" formControlName="selectStartDateTimeZone"
-                        [options]="globalTimeZones" optionLabel="timezone"
+                      <p-dropdown [(ngModel)]="startDateTimeZone" panelStyleClass="time-zone"
+                        id="new_voyage_start_date_time_zone" styleClass="form-control" appendTo="body"
+                        formControlName="selectStartDateTimeZone" [options]="globalTimeZones" optionLabel="timezone"
                         placeholder="{{'VOYAGE_POP_UP_START_DATE_TIME_ZONE_PLACEHOLDER'|translate}}" filter="true"
                         resetFilterOnHide="true" focusTrap>
                       </p-dropdown>
@@ -99,8 +103,12 @@
                         [hideOnDateTimeSelect]="false" (onClose)="onDateSelect(endDateTime)"
                         (onInput)="onDateSelect(endDateTime)" [placeholder]="datePlaceHolder" focusTrap>
                         <p-footer>
-                          <button class="btn btn-main" (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                          <div class="row">
+                            <div class="col text-center">
+                              <button class="btn btn-main" (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                             | translate}}</button>
+                            </div>
+                          </div>
                         </p-footer>
                       </p-calendar>
                     </div>

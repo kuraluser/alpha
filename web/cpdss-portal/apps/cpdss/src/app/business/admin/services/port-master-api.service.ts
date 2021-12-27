@@ -67,8 +67,9 @@ export class PortMasterApiService {
       if (stateParams?.filter[key]) {
         return "&" + key + "=" + stateParams?.filter[key];
       }
-    }) : '';
-    const requestParams = `pageSize=${stateParams.pageSize ? stateParams.pageSize : this._pageSize}&page=${stateParams.page ? stateParams.page : this._page}${stateParams.sortBy ? `&sortBy=${stateParams.sortBy}` : ''}${stateParams.orderBy ? `&orderBy=${stateParams.orderBy}` : ''}${filterString}`;
+    }).toString() : '';
+    const filterParams = filterString.replace(/\,/g, '');
+    const requestParams = `pageSize=${stateParams.pageSize ? stateParams.pageSize : this._pageSize}&page=${stateParams.page ? stateParams.page : this._page}${stateParams.sortBy ? `&sortBy=${stateParams.sortBy}` : ''}${stateParams.orderBy ? `&orderBy=${stateParams.orderBy}` : ''}${filterParams}`;
     return this.commonApiService.get<IPortMasterListResponse>(`master/ports?${requestParams}`);
   }
 

@@ -6,6 +6,9 @@ import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service';
 import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 import { VALIDATION_AND_SAVE_STATUS } from '../../models/loadable-plan.model';
+import { LoadablePatternHistoryApiService } from '../../services/loadable-pattern-history-api.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { saveAs } from 'file-saver';
 
 /**
  * Component for pattern case
@@ -29,6 +32,7 @@ export class PatternCaseComponent implements OnInit {
   @Input() index: number;
   @Input() loadablePlanPermissionContext;
   @Input() selectedVoyage;
+  @Input() vesselId;
 
   @Input()
   set loadablePattern(loadablePattern: ILoadablePattern) {
@@ -51,7 +55,11 @@ export class PatternCaseComponent implements OnInit {
   readonly LOADABLE_STUDY_STATUS = LOADABLE_STUDY_STATUS;
   readonly VOYAGE_STATUS = VOYAGE_STATUS;
 
-  constructor(private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService) { }
+  constructor(
+    private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService,
+    private loadablePatternApiService: LoadablePatternHistoryApiService,
+    private ngxSpinnerService: NgxSpinnerService
+    ) { }
 
   /**
    * Component lifecycle ngOnit
@@ -144,5 +152,16 @@ export class PatternCaseComponent implements OnInit {
   */
   onConfirmPlanClick(event) {
     this.confirmPlanClick.emit(event);
+  }
+
+  downloadDatFile(): void {
+    this.ngxSpinnerService.show();
+    this.loadablePatternApiService.downloadDATfile(this.vesselId, this.loadablePatternDetailsId).subscribe((result) => {
+      const fileName = result.headers.get('content-disposition').split('filename=')[1];
+      const blob = new Blob([result.body], { type: result.type });
+      const fileurl = window.URL.createObjectURL(blob);
+      saveAs(fileurl, fileName);
+      this.ngxSpinnerService.hide();
+    });
   }
 }
