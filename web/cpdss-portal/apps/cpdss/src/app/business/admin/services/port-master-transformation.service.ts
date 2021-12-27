@@ -99,19 +99,20 @@ export class PortMasterTransformationService {
         filterByServer: true,
         sortable: true,
         sortField: 'code'
-      }
-      // {
-      //   field: 'country',                                   //This will be needed later when more fields are added to the api.
-      //   header: 'PORT_MASTER_COUNTRY',
-      //   filter: true,
-      //   filterPlaceholder: 'PORT_MASTER_SEARCH_COUNTRY',
-      //   filterType: DATATABLE_FILTER_TYPE.TEXT,
-      //   filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-      //   filterField: 'country',
-      //   sortable: true,
-      //   sortField: 'country'
-      // },
-      , {
+      },
+      {
+        field: 'countryName',
+        header: 'PORT_MASTER_COUNTRY',
+        filter: true,
+        filterPlaceholder: 'PORT_MASTER_SEARCH_COUNTRY',
+        filterType: DATATABLE_FILTER_TYPE.TEXT,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'countryName',
+        filterByServer: true,
+        sortable: true,
+        sortField: 'countryName'
+      },
+      {
         field: 'timezone',
         header: 'PORT_MASTER_TIMEZONE',
         filter: true,
@@ -134,7 +135,7 @@ export class PortMasterTransformationService {
         filterByServer: true,
         sortable: true,
         sortField: 'waterDensity'
-      }
+      },
       // {
       //   field: 'temperature',
       //   header: 'PORT_MASTER_TEMPERATURE',                            //This will be required when more fields are added to the api.

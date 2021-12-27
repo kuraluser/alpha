@@ -71,6 +71,8 @@ export interface IPortMasterList {
   code: string;
   id: number;
   name: string;
+  countryId: number;
+  countryName: string;
   timezone: string;
   timezoneAbbreviation: string;
   timezoneOffsetVal: string;
