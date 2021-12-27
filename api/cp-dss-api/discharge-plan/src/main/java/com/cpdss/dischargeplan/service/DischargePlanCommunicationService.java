@@ -1822,8 +1822,8 @@ public class DischargePlanCommunicationService {
   private JsonArray removeJsonFields(JsonArray array, HashMap<String, String> map, String... xIds) {
     JsonArray json = dischargePlanStagingService.getAsEntityJson(map, array);
     JsonArray jsonArray = new JsonArray();
-    JsonObject communicationRelatedIdMap = new JsonObject();
     for (JsonElement jsonElement : json) {
+      JsonObject communicationRelatedIdMap = new JsonObject();
       final JsonObject jsonObj = jsonElement.getAsJsonObject();
       if (xIds != null) {
         for (String xId : xIds) {
