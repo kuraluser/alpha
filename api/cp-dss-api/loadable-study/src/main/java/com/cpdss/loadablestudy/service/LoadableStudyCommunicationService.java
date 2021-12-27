@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.service;
 
 // region Import
+import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
@@ -882,7 +883,7 @@ public class LoadableStudyCommunicationService {
     if (loadableStudyStage != null) {
       Optional<LoadableStudy> optionalLoadableStudy =
           loadableStudyRepository.findById(loadableStudyStage.getId());
-      loadableStudyStage.setVersion(optionalLoadableStudy.map(EntityDoc::getVersion).orElse(null));
+      setEntityDocFields(loadableStudyStage, optionalLoadableStudy);
       loadableStudyStage.setVoyage(voyageStage);
       loadableStudyStage.setLoadableStudyStatus(
           loadableStudyStatusRepository.findById(loadableStudyStatusId).orElse(null));

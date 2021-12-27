@@ -5,6 +5,7 @@ import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.communication.repository.StagingRepository;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.StagingStatus;
 import com.google.gson.*;
@@ -324,5 +325,25 @@ public class StagingService {
 
     }
     return null;
+  }
+
+  /**
+   * Method to set entity doc fields to staging entity
+   *
+   * @param stagingEntity staging entity value
+   * @param actualEntity actual entity value
+   */
+  public static void setEntityDocFields(
+      final EntityDoc stagingEntity, final Optional<? extends EntityDoc> actualEntity) {
+    actualEntity.ifPresentOrElse(
+        entityDoc -> {
+          stagingEntity.setCreatedBy(entityDoc.getCreatedBy());
+          stagingEntity.setCreatedDate(entityDoc.getCreatedDate());
+          stagingEntity.setCreatedDateTime(entityDoc.getCreatedDateTime());
+          stagingEntity.setVersion(entityDoc.getVersion());
+        },
+        () -> {
+          stagingEntity.setVersion(null);
+        });
   }
 }
