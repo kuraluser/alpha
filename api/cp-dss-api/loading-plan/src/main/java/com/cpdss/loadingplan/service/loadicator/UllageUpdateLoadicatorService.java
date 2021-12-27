@@ -186,6 +186,7 @@ public class UllageUpdateLoadicatorService {
         loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
         loadingPlanCommunicationStatus.setMessageType(MessageTypes.ULLAGE_UPDATE.getMessageType());
         loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        loadingPlanCommunicationStatus.setActive(true);
         LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
             this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
         log.info(
@@ -516,6 +517,7 @@ public class UllageUpdateLoadicatorService {
       loadingPlanCommunicationStatus.setReferenceId(loadingInfoId);
       loadingPlanCommunicationStatus.setMessageType(messageType);
       loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+      loadingPlanCommunicationStatus.setActive(true);
       LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
           this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
       log.info(

@@ -774,6 +774,9 @@ public class LoadicatorService {
               loadingInfoOpt.get().getId(), true);
           loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
               loadingInfoOpt.get().getId(), true);
+          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.COMPLETED.getId(), false, loadingInfoOpt.get().getId());
+
         } else {
           statusId = LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID;
           saveJudgements(loadingInfoOpt.get(), judgements);
@@ -1242,6 +1245,7 @@ public class LoadicatorService {
     loadingPlanCommunicationStatus.setMessageType(
         MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
     loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+    loadingPlanCommunicationStatus.setActive(true);
     LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
         this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
     log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());

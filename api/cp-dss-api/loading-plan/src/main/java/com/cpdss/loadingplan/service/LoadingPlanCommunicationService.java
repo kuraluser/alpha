@@ -2155,13 +2155,7 @@ public class LoadingPlanCommunicationService {
       log.info("updated status to completed for processId:" + processId);
       if (!env.equals("ship") && loadingInfo != null) {
         if (processGroupId.equals(MessageTypes.LOADINGPLAN.getMessageType())) {
-          log.info("Algo call started for LoadingPlan");
-          LoadingPlanModels.LoadingInfoAlgoRequest.Builder builder =
-              LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder();
-          builder.setLoadingInfoId(loadingInfo.getId());
-          LoadingPlanModels.LoadingInfoAlgoReply.Builder algoReplyBuilder =
-              LoadingPlanModels.LoadingInfoAlgoReply.newBuilder();
-          loadingPlanAlgoService.generateLoadingPlan(builder.build(), algoReplyBuilder);
+          generateLoadingPlan(loadingInformation.getId());
         }
         if (processGroupId.equals(MessageTypes.ULLAGE_UPDATE.getMessageType())) {
           log.info("Algo call started for Update Ullage");
@@ -2192,7 +2186,7 @@ public class LoadingPlanCommunicationService {
                 .equals(processGroupId)) {
           // Update communication status table with final state
           loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
-              CommunicationStatus.COMPLETED.getId(), loadingInfo.getId());
+              CommunicationStatus.COMPLETED.getId(), false, loadingInfo.getId());
         }
       }
     }
@@ -2250,9 +2244,11 @@ public class LoadingPlanCommunicationService {
    * Method to check communication status and call fallback mechanism on timeout
    *
    * @param taskReqParams map of params used by the scheduler
+   * @param messageType messageType value
    * @throws GenericServiceException Exception on failure
    */
-  public void checkCommunicationStatus(final Map<String, String> taskReqParams)
+  public void checkCommunicationStatus(
+      final Map<String, String> taskReqParams, MessageTypes messageType)
       throws GenericServiceException {
 
     // Status check only enabled for ship. Shore not implemented as retrial not done at shore
@@ -2263,7 +2259,7 @@ public class LoadingPlanCommunicationService {
           loadingPlanCommunicationStatusRepository
               .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
                   CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
-                  MessageTypes.LOADINGPLAN.getMessageType())
+                  messageType.getMessageType())
               .orElse(Collections.emptyList());
 
       for (LoadingPlanCommunicationStatus communicationStatusRow : communicationStatusList) {
@@ -2289,16 +2285,78 @@ public class LoadingPlanCommunicationService {
               CommunicationStatus.TIME_OUT.getId(), loadingInformation.getId());
 
           // Call fallback mechanism on timeout
-          log.info("Algo call started for LoadingPlan");
-          LoadingPlanModels.LoadingInfoAlgoRequest.Builder builder =
-              LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder();
-          builder.setLoadingInfoId(loadingInformation.getId());
-          LoadingPlanModels.LoadingInfoAlgoReply.Builder algoReplyBuilder =
-              LoadingPlanModels.LoadingInfoAlgoReply.newBuilder();
-          loadingPlanAlgoService.generateLoadingPlan(builder.build(), algoReplyBuilder);
+          log.info(
+              "Retrying {} at {}. Id: {}",
+              messageType.getMessageType(),
+              env,
+              loadingInformation.getId());
+          if (MessageTypes.LOADINGPLAN.equals(messageType)) {
+            generateLoadingPlan(loadingInformation.getId());
+          } else if (MessageTypes.ULLAGE_UPDATE.equals(messageType)) {
+            updateUllage(loadingInformation.getId());
+          } else {
+            log.warn("Message Type: {} not configured", messageType);
+          }
 
           loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
               CommunicationStatus.RETRY_AT_SOURCE.getId(), loadingInformation.getId());
+        }
+      }
+    }
+  }
+
+  /**
+   * Method to generate loading plan
+   *
+   * @param loadingInfoId loadingPlanId value
+   * @throws GenericServiceException Exception on fialure
+   */
+  private void generateLoadingPlan(final long loadingInfoId) throws GenericServiceException {
+    log.info("Generating loading plan. Id: {}", loadingInfoId);
+
+    LoadingPlanModels.LoadingInfoAlgoRequest.Builder builder =
+        LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder();
+    builder.setLoadingInfoId(loadingInfoId);
+    LoadingPlanModels.LoadingInfoAlgoReply.Builder algoReplyBuilder =
+        LoadingPlanModels.LoadingInfoAlgoReply.newBuilder();
+    loadingPlanAlgoService.generateLoadingPlan(builder.build(), algoReplyBuilder);
+  }
+
+  /**
+   * Method to update ullage
+   *
+   * @param loadingInfoId loadingInfoId value
+   * @throws GenericServiceException Exception on ullage update value failure
+   */
+  private void updateUllage(final long loadingInfoId) throws GenericServiceException {
+
+    Optional<List<LoadingInformationAlgoStatus>> loadingInfoAlgoStatus =
+        loadingInformationAlgoStatusRepository.getLoadingInfoAlgoStatus(
+            loadingInfoId, LoadingPlanConstants.UPDATE_ULLAGE_COMMUNICATED_TO_SHORE);
+
+    if (loadingInfoAlgoStatus.isPresent()) {
+      for (LoadingInformationAlgoStatus loadingInformationAlgoStatus :
+          loadingInfoAlgoStatus.get()) {
+        LoadingPlanModels.UllageBillRequest.Builder builder =
+            LoadingPlanModels.UllageBillRequest.newBuilder();
+        LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
+            LoadingPlanModels.UpdateUllage.newBuilder();
+        updateUllageBuilder.setLoadingInformationId(loadingInfoId);
+        updateUllageBuilder.setArrivalDepartutre(loadingInformationAlgoStatus.getConditionType());
+        builder.addUpdateUllage(updateUllageBuilder.build());
+        try {
+          log.info(
+              "Ullage update running for LoadingInfoId: {} ::: Arr/Dep condition: {}",
+              loadingInfoId,
+              loadingInformationAlgoStatus.getConditionType());
+          ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
+        } catch (IllegalAccessException | InvocationTargetException e) {
+          log.error("Update ullage failed. Loading Info Id: {}", loadingInfoId, e);
+          throw new GenericServiceException(
+              "Update ullage failed. Loading Info Id: " + loadingInfoId,
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              e);
         }
       }
     }

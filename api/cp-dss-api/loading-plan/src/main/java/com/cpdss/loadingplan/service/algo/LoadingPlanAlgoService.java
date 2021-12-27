@@ -230,6 +230,7 @@ public class LoadingPlanAlgoService {
         loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
         loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
         loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+        loadingPlanCommunicationStatus.setActive(true);
         LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
             this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
         log.info("Communication table update : " + loadingPlanCommunicationStat.getId());
@@ -459,6 +460,8 @@ public class LoadingPlanAlgoService {
             loadingInfoOpt.get().getId(), true);
         loadingInformationRepository.updateIsLoadingPlanGeneratedStatus(
             loadingInfoOpt.get().getId(), true);
+        loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+            CommunicationStatus.COMPLETED.getId(), false, loadingInfoOpt.get().getId());
       }
       log.info("Communication side started");
       if (enableCommunication && !env.equals("ship") && !request.getHasLoadicator()) {
@@ -497,6 +500,7 @@ public class LoadingPlanAlgoService {
     loadingPlanCommunicationStatus.setMessageType(
         MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType());
     loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+    loadingPlanCommunicationStatus.setActive(true);
     LoadingPlanCommunicationStatus loadableStudyCommunicationStatus =
         this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
     log.info("Communication table update : " + loadingPlanCommunicationStatus.getId());

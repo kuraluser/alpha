@@ -20,6 +20,12 @@ public interface LoadingPlanCommunicationStatusRepository
   @Transactional
   @Modifying
   @Query(
+      "UPDATE LoadingPlanCommunicationStatus LS SET LS.communicationStatus = ?1, LS.isActive = ?2 WHERE referenceId = ?3 ")
+  void updateCommunicationStatus(String communicationStatus, Boolean isActive, Long referenceId);
+
+  @Transactional
+  @Modifying
+  @Query(
       "UPDATE LoadingPlanCommunicationStatus LS SET LS.communicationStatus = ?1 WHERE referenceId = ?2 ")
   void updateCommunicationStatus(String communicationStatus, Long referenceId);
 }

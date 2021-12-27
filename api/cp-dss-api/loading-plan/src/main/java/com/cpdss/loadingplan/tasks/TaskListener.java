@@ -60,7 +60,8 @@ public class TaskListener implements ExecuteTaskListener {
         communicationService.getUllageUpdateStagingData(
             StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get("env"), taskName);
       } else if (taskName.contains("LOADING_PLAN_STATUS_CHECK")) {
-        communicationService.checkCommunicationStatus(taskReqParams);
+        communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.LOADINGPLAN);
+        communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.ULLAGE_UPDATE);
       }
     }
   }

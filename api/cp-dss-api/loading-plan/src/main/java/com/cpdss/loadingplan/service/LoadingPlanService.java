@@ -190,6 +190,7 @@ public class LoadingPlanService {
           loadingPlanCommunicationStatus.setMessageType(
               MessageTypes.LOADINGPLAN_SAVE.getMessageType());
           loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          loadingPlanCommunicationStatus.setActive(true);
           LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
               this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
           log.info("Communication table updated : " + loadingPlanCommunicationStat.getId());
