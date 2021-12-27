@@ -2871,19 +2871,36 @@ public class LoadableStudyService {
       SynopticalTableResponse synopticalTableResponse, SynopticalTableReply reply) {
     if (!CollectionUtils.isEmpty(reply.getSynopticalRecordsList())) {
       List<SynopticalRecord> synopticalTableList = new ArrayList<>();
-      reply
-          .getSynopticalRecordsList()
-          .forEach(
-              synopticalProtoRecord -> {
-                SynopticalRecord synopticalRecord = new SynopticalRecord();
-                this.buildSynopticalRecord(synopticalRecord, synopticalProtoRecord);
-                this.buildSynopticalTableCargos(synopticalRecord, synopticalProtoRecord);
-                this.buildOhqDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
-                this.buildVesselDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
-                this.buildSynopticalLoadicatorRecord(synopticalRecord, synopticalProtoRecord);
-                this.buildSynopticalBallastRecords(synopticalRecord, synopticalProtoRecord);
-                synopticalTableList.add(synopticalRecord);
-              });
+      // Fetching the last discharging port record and removing it when discharging has not started.
+      Optional<com.cpdss.common.generated.LoadableStudy.SynopticalRecord> lastDeparturePortDepOpt =
+          Optional.empty();
+      if (!reply.getDischargingStarted()) {
+        lastDeparturePortDepOpt =
+            reply.getSynopticalRecordsList().stream()
+                .filter(
+                    record ->
+                        record.getPortRotationType().equalsIgnoreCase(PORT_ROTATION_TYPE_LOADING)
+                            && record.getCargoOperationTypeId() == DISCHARGING_OPERATION_TYPE_ID
+                            && record
+                                .getOperationType()
+                                .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
+                .max(Comparator.comparing(record -> record.getPortOrder()));
+      }
+
+      for (com.cpdss.common.generated.LoadableStudy.SynopticalRecord synopticalProtoRecord :
+          reply.getSynopticalRecordsList()) {
+        if (lastDeparturePortDepOpt.isEmpty()
+            || synopticalProtoRecord.getId() != lastDeparturePortDepOpt.get().getId()) {
+          SynopticalRecord synopticalRecord = new SynopticalRecord();
+          this.buildSynopticalRecord(synopticalRecord, synopticalProtoRecord);
+          this.buildSynopticalTableCargos(synopticalRecord, synopticalProtoRecord);
+          this.buildOhqDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
+          this.buildVesselDataForSynopticalTable(synopticalRecord, synopticalProtoRecord);
+          this.buildSynopticalLoadicatorRecord(synopticalRecord, synopticalProtoRecord);
+          this.buildSynopticalBallastRecords(synopticalRecord, synopticalProtoRecord);
+          synopticalTableList.add(synopticalRecord);
+        }
+      }
       this.setSynopticalInPortHours(synopticalTableList);
       synopticalTableResponse.setSynopticalRecords(synopticalTableList);
     }

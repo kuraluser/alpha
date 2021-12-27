@@ -706,6 +706,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
             portRotation ->
                 ofNullable(portRotation.getPortRotationType())
                     .ifPresent(i -> builder.setPortRotationType(i)));
+    ofNullable(synopticalEntity.getLoadableStudyPortRotation())
+        .ifPresent(
+            portRotation -> builder.setCargoOperationTypeId(portRotation.getOperation().getId()));
     if (null != synopticalEntity.getEtaActual()) {
       builder.setEtaEtdActual(formatter.format(synopticalEntity.getEtaActual()));
     } else if (null != synopticalEntity.getEtdActual()) {
@@ -1583,6 +1586,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       LoadableStudy.SynopticalTableReply.Builder replyBuilder)
       throws GenericServiceException {
 
+    Boolean dischargingStarted = false;
+
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudyOpt =
         this.loadableStudyRepository.findById(request.getLoadableStudyId());
     if (!loadableStudyOpt.isPresent()) {
@@ -1596,6 +1601,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     List<Long> patternIds = new ArrayList<>();
     if (dischargeStudyEntries.isPresent()
         && loadableStudyOpt.get().getConfirmedLoadableStudyId() != null) {
+      dischargingStarted = true;
+
       synopticalTableList =
           synpoticServiceUtils.getsynopticalTableList(
               loadableStudyOpt.get().getConfirmedLoadableStudyId(), request.getLoadableStudyId());
@@ -1638,6 +1645,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
           patternIds,
           replyBuilder);
     }
+
+    replyBuilder.setDischargingStarted(dischargingStarted);
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
   }
 

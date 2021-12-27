@@ -2,10 +2,9 @@
 package com.cpdss.gateway.domain.cargomaster;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class CargoDetailed {
@@ -26,6 +25,7 @@ public class CargoDetailed {
   private String benzene;
   private String specialInstrictionsRemark;
   private List<CargoPortMapping> loadingInformation;
+
   @JsonFormat(pattern = "dd-MM-yyyy")
   private LocalDate assayDate;
 }

@@ -154,6 +154,7 @@ public class SynopticServiceTest {
     loadableStudyPortRotation.setActive(true);
     CargoOperation operation = new CargoOperation();
     operation.setName("1");
+    operation.setId(1L);
     loadableStudyPortRotation.setOperation(operation);
     loadableStudyPortRotation.setSeaWaterDensity(new BigDecimal(1));
     return loadableStudyPortRotation;

@@ -77,4 +77,8 @@ public class GatewayConstants {
 
   public static final Long CARGO_TANK_CATEGORY_ID = 1L;
   public static final Long BALLAST_TANK_CATEGORY_ID = 2L;
+
+  public static final String PORT_ROTATION_TYPE_LOADING = "LOADING";
+
+  public static final Long DISCHARGING_OPERATION_TYPE_ID = 2L;
 }

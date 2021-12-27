@@ -1298,6 +1298,7 @@ message SynopticalRecord{
 	bool hasLoadicator = 41;
 	string portRotationType = 42;
 	repeated SynopticalCommingleRecord commingle = 43;
+	int64 cargoOperationTypeId = 44;
 }
 
 message SynopticalCommingleRecord{
@@ -1387,6 +1388,7 @@ message SynopticalTableReply{
 	repeated TankList ballastCenterTanks = 5;
 	repeated TankList ballastRearTanks = 6;	
 	repeated TankList cargoTanks = 7;
+	bool dischargingStarted = 8;
 }
 
 message SynopticalTableLoadicatorData{
