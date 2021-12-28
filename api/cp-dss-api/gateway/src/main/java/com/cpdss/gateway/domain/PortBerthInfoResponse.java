@@ -1,8 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
-import java.math.BigDecimal;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class PortBerthInfoResponse {
@@ -17,4 +18,5 @@ public class PortBerthInfoResponse {
   private BigDecimal maxManifoldHeight;
   private String minUKC;
   private String regulationAndRestriction;
+  private BigDecimal maxDraft;
 }

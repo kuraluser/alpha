@@ -11,6 +11,7 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
 import com.google.protobuf.Empty;
+import io.micrometer.core.instrument.util.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,6 +123,8 @@ public class PortInfoService {
           berth.getMaxManifoldHeight().isEmpty()
               ? null
               : new BigDecimal(berth.getMaxManifoldHeight()));
+      berthResponse.setMaxDraft(
+          StringUtils.isEmpty(berth.getMaxDraft()) ? null : new BigDecimal(berth.getMaxDraft()));
       berthResponse.setMaxShipDepth(
           berth.getMaxShipDepth().isEmpty() ? null : new BigDecimal(berth.getMaxShipDepth()));
       berthResponse.setPortId(berth.getPortId());
@@ -279,6 +282,10 @@ public class PortInfoService {
                   : portBerthInfoResponse.getMaxLoa().toString());
           berthDetail.setUkc(
               portBerthInfoResponse.getMinUKC() == null ? "" : portBerthInfoResponse.getMinUKC());
+          berthDetail.setMaxDraft(
+              portBerthInfoResponse.getMaxDraft() == null
+                  ? ""
+                  : portBerthInfoResponse.getMaxDraft().toString());
           portDetailRequest.addBerthDetails(berthDetail);
         });
   }
