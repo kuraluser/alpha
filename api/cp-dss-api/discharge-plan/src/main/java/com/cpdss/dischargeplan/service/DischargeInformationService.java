@@ -159,8 +159,10 @@ public class DischargeInformationService {
     List<DischargingInstruction> dischargingInstructionList =
         dischargingInstructionRepository.getAllDischargingInstructions(
             request.getVesselId(), disEntity.getId(), request.getPortRotationId());
-    builder.setIsDischargingInstructionsComplete(
-        !dischargingInstructionList.isEmpty() ? Boolean.TRUE : Boolean.FALSE);
+    /*builder.setIsDischargingInstructionsComplete(
+    !dischargingInstructionList.isEmpty() ? Boolean.TRUE : Boolean.FALSE);*/
+    builder.setIsDischargingInstructionsComplete(disEntity.getIsDischargingInstructionsComplete());
+
     // Set Discharge Details
     this.informationBuilderService.buildDischargeDetailsMessageFromEntity(disEntity, builder);
 
