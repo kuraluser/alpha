@@ -672,6 +672,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(density -> portDetail.setWaterDensity(density.toString()));
           Optional.ofNullable(portMapping.getPortInfo().getMaxPermissibleDraft())
               .ifPresent(draft -> portDetail.setMaxDraft(draft.toString()));
+          Optional.ofNullable(portMapping.getPortInfo().getCountry())
+              .ifPresent(
+                  country -> {
+                    Optional.ofNullable(country.getId()).ifPresent(portDetail::setCountryId);
+                    Optional.ofNullable(country.getName()).ifPresent(portDetail::setCountryName);
+                  });
           replyBuilder.addPorts(portDetail);
         });
     ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
@@ -716,6 +722,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
                               cargoPortMappingEntity.setIsActive(true);
                               portMappings.add(
                                   this.cargoPortMappingRepository.save(cargoPortMappingEntity));
+                            } else {
+                              portMappings.add(cargoPortMappingWrapper.get());
                             }
                           });
                     });

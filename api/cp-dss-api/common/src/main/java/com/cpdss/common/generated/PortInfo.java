@@ -24143,6 +24143,26 @@ public final class PortInfo {
      * @return The bytes for waterDensity.
      */
     com.google.protobuf.ByteString getWaterDensityBytes();
+
+    /**
+     * <code>int64 countryId = 10;</code>
+     *
+     * @return The countryId.
+     */
+    long getCountryId();
+
+    /**
+     * <code>string countryName = 11;</code>
+     *
+     * @return The countryName.
+     */
+    java.lang.String getCountryName();
+    /**
+     * <code>string countryName = 11;</code>
+     *
+     * @return The bytes for countryName.
+     */
+    com.google.protobuf.ByteString getCountryNameBytes();
   }
   /** Protobuf type {@code CargoPortMappingDetail} */
   public static final class CargoPortMappingDetail extends com.google.protobuf.GeneratedMessageV3
@@ -24161,6 +24181,7 @@ public final class PortInfo {
       maxAirDraft_ = "";
       maxDraft_ = "";
       waterDensity_ = "";
+      countryName_ = "";
     }
 
     @java.lang.Override
@@ -24245,6 +24266,18 @@ public final class PortInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 waterDensity_ = s;
+                break;
+              }
+            case 80:
+              {
+                countryId_ = input.readInt64();
+                break;
+              }
+            case 90:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                countryName_ = s;
                 break;
               }
             default:
@@ -24499,6 +24532,52 @@ public final class PortInfo {
       }
     }
 
+    public static final int COUNTRYID_FIELD_NUMBER = 10;
+    private long countryId_;
+    /**
+     * <code>int64 countryId = 10;</code>
+     *
+     * @return The countryId.
+     */
+    public long getCountryId() {
+      return countryId_;
+    }
+
+    public static final int COUNTRYNAME_FIELD_NUMBER = 11;
+    private volatile java.lang.Object countryName_;
+    /**
+     * <code>string countryName = 11;</code>
+     *
+     * @return The countryName.
+     */
+    public java.lang.String getCountryName() {
+      java.lang.Object ref = countryName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        countryName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string countryName = 11;</code>
+     *
+     * @return The bytes for countryName.
+     */
+    public com.google.protobuf.ByteString getCountryNameBytes() {
+      java.lang.Object ref = countryName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        countryName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -24540,6 +24619,12 @@ public final class PortInfo {
       if (!getWaterDensityBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, waterDensity_);
       }
+      if (countryId_ != 0L) {
+        output.writeInt64(10, countryId_);
+      }
+      if (!getCountryNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 11, countryName_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -24576,6 +24661,12 @@ public final class PortInfo {
       if (!getWaterDensityBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, waterDensity_);
       }
+      if (countryId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(10, countryId_);
+      }
+      if (!getCountryNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, countryName_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -24601,6 +24692,8 @@ public final class PortInfo {
       if (!getMaxAirDraft().equals(other.getMaxAirDraft())) return false;
       if (!getMaxDraft().equals(other.getMaxDraft())) return false;
       if (!getWaterDensity().equals(other.getWaterDensity())) return false;
+      if (getCountryId() != other.getCountryId()) return false;
+      if (!getCountryName().equals(other.getCountryName())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -24630,6 +24723,10 @@ public final class PortInfo {
       hash = (53 * hash) + getMaxDraft().hashCode();
       hash = (37 * hash) + WATERDENSITY_FIELD_NUMBER;
       hash = (53 * hash) + getWaterDensity().hashCode();
+      hash = (37 * hash) + COUNTRYID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCountryId());
+      hash = (37 * hash) + COUNTRYNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getCountryName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -24788,6 +24885,10 @@ public final class PortInfo {
 
         waterDensity_ = "";
 
+        countryId_ = 0L;
+
+        countryName_ = "";
+
         return this;
       }
 
@@ -24825,6 +24926,8 @@ public final class PortInfo {
         result.maxAirDraft_ = maxAirDraft_;
         result.maxDraft_ = maxDraft_;
         result.waterDensity_ = waterDensity_;
+        result.countryId_ = countryId_;
+        result.countryName_ = countryName_;
         onBuilt();
         return result;
       }
@@ -24908,6 +25011,13 @@ public final class PortInfo {
         }
         if (!other.getWaterDensity().isEmpty()) {
           waterDensity_ = other.waterDensity_;
+          onChanged();
+        }
+        if (other.getCountryId() != 0L) {
+          setCountryId(other.getCountryId());
+        }
+        if (!other.getCountryName().isEmpty()) {
+          countryName_ = other.countryName_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -25448,6 +25558,115 @@ public final class PortInfo {
         checkByteStringIsUtf8(value);
 
         waterDensity_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long countryId_;
+      /**
+       * <code>int64 countryId = 10;</code>
+       *
+       * @return The countryId.
+       */
+      public long getCountryId() {
+        return countryId_;
+      }
+      /**
+       * <code>int64 countryId = 10;</code>
+       *
+       * @param value The countryId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCountryId(long value) {
+
+        countryId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 countryId = 10;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCountryId() {
+
+        countryId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object countryName_ = "";
+      /**
+       * <code>string countryName = 11;</code>
+       *
+       * @return The countryName.
+       */
+      public java.lang.String getCountryName() {
+        java.lang.Object ref = countryName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          countryName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string countryName = 11;</code>
+       *
+       * @return The bytes for countryName.
+       */
+      public com.google.protobuf.ByteString getCountryNameBytes() {
+        java.lang.Object ref = countryName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          countryName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string countryName = 11;</code>
+       *
+       * @param value The countryName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCountryName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        countryName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string countryName = 11;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearCountryName() {
+
+        countryName_ = getDefaultInstance().getCountryName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string countryName = 11;</code>
+       *
+       * @param value The bytes for countryName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCountryNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        countryName_ = value;
         onChanged();
         return this;
       }
@@ -27285,12 +27504,13 @@ public final class PortInfo {
           + "d\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\020\n\010portName\030\003 \001"
           + "(\t\"a\n\016CargoPortReply\022\'\n\016responseStatus\030\001"
           + " \001(\0132\017.ResponseStatus\022&\n\005ports\030\002 \003(\0132\027.C"
-          + "argoPortMappingDetail\"\271\001\n\026CargoPortMappi"
+          + "argoPortMappingDetail\"\341\001\n\026CargoPortMappi"
           + "ngDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022"
           + "\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010port"
           + "Name\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t\022\023\n\013maxAirDr"
           + "aft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\024\n\014waterDens"
-          + "ity\030\t \001(\t\"F\n\027CargoPortMappingRequest\022+\n\020"
+          + "ity\030\t \001(\t\022\021\n\tcountryId\030\n \001(\003\022\023\n\013countryN"
+          + "ame\030\013 \001(\t\"F\n\027CargoPortMappingRequest\022+\n\020"
           + "cargoPortMapping\030\001 \003(\0132\021.CargoPortMappin"
           + "g\"S\n\rPortInfoReply\022\'\n\016responseStatus\030\001 \001"
           + "(\0132\017.ResponseStatus\022\031\n\004port\030\002 \001(\0132\013.Port"
@@ -27556,6 +27776,8 @@ public final class PortInfo {
               "MaxAirDraft",
               "MaxDraft",
               "WaterDensity",
+              "CountryId",
+              "CountryName",
             });
     internal_static_CargoPortMappingRequest_descriptor = getDescriptor().getMessageTypes().get(22);
     internal_static_CargoPortMappingRequest_fieldAccessorTable =

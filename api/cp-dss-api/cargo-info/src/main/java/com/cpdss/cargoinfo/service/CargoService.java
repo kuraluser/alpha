@@ -442,6 +442,8 @@ public class CargoService extends CargoInfoServiceImplBase {
     cargo.setBenzene(request.getBenzene());
     cargo.setRemarks(request.getSpecialInstrictionsRemark());
     cargo.setAbbreviation(request.getAbbreviation());
+    cargo.setLastUpdated(
+        request.getAssayDate().isEmpty() ? null : LocalDate.parse(request.getAssayDate()));
     cargo.setIsActive(true);
   }
 }

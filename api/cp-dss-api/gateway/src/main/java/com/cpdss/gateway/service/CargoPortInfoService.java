@@ -18,6 +18,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.cargomaster.*;
 import com.cpdss.gateway.domain.cargomaster.CargoPortMapping;
+import com.cpdss.gateway.domain.cargomaster.Country;
 import io.micrometer.core.instrument.util.StringUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -290,9 +291,9 @@ public class CargoPortInfoService {
     CargosDetailedResponse cargosResponse = new CargosDetailedResponse();
     // Retrieve cargo information from cargo master
     CargoRequest.Builder cargoRequestBuilder = CargoRequest.newBuilder();
-    if (sortBy != null && sortBy.equalsIgnoreCase("assayDate")) sortBy = "lastUpdated";
-    else if (sortBy != null && sortBy.equalsIgnoreCase("name")) sortBy = "crudeType";
-    else if (sortBy != null && sortBy.equalsIgnoreCase("temp")) sortBy = "minLoadTemp";
+    if ("assayDate".equals(sortBy)) sortBy = "lastUpdated";
+    else if ("name".equals(sortBy)) sortBy = "crudeType";
+    else if ("temp".equals(sortBy)) sortBy = "minLoadTemp";
     String portName = "";
     cargoRequestBuilder.setPage(page);
     cargoRequestBuilder.setPageSize(pageSize);
@@ -340,7 +341,8 @@ public class CargoPortInfoService {
       }
       List<Long> cargoXidList =
           cargoPortMappings.stream()
-              .collect(Collectors.mapping(CargoPortMappingDetail::getCargoId, Collectors.toList()));
+              .map(CargoPortMappingDetail::getCargoId)
+              .collect(Collectors.toList());
       cargoRequestBuilder.addAllCargoXIds(cargoXidList);
     }
     CargoInfo.CargoDetailedReply cargoReply =
@@ -457,6 +459,7 @@ public class CargoPortInfoService {
             cargoPort -> {
               CargoPortMapping cargoPortMapping = new CargoPortMapping();
               cargoPortMapping.setId(cargoPort.getId());
+
               CargoPort port = new CargoPort();
               port.setId(cargoPort.getPortId());
               port.setCode(cargoPort.getPortCode());
@@ -465,6 +468,12 @@ public class CargoPortInfoService {
               port.setMaxDraft(cargoPort.getMaxDraft());
               port.setWaterDensity(cargoPort.getWaterDensity());
               cargoPortMapping.setPort(port);
+
+              Country country = new Country();
+              country.setId(cargoPort.getCountryId());
+              country.setName(cargoPort.getCountryName());
+              cargoPortMapping.setCountry(country);
+
               cargoPortMappingList.add(cargoPortMapping);
             });
     return cargoPortMappingList;
@@ -499,6 +508,7 @@ public class CargoPortInfoService {
       CargoDetailedResponse cargoResponse,
       CargoInfo.CargoByIdDetailedReply cargoReply,
       List<PortInfo.CargoPortMappingDetail> cargoPortMappings) {
+
     CargoInfo.CargoDetailed cargo = cargoReply.getCargo();
     CargoDetailed cargoDetail = new CargoDetailed();
     cargoDetail.setAbbreviation(cargo.getAbbreviation());
@@ -518,6 +528,13 @@ public class CargoPortInfoService {
     cargoDetail.setHydrogenSulfideOil(cargo.getHydrogenSulfideOil());
     cargoDetail.setHydrogenSulfideVapour(cargo.getHydrogenSulfideVapour());
     cargoDetail.setSpecialInstrictionsRemark(cargo.getSpecialInstrictionsRemark());
+
+    cargoDetail.setAssayDate(
+        StringUtils.isEmpty(cargo.getAssayDate())
+            ? null
+            : LocalDate.parse(
+                cargo.getAssayDate(), DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT)));
+
     List<CargoPortMapping> mappings = this.buildMappings(cargoPortMappings);
     cargoDetail.setLoadingInformation(mappings);
     cargoResponse.setCargo(cargoDetail);
@@ -720,6 +737,8 @@ public class CargoPortInfoService {
         cargoDetailed.getSpecialInstrictionsRemark() == null
             ? ""
             : cargoDetailed.getSpecialInstrictionsRemark());
+    cargoRequest.setAssayDate(
+        cargoDetailed.getAssayDate() == null ? "" : String.valueOf(cargoDetailed.getAssayDate()));
   }
 
   /**
