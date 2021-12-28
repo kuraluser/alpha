@@ -100,7 +100,6 @@ public class DischargePatternQuantityCargoPortwiseDetails extends EntityDoc {
   @OneToMany(
       mappedBy = "dischargePatternQuantityCargoPortwiseDetails",
       cascade = CascadeType.ALL,
-      orphanRemoval = true,
       fetch = FetchType.LAZY)
   private List<DischargePlanCowDetailFromAlgo> cowDetails;
 }
