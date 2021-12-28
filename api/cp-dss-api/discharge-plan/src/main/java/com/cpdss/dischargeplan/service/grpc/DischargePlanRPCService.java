@@ -226,6 +226,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
             dischargePlanCommunicationStatus.setMessageType(
                 MessageTypes.DISCHARGEPLAN.getMessageType());
             dischargePlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+            dischargePlanCommunicationStatus.setActive(true);
             DischargePlanCommunicationStatus dischargePlanCommunication =
                 dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
             log.info(

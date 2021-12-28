@@ -37,4 +37,7 @@ public class DischargePlanCommunicationStatus extends EntityDoc {
 
   @Column(name = "reference_id")
   private Long referenceId;
+
+  @Column(name = "is_active")
+  private boolean isActive;
 }

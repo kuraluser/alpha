@@ -340,19 +340,19 @@ public class DischargePlanAlgoService {
           if (!CollectionUtils.isEmpty(cowTankDetails)) {
             log.info("CowTankDetail size:{}", cowTankDetails.size());
             cowPlan.setTopCowTankIds(
-                cpd.getCowTankDetails().stream()
+                cowTankDetails.stream()
                     .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
                     .map(CowTankDetail::getTankXid)
                     .collect(Collectors.toList()));
 
             cowPlan.setBottomCowTankIds(
-                cpd.getCowTankDetails().stream()
+                cowTankDetails.stream()
                     .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.BOTTOM_COW_VALUE))
                     .map(CowTankDetail::getTankXid)
                     .collect(Collectors.toList()));
 
             cowPlan.setAllCowTankIds(
-                cpd.getCowTankDetails().stream()
+                cowTankDetails.stream()
                     .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.ALL_COW_VALUE))
                     .map(CowTankDetail::getTankXid)
                     .collect(Collectors.toList()));
@@ -363,7 +363,7 @@ public class DischargePlanAlgoService {
             log.info("CowWithDifferentCargo size:{}", cowWithDifferentCargos.size());
             List<CargoForCowDetails> cargoForCowDetails = new ArrayList<>();
             var gp1 =
-                cpd.getCowWithDifferentCargos().stream()
+                cowWithDifferentCargos.stream()
                     .collect(
                         Collectors.groupingBy(
                             CowWithDifferentCargo::getCargoXid)); // group by cargo
@@ -1900,12 +1900,13 @@ public class DischargePlanAlgoService {
       dischargePlanCommunicationStatus.setMessageType(
           MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType());
       dischargePlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-      DischargePlanCommunicationStatus loadableStudyCommunicationStatus =
+      dischargePlanCommunicationStatus.setActive(true);
+      DischargePlanCommunicationStatus dischargePlanCommcationStatus =
           dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
       log.info("Communication table update : " + dischargePlanCommunicationStatus.getId());
       log.info(
           "DischargePlanCommunicationStatus table updated id : "
-              + loadableStudyCommunicationStatus.getId());
+              + dischargePlanCommcationStatus.getId());
     }
   }
 }
