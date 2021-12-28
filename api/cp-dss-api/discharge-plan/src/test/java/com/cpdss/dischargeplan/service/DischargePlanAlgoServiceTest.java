@@ -46,6 +46,8 @@ public class DischargePlanAlgoServiceTest {
 
   @MockBean private DischargeInformationStatusRepository dischargeInformationStatusRepository;
   @MockBean private DischargingPlanBuilderService dischargingPlanBuilderService;
+  @MockBean private CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
+  @MockBean DischargingDelayReasonRepository dischargingDelayReasonRepository;
 
   @MockBean
   private DischargingInformationAlgoStatusRepository dischargingInformationAlgoStatusRepository;

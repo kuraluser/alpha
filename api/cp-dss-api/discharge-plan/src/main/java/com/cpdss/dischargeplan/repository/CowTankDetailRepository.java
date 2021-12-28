@@ -21,4 +21,6 @@ public interface CowTankDetailRepository extends CommonCrudRepository<CowTankDet
   void deleteByDischargingInformationId(Long dischargingInformationId);
 
   List<CowTankDetail> findByDischargingXidAndIsActiveTrue(Long dischargingId);
+
+  List<CowTankDetail> findAllByCowPlanDetail(CowPlanDetail cowPlanDetail);
 }

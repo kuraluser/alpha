@@ -77,6 +77,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Slf4j
@@ -91,6 +92,7 @@ public class DischargePlanAlgoService {
 
   @Autowired CowPlanDetailRepository cowPlanDetailRepository;
   @Autowired CowTankDetailRepository cowTankDetailRepository;
+  @Autowired private CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
 
   @Autowired private DischargeInformationStatusRepository dischargeInformationStatusRepository;
   @Autowired private DischargingPlanBuilderService dischargingPlanBuilderService;
@@ -161,6 +163,7 @@ public class DischargePlanAlgoService {
       dischargeStudyOperationServiceBlockingStub;
 
   @Autowired DischargingDelayRepository dischargingDelayRepository;
+  @Autowired DischargingDelayReasonRepository dischargingDelayReasonRepository;
 
   @Value("${cpdss.build.env}")
   private String env;
@@ -333,8 +336,9 @@ public class DischargePlanAlgoService {
           BeanUtils.copyProperties(cpd, cowPlan);
           cowPlan.setCowOptionType(
               Common.COW_OPTION_TYPE.forNumber(cpd.getCowOperationType()).name());
-
-          if (!cpd.getCowTankDetails().isEmpty()) {
+          List<CowTankDetail> cowTankDetails = cowTankDetailRepository.findAllByCowPlanDetail(cpd);
+          if (!CollectionUtils.isEmpty(cowTankDetails)) {
+            log.info("CowTankDetail size:{}", cowTankDetails.size());
             cowPlan.setTopCowTankIds(
                 cpd.getCowTankDetails().stream()
                     .filter(v -> v.getCowTypeXid().equals(Common.COW_TYPE.TOP_COW_VALUE))
@@ -353,8 +357,10 @@ public class DischargePlanAlgoService {
                     .map(CowTankDetail::getTankXid)
                     .collect(Collectors.toList()));
           }
-
-          if (!cpd.getCowWithDifferentCargos().isEmpty()) {
+          List<CowWithDifferentCargo> cowWithDifferentCargos =
+              cowWithDifferentCargoRepository.findAllByCowPlanDetail(cpd);
+          if (!CollectionUtils.isEmpty(cowWithDifferentCargos)) {
+            log.info("CowWithDifferentCargo size:{}", cowWithDifferentCargos.size());
             List<CargoForCowDetails> cargoForCowDetails = new ArrayList<>();
             var gp1 =
                 cpd.getCowWithDifferentCargos().stream()
@@ -446,11 +452,20 @@ public class DischargePlanAlgoService {
           ld.setId(delay.getId());
           ld.setDischargeInfoId(delay.getDischargingInformation().getId());
           ld.setQuantity(delay.getQuantity());
-          ld.setReasonForDelayIds(
-              delay.getDischargingDelayReasons().stream()
-                  .filter(DischargingDelayReason::getIsActive)
-                  .map(v -> v.getReasonForDelay().getId())
-                  .collect(Collectors.toList()));
+          List<DischargingDelayReason> reasonForDelayIds =
+              dischargingDelayReasonRepository.findAllByDischargingDelayAndIsActive(delay, true);
+          if (!CollectionUtils.isEmpty(reasonForDelayIds)) {
+            log.info("DischargingDelayReason get with size:{}", reasonForDelayIds.size());
+            ld.setReasonForDelayIds(
+                reasonForDelayIds.stream()
+                    .map(v -> v.getReasonForDelay().getId())
+                    .collect(Collectors.toList()));
+          }
+          //          ld.setReasonForDelayIds(
+          //              delay.getDischargingDelayReasons().stream()
+          //                  .filter(DischargingDelayReason::getIsActive)
+          //                  .map(v -> v.getReasonForDelay().getId())
+          //                  .collect(Collectors.toList()));
           dischargeDelays.add(ld);
         });
     dischargeSequences.setDischargeDelays(dischargeDelays);

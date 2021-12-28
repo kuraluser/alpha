@@ -1631,8 +1631,7 @@ public class DischargePlanCommunicationService {
         dischargeCommunicationInformationRepository.findById(dischargeInformation.getId());
     setEntityDocFields(dischargeInformation, dischargeInfoObj);
     dischargeInfo = dischargeCommunicationInformationRepository.save(dischargeInformation);
-    log.info(
-        "Communication ====  DischargeInformation saved with id:" + dischargeInformation.getId());
+    log.info("Communication ====  DischargeInformation saved with id:" + dischargeInfo.getId());
     return dischargeInfo;
   }
 
