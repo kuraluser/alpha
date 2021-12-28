@@ -151,7 +151,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   selectedCargo: any;
   billOfLaddingRemovedList: any = [];
-  cargoActualSum :any = 0;
+  cargoActualSum: any = 0;
 
   selectedTab = TANKTYPE.CARGO;
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -236,18 +236,24 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
               commingleStowages[commingleStowages?.length - 1].actualWeight = item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].quantity = item.quantity2MT;
               commingleStowages[commingleStowages?.length - 1].ullage = item.ullage2;
-
-              if (item.ullage2 > item.ullage1) {
-                stowage.ullage = item.ullage;
-                stowage.quantity = item.quantity;
-                stowage.quantityMT = item.quantity;
-                stowage.actualWeight = item.quantity;
-
-              } else {
+              if (data.isPlannedValues) {
                 commingleStowages[commingleStowages?.length - 1].ullage = item.ullage;
                 commingleStowages[commingleStowages?.length - 1].quantityMT = item.quantity;
                 commingleStowages[commingleStowages?.length - 1].actualWeight = item.quantity;
                 commingleStowages[commingleStowages?.length - 1].quantity = item.quantity;
+              } else {
+                if (item.ullage2 > item.ullage1) {
+                  stowage.ullage = item.ullage;
+                  stowage.quantity = item.quantity;
+                  stowage.quantityMT = item.quantity;
+                  stowage.actualWeight = item.quantity;
+
+                } else {
+                  commingleStowages[commingleStowages?.length - 1].ullage = item.ullage;
+                  commingleStowages[commingleStowages?.length - 1].quantityMT = item.quantity;
+                  commingleStowages[commingleStowages?.length - 1].actualWeight = item.quantity;
+                  commingleStowages[commingleStowages?.length - 1].quantity = item.quantity;
+                }
               }
             }
           });

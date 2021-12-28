@@ -102,10 +102,10 @@ export class LoadableQuantityComponent implements OnInit {
         return a.portOrder - b.portOrder;
       });
       const lastModifiedPortIdExist = this.ports.some(port => port.id === portsData?.lastModifiedPortId);
-      if(lastModifiedPortIdExist){
+      if (lastModifiedPortIdExist) {
         this.selectedPort = this.ports.find(port => port.id === portsData?.lastModifiedPortId);
         this.portRotationId = portsData?.lastModifiedPortId;
-      }else{
+      } else {
         this.selectedPort = this.ports[0];
         this.portRotationId = this.ports[0].id;
       }
@@ -221,7 +221,7 @@ export class LoadableQuantityComponent implements OnInit {
       this.getSubTotal();
     }
     else {
-       this.getDWT();
+      this.getDWT();
       this.getSubTotal();
     }
 
@@ -434,20 +434,20 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getSubTotal() {
     let subTotal = 0;
-      const data: ISubTotal = {
-        dwt: this.loadableQuantityForm.get('dwt').value,
-        sagCorrection: this.loadableQuantityForm.get('safCorrection').value,
-        sgCorrection: this.loadableQuantityForm.get('sgCorrection').value,
-        foOnboard: this.loadableQuantityForm.get('foOnboard').value,
-        doOnboard: this.loadableQuantityForm.get('doOnboard').value,
-        freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
-        ballast: this.loadableQuantityForm.get('ballast').value,
-        constant: this.loadableQuantityForm.get('constant').value,
-        others: this.loadableQuantityForm.get('others').value
-      }
-      subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
-      this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
-      this.getTotalLoadableQuantity();
+    const data: ISubTotal = {
+      dwt: this.loadableQuantityForm.get('dwt').value,
+      sagCorrection: this.loadableQuantityForm.get('safCorrection').value,
+      sgCorrection: this.loadableQuantityForm.get('sgCorrection').value,
+      foOnboard: this.loadableQuantityForm.get('foOnboard').value,
+      doOnboard: this.loadableQuantityForm.get('doOnboard').value,
+      freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
+      ballast: this.loadableQuantityForm.get('ballast').value,
+      constant: this.loadableQuantityForm.get('constant').value,
+      others: this.loadableQuantityForm.get('others').value
+    }
+    subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
+    this.loadableQuantityForm.controls['subTotal'].setValue(subTotal);
+    this.getTotalLoadableQuantity();
   }
 
   /**
@@ -546,5 +546,17 @@ export class LoadableQuantityComponent implements OnInit {
     this.selectedPort = event.value;
     this.portRotationId = this.selectedPort?.id;
     this.getLoadableQuantity();
+  }
+
+  /**
+   * method for calculating OHP total
+   */
+  getOHQTotal() {
+    return (this.loadableQuantityForm.controls.foOnboard.value ? Number(this.loadableQuantityForm.controls.foOnboard.value) : 0) +
+      (this.loadableQuantityForm.controls.doOnboard.value ? Number(this.loadableQuantityForm.controls.doOnboard.value) : 0) +
+      (this.loadableQuantityForm.controls.freshWaterOnboard.value ? Number(this.loadableQuantityForm.controls.freshWaterOnboard.value) : 0) +
+      (this.loadableQuantityForm.controls.ballast.value ? Number(this.loadableQuantityForm.controls.ballast.value) : 0) +
+      (this.loadableQuantityForm.controls.constant.value ? Number(this.loadableQuantityForm.controls.constant.value) : 0) +
+      (this.loadableQuantityForm.controls.others.value ? Number(this.loadableQuantityForm.controls.others.value) : 0);
   }
 }

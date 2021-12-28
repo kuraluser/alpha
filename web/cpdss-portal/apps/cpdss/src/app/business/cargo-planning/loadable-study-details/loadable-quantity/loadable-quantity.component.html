@@ -77,81 +77,7 @@
                             <div class="col error-column text-center"></div>
                     </div>
 
-                    <div class="row form-group">
-                        <label for="loadable_quantity_tpc" class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' |
-                            translate}}</label>
-                        <div class="col pt-5">
-                            <label id="loadable_quantity_tpc">{{getControlLabel('tpc') | number : '1.2-2'}}</label>
-                        </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_TONNE' | translate }}</div>
-                        <div class="col error-column text-center"></div>
-                    </div>
-
-                    <div class="row form-group">
-                        <label for="loadable_quantity_sea_water_density"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
-                        <div class="col pt-5">
-                            <input type="text" *ngIf="isEditable && isEditableSeaWaterDensity;else seaWaterDensityRef" cpdssPortalNumberDecimal [negative]="false" class="form-control"
-                                id="loadable_quantity_sea_water_density" formControlName="estSeaDensity"
-                                (change)="getSgCorrectionOnChange()" focusTrap>
-                                <ng-template #seaWaterDensityRef>
-                                    <label id="loadable_quantity_sea_water_density_label" >{{getControlLabel('estSeaDensity') | number :
-                                    '1.4-4'}}</label>
-                                </ng-template>
-                        </div>
-                        <div class="col unit-column">{{'SEA_WATER_DENSITY' | translate }}</div>
-                        <div class="col error-column text-center">
-                            <cpdss-portal-validation-error [errors]="fieldError('estSeaDensity')"
-                                [errorMessages]="errorMesages.estSeaDensity"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <label for="loadable_quantity_sg_correction"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
-                        <div class="col pt-5">
-                            <label id="loadable_quantity_sg_correction">{{getControlLabel('sgCorrection') | number :
-                                '1.2-2'}}</label>
-                        </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column text-center">
-                            <cpdss-portal-validation-error [errors]="fieldError('sgCorrection')"
-                                [errorMessages]="errorMesages.sgCorrection"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <label for="loadable_quantity_estimate_sag"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_ESTIMATE_SAG' | translate}}</label>
-                        <div class="col">
-                            <input type="text" cpdssPortalNumberDecimal [negative]="false"
-                                id="loadable_quantity_estimate_sag" class="form-control" formControlName="estimateSag"
-                                (change)="getSagCorrectionOnChange()" *ngIf="isEditable; else estimateRef" focusTrap>
-                                <ng-template #estimateRef>
-                                    <input type="text" class="form-control" id="loadable_quantity_estimate_sag_label" [value]="getControlLabel('estimateSag')| number :'1.2-2'"
-                                     [disabled]="true" focusTrap>
-                                </ng-template>
-                        </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
-                        <div class="col error-column text-center">
-                            <cpdss-portal-validation-error [errors]="fieldError('estimateSag')"
-                                [errorMessages]="errorMesages.estimateSag"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <label for="loadable_quantity_sag_correction"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
-                        <div class="col pt-5">
-                            <label id="loadable_quantity_sag_correction">{{getControlLabel('safCorrection')| number :
-                                '1.2-2'}}</label>
-                        </div>
-                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
-                        <div class="col error-column text-center">
-                            <cpdss-portal-validation-error [errors]="fieldError('safCorrection')"
-                                [errorMessages]="errorMesages.safCorrection"></cpdss-portal-validation-error>
-                        </div>
-                    </div>
+                    
 
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_onboard"
@@ -244,6 +170,91 @@
                         <div class="col error-column">
                             <cpdss-portal-validation-error [errors]="fieldError('others')"
                                 [errorMessages]="errorMesages.others"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+                    <div class="row form-group no-border mb-5 sub-heading-size strong">
+                        <label for="loadable_quantity_dwt"
+                            class="col col-form-label strong ">{{'LOADABLE_QUANTITY_ON_HAND_QTY' | translate}}</label>
+                        <div class="col pt-5">
+                            <label id="loadable_quantity_dwt">{{getOHQTotal() | number : '1.2-2'}}</label>
+                        </div>
+                        <div class="col unit-column strong sub-heading-size">{{'LOADABLE_QUANTITY_UNIT_MT' | translate
+                            }}</div>
+                            <div class="col error-column text-center"></div>
+                    </div>
+                    <div class="row form-group">
+                        <label for="loadable_quantity_tpc" class="col col-form-label">{{'LOADABLE_QUANTITY_TPC' |
+                            translate}}</label>
+                        <div class="col pt-5">
+                            <label id="loadable_quantity_tpc">{{getControlLabel('tpc') | number : '1.2-2'}}</label>
+                        </div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_TONNE' | translate }}</div>
+                        <div class="col error-column text-center"></div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="loadable_quantity_sea_water_density"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SEA_WATER_DENSITY' | translate}}</label>
+                        <div class="col pt-5">
+                            <input type="text" *ngIf="isEditable && isEditableSeaWaterDensity;else seaWaterDensityRef" cpdssPortalNumberDecimal [negative]="false" class="form-control"
+                                id="loadable_quantity_sea_water_density" formControlName="estSeaDensity"
+                                (change)="getSgCorrectionOnChange()" focusTrap>
+                                <ng-template #seaWaterDensityRef>
+                                    <label id="loadable_quantity_sea_water_density_label" >{{getControlLabel('estSeaDensity') | number :
+                                    '1.4-4'}}</label>
+                                </ng-template>
+                        </div>
+                        <div class="col unit-column">{{'SEA_WATER_DENSITY' | translate }}</div>
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('estSeaDensity')"
+                                [errorMessages]="errorMesages.estSeaDensity"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="loadable_quantity_sg_correction"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SG_CORRECTION' | translate}}</label>
+                        <div class="col pt-5">
+                            <label id="loadable_quantity_sg_correction">{{getControlLabel('sgCorrection') | number :
+                                '1.2-2'}}</label>
+                        </div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('sgCorrection')"
+                                [errorMessages]="errorMesages.sgCorrection"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="loadable_quantity_estimate_sag"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_ESTIMATE_SAG' | translate}}</label>
+                        <div class="col">
+                            <input type="text" cpdssPortalNumberDecimal [negative]="false"
+                                id="loadable_quantity_estimate_sag" class="form-control" formControlName="estimateSag"
+                                (change)="getSagCorrectionOnChange()" *ngIf="isEditable; else estimateRef" focusTrap>
+                                <ng-template #estimateRef>
+                                    <input type="text" class="form-control" id="loadable_quantity_estimate_sag_label" [value]="getControlLabel('estimateSag')| number :'1.2-2'"
+                                     [disabled]="true" focusTrap>
+                                </ng-template>
+                        </div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_CM' | translate }}</div>
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('estimateSag')"
+                                [errorMessages]="errorMesages.estimateSag"></cpdss-portal-validation-error>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="loadable_quantity_sag_correction"
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_SAG_CORRECTION' | translate}}</label>
+                        <div class="col pt-5">
+                            <label id="loadable_quantity_sag_correction">{{getControlLabel('safCorrection')| number :
+                                '1.2-2'}}</label>
+                        </div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column text-center">
+                            <cpdss-portal-validation-error [errors]="fieldError('safCorrection')"
+                                [errorMessages]="errorMesages.safCorrection"></cpdss-portal-validation-error>
                         </div>
                     </div>
                 </div>
@@ -359,9 +370,9 @@
                 <div class="col">
                     <div class="row form-group sub-heading-size strong text-secondary" [ngClass]="{'no-border': caseNo !== 1}">
                         <label for="loadable_quantity_sub_total"
-                            class="col col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</label>
+                            class="col col-form-label">{{'LOADABLE_QUANTITY_CORRECTION' | translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_sub_total">{{getControlLabel('subTotal')| number :
+                            <label id="loadable_quantity_sub_total">{{(loadableQuantityForm.controls.safCorrection.value ? loadableQuantityForm.controls.safCorrection.value : 0) + (loadableQuantityForm.controls.sgCorrection.value ? loadableQuantityForm.controls.sgCorrection.value : 0)| number :
                                 '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column pt-5">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
