@@ -5298,13 +5298,20 @@ public class LoadableStudyService {
         }
         // build bunker conditions
         BunkerConditions bunkerConditions = new BunkerConditions();
-        bunkerConditions.setFuelOilWeight(synopticalRecord.get().getActualFOTotal());
-        bunkerConditions.setDieselOilWeight(synopticalRecord.get().getActualDOTotal());
-        bunkerConditions.setBallastWeight(synopticalRecord.get().getBallastActualTotal());
-        bunkerConditions.setFreshWaterWeight(synopticalRecord.get().getActualFWTotal());
-        bunkerConditions.setOthersWeight(synopticalRecord.get().getOthersActual());
-        bunkerConditions.setTotalDwtWeight(synopticalRecord.get().getTotalDwtActual());
-        bunkerConditions.setDisplacement(synopticalRecord.get().getDisplacementActual());
+        bunkerConditions.setFuelOilPlannedWeight(synopticalRecord.get().getPlannedFOTotal());
+        bunkerConditions.setFuelOilActualWeight(synopticalRecord.get().getActualFOTotal());
+        bunkerConditions.setDieselOilPlannedWeight(synopticalRecord.get().getPlannedDOTotal());
+        bunkerConditions.setDieselOilActualWeight(synopticalRecord.get().getActualDOTotal());
+        bunkerConditions.setBallastPlannedWeight(synopticalRecord.get().getBallastPlannedTotal());
+        bunkerConditions.setBallastActualWeight(synopticalRecord.get().getBallastActualTotal());
+        bunkerConditions.setFreshWaterPlannedWeight(synopticalRecord.get().getPlannedFWTotal());
+        bunkerConditions.setFreshWaterActualWeight(synopticalRecord.get().getActualFWTotal());
+        bunkerConditions.setOthersPlannedWeight(synopticalRecord.get().getOthersPlanned());
+        bunkerConditions.setOthersActualWeight(synopticalRecord.get().getOthersActual());
+        bunkerConditions.setTotalDwtWeightPlanned(synopticalRecord.get().getTotalDwtPlanned());
+        bunkerConditions.setTotalDwtWeightActual(synopticalRecord.get().getTotalDwtActual());
+        bunkerConditions.setDisplacementPlanned(synopticalRecord.get().getDisplacementPlanned());
+        bunkerConditions.setDisplacementActual(synopticalRecord.get().getDisplacementActual());
         bunkerConditions.setSpecificGravity(synopticalRecord.get().getSpecificGravity());
         bunkerConditions.setConstantActual(synopticalRecord.get().getConstantActual());
         bunkerConditions.setConstantPlanned(synopticalRecord.get().getConstantPlanned());

@@ -9,13 +9,20 @@ import lombok.Data;
 @Data
 @JsonInclude(Include.NON_NULL)
 public class BunkerConditions {
-  private BigDecimal dieselOilWeight;
-  private BigDecimal fuelOilWeight;
-  private BigDecimal ballastWeight;
-  private BigDecimal freshWaterWeight;
-  private BigDecimal othersWeight;
-  private BigDecimal totalDwtWeight;
-  private BigDecimal displacement;
+  private BigDecimal dieselOilPlannedWeight;
+  private BigDecimal dieselOilActualWeight;
+  private BigDecimal fuelOilPlannedWeight;
+  private BigDecimal fuelOilActualWeight;
+  private BigDecimal ballastPlannedWeight;
+  private BigDecimal ballastActualWeight;
+  private BigDecimal freshWaterPlannedWeight;
+  private BigDecimal freshWaterActualWeight;
+  private BigDecimal othersPlannedWeight;
+  private BigDecimal othersActualWeight;
+  private BigDecimal totalDwtWeightPlanned;
+  private BigDecimal totalDwtWeightActual;
+  private BigDecimal displacementPlanned;
+  private BigDecimal displacementActual;
   private BigDecimal specificGravity;
   private BigDecimal constantActual;
   private BigDecimal constantPlanned;

@@ -373,7 +373,8 @@ public class CargoPortInfoService {
     PortInfo.CargoPortRequest.Builder cargoPortRequestBuilder =
         PortInfo.CargoPortRequest.newBuilder();
     if (portName != null) cargoPortRequestBuilder.setPortName(portName);
-    PortInfo.CargoPortRequest cargoPortRequest = cargoPortRequestBuilder.setPortName(portName).build();
+    PortInfo.CargoPortRequest cargoPortRequest =
+        cargoPortRequestBuilder.setPortName(portName).build();
     PortInfo.CargoPortReply cargoPortReply =
         this.portInfoServiceBlockingStub.getAllCargoPortMapping(cargoPortRequest);
     //    System.out.println(cargoPortReply.getPorts(0));
