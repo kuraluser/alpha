@@ -27,6 +27,7 @@ export interface ICargoDetails extends ICargo {
   hydrogenSulfideVapour: string;
   benzene: string;
   specialInstrictionsRemark: string;
+  assayDate?: string;
 }
 
 /**
@@ -39,6 +40,7 @@ export interface ICargoLoadingInformation {
   id: number;
   country: ICountry;
   port: IPort;
+  ports?: IPort[];
 }
 
 /**
@@ -75,7 +77,7 @@ export interface IAPITempLoadingPorts {
   id: number;
   isAdd?: boolean;
   name: string;
-  quantity: number;
+  quantity?: number;
 }
 
 /**

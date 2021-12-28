@@ -849,7 +849,7 @@ export class DatatableComponent implements OnInit {
       }
     }
     if (formControl?.value && formControl?.value[0] && formControl?.value[1]) {
-      if (formControl?.value[0]?.toDateString() === formControl?.value[1]?.toDateString()) {
+      if (col?.allowEqualDates === false && formControl?.value[0]?.toDateString() === formControl?.value[1]?.toDateString()) {
         formControl.setErrors({ 'datesEqual': true });
       } else {
         if (col?.dateFormat && col?.dateFormat === this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)) {
@@ -858,7 +858,7 @@ export class DatatableComponent implements OnInit {
         } else {
           rowData[formControlName].value = this.formatDateTime(formControl?.value[0]) + ' to ' + this.formatDateTime(formControl?.value[1]);
         }
-        rowData[formControlName].isEditMode = this.onInputRange ? true :false;
+        rowData[formControlName].isEditMode = this.onInputRange ? true : false;
         this.onInputRange = false;
         this.editComplete.emit({ originalEvent: event, data: rowData, index: formGroupIndex, field: formControlName });
       }

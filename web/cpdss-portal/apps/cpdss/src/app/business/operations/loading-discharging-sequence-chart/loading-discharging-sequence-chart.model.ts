@@ -33,6 +33,7 @@ declare module 'highcharts' {
     cargoStrippingGroup: any;
     ballastStrippingGroup: any;
     ballastGravityGroup: any;
+    cargoCOWLegend: any;
   }
 
   /**

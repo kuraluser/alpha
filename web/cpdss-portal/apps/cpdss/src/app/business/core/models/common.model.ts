@@ -254,6 +254,8 @@ export interface IPort {
     timezoneOffsetVal?: string;
     timezoneAbbreviation?: string;
     portOrder?: number;
+    countryId?: number;
+    countryName: string;
 }
 
 /**

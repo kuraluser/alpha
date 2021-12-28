@@ -35,6 +35,7 @@ export interface IDataTableColumn {
     filterFieldMaxvalue?: any;
     minDate?: Date;
     dateFormat?: string;
+    allowEqualDates?: boolean;
     readonlyInput?: boolean;
     columns?: IDataTableColumn[];
     virtualScroll?: boolean;

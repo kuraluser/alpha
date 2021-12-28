@@ -43,6 +43,19 @@
       </div>
       <div class="col-4">
         <div class="form-group row">
+          <label for="cargo_assayDate" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_ASSAY_DATE' |
+            translate}}</label>
+          <div class="col-sm-7">
+            <p-calendar appendTo="body" formControlName="assayDate" id="cargo_assay_date" [dateFormat]="dateFormat">
+            </p-calendar>
+            <cpdss-portal-validation-error [errors]="fieldError('assayDate')"
+              [errorMessages]="errorMessages?.assayDate">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group row">
           <label for="cargo_api" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_API' |
             translate}}</label>
           <div class="col-sm-7 error-icon-wrapper">
@@ -95,7 +108,8 @@
             translate}}</label>
           <div class="col-sm-7 error-icon-wrapper">
             <input type="text" class="form-control" id="cargo_pour_point" formControlName="pourPoint">
-            <cpdss-portal-validation-error [errors]="fieldError('pourPoint')" [errorMessages]="errorMessages?.pourPoint">
+            <cpdss-portal-validation-error [errors]="fieldError('pourPoint')"
+              [errorMessages]="errorMessages?.pourPoint">
             </cpdss-portal-validation-error>
           </div>
         </div>
@@ -118,7 +132,8 @@
             translate}}</label>
           <div class="col-sm-7 error-icon-wrapper">
             <input type="text" class="form-control" id="cargo_viscosity" formControlName="viscosity">
-            <cpdss-portal-validation-error [errors]="fieldError('viscosity')" [errorMessages]="errorMessages?.viscosity">
+            <cpdss-portal-validation-error [errors]="fieldError('viscosity')"
+              [errorMessages]="errorMessages?.viscosity">
             </cpdss-portal-validation-error>
           </div>
         </div>
@@ -194,7 +209,8 @@
             <textarea class="form-control" id="cargo_special_instrictions_remark" [rows]="5"
               formControlName="specialInstrictionsRemark"
               placeholder="{{'CARGO_DETAILS_SPECIAL_INSTRUCTIONS_REMARK_PLACEHOLDER' | translate}}"></textarea>
-            <cpdss-portal-validation-error [errors]="fieldError('specialInstrictionsRemark')" [errorMessages]="errorMessages?.specialInstrictionsRemark">
+            <cpdss-portal-validation-error [errors]="fieldError('specialInstrictionsRemark')"
+              [errorMessages]="errorMessages?.specialInstrictionsRemark">
             </cpdss-portal-validation-error>
           </div>
         </div>
@@ -241,22 +257,27 @@
                   <td>
                     <p-dropdown id="country_dropdown_{{rowIndex}}" styleClass="form-control" appendTo="body"
                       [placeholder]="'CARGO_LOADING_INFO_COUNTRY_PLACEHOLDER'| translate" [filter]="true"
-                      [options]="countries" optionLabel="name" resetFilterOnHide="true" formControlName="country">
+                      [options]="countries" optionLabel="name" resetFilterOnHide="true" formControlName="country"
+                      (onChange)="onLoadingInfoChange(rowData, rowIndex)">
                     </p-dropdown>
                   </td>
-                  <td>
+                  <td class="error-icon-wrapper">
                     <p-dropdown id="port_dropdown_{{rowIndex}}" styleClass="form-control" appendTo="body"
                       [placeholder]="'CARGO_LOADING_INFO_PORT_PLACEHOLDER' | translate" [filter]="true"
-                      [options]="ports" optionLabel="name" resetFilterOnHide="true" formControlName="port">
+                      [options]="rowData?.ports" optionLabel="name" resetFilterOnHide="true" formControlName="port"
+                      (onChange)="onLoadingInfoChange(rowData, rowIndex)">
                     </p-dropdown>
+                    <cpdss-portal-validation-error [errors]="fieldError('loadingInformation', rowIndex, 'port')" [errorMessages]="errorMessages?.port">
+                    </cpdss-portal-validation-error>
                   </td>
                   <td>
                     <button id="view_api_temp_{{rowIndex}}" class="btn btn-main btn-sm"
-                      (click)="openAPITemperaturePopup()">
+                      [disabled]="!rowData.country || !rowData.port" (click)="openAPITemperaturePopup(rowData)">
                       {{'CARGO_LOADING_INFO_VIEW_API_TEMP' | translate}}</button>
                   </td>
                   <td>
-                    <a type="button" id="delete_button_{{rowIndex}}" class="delete-icon" (click)="deleteLoadingInformation(rowIndex)"></a>
+                    <a type="button" id="delete_button_{{rowIndex}}" class="delete-icon"
+                      (click)="deleteLoadingInformation(rowIndex)"></a>
                   </td>
                 </tr>
               </ng-template>

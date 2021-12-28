@@ -20,6 +20,8 @@ import { specialCharacterValidator } from '../../../core/directives/special-char
 import { alphaNumericOnlyValidator } from '../../../core/directives/alpha-numeric-only-validator.directive';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { CargoMasterTransformationService } from '../../services/cargo-master-transformation.service';
+import { uniqueValidator } from '../../../core/directives/unique-validator.directive';
+import * as moment from 'moment';
 
 /**
  * Coponent class for cargo details page
@@ -46,6 +48,7 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   openAPITemperatureHistoryPopup = false;
   saveBtnPermissionContext: IPermissionContext;
   errorMessages: IValidationErrorMessagesSet;
+  dateFormat: string;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
@@ -65,6 +68,7 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
+    this.dateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)
     this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
       this.cargoId = Number(params.get('cargoId'));
       this.saveBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], actions: this.cargoId ? [PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT] : [PERMISSION_ACTION.ADD] };
@@ -98,8 +102,9 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
     const loadingInformationForm = cargo?.loadingInformation ? cargo?.loadingInformation?.map(info => this.initLoadingInformationGroup(info)) : [];
     this.cargoDetailsForm = this.fb.group({
       name: this.fb.control(cargo?.name, [Validators.required, specialCharacterValidator, Validators.maxLength(100)]),
-      abbreviation: this.fb.control(cargo?.abbreviation, [Validators.required, alphaNumericOnlyValidator, Validators.maxLength(100)]),
-      api: this.fb.control(cargo?.api, [numberValidator(2)]),
+      abbreviation: this.fb.control(cargo?.abbreviation, [Validators.required, alphaNumericOnlyValidator, Validators.maxLength(10)]),
+      assayDate: this.fb.control(cargo?.assayDate),
+      api: this.fb.control(cargo?.api, [Validators.required, numberValidator(2)]),
       reidVapourPressure: this.fb.control(cargo?.reidVapourPressure, [numberValidator(3)]),
       gas: this.fb.control(cargo?.gas, [numberValidator(1)]),
       totalWax: this.fb.control(cargo?.totalWax, [numberValidator(0)]),
@@ -124,10 +129,11 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
    * @memberof CargoDetailsComponent
    */
   initLoadingInformationGroup(info: ICargoLoadingInformation) {
-    const port = this.ports.find(_port => _port.id === info.port?.id);
+    info.ports = this.ports?.filter(_port => _port?.countryId === info?.country?.id);
+    const port = this.ports?.find(_port => _port.id === info.port?.id);
     return this.fb.group({
-      country: this.fb.control(info.country),
-      port: this.fb.control(port)
+      country: this.fb.control(info?.country),
+      port: this.fb.control(port, [uniqueValidator])
     })
   }
 
@@ -143,21 +149,17 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Hander for opening api and temerature history popup
+   * Handler for opening api and temperature history popup
    *
    * @memberof CargoDetailsComponent
    */
-  openAPITemperaturePopup() {
+  openAPITemperaturePopup(rowData: ICargoLoadingInformation) {
     this.apiTempPopupData = {
       portData: [
-        {
-          "id": 359,
-          "name": "5 WEST",
-          "quantity": 1000
-        }
+        rowData?.port
       ],
-      cargoId: 1,
-      cargoName: 'Cargo 1'
+      cargoId: this.cargoId,
+      cargoName: this.cargo?.name
     };
     this.openAPITemperatureHistoryPopup = true;
   }
@@ -180,8 +182,10 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
     if (this.cargoDetailsForm.valid) {
       this.ngxSpinnerService.show();
       const translationKeys = this.translateService.instant(['CARGO_SAVED_SUCCESSFULLY', 'CARGO_SAVE_SUCCESS', 'CARGO_SAVE_ERROR', 'CARGO_NAME_ALREADY_EXIST', 'CARGO_ABBREVIATION_ALREADY_EXIST']);
+      const cargoDetails: ICargoDetails = this.cargoDetailsForm.value;
+      cargoDetails.assayDate = moment(cargoDetails.assayDate, AppConfigurationService.settings?.dateFormat.split(' ')[0]).format('DD-MM-YYYY');
       try {
-        const result = await this.cargoMasterApiService.saveCargo(this.cargoDetailsForm.value, this.cargoId).toPromise();
+        const result = await this.cargoMasterApiService.saveCargo(cargoDetails, this.cargoId).toPromise();
         this.cargo = result?.cargo;
         this.cargoId = result?.id;
         this.ngxSpinnerService.hide();
@@ -235,24 +239,45 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   /**
   * Method to check for field errors
   *
-  * @param {string} formControlName
+  * @param {...string[]} formControlNames
   * @return {ValidationErrors}
-  * @memberof LoadingDischargingDetailsComponent
+  * @memberof CargoDetailsComponent
   */
-  fieldError(formControlName: string): ValidationErrors {
-    const formControl = this.field(formControlName);
+  fieldError(...formControlNames: string[]): ValidationErrors {
+    const formControl = this.field(...formControlNames);
     return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
 
   /**
-   * Method to get formcontrolName
+   * Method to get form control name
    *
-   * @param {string} formControlName
+   * @param {...string[]} formControlNames
    * @return {*}  {FormControl}
    * @memberof CargoDetailsComponent
    */
-  field(formControlName: string): FormControl {
-    const formControl = <FormControl>this.cargoDetailsForm?.get(formControlName);
+  field(...formControlNames: string[]): FormControl {
+    const formControl = <FormControl>this.cargoDetailsForm?.get([...formControlNames]);
     return formControl;
+  }
+
+  /**
+   * Handler for country dropdowm change event
+   *
+   * @param {ICargoLoadingInformation} rowData
+   * @param {number} rowIndex
+   * @memberof CargoDetailsComponent
+   */
+  onLoadingInfoChange(rowData: ICargoLoadingInformation, rowIndex: number) {
+    const loadingInfoControl = (<FormArray>this.cargoDetailsForm.get('loadingInformation')).at(rowIndex);
+    const formControlPort = loadingInfoControl.get('port');
+    const formControlCountry = loadingInfoControl.get('country');
+    this.cargo.loadingInformation[rowIndex].country = formControlCountry?.value;
+    this.cargo.loadingInformation[rowIndex].port = formControlPort?.value;
+
+    if (formControlCountry?.value?.id) {
+      this.cargo.loadingInformation[rowIndex].ports = this.ports?.filter(port => port?.countryId === formControlCountry?.value?.id);
+    } else {
+      this.cargo.loadingInformation[rowIndex].ports = [];
+    }
   }
 }

@@ -59,6 +59,18 @@ export class CargoMasterTransformationService {
         filterByServer: true
       },
       {
+        field: 'assayDate',
+        header: 'CARGO_LIST_ASSAY_DATE',
+        filter: true,
+        filterPlaceholder: 'SEARCH_CARGO_ASSAY_DATE',
+        filterType: DATATABLE_FILTER_TYPE.DATE,
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
+        filterField: 'assayDate',
+        sortable: true,
+        sortField: 'assayDate',
+        filterByServer: true
+      },
+      {
         field: 'api',
         header: 'CARGO_LIST_API',
         filter: true,
@@ -176,6 +188,7 @@ export class CargoMasterTransformationService {
         'maxlength': 'CARGO_DETAILS_ABBREVIATION_MAX_LENGTH'
       },
       api: {
+        'required': 'CARGO_DETAILS_REQUIRED',
         'invalidNumber': 'CARGO_DETAILS_INVALID'
       },
       reidVapourPressure: {
@@ -211,6 +224,9 @@ export class CargoMasterTransformationService {
       benzene: {
         'invalidNumber': 'CARGO_DETAILS_INVALID'
       },
+      port: {
+        'unique': 'CARGO_DETAILS_PORT_EXIST'
+      }
     }
   }
 }

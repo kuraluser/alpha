@@ -13,6 +13,7 @@ import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { ApiTemperatureHistoryPopupComponent } from './api-temperature-history-popup/api-temperature-history-popup.component';
 import { DialogModule } from 'primeng/dialog';
+import { CalendarModule } from 'primeng/calendar';
 
 /**
  * Module for cargo master
@@ -33,7 +34,8 @@ import { DialogModule } from 'primeng/dialog';
     ValidationErrorModule,
     TableModule,
     DropdownModule,
-    DialogModule
+    DialogModule,
+    CalendarModule
   ]
 })
 export class CargoMasterModule { }

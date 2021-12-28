@@ -1737,7 +1737,6 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         borderColor: '#bebebe',
         borderWidth: 1,
         borderRadius: 20,
-        followPointer: true,
         valueSuffix: ` ${LoadingDischargingSequenceChartComponent._currentRateSelectedUnit}`
       },
       series: this.flowRateChartSeries
@@ -2306,7 +2305,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                             <i class=" cow-legend-icon bottom-wash"></i>
                             <span class="cow-legend-label">${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_BOTTOM_WASH']}</span> </li>
                         </ul>`;
-      renderer.text(cowLegend, chart.plotLeft, chart.chartHeight - 20, true).attr({
+      if (chart?.cargoCOWLegend) {
+        chart?.cargoCOWLegend.destroy();
+        chart.cargoCOWLegend = null;
+      }
+      chart.cargoCOWLegend = renderer.text(cowLegend, chart.plotLeft, chart.chartHeight - 20, true).attr({
         cursor: 'pointer',
         zIndex: 1
       }).add();

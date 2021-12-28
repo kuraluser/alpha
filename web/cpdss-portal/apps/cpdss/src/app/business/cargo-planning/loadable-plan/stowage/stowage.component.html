@@ -9,14 +9,17 @@
 
     </div>
     <div class="row pb-15 pt-15">
-        <div class="col  text-center">
-            <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.CARGO}" id="cargo_tab"
-                (click)="onTabClick(tankType.CARGO)">{{'LOADABLE_PLAN_STOWAGE_CARGO_TAB' | translate}}
-            </a>
-            <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.BALLAST}" id="ballast_tab"
-                (click)="onTabClick(tankType.BALLAST)">{{'LOADABLE_PLAN_STOWAGE_BALLAST_TAB' | translate}}
-            </a>
+      <div class="col text-center">
+        <div class="header-info-pop-up mb-5"><span class="info-icon mr-5">!</span>
+          {{'LOADABLE_PLAN_STOWAGE_PORT_CONDITION_LABEL' | translate}}
         </div>
+        <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.CARGO}" id="cargo_tab"
+          (click)="onTabClick(tankType.CARGO)">{{'LOADABLE_PLAN_STOWAGE_CARGO_TAB' | translate}}
+        </a>
+        <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.BALLAST}" id="ballast_tab"
+          (click)="onTabClick(tankType.BALLAST)">{{'LOADABLE_PLAN_STOWAGE_BALLAST_TAB' | translate}}
+        </a>
+      </div>
     </div>
     <div>
         <div class="row">
