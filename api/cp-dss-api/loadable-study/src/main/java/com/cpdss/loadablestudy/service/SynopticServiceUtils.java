@@ -130,6 +130,7 @@ public class SynopticServiceUtils {
    */
   public void saveSynopticalBallastData(
       long loadablePatternId, LoadableStudy.SynopticalRecord record, SynopticalTable entity) {
+    log.info("Saving ballast data to synoptical table {}", entity.getId());
     List<LoadablePlanStowageBallastDetails> ballastEntities =
         this.loadablePlanStowageBallastDetailsRepository
             .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
@@ -182,6 +183,7 @@ public class SynopticServiceUtils {
       LoadableStudy.SynopticalRecord record,
       boolean isUpdate)
       throws GenericServiceException {
+    log.info("Saving cargo data to synoptical table {}", entity.getId());
     List<Long> portIds = loadableStudyPortRotationService.getPortRoationPortIds(loadableStudy);
     if (null == portIds || portIds.isEmpty()) {
       throw new GenericServiceException(
@@ -205,6 +207,7 @@ public class SynopticServiceUtils {
       boolean isUpdate,
       boolean fromOperations)
       throws GenericServiceException {
+    log.info("Saving OHQ data to synoptical table {}", entity.getId());
     List<OnHandQuantity> ohqEntities =
         this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
             loadableStudy, entity.getLoadableStudyPortRotation(), true);
@@ -782,7 +785,6 @@ public class SynopticServiceUtils {
           cargo1.setCargo1Mt(ccN.getCargo1ActualMT().toString());
           cargo2.setCargo2Mt(ccN.getCargo2ActualMT().toString());
 
-
           cargo1.setApi(ccN.getApi());
           cargo2.setApi(ccN.getApi());
 
@@ -1210,6 +1212,7 @@ public class SynopticServiceUtils {
       SynopticalTableRequest request,
       Optional<SynopticalTable> synopticalData,
       SynopticalRecord synopticalRecord) {
+    log.info("Saving commingle data to synoptical table {}", synopticalData.get().getId());
     if (!synopticalRecord.getCommingleList().isEmpty()) {
       List<LoadablePlanComminglePortwiseDetails> commingles =
           loadablePlanCommingleDetailsPortwiseRepository.findByLoadablePatternIdAndIsActive(
