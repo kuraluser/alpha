@@ -7,6 +7,7 @@ import com.cpdss.common.generated.PortInfo.*;
 import com.cpdss.common.generated.PortInfo.CountryReply.Builder;
 import com.cpdss.common.generated.PortInfoServiceGrpc.PortInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.portinfo.domain.CargoPortInfoSpecification;
 import com.cpdss.portinfo.domain.FilterCriteria;
 import com.cpdss.portinfo.domain.PortInfoSpecification;
@@ -981,7 +982,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
     portReply.setPort(portDetail);
   }
 
-  private void buildPortEntity(PortDetail request, PortInfo portInfo) {
+  private void buildPortEntity(PortDetail request, PortInfo portInfo)
+      throws GenericServiceException {
 
     if (request.getId() == 0
         || (portInfo.getCountry() != null
@@ -1035,12 +1037,29 @@ public class PortInfoService extends PortInfoServiceImplBase {
    * @return
    */
   private Set<BerthInfo> setBerthInformationForThePorts(
-      List<BerthDetail> berthDetailsList, PortInfo portInfo) {
+      List<BerthDetail> berthDetailsList, PortInfo portInfo) throws GenericServiceException {
     Set<BerthInfo> berthList = new HashSet<>();
     if (berthDetailsList == null) return berthList;
     for (BerthDetail berth : berthDetailsList) {
-      BerthInfo berthResponse = new BerthInfo();
-      //      berthResponse.setId(berth.getId());
+      BerthInfo berthResponse;
+      if (berth.getId() == 0) {
+        berthResponse = new BerthInfo();
+      } else {
+        Optional<BerthInfo> berthOptResponse =
+            this.berthInfoRepository.findByIdAndIsActiveTrue(berth.getId());
+        if (berthOptResponse.isEmpty()) {
+          log.error(
+              "Error in Save Port -> Berth Detail get -> portId: "
+                  + portInfo.getId()
+                  + " berth id: "
+                  + berth.getId());
+          throw new GenericServiceException(
+              "Invalid Berth Id",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+        berthResponse = berthOptResponse.get();
+      }
       berthResponse.setBerthName(berth.getBerthName());
       berthResponse.setBerthDatumDepth(
           isNullOrEmpty(berth.getBerthDatumDepth())
