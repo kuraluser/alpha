@@ -12,11 +12,4 @@
 
 # API applications code owners
 
-/api/cp-dss-api/cargo-info/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
-/api/cp-dss-api/port-info/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
-/api/cp-dss-api/vessel-info/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
-/api/cp-dss-api/loadable-study/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
-/api/cp-dss-api/company-info/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
-/api/cp-dss-api/gateway/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
-/api/cp-dss-api/user-authorization/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
-/api/cp-dss-api/loading-plan/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
+/api/ @johnsoorajxavier @pranavkrishna97 @sreekumar-ao @sanalkumarkk92 @mathewgillroy-ao
