@@ -11,26 +11,18 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
-import com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest;
-import com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest;
 import com.cpdss.loadablestudy.entity.JsonData;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -162,100 +154,6 @@ public class CommunicationService {
     }
   }
 
-  private void savePatternInShipSide(EnvoyReader.EnvoyReaderResultReply erReply)
-      throws GenericServiceException {
-    String jsonResult = erReply.getPatternResultJson();
-
-    // log.info("------Pattern details payload : " + jsonResult);
-    LoadablePatternAlgoRequest loadablePatternAlgoRequest =
-        new Gson()
-            .fromJson(jsonResult, com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest.class);
-    log.info(
-        "Pattern has reached in ship side from shore side : "
-            + loadablePatternAlgoRequest.getLoadablePatternId());
-    Optional<LoadablePattern> loadablePatternOpt =
-        this.loadablePatternRepository.findByIdAndIsActive(
-            loadablePatternAlgoRequest.getLoadablePatternId(), true);
-    if (!loadablePatternOpt.isPresent()) {
-      throw new GenericServiceException(
-          "Loadable pattern does not exist",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
-    if (!loadablePatternAlgoRequest.getValidated()) {
-      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatus(
-          LOADABLE_PATTERN_VALIDATION_FAILED_ID, loadablePatternAlgoRequest.getProcessId(), true);
-
-      algoErrorsRepository.deleteAlgoError(
-          false, loadablePatternAlgoRequest.getLoadablePatternId());
-      algoErrorHeadingRepository.deleteAlgoErrorHeading(
-          false, loadablePatternAlgoRequest.getLoadablePatternId());
-      if (loadablePatternAlgoRequest.getAlgoError() != null) {
-        loadablePatternAlgoRequest
-            .getAlgoError()
-            .forEach(
-                algoErrors -> {
-                  com.cpdss.loadablestudy.entity.AlgoErrors algoErrorsEntity =
-                      new com.cpdss.loadablestudy.entity.AlgoErrors();
-                  algoErrorsEntity.setAlgoErrorHeading(algoErrors.getAlgoErrorHeading());
-                  algoErrorsEntity.setErrorMessage(algoErrors.getErrorMessage());
-                  algoErrorsEntity.setIsActive(true);
-                  algoErrorsRepository.save(algoErrors);
-                });
-      }
-      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatusByMessageId(
-          LOADABLE_STUDY_STATUS_ERROR_OCCURRED_ID, loadablePatternAlgoRequest.getMessageId(), true);
-    } else {
-      loadablePatternService.deleteExistingPlanDetails(loadablePatternOpt.get());
-      if (loadablePatternAlgoRequest.getPatternDetails() != null) {
-        loadableStudyServiceShore.savePatternInShipSide(
-            loadablePatternAlgoRequest.getPatternDetails(), loadablePatternOpt.get());
-      }
-      if (!loadablePatternAlgoRequest.getHasLoadicator()) {
-        log.info(
-            "----pattern persisted in ship without loadicator : "
-                + loadablePatternAlgoRequest.getMessageId());
-      } else {
-        loadicatorService.updateFeedbackLoopParameters(
-            loadablePatternAlgoRequest.getLoadablePatternId(),
-            true,
-            false,
-            loadablePatternAlgoRequest.getFeedBackLoopCount(),
-            LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID);
-
-        log.info(
-            "----pattern persisted in ship with loadicator : "
-                + loadablePatternAlgoRequest.getMessageId());
-      }
-      loadablePatternAlgoStatusRepository.updateLoadablePatternAlgoStatusByMessageId(
-          LOADABLE_PATTERN_VALIDATION_SUCCESS_ID, loadablePatternAlgoRequest.getMessageId(), true);
-    }
-    log.info("Pattern has successfully updated in ship");
-  }
-
-  private void saveValidatePlanRequestShore(EnvoyReader.EnvoyReaderResultReply erReply) {
-    try {
-      String jsonResult = erReply.getPatternResultJson();
-      // log.info("Json payload :" + jsonResult);
-      LoadabalePatternValidateRequest loadabalePatternValidateRequest =
-          new Gson()
-              .fromJson(
-                  jsonResult, com.cpdss.loadablestudy.domain.LoadabalePatternValidateRequest.class);
-      LoadableStudy loadableStudyEntity =
-          loadableStudyServiceShore.persistShipPayloadInShoreSide(
-              erReply.getMessageId(), loadabalePatternValidateRequest);
-      if (loadableStudyEntity != null) {
-        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
-        this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-        log.info("algo process started in shore");
-        processAlgoFromShoreSide(loadabalePatternValidateRequest, loadableStudyEntity);
-      }
-    } catch (Exception e) {
-      log.error(
-          "Exception has occurred updating payload in shore side which is received from ship  ", e);
-    }
-  }
-
   /**
    * Method to get data for communication in ship refactored existing method on 09-11-21
    *
@@ -283,14 +181,9 @@ public class CommunicationService {
 
         if (!erReply.getPatternResultJson().isEmpty()) {
           log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
-          // Get loadable study response and update ship
-          if (MessageTypes.ALGORESULT.getMessageType().equals(messageType.getMessageType())) {
-            saveLoadableStudyIntoStagingTable(erReply);
-          }
-          // Get stowage edit response and update ship
-          else if (MessageTypes.PATTERNDETAIL
-              .getMessageType()
-              .equals(messageType.getMessageType())) {
+          // Save data to staging table
+          if (MessageTypes.ALGORESULT.getMessageType().equals(messageType.getMessageType())
+              || MessageTypes.PATTERNDETAIL.getMessageType().equals(messageType.getMessageType())) {
             saveLoadableStudyIntoStagingTable(erReply);
           }
         } else {
@@ -313,112 +206,6 @@ public class CommunicationService {
             e);
       }
     }
-  }
-
-  public void saveLoadableStudyShore(EnvoyReader.EnvoyReaderResultReply erReply) {
-
-    try {
-
-      String jsonResult = erReply.getPatternResultJson();
-      LoadableStudy loadableStudyEntity =
-          loadableStudyServiceShore.setLoadableStudyShore(jsonResult, erReply.getMessageId());
-      if (loadableStudyEntity != null) {
-        voyageService.checkIfVoyageClosed(loadableStudyEntity.getVoyage().getId());
-        this.loadableQuantityService.validateLoadableStudyWithLQ(loadableStudyEntity);
-        log.info("processAlgo started");
-        processAlgoFromShore(loadableStudyEntity);
-      }
-
-    } catch (GenericServiceException e) {
-      log.error("GenericServiceException when generating pattern", e);
-
-    } catch (ResourceAccessException e) {
-      log.info("Error calling ALGO ");
-
-    } catch (Exception e) {
-      log.error("Exception when when calling algo  ", e);
-    }
-  }
-
-  private void processAlgoFromShoreSide(
-      LoadabalePatternValidateRequest lPValidateRequest, LoadableStudy loadableStudyEntity)
-      throws IOException, GenericServiceException {
-    LoadabalePatternValidateRequest loadabalePatternValidateRequest =
-        new LoadabalePatternValidateRequest();
-    ModelMapper modelMapper = new ModelMapper();
-    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.domain.LoadableStudy();
-    ObjectMapper objectMapper = new ObjectMapper();
-    Optional<LoadablePattern> loadablePatternOpt =
-        this.loadablePatternRepository.findByIdAndIsActive(
-            lPValidateRequest.getLoadablePatternId(), true);
-    loadableStudyService.buildLoadableStudy(
-        loadableStudyEntity.getId(), loadableStudyEntity, loadableStudy, modelMapper);
-    loadablePlanService.buildLoadablePlanPortWiseDetails(
-        loadablePatternOpt.get(), loadabalePatternValidateRequest);
-    loadabalePatternValidateRequest.setLoadableStudy(loadableStudy);
-    loadabalePatternValidateRequest.setBallastEdited(
-        stowageDetailsTempRepository.isBallastEdited(loadablePatternOpt.get().getId(), true));
-    loadabalePatternValidateRequest.setLoadablePatternId(loadablePatternOpt.get().getId());
-    loadabalePatternValidateRequest.setCaseNumber(loadablePatternOpt.get().getCaseNumber());
-    jsonDataService.saveJsonToDatabase(
-        lPValidateRequest.getLoadablePatternId(),
-        LOADABLE_PATTERN_EDIT_REQUEST,
-        objectMapper.writeValueAsString(lPValidateRequest));
-    objectMapper.writeValue(
-        new File(
-            this.rootFolder
-                + "/json/loadablePattern_request_"
-                + loadablePatternOpt.get().getId()
-                + ".json"),
-        lPValidateRequest);
-    AlgoResponse algoResponse =
-        restTemplate.postForObject(loadableStudyUrl, lPValidateRequest, AlgoResponse.class);
-
-    loadablePlanService.updateProcessIdForLoadablePattern(
-        algoResponse.getProcessId(),
-        loadablePatternOpt.get(),
-        LOADABLE_PATTERN_VALIDATION_STARTED_ID,
-        "",
-        true);
-    log.info("Algo response in shore side (Stowage Edit): " + algoResponse.toString());
-  }
-
-  private void processAlgoFromShore(LoadableStudy loadableStudyEntity)
-      throws GenericServiceException, IOException {
-    ModelMapper modelMapper = new ModelMapper();
-    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.domain.LoadableStudy();
-
-    loadableStudyService.buildLoadableStudy(
-        loadableStudyEntity.getId(), loadableStudyEntity, loadableStudy, modelMapper);
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    objectMapper.writeValue(
-        new File(
-            this.rootFolder
-                + "/json/loadableStudyFromShip_"
-                + loadableStudyEntity.getId()
-                + ".json"),
-        loadableStudy);
-
-    this.jsonDataService.saveJsonToDatabase(
-        loadableStudyEntity.getId(),
-        LoadableStudiesConstants.LOADABLE_STUDY_REQUEST,
-        objectMapper.writeValueAsString(loadableStudy));
-
-    AlgoResponse algoResponse =
-        restTemplate.postForObject(loadableStudyUrl, loadableStudy, AlgoResponse.class);
-    loadablePatternService.updateProcessIdForLoadableStudy(
-        algoResponse.getProcessId(),
-        loadableStudyEntity,
-        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID,
-        "",
-        true);
-    log.info("Algo response : " + algoResponse.toString());
-
-    loadableStudyRepository.updateLoadableStudyStatus(
-        LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
   }
 
   /**
@@ -563,7 +350,6 @@ public class CommunicationService {
       EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
           EnvoyWriter.EnvoyWriterRequest.newBuilder();
       writerRequest.setJsonPayload(jsonPayload);
-      // writerRequest.setClientId("KAZUSA_VINOTH");
       writerRequest.setClientId(vesselReply.getName());
       writerRequest.setImoNumber(vesselReply.getImoNumber());
       writerRequest.setMessageType(MessageTypes.ALGORESULT.getMessageType());
@@ -593,8 +379,8 @@ public class CommunicationService {
   }
 
   public EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
-      String requestJson, Long VesselId, String messageType) throws GenericServiceException {
-    VesselInfo.VesselDetail vesselReply = this.getVesselDetailsForEnvoy(VesselId);
+      String requestJson, Long vesselId, String messageType) throws GenericServiceException {
+    VesselInfo.VesselDetail vesselReply = this.getVesselDetailsForEnvoy(vesselId);
     EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
         EnvoyWriter.EnvoyWriterRequest.newBuilder();
     writerRequest.setJsonPayload(requestJson);

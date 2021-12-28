@@ -6,7 +6,6 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.utility.ProcessIdentifiers;
 import com.google.gson.Gson;
@@ -20,7 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/** @Author Selvy Thomas */
+/** @author Selvy Thomas */
 @Log4j2
 @Service
 public class LoadableStudyStagingService extends StagingService {
@@ -28,7 +27,6 @@ public class LoadableStudyStagingService extends StagingService {
   @Autowired private LoadableStudyStagingRepository loadableStudyStagingRepository;
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @Autowired private LoadablePatternRepository loadablePatternRepository;
-  @Autowired private LoadablePlanRepository loadablePlanRepository;
   @Autowired private SynopticalTableRepository synopticalTableRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
 
@@ -43,28 +41,26 @@ public class LoadableStudyStagingService extends StagingService {
    * @param processIdentifierList - list of processIdentifier
    * @param processId - processId
    * @param processGroupId - processGroupId
-   * @param Id- id
+   * @param id- id
    * @return JsonArray
    */
   public JsonArray getCommunicationData(
-      List<String> processIdentifierList, String processId, String processGroupId, Long Id) {
+      List<String> processIdentifierList, String processId, String processGroupId, Long id) {
     log.info("LoadingPlanStaging Service processidentifier list:" + processIdentifierList);
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
     List<Long> algoErrorHeadingsIds = null;
-    List<Long> loadablePatternIds = getLoadablePatternIds(Id, processGroupId);
-    Long loadableStudyId = getLoadableStudyId(Id, processGroupId);
-    List<Long> loadablePlanIds = null;
-    List<Long> synopticalTableIds = null;
+    List<Long> loadablePatternIds = getLoadablePatternIds(id, processGroupId);
+    Long loadableStudyId = getLoadableStudyId(id, processGroupId);
+    List<Long> synopticalTableIds;
     List<Long> cargoNominationIds = null;
     Long voyageId = null;
     for (String processIdentifier : processIdentifierList) {
       if (processedList.contains(processIdentifier)) {
-        log.info("Table already fetched :" + processIdentifier);
+        log.info("Table already fetched : {}", processIdentifier);
         continue;
       }
-      JsonObject jsonObject = new JsonObject();
-      List<Object> object = new ArrayList<Object>();
+      List<Object> object = new ArrayList<>();
       switch (ProcessIdentifiers.valueOf(processIdentifier)) {
         case loadable_study:
           {
@@ -74,13 +70,11 @@ public class LoadableStudyStagingService extends StagingService {
               JsonArray loadableStudy = JsonParser.parseString(loadableStudyJson).getAsJsonArray();
               JsonObject loadableStudyJsonObj = loadableStudy.get(0).getAsJsonObject();
               voyageId = loadableStudyJsonObj.get("voyage_xid").getAsLong();
-              if (voyageId != null) {
-                String voyageJson = loadableStudyStagingRepository.getVoyageWithId(voyageId);
-                if (voyageJson != null) {
-                  JsonArray voyage = JsonParser.parseString(voyageJson).getAsJsonArray();
-                  addIntoProcessedList(
-                      array, object, "voyage", processId, processGroupId, processedList, voyage);
-                }
+              String voyageJson = loadableStudyStagingRepository.getVoyageWithId(voyageId);
+              if (voyageJson != null) {
+                JsonArray voyage = JsonParser.parseString(voyageJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array, object, "voyage", processId, processGroupId, processedList, voyage);
               }
               addIntoProcessedList(
                   array,
@@ -757,6 +751,9 @@ public class LoadableStudyStagingService extends StagingService {
             }
             break;
           }
+        default:
+          log.warn("Process Identifier Not Configured: {}", processIdentifier);
+          break;
       }
     }
     return array;

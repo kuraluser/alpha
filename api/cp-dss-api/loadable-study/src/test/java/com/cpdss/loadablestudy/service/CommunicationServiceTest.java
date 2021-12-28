@@ -9,15 +9,12 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
-import com.cpdss.loadablestudy.domain.AlgoResponse;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -77,9 +74,6 @@ public class CommunicationServiceTest {
     when(envoyReaderGrpcService.getResultFromCommServer(
             any(EnvoyReader.EnvoyReaderResultRequest.class)))
         .thenReturn(resultReply);
-    doNothing()
-        .when(spyService)
-        .saveLoadableStudyShore(any(EnvoyReader.EnvoyReaderResultReply.class));
     ReflectionTestUtils.setField(spyService, "envoyReaderGrpcService", envoyReaderGrpcService);
     spyService.getDataFromCommInShoreSide("1", taskReqParams, shore);
   }
@@ -99,43 +93,9 @@ public class CommunicationServiceTest {
     when(envoyReaderGrpcService.getResultFromCommServer(
             any(EnvoyReader.EnvoyReaderResultRequest.class)))
         .thenReturn(resultReply);
-    doNothing()
-        .when(spyService)
-        .saveLoadableStudyShore(any(EnvoyReader.EnvoyReaderResultReply.class));
     ReflectionTestUtils.setField(spyService, "envoyReaderGrpcService", envoyReaderGrpcService);
 
     spyService.getDataFromCommInShipSide("1", taskReqParams, shore);
-  }
-
-  @Test
-  void testSaveLoadableStudyShore() throws GenericServiceException {
-    EnvoyReader.EnvoyReaderResultReply resultReply =
-        EnvoyReader.EnvoyReaderResultReply.newBuilder()
-            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
-            .setPatternResultJson("1")
-            .build();
-    when(loadableStudyServiceShore.setLoadableStudyShore(anyString(), anyString()))
-        .thenReturn(getLoadableStudyEntity());
-    doNothing().when(voyageService).checkIfVoyageClosed(anyLong());
-    doNothing().when(loadableQuantityService).validateLoadableStudyWithLQ(any(LoadableStudy.class));
-    doNothing()
-        .when(loadableStudyService)
-        .buildLoadableStudy(
-            anyLong(),
-            any(LoadableStudy.class),
-            any(com.cpdss.loadablestudy.domain.LoadableStudy.class),
-            any(ModelMapper.class));
-    doNothing().when(jsonDataService).saveJsonToDatabase(anyLong(), anyLong(), anyString());
-    AlgoResponse algoResponse = new AlgoResponse();
-    algoResponse.setProcessId("1");
-    when(restTemplate.postForObject(anyString(), any(), any())).thenReturn(algoResponse);
-    doNothing()
-        .when(loadablePatternService)
-        .updateProcessIdForLoadableStudy(anyString(), any(), anyLong(), anyString(), anyBoolean());
-    doNothing().when(loadableStudyRepository).updateLoadableStudyStatus(anyLong(), anyLong());
-    ReflectionTestUtils.setField(communicationService, "timeLimit", 2l);
-
-    communicationService.saveLoadableStudyShore(resultReply);
   }
 
   @Test

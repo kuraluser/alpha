@@ -1,13 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.domain.CommingleCargo;
 import com.cpdss.loadablestudy.domain.LoadableQuantity;
@@ -16,17 +11,11 @@ import com.cpdss.loadablestudy.domain.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.domain.OnHandQuantity;
 import com.cpdss.loadablestudy.domain.SynopticalTable;
 import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.repository.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -72,150 +61,6 @@ public class LoadableStudyServiceShoreTest {
   @MockBean LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
   @MockBean LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
   @MockBean SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
-
-  @Test
-  void testSetLoadableStudyShore() {
-    String messageId = "1";
-    Voyage voyage = new Voyage();
-    voyage.setCaptainXId(1l);
-
-    List<CargoNomination> cargoNominationEntityList = new ArrayList<>();
-    CargoNomination cargoNominationEntity = new CargoNomination();
-    cargoNominationEntity.setAbbreviation("1");
-    cargoNominationEntity.setColor("1");
-    cargoNominationEntityList.add(cargoNominationEntity);
-
-    com.cpdss.loadablestudy.entity.LoadableStudyPortRotation loadableStudyPortRotation =
-        new com.cpdss.loadablestudy.entity.LoadableStudyPortRotation();
-    loadableStudyPortRotation.setPortXId(1l);
-    loadableStudyPortRotation.setId(1l);
-    loadableStudyPortRotation.setLoadableStudy(getLoadableStudyEntity());
-
-    when(voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(null);
-    when(voyageRepository.save(Mockito.any(Voyage.class))).thenReturn(voyage);
-    when(loadableStudyRepository.existsByIdAndPlanningTypeXIdAndVoyageAndIsActive(
-            Mockito.anyLong(), Mockito.anyInt(), Mockito.any(Voyage.class), Mockito.anyBoolean()))
-        .thenReturn(true);
-    when(loadableStudyRepository.findByVoyageAndNameIgnoreCaseAndIsActiveAndPlanningTypeXId(
-            Mockito.any(Voyage.class), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyInt()))
-        .thenReturn(getLoadableStudyEntity());
-    when(commingleCargoRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getCommingleCargoEntityOpt());
-    when(cargoNominationRepository.getMaxPriorityCargoNominationIn(Mockito.anyList()))
-        .thenReturn(1l);
-    when(cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
-            Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(cargoNominationEntityList);
-    when(loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-            Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-            Mockito.anyLong(),
-            Mockito.anyBoolean()))
-        .thenReturn(loadableStudyPortRotation);
-    when(cargoOperationRepository.getOne(Mockito.anyLong())).thenReturn(getCargoOperation());
-
-    try {
-      ObjectMapper mapper = new ObjectMapper();
-      String jsonResult = mapper.writeValueAsString(getLoadableStudyDomain());
-      var result = loadableStudyServiceShore.setLoadableStudyShore(jsonResult, messageId);
-      Mockito.verify(onHandQuantityRepository).saveAll(Mockito.anyList());
-      Mockito.verify(onBoardQuantityRepository).saveAll(Mockito.anyList());
-      Mockito.verify(loadableQuantityRepository)
-          .save(Mockito.any(com.cpdss.loadablestudy.entity.LoadableQuantity.class));
-      Mockito.verify(cargoNominationRepository).saveAll(Mockito.anyList());
-      Mockito.verify(loadableStudyPortRotationRepository).saveAll(Mockito.anyList());
-      Mockito.verify(commingleCargoRepository).saveAll(Mockito.anyList());
-      Mockito.verify(loadableStudyCommunicationStatusRepository)
-          .save(Mockito.any(LoadableStudyCommunicationStatus.class));
-      Mockito.verify(voyageRepository).save(Mockito.any(Voyage.class));
-      assertEquals(1l, result.getId());
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    } catch (GenericServiceException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
-  void testConstructFolderPath() {
-    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy = getLoadableStudyEntity();
-    var result = loadableStudyServiceShore.constructFolderPath(loadableStudy);
-    assertTrue(result.contains("test"));
-  }
-
-  @Test
-  void testPersistShipPayloadInShoreSide() {
-    String messageId = "1";
-    LoadabalePatternValidateRequest loadabalePatternValidateRequest =
-        new LoadabalePatternValidateRequest();
-    List<LoadablePatternDto> loadablePatternDtoList = new ArrayList<>();
-    LoadablePatternDto dto = new LoadablePatternDto();
-    loadablePatternDtoList.add(dto);
-    loadabalePatternValidateRequest.setLoadableStudy(getLoadableStudyDomain());
-    loadabalePatternValidateRequest.setLoadablePatternDtoList(loadablePatternDtoList);
-    com.cpdss.loadablestudy.entity.LoadableStudyPortRotation loadableStudyPortRotation =
-        new com.cpdss.loadablestudy.entity.LoadableStudyPortRotation();
-    loadableStudyPortRotation.setPortXId(1l);
-    loadableStudyPortRotation.setId(1l);
-    loadableStudyPortRotation.setLoadableStudy(getLoadableStudyEntity());
-    LoadablePattern pattern = new LoadablePattern();
-    pattern.setId(1l);
-    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(Optional.of(getLoadableStudyEntity()));
-    when(voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(null);
-    when(loadableStudyAttachmentsRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(Optional.empty());
-    when(commingleCargoRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getCommingleCargoEntityOpt());
-    when(cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(Optional.empty());
-    when(loadableStudyPortRotationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(null);
-    when(onHandQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
-    when(onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
-    when(loadableQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
-    when(loadableStudyPortRotationRepository.findByLoadableStudyAndPortXIdAndIsActive(
-            Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
-            Mockito.anyLong(),
-            Mockito.anyBoolean()))
-        .thenReturn(loadableStudyPortRotation);
-    when(voyageRepository.save(any(Voyage.class))).thenReturn(getLoadableStudyEntity().getVoyage());
-    when(loadableStudyRepository.save(any(com.cpdss.loadablestudy.entity.LoadableStudy.class)))
-        .thenReturn(getLoadableStudyEntity());
-    when(loadablePatternRepository.save(any(LoadablePattern.class))).thenReturn(pattern);
-    try {
-      var result =
-          loadableStudyServiceShore.persistShipPayloadInShoreSide(
-              messageId, loadabalePatternValidateRequest);
-      assertEquals(1l, result.getId());
-
-      Mockito.verify(voyageRepository).save(Mockito.any(Voyage.class));
-      Mockito.verify(loadableStudyRepository)
-          .save(Mockito.any(com.cpdss.loadablestudy.entity.LoadableStudy.class));
-      Mockito.verify(loadableStudyCommunicationStatusRepository)
-          .save(Mockito.any(LoadableStudyCommunicationStatus.class));
-      Mockito.verify(commingleCargoRepository).saveAll(Mockito.anyList());
-      Mockito.verify(commingleCargoRepository).saveAll(Mockito.anyList());
-      Mockito.verify(loadableStudyPortRotationRepository).saveAll(Mockito.anyList());
-
-    } catch (GenericServiceException | IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
-  void testsavePatternInShipSide() {
-    LoadablePattern loadablePattern = new LoadablePattern();
-    when(loadablePlanQuantityRepository.findById(anyLong()))
-        .thenReturn(Optional.of(new LoadablePlanQuantity()));
-    when(toppingOffSequenceRepository.findById(anyLong())).thenReturn(Optional.empty());
-    when(synopticalTableRepository.findById(anyLong())).thenReturn(Optional.empty());
-    when(synopticalTableLoadicatorDataRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-    loadableStudyServiceShore.savePatternInShipSide(getPatternDetails(), loadablePattern);
-    verify(loadablePlanQuantityRepository).save(any(LoadablePlanQuantity.class));
-  }
 
   private PatternDetails getPatternDetails() {
     PatternDetails patternDetails = new PatternDetails();

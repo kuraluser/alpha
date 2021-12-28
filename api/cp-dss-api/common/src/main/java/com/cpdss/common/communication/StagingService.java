@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.common.communication;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.communication.repository.StagingRepository;
 import com.cpdss.common.exception.GenericServiceException;
@@ -15,7 +17,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import javax.persistence.Table;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
@@ -36,6 +40,11 @@ public class StagingService {
   private static final String DATA = "data";
   private static final String META_DATA = "meta_data";
   private String[] exceptionalAttributesNames = {"eta", "etd"};
+  private static final String UNKNOWN_CONSTANT = "unknown";
+  private static final String COMM_DATA_SAVED_PREFIX_MSG_TEMPLATE =
+      "Communication ####### Saved Data - Table: {} >> ";
+  private static final String COMM_DATA_EMPTY_MSG_TEMPLATE =
+      "Communication XXXXXXX Data Empty - Table: {}";
 
   public StagingService(StagingRepository stagingRepository) {
     this.stagingRepository = stagingRepository;
@@ -347,5 +356,62 @@ public class StagingService {
           stagingEntity.setVersion(null);
         });
     stagingEntity.setLastModifiedBy(CREATED_OR_UPDATED_BY);
+  }
+
+  /**
+   * Method to check if stage entity is valid
+   *
+   * @param stageEntity stageEntity value
+   * @param tableName tableName value
+   * @return true on valid entity and false on invalid
+   */
+  public static boolean isValidStageEntity(final EntityDoc stageEntity, final String tableName) {
+    if (null == stageEntity) {
+      log.info(COMM_DATA_EMPTY_MSG_TEMPLATE, tableName);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Method to check if stage entity is valid
+   *
+   * @param stageEntity stageEntity value
+   * @param tableName tableName value
+   * @return true on valid entity and false on invalid
+   */
+  public static boolean isValidStageEntity(
+      final List<? extends EntityDoc> stageEntity, final String tableName) {
+    if (isEmpty(stageEntity)) {
+      log.info(COMM_DATA_EMPTY_MSG_TEMPLATE, tableName);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Method to log saved entities
+   *
+   * @param stageEntity stageEntity value
+   */
+  public static void logSavedEntity(final EntityDoc stageEntity) {
+    final String tableName = stageEntity.getClass().getAnnotation(Table.class).name();
+    log.info(COMM_DATA_SAVED_PREFIX_MSG_TEMPLATE + "Id: {}", tableName, stageEntity.getId());
+  }
+
+  /**
+   * Method to log saved entities
+   *
+   * @param stageEntity stageEntity stageEntity value
+   */
+  public static void logSavedEntity(final List<? extends EntityDoc> stageEntity) {
+    AtomicReference<String> tableName = new AtomicReference<>(UNKNOWN_CONSTANT);
+    stageEntity.stream()
+        .findFirst()
+        .ifPresent(
+            entityDoc -> tableName.set(entityDoc.getClass().getAnnotation(Table.class).name()));
+
+    log.info(
+        COMM_DATA_SAVED_PREFIX_MSG_TEMPLATE + "Entries: {}", tableName.get(), stageEntity.size());
   }
 }

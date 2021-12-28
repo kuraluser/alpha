@@ -212,7 +212,7 @@ public class LoadableStudiesConstants {
 
   public static final String ENV = "env";
 
-  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
+  public static final List<String> LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
       Arrays.asList(
           LoadableStudyTables.LOADABLE_STUDY.getTable(),
           LoadableStudyTables.COMINGLE_CARGO.getTable(),
@@ -226,7 +226,7 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.LOADABLE_STUDY_RULES.getTable(),
           LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable());
 
-  public static List<String> LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP =
+  public static final List<String> LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP =
       Arrays.asList(
           LoadableStudyTables.LOADABLE_STUDY.getTable(),
           LoadableStudyTables.JSON_DATA.getTable(),
@@ -248,7 +248,7 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.DISCHARGE_QUANTITY_CARGO_DETAILS.getTable(),
           LoadableStudyTables.LOADABLE_STUDY_ALGO_STATUS.getTable());
 
-  public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
+  public static final List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
       Arrays.asList(
           LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS.getTable(),
           LoadableStudyTables.LOADABLE_PLAN_BALLAST_DETAILS.getTable(),
@@ -259,7 +259,7 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.LOADABLE_PLAN_QUANTITY.getTable(),
           LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable());
 
-  public static List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP =
+  public static final List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP =
       Arrays.asList(
           LoadableStudyTables.LOADABLE_STUDY.getTable(),
           LoadableStudyTables.JSON_DATA.getTable(),
@@ -327,7 +327,7 @@ public class LoadableStudiesConstants {
     public final String table;
   }
 
-  public static List<String> DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
+  public static final List<String> DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE =
       Arrays.asList(
           LoadableStudyTables.LOADABLE_STUDY.getTable(),
           LoadableStudyTables.LOADABLE_QUANTITY.getTable(),
@@ -340,4 +340,27 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.DISCHARGE_COW_DETAILS.getTable(),
           LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable(),
           LoadableStudyTables.LOADABLE_PLAN_BALLAST_DETAILS.getTable());
+
+  @Getter
+  @AllArgsConstructor
+  public enum LOADABLE_STUDY_COLUMNS {
+    VOYAGE_XID("voyage_xid"),
+    OPERATION_XID("operation_xid"),
+    PORT_ROTATION_XID("port_rotation_xid"),
+    JSON_TYPE_XID("json_type_xid"),
+    LOADABLE_STUDY_STATUS("loadable_study_status"),
+    LOADABLESTUDY_XID("loadablestudy_xid"),
+    LOADABLE_PATTERN_XID("loadable_pattern_xid"),
+    ERROR_HEADING_XID("error_heading_xid"),
+    CARGO_NOMINATION_XID("cargo_nomination_xid"),
+    LOADABLE_PLAN_XID("loadable_plan_xid"),
+    SYNOPTICAL_TABLE_XID("synoptical_table_xid"),
+    LOADABLE_STUDY_XID("loadable_study_xid"),
+    LOADABLE_STUDY_RULE_XID("loadable_study_rule_xid"),
+    STOWAGE_DETAILS_XID("stowage_details_xid"),
+    BALLAST_DETAILS_XID("ballast_details_xid"),
+    LOADABLE_PLAN_COMMINGLE_DETAILS_XID("loadable_plan_commingle_details_xid");
+
+    private final String columnName;
+  }
 }
