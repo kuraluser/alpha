@@ -1087,9 +1087,13 @@ public class LoadableStudyRuleService {
             Optional.ofNullable(rulesList.getNumericScale()).ifPresent(rules::setNumericScale);
             List<com.cpdss.loadablestudy.domain.RulesInputs> ruleInputList = new ArrayList<>();
             List<LoadableStudyRuleInput> loadableStudyRuleInputs;
-            if (rulesList != null && rulesList.getLoadableStudyRuleInputs().size() != 0) {
+
+            List<LoadableStudyRuleInput> loadableStudyRuleInputList =
+                loadableStudyRuleInputRepository.findAllByLoadableStudyRules(rulesList);
+
+            if (!CollectionUtils.isEmpty(loadableStudyRuleInputList)) {
               loadableStudyRuleInputs =
-                  rulesList.getLoadableStudyRuleInputs().stream()
+                  loadableStudyRuleInputList.stream()
                       .sorted(Comparator.comparingLong(LoadableStudyRuleInput::getId))
                       .collect(Collectors.toList());
             } else {
@@ -1099,7 +1103,7 @@ public class LoadableStudyRuleService {
               com.cpdss.loadablestudy.domain.RulesInputs ruleInput =
                   new com.cpdss.loadablestudy.domain.RulesInputs();
               LoadableStudyRuleInput loadableStudyRuleInput =
-                  rulesList.getLoadableStudyRuleInputs().get(inputIndex);
+                  loadableStudyRuleInputList.get(inputIndex);
               Optional.ofNullable(loadableStudyRuleInput.getId())
                   .ifPresentOrElse(
                       (id) -> ruleInput.setId(String.valueOf(id)), () -> ruleInput.setId(null));

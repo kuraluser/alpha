@@ -235,6 +235,9 @@ public class LoadableStudyRuleServiceTest {
     when(this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
             any(VesselInfo.VesselRuleRequest.class)))
         .thenReturn(getVesselRuleReply());
+    when(this.loadableStudyRuleInputRepository.findAllByLoadableStudyRules(
+            any(LoadableStudyRules.class)))
+        .thenReturn(getLoadableStudyRulesList().get(0).getLoadableStudyRuleInputs());
     when(loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
             any(LoadableStudy.class), anyLong(), anyBoolean()))
         .thenReturn(getLoadableStudyRulesList());
@@ -242,6 +245,8 @@ public class LoadableStudyRuleServiceTest {
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     ReflectionTestUtils.setField(
         spyService, "loadableStudyRuleRepository", loadableStudyRuleRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyRuleInputRepository", loadableStudyRuleInputRepository);
 
     spyService.buildLoadableStudyRuleDetails(getLoadablestudy().get(), loadableStudy);
     var id =
