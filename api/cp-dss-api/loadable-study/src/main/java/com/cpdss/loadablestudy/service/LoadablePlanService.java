@@ -20,6 +20,7 @@ import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
+import com.cpdss.loadablestudy.entity.OnBoardQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
@@ -142,6 +143,8 @@ public class LoadablePlanService {
   private String env;
 
   @Autowired AlgoService algoService;
+
+  @Autowired OnBoardQuantityRepository onBoardQuantityRepository;
 
   public void buildLoadablePlanQuantity(
       List<LoadablePlanQuantity> loadablePlanQuantities,
@@ -2172,7 +2175,46 @@ public class LoadablePlanService {
       ofNullable(lq.get().getLoadableStudyPortRotation().getId())
           .ifPresent(replyBuilder::setLastModifiedPort);
     }
+
+    List<OnBoardQuantity> onBoardQuantities =
+        onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            loadablePatternOpt.get().getLoadableStudy(), true);
+    buildOnBoardQuantities(onBoardQuantities, replyBuilder);
+
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+  }
+
+  /**
+   * Builds OBQ details message
+   *
+   * @param onBoardQuantities
+   * @param replyBuilder
+   */
+  private void buildOnBoardQuantities(
+      List<OnBoardQuantity> onBoardQuantities,
+      LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder) {
+    List<LoadableStudy.OnBoardQuantityDetail> details = new ArrayList<>();
+    onBoardQuantities.forEach(
+        entity -> {
+          LoadableStudy.OnBoardQuantityDetail.Builder builder =
+              LoadableStudy.OnBoardQuantityDetail.newBuilder();
+          ofNullable(entity.getId()).ifPresent(builder::setId);
+          ofNullable(entity.getTankId()).ifPresent(builder::setTankId);
+          ofNullable(entity.getCargoId()).ifPresent(builder::setCargoId);
+          ofNullable(entity.getSounding()).ifPresent(item -> builder.setSounding(item.toString()));
+          ofNullable(entity.getPlannedArrivalWeight())
+              .ifPresent(item -> builder.setWeight(item.toString()));
+          ofNullable(entity.getActualArrivalWeight())
+              .ifPresent(item -> builder.setActualWeight(item.toString()));
+          ofNullable(entity.getVolume()).ifPresent(item -> builder.setVolume(item.toString()));
+          ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
+          ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
+          ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
+          ofNullable(entity.getTemperature())
+              .ifPresent(item -> builder.setTemperature(item.toString()));
+          details.add(builder.build());
+        });
+    replyBuilder.addAllOnBoardQuantities(details);
   }
 
   /**

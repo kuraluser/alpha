@@ -105,6 +105,7 @@ public class LoadablePlanServiceTest {
   @MockBean AlgoService algoService;
   @MockBean private VoyageRepository voyageRepository;
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
+  @MockBean OnBoardQuantityRepository onBoardQuantityRepository;
 
   @Test
   void testBuildLoadablePlanQuantity() {
@@ -353,6 +354,9 @@ public class LoadablePlanServiceTest {
     when(stowageDetailsTempRepository.findByLoadablePatternAndIsActive(
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(getLPSDT());
+    when(onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
 
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     ReflectionTestUtils.setField(
@@ -375,6 +379,8 @@ public class LoadablePlanServiceTest {
         spyService, "loadableQuantityRepository", loadableQuantityRepository);
     ReflectionTestUtils.setField(
         spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
+    ReflectionTestUtils.setField(
+        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
 
     var result = spyService.buildVesselPlanTableData(1l, 1l);
     assertEquals("1", result.getVesselName());
@@ -442,6 +448,9 @@ public class LoadablePlanServiceTest {
         .thenReturn(getLPSDT());
     when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
         .thenReturn(getPortReply());
+    when(onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
 
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     ReflectionTestUtils.setField(
@@ -467,6 +476,8 @@ public class LoadablePlanServiceTest {
     ReflectionTestUtils.setField(
         spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
     ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
 
     var result = spyService.buildCargoDetailsTable(1l, 1l);
     assertEquals(1.0, result.getCargosTableList().get(0).getApi());
@@ -515,6 +526,9 @@ public class LoadablePlanServiceTest {
         .thenReturn(getLPSDT());
     when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
         .thenReturn(getPortReply());
+    when(onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
 
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     ReflectionTestUtils.setField(
@@ -540,6 +554,8 @@ public class LoadablePlanServiceTest {
     ReflectionTestUtils.setField(
         spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
     ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
 
     spyService.buildLoadablePlanDetails(getLP(), replyBuilder);
     assertEquals("SUCCESS", replyBuilder.getResponseStatus().getStatus());

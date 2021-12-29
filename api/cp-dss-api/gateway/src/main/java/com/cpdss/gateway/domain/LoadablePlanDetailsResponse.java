@@ -60,4 +60,6 @@ public class LoadablePlanDetailsResponse {
   private List<LoadablePlanBallastDetails> dischargePlanBallastDetails;
 
   private List<LoadablePlanStowageDetails> dischargePlanStowageDetails;
+
+  private List<OnBoardQuantity> onBoardQuantities;
 }

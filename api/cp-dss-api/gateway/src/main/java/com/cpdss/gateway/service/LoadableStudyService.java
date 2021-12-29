@@ -4128,6 +4128,7 @@ public class LoadableStudyService {
     buildLoadableStudyBallastDetails(response, grpcReply);
     buildSynopticalTableDetails(response, loadableStudyId, vesselId, loadablePatternId, voyageId);
     buildLoadablePlanComments(response, grpcReply);
+    buildOnBoardQuantities(response, grpcReply.getOnBoardQuantitiesList());
     response.setLoadableQuantity(
         isEmpty(grpcReply.getTotalLoadableQuantity())
             ? null
@@ -4136,6 +4137,43 @@ public class LoadableStudyService {
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
+  }
+
+  /**
+   * Builds On Board Quantities
+   *
+   * @param response
+   * @param onBoardQuantitiesList
+   */
+  private void buildOnBoardQuantities(
+      LoadablePlanDetailsResponse response, List<OnBoardQuantityDetail> onBoardQuantitiesList) {
+    List<OnBoardQuantity> onBoardQuantities = new ArrayList<>();
+    for (OnBoardQuantityDetail detail : onBoardQuantitiesList) {
+      OnBoardQuantity dto = new OnBoardQuantity();
+      dto.setId(detail.getId());
+      dto.setCargoId(0 == detail.getCargoId() ? null : detail.getCargoId());
+      dto.setColorCode(isEmpty(detail.getColorCode()) ? null : detail.getColorCode());
+      dto.setAbbreviation(isEmpty(detail.getAbbreviation()) ? null : detail.getAbbreviation());
+      dto.setSounding(
+          isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
+      dto.setQuantity(
+          isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
+      dto.setActualWeight(
+          isEmpty(detail.getActualWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getActualWeight()));
+      dto.setVolume(
+          isEmpty(detail.getVolume()) ? BigDecimal.ZERO : new BigDecimal(detail.getVolume()));
+      dto.setTankId(detail.getTankId());
+      dto.setTankName(detail.getTankName());
+      dto.setApi(
+          isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
+      if (detail.getTemperature() != null && detail.getTemperature().length() > 0) {
+        dto.setTemperature(new BigDecimal(detail.getTemperature()));
+      }
+      onBoardQuantities.add(dto);
+    }
+    response.setOnBoardQuantities(onBoardQuantities);
   }
 
   /**

@@ -3679,6 +3679,12 @@ class LoadableStudyServiceTest {
     doCallRealMethod()
         .when(loadablePlanService)
         .buildLoadablePlanDetails(any(Optional.class), any(LoadablePlanDetailsReply.Builder.class));
+    when(onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
+
+    ReflectionTestUtils.setField(
+        loadablePlanService, "onBoardQuantityRepository", onBoardQuantityRepository);
     ReflectionTestUtils.setField(
         loadablePlanService, "loadablePatternRepository", loadablePatternRepository);
     ReflectionTestUtils.setField(
