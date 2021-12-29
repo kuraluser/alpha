@@ -129,7 +129,7 @@ export class DischargeStudyComponent implements OnInit {
     this.portCargoList = portCargoDetails.portWiseCorges;
 
     this.listData = {
-      mode: this.mode,
+      modes: this.mode,
       tank: this.tank,
       portList: this.ports,
       cargoList: this.cargos,
@@ -206,7 +206,7 @@ export class DischargeStudyComponent implements OnInit {
       return portcargo.portId === id;
     })
     return {
-      mode: this.mode,
+      modes: this.mode,
       tank: this.tank,
       portList: this.ports,
       cargoList: cargoList ? cargoList.cargos : [],

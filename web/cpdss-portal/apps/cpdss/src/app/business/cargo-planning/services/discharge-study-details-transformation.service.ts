@@ -882,7 +882,7 @@ getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
       header: 'DISCHARGE_STUDY_DISCHARGE_MODE',
       fieldType: DATATABLE_FIELD_TYPE.SELECT,
       editable: true,
-      listName: 'mode',
+      listName: 'modes',
       fieldOptionLabel: 'name'
     },
     {
@@ -1081,9 +1081,9 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    */
     getDischargeStudyCowDetails(cowId:number,percentage: number,tanks:number[],listData:IDischargeStudyDropdownData): ICowDetailsValueObject{
       const _cowDetails = <ICowDetailsValueObject>{};
-      _cowDetails.cow = listData.mode.find(modeDetails => modeDetails.id === cowId);
+      _cowDetails.cow = listData.modes.find(modeDetails => modeDetails.id === cowId);
       if(!_cowDetails.cow) {
-        _cowDetails.cow = listData.mode[0];
+        _cowDetails.cow = listData.modes[0];
         _cowDetails.percentage = { value: 100, name: '100%' };
       } else if(cowId === 1) {
         _cowDetails.percentage = listData.percentageList.find((item) => {
@@ -1144,7 +1144,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    */
     getCargoDetailsAsValueObject(portDetailsValueAsObject:IPortDetailValueObject[] ,cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
       const _cargoDetailValuObject = <IPortCargo>{};
-      const mode = listData.mode.find(modeDetails => modeDetails.id === cargoDetail.mode);
+      const mode = listData.modes.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
       const isKlEditable = mode?.id === 2 || mode?.id === 1 ? true : false;
       //Note: - mode 3 need to be confirmed

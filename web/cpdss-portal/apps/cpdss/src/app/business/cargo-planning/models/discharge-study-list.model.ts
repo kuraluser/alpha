@@ -270,7 +270,7 @@ export interface IPortCargo {
  * @interface IDischargeStudyDropdownData
  */
  export interface IDischargeStudyDropdownData {
-    mode: IMode[];
+    modes: IMode[];
     tank: ITankDetails[];
     instructions: IInstruction[];
     cargoList: ICargo[];
