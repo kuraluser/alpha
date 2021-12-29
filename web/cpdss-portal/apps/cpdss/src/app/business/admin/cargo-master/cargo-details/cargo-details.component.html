@@ -46,7 +46,7 @@
           <label for="cargo_assayDate" class="col-sm-5 col-form-label">{{ 'CARGO_DETAILS_CARGO_ASSAY_DATE' |
             translate}}</label>
           <div class="col-sm-7">
-            <p-calendar appendTo="body" formControlName="assayDate" id="cargo_assay_date" [dateFormat]="dateFormat">
+            <p-calendar appendTo="body" formControlName="assayDate" id="cargo_assay_date" [dateFormat]="dateFormat" [placeholder]="datePlaceHolder">
             </p-calendar>
             <cpdss-portal-validation-error [errors]="fieldError('assayDate')"
               [errorMessages]="errorMessages?.assayDate">

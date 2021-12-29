@@ -729,6 +729,7 @@ export interface IPortOBQTankDetailValueObject {
     loadOnTop: boolean;
     processing?: boolean;
     temperature?: number;
+    cargoList: ICargo[];
 }
 
 /**

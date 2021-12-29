@@ -7,7 +7,7 @@ import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNomina
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
-import { IOperations, IPort, IPortList, LOADABLE_STUDY_STATUS, OPERATIONS, VOYAGE_STATUS } from '../../core/models/common.model';
+import { IOperations, IPort, IPortList, ITank, LOADABLE_STUDY_STATUS, OPERATIONS, VOYAGE_STATUS } from '../../core/models/common.model';
 import { ILoadableOHQStatus } from '../models/loadable-study-list.model';
 import * as moment from 'moment';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
@@ -1456,7 +1456,6 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'cargo',
         header: 'CARGO',
-        editable: false,
         fieldType: DATATABLE_FIELD_TYPE.SELECT,
         filter: true,
         filterPlaceholder: 'SEARCH_CARGO',
@@ -1512,21 +1511,25 @@ export class LoadableStudyDetailsTransformationService {
   }
 
   /**
- * Method to convert obq tank details to value object
- *
- * @param {IPortOBQTankDetail} obqTankDetail
- * @param {boolean} [isNewValue=true]
- * @returns {IPortOBQTankDetailValueObject}
- * @memberof LoadableStudyDetailsTransformationService
- */
-  getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData, isEditable = true): IPortOBQTankDetailValueObject {
+   * Method to convert obq tank details to value object
+   *
+   * @param {IPortOBQTankDetail} obqTankDetail
+   * @param {boolean} [isNewValue=true]
+   * @param {IPortOBQListData} listData
+   * @param {boolean} [isEditable=true]
+   * @param {ITank[][]} tanks
+   * @return {*}  {IPortOBQTankDetailValueObject}
+   * @memberof LoadableStudyDetailsTransformationService
+   */
+  getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData, isEditable = true, tanks: ITank[][]): IPortOBQTankDetailValueObject {
     const _obqTankDetail = <IPortOBQTankDetailValueObject>{};
+    const isSlopeTank = tanks.some(group => group.some(tank => tank.slopTank)) || true;
     _obqTankDetail.id = obqTankDetail.id;
     _obqTankDetail.portId = obqTankDetail.portId;
     _obqTankDetail.tankId = obqTankDetail.tankId;
     _obqTankDetail.tankName = obqTankDetail.tankName;
     const cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
-    _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false);
+    _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false, isEditable && isSlopeTank);
     _obqTankDetail.fullCapacityCubm = obqTankDetail?.fullCapacityCubm;
     _obqTankDetail.api = new ValueObject<number>(obqTankDetail.api, true, isNewValue, isEditable);
     _obqTankDetail.quantity = new ValueObject<number>(obqTankDetail.quantity, true, isNewValue, isEditable);
@@ -1534,6 +1537,10 @@ export class LoadableStudyDetailsTransformationService {
     _obqTankDetail.abbreviation = obqTankDetail.abbreviation;
     _obqTankDetail.volume = obqTankDetail.volume;
     _obqTankDetail.temperature = obqTankDetail.temperature;
+    if (isSlopeTank) {
+      const slops: ICargo = { id: -1, name: 'Slops' };
+      _obqTankDetail.cargoList = cargoObj ? [cargoObj, slops] : [slops];
+    }
     return _obqTankDetail;
   }
 

@@ -4,6 +4,9 @@ import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoDetails } from '../models/cargo.model';
 import { AdminModule } from '../admin.module';
 import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { IDateTimeFormatOptions } from '../../../shared/models/common.model';
+import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 
 /**
  * Service for transformation of cargo master data
@@ -16,7 +19,7 @@ import { IValidationErrorMessagesSet } from '../../../shared/components/validati
 })
 export class CargoMasterTransformationService {
 
-  constructor() { }
+  constructor(private timeZoneTransformationService: TimeZoneTransformationService) { }
 
   /**
    * Method for getting Cargo master table column data
@@ -137,6 +140,8 @@ export class CargoMasterTransformationService {
    */
   formatCargo(cargo: ICargoDetails) {
     cargo.port = cargo.loadingInformation?.map(info => info?.port?.name);
+    const formatOptions: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
+    cargo.assayDate = this.timeZoneTransformationService.formatDateTime(cargo.assayDate, formatOptions);
     cargo.portsLabel = cargo.port?.join();
     return cargo;
   }

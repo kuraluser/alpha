@@ -8,7 +8,7 @@ import { IAPITempPopupData, ICargoDetails, ICargoLoadingInformation } from '../.
 import { CargoMasterApiService } from '../../services/cargo-master-api.service';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
-import { ICountry, IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
+import { ICountry, IDateTimeFormatOptions, IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { IPort } from '../../../core/models/common.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -49,6 +49,7 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   saveBtnPermissionContext: IPermissionContext;
   errorMessages: IValidationErrorMessagesSet;
   dateFormat: string;
+  datePlaceHolder: string;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
@@ -68,6 +69,10 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.ngxSpinnerService.show();
+    const date = new Date();
+    const formatOptions: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
+    const translationKeys = await this.translateService.get(['EXAMPLE']).toPromise();
+    this.datePlaceHolder = translationKeys['EXAMPLE'] + this.timeZoneTransformationService.formatDateTime(date, formatOptions);
     this.dateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat)
     this.activatedRoute.paramMap.pipe(takeUntil(this.ngUnsubscribe)).subscribe(params => {
       this.cargoId = Number(params.get('cargoId'));
@@ -80,6 +85,7 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
     if (this.cargoId) {
       const result = await this.cargoMasterApiService.getCargo(this.cargoId).toPromise();
       this.cargo = this.cargoId ? result?.cargo : null;
+      this.cargo.assayDate = this.cargo?.assayDate ? this.timeZoneTransformationService.formatDateTime(this.cargo?.assayDate, formatOptions) : null;
     } else {
       this.cargo = <ICargoDetails>{ loadingInformation: [] };
     }
@@ -131,8 +137,9 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
   initLoadingInformationGroup(info: ICargoLoadingInformation) {
     info.ports = this.ports?.filter(_port => _port?.countryId === info?.country?.id);
     const port = this.ports?.find(_port => _port.id === info.port?.id);
+    const country = this.countries?.find(_country => _country.id === info.country?.id);
     return this.fb.group({
-      country: this.fb.control(info?.country),
+      country: this.fb.control(country),
       port: this.fb.control(port, [uniqueValidator])
     })
   }
@@ -183,7 +190,7 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.show();
       const translationKeys = this.translateService.instant(['CARGO_SAVED_SUCCESSFULLY', 'CARGO_SAVE_SUCCESS', 'CARGO_SAVE_ERROR', 'CARGO_NAME_ALREADY_EXIST', 'CARGO_ABBREVIATION_ALREADY_EXIST']);
       const cargoDetails: ICargoDetails = this.cargoDetailsForm.value;
-      cargoDetails.assayDate = moment(cargoDetails.assayDate, AppConfigurationService.settings?.dateFormat.split(' ')[0]).format('DD-MM-YYYY');
+      cargoDetails.assayDate = cargoDetails.assayDate ? moment(cargoDetails.assayDate).format('DD-MM-YYYY') : null;
       try {
         const result = await this.cargoMasterApiService.saveCargo(cargoDetails, this.cargoId).toPromise();
         this.cargo = result?.cargo;

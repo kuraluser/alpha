@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, DATATABLE_SELECTIONMODE, IDataTableColumn, IDataTableFilterEvent, IDataTableSortEvent } from '../../../../shared/components/datatable/datatable.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
@@ -123,6 +123,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   obqCheckUpdatesTimer;
   cargoTankOptions: ITankOptions = { showTooltip: true, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
   progress = true;
+  apiValidators: ValidatorFn[];
 
   private _selectedTank: IPortOBQTankDetailValueObject;
   private _loadableStudyId: number;
@@ -163,6 +164,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     this.columns = this.loadableStudyDetailsTransformationService.getOBQDatatableColumns();
     this.initSubscriptions();
     this.checkEditMode();
+    this.apiValidators = [ Validators.min(0), numberValidator(2, 2)];
   }
 
   /**
@@ -225,7 +227,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
           obqTankDetail.fullCapacityCubm = Number(tank?.fullCapacityCubm);
         }
       }));
-      const _obqTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailsAsValueObject(obqTankDetail, false, this.listData);
+      const _obqTankDetail = this.loadableStudyDetailsTransformationService.getOBQTankDetailsAsValueObject(obqTankDetail, false, this.listData, true, this.tanks);
       return _obqTankDetail;
     });
 
@@ -272,11 +274,11 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   private initOBQFormGroup(obqTankDetail: IPortOBQTankDetailValueObject) {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal();
     const quantity = this.loadableStudyDetailsTransformationService.convertToNumber(this.quantityDecimalFormatPipe.transform(obqTankDetail.quantity.value));
-
+    
     return this.fb.group({
       cargo: this.fb.control(obqTankDetail.cargo),
       tankName: this.fb.control(obqTankDetail.tankName, Validators.required),
-      api: this.fb.control(obqTankDetail.api.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
+      api: this.fb.control(obqTankDetail.api.value, obqTankDetail?.cargo?.value?.id === 0 ? this.apiValidators : [Validators.required, ...this.apiValidators]),
       quantity: this.fb.control(quantity, [Validators.required, Validators.min(0), numberValidator(quantityDecimal, 7), maximumVolumeValidator('api', obqTankDetail)]),
     });
   }
@@ -313,11 +315,17 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     const volume = this.quantityPipe.transform(event?.data?.quantity?.value, this.quantitySelectedUnit, AppConfigurationService.settings.volumeBaseUnit, event?.data?.api?.value);
     event.data.volume = volume ?? 0;
 
+    if (event?.field === 'cargo' && event?.data?.cargo?.id === 0) {
+      formGroup.controls.api.setValue(0);
+      formGroup.controls.quantity.setValue(0);
+      formGroup.controls.api.setErrors(this.apiValidators);
+      formGroup.controls.cargo.updateValueAndValidity();
+    }
     if (event?.field === 'api') {
       formGroup.controls.quantity.updateValueAndValidity();
     }
 
-    if (formGroup.valid && formGroup.controls.api.value && formGroup.controls.quantity.value) {
+    if (formGroup.valid && (formGroup.controls.api.value && formGroup.controls.quantity.value || formGroup.controls?.cargo?.value?.id === 0)) {
       event.data.processing = true;
       this.loadableStudyDetailsTransformationService.disableGenerateLoadablePatternBtn(true);
       const _selectedPortOBQTankDetail = this.convertToStandardUnitForSave(event.data);

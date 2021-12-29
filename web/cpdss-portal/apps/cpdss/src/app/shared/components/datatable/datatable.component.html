@@ -231,7 +231,7 @@
 
                                 <ng-container *ngSwitchCase="fieldType.SELECT">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <p-dropdown #dropDown2 [inputId]="col.field+'_'+ rowIndex + 'input'" [options]="listData[col.listName]"
+                                        <p-dropdown #dropDown2 [inputId]="col.field+'_'+ rowIndex + 'input'" [options]="rowData[col.listName]? rowData[col.listName] : listData[col.listName]"
                                             styleClass="form-control" appendTo="body"
                                             [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
                                             [formControlName]="col.field" [filter]="col.listFilter"
