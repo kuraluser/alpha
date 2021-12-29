@@ -6,26 +6,13 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.RoleScreen;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.domain.user.NotificationStatusValue;
 import com.cpdss.gateway.domain.user.UserStatusValue;
 import com.cpdss.gateway.domain.user.UserType;
-import com.cpdss.gateway.entity.NotificationStatus;
-import com.cpdss.gateway.entity.Notifications;
-import com.cpdss.gateway.entity.RoleUserMapping;
-import com.cpdss.gateway.entity.Roles;
-import com.cpdss.gateway.entity.Screen;
-import com.cpdss.gateway.entity.UserStatus;
-import com.cpdss.gateway.entity.Users;
-import com.cpdss.gateway.repository.NotificationRepository;
-import com.cpdss.gateway.repository.NotificationStatusRepository;
-import com.cpdss.gateway.repository.RoleScreenRepository;
-import com.cpdss.gateway.repository.RoleUserMappingRepository;
-import com.cpdss.gateway.repository.RoleUserRepository;
-import com.cpdss.gateway.repository.RolesRepository;
-import com.cpdss.gateway.repository.ScreenRepository;
-import com.cpdss.gateway.repository.UserStatusRepository;
-import com.cpdss.gateway.repository.UsersRepository;
+import com.cpdss.gateway.entity.*;
+import com.cpdss.gateway.repository.*;
 import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import com.cpdss.gateway.security.ship.ShipJwtService;
 import com.cpdss.gateway.security.ship.ShipUserContext;
@@ -172,6 +159,7 @@ public class UserService {
         || (null != usersEntity.getStatus()
             && UserStatusValue.APPROVED.getId().equals(usersEntity.getStatus().getId()))) {
       user.setId(usersEntity.getId());
+      user.setUsername(usersEntity.getUsername());
       List<RoleUserMapping> roleUserList =
           this.roleUserMappingRepository.findByUsersAndIsActive(
               usersEntity, true); // usersEntity.getRoleUserMappings();
