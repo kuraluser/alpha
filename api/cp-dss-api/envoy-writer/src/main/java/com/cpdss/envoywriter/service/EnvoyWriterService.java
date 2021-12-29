@@ -168,7 +168,7 @@ public class EnvoyWriterService {
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     headers.set("checksum", checkSum);
     headers.set("algo", "md5");
-    headers.set("split", "n");
+    headers.set("split", "y");
     return headers;
   }
 
