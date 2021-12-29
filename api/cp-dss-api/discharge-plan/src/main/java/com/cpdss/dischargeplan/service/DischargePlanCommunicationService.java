@@ -1600,9 +1600,13 @@ public class DischargePlanCommunicationService {
       log.info("Communication ++++ CowPlanDetail or Discharge Info is empty");
       return null;
     }
-    cowPlanDetail.get(0).setDischargeInformation(dischargeInfo);
-    cowPlanDetailObj = cowPlanDetailRepository.save(cowPlanDetail.get(0));
-    log.info("Communication ==== Saved CowPlanDetail:" + cowPlanDetail);
+    CowPlanDetail cowPlanDetailGet = cowPlanDetail.get(0);
+    Optional<CowPlanDetail> cowPlanDetailOpt =
+        cowPlanDetailRepository.findById(cowPlanDetailGet.getId());
+    setEntityDocFields(cowPlanDetailGet, cowPlanDetailOpt);
+    cowPlanDetailGet.setDischargeInformation(dischargeInfo);
+    cowPlanDetailObj = cowPlanDetailRepository.save(cowPlanDetailGet);
+    log.info("Communication ==== Saved CowPlanDetail:" + cowPlanDetailObj);
     return cowPlanDetailObj;
   }
   // region dave Json Data
