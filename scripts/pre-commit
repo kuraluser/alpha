@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "
+╔═╗┌─┐┌─┐┌┬┐┬  ┌─┐┌─┐┌─┐  ╔═╗┬ ┬┌─┐┌─┐┬┌─
+╚═╗├─┘│ │ │ │  ├┤ └─┐└─┐  ║  ├─┤├┤ │  ├┴┐
+╚═╝┴  └─┘ ┴ ┴─┘└─┘└─┘└─┘  ╚═╝┴ ┴└─┘└─┘┴ ┴
+"
+
+cd api/cp-dss-api/
+./gradlew spotlessCheck
+status=$?
+
+echo "*****Completed SpotlessCheck******"
+
+exit $status

@@ -82,7 +82,14 @@ subprojects {
         }
     }
 
-    it.tasks.build.dependsOn it.tasks.spotlessApply
+
+    task installLocalGitHook(type: Copy){
+        from new File('../../../', 'scripts/pre-commit')
+        into { new File('../../../', '.git/hooks')}
+        fileMode 0775
+    }
+
+    it.tasks.build.dependsOn (it.tasks.spotlessApply, it.tasks.installLocalGitHook)
 
     configurations {
         all {
