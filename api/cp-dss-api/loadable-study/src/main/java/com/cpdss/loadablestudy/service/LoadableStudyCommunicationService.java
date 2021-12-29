@@ -818,8 +818,13 @@ public class LoadableStudyCommunicationService {
         saveLoadablePlanStowageDetailsTemp();
         saveLoadablePatternAlgoStatus();
         saveDischargeStudyCowDetail();
-        saveRuleVesselMapping();
-        saveRuleVesselMappingInput();
+        try {
+          saveRuleVesselMapping();
+          saveRuleVesselMappingInput();
+        } catch (GenericServiceException e) {
+          // TODO temporarily removed for QA
+          e.printStackTrace();
+        }
         saveCommunicationStatusUpdate(processGroupId);
       } catch (ResourceAccessException e) {
         log.error(
