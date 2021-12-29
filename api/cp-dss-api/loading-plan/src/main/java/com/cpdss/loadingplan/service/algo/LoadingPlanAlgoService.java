@@ -205,7 +205,7 @@ public class LoadingPlanAlgoService {
       processId = UUID.randomUUID().toString();
       JsonArray jsonArray =
           loadingPlanStagingService.getCommunicationData(
-              com.cpdss.loadingplan.utility.LoadingPlanConstants.loadingPlanGenerationCommList,
+              com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHIP_TO_SHORE,
               processId,
               MessageTypes.LOADINGPLAN.getMessageType(),
               loadingInfoOpt.get().getId(),
@@ -418,7 +418,8 @@ public class LoadingPlanAlgoService {
       log.info("Communication side started with Algo Errors");
       if (enableCommunication && !env.equals("ship")) {
         loadingPlanCommunication(
-            com.cpdss.loadingplan.utility.LoadingPlanConstants.loadingPlanCommWithAlgoErrorsList,
+            com.cpdss.loadingplan.utility.LoadingPlanConstants
+                .LOADING_PLAN_ALGO_ERRORS_SHORE_TO_SHIP,
             loadingInfoOpt.get());
       }
     }
@@ -466,7 +467,7 @@ public class LoadingPlanAlgoService {
       log.info("Communication side started");
       if (enableCommunication && !env.equals("ship") && !request.getHasLoadicator()) {
         loadingPlanCommunication(
-            com.cpdss.loadingplan.utility.LoadingPlanConstants.loadingPlanCommunicationList,
+            com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHORE_TO_SHIP,
             loadingInfoOpt.get());
       }
     }

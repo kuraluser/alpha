@@ -795,7 +795,7 @@ public class LoadicatorService {
           log.info("Communication side started for loadicator on");
           if (enableCommunication && !env.equals("ship")) {
             loadingPlanCommunication(
-                com.cpdss.loadingplan.utility.LoadingPlanConstants.loadingPlanCommunicationList,
+                com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHORE_TO_SHIP,
                 loadingInfoOpt.get());
           }
         } catch (Exception e) {
@@ -818,7 +818,7 @@ public class LoadicatorService {
           if (enableCommunication && !env.equals("ship")) {
             loadingPlanCommunication(
                 com.cpdss.loadingplan.utility.LoadingPlanConstants
-                    .loadingPlanCommWithAlgoErrorsList,
+                    .LOADING_PLAN_ALGO_ERRORS_SHORE_TO_SHIP,
                 loadingInfoOpt.get());
           }
         } catch (Exception ex) {

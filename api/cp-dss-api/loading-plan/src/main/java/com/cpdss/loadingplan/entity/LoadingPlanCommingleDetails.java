@@ -3,11 +3,7 @@ package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -87,4 +83,6 @@ public class LoadingPlanCommingleDetails extends EntityDoc {
 
   @Column(name = "ullage_2")
   private BigDecimal ullage2;
+
+  @Transient private String communicationRelatedEntityId;
 }

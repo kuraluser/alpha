@@ -22,6 +22,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /** @Author Selvy Thomas */
 @Log4j2
@@ -791,6 +792,27 @@ public class LoadingPlanStagingService extends StagingService {
                   processGroupId,
                   processedList,
                   loadingInformationAlgoStatus);
+            }
+            break;
+          }
+        case loading_plan_commingle_details:
+          {
+            if (!CollectionUtils.isEmpty(loadingPlanPortWiseDetailsIds)) {
+              String loadingPlanCommingleDetailsJson =
+                  loadingPlanStagingRepository.getLoadingPlanCommingleDetailsWithPortIds(
+                      loadingPlanPortWiseDetailsIds);
+              if (loadingPlanCommingleDetailsJson != null) {
+                JsonArray loadingPlanCommingleDetails =
+                    JsonParser.parseString(loadingPlanCommingleDetailsJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    loadingPlanCommingleDetails);
+              }
             }
             break;
           }

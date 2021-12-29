@@ -59,12 +59,13 @@ public class LoadingPlanConstants {
     LOADING_INSTRUCTIONS("loading_instructions"),
     SYNOPTICAL_TABLE("synoptical_table"),
     LOADABLE_STUDY_PORT_ROTATION("loadable_study_port_rotation"),
-    LOADING_INFORMATION_ALGO_STATUS("loading_information_algo_status");
+    LOADING_INFORMATION_ALGO_STATUS("loading_information_algo_status"),
+    LOADING_PLAN_COMMINGLE_DETAILS("loading_plan_commingle_details");
 
     public final String table;
   }
 
-  public static final List<String> loadingPlanCommunicationList =
+  public static final List<String> LOADING_PLAN_SHORE_TO_SHIP =
       Arrays.asList(
           "loading_information",
           "loading_sequence",
@@ -86,16 +87,18 @@ public class LoadingPlanConstants {
           "json_data",
           "algo_error_heading",
           "algo_errors",
-          "loading_information_algo_status");
+          "loading_information_algo_status",
+          "port_loadable_plan_commingle_details",
+          "loading_plan_commingle_details");
 
-  public static final List<String> loadingPlanCommWithAlgoErrorsList =
+  public static final List<String> LOADING_PLAN_ALGO_ERRORS_SHORE_TO_SHIP =
       Arrays.asList(
           "loading_information",
           "loading_information_algo_status",
           "algo_error_heading",
           "algo_errors");
 
-  public static final List<String> loadingPlanGenerationCommList =
+  public static final List<String> LOADING_PLAN_SHIP_TO_SHORE =
       Arrays.asList(
           "loading_information",
           "cargo_topping_off_sequence",

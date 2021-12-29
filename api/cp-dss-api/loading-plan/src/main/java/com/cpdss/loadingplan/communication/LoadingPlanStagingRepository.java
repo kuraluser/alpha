@@ -188,4 +188,10 @@ public interface LoadingPlanStagingRepository extends StagingRepository {
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loading_delay_reason u where loading_delay_xid IN (SELECT id FROM loading_delay where loading_xid=?1)",
       nativeQuery = true)
   String getLoadingDelayReasonWithLoadingId(Long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loading_plan_commingle_details u where loading_plan_portwise_details_xid IN ?1",
+      nativeQuery = true)
+  String getLoadingPlanCommingleDetailsWithPortIds(List<Long> loadingPlanPortWiseDetailsIds);
 }

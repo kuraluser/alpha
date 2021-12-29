@@ -97,6 +97,7 @@ public class LoadingPlanCommunicationServiceTest {
   @MockBean private LoadingInstructionRepository loadingInstructionRepository;
   @MockBean private LoadingDelayReasonRepository loadingDelayReasonRepository;
   @MockBean private ReasonForDelayRepository reasonForDelayRepository;
+  @MockBean private LoadingPlanCommingleDetailsRepository loadingPlanCommingleDetailsRepository;
 
   @MockBean
   private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;

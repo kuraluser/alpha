@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 @Log4j2
@@ -126,6 +127,7 @@ public class LoadingPlanCommunicationService {
   @Autowired private LoadingInstructionRepository loadingInstructionRepository;
   @Autowired private LoadingDelayReasonRepository loadingDelayReasonRepository;
   @Autowired private ReasonForDelayRepository reasonForDelayRepository;
+  @Autowired private LoadingPlanCommingleDetailsRepository loadingPlanCommingleDetailsRepository;
 
   @Autowired
   private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
@@ -319,6 +321,7 @@ public class LoadingPlanCommunicationService {
       List<BallastOperation> ballastOperationList = null;
       List<EductionOperation> eductionOperationList = null;
       List<CargoLoadingRate> cargoLoadingRateList = null;
+      List<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsList = null;
       // Ullage update tables
       List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList = null;
       List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
@@ -922,6 +925,22 @@ public class LoadingPlanCommunicationService {
                   new Gson().fromJson(jsonArray.get(0).getAsJsonObject(), listType);
               idMap.put(
                   LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable(),
+                  dataTransferStage.getId());
+              break;
+            }
+          case loading_plan_commingle_details:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingPlanCommingleDetails());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_plan_portwise_details_xid");
+              listType = new TypeToken<ArrayList<LoadingPlanCommingleDetails>>() {}.getType();
+              loadingPlanCommingleDetailsList = new Gson().fromJson(jsonArray, listType);
+              idMap.put(
+                  LoadingPlanTables.LOADING_PLAN_COMMINGLE_DETAILS.getTable(),
                   dataTransferStage.getId());
               break;
             }
@@ -2040,6 +2059,43 @@ public class LoadingPlanCommunicationService {
         } catch (Exception e) {
           updateStatusInExceptionCase(
               idMap.get(LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              e.getMessage());
+        }
+      }
+      if (!CollectionUtils.isEmpty(loadingPlanCommingleDetailsList)) {
+        try {
+          for (LoadingPlanCommingleDetails loadingPlanCommingleDetails :
+              loadingPlanCommingleDetailsList) {
+            Optional<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsObj =
+                loadingPlanCommingleDetailsRepository.findById(loadingPlanCommingleDetails.getId());
+            setEntityDocFields(loadingPlanCommingleDetails, loadingPlanCommingleDetailsObj);
+            // Set LoadingPlanPortWiseDetails
+            loadingPlanCommingleDetails.setLoadingPlanPortWiseDetails(
+                emptyIfNull(loadingPlanPortWiseDetailsList).stream()
+                    .filter(
+                        loadingPlanPortWiseDetails ->
+                            loadingPlanPortWiseDetails
+                                .getId()
+                                .equals(
+                                    Long.valueOf(
+                                        loadingPlanCommingleDetails
+                                            .getCommunicationRelatedEntityId())))
+                    .findFirst()
+                    .orElse(null));
+          }
+          loadingPlanCommingleDetailsRepository.saveAll(loadingPlanCommingleDetailsList);
+          log.info("Saved LoadingPlanCommingleDetails:" + loadingPlanCommingleDetailsList);
+        } catch (ResourceAccessException e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_PLAN_COMMINGLE_DETAILS.getTable()),
+              processId,
+              retryStatus,
+              e.getMessage());
+        } catch (Exception e) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADING_PLAN_COMMINGLE_DETAILS.getTable()),
               processId,
               StagingStatus.FAILED.getStatus(),
               e.getMessage());
