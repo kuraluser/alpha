@@ -14,18 +14,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
-import com.cpdss.common.generated.discharge_plan.DischargeInfoStatusReply;
-import com.cpdss.common.generated.discharge_plan.DischargeInfoStatusRequest;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
-import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsRequest;
-import com.cpdss.common.generated.discharge_plan.DischargePlanStowageDetailsResponse;
-import com.cpdss.common.generated.discharge_plan.DischargeSequenceReply;
-import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataReply;
-import com.cpdss.common.generated.discharge_plan.DischargingInfoLoadicatorDataRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveRequest;
-import com.cpdss.common.generated.discharge_plan.DischargingPlanSaveResponse;
+import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleDetails.Builder;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
@@ -42,10 +31,13 @@ import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.domain.algo.DischargingInformationAlgoResponse;
 import com.cpdss.dischargeplan.entity.*;
+import com.cpdss.dischargeplan.entity.DischargeInformation;
+import com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.*;
 import com.cpdss.dischargeplan.service.loadicator.LoadicatorService;
 import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
@@ -170,120 +162,8 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
           responseObserver) {
     com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.Builder builder =
         com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.newBuilder();
-    com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest algoRequest =
-        new com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest();
     try {
-      log.info("Generate Discharge Plan RPC: Payload", Utils.toJson(request));
-      com.cpdss.dischargeplan.entity.DischargeInformation dischargeInformation =
-          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
-      if (dischargeInformation == null) {
-        throw new GenericServiceException(
-            "Could not find discharge information " + request.getDischargeInfoId(),
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      // Call To Algo End Point for Loading
-      String processId = null;
-      Long status = null;
-      if (enableCommunication && env.equals("ship")) {
-        status = DischargePlanConstants.DISCHARGE_INFORMATION_COMMUNICATED_TO_SHORE;
-      } else {
-        status = DischargePlanConstants.DISCHARGING_INFORMATION_PROCESSING_STARTED_ID;
-      }
-      log.info("DischargingInformation status:{}", status);
-      Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
-          dischargePlanAlgoService.getDischargingInformationStatus(status);
-      try {
-        if (env.equals("ship") && enableCommunication) {
-          log.info("Communication side started for generate DischargePlan");
-          // =================  Algo changes =======================
-          processId = UUID.randomUUID().toString();
-          JsonArray jsonArray =
-              dischargePlanStagingService.getCommunicationData(
-                  com.cpdss.dischargeplan.service.utility.DischargePlanConstants
-                      .DISCHARGE_PLAN_SHIP_TO_SHORE,
-                  processId,
-                  MessageTypes.DISCHARGEPLAN.getMessageType(),
-                  dischargeInformation.getId(),
-                  null);
-          log.info("Json Array in Discharging plan service: " + jsonArray.toString());
-          EnvoyWriter.WriterReply ewReply =
-              dischargePlanCommunicationService.passRequestPayloadToEnvoyWriter(
-                  jsonArray.toString(),
-                  dischargeInformation.getVesselXid(),
-                  MessageTypes.DISCHARGEPLAN.getMessageType());
-
-          if (DischargePlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-            log.info("------- Envoy writer has called successfully : " + ewReply);
-            DischargePlanCommunicationStatus dischargePlanCommunicationStatus =
-                new DischargePlanCommunicationStatus();
-            if (ewReply.getMessageId() != null) {
-              dischargePlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-              dischargePlanCommunicationStatus.setCommunicationStatus(
-                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-            }
-            dischargePlanCommunicationStatus.setReferenceId(dischargeInformation.getId());
-            dischargePlanCommunicationStatus.setMessageType(
-                MessageTypes.DISCHARGEPLAN.getMessageType());
-            dischargePlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-            dischargePlanCommunicationStatus.setActive(true);
-            DischargePlanCommunicationStatus dischargePlanCommunication =
-                dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
-            log.info(
-                "DischargePlanCommunicationStatus table updated id : "
-                    + dischargePlanCommunication.getId());
-            // Set Discharging Status
-            dischargeInformationRepository.updateDischargingInfoWithInfoStatus(
-                dischargingInfoStatusOpt.get(), false, false, dischargeInformation.getId());
-          }
-          // end of communication code
-
-        } else {
-          // build DTO object
-          this.dischargePlanAlgoService.buildDischargeInformation(request, algoRequest);
-
-          // Save Above JSON In LS json data Table
-          dischargePlanAlgoService.saveDischargingInformationRequestJson(
-              algoRequest, request.getDischargeInfoId());
-          ObjectMapper objectMapper = new ObjectMapper();
-          String ss = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoRequest);
-          builder.setRequestAsJsonString(ss);
-          log.info("algo request payload - {}", ss);
-          log.info("Call To Algo End Point for Discharging");
-          // Call To Algo End Point for Loading
-          DischargingInformationAlgoResponse response =
-              restTemplate.postForObject(
-                  planGenerationUrl, algoRequest, DischargingInformationAlgoResponse.class);
-          processId = response.getProcessId();
-          log.info("DischargingInformationAlgoResponse:{}", response);
-          // Set Loading Status
-          dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
-          dischargeInformation.setIsDischargingPlanGenerated(false);
-          dischargeInformation.setIsDischargingSequenceGenerated(false);
-          dischargeInformationRepository.save(dischargeInformation);
-        }
-        dischargePlanAlgoService.createDischargingInformationAlgoStatus(
-            dischargeInformation, processId, dischargingInfoStatusOpt.get(), null);
-        builder.setProcessId(processId);
-        builder.setResponseStatus(
-            Common.ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
-
-      } catch (HttpStatusCodeException e) {
-        log.error("Error occured in ALGO side while calling new_loadable API");
-        Optional<DischargingInformationStatus> errorOccurredStatusOpt =
-            dischargePlanAlgoService.getDischargingInformationStatus(
-                DischargePlanConstants.DISCHARGING_INFORMATION_ERROR_OCCURRED_ID);
-        dischargeInformationService.updateDischargingInformationStatus(
-            errorOccurredStatusOpt.get(), dischargeInformation.getId());
-        dischargePlanAlgoService.saveAlgoInternalError(
-            dischargeInformation, null, Lists.newArrayList(e.getResponseBodyAsString()));
-        builder.setResponseStatus(
-            Common.ResponseStatus.newBuilder()
-                .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
-                .setMessage(e.getMessage())
-                .setStatus(DischargePlanConstants.FAILED)
-                .build());
-      }
+      this.generateDischargingPlan(request, builder);
     } catch (Exception e) {
       e.printStackTrace();
       builder.setResponseStatus(
@@ -295,6 +175,124 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  public void generateDischargingPlan(
+      DischargeInformationRequest request, DischargePlanAlgoRequest.Builder builder)
+      throws GenericServiceException, JsonProcessingException {
+    log.info("Generate Discharge Plan RPC: Payload", Utils.toJson(request));
+    com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest algoRequest =
+        new com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest();
+    DischargeInformation dischargeInformation =
+        dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+    if (dischargeInformation == null) {
+      throw new GenericServiceException(
+          "Could not find discharge information " + request.getDischargeInfoId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    // Call To Algo End Point for Loading
+    String processId = null;
+    Long status = null;
+    if (enableCommunication && env.equals("ship")) {
+      status = DischargePlanConstants.DISCHARGE_INFORMATION_COMMUNICATED_TO_SHORE;
+    } else {
+      status = DischargePlanConstants.DISCHARGING_INFORMATION_PROCESSING_STARTED_ID;
+    }
+    log.info("DischargingInformation status:{}", status);
+    Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
+        dischargePlanAlgoService.getDischargingInformationStatus(status);
+    try {
+      if (env.equals("ship") && enableCommunication) {
+        log.info("Communication side started for generate DischargePlan");
+        // =================  Algo changes =======================
+        processId = UUID.randomUUID().toString();
+        JsonArray jsonArray =
+            dischargePlanStagingService.getCommunicationData(
+                com.cpdss.dischargeplan.service.utility.DischargePlanConstants
+                    .DISCHARGE_PLAN_SHIP_TO_SHORE,
+                processId,
+                MessageTypes.DISCHARGEPLAN.getMessageType(),
+                dischargeInformation.getId(),
+                null);
+        log.info("Json Array in Discharging plan service: " + jsonArray.toString());
+        EnvoyWriter.WriterReply ewReply =
+            dischargePlanCommunicationService.passRequestPayloadToEnvoyWriter(
+                jsonArray.toString(),
+                dischargeInformation.getVesselXid(),
+                MessageTypes.DISCHARGEPLAN.getMessageType());
+
+        if (DischargePlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+          log.info("------- Envoy writer has called successfully : " + ewReply);
+          DischargePlanCommunicationStatus dischargePlanCommunicationStatus =
+              new DischargePlanCommunicationStatus();
+          if (ewReply.getMessageId() != null) {
+            dischargePlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+            dischargePlanCommunicationStatus.setCommunicationStatus(
+                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+          }
+          dischargePlanCommunicationStatus.setReferenceId(dischargeInformation.getId());
+          dischargePlanCommunicationStatus.setMessageType(
+              MessageTypes.DISCHARGEPLAN.getMessageType());
+          dischargePlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+          dischargePlanCommunicationStatus.setActive(true);
+          DischargePlanCommunicationStatus dischargePlanCommunication =
+              dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
+          log.info(
+              "DischargePlanCommunicationStatus table updated id : "
+                  + dischargePlanCommunication.getId());
+          // Set Discharging Status
+          dischargeInformationRepository.updateDischargingInfoWithInfoStatus(
+              dischargingInfoStatusOpt.get(), false, false, dischargeInformation.getId());
+        }
+        // end of communication code
+
+      } else {
+        // build DTO object
+        this.dischargePlanAlgoService.buildDischargeInformation(request, algoRequest);
+
+        // Save Above JSON In LS json data Table
+        dischargePlanAlgoService.saveDischargingInformationRequestJson(
+            algoRequest, request.getDischargeInfoId());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String ss = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(algoRequest);
+        builder.setRequestAsJsonString(ss);
+        log.info("algo request payload - {}", ss);
+        log.info("Call To Algo End Point for Discharging");
+        // Call To Algo End Point for Loading
+        DischargingInformationAlgoResponse response =
+            restTemplate.postForObject(
+                planGenerationUrl, algoRequest, DischargingInformationAlgoResponse.class);
+        processId = response.getProcessId();
+        log.info("DischargingInformationAlgoResponse:{}", response);
+        // Set Loading Status
+        dischargeInformation.setDischargingInformationStatus(dischargingInfoStatusOpt.get());
+        dischargeInformation.setIsDischargingPlanGenerated(false);
+        dischargeInformation.setIsDischargingSequenceGenerated(false);
+        dischargeInformationRepository.save(dischargeInformation);
+      }
+      dischargePlanAlgoService.createDischargingInformationAlgoStatus(
+          dischargeInformation, processId, dischargingInfoStatusOpt.get(), null);
+      builder.setProcessId(processId);
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
+
+    } catch (HttpStatusCodeException e) {
+      log.error("Error occured in ALGO side while calling new_loadable API");
+      Optional<DischargingInformationStatus> errorOccurredStatusOpt =
+          dischargePlanAlgoService.getDischargingInformationStatus(
+              DischargePlanConstants.DISCHARGING_INFORMATION_ERROR_OCCURRED_ID);
+      dischargeInformationService.updateDischargingInformationStatus(
+          errorOccurredStatusOpt.get(), dischargeInformation.getId());
+      dischargePlanAlgoService.saveAlgoInternalError(
+          dischargeInformation, null, Lists.newArrayList(e.getResponseBodyAsString()));
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(DischargePlanConstants.FAILED)
+              .build());
     }
   }
 
