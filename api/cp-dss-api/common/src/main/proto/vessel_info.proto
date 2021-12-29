@@ -52,6 +52,12 @@ service VesselInfoService {
 	rpc GetVesselDetaildInformation(VesselIdRequest) returns (VesselDetaildInfoReply){}
 
 	rpc GetVesselTanksByTankIds(VesselTankRequest) returns (VesselTankReply){}
+
+	//	Method to get vessel DB data using the table names and list of ids
+	rpc GetVesselData(CommunicationDataGetRequest) returns (CommunicationDataResponse){}
+
+	//	Method to update vessel DB data using the table name and JSON data
+	rpc UpdateVesselData(CommunicationDataUpdateRequest) returns (ResponseStatus){}
 }
 
 

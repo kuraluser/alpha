@@ -17,4 +17,10 @@ public interface RuleVesselMappingRepository extends CommonCrudRepository<RuleVe
       "FROM RuleVesselMapping RVM WHERE RVM.vessel.id = ?1 AND RVM.isActive = ?2 AND RVM.ruleTemplate.id = ?3")
   Optional<RuleVesselMapping> checkIsRuleTemplateMapped(
       Long id, Boolean isActive, Long ruleTemplateId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM rule_vessel_mapping u where vessel_xid IN ?1",
+      nativeQuery = true)
+  String getRuleVesselMappings(List<Long> vesselIds);
 }

@@ -224,7 +224,10 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.SYNOPTICAL_TABLE.getTable(),
           LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS.getTable(),
           LoadableStudyTables.LOADABLE_STUDY_RULES.getTable(),
-          LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable());
+          LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable(),
+          // vessel-info tables
+          VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING.getTableName(),
+          VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING_INPUT.getTableName());
 
   public static final List<String> LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP =
       Arrays.asList(
@@ -359,8 +362,19 @@ public class LoadableStudiesConstants {
     LOADABLE_STUDY_RULE_XID("loadable_study_rule_xid"),
     STOWAGE_DETAILS_XID("stowage_details_xid"),
     BALLAST_DETAILS_XID("ballast_details_xid"),
-    LOADABLE_PLAN_COMMINGLE_DETAILS_XID("loadable_plan_commingle_details_xid");
+    LOADABLE_PLAN_COMMINGLE_DETAILS_XID("loadable_plan_commingle_details_xid"),
+    VESSEL_XID("vessel_xid"),
+    ID("id");
 
     private final String columnName;
+  }
+
+  @Getter
+  @AllArgsConstructor
+  public enum VESSEL_INFO_TABLES {
+    RULE_VESSEL_MAPPING("rule_vessel_mapping"),
+    RULE_VESSEL_MAPPING_INPUT("rule_vessel_mapping_input");
+
+    private final String tableName;
   }
 }

@@ -10,6 +10,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.StagingStatus;
+import com.google.common.base.Strings;
 import com.google.gson.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -390,6 +391,21 @@ public class StagingService {
   }
 
   /**
+   * Method to check if stage entity is valid
+   *
+   * @param stageEntity stageEntity JSON string value
+   * @param tableName tableName value
+   * @return true on valid entity and false on invalid
+   */
+  public static boolean isValidStageEntity(final String stageEntity, final String tableName) {
+    if (Strings.isNullOrEmpty(stageEntity)) {
+      log.info(COMM_DATA_EMPTY_MSG_TEMPLATE, tableName);
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Method to log saved entities
    *
    * @param stageEntity stageEntity value
@@ -397,6 +413,15 @@ public class StagingService {
   public static void logSavedEntity(final EntityDoc stageEntity) {
     final String tableName = stageEntity.getClass().getAnnotation(Table.class).name();
     log.info(COMM_DATA_SAVED_PREFIX_MSG_TEMPLATE + "Id: {}", tableName, stageEntity.getId());
+  }
+
+  /**
+   * Method to log external DB saved entities
+   *
+   * @param stageEntity stageEntity value
+   */
+  public static void logSavedEntity(final String tableName) {
+    log.info(COMM_DATA_SAVED_PREFIX_MSG_TEMPLATE + "Id: <External DB>", tableName);
   }
 
   /**

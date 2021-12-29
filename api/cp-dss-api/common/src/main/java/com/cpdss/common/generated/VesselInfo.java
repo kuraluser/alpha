@@ -106845,7 +106845,7 @@ public final class VesselInfo {
           + "\023\n\017BALLAST_EDUCTOR\020\010\022\026\n\022TANK_CLEANING_PU"
           + "MP\020\t*\\\n\025TankTypeForOperations\022\023\n\017EMPTY_T"
           + "ANK_TYPE\020\000\022\010\n\004PORT\020\001\022\n\n\006CENTER\020\002\022\010\n\004STBD"
-          + "\020\003\022\006\n\002WP\020\004\022\006\n\002WS\020\0052\205\n\n\021VesselInfoService"
+          + "\020\003\022\006\n\002WP\020\004\022\006\n\002WS\020\0052\232\013\n\021VesselInfoService"
           + "\0228\n\026GetAllVesselsByCompany\022\016.VesselReque"
           + "st\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsBy"
           + "Id\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n\016Ge"
@@ -106877,8 +106877,12 @@ public final class VesselInfo {
           + "s\"\000\022J\n\033GetVesselDetaildInformation\022\020.Ves"
           + "selIdRequest\032\027.VesselDetaildInfoReply\"\000\022"
           + "A\n\027GetVesselTanksByTankIds\022\022.VesselTankR"
-          + "equest\032\020.VesselTankReply\"\000B\036\n\032com.cpdss."
-          + "common.generatedP\000b\006proto3"
+          + "equest\032\020.VesselTankReply\"\000\022K\n\rGetVesselD"
+          + "ata\022\034.CommunicationDataGetRequest\032\032.Comm"
+          + "unicationDataResponse\"\000\022F\n\020UpdateVesselD"
+          + "ata\022\037.CommunicationDataUpdateRequest\032\017.R"
+          + "esponseStatus\"\000B\036\n\032com.cpdss.common.gene"
+          + "ratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

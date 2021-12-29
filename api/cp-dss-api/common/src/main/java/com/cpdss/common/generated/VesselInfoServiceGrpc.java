@@ -985,6 +985,100 @@ public final class VesselInfoServiceGrpc {
     return getGetVesselTanksByTankIdsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationDataGetRequest,
+          com.cpdss.common.generated.Common.CommunicationDataResponse>
+      getGetVesselDataMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetVesselData",
+      requestType = com.cpdss.common.generated.Common.CommunicationDataGetRequest.class,
+      responseType = com.cpdss.common.generated.Common.CommunicationDataResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationDataGetRequest,
+          com.cpdss.common.generated.Common.CommunicationDataResponse>
+      getGetVesselDataMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CommunicationDataGetRequest,
+            com.cpdss.common.generated.Common.CommunicationDataResponse>
+        getGetVesselDataMethod;
+    if ((getGetVesselDataMethod = VesselInfoServiceGrpc.getGetVesselDataMethod) == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getGetVesselDataMethod = VesselInfoServiceGrpc.getGetVesselDataMethod) == null) {
+          VesselInfoServiceGrpc.getGetVesselDataMethod =
+              getGetVesselDataMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CommunicationDataGetRequest,
+                          com.cpdss.common.generated.Common.CommunicationDataResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetVesselData"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationDataGetRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationDataResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("GetVesselData"))
+                      .build();
+        }
+      }
+    }
+    return getGetVesselDataMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationDataUpdateRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getUpdateVesselDataMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdateVesselData",
+      requestType = com.cpdss.common.generated.Common.CommunicationDataUpdateRequest.class,
+      responseType = com.cpdss.common.generated.Common.ResponseStatus.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationDataUpdateRequest,
+          com.cpdss.common.generated.Common.ResponseStatus>
+      getUpdateVesselDataMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CommunicationDataUpdateRequest,
+            com.cpdss.common.generated.Common.ResponseStatus>
+        getUpdateVesselDataMethod;
+    if ((getUpdateVesselDataMethod = VesselInfoServiceGrpc.getUpdateVesselDataMethod) == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getUpdateVesselDataMethod = VesselInfoServiceGrpc.getUpdateVesselDataMethod) == null) {
+          VesselInfoServiceGrpc.getUpdateVesselDataMethod =
+              getUpdateVesselDataMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CommunicationDataUpdateRequest,
+                          com.cpdss.common.generated.Common.ResponseStatus>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "UpdateVesselData"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationDataUpdateRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.ResponseStatus
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("UpdateVesselData"))
+                      .build();
+        }
+      }
+    }
+    return getUpdateVesselDataMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static VesselInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<VesselInfoServiceStub> factory =
@@ -1200,6 +1294,36 @@ public final class VesselInfoServiceGrpc {
           getGetVesselTanksByTankIdsMethod(), responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Method to get vessel DB data using the table names and list of ids
+     * </pre>
+     */
+    public void getVesselData(
+        com.cpdss.common.generated.Common.CommunicationDataGetRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationDataResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetVesselDataMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Method to update vessel DB data using the table name and JSON data
+     * </pre>
+     */
+    public void updateVesselData(
+        com.cpdss.common.generated.Common.CommunicationDataUpdateRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getUpdateVesselDataMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1336,6 +1460,20 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselTankRequest,
                       com.cpdss.common.generated.VesselInfo.VesselTankReply>(
                       this, METHODID_GET_VESSEL_TANKS_BY_TANK_IDS)))
+          .addMethod(
+              getGetVesselDataMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CommunicationDataGetRequest,
+                      com.cpdss.common.generated.Common.CommunicationDataResponse>(
+                      this, METHODID_GET_VESSEL_DATA)))
+          .addMethod(
+              getUpdateVesselDataMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CommunicationDataUpdateRequest,
+                      com.cpdss.common.generated.Common.ResponseStatus>(
+                      this, METHODID_UPDATE_VESSEL_DATA)))
           .build();
     }
   }
@@ -1561,6 +1699,40 @@ public final class VesselInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Method to get vessel DB data using the table names and list of ids
+     * </pre>
+     */
+    public void getVesselData(
+        com.cpdss.common.generated.Common.CommunicationDataGetRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationDataResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetVesselDataMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Method to update vessel DB data using the table name and JSON data
+     * </pre>
+     */
+    public void updateVesselData(
+        com.cpdss.common.generated.Common.CommunicationDataUpdateRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdateVesselDataMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1708,6 +1880,32 @@ public final class VesselInfoServiceGrpc {
         com.cpdss.common.generated.VesselInfo.VesselTankRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetVesselTanksByTankIdsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Method to get vessel DB data using the table names and list of ids
+     * </pre>
+     */
+    public com.cpdss.common.generated.Common.CommunicationDataResponse getVesselData(
+        com.cpdss.common.generated.Common.CommunicationDataGetRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetVesselDataMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Method to update vessel DB data using the table name and JSON data
+     * </pre>
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus updateVesselData(
+        com.cpdss.common.generated.Common.CommunicationDataUpdateRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdateVesselDataMethod(), getCallOptions(), request);
     }
   }
 
@@ -1881,6 +2079,34 @@ public final class VesselInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetVesselTanksByTankIdsMethod(), getCallOptions()), request);
     }
+
+    /**
+     *
+     *
+     * <pre>
+     * Method to get vessel DB data using the table names and list of ids
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CommunicationDataResponse>
+        getVesselData(com.cpdss.common.generated.Common.CommunicationDataGetRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetVesselDataMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Method to update vessel DB data using the table name and JSON data
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.ResponseStatus>
+        updateVesselData(com.cpdss.common.generated.Common.CommunicationDataUpdateRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdateVesselDataMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_ALL_VESSELS_BY_COMPANY = 0;
@@ -1902,6 +2128,8 @@ public final class VesselInfoServiceGrpc {
   private static final int METHODID_GET_VESSEL_PARTICULARS = 16;
   private static final int METHODID_GET_VESSEL_DETAILD_INFORMATION = 17;
   private static final int METHODID_GET_VESSEL_TANKS_BY_TANK_IDS = 18;
+  private static final int METHODID_GET_VESSEL_DATA = 19;
+  private static final int METHODID_UPDATE_VESSEL_DATA = 20;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2040,6 +2268,19 @@ public final class VesselInfoServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.VesselTankReply>)
                   responseObserver);
           break;
+        case METHODID_GET_VESSEL_DATA:
+          serviceImpl.getVesselData(
+              (com.cpdss.common.generated.Common.CommunicationDataGetRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.Common.CommunicationDataResponse>)
+                  responseObserver);
+          break;
+        case METHODID_UPDATE_VESSEL_DATA:
+          serviceImpl.updateVesselData(
+              (com.cpdss.common.generated.Common.CommunicationDataUpdateRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2123,6 +2364,8 @@ public final class VesselInfoServiceGrpc {
                       .addMethod(getGetVesselParticularsMethod())
                       .addMethod(getGetVesselDetaildInformationMethod())
                       .addMethod(getGetVesselTanksByTankIdsMethod())
+                      .addMethod(getGetVesselDataMethod())
+                      .addMethod(getUpdateVesselDataMethod())
                       .build();
         }
       }

@@ -5,13 +5,17 @@ package com.cpdss.loadablestudy.service;
 import static com.cpdss.common.communication.StagingService.isValidStageEntity;
 import static com.cpdss.common.communication.StagingService.logSavedEntity;
 import static com.cpdss.common.communication.StagingService.setEntityDocFields;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUILD_ENV_SHORE;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
@@ -29,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -49,6 +54,9 @@ Purpose - Communicating Lodable study related tables to ship to shore and vice v
 public class LoadableStudyCommunicationService {
 
   // region Autowired
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   @Autowired private LoadableStudyStagingService loadableStudyStagingService;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
   @Autowired private VoyageRepository voyageRepository;
@@ -166,6 +174,8 @@ public class LoadableStudyCommunicationService {
   private List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempStage = null;
   private LoadablePatternAlgoStatus loadablePatternAlgoStatusStage = null;
   private List<DischargeStudyCowDetail> dischargeStudyCowDetailStage = null;
+  private String ruleVesselMappingStage = null;
+  private String ruleVesselMappingInputStage = null;
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -756,6 +766,16 @@ public class LoadableStudyCommunicationService {
                       dataTransferStage.getId());
               break;
             }
+          case rule_vessel_mapping:
+            {
+              ruleVesselMappingStage = data;
+              break;
+            }
+          case rule_vessel_mapping_input:
+            {
+              ruleVesselMappingInputStage = data;
+              break;
+            }
           default:
             log.warn(
                 "Process Identifier Not Configured: {}", dataTransferStage.getProcessIdentifier());
@@ -798,6 +818,8 @@ public class LoadableStudyCommunicationService {
         saveLoadablePlanStowageDetailsTemp();
         saveLoadablePatternAlgoStatus();
         saveDischargeStudyCowDetail();
+        saveRuleVesselMapping();
+        saveRuleVesselMappingInput();
         saveCommunicationStatusUpdate(processGroupId);
       } catch (ResourceAccessException e) {
         log.error(
@@ -1817,6 +1839,24 @@ public class LoadableStudyCommunicationService {
     }
   }
 
+  /** Method to save rule_vessel_mapping table */
+  private void saveRuleVesselMapping() throws GenericServiceException {
+    currentTableName = VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING.getTableName();
+
+    if (isValidStageEntity(ruleVesselMappingStage, currentTableName)) {
+      updateCommunicationDataVesselInfo(currentTableName, ruleVesselMappingStage);
+    }
+  }
+
+  /** Method to save rule_vessel_mapping_input table */
+  private void saveRuleVesselMappingInput() throws GenericServiceException {
+    currentTableName = VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING_INPUT.getTableName();
+
+    if (isValidStageEntity(ruleVesselMappingInputStage, currentTableName)) {
+      updateCommunicationDataVesselInfo(currentTableName, ruleVesselMappingInputStage);
+    }
+  }
+
   // endregion
 
   // region Data Binding
@@ -1956,6 +1996,40 @@ public class LoadableStudyCommunicationService {
     loadablePlanStowageDetailsTempStage = null;
     loadablePatternAlgoStatusStage = null;
     dischargeStudyCowDetailStage = null;
+    ruleVesselMappingStage = null;
+    ruleVesselMappingInputStage = null;
+  }
+
+  /**
+   * Method to update communication data in vessel-info service
+   *
+   * @param tableName tableName value
+   * @param dataJson JSON array string to be updated
+   * @throws GenericServiceException Exception on update failure
+   */
+  private void updateCommunicationDataVesselInfo(final String tableName, final String dataJson)
+      throws GenericServiceException {
+    final Common.CommunicationDataUpdateRequest vesselInfoUpdateRequest =
+        Common.CommunicationDataUpdateRequest.newBuilder()
+            .setTableName(tableName)
+            .setDataJson(dataJson)
+            .build();
+
+    final Common.ResponseStatus vesselInfoUpdateResponse =
+        vesselInfoGrpcService.updateVesselData(vesselInfoUpdateRequest);
+    if (SUCCESS.equals(vesselInfoUpdateResponse.getStatus())) {
+      logSavedEntity(currentTableName);
+    } else {
+      log.error(
+          "External save failed. Service: {}, Table: {}, GRPC Response: {}",
+          "vessel-info",
+          currentTableName,
+          vesselInfoUpdateResponse);
+      throw new GenericServiceException(
+          "External save failed. Table: " + currentTableName,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
   }
 
   // endregion

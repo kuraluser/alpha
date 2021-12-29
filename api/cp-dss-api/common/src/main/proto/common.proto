@@ -114,3 +114,21 @@ message CargoHistoryOps {
 	string quantity = 7;
 	string updateDate = 8;
 }
+
+//	Communication request object for fetching tables
+message CommunicationDataGetRequest {
+	repeated int64 id = 1;
+	string tableName = 2;
+}
+
+//	Communication request object for updating tables
+message CommunicationDataUpdateRequest {
+	string dataJson = 1;
+	string tableName = 2;
+}
+
+//	Communication response object with table data
+message CommunicationDataResponse {
+	string dataJson = 1;
+	ResponseStatus responseStatus = 2;
+}

@@ -1,12 +1,18 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.communication;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+
 import com.cpdss.common.communication.StagingService;
+import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COLUMNS;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VESSEL_INFO_TABLES;
 import com.cpdss.loadablestudy.utility.ProcessIdentifiers;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -16,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +41,9 @@ public class LoadableStudyStagingService extends StagingService {
       @Autowired LoadableStudyStagingRepository loadableStudyStagingRepository) {
     super(loadableStudyStagingRepository);
   }
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
@@ -55,6 +65,7 @@ public class LoadableStudyStagingService extends StagingService {
     List<Long> synopticalTableIds;
     List<Long> cargoNominationIds = null;
     Long voyageId = null;
+    Long vesselId = null;
     for (String processIdentifier : processIdentifierList) {
       if (processedList.contains(processIdentifier)) {
         log.info("Table already fetched : {}", processIdentifier);
@@ -70,6 +81,10 @@ public class LoadableStudyStagingService extends StagingService {
               JsonArray loadableStudy = JsonParser.parseString(loadableStudyJson).getAsJsonArray();
               JsonObject loadableStudyJsonObj = loadableStudy.get(0).getAsJsonObject();
               voyageId = loadableStudyJsonObj.get("voyage_xid").getAsLong();
+              vesselId =
+                  loadableStudyJsonObj
+                      .get(LOADABLE_STUDY_COLUMNS.VESSEL_XID.getColumnName())
+                      .getAsLong();
               String voyageJson = loadableStudyStagingRepository.getVoyageWithId(voyageId);
               if (voyageJson != null) {
                 JsonArray voyage = JsonParser.parseString(voyageJson).getAsJsonArray();
@@ -751,12 +766,84 @@ public class LoadableStudyStagingService extends StagingService {
             }
             break;
           }
+        case rule_vessel_mapping:
+          {
+            final String ruleVesselMappingJson =
+                getCommunicationDataFromVesselInfo(
+                    processIdentifier, Collections.singletonList(vesselId));
+            if (null != ruleVesselMappingJson) {
+              JsonArray ruleVesselMapping =
+                  JsonParser.parseString(ruleVesselMappingJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  ruleVesselMapping);
+
+              // Get rule_vessel_mapping_input data
+              List<Long> ruleVesselMappingIds = new ArrayList<>();
+              ruleVesselMapping.forEach(
+                  jsonElement -> {
+                    ruleVesselMappingIds.add(
+                        jsonElement
+                            .getAsJsonObject()
+                            .get(LOADABLE_STUDY_COLUMNS.ID.getColumnName())
+                            .getAsLong());
+                  });
+
+              final String ruleVesselMappingInputJson =
+                  getCommunicationDataFromVesselInfo(processIdentifier, ruleVesselMappingIds);
+              if (null != ruleVesselMappingInputJson) {
+                JsonArray ruleVesselMappingInput =
+                    JsonParser.parseString(ruleVesselMappingInputJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING_INPUT.getTableName(),
+                    processId,
+                    processGroupId,
+                    processedList,
+                    ruleVesselMappingInput);
+              }
+            }
+            break;
+          }
         default:
           log.warn("Process Identifier Not Configured: {}", processIdentifier);
           break;
       }
     }
     return array;
+  }
+
+  /**
+   * Method to get data from vessel-info service
+   *
+   * @param tableName tableName value
+   * @param ids id values for which the records are to be fetched
+   * @return JSON string of records in vessel-info service
+   */
+  private String getCommunicationDataFromVesselInfo(final String tableName, final List<Long> ids) {
+    Common.CommunicationDataGetRequest vesselInfoDataGetRequest =
+        Common.CommunicationDataGetRequest.newBuilder()
+            .setTableName(tableName)
+            .addAllId(ids)
+            .build();
+
+    final Common.CommunicationDataResponse vesselInfoDataResponse =
+        vesselInfoGrpcService.getVesselData(vesselInfoDataGetRequest);
+    if (SUCCESS.equals(vesselInfoDataResponse.getResponseStatus().getStatus())) {
+      return vesselInfoDataResponse.getDataJson();
+    }
+    log.error(
+        "External get failed. Service: {}, Table: {}, GRPC Request: {}",
+        "vessel-info",
+        tableName,
+        vesselInfoDataGetRequest);
+    return null;
   }
 
   private void addIntoProcessedList(

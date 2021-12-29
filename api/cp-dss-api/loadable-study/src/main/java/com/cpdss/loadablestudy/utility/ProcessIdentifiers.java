@@ -37,6 +37,8 @@ public enum ProcessIdentifiers {
   discharge_quantity_cargo_details,
   loadable_study_rules,
   loadable_study_rule_input,
+  rule_vessel_mapping,
+  rule_vessel_mapping_input,
   loadable_plan_comments,
   loadable_plan_stowage_details_temp,
   loadable_pattern_algo_status,

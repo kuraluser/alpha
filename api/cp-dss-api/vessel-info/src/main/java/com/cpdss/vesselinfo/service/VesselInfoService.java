@@ -1,9 +1,11 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.vesselinfo.service;
 
+import static com.cpdss.vesselinfo.constants.VesselInfoConstants.*;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.Common.RuleDropDownMaster;
 import com.cpdss.common.generated.Common.RulePlans;
@@ -65,6 +67,7 @@ import com.cpdss.vesselinfo.domain.VesselRule;
 import com.cpdss.vesselinfo.domain.VesselTankDetails;
 import com.cpdss.vesselinfo.entity.*;
 import com.cpdss.vesselinfo.repository.*;
+import com.google.common.base.Strings;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -147,6 +150,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired private VesselParticularService vesselParticularService;
   @Autowired VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
   @Autowired VesselCowService vesselCowService;
+  @Autowired VesselInfoCommunicationService vesselInfoCommunicationService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -2975,6 +2979,112 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
               .build());
     } finally {
       responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getVesselData(
+      Common.CommunicationDataGetRequest request,
+      StreamObserver<Common.CommunicationDataResponse> responseObserver) {
+
+    Common.CommunicationDataResponse.Builder communicationDataResponseBuilder =
+        Common.CommunicationDataResponse.newBuilder();
+
+    try {
+      // Get records from table
+      String records;
+      if (VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING.getTableName().equals(request.getTableName())) {
+        records = ruleVesselMappingRepository.getRuleVesselMappings(request.getIdList());
+      } else if (VESSEL_INFO_TABLES
+          .RULE_VESSEL_MAPPING_INPUT
+          .getTableName()
+          .equals(request.getTableName())) {
+        records = ruleVesselMappingInputRespository.getRuleVesselMappingInputs(request.getIdList());
+      } else {
+        log.error("Table not configured: {}", request.getTableName());
+        throw new GenericServiceException(
+            "Table not configured: " + request.getTableName(),
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      // Set values
+      communicationDataResponseBuilder.setDataJson(records);
+
+      // Set response status
+      communicationDataResponseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(SUCCESS)
+              .setMessage(SUCCESS)
+              .setCode(String.valueOf(HttpStatusCode.OK.value()))
+              .setHttpStatusCode(HttpStatusCode.OK.value())
+              .build());
+    } catch (GenericServiceException e) {
+      // Set response status
+      communicationDataResponseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(e.getCode())
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
+    } catch (Exception e) {
+      // Set response status
+      communicationDataResponseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .build());
+    } finally {
+      // Build response
+      responseObserver.onNext(communicationDataResponseBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void updateVesselData(
+      Common.CommunicationDataUpdateRequest request,
+      StreamObserver<ResponseStatus> responseObserver) {
+
+    ResponseStatus.Builder responseBuilder = ResponseStatus.newBuilder();
+
+    try {
+      if (VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING.getTableName().equals(request.getTableName())) {
+        vesselInfoCommunicationService.saveRuleVesselMapping(request.getDataJson());
+      } else if (VESSEL_INFO_TABLES
+          .RULE_VESSEL_MAPPING_INPUT
+          .getTableName()
+          .equals(request.getTableName())) {
+        vesselInfoCommunicationService.saveRuleVesselMappingInput(request.getDataJson());
+      } else {
+        log.error("Table not configured: {}", request.getTableName());
+        throw new GenericServiceException(
+            "Table not configured: " + request.getTableName(),
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } catch (GenericServiceException e) {
+      // Set response status
+      responseBuilder
+          .setStatus(FAILED)
+          .setMessage(Strings.nullToEmpty(e.getMessage()))
+          .setCode(e.getCode())
+          .setHttpStatusCode(e.getStatus().value())
+          .build();
+    } catch (Exception e) {
+      // Set response status
+      responseBuilder
+          .setStatus(FAILED)
+          .setMessage(Strings.nullToEmpty(e.getMessage()))
+          .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+          .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+          .build();
+    } finally {
+      // Build response
+      responseObserver.onNext(responseBuilder.build());
       responseObserver.onCompleted();
     }
   }
