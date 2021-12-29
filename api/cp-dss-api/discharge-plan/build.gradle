@@ -2,10 +2,20 @@
 ext{
     dbHost = System.getenv('DB_HOST') ?: ""
     dbName = System.getenv('DB_NAME') ?: ""
-    dbUser = System.getenv('DB_USER') ?: ""
-    dbPassword = System.getenv('DB_PASSWORD') ?: ""
-    algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
+	dbUser = System.getenv('DB_USER') ?: ""
+	dbPassword = System.getenv('DB_PASSWORD') ?: ""
+	algoBaseURL = System.getenv('ALGO_BASE_URL') ?: ""
+	hostRootPath = System.getenv('HOST_ROOT_PATH')?:""
+	enableComm = System.getenv('ENABLE_COMM') ?: ""
+	cpdssBuildEnv = System.getenv('CPDSS_BUILD_ENV')?:""
+	commTimeLimit = System.getenv('COMM_TIME_LIMIT')?:""
 	enableJudgement = System.getenv('ENABLE_JUDGEMENT') ?: ""
+
+	grpcPortHost = System.getenv('GRPC_PORT_HOST') ?: '9098'
+	debugPortHost = System.getenv('DEBUG_PORT_HOST') ?: '5098'
+	imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-discharge-plan'
+	containerNameVal = System.getenv('CONTAINER_NAME') ?: "discharge-plan-container"
+	serviceNameVal = System.getenv('SERVICE_NAME') ?: 'discharge-plan-service'
 }
 
 appConfig {
@@ -19,17 +29,25 @@ appConfig {
 	javaMainClass = 'com.cpdss.dischargeplan.DischargePlanApplication'
 	monitoring = 'y'
 	docker {
-		imageName = 'cpdss-discharge-plan'
-		containerName = 'discharge-plan-container'
+		imageName = imageNameVal
+		containerName = containerNameVal
 		creationTime = 'USE_CURRENT_TIMESTAMP'
 		networkName = 'cpdss-network'
+		hostVolumeMapping {
+			hostPath = hostRootPath
+			containerPath = "/data"
+		}
+		hostPortMapping {
+			hostGrpcPort = Integer.parseInt(grpcPortHost)
+			hostDebugPort = Integer.parseInt(debugPortHost)
+		}
 		swarm {
-			serviceName = 'discharge-plan-service'
+			serviceName = serviceNameVal
 			swarmMode = REPLICATED_MODE
 			replicas = 1
 			rollbackOnUpdateFailure = true
 		}
-		environment = ['DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'ALGO_BASE_URL': algoBaseURL,
+		environment = ['GRPC_PORT': '8090', 'DB_HOST': dbHost, 'DB_NAME': dbName, 'DB_USER': dbUser, 'DB_PASSWORD': dbPassword, 'ALGO_BASE_URL': algoBaseURL,
 					   'ATTACHMENT_ROOT_PATH': '/data', 'ENABLE_JUDGEMENT': enableJudgement]
 		labels = ["Key1":"testLabel"]
 	}

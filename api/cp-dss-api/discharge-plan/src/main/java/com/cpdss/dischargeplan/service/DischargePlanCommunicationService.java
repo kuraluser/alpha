@@ -19,6 +19,7 @@ import com.cpdss.dischargeplan.service.grpc.DischargePlanRPCService;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants.DischargingPlanTables;
 import com.cpdss.dischargeplan.service.utility.ProcessIdentifiers;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import java.lang.reflect.Type;
@@ -385,9 +386,23 @@ public class DischargePlanCommunicationService {
       if (!env.equals("ship") && dischargeInfo != null) {
         if (processGroupId.equals(MessageTypes.DISCHARGEPLAN.getMessageType())) {
           log.info("Algo call started for DischargePlan");
-          DischargeInformationRequest.Builder builder = DischargeInformationRequest.newBuilder();
-          builder.setDischargeInfoId(dischargeInfo.getId());
-          dischargePlanRPCService.generateDischargePlan(builder.build(), null);
+          try {
+            DischargeInformationRequest.Builder builder = DischargeInformationRequest.newBuilder();
+            builder.setDischargeInfoId(dischargeInfo.getId());
+            com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.Builder
+                algoReplyBuilder =
+                    com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.newBuilder();
+            dischargePlanRPCService.generateDischargingPlan(builder.build(), algoReplyBuilder);
+          } catch (JsonProcessingException e) {
+            log.error(
+                "Exception got in Dischargeplan Communication side when calling algo:{}",
+                e.getMessage());
+            throw new GenericServiceException(
+                e.getMessage(),
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR,
+                e);
+          }
         }
       }
     }
