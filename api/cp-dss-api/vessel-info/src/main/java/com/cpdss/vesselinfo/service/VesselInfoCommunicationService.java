@@ -5,7 +5,7 @@ import static com.cpdss.common.communication.StagingService.isValidStageEntity;
 import static com.cpdss.common.communication.StagingService.logSavedEntity;
 import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 
-import com.cpdss.common.communication.StagingService;
+import com.cpdss.vesselinfo.communication.VesselInfoStagingService;
 import com.cpdss.vesselinfo.constants.VesselInfoConstants.VESSEL_INFO_TABLES;
 import com.cpdss.vesselinfo.entity.RuleVesselMapping;
 import com.cpdss.vesselinfo.entity.RuleVesselMappingInput;
@@ -38,7 +38,7 @@ public class VesselInfoCommunicationService {
 
   // region Autowired
 
-  @Autowired private StagingService stagingService;
+  @Autowired private VesselInfoStagingService stagingService;
   @Autowired private RuleVesselMappingRepository ruleVesselMappingRepository;
   @Autowired private RuleTemplateRepository ruleTemplateRepository;
   @Autowired private VesselRepository vesselRepository;
