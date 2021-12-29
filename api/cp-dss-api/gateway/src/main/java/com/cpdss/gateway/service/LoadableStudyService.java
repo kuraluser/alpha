@@ -4708,12 +4708,7 @@ public class LoadableStudyService {
         request.getSynopticalRecords().stream()
             .filter(rec -> rec.getPortRotationId().equals(portRotationId))
             .collect(Collectors.toList());
-    if (records.size() != 2) {
-      throw new GenericServiceException(
-          "Invalid size of port records",
-          CommonErrorCodes.E_HTTP_BAD_REQUEST,
-          HttpStatusCode.BAD_REQUEST);
-    }
+
     for (SynopticalRecord rec : records) {
       com.cpdss.common.generated.LoadableStudy.SynopticalRecord.Builder recordBuilder =
           com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder();
