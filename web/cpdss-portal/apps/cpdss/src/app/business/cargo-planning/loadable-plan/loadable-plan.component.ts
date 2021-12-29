@@ -412,6 +412,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
   * @memberof LoadablePlanComponent
   */
   private async getLoadablePlanDetails() {
+    this.loadablePlanTransformationService.ballastEditStatus({ validateAndSaveProcessing: false });
     this.loadableQuantityCargo = [];
     this.ngxSpinnerService.show();
     const loadablePlanRes: ILoadablePlanResponse = await this.loadablePlanApiService.getLoadablePlanDetails(this.vesselId, this.voyageId, this.loadableStudyId, this.loadablePatternId).toPromise();
