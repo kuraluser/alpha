@@ -47,7 +47,7 @@ public class DischargePlanConstants {
   public static final Long DISCHARGE_INFORMATION_REQUEST_JSON_TYPE_ID = 18L;
   public static final Long DISCHARGE_INFORMATION_LOADICATOR_REQUEST_JSON_TYPE_ID = 20L;
   public static final Long DISCHARGE_INFORMATION_LOADICATOR_RESPONSE_JSON_TYPE_ID = 21L;
-  public static final Long DISCHARGE_INFORMATION_COMMUNICATED_TO_SHORE = 16L;
+  public static final Long DISCHARGE_INFORMATION_COMMUNICATED_TO_SHORE = 18L;
 
   // discharge Plan Conditions
   public static final Integer DISCHARGE_PLAN_ARRIVAL_CONDITION_VALUE = 1;
