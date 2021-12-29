@@ -6,6 +6,7 @@ import static com.cpdss.common.communication.StagingService.logSavedEntity;
 import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 
 import com.cpdss.vesselinfo.communication.VesselInfoStagingService;
+import com.cpdss.vesselinfo.constants.VesselInfoConstants.VESSEL_INFO_COLUMNS;
 import com.cpdss.vesselinfo.constants.VesselInfoConstants.VESSEL_INFO_TABLES;
 import com.cpdss.vesselinfo.entity.RuleVesselMapping;
 import com.cpdss.vesselinfo.entity.RuleVesselMappingInput;
@@ -66,7 +67,14 @@ public class VesselInfoCommunicationService {
     final Type type = new TypeToken<ArrayList<RuleVesselMapping>>() {}.getType();
     List<RuleVesselMapping> ruleVesselMappingList =
         bindDataToEntity(
-            new RuleVesselMapping(), type, VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING, jsonData, null);
+            new RuleVesselMapping(),
+            type,
+            VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING,
+            jsonData,
+            null,
+            VESSEL_INFO_COLUMNS.RULE_TEMPLATE_XID.getColumnName(),
+            VESSEL_INFO_COLUMNS.VESSEL_XID.getColumnName(),
+            VESSEL_INFO_COLUMNS.RULETYPE_XID.getColumnName());
 
     if (isValidStageEntity(
         ruleVesselMappingList, VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING.getTableName())) {
@@ -83,17 +91,21 @@ public class VesselInfoCommunicationService {
                         .findById(
                             ruleVesselMapping
                                 .getCommunicationRelatedIdMap()
-                                .get("rule_template_xid"))
+                                .get(VESSEL_INFO_COLUMNS.RULE_TEMPLATE_XID.getColumnName()))
                         .orElse(null));
                 ruleVesselMapping.setVessel(
                     vesselRepository
                         .findById(
-                            ruleVesselMapping.getCommunicationRelatedIdMap().get("vessel_xid"))
+                            ruleVesselMapping
+                                .getCommunicationRelatedIdMap()
+                                .get(VESSEL_INFO_COLUMNS.VESSEL_XID.getColumnName()))
                         .orElse(null));
                 ruleVesselMapping.setRuleType(
                     ruleTypeRepository
                         .findById(
-                            ruleVesselMapping.getCommunicationRelatedIdMap().get("ruletype_xid"))
+                            ruleVesselMapping
+                                .getCommunicationRelatedIdMap()
+                                .get(VESSEL_INFO_COLUMNS.RULETYPE_XID.getColumnName()))
                         .orElse(null));
               });
 
@@ -118,7 +130,8 @@ public class VesselInfoCommunicationService {
             type,
             VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING_INPUT,
             jsonData,
-            null);
+            null,
+            VESSEL_INFO_COLUMNS.RULE_VESSEL_MAPPING_XID.getColumnName());
 
     if (isValidStageEntity(
         ruleVesselMappingInputList, VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING_INPUT.getTableName())) {
@@ -135,7 +148,7 @@ public class VesselInfoCommunicationService {
                         .findById(
                             ruleVesselMappingInput
                                 .getCommunicationRelatedIdMap()
-                                .get("rule_vessel_mapping_xid"))
+                                .get(VESSEL_INFO_COLUMNS.RULE_VESSEL_MAPPING_XID.getColumnName()))
                         .orElse(null));
               });
 

@@ -2994,6 +2994,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     try {
       // Get records from table
       String records;
+      log.info("Request for fetching Table: {}", request.getTableName());
       if (VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING.getTableName().equals(request.getTableName())) {
         records = ruleVesselMappingRepository.getRuleVesselMappings(request.getIdList());
       } else if (VESSEL_INFO_TABLES
@@ -3066,6 +3067,13 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+      // Set response status
+      responseBuilder
+          .setStatus(SUCCESS)
+          .setMessage(SUCCESS)
+          .setCode(String.valueOf(HttpStatusCode.OK.value()))
+          .setHttpStatusCode(HttpStatusCode.OK.value())
+          .build();
     } catch (GenericServiceException e) {
       // Set response status
       responseBuilder

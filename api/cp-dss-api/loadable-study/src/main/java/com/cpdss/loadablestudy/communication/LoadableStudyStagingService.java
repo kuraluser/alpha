@@ -795,7 +795,9 @@ public class LoadableStudyStagingService extends StagingService {
                   });
 
               final String ruleVesselMappingInputJson =
-                  getCommunicationDataFromVesselInfo(processIdentifier, ruleVesselMappingIds);
+                  getCommunicationDataFromVesselInfo(
+                      VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING_INPUT.getTableName(),
+                      ruleVesselMappingIds);
               if (null != ruleVesselMappingInputJson) {
                 JsonArray ruleVesselMappingInput =
                     JsonParser.parseString(ruleVesselMappingInputJson).getAsJsonArray();

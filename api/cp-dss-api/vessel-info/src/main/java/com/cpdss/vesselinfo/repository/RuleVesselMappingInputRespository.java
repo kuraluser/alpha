@@ -29,5 +29,5 @@ public interface RuleVesselMappingInputRespository
       value =
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM rule_vessel_mapping_input u where rule_vessel_mapping_xid IN ?1",
       nativeQuery = true)
-  String getRuleVesselMappingInputs(List<Long> ruleVessleMappingIds);
+  String getRuleVesselMappingInputs(List<Long> ruleVesselMappingIds);
 }
