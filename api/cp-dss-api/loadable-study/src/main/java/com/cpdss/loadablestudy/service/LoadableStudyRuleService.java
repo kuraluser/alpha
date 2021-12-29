@@ -1089,7 +1089,7 @@ public class LoadableStudyRuleService {
             List<LoadableStudyRuleInput> loadableStudyRuleInputs;
 
             List<LoadableStudyRuleInput> loadableStudyRuleInputList =
-                loadableStudyRuleInputRepository.findAllByLoadableStudyRules(rulesList);
+                loadableStudyRuleInputRepository.findAllByLoadableStudyRuleXId(rulesList);
 
             if (!CollectionUtils.isEmpty(loadableStudyRuleInputList)) {
               loadableStudyRuleInputs =

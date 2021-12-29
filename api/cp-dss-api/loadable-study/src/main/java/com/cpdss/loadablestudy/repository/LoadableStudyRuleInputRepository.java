@@ -16,5 +16,5 @@ public interface LoadableStudyRuleInputRepository
   @Query("UPDATE LoadableStudyRuleInput SET isActive = false WHERE id IN (:id)")
   void updateLoadbleStudyRulesInputStatus(@Param("id") List<Long> id);
 
-  List<LoadableStudyRuleInput> findAllByLoadableStudyRules(LoadableStudyRules loadableStudyRules);
+  List<LoadableStudyRuleInput> findAllByLoadableStudyRuleXId(LoadableStudyRules loadableStudyRules);
 }

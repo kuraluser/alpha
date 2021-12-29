@@ -235,7 +235,7 @@ public class LoadableStudyRuleServiceTest {
     when(this.vesselInfoGrpcService.getRulesByVesselIdAndSectionId(
             any(VesselInfo.VesselRuleRequest.class)))
         .thenReturn(getVesselRuleReply());
-    when(this.loadableStudyRuleInputRepository.findAllByLoadableStudyRules(
+    when(this.loadableStudyRuleInputRepository.findAllByLoadableStudyRuleXId(
             any(LoadableStudyRules.class)))
         .thenReturn(getLoadableStudyRulesList().get(0).getLoadableStudyRuleInputs());
     when(loadableStudyRuleRepository.findByLoadableStudyAndVesselXIdAndIsActive(
