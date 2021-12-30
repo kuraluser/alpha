@@ -46,4 +46,7 @@ public class VesselValveStrippingSequence implements Serializable {
 
   @Column(name = "manifold_side")
   private String manifoldSide;
+
+  @Column(name = "valve_side")
+  private String valveSide;
 }

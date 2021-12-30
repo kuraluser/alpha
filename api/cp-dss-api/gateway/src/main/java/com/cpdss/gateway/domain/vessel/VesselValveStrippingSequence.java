@@ -17,4 +17,6 @@ public class VesselValveStrippingSequence {
 
   private String manifoldName;
   private String manifoldSide;
+
+  private String valveSide;
 }

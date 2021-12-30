@@ -276,6 +276,7 @@ public class VesselPumpService {
         Optional.ofNullable(vvS.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
         Optional.ofNullable(vvS.getManifoldName()).ifPresent(builder::setManifoldName);
         Optional.ofNullable(vvS.getManifoldSide()).ifPresent(builder::setManifoldSide);
+        Optional.ofNullable(vvS.getValveSide()).ifPresent(builder::setValveSide);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -302,6 +303,7 @@ public class VesselPumpService {
       Optional.ofNullable(a.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
       Optional.ofNullable(a.getManifoldName()).ifPresent(builder::setManifoldName);
       Optional.ofNullable(a.getManifoldSide()).ifPresent(builder::setManifoldSide);
+      Optional.ofNullable(a.getValveSide()).ifPresent(builder::setValveSide);
       response.add(builder.build());
     }
     log.info("Vessel Valve RPC build StrippingSequenceCargoValve - Size {}", response.size());

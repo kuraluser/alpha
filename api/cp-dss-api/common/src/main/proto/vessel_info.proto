@@ -601,6 +601,7 @@ message BendingMomentType1 {
 		int32 sequenceNumber = 9;
 		string manifoldName = 10;
 		string manifoldSide = 11;
+		string valveSide = 12;
 	}
 
 	message VesselValveAirPurgeSequence {
@@ -665,6 +666,7 @@ message BendingMomentType1 {
 		int32 sequenceNumber = 9;
 		string manifoldName = 10;
 		string manifoldSide = 11;
+		string valveSide = 12;
 	}
 
 	message VesselValveEducationProcess {

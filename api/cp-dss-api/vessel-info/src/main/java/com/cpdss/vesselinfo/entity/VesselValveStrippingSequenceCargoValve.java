@@ -47,4 +47,7 @@ public class VesselValveStrippingSequenceCargoValve {
 
   @Column(name = "manifold_side")
   private String manifoldSide;
+
+  @Column(name = "valve_side")
+  private String valveSide;
 }

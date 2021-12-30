@@ -78928,6 +78928,19 @@ public final class VesselInfo {
      * @return The bytes for manifoldSide.
      */
     com.google.protobuf.ByteString getManifoldSideBytes();
+
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The valveSide.
+     */
+    java.lang.String getValveSide();
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The bytes for valveSide.
+     */
+    com.google.protobuf.ByteString getValveSideBytes();
   }
   /** Protobuf type {@code VesselValveStrippingSequence} */
   public static final class VesselValveStrippingSequence
@@ -78949,6 +78962,7 @@ public final class VesselInfo {
       valve_ = "";
       manifoldName_ = "";
       manifoldSide_ = "";
+      valveSide_ = "";
     }
 
     @java.lang.Override
@@ -79045,6 +79059,13 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 manifoldSide_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                valveSide_ = s;
                 break;
               }
             default:
@@ -79346,6 +79367,41 @@ public final class VesselInfo {
       }
     }
 
+    public static final int VALVESIDE_FIELD_NUMBER = 12;
+    private volatile java.lang.Object valveSide_;
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The valveSide.
+     */
+    public java.lang.String getValveSide() {
+      java.lang.Object ref = valveSide_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        valveSide_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The bytes for valveSide.
+     */
+    public com.google.protobuf.ByteString getValveSideBytes() {
+      java.lang.Object ref = valveSide_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        valveSide_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -79393,6 +79449,9 @@ public final class VesselInfo {
       if (!getManifoldSideBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, manifoldSide_);
       }
+      if (!getValveSideBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, valveSide_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -79435,6 +79494,9 @@ public final class VesselInfo {
       if (!getManifoldSideBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, manifoldSide_);
       }
+      if (!getValveSideBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, valveSide_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -79462,6 +79524,7 @@ public final class VesselInfo {
       if (getSequenceNumber() != other.getSequenceNumber()) return false;
       if (!getManifoldName().equals(other.getManifoldName())) return false;
       if (!getManifoldSide().equals(other.getManifoldSide())) return false;
+      if (!getValveSide().equals(other.getValveSide())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -79495,6 +79558,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getManifoldName().hashCode();
       hash = (37 * hash) + MANIFOLDSIDE_FIELD_NUMBER;
       hash = (53 * hash) + getManifoldSide().hashCode();
+      hash = (37 * hash) + VALVESIDE_FIELD_NUMBER;
+      hash = (53 * hash) + getValveSide().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -79659,6 +79724,8 @@ public final class VesselInfo {
 
         manifoldSide_ = "";
 
+        valveSide_ = "";
+
         return this;
       }
 
@@ -79699,6 +79766,7 @@ public final class VesselInfo {
         result.sequenceNumber_ = sequenceNumber_;
         result.manifoldName_ = manifoldName_;
         result.manifoldSide_ = manifoldSide_;
+        result.valveSide_ = valveSide_;
         onBuilt();
         return result;
       }
@@ -79791,6 +79859,10 @@ public final class VesselInfo {
         }
         if (!other.getManifoldSide().isEmpty()) {
           manifoldSide_ = other.manifoldSide_;
+          onChanged();
+        }
+        if (!other.getValveSide().isEmpty()) {
+          valveSide_ = other.valveSide_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -80441,6 +80513,82 @@ public final class VesselInfo {
         checkByteStringIsUtf8(value);
 
         manifoldSide_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object valveSide_ = "";
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @return The valveSide.
+       */
+      public java.lang.String getValveSide() {
+        java.lang.Object ref = valveSide_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          valveSide_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @return The bytes for valveSide.
+       */
+      public com.google.protobuf.ByteString getValveSideBytes() {
+        java.lang.Object ref = valveSide_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          valveSide_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @param value The valveSide to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValveSide(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        valveSide_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValveSide() {
+
+        valveSide_ = getDefaultInstance().getValveSide();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @param value The bytes for valveSide to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValveSideBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        valveSide_ = value;
         onChanged();
         return this;
       }
@@ -86442,6 +86590,19 @@ public final class VesselInfo {
      * @return The bytes for manifoldSide.
      */
     com.google.protobuf.ByteString getManifoldSideBytes();
+
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The valveSide.
+     */
+    java.lang.String getValveSide();
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The bytes for valveSide.
+     */
+    com.google.protobuf.ByteString getValveSideBytes();
   }
   /** Protobuf type {@code VesselValveStrippingSequenceCargoValve} */
   public static final class VesselValveStrippingSequenceCargoValve
@@ -86463,6 +86624,7 @@ public final class VesselInfo {
       valve_ = "";
       manifoldName_ = "";
       manifoldSide_ = "";
+      valveSide_ = "";
     }
 
     @java.lang.Override
@@ -86559,6 +86721,13 @@ public final class VesselInfo {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 manifoldSide_ = s;
+                break;
+              }
+            case 98:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                valveSide_ = s;
                 break;
               }
             default:
@@ -86861,6 +87030,41 @@ public final class VesselInfo {
       }
     }
 
+    public static final int VALVESIDE_FIELD_NUMBER = 12;
+    private volatile java.lang.Object valveSide_;
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The valveSide.
+     */
+    public java.lang.String getValveSide() {
+      java.lang.Object ref = valveSide_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        valveSide_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string valveSide = 12;</code>
+     *
+     * @return The bytes for valveSide.
+     */
+    public com.google.protobuf.ByteString getValveSideBytes() {
+      java.lang.Object ref = valveSide_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        valveSide_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -86908,6 +87112,9 @@ public final class VesselInfo {
       if (!getManifoldSideBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, manifoldSide_);
       }
+      if (!getValveSideBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 12, valveSide_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -86950,6 +87157,9 @@ public final class VesselInfo {
       if (!getManifoldSideBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, manifoldSide_);
       }
+      if (!getValveSideBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, valveSide_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -86979,6 +87189,7 @@ public final class VesselInfo {
       if (getSequenceNumber() != other.getSequenceNumber()) return false;
       if (!getManifoldName().equals(other.getManifoldName())) return false;
       if (!getManifoldSide().equals(other.getManifoldSide())) return false;
+      if (!getValveSide().equals(other.getValveSide())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -87012,6 +87223,8 @@ public final class VesselInfo {
       hash = (53 * hash) + getManifoldName().hashCode();
       hash = (37 * hash) + MANIFOLDSIDE_FIELD_NUMBER;
       hash = (53 * hash) + getManifoldSide().hashCode();
+      hash = (37 * hash) + VALVESIDE_FIELD_NUMBER;
+      hash = (53 * hash) + getValveSide().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -87182,6 +87395,8 @@ public final class VesselInfo {
 
         manifoldSide_ = "";
 
+        valveSide_ = "";
+
         return this;
       }
 
@@ -87224,6 +87439,7 @@ public final class VesselInfo {
         result.sequenceNumber_ = sequenceNumber_;
         result.manifoldName_ = manifoldName_;
         result.manifoldSide_ = manifoldSide_;
+        result.valveSide_ = valveSide_;
         onBuilt();
         return result;
       }
@@ -87318,6 +87534,10 @@ public final class VesselInfo {
         }
         if (!other.getManifoldSide().isEmpty()) {
           manifoldSide_ = other.manifoldSide_;
+          onChanged();
+        }
+        if (!other.getValveSide().isEmpty()) {
+          valveSide_ = other.valveSide_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -87969,6 +88189,82 @@ public final class VesselInfo {
         checkByteStringIsUtf8(value);
 
         manifoldSide_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object valveSide_ = "";
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @return The valveSide.
+       */
+      public java.lang.String getValveSide() {
+        java.lang.Object ref = valveSide_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          valveSide_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @return The bytes for valveSide.
+       */
+      public com.google.protobuf.ByteString getValveSideBytes() {
+        java.lang.Object ref = valveSide_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          valveSide_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @param value The valveSide to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValveSide(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        valveSide_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearValveSide() {
+
+        valveSide_ = getDefaultInstance().getValveSide();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string valveSide = 12;</code>
+       *
+       * @param value The bytes for valveSide to set.
+       * @return This builder for chaining.
+       */
+      public Builder setValveSideBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        valveSide_ = value;
         onChanged();
         return this;
       }
@@ -106739,150 +107035,151 @@ public final class VesselInfo {
           + "e\022:\n\023vvStrippingSequence\030\005 \003(\0132\035.VesselV"
           + "alveStrippingSequence\022?\n\016vvSSCargoValve\030"
           + "\006 \003(\0132\'.VesselValveStrippingSequenceCarg"
-          + "oValve\"\356\001\n\034VesselValveStrippingSequence\022"
+          + "oValve\"\201\002\n\034VesselValveStrippingSequence\022"
           + "\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\022\n\nvesselN"
           + "ame\030\003 \001(\t\022\022\n\npipeLineId\030\004 \001(\005\022\024\n\014pipeLin"
           + "eName\030\005 \001(\t\022\016\n\006colour\030\006 \001(\t\022\017\n\007valveId\030\007"
           + " \001(\005\022\r\n\005valve\030\010 \001(\t\022\026\n\016sequenceNumber\030\t "
           + "\001(\005\022\024\n\014manifoldName\030\n \001(\t\022\024\n\014manifoldSid"
-          + "e\030\013 \001(\t\"\243\002\n\033VesselValveAirPurgeSequence\022"
-          + "\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\022\n\nvesselN"
-          + "ame\030\003 \001(\t\022\021\n\tshortname\030\004 \001(\t\022\016\n\006tankId\030\005"
-          + " \001(\003\022\016\n\006pumpId\030\006 \001(\003\022\020\n\010pumpCode\030\007 \001(\t\022\026"
-          + "\n\016sequenceNumber\030\010 \001(\005\022\023\n\013valveNumber\030\t "
-          + "\001(\t\022\017\n\007valveId\030\n \001(\005\022\016\n\006isShut\030\013 \001(\010\022\023\n\013"
-          + "isCopWarmup\030\014 \001(\010\022\024\n\014manifoldName\030\r \001(\t\022"
-          + "\024\n\014manifoldSide\030\016 \001(\t\"\247\005\n\023VesselValveSeq"
-          + "uence\022\n\n\002id\030\001 \001(\003\022\025\n\risCommonValve\030\002 \001(\010"
-          + "\022\016\n\006isShut\030\030 \001(\010\022\022\n\npipelineId\030\003 \001(\005\022\025\n\r"
-          + "pipelineColor\030\004 \001(\t\022\024\n\014pipelineName\030\005 \001("
-          + "\t\022\024\n\014pipelineType\030\006 \001(\t\022\020\n\010pumpCode\030\031 \001("
-          + "\t\022\020\n\010pumpName\030\032 \001(\t\022\020\n\010pumpType\030\033 \001(\t\022\026\n"
-          + "\016sequenceNumber\030\007 \001(\t\022\033\n\023sequenceOperati"
-          + "onId\030\010 \001(\005\022\035\n\025sequenceOperationName\030\t \001("
-          + "\t\022\026\n\016sequenceTypeId\030\n \001(\005\022\030\n\020sequenceTyp"
-          + "eName\030\013 \001(\t\022\037\n\027sequenceVesselMappingId\030\014"
-          + " \001(\005\022\025\n\rtankShortName\030\r \001(\t\022\023\n\013stageNumb"
-          + "er\030\034 \001(\t\022\025\n\rvalveCategory\030\016 \001(\t\022\027\n\017valve"
-          + "CategoryId\030\017 \001(\005\022\017\n\007valveId\030\035 \001(\005\022\023\n\013val"
-          + "veNumber\030\020 \001(\t\022\021\n\tvalveSide\030\021 \001(\005\022\023\n\013val"
-          + "veTypeId\030\022 \001(\005\022\025\n\rvalveTypeName\030\023 \001(\t\022\022\n"
-          + "\nvesselName\030\024 \001(\t\022\025\n\rvesselTankXid\030\025 \001(\005"
-          + "\022\021\n\tvesselXid\030\027 \001(\003\022\024\n\014manifoldName\030\036 \001("
-          + "\t\022\024\n\014manifoldSide\030\037 \001(\t\"\370\001\n&VesselValveS"
-          + "trippingSequenceCargoValve\022\n\n\002id\030\001 \001(\003\022\020"
-          + "\n\010vesselId\030\002 \001(\003\022\022\n\nvesselName\030\003 \001(\t\022\022\n\n"
-          + "pipeLineId\030\004 \001(\005\022\024\n\014pipeLineName\030\005 \001(\t\022\016"
-          + "\n\006colour\030\006 \001(\t\022\017\n\007valveId\030\007 \001(\005\022\r\n\005valve"
-          + "\030\010 \001(\t\022\026\n\016sequenceNumber\030\t \001(\005\022\024\n\014manifo"
-          + "ldName\030\n \001(\t\022\024\n\014manifoldSide\030\013 \001(\t\"\262\003\n\033V"
-          + "esselValveEducationProcess\022\n\n\002id\030\001 \001(\003\022\023"
-          + "\n\013eductorName\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 "
-          + "\001(\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001"
-          + "(\t\022\021\n\teductorId\030\006 \001(\005\022\037\n\027eductionProcess"
-          + "MasterId\030\007 \001(\005\022\023\n\013stageNumber\030\010 \001(\005\022\017\n\007v"
-          + "alveId\030\t \001(\005\022\021\n\tstageName\030\n \001(\t\022\027\n\017valve"
-          + "CategoryId\030\013 \001(\005\022\025\n\rvalveCategory\030\014 \001(\t\022"
-          + "\023\n\013valveTypeId\030\r \001(\005\022\025\n\rvalveTypeName\030\016 "
-          + "\001(\t\022\021\n\tvalveSide\030\017 \001(\005\022\024\n\014vesselTankId\030\020"
-          + " \001(\003\022\025\n\rtankShortName\030\021 \001(\t\022\024\n\014manifoldN"
-          + "ame\030\022 \001(\t\022\024\n\014manifoldSide\030\023 \001(\t\"+\n\027Loadi"
-          + "ngInfoRulesRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025"
-          + "LoadingInfoRulesReply\022\025\n\005rules\030\001 \003(\0132\006.R"
-          + "ules\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseS"
-          + "tatus\"0\n\017CargoTankMaster\022\n\n\002id\030\001 \001(\003\022\021\n\t"
-          + "shortName\030\002 \001(\t\"L\n\027RuleDropDownValueMast"
-          + "er\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ruleTem"
-          + "plateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n\n\002id\030\001 "
-          + "\001(\003\022\020\n\010ruleType\030\002 \001(\t\"\343\001\n\022VesselsInfoReq"
-          + "uest\022\020\n\010pageSize\030\001 \001(\003\022\016\n\006pageNo\030\002 \001(\003\022\016"
-          + "\n\006sortBy\030\003 \001(\t\022\017\n\007orderBy\030\004 \001(\t\022\022\n\nvesse"
-          + "lName\030\005 \001(\t\022\022\n\nvesselType\030\006 \001(\t\022\r\n\005owner"
-          + "\030\007 \001(\t\022\017\n\007builder\030\010 \001(\t\022\024\n\014dateOfLaunch\030"
-          + "\t \001(\t\022\024\n\014signalLetter\030\n \001(\t\022\026\n\016officialN"
-          + "umber\030\013 \001(\t\"\262\001\n\022VesselsInformation\022\020\n\010ve"
-          + "sselId\030\001 \001(\003\022\022\n\nvesselName\030\002 \001(\t\022\022\n\nvess"
-          + "elType\030\003 \001(\t\022\r\n\005owner\030\004 \001(\t\022\017\n\007builder\030\005"
-          + " \001(\t\022\024\n\014dateOfLaunch\030\006 \001(\t\022\024\n\014signalLett"
-          + "er\030\007 \001(\t\022\026\n\016officialNumber\030\010 \001(\t\"\211\001\n\027Ves"
-          + "selsInformationReply\022/\n\022vesselsInformati"
-          + "on\030\001 \003(\0132\023.VesselsInformation\022\'\n\016respons"
-          + "eStatus\030\002 \001(\0132\017.ResponseStatus\022\024\n\014totalE"
-          + "lement\030\003 \001(\003\"\214\002\n\016VesselTankInfo\022\016\n\006tankI"
-          + "d\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020tankC"
-          + "ategoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n\017f"
-          + "rameNumberFrom\030\005 \001(\t\022\025\n\rframeNumberTo\030\006 "
-          + "\001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fullCapacityCu"
-          + "bm\030\010 \001(\001\022\017\n\007density\030\t \001(\001\022\022\n\nisSlopTank\030"
-          + "\n \001(\010\022\021\n\ttankOrder\030\013 \001(\005\022\021\n\ttankGroup\030\014 "
-          + "\001(\005\"c\n\017VesselTankReply\022\'\n\016vesselTankInfo"
-          + "\030\001 \003(\0132\017.VesselTankInfo\022\'\n\016responseStatu"
-          + "s\030\002 \001(\0132\017.ResponseStatus\"\267\006\n\026VesselDetai"
-          + "ldInfoReply\022\020\n\010vesselId\030\001 \001(\003\022\022\n\nvesselN"
-          + "ame\030\002 \001(\t\022\022\n\nvesselType\030\003 \001(\t\022\021\n\timoNumb"
-          + "er\030\004 \001(\t\022\017\n\007builder\030\005 \001(\t\022\024\n\014dateOfLaunc"
-          + "h\030\006 \001(\t\022\024\n\014signalLetter\030\007 \001(\t\022\026\n\016officia"
-          + "lNumber\030\010 \001(\t\022\026\n\016dateOfKeelLaid\030\t \001(\t\022\026\n"
-          + "\016dateOfDelivery\030\n \001(\t\022\r\n\005class\030\013 \001(\t\022\026\n\016"
-          + "navigationArea\030\014 \001(\t\022\026\n\016registerLength\030\r"
-          + " \001(\003\022\025\n\rlengthOverall\030\016 \001(\003\022\025\n\rdraftFull"
-          + "Load\030\017 \001(\001\022\026\n\016breadthMoulded\030\020 \001(\003\022#\n\033le"
-          + "ngthBetweenPerpendiculars\030\021 \001(\003\022\024\n\014depth"
-          + "Moulded\030\022 \001(\001\022\031\n\021designedLoadDraft\030\023 \001(\001"
-          + "\022\034\n\024thicknessOfUpperDeck\030\024 \001(\001\022\034\n\024thickn"
-          + "essOfKeelPlate\030\025 \001(\001\022\022\n\ntotalDepth\030\026 \001(\001"
-          + "\022(\n\017bunkerRearTanks\030\027 \003(\0132\017.VesselTankIn"
-          + "fo\022$\n\013bunkerTanks\030\030 \003(\0132\017.VesselTankInfo"
-          + "\022*\n\021ballastFrontTanks\030\031 \003(\0132\017.VesselTank"
-          + "Info\022+\n\022ballastCenterTanks\030\032 \003(\0132\017.Vesse"
-          + "lTankInfo\022)\n\020ballastRearTanks\030\033 \003(\0132\017.Ve"
-          + "sselTankInfo\022#\n\ncargoTanks\030\034 \003(\0132\017.Vesse"
-          + "lTankInfo\022\'\n\016responseStatus\030\035 \001(\0132\017.Resp"
-          + "onseStatus*\277\001\n\017VesselPumpTypes\022\016\n\nEMPTY_"
-          + "PUMP\020\000\022\016\n\nCARGO_PUMP\020\001\022\020\n\014BALLAST_PUMP\020\002"
-          + "\022\013\n\007GS_PUMP\020\003\022\013\n\007IG_PUMP\020\004\022\022\n\016STRIPPING_"
-          + "PUMP\020\005\022\021\n\rSTRIP_EDUCTOR\020\006\022\014\n\010COW_PUMP\020\007\022"
-          + "\023\n\017BALLAST_EDUCTOR\020\010\022\026\n\022TANK_CLEANING_PU"
-          + "MP\020\t*\\\n\025TankTypeForOperations\022\023\n\017EMPTY_T"
-          + "ANK_TYPE\020\000\022\010\n\004PORT\020\001\022\n\n\006CENTER\020\002\022\010\n\004STBD"
-          + "\020\003\022\006\n\002WP\020\004\022\006\n\002WS\020\0052\232\013\n\021VesselInfoService"
-          + "\0228\n\026GetAllVesselsByCompany\022\016.VesselReque"
-          + "st\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsBy"
-          + "Id\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n\016Ge"
-          + "tVesselTanks\022\016.VesselRequest\032\014.VesselRep"
-          + "ly\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselRequ"
-          + "est\032\014.VesselReply\"\000\022A\n\027GetVesselDetailsF"
-          + "orAlgo\022\022.VesselAlgoRequest\032\020.VesselAlgoR"
-          + "eply\"\000\022C\n!GetVesselDetailForSynopticalTa"
-          + "ble\022\016.VesselRequest\032\014.VesselReply\"\000\022;\n\031G"
-          + "etVesselDetailByVesselId\022\016.VesselRequest"
-          + "\032\014.VesselReply\"\000\022A\n\025GetVesselInfoByPagin"
-          + "g\022\030.VesselRequestWithPaging\032\014.VesselRepl"
-          + "y\"\000\022C\n\026GetVesselInfoBytankIds\022\022.VesselTa"
-          + "nkRequest\032\023.VesselTankResponse\"\000\022C\n\032GetD"
-          + "WTFromVesselByVesselId\022\021.VesselDWTReques"
-          + "t\032\022.VesselDWTResponse\022@\n\027GetVesselInfoBy"
-          + "VesselId\022\020.VesselIdRequest\032\021.VesselIdRes"
-          + "ponse\"\000\022D\n\030GetVesselPumpsByVesselId\022\020.Ve"
-          + "sselIdRequest\032\024.VesselPumpsResponse\"\000\022H\n"
-          + "\036GetRulesByVesselIdAndSectionId\022\022.Vessel"
-          + "RuleRequest\032\020.VesselRuleReply\"\000\022E\n\026GetVe"
-          + "sselValveSequence\022\016.VesselRequest\032\031.Vess"
-          + "elValveSequenceReply\"\000\022I\n\023GetLoadingInfo"
-          + "Rules\022\030.LoadingInfoRulesRequest\032\026.Loadin"
-          + "gInfoRulesReply\"\000\022H\n\025GetVesselsInformati"
-          + "on\022\023.VesselsInfoRequest\032\030.VesselsInforma"
-          + "tionReply\"\000\022F\n\024GetVesselParticulars\022\030.Lo"
-          + "adingInfoRulesRequest\032\022.VesselParticular"
-          + "s\"\000\022J\n\033GetVesselDetaildInformation\022\020.Ves"
-          + "selIdRequest\032\027.VesselDetaildInfoReply\"\000\022"
-          + "A\n\027GetVesselTanksByTankIds\022\022.VesselTankR"
-          + "equest\032\020.VesselTankReply\"\000\022K\n\rGetVesselD"
-          + "ata\022\034.CommunicationDataGetRequest\032\032.Comm"
-          + "unicationDataResponse\"\000\022F\n\020UpdateVesselD"
-          + "ata\022\037.CommunicationDataUpdateRequest\032\017.R"
-          + "esponseStatus\"\000B\036\n\032com.cpdss.common.gene"
-          + "ratedP\000b\006proto3"
+          + "e\030\013 \001(\t\022\021\n\tvalveSide\030\014 \001(\t\"\243\002\n\033VesselVal"
+          + "veAirPurgeSequence\022\n\n\002id\030\001 \001(\003\022\020\n\010vessel"
+          + "Id\030\002 \001(\003\022\022\n\nvesselName\030\003 \001(\t\022\021\n\tshortnam"
+          + "e\030\004 \001(\t\022\016\n\006tankId\030\005 \001(\003\022\016\n\006pumpId\030\006 \001(\003\022"
+          + "\020\n\010pumpCode\030\007 \001(\t\022\026\n\016sequenceNumber\030\010 \001("
+          + "\005\022\023\n\013valveNumber\030\t \001(\t\022\017\n\007valveId\030\n \001(\005\022"
+          + "\016\n\006isShut\030\013 \001(\010\022\023\n\013isCopWarmup\030\014 \001(\010\022\024\n\014"
+          + "manifoldName\030\r \001(\t\022\024\n\014manifoldSide\030\016 \001(\t"
+          + "\"\247\005\n\023VesselValveSequence\022\n\n\002id\030\001 \001(\003\022\025\n\r"
+          + "isCommonValve\030\002 \001(\010\022\016\n\006isShut\030\030 \001(\010\022\022\n\np"
+          + "ipelineId\030\003 \001(\005\022\025\n\rpipelineColor\030\004 \001(\t\022\024"
+          + "\n\014pipelineName\030\005 \001(\t\022\024\n\014pipelineType\030\006 \001"
+          + "(\t\022\020\n\010pumpCode\030\031 \001(\t\022\020\n\010pumpName\030\032 \001(\t\022\020"
+          + "\n\010pumpType\030\033 \001(\t\022\026\n\016sequenceNumber\030\007 \001(\t"
+          + "\022\033\n\023sequenceOperationId\030\010 \001(\005\022\035\n\025sequenc"
+          + "eOperationName\030\t \001(\t\022\026\n\016sequenceTypeId\030\n"
+          + " \001(\005\022\030\n\020sequenceTypeName\030\013 \001(\t\022\037\n\027sequen"
+          + "ceVesselMappingId\030\014 \001(\005\022\025\n\rtankShortName"
+          + "\030\r \001(\t\022\023\n\013stageNumber\030\034 \001(\t\022\025\n\rvalveCate"
+          + "gory\030\016 \001(\t\022\027\n\017valveCategoryId\030\017 \001(\005\022\017\n\007v"
+          + "alveId\030\035 \001(\005\022\023\n\013valveNumber\030\020 \001(\t\022\021\n\tval"
+          + "veSide\030\021 \001(\005\022\023\n\013valveTypeId\030\022 \001(\005\022\025\n\rval"
+          + "veTypeName\030\023 \001(\t\022\022\n\nvesselName\030\024 \001(\t\022\025\n\r"
+          + "vesselTankXid\030\025 \001(\005\022\021\n\tvesselXid\030\027 \001(\003\022\024"
+          + "\n\014manifoldName\030\036 \001(\t\022\024\n\014manifoldSide\030\037 \001"
+          + "(\t\"\213\002\n&VesselValveStrippingSequenceCargo"
+          + "Valve\022\n\n\002id\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\022\022\n\nv"
+          + "esselName\030\003 \001(\t\022\022\n\npipeLineId\030\004 \001(\005\022\024\n\014p"
+          + "ipeLineName\030\005 \001(\t\022\016\n\006colour\030\006 \001(\t\022\017\n\007val"
+          + "veId\030\007 \001(\005\022\r\n\005valve\030\010 \001(\t\022\026\n\016sequenceNum"
+          + "ber\030\t \001(\005\022\024\n\014manifoldName\030\n \001(\t\022\024\n\014manif"
+          + "oldSide\030\013 \001(\t\022\021\n\tvalveSide\030\014 \001(\t\"\262\003\n\033Ves"
+          + "selValveEducationProcess\022\n\n\002id\030\001 \001(\003\022\023\n\013"
+          + "eductorName\030\002 \001(\t\022\026\n\016sequenceNumber\030\003 \001("
+          + "\005\022\020\n\010stepName\030\004 \001(\t\022\023\n\013valveNumber\030\005 \001(\t"
+          + "\022\021\n\teductorId\030\006 \001(\005\022\037\n\027eductionProcessMa"
+          + "sterId\030\007 \001(\005\022\023\n\013stageNumber\030\010 \001(\005\022\017\n\007val"
+          + "veId\030\t \001(\005\022\021\n\tstageName\030\n \001(\t\022\027\n\017valveCa"
+          + "tegoryId\030\013 \001(\005\022\025\n\rvalveCategory\030\014 \001(\t\022\023\n"
+          + "\013valveTypeId\030\r \001(\005\022\025\n\rvalveTypeName\030\016 \001("
+          + "\t\022\021\n\tvalveSide\030\017 \001(\005\022\024\n\014vesselTankId\030\020 \001"
+          + "(\003\022\025\n\rtankShortName\030\021 \001(\t\022\024\n\014manifoldNam"
+          + "e\030\022 \001(\t\022\024\n\014manifoldSide\030\023 \001(\t\"+\n\027Loading"
+          + "InfoRulesRequest\022\020\n\010vesselId\030\001 \001(\003\"W\n\025Lo"
+          + "adingInfoRulesReply\022\025\n\005rules\030\001 \003(\0132\006.Rul"
+          + "es\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseSta"
+          + "tus\"0\n\017CargoTankMaster\022\n\n\002id\030\001 \001(\003\022\021\n\tsh"
+          + "ortName\030\002 \001(\t\"L\n\027RuleDropDownValueMaster"
+          + "\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ruleTempl"
+          + "ateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n\n\002id\030\001 \001("
+          + "\003\022\020\n\010ruleType\030\002 \001(\t\"\343\001\n\022VesselsInfoReque"
+          + "st\022\020\n\010pageSize\030\001 \001(\003\022\016\n\006pageNo\030\002 \001(\003\022\016\n\006"
+          + "sortBy\030\003 \001(\t\022\017\n\007orderBy\030\004 \001(\t\022\022\n\nvesselN"
+          + "ame\030\005 \001(\t\022\022\n\nvesselType\030\006 \001(\t\022\r\n\005owner\030\007"
+          + " \001(\t\022\017\n\007builder\030\010 \001(\t\022\024\n\014dateOfLaunch\030\t "
+          + "\001(\t\022\024\n\014signalLetter\030\n \001(\t\022\026\n\016officialNum"
+          + "ber\030\013 \001(\t\"\262\001\n\022VesselsInformation\022\020\n\010vess"
+          + "elId\030\001 \001(\003\022\022\n\nvesselName\030\002 \001(\t\022\022\n\nvessel"
+          + "Type\030\003 \001(\t\022\r\n\005owner\030\004 \001(\t\022\017\n\007builder\030\005 \001"
+          + "(\t\022\024\n\014dateOfLaunch\030\006 \001(\t\022\024\n\014signalLetter"
+          + "\030\007 \001(\t\022\026\n\016officialNumber\030\010 \001(\t\"\211\001\n\027Vesse"
+          + "lsInformationReply\022/\n\022vesselsInformation"
+          + "\030\001 \003(\0132\023.VesselsInformation\022\'\n\016responseS"
+          + "tatus\030\002 \001(\0132\017.ResponseStatus\022\024\n\014totalEle"
+          + "ment\030\003 \001(\003\"\214\002\n\016VesselTankInfo\022\016\n\006tankId\030"
+          + "\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n\020tankCat"
+          + "egoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001(\t\022\027\n\017fra"
+          + "meNumberFrom\030\005 \001(\t\022\025\n\rframeNumberTo\030\006 \001("
+          + "\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fullCapacityCubm"
+          + "\030\010 \001(\001\022\017\n\007density\030\t \001(\001\022\022\n\nisSlopTank\030\n "
+          + "\001(\010\022\021\n\ttankOrder\030\013 \001(\005\022\021\n\ttankGroup\030\014 \001("
+          + "\005\"c\n\017VesselTankReply\022\'\n\016vesselTankInfo\030\001"
+          + " \003(\0132\017.VesselTankInfo\022\'\n\016responseStatus\030"
+          + "\002 \001(\0132\017.ResponseStatus\"\267\006\n\026VesselDetaild"
+          + "InfoReply\022\020\n\010vesselId\030\001 \001(\003\022\022\n\nvesselNam"
+          + "e\030\002 \001(\t\022\022\n\nvesselType\030\003 \001(\t\022\021\n\timoNumber"
+          + "\030\004 \001(\t\022\017\n\007builder\030\005 \001(\t\022\024\n\014dateOfLaunch\030"
+          + "\006 \001(\t\022\024\n\014signalLetter\030\007 \001(\t\022\026\n\016officialN"
+          + "umber\030\010 \001(\t\022\026\n\016dateOfKeelLaid\030\t \001(\t\022\026\n\016d"
+          + "ateOfDelivery\030\n \001(\t\022\r\n\005class\030\013 \001(\t\022\026\n\016na"
+          + "vigationArea\030\014 \001(\t\022\026\n\016registerLength\030\r \001"
+          + "(\003\022\025\n\rlengthOverall\030\016 \001(\003\022\025\n\rdraftFullLo"
+          + "ad\030\017 \001(\001\022\026\n\016breadthMoulded\030\020 \001(\003\022#\n\033leng"
+          + "thBetweenPerpendiculars\030\021 \001(\003\022\024\n\014depthMo"
+          + "ulded\030\022 \001(\001\022\031\n\021designedLoadDraft\030\023 \001(\001\022\034"
+          + "\n\024thicknessOfUpperDeck\030\024 \001(\001\022\034\n\024thicknes"
+          + "sOfKeelPlate\030\025 \001(\001\022\022\n\ntotalDepth\030\026 \001(\001\022("
+          + "\n\017bunkerRearTanks\030\027 \003(\0132\017.VesselTankInfo"
+          + "\022$\n\013bunkerTanks\030\030 \003(\0132\017.VesselTankInfo\022*"
+          + "\n\021ballastFrontTanks\030\031 \003(\0132\017.VesselTankIn"
+          + "fo\022+\n\022ballastCenterTanks\030\032 \003(\0132\017.VesselT"
+          + "ankInfo\022)\n\020ballastRearTanks\030\033 \003(\0132\017.Vess"
+          + "elTankInfo\022#\n\ncargoTanks\030\034 \003(\0132\017.VesselT"
+          + "ankInfo\022\'\n\016responseStatus\030\035 \001(\0132\017.Respon"
+          + "seStatus*\277\001\n\017VesselPumpTypes\022\016\n\nEMPTY_PU"
+          + "MP\020\000\022\016\n\nCARGO_PUMP\020\001\022\020\n\014BALLAST_PUMP\020\002\022\013"
+          + "\n\007GS_PUMP\020\003\022\013\n\007IG_PUMP\020\004\022\022\n\016STRIPPING_PU"
+          + "MP\020\005\022\021\n\rSTRIP_EDUCTOR\020\006\022\014\n\010COW_PUMP\020\007\022\023\n"
+          + "\017BALLAST_EDUCTOR\020\010\022\026\n\022TANK_CLEANING_PUMP"
+          + "\020\t*\\\n\025TankTypeForOperations\022\023\n\017EMPTY_TAN"
+          + "K_TYPE\020\000\022\010\n\004PORT\020\001\022\n\n\006CENTER\020\002\022\010\n\004STBD\020\003"
+          + "\022\006\n\002WP\020\004\022\006\n\002WS\020\0052\232\013\n\021VesselInfoService\0228"
+          + "\n\026GetAllVesselsByCompany\022\016.VesselRequest"
+          + "\032\014.VesselReply\"\000\0226\n\024GetVesselDetailsById"
+          + "\022\016.VesselRequest\032\014.VesselReply\"\000\0220\n\016GetV"
+          + "esselTanks\022\016.VesselRequest\032\014.VesselReply"
+          + "\"\000\0225\n\023GetVesselCargoTanks\022\016.VesselReques"
+          + "t\032\014.VesselReply\"\000\022A\n\027GetVesselDetailsFor"
+          + "Algo\022\022.VesselAlgoRequest\032\020.VesselAlgoRep"
+          + "ly\"\000\022C\n!GetVesselDetailForSynopticalTabl"
+          + "e\022\016.VesselRequest\032\014.VesselReply\"\000\022;\n\031Get"
+          + "VesselDetailByVesselId\022\016.VesselRequest\032\014"
+          + ".VesselReply\"\000\022A\n\025GetVesselInfoByPaging\022"
+          + "\030.VesselRequestWithPaging\032\014.VesselReply\""
+          + "\000\022C\n\026GetVesselInfoBytankIds\022\022.VesselTank"
+          + "Request\032\023.VesselTankResponse\"\000\022C\n\032GetDWT"
+          + "FromVesselByVesselId\022\021.VesselDWTRequest\032"
+          + "\022.VesselDWTResponse\022@\n\027GetVesselInfoByVe"
+          + "sselId\022\020.VesselIdRequest\032\021.VesselIdRespo"
+          + "nse\"\000\022D\n\030GetVesselPumpsByVesselId\022\020.Vess"
+          + "elIdRequest\032\024.VesselPumpsResponse\"\000\022H\n\036G"
+          + "etRulesByVesselIdAndSectionId\022\022.VesselRu"
+          + "leRequest\032\020.VesselRuleReply\"\000\022E\n\026GetVess"
+          + "elValveSequence\022\016.VesselRequest\032\031.Vessel"
+          + "ValveSequenceReply\"\000\022I\n\023GetLoadingInfoRu"
+          + "les\022\030.LoadingInfoRulesRequest\032\026.LoadingI"
+          + "nfoRulesReply\"\000\022H\n\025GetVesselsInformation"
+          + "\022\023.VesselsInfoRequest\032\030.VesselsInformati"
+          + "onReply\"\000\022F\n\024GetVesselParticulars\022\030.Load"
+          + "ingInfoRulesRequest\032\022.VesselParticulars\""
+          + "\000\022J\n\033GetVesselDetaildInformation\022\020.Vesse"
+          + "lIdRequest\032\027.VesselDetaildInfoReply\"\000\022A\n"
+          + "\027GetVesselTanksByTankIds\022\022.VesselTankReq"
+          + "uest\032\020.VesselTankReply\"\000\022K\n\rGetVesselDat"
+          + "a\022\034.CommunicationDataGetRequest\032\032.Commun"
+          + "icationDataResponse\"\000\022F\n\020UpdateVesselDat"
+          + "a\022\037.CommunicationDataUpdateRequest\032\017.Res"
+          + "ponseStatus\"\000B\036\n\032com.cpdss.common.genera"
+          + "tedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -107489,6 +107786,7 @@ public final class VesselInfo {
               "SequenceNumber",
               "ManifoldName",
               "ManifoldSide",
+              "ValveSide",
             });
     internal_static_VesselValveAirPurgeSequence_descriptor =
         getDescriptor().getMessageTypes().get(48);
@@ -107564,6 +107862,7 @@ public final class VesselInfo {
               "SequenceNumber",
               "ManifoldName",
               "ManifoldSide",
+              "ValveSide",
             });
     internal_static_VesselValveEducationProcess_descriptor =
         getDescriptor().getMessageTypes().get(51);
