@@ -11,11 +11,11 @@ import * as olProj from 'ol/proj';
 import StyleIcon from 'ol/style/Icon';
 import Point from 'ol/geom/Point';
 import { fromLonLat } from 'ol/proj';
-import { PortMasterTransformationService } from '../../services/port-master-transformation.service';
 
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 
 /**
- * Component class for port master map component 
+ * Component class for port master map component
  *
  * @export
  * @class PortMasterMapComponent
@@ -27,86 +27,35 @@ import { PortMasterTransformationService } from '../../services/port-master-tran
   templateUrl: './port-master-map.component.html',
   styleUrls: ['./port-master-map.component.scss']
 })
-
-
 export class PortMasterMapComponent implements OnInit, AfterViewInit {
 
-  @Input()
-  isVisible;
+  @Output() coordinates: EventEmitter<any> = new EventEmitter();
+  @Output() isModalOpen: EventEmitter<any> = new EventEmitter();
+
+  @Input() currentLatLong: number[];
+  @Input() isVisible;
 
   map: Map;
   view: View;
   tileLayer: TileLayer;
   vectorLayor: VectorLayer;
-  minZoom: number = 3;
-  maxZoom: number = 200;
+  minZoom = 3;
+  maxZoom = 200;
   typeSelect = null;
   draw: any;
   vectorSource: any;
   visible = false;
   coords = null;
-  selectedPortLocation: any;
+  pinIconSrc = AppConfigurationService.settings?.minimapPinIconUrl;
 
-  @Output() coordinates: EventEmitter<any> = new EventEmitter();
-  @Output() isModalOpen: EventEmitter<any> = new EventEmitter();
+  constructor() { }
 
-  constructor(private portMasterTransformationService: PortMasterTransformationService) { }
-
-  /**
-   * Component lifecycle ngoninit
-   *
-   * @memberof PortMasterMapComponent
-   */
-  ngOnInit(): void {
+  ngOnInit() {
     this.visible = this.isVisible;
   }
 
-
-  /**
-   *Component lifecyle ngafterviewinit
-   *
-   * @memberof PortMasterMapComponent
-   */
-  async ngAfterViewInit() {
-    this.setVectorSource();
+  ngAfterViewInit() {
     this.initMap();
-    this.listenToMouseClick();
-  }
-
-
-  /**
-   *Method to set the vector source.
-   *
-   * @memberof PortMasterMapComponent
-   */
-  setVectorSource() {
-    this.selectedPortLocation = this.portMasterTransformationService.getSelectedPortLocation();
-    this.selectedPortLocation ? this.vectorSource = this.markSelectedLocation(this.selectedPortLocation) : this.vectorSource = new VectorSource({ wrapX: false });
-  }
-
-  /**
-   * Method to listen to the mouse single click
-   *
-   * @memberof PortMasterMapComponent
-   */
-  listenToMouseClick() {
-    this.map.on('click', (evt) => {
-      this.coords = olProj.toLonLat(evt.coordinate);
-      if (this.vectorSource?.getFeatures()?.length > 1) {
-        this.vectorSource.removeFeature(this.vectorSource.getFeatures()[0]);
-      }
-    });
-  }
-
-  /**
-   * Method to trigger value to close the modal
-   *
-   * @memberof PortMasterMapComponent
-   */
-
-  onClose() {
-    this.isModalOpen.emit(false);
-    this.visible = false;
   }
 
   /**
@@ -114,9 +63,12 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
    *
    * @memberof FleetMapComponent
    */
-  async initMap(): Promise<void> {
+  initMap(): void {
+    this.vectorSource = this.currentLatLong ? this.markSelectedLocation(this.currentLatLong) : new VectorSource({ wrapX: false });
+    const mapCenter = this.currentLatLong ? olProj.fromLonLat([this.currentLatLong[1], this.currentLatLong[0]]) : [9441371.9389, 258337.7609];
+
     this.view = new View({
-      center: [9441371.9389, 258337.7609],
+      center: mapCenter,
       zoom: this.minZoom,
       minZoom: this.minZoom,
       maxZoom: this.maxZoom
@@ -125,15 +77,13 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
     this.tileLayer = new TileLayer({
       source: new OSM()
     });
+
     this.vectorLayor = new VectorLayer({
       source: this.vectorSource,
       style: new Style({
         image: new StyleIcon({
           crossOrigin: 'anonymous',
-          /*
-           * this url will replace once actual icon given
-           */
-          src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYbkLtt6l3r3_s0IUsmdjobXc0YYNve2gh95gw8DLApPotB5xwKwKQVIxdqL3uQrxPwJs&usqp=CAU',
+          src: this.pinIconSrc,
           anchor: [0.45, 0.5],
           scale: 0.1
         }),
@@ -148,6 +98,14 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
     });
     this.addInteraction();
     this.visible = true;
+
+    // Event to get clicked coordinates
+    this.map.on('click', (evt) => {
+      if (this.vectorSource?.getFeatures()?.length > 1) {
+        this.vectorSource.removeFeature(this.vectorSource.getFeatures()[0]);
+      }
+      this.coords = olProj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326').map(coordinate => (Number(coordinate.toFixed(4))));
+    });
   }
 
   /**
@@ -155,21 +113,19 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
    *
    * @memberof PortMasterMapComponent
    */
-  
   addInteraction() {
-    this.typeSelect = { value: "Point" }
+    this.typeSelect = { value: "Point" };
     this.draw = new Draw({
       source: this.vectorSource,
       type: this.typeSelect.value,
       condition: (e) => {
         // when the point's button is 2(leftclick), prevents drawing
-        if ((<any>e.originalEvent).button == 2) {
+        if ((<any>e.originalEvent).button === 2) {
           return false;
         } else {
           return true;
         }
       }
-
     });
     this.map.addInteraction(this.draw);
   }
@@ -181,20 +137,16 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
    * @return {*}  {*}
    * @memberof PortMasterMapComponent
    */
-  markSelectedLocation(selectedPortLocation: any): any {
-    let feature = [];
+  markSelectedLocation(selectedPortLocation: number[]): any {
+    const feature = [];
     const portLocation = new Feature({
-      geometry: new Point(fromLonLat([selectedPortLocation.lat, selectedPortLocation.lon])),
+      geometry: new Point(fromLonLat([selectedPortLocation[1], selectedPortLocation[0]])),
       objectType: 'marker'
     });
-
     const portStyleIcon = new Style({
       image: new StyleIcon({
         crossOrigin: 'anonymous',
-        /*
-         * this url will replace once actual icon given
-         */
-        src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYbkLtt6l3r3_s0IUsmdjobXc0YYNve2gh95gw8DLApPotB5xwKwKQVIxdqL3uQrxPwJs&usqp=CAU',
+        src: this.pinIconSrc,
         anchor: [0.45, 0.5],
         scale: 0.1
       })
@@ -212,27 +164,35 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
    *
    * @memberof PortMasterMapComponent
    */
-
-  setPortLocation() {
+  setPortLocation(): void {
+    if (this.coords) {
+      this.coordinates.emit({ lat: this.coords[1], long: this.coords[0] });
+    }
     this.isModalOpen.emit(false);
     this.visible = false;
-    if (this.coords) {
-      this.portMasterTransformationService.setSelectedLocation(this.coords);
-      this.coordinates.emit({ lat: this.coords[1], lon: this.coords[0] });
-    }
   }
 
   /**
-   * Method to cancel the plotted location from map 
+   * Method to cancel the plotted location from map
    *
    * @memberof PortMasterMapComponent
    */
-  onCancelClick() {
+  onClearLocation(): void {
     this.vectorSource.removeFeature(this.vectorSource.getFeatures()[0]);
     this.coords = null;
-    this.portMasterTransformationService.setSelectedLocation({ lat: null, lon: null });
     this.coordinates.emit({ lat: null, lon: null });
   }
+
+  /**
+   * Method to trigger value to close the modal
+   *
+   * @memberof PortMasterMapComponent
+   */
+  onClose() {
+    this.isModalOpen.emit(false);
+    this.visible = false;
+  }
+
 }
 
 

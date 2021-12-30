@@ -1,9 +1,13 @@
-import { Component, Input, OnInit, SimpleChanges, OnChanges } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { DATATABLE_ACTION, DATATABLE_EDITMODE, IDataTableColumn } from  '../../../../shared/components/datatable/datatable.model';
-import { ValueObject } from '../../../../shared/models/common.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { numberValidator } from '../../../core/directives/number-validator.directive';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PortMasterTransformationService } from '../../services/port-master-transformation.service';
+
+import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/components/datatable/datatable.model';
+import { IBerthInfo, IBerthValueObject } from '../../models/port.model';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 
 
 /**
@@ -19,49 +23,53 @@ import { PortMasterTransformationService } from '../../services/port-master-tran
   styleUrls: ['./add-berth.component.scss'],
 })
 export class AddBerthComponent implements OnInit {
-  @Input() isSaveClicked;
-  errorMessages: any;
-  berthDetailsFormArray = new FormArray([]);
-  public berthDetailsForm: FormGroup;
-  columns: IDataTableColumn[];
-  berthList: any;
-  editMode: DATATABLE_EDITMODE;
-  constructor(
-    private fb: FormBuilder,
-    private portMasterTransformationService: PortMasterTransformationService
-  ) {}
-  private _berthList: any;
 
+  @Input() portId: number;
   @Input()
   get existingBerthInfo() {
     return this._berthList;
   }
+  set existingBerthInfo(value: IBerthInfo[]) {
+    this._berthList = value;
+    this.initForm(value);
+  }
 
-  set existingBerthInfo(value: any) {
-    this._berthList = value;    
-    const berths = this.initBerthListArray();
-    const berthListArray = berths?.map((result, index) =>
-      this.initBethsFormGroup(result, index)
+  addBerthBtnPermissionContext: IPermissionContext;
+  columns: IDataTableColumn[];
+  berthDetailsForm: FormGroup;
+  berthList: IBerthValueObject[];
+  editMode: DATATABLE_EDITMODE;
+
+  private _berthList: IBerthInfo[];
+
+  constructor(
+    private fb: FormBuilder,
+    private portMasterTransformationService: PortMasterTransformationService
+  ) { }
+
+  ngOnInit(): void {
+    this.addBerthBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortListingComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.columns = this.portMasterTransformationService.getBerthGridColumns();
+    this.editMode = DATATABLE_EDITMODE.CELL;
+  }
+
+  /**
+   * Method to initialize form
+   *
+   * @param {IBerthInfo[]} berthArray
+   * @memberof AddBerthComponent
+   */
+  initForm(berthArray: IBerthInfo[]): void {
+    const _berthList = berthArray?.map(berth => (this.portMasterTransformationService.getBerthListAsValueObject(berth, true, false, false, true, false)));
+    const berthListArray = _berthList?.map(berth =>
+      this.initBethsFormGroup(berth)
     );
     this.berthDetailsForm = this.fb.group({
       dataTable: this.fb.array([...berthListArray]),
     });
     this.berthDetailsForm?.markAllAsTouched();
-    this.berthList = value;
-  }
-
-  /**
-   * Component lifecycle ngoninit
-   * @memberof AddBerthComponent
-   */
-
-  ngOnInit(): void {
-    this.columns = this.portMasterTransformationService.getBerthGridColumns();
-    this.columns[this.columns.length - 1]['actions'].push(
-      DATATABLE_ACTION.DELETE
-    ); //ToDo.add permission.
-
-    this.editMode = DATATABLE_EDITMODE.CELL;
+    this.berthDetailsForm?.markAsDirty();
+    this.berthList = _berthList;
   }
 
   /**
@@ -72,262 +80,54 @@ export class AddBerthComponent implements OnInit {
    * @return {*}
    * @memberof AddBerthComponent
    */
-  initBethsFormGroup(berths: any = null, index: any = null) {
+  initBethsFormGroup(berths: IBerthValueObject) {
     return this.fb.group({
-      berthName: this.fb.control(berths?.berthName?._value, [
-        Validators.required,
-      ]),
-      maxShipDepth: this.fb.control(berths?.maxShipDepth?._value),
-      maxLoa: this.fb.control(berths?.maxLoa?._value),
-      maxDwt: this.fb.control(berths?.maxDwt?._value),
-      maxManifoldHeight: this.fb.control(berths?.maxManifoldHeight?._value),
-      minUkc: this.fb.control(berths?.minUkc?._value),
-      restrictions: this.fb.control(berths?.restrictions?._value),
-      id: this.fb.control(berths?.id),
+      berthId: this.fb.control(berths?.berthId),
+      portId: this.fb.control(berths?.portId),
+      berthName: this.fb.control(berths?.berthName?.value, [Validators.maxLength(100)]),
+      maxDraft: this.fb.control(berths?.maxDraft?.value, [Validators.required, numberValidator(2, 2, false)]),
+      depthInDatum: this.fb.control(berths?.depthInDatum?.value),
+      maxLoa: this.fb.control(berths?.maxLoa?.value, [Validators.required, numberValidator(2, 4, false)]),
+      maxDwt: this.fb.control(berths?.maxDwt?.value, [Validators.required, numberValidator(2, 7, false)]),
+      maxShipDepth: this.fb.control(berths?.maxShipDepth?.value, [Validators.required, numberValidator(2, 2, false)]),
+      maxManifoldHeight: this.fb.control(berths?.maxManifoldHeight?.value, [Validators.required, numberValidator(2, 2, false)]),
+      minUKC: this.fb.control(berths?.minUKC?.value, [Validators.required]),
+      regulationAndRestriction: this.fb.control(berths?.regulationAndRestriction?.value, [Validators.maxLength(100)]),
     });
   }
 
   /**
-   * Method to initialise berth list.
+   * Method to add new berth.
    *
    * @memberof AddBerthComponent
    */
-  initBerthListArray() {
-    const berthListArray = this.getBerthListAsValueObject(this.berthList);
-    return berthListArray;
-  }
-
-  /**
-   * Method to get berth list as value object.
-   *
-   * @param {*} element
-   * @param {*} isVisible
-   * @param {*} isEditMode
-   * @param {*} isModified
-   * @param {*} isEditable
-   * @return {*}
-   * @memberof AddBerthComponent
-   */
-  getBerthListAsValueObject(
-    berthList,
-    isVisible = true,
-    isEditMode = true,
-    isModified = true,
-    isEditable = true
-  ) {
-    const _berthListArray = berthList.map((item) => {
-      item.berthName = new ValueObject<string>(
-        item.berthName,
-        isVisible,
-        isEditMode,
-        isModified,
-        isEditable
-      );
-      item.maxShipDepth = new ValueObject<string>(
-        item.maxShipDepth,
-        isVisible,
-        isEditMode,
-        isModified,
-        isEditable
-      );
-      item.maxLoa = new ValueObject<string>(
-        item.maxLoa,
-        isVisible,
-        isEditMode,
-        isModified,
-        isEditable
-      );
-      item.maxDwt = new ValueObject<string>(
-        item.maxDwt,
-        isVisible,
-        isEditMode,
-        isModified,
-        isEditable
-      );
-      item.maxManifoldHeight = new ValueObject<string>(
-        item.maxManifoldHeight,
-        isVisible,
-        isEditMode,
-        isModified,
-        isEditable
-      );
-      item.minUkc = new ValueObject<string>(
-        item.minUkc,
-        isVisible,
-        isEditMode,
-        isModified,
-        isEditable
-      );
-      item.restrictions = new ValueObject<string>(
-        item.restrictions,
-        isVisible,
-        isEditMode,
-        isModified,
-        isEditable
-      );
-      return item;
-    });
-    return _berthListArray;
-  }
-
-  /**
-   * Method to mark all fields visited once.
-   *
-   * @memberof AddBerthComponent
-   */
-
-  markFormAsTouched() {
-    if (this.isSaveClicked) {
-      this.berthDetailsFormArray.markAllAsTouched();
-    }
-  }
-
-  /**
-   * Method to get berth name as value object.
-   *
-   * @param {*} berthList
-   * @param {boolean} [isVisible=true]
-   * @param {boolean} [isEditMode=true]
-   * @param {boolean} [isModified=true]
-   * @param {boolean} [isEditable=true]
-   * @return {*}
-   * @memberof AddBerthComponent
-   */
-  getBerthAsValueObject(
-    item: any,
-    isVisible = true,
-    isEditMode = true,
-    isModified = true,
-    isEditable = true
-  ) {
-    item.berthName = new ValueObject<string>(
-      item.berthName,
-      isVisible,
-      isEditMode,
-      isModified,
-      isEditable
-    );
-    item.maxShipDepth = new ValueObject<string>(
-      item.maxShipDepth,
-      isVisible,
-      isEditMode,
-      isModified,
-      isEditable
-    );
-    item.maxLoa = new ValueObject<string>(
-      item.maxLoa,
-      isVisible,
-      isEditMode,
-      isModified,
-      isEditable
-    );
-    item.maxDwt = new ValueObject<string>(
-      item.maxDwt,
-      isVisible,
-      isEditMode,
-      isModified,
-      isEditable
-    );
-    item.maxManifoldHeight = new ValueObject<string>(
-      item.maxManifoldHeight,
-      isVisible,
-      isEditMode,
-      isModified,
-      isEditable
-    );
-    item.minUkc = new ValueObject<string>(
-      item.minUkc,
-      isVisible,
-      isEditMode,
-      isModified,
-      isEditable
-    );
-    item.restrictions = new ValueObject<string>(
-      item.restrictions,
-      isVisible,
-      isEditMode,
-      isModified,
-      isEditable
-    );
-    return item;
-  }
-
-  /**
-   * Method to get validation/error messages.
-   *
-   * @memberof AddBerthComponent
-   */
-  getErrorMessages() {
-    this.errorMessages = this.portMasterTransformationService.setValidationMessageForAddBerth();
-  }
-
-  /**
-   * Method to set form value into portmaster service.
-   *
-   * @memberof AddBerthComponent
-   */
-
-  setFormValues() {
-    this.portMasterTransformationService.setBerthFomDetails(
-      this.berthDetailsFormArray
-    );
-  }
-
-  /**
-   *Method to add new berth.
-   *
-   * @memberof AddBerthComponent
-   */
-
-  addBerth() {
-    const dataTableControl = <FormArray>this.berthDetailsForm.get('dataTable'); //ToDo
-    const newBerth = {
+  async addBerth() {
+    const newBerth = <IBerthInfo>{
+      berthId: 0,
+      portId: this.portId ? this.portId : 0,
       berthName: null,
-      maxShipDepth: 0,
-      maxLoa: 0,
-      maxDwt: 0,
-      minUkc: 0,
-      restrictions: '',
+      depthInDatum: null,
+      maxLoa: null,
+      maxDwt: null,
+      maxShipDepth: null,
+      maxManifoldHeight: null,
+      minUKC: null,
+      regulationAndRestriction: null,
     };
-    const newBerthAsValueObject = this.getBerthAsValueObject(newBerth);
-    dataTableControl.push(this.initBethsFormGroup(newBerthAsValueObject));
-    this.berthList = [...this.berthList, newBerth];
+    const dataTableFormArray = <FormArray>this.berthDetailsForm.get('dataTable');
+    const newBerthAsValueObject = this.portMasterTransformationService.getBerthListAsValueObject(newBerth);
+    dataTableFormArray.push(this.initBethsFormGroup(newBerthAsValueObject));
+    this.berthList = [...this.berthList, newBerthAsValueObject];
   }
 
   /**
-   *Method to check for field errors
+   * Method to call on edit row
    *
-   * @param {string} formControlName
-   * @param {number} indexOfFormgroup
-   * @return {ValidationErrors}
+   * @param {*} event
    * @memberof AddBerthComponent
    */
-  fieldError(
-    formControlName: string,
-    indexOfFormgroup: number
-  ): ValidationErrors {
-    const formControl = this.field(formControlName, indexOfFormgroup);
-    return formControl?.invalid && (formControl.dirty || formControl.touched)
-      ? formControl.errors
-      : null;
-  }
-
-  /**
-   *Method to get the field name
-   *
-   * @param {string} formControlName
-   * @param {number} indexOfFormgroup
-   * @return {FormControl}
-   * @memberof AddBerthComponent
-   */
-
-  field(formControlName: string, indexOfFormgroup: number): FormControl {
-    const formControl = <FormControl>(
-      this.berthDetailsFormArray['controls'][indexOfFormgroup].get(
-        formControlName
-      )
-    );
-    return formControl;
+  onEditComplete(event): void {
+    // TODO : emit changes to port details
   }
 
   /**
@@ -336,7 +136,13 @@ export class AddBerthComponent implements OnInit {
    * @param {*} event
    * @memberof AddBerthComponent
    */
-  onDeleteRow(event) {
-    //ToDo
+  onDeleteRow(event): void {
+    if (event?.data?.isDelete) {
+      // TODO: implement delete API to remove added berth datails
+      this.berthList.splice(event.index, 1);
+      this.berthList = [...this.berthList];
+      const dataTableFormArray = <FormArray>this.berthDetailsForm.get('dataTable');
+      dataTableFormArray.removeAt(event.index);
+    }
   }
 }

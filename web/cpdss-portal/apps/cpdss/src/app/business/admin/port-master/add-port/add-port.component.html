@@ -1,192 +1,162 @@
-<form [formGroup]="addPortDetailsForm" (submit)="savePortDetails()" *ngIf="addPortDetailsForm">
-    <div class="container">
-        <div class="row">
-            <div class="col-6">
-                <button class="btn btn-main" id="btnCancel" (click)="cancel()">{{
-                    'PORT_MASTER_CANCEL' | translate }}</button>
-            </div>
-            <div class="col-6">
-                <button class="btn btn-main" id="btnSave" type="submit">
-                    {{
-                    'PORT_MASTER_SAVE' | translate }}</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblPortNAme"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_PORT_NAME' | translate
-                            }}</label>
-                    </div>
-                    <div class="col-6">
-                        <input formControlName="portName" id="inputPortName" type="text"
-                            [placeholder]="" maxlength="100" />
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('portName')"
-                        [errorMessages]="errorMessages.portName">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblTimeZone"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_TIMEZONE' |
-                            translate}}</label>
-                    </div>
-                    <div class="col-6">
-                        <p-dropdown [options]="timeZoneList" id="dropDownTimeZone"
-                            placeholder="{{'PORT_MASTER_TIMEZONE' | translate}}" formControlName="timeZone"
-                            optionLabel="timezone" focusTrap>
-                        </p-dropdown>
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('timeZone')"
-                        [errorMessages]="errorMessages?.timeZone">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblShiftDraft"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_MAX_SHIP_DRAFT' |
-                            translate}}</label>
-                    </div>
-                    <div class="col-6">
-                        <input type="text" id="inputShiftDraft" formControlName="maxPermissibleDraft"
-                            [placeholder]="" />
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('maxPermissibleDraft')"
-                        [errorMessages]="errorMessages.maxPermissibleDraft">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblPortCode"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_PORT_CODE' | translate
-                            }}</label>
-                    </div>
-                    <div class="col-6">
-                        <input type="text" id="inputPortCode" formControlName="portCode" [placeholder]=""
-                            maxlength="10" />
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('portCode')"
-                        [errorMessages]="errorMessages.portCode">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblTideHeight"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_TIDE_HEIGHT_HIGH' |
-                            translate}}</label>
-                    </div>
-                    <div class="col-6">
-                        <input type="number" id="inputHighTide" formControlName="tideHeightHigh" [placeholder]="" />
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('tideHeightHigh')"
-                        [errorMessages]="errorMessages?.tideHeightHigh">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblDensityOFWater"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_DENSITY_OF_SEAWATER' |
-                            translate}}</label>
-                    </div>
-                    <div class="col-6">
-                        <input type="number" id="inputDensityOfWater" formControlName="densityOfWater"
-                            [placeholder]="" />
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('densityOfWater')"
-                        [errorMessages]="errorMessages.densityOfWater">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblCountry"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_COUNTRY' | translate
-                            }}</label>
-                    </div>
-                    <div class="col-6">
-                        <p-dropdown [options]="countryList" id="dropDownCountry"
-                            placeholder="{{'PORT_MASTER_COUNTRY' | translate}}" formControlName="country"
-                            optionLabel="name">
-                        </p-dropdown>
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('country')"
-                        [errorMessages]="errorMessages.country">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblLowTide"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_Tide_HEIGHT_LOW' |
-                            translate}}</label>
-                    </div>
-                    <div class="col-6">
-                        <input type="number" id="inputLowTide" formControlName="tideHeightLow" [placeholder]="" />
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('tideHeightLow')"
-                        [errorMessages]="errorMessages?.tideHeightLow">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblTemperature"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_AMBIENT_TEMPERATURE' |
-                            translate}}</label>
-                    </div>
-                    <div class="col-6">
-                        <input type="number" id="inputTemperature" formControlName="ambientTemperature"
-                            [placeholder]="" />
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('ambientTemperature')"
-                        [errorMessages]="errorMessages.ambientTemperature">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-4">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="new_user_role" id="lblPosition"
-                            class="col-md-6 col-form-label text-secondary">{{'PORT_MASTER_POSITION' |
-                            translate}}</label>
-                    </div>
-                    <div class="col-6">
-                        <input type="text" id="inputPosition" formControlName="position" 
-                            [placeholder]="" readonly />
-                        <img src="" id="imgPosition" (click)="isVisible=!isVisible" alt="click here" class="ml-20">
-                    </div>
-                    <cpdss-portal-validation-error [errors]="fieldError('position')"
-                        [errorMessages]="errorMessages.position">
-                    </cpdss-portal-validation-error>
-                </div>
-            </div>
-        </div>
+<div class="conatiner-fluid pl-20 pr-20" *ngIf="addPortDetailsForm">
+  <form [formGroup]="addPortDetailsForm">
+    <div class="row mb-10">
+      <div class="col-6">
+        <h5 class="main-head inline-block text-uppercase">
+          {{(portId ? 'PORT_MASTER_EDIT_PORT' : 'PORT_MASTER_ADD_PORT')| translate}}
+        </h5>
+      </div>
+      <div class="col-6 text-right">
+        <button class="btn btn-main mr-10" id="btnCancel"
+          (click)="cancel()">{{ 'PORT_MASTER_CANCEL' | translate }}</button>
+        <button class="btn btn-main" id="btnSave"
+          (click)="savePortDetails()">{{ 'PORT_MASTER_SAVE' | translate }}</button>
+      </div>
     </div>
-</form>
-<cpdss-portal-port-master-map *ngIf="isVisible" [isVisible]="isVisible" (coordinates)="setCoordinates($event)"
-    (isModalOpen)="closeModal($event)"></cpdss-portal-port-master-map>
-<cpdss-portal-add-berth *ngIf="existingBerthInfo" [existingBerthInfo]="existingBerthInfo" [isSaveClicked]="isSaveClicked">
-</cpdss-portal-add-berth>
+
+    <div class="row">
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="port_name" class="col-sm-6 col-form-label">{{ 'PORT_MASTER_PORT_NAME' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <input type="text" class="form-control" id="port_name" formControlName="portName"
+              placeholder="{{ 'PORT_MASTER_PORT_NAME_PLACEHOLDER' | translate}}">
+            <cpdss-portal-validation-error [errors]="fieldError('portName')" [errorMessages]="errorMessages?.portName">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="time_zone" class="col-sm-6 col-form-label">{{ 'PORT_MASTER_TIMEZONE' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <p-dropdown styleClass="form-control" appendTo="body" [options]="timeZoneList" id="time_zone"
+              placeholder="{{'PORT_MASTER_TIMEZONE_PLACEHOLDER' | translate}}" formControlName="timeZone"
+              optionLabel="timezone" [filter]="true" resetFilterOnHide="true">
+            </p-dropdown>
+            <cpdss-portal-validation-error [errors]="fieldError('timeZone')" [errorMessages]="errorMessages?.timeZone">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="max_permissible_draft"
+            class="col-sm-6 col-form-label">{{ 'PORT_MASTER_MAX_SHIP_DRAFT' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <input type="text" class="form-control" id="max_permissible_draft" formControlName="maxPermissibleDraft"
+              placeholder="{{'PORT_MASTER_MAX_SHIP_DRAFT_PLACEHOLDER' | translate}}">
+            <cpdss-portal-validation-error [errors]="fieldError('maxPermissibleDraft')"
+              [errorMessages]="errorMessages?.maxPermissibleDraft">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="port_code" class="col-sm-6 col-form-label">{{ 'PORT_MASTER_PORT_CODE' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <input type="text" class="form-control" id="port_code" formControlName="portCode"
+              placeholder="{{'PORT_MASTER_PORT_CODE_PLACEHOLDER' | translate}}">
+            <cpdss-portal-validation-error [errors]="fieldError('portCode')" [errorMessages]="errorMessages?.portCode">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="tide_height_high"
+            class="col-sm-6 col-form-label">{{ 'PORT_MASTER_TIDE_HEIGHT_HIGH' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <input type="text" class="form-control" id="tide_height_high" formControlName="tideHeightHigh"
+              placeholder="{{'PORT_MASTER_TIDE_HEIGHT_HIGH_PLACEHOLDER' | translate}}">
+            <cpdss-portal-validation-error [errors]="fieldError('tideHeightHigh')"
+              [errorMessages]="errorMessages?.tideHeightHigh">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="density_of_water"
+            class="col-sm-6 col-form-label">{{ 'PORT_DENSITY_OF_SEAWATER' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <input type="text" class="form-control" id="density_of_water" formControlName="densityOfWater"
+              placeholder="{{'PORT_DENSITY_OF_SEAWATER_PLACEHOLDER' | translate}}">
+            <cpdss-portal-validation-error [errors]="fieldError('densityOfWater')"
+              [errorMessages]="errorMessages?.densityOfWater">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="country_list" class="col-sm-6 col-form-label">{{ 'PORT_MASTER_COUNTRY' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <p-dropdown styleClass="form-control" appendTo="body" [options]="countryList" id="country_list"
+              placeholder="{{'PORT_MASTER_COUNTRY_PLACEHOLDER' | translate}}" formControlName="country"
+              optionLabel="name" [filter]="true" resetFilterOnHide="true">
+            </p-dropdown>
+            <cpdss-portal-validation-error [errors]="fieldError('country')" [errorMessages]="errorMessages?.country">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="tide_height_low"
+            class="col-sm-6 col-form-label">{{ 'PORT_MASTER_TIDE_HEIGHT_LOW' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <input type="text" class="form-control" id="tide_height_low" formControlName="tideHeightLow"
+              placeholder="{{'PORT_MASTER_TIDE_HEIGHT_LOW_PLACEHOLDER' | translate}}">
+            <cpdss-portal-validation-error [errors]="fieldError('tideHeightLow')"
+              [errorMessages]="errorMessages?.tideHeightLow">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="ambient_temperature"
+            class="col-sm-6 col-form-label">{{ 'PORT_MASTER_AMBIENT_TEMPERATURE' | translate}}</label>
+          <div class="col-sm-6 error-icon-wrapper">
+            <input type="text" class="form-control" id="ambient_temperature" formControlName="ambientTemperature"
+              placeholder="{{'PORT_MASTER_AMBIENT_TEMPERATURE_PLACEHOLDER' | translate}}">
+            <cpdss-portal-validation-error [errors]="fieldError('ambientTemperature')"
+              [errorMessages]="errorMessages?.ambientTemperature">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="form-group row">
+          <label for="position_map" class="col-sm-6 col-form-label">{{ 'PORT_MASTER_POSITION' | translate}}</label>
+          <div class="col-sm-6 lat-long error-icon-wrapper">
+            <input type="text" class="form-control" id="position_map" formControlName="position"
+              placeholder="{{'PORT_MASTER_POSITION_PLACEHOLDER' | translate}}" readonly>
+            <div class="loc-ico pl-5">
+              <span class="pi pi-map-marker pointer" style="font-size: 1.5rem" (click)="showMapPopup()"></span>
+            </div>
+            <cpdss-portal-validation-error [errors]="fieldError('position')" [errorMessages]="errorMessages?.position">
+            </cpdss-portal-validation-error>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <cpdss-portal-add-berth *ngIf="addPortDetailsForm" [portId]="portId" [existingBerthInfo]="berthInfo">
+    </cpdss-portal-add-berth>
+  </form>
+</div>
+
+<cpdss-portal-port-master-map *ngIf="isVisible" [isVisible]="isVisible" [currentLatLong]="currentLocation" (coordinates)="setCoordinates($event)"
+  (isModalOpen)="closeModal($event)"></cpdss-portal-port-master-map>

@@ -10,14 +10,9 @@ const routes: Routes = [
         component: PortListingComponent
     },
     {
-        path: 'add-port/:portId',
+        path: ':portId',
         component: AddPortComponent
-    },
-    {
-        path: 'add-port',
-        component: AddPortComponent
-    },
-
+    }
 ];
 
 /**

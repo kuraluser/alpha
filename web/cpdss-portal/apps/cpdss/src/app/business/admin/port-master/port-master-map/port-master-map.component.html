@@ -1,6 +1,13 @@
-<p-dialog header=" {{'PORT_MASTER_SELECT_PORT_LOCATION'| translate}}" [(visible)]="visible"
-  styleClass="new-voayge-pop-up" [draggable]="visible" [closable]="true" (onHide)="onClose()">
-  <button type="button" id="btnOk" (click)="setPortLocation()" autofocus focusTrap>{{'PORT_MASTER_OK' | translate}}</button>
-  <button type="button" id="btnCancel" (click)="onCancelClick()" focusTrap>{{'PORT_MASTER_CANCEL' | translate}}</button>
+<p-dialog [(visible)]="visible"
+  styleClass="new-voayge-pop-up" [draggable]="visible" [minY]="50" [closable]="true" (onHide)="onClose()">
+  <p-header>
+    {{'PORT_MASTER_SELECT_PORT_LOCATION'| translate}}
+  </p-header>
+  <div class="row">
+    <div class="col-12 text-right pb-5">
+      <button class="btn btn-main mr-5" type="button" id="set_location" (click)="setPortLocation()" autofocus focusTrap>{{'PORT_MASTER_MAP_SET' | translate}}</button>
+      <button class="btn btn-main" type="button" id="clear_location" (click)="onClearLocation()" focusTrap>{{'PORT_MASTER_MAP_CLEAR' | translate}}</button>
+    </div>
+  </div>
   <div id="countryMap" class="map"></div>
 </p-dialog>

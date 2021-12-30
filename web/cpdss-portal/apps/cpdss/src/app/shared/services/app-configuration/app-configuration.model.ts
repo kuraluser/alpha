@@ -26,6 +26,7 @@ export interface IAppConfiguration {
   restrictMaxNumberOfCargo?: boolean;
   maxCargoLimit?: number;
   vesselNoImageUrl: string;
+  minimapPinIconUrl: string;
   unitConversionConstant: number;
   documentationSiteMapping?: IDictionary<string>;
 }

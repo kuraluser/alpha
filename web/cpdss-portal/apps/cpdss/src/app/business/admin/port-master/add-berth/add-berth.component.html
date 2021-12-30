@@ -1,16 +1,24 @@
-<ng-container>
-    <a id="add_cargo_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
-        (click)="addBerth()">{{'ADD_BERTH_BUTTON_LABEL'|
-        translate}}</a>
-</ng-container>
-<div class="" *ngIf="berthDetailsForm">
-    <form [formGroup]="berthDetailsForm"></form>
-    <div class="form-group row">
-        <div class="col table-responsive-custom">
-            <cpdss-portal-datatable [tableId]="berth" [form]="berthDetailsForm" [columns]="columns" [value]="berthList"
-                [filterable]="true" [editMode]="editMode" (deleteRow)="onDeleteRow($event)">
-            </cpdss-portal-datatable>
+<div class="row" *ngIf="berthDetailsForm">
+  <div class="col-12">
+    <form [formGroup]="berthDetailsForm">
+      <div class="row">
+        <div class="col-6">
+          <p class="text-secondary text-uppercase">{{'PORT_MASTER_BERTH_HEADER' | translate }}</p>
         </div>
-    </div>
+        <div class="col-6">
+          <button type="button" id="add_berth_details" class="btn btn-main float-right"
+            *cpdssPortalPermission="addBerthBtnPermissionContext"
+            (click)="addBerth()">{{'ADD_BERTH_BUTTON_LABEL' | translate}}</button>
+        </div>
+      </div>
 
+      <div class="form-group row">
+        <div class="col table-responsive-custom">
+          <cpdss-portal-datatable [tableId]="'add_port_berth'" [form]="berthDetailsForm" [columns]="columns"
+            [value]="berthList" [editMode]="editMode" (editComplete)="onEditComplete($event)" (deleteRow)="onDeleteRow($event)">
+          </cpdss-portal-datatable>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>

@@ -20,5 +20,6 @@
     "maxCargoLimit": 7,
     "ullageUnit": "M",
     "vesselNoImageUrl": "assets/images/vessels/ship-profile-no-image.png",
+    "minimapPinIconUrl": "assets/images/themes/light/map-icon/mini-map-pin.png",
     "unitConversionConstant": 6.28981
 }

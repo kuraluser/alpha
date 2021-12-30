@@ -44,10 +44,10 @@ export class FleetMapComponent implements OnInit {
   tileLayer: TileLayer;
   vectorLayor: VectorLayer;
   popupOverlay: Overlay;
-  minZoom: number = 0;
-  maxZoom: number = 20;
+  minZoom = 0;
+  maxZoom = 20;
 
-  showALlVessel: boolean = false;
+  showALlVessel = false;
   vessels: IFleetVessel[];
   selectedVessel: IFleetVessel;
   hidePortPopUp = true;

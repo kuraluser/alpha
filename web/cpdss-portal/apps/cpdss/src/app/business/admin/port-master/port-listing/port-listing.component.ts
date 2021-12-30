@@ -1,12 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
 
+import { PermissionsService } from '../../../../shared/services/permissions/permissions.service';
+import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { PortMasterTransformationService } from '../../services/port-master-transformation.service';
 import { PortMasterApiService } from '../../services/port-master-api.service';
 
+import { IPermission } from '../../../../shared/models/user-profile.model';
+import { IPermissionContext, PERMISSION_ACTION } from '../../../../shared/models/common.model';
 import { IDataTableColumn, IDataTablePageChangeEvent } from '../../../../shared/components/datatable/datatable.model';
 import { IPortMasterList, IPortMasterListResponse, IPortMasterListStateChange } from '../../models/port.model';
 
@@ -23,7 +27,11 @@ import { IPortMasterList, IPortMasterListResponse, IPortMasterListStateChange } 
 })
 export class PortListingComponent implements OnInit, OnDestroy {
 
+  private getPortMasterListState$ = new BehaviorSubject<IPortMasterListStateChange>(<IPortMasterListStateChange>{});
+
   public columns: IDataTableColumn[];
+  public permission: IPermission;
+  public addPortBtnPermissionContext: IPermissionContext;
   public loading: boolean;
   public totalRecords: number;
   public currentPage: number;
@@ -31,12 +39,12 @@ export class PortListingComponent implements OnInit, OnDestroy {
   public portList: IPortMasterList[];
   public portListPageState: IPortMasterListStateChange;
 
-  private getPortMasterListState$ = new BehaviorSubject<IPortMasterListStateChange>(<IPortMasterListStateChange>{});
-
   constructor(
+    private permissionsService: PermissionsService,
     private portMasterTransformationService: PortMasterTransformationService,
     private portMasterApiService: PortMasterApiService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private ngxSpinnerService: NgxSpinnerService
   ) { }
 
@@ -60,7 +68,9 @@ export class PortListingComponent implements OnInit, OnDestroy {
       }
       this.loading = false;
     });
-    this.columns = this.portMasterTransformationService.getPortListDatatableColumns();
+    this.addPortBtnPermissionContext = { key: AppConfigurationService.settings.permissionMapping['PortListingComponent'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD] };
+    this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['PortListingComponent']);
+    this.columns = this.portMasterTransformationService.getPortListDatatableColumns(this.permission);
   }
 
   ngOnDestroy() {
@@ -102,12 +112,25 @@ export class PortListingComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Method to navigate to add port component on row selection
+   * Method to navigate to add port component on row selection to edit
    * @param {selectedPort}
    * @memberof PortListingComponent
    */
   onRowSelect(selectedPort) {
-    this.router.navigate([`/business/admin/port-listing/add-port/${selectedPort?.data?.id}`]);
+    if (this.permission?.edit) {
+      this.router.navigate([selectedPort?.data?.id], {relativeTo: this.activatedRoute});
+    }
+  }
+
+  /**
+   * Method to navigate to Add port component
+   *
+   * @memberof PortListingComponent
+   */
+  addPort(): void {
+    if (this.permission?.add) {
+      this.router.navigate([0], {relativeTo: this.activatedRoute});
+    }
   }
 
 }

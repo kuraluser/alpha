@@ -1,23 +1,48 @@
-import { IResponseStatus } from '../../../shared/models/common.model';
+import { ICountry, IResponseStatus, ITimeZone, ValueObject } from '../../../shared/models/common.model';
 
 
 /**
  * Interface for berthInformation.
  *
  * @export
- * @interface BerthInfo
+ * @interface IBerthInfo
  */
-export interface BerthInfo {
+export interface IBerthInfo {
   berthId: number;
   portId: number;
   berthName: string;
-  maxShipDepth: number;
+  maxDraft: number;
   depthInDatum: number;
-  maxDwt: number;
   maxLoa: number;
+  maxDwt: number;
+  maxShipDepth: number;
   maxManifoldHeight: number;
-  minUKC?: number;
+  minUKC?: string;
   regulationAndRestriction: string;
+  isAdd: boolean;
+  isDelete?: boolean;
+}
+
+/**
+ * Interface for berth details as ValueObject
+ *
+ * @export
+ * @interface IBerthValueObject
+ */
+export interface IBerthValueObject {
+  berthId: number;
+  portId: number;
+  berthName: ValueObject<string>;
+  maxDraft: ValueObject<number>;
+  depthInDatum: ValueObject<number>;
+  maxLoa: ValueObject<number>;
+  maxDwt: ValueObject<number>;
+  maxShipDepth: ValueObject<number>;
+  maxManifoldHeight: ValueObject<number>;
+  minUKC?: ValueObject<string>;
+  regulationAndRestriction: ValueObject<string>;
+  isAdd?: boolean;
+  isDelete?: boolean;
 }
 
 /**
@@ -26,22 +51,25 @@ export interface BerthInfo {
  * @export
  * @interface PortDetails
  */
-export interface PortDetails {
+export interface IPortDetails {
   portId: number;
   portName: string;
   portCode: string;
   maxPermissibleDraft: number;
   timezone: string;
+  timezoneObj?: ITimeZone;
   timezoneOffsetVal: string;
   timezoneAbbreviation: string;
   tideHeightHigh?: number;
   tideHeightLow?: number;
   densityOfWater: number;
-  country: string;
+  countryName: string;
+  country?: ICountry;
   ambientTemperature?: number;
-  latitude: string;
-  longitude: string;
-  berthInfo: BerthInfo[];
+  latitude: any;
+  longitude: any;
+  position?: number[];
+  berthInfo: IBerthInfo[];
 }
 
 /**
@@ -52,7 +80,7 @@ export interface PortDetails {
  */
 export interface IPortsDetailsResponse {
   responseStatus: IResponseStatus;
-  portDetails: PortDetails;
+  portDetails: IPortDetails;
 }
 
 /**

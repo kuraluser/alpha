@@ -4,8 +4,8 @@
       <h5 class="main-head inline-block">{{'PORT_MASTER_PORT_LISTING' | translate}}</h5>
     </div>
     <div class="col text-right">
-      <a id="portMasterAddPort" [routerLink]="['/business/admin/port-listing/add-port']"
-        class="btn btn-link icon-btn plus-icon-rounded float-right">{{'PORT_MASTER_ADD_PORT_DETAILS' | translate}}</a>
+      <a id="portMasterAddPort" class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addPort()"
+        *cpdssPortalPermission="addPortBtnPermissionContext">{{'PORT_MASTER_ADD_PORT' | translate}}</a>
     </div>
   </div>
   <div class="row">

@@ -45,18 +45,6 @@ export class PortMasterApiService {
   }
 
   /**
-   * Method to get country list
-   * @return {*}
-   * @memberof PortMasterApiService
-   */
-  async getCountryList() {
-    return await [
-      { name: 'India' }, //TODO-has to be replaced with actual api call later
-      { name: 'Australia' },
-    ];
-  }
-
-  /**
    * API to get port master list
    * @param {IPortMasterListStateChange} stateParams
    * @return {*}  {Observable<IPortMasterListResponse>}
@@ -74,11 +62,13 @@ export class PortMasterApiService {
   }
 
   /**
-   * Method to get port details.
+   * Method to get selected port details.
    *
+   * @param {number} portId
+   * @return {*}  {Observable<IPortsDetailsResponse>}
    * @memberof PortMasterApiService
    */
-  getPortDetailsById(portId: number) {
+  getPortDetailsById(portId: number): Observable<IPortsDetailsResponse> {
     return this.commonApiService.get<IPortsDetailsResponse>(`portInfo/${portId}`);
   }
 }

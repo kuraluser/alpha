@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
-import { IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FIELD_TYPE, DATATABLE_ACTION } from '../../../shared/components/datatable/datatable.model';
 import { AdminModule } from '../admin.module';
+
+import { IDataTableColumn, DATATABLE_FILTER_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FIELD_TYPE, DATATABLE_ACTION } from '../../../shared/components/datatable/datatable.model';
+import { IPermission } from '../../../shared/models/user-profile.model';
+import { IBerthInfo, IBerthValueObject } from '../models/port.model';
+import { ValueObject } from '../../../shared/models/common.model';
 
 
 /**
@@ -13,9 +17,8 @@ import { AdminModule } from '../admin.module';
 })
 export class PortMasterTransformationService {
 
-
   berthFomDetails: any;
-  selectedPortLocation: { lat: number, lon: number }
+
   constructor() {
   }
 
@@ -27,26 +30,28 @@ export class PortMasterTransformationService {
   setValidationErrorMessage() {
     return {
       portName: {
-        'required': 'PORT_MASTER_PORT_NAME_REQUIRED'
+        'required': 'PORT_MASTER_PORT_NAME_REQUIRED',
+        'maxlength': 'PORT_MASTER_PORT_NAME_MAX_LENGTH'
       },
       portCode: {
         'required': "PORT_MASTER_PORT_CODE_REQUIRED",
+        'maxlength': 'PORT_MASTER_PORT_CODE_MAX_LENGTH'
       },
-      portTimeZone: {
+      timeZone: {
         'required': "PORT_MASTER_TIMEZONE_REQUIRED",
       },
       country: {
         'required': "PORT_MASTER_COUNTRY_REQUIRED",
       },
-      highTide: {
+      tideHeightHigh: {
         'required': "PORT_MASTER_TIDE_HEIGHT_REQUIRRED",
         'invalidNumber': "PORT_MASTER_TIDE_HEIGHT_INVALID"
       },
-      lowTide: {
+      tideHeightLow: {
         'required': "PORT_MASTER_LOW_TIDE_HEIGHT_REQUIRED",
         'invalidNumber': "PORT_MASTER_LOW_TIDE_HEIGHT_INVALID"
       },
-      permissibleShipsAtDraft: {
+      maxPermissibleDraft: {
         'required': "PORT_MASTER_MAX_PERMISSIBLE_SHIPS",
         'invalidNumber': "PORT_MASTER_MAX_PERMISSIBLE_SHIPS_INVALID"
       },
@@ -67,7 +72,7 @@ export class PortMasterTransformationService {
    * @return {IDataTableColumn[]}
    * @memberof PortMasterTransformationService
    */
-  getPortListDatatableColumns(): IDataTableColumn[] {
+  getPortListDatatableColumns(permission: IPermission): IDataTableColumn[] {
     const columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -162,7 +167,6 @@ export class PortMasterTransformationService {
     return columns;
   }
 
-
   /**
    * Method to set  berth form details.
    *
@@ -184,72 +188,12 @@ export class PortMasterTransformationService {
   }
 
   /**
-   *
-   * Method to set validation message for add berth page.
-   * @return {*}
-   * @memberof PortMasterTransformationService
-   */
-
-  setValidationMessageForAddBerth() {
-    return {
-      berthName: {
-        'required': 'PORTMASTER_BERTH_NAME'
-      },
-      maxShipDepth: {
-        'required': 'PORTMASTER_BERTH_DEPTH_REQUIRED'
-      },
-      maxLoa: {
-        'required': 'PORTMASTER_BERTH_MAXIMUM_LOA_REQUIRED',
-        'invalidNumber': 'PORTMASTER_BERTH_MAXIMUM_LOA_INVALID'
-      },
-      maxDwt: {
-        'required': 'PORTMASTER_BERTH_MAXIMUM_DWT_REQUIRED',
-        'invalidNumber': 'PORTMASTER_BERTH_MAXIMUM_DWT_INVALID'
-      },
-      maxManifoldHeight: {
-        'required': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_REQUIRED',
-        'invalidNumber': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_INVALID'
-      },
-      minUkc: {
-        'required': 'PORTMASTER_BERTH_MINIMUM_UKC_REQUIRED',
-        'invalidNumber': 'PORTMASTER_BERTH_MINIMUM_UKC_INVALID'
-      }
-    }
-  }
-
-
-  /**
-   * Method to get previously selected port location
-   *
-   * @memberof PortMasterTransformationService
-   */
-   getSelectedPortLocation() {
-    return this.selectedPortLocation;
-  }
-
-  /**
-   * Method to set current location
-   *
-   * @memberof PortMasterTransformationService
-   */
-  setSelectedLocation(selectedPortLocation: any) {
-    if (selectedPortLocation) {
-      this.selectedPortLocation = {
-        lat: selectedPortLocation[0],
-        lon: selectedPortLocation[1],
-      }
-    }
-  }
-
-
-  /**
    * Method to get berth grid columns list.
    *
    * @memberof PortMasterTransformationService
    */
-  getBerthGridColumns()  {
-    let columns :IDataTableColumn[] =
-    [
+  getBerthGridColumns(): IDataTableColumn[] {
+    const columns: IDataTableColumn[] = [
       {
         field: 'slNo',
         header: 'SL',
@@ -260,85 +204,125 @@ export class PortMasterTransformationService {
       {
         field: 'berthName',
         header: 'PORTMASTER_BERTH_NAME',
-        filter: true,
-        filterPlaceholder: '',
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'berthName',
-        sortable: true,
-        sortField: 'berthName',
-        editable: true,
-
+        fieldPlaceholder: 'PORTMASTER_BERTH_NAME_PLACEHOLDER',
+        errorMessages: {
+          'maxlength': 'PORTMASTER_BERTH_NAME_MAX_LENGTH'
+        }
       },
       {
-        field: 'maxShipDepth',
-        header: 'PORTMASTER_BERTH_DEPTH',
-        filter: true,
-        filterPlaceholder: '',
+        field: 'maxDraft',
+        header: 'PORTMASTER_BERTH_MAX_DRAFT',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
-        filterType: DATATABLE_FILTER_TYPE.TEXT,
-        filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
-        filterField: 'maxShipDepth',
-        sortable: true,
-        sortField: 'maxShipDepth',
-        editable: true
+        fieldPlaceholder: 'PORTMASTER_BERTH_MAX_PLACEHOLDER',
+        errorMessages: {
+          'required': 'PORTMASTER_BERTH_MAX_DRAFT_REQUIRED'
+        }
+      },
+      {
+        field: 'depthInDatum',
+        header: 'PORTMASTER_BERTH_DEPTH',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldPlaceholder: 'PORTMASTER_BERTH_DEPTH_PLACEHOLDER'
       },
       {
         field: 'maxLoa',
         header: 'PORTMASTER_BERTH_MAXIMUM_LOA',
-        filter: true,
-        filterPlaceholder: '',
-
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
-        filterField: 'maxLoa',
-        sortable: true,
-        sortField: 'maxLoa',
-        editable: true
+        fieldPlaceholder: 'PORTMASTER_BERTH_MAXIMUM_LOA_PLACEHOLDER',
+        errorMessages: {
+          'required': 'PORTMASTER_BERTH_MAXIMUM_LOA_REQUIRED'
+        }
       },
       {
         field: 'maxDwt',
         header: 'PORTMASTER_BERTH_MAXIMUM_DWT',
-        filter: true,
-        filterPlaceholder: '',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
-        filterField: 'maxDwt',
-        sortable: true,
-        sortField: 'maxDwt',
-        editable: true
+        fieldPlaceholder: 'PORTMASTER_BERTH_MAXIMUM_DWT_PLACEHOLDER',
+        errorMessages: {
+          'required': 'PORTMASTER_BERTH_MAXIMUM_DWT_REQUIRED'
+        }
+      },
+      {
+        field: 'maxShipDepth',
+        header: 'PORTMASTER_BERTH_MAX_PERMISSIBLE_SHIPS',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldPlaceholder: 'PORTMASTER_BERTH_MAX_PERMISSIBLE_SHIPS_PLACEHOLDER',
+        errorMessages: {
+          'required': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_REQUIRED'
+        }
       },
       {
         field: 'maxManifoldHeight',
         header: 'PORTMASTER_BERTH_MANIFOLD_HEIGHT',
-        filter: true,
-        filterPlaceholder: '',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
-        filterField: 'maxManifoldHeight',
-        sortable: true,
-        sortField: 'maxManifoldHeight',
-        editable: true
+        fieldPlaceholder: 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_PLACEHOLDER',
+        errorMessages: {
+          'required': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_REQUIRED'
+        }
       },
       {
-        field: 'minUkc',
-        header: 'PORTMASTER_BERTH_MINIMUM_UKC',
-        filter: true,
-        filterPlaceholder: '',
+        field: 'minUKC',
+        header: 'PORTMASTER_BERTH_UKC_DETAILS',
         fieldType: DATATABLE_FIELD_TYPE.TEXT,
-        filterField: 'minUkc',
-        sortable: true,
-        sortField: 'minUkc',
-        editable: true
+        fieldPlaceholder: 'PORTMASTER_BERTH_UKC_DETAILS_PLACEHOLDER',
+        errorMessages: {
+          'required': 'PORTMASTER_BERTH_MINIMUM_UKC_REQUIRED'
+        }
+      },
+      {
+        field: 'regulationAndRestriction',
+        header: 'PORTMASTER_BERTH_RESTRICTIONS',
+        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldPlaceholder: 'PORTMASTER_BERTH_RESTRICTIONS_PLACEHOLDER',
+        errorMessages: {
+          'maxlength': 'PORTMASTER_BERTH_RESTRICTIONS_MAX_LENGTH'
+        }
       }
     ];
+
+    // NOTE: Below code may be use in future
+    /*
     const actions: DATATABLE_ACTION[] = [];
-      const action: IDataTableColumn = {
-        field: 'actions',
-        header: '',
-        fieldType: DATATABLE_FIELD_TYPE.ACTION,
-        fieldValueIcon: '##',
-        actions: actions
-      };
-      columns = [...columns, action];
+    actions.push(DATATABLE_ACTION.DELETE);
+    const action: IDataTableColumn = {
+      field: 'actions',
+      header: '',
+      fieldType: DATATABLE_FIELD_TYPE.ACTION,
+      actions: actions
+    };
+    columns = [...columns, action];
+    */
     return columns;
   }
+
+  /**
+   * Method to convert berth-details as valueObject
+   *
+   * @param {IBerthInfo} berthList
+   * @param {boolean} [isVisible=true]
+   * @param {boolean} [isEditMode=true]
+   * @param {boolean} [isModified=true]
+   * @param {boolean} [isEditable=true]
+   * @param {boolean} [isNewValue=false]
+   * @return {*}  {IBerthValueObject}
+   * @memberof PortMasterTransformationService
+   */
+  getBerthListAsValueObject(berthList: IBerthInfo, isVisible = true, isEditMode = true, isModified = true, isEditable = true, isNewValue = true): IBerthValueObject {
+    const _berth = <IBerthValueObject>{};
+    _berth.berthId = berthList.berthId;
+    _berth.portId = berthList.portId;
+    _berth.berthName = new ValueObject<string>(berthList.berthName, isVisible, isEditMode, isModified, isEditable);
+    _berth.maxDraft = new ValueObject<number>(berthList.maxDraft, isVisible, isEditMode, isModified, isEditable);
+    _berth.depthInDatum = new ValueObject<number>(berthList.depthInDatum, isVisible, isEditMode, isModified, isEditable);
+    _berth.maxLoa = new ValueObject<number>(berthList.maxLoa, isVisible, isEditMode, isModified, isEditable);
+    _berth.maxDwt = new ValueObject<number>(berthList.maxDwt, isVisible, isEditMode, isModified, isEditable);
+    _berth.maxShipDepth = new ValueObject<number>(berthList.maxShipDepth, isVisible, isEditMode, isModified, isEditable);
+    _berth.maxManifoldHeight = new ValueObject<number>(berthList.maxManifoldHeight, isVisible, isEditMode, isModified, isEditable);
+    _berth.minUKC = new ValueObject<string>(berthList.minUKC, isVisible, isEditMode, isModified, isEditable);
+    _berth.regulationAndRestriction = new ValueObject<string>(berthList.regulationAndRestriction, isVisible, isEditMode, isModified, isEditable);
+    _berth.isAdd = isNewValue;
+    return _berth;
+  }
+
 }
