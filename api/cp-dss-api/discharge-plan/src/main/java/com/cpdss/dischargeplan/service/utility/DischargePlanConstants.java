@@ -49,7 +49,8 @@ public class DischargePlanConstants {
     PORT_DISCHARGING_PLAN_STABILITY_PARAMETERS("port_discharging_plan_stability_parameters"),
     PORT_DISCHARGING_PLAN_STOWAGE_DETAILS("port_discharging_plan_stowage_details"),
     PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS("port_discharge_plan_commingle_details"),
-    JSON_DATA("json_data");
+    JSON_DATA("json_data"),
+    LOADABLE_PATTERN("loadable_pattern");
 
     public final String table;
   }
@@ -66,7 +67,8 @@ public class DischargePlanConstants {
           "discharging_port_tide_details",
           "discharging_sequence",
           "discharging_berth_details",
-          "discharging_delay_reason");
+          "discharging_delay_reason",
+          "loadable_pattern");
 
   public static List<String> DISCHARGE_PLAN_SHORE_TO_SHIP =
       Arrays.asList(

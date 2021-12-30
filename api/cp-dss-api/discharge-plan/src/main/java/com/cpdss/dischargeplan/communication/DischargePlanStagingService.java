@@ -47,6 +47,7 @@ public class DischargePlanStagingService extends StagingService {
     super(dischargePlanStagingRepository);
   }
 
+  Long dischargingPatternId = null;
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
    *
@@ -732,6 +733,32 @@ public class DischargePlanStagingService extends StagingService {
             }
             break;
           }
+        case loadable_pattern:
+          {
+            if (dischargingPatternId != null) {
+              LoadableStudy.LoadableStudyPatternCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyPatternCommunicationRequest.newBuilder();
+              builder.setId(dischargingPatternId);
+              LoadableStudy.LoadableStudyPatternCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub.getLoadablePatternForCommunication(
+                      builder.build());
+              if (DischargePlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray loadablePattern =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      loadablePattern);
+                }
+              }
+            }
+            break;
+          }
       }
     }
     return array;
@@ -773,6 +800,7 @@ public class DischargePlanStagingService extends StagingService {
           dischargeInformation.get("stages_min_amount_xid").getAsLong();
       Long dischargingStagesDurationId =
           dischargeInformation.get("stages_duration_xid").getAsLong();
+      dischargingPatternId = dischargeInformation.get("discharging_pattern_xid").getAsLong();
       if (dischargingInformationStatusId != null) {
         getDischargingInformationStatus(
             array,

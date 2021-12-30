@@ -36,5 +36,6 @@ public enum ProcessIdentifiers {
   port_discharging_plan_stability_parameters,
   port_discharging_plan_stowage_details,
   port_discharge_plan_commingle_details,
-  json_data;
+  json_data,
+  loadable_pattern;
 }

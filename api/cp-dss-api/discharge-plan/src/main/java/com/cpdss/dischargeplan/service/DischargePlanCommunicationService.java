@@ -171,6 +171,7 @@ public class DischargePlanCommunicationService {
   List<PortDischargingPlanCommingleDetails> portDischargingPlanCommingleDetailsList = null;
   String jsonData = null;
   String current_table_name = "";
+  String loadablePattern = null;
 
   // endregion
   // region Communication get data
@@ -366,6 +367,7 @@ public class DischargePlanCommunicationService {
         savePortDischargingPlanStowageDetails(dischargeInfo);
         savePortDischargingPlanCommingDetails(dischargeInfo);
         saveJsonData();
+        saveLoadablePattern();
       } catch (ResourceAccessException e) {
         log.info("Communication ++++++++++++ Failed to save data for  : " + current_table_name);
         log.info("Communication ++++++++++++ ResourceAccessException : " + e.getMessage());
@@ -874,6 +876,12 @@ public class DischargePlanCommunicationService {
           {
             jsonData = dataTransferString;
             idMap.put(DischargingPlanTables.JSON_DATA.getTable(), dataTransferStage.getId());
+            break;
+          }
+        case loadable_pattern:
+          {
+            loadablePattern = dataTransferString;
+            idMap.put(DischargingPlanTables.LOADABLE_PATTERN.getTable(), dataTransferStage.getId());
             break;
           }
       }
@@ -1634,6 +1642,31 @@ public class DischargePlanCommunicationService {
       throw new Exception(reply.getResponseStatus().getMessage());
     }
   }
+  // region save Loadable Pattern
+  private void saveLoadablePattern() throws Exception {
+    current_table_name = DischargingPlanTables.LOADABLE_PATTERN.getTable();
+    if (loadablePattern == null) {
+      log.info("Communication ++++ LOADABLE_PATTERN is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyPatternCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyPatternCommunicationRequest.newBuilder();
+    log.info("Loadable Pattern from staging table:{}", loadablePattern);
+    builder.setDataJson(loadablePattern);
+    LoadableStudy.LoadableStudyPatternCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveLoadablePatternForCommunication(builder.build());
+    if (DischargePlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("LoadablePattern saved in LoadableStudy");
+    } else if (DischargePlanConstants.FAILED_WITH_RESOURCE_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when LoadablePattern save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (DischargePlanConstants.FAILED_WITH_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when LoadablePattern save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
   // endregion
 
   private DischargeInformation saveDischargeInformation() {
@@ -1812,6 +1845,7 @@ public class DischargePlanCommunicationService {
     portDischargingPlanCommingleDetailsList = null;
     current_table_name = "";
     jsonData = null;
+    loadablePattern = null;
   }
   // endregion
 }
