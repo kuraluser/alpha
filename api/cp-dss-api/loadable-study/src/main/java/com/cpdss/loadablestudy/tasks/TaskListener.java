@@ -29,9 +29,9 @@ public class TaskListener implements ExecuteTaskListener {
 
   public static final String ENABLED = "Enabled";
   public static final String DISABLED = "Disabled";
-  public static final String DOWNLOAD_TASK_PREFIX = "DOWNLOAD_RESULT_";
-  public static final String STATUS_CHECK_TASK_PREFIX = "STATUS_CHECK_";
-  public static final String LOADABLE_DATA_UPDATE_TASK_PREFIX = "LOADABLE_DATA_UPDATE";
+  public static final String LOADABLE_STUDY_DOWNLOAD_TASK_PREFIX = "LOADABLE_STUDY_DOWNLOAD_RESULT";
+  public static final String STATUS_CHECK_TASK_PREFIX = "STATUS_CHECK";
+  public static final String LOADABLE_STUDY_DATA_UPDATE_TASK_PREFIX = "LOADABLE_STUDY_DATA_UPDATE";
   public static final String STOWAGE_DATA_UPDATE_TASK_PREFIX = "STOWAGE_DATA_UPDATE";
   public static final String DISCHARGE_STUDY_DOWNLOAD_TASK_PREFIX =
       "DISCHARGE_STUDY_DOWNLOAD_RESULT";
@@ -55,7 +55,7 @@ public class TaskListener implements ExecuteTaskListener {
       log.info("Executing Task: {}, Params: {}", taskName, taskReqParams);
 
       // Download result task
-      if (taskName.startsWith(DOWNLOAD_TASK_PREFIX)) {
+      if (taskName.startsWith(LOADABLE_STUDY_DOWNLOAD_TASK_PREFIX)) {
         if (CPDSS_BUILD_ENV_SHIP.equals(taskReqParams.get(ENV))) {
           communicationService.getDataFromCommInShipSide(
               taskName, taskReqParams, MessageTypes.loadableShip);
@@ -70,7 +70,7 @@ public class TaskListener implements ExecuteTaskListener {
         }
       }
       // Save LoadableStudy data from staging table to corresponding tables
-      else if (taskName.startsWith(LOADABLE_DATA_UPDATE_TASK_PREFIX)) {
+      else if (taskName.startsWith(LOADABLE_STUDY_DATA_UPDATE_TASK_PREFIX)) {
         loadableStudyCommunicationService.getLoadableStudyStagingData(
             StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get(ENV), taskName);
         loadableStudyCommunicationService.getLoadableStudyStagingData(
@@ -93,10 +93,7 @@ public class TaskListener implements ExecuteTaskListener {
       }
       // Download result task for Discharge Study
       else if (taskName.startsWith(DISCHARGE_STUDY_DOWNLOAD_TASK_PREFIX)) {
-        if (CPDSS_BUILD_ENV_SHIP.equals(taskReqParams.get(ENV))) {
-          communicationService.getDataFromCommInShipSide(
-              taskName, taskReqParams, MessageTypes.dischargeStudyShip);
-        } else if (CPDSS_BUILD_ENV_SHORE.equals(taskReqParams.get(ENV))) {
+        if (CPDSS_BUILD_ENV_SHORE.equals(taskReqParams.get(ENV))) {
           communicationService.getDataFromCommInShoreSide(
               taskName, taskReqParams, MessageTypes.dischargeStudyShore);
         } else {

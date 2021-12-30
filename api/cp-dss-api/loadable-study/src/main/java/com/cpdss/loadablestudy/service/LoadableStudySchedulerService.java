@@ -45,6 +45,7 @@ public class LoadableStudySchedulerService {
     List<SchedulerRequest> vesselList = getAllVessel();
     List<String> scheduledTasks = getScheduledTasks();
     for (SchedulerRequest vessel : vesselList) {
+      final String taskName = "_" + environment + "_" + vessel.getVesselId();
       new Thread(
               () -> {
                 try {
@@ -53,8 +54,7 @@ public class LoadableStudySchedulerService {
                   LocalDateTime dateTime = LocalDateTime.now();
                   LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                   ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                  properties.setTaskName(
-                      "DOWNLOAD_RESULT_" + environment + "_" + vessel.getVesselId());
+                  properties.setTaskName("LOADABLE_STUDY_DOWNLOAD_RESULT" + taskName);
                   properties.setTaskFrequency(30);
                   properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                   properties.setTaskStartDate(dateTime.toLocalDate());
@@ -83,8 +83,7 @@ public class LoadableStudySchedulerService {
                   LocalDateTime dateTime = LocalDateTime.now();
                   LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                   ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                  properties.setTaskName(
-                      "STATUS_CHECK_" + environment + "_" + vessel.getVesselId());
+                  properties.setTaskName("STATUS_CHECK" + taskName);
                   properties.setTaskFrequency(60);
                   properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                   properties.setTaskStartDate(dateTime.toLocalDate());
@@ -114,8 +113,7 @@ public class LoadableStudySchedulerService {
                   LocalDateTime dateTime = LocalDateTime.now();
                   LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                   ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                  properties.setTaskName(
-                      "DISCHARGE_STUDY_DOWNLOAD_RESULT" + environment + "_" + vessel.getVesselId());
+                  properties.setTaskName("DISCHARGE_STUDY_DOWNLOAD_RESULT" + taskName);
                   properties.setTaskFrequency(30);
                   properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                   properties.setTaskStartDate(dateTime.toLocalDate());
@@ -145,7 +143,7 @@ public class LoadableStudySchedulerService {
                 LocalDateTime dateTime = LocalDateTime.now();
                 LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                 ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                properties.setTaskName("LOADABLE_DATA_UPDATE" + environment);
+                properties.setTaskName("LOADABLE_STUDY_DATA_UPDATE_" + environment);
                 properties.setTaskFrequency(30);
                 properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                 properties.setTaskStartDate(dateTime.toLocalDate());
@@ -172,7 +170,7 @@ public class LoadableStudySchedulerService {
                 LocalDateTime dateTime = LocalDateTime.now();
                 LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                 ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                properties.setTaskName("STOWAGE_DATA_UPDATE" + environment);
+                properties.setTaskName("STOWAGE_DATA_UPDATE_" + environment);
                 properties.setTaskFrequency(30);
                 properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                 properties.setTaskStartDate(dateTime.toLocalDate());
@@ -199,7 +197,7 @@ public class LoadableStudySchedulerService {
                 LocalDateTime dateTime = LocalDateTime.now();
                 LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                 ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                properties.setTaskName("DISCHARGE_STUDY_DATA_UPDATE" + environment);
+                properties.setTaskName("DISCHARGE_STUDY_DATA_UPDATE_" + environment);
                 properties.setTaskFrequency(30);
                 properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                 properties.setTaskStartDate(dateTime.toLocalDate());

@@ -36,7 +36,6 @@ public enum MessageTypes {
           ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT);
   public static EnumSet<MessageTypes> dischargeShore = EnumSet.of(DISCHARGEPLAN);
   public static EnumSet<MessageTypes> dischargeShip = EnumSet.of(DISCHARGEPLAN_ALGORESULT);
-  public static EnumSet<MessageTypes> dischargeStudyShip = EnumSet.of(ALGORESULT);
   public static EnumSet<MessageTypes> dischargeStudyShore = EnumSet.of(DISCHARGESTUDY);
 
   private final String messageType;
