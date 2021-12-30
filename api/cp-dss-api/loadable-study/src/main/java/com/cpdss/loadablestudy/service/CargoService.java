@@ -69,6 +69,7 @@ public class CargoService {
   @GrpcClient("cargoService")
   private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
 
+  @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanService;
 
   public LoadableStudy.CargoHistoryReply.Builder getAllCargoHistory(
@@ -555,32 +556,61 @@ public class CargoService {
   public void saveCargoHistoryFromOperationsModule(Long vesselId, Long voyageId) {
     Common.CargoHistoryOpsRequest.Builder request = Common.CargoHistoryOpsRequest.newBuilder();
     request.setVesselId(vesselId).setVoyageId(voyageId);
-    Common.CargoHistoryOpsRequest.Builder request2 = Common.CargoHistoryOpsRequest.newBuilder();
-    request.setVesselId(vesselId).setVoyageId(voyageId);
+    var voyage = voyageRepository.findByIdAndIsActive(voyageId, true);
     var loading = loadingPlanService.getLoadingPlanCargoHistory(request.build());
-    var discharge = dischargePlanService.getDischargePlanCargoHistory(request2.build());
+    var discharge = dischargePlanService.getDischargePlanCargoHistory(request.build());
     // Call 1 for Loading data save
     if (!loading.getCargoHistoryList().isEmpty()) {
-      this.saveCargoHistoryBatch(this.buildCargoHistoryData(loading, true));
+      this.saveCargoHistoryBatch(this.buildCargoHistoryData(loading, true, vesselId, voyage));
       log.info(
-          "Save Cargo History data fro Loading Plan Success, Size - {}",
+          "Save Cargo History data for Loading Plan Success, Size - {}",
           loading.getCargoHistoryCount());
+      // Save to Api Temp table for Cargo-History Window
+      this.saveApiHistoryOnVoyageClose(
+          loading.getCargoHistoryList().stream().findAny().get(), vesselId);
     }
     // Call 2 for discharge
     if (!discharge.getCargoHistoryList().isEmpty()) {
-      this.saveCargoHistoryBatch(this.buildCargoHistoryData(discharge, false));
+      this.saveCargoHistoryBatch(this.buildCargoHistoryData(discharge, false, vesselId, voyage));
       log.info(
-          "Save Cargo History data fro Discharge Plan Success, Size - {}",
+          "Save Cargo History data for Discharge Plan Success, Size - {}",
           discharge.getCargoHistoryCount());
+      // Save to Api Temp table for Cargo-History Window
+      this.saveApiHistoryOnVoyageClose(
+          discharge.getCargoHistoryList().stream().findAny().get(), vesselId);
     }
   }
 
+  // Save to Api Temp table for Cargo-History Window
+  /**
+   * In api_history table, each row keep api/temp for each cargo in LS/DS nominations So, taking
+   * api/temp from one of the stowage details and save.
+   */
+  private void saveApiHistoryOnVoyageClose(Common.CargoHistoryOps var1, Long vesselId) {
+    ApiTempHistory apiTempHistory = new ApiTempHistory();
+    apiTempHistory.setVesselId(vesselId);
+    if (var1.getCargoNominationId() > 0) {
+      var cn =
+          cargoNominationRepository.findByIdAndIsActive(var1.getCargoNominationId(), true).get();
+      apiTempHistory.setCargoId(cn.getCargoXId());
+    }
+    apiTempHistory.setApi(var1.getApi().isEmpty() ? null : new BigDecimal(var1.getApi()));
+    apiTempHistory.setTemp(var1.getTemperature().isEmpty() ? null : new BigDecimal(var1.getApi()));
+    apiTempHistory.setLoadingPortId(var1.getPortId());
+    apiTempHistory.setIsActive(true);
+    apiTempHistoryRepository.save(apiTempHistory);
+    log.info("Save API History for cargo - {}", apiTempHistory.getCargoId());
+  }
+
   private List<CargoHistory> buildCargoHistoryData(
-      Common.CargoHistoryResponse response, boolean isLoading) {
+      Common.CargoHistoryResponse response, boolean isLoading, Long vesselId, Voyage voyage) {
     List<CargoHistory> histories = new ArrayList<>();
     try {
       for (Common.CargoHistoryOps var1 : response.getCargoHistoryList()) {
         CargoHistory entity = new CargoHistory();
+        entity.setIsActive(true);
+        entity.setVesselId(vesselId);
+        entity.setVoyage(voyage);
         entity.setTankId(var1.getTankId());
         entity.setApi(var1.getApi().isEmpty() ? null : new BigDecimal(var1.getApi()));
         entity.setTemperature(
@@ -604,7 +634,7 @@ public class CargoService {
 
   private void saveCargoHistoryBatch(List<CargoHistory> cargoHistories) {
     try {
-      cargoHistoryRepository.saveAll(cargoHistories);
+      var resp = cargoHistoryRepository.saveAll(cargoHistories);
     } catch (Exception e) {
       e.printStackTrace();
     }

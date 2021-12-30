@@ -30,7 +30,7 @@ public class LoadingCargoHistoryService {
             request.getVesselId(), request.getVoyageId());
     if (!infoList.isEmpty()) {
       for (LoadingInformation info : infoList) {
-        // TO DO  Need to discuss, If only needed Stowage details for departure condition
+        // Only needed Stowage details for departure condition, actual value
         var stowageList = stowageDetailsRepository.findCargoHistoryData(info.getId());
         for (PortLoadingPlanStowageDetails data : stowageList) {
           Common.CargoHistoryOps.Builder builder1 = Common.CargoHistoryOps.newBuilder();

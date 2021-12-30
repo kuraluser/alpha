@@ -28,7 +28,7 @@ public class DischargeCargoHistoryService {
             request.getVesselId(), request.getVoyageId());
     if (!infoList.isEmpty()) {
       for (DischargeInformation info : infoList) {
-        // TO DO  Need to discuss, If only needed Stowage details for departure condition
+        // only needed Stowage details for departure condition, actual value
         var stowageList = stowageDetailsRepository.findCargoHistoryData(info.getId());
         for (PortDischargingPlanStowageDetails data : stowageList) {
           Common.CargoHistoryOps.Builder builder1 = Common.CargoHistoryOps.newBuilder();
