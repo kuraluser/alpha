@@ -2176,10 +2176,23 @@ public class LoadablePlanService {
           .ifPresent(replyBuilder::setLastModifiedPort);
     }
 
-    List<OnBoardQuantity> onBoardQuantities =
-        onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+    // Fetching the first loading port
+    List<LoadableStudyPortRotation> loadableStudyPortRotations =
+        loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             loadablePatternOpt.get().getLoadableStudy(), true);
-    buildOnBoardQuantities(onBoardQuantities, replyBuilder);
+    Optional<LoadableStudyPortRotation> firstLoadingPortOpt =
+        loadableStudyPortRotations.stream()
+            .filter(
+                loadableStudyPortRotation ->
+                    loadableStudyPortRotation.getOperation().getId().equals(LOADING_OPERATION_ID))
+            .min(Comparator.comparing(LoadableStudyPortRotation::getPortOrder));
+    firstLoadingPortOpt.ifPresent(
+        firstLoadingPort -> {
+          List<OnBoardQuantity> onBoardQuantities =
+              onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+                  loadablePatternOpt.get().getLoadableStudy(), firstLoadingPort.getPortXId(), true);
+          buildOnBoardQuantities(onBoardQuantities, replyBuilder);
+        });
 
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
@@ -2212,6 +2225,7 @@ public class LoadablePlanService {
           ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
           ofNullable(entity.getTemperature())
               .ifPresent(item -> builder.setTemperature(item.toString()));
+          ofNullable(entity.getPortId()).ifPresent(builder::setPortId);
           details.add(builder.build());
         });
     replyBuilder.addAllOnBoardQuantities(details);

@@ -3679,7 +3679,10 @@ class LoadableStudyServiceTest {
     doCallRealMethod()
         .when(loadablePlanService)
         .buildLoadablePlanDetails(any(Optional.class), any(LoadablePlanDetailsReply.Builder.class));
-    when(onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+    when(onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(new ArrayList<>());
+    when(loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(new ArrayList<>());
 
@@ -3719,6 +3722,10 @@ class LoadableStudyServiceTest {
         loadablePlanService,
         "loadablePatternAlgoStatusRepository",
         loadablePatternAlgoStatusRepository);
+    ReflectionTestUtils.setField(
+        loadablePlanService,
+        "loadableStudyPortRotationRepository",
+        loadableStudyPortRotationRepository);
 
     StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
     spyService.getLoadablePlanDetails(this.createGetLoadablePlanDetails(), responseObserver);
