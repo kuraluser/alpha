@@ -1,10 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service.grpc;
 
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.ACTUAL_TYPE_VALUE;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.DEPARTURE_CONDITION_VALUE;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -843,6 +840,17 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
 
       if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
         processId = validateAndSaveData(request);
+      } else {
+        DischargeInformation dischargeInformation =
+            dischargeInformationService.getDischargeInformation(
+                request.getUpdateUllage(0).getDischargingInfoId());
+        Optional<DischargingInformationStatus> validationPendingStatusOpt =
+            dischargePlanAlgoService.getDischargingInformationStatus(
+                UPDATE_ULLAGE_VALIDATION_PENDING_ID);
+        dischargeInformationService.updateDischargePlanStatus(
+            dischargeInformation,
+            validationPendingStatusOpt.get(),
+            request.getUpdateUllage(0).getArrivalDepartutre());
       }
       builder.setProcessId(processId);
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());

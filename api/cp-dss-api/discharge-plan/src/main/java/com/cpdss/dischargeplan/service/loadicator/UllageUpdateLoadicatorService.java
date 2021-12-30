@@ -288,16 +288,11 @@ public class UllageUpdateLoadicatorService {
 
     Optional<DischargingInformationStatus> dischargingInfoStatusOpt =
         dischargingPlanAlgoService.getDischargingInformationStatus(
-            DischargePlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-    if (DischargePlanConstants.ARRIVAL_CONDITION_VALUE
-        == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      dischargeInformationRepository.updateDischargeInformationArrivalStatus(
-          dischargingInfoStatusOpt.get().getId(), dsichargingInfoId);
-    } else if (DischargePlanConstants.DEPARTURE_CONDITION_VALUE
-        == request.getUpdateUllage(0).getArrivalDepartutre()) {
-      dischargeInformationRepository.updateDischargeInformationDepartureStatus(
-          dischargingInfoStatusOpt.get().getId(), dsichargingInfoId);
-    }
+            DischargePlanConstants.UPDATE_ULLAGE_LOADICATOR_VERIFICATION_STARTED_ID);
+    dischargeInformationService.updateDischargePlanStatus(
+        dischargingInfoOpt.get(),
+        dischargingInfoStatusOpt.get(),
+        request.getUpdateUllage(0).getArrivalDepartutre());
     dischargingPlanAlgoService.updateDischargingInfoAlgoStatus(
         dischargingInfoOpt.get(),
         processId,
