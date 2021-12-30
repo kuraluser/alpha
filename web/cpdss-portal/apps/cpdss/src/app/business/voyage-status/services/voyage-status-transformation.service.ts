@@ -26,7 +26,7 @@ export class VoyageStatusTransformationService {
    * @returns {IShipBallastTank}
    * @memberof VoyageStatusTransformationService
    */
-  formatBallastTanks(ballastTank: IShipBallastTank[][], ballastTankQuantities: IBallastQuantities[], prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): IShipBallastTank[][] {
+  formatBallastTanks(ballastTank: IShipBallastTank[][], ballastTankQuantities: IBallastQuantities[], prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT, showPlannedValues: boolean): IShipBallastTank[][] {
     for (let groupIndex = 0; groupIndex < ballastTank?.length; groupIndex++) {
       for (let tankIndex = 0; tankIndex < ballastTank[groupIndex].length; tankIndex++) {
         for (let index = 0; index < ballastTankQuantities?.length; index++) {
@@ -36,7 +36,8 @@ export class VoyageStatusTransformationService {
             ballastTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
             const actualWeight = ballastTank[groupIndex][tankIndex].commodity.actualWeight;
             ballastTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight.toFixed(2)) : 0;
-            ballastTank[groupIndex][tankIndex].commodity.volume = ballastTank[groupIndex][tankIndex].density ? Number((ballastTank[groupIndex][tankIndex].commodity.actualWeight/ballastTank[groupIndex][tankIndex].density).toFixed(2)) : 0;
+            ballastTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight.toFixed(2)) : 0;
+            ballastTank[groupIndex][tankIndex].commodity.volume = ballastTank[groupIndex][tankIndex].density ? Number((( showPlannedValues ? ballastTank[groupIndex][tankIndex].commodity.plannedWeight : ballastTank[groupIndex][tankIndex].commodity.actualWeight)/ballastTank[groupIndex][tankIndex].density).toFixed(2)) : 0;
             ballastTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(ballastTank[groupIndex][tankIndex]);
             break;
           }
@@ -54,14 +55,14 @@ export class VoyageStatusTransformationService {
 * @returns {IShipBunkerTank}
 * @memberof VoyageStatusTransformationService
 */
-  formatBunkerTanks(bunkerTank: IShipBunkerTank[][], bunkerTankQuantities: IBunkerQuantities[], mode: OHQ_MODE): IShipBunkerTank[][] {
+  formatBunkerTanks(bunkerTank: IShipBunkerTank[][], bunkerTankQuantities: IBunkerQuantities[], mode: OHQ_MODE, showPlannedValues: boolean): IShipBunkerTank[][] {
 
     for (let groupIndex = 0; groupIndex < bunkerTank?.length; groupIndex++) {
       for (let tankIndex = 0; tankIndex < bunkerTank[groupIndex].length; tankIndex++) {
         for (let index = 0; index < bunkerTankQuantities.length; index++) {
           if (bunkerTankQuantities[index]?.tankId === bunkerTank[groupIndex][tankIndex]?.id) {
             bunkerTank[groupIndex][tankIndex].commodity = bunkerTankQuantities[index];
-            const quantity = mode === OHQ_MODE.ARRIVAL ? bunkerTank[groupIndex][tankIndex]?.commodity?.actualArrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.actualDepartureQuantity;
+            const quantity = mode === OHQ_MODE.ARRIVAL ? (showPlannedValues ? bunkerTank[groupIndex][tankIndex]?.commodity?.arrivalQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.actualArrivalQuantity) : (showPlannedValues ? bunkerTank[groupIndex][tankIndex]?.commodity?.departureQuantity : bunkerTank[groupIndex][tankIndex]?.commodity?.actualDepartureQuantity);
             bunkerTank[groupIndex][tankIndex].commodity.quantity = quantity ? Number(quantity.toFixed(2)) : 0;
             bunkerTank[groupIndex][tankIndex].commodity.volume = bunkerTank[groupIndex][tankIndex].commodity?.density ? bunkerTank[groupIndex][tankIndex].commodity.quantity / bunkerTank[groupIndex][tankIndex].commodity?.density : 0;
             break;
@@ -80,7 +81,7 @@ export class VoyageStatusTransformationService {
  * @returns {IShipCargoTank}
  * @memberof VoyageStatusTransformationService
  */
-  formatCargoTanks(cargoTank: IShipCargoTank[][], cargoTankQuantities: ICargoQuantities[], prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT): IShipCargoTank[][] {
+  formatCargoTanks(cargoTank: IShipCargoTank[][], cargoTankQuantities: ICargoQuantities[], prevUnit: QUANTITY_UNIT, currUnit: QUANTITY_UNIT, showPlanned: boolean): IShipCargoTank[][] {
 
     for (let groupIndex = 0; groupIndex < cargoTank?.length; groupIndex++) {
       for (let tankIndex = 0; tankIndex < cargoTank[groupIndex].length; tankIndex++) {
@@ -91,7 +92,8 @@ export class VoyageStatusTransformationService {
             cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
             const actualWeight = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, prevUnit, currUnit, cargoTankQuantities[index]?.api, cargoTankQuantities[index]?.temperature, -1);
             cargoTank[groupIndex][tankIndex].commodity.actualWeight = actualWeight ? Number(actualWeight) : 0;
-            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api, cargoTank[groupIndex][tankIndex].commodity?.temperature, -1);
+            cargoTank[groupIndex][tankIndex].commodity.plannedWeight = plannedWeight ? Number(plannedWeight) : 0;
+            cargoTank[groupIndex][tankIndex].commodity.volume = this.quantityPipe.transform(showPlanned ? cargoTank[groupIndex][tankIndex].commodity.plannedWeight : cargoTank[groupIndex][tankIndex].commodity.actualWeight, currUnit, QUANTITY_UNIT.OBSKL, cargoTank[groupIndex][tankIndex].commodity?.api, cargoTank[groupIndex][tankIndex].commodity?.temperature, -1);
             cargoTank[groupIndex][tankIndex].commodity.percentageFilled = this.getFillingPercentage(cargoTank[groupIndex][tankIndex]);
             break;
           }

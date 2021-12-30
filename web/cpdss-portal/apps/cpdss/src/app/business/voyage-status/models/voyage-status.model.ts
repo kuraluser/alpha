@@ -34,6 +34,7 @@ export class IBunkerConditions {
     totalDwtWeight: number;
     displacement: number;
     specificGravity: number;
+    constantPlanned?: number;
 }
 
 

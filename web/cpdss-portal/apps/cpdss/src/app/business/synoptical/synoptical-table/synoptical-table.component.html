@@ -85,7 +85,7 @@
                         &nbsp;-&nbsp;
                     </div>
                     <ng-container
-                        *ngIf="rowData.editable && synopticalService.editMode &&  checkEditableCondition(field.key,colIndex,rowData); else noEdit">
+                        *ngIf="!column.disabled && rowData.editable && synopticalService.editMode &&  checkEditableCondition(field.key,colIndex,rowData); else noEdit">
                         <div class="error-icon-wrapper"  [ngClass]="{'textfield-small': rowData?.fields?.length>1}">
                             <ng-container [ngSwitch]="field.type">
                                 <ng-container *ngSwitchCase="fieldType.DATETIME">

@@ -2259,6 +2259,7 @@
   "DISCHARGE_STUDY_PORT_COW": "Consider Cow At This Port",
   "ENTIRE_REMAINING": "Entire/Remaining",
   "SIMULATOR_LOADICATOR_DATA_NULL": "Loadicator data not available",
+  "DASHBOARD_INFO_MESSAGE": "The data displayed here will be planned values if actuals are not updated",
   "DOWNLOAD_DAT_FILE": "Download as .zip"
 }
 

@@ -366,22 +366,30 @@
                 </div>
             </div>
 
-            <div class="row item-row-wrapper">
+            <div class="row item-row-wrapper align-items-end">
                 <div class="col">
                     <div class="row form-group sub-heading-size strong text-secondary" [ngClass]="{'no-border': caseNo !== 1}">
-                        <label for="loadable_quantity_sub_total"
+                        <label for="loadable_quantity_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_CORRECTION' | translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_sub_total">{{(loadableQuantityForm.controls.safCorrection.value ? loadableQuantityForm.controls.safCorrection.value : 0) + (loadableQuantityForm.controls.sgCorrection.value ? loadableQuantityForm.controls.sgCorrection.value : 0)| number :
+                            <label id="loadable_quantity_correction">{{((loadableQuantityForm.controls.safCorrection.value ? loadableQuantityForm.controls.safCorrection.value : 0) + (loadableQuantityForm.controls.sgCorrection.value ? loadableQuantityForm.controls.sgCorrection.value : 0))| number :
                                 '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column pt-5">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column text-center">
+                        </div>
+                    </div>
+
+                    <div class="row form-group sub-heading-size strong text-secondary" [ngClass]="{'no-border': caseNo !== 1}">
+                        <div class="col text-uppercase col-form-label">{{'LOADABLE_QUANTITY_SUB_TOTAL' | translate}}</div>
+                        <label id="loadable_quantity_totalQuantity_label" class="col pt-5">{{getControlLabel('subTotal') |
+                            number : '1.2-2'}}</label>
+                        <div class="col unit-column ">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center">
                             <cpdss-portal-validation-error [errors]="fieldError('subTotal')"
                                 [errorMessages]="errorMesages.subTotal"></cpdss-portal-validation-error>
                         </div>
                     </div>
-
                     <div class="row form-group no-border sub-heading-size strong text-secondary" *ngIf="caseNo !== 1">
                         <div class="col text-uppercase col-form-label">{{'LOADABLE_QUANTITY' | translate}}</div>
                         <label id="loadable_quantity_totalQuantity_label" class="col pt-5">{{getControlLabel('totalQuantity') |
@@ -422,7 +430,7 @@
                         </div>
                     </div>
 
-                    <div class="row" [ngClass]="{'no-border': (!isNegative && !isNoTpc && !isNoDwt && !isNoConstant)}">
+                    <div class="row" *ngIf="isNegative || isNoTpc || isNoDwt || isNoConstant" [ngClass]="{'no-border': (!isNegative && !isNoTpc && !isNoDwt && !isNoConstant)}">
                         <div class="col error-container">
                             <div class="pt-5 text-danger" *ngIf="isNegative">
                                 {{'LOADABLE_QUANTITY_NEGATIVE_VALUE' | translate}}</div>

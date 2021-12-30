@@ -214,6 +214,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       .toPromise();
     if (result.responseStatus.status === "200") {
       this.synopticalService.synopticalRecords = await this.convertIntoZoneTimeZone(result.synopticalRecords);
+      if((this.synopticalService.synopticalRecords.length % 2 ) !== 0){
+        this.synopticalService.synopticalRecords.push({ disabled : true});
+      }
       this.synopticalService.showActions = true;
       const index = this.cols.findIndex(item => item?.header === 'Hogging/Sagging (cm)');
       if (!this.synopticalService?.synopticalRecords[0]?.hasLoadicator && (index || index === 0)) {
@@ -1157,27 +1160,29 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.allColumns = this.getAllColumns(this.cols);
 
     this.synopticalService.synopticalRecords.forEach((record, colIndex) => {
-      this.setTotal(colIndex);
-      const fg = new FormGroup({})
-      this.allColumns.forEach(column => {
-        if (column.editable) {
-          column.fields?.forEach(field => {
-            fg.addControl(field.key, new FormControl(this.getValue(record[field.key], field.type)))
-          });
-          column.fields?.forEach(field => {
-            const validators: ValidatorFn[] = []
-            field.validators?.forEach(validator => {
-              validators.push(this.getValidators(validator))
+      if(!record.disabled){
+        this.setTotal(colIndex);
+        const fg = new FormGroup({})
+        this.allColumns.forEach(column => {
+          if (column.editable) {
+            column.fields?.forEach(field => {
+              fg.addControl(field.key, new FormControl(this.getValue(record[field.key], field.type)))
+            });
+            column.fields?.forEach(field => {
+              const validators: ValidatorFn[] = []
+              field.validators?.forEach(validator => {
+                validators.push(this.getValidators(validator))
+              })
+              const fc = fg.get(field.key);
+              fc.setValidators(validators);
+              if(!this.checkEditableCondition(field.key,colIndex,column)){
+                fc.disable();
+              }
             })
-            const fc = fg.get(field.key);
-            fc.setValidators(validators);
-            if(!this.checkEditableCondition(field.key,colIndex,column)){
-              fc.disable();
-            }
-          })
-        }
-      })
-      this.tableForm.push(fg)
+          }
+        })
+        this.tableForm.push(fg);
+      }
     })
   }
 
@@ -1398,7 +1403,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   onBlur(field: SynopticField, colIndex: number, updateValues = true) {
     const fc = this.getControl(colIndex, field.key)
     const operationType = this.synopticalService.synopticalRecords[colIndex].operationType;
-    const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
+    const otherIndex = colIndex % 2 === 0 ? colIndex + 1 : colIndex - 1;
     if (!fc || fc.invalid)
       return;
     let fcMax, fcMin;
@@ -1802,11 +1807,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     // Prompt all validations
     this.tableForm.markAllAsTouched();
     this.synopticalService.synopticalRecords.forEach((_, portIndex) => {
-      this.allColumns.forEach(col => {
-        col.fields.forEach(field => {
-          this.onBlur(field, portIndex, false)
+      if(!_.disabled){
+        this.allColumns.forEach(col => {
+          col.fields.forEach(field => {
+            this.onBlur(field, portIndex, false)
+          })
         })
-      })
+      }
     })
     //check if valid and save
     if (valid) {
@@ -1814,19 +1821,21 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         this.ngxSpinner.show();
         const synopticalRecords = []
         this.synopticalService.synopticalRecords.forEach((row, index: number) => {
-          const saveJson = {};
-          saveJson['id'] = row.id;
-          saveJson['portId'] = row.portId;
-          saveJson['portRotationId'] = row.portRotationId;
-          this.headerColumns.forEach(col => {
-            col.fields.forEach(field => {
-              saveJson[field.key] = this.synopticalService.synopticalRecords[index][field.key]
+          if(!row.disabled){
+            const saveJson = {};
+            saveJson['id'] = row.id;
+            saveJson['portId'] = row.portId;
+            saveJson['portRotationId'] = row.portRotationId;
+            this.headerColumns.forEach(col => {
+              col.fields.forEach(field => {
+                saveJson[field.key] = this.synopticalService.synopticalRecords[index][field.key]
+              })
             })
-          })
-          this.cols.forEach(col => {
-            this.setColValue(col, saveJson, index)
-          })
-          synopticalRecords.push(saveJson)
+            this.cols.forEach(col => {
+              this.setColValue(col, saveJson, index)
+            })
+            synopticalRecords.push(saveJson);
+          }
         })
 
         const postData = {
@@ -1963,12 +1972,14 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   resetFormValues() {
     this.allColumns.forEach(col => {
       this.synopticalService.synopticalRecords.forEach((record, index) => {
-        col.fields.forEach(field => {
-          const fc = this.getControl(index, field.key)
-          if (fc) {
-            fc.setValue(this.getValue(record[field.key], field.type))
-          }
-        })
+        if(!record.disabled){
+          col.fields.forEach(field => {
+            const fc = this.getControl(index, field.key)
+            if (fc) {
+              fc.setValue(this.getValue(record[field.key], field.type))
+            }
+          })
+        }
       })
     })
   }

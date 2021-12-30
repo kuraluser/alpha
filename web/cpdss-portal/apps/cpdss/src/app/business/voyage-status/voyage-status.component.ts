@@ -44,6 +44,7 @@ export class VoyageStatusComponent implements OnInit, OnDestroy {
   newVoyagePermissionContext: IPermissionContext;
   editPortRotationPermissionContext: IPermissionContext;
   etaEtdPermision: IPermission;
+  showPlannedValues = false;
 
   get selectedVoyage(): Voyage {
     return this._selectedVoyage;
@@ -206,8 +207,20 @@ export class VoyageStatusComponent implements OnInit, OnDestroy {
       this.bunkerConditions = this.voyageStatusResponse?.bunkerConditions;
       this.cargoConditions = this.voyageStatusResponse?.cargoConditions?.length > 0 ? this.voyageStatusResponse?.cargoConditions : [];
       this.cargoQuantities = this.voyageStatusResponse?.cargoQuantities?.length > 0 ? this.voyageStatusResponse?.cargoQuantities : [];
+      this.showPlannedValues = !this.checkActualValues();
     }
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * check if it has actual values
+   */
+  checkActualValues(){
+    let actual = 0;
+    this.voyageStatusResponse?.cargoQuantities?.map(item=>{
+      actual += Number(item.actualWeight);
+    });
+    return actual ? true : false;
   }
 
   /**

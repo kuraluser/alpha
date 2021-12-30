@@ -54,7 +54,7 @@
         </cpdss-portal-edit-port-rotation-popup>
         <div class="row no-wrap">
             <div class="col sidebar-landing">
-                <cpdss-portal-parameter-list *ngIf="bunkerConditions &&  cargoQuantities"
+                <cpdss-portal-parameter-list *ngIf="bunkerConditions &&  cargoQuantities" [showPlannedValues]="showPlannedValues"
                     [bunkerConditions]="bunkerConditions" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargoConditions]="cargoConditions">
                 </cpdss-portal-parameter-list>
             </div>
@@ -62,7 +62,7 @@
                 <cpdss-portal-ship-landing-tanks [vesselId]="vesselInfo?.id" [voyageId]="selectedVoyage?.id"
                     [loadableStudyId]="selectedVoyage?.confirmedLoadableStudyId"
                     [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
-                    [selectedPortDetails]="selectedPortDetails" [shipLandingTanks]="voyageStatusResponse">
+                    [selectedPortDetails]="selectedPortDetails" [showPlannedValues]="showPlannedValues" [shipLandingTanks]="voyageStatusResponse">
                 </cpdss-portal-ship-landing-tanks>
             </div>
             <div class="col sidebar-right-landing tank-parameters-right">

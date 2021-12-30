@@ -1,4 +1,9 @@
 <div>
+    <div class="col">
+        <div class="mb-5 text-center"><span class="info-icon mr-5">!</span>
+            {{'DASHBOARD_INFO_MESSAGE' | translate}}
+          </div>
+    </div>
     <div class="row  pt-15">
         <div class="col  text-center">
             <a class="tab-btn tab-btn-default tab-landing tank-icon" [ngClass]="{'active': selectedTab === tankType.CARGO}" pTooltip="{{'CARGO' | translate}}" tooltipPosition="top"
@@ -13,6 +18,7 @@
         </div>
     </div>
     <div class="row">
+        
         <div *ngIf="selectedTab === tankType.CARGO || selectedTab === tankType.BALLAST" class="col-7 pb-5 m-auto text-right">
             <div class="switch-wrapper">
                 <span class="switch-label">View All</span>

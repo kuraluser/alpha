@@ -25,6 +25,7 @@ export class ShipLandingTanksComponent implements OnInit {
   @Input() voyageId: number;
   @Input() loadableStudyId: number;
   @Input() selectedPortDetails: IVoyagePortDetails;
+  @Input() showPlannedValues = false;
   @Input() get shipLandingTanks(): IVoyageStatus {
     return this._shipLandingTanks;
   }
@@ -107,12 +108,12 @@ export class ShipLandingTanksComponent implements OnInit {
     const mode = this.selectedPortDetails?.operationType === 'ARR' ? OHQ_MODE.ARRIVAL : OHQ_MODE.DEPARTURE;
     this.cargoQuantities = this.shipLandingTanks?.cargoQuantities ?? [];
     this.ballastQuantities = this.shipLandingTanks?.ballastQuantities ?? [];
-    this.bunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerTanks, this.shipLandingTanks?.bunkerQuantities, mode);
-    this.rearBunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerRearTanks, this.shipLandingTanks?.bunkerQuantities, mode);
-    this.cargoTanks = this.voyageStatusTransformationService.formatCargoTanks(this.shipLandingTanks?.cargoTanks, this.shipLandingTanks?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.rearBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastRearTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.centerBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastCenterTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
-    this.frontBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastFrontTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit);
+    this.bunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerTanks, this.shipLandingTanks?.bunkerQuantities, mode, this.showPlannedValues);
+    this.rearBunkerTanks = this.voyageStatusTransformationService.formatBunkerTanks(this.shipLandingTanks?.bunkerRearTanks, this.shipLandingTanks?.bunkerQuantities, mode, this.showPlannedValues);
+    this.cargoTanks = this.voyageStatusTransformationService.formatCargoTanks(this.shipLandingTanks?.cargoTanks, this.shipLandingTanks?.cargoQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.showPlannedValues);
+    this.rearBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastRearTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.showPlannedValues);
+    this.centerBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastCenterTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.showPlannedValues);
+    this.frontBallastTanks = this.voyageStatusTransformationService.formatBallastTanks(this.shipLandingTanks?.ballastFrontTanks, this.shipLandingTanks?.ballastQuantities, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.showPlannedValues);
     this.fuelTypes = [...new Map(this.shipLandingTanks.bunkerQuantities.map(item => [item['fuelTypeId'], { id: item?.fuelTypeId, name: item?.fuelTypeName, colorCode: item?.colorCode, shortName: item?.fuelTypeShortName }])).values()];
   }
 
