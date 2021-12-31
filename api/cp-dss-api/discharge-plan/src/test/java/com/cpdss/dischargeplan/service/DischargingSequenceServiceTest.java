@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.FAILED;
 import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,6 +21,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringJUnitConfig(
     classes = {
@@ -97,9 +99,44 @@ public class DischargingSequenceServiceTest {
             stowageDetailsRepository.findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
                 Mockito.any()))
         .thenReturn(getLDPSD());
+    ReflectionTestUtils.setField(
+        dischargingSequenceService, "loadableStudyGrpcService", this.loadableStudyGrpcService);
     try {
       this.dischargingSequenceService.getDischargingSequences(request, builder);
       assertEquals(1L, builder.getPortId());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  void testGetDischargingSequencesException() {
+    LoadingPlanModels.LoadingSequenceRequest request =
+        LoadingPlanModels.LoadingSequenceRequest.newBuilder().setLoadingInfoId(1L).build();
+    DischargeSequenceReply.Builder builder = DischargeSequenceReply.newBuilder();
+    Mockito.when(dischargingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(Optional.empty());
+    try {
+      this.dischargingSequenceService.getDischargingSequences(request, builder);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  void testGetDischargingSequenceException() {
+    LoadingPlanModels.LoadingSequenceRequest request =
+        LoadingPlanModels.LoadingSequenceRequest.newBuilder().setLoadingInfoId(1L).build();
+    DischargeSequenceReply.Builder builder = DischargeSequenceReply.newBuilder();
+    Mockito.when(dischargingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(getODI());
+    Mockito.when(
+            loadableStudyGrpcService.getLoadableStudyPortRotationByPortRotationId(Mockito.any()))
+        .thenReturn(getPRDRNS());
+    ReflectionTestUtils.setField(
+        dischargingSequenceService, "loadableStudyGrpcService", this.loadableStudyGrpcService);
+    try {
+      this.dischargingSequenceService.getDischargingSequences(request, builder);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -192,6 +229,16 @@ public class DischargingSequenceServiceTest {
             .setPortRotationDetail(
                 LoadableStudy.PortRotationDetail.newBuilder().setEta("1").build())
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    return reply;
+  }
+
+  private LoadableStudy.PortRotationDetailReply getPRDRNS() {
+    LoadableStudy.PortRotationDetailReply reply =
+        LoadableStudy.PortRotationDetailReply.newBuilder()
+            .setPortRotationDetail(
+                LoadableStudy.PortRotationDetail.newBuilder().setEta("1").build())
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(FAILED).build())
             .build();
     return reply;
   }
