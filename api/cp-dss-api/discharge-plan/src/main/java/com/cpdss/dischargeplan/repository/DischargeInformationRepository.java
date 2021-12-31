@@ -7,6 +7,7 @@ import com.cpdss.dischargeplan.entity.DischargingInformationStatus;
 import com.cpdss.dischargeplan.entity.DischargingStagesDuration;
 import com.cpdss.dischargeplan.entity.DischargingStagesMinAmount;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -86,6 +87,11 @@ public interface DischargeInformationRepository
   @Modifying
   @Query("UPDATE DischargeInformation SET initialTrim = ?1, maximumTrim=?2 WHERE id = ?3")
   void updateInitialTrimAndMaximumTrim(BigDecimal initialTrim, BigDecimal maximumTrim, Long id);
+
+  @Transactional
+  @Modifying
+  @Query("UPDATE DischargeInformation SET commonDate = ?1 WHERE id = ?2")
+  void updateCommonDate(LocalDate commonDate, Long id);
 
   @Transactional
   @Modifying

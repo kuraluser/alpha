@@ -60,6 +60,7 @@ message LoadingDetails{
   string startTime = 4;
   TrimAllowed trimAllowed = 5;
   int64 voyageId = 6;
+  string commonDate = 7;
 }
 
 message TrimAllowed{

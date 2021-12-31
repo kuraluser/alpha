@@ -5,7 +5,7 @@ import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_RULE_MASTER_
 import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
@@ -47,6 +47,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -87,6 +89,13 @@ public class DischargeInformationService {
 
   @GrpcClient("dischargeInformationService")
   DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanServiceBlockingStub;
+
+  @GrpcClient("loadableStudyService")
+  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
+      loadableStudyServiceBlockingStub;
+
+  @GrpcClient("portInfoService")
+  private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -153,6 +162,31 @@ public class DischargeInformationService {
             portRotation.get().getPortId(),
             portRotation.get().getId(),
             extract);
+
+    // Fetch timezoneOffsetValue, eta and etd
+    LoadableStudy.PortRotationDetailReply portRotationDetailReply =
+        this.loadableStudyServiceBlockingStub.getLoadableStudyPortRotationByPortRotationId(
+            LoadableStudy.PortRotationRequest.newBuilder()
+                .setId(portRotation.get().getId())
+                .build());
+
+    LoadableStudy.PortRotationDetail portRotationDetail =
+        portRotationDetailReply.getPortRotationDetail();
+    dischargeDetails.setEta(LocalDateTime.parse(portRotationDetail.getEta()));
+    dischargeDetails.setEtd(LocalDateTime.parse(portRotationDetail.getEtd()));
+    if (dischargeDetails.getCommonDate() == null
+        || String.valueOf(dischargeDetails.getCommonDate()).isEmpty()) {
+      dischargeDetails.setCommonDate(LocalDate.from(dischargeDetails.getEta()));
+    }
+
+    PortInfo.PortReply portReply =
+        this.portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                .addId(portRotation.get().getPortId())
+                .build());
+    if (!portReply.getPortsList().isEmpty()) {
+      dischargeDetails.setTimezoneOffsetVal(portReply.getPorts(0).getTimezoneOffsetVal());
+    }
 
     // discharge rates
     DischargeRates dischargeRates =

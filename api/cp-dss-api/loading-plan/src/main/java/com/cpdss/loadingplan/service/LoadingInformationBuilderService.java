@@ -17,6 +17,7 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanBallastDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.repository.LoadingDelayReasonRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,9 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var1.getFinalTrim()).ifPresent(v -> builder1.setFinalTrim(v.toString()));
 
       builder.setTrimAllowed(builder1.build());
+
+      Optional.ofNullable(var1.getCommonDate())
+          .ifPresent(commonDate -> builder.setCommonDate(String.valueOf(var1.getCommonDate())));
     }
     return builder.build();
   }
@@ -262,6 +266,10 @@ public class LoadingInformationBuilderService {
       if (!source.getLoadingDetail().getTrimAllowed().getMaximumTrim().isEmpty())
         target.setMaximumTrim(
             new BigDecimal(source.getLoadingDetail().getTrimAllowed().getMaximumTrim()));
+
+      if (!source.getLoadingDetail().getCommonDate().isEmpty()) {
+        target.setCommonDate(LocalDate.parse(source.getLoadingDetail().getCommonDate()));
+      }
     }
     return target;
   }

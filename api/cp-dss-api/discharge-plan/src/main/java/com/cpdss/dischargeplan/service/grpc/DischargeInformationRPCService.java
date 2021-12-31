@@ -848,6 +848,10 @@ public class DischargeInformationRPCService
             new BigDecimal(source.getDischargeDetails().getTrimAllowed().getMaximumTrim()));
       dischargeInformationRepository.updateInitialTrimAndMaximumTrim(
           target.getInitialTrim(), target.getMaximumTrim(), target.getId());
+
+      if (!source.getDischargeDetails().getCommonDate().isEmpty()) {
+        dischargeInformationRepository.updateCommonDate(target.getCommonDate(), target.getId());
+      }
     }
   }
 

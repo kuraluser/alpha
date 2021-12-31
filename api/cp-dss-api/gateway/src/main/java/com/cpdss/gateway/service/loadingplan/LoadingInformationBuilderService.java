@@ -168,6 +168,8 @@ public class LoadingInformationBuilderService {
           .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
     }
     builder.setTrimAllowed(trimBuilder.build());
+
+    builder.setCommonDate(String.valueOf(loadingDetails.getCommonDate()));
     return builder.build();
   }
 

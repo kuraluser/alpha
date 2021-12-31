@@ -4,6 +4,7 @@ package com.cpdss.dischargeplan.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import javax.persistence.*;
 import lombok.Getter;
@@ -161,6 +162,9 @@ public class DischargeInformation extends EntityDoc {
 
   @Column(name = "is_discharging_instructions_complete")
   private Boolean isDischargingInstructionsComplete = false;
+
+  @Column(name = "common_date")
+  private LocalDate commonDate;
 
   public DischargeInformation(Long pk) {
     this.setId(pk);

@@ -45,6 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -263,6 +265,31 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             activeVoyage.getId(),
             portRId,
             portRotation.get().getPortId());
+
+    // Fetch timezoneOffsetValue, eta and etd
+    LoadableStudy.PortRotationDetailReply portRotationDetailReply =
+        this.loadableStudyServiceBlockingStub.getLoadableStudyPortRotationByPortRotationId(
+            LoadableStudy.PortRotationRequest.newBuilder()
+                .setId(portRotation.get().getId())
+                .build());
+
+    LoadableStudy.PortRotationDetail portRotationDetail =
+        portRotationDetailReply.getPortRotationDetail();
+    loadingDetails.setEta(LocalDateTime.parse(portRotationDetail.getEta()));
+    loadingDetails.setEtd(LocalDateTime.parse(portRotationDetail.getEtd()));
+    if (loadingDetails.getCommonDate() == null
+        || String.valueOf(loadingDetails.getCommonDate()).isEmpty()) {
+      loadingDetails.setCommonDate(LocalDate.from(loadingDetails.getEta()));
+    }
+
+    PortInfo.PortReply portReply =
+        this.portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                .addId(portRotation.get().getPortId())
+                .build());
+    if (!portReply.getPortsList().isEmpty()) {
+      loadingDetails.setTimezoneOffsetVal(portReply.getPorts(0).getTimezoneOffsetVal());
+    }
 
     // from loading info table, loading plan service
     LoadingRates loadingRates =

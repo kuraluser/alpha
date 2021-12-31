@@ -3,6 +3,7 @@ package com.cpdss.loadingplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 import javax.persistence.*;
@@ -142,4 +143,7 @@ public class LoadingInformation extends EntityDoc {
 
   @Column(name = "loading_plan_details_from_algo")
   private String loadingPlanDetailsFromAlgo;
+
+  @Column(name = "common_date")
+  private LocalDate commonDate;
 }

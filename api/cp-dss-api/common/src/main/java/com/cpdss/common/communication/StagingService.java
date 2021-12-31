@@ -269,7 +269,9 @@ public class StagingService {
       "lw_tide_time_from",
       "lw_tide_time_to"
     };
-    String[] dateFields = {"created_date", "last_modified_date", "lay_can_from", "lay_can_to"};
+    String[] dateFields = {
+      "created_date", "last_modified_date", "lay_can_from", "lay_can_to", "common_date"
+    };
     String value = jsonObj.get(sourceKey) == null ? null : jsonObj.get(sourceKey).toString();
     if (Arrays.stream(dateTimeFields).anyMatch(sourceKey::equals)) {
       jsonObj.add(targetKey, getJsonObjectFromTimeStamp(value, true));

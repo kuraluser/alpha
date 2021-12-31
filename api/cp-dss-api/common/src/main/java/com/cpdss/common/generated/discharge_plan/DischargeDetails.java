@@ -16,6 +16,7 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     timeOfSunrise_ = "";
     timeOfSunset_ = "";
     startTime_ = "";
+    commonDate_ = "";
   }
 
   @java.lang.Override
@@ -95,6 +96,13 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
           case 48:
             {
               voyageId_ = input.readInt64();
+              break;
+            }
+          case 58:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              commonDate_ = s;
               break;
             }
           default:
@@ -284,6 +292,41 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     return voyageId_;
   }
 
+  public static final int COMMONDATE_FIELD_NUMBER = 7;
+  private volatile java.lang.Object commonDate_;
+  /**
+   * <code>string commonDate = 7;</code>
+   *
+   * @return The commonDate.
+   */
+  public java.lang.String getCommonDate() {
+    java.lang.Object ref = commonDate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      commonDate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string commonDate = 7;</code>
+   *
+   * @return The bytes for commonDate.
+   */
+  public com.google.protobuf.ByteString getCommonDateBytes() {
+    java.lang.Object ref = commonDate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      commonDate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -316,6 +359,9 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     if (voyageId_ != 0L) {
       output.writeInt64(6, voyageId_);
     }
+    if (!getCommonDateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 7, commonDate_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -343,6 +389,9 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     if (voyageId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, voyageId_);
     }
+    if (!getCommonDateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, commonDate_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -368,6 +417,7 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
       if (!getTrimAllowed().equals(other.getTrimAllowed())) return false;
     }
     if (getVoyageId() != other.getVoyageId()) return false;
+    if (!getCommonDate().equals(other.getCommonDate())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -393,6 +443,8 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     }
     hash = (37 * hash) + VOYAGEID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVoyageId());
+    hash = (37 * hash) + COMMONDATE_FIELD_NUMBER;
+    hash = (53 * hash) + getCommonDate().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -547,6 +599,8 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
       }
       voyageId_ = 0L;
 
+      commonDate_ = "";
+
       return this;
     }
 
@@ -584,6 +638,7 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
         result.trimAllowed_ = trimAllowedBuilder_.build();
       }
       result.voyageId_ = voyageId_;
+      result.commonDate_ = commonDate_;
       onBuilt();
       return result;
     }
@@ -654,6 +709,10 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
       }
       if (other.getVoyageId() != 0L) {
         setVoyageId(other.getVoyageId());
+      }
+      if (!other.getCommonDate().isEmpty()) {
+        commonDate_ = other.commonDate_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1101,6 +1160,82 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     public Builder clearVoyageId() {
 
       voyageId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object commonDate_ = "";
+    /**
+     * <code>string commonDate = 7;</code>
+     *
+     * @return The commonDate.
+     */
+    public java.lang.String getCommonDate() {
+      java.lang.Object ref = commonDate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        commonDate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string commonDate = 7;</code>
+     *
+     * @return The bytes for commonDate.
+     */
+    public com.google.protobuf.ByteString getCommonDateBytes() {
+      java.lang.Object ref = commonDate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        commonDate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string commonDate = 7;</code>
+     *
+     * @param value The commonDate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCommonDate(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      commonDate_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string commonDate = 7;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearCommonDate() {
+
+      commonDate_ = getDefaultInstance().getCommonDate();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string commonDate = 7;</code>
+     *
+     * @param value The bytes for commonDate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCommonDateBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      commonDate_ = value;
       onChanged();
       return this;
     }

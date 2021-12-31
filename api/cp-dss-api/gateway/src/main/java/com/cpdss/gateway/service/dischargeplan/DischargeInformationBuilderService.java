@@ -42,6 +42,7 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.utility.AdminRuleTemplate;
 import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -115,6 +116,10 @@ public class DischargeInformationBuilderService {
         trimAllowed.setFinalTrim(new BigDecimal(var1.getTrimAllowed().getFinalTrim()));
       }
       var2.setTrimAllowed(trimAllowed);
+    }
+
+    if (!var1.getCommonDate().isEmpty()) {
+      var2.setCommonDate(LocalDate.parse(var1.getCommonDate()));
     }
     return var2;
   }
@@ -775,6 +780,7 @@ public class DischargeInformationBuilderService {
           .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
     }
     builder.setTrimAllowed(trimBuilder.build());
+    builder.setCommonDate(String.valueOf(dischargingDetails.getCommonDate()));
     return builder.build();
   }
 

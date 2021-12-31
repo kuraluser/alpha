@@ -476,6 +476,10 @@ public class DischargeInformationBuilderService {
           .ifPresent(v -> trimAllowed.setFinalTrim(v.toString()));
 
       builder1.setTrimAllowed(trimAllowed.build());
+
+      Optional.ofNullable(disEntity.getCommonDate())
+          .ifPresent(commonDate -> builder1.setCommonDate(String.valueOf(commonDate)));
+
       builder.setDischargeDetails(builder1.build());
       log.info("Setting Discharge Details");
     } catch (Exception e) {

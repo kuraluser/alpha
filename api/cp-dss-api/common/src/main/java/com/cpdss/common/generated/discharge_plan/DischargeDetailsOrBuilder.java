@@ -74,4 +74,17 @@ public interface DischargeDetailsOrBuilder
    * @return The voyageId.
    */
   long getVoyageId();
+
+  /**
+   * <code>string commonDate = 7;</code>
+   *
+   * @return The commonDate.
+   */
+  java.lang.String getCommonDate();
+  /**
+   * <code>string commonDate = 7;</code>
+   *
+   * @return The bytes for commonDate.
+   */
+  com.google.protobuf.ByteString getCommonDateBytes();
 }

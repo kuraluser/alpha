@@ -44,6 +44,7 @@ import com.cpdss.gateway.utility.AdminRuleValueExtract;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -154,6 +155,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       if (var1.getTimeOfSunset().isEmpty()) {
         var.setTimeOfSunset(
             response.getTimeOfSunset().isEmpty() ? null : response.getTimeOfSunset());
+      }
+
+      if (!var1.getCommonDate().isEmpty()) {
+        var.setCommonDate(LocalDate.parse(var1.getCommonDate()));
       }
 
       // If not found in LS, Synoptic Go to Port Master
