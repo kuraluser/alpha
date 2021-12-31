@@ -20,7 +20,7 @@ public class PortDetails {
   private BigDecimal tideHeightLow;
   private BigDecimal densityOfWater;
   private Long countryId;
-  private String country;
+  private String countryName;
   private BigDecimal ambientTemperature;
   private String latitude;
   private String longitude;

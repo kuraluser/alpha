@@ -63,7 +63,7 @@ public class PortInfoService {
     PortDetailResponse response = new PortDetailResponse();
     PortDetails portDetails = new PortDetails();
     List<PortDetail> portsList = portReply.getPortsList();
-    portDetails.setCountry(portsList.get(0).getCountryName());
+    portDetails.setCountryName(portsList.get(0).getCountryName());
     portDetails.setCountryId(portsList.get(0).getCountryId());
     portDetails.setDensityOfWater(
         portsList.get(0).getWaterDensity().isEmpty()
@@ -210,8 +210,10 @@ public class PortInfoService {
   private void buildPortDetailed(
       PortDetails portDetailed, long portId, PortDetail.Builder portDetailRequest) {
     portDetailRequest.setId(portId);
-    portDetailRequest.setCountryName(portDetailed.getCountry());
-    portDetailRequest.setCountryId(portDetailed.getCountryId());
+    portDetailRequest.setCountryName(
+        portDetailed.getCountryName() == null ? "" : portDetailed.getCountryName());
+    portDetailRequest.setCountryId(
+        portDetailed.getCountryId() == null ? 0L : portDetailed.getCountryId());
     portDetailRequest.setWaterDensity(
         portDetailed.getDensityOfWater() == null
             ? ""
@@ -222,20 +224,25 @@ public class PortInfoService {
             : portDetailed.getMaxPermissibleDraft().toString());
     portDetailRequest.setCode(portDetailed.getPortCode());
     portDetailRequest.setName(portDetailed.getPortName());
-    portDetailRequest.setTimezoneId(portDetailed.getTimezoneId());
-    portDetailRequest.setTimezone(portDetailed.getTimezone());
-    portDetailRequest.setTimezoneAbbreviation(portDetailed.getTimezoneAbbreviation());
-    portDetailRequest.setTimezoneOffsetVal(portDetailed.getTimezoneOffsetVal());
+    portDetailRequest.setTimezoneId(
+        portDetailed.getTimezoneId() == null ? 0 : portDetailed.getTimezoneId());
+    portDetailRequest.setTimezone(
+        portDetailed.getTimezone() == null ? "" : portDetailed.getTimezone());
+    portDetailRequest.setTimezoneAbbreviation(
+        portDetailed.getTimezoneAbbreviation() == null
+            ? ""
+            : portDetailed.getTimezoneAbbreviation());
+    portDetailRequest.setTimezoneOffsetVal(
+        portDetailed.getTimezoneOffsetVal() == null ? "" : portDetailed.getTimezoneAbbreviation());
     portDetailRequest.setTideHeightTo(
         portDetailed.getTideHeightHigh() == null
             ? ""
             : portDetailed.getTideHeightHigh().toString());
     portDetailRequest.setTideHeightFrom(
         portDetailed.getTideHeightLow() == null ? "" : portDetailed.getTideHeightLow().toString());
-    portDetailRequest.setLat(
-        portDetailed.getLatitude().isEmpty() ? null : portDetailed.getLatitude());
+    portDetailRequest.setLat(portDetailed.getLatitude() == null ? "" : portDetailed.getLatitude());
     portDetailRequest.setLon(
-        portDetailed.getLongitude().isEmpty() ? null : portDetailed.getLongitude());
+        portDetailed.getLongitude() == null ? "" : portDetailed.getLongitude());
     portDetailRequest.setAmbientTemperature(
         portDetailed.getAmbientTemperature() == null
             ? ""
@@ -256,7 +263,10 @@ public class PortInfoService {
         portBerthInfoResponse -> {
           BerthDetail.Builder berthDetail = BerthDetail.newBuilder();
           berthDetail.setId(portBerthInfoResponse.getBerthId());
-          berthDetail.setBerthName(portBerthInfoResponse.getBerthName());
+          berthDetail.setBerthName(
+              portBerthInfoResponse.getBerthName() == null
+                  ? ""
+                  : portBerthInfoResponse.getBerthName());
           berthDetail.setBerthDatumDepth(
               portBerthInfoResponse.getDepthInDatum() == null
                   ? ""
@@ -275,7 +285,9 @@ public class PortInfoService {
                   : portBerthInfoResponse.getMaxShipDepth().toString());
           berthDetail.setPortId(portBerthInfoResponse.getPortId());
           berthDetail.setRegulationAndRestriction(
-              portBerthInfoResponse.getRegulationAndRestriction());
+              portBerthInfoResponse.getRegulationAndRestriction() == null
+                  ? ""
+                  : portBerthInfoResponse.getRegulationAndRestriction());
           berthDetail.setMaxLoa(
               portBerthInfoResponse.getMaxLoa() == null
                   ? ""
@@ -299,14 +311,14 @@ public class PortInfoService {
   public void buildPortInfoResponse(PortDetailResponse response, PortInfoReply portInfoReply) {
     PortDetails portDetails = new PortDetails();
     PortDetail portDetail = portInfoReply.getPort();
-    portDetails.setCountry(portDetail.getCountryName());
+    portDetails.setCountryName(portDetail.getCountryName());
     portDetails.setCountryId(portDetail.getCountryId());
     portDetails.setDensityOfWater(
-        portDetail.getWaterDensity().isEmpty()
+        StringUtils.isEmpty(portDetail.getWaterDensity())
             ? null
             : new BigDecimal(portDetail.getWaterDensity()));
     portDetails.setMaxPermissibleDraft(
-        portDetail.getMaxPermissibleDraft().isEmpty()
+        StringUtils.isEmpty(portDetail.getMaxPermissibleDraft())
             ? null
             : new BigDecimal(portDetail.getMaxPermissibleDraft()));
     portDetails.setPortCode(portDetail.getCode());
@@ -317,17 +329,17 @@ public class PortInfoService {
     portDetails.setTimezoneAbbreviation(portDetail.getTimezoneAbbreviation());
     portDetails.setTimezoneOffsetVal(portDetail.getTimezoneOffsetVal());
     portDetails.setTideHeightHigh(
-        portDetail.getTideHeightTo().isEmpty()
+        StringUtils.isEmpty(portDetail.getTideHeightTo())
             ? null
             : new BigDecimal(portDetail.getTideHeightTo()));
     portDetails.setTideHeightLow(
-        portDetail.getTideHeightFrom().isEmpty()
+        StringUtils.isEmpty(portDetail.getTideHeightFrom())
             ? null
             : new BigDecimal(portDetail.getTideHeightFrom()));
-    portDetails.setLatitude(portDetail.getLat().isEmpty() ? null : portDetail.getLat());
-    portDetails.setLongitude(portDetail.getLon().isEmpty() ? null : portDetail.getLon());
+    portDetails.setLatitude(StringUtils.isEmpty(portDetail.getLat()) ? null : portDetail.getLat());
+    portDetails.setLongitude(StringUtils.isEmpty(portDetail.getLon()) ? null : portDetail.getLon());
     portDetails.setAmbientTemperature(
-        portDetail.getAmbientTemperature().isEmpty()
+        StringUtils.isEmpty(portDetail.getAmbientTemperature())
             ? null
             : new BigDecimal(portDetail.getAmbientTemperature()));
     List<PortBerthInfoResponse> berthList =

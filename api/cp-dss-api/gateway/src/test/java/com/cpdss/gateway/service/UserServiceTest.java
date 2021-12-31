@@ -3,9 +3,7 @@ package com.cpdss.gateway.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +13,7 @@ import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.user.UserType;
 import com.cpdss.gateway.entity.*;
 import com.cpdss.gateway.repository.*;
+import com.cpdss.gateway.security.cloud.KeycloakDynamicConfigResolver;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,6 +69,8 @@ class UserServiceTest {
   @Mock private ScreenRepository screenRepository;
   @Mock private RoleUserRepository roleUserRepository;
   @Mock private UserStatusRepository userStatusRepository;
+  @Mock private KeycloakDynamicConfigResolver keycloakDynamicConfigResolver;
+  @Mock private UserCachingService userCachingService;
 
   private AutoCloseable closeable;
 
