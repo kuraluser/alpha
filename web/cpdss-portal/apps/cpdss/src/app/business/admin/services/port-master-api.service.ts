@@ -6,7 +6,7 @@ import { AdminModule } from '../admin.module';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
 
 import { IPort, IPortsResponse } from '../../core/models/common.model';
-import { IPortMasterListResponse, IPortMasterListStateChange, IPortsDetailsResponse } from '../models/port.model';
+import { IPortDetails, IPortMasterListResponse, IPortMasterListStateChange, IPortsDetailsResponse } from '../models/port.model';
 
 /**
  * Api service for port master
@@ -70,5 +70,17 @@ export class PortMasterApiService {
    */
   getPortDetailsById(portId: number): Observable<IPortsDetailsResponse> {
     return this.commonApiService.get<IPortsDetailsResponse>(`portInfo/${portId}`);
+  }
+
+  /**
+   * Method to save port details.
+   *
+   * @param {number} portId
+   * @param {IPortDetails} portData
+   * @return {*}  {Observable<any>}
+   * @memberof PortMasterApiService
+   */
+  savePortDetails(portId: number, portData: IPortDetails): Observable<IPortsDetailsResponse> {
+    return this.commonApiService.post<IPortDetails, IPortsDetailsResponse>(`portInfo/${portId}`, portData);
   }
 }

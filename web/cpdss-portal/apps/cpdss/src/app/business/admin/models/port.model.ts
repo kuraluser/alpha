@@ -17,9 +17,10 @@ export interface IBerthInfo {
   maxDwt: number;
   maxShipDepth: number;
   maxManifoldHeight: number;
-  minUKC?: string;
+  minUKC: string;
   regulationAndRestriction: string;
-  isAdd: boolean;
+  isActionsEnabled?: boolean;
+  isAdd?: boolean;
   isDelete?: boolean;
 }
 
@@ -39,8 +40,9 @@ export interface IBerthValueObject {
   maxDwt: ValueObject<number>;
   maxShipDepth: ValueObject<number>;
   maxManifoldHeight: ValueObject<number>;
-  minUKC?: ValueObject<string>;
+  minUKC: ValueObject<string>;
   regulationAndRestriction: ValueObject<string>;
+  isActionsEnabled?: boolean;
   isAdd?: boolean;
   isDelete?: boolean;
 }
@@ -56,13 +58,15 @@ export interface IPortDetails {
   portName: string;
   portCode: string;
   maxPermissibleDraft: number;
+  timezoneId: number;
   timezone: string;
   timezoneObj?: ITimeZone;
   timezoneOffsetVal: string;
   timezoneAbbreviation: string;
-  tideHeightHigh?: number;
-  tideHeightLow?: number;
+  tideHeightHigh: number;
+  tideHeightLow: number;
   densityOfWater: number;
+  countryId: number;
   countryName: string;
   country?: ICountry;
   ambientTemperature?: number;

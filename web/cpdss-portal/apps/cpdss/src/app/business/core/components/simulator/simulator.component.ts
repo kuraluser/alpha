@@ -79,7 +79,7 @@ export class SimulatorComponent implements OnInit {
             stowageData: JSON.parse(JSON.stringify(stowageJSON)),
             loadicatorData: null,
             path: '$.departureCondition',
-            userName: userDetails.rolePermissions.role,
+            userName: userDetails.username,
             userRole: selectdeUserRole,
             requestType: this.requestType,
             url: simulatorInputURL
@@ -95,7 +95,7 @@ export class SimulatorComponent implements OnInit {
             stowageData: JSON.parse(JSON.stringify(loadingSeqJSON.loadingJson)),
             loadicatorData: JSON.parse(JSON.stringify(loadingSeqJSON.loadicatorJson)),
             path: '$',
-            userName: userDetails.rolePermissions.role,
+            userName: userDetails.username,
             userRole: selectdeUserRole,
             requestType: this.requestType,
             url: simulatorInputURL

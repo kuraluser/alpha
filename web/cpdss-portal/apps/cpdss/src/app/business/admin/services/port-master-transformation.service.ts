@@ -173,7 +173,7 @@ export class PortMasterTransformationService {
    * @param {*} berthForm
    * @memberof PortMasterTransformationService
    */
-  setBerthFomDetails(berthForm: any) {
+  setBerthFormDetails(berthForm: any) {
     this.berthFomDetails = berthForm;
   }
 
@@ -193,7 +193,7 @@ export class PortMasterTransformationService {
    * @memberof PortMasterTransformationService
    */
   getBerthGridColumns(): IDataTableColumn[] {
-    const columns: IDataTableColumn[] = [
+    let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
         header: 'SL',
@@ -213,7 +213,7 @@ export class PortMasterTransformationService {
       {
         field: 'maxDraft',
         header: 'PORTMASTER_BERTH_MAX_DRAFT',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_MAX_PLACEHOLDER',
         errorMessages: {
           'required': 'PORTMASTER_BERTH_MAX_DRAFT_REQUIRED'
@@ -222,13 +222,13 @@ export class PortMasterTransformationService {
       {
         field: 'depthInDatum',
         header: 'PORTMASTER_BERTH_DEPTH',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_DEPTH_PLACEHOLDER'
       },
       {
         field: 'maxLoa',
         header: 'PORTMASTER_BERTH_MAXIMUM_LOA',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_MAXIMUM_LOA_PLACEHOLDER',
         errorMessages: {
           'required': 'PORTMASTER_BERTH_MAXIMUM_LOA_REQUIRED'
@@ -237,7 +237,7 @@ export class PortMasterTransformationService {
       {
         field: 'maxDwt',
         header: 'PORTMASTER_BERTH_MAXIMUM_DWT',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_MAXIMUM_DWT_PLACEHOLDER',
         errorMessages: {
           'required': 'PORTMASTER_BERTH_MAXIMUM_DWT_REQUIRED'
@@ -246,7 +246,7 @@ export class PortMasterTransformationService {
       {
         field: 'maxShipDepth',
         header: 'PORTMASTER_BERTH_MAX_PERMISSIBLE_SHIPS',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_MAX_PERMISSIBLE_SHIPS_PLACEHOLDER',
         errorMessages: {
           'required': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_REQUIRED'
@@ -255,7 +255,7 @@ export class PortMasterTransformationService {
       {
         field: 'maxManifoldHeight',
         header: 'PORTMASTER_BERTH_MANIFOLD_HEIGHT',
-        fieldType: DATATABLE_FIELD_TYPE.TEXT,
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_PLACEHOLDER',
         errorMessages: {
           'required': 'PORTMASTER_BERTH_MANIFOLD_HEIGHT_REQUIRED'
@@ -281,8 +281,6 @@ export class PortMasterTransformationService {
       }
     ];
 
-    // NOTE: Below code may be use in future
-    /*
     const actions: DATATABLE_ACTION[] = [];
     actions.push(DATATABLE_ACTION.DELETE);
     const action: IDataTableColumn = {
@@ -292,7 +290,6 @@ export class PortMasterTransformationService {
       actions: actions
     };
     columns = [...columns, action];
-    */
     return columns;
   }
 
@@ -321,6 +318,7 @@ export class PortMasterTransformationService {
     _berth.maxManifoldHeight = new ValueObject<number>(berthList.maxManifoldHeight, isVisible, isEditMode, isModified, isEditable);
     _berth.minUKC = new ValueObject<string>(berthList.minUKC, isVisible, isEditMode, isModified, isEditable);
     _berth.regulationAndRestriction = new ValueObject<string>(berthList.regulationAndRestriction, isVisible, isEditMode, isModified, isEditable);
+    _berth.isActionsEnabled = isNewValue;
     _berth.isAdd = isNewValue;
     return _berth;
   }

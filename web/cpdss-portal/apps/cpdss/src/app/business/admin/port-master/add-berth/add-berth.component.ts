@@ -60,16 +60,15 @@ export class AddBerthComponent implements OnInit {
    * @memberof AddBerthComponent
    */
   initForm(berthArray: IBerthInfo[]): void {
-    const _berthList = berthArray?.map(berth => (this.portMasterTransformationService.getBerthListAsValueObject(berth, true, false, false, true, false)));
+    const _berthList = berthArray?.map(berth => (this.portMasterTransformationService.getBerthListAsValueObject(berth, true, true, false, true, false)));
     const berthListArray = _berthList?.map(berth =>
       this.initBethsFormGroup(berth)
     );
     this.berthDetailsForm = this.fb.group({
       dataTable: this.fb.array([...berthListArray]),
     });
-    this.berthDetailsForm?.markAllAsTouched();
-    this.berthDetailsForm?.markAsDirty();
     this.berthList = _berthList;
+    this.portMasterTransformationService.setBerthFormDetails(this.berthDetailsForm);
   }
 
   /**
@@ -127,7 +126,7 @@ export class AddBerthComponent implements OnInit {
    * @memberof AddBerthComponent
    */
   onEditComplete(event): void {
-    // TODO : emit changes to port details
+    this.portMasterTransformationService.setBerthFormDetails(this.berthDetailsForm);
   }
 
   /**

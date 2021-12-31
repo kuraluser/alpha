@@ -77,7 +77,7 @@ export class AddPortComponent implements OnInit {
       }
     } else {
       this.portDetails = <IPortDetails>{};
-      this.berthInfo =[];
+      this.berthInfo = [];
     }
     this.initForm(this.portDetails);
     this.ngxSpinnerService.hide();
@@ -153,7 +153,6 @@ export class AddPortComponent implements OnInit {
     return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
 
-
   /**
    * Method to save port details
    *
@@ -162,11 +161,46 @@ export class AddPortComponent implements OnInit {
   async savePortDetails() {
     const berthDetailsForm = this.portMasterTransformationService.getBerthFormDetails();
     const translationKeys = await this.translateService.get(['PORT_ADDED_SUCCESSFULLY', 'PORT_MASTER_SUCCESS', 'PORT_MASTER_FAILURE', 'PORT_MASTER_ERROR']).toPromise();
-    // TODO - has implement save api call later.
+
     if (this.addPortDetailsForm.valid && berthDetailsForm.valid) {
-      this.messageService.add({ severity: 'success', summary: translationKeys['PORT_MASTER_SUCCESS'], detail: translationKeys['PORT_ADDED_SUCCESSFULLY'] });
+      this.ngxSpinnerService.show();
+      const berthDetails: IBerthInfo[] = berthDetailsForm.value.dataTable;
+      const portDataPostOBJ: IPortDetails = {
+        portId: this.portId,
+        portName: this.addPortDetailsForm.controls.portName.value,
+        portCode: this.addPortDetailsForm.controls.portCode.value,
+        maxPermissibleDraft: Number(this.addPortDetailsForm.controls.maxPermissibleDraft.value),
+        timezoneId: this.addPortDetailsForm.controls.timeZone.value.id,
+        timezoneAbbreviation: this.addPortDetailsForm.controls.timeZone.value.abbreviation,
+        timezoneOffsetVal: this.addPortDetailsForm.controls.timeZone.value.offsetValue,
+        timezone: this.addPortDetailsForm.controls.timeZone.value.timezone?.split(' ')[0],
+        tideHeightHigh: Number(this.addPortDetailsForm.controls.tideHeightHigh.value),
+        tideHeightLow: Number(this.addPortDetailsForm.controls.tideHeightLow.value),
+        densityOfWater: this.addPortDetailsForm.controls.densityOfWater.value,
+        countryName: this.addPortDetailsForm.controls.country.value.name,
+        countryId: this.addPortDetailsForm.controls.country.value.id,
+        ambientTemperature: Number(this.addPortDetailsForm.controls.ambientTemperature.value),
+        latitude: this.addPortDetailsForm.controls.position?.value ? this.addPortDetailsForm.controls.position?.value[0].toString() : null,
+        longitude: this.addPortDetailsForm.controls.position?.value ? this.addPortDetailsForm.controls.position?.value[1].toString() : null,
+        berthInfo: berthDetails.length ? berthDetails : []
+      };
+
+      try {
+        const response: IPortsDetailsResponse = await this.portMasterApiService.savePortDetails(this.portId, portDataPostOBJ).toPromise();
+        if (response.responseStatus.status === '200') {
+          this.portId = response.portDetails.portId;
+          this.ngxSpinnerService.hide();
+          this.messageService.add({ severity: 'success', summary: translationKeys['PORT_MASTER_SUCCESS'], detail: translationKeys['PORT_ADDED_SUCCESSFULLY'] });
+          // this.cancel()            // may be will use this after confirmation
+        } else {
+          // TODO: Handle specific error toast here
+        }
+      } catch (error) {
+        this.ngxSpinnerService.hide();
+      }
     } else {
       this.addPortDetailsForm.markAllAsTouched();
+      berthDetailsForm.markAllAsTouched();
       this.messageService.add({ severity: 'error', summary: translationKeys['PORT_MASTER_ERROR'], detail: translationKeys['PORT_MASTER_FAILURE'] });
     }
   }

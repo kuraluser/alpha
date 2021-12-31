@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter } from '@
 import 'ol/ol.css';
 import { Feature, Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import OSM, { ATTRIBUTION } from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import Style from 'ol/style/Style';
 import VectorSource from 'ol/source/Vector';
@@ -39,7 +39,7 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
   view: View;
   tileLayer: TileLayer;
   vectorLayor: VectorLayer;
-  minZoom = 3;
+  minZoom = 2;
   maxZoom = 200;
   typeSelect = null;
   draw: any;
@@ -69,13 +69,15 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
 
     this.view = new View({
       center: mapCenter,
-      zoom: this.minZoom,
+      zoom: 5,
       minZoom: this.minZoom,
       maxZoom: this.maxZoom
     });
 
     this.tileLayer = new TileLayer({
-      source: new OSM()
+      source: new OSM({
+        url: 'https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=6fb77ea124ac439399a6fd248878f57e'
+      })
     });
 
     this.vectorLayor = new VectorLayer({
@@ -180,7 +182,6 @@ export class PortMasterMapComponent implements OnInit, AfterViewInit {
   onClearLocation(): void {
     this.vectorSource.removeFeature(this.vectorSource.getFeatures()[0]);
     this.coords = null;
-    this.coordinates.emit({ lat: null, lon: null });
   }
 
   /**
