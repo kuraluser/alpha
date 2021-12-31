@@ -473,7 +473,7 @@ public class LoadicatorService {
     Optional.ofNullable(loadableStudyEntity.getVoyage().getVoyageNo())
         .ifPresent(stowagePlanBuilder::setVoyageNumber);
     if (!vesselReply.getVesselsList().isEmpty()) {
-      stowagePlanBuilder.setVesselName(vesselReply.getVessels(0).getName());
+      stowagePlanBuilder.setVesselName(vesselReply.getVessels(0).getName().replaceAll(" +", "_"));
     }
     Optional.ofNullable(synopticalEntity.getOperationType())
         .ifPresent(stowagePlanBuilder::setCondition);
