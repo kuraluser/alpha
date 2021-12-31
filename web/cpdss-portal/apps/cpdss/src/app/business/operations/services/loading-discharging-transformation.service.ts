@@ -543,6 +543,9 @@ export class LoadingDischargingTransformationService {
   */
   setValidationMessageForLoadingDetails() {
     return {
+      commonDate: {
+        'notInRange': 'LOADING_DETAILS_DATE_NOT_IN_RANGE'
+      },
       timeOfSunrise: {
         'required': 'LOADING_DETAILS_SUNRISE_REQUIRED',
         'failedCompare': 'LOADING_DETAILS_SUNRISE_FAILED_COMPARE'

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef , OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -6,15 +6,20 @@ import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { saveAs } from 'file-saver';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ILoadingDischargingDetails } from '../models/loading-discharging.model';
+
 import { loadingDetailsValidator } from '../directives/validator/loading-details-time-validator.directive';
 import { numberValidator } from '../../core/directives/number-validator.directive';
-import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
-import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { dateInRangeValidator } from '../directives/validator/date-in-range-validator.directive';
+
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
+import { PermissionsService } from '../../../shared/services/permissions/permissions.service';
+import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
+import { LoadingDischargingTransformationService } from '../services/loading-discharging-transformation.service';
+import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service';
+
+import { ILoadingDischargingDetails } from '../models/loading-discharging.model';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { OPERATIONS } from '../../core/models/common.model';
-import { LoadingDischargingInformationApiService } from '../services/loading-discharging-information-api.service';
 
 @Component({
   selector: 'cpdss-portal-loading-discharging-details',
@@ -29,7 +34,7 @@ import { LoadingDischargingInformationApiService } from '../services/loading-dis
  * @class LoadingDischargingDetailsComponent
  * @implements {OnInit}
  */
-export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
+export class LoadingDischargingDetailsComponent implements OnInit, OnDestroy {
 
   @ViewChild('fileUpload') fileUploadVariable: ElementRef;
 
@@ -41,7 +46,6 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   get loadingDischargingDetails(): ILoadingDischargingDetails {
     return this._loadingDischargingDetails;
   }
-
   set loadingDischargingDetails(loadingDischargingDetails: ILoadingDischargingDetails) {
     this._loadingDischargingDetails = loadingDischargingDetails;
     this.getPagePermission();
@@ -58,20 +62,25 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   loadingDischargingDetailsResponse: ILoadingDischargingDetails;
   timeOfSunrisePermission: IPermission;
   timeOfSunsetPermission: IPermission;
-  selectedTime:any;
+  selectedTime: any;
   isDischargeStarted: boolean;
+  datePickerFormat: string;
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private translateService: TranslateService,
+    private timeZoneTransformationService: TimeZoneTransformationService,
     private permissionsService: PermissionsService,
     private messageService: MessageService,
     private ngxSpinnerService: NgxSpinnerService,
     private loadingDischargingInformationApiService: LoadingDischargingInformationApiService,
-    private loadingDischargingTransformationService: LoadingDischargingTransformationService) { }
+    private loadingDischargingTransformationService: LoadingDischargingTransformationService
+  ) { }
 
   ngOnInit(): void {
     this.getPagePermission();
+    this.datePickerFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat);
     this.errorMessages = this.loadingDischargingTransformationService.setValidationMessageForLoadingDetails();
     this.initSubscriptions();
   }
@@ -106,26 +115,31 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   initLoadingDischargingDetailsForm() {
     let timeOfSunriseValidation = [];
     let timeOfSunsetValidation = [];
-    if(this.timeOfSunrisePermission.view || this.timeOfSunrisePermission.view === undefined) {
+    if (this.timeOfSunrisePermission.view || this.timeOfSunrisePermission.view === undefined) {
       timeOfSunriseValidation = [Validators.required];
     }
-    if(this.timeOfSunsetPermission.view || this.timeOfSunsetPermission.view === undefined) {
+    if (this.timeOfSunsetPermission.view || this.timeOfSunsetPermission.view === undefined) {
       timeOfSunsetValidation = [Validators.required];
     }
-    if(this.timeOfSunrisePermission.view && this.timeOfSunsetPermission.view) {
-      timeOfSunsetValidation = [...timeOfSunsetValidation , loadingDetailsValidator('timeOfSunrise', '>')];
-      timeOfSunriseValidation = [...timeOfSunriseValidation , loadingDetailsValidator('timeOfSunset', '<')];
+    if (this.timeOfSunrisePermission.view && this.timeOfSunsetPermission.view) {
+      timeOfSunsetValidation = [...timeOfSunsetValidation, loadingDetailsValidator('timeOfSunrise', '>')];
+      timeOfSunriseValidation = [...timeOfSunriseValidation, loadingDetailsValidator('timeOfSunset', '<')];
     }
     this.loadingDischargingDetailsResponse = this.loadingDischargingDetails;
+
+    const commonDateObj = this.dateStringToDate(this.loadingDischargingDetails?.commonDate);
+    const etaObj = this.dateStringToDate(this.loadingDischargingDetails?.eta);
+    const etdObj = this.dateStringToDate(this.loadingDischargingDetails?.etd);
     this.loadingDischargingDetailsForm = this.fb.group({
+      commonDate: this.fb.control(commonDateObj, [dateInRangeValidator(etaObj, etdObj)]),
       timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), timeOfSunriseValidation),
       timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), timeOfSunsetValidation),
-      startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime), [Validators.required]),
+      startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime)),
       initialTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.initialTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(4)]),
       maximumTrim: this.fb.control(this.loadingDischargingDetails.trimAllowed?.maximumTrim, [Validators.required, numberValidator(2, 1), Validators.min(1), Validators.max(3)]),
     });
 
-    if(this.operation === OPERATIONS.DISCHARGING) {
+    if (this.operation === OPERATIONS.DISCHARGING) {
       this.loadingDischargingDetailsForm.addControl('strippingTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.strippingTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
     } else {
       this.loadingDischargingDetailsForm.addControl('finalTrim', this.fb.control(this.loadingDischargingDetails.trimAllowed?.finalTrim, [Validators.required, numberValidator(2, 1), Validators.min(0), Validators.max(2)]));
@@ -133,10 +147,12 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   }
 
   /**
-* Method for converting time string to date
-*
-* @memberof LoadingDischargingDetailsComponent
-*/
+   * Method for converting time string to date
+   *
+   * @param {string} field
+   * @return {*}  {Date}
+   * @memberof LoadingDischargingDetailsComponent
+   */
   getDateByDate(field: string): Date {
     if (field) {
       const splittedField = field.split(":");
@@ -155,24 +171,21 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   * @return {ValidationErrors}
   * @memberof LoadingDischargingDetailsComponent
   */
-
   fieldError(formControlName: string): ValidationErrors {
     const formControl = this.field(formControlName);
     return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
 
   /**
-*Method to get formcontrolName
-* @param {string} formControlName
-* @return {FormControl}
-* @memberof LoadingDischargingDetailsComponent
-*/
+   * Method to get formcontrolName
+   *
+   * @param {string} formControlName
+   * @return {*}  {FormControl}
+   * @memberof LoadingDischargingDetailsComponent
+   */
   field(formControlName: string): FormControl {
     const formControl = <FormControl>this.loadingDischargingDetailsForm?.get(formControlName);
     return formControl;
-  }
-
-  clearFilter(dd) {
   }
 
   onSubmit() { }
@@ -228,8 +241,6 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
     this.timeOfSunsetPermission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping[this.operation === OPERATIONS.LOADING ? 'LoadingInfoSunSet' : 'DischargingInfoSunSet'], false);
   }
 
-
-
   /**
   * Method for when trim value update
   *
@@ -249,15 +260,15 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
   */
   downloadTemplate() {
     let id;
-    if(this.operation === OPERATIONS.DISCHARGING) {
+    if (this.operation === OPERATIONS.DISCHARGING) {
       id = this.dischargeInfoId;
     } else {
       id = this.loadingInfoId;
     }
-    this.loadingDischargingInformationApiService.downloadTemplate(id,this.operation).subscribe((data) => {
+    this.loadingDischargingInformationApiService.downloadTemplate(id, this.operation).subscribe((data) => {
       const blob = new Blob([data], { type: data.type })
       const fileurl = window.URL.createObjectURL(blob);
-      if(this.operation === OPERATIONS.DISCHARGING) {
+      if (this.operation === OPERATIONS.DISCHARGING) {
         saveAs(fileurl, 'Discharging_port_tide_details.xlsx');
       } else {
         saveAs(fileurl, 'Loading_port_tide_details.xlsx');
@@ -298,30 +309,30 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
           uploadError = 'LOADING_DISCHARGING_FILE_FORMAT_ERROR';
         }
       }
-      if(uploadError) {
+      if (uploadError) {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys[uploadError] });
       } else {
         const result = await this.loadingDischargingInformationApiService.uploadTemplate(id, uploadedFileVar[0], this.operation).toPromise();
-        if(result.responseStatus.status === '200') {
+        if (result.responseStatus.status === '200') {
           this.messageService.add({ severity: 'success', summary: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_SUCCESS_DETAILS'] });
         }
       }
-    } catch(err) {
-      if(err.error.errorCode === "ERR-RICO-310") {
+    } catch (err) {
+      if (err.error.errorCode === "ERR-RICO-310") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_PORT_NAME_INVALID'] });
-      } else if(err.error.errorCode === "ERR-RICO-311") {
+      } else if (err.error.errorCode === "ERR-RICO-311") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_DATE_INVALID'] });
-      } else if(err.error.errorCode === "ERR-RICO-312") {
+      } else if (err.error.errorCode === "ERR-RICO-312") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_TIME_INVALID'] });
-      } else if(err.error.errorCode === "ERR-RICO-313") {
+      } else if (err.error.errorCode === "ERR-RICO-313") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_HEIGHT_INVALID'] });
-      } else if(err.error.errorCode === "ERR-RICO-314") {
+      } else if (err.error.errorCode === "ERR-RICO-314") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_INVALID_EXCEL_FILE'] });
-      } else if(err.error.errorCode === "ERR-RICO-315") {
+      } else if (err.error.errorCode === "ERR-RICO-315") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EMPTY_FILE'] });
-      } else if(err.error.errorCode === "ERR-RICO-316") {
+      } else if (err.error.errorCode === "ERR-RICO-316") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_INVALID_FILE'] });
-      } else if(err.error.errorCode === "ERR-RICO-400") {
+      } else if (err.error.errorCode === "ERR-RICO-400") {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_DISCHARGING_EXCEL_ERROR'], detail: translationKeys['LOADING_DICHARGING_EXCEL_EXPORT_ERROR'] });
       }
     }
@@ -341,9 +352,28 @@ export class LoadingDischargingDetailsComponent implements OnInit , OnDestroy {
     this.loadingDischargingDetailsForm.controls.timeOfSunset.updateValueAndValidity();
     fieldReferenceName.hideOverlay();
     if (!this.fieldError(field)) {
-      const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
-      this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
+      if (field === 'commonDate') {
+        const commonDT = this.loadingDischargingDetailsForm.value[field] ? this.timeZoneTransformationService.formatDateTime(this.loadingDischargingDetailsForm.value[field]) : null;
+        this.loadingDischargingDetailsResponse[field] = commonDT;
+      } else {
+        const selectedTime = new Date(this.loadingDischargingDetailsForm.value[field]);
+        this.loadingDischargingDetailsResponse[field] = ((selectedTime.getHours() < 10 ? ('0' + selectedTime.getHours()) : selectedTime.getHours())) + ":" + ((selectedTime.getMinutes() < 10 ? ('0' + selectedTime.getMinutes()) : selectedTime.getMinutes()));
+      }
       this.updateLoadingDischargingDetails.emit(this.loadingDischargingDetailsResponse);
+    }
+  }
+
+  /**
+   * function to convert string to Date object
+   *
+   * @param {string} date
+   * @return {*}  {Date}
+   * @memberof LoadingDischargingDetailsComponent
+   */
+  dateStringToDate(date: string): Date {
+    if (date) {
+      const dtFormatOptions = { stringToDate: true };
+      return this.timeZoneTransformationService.formatDateTime(date, dtFormatOptions);
     }
   }
 

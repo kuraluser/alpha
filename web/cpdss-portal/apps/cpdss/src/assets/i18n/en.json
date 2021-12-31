@@ -1580,6 +1580,8 @@
   "DISCHARGE_STUDY_COLOR_ALREADY_USED_ERROR": "Color already in use",
   "DISCHARGE_STUDY_ABBREVIATION_ALREADY_USED_ERROR": "Abbreviation already in use",
   "QUANTITY_NOT_EQUAL": "Sum of quantity should be equal to total quantity",
+  "LOADING_DETAILS_DATE_NOT_IN_RANGE": "Date must be in between ETA & ETD",
+  "LOADING_DETAILS_DATE_PLACEHOLDER": "Select Date",
   "LOADING_DETAILS_SUNRISE_FAILED_COMPARE": "Sunrise time should be less than sunset time",
   "LOADING_DETAILS_SUNSET_FAILED_COMPARE": "Sunset time should be greater than sunrise time",
   "MIN_LOADING_COMPARE": "Should be less than maximum loading rate",
@@ -1974,6 +1976,7 @@
   "GENERATE_DISCHARGE_STUDY_PATTERN_LOADICATOR_CHECKING": "Checking with loadicator",
   "LOADING_DETAILS_SUNSET":"Sunset",
   "LOADING_DETAILS_SUNRISE":"Sunrise",
+  "LOADING_DISCHARGING_DETAILS_DATE":"Date",
 
   "LOADING_INFORMATION_NO_MACHINERY": "Atleast one machinery is required",
   "MIN_SHORE_LOADING_RATE_M3": "Minimum 1000 required",

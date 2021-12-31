@@ -110,10 +110,14 @@ export interface ICargoToBeDischarged {
 * @interface ILoadingDischargingDetails
 */
 export interface ILoadingDischargingDetails {
+  commonDate?: string;
   timeOfSunrise: string;
   timeOfSunset: string;
   startTime: string;
   trimAllowed: ITrimAllowed;
+  eta?: string;
+  etd?: string;
+  timezoneOffsetVal?: string;
 }
 
 /**

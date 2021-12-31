@@ -191,7 +191,7 @@ export class AddPortComponent implements OnInit {
           this.portId = response.portDetails.portId;
           this.ngxSpinnerService.hide();
           this.messageService.add({ severity: 'success', summary: translationKeys['PORT_MASTER_SUCCESS'], detail: translationKeys['PORT_ADDED_SUCCESSFULLY'] });
-          // this.cancel()            // may be will use this after confirmation
+          this.cancel();
         } else {
           // TODO: Handle specific error toast here
         }
