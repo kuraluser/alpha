@@ -283,6 +283,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.fillingRatioOrginal = cargoTankDetail.fillingRatioOrginal;
     _cargoTankDetail.fullCapacityCubm = cargoTankDetail.fullCapacityCubm;
     _cargoTankDetail.isCommingle = cargoTankDetail?.isCommingle;
+    _cargoTankDetail.obqBbls = cargoTankDetail.obqBbls;
     return _cargoTankDetail;
   }
 
@@ -300,7 +301,8 @@ export class LoadablePlanTransformationService {
       observedM3: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSKL, cargoTankDetail?.api, cargoTankDetail?.temperature,-1),
       observedBarrelsAt60: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoTankDetail?.api, cargoTankDetail?.temperature,-1),
       observedBarrelsAt60Original: this.quantityPipe.transform(cargoTankDetail?.weightOrginal, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoTankDetail?.api, cargoTankDetail?.temperature, -1),
-      observedBarrels: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSBBLS, cargoTankDetail?.api, cargoTankDetail?.temperature,-1)
+      observedBarrels: this.quantityPipe.transform(cargoTankDetail?.weight, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSBBLS, cargoTankDetail?.api, cargoTankDetail?.temperature,-1),
+      obqBbls: this.quantityPipe.transform(cargoTankDetail?.obqBbls, QUANTITY_UNIT.MT, QUANTITY_UNIT.OBSBBLS, cargoTankDetail?.api, cargoTankDetail?.temperature,-1)
     }
     _cargoTankDetail.id = cargoTankDetail?.id;
     _cargoTankDetail.tankId = cargoTankDetail?.tankId;
@@ -328,6 +330,8 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.isAdd = isNewValue;
     _cargoTankDetail.fullCapacityCubm = cargoTankDetail.fullCapacityCubm;
     _cargoTankDetail.isCommingle = cargoTankDetail?.isCommingle;
+    _cargoTankDetail.obqBbls = new ValueObject<number>(unitConvertedTankDetails.obqBbls, true, false);
+    _cargoTankDetail.obsbbls = new ValueObject<number>((_cargoTankDetail.observedBarrels.value - unitConvertedTankDetails.obqBbls), true, false);
     return _cargoTankDetail;
   }
 
@@ -417,6 +421,24 @@ export class LoadablePlanTransformationService {
       {
         field: 'observedBarrelsAt60',
         header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_BBL_AT_60F',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberType: 'quantity',
+        unit: QUANTITY_UNIT.BBLS,
+        editable: false,
+        showTotal: true
+      },
+      {
+        field: 'obqBbls',
+        header: 'LOADABLE_PLAN_OBQ_BBLS',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberType: 'quantity',
+        unit: QUANTITY_UNIT.BBLS,
+        editable: false,
+        showTotal: true
+      },
+      {
+        field: 'obsbbls',
+        header: 'LOADABLE_PLAN_OBS_BBLS',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
         unit: QUANTITY_UNIT.BBLS,

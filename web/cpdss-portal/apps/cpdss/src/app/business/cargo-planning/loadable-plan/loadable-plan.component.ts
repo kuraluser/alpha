@@ -450,6 +450,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
           cargo.colorCode = commingleData[0].colorCode;
         }
       }
+      cargo.obqBbls = loadablePlanRes.onBoardQuantities?.find(obq=> obq.tankId === cargo.tankId)?.quantity;
       const formattedCargo = this.loadablePlanTransformationService.getFormatedCargoDetails(cargo)
       return this.loadablePlanTransformationService.getCargoTankDetailAsValueObject(formattedCargo)
     }) : [];

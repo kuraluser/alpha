@@ -32,8 +32,27 @@ export interface ILoadablePlanResponse {
     confirmPlanEligibility?: boolean;
     loadableQuantity: number;
     lastModifiedPort: number;
+    onBoardQuantities?: IOnBoardQuantities[];
 }
 
+/**
+ * Interface for on board quantities
+ *
+ * @export
+ * @interface IOnBoardQuantities
+ */
+ export interface IOnBoardQuantities {
+    abbreviation: string;
+    actualWeight: number;
+    api: number;
+    colorCode: string;
+    id: number;
+    quantity: number;
+    sounding: number;
+    tankId: number;
+    temperature: number;
+    volume: number;
+ }
 
 /**
  * Interface for loadable commingle Cargo
@@ -142,6 +161,8 @@ export interface ICargoTankDetail extends ILoadableCargo {
     isCommingle?: boolean;
     tankShortName?: string;
     cargoNominationId?: number;
+    obqBbls?: number;
+    obsbbls?: number;
 }
 
 /**
@@ -177,6 +198,8 @@ export interface ICargoTankDetailValueObject {
     tankShortName: string;
     isCommingle?: boolean;
     cargoNominationId?: number;
+    obqBbls?: ValueObject<number>;
+    obsbbls?: ValueObject<number>;
 }
 
 /**
