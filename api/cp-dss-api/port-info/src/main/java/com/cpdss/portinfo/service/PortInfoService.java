@@ -59,7 +59,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
     PortReply.Builder portReply = PortReply.newBuilder();
     try {
       List<PortInfo> portList = portRepository.findAllByOrderByName();
-      getPorts(portReply, portList);
+      getPorts(portReply, portList, false);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus(SUCCESS);
       portReply.setResponseStatus(responseStatus);
@@ -120,7 +120,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
       }
       if (request != null) {
         List<PortInfo> portList = portRepository.findByIdInAndIsActive(request.getIdList(), true);
-        getPorts(portReply, portList);
+        getPorts(portReply, portList, true);
       }
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus(SUCCESS);
@@ -136,13 +136,14 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
-  private void getPorts(PortReply.Builder portReply, List<PortInfo> portList) {
-    Comparator<BerthInfo> byMaxDraftComparator =
-        Comparator.comparing(
-            BerthInfo::getMaximumDraft, Comparator.nullsFirst(Comparator.naturalOrder()));
-    Comparator<BerthInfo> byAirDraftComparator =
-        Comparator.comparing(
-            BerthInfo::getAirDraft, Comparator.nullsFirst(Comparator.naturalOrder()));
+  private void getPorts(
+      PortReply.Builder portReply, List<PortInfo> portList, Boolean isBerthDataNeed) {
+    //    Comparator<BerthInfo> byMaxDraftComparator =
+    //        Comparator.comparing(
+    //            BerthInfo::getMaximumDraft, Comparator.nullsFirst(Comparator.naturalOrder()));
+    //    Comparator<BerthInfo> byAirDraftComparator =
+    //        Comparator.comparing(
+    //            BerthInfo::getAirDraft, Comparator.nullsFirst(Comparator.naturalOrder()));
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     portList.forEach(
         port -> {
@@ -198,10 +199,14 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(item -> portDetail.setCountryName(port.getCountry().getName()));
           Optional.ofNullable(port.getCountry())
               .ifPresent(item -> portDetail.setCountryId(port.getCountry().getId()));
-
-          if (!port.getBerthInfoSet().isEmpty()) {
+          Optional.ofNullable(port.getAmbientTemperature())
+              .ifPresent(
+                  item ->
+                      portDetail.setAmbientTemperature(port.getAmbientTemperature().toString()));
+          Set<BerthInfo> berthInfoSet = port.getBerthInfoSet();
+          if (!berthInfoSet.isEmpty()) {
             Optional<BigDecimal> minDraftOfBerths =
-                port.getBerthInfoSet().stream()
+                berthInfoSet.stream()
                     .filter(v -> v.getMaximumDraft() != null)
                     .map(BerthInfo::getMaximumDraft)
                     .min(BigDecimal::compareTo);
@@ -209,7 +214,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
               portDetail.setMaxDraft(minDraftOfBerths.get().toString());
             }
             Optional<BigDecimal> minAirDraftOfBerths =
-                port.getBerthInfoSet().stream()
+                berthInfoSet.stream()
                     .filter(v -> v.getAirDraft() != null)
                     .map(BerthInfo::getAirDraft)
                     .min(BigDecimal::compareTo);
@@ -230,12 +235,14 @@ public class PortInfoService extends PortInfoServiceImplBase {
               .ifPresent(tideHeightTo -> portDetail.setTideHeightTo(String.valueOf(tideHeightTo)));
           Optional.ofNullable(port.getMaxPermissibleDraft())
               .ifPresent(draft -> portDetail.setMaxPermissibleDraft(String.valueOf(draft)));
-          Set<BerthInfo> berthInfoSet = port.getBerthInfoSet();
-          List<BerthInfo> berthList =
-              berthInfoSet.stream()
-                  .filter(item -> item.getIsActive().equals(true))
-                  .collect(Collectors.toList());
-          buildBerthInfoResponse(berthList, portDetail);
+
+          if (isBerthDataNeed == null || isBerthDataNeed) {
+            List<BerthInfo> berthList =
+                berthInfoSet.stream()
+                    .filter(item -> item.getIsActive().equals(true))
+                    .collect(Collectors.toList());
+            buildBerthInfoResponse(berthList, portDetail);
+          }
           // ##
           portReply.addPorts(portDetail);
         });

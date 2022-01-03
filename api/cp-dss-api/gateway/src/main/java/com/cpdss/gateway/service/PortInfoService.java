@@ -91,6 +91,10 @@ public class PortInfoService {
     portDetails.setLatitude(portsList.get(0).getLat().isEmpty() ? null : portsList.get(0).getLat());
     portDetails.setLongitude(
         portsList.get(0).getLon().isEmpty() ? null : portsList.get(0).getLon());
+    portDetails.setAmbientTemperature(
+        StringUtils.isEmpty(portsList.get(0).getAmbientTemperature())
+            ? null
+            : new BigDecimal(portsList.get(0).getAmbientTemperature()));
 
     List<BerthDetail> berthDetailsList = portsList.get(0).getBerthDetailsList();
     List<PortBerthInfoResponse> berthList = setBerthInformationForThePorts(berthDetailsList);
