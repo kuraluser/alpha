@@ -1774,7 +1774,7 @@ public class GenerateDischargingPlanExcelReportService {
     List<ShearingForce> sf = new ArrayList<>();
     sequenceStability.setAfter(afterList);
     sequenceStability.setFw(fwList);
-    IntStream.range(0, size)
+    IntStream.range(0, bmFrNoList.size())
         .forEach(
             i -> {
               ShearingForce listItem = new ShearingForce();
@@ -1788,7 +1788,7 @@ public class GenerateDischargingPlanExcelReportService {
     sequenceStability.setTrim(trimList);
     sequenceStability.setUkc(ukcList);
     sf.clear();
-    IntStream.range(0, size)
+    IntStream.range(0, sfFrNoList.size())
         .forEach(
             i -> {
               ShearingForce listItem = new ShearingForce();
