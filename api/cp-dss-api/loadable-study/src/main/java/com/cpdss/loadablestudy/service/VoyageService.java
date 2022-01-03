@@ -6,15 +6,11 @@ import static java.util.Optional.ofNullable;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.CargoInfo;
-import com.cpdss.common.generated.CargoInfoServiceGrpc;
-import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder;
-import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.PortDetail;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
@@ -1000,6 +996,7 @@ public class VoyageService {
       LoadableStudy.VoyageRequest request, LoadableStudy.VoyageListReply.Builder builder)
       throws GenericServiceException {
     PortInfo.PortRequest.Builder portReqBuilder = PortInfo.PortRequest.newBuilder();
+    portReqBuilder.setBerthDataNotNeed(true);
     PortInfo.PortReply portReply = this.GetPortInfo(portReqBuilder.build());
 
     if (portReply != null
