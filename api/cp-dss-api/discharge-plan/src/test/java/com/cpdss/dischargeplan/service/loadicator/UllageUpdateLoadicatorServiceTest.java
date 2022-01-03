@@ -8,10 +8,12 @@ import com.cpdss.common.generated.SynopticalOperationServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.DischargeInformationService;
 import com.cpdss.dischargeplan.service.DischargePlanAlgoService;
+import com.cpdss.dischargeplan.service.DischargePlanCommunicationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +21,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
+@TestPropertySource(properties = "cpdss.communication.enable = false")
 @SpringJUnitConfig(classes = {UllageUpdateLoadicatorService.class})
 public class UllageUpdateLoadicatorServiceTest {
 
@@ -49,6 +53,13 @@ public class UllageUpdateLoadicatorServiceTest {
 
   @MockBean
   PortDischargingPlanBallastTempDetailsRepository portDischargingPlanBallastDetailsTempRepository;
+
+  @MockBean private DischargePlanStagingService dischargePlanStagingService;
+
+  @MockBean
+  private DischargePlanCommunicationStatusRepository dischargePlanCommunicationStatusRepository;
+
+  @MockBean private DischargePlanCommunicationService dischargePlanCommunicationService;
 
   @MockBean DischargePlanAlgoService dischargingPlanAlgoService;
   @MockBean LoadicatorService loadicatorService;

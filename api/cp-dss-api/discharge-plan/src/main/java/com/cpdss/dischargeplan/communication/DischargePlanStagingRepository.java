@@ -200,4 +200,28 @@ public interface DischargePlanStagingRepository extends StagingRepository {
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM port_discharge_plan_commingle_details u where discharging_xid=?1",
       nativeQuery = true)
   String getPortDischargingPlanCommingleDetailsWithDischargeId(Long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM port_discharging_plan_stowage_details_temp u where discharging_information_xid=?1",
+      nativeQuery = true)
+  String getPortDischargingPlanStowageDetailsTempWithDischargeId(Long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM port_discharging_plan_stowage_ballast_details_temp u where discharging_information_xid=?1",
+      nativeQuery = true)
+  String getPortDischargingPlanStowageBallastDetailsTempWithDischargeId(Long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM port_discharge_plan_commingle_details_temp u where discharging_xid=?1",
+      nativeQuery = true)
+  String getPortDischargingPlanCommingleDetailsTempWithDischargeId(Long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM bill_of_ladding u where discharging_xid=?1",
+      nativeQuery = true)
+  String getBillOfLandingWithDischargeInfoId(Long id);
 }

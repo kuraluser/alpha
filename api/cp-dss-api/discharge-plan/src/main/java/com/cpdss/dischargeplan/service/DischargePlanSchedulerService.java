@@ -48,7 +48,8 @@ public class DischargePlanSchedulerService {
   public void init() {
     List<SchedulerRequest> vesselList = getAllVessel();
     List<String> scheduledTasks = getScheduledTasks();
-    for (SchedulerRequest vesssel : vesselList) {
+    for (SchedulerRequest vessel : vesselList) {
+      final String taskName = "_" + environment + "_" + vessel.getVesselId();
       new Thread(
               () -> {
                 try {
@@ -57,8 +58,7 @@ public class DischargePlanSchedulerService {
                   LocalDateTime dateTime = LocalDateTime.now();
                   LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                   ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                  properties.setTaskName(
-                      "DISCHARGE_PLAN_DOWNLOAD_RESULT" + environment + "_" + vesssel.getVesselId());
+                  properties.setTaskName("DISCHARGE_PLAN_DOWNLOAD_RESULT" + taskName);
                   properties.setTaskFrequency(30);
                   properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                   properties.setTaskStartDate(dateTime.toLocalDate());
@@ -68,8 +68,8 @@ public class DischargePlanSchedulerService {
                   properties.setTaskURI("discharge-plan-service:" + port);
                   Map<String, String> requestParam = new HashMap<>();
                   requestParam.put("env", environment);
-                  requestParam.put("ClientId", vesssel.getVesselName());
-                  requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
+                  requestParam.put("ClientId", vessel.getVesselName());
+                  requestParam.put("ShipId", String.valueOf(vessel.getShipId()));
                   properties.setTaskReqParam(requestParam);
                   if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
                     scheduledTaskRequest.createScheduledTaskRequest(properties);
@@ -87,8 +87,7 @@ public class DischargePlanSchedulerService {
                   LocalDateTime dateTime = LocalDateTime.now();
                   LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                   ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                  properties.setTaskName(
-                      "DISCHARGE_PLAN_STATUS_CHECK" + environment + "_" + vesssel.getVesselId());
+                  properties.setTaskName("DISCHARGE_PLAN_STATUS_CHECK" + taskName);
                   properties.setTaskFrequency(60);
                   properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                   properties.setTaskStartDate(dateTime.toLocalDate());
@@ -97,9 +96,9 @@ public class DischargePlanSchedulerService {
                   properties.setTaskEndTime(endDateTime.toLocalTime());
                   properties.setTaskURI("discharge-plan-service:" + port);
                   Map<String, String> requestParam = new HashMap<>();
-
-                  requestParam.put("ClientId", vesssel.getVesselName());
-                  requestParam.put("ShipId", String.valueOf(vesssel.getShipId()));
+                  requestParam.put("env", environment);
+                  requestParam.put("ClientId", vessel.getVesselName());
+                  requestParam.put("ShipId", String.valueOf(vessel.getShipId()));
                   properties.setTaskReqParam(requestParam);
                   if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
                     scheduledTaskRequest.createScheduledTaskRequest(properties);
@@ -118,7 +117,34 @@ public class DischargePlanSchedulerService {
                 LocalDateTime dateTime = LocalDateTime.now();
                 LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
                 ScheduledTaskProperties properties = new ScheduledTaskProperties();
-                properties.setTaskName("DISCHARGE_PLAN_DATA_UPDATE" + environment);
+                properties.setTaskName("DISCHARGE_PLAN_DATA_UPDATE_" + environment);
+                properties.setTaskFrequency(30);
+                properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
+                properties.setTaskStartDate(dateTime.toLocalDate());
+                properties.setTaskStartTime(dateTime.toLocalTime());
+                properties.setTaskEndDate(endDateTime.toLocalDate());
+                properties.setTaskEndTime(endDateTime.toLocalTime());
+                properties.setTaskURI("discharge-plan-service:" + port);
+                Map<String, String> requestParam = new HashMap<>();
+                requestParam.put("env", environment);
+                properties.setTaskReqParam(requestParam);
+                if (scheduledTasks != null && !scheduledTasks.contains(properties.getTaskName()))
+                  scheduledTaskRequest.createScheduledTaskRequest(properties);
+
+              } catch (InterruptedException | GenericServiceException e) {
+                e.printStackTrace();
+              }
+            })
+        .start();
+    new Thread(
+            () -> {
+              try {
+                Thread.sleep(15 * 1000);
+                System.out.println("EXECUTING");
+                LocalDateTime dateTime = LocalDateTime.now();
+                LocalDateTime endDateTime = dateTime.plus(Duration.ofDays(100));
+                ScheduledTaskProperties properties = new ScheduledTaskProperties();
+                properties.setTaskName("DISCHARGE_PLAN_ULLAGE_UPDATE_" + environment);
                 properties.setTaskFrequency(30);
                 properties.setTaskType(ScheduledTaskProperties.TaskTypeEnum.ASYNC);
                 properties.setTaskStartDate(dateTime.toLocalDate());

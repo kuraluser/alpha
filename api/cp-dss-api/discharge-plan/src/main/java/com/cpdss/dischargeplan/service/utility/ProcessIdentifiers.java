@@ -32,10 +32,15 @@ public enum ProcessIdentifiers {
   discharging_plan_commingle_details,
   discharging_sequence_stability_parameters,
   port_discharging_plan_stowage_ballast_details,
+  port_discharging_plan_stowage_ballast_details_temp,
   port_discharging_plan_rob_details,
   port_discharging_plan_stability_parameters,
   port_discharging_plan_stowage_details,
+  port_discharging_plan_stowage_details_temp,
   port_discharge_plan_commingle_details,
   json_data,
-  loadable_pattern;
+  loadable_pattern,
+  port_discharge_plan_commingle_details_temp,
+  bill_of_ladding,
+  synoptical_table;
 }

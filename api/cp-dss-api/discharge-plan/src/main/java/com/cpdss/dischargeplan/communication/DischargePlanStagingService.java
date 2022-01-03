@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.communication;
 
+import static com.cpdss.dischargeplan.service.utility.ProcessIdentifiers.port_discharge_plan_commingle_details_temp;
+
 import com.cpdss.common.communication.StagingService;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
@@ -48,6 +50,8 @@ public class DischargePlanStagingService extends StagingService {
   }
 
   Long dischargingPatternId = null;
+  Long synopticTableXid = null;
+
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
    *
@@ -710,6 +714,26 @@ public class DischargePlanStagingService extends StagingService {
             }
             break;
           }
+        case port_discharge_plan_commingle_details_temp:
+          {
+            String portDischargingPlanCommingleDetailsTempJson =
+                dischargePlanStagingRepository
+                    .getPortDischargingPlanCommingleDetailsTempWithDischargeId(Id);
+            if (portDischargingPlanCommingleDetailsTempJson != null) {
+              JsonArray portDischargingPlanCommingleDetailsTemp =
+                  JsonParser.parseString(portDischargingPlanCommingleDetailsTempJson)
+                      .getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  portDischargingPlanCommingleDetailsTemp);
+            }
+            break;
+          }
         case json_data:
           {
             LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
@@ -759,6 +783,49 @@ public class DischargePlanStagingService extends StagingService {
             }
             break;
           }
+        case bill_of_ladding:
+          {
+            String billOfLandingJson =
+                dischargePlanStagingRepository.getBillOfLandingWithDischargeInfoId(Id);
+            if (billOfLandingJson != null) {
+              JsonArray billOfLanding = JsonParser.parseString(billOfLandingJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  billOfLanding);
+            }
+            break;
+          }
+        case synoptical_table:
+          {
+            if (synopticTableXid != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(synopticTableXid);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub.getSynopticalDataForCommunication(
+                      builder.build());
+              if (DischargePlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray synopticalTableData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      synopticalTableData);
+                }
+              }
+            }
+            break;
+          }
       }
     }
     return array;
@@ -801,6 +868,7 @@ public class DischargePlanStagingService extends StagingService {
       Long dischargingStagesDurationId =
           dischargeInformation.get("stages_duration_xid").getAsLong();
       dischargingPatternId = dischargeInformation.get("discharging_pattern_xid").getAsLong();
+      synopticTableXid = dischargeInformation.get("synoptical_table_xid").getAsLong();
       if (dischargingInformationStatusId != null) {
         getDischargingInformationStatus(
             array,

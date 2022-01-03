@@ -34,7 +34,7 @@ public class TaskListener implements ExecuteTaskListener {
     log.info("Communication Enabled " + enableCommunication);
     log.info("Task Name :" + taskName);
     if (enableCommunication) {
-      if (taskName.contains("DISCHARGE_PLAN_DOWNLOAD_RESULT")) {
+      if (taskName.startsWith("DISCHARGE_PLAN_DOWNLOAD_RESULT")) {
         log.info("inside TaskName " + taskName);
         if (taskReqParams.get("env").equals("ship")) {
           communicationService.getDataFromCommunication(taskReqParams, MessageTypes.dischargeShip);
@@ -43,7 +43,7 @@ public class TaskListener implements ExecuteTaskListener {
           communicationService.getDataFromCommunication(taskReqParams, MessageTypes.dischargeShore);
         }
 
-      } else if (taskName.contains("DISCHARGE_PLAN_DATA_UPDATE")) {
+      } else if (taskName.startsWith("DISCHARGE_PLAN_DATA_UPDATE")) {
         log.info("inside TaskName " + taskName);
         communicationService.getDischargePlanStagingData(
             StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get("env"), taskName);
@@ -51,7 +51,15 @@ public class TaskListener implements ExecuteTaskListener {
             StagingStatus.RETRY.getStatus(), taskReqParams.get("env"), taskName);
         communicationService.getDischargePlanStagingData(
             StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get("env"), taskName);
-      } else if (taskName.contains("DISCHARGE_PLAN_STATUS_CHECK")) {
+      } else if (taskName.startsWith("DISCHARGE_PLAN_ULLAGE_UPDATE")) {
+        log.info("inside TaskName " + taskName);
+        communicationService.getUllageUpdateStagingData(
+            StagingStatus.READY_TO_PROCESS.getStatus(), taskReqParams.get("env"), taskName);
+        communicationService.getUllageUpdateStagingData(
+            StagingStatus.RETRY.getStatus(), taskReqParams.get("env"), taskName);
+        communicationService.getUllageUpdateStagingData(
+            StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get("env"), taskName);
+      } else if (taskName.startsWith("DISCHARGE_PLAN_STATUS_CHECK")) {
         // communicationService.checkLoadableStudyStatus(taskReqParams);
       }
     }

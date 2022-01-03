@@ -252,7 +252,7 @@ public class LoadingPlanCommunicationService {
                     Arrays.asList(
                             MessageTypes.ULLAGE_UPDATE.getMessageType(),
                             MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
-                            MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType())
+                            MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT.getMessageType())
                         .contains(dataTransfer.getProcessGroupId()))
             .collect(Collectors.toList());
     log.info("DataTransferStages in ULLAGE_DATA_UPDATE task:" + dataTransferStages);
@@ -2297,7 +2297,7 @@ public class LoadingPlanCommunicationService {
             || MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT
                 .getMessageType()
                 .equals(processGroupId)
-            || MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT
+            || MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT
                 .getMessageType()
                 .equals(processGroupId)) {
           // Update communication status table with final state

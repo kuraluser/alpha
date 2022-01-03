@@ -50,7 +50,13 @@ public class DischargePlanConstants {
     PORT_DISCHARGING_PLAN_STOWAGE_DETAILS("port_discharging_plan_stowage_details"),
     PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS("port_discharge_plan_commingle_details"),
     JSON_DATA("json_data"),
-    LOADABLE_PATTERN("loadable_pattern");
+    LOADABLE_PATTERN("loadable_pattern"),
+    PORT_DISCHARGING_PLAN_STOWAGE_DETAILS_TEMP("port_discharging_plan_stowage_details_temp"),
+    PORT_DISCHARGING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP(
+        "port_discharging_plan_stowage_ballast_details_temp"),
+    PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS_TEMP("port_discharge_plan_commingle_details_temp"),
+    BILL_OF_LADDING("bill_of_ladding"),
+    SYNOPTICAL_TABLE("synoptical_table");
 
     public final String table;
   }
@@ -98,6 +104,41 @@ public class DischargePlanConstants {
           "json_data");
 
   public static List<String> DISCHARGE_PLAN_ALGO_ERRORS_SHORE_TO_SHIP =
+      Arrays.asList(
+          "discharging_information",
+          "discharging_information_algo_status",
+          "algo_error_heading",
+          "algo_errors");
+
+  public static final List<String> ULLAGE_UPDATE_SHIP_TO_SHORE =
+      Arrays.asList(
+          "discharging_information",
+          "port_discharging_plan_stowage_details_temp",
+          "port_discharging_plan_stowage_ballast_details_temp",
+          "port_discharge_plan_commingle_details_temp",
+          "port_discharging_plan_rob_details",
+          "bill_of_ladding",
+          "port_discharging_plan_stowage_details",
+          "port_discharging_plan_stowage_ballast_details",
+          "port_discharge_plan_commingle_details",
+          "port_discharging_plan_stability_parameters");
+
+  public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP =
+      Arrays.asList(
+          "discharging_information",
+          "port_discharging_plan_stowage_details_temp",
+          "port_discharging_plan_stowage_ballast_details_temp",
+          "port_discharge_plan_commingle_details_temp",
+          "port_discharging_plan_stowage_details",
+          "port_discharging_plan_stowage_ballast_details",
+          "port_discharge_plan_commingle_details",
+          "port_discharging_plan_stability_parameters",
+          "port_discharging_plan_rob_details",
+          "discharging_information_algo_status",
+          "json_data",
+          "synoptical_table");
+
+  public static final List<String> ULLAGE_UPDATE_ALGO_ERRORS =
       Arrays.asList(
           "discharging_information",
           "discharging_information_algo_status",

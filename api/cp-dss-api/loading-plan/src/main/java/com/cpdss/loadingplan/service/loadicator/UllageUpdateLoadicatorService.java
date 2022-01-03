@@ -64,7 +64,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -432,11 +431,11 @@ public class UllageUpdateLoadicatorService {
             conditionType);
         // algoerror communication
         try {
-          log.info("Communication side started for ullage update loadicator on With Algo Errors");
+          log.info("Communication side started for ullage update loadicator off With Algo Errors");
           ullageUpdateSaveForCommunication(
               com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
               loadingInformation.getId(),
-              MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+              MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
               null,
               loadingInformation.getVesselXId());
         } catch (Exception ex) {
@@ -796,7 +795,7 @@ public class UllageUpdateLoadicatorService {
           ullageUpdateSaveForCommunication(
               com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
               loadingInfoOpt.get().getId(),
-              MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+              MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT.getMessageType(),
               null,
               loadingInfoOpt.get().getVesselXId());
         } catch (Exception ex) {
@@ -820,7 +819,7 @@ public class UllageUpdateLoadicatorService {
             com.cpdss.loadingplan.utility.LoadingPlanConstants
                 .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_ON,
             loadingInfoOpt.get().getId(),
-            MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+            MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT.getMessageType(),
             // algoResponse.getProcessId(),
             request.getProcessId(),
             loadingInfoOpt.get().getVesselXId());
@@ -842,7 +841,7 @@ public class UllageUpdateLoadicatorService {
         ullageUpdateSaveForCommunication(
             com.cpdss.loadingplan.utility.LoadingPlanConstants.ULLAGE_UPDATE_ALGO_ERRORS,
             loadingInfoOpt.get().getId(),
-            MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_LGORESULT.getMessageType(),
+            MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT.getMessageType(),
             null,
             loadingInfoOpt.get().getVesselXId());
       } catch (Exception ex) {

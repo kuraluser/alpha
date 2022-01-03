@@ -8,6 +8,7 @@ import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
@@ -16,12 +17,13 @@ import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.grpc.DischargePlanRPCService;
+import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants.DischargingPlanTables;
 import com.cpdss.dischargeplan.service.utility.ProcessIdentifiers;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,6 +36,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 @Log4j2
@@ -44,6 +47,7 @@ public class DischargePlanCommunicationService {
   // region Autowired
   @Autowired private DischargePlanStagingService dischargePlanStagingService;
   @Autowired private DischargePlanRPCService dischargePlanRPCService;
+  @Autowired private UllageUpdateLoadicatorService ullageUpdateLoadicatorService;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -131,6 +135,20 @@ public class DischargePlanCommunicationService {
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
+
+  @Autowired
+  PortDischargingPlanStowageTempDetailsRepository portDischargingPlanStowageTempDetailsRepository;
+
+  @Autowired
+  private PortDischargingPlanBallastTempDetailsRepository
+      portDischargingPlanBallastTempDetailsRepository;
+
+  @Autowired
+  private PortDischargingPlanCommingleTempDetailsRepository
+      portDischargingPlanCommingleTempDetailsRepository;
+
+  @Autowired private BillOfLaddingRepository billOfLaddingRepository;
+
   // endregion
   // region declaration
   HashMap<String, Long> idMap = new HashMap<>();
@@ -169,9 +187,14 @@ public class DischargePlanCommunicationService {
   List<PortDischargingPlanStabilityParameters> portDischargingPlanStabilityParamList = null;
   List<PortDischargingPlanStowageDetails> portDischargingPlanStowageDetailsList = null;
   List<PortDischargingPlanCommingleDetails> portDischargingPlanCommingleDetailsList = null;
+  List<BillOfLadding> billOfLaddingList = null;
   String jsonData = null;
   String current_table_name = "";
+  List<PortDischargingPlanStowageTempDetails> portDischargingPlanStowageDetailsTempList = null;
+  List<PortDischargingPlanBallastTempDetails> portDischargingPlanBallastTempDetailsList = null;
+  List<PortDischargingPlanCommingleTempDetails> portDischargingPlanCommingleTempDetailsList = null;
   String loadablePattern = null;
+  String synopticalData = null;
 
   // endregion
   // region Communication get data
@@ -288,6 +311,25 @@ public class DischargePlanCommunicationService {
     }
   }
 
+  public void getUllageUpdateStagingData(String status, String env, String taskName)
+      throws GenericServiceException {
+    log.info("Inside getUllageUpdateStagingData for env:{} and status:{}", env, status);
+    String retryStatus = getRetryStatus(status);
+    List<DataTransferStage> dataTransferStagesWithStatus = getDataTransferWithStatus(status);
+    List<DataTransferStage> dataTransferStages =
+        dataTransferStagesWithStatus.stream()
+            .filter(
+                dataTransfer ->
+                    Arrays.asList(
+                            MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE.getMessageType(),
+                            MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE_ALGORESULT.getMessageType())
+                        .contains(dataTransfer.getProcessGroupId()))
+            .collect(Collectors.toList());
+    log.info("DataTransferStages in DISCHARGE_PLAN_ULLAGE_UPDATE task:" + dataTransferStages);
+    if (dataTransferStages != null && !dataTransferStages.isEmpty()) {
+      getStagingData(dataTransferStages, env, retryStatus);
+    }
+  }
   // endregion
   // region get retry status
   private String getRetryStatus(String status) {
@@ -362,12 +404,17 @@ public class DischargePlanCommunicationService {
         saveDischargingPlanCommingleDetails();
         saveDischargeSequenceStabilityParam(dischargeInfo);
         savePortDischargingPlanBallastDetails(dischargeInfo);
+        savePortDischargingPlanBallastTempDetails();
         savePortDischargingPlanRobDetails(dischargeInfo);
         savePortDischargingPlanStabilityParam(dischargeInfo);
         savePortDischargingPlanStowageDetails(dischargeInfo);
-        savePortDischargingPlanCommingDetails(dischargeInfo);
+        savePortDischargingPlanStowageTempDetails();
+        savePortDischargingPlanCommingleDetails(dischargeInfo);
+        savePortDischargingPlanCommingleTempDetails();
         saveJsonData();
         saveLoadablePattern();
+        saveSynopticalTable();
+        saveBillOfLadding(dischargeInfo);
       } catch (ResourceAccessException e) {
         log.info("Communication ++++++++++++ Failed to save data for  : " + current_table_name);
         log.info("Communication ++++++++++++ ResourceAccessException : " + e.getMessage());
@@ -386,25 +433,38 @@ public class DischargePlanCommunicationService {
           processId, StagingStatus.COMPLETED.getStatus());
       log.info("updated status to completed for processId:" + processId);
       if (!env.equals("ship") && dischargeInfo != null) {
-        if (processGroupId.equals(MessageTypes.DISCHARGEPLAN.getMessageType())) {
-          log.info("Algo call started for DischargePlan");
-          try {
+        try {
+          if (processGroupId.equals(MessageTypes.DISCHARGEPLAN.getMessageType())) {
+            log.info("Algo call started for DischargePlan");
             DischargeInformationRequest.Builder builder = DischargeInformationRequest.newBuilder();
             builder.setDischargeInfoId(dischargeInfo.getId());
-            com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.Builder
-                algoReplyBuilder =
-                    com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.newBuilder();
-            dischargePlanRPCService.generateDischargingPlan(builder.build(), algoReplyBuilder);
-          } catch (JsonProcessingException e) {
-            log.error(
-                "Exception got in Dischargeplan Communication side when calling algo:{}",
-                e.getMessage());
-            throw new GenericServiceException(
-                e.getMessage(),
-                CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                HttpStatusCode.INTERNAL_SERVER_ERROR,
-                e);
+            dischargePlanRPCService.generateDischargePlan(builder.build(), null);
+          } else if (processGroupId.equals(
+              MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE.getMessageType())) {
+            log.info("Algo call started for DischargePlan Ullage-Update");
+            Integer arrivalDeparture = null;
+            if (!CollectionUtils.isEmpty(portDischargingPlanCommingleTempDetailsList)) {
+              arrivalDeparture =
+                  portDischargingPlanCommingleTempDetailsList.get(0).getConditionType();
+            } else if (!CollectionUtils.isEmpty(portDischargingPlanStowageDetailsTempList)) {
+              arrivalDeparture = portDischargingPlanStowageDetailsList.get(0).getConditionType();
+            }
+            LoadingPlanModels.UllageBillRequest.Builder builder =
+                LoadingPlanModels.UllageBillRequest.newBuilder();
+            LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
+                LoadingPlanModels.UpdateUllage.newBuilder();
+            updateUllageBuilder.setDischargingInfoId(dischargeInfo.getId());
+            updateUllageBuilder.setArrivalDepartutre(arrivalDeparture);
+            builder.addUpdateUllage(updateUllageBuilder.build());
+            ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
           }
+        } catch (InvocationTargetException | IllegalAccessException e) {
+          log.error("Exception occured:{}", e.getMessage());
+          throw new GenericServiceException(
+              e.getMessage(),
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR,
+              e);
         }
       }
     }
@@ -806,6 +866,19 @@ public class DischargePlanCommunicationService {
                     "discharging_information_xid");
             break;
           }
+        case port_discharging_plan_stowage_ballast_details_temp:
+          {
+            Type type =
+                new TypeToken<ArrayList<PortDischargingPlanBallastTempDetails>>() {}.getType();
+            portDischargingPlanBallastTempDetailsList =
+                bindDataToEntity(
+                    new PortDischargingPlanBallastTempDetails(),
+                    type,
+                    DischargingPlanTables.PORT_DISCHARGING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP,
+                    data,
+                    dataTransferStage.getId(),
+                    null);
+          }
         case port_discharging_plan_stowage_ballast_details:
           {
             Type type = new TypeToken<ArrayList<PortDischargingPlanBallastDetails>>() {}.getType();
@@ -845,6 +918,20 @@ public class DischargePlanCommunicationService {
                     "discharging_information_xid");
             break;
           }
+        case port_discharging_plan_stowage_details_temp:
+          {
+            Type type =
+                new TypeToken<ArrayList<PortDischargingPlanStowageTempDetails>>() {}.getType();
+            portDischargingPlanStowageDetailsTempList =
+                bindDataToEntity(
+                    new PortDischargingPlanStowageTempDetails(),
+                    type,
+                    DischargingPlanTables.PORT_DISCHARGING_PLAN_STOWAGE_DETAILS_TEMP,
+                    data,
+                    dataTransferStage.getId(),
+                    null);
+            break;
+          }
         case port_discharging_plan_stowage_details:
           {
             Type type = new TypeToken<ArrayList<PortDischargingPlanStowageDetails>>() {}.getType();
@@ -856,6 +943,20 @@ public class DischargePlanCommunicationService {
                     data,
                     dataTransferStage.getId(),
                     "discharging_information_xid");
+            break;
+          }
+        case port_discharge_plan_commingle_details_temp:
+          {
+            Type type =
+                new TypeToken<ArrayList<PortDischargingPlanCommingleTempDetails>>() {}.getType();
+            portDischargingPlanCommingleTempDetailsList =
+                bindDataToEntity(
+                    new PortDischargingPlanCommingleTempDetails(),
+                    type,
+                    DischargingPlanTables.PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS_TEMP,
+                    data,
+                    dataTransferStage.getId(),
+                    null);
             break;
           }
         case port_discharge_plan_commingle_details:
@@ -884,13 +985,32 @@ public class DischargePlanCommunicationService {
             idMap.put(DischargingPlanTables.LOADABLE_PATTERN.getTable(), dataTransferStage.getId());
             break;
           }
+        case bill_of_ladding:
+          {
+            Type type = new TypeToken<ArrayList<BillOfLadding>>() {}.getType();
+            billOfLaddingList =
+                bindDataToEntity(
+                    new BillOfLadding(),
+                    type,
+                    DischargingPlanTables.BILL_OF_LADDING,
+                    data,
+                    dataTransferStage.getId(),
+                    "discharging_xid");
+            break;
+          }
+        case synoptical_table:
+          {
+            synopticalData = dataTransferString;
+            idMap.put(DischargingPlanTables.SYNOPTICAL_TABLE.getTable(), dataTransferStage.getId());
+            break;
+          }
       }
     }
   }
 
   // endregion
   // region save to db
-  private void savePortDischargingPlanCommingDetails(DischargeInformation dischargeInfo) {
+  private void savePortDischargingPlanCommingleDetails(DischargeInformation dischargeInfo) {
     current_table_name = DischargingPlanTables.PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS.getTable();
     if (dischargeInfo == null
         || portDischargingPlanCommingleDetailsList == null
@@ -911,6 +1031,30 @@ public class DischargePlanCommunicationService {
     log.info(
         "Communication ====  Saved PortDischargingPlanCommingleDetails:"
             + portDischargingPlanCommingleDetailsList);
+  }
+
+  private void savePortDischargingPlanCommingleTempDetails() {
+    current_table_name =
+        DischargingPlanTables.PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS_TEMP.getTable();
+    if (portDischargingPlanCommingleTempDetailsList == null
+        || portDischargingPlanCommingleTempDetailsList.isEmpty()) {
+      log.info("Communication ++++ PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS_TEMP is empty");
+      return;
+    }
+    for (PortDischargingPlanCommingleTempDetails portDischargingPlanCommingleTempDetails :
+        portDischargingPlanCommingleTempDetailsList) {
+      Optional<PortDischargingPlanCommingleTempDetails>
+          portDischargingPlanCommingleTempDetailsOptional =
+              portDischargingPlanCommingleTempDetailsRepository.findById(
+                  portDischargingPlanCommingleTempDetails.getId());
+      setEntityDocFields(
+          portDischargingPlanCommingleTempDetails, portDischargingPlanCommingleTempDetailsOptional);
+    }
+    portDischargingPlanCommingleTempDetailsRepository.saveAll(
+        portDischargingPlanCommingleTempDetailsList);
+    log.info(
+        "Communication ====  Saved PortDischargingPlanCommingleDetailsTemp:"
+            + portDischargingPlanCommingleTempDetailsList);
   }
 
   private void savePortDischargingPlanStowageDetails(DischargeInformation dischargeInfo) {
@@ -934,6 +1078,31 @@ public class DischargePlanCommunicationService {
     log.info(
         "Communication ====  Saved PortDischargingPlanStowageDetails:"
             + portDischargingPlanStowageDetailsList);
+  }
+
+  private void savePortDischargingPlanStowageTempDetails() {
+    current_table_name =
+        DischargingPlanTables.PORT_DISCHARGING_PLAN_STOWAGE_DETAILS_TEMP.getTable();
+    if (portDischargingPlanStowageDetailsTempList == null
+        || portDischargingPlanStowageDetailsTempList.isEmpty()) {
+      log.info(
+          "Communication ++++ dischargeInfo or PORT_DISCHARGING_PLAN_STOWAGE_DETAILS_TEMP is empty");
+      return;
+    }
+    for (PortDischargingPlanStowageTempDetails portDischargingPlanStowageTempDetails :
+        portDischargingPlanStowageDetailsTempList) {
+      Optional<PortDischargingPlanStowageTempDetails> portDischargingPlanStowageTempDetailsObj =
+          portDischargingPlanStowageTempDetailsRepository.findById(
+              portDischargingPlanStowageTempDetails.getId());
+      setEntityDocFields(
+          portDischargingPlanStowageTempDetails, portDischargingPlanStowageTempDetailsObj);
+    }
+
+    portDischargingPlanStowageTempDetailsRepository.saveAll(
+        portDischargingPlanStowageDetailsTempList);
+    log.info(
+        "Communication ====  Saved PortDischargingPlanStowageDetailsTemp:"
+            + portDischargingPlanStowageDetailsTempList);
   }
 
   private void savePortDischargingPlanStabilityParam(DischargeInformation dischargeInfo) {
@@ -1003,6 +1172,29 @@ public class DischargePlanCommunicationService {
     log.info(
         "Communication ====  Saved PortDischargingPlanBallastDetails:"
             + portDischargingPlanBallastDetailsList);
+  }
+
+  private void savePortDischargingPlanBallastTempDetails() {
+    current_table_name =
+        DischargingPlanTables.PORT_DISCHARGING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable();
+    if (portDischargingPlanBallastTempDetailsList == null
+        || portDischargingPlanBallastTempDetailsList.isEmpty()) {
+      log.info("Communication ++++ PORT_DISCHARGING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP is empty");
+      return;
+    }
+    for (PortDischargingPlanBallastTempDetails portDischargingPlanBallastTempDetails :
+        portDischargingPlanBallastTempDetailsList) {
+      Optional<PortDischargingPlanBallastTempDetails> portDischargingPlanBallastTempDetailsObj =
+          portDischargingPlanBallastTempDetailsRepository.findById(
+              portDischargingPlanBallastTempDetails.getId());
+      setEntityDocFields(
+          portDischargingPlanBallastTempDetails, portDischargingPlanBallastTempDetailsObj);
+    }
+    portDischargingPlanBallastTempDetailsRepository.saveAll(
+        portDischargingPlanBallastTempDetailsList);
+    log.info(
+        "Communication ====  Saved PortDischargingPlanBallastDetailsTemp:"
+            + portDischargingPlanBallastTempDetailsList);
   }
 
   private void saveDischargeSequenceStabilityParam(DischargeInformation dischargeInfo) {
@@ -1667,6 +1859,46 @@ public class DischargePlanCommunicationService {
       throw new Exception(reply.getResponseStatus().getMessage());
     }
   }
+
+  // region save Bill of Ladding
+  private void saveBillOfLadding(DischargeInformation dischargeInfo) {
+    current_table_name = DischargingPlanTables.BILL_OF_LADDING.getTable();
+    if (!CollectionUtils.isEmpty(billOfLaddingList)) {
+      for (BillOfLadding billOfLadding : billOfLaddingList) {
+        Optional<BillOfLadding> billOfLaddingObj =
+            billOfLaddingRepository.findById(billOfLadding.getId());
+        setEntityDocFields(billOfLadding, billOfLaddingObj);
+        billOfLadding.setDischargeInformation(dischargeInfo);
+      }
+      billOfLaddingRepository.saveAll(billOfLaddingList);
+      log.info("Communication ====  Saved BillOfLadding:" + billOfLaddingList);
+    }
+  }
+  // region save SynopticalTable
+  private void saveSynopticalTable() throws Exception {
+    current_table_name = DischargingPlanTables.SYNOPTICAL_TABLE.getTable();
+    if (synopticalData == null) {
+      log.info("Communication ++++ SYNOPTICAL_TABLE is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info("SynopticalTable get from staging table:{}", synopticalData);
+    builder.setDataJson(synopticalData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveSynopticalDataForCommunication(builder.build());
+    if (DischargePlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("SynopticalTable saved in LoadableStudy ");
+    } else if (DischargePlanConstants.FAILED_WITH_RESOURCE_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when SynopticalTable save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (DischargePlanConstants.FAILED_WITH_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when SynopticalTable save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
   // endregion
 
   private DischargeInformation saveDischargeInformation() {
@@ -1846,6 +2078,11 @@ public class DischargePlanCommunicationService {
     current_table_name = "";
     jsonData = null;
     loadablePattern = null;
+    portDischargingPlanStowageDetailsTempList = null;
+    portDischargingPlanBallastTempDetailsList = null;
+    portDischargingPlanCommingleTempDetailsList = null;
+    billOfLaddingList = null;
+    synopticalData = null;
   }
   // endregion
 }
