@@ -2407,9 +2407,9 @@ public class LoadingPlanCommunicationService {
               env,
               loadingInformation.getId());
           if (MessageTypes.LOADINGPLAN.equals(messageType)) {
-            generateLoadingPlan(loadingInformation.getId());
+            loadingPlanAlgoService.processAlgoLoading(loadingInformation);
           } else if (MessageTypes.ULLAGE_UPDATE.equals(messageType)) {
-            updateUllage(loadingInformation.getId());
+            updateUllage(loadingInformation);
           } else {
             log.warn("Message Type: {} not configured", messageType);
           }
@@ -2441,14 +2441,15 @@ public class LoadingPlanCommunicationService {
   /**
    * Method to update ullage
    *
-   * @param loadingInfoId loadingInfoId value
+   * @param loadingInformation loadingInformation entity
    * @throws GenericServiceException Exception on ullage update value failure
    */
-  private void updateUllage(final long loadingInfoId) throws GenericServiceException {
+  private void updateUllage(final LoadingInformation loadingInformation)
+      throws GenericServiceException {
 
     Optional<List<LoadingInformationAlgoStatus>> loadingInfoAlgoStatus =
         loadingInformationAlgoStatusRepository.getLoadingInfoAlgoStatus(
-            loadingInfoId, LoadingPlanConstants.UPDATE_ULLAGE_COMMUNICATED_TO_SHORE);
+            loadingInformation.getId(), LoadingPlanConstants.UPDATE_ULLAGE_COMMUNICATED_TO_SHORE);
 
     if (loadingInfoAlgoStatus.isPresent()) {
       for (LoadingInformationAlgoStatus loadingInformationAlgoStatus :
@@ -2457,19 +2458,20 @@ public class LoadingPlanCommunicationService {
             LoadingPlanModels.UllageBillRequest.newBuilder();
         LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
             LoadingPlanModels.UpdateUllage.newBuilder();
-        updateUllageBuilder.setLoadingInformationId(loadingInfoId);
+        updateUllageBuilder.setLoadingInformationId(loadingInformation.getId());
         updateUllageBuilder.setArrivalDepartutre(loadingInformationAlgoStatus.getConditionType());
         builder.addUpdateUllage(updateUllageBuilder.build());
         try {
           log.info(
               "Ullage update running for LoadingInfoId: {} ::: Arr/Dep condition: {}",
-              loadingInfoId,
+              loadingInformation.getId(),
               loadingInformationAlgoStatus.getConditionType());
-          ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
+          ullageUpdateLoadicatorService.processAlgoUpdateUllage(
+              loadingInformation, builder.build());
         } catch (IllegalAccessException | InvocationTargetException e) {
-          log.error("Update ullage failed. Loading Info Id: {}", loadingInfoId, e);
+          log.error("Update ullage failed. Loading Info Id: {}", loadingInformation.getId(), e);
           throw new GenericServiceException(
-              "Update ullage failed. Loading Info Id: " + loadingInfoId,
+              "Update ullage failed. Loading Info Id: " + loadingInformation.getId(),
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR,
               e);

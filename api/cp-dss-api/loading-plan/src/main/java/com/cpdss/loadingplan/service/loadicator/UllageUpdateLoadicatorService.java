@@ -143,8 +143,7 @@ public class UllageUpdateLoadicatorService {
   public String saveLoadicatorInfoForUllageUpdate(UllageBillRequest request)
       throws GenericServiceException, IllegalAccessException, InvocationTargetException {
     log.info("Inside saveLoadicatorInfoForUllageUpdate method");
-    Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
-        Loadicator.LoadicatorRequest.newBuilder();
+
     Long loadingInfoId = request.getUpdateUllage(0).getLoadingInformationId();
     Optional<LoadingInformation> loadingInfoOpt =
         loadingInformationRepository.findByIdAndIsActiveTrue(loadingInfoId);
@@ -206,146 +205,171 @@ public class UllageUpdateLoadicatorService {
         return processId;
       }
     } else {
-      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
-      log.info("LoadingInformationStatus obj:{}", loadingInfoStatusOpt.get());
-      loadingPlanService.updateLoadingPlanStatus(
-          loadingInfoOpt.get(),
-          loadingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
-      loadingPlanAlgoService.createLoadingInformationAlgoStatus(
-          loadingInfoOpt.get(),
-          processId,
-          loadingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
-      VesselInfo.VesselReply vesselReply =
-          loadicatorService.getVesselDetailsForLoadicator(loadingInfoOpt.get());
-      if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
-        log.info("Vessel has no loadicator");
-        UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
-        LoadingInfoLoadicatorDataRequest.Builder loadicatorDataRequestBuilder =
-            LoadingInfoLoadicatorDataRequest.newBuilder();
-        loadicatorDataRequestBuilder.setProcessId(processId);
-        loadicatorDataRequestBuilder.setConditionType(
-            request.getUpdateUllage(0).getArrivalDepartutre());
-        loadicatorDataRequestBuilder.setProcessId(processId);
-        buildUllageEditLoadicatorAlgoRequest(
-            loadingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
-        log.info("Algo request for ullage update:{}", algoRequest);
-        saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
-        checkStabilityWithAlgo(
-            loadingInfoOpt.get(),
-            algoRequest,
-            processId,
-            request.getUpdateUllage(0).getArrivalDepartutre());
-        return processId;
-      }
-      List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
-          portLoadingPlanStowageDetailsTempRepository
-              .findByLoadingInformationAndConditionTypeAndIsActive(
-                  loadingInfoOpt.get().getId(),
-                  request.getUpdateUllage(0).getArrivalDepartutre(),
-                  true);
-      List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
-          portLoadingPlanBallastDetailsTempRepository
-              .findByLoadingInformationAndConditionTypeAndIsActive(
-                  loadingInfoOpt.get().getId(),
-                  request.getUpdateUllage(0).getArrivalDepartutre(),
-                  true);
-      BigDecimal sg = null;
-      List<BigDecimal> specificGravities =
-          tempBallastDetails.stream()
-              .filter(ballast -> (ballast.getSg() != null) && (ballast.getSg() != BigDecimal.ZERO))
-              .map(ballast -> ballast.getSg())
-              .collect(Collectors.toList());
-
-      if (!specificGravities.isEmpty()) {
-        sg = specificGravities.get(0);
-      }
-      List<PortLoadingPlanRobDetails> robDetails =
-          portLoadingPlanRobDetailsRepository
-              .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
-                  loadingInfoOpt.get().getId(),
-                  request.getUpdateUllage(0).getArrivalDepartutre(),
-                  LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE,
-                  true);
-      List<PortLoadingPlanCommingleTempDetails> tempCommingleDetails =
-          portLoadingPlanCommingleDetailsTempRepository
-              .findByLoadingInformationAndConditionTypeAndIsActive(
-                  loadingInfoOpt.get().getId(),
-                  request.getUpdateUllage(0).getArrivalDepartutre(),
-                  true);
-
-      Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
-
-      cargoNominationIds.addAll(
-          tempStowageDetails.stream()
-              .map(PortLoadingPlanStowageTempDetails::getCargoNominationXId)
-              .collect(Collectors.toList()));
-      Map<Long, CargoNominationDetail> cargoNomDetails =
-          loadicatorService.getCargoNominationDetails(cargoNominationIds);
-      CargoInfo.CargoReply cargoReply =
-          loadicatorService.getCargoInfoForLoadicator(loadingInfoOpt.get());
-      PortInfo.PortReply portReply =
-          loadicatorService.getPortInfoForLoadicator(loadingInfoOpt.get());
-
-      loadicatorRequestBuilder.setTypeId(
-          LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
-      loadicatorRequestBuilder.setIsUllageUpdate(true);
-      loadicatorRequestBuilder.setConditionType(request.getUpdateUllage(0).getArrivalDepartutre());
-      StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
-      loadicatorService.buildStowagePlan(
-          loadingInfoOpt.get(),
-          0,
-          processId,
-          cargoReply,
-          vesselReply,
-          portReply,
-          stowagePlanBuilder,
-          sg);
-      buildStowagePlanDetails(
-          loadingInfoOpt.get(),
-          tempStowageDetails,
-          tempCommingleDetails,
-          cargoNomDetails,
-          vesselReply,
-          cargoReply,
-          stowagePlanBuilder);
-      buildCargoDetails(
-          loadingInfoOpt.get(),
-          cargoNomDetails,
-          tempStowageDetails,
-          tempCommingleDetails,
-          cargoReply,
-          stowagePlanBuilder);
-      buildBallastDetails(
-          loadingInfoOpt.get(), tempBallastDetails, vesselReply, stowagePlanBuilder);
-      buildRobDetails(loadingInfoOpt.get(), robDetails, vesselReply, stowagePlanBuilder);
-      loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
-      Loadicator.LoadicatorReply reply =
-          loadicatorService.saveLoadicatorInfo(loadicatorRequestBuilder.build());
-      if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
-        throw new GenericServiceException(
-            "Failed to send Stowage plans to Loadicator",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-
-      Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
-          loadingPlanAlgoService.getLoadingInformationStatus(
-              LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_VERIFICATION_STARTED_ID);
-
-      loadingPlanService.updateLoadingPlanStatus(
-          loadingInfoOpt.get(),
-          loadingInfoStatusOpt.get(),
-          request.getUpdateUllage(0).getArrivalDepartutre());
-
-      loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
-          loadingInfoOpt.get(), processId, loadicatorVerificationStatusOpt.get());
-      return processId;
+      return processAlgoUpdateUllage(loadingInfoOpt.get(), request);
     }
     return null;
+  }
+
+  /**
+   * Method to process Algo for update ullage at ship. (Moved previous function body as is to this
+   * new function for retrial) TODO method to be refactored
+   *
+   * @param loadingInfo loadingInfo entity
+   * @param ullageUpdateReq Ullage update request object
+   * @return Algo processId
+   * @throws GenericServiceException Exception on failure
+   * @throws InvocationTargetException Exception on checkStabilityWithAlgo
+   * @throws IllegalAccessException Exception on checkStabilityWithAlgo
+   */
+  public String processAlgoUpdateUllage(
+      LoadingInformation loadingInfo, UllageBillRequest ullageUpdateReq)
+      throws GenericServiceException, InvocationTargetException, IllegalAccessException {
+
+    String processId = UUID.randomUUID().toString();
+
+    LoadingInformationStatus loadingInfoStatus =
+        loadingPlanAlgoService
+            .getLoadingInformationStatus(LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID)
+            .orElseThrow(
+                () -> {
+                  log.error(
+                      "LoadingInformationStatus Id: {} not found in master loading_information_status",
+                      LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID);
+                  return new GenericServiceException(
+                      "Master data missing. LoadingInformationStatus Id: "
+                          + LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_STARTED_ID,
+                      CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                      HttpStatusCode.INTERNAL_SERVER_ERROR);
+                });
+
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfo, loadingInfoStatus, ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre());
+    loadingPlanAlgoService.createLoadingInformationAlgoStatus(
+        loadingInfo,
+        processId,
+        loadingInfoStatus,
+        ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre());
+
+    VesselInfo.VesselReply vesselReply =
+        loadicatorService.getVesselDetailsForLoadicator(loadingInfo);
+    if (!vesselReply.getVesselsList().get(0).getHasLoadicator()) {
+      // Loadicator OFF case
+      log.info(
+          "Ullage Update. Loadicator Disabled. Loading Info Id: {}. ProcessId: {}",
+          loadingInfo.getId(),
+          processId);
+      UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
+      LoadingInfoLoadicatorDataRequest.Builder loadicatorDataRequestBuilder =
+          LoadingInfoLoadicatorDataRequest.newBuilder();
+      loadicatorDataRequestBuilder.setProcessId(processId);
+      loadicatorDataRequestBuilder.setConditionType(
+          ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre());
+      loadicatorDataRequestBuilder.setProcessId(processId);
+      buildUllageEditLoadicatorAlgoRequest(
+          loadingInfo, loadicatorDataRequestBuilder.build(), algoRequest);
+      log.debug("Algo ullageUpdateReq for ullage update:{}", algoRequest);
+      saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfo.getId());
+      checkStabilityWithAlgo(
+          loadingInfo,
+          algoRequest,
+          processId,
+          ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre());
+      return processId;
+    }
+    List<PortLoadingPlanStowageTempDetails> tempStowageDetails =
+        portLoadingPlanStowageDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfo.getId(),
+                ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre(),
+                true);
+    List<PortLoadingPlanBallastTempDetails> tempBallastDetails =
+        portLoadingPlanBallastDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfo.getId(),
+                ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre(),
+                true);
+    BigDecimal sg = null;
+    List<BigDecimal> specificGravities =
+        tempBallastDetails.stream()
+            .filter(ballast -> (ballast.getSg() != null) && (ballast.getSg() != BigDecimal.ZERO))
+            .map(ballast -> ballast.getSg())
+            .collect(Collectors.toList());
+
+    if (!specificGravities.isEmpty()) {
+      sg = specificGravities.get(0);
+    }
+    List<PortLoadingPlanRobDetails> robDetails =
+        portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                loadingInfo.getId(),
+                ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre(),
+                LoadingPlanConstants.LOADING_PLAN_ACTUAL_TYPE_VALUE,
+                true);
+    List<PortLoadingPlanCommingleTempDetails> tempCommingleDetails =
+        portLoadingPlanCommingleDetailsTempRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                loadingInfo.getId(),
+                ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre(),
+                true);
+
+    Set<Long> cargoNominationIds = new LinkedHashSet<Long>();
+
+    cargoNominationIds.addAll(
+        tempStowageDetails.stream()
+            .map(PortLoadingPlanStowageTempDetails::getCargoNominationXId)
+            .collect(Collectors.toList()));
+    Map<Long, CargoNominationDetail> cargoNomDetails =
+        loadicatorService.getCargoNominationDetails(cargoNominationIds);
+    CargoInfo.CargoReply cargoReply = loadicatorService.getCargoInfoForLoadicator(loadingInfo);
+    PortInfo.PortReply portReply = loadicatorService.getPortInfoForLoadicator(loadingInfo);
+
+    Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
+        Loadicator.LoadicatorRequest.newBuilder();
+    loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
+    loadicatorRequestBuilder.setIsUllageUpdate(true);
+    loadicatorRequestBuilder.setConditionType(
+        ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre());
+    StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
+    loadicatorService.buildStowagePlan(
+        loadingInfo, 0, processId, cargoReply, vesselReply, portReply, stowagePlanBuilder, sg);
+    buildStowagePlanDetails(
+        loadingInfo,
+        tempStowageDetails,
+        tempCommingleDetails,
+        cargoNomDetails,
+        vesselReply,
+        cargoReply,
+        stowagePlanBuilder);
+    buildCargoDetails(
+        loadingInfo,
+        cargoNomDetails,
+        tempStowageDetails,
+        tempCommingleDetails,
+        cargoReply,
+        stowagePlanBuilder);
+    buildBallastDetails(loadingInfo, tempBallastDetails, vesselReply, stowagePlanBuilder);
+    buildRobDetails(loadingInfo, robDetails, vesselReply, stowagePlanBuilder);
+    loadicatorRequestBuilder.addStowagePlanDetails(stowagePlanBuilder.build());
+    Loadicator.LoadicatorReply reply =
+        loadicatorService.saveLoadicatorInfo(loadicatorRequestBuilder.build());
+    if (!reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
+      log.error("Failed to save loadicator info. Loading Info Id: {}", loadingInfo.getId());
+      throw new GenericServiceException(
+          "Failed to send Stowage plans to Loadicator",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    Optional<LoadingInformationStatus> loadicatorVerificationStatusOpt =
+        loadingPlanAlgoService.getLoadingInformationStatus(
+            LoadingPlanConstants.UPDATE_ULLAGE_LOADICATOR_VERIFICATION_STARTED_ID);
+
+    loadingPlanService.updateLoadingPlanStatus(
+        loadingInfo, loadingInfoStatus, ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre());
+
+    loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
+        loadingInfo, processId, loadicatorVerificationStatusOpt.get());
+    return processId;
   }
 
   /**

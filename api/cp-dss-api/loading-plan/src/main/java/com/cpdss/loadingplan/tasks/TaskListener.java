@@ -20,6 +20,9 @@ public class TaskListener implements ExecuteTaskListener {
 
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
+
+  public static final String LOADING_PLAN_STATUS_CHECK_TASK_PREFIX = "LOADING_PLAN_STATUS_CHECK";
+
   /**
    * Task Listener
    *
@@ -59,10 +62,13 @@ public class TaskListener implements ExecuteTaskListener {
             StagingStatus.RETRY.getStatus(), taskReqParams.get("env"), taskName);
         communicationService.getUllageUpdateStagingData(
             StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get("env"), taskName);
-      } else if (taskName.contains("LOADING_PLAN_STATUS_CHECK")) {
-        communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.LOADINGPLAN);
-        communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.ULLAGE_UPDATE);
       }
+    }
+
+    // Status check task for loading plan
+    if (taskName.startsWith(LOADING_PLAN_STATUS_CHECK_TASK_PREFIX)) {
+      communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.LOADINGPLAN);
+      communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.ULLAGE_UPDATE);
     }
   }
 }

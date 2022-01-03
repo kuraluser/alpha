@@ -8,6 +8,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoReply.Builder;
@@ -236,41 +237,80 @@ public class LoadingPlanAlgoService {
         log.info("Communication table update : " + loadingPlanCommunicationStat.getId());
       }
     } else {
-      log.info("Create algo request:" + request);
-      // Create JSON To Algo
-      LoadingInformationAlgoRequest algoRequest =
-          loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
-      log.info("algo request created: {}", algoRequest);
-      log.info("Before Save Above JSON In LS json data Table");
-      // Save Above JSON In LS json data Table
-      saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
-      log.info("Call To Algo End Point for Loading");
-      // Call To Algo End Point for Loading
-      try {
-        LoadingInformationAlgoResponse response =
-            restTemplate.postForObject(
-                planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
-        processId = response.getProcessId();
-        log.info("LoadingInformationAlgoResponse:{}", response);
-      } catch (HttpStatusCodeException e) {
-        log.error("Error occured in ALGO side while calling new_loadable API");
-        saveAlgoInternalError(
-            loadingInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
-        Optional<LoadingInformationStatus> errorOccurredStatusOpt =
-            getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
-        loadingInformationRepository.updateLoadingInformationStatus(
-            errorOccurredStatusOpt.get(), loadingInfoOpt.get().getId());
-        throw new GenericServiceException(
-            "Internal Server Error in ALGO" + request.getLoadingInfoId(),
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
+      processId = processAlgoLoading(loadingInfoOpt.get());
     }
 
     createLoadingInformationAlgoStatus(
         loadingInfoOpt.get(), processId, loadingInfoStatusOpt.get(), null);
     builder.setLoadingInfoId(loadingInfoOpt.get().getId());
     builder.setProcessId(processId);
+  }
+
+  /**
+   * Method to process Algo for loadingInfo
+   *
+   * @param loadingInformation loadingInfo entity
+   * @return Algo processId
+   * @throws GenericServiceException Exception on failure
+   */
+  public String processAlgoLoading(final LoadingInformation loadingInformation)
+      throws GenericServiceException {
+    String processId = null;
+
+    final LoadingPlanModels.LoadingInfoAlgoRequest request =
+        LoadingPlanModels.LoadingInfoAlgoRequest.newBuilder()
+            .setLoadingInfoId(loadingInformation.getId())
+            .build();
+
+    // Create Algo request object
+    LoadingInformationAlgoRequest algoRequest =
+        loadingInfoAlgoRequestBuilderService.createAlgoRequest(request);
+
+    // Save Algo request to json_data table
+    saveLoadingInformationRequestJson(algoRequest, request.getLoadingInfoId());
+
+    // Call Algo for loading
+    try {
+      log.debug("Loading Info Id: {}, Algo Request: {}", loadingInformation.getId(), algoRequest);
+      final LoadingInformationAlgoResponse algoResponse =
+          restTemplate.postForObject(
+              planGenerationUrl, algoRequest, LoadingInformationAlgoResponse.class);
+      if (null != algoResponse) {
+        processId = algoResponse.getProcessId();
+      }
+      log.info("Loading Info Id: {}, Algo Response: {}", loadingInformation.getId(), algoResponse);
+    } catch (HttpStatusCodeException e) {
+      log.error(
+          "Error occurred in calling Algo API for Loading Plan. Loading Info Id: {}, Algo Request: {}",
+          loadingInformation.getId(),
+          algoRequest,
+          e);
+
+      // Save error
+      saveAlgoInternalError(
+          loadingInformation, null, Lists.newArrayList(e.getResponseBodyAsString()));
+      LoadingInformationStatus errorOccurredStatusOpt =
+          getLoadingInformationStatus(LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID)
+              .orElseThrow(
+                  () -> {
+                    log.error(
+                        "LoadingInformationStatus Id: {} not found in master loading_information_status",
+                        LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
+                    return new GenericServiceException(
+                        "Master data missing. LoadingInformationStatus Id: "
+                            + LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID,
+                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                        HttpStatusCode.INTERNAL_SERVER_ERROR);
+                  });
+
+      loadingInformationRepository.updateLoadingInformationStatus(
+          errorOccurredStatusOpt, loadingInformation.getId());
+      throw new GenericServiceException(
+          "Error calling Algo" + request.getLoadingInfoId(),
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.valueOf(e.getRawStatusCode()));
+    }
+    return processId;
   }
 
   /**
