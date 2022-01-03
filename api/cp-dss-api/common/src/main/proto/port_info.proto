@@ -88,6 +88,7 @@ message PortRequest {
 	string sortBy = 8;
 	string orderBy = 9;
 	repeated Param param = 10;
+	bool berthDataNotNeed = 11;
 }
 
 message PortRequestWithPaging{

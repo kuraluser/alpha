@@ -119,7 +119,7 @@ public class CargoPortInfoService {
   public PortsResponse getPorts(HttpHeaders headers) throws GenericServiceException {
     PortsResponse portsResponse = new PortsResponse();
     // Retrieve port information from port master
-    PortRequest portRequest = PortRequest.newBuilder().build();
+    PortRequest portRequest = PortRequest.newBuilder().setBerthDataNotNeed(true).build();
     PortReply portReply = portInfoServiceBlockingStub.getPortInfo(portRequest);
     if (portReply != null
         && portReply.getResponseStatus() != null

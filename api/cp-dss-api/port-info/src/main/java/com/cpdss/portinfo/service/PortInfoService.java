@@ -59,7 +59,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
     PortReply.Builder portReply = PortReply.newBuilder();
     try {
       List<PortInfo> portList = portRepository.findAllByOrderByName();
-      getPorts(portReply, portList, false);
+      Boolean berthDataNotNeed = request.getBerthDataNotNeed();
+      getPorts(portReply, portList, berthDataNotNeed);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus(SUCCESS);
       portReply.setResponseStatus(responseStatus);
@@ -120,7 +121,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
       }
       if (request != null) {
         List<PortInfo> portList = portRepository.findByIdInAndIsActive(request.getIdList(), true);
-        getPorts(portReply, portList, true);
+        getPorts(portReply, portList, false);
       }
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus(SUCCESS);
@@ -137,13 +138,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
   }
 
   private void getPorts(
-      PortReply.Builder portReply, List<PortInfo> portList, Boolean isBerthDataNeed) {
-    //    Comparator<BerthInfo> byMaxDraftComparator =
-    //        Comparator.comparing(
-    //            BerthInfo::getMaximumDraft, Comparator.nullsFirst(Comparator.naturalOrder()));
-    //    Comparator<BerthInfo> byAirDraftComparator =
-    //        Comparator.comparing(
-    //            BerthInfo::getAirDraft, Comparator.nullsFirst(Comparator.naturalOrder()));
+      PortReply.Builder portReply, List<PortInfo> portList, Boolean berthDataNotNeed) {
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     portList.forEach(
         port -> {
@@ -236,7 +231,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
           Optional.ofNullable(port.getMaxPermissibleDraft())
               .ifPresent(draft -> portDetail.setMaxPermissibleDraft(String.valueOf(draft)));
 
-          if (isBerthDataNeed == null || isBerthDataNeed) {
+          if (berthDataNotNeed == null || !berthDataNotNeed) {
             List<BerthInfo> berthList =
                 berthInfoSet.stream()
                     .filter(item -> item.getIsActive().equals(true))
