@@ -9,7 +9,7 @@ import lombok.Data;
 
 /** @Author jerin.g */
 @Data
-@JsonInclude(Include.NON_EMPTY)
+@JsonInclude(Include.NON_NULL)
 public class VoyageResponse {
 
   private CommonSuccessResponse responseStatus;
