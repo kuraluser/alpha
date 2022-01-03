@@ -303,7 +303,7 @@ public class LoadableStudyController {
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
       @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           Long loadableStudiesId,
-      @RequestParam("portRotationId") Long portRotationId,
+      @RequestParam(value = "portRotationId", required = false) Long portRotationId,
       @RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
