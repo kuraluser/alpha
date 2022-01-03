@@ -4433,6 +4433,568 @@ public final class LoadableStudyServiceGrpc {
     return getCheckCargoUsageMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadablePlanStowageBallastDetailsForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getLoadablePlanStowageBallastDetailsForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadablePlanStowageBallastDetailsForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetLoadablePlanStowageBallastDetailsForCommunicationMethod;
+    if ((getGetLoadablePlanStowageBallastDetailsForCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetLoadablePlanStowageBallastDetailsForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePlanStowageBallastDetailsForCommunicationMethod =
+                LoadableStudyServiceGrpc
+                    .getGetLoadablePlanStowageBallastDetailsForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadablePlanStowageBallastDetailsForCommunicationMethod =
+              getGetLoadablePlanStowageBallastDetailsForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "getLoadablePlanStowageBallastDetailsForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getLoadablePlanStowageBallastDetailsForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePlanStowageBallastDetailsForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveLoadablePlanStowageBallastDetailsForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod;
+    if ((getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod =
+            LoadableStudyServiceGrpc.getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod =
+                LoadableStudyServiceGrpc
+                    .getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod =
+              getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME,
+                              "saveLoadablePlanStowageBallastDetailsForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveLoadablePlanStowageBallastDetailsForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadablePatternCargoDetailsForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getLoadablePatternCargoDetailsForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadablePatternCargoDetailsForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetLoadablePatternCargoDetailsForCommunicationMethod;
+    if ((getGetLoadablePatternCargoDetailsForCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetLoadablePatternCargoDetailsForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePatternCargoDetailsForCommunicationMethod =
+                LoadableStudyServiceGrpc.getGetLoadablePatternCargoDetailsForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetLoadablePatternCargoDetailsForCommunicationMethod =
+              getGetLoadablePatternCargoDetailsForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "getLoadablePatternCargoDetailsForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getLoadablePatternCargoDetailsForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePatternCargoDetailsForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadablePatternCargoDetailsForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveLoadablePatternCargoDetailsForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadablePatternCargoDetailsForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getSaveLoadablePatternCargoDetailsForCommunicationMethod;
+    if ((getSaveLoadablePatternCargoDetailsForCommunicationMethod =
+            LoadableStudyServiceGrpc.getSaveLoadablePatternCargoDetailsForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadablePatternCargoDetailsForCommunicationMethod =
+                LoadableStudyServiceGrpc.getSaveLoadablePatternCargoDetailsForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveLoadablePatternCargoDetailsForCommunicationMethod =
+              getSaveLoadablePatternCargoDetailsForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "saveLoadablePatternCargoDetailsForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveLoadablePatternCargoDetailsForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadablePatternCargoDetailsForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName =
+          SERVICE_NAME + '/' + "getLoadablePlanCommingleDetailsPortwiseForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod;
+    if ((getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+            LoadableStudyServiceGrpc
+                .getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+                LoadableStudyServiceGrpc
+                    .getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc
+                  .getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+              getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME,
+                              "getLoadablePlanCommingleDetailsPortwiseForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getLoadablePlanCommingleDetailsPortwiseForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName =
+          SERVICE_NAME + '/' + "saveLoadablePlanCommingleDetailsPortwiseForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod;
+    if ((getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+            LoadableStudyServiceGrpc
+                .getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+                LoadableStudyServiceGrpc
+                    .getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc
+                  .getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+              getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME,
+                              "saveLoadablePlanCommingleDetailsPortwiseForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveLoadablePlanCommingleDetailsPortwiseForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetOnBoardQuantityForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getOnBoardQuantityForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetOnBoardQuantityForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetOnBoardQuantityForCommunicationMethod;
+    if ((getGetOnBoardQuantityForCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetOnBoardQuantityForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetOnBoardQuantityForCommunicationMethod =
+                LoadableStudyServiceGrpc.getGetOnBoardQuantityForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetOnBoardQuantityForCommunicationMethod =
+              getGetOnBoardQuantityForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "getOnBoardQuantityForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getOnBoardQuantityForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetOnBoardQuantityForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveOnBoardQuantityForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveOnBoardQuantityForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveOnBoardQuantityForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getSaveOnBoardQuantityForCommunicationMethod;
+    if ((getSaveOnBoardQuantityForCommunicationMethod =
+            LoadableStudyServiceGrpc.getSaveOnBoardQuantityForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveOnBoardQuantityForCommunicationMethod =
+                LoadableStudyServiceGrpc.getSaveOnBoardQuantityForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveOnBoardQuantityForCommunicationMethod =
+              getSaveOnBoardQuantityForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "saveOnBoardQuantityForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveOnBoardQuantityForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveOnBoardQuantityForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetOnHandQuantityForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getOnHandQuantityForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getGetOnHandQuantityForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getGetOnHandQuantityForCommunicationMethod;
+    if ((getGetOnHandQuantityForCommunicationMethod =
+            LoadableStudyServiceGrpc.getGetOnHandQuantityForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getGetOnHandQuantityForCommunicationMethod =
+                LoadableStudyServiceGrpc.getGetOnHandQuantityForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getGetOnHandQuantityForCommunicationMethod =
+              getGetOnHandQuantityForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getOnHandQuantityForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "getOnHandQuantityForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetOnHandQuantityForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveOnHandQuantityForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "saveOnHandQuantityForCommunication",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+      getSaveOnHandQuantityForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getSaveOnHandQuantityForCommunicationMethod;
+    if ((getSaveOnHandQuantityForCommunicationMethod =
+            LoadableStudyServiceGrpc.getSaveOnHandQuantityForCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getSaveOnHandQuantityForCommunicationMethod =
+                LoadableStudyServiceGrpc.getSaveOnHandQuantityForCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getSaveOnHandQuantityForCommunicationMethod =
+              getSaveOnHandQuantityForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                          com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "saveOnHandQuantityForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadableStudyCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier(
+                              "saveOnHandQuantityForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSaveOnHandQuantityForCommunicationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -5285,6 +5847,106 @@ public final class LoadableStudyServiceGrpc {
           getCheckCargoUsageMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadablePlanStowageBallastDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadablePlanStowageBallastDetailsForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePlanStowageBallastDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void getLoadablePatternCargoDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadablePatternCargoDetailsForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePatternCargoDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveLoadablePatternCargoDetailsForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void getLoadablePlanCommingleDetailsPortwiseForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePlanCommingleDetailsPortwiseForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void getOnBoardQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetOnBoardQuantityForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveOnBoardQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveOnBoardQuantityForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void getOnHandQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetOnHandQuantityForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveOnHandQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveOnHandQuantityForCommunicationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -5896,6 +6558,78 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoNominationCheckRequest,
                       com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply>(
                       this, METHODID_CHECK_CARGO_USAGE)))
+          .addMethod(
+              getGetLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_GET_LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_SAVE_LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS_FOR_COMMUNICATION)))
+          .addMethod(
+              getGetLoadablePatternCargoDetailsForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_GET_LOADABLE_PATTERN_CARGO_DETAILS_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveLoadablePatternCargoDetailsForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_SAVE_LOADABLE_PATTERN_CARGO_DETAILS_FOR_COMMUNICATION)))
+          .addMethod(
+              getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this,
+                      METHODID_GET_LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this,
+                      METHODID_SAVE_LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE_FOR_COMMUNICATION)))
+          .addMethod(
+              getGetOnBoardQuantityForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_GET_ON_BOARD_QUANTITY_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveOnBoardQuantityForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_SAVE_ON_BOARD_QUANTITY_FOR_COMMUNICATION)))
+          .addMethod(
+              getGetOnHandQuantityForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_GET_ON_HAND_QUANTITY_FOR_COMMUNICATION)))
+          .addMethod(
+              getSaveOnHandQuantityForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
+                      this, METHODID_SAVE_ON_HAND_QUANTITY_FOR_COMMUNICATION)))
           .build();
     }
   }
@@ -6895,6 +7629,141 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadablePlanStowageBallastDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(
+                  getGetLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+                  getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePlanStowageBallastDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(
+                  getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+                  getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getLoadablePatternCargoDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(getGetLoadablePatternCargoDetailsForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePatternCargoDetailsForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(
+                  getSaveLoadablePatternCargoDetailsForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getLoadablePlanCommingleDetailsPortwiseForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(
+                  getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+                  getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveLoadablePlanCommingleDetailsPortwiseForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel()
+              .newCall(
+                  getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+                  getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getOnBoardQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetOnBoardQuantityForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveOnBoardQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveOnBoardQuantityForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getOnHandQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetOnHandQuantityForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveOnHandQuantityForCommunication(
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveOnHandQuantityForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -7576,6 +8445,104 @@ public final class LoadableStudyServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.CargoNominationCheckRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCheckCargoUsageMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getLoadablePlanStowageBallastDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getGetLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        saveLoadablePlanStowageBallastDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getLoadablePatternCargoDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getGetLoadablePatternCargoDetailsForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        saveLoadablePatternCargoDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getSaveLoadablePatternCargoDetailsForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getLoadablePlanCommingleDetailsPortwiseForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        saveLoadablePlanCommingleDetailsPortwiseForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(),
+          getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+          getCallOptions(),
+          request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getOnBoardQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetOnBoardQuantityForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        saveOnBoardQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveOnBoardQuantityForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        getOnHandQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetOnHandQuantityForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply
+        saveOnHandQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveOnHandQuantityForCommunicationMethod(), getCallOptions(), request);
     }
   }
 
@@ -8373,6 +9340,121 @@ public final class LoadableStudyServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getCheckCargoUsageMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getLoadablePlanStowageBallastDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(
+                  getGetLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+                  getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        saveLoadablePlanStowageBallastDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(
+                  getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod(),
+                  getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getLoadablePatternCargoDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(getGetLoadablePatternCargoDetailsForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        saveLoadablePatternCargoDetailsForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(
+                  getSaveLoadablePatternCargoDetailsForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getLoadablePlanCommingleDetailsPortwiseForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(
+                  getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+                  getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        saveLoadablePlanCommingleDetailsPortwiseForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel()
+              .newCall(
+                  getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod(),
+                  getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getOnBoardQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetOnBoardQuantityForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        saveOnBoardQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveOnBoardQuantityForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        getOnHandQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetOnHandQuantityForCommunicationMethod(), getCallOptions()),
+          request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        saveOnHandQuantityForCommunication(
+            com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveOnHandQuantityForCommunicationMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -8461,6 +9543,20 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_LOADABLE_STUDY_PORT_ROTATION_DATA_FOR_COMMUNICATION = 83;
   private static final int METHODID_GET_JSON_DATA_FOR_DISCHARGE_PLAN_COMMUNICATION = 84;
   private static final int METHODID_CHECK_CARGO_USAGE = 85;
+  private static final int METHODID_GET_LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS_FOR_COMMUNICATION =
+      86;
+  private static final int METHODID_SAVE_LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS_FOR_COMMUNICATION =
+      87;
+  private static final int METHODID_GET_LOADABLE_PATTERN_CARGO_DETAILS_FOR_COMMUNICATION = 88;
+  private static final int METHODID_SAVE_LOADABLE_PATTERN_CARGO_DETAILS_FOR_COMMUNICATION = 89;
+  private static final int METHODID_GET_LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE_FOR_COMMUNICATION =
+      90;
+  private static final int
+      METHODID_SAVE_LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE_FOR_COMMUNICATION = 91;
+  private static final int METHODID_GET_ON_BOARD_QUANTITY_FOR_COMMUNICATION = 92;
+  private static final int METHODID_SAVE_ON_BOARD_QUANTITY_FOR_COMMUNICATION = 93;
+  private static final int METHODID_GET_ON_HAND_QUANTITY_FOR_COMMUNICATION = 94;
+  private static final int METHODID_SAVE_ON_HAND_QUANTITY_FOR_COMMUNICATION = 95;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -9075,6 +10171,76 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.CargoNominationCheckReply>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS_FOR_COMMUNICATION:
+          serviceImpl.getLoadablePlanStowageBallastDetailsForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS_FOR_COMMUNICATION:
+          serviceImpl.saveLoadablePlanStowageBallastDetailsForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_LOADABLE_PATTERN_CARGO_DETAILS_FOR_COMMUNICATION:
+          serviceImpl.getLoadablePatternCargoDetailsForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADABLE_PATTERN_CARGO_DETAILS_FOR_COMMUNICATION:
+          serviceImpl.saveLoadablePatternCargoDetailsForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE_FOR_COMMUNICATION:
+          serviceImpl.getLoadablePlanCommingleDetailsPortwiseForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE_FOR_COMMUNICATION:
+          serviceImpl.saveLoadablePlanCommingleDetailsPortwiseForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ON_BOARD_QUANTITY_FOR_COMMUNICATION:
+          serviceImpl.getOnBoardQuantityForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_ON_BOARD_QUANTITY_FOR_COMMUNICATION:
+          serviceImpl.saveOnBoardQuantityForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_GET_ON_HAND_QUANTITY_FOR_COMMUNICATION:
+          serviceImpl.getOnHandQuantityForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_ON_HAND_QUANTITY_FOR_COMMUNICATION:
+          serviceImpl.saveOnHandQuantityForCommunication(
+              (com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -9225,6 +10391,17 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveLoadableStudyPortRotationDataForCommunicationMethod())
                       .addMethod(getGetJsonDataForDischargePlanCommunicationMethod())
                       .addMethod(getCheckCargoUsageMethod())
+                      .addMethod(getGetLoadablePlanStowageBallastDetailsForCommunicationMethod())
+                      .addMethod(getSaveLoadablePlanStowageBallastDetailsForCommunicationMethod())
+                      .addMethod(getGetLoadablePatternCargoDetailsForCommunicationMethod())
+                      .addMethod(getSaveLoadablePatternCargoDetailsForCommunicationMethod())
+                      .addMethod(getGetLoadablePlanCommingleDetailsPortwiseForCommunicationMethod())
+                      .addMethod(
+                          getSaveLoadablePlanCommingleDetailsPortwiseForCommunicationMethod())
+                      .addMethod(getGetOnBoardQuantityForCommunicationMethod())
+                      .addMethod(getSaveOnBoardQuantityForCommunicationMethod())
+                      .addMethod(getGetOnHandQuantityForCommunicationMethod())
+                      .addMethod(getSaveOnHandQuantityForCommunicationMethod())
                       .build();
         }
       }

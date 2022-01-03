@@ -238,6 +238,26 @@ service LoadableStudyService {
 	rpc getJsonDataForDischargePlanCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 
 	rpc checkCargoUsage(CargoNominationCheckRequest) returns (CargoNominationCheckReply) {}
+
+	rpc getLoadablePlanStowageBallastDetailsForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadablePlanStowageBallastDetailsForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc getLoadablePatternCargoDetailsForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadablePatternCargoDetailsForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc getLoadablePlanCommingleDetailsPortwiseForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveLoadablePlanCommingleDetailsPortwiseForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc getOnBoardQuantityForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveOnBoardQuantityForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc getOnHandQuantityForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc saveOnHandQuantityForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 }
 
 service SynopticalOperationService{

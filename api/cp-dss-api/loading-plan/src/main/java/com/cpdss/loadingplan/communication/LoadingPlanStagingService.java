@@ -816,6 +816,136 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case loadable_plan_stowage_ballast_details:
+          {
+            if (loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub
+                      .getLoadablePlanStowageBallastDetailsForCommunication(builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray loadablePlanStowageBallastDetailsData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      loadablePlanStowageBallastDetailsData);
+                }
+              }
+            }
+            break;
+          }
+        case loadable_pattern_cargo_details:
+          {
+            if (loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub
+                      .getLoadablePatternCargoDetailsForCommunication(builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray loadablePatternCargoDetailsData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      loadablePatternCargoDetailsData);
+                }
+              }
+            }
+            break;
+          }
+        case loadable_plan_commingle_details_portwise:
+          {
+            if (loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub
+                      .getLoadablePlanCommingleDetailsPortwiseForCommunication(builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray loadablePlanComminglePortwiseDetailsData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      loadablePlanComminglePortwiseDetailsData);
+                }
+              }
+            }
+            break;
+          }
+        case on_board_quantity:
+          {
+            if (loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub.getOnBoardQuantityForCommunication(
+                      builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray onBoardQuantityData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      onBoardQuantityData);
+                }
+              }
+            }
+            break;
+          }
+        case on_hand_quantity:
+          {
+            if (loadablePatternId != null) {
+              LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+                  LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+              builder.setId(loadablePatternId);
+              LoadableStudy.LoadableStudyCommunicationReply reply =
+                  this.loadableStudyServiceBlockingStub.getOnHandQuantityForCommunication(
+                      builder.build());
+              if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray onHandQuantityData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      onHandQuantityData);
+                }
+              }
+            }
+            break;
+          }
       }
     }
     return array;

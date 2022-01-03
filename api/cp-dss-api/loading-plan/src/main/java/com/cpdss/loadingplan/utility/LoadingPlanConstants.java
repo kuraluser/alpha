@@ -60,7 +60,12 @@ public class LoadingPlanConstants {
     SYNOPTICAL_TABLE("synoptical_table"),
     LOADABLE_STUDY_PORT_ROTATION("loadable_study_port_rotation"),
     LOADING_INFORMATION_ALGO_STATUS("loading_information_algo_status"),
-    LOADING_PLAN_COMMINGLE_DETAILS("loading_plan_commingle_details");
+    LOADING_PLAN_COMMINGLE_DETAILS("loading_plan_commingle_details"),
+    LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS("loadable_plan_stowage_ballast_details"),
+    LOADABLE_PATTERN_CARGO_DETAILS("loadable_pattern_cargo_details"),
+    LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE("loadable_plan_commingle_details_portwise"),
+    ON_BOARD_QUANTITY("on_board_quantity"),
+    ON_HAND_QUANTITY("on_hand_quantity");
 
     public final String table;
   }
@@ -131,7 +136,12 @@ public class LoadingPlanConstants {
           "port_loading_plan_stability_parameters",
           "pyuser",
           "loading_information_algo_status",
-          "synoptical_table");
+          "synoptical_table",
+          "loadable_plan_stowage_ballast_details",
+          "loadable_pattern_cargo_details",
+          "loadable_plan_commingle_details_portwise",
+          "on_board_quantity",
+          "on_hand_quantity");
 
   public static final List<String> ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF =
       Arrays.asList(
@@ -142,7 +152,12 @@ public class LoadingPlanConstants {
           "port_loading_plan_stability_parameters",
           "pyuser",
           "loading_information_algo_status",
-          "synoptical_table");
+          "synoptical_table",
+          "loadable_plan_stowage_ballast_details",
+          "loadable_pattern_cargo_details",
+          "loadable_plan_commingle_details_portwise",
+          "on_board_quantity",
+          "on_hand_quantity");
 
   public static final List<String> ULLAGE_UPDATE_ALGO_ERRORS =
       Arrays.asList(

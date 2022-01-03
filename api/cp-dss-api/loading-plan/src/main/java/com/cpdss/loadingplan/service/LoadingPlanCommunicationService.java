@@ -331,6 +331,11 @@ public class LoadingPlanCommunicationService {
       String loadicatorDataForSynoptical = null;
       String jsonData = null;
       String synopticalData = null;
+      String loadablePlanStowageBallastDetailsData = null;
+      String loadablePatternCargoDetailsData = null;
+      String loadablePlanComminglePortwiseDetailsData = null;
+      String onBoardQuantityData = null;
+      String onHandQuantityData = null;
       String loadableStudyPortRotationData = null;
       List<PortTideDetail> portTideDetailList = null;
       List<AlgoErrorHeading> algoErrorHeadings = null;
@@ -942,6 +947,42 @@ public class LoadingPlanCommunicationService {
               idMap.put(
                   LoadingPlanTables.LOADING_PLAN_COMMINGLE_DETAILS.getTable(),
                   dataTransferStage.getId());
+              break;
+            }
+          case loadable_plan_stowage_ballast_details:
+            {
+              loadablePlanStowageBallastDetailsData = dataTransferString;
+              idMap.put(
+                  LoadingPlanTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable(),
+                  dataTransferStage.getId());
+              break;
+            }
+          case loadable_pattern_cargo_details:
+            {
+              loadablePatternCargoDetailsData = dataTransferString;
+              idMap.put(
+                  LoadingPlanTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable(),
+                  dataTransferStage.getId());
+              break;
+            }
+          case loadable_plan_commingle_details_portwise:
+            {
+              loadablePlanComminglePortwiseDetailsData = dataTransferString;
+              idMap.put(
+                  LoadingPlanTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable(),
+                  dataTransferStage.getId());
+              break;
+            }
+          case on_board_quantity:
+            {
+              onBoardQuantityData = dataTransferString;
+              idMap.put(LoadingPlanTables.ON_BOARD_QUANTITY.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case on_hand_quantity:
+            {
+              onHandQuantityData = dataTransferString;
+              idMap.put(LoadingPlanTables.ON_HAND_QUANTITY.getTable(), dataTransferStage.getId());
               break;
             }
         }
@@ -2099,6 +2140,130 @@ public class LoadingPlanCommunicationService {
               processId,
               StagingStatus.FAILED.getStatus(),
               e.getMessage());
+        }
+      }
+      if (loadablePlanStowageBallastDetailsData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info(
+            "LoadablePlanStowageBallastDetails get from staging table:{}",
+            loadablePlanStowageBallastDetailsData);
+        builder.setDataJson(loadablePlanStowageBallastDetailsData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveLoadablePlanStowageBallastDetailsForCommunication(
+                builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("LoadablePlanStowageBallastDetails saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadablePatternCargoDetailsData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info(
+            "LoadablePatternCargoDetails get from staging table:{}",
+            loadablePatternCargoDetailsData);
+        builder.setDataJson(loadablePatternCargoDetailsData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveLoadablePatternCargoDetailsForCommunication(
+                builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("LoadablePatternCargoDetails saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (loadablePlanComminglePortwiseDetailsData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info(
+            "LoadablePlanComminglePortwiseDetails get from staging table:{}",
+            loadablePlanComminglePortwiseDetailsData);
+        builder.setDataJson(loadablePlanComminglePortwiseDetailsData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub
+                .saveLoadablePlanCommingleDetailsPortwiseForCommunication(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("LoadablePlanComminglePortwiseDetails saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (onBoardQuantityData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info("OnBoardQuantity get from staging table:{}", onBoardQuantityData);
+        builder.setDataJson(onBoardQuantityData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveOnBoardQuantityForCommunication(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("OnBoardQuantity saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ON_BOARD_QUANTITY.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ON_BOARD_QUANTITY.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
+        }
+      }
+      if (onHandQuantityData != null) {
+        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+        log.info("OnHandQuantity get from staging table:{}", onHandQuantityData);
+        builder.setDataJson(onHandQuantityData);
+        LoadableStudy.LoadableStudyCommunicationReply reply =
+            loadableStudyServiceBlockingStub.saveOnHandQuantityForCommunication(builder.build());
+        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+          log.info("OnHandQuantity saved in LoadableStudy ");
+        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ON_HAND_QUANTITY.getTable()),
+              processId,
+              retryStatus,
+              reply.getResponseStatus().getMessage());
+        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+          updateStatusInExceptionCase(
+              idMap.get(LoadingPlanTables.ON_HAND_QUANTITY.getTable()),
+              processId,
+              StagingStatus.FAILED.getStatus(),
+              reply.getResponseStatus().getMessage());
         }
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(

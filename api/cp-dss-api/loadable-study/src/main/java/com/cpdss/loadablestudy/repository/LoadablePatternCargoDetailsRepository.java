@@ -40,4 +40,10 @@ public interface LoadablePatternCargoDetailsRepository
   Optional<LoadablePatternCargoDetails>
       findFirstByLoadablePatternIdAndCargoNominationIdAndTankIdAndIsActiveTrue(
           long loadablePatternId, long cargoNominationId, long tankId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_pattern_cargo_details u where loadable_pattern_xid = ?1",
+      nativeQuery = true)
+  String getLoadablePatternCargoDetailsWithPatternId(long id);
 }

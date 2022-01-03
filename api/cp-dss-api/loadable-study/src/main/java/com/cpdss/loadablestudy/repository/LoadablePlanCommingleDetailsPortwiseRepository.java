@@ -47,4 +47,10 @@ public interface LoadablePlanCommingleDetailsPortwiseRepository
   @Query(
       "UPDATE LoadablePlanComminglePortwiseDetails SET isActive = false WHERE loadablePattern.id = ?2")
   void deleteByLoadablePatternId(Long loadablePatternId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_plan_commingle_details_portwise u where loadable_pattern_xid=?1",
+      nativeQuery = true)
+  String getLoadablePlanComminglePortwiseDetaWithPatternId(long id);
 }

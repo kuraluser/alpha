@@ -44,5 +44,10 @@ public enum ProcessIdentifiers {
   synoptical_table,
   loadable_study_port_rotation,
   loading_information_algo_status,
-  loading_plan_commingle_details;
+  loading_plan_commingle_details,
+  loadable_plan_stowage_ballast_details,
+  loadable_pattern_cargo_details,
+  loadable_plan_commingle_details_portwise,
+  on_board_quantity,
+  on_hand_quantity;
 }

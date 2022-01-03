@@ -66,4 +66,10 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
 
   @Query("FROM OnHandQuantity OHQ where OHQ.loadableStudy.id = ?1 AND OHQ.isActive = true")
   public List<OnHandQuantity> findByDischargeStudyIdAndActive(Long dischargeStudyId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM on_hand_quantity u where loadable_study_xid IN (SELECT loadablestudy_xid FROM loadable_pattern where id=?1)",
+      nativeQuery = true)
+  String getOnHandQuantityWithPatternId(long id);
 }

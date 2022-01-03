@@ -222,6 +222,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
   @Autowired private LoadableStudyCommunicationData loadableStudyCommunicationData;
 
+  @Autowired
+  private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
+
+  @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+
+  @Autowired
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
+
   /**
    * method for save voyage
    *
@@ -3555,6 +3564,390 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setHttpStatusCode(e.getStatus().value())
               .setMessage(e.getMessage())
               .setStatus(FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * get LoadablePlanStowageBallastDetails Data for LoadingPlan Ullage edit communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getLoadablePlanStowageBallastDetailsForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      log.info("LoadablePlanStowageBallastDetails request:{}", request.getId());
+      String loadablePlanStowageBallastDetailsData =
+          loadablePlanStowageBallastDetailsRepository
+              .getLoadablePlanStowageBallastDetailsDataWithPatternId(request.getId());
+      if (loadablePlanStowageBallastDetailsData != null) {
+        log.info(
+            "LoadablePlanStowageBallastDetails get:{}",
+            loadablePlanStowageBallastDetailsData.length());
+        replyBuilder.setDataJson(loadablePlanStowageBallastDetailsData);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder()
+                .setMessage("No LoadablePlanStowageBallastDetails Found")
+                .build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get LoadablePlanStowageBallastDetails data", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("Error occurred when get LoadablePlanStowageBallastDetails")
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    }
+  }
+
+  /**
+   * get LoadablePatternCargoDetails Data for LoadingPlan Ullage edit communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getLoadablePatternCargoDetailsForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      log.info("LoadablePatternCargoDetails request:{}", request.getId());
+      String loadablePatternCargoDetailsData =
+          loadablePatternCargoDetailsRepository.getLoadablePatternCargoDetailsWithPatternId(
+              request.getId());
+      if (loadablePatternCargoDetailsData != null) {
+        log.info("LoadablePatternCargoDetails get:{}", loadablePatternCargoDetailsData.length());
+        replyBuilder.setDataJson(loadablePatternCargoDetailsData);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder()
+                .setMessage("No LoadablePatternCargoDetails Found")
+                .build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get LoadablePatternCargoDetails data", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("Error occurred when get LoadablePatternCargoDetails")
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    }
+  }
+
+  /**
+   * get LoadablePlanComminglePortwiseDetails Data for LoadingPlan Ullage edit communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getLoadablePlanCommingleDetailsPortwiseForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      log.info("LoadablePlanComminglePortwiseDetails request:{}", request.getId());
+      String loadablePlanComminglePortwiseDetailsData =
+          loadablePlanCommingleDetailsPortwiseRepository
+              .getLoadablePlanComminglePortwiseDetaWithPatternId(request.getId());
+      if (loadablePlanComminglePortwiseDetailsData != null) {
+        log.info(
+            "LoadablePlanComminglePortwiseDetails get:{}",
+            loadablePlanComminglePortwiseDetailsData.length());
+        replyBuilder.setDataJson(loadablePlanComminglePortwiseDetailsData);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder()
+                .setMessage("No LoadablePlanComminglePortwiseDetails Found")
+                .build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get LoadablePlanComminglePortwiseDetails data", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("Error occurred when get LoadablePlanComminglePortwiseDetails")
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    }
+  }
+
+  /**
+   * get OnBoardQuantity Data for LoadingPlan Ullage edit communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getOnBoardQuantityForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      log.info("OnBoardQuantity request:{}", request.getId());
+      String onBoardQuantityData =
+          onBoardQuantityRepository.getOnBoardQuantityWithPatternId(request.getId());
+      if (onBoardQuantityData != null) {
+        log.info("OnBoardQuantity get:{}", onBoardQuantityData.length());
+        replyBuilder.setDataJson(onBoardQuantityData);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setMessage("No OnBoardQuantity Found").build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get OnBoardQuantity data", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("Error occurred when get OnBoardQuantity")
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    }
+  }
+
+  /**
+   * get OnHandQuantity Data for LoadingPlan Ullage edit communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getOnHandQuantityForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      log.info("OnHandQuantity request:{}", request.getId());
+      String onHandQuantityData =
+          onHandQuantityRepository.getOnHandQuantityWithPatternId(request.getId());
+      if (onHandQuantityData != null) {
+        log.info("OnHandQuantity get:{}", onHandQuantityData.length());
+        replyBuilder.setDataJson(onHandQuantityData);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setMessage("No OnHandQuantity Found").build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get OnHandQuantity data", e);
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setMessage("Error occurred when get OnHandQuantity")
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .build());
+    }
+  }
+
+  /**
+   * save LoadablePlanStowageBallastDetails Data for loadingplan ullage update communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveLoadablePlanStowageBallastDetailsForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveLoadablePlanStowageBallastDetails(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * save LoadablePatternCargoDetails Data for loadingplan ullage update communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveLoadablePatternCargoDetailsForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveLoadablePatternCargoDetails(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * save LoadablePlanCommingleDetailsPortwise Data for loadingplan ullage update communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveLoadablePlanCommingleDetailsPortwiseForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveLoadablePlanCommingleDetailsPortwise(
+          request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * save OnBoardQuantity Data for loadingplan ullage update communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveOnBoardQuantityForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveOnBoardQuantity(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * save OnBoardQuantity Data for loadingplan ullage update communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void saveOnHandQuantityForCommunication(
+      com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+          responseObserver) {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply.newBuilder();
+    try {
+      loadableStudyCommunicationData.saveOnHandQuantity(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(FAILED_WITH_RESOURCE_EXC)
               .build());
     } catch (Exception e) {
       e.printStackTrace();

@@ -9,14 +9,12 @@ import com.cpdss.loadablestudy.repository.*;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 @Log4j2
@@ -41,12 +39,30 @@ public class LoadableStudyCommunicationData {
   private LoadableStudyPortRotationCommuncationRepository
       loadableStudyPortRotationCommuncationRepository;
 
+  @Autowired
+  private LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
+
+  @Autowired private LoadablePatternCargoDetailsRepository loadablePatternCargoDetailsRepository;
+
+  @Autowired
+  private LoadablePlanCommingleDetailsPortwiseRepository
+      loadablePlanCommingleDetailsPortwiseRepository;
+
+  @Autowired private LoadablePlanRepository loadablePlanRepository;
+  @Autowired private OnHandQuantityRepository onHandQuantityRepository;
+  @Autowired private OnBoardQuantityRepository onBoardQuantityRepository;
+
   Type listType = null;
   List<LoadablePattern> loadablePatterns = null;
   List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDatas = null;
   List<JsonData> jsonDatas = null;
   List<SynopticalTable> synopticalTables = null;
   List<LoadableStudyPortRotationCommunication> loadableStudyPortRotations = null;
+  List<LoadablePlanStowageBallastDetails> loadablePlanStowageBallastDetails = null;
+  List<LoadablePlanComminglePortwiseDetails> loadablePlanComminglePortwiseDetails = null;
+  List<LoadablePatternCargoDetails> loadablePatternCargoDetails = null;
+  List<OnBoardQuantity> onBoardQuantities = null;
+  List<OnHandQuantity> onHandQuantities = null;
 
   public void saveLoadablePattern(String dataJson) throws ResourceAccessException, Exception {
     HashMap<String, String> map =
@@ -149,15 +165,21 @@ public class LoadableStudyCommunicationData {
     JsonArray json = loadableStudyStagingService.getAsEntityJson(map, array);
     JsonArray jsonArray = new JsonArray();
     for (JsonElement jsonElement : json) {
+      JsonObject communicationRelatedIdMap = new JsonObject();
       final JsonObject jsonObj = jsonElement.getAsJsonObject();
       if (xIds != null) {
         for (String xId : xIds) {
           if (xIds.length == 1) {
             jsonObj.add("communicationRelatedEntityId", jsonObj.get(xId));
+          } else {
+            if (!"null".equals(jsonObj.get(xId).toString())) {
+              communicationRelatedIdMap.addProperty(xId, jsonObj.get(xId).getAsLong());
+            }
           }
           jsonObj.remove(xId);
         }
       }
+      jsonObj.add("communicationRelatedIdMap", communicationRelatedIdMap);
       jsonArray.add(jsonObj);
     }
     return jsonArray;
@@ -304,5 +326,172 @@ public class LoadableStudyCommunicationData {
       jsonArray.add(jsonObj);
     }
     return jsonArray;
+  }
+
+  public void saveLoadablePlanStowageBallastDetails(String dataJson) {
+    try {
+      HashMap<String, String> map =
+          loadableStudyStagingService.getAttributeMapping(new LoadablePlanStowageBallastDetails());
+      JsonArray jsonArray =
+          removeJsonFields(
+              JsonParser.parseString(dataJson).getAsJsonArray(), map, "loadable_plan_xid");
+      log.info("LoadablePlanStowageBallastDetails json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<LoadablePlanStowageBallastDetails>>() {}.getType();
+      loadablePlanStowageBallastDetails = new Gson().fromJson(jsonArray, listType);
+      log.info("LoadablePlanStowageBallastDetails list:{}", loadablePlanStowageBallastDetails);
+      if (!CollectionUtils.isEmpty(loadablePlanStowageBallastDetails)) {
+        for (LoadablePlanStowageBallastDetails lpStowageBallastDetail :
+            loadablePlanStowageBallastDetails) {
+          Optional<LoadablePlanStowageBallastDetails> loadablePatternCargoDetailsOptional =
+              loadablePlanStowageBallastDetailsRepository.findById(lpStowageBallastDetail.getId());
+          setEntityDocFields(lpStowageBallastDetail, loadablePatternCargoDetailsOptional);
+          lpStowageBallastDetail.setLoadablePlan(
+              getLoadablePlan(lpStowageBallastDetail.getCommunicationRelatedEntityId())
+                  .orElse(null));
+        }
+
+        loadablePlanStowageBallastDetailsRepository.saveAll(loadablePlanStowageBallastDetails);
+        log.info("Saved LoadablePlanStowageBallastDetails:{}", loadablePlanStowageBallastDetails);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving LoadablePlanStowageBallast", e);
+    }
+  }
+
+  /**
+   * Method to get loadable plan from loadable_plan Id
+   *
+   * @param loadablePlanId loadablePlanId
+   * @return LoadablePlan entity
+   */
+  private Optional<LoadablePlan> getLoadablePlan(Long loadablePlanId) {
+    return null != loadablePlanId
+        ? loadablePlanRepository.findById(loadablePlanId)
+        : Optional.empty();
+  }
+
+  public void saveLoadablePlanCommingleDetailsPortwise(String dataJson) {
+    try {
+      HashMap<String, String> map =
+          loadableStudyStagingService.getAttributeMapping(
+              new LoadablePlanComminglePortwiseDetails());
+      JsonArray jsonArray =
+          removeJsonFields(
+              JsonParser.parseString(dataJson).getAsJsonArray(), map, "loadable_pattern_xid");
+      log.info("LoadablePlanComminglePortwiseDetails json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<LoadablePlanStowageBallastDetails>>() {}.getType();
+      loadablePlanComminglePortwiseDetails = new Gson().fromJson(jsonArray, listType);
+      log.info(
+          "LoadablePlanComminglePortwiseDetails list:{}", loadablePlanComminglePortwiseDetails);
+      if (!CollectionUtils.isEmpty(loadablePlanComminglePortwiseDetails)) {
+        for (LoadablePlanComminglePortwiseDetails lpComminglePortwiseDetail :
+            loadablePlanComminglePortwiseDetails) {
+          Optional<LoadablePlanComminglePortwiseDetails> lpComminglePortwiseDetailsOptional =
+              loadablePlanCommingleDetailsPortwiseRepository.findById(
+                  lpComminglePortwiseDetail.getId());
+          setEntityDocFields(lpComminglePortwiseDetail, lpComminglePortwiseDetailsOptional);
+          lpComminglePortwiseDetail.setLoadablePattern(
+              loadablePatternRepository
+                  .findById(lpComminglePortwiseDetail.getCommunicationRelatedEntityId())
+                  .orElse(null));
+        }
+        loadablePlanComminglePortwiseDetails =
+            loadablePlanCommingleDetailsPortwiseRepository.saveAll(
+                loadablePlanComminglePortwiseDetails);
+        log.info(
+            "Saved LoadablePlanComminglePortwiseDetails:{}", loadablePlanComminglePortwiseDetails);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving LoadablePlanComminglePortwiseDetails", e);
+    }
+  }
+
+  public void saveLoadablePatternCargoDetails(String dataJson) {
+    try {
+      HashMap<String, String> map =
+          loadableStudyStagingService.getAttributeMapping(new LoadablePatternCargoDetails());
+      JsonArray jsonArray =
+          removeJsonFields(JsonParser.parseString(dataJson).getAsJsonArray(), map, null);
+      log.info("LoadablePatternCargoDetails json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<LoadablePatternCargoDetails>>() {}.getType();
+      loadablePatternCargoDetails = new Gson().fromJson(jsonArray, listType);
+      log.info("LoadablePatternCargoDetails list:{}", loadablePatternCargoDetails);
+      if (!CollectionUtils.isEmpty(loadablePatternCargoDetails)) {
+        for (LoadablePatternCargoDetails lpCargoDetail : loadablePatternCargoDetails) {
+          Optional<LoadablePatternCargoDetails> loadablePatternCargoDetailsOptional =
+              loadablePatternCargoDetailsRepository.findById(lpCargoDetail.getId());
+          setEntityDocFields(lpCargoDetail, loadablePatternCargoDetailsOptional);
+        }
+        loadablePatternCargoDetailsRepository.saveAll(loadablePatternCargoDetails);
+        log.info("Saved LoadablePatternCargoDetails:{}", loadablePatternCargoDetails);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving LoadablePatternCargoDetails", e);
+    }
+  }
+
+  public void saveOnBoardQuantity(String dataJson) {
+    try {
+      HashMap<String, String> map =
+          loadableStudyStagingService.getAttributeMapping(new OnBoardQuantity());
+      JsonArray jsonArray =
+          removeJsonFields(
+              JsonParser.parseString(dataJson).getAsJsonArray(), map, "loadable_study_xid");
+      log.info("OnBoardQuantity json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<OnBoardQuantity>>() {}.getType();
+      onBoardQuantities = new Gson().fromJson(jsonArray, listType);
+      log.info("OnBoardQuantity list:{}", onBoardQuantities);
+      if (!CollectionUtils.isEmpty(onBoardQuantities)) {
+        for (OnBoardQuantity obqStage : onBoardQuantities) {
+          Optional<OnBoardQuantity> obqOpt = onBoardQuantityRepository.findById(obqStage.getId());
+          setEntityDocFields(obqStage, obqOpt);
+          obqStage.setLoadableStudy(
+              loadableStudyRepository
+                  .findById(obqStage.getCommunicationRelatedIdMap().get("loadable_study_xid"))
+                  .orElse(null));
+        }
+        // Save data
+        onBoardQuantities = onBoardQuantityRepository.saveAll(onBoardQuantities);
+        log.info("Saved OnBoardQuantity:{}", onBoardQuantities);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving OnBoardQuantity", e);
+    }
+  }
+
+  public void saveOnHandQuantity(String dataJson) {
+    try {
+      HashMap<String, String> map =
+          loadableStudyStagingService.getAttributeMapping(new OnHandQuantity());
+      JsonArray jsonArray =
+          removeJsonFields(
+              JsonParser.parseString(dataJson).getAsJsonArray(),
+              map,
+              "loadable_study_xid",
+              "port_rotation_xid");
+      log.info("OnHandQuantity json array:{}", jsonArray);
+      listType = new TypeToken<ArrayList<OnHandQuantity>>() {}.getType();
+      onHandQuantities = new Gson().fromJson(jsonArray, listType);
+      log.info("OnHandQuantity list:{}", onHandQuantities);
+      if (!CollectionUtils.isEmpty(onHandQuantities)) {
+        for (OnHandQuantity ohqStage : onHandQuantities) {
+          Optional<OnHandQuantity> ohq = onHandQuantityRepository.findById(ohqStage.getId());
+          setEntityDocFields(ohqStage, ohq);
+          ohqStage.setLoadableStudy(
+              loadableStudyRepository
+                  .findById(ohqStage.getCommunicationRelatedIdMap().get("loadable_study_xid"))
+                  .orElse(null));
+          ohqStage.setPortRotation(
+              loadableStudyPortRotationRepository
+                  .findById(ohqStage.getCommunicationRelatedIdMap().get("port_rotation_xid"))
+                  .orElse(null));
+        }
+        // Save data
+        onHandQuantities = onHandQuantityRepository.saveAll(onHandQuantities);
+        log.info("Saved OnHandQuantity:{}", onHandQuantities);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving OnBoardQuantity", e);
+    }
   }
 }

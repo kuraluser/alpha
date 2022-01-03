@@ -51,4 +51,10 @@ public interface LoadablePlanStowageBallastDetailsRepository
       "FROM LoadablePlanStowageBallastDetails lp WHERE lp.loadablePatternId = ?1 AND lp.portXId = ?2 and lp.isActive = true")
   List<LoadablePlanStowageBallastDetails> findAllByLoadablePatternIdAndPortXId(
       Long patternId, Long portXId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_plan_stowage_ballast_details u where loadable_pattern_xid=?1",
+      nativeQuery = true)
+  String getLoadablePlanStowageBallastDetailsDataWithPatternId(Long id);
 }
