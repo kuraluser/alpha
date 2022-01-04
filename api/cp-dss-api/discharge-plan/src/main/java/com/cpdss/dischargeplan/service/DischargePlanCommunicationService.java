@@ -21,6 +21,7 @@ import com.cpdss.dischargeplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants.DischargingPlanTables;
 import com.cpdss.dischargeplan.service.utility.ProcessIdentifiers;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import java.lang.reflect.InvocationTargetException;
@@ -438,7 +439,10 @@ public class DischargePlanCommunicationService {
             log.info("Algo call started for DischargePlan");
             DischargeInformationRequest.Builder builder = DischargeInformationRequest.newBuilder();
             builder.setDischargeInfoId(dischargeInfo.getId());
-            dischargePlanRPCService.generateDischargePlan(builder.build(), null);
+            com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.Builder
+                algoReplyBuilder =
+                    com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.newBuilder();
+            dischargePlanRPCService.generateDischargingPlan(builder.build(), algoReplyBuilder);
           } else if (processGroupId.equals(
               MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE.getMessageType())) {
             log.info("Algo call started for DischargePlan Ullage-Update");
@@ -458,7 +462,7 @@ public class DischargePlanCommunicationService {
             builder.addUpdateUllage(updateUllageBuilder.build());
             ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
           }
-        } catch (InvocationTargetException | IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException | JsonProcessingException e) {
           log.error("Exception occured:{}", e.getMessage());
           throw new GenericServiceException(
               e.getMessage(),
