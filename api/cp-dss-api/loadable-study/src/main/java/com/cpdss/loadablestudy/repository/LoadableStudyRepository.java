@@ -87,4 +87,22 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   @Modifying
   @Query("UPDATE LoadableStudy LS SET LS.isObqComplete = ?1 WHERE id = ?2")
   public void updateOBQStatusById(Boolean isOBQCompleted, Long id);
+
+  @Query(
+      value =
+          "select ls.voyage_xid From loadable_study ls where ls.vessel_xid = ?1 and ls.planning_type_xid = ?2 "
+              + " and is_active = true",
+      nativeQuery = true)
+  List<Long> getActiveVoyageIdsByVesselIdAndPlanningType(
+      Long vesselId, Integer dischargingOperationId);
+
+  @Query(
+      value =
+          "select temp.id,temp.etd from ( "
+              + "select ls.id,lspr.etd,lspr.port_order,row_number() over (partition by ls.id order by port_order desc) "
+              + "as row_number  from  loadable_study ls inner join loadable_study_port_rotation lspr"
+              + " on ls.id = lspr.loadable_study_xid "
+              + "where ls.vessel_xid  =?1 and lspr.is_active = true ) temp where temp.row_number =1",
+      nativeQuery = true)
+  public List<Object[]> getVesellEtd(Long vesselId);
 }

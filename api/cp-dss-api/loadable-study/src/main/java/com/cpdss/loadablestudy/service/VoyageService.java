@@ -20,6 +20,7 @@ import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.domain.VoyageDto;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +35,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -376,11 +378,33 @@ public class VoyageService {
    * @return
    */
   private Builder voyageResponseBuilder(List<Voyage> entityList, Builder builder) {
+    // List of discharged voyages
+    List<Long> voyageIds = new ArrayList<>();
+    Map<Long, LocalDateTime> etdMap = new HashMap<>();
+    if (!CollectionUtils.isEmpty(entityList)) {
+      voyageIds =
+          loadableStudyRepository.getActiveVoyageIdsByVesselIdAndPlanningType(
+              entityList.get(0).getVesselXId(), PLANNING_TYPE_DISCHARGE);
+      List<Object[]> vesselEtdList =
+          loadableStudyRepository.getVesellEtd(entityList.get(0).getVesselXId());
+      if (vesselEtdList != null) {
+        vesselEtdList.forEach(
+            item -> {
+              if (item[0] != null) {
+                LocalDateTime dateTime = null;
+                if (item[1] != null) {
+                  dateTime = ((Timestamp) item[1]).toLocalDateTime();
+                }
+                etdMap.put(Long.valueOf(item[0].toString()), dateTime);
+              }
+            });
+      }
+    }
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
     for (Voyage entity : entityList) {
       LoadableStudy.VoyageDetail.Builder detailbuilder = LoadableStudy.VoyageDetail.newBuilder();
       detailbuilder.setId(entity.getId());
       detailbuilder.setVoyageNumber(entity.getVoyageNo());
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
       Optional.ofNullable(entity.getActualEndDate())
           .ifPresent(
               actualEndDate -> detailbuilder.setActualEndDate(formatter.format(actualEndDate)));
@@ -403,16 +427,11 @@ public class VoyageService {
               || STATUS_CLOSE.equalsIgnoreCase(entity.getVoyageStatus().getName()))) {
         Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedStudy = Optional.empty();
         // Checking if Discharge started or not
-        Optional<List<com.cpdss.loadablestudy.entity.LoadableStudy>> dischargeStudyEntries =
-            synopticService.checkDischargeStarted(entity.getVesselXId(), entity.getId());
-        if (dischargeStudyEntries.isPresent() && !dischargeStudyEntries.get().isEmpty()) {
+        if (voyageIds.contains(entity.getId())) {
           detailbuilder.setIsDischargeStarted(true);
           confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_DISCHARGE);
           if (confirmedStudy.isPresent()) {
             detailbuilder.setConfirmedDischargeStudyId(confirmedStudy.get().getId());
-            // Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
-            // Optional.ofNullable(noOfDays).ifPresent(item ->
-            // detailbuilder.setNoOfDays(item));
           }
         } else {
           detailbuilder.setIsDischargeStarted(false);
@@ -420,7 +439,7 @@ public class VoyageService {
         confirmedStudy = getConfirmedStudy(entity, PLANNING_TYPE_LOADING);
         if (confirmedStudy.isPresent()) {
           detailbuilder.setConfirmedLoadableStudyId(confirmedStudy.get().getId());
-          Long noOfDays = this.getNumberOfDays(confirmedStudy.get());
+          Long noOfDays = this.getNumberOfDays(confirmedStudy.get(), etdMap);
           Optional.ofNullable(noOfDays).ifPresent(item -> detailbuilder.setNoOfDays(item));
         }
       }
@@ -456,25 +475,21 @@ public class VoyageService {
             .filter(
                 loadableStudyElement ->
                     loadableStudyElement.getPlanningTypeXId() != null
-                        && loadableStudyElement.getPlanningTypeXId().equals(planningType))
-            .filter(
-                loadableStudyElement ->
-                    (loadableStudyElement.getLoadableStudyStatus() != null
+                        && loadableStudyElement.getPlanningTypeXId().equals(planningType)
+                        && loadableStudyElement.getLoadableStudyStatus() != null
                         && STATUS_CONFIRMED.equalsIgnoreCase(
-                            loadableStudyElement.getLoadableStudyStatus().getName())))
+                            loadableStudyElement.getLoadableStudyStatus().getName()))
             .findFirst();
+
     return confirmedStudy;
   }
 
-  private Long getNumberOfDays(com.cpdss.loadablestudy.entity.LoadableStudy entity) {
-    LoadableStudyPortRotation lastPort =
-        this.loadableStudyPortRotationRepository
-            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(entity, true);
+  private Long getNumberOfDays(
+      com.cpdss.loadablestudy.entity.LoadableStudy entity, Map<Long, LocalDateTime> etdMap) {
     Long daysBetween = null;
-
-    if (null != lastPort && null != lastPort.getEtd()) {
-
-      daysBetween = ChronoUnit.DAYS.between(LocalDate.now(), lastPort.getEtd().toLocalDate());
+    if (etdMap.get(entity.getId()) != null) {
+      daysBetween =
+          ChronoUnit.DAYS.between(LocalDate.now(), etdMap.get(entity.getId()).toLocalDate());
     }
     if (null != daysBetween && daysBetween <= Long.parseLong(dayDifference)) {
       return daysBetween;
