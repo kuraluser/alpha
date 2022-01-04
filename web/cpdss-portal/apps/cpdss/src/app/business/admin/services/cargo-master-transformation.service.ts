@@ -141,7 +141,7 @@ export class CargoMasterTransformationService {
   formatCargo(cargo: ICargoDetails) {
     cargo.port = cargo.loadingInformation?.map(info => info?.port?.name);
     const formatOptions: IDateTimeFormatOptions = { customFormat: AppConfigurationService.settings?.dateFormat.split(' ')[0] };
-    cargo.assayDate = this.timeZoneTransformationService.formatDateTime(cargo.assayDate, formatOptions);
+    cargo.assayDate = cargo.assayDate ? this.timeZoneTransformationService.formatDateTime(cargo.assayDate, formatOptions) : null;
     cargo.portsLabel = cargo.port?.join();
     return cargo;
   }

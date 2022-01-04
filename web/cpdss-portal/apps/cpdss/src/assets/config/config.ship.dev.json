@@ -1,5 +1,5 @@
 {
-    "apiUrl" : "",
+    "apiUrl": "",
     "keycloakUrl": "",
     "path": "",
     "redirectPath": ":9001",
@@ -22,5 +22,7 @@
     "ullageUnit": "M",
     "vesselNoImageUrl": "assets/images/vessels/ship-profile-no-image.png",
     "minimapPinIconUrl": "assets/images/themes/light/map-icon/mini-map-pin.png",
-    "unitConversionConstant": 6.28981
+    "unitConversionConstant": 6.28981,
+    "obqBaseUnit": "OBSBBLS",
+    "obqDefaultWeightUnit": "OBSBBLS"
 }

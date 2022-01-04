@@ -1236,8 +1236,8 @@ export class LoadableStudyDetailsTransformationService {
   }
 
   /**
-   * function to update ohq tab status 
-   * @param status 
+   * function to update ohq tab status
+   * @param status
    */
   updateOhqOnAddEditPorts(status: boolean): void {
     this._ohqValiditySource.next(status);
@@ -1523,24 +1523,32 @@ export class LoadableStudyDetailsTransformationService {
    */
   getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData, isEditable = true, tanks: ITank[][]): IPortOBQTankDetailValueObject {
     const _obqTankDetail = <IPortOBQTankDetailValueObject>{};
-    const isSlopeTank = tanks.some(group => group.some(tank => tank.slopTank)) || true;
+    const isSlopeTank = tanks.some(group => group.some(tank => obqTankDetail.tankId === tank.id && tank.slopTank));
     _obqTankDetail.id = obqTankDetail.id;
     _obqTankDetail.portId = obqTankDetail.portId;
     _obqTankDetail.tankId = obqTankDetail.tankId;
     _obqTankDetail.tankName = obqTankDetail.tankName;
-    const cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
+    _obqTankDetail.colorCode = obqTankDetail.colorCode;
+    _obqTankDetail.abbreviation = obqTankDetail.abbreviation;
+    let cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
+    if (cargoObj) {
+      cargoObj.abbreviation = obqTankDetail?.abbreviation;
+      cargoObj.color = obqTankDetail?.colorCode;
+    }
+    const slops: ICargo = <ICargo>{ id: -1, name: 'Slops', abbreviation: 'SLOPS', color: '#a52a2a' };
+    if (isSlopeTank) {
+      _obqTankDetail.cargoList = cargoObj ? [cargoObj, slops] : [slops];
+      cargoObj = _obqTankDetail.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
+      _obqTankDetail.colorCode = cargoObj?.color;
+      _obqTankDetail.abbreviation = cargoObj?.abbreviation;
+    }
     _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false, isEditable && isSlopeTank);
     _obqTankDetail.fullCapacityCubm = obqTankDetail?.fullCapacityCubm;
     _obqTankDetail.api = new ValueObject<number>(obqTankDetail.api, true, isNewValue, isEditable);
     _obqTankDetail.quantity = new ValueObject<number>(obqTankDetail.quantity, true, isNewValue, isEditable);
-    _obqTankDetail.colorCode = obqTankDetail.colorCode;
-    _obqTankDetail.abbreviation = obqTankDetail.abbreviation;
     _obqTankDetail.volume = obqTankDetail.volume;
     _obqTankDetail.temperature = obqTankDetail.temperature;
-    if (isSlopeTank) {
-      const slops: ICargo = { id: -1, name: 'Slops' };
-      _obqTankDetail.cargoList = cargoObj ? [cargoObj, slops] : [slops];
-    }
+
     return _obqTankDetail;
   }
 

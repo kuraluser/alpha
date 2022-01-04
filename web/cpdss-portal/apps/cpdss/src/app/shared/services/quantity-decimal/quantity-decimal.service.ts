@@ -18,7 +18,7 @@ export class QuantityDecimalService {
 
   constructor() { }
   /**
-   * Method for transforming quantity decimal 
+   * Method for transforming quantity decimal
    * @param {string} unit
    * @memberof QuantityDecimalService
   */
@@ -27,6 +27,10 @@ export class QuantityDecimalService {
     let decimal;
     switch (qunatityUnit) {
       case QUANTITY_UNIT.KL:
+        decimal = AppConfigurationService.settings.quantityNumberFormatKL.slice(-1);
+        break;
+
+      case QUANTITY_UNIT.OBSBBLS:
         decimal = AppConfigurationService.settings.quantityNumberFormatKL.slice(-1);
         break;
 

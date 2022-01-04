@@ -121,7 +121,7 @@ export class CargoDetailsComponent implements OnInit, OnDestroy {
       cowCodes: this.fb.control(cargo?.cowCodes, [numberValidator(0)]),
       hydrogenSulfideOil: this.fb.control(cargo?.hydrogenSulfideOil, [numberValidator(0)]),
       hydrogenSulfideVapour: this.fb.control(cargo?.hydrogenSulfideVapour, [numberValidator(0)]),
-      benzene: this.fb.control(cargo?.benzene, [numberValidator(0)]),
+      benzene: this.fb.control(cargo?.benzene, [numberValidator(2)]),
       specialInstrictionsRemark: this.fb.control(cargo?.specialInstrictionsRemark),
       loadingInformation: this.fb.array(loadingInformationForm)
     });

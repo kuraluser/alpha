@@ -98,7 +98,7 @@
       </div>
 
       <cpdss-portal-unit-dropdown
-        *ngIf="selectedTab == LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab == LOADABLE_STUDY_DETAILS_TABS.OBQ"
+        *ngIf="selectedTab == LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION || selectedTab == LOADABLE_STUDY_DETAILS_TABS.OBQ" [isObsTemp]="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ"
         (unitChange)="onUnitChange($event)" [disableUnitChange]="loadableStudyDetailsApiService.disableUnitChange"
         (changeBlocked)="unitChangeBlocked()"></cpdss-portal-unit-dropdown>
     </div>
@@ -184,7 +184,7 @@
         <cpdss-portal-on-board-quantity
           *ngIf="selectedTab === LOADABLE_STUDY_DETAILS_TABS.OBQ && this.dischargingPorts?.length && loadableStudyId && loadableStudies && loadableQuantityNew && (obqTabPermission?.view || obqTabPermission?.view === undefined)"
           [voyage]="selectedVoyage" [vesselId]="vesselId" [voyageId]="voyageId" [loadableStudyId]="loadableStudyId"
-          [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentUnit">
+          [loadableStudy]="selectedLoadableStudy" [permission]="obqTabPermission" [quantitySelectedUnit]="currentObqUnit">
         </cpdss-portal-on-board-quantity>
 
         <div class="row"

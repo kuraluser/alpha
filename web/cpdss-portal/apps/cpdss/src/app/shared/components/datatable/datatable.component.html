@@ -240,7 +240,7 @@
                                             (onChange)="onChange($event, rowData, rowIndex, col)"
                                             resetFilterOnHide="true" (onFocus)="setDropDownFocus(dropDown2)"
                                             id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
-                                            itemSize="30">
+                                            itemSize="30" [showClear]="col?.showClear">
                                             <ng-template *ngIf="col?.showTemplate" let-item pTemplate="item">
                                                 <span>
                                                     <i class="color-rounded align-top mr-5"

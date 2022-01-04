@@ -29,5 +29,7 @@ export interface IAppConfiguration {
   minimapPinIconUrl: string;
   unitConversionConstant: number;
   documentationSiteMapping?: IDictionary<string>;
+  obqBaseUnit: QUANTITY_UNIT;
+  obqDefaultWeightUnit: QUANTITY_UNIT;
 }
 

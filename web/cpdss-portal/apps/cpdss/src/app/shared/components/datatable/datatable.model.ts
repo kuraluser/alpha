@@ -63,6 +63,7 @@ export interface IDataTableColumn {
     maxSelectedLabels?: number;
     multiSelectShowTooltip?: boolean;
     iconField?: string;
+    showClear?: boolean;
 }
 
 /**

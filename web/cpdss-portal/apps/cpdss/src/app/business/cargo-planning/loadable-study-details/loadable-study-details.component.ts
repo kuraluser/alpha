@@ -90,6 +90,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   selectedDischargeCargo: ICargo;
   dischargeCargos: ICargo[] = [];
   currentUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+  currentObqUnit = <QUANTITY_UNIT>localStorage.getItem('unitObs');
   baseUnit = this.loadableStudyDetailsApiService.baseUnit;
   isPatternGenerated = false;
   isGenerateClicked = false;
@@ -1171,6 +1172,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
   onUnitChange(event) {
     this.loadableStudyDetailsApiService.unitChange.next();
     this.currentUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
+    this.currentObqUnit = <QUANTITY_UNIT>localStorage.getItem('unitObs');
   }
 
   /**
