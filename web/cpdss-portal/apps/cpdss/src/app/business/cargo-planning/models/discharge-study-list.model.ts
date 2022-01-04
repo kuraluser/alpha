@@ -228,6 +228,7 @@ export interface IBackLoadingDetails {
     id: ValueObject<number>;
     kl: ValueObject<number>;
     bbls: ValueObject<number>;
+    quantity: number;
     color: ValueObject<string>;
     api: ValueObject<string>;
     temp: ValueObject<string>;
@@ -251,6 +252,7 @@ export interface IPortCargo {
     bbls: ValueObject<string>;
     mt: ValueObject<string>;
     kl: ValueObject<string>;
+    quantity: number;
     mode: ValueObject<IMode>;
     api: ValueObject<number>;
     temp: ValueObject<number>;
@@ -396,7 +398,7 @@ export interface IDischargeStudyCargoNominationList {
     api: number;
     temperature: number;
     mode: number;
-    sequenceNo: string;
+    sequenceNo: string | number;
     emptyMaxNoOfTanks: boolean;
 }
 
@@ -435,5 +437,17 @@ export interface ICargoHistoryDetails {
     temperature: string
     vesselId: number
 }
+
+ /**
+ * ENUM for mode 
+ *
+ * @export
+ * @enum {number}
+ */
+ export enum IDISCHARGE_STUDY_MODE {
+    BALANCE = "Balance",
+    MANUAL = "Manual",
+    ENTIRE = "Entire"
+ }
 
 

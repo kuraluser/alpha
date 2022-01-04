@@ -1,4 +1,5 @@
 import { FormArray, FormControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { IDISCHARGE_STUDY_MODE } from '../../models/discharge-study-list.model';
 
 
 /**
@@ -12,11 +13,11 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
 
   const portDetails = control.root.get('portDetails') as FormArray;
   let totalParentQuantityIndex;
-  let calculatedTotalQuantity = 0;
+  let quantitySum = 0;
   let maxQuantity;
   let isAutoModeAvailable;
-  //Note: - mode 3 need to be confirmed
-  // const isEntireRemainingStatus;
+
+  let isEntireRemainingStatus;
   let noCargoFoundtStatus;
   let isQuantityAutoCorrect;
 
@@ -28,14 +29,13 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
         if (control.parent?.value?.color && backLoadingItems.get('storedKey').value === control.parent?.value?.storedKey) {
           totalParentQuantityIndex = itemIndex;
           if(backLoadingItems.get('mode').value.id === 2) {
-            calculatedTotalQuantity += Number(backLoadingItems.get('kl').value);
-          } else if(backLoadingItems.get('mode').value.id === 1) {
+            quantitySum += Number(backLoadingItems.get('kl').value);
+          } else if(backLoadingItems.get('mode').value.name === IDISCHARGE_STUDY_MODE.BALANCE) {
             isAutoModeAvailable = true;
           } 
-          //Note: - mode 3 need to be confirmed
-          // else if(backLoadingItems.get('mode').value.id === 3) {
-          //   isEntireRemainingStatus = true;
-          // }
+          else if(backLoadingItems.get('mode').value.name === IDISCHARGE_STUDY_MODE.ENTIRE) {
+            isEntireRemainingStatus = true;
+          }
           maxQuantity = Number(backLoadingItems.get('maxKl').value);
         }
       })
@@ -47,37 +47,45 @@ export const dischargeStudyCargoQuantityValidator: ValidatorFn = (control: FormC
           maxQuantity = Number(backLoadingItems.get('kl').value);
         }
       })
-      if(calculatedTotalQuantity === maxQuantity) {
+      if(quantitySum === maxQuantity) {
         isQuantityAutoCorrect = true;
       }
     } else {
       const cargoDataTable = item.get('cargoDetail').get('dataTable') as FormArray;
       const findCargo = cargoDataTable['controls'].find((cargoDetailItems, cargoDetailIndex) => {
         if (control.parent.value.color && cargoDetailItems.get('storedKey').value === control.parent.value.storedKey) {
-          if(cargoDetailItems.get('mode').value?.id === 1) {
+          if(cargoDetailItems.get('mode').value?.name === IDISCHARGE_STUDY_MODE.BALANCE) {
             isAutoModeAvailable = true;
           } 
-          //Note: - mode 3 need to be confirmed
-          // else if(cargoDetailItems.get('mode').value?.id === 3) {
-          //   isEntireRemainingStatus = true;
-          // }
+          
+          else if(cargoDetailItems.get('mode').value?.name === IDISCHARGE_STUDY_MODE.ENTIRE) {
+            isEntireRemainingStatus = true;
+          }
           return cargoDetailItems;
         }
       })
       
-      if (findCargo && findCargo.get('mode').value?.id === 2) {
-        calculatedTotalQuantity = Number((calculatedTotalQuantity + Number(findCargo.get('kl').value)).toFixed(3));
+      if (findCargo && (findCargo.get('mode').value?.name === IDISCHARGE_STUDY_MODE.MANUAL || (!isAutoModeAvailable && findCargo.get('mode').value?.name === IDISCHARGE_STUDY_MODE.ENTIRE))) {
+        quantitySum = Number((quantitySum + Number(findCargo.get('kl').value)).toFixed(3));
       } else if(!findCargo) {
         noCargoFoundtStatus = true;
       }
-      if(calculatedTotalQuantity === maxQuantity) {
+      if(quantitySum === maxQuantity) {
         isQuantityAutoCorrect = true;
       }
     }
   })
-  if(!isQuantityAutoCorrect && calculatedTotalQuantity > maxQuantity) {
+  const constantValue = (0.01 / 100) * maxQuantity;
+  const isQuantityWithInTheRange = () => {
+    if(quantitySum >= (maxQuantity - constantValue) && quantitySum <=(maxQuantity + constantValue)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  if(!isQuantityAutoCorrect && quantitySum > ( maxQuantity + constantValue)) {
     return { greaterThanTotalQuantity: true }
-  } else if(!noCargoFoundtStatus && !isAutoModeAvailable && calculatedTotalQuantity !== maxQuantity && !isQuantityAutoCorrect) {
+  } else if(!noCargoFoundtStatus && !isEntireRemainingStatus && !isAutoModeAvailable && !isQuantityWithInTheRange() && !isQuantityAutoCorrect) {
     return { quantityNotEqual : true }
   } else {
     return null;

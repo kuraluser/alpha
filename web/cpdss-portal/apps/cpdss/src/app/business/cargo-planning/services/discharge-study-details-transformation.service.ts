@@ -17,7 +17,7 @@ import { TimeZoneTransformationService } from '../../../shared/services/time-zon
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { IPortAllDropdownData, IDischargeStudyPortOHQTankDetail , IPortOHQTankDetailValueObject, IDischargeStudyPortsValueObject } from '../models/cargo-planning.model';
 import { IPermissionContext, PERMISSION_ACTION, QUANTITY_UNIT, IMode } from '../../../shared/models/common.model';
-import { ICowDetailsValueObject , IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails , IPortCargoDetails } from '../models/discharge-study-list.model';
+import { ICowDetailsValueObject , IDischargeOHQStatus, IDischargeStudyDropdownData , IBackLoadingDetails  , IBillingOfLaddings ,ILoadableQuantityCommingleCargo , ICommingleCargoDispaly , IBillingFigValueObject  ,  IPortDetailValueObject , IPortCargo , IDischargeStudyPortListDetails , IDischargeStudyCargoNominationList , IDischargeStudyBackLoadingDetails , IPortCargoDetails , IDISCHARGE_STUDY_MODE } from '../models/discharge-study-list.model';
 import { IOperations, IPort, IDischargeStudyPortList , DISCHARGE_STUDY_STATUS , VOYAGE_STATUS, ICargo, OPERATIONS } from '../../core/models/common.model';
 
 
@@ -849,17 +849,31 @@ getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
       field: 'bbls',
       header: 'DISCHARGE_STUDY_DISCHARGE_BBLS',
       fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-      editable: false,
+      editable: true,
       unit: QUANTITY_UNIT.BBLS,
-      numberType: 'quantity'
+      numberType: 'quantity',
+      errorMessages: {
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'greaterThanTotalQuantity': 'SUM_OF_QUANTITY_GREATER_THAN_TOTAL_QUANTITY',
+        'quantityNotEqual': 'QUANTITY_NOT_EQUAL',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE',
+      }
     },
     {
       field: 'mt',
       header: 'DISCHARGE_STUDY_DISCHARGE_MT',
       fieldType: DATATABLE_FIELD_TYPE.NUMBER,
       unit: QUANTITY_UNIT.MT,
-      editable: false,
-      numberType: 'quantity'
+      editable: true,
+      numberType: 'quantity',
+      errorMessages: {
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'greaterThanTotalQuantity': 'SUM_OF_QUANTITY_GREATER_THAN_TOTAL_QUANTITY',
+        'quantityNotEqual': 'QUANTITY_NOT_EQUAL',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE',
+      }
     },
     {
       field: 'kl',
@@ -948,9 +962,12 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       numberType: 'quantity',
       fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_BBLS',
       showTotal: true,
-      editable: false,
+      editable: true,
       errorMessages: {
-        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'backloadingGreaterThanLoading': 'DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY'
       }
     },
     {
@@ -961,9 +978,12 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       showTotal: true,
       numberType: 'quantity',
       fieldPlaceholder: 'DISCHARGE_STUDY_BACK_LOADING_MT',
-      editable: false,
+      editable: true,
       errorMessages: {
-        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR'
+        'required': 'DISCHARGE_STUDY_FIELD_REQUIRED_ERROR',
+        'min': 'DISCHARGE_STUDY_QUANTITY_MIN_VALUE',
+        'invalidNumber': 'DISCHARGE_STUDY_INVALID_ERROR',
+        'backloadingGreaterThanLoading': 'DISCHARGE_STUDY_BACK_LOADING_GREATER_THAN_LOADABLE_QUANTITY'
       }
     },
     {
@@ -1148,35 +1168,35 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
       const isKlEditable = mode?.id === 2 || mode?.id === 1 ? true : false;
       //Note: - mode 3 need to be confirmed
-      // let isAutoAvailable;
-      // if(mode?.id === 3) {
-      //   isAutoAvailable = portDetailsValueAsObject?.find((portDetailValueAsObject) => {
-      //     return portDetailValueAsObject.cargoDetail?.some((cargo) =>{
-      //       return cargo.storedKey?.value === storedKey && cargo.mode.value?.id === 1;
-      //     })
-      //   })
-      // }
+      let isAutoAvailable;
+      if(mode?.id === 3) {
+        isAutoAvailable = portDetailsValueAsObject?.find((portDetailValueAsObject) => {
+          return portDetailValueAsObject.cargoDetail?.some((cargo) =>{
+            return cargo.storedKey?.value === storedKey && cargo.mode.value?.id === 1;
+          })
+        })
+      }
       
       const unitConversion = {
         kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
-        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
+        bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature),
+        mt: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.MT, cargoDetail.api, cargoDetail.temperature),
+        quantity: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature,-1)
       }
-      _cargoDetailValuObject.sequenceNo = new ValueObject<string>(cargoDetail.sequenceNo , true , false);
+      _cargoDetailValuObject.sequenceNo = new ValueObject<string>(cargoDetail.sequenceNo?.toString() , true , false);
       _cargoDetailValuObject.emptyMaxNoOfTanks = new ValueObject<boolean>(cargoDetail.emptyMaxNoOfTanks ?? false, true, true),
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
-      //Note: - mode 3 need to be confirmed
-      // (isAutoAvailable && mode?.id === 3)
-      _cargoDetailValuObject.bbls = new ValueObject<string>(mode?.id === 2 ? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false);
+ 
+      _cargoDetailValuObject.bbls = new ValueObject<string>(mode?.id === 2 || (!isAutoAvailable && mode?.id === 3)? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
-      //Note: - mode 3 need to be confirmed
-      // (isAutoAvailable && mode?.id === 3)
-      _cargoDetailValuObject.kl = new ValueObject<string>(mode?.id === 2  ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
+
+      _cargoDetailValuObject.kl = new ValueObject<string>(mode?.id === 2 || (!isAutoAvailable && mode?.id === 3) ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
       _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
-      //Note: - mode 3 need to be confirmed
-      // (isAutoAvailable && mode?.id === 3)
-      _cargoDetailValuObject.mt = new ValueObject<string>(mode?.id === 2 ? cargoDetail.quantity +'' : '-', true , false);
+      _cargoDetailValuObject.quantity = unitConversion.quantity;
+
+      _cargoDetailValuObject.mt = new ValueObject<string>(mode?.id === 2 || (!isAutoAvailable && mode?.id === 3) ? (unitConversion.mt ? unitConversion.mt+'' : '0'): '-', true , false , false,isKlEditable);
       _cargoDetailValuObject.mode = new ValueObject<IMode>(mode , true , false);
       _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true , false);
       _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);
@@ -1208,6 +1228,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
         mode: new ValueObject<IMode>(mode , true , false),
         api: new ValueObject<number>(backLoadingDetails.api.value, true , false),
         temp: new ValueObject<number>(backLoadingDetails.temp.value, true , false),
+        quantity: backLoadingDetails.quantity
       }
     }
    /**
@@ -1224,13 +1245,16 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       const unitConversion = {
         kl: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature),
         bbls: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.BBLS, backLoadingDetail.api, backLoadingDetail.temperature),
+        mt: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.MT, backLoadingDetail.api, backLoadingDetail.temperature),
+        quantity: this.quantityPipe.transform(backLoadingDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, backLoadingDetail.api, backLoadingDetail.temperature,-1),
       }
       const cargoObj: ICargo = cargoDetails?.cargos ? cargoDetails.cargos.find(cargo => cargo.id === backLoadingDetail.cargoId) : null;
       _backLoadingDetailDetail.color = new ValueObject<string>(backLoadingDetail.color , true , isNewValue);
-      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls ? unitConversion.bbls : 0, true , false);
+      _backLoadingDetailDetail.bbls = new ValueObject<number>(unitConversion.bbls ? unitConversion.bbls : 0, true , false , true);
+      _backLoadingDetailDetail.quantity = unitConversion.quantity;
       _backLoadingDetailDetail.cargo = new ValueObject<ICargo>(cargoObj, true , isNewValue);
       _backLoadingDetailDetail.kl = new ValueObject<number>(unitConversion.kl ? unitConversion.kl : 0 , true , isNewValue);
-      _backLoadingDetailDetail.mt = new ValueObject<number>(backLoadingDetail.quantity  , true , false);
+      _backLoadingDetailDetail.mt = new ValueObject<number>(unitConversion.mt ? unitConversion.mt : 0  , true , false , true);
       _backLoadingDetailDetail.api = new ValueObject<string>(backLoadingDetail.api?.toString() , true , isNewValue);
       _backLoadingDetailDetail.temp = new ValueObject<string>(backLoadingDetail.temperature?.toString() , true , isNewValue);
       _backLoadingDetailDetail.isDelete = true;
@@ -1355,13 +1379,13 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       if (Object.prototype.hasOwnProperty.call(cargoDetails, key)) {
         switch(key) {
           case 'sequenceNo':
-            _cargoDetails.sequenceNo = cargoDetails.sequenceNo.value;
+            _cargoDetails.sequenceNo = Number(cargoDetails.sequenceNo.value);
             break;
           case 'emptyMaxNoOfTanks':
               _cargoDetails.emptyMaxNoOfTanks = cargoDetails.emptyMaxNoOfTanks.value;
               break;
           case 'mt':
-            _cargoDetails.quantity = cargoDetails.mode.value.id === 1  ? 0 : +cargoDetails.mt.value;
+            _cargoDetails.quantity = cargoDetails.mode.value.name === IDISCHARGE_STUDY_MODE.BALANCE  ? 0 : this.quantityPipe.transform(cargoDetails.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, cargoDetails.api.value, cargoDetails.temp.value,-1);
             break;
           case 'mode':
             _cargoDetails.mode = cargoDetails.mode.value.id;
@@ -1404,7 +1428,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       if (Object.prototype.hasOwnProperty.call(backLoading, key)) {
         switch(key) {
           case 'mt':
-            _backLoading.quantity = +backLoading.mt.value;
+            _backLoading.quantity = this.quantityPipe.transform(backLoading.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, backLoading.api.value, backLoading.temp.value,-1);
             break;
           case 'color':
             _backLoading.color = backLoading.color.value;
