@@ -519,7 +519,7 @@ public class DischargeStudyService {
                   ? null
                   : new BigDecimal(port.getFreshCrudeOilTime()));
           portRotation.setCow(port.getCow());
-          portRotation.setDischargeRate(new BigDecimal(0));
+
           if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
             List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
                 portIdsToCargoNominationMap.get(port.getPortId());
@@ -572,6 +572,12 @@ public class DischargeStudyService {
                   && !cargoNominationDetail.getDischargingTime().isBlank()) {
                 cargoNomination.setDischargeTime(
                     new BigDecimal(cargoNominationDetail.getDischargingTime()));
+              }
+              // Bug fix  DSS-5162
+              if (cargoNominationDetail.getDischargingRate() != null
+                  && !cargoNominationDetail.getDischargingRate().isBlank()) {
+                cargoNomination.setDischargeRate(
+                    new BigDecimal(cargoNominationDetail.getDischargingRate()));
               }
               if (nominationPort.isPresent()) {
                 cargoNomination.setQuantity(new BigDecimal(nominationPort.get().getQuantity()));
