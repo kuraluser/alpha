@@ -1182,7 +1182,8 @@ public class LoadingSequenceService {
       Long loadingInfoId,
       Builder builder) {
     builder.setLoadingInfoId(loadingInfoId);
-    builder.setHasLoadicator(loadingPlanAlgoRequest.getHasLoadicator());
+    Optional.ofNullable(loadingPlanAlgoRequest.getHasLoadicator())
+        .ifPresent(builder::setHasLoadicator);
     AtomicInteger sequenceNumber = new AtomicInteger(0);
     VesselIdRequest.Builder vesselReqBuilder = VesselIdRequest.newBuilder();
     vesselReqBuilder.setVesselId(vesselId);

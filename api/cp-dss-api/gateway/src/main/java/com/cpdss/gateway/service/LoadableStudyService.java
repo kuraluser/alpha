@@ -3519,13 +3519,18 @@ public class LoadableStudyService {
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
     request.setLoadableStudyId(loadableStudiesId);
-    request.setHasLodicator(loadablePlanRequest.getHasLoadicator());
+    Optional.ofNullable(loadablePlanRequest.getHasLoadicator()).ifPresent(request::setHasLodicator);
+    Optional.ofNullable(loadablePlanRequest.getProcessId()).ifPresent(request::setProcesssId);
     if (requestType.equals(DISCHARGE_STUDY_SAVE_REQUEST)) {
       request.setRequestType(DICHARGE_STUDY);
-      buildDischargePlanDetails(loadablePlanRequest, request);
+      if (loadablePlanRequest.getDischargePlanDetails() != null) {
+        buildDischargePlanDetails(loadablePlanRequest, request);
+      }
     } else {
       request.setRequestType(LOADABLE_STUDY);
-      buildLoadablePlanDetails(loadablePlanRequest, request);
+      if (loadablePlanRequest.getLoadablePlanDetails() != null) {
+        buildLoadablePlanDetails(loadablePlanRequest, request);
+      }
     }
 
     if (loadablePlanRequest.getErrors() != null && !loadablePlanRequest.getErrors().isEmpty()) {
@@ -3555,7 +3560,6 @@ public class LoadableStudyService {
       LoadablePlanRequest loadablePlanRequest,
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
-    Optional.ofNullable(loadablePlanRequest.getProcessId()).ifPresent(request::setProcesssId);
     loadablePlanRequest
         .getLoadablePlanDetails()
         .forEach(
@@ -3669,7 +3673,6 @@ public class LoadableStudyService {
       LoadablePlanRequest loadablePlanRequest,
       com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.Builder request) {
     LoadablePlanDetails.Builder planBuilder = LoadablePlanDetails.newBuilder();
-    Optional.ofNullable(loadablePlanRequest.getProcessId()).ifPresent(request::setProcesssId);
     if (loadablePlanRequest.getDischargePlanDetails() != null) {
       loadablePlanRequest
           .getDischargePlanDetails()
@@ -5454,11 +5457,14 @@ public class LoadableStudyService {
 
     AlgoPatternResponse algoPatternResponse = new AlgoPatternResponse();
     LoadablePatternAlgoRequest.Builder request = LoadablePatternAlgoRequest.newBuilder();
-    request.setLoadablePatternId(loadablePatternId);
-    request.setValidated(patternValidateResultRequest.getValidated());
-    request.setHasLodicator(patternValidateResultRequest.getHasLoadicator());
+    Optional.ofNullable(loadablePatternId).ifPresent(request::setLoadablePatternId);
+    Optional.ofNullable(patternValidateResultRequest.getValidated())
+        .ifPresent(request::setValidated);
+    Optional.ofNullable(patternValidateResultRequest.getHasLoadicator())
+        .ifPresent(request::setHasLodicator);
 
-    if (patternValidateResultRequest.getValidated()) {
+    if (patternValidateResultRequest.getValidated() != null
+        && patternValidateResultRequest.getValidated()) {
       LoadablePlanRequest loadablePlanRequest = new LoadablePlanRequest();
       loadablePlanRequest.setLoadablePlanDetails(
           Arrays.asList(patternValidateResultRequest.getLoadablePlanDetails()));
@@ -5467,7 +5473,8 @@ public class LoadableStudyService {
       if (null != patternValidateResultRequest.getErrors())
         buildAlgoError(patternValidateResultRequest.getErrors(), request);
     }
-    request.setProcesssId(patternValidateResultRequest.getProcessId());
+    Optional.ofNullable(patternValidateResultRequest.getProcessId())
+        .ifPresent(request::setProcesssId);
     AlgoReply algoReply = this.patternValidateResult(request);
     if (!SUCCESS.equals(algoReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

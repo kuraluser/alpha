@@ -103,7 +103,8 @@ public class DischargingSequenceService {
       Long loadingInfoId,
       Builder builder) {
     builder.setDischargingInfoId(loadingInfoId);
-    builder.setHasLoadicator(dischargingPlanAlgoRequest.getHasLoadicator());
+    Optional.ofNullable(dischargingPlanAlgoRequest.getHasLoadicator())
+        .ifPresent(builder::setHasLoadicator);
     AtomicInteger sequenceNumber = new AtomicInteger(0);
     VesselIdRequest.Builder vesselReqBuilder = VesselIdRequest.newBuilder();
     vesselReqBuilder.setVesselId(vesselId);
