@@ -85,7 +85,7 @@ export class AddBerthComponent implements OnInit {
       portId: this.fb.control(berths?.portId),
       berthName: this.fb.control(berths?.berthName?.value, [Validators.maxLength(100)]),
       maxDraft: this.fb.control(berths?.maxDraft?.value, [Validators.required, numberValidator(2, 2, false)]),
-      depthInDatum: this.fb.control(berths?.depthInDatum?.value),
+      depthInDatum: this.fb.control(berths?.depthInDatum?.value, [numberValidator(2, 2, false)]),
       maxLoa: this.fb.control(berths?.maxLoa?.value, [Validators.required, numberValidator(2, 4, false)]),
       maxDwt: this.fb.control(berths?.maxDwt?.value, [Validators.required, numberValidator(2, 7, false)]),
       maxShipDepth: this.fb.control(berths?.maxShipDepth?.value, [Validators.required, numberValidator(2, 2, false)]),
