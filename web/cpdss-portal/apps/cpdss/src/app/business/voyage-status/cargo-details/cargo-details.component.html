@@ -24,15 +24,15 @@
                             [ngStyle]="rowData?.colorCode && {'background' : rowData?.colorCode}">
                         </div>
                     </ng-container>
-                    <ng-container [ngSwitch]="col.fieldType"> 
-                        <ng-container *ngSwitchCase="fieldType.NUMBER">{{rowData[col.field]  | quantityDecimalFormat: currentQuantitySelectedUnit}}</ng-container>  
-                        <ng-container *ngSwitchDefault>{{rowData[col.field]}}</ng-container> 
+                    <ng-container [ngSwitch]="col.fieldType">
+                        <ng-container *ngSwitchCase="fieldType.NUMBER">{{rowData[col.field]  | quantityDecimalFormat: currentQuantitySelectedUnit}}</ng-container>
+                        <ng-container *ngSwitchDefault>{{rowData[col.field]}}</ng-container>
                     </ng-container>
-                    
+
                 </ng-container>
                 <ng-container *ngIf="col.field === 'difference'">
-                    <span *ngIf="rowData[col.field]!==0" class="badge-custom content-ellipsis"  [pTooltip]="rowData?.isPositive ? ((rowData[col.field] | number :'1.2-2')) : (rowData[col.field] | number :'1.2-2')" tooltipPosition="top"
-                        [ngStyle]="{'background': rowData?.isPositive?  'green' : 'red' }"> 
+                    <span *ngIf="rowData[col.field]!==0" class="badge-custom content-ellipsis"  [pTooltip]="rowData?.isPositive ? ((rowData[col.field] | quantityDecimalFormat: currentQuantitySelectedUnit)) : (rowData[col.field] | quantityDecimalFormat: currentQuantitySelectedUnit)" tooltipPosition="top"
+                        [ngStyle]="{'background': rowData?.isPositive?  'green' : 'red' }">
                         {{rowData[col.field] | quantityDecimalFormat: currentQuantitySelectedUnit}}
                     </span>
                     <span *ngIf="rowData[col.field]===0"> {{rowData[col.field] | quantityDecimalFormat: currentQuantitySelectedUnit}}</span>

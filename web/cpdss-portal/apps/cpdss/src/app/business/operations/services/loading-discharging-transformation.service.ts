@@ -1160,7 +1160,9 @@ export class LoadingDischargingTransformationService {
     };
 
     // Update discharging details
+
     dischargingInformation.dischargeDetails = dischargingInformationResponse?.dischargeDetails;
+    dischargingInformation.dischargeDetails.trimAllowed.initialTrim = dischargingInformationResponse?.dischargeDetails?.trimAllowed?.initialTrim ? dischargingInformationResponse?.dischargeDetails?.trimAllowed?.initialTrim : 0;
     dischargingInformation.dischargeDetails.trimAllowed.strippingTrim = dischargingInformationResponse?.dischargeDetails?.trimAllowed?.finalTrim;
 
     //Update tank list
@@ -1302,6 +1304,7 @@ export class LoadingDischargingTransformationService {
     const cowDetails = <ICOWDetails>{};
     cowDetails.cowOption = listData.cowOptions.find(option => option.id === dischargingInformationResponse?.cowPlan?.cowOption);
     cowDetails.cowPercentage = listData.cowPercentages.find(percentage => percentage.value === Number(dischargingInformationResponse?.cowPlan?.cowPercentage));
+    cowDetails.enableDayLightRestriction = dischargingInformationResponse?.cowPlan?.enableDayLightRestriction;
 
     cowDetails.allCOWTanks = dischargingInformationResponse?.cowPlan?.allCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
     cowDetails.topCOWTanks = dischargingInformationResponse?.cowPlan?.topCow?.map(tankId => dischargingInformation?.cargoTanks?.find(cargoTank => cargoTank.id === tankId));
@@ -1320,8 +1323,7 @@ export class LoadingDischargingTransformationService {
     cowDetails.cowTrimMax = dischargingInformationResponse?.cowPlan?.cowTrimMax;
     cowDetails.cowTrimMin = dischargingInformationResponse?.cowPlan?.cowTrimMin;
 
-    cowDetails.needFlushingOil = dischargingInformationResponse?.cowPlan?.needFlushingOil;
-    cowDetails.needFreshCrudeStorage = dischargingInformationResponse?.cowPlan?.needFreshCrudeStorage;
+    cowDetails.needFlushingOilAndCrudeStorage = dischargingInformationResponse?.cowPlan?.needFlushingOilAndCrudeStorage;
 
     cowDetails.washTanksWithDifferentCargo = dischargingInformationResponse?.cowPlan?.washTanksWithDifferentCargo;
     const tanksWashingWithDifferentCargo: ITanksWashingWithDifferentCargo[] = dischargingInformation?.cargoVesselTankDetails?.loadableQuantityCargoDetails?.map(cargo => {

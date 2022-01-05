@@ -85,6 +85,7 @@ export class CowPlanComponent implements OnInit {
       washTanksWithDifferentCargo: this.fb.control(this.cowDetails?.washTanksWithDifferentCargo),
       cowOption: this.fb.control(this.cowDetails?.cowOption, [Validators.required]),
       cowPercentage: this.fb.control(this.cowDetails?.cowPercentage),
+      enableDayLightRestriction: this.fb.control(this.cowDetails?.enableDayLightRestriction),
       topCOWTanks: this.fb.control(this.cowDetails?.topCOWTanks, [tankPreferenceDuplicationValidator('top')]),
       selectedTopCOWTanks: this.joinDropOptionsToLabel(this.cowDetails?.topCOWTanks),
       bottomCOWTanks: this.fb.control(this.cowDetails?.bottomCOWTanks),
@@ -97,8 +98,7 @@ export class CowPlanComponent implements OnInit {
       cowDuration: this.fb.control(this.cowDetails?.cowDuration),
       cowTrimMin: this.fb.control(this.cowDetails?.cowTrimMin, [Validators.required, Validators.min(3.5), Validators.max(4.5), numberValidator(2, 1)]),
       cowTrimMax: this.fb.control(this.cowDetails?.cowTrimMax, [Validators.required, Validators.min(5.5), Validators.max(6.5), numberValidator(2, 1)]),
-      needFreshCrudeStorage: this.fb.control(this.cowDetails?.needFreshCrudeStorage),
-      needFlushingOil: this.fb.control(this.cowDetails?.needFlushingOil),
+      needFlushingOilAndCrudeStorage: this.fb.control(this.cowDetails?.needFlushingOilAndCrudeStorage),
     }));
     this.setWashWithDifferentCargoChangeValidation(this.cowDetails?.washTanksWithDifferentCargo);
   }
@@ -174,8 +174,14 @@ export class CowPlanComponent implements OnInit {
       this.cowDetailsForm.controls.allCOWTanks.enable();
       this.cowDetailsForm.controls.bottomCOWTanks.enable();
       this.cowDetailsForm.controls.topCOWTanks.enable();
-      this.cowDetailsForm.controls.washTanksWithDifferentCargo.enable();
-      this.enableDisableTanksWashWithDifferentCargoFields(this.cowDetailsForm.controls.washTanksWithDifferentCargo?.value);
+
+      if (this.cowDetails.tanksWashingWithDifferentCargo.length === 1) {
+        this.cowDetailsForm.controls.washTanksWithDifferentCargo.disable();
+        this.cowDetailsForm.controls.tanksWashingWithDifferentCargo.disable();
+      } else {
+        this.cowDetailsForm.controls.washTanksWithDifferentCargo.enable();
+        this.enableDisableTanksWashWithDifferentCargoFields(this.cowDetailsForm.controls.washTanksWithDifferentCargo?.value);
+      }
       this.cowDetailsForm.controls?.cowPercentage.clearValidators();
     }
   }
@@ -202,7 +208,7 @@ export class CowPlanComponent implements OnInit {
   */
   fieldErrorCargo(index: number,formControlName: string): ValidationErrors{
     const formArray = this.cowDetailsForm.controls.tanksWashingWithDifferentCargo as FormArray;
-    return formArray.at(index).get(formControlName).invalid ? formArray.at(index).get(formControlName)?.errors : null;; 
+    return formArray.at(index).get(formControlName).invalid ? formArray.at(index).get(formControlName)?.errors : null;;
   }
   /**
    * Set validation for washing cargo
@@ -212,7 +218,7 @@ export class CowPlanComponent implements OnInit {
    */
   setWashWithDifferentCargoChangeValidation(status: boolean) {
     const validation = status ? [Validators.required] : [];
-    const formArray = this.cowDetailsForm.controls.tanksWashingWithDifferentCargo as FormArray; 
+    const formArray = this.cowDetailsForm.controls.tanksWashingWithDifferentCargo as FormArray;
     const recursiveFunc = (form: FormGroup | FormArray) => {
       Object.keys(form.controls).forEach(field => {
         const control = form.get(field);
@@ -222,7 +228,7 @@ export class CowPlanComponent implements OnInit {
         }
         if (control instanceof FormGroup) {
           recursiveFunc(control);
-        } 
+        }
       });
     }
     recursiveFunc(formArray);

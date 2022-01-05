@@ -357,11 +357,11 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     this.dischargingInformationPostData.cowPlan = {
       cowOption: event?.cowOption?.id,
       cowPercentage: event?.cowPercentage?.value,
+      enableDayLightRestriction: event?.enableDayLightRestriction,
       cowStart: moment.duration(event?.cowStart).asMinutes().toString(),
       cowEnd: moment.duration(event?.cowEnd).asMinutes().toString(),
       cowDuration: moment.duration(event?.cowDuration).asMinutes().toString(),
-      needFreshCrudeStorage: event?.needFreshCrudeStorage,
-      needFlushingOil: event?.needFlushingOil,
+      needFlushingOilAndCrudeStorage: event?.needFlushingOilAndCrudeStorage,
       washTanksWithDifferentCargo: event?.washTanksWithDifferentCargo,
       topCow: event?.topCOWTanks?.map(tank => tank.id),
       bottomCow: event?.bottomCOWTanks?.map(tank => tank.id),

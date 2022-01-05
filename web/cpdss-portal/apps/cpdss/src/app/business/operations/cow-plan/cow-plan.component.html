@@ -5,8 +5,8 @@
   <div class="row" *ngIf="editMode">
     <div class="col ml-15">
       <div class="row">
-        <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_SELECT_COW_OPTION' | translate}}</label>
-        <div class="col-2 error-icon-wrapper">
+        <label for="cow_option" class="col-6 col-form-label">{{ 'DISCHARGING_SELECT_COW_OPTION' | translate}}</label>
+        <div class="col-4 error-icon-wrapper pt-5">
           <p-dropdown [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_OPTION'| translate }}"
             styleClass="form-control" (onChange)="onCowOptionChange($event)"></p-dropdown>
             <cpdss-portal-validation-error [errors]="fieldError('cowOption')" [errorMessages]="errorMesages?.cowOption">
@@ -15,12 +15,22 @@
       </div>
 
       <div class="row">
-        <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_NO_OF_TANKS' | translate}}</label>
-        <div class="col-2 error-icon-wrapper">
+        <label for="cow_option" class="col-6 col-form-label">{{ 'DISCHARGING_NO_OF_TANKS' | translate}}</label>
+        <div class="col-4 error-icon-wrapper pt-5">
           <p-dropdown [options]="listData?.cowPercentages" formControlName="cowPercentage" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_PERCENTAGE'| translate }}"
             styleClass="form-control" (onChange)="onChange($event)"></p-dropdown>
             <cpdss-portal-validation-error [errors]="fieldError('cowPercentage')" [errorMessages]="errorMesages?.cowPercentage">
             </cpdss-portal-validation-error>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="row">
+        <div class="col-auto mt-10">
+          <label class="checkbox-custom pr-20">{{'DISCHARGING_CONSIDER_DAY_LIGHT_RESTRICTION' | translate}}
+            <input type="checkbox" formControlName="enableDayLightRestriction" (change)="onChange($event)">
+            <span class="checkmark"></span>
+          </label>
         </div>
       </div>
     </div>
@@ -281,15 +291,8 @@
         <div class="col ml-15">
           <div class="form-row align-items-center">
             <div class="col-auto">
-              <label class="checkbox-custom pr-20">{{'DISCHARGING_ADDITIONAL_REQUIREMENT_CRUDE_STORAGE' | translate}}
-                <input type="checkbox" formControlName="needFreshCrudeStorage" (change)="onChange($event)">
-                <span class="checkmark"></span>
-              </label>
-            </div>
-
-            <div class="col-auto">
-              <label class="checkbox-custom pr-20">{{'DISCHARGING_ADDITIONAL_REQUIREMENT_FLUSHING_OIL' | translate}}
-                <input type="checkbox" formControlName="needFlushingOil" (change)="onChange($event)">
+              <label class="checkbox-custom pr-20">{{'DISCHARGING_ADDITIONAL_REQUIREMENT_CRUDE_STORAGE_FLUSHING_OIL' | translate}}
+                <input type="checkbox" formControlName="needFlushingOilAndCrudeStorage" (change)="onChange($event)">
                 <span class="checkmark"></span>
               </label>
             </div>

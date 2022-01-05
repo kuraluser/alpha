@@ -653,6 +653,7 @@ export interface IPostDischargeStageTime {
 export interface ICOWDetails {
   cowOption: IMode;
   cowPercentage: IPercentage;
+  enableDayLightRestriction: boolean;
   topCOWTanks: ITank[];
   bottomCOWTanks: ITank[];
   allCOWTanks: ITank[];
@@ -662,8 +663,7 @@ export interface ICOWDetails {
   cowDuration: string;
   cowTrimMin: number;
   cowTrimMax: number;
-  needFreshCrudeStorage: boolean;
-  needFlushingOil: boolean;
+  needFlushingOilAndCrudeStorage: boolean;
   washTanksWithDifferentCargo: boolean;
   totalDuration: string;
 }
@@ -677,6 +677,7 @@ export interface ICOWDetails {
 export interface ICOWDetailsResponse {
   cowOption: number;
   cowPercentage: number;
+  enableDayLightRestriction: boolean;
   topCow: number[];
   bottomCow: number[];
   allCow: number[];
@@ -686,8 +687,7 @@ export interface ICOWDetailsResponse {
   cowDuration: string;
   cowTrimMin: number;
   cowTrimMax: number;
-  needFreshCrudeStorage: boolean;
-  needFlushingOil: boolean;
+  needFlushingOilAndCrudeStorage: boolean
   washTanksWithDifferentCargo: boolean;
   totalDuration?: string;
 }
