@@ -770,7 +770,11 @@ public class CargoPortInfoService {
       throws GenericServiceException {
 
     PortsResponse cargosResponse = new PortsResponse();
+
     // Retrieve ports information from port info
+    if ("waterDensity".equals(sortBy)) {
+      sortBy = "densitySeaWater";
+    }
     PortRequest.Builder portRequestBuilder =
         PortRequest.newBuilder()
             .setPage(page)
