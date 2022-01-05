@@ -9,7 +9,7 @@ import lombok.Data;
 
 /** Dto for displaying cargo detailed master info */
 @Data
-@JsonInclude(Include.NON_EMPTY)
+@JsonInclude(Include.NON_NULL)
 public class CargosDetailedResponse {
 
   private CommonSuccessResponse responseStatus;

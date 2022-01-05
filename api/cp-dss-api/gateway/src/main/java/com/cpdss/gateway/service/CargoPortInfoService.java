@@ -400,50 +400,55 @@ public class CargoPortInfoService {
       CargosDetailedResponse cargosResponse,
       CargoInfo.CargoDetailedReply cargoReply,
       List<PortInfo.CargoPortMappingDetail> cargoPortMappings) {
-    if (cargoReply != null && !cargoReply.getCargosList().isEmpty()) {
-      List<CargoDetailed> cargoList = new ArrayList<>();
-      cargoReply
-          .getCargosList()
-          .forEach(
-              cargo -> {
-                CargoDetailed cargoDetail = new CargoDetailed();
-                cargoDetail.setAbbreviation(cargo.getAbbreviation());
-                cargoDetail.setApi(cargo.getApi());
-                cargoDetail.setId(cargo.getId());
-                cargoDetail.setName(cargo.getName());
-                cargoDetail.setBenzene(cargo.getBenzene());
-                cargoDetail.setCloudPoint(cargo.getCloudPoint());
-                cargoDetail.setTemp(cargo.getTemp());
-                cargoDetail.setReidVapourPressure(cargo.getReidVapourPressure());
-                cargoDetail.setGas(cargo.getGas());
-                cargoDetail.setTotalWax(cargo.getTotalWax());
-                cargoDetail.setPourPoint(cargo.getPourPoint());
-                cargoDetail.setCloudPoint(cargo.getCloudPoint());
-                cargoDetail.setViscosity(cargo.getViscosity());
-                cargoDetail.setCowCodes(cargo.getCowCodes());
-                cargoDetail.setHydrogenSulfideOil(cargo.getHydrogenSulfideOil());
-                cargoDetail.setHydrogenSulfideVapour(cargo.getHydrogenSulfideVapour());
-                cargoDetail.setSpecialInstrictionsRemark(cargo.getSpecialInstrictionsRemark());
-                cargoDetail.setAssayDate(
-                    StringUtils.isBlank(cargo.getAssayDate())
-                        ? null
-                        : LocalDate.from(
-                            DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT)
-                                .parse(cargo.getAssayDate())));
-                // adding ports that are mapped to this cargo
-                List<PortInfo.CargoPortMappingDetail> cargoPorts =
-                    cargoPortMappings.stream()
-                        .filter(
-                            cargoPortMappingDetail ->
-                                cargoPortMappingDetail.getCargoId() == cargo.getId())
-                        .collect(Collectors.toList());
-                List<CargoPortMapping> cargoPortMappingList = this.buildMappings(cargoPorts);
-                cargoDetail.setLoadingInformation(cargoPortMappingList);
-                cargoList.add(cargoDetail);
-              });
-      cargosResponse.setCargos(cargoList);
-      cargosResponse.setTotalElements(cargoReply.getTotalElements());
-    }
+
+    List<CargoDetailed> cargoList = new ArrayList<>();
+    cargoReply
+        .getCargosList()
+        .forEach(
+            cargo -> {
+              CargoDetailed cargoDetail = new CargoDetailed();
+
+              cargoDetail.setAbbreviation(cargo.getAbbreviation());
+              cargoDetail.setApi(cargo.getApi());
+              cargoDetail.setId(cargo.getId());
+              cargoDetail.setName(cargo.getName());
+              cargoDetail.setBenzene(cargo.getBenzene());
+              cargoDetail.setCloudPoint(cargo.getCloudPoint());
+              cargoDetail.setTemp(cargo.getTemp());
+              cargoDetail.setReidVapourPressure(cargo.getReidVapourPressure());
+
+              cargoDetail.setGas(cargo.getGas());
+              cargoDetail.setTotalWax(cargo.getTotalWax());
+              cargoDetail.setPourPoint(cargo.getPourPoint());
+              cargoDetail.setCloudPoint(cargo.getCloudPoint());
+              cargoDetail.setViscosity(cargo.getViscosity());
+              cargoDetail.setCowCodes(cargo.getCowCodes());
+              cargoDetail.setHydrogenSulfideOil(cargo.getHydrogenSulfideOil());
+              cargoDetail.setHydrogenSulfideVapour(cargo.getHydrogenSulfideVapour());
+              cargoDetail.setSpecialInstrictionsRemark(cargo.getSpecialInstrictionsRemark());
+
+              cargoDetail.setAssayDate(
+                  StringUtils.isBlank(cargo.getAssayDate())
+                      ? null
+                      : LocalDate.from(
+                          DateTimeFormatter.ofPattern(CARGO_DATE_FORMAT)
+                              .parse(cargo.getAssayDate())));
+
+              // adding ports that are mapped to this cargo
+              List<PortInfo.CargoPortMappingDetail> cargoPorts =
+                  cargoPortMappings.stream()
+                      .filter(
+                          cargoPortMappingDetail ->
+                              cargoPortMappingDetail.getCargoId() == cargo.getId())
+                      .collect(Collectors.toList());
+
+              List<CargoPortMapping> cargoPortMappingList = this.buildMappings(cargoPorts);
+              cargoDetail.setLoadingInformation(cargoPortMappingList);
+              cargoList.add(cargoDetail);
+            });
+
+    cargosResponse.setCargos(cargoList);
+    cargosResponse.setTotalElements(cargoReply.getTotalElements());
   }
 
   /**
