@@ -1,9 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
-import static com.cpdss.gateway.common.GatewayConstants.DISCHARGING_RULE_MASTER_ID;
-import static com.cpdss.gateway.common.GatewayConstants.SUCCESS;
+import static com.cpdss.gateway.common.GatewayConstants.*;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
@@ -50,6 +50,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -824,7 +825,13 @@ public class DischargeInformationService {
             error -> {
               AlgoError algoError = new AlgoError();
               algoError.setErrorHeading(error.getErrorHeading());
-              algoError.setErrorDetails(error.getErrorMessagesList());
+              if (!error
+                  .getErrorHeading()
+                  .equalsIgnoreCase(AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR)) {
+                algoError.setErrorDetails(error.getErrorMessagesList());
+              } else {
+                algoError.setErrorDetails(Arrays.asList(ALGO_CANNOT_PROCESS_MSG));
+              }
               algoErrors.add(algoError);
             });
     algoResponse.setAlgoErrors(algoErrors);

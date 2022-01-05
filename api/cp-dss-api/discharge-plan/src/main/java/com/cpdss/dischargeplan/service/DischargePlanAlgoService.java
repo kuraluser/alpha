@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
+import static com.cpdss.dischargeplan.service.utility.DischargePlanConstants.SUCCESS;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
@@ -11,6 +12,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
@@ -44,6 +46,7 @@ import com.cpdss.dischargeplan.domain.DischargeStages;
 import com.cpdss.dischargeplan.domain.PostDischargeRates;
 import com.cpdss.dischargeplan.domain.ReasonForDelay;
 import com.cpdss.dischargeplan.domain.TrimAllowed;
+import com.cpdss.dischargeplan.domain.algo.UllageEditLoadicatorAlgoRequest;
 import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
 import com.cpdss.dischargeplan.domain.cargo.LoadablePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
@@ -148,6 +151,10 @@ public class DischargePlanAlgoService {
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub loadableStudyService;
+
+  @GrpcClient("loadableStudyService")
+  private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
+      dischargeStudyService;
 
   @Autowired
   private PortDischargingPlanBallastDetailsRepository portDischargingPlanBallastDetailsRepository;
@@ -269,8 +276,63 @@ public class DischargePlanAlgoService {
       // Build Discharging Rule, service is in discharging-plan (self)
       buildDischargingRules(algoRequest, entity);
 
+      this.buildDischargeStudy(algoRequest, entity);
+
       algoRequest.setDischargeInformation(disDto);
     }
+  }
+
+  /**
+   * Builds the discharge study input details
+   *
+   * @param algoRequest
+   * @param entity
+   */
+  private void buildDischargeStudy(
+      DischargeInformationAlgoRequest algoRequest, DischargeInformation entity)
+      throws GenericServiceException {
+    Object dischargeStudy = getDischargeStudy(entity);
+    algoRequest.setDischargeStudy(dischargeStudy);
+  }
+
+  /**
+   * Builds the discharge study input details
+   *
+   * @param algoRequest
+   * @param entity
+   */
+  public void buildDischargeStudy(
+      UllageEditLoadicatorAlgoRequest algoRequest, DischargeInformation entity)
+      throws GenericServiceException {
+    Object dischargeStudy = getDischargeStudy(entity);
+    algoRequest.setDischargeStudy(dischargeStudy);
+  }
+
+  private Object getDischargeStudy(DischargeInformation entity) throws GenericServiceException {
+    JsonRequest.Builder requestBuilder = JsonRequest.newBuilder();
+    requestBuilder.setReferenceId(entity.getDischargingPatternXid());
+    LoadableStudyModels.DischargeStudyJsonReply reply =
+        dischargeStudyService.getDischargeStudyRequestJson(requestBuilder.build());
+    if (!reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.error("Failed to get Discharge study input details from Loadable-Study MS");
+      throw new GenericServiceException(
+          "Failed to get Discharge study input details from Loadable-Study MS",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    ObjectMapper objectMapper = new ObjectMapper();
+    Object dischargeStudy = null;
+    try {
+      dischargeStudy = objectMapper.readValue(reply.getDischargeStudyJson(), Object.class);
+    } catch (JsonProcessingException e) {
+      log.error("Failed to parse discharge study input JSON");
+      e.printStackTrace();
+      throw new GenericServiceException(
+          "Failed to parse Discharge study input details",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    return dischargeStudy;
   }
 
   private List<PortTideAlgo> buildPortTideDetails(Long id, Long portXid) {

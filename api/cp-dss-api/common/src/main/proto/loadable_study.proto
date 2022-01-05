@@ -275,7 +275,7 @@ service DischargeStudyOperationService {
   rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {}
   rpc getCowHistoryByVesselId(CowHistoryRequest) returns (CowHistoryReply);
   rpc getDischargeCowDetails(DischargeCowRequest) returns (DischargeCowResponse) {}
-
+	rpc GetDischargeStudyRequestJson(JsonRequest) returns (DischargeStudyJsonReply) {}
 }
 
 service PortInstructionService {

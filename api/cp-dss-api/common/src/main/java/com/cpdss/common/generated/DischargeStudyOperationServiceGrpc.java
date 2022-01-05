@@ -607,6 +607,71 @@ public final class DischargeStudyOperationServiceGrpc {
     return getGetDischargeCowDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.JsonRequest,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyJsonReply>
+      getGetDischargeStudyRequestJsonMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetDischargeStudyRequestJson",
+      requestType = com.cpdss.common.generated.LoadableStudy.JsonRequest.class,
+      responseType =
+          com.cpdss
+              .common
+              .generated
+              .loadableStudy
+              .LoadableStudyModels
+              .DischargeStudyJsonReply
+              .class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.JsonRequest,
+          com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyJsonReply>
+      getGetDischargeStudyRequestJsonMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.JsonRequest,
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyJsonReply>
+        getGetDischargeStudyRequestJsonMethod;
+    if ((getGetDischargeStudyRequestJsonMethod =
+            DischargeStudyOperationServiceGrpc.getGetDischargeStudyRequestJsonMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getGetDischargeStudyRequestJsonMethod =
+                DischargeStudyOperationServiceGrpc.getGetDischargeStudyRequestJsonMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getGetDischargeStudyRequestJsonMethod =
+              getGetDischargeStudyRequestJsonMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.JsonRequest,
+                          com.cpdss
+                              .common
+                              .generated
+                              .loadableStudy
+                              .LoadableStudyModels
+                              .DischargeStudyJsonReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetDischargeStudyRequestJson"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.JsonRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loadableStudy.LoadableStudyModels
+                                  .DischargeStudyJsonReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "GetDischargeStudyRequestJson"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargeStudyRequestJsonMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -758,6 +823,21 @@ public final class DischargeStudyOperationServiceGrpc {
           getGetDischargeCowDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void getDischargeStudyRequestJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DischargeStudyJsonReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetDischargeStudyRequestJsonMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -872,6 +952,18 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.DischargeCowRequest,
                       com.cpdss.common.generated.LoadableStudy.DischargeCowResponse>(
                       this, METHODID_GET_DISCHARGE_COW_DETAILS)))
+          .addMethod(
+              getGetDischargeStudyRequestJsonMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.JsonRequest,
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DischargeStudyJsonReply>(
+                      this, METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON)))
           .build();
     }
   }
@@ -1014,6 +1106,23 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getDischargeStudyRequestJson(
+        com.cpdss.common.generated.LoadableStudy.JsonRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss
+                    .common
+                    .generated
+                    .loadableStudy
+                    .LoadableStudyModels
+                    .DischargeStudyJsonReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetDischargeStudyRequestJsonMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1107,6 +1216,13 @@ public final class DischargeStudyOperationServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargeCowDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyJsonReply
+        getDischargeStudyRequestJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetDischargeStudyRequestJsonMethod(), getCallOptions(), request);
     }
   }
 
@@ -1217,6 +1333,14 @@ public final class DischargeStudyOperationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargeCowDetailsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyJsonReply>
+        getDischargeStudyRequestJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetDischargeStudyRequestJsonMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
@@ -1229,6 +1353,7 @@ public final class DischargeStudyOperationServiceGrpc {
   private static final int METHODID_CONFIRM_PLAN = 7;
   private static final int METHODID_GET_COW_HISTORY_BY_VESSEL_ID = 8;
   private static final int METHODID_GET_DISCHARGE_COW_DETAILS = 9;
+  private static final int METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON = 10;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1346,6 +1471,18 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.DischargeCowResponse>)
                   responseObserver);
           break;
+        case METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON:
+          serviceImpl.getDischargeStudyRequestJson(
+              (com.cpdss.common.generated.LoadableStudy.JsonRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss
+                          .common
+                          .generated
+                          .loadableStudy
+                          .LoadableStudyModels
+                          .DischargeStudyJsonReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1421,6 +1558,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getConfirmPlanMethod())
                       .addMethod(getGetCowHistoryByVesselIdMethod())
                       .addMethod(getGetDischargeCowDetailsMethod())
+                      .addMethod(getGetDischargeStudyRequestJsonMethod())
                       .build();
         }
       }

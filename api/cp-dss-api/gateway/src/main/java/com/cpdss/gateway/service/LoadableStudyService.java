@@ -6,6 +6,7 @@ import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.*;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
@@ -4066,7 +4067,13 @@ public class LoadableStudyService {
   private AlgoError buildAlgoError(AlgoErrors algoError) {
     AlgoError error = new AlgoError();
     error.setErrorHeading(algoError.getErrorHeading());
-    error.setErrorDetails(buildErrorMessage(algoError.getErrorMessagesList()));
+    if (!algoError
+        .getErrorHeading()
+        .equalsIgnoreCase(AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR)) {
+      error.setErrorDetails(buildErrorMessage(algoError.getErrorMessagesList()));
+    } else {
+      error.setErrorDetails(Arrays.asList(ALGO_CANNOT_PROCESS_MSG));
+    }
     return error;
   }
 

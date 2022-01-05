@@ -142,6 +142,7 @@ class DischargeStudyServiceTest {
   @MockBean private GenerateDischargeStudyJson generateDischargeStudyJson;
   @MockBean private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @MockBean private CowHistoryRepository cowHistoryRepository;
+  @MockBean JsonDataService jsonDataService;
 
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub =
       Mockito.mock(LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub.class);

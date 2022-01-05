@@ -75,3 +75,8 @@ message DishargeStudyCargoReply {
 	ResponseStatus responseStatus = 1;
 	repeated DishargeStudyPortCargoMapping portCargos= 2;
 }
+
+message DischargeStudyJsonReply {
+	 string dischargeStudyJson = 1;
+	 ResponseStatus responseStatus = 2;
+}

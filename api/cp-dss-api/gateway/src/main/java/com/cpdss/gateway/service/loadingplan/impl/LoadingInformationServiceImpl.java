@@ -3,6 +3,7 @@ package com.cpdss.gateway.service.loadingplan.impl;
 
 import static org.springframework.util.StringUtils.isEmpty;
 
+import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.PLANNING_TYPE;
@@ -1185,7 +1186,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             error -> {
               AlgoError algoError = new AlgoError();
               algoError.setErrorHeading(error.getErrorHeading());
-              algoError.setErrorDetails(error.getErrorMessagesList());
+              if (!error
+                  .getErrorHeading()
+                  .equalsIgnoreCase(AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR)) {
+                algoError.setErrorDetails(error.getErrorMessagesList());
+              } else {
+                algoError.setErrorDetails(Arrays.asList(GatewayConstants.ALGO_CANNOT_PROCESS_MSG));
+              }
               algoErrors.add(algoError);
             });
     algoResponse.setAlgoErrors(algoErrors);

@@ -33,6 +33,7 @@ import com.cpdss.common.generated.discharge_plan.DSCowDetails;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.DischargeStudyDataTransferRequest;
 import com.cpdss.common.generated.discharge_plan.PortData;
+import com.cpdss.common.generated.loadableStudy.LoadableStudyModels;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyRequest;
@@ -47,6 +48,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.domain.DischargeStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.BackLoading;
 import com.cpdss.loadablestudy.entity.CargoNomination;
@@ -72,6 +74,7 @@ import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -120,6 +123,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @Autowired CowHistoryRepository cowHistoryRepository;
   @Autowired LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
+  @Autowired JsonDataService jsonDataService;
 
   @GrpcClient("dischargeInformationService")
   private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub
@@ -1706,6 +1710,56 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .setStatus(FAILED)
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception when getting cow details"));
+
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getDischargeStudyRequestJson(
+      com.cpdss.common.generated.LoadableStudy.JsonRequest request,
+      StreamObserver<LoadableStudyModels.DischargeStudyJsonReply> responseObserver) {
+    LoadableStudyModels.DischargeStudyJsonReply.Builder replyBuilder =
+        LoadableStudyModels.DischargeStudyJsonReply.newBuilder();
+    try {
+      log.info(
+          "Fetching Discharge Study input JSON for discharge pattern {}", request.getReferenceId());
+      Optional<LoadablePattern> loadablePatternOpt =
+          loadablePatternRepository.findByIdAndIsActive(request.getReferenceId(), true);
+      if (loadablePatternOpt.isEmpty()) {
+        log.error("Loadable pattern not found for Id {}", request.getReferenceId());
+        throw new GenericServiceException(
+            "Loadable pattern not found for Id " + request.getReferenceId(),
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      ObjectMapper objectMapper = new ObjectMapper();
+      DischargeStudyAlgoJson algoJsonPayload = null;
+      Long dischargeStudyId = loadablePatternOpt.get().getLoadableStudy().getId();
+      JsonData jsonData = jsonDataService.getJsonData(dischargeStudyId, DISCHARGE_STUDY_REQUEST);
+      if (jsonData == null || jsonData.getJsonData() == null) {
+        log.info(
+            "Json Data not found for Discharge Study with Id {}, generating  discharge study JSON",
+            dischargeStudyId);
+        algoJsonPayload =
+            generateDischargeStudyJson.generateDischargeStudyJson(
+                dischargeStudyId, loadablePatternOpt.get().getLoadableStudy());
+        replyBuilder.setDischargeStudyJson(objectMapper.writeValueAsString(algoJsonPayload));
+      } else {
+        log.info("Discharge Study input JSON found for Discharge Study {}", dischargeStudyId);
+        replyBuilder.setDischargeStudyJson(jsonData.getJsonData());
+      }
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+    } catch (Exception e) {
+      log.error("Exception when getting discharge study input JSON ", e);
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when getting discharge study input JSON"));
 
     } finally {
       responseObserver.onNext(replyBuilder.build());

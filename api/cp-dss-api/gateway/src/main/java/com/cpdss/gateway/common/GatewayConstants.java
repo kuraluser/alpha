@@ -81,4 +81,6 @@ public class GatewayConstants {
   public static final String PORT_ROTATION_TYPE_LOADING = "LOADING";
 
   public static final Long DISCHARGING_OPERATION_TYPE_ID = 2L;
+
+  public static final String ALGO_CANNOT_PROCESS_MSG = "Something went wrong in ALGO";
 }

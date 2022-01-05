@@ -983,7 +983,8 @@ public class UllageUpdateLoadicatorService {
   private void buildUllageEditLoadicatorAlgoRequest(
       DischargeInformation dischargeInformation,
       LoadingInfoLoadicatorDataRequest request,
-      UllageEditLoadicatorAlgoRequest algoRequest) {
+      UllageEditLoadicatorAlgoRequest algoRequest)
+      throws GenericServiceException {
     algoRequest.setDischargingInformationId(dischargeInformation.getId());
     algoRequest.setDischargeStudyProcessId(dischargeInformation.getDischargeStudyProcessId());
     algoRequest.setProcessId(request.getProcessId());
@@ -1047,6 +1048,7 @@ public class UllageUpdateLoadicatorService {
           loadicatorRobDetails.add(robDetail);
         });
     loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
+    dischargingPlanAlgoService.buildDischargeStudy(algoRequest, dischargeInformation);
     algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
   }
 
@@ -1220,7 +1222,8 @@ public class UllageUpdateLoadicatorService {
   private void buildUllageEditLoadicatorAlgoRequest(
       DischargeInformation dischargeInformation,
       DischargingInfoLoadicatorDataRequest request,
-      UllageEditLoadicatorAlgoRequest algoRequest) {
+      UllageEditLoadicatorAlgoRequest algoRequest)
+      throws GenericServiceException {
     algoRequest.setDischargingInformationId(dischargeInformation.getId());
     algoRequest.setDischargeStudyProcessId(dischargeInformation.getDischargeStudyProcessId());
     algoRequest.setProcessId(request.getProcessId());
@@ -1282,6 +1285,7 @@ public class UllageUpdateLoadicatorService {
           loadicatorRobDetails.add(robDetail);
         });
     loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
+    dischargingPlanAlgoService.buildDischargeStudy(algoRequest, dischargeInformation);
     algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
   }
 }
