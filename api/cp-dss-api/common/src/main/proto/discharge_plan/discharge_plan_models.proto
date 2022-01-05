@@ -196,6 +196,7 @@ message CowPlan {
   bool cowWithCargoEnable = 11; // update in table
   repeated CowTankDetails cowTankDetails = 10;
   int64 dischargingInfoId = 12;
+  bool enableDayLightRestriction = 13;
 }
 
 message CowTankDetails {

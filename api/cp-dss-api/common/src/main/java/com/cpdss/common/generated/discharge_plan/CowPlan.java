@@ -136,6 +136,11 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
               dischargingInfoId_ = input.readInt64();
               break;
             }
+          case 104:
+            {
+              enableDayLightRestriction_ = input.readBool();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -481,6 +486,17 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     return dischargingInfoId_;
   }
 
+  public static final int ENABLEDAYLIGHTRESTRICTION_FIELD_NUMBER = 13;
+  private boolean enableDayLightRestriction_;
+  /**
+   * <code>bool enableDayLightRestriction = 13;</code>
+   *
+   * @return The enableDayLightRestriction.
+   */
+  public boolean getEnableDayLightRestriction() {
+    return enableDayLightRestriction_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -532,6 +548,9 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     if (dischargingInfoId_ != 0L) {
       output.writeInt64(12, dischargingInfoId_);
     }
+    if (enableDayLightRestriction_ != false) {
+      output.writeBool(13, enableDayLightRestriction_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -578,6 +597,9 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     if (dischargingInfoId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(12, dischargingInfoId_);
     }
+    if (enableDayLightRestriction_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(13, enableDayLightRestriction_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -606,6 +628,7 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     if (getCowWithCargoEnable() != other.getCowWithCargoEnable()) return false;
     if (!getCowTankDetailsList().equals(other.getCowTankDetailsList())) return false;
     if (getDischargingInfoId() != other.getDischargingInfoId()) return false;
+    if (getEnableDayLightRestriction() != other.getEnableDayLightRestriction()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -643,6 +666,8 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     }
     hash = (37 * hash) + DISCHARGINGINFOID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargingInfoId());
+    hash = (37 * hash) + ENABLEDAYLIGHTRESTRICTION_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getEnableDayLightRestriction());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -810,6 +835,8 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
       }
       dischargingInfoId_ = 0L;
 
+      enableDayLightRestriction_ = false;
+
       return this;
     }
 
@@ -858,6 +885,7 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
         result.cowTankDetails_ = cowTankDetailsBuilder_.build();
       }
       result.dischargingInfoId_ = dischargingInfoId_;
+      result.enableDayLightRestriction_ = enableDayLightRestriction_;
       onBuilt();
       return result;
     }
@@ -973,6 +1001,9 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
       }
       if (other.getDischargingInfoId() != 0L) {
         setDischargingInfoId(other.getDischargingInfoId());
+      }
+      if (other.getEnableDayLightRestriction() != false) {
+        setEnableDayLightRestriction(other.getEnableDayLightRestriction());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1893,6 +1924,39 @@ public final class CowPlan extends com.google.protobuf.GeneratedMessageV3
     public Builder clearDischargingInfoId() {
 
       dischargingInfoId_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private boolean enableDayLightRestriction_;
+    /**
+     * <code>bool enableDayLightRestriction = 13;</code>
+     *
+     * @return The enableDayLightRestriction.
+     */
+    public boolean getEnableDayLightRestriction() {
+      return enableDayLightRestriction_;
+    }
+    /**
+     * <code>bool enableDayLightRestriction = 13;</code>
+     *
+     * @param value The enableDayLightRestriction to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEnableDayLightRestriction(boolean value) {
+
+      enableDayLightRestriction_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool enableDayLightRestriction = 13;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearEnableDayLightRestriction() {
+
+      enableDayLightRestriction_ = false;
       onChanged();
       return this;
     }

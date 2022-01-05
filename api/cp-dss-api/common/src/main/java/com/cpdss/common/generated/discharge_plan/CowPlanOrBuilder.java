@@ -143,4 +143,11 @@ public interface CowPlanOrBuilder
    * @return The dischargingInfoId.
    */
   long getDischargingInfoId();
+
+  /**
+   * <code>bool enableDayLightRestriction = 13;</code>
+   *
+   * @return The enableDayLightRestriction.
+   */
+  boolean getEnableDayLightRestriction();
 }

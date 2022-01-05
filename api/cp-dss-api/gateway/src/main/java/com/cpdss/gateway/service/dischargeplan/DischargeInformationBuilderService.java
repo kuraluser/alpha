@@ -371,6 +371,10 @@ public class DischargeInformationBuilderService {
       var1.setCowDuration(cowPlan.getEstCowDuration());
       var1.setWashTanksWithDifferentCargo(cowPlan.getCowWithCargoEnable());
 
+      // Both flags - needFlushihngOil and needCrudeStorage are combined in the frontend.
+      var1.setNeedFlushingOilAndCrudeStorage(
+          cowPlan.getNeedFlushingOil() && cowPlan.getNeedFreshCrudeStorage());
+
       // If no value in discharge-plan DB, set admin Rule Value
       if (cowPlan.getTrimCowMin().isEmpty()) {
         String val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_COW_TRIM_MIN, false);
@@ -646,11 +650,20 @@ public class DischargeInformationBuilderService {
     Optional.ofNullable(cowPlan.getCowStart()).ifPresent(builder::setCowStartTime);
     Optional.ofNullable(cowPlan.getCowTrimMax()).ifPresent(builder::setTrimCowMax);
     Optional.ofNullable(cowPlan.getCowTrimMin()).ifPresent(builder::setTrimCowMin);
+    // Both flags - needFlushingOil and needCrudeStorage are combined in the frontend.
+    Optional.ofNullable(cowPlan.getNeedFlushingOilAndCrudeStorage())
+        .ifPresent(
+            needFlushingOilAndCrudeStorage -> {
+              builder.setNeedFlushingOil(needFlushingOilAndCrudeStorage);
+              builder.setNeedFreshCrudeStorage(needFlushingOilAndCrudeStorage);
+            });
     Optional.ofNullable(cowPlan.getNeedFreshCrudeStorage())
         .ifPresent(builder::setNeedFreshCrudeStorage);
     Optional.ofNullable(cowPlan.getNeedFlushingOil()).ifPresent(builder::setNeedFlushingOil);
     Optional.ofNullable(cowPlan.getWashTanksWithDifferentCargo())
         .ifPresent(builder::setCowWithCargoEnable);
+    Optional.ofNullable(cowPlan.getEnableDayLightRestriction())
+        .ifPresent(builder::setEnableDayLightRestriction);
 
     return builder.build();
   }

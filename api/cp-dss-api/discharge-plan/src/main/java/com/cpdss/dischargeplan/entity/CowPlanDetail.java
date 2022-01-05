@@ -62,5 +62,8 @@ public class CowPlanDetail extends EntityDoc {
   @JoinColumn(name = "discharging_xid", referencedColumnName = "id")
   private DischargeInformation dischargeInformation;
 
+  @Column(name = "enable_day_light_restriction")
+  private Boolean enableDayLightRestriction;
+
   @Transient private Long communicationRelatedEntityId;
 }

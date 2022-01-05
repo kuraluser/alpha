@@ -748,7 +748,8 @@ public class DischargeInformationBuilderService {
         Optional.ofNullable(cpd.getWashTankWithDifferentCargo())
             .ifPresent(
                 builder1::setCowWithCargoEnable); // radio button for enable/disable CWC section
-
+        Optional.ofNullable(cpd.getEnableDayLightRestriction())
+            .ifPresent(builder1::setEnableDayLightRestriction);
         // tank wise details
         if (!cpd.getCowTankDetails().isEmpty()) {
           this.buildCowTankDetails(

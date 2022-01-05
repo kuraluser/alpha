@@ -570,6 +570,7 @@ public class DischargeInformationRPCService
 
       cowPlanDetail.setNeedFlushingOil(cowPlan.getNeedFlushingOil());
       cowPlanDetail.setNeedFreshCrudeStorage(cowPlan.getNeedFreshCrudeStorage());
+      cowPlanDetail.setEnableDayLightRestriction(cowPlan.getEnableDayLightRestriction());
 
       if (!cowPlan.getTrimCowMax().isEmpty()) {
         cowPlanDetail.setCowMaxTrim(new BigDecimal(cowPlan.getTrimCowMax()));
