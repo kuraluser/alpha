@@ -1168,15 +1168,15 @@ public class LoadableStudyCommunicationService {
         loadableStudyStatusRepository.findById(
             loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
     if (loadableStudyStatus.isPresent()) {
-      loadableStudyAlgoStatusRepository
-          .findByLoadableStudyId(loadableStudyStage.getId())
-          .ifPresentOrElse(
-              loadableStudyAlgoStatus -> {
-                loadableStudyAlgoStatus.setProcessId(loadableStudyAlgoStatusStage.getProcessId());
-                loadableStudyAlgoStatusStage = loadableStudyAlgoStatus;
-              },
-              () -> loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage));
-      setEntityDocFields(loadableStudyAlgoStatusStage, loadableStudyStatus);
+      Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOptional =
+          loadableStudyAlgoStatusRepository.findByLoadableStudyId(loadableStudyStage.getId());
+      loadableStudyAlgoStatusOptional.ifPresentOrElse(
+          loadableStudyAlgoStatus -> {
+            loadableStudyAlgoStatus.setProcessId(loadableStudyAlgoStatusStage.getProcessId());
+            loadableStudyAlgoStatusStage = loadableStudyAlgoStatus;
+          },
+          () -> loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage));
+      setEntityDocFields(loadableStudyAlgoStatusStage, loadableStudyAlgoStatusOptional);
       loadableStudyAlgoStatusStage.setGeneratedFromShore(true);
       loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
       loadableStudyAlgoStatusStage =

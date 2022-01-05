@@ -1622,16 +1622,17 @@ public class DischargePlanCommunicationService {
         dischargeInformationStatusRepository.findById(
             dischargingInfoAlgoStatus.getCommunicationRelatedEntityId());
     if (dischargingInformationStatusOpt.isPresent()) {
-      dischargingInformationAlgoStatusRepository
-          .findByDischargeInformationId(dischargeInfo.getId())
-          .ifPresentOrElse(
-              dischargingInfoAlgo -> {
-                dischargingInfoAlgo.setProcessId(dischargingInfoAlgoStatus.getProcessId());
-                dischargingInfoAlgoStatus = dischargingInfoAlgo;
-              },
-              () -> {
-                dischargingInfoAlgoStatus.setDischargeInformation(dischargeInfo);
-              });
+      Optional<DischargingInformationAlgoStatus> dischargingInformationAlgoStatusOptional =
+          dischargingInformationAlgoStatusRepository.findByDischargeInformationId(
+              dischargeInfo.getId());
+      dischargingInformationAlgoStatusOptional.ifPresentOrElse(
+          dischargingInfoAlgo -> {
+            dischargingInfoAlgo.setProcessId(dischargingInfoAlgoStatus.getProcessId());
+            dischargingInfoAlgoStatus = dischargingInfoAlgo;
+          },
+          () -> {
+            dischargingInfoAlgoStatus.setDischargeInformation(dischargeInfo);
+          });
       setEntityDocFields(dischargingInfoAlgoStatus, dischargingInformationStatusOpt);
       dischargingInfoAlgoStatus.setDischargingInformationStatus(
           dischargingInformationStatusOpt.get());
@@ -1662,7 +1663,7 @@ public class DischargePlanCommunicationService {
 
   private void saveDischargeSequence(DischargeInformation dischargeInfo) {
     current_table_name = DischargingPlanTables.DISCHARGING_SEQUENCE.getTable();
-    if (dischargeInfo == null || dischargingSequences == null || !dischargingSequences.isEmpty()) {
+    if (dischargeInfo == null || CollectionUtils.isEmpty(dischargingSequences)) {
       log.info("Communication ++++ dischargeInfo or DISCHARGING_SEQUENCE is empty");
       return;
     }
