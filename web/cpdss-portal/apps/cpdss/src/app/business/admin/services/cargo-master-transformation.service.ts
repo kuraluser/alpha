@@ -117,7 +117,8 @@ export class CargoMasterTransformationService {
         actions.push(DATATABLE_ACTION.EDIT);
       }
       if (permission?.delete) {
-        actions.push(DATATABLE_ACTION.DELETE);
+        //TODO: currently needed to hide. May be need in future
+        // actions.push(DATATABLE_ACTION.DELETE);
       }
       const action: IDataTableColumn = {
         field: 'actions',

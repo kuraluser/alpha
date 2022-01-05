@@ -117,7 +117,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             .subscribe(async route => {
               if (Number(route.loadableStudyId) !== 0) {
                 this.synopticalService.loadableOrDischargeStudyId = Number(route.loadableStudyId);
-              } 
+              }
               if(this.synopticalService.hasDischargeStarted){
                 this.synopticalService.loadablePatternId = null;
                 await this.synopticalService.setSelectedDischargeStudy();
@@ -357,7 +357,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.DATETIME,
                 minValue: this.today,
                 validators: (this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) &&
-                  (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined) ? ['required'] : []
+                  (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined) ? [] : []
               }],
               editable: !this.checkIfConfirmed() && this.checkIfEnableEditMode() && (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined),
             },
@@ -368,7 +368,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 type: this.fieldType.DATETIME,
                 maxValue: this.today,
                 validators: ((this.etaEtdPermision?.view || this.etaEtdPermision?.view === undefined) &&
-                  (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined)) ? ['required'] : []
+                  (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined)) ? [] : []
               }],
               editable: this.checkIfConfirmed() && (this.etaEtdPermision?.edit || this.etaEtdPermision?.edit === undefined),
             },
@@ -415,12 +415,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 {
                   key: 'hwTideFrom',
                   type: this.fieldType.NUMBER,
-                  validators: ['required', 'dd.dd.+']
+                  validators: ['dd.dd.+']
                 },
                 {
                   key: 'hwTideTo',
                   type: this.fieldType.NUMBER,
-                  validators: ['required', 'dd.dd.+']
+                  validators: ['dd.dd.+']
                 }
               ],
               editable: true,
@@ -431,12 +431,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 {
                   key: 'hwTideTimeFrom',
                   type: this.fieldType.TIME,
-                  validators: ['required']
+                  validators: []
                 },
                 {
                   key: 'hwTideTimeTo',
                   type: this.fieldType.TIME,
-                  validators: ['required']
+                  validators: []
                 }
               ],
               editable: true,
@@ -456,12 +456,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 {
                   key: 'lwTideFrom',
                   type: this.fieldType.NUMBER,
-                  validators: ['required', 'dd.dd.+']
+                  validators: ['dd.dd.+']
                 },
                 {
                   key: 'lwTideTo',
                   type: this.fieldType.NUMBER,
-                  validators: ['required', 'dd.dd.+']
+                  validators: ['dd.dd.+']
                 }
               ],
               editable: true,
@@ -472,12 +472,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
                 {
                   key: 'lwTideTimeFrom',
                   type: this.fieldType.TIME,
-                  validators: ['required']
+                  validators: []
                 },
                 {
                   key: 'lwTideTimeTo',
                   type: this.fieldType.TIME,
-                  validators: ['required']
+                  validators: []
                 }
               ],
               editable: true,
@@ -1215,7 +1215,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
   */
   getControl(colIndex: number, key: string): AbstractControl {
-    return this.tableForm.at(colIndex).get(key)
+    return this.tableForm?.at(colIndex)?.get(key)
   }
 
   /**
@@ -1410,11 +1410,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     switch (field.key) {
       case 'hwTideFrom':
         fcMax = this.getControl(colIndex, 'hwTideTo')
-        if (fc.value != 0 && !fc.value) {
+        if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
-        else if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
+        else if (typeof fcMax.value !== 'undefined' && fc.value > fcMax.value) {
           fc.setErrors({ fromMax: true })
         } else if (fcMax.hasError('toMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1423,11 +1422,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'hwTideTo':
         fcMin = this.getControl(colIndex, 'hwTideFrom')
-        if (fc.value != 0 && !fc.value) {
+        if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
-        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
+        if (typeof fcMin.value !== 'undefined' && fc.value < fcMin.value) {
           fc.setErrors({ toMin: true })
         } else if (fcMin.hasError('fromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1436,10 +1434,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       case 'lwTideFrom':
         if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
         fcMax = this.getControl(colIndex, 'lwTideTo')
-        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
+        if (typeof fcMax.value !== 'undefined' && fc.value > fcMax.value) {
           fc.setErrors({ fromMax: true })
         } else if (fcMax.hasError('toMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1448,10 +1445,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       case 'lwTideTo':
         if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
         fcMin = this.getControl(colIndex, 'lwTideFrom')
-        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
+        if (typeof fcMin.value !== 'undefined' && fc.value < fcMin.value) {
           fc.setErrors({ toMin: true })
         } else if (fcMin.hasError('fromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1460,7 +1456,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       case 'hwTideTimeFrom':
         if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
         fcMax = this.getControl(colIndex, 'hwTideTimeTo')
 
@@ -1472,7 +1467,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           fc.value.setSeconds(0, 0);
         }
 
-        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
+        if (typeof fcMax.value !== 'undefined' && fc.value > fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1481,7 +1476,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       case 'hwTideTimeTo':
         if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
         fcMin = this.getControl(colIndex, 'hwTideTimeFrom')
         if (fcMin.value) {
@@ -1491,7 +1485,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           fc.value.setSeconds(0, 0);
         }
 
-        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
+        if (typeof fcMin.value !== 'undefined' && fc.value < fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1500,7 +1494,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       case 'lwTideTimeFrom':
         if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
         fcMax = this.getControl(colIndex, 'lwTideTimeTo')
         if (fcMax.value) {
@@ -1509,7 +1502,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         if (fc.value) {
           fc.value.setSeconds(0, 0);
         }
-        if (typeof fcMax.value !== 'undefined' && fc.value >= fcMax.value) {
+        if (typeof fcMax.value !== 'undefined' && fc.value > fcMax.value) {
           fc.setErrors({ timeFromMax: true })
         } else if (fcMax.hasError('timeToMin')) {
           fcMax.setValue(fcMax.value, { emitEvent: false })
@@ -1518,7 +1511,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       case 'lwTideTimeTo':
         if (!fc.value) {
           fc.setErrors(null);
-          fc.setErrors({ required: true })
         }
         fcMin = this.getControl(colIndex, 'lwTideTimeFrom')
         if (fcMin.value) {
@@ -1527,7 +1519,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         if (fc.value) {
           fc.value.setSeconds(0, 0);
         }
-        if (typeof fcMin.value !== 'undefined' && fc.value <= fcMin.value) {
+        if (typeof fcMin.value !== 'undefined' && fc.value < fcMin.value) {
           fc.setErrors({ timeToMin: true })
         } else if (fcMin.hasError('timeFromMax')) {
           fcMin.setValue(fcMin.value, { emitEvent: false })
@@ -1572,56 +1564,58 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'etaEtdPlanned': case 'etaEtdActual':
         const value: Date = fc.value;
-        value.setSeconds(0, 0)
-        if (colIndex > 0) {
-          fcMin = this.getControl(colIndex - 1, field.key)
-          const minValue: Date = fcMin.value;
-          if (minValue) {
-            minValue.setSeconds(0, 0)
-            if (value <= minValue) {
-              if (this.synopticalService.synopticalRecords[colIndex].operationType === 'ARR')
-                fc.setErrors({ etaMin: true })
-              else
-                fc.setErrors({ etdMin: true })
-            } else if (fcMin.hasError('etaMax') || fcMin.hasError('etdMax')) {
-              fcMin.setValue(fcMin.value, { emitEvent: false })
-            }
-          }
-        }
-        if (colIndex < this.synopticalService.synopticalRecords.length - 1) {
-          fcMax = this.getControl(colIndex + 1, field.key)
-          const maxValue: Date = fcMax.value;
-          if (maxValue) {
-            maxValue.setSeconds(0, 0)
-            if (value >= maxValue) {
-              if (this.synopticalService.synopticalRecords[colIndex].operationType === 'ARR')
-                fc.setErrors({ etaMax: true })
-              else
-                fc.setErrors({ etdMax: true })
-            } else if (fcMax.hasError('etaMin') || fcMax.hasError('etdMin')) {
-              fcMax.setValue(fcMax.value, { emitEvent: false })
-            }
-          }
-        }
-        if (updateValues) {
-          let inPortHours = 0;
-          if (fc.valid) {
-            const otherControl = this.getControl(otherIndex, field.key);
-            if (otherControl.valid) {
-              let arrDate, depDate;
-              if (otherIndex > colIndex) {
-                arrDate = fc.value;
-                depDate = otherControl.value;
-              } else {
-                depDate = fc.value;
-                arrDate = otherControl.value;
+        if (value) {
+          value.setSeconds(0, 0)
+          if (colIndex > 0) {
+            fcMin = this.getControl(colIndex - 1, field.key)
+            const minValue: Date = fcMin?.value;
+            if (minValue) {
+              minValue.setSeconds(0, 0)
+              if (value <= minValue) {
+                if (this.synopticalService.synopticalRecords[colIndex].operationType === 'ARR')
+                  fc.setErrors({ etaMin: true })
+                else
+                  fc.setErrors({ etdMin: true })
+              } else if (fcMin.hasError('etaMax') || fcMin.hasError('etdMax')) {
+                fcMin.setValue(fcMin.value, { emitEvent: false })
               }
-              inPortHours = Math.abs(depDate - arrDate) / 36e5;
-              inPortHours = Number(inPortHours.toFixed(2))
             }
           }
-          this.getControl(colIndex, 'inPortHours')?.setValue(inPortHours)
-          this.getControl(otherIndex, 'inPortHours')?.setValue(inPortHours)
+          if (colIndex < this.synopticalService.synopticalRecords.length - 1) {
+            fcMax = this.getControl(colIndex + 1, field.key)
+            const maxValue: Date = fcMax?.value;
+            if (maxValue) {
+              maxValue.setSeconds(0, 0)
+              if (value >= maxValue) {
+                if (this.synopticalService.synopticalRecords[colIndex].operationType === 'ARR')
+                  fc.setErrors({ etaMax: true })
+                else
+                  fc.setErrors({ etdMax: true })
+              } else if (fcMax.hasError('etaMin') || fcMax.hasError('etdMin')) {
+                fcMax.setValue(fcMax.value, { emitEvent: false })
+              }
+            }
+          }
+          if (updateValues) {
+            let inPortHours = 0;
+            if (fc.valid) {
+              const otherControl = this.getControl(otherIndex, field.key);
+              if (otherControl.valid) {
+                let arrDate, depDate;
+                if (otherIndex > colIndex) {
+                  arrDate = fc.value;
+                  depDate = otherControl.value;
+                } else {
+                  depDate = fc.value;
+                  arrDate = otherControl.value;
+                }
+                inPortHours = Math.abs(depDate - arrDate) / 36e5;
+                inPortHours = Number(inPortHours.toFixed(2))
+              }
+            }
+            this.getControl(colIndex, 'inPortHours')?.setValue(inPortHours)
+            this.getControl(otherIndex, 'inPortHours')?.setValue(inPortHours)
+          }
         }
         break;
       case 'speed': case 'distance':
@@ -1947,11 +1941,11 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   convertToString(value, type, record) {
     switch (type) {
       case this.fieldType.DATETIME:
-        const item = this.globalTimeZones.find((item) => item.id == record.portTimezoneId)
+        const item = this.globalTimeZones.find((_item) => _item.id === record.portTimezoneId)
         if (item)
-          return this.timeZoneTransformationService.revertZoneTimetoUTC(value, item.offsetValue);
+          return value ? this.timeZoneTransformationService.revertZoneTimetoUTC(value, item.offsetValue) : null;
         else
-          return this.datePipe.transform(value, 'dd-MM-yyyy HH:mm')
+          return value ? this.datePipe.transform(value, 'dd-MM-yyyy HH:mm') : null;
       case this.fieldType.TIME:
         if (value === null) {
           return '';
@@ -2050,7 +2044,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     if (key.startsWith('cargos') && index > 0) {
       editable = false;
     }
-    if(this.synopticalService.hasDischargeStarted && this.synopticalService.synopticalRecords[index].portRotationType === "LOADING" && 
+    if(this.synopticalService.hasDischargeStarted && this.synopticalService.synopticalRecords[index].portRotationType === "LOADING" &&
     (!rowData.betweenPorts || this.synopticalService.synopticalRecords[index + 1]?.portRotationType !== "DISCHARGE")){
       editable = false;
     }

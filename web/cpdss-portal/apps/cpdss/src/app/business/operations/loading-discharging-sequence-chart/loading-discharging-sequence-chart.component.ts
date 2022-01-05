@@ -2127,6 +2127,8 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
             attr['align'] = 'left';
           } else if ((!distanceLeft || distanceLeft > 36) && distanceRight < 36) {
             attr['align'] = 'right';
+          } else if (distanceLeft > 36 && !distanceRight) {
+            attr['align'] = 'right';
           }
           if (visibleTickPositions?.some(tickPosition => category === tickPosition)) {
             renderer.text(dataLabel, x, y, false).attr(attr).css({

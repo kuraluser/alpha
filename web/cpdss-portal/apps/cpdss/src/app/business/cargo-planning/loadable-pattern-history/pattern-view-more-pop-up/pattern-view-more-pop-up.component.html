@@ -4,6 +4,10 @@
     [closable]="false" *ngIf="display">
     <div class="row pb-15 pt-15">
         <div class="col  text-center">
+          <div class="header-info-pop-up mb-5">
+            <span class="info-icon mr-5">!</span>
+            {{'LOADABLE_PATTERN_STOWAGE_PORT_CONDITION_LABEL' | translate}}
+          </div>
             <a class="tab-btn tab-btn-default" [ngClass]="{'active': selectedTab === tankType.CARGO}"
                 id="pattern_view_more_cargo_tab" (click)="onTabClick(tankType.CARGO)">{{'PATTERN_VIEW_MORE_CARGO_TAB' |
                 translate}}

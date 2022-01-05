@@ -276,7 +276,7 @@
                       {{'CARGO_LOADING_INFO_VIEW_API_TEMP' | translate}}</button>
                   </td>
                   <td>
-                    <a type="button" id="delete_button_{{rowIndex}}" class="delete-icon"
+                    <a type="button" *ngIf="!rowData.id" id="delete_button_{{rowIndex}}" class="delete-icon"
                       (click)="deleteLoadingInformation(rowIndex)"></a>
                   </td>
                 </tr>
