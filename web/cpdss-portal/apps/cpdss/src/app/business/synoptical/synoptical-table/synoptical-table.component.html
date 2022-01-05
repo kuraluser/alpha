@@ -20,7 +20,7 @@
                 <th></th>
                 <th></th>
                 <ng-container *ngFor="let col of columns; let i= index">
-                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" class="text-right">
+                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" [ngClass]="{'text-right': !(i !== columns.length - 1 && hideDepartureData ), 'text-center': (i !== columns.length - 1 && hideDepartureData )}">
                         {{col[headerColumn.fields[0].key]}}</th>
                 </ng-container>
             </tr>

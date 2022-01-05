@@ -179,7 +179,7 @@ export class PortsComponent implements OnInit, OnDestroy {
     const portsFormData: IPortsDetailsResponse = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     portsFormData.portList = portsFormData.portList ?? [];
     this.listData.operationListComplete = portsFormData.operations;
-    this.listData.operationList = portsFormData.operations.filter((item) => item.id !== OPERATIONS.LOADING && item.id !== OPERATIONS.DISCHARGING);
+    this.listData.operationList = portsFormData.operations.filter((item) => item.id !== OPERATIONS.LOADING && item.id !== OPERATIONS.DISCHARGING && item.id !== OPERATIONS.STSLOADING);
     this.portsDetails = portsFormData;
     this.initPortsArray(this.portsDetails?.portList);
   }

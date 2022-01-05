@@ -559,4 +559,10 @@ export class LoadableQuantityComponent implements OnInit {
       (this.loadableQuantityForm.controls.constant.value ? Number(this.loadableQuantityForm.controls.constant.value) : 0) +
       (this.loadableQuantityForm.controls.others.value ? Number(this.loadableQuantityForm.controls.others.value) : 0);
   }
+  /**
+   * method for calculating correction
+   */
+  getCorrectionValue() {
+    return (this.loadableQuantityForm.controls.safCorrection.value ? Number(this.loadableQuantityForm.controls.safCorrection.value) : 0) + (this.loadableQuantityForm.controls.sgCorrection.value ? Number(this.loadableQuantityForm.controls.sgCorrection.value) : 0);
+  }
 }

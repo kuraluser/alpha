@@ -330,7 +330,7 @@ export class LoadablePlanTransformationService {
     _cargoTankDetail.isAdd = isNewValue;
     _cargoTankDetail.fullCapacityCubm = cargoTankDetail.fullCapacityCubm;
     _cargoTankDetail.isCommingle = cargoTankDetail?.isCommingle;
-    _cargoTankDetail.obqBbls = new ValueObject<number>(unitConvertedTankDetails.obqBbls, true, false);
+    _cargoTankDetail.obqBbls = new ValueObject<number>((unitConvertedTankDetails.obqBbls ? unitConvertedTankDetails.obqBbls : 0), true, false);
     _cargoTankDetail.obsbbls = new ValueObject<number>((_cargoTankDetail.observedBarrels.value - unitConvertedTankDetails.obqBbls), true, false);
     return _cargoTankDetail;
   }
@@ -365,11 +365,12 @@ export class LoadablePlanTransformationService {
         field: 'tankShortName',
         header: 'LOADABLE_PLAN_CARGO_GRID_TANK',
         editable: false,
-        fieldHeaderClass: 'column-tank-name'
+        fieldHeaderClass: 'column-ls-abbr'
       },
       {
         field: 'cargoAbbreviation',
         header: 'LOADABLE_PLAN_CARGO_GRID_ABBREVIATION',
+        fieldHeaderClass: 'column-ls-abbr',
         editable: false,
       },
       {
@@ -391,12 +392,14 @@ export class LoadablePlanTransformationService {
         field: 'correctionFactor',
         header: 'LOADABLE_PLAN_CARGO_GRID_CORRECTION_FACTOR',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldHeaderClass: 'column-stowage-plan-header',
         editable: false,
       },
       {
         field: 'correctedUllage',
         header: 'LOADABLE_PLAN_CARGO_GRID_CORRECTED_ULLAGE',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldHeaderClass: 'column-stowage-plan-header',
         numberFormat: '1.2-2',
         editable: false,
       },
@@ -405,6 +408,7 @@ export class LoadablePlanTransformationService {
         header: 'LOADABLE_PLAN_CARGO_GRID_OBSERVED_M3',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         editable: false,
+        fieldHeaderClass: 'column-stowage-total-header',
         unit: QUANTITY_UNIT.KL,
         showTotal: true,
         numberType: 'quantity'
@@ -415,6 +419,7 @@ export class LoadablePlanTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
         unit: QUANTITY_UNIT.OBSBBLS,
+        fieldHeaderClass: 'column-stowage-total-header',
         editable: false,
         showTotal: true
       },
@@ -424,6 +429,7 @@ export class LoadablePlanTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
         unit: QUANTITY_UNIT.BBLS,
+        fieldHeaderClass: 'column-stowage-total-header',
         editable: false,
         showTotal: true
       },
@@ -433,6 +439,7 @@ export class LoadablePlanTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
         unit: QUANTITY_UNIT.BBLS,
+        fieldHeaderClass: 'column-stowage-total-header',
         editable: false,
         showTotal: true
       },
@@ -442,6 +449,7 @@ export class LoadablePlanTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberType: 'quantity',
         unit: QUANTITY_UNIT.BBLS,
+        fieldHeaderClass: 'column-stowage-total-header',
         editable: false,
         showTotal: true
       },
@@ -452,6 +460,7 @@ export class LoadablePlanTransformationService {
         numberFormat: AppConfigurationService.settings.quantityNumberFormatMT,
         editable: false,
         showTotal: true,
+        fieldHeaderClass: 'column-stowage-total-header',
         numberType: 'quantity',
         unit: QUANTITY_UNIT.MT,
       },
@@ -459,6 +468,7 @@ export class LoadablePlanTransformationService {
         field: 'fillingRatio',
         header: 'LOADABLE_PLAN_CARGO_GRID_FILLING_RATIO',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldHeaderClass: 'column-stowage-plan-header',
         numberFormat: '1.2-2',
         editable: false,
       },
@@ -466,6 +476,7 @@ export class LoadablePlanTransformationService {
         field: 'api',
         header: 'LOADABLE_PLAN_CARGO_GRID_API',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldHeaderClass: 'column-stowage-plan-header',
         numberFormat: '1.2-2',
         editable: false,
       },
@@ -473,6 +484,7 @@ export class LoadablePlanTransformationService {
         field: 'temperature',
         header: 'LOADABLE_PLAN_CARGO_GRID_TEMPERATURE',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldHeaderClass: 'column-stowage-plan-header',
         numberFormat: '1.2-2',
         editable: false,
       },

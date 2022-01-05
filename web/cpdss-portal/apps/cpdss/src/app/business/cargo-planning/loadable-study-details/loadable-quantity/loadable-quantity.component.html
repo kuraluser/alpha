@@ -372,7 +372,7 @@
                         <label for="loadable_quantity_correction"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_CORRECTION' | translate}}</label>
                         <div class="col pt-5">
-                            <label id="loadable_quantity_correction">{{((loadableQuantityForm.controls.safCorrection.value ? loadableQuantityForm.controls.safCorrection.value : 0) + (loadableQuantityForm.controls.sgCorrection.value ? loadableQuantityForm.controls.sgCorrection.value : 0))| number :
+                            <label id="loadable_quantity_correction">{{ getCorrectionValue() | number :
                                 '1.2-2'}}</label>
                         </div>
                         <div class="col unit-column pt-5">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>

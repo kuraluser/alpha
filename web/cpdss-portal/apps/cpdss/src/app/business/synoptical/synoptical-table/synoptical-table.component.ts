@@ -80,6 +80,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   globalTimeZones: ITimeZone[];
   vesselLightWeight: number;
   datePlaceHolder: string;
+  hideDepartureData = false;
 
   constructor(
     private synoticalApiService: SynopticalApiService,
@@ -215,7 +216,10 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     if (result.responseStatus.status === "200") {
       this.synopticalService.synopticalRecords = await this.convertIntoZoneTimeZone(result.synopticalRecords);
       if((this.synopticalService.synopticalRecords.length % 2 ) !== 0){
+        this.hideDepartureData = true;
         this.synopticalService.synopticalRecords.push({ disabled : true});
+      } else {
+        this.hideDepartureData = false;
       }
       this.synopticalService.showActions = true;
       const index = this.cols.findIndex(item => item?.header === 'Hogging/Sagging (cm)');
