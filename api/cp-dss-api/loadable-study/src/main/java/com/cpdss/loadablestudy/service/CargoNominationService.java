@@ -151,9 +151,7 @@ public class CargoNominationService {
                   "ds save API DS cargo... cargo id ::  "
                       + newCargo.getCargoXId()
                       + " , abb::"
-                      + newCargo.getAbbreviation()
-                      + " seq:"
-                      + newCargo.getSequenceNo());
+                      + newCargo.getAbbreviation());
               dischargeStudycargos.add(newCargo);
             });
     List<CargoNomination> savedCargos = cargoNominationRepository.saveAll(dischargeStudycargos);
@@ -180,10 +178,10 @@ public class CargoNominationService {
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
-    dischargeStudyCargo.setSequenceNo(Long.valueOf(seqNo));
-    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
+    //    dischargeStudyCargo.setSequenceNo(Long.valueOf(seqNo));
+    //    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
     dischargeStudyCargo.setCargoNominationPortDetails(
-        createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId, operationId));
+        createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId, operationId, seqNo));
     return dischargeStudyCargo;
   }
 
@@ -229,12 +227,19 @@ public class CargoNominationService {
   }
 
   public Set<CargoNominationPortDetails> createCargoNominationPortDetails(
-      CargoNomination dischargeStudyCargo, CargoNomination cargo, Long portId, Long operationId) {
+      CargoNomination dischargeStudyCargo,
+      CargoNomination cargo,
+      Long portId,
+      Long operationId,
+      Integer seqNo) {
     CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
     portDetail.setPortId(portId);
     portDetail.setOperationId(operationId);
     portDetail.setIsActive(true);
-    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
+    portDetail.setEmptyMaxNoOfTanks(false);
+    if (seqNo != null) {
+      portDetail.setSequenceNo(seqNo.longValue());
+    }
     portDetail.setCargoNomination(dischargeStudyCargo);
 
     if (cargo != null) {
@@ -647,21 +652,21 @@ public class CargoNominationService {
                 .ifPresent(val -> builder.setApi(String.valueOf(val)));
             Optional.ofNullable(cargoNomination.getTemperature())
                 .ifPresent(val -> builder.setTemperature(String.valueOf(val)));
-            Optional.ofNullable(cargoNomination.getSequenceNo())
-                .ifPresent(val -> builder.setSequenceNo(val));
-            Optional.ofNullable(cargoNomination.getEmptyMaxNoOfTanks())
-                .ifPresent(val -> builder.setEmptyMaxNoOfTanks(val));
+            //            Optional.ofNullable(cargoNomination.getSequenceNo())
+            //                .ifPresent(val -> builder.setSequenceNo(val));
+            //            Optional.ofNullable(cargoNomination.getEmptyMaxNoOfTanks())
+            //                .ifPresent(val -> builder.setEmptyMaxNoOfTanks(val));
             ofNullable(cargoNomination.getQuantity())
                 .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
             // build inner loadingPort details object
-            System.out.println(cargoNomination.getCargoNominationPortDetails());
+            log.info(cargoNomination.getCargoNominationPortDetails());
             if (!CollectionUtils.isEmpty(cargoNomination.getCargoNominationPortDetails())) {
 
               cargoNomination.getCargoNominationPortDetails().stream()
                   .filter(operation -> operation.getIsActive())
                   .forEach(
                       loadingPort -> {
-                        System.out.println(loadingPort.getPortId());
+                        //                        System.out.println(loadingPort.getPortId());
                         if (loadingPort.getIsActive()) {
                           LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
                               LoadableStudy.LoadingPortDetail.newBuilder();
@@ -676,6 +681,10 @@ public class CargoNominationService {
                               .ifPresent(loadingPortDetailBuilder::setMode);
                           ofNullable(loadingPort.getOperationId())
                               .ifPresent(loadingPortDetailBuilder::setOperationId);
+                          ofNullable(loadingPort.getEmptyMaxNoOfTanks())
+                              .ifPresent(loadingPortDetailBuilder::setEmptyMaxNoOfTanks);
+                          ofNullable(loadingPort.getSequenceNo())
+                              .ifPresent(loadingPortDetailBuilder::setSequenceNo);
                           builder.addLoadingPortDetails(loadingPortDetailBuilder);
                         }
                       });

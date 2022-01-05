@@ -79,6 +79,7 @@ import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -753,10 +754,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 if (!optionalCargoNomination.isPresent()) {
                   return;
                 }
-                optionalCargoNomination.get().setSequenceNo(cargoRequest.getSequenceNo());
-                optionalCargoNomination
-                    .get()
-                    .setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
+                //
+                // optionalCargoNomination.get().setSequenceNo(cargoRequest.getSequenceNo());
+                //                optionalCargoNomination
+                //                    .get()
+                //                    .setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
                 updateCargoNominationToSave(
                     cargoRequest, optionalCargoNomination.get(), cargoNominationsToSave, portId);
               } else {
@@ -766,10 +768,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 cargoNomination.setIsActive(true);
                 cargoNomination.setCargoNominationPortDetails(
                     cargoNominationService.createCargoNominationPortDetails(
-                        cargoNomination, null, portId, dbPortRoation.getOperation().getId()));
+                        cargoNomination, null, portId, dbPortRoation.getOperation().getId(), i));
                 cargoNomination.setIsBackloading(true);
-                cargoNomination.setSequenceNo(Long.valueOf(i));
-                cargoNomination.setEmptyMaxNoOfTanks(false);
+                //                cargoNomination.setSequenceNo(Long.valueOf(i));
+                //                cargoNomination.setEmptyMaxNoOfTanks(false);
                 updateCargoNominationToSave(
                     cargoRequest, cargoNomination, cargoNominationsToSave, portId);
               }
@@ -850,6 +852,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       cargoOperation.get().setQuantity(new BigDecimal(cargoRequest.getQuantity()));
       cargoOperation.get().setMode(cargoRequest.getMode());
       cargoOperation.get().setIsActive(true);
+      cargoOperation.get().setSequenceNo(cargoRequest.getSequenceNo());
+      cargoOperation.get().setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
     }
     cargoNominationsToSave.add(cargoNomination);
   }
@@ -1247,7 +1251,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                         cargoBackloading,
                         null,
                         portRotations.get(portRotations.size() - 1).getPortXId(),
-                        portRotations.get(portRotations.size() - 1).getOperation().getId()));
+                        portRotations.get(portRotations.size() - 1).getOperation().getId(),
+                        null));
                 cargoBackloading.setPriority(1L);
                 cargos.add(cargoBackloading);
               });
@@ -1260,7 +1265,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargos.stream()
         .forEach(
             cargo -> {
-              cargo.setEmptyMaxNoOfTanks(false);
+              cargo.getCargoNominationPortDetails().stream()
+                  .forEach(item -> item.setEmptyMaxNoOfTanks(false));
             });
     List<LoadableStudyPortRotation> ports =
         loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(loadableStudyId, true);
@@ -1276,6 +1282,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .filter(
                 cargo -> cargo.getIsBackloading() == null || cargo.getIsBackloading().equals(false))
             .collect(Collectors.toList());
+    AtomicInteger seqNo = new AtomicInteger(1);
     newPortCargo.stream()
         .forEach(
             cargo -> {
@@ -1287,13 +1294,21 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     && firstDischargingPort.get().getPortXId().equals(newPort.getPortXId())) {
                   newPortDetails =
                       cargoNominationService.createCargoNominationPortDetails(
-                          cargo, cargo, newPort.getPortXId(), newPort.getOperation().getId());
+                          cargo,
+                          cargo,
+                          newPort.getPortXId(),
+                          newPort.getOperation().getId(),
+                          seqNo.intValue());
                 } else {
                   newPortDetails =
                       cargoNominationService.createCargoNominationPortDetails(
-                          cargo, null, newPort.getPortXId(), newPort.getOperation().getId());
+                          cargo,
+                          null,
+                          newPort.getPortXId(),
+                          newPort.getOperation().getId(),
+                          seqNo.intValue());
                 }
-
+                seqNo.incrementAndGet();
                 if (cargo.getCargoNominationPortDetails() != null
                     && !cargo.getCargoNominationPortDetails().isEmpty()) {
                   cargo.getCargoNominationPortDetails().addAll(newPortDetails);
@@ -1399,7 +1414,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargos.stream()
         .forEach(
             cargo -> {
-              cargo.setEmptyMaxNoOfTanks(false);
+              cargo.getCargoNominationPortDetails().stream()
+                  .forEach(item -> item.setEmptyMaxNoOfTanks(false));
               if (cargo.getIsBackloading() != null && cargo.getIsBackloading()) {
                 cargo.setIsActive(false);
               }

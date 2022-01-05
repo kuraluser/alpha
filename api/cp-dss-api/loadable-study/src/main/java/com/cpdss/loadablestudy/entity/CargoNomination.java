@@ -72,9 +72,9 @@ public class CargoNomination extends EntityDoc {
   // This data against each cargo (cargo-service)
   @Transient private Boolean isCondensateCargo;
 
-  @Column(name = "sequence_no")
-  private Long sequenceNo;
-
-  @Column(name = "empty_max_no_of_tanks")
-  private Boolean emptyMaxNoOfTanks;
+  //  @Column(name = "sequence_no")
+  //  private Long sequenceNo;
+  //
+  //  @Column(name = "empty_max_no_of_tanks")
+  //  private Boolean emptyMaxNoOfTanks;
 }

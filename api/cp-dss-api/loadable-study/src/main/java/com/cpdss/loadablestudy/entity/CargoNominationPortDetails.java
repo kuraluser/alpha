@@ -4,7 +4,6 @@ package com.cpdss.loadablestudy.entity;
 import com.cpdss.common.utils.EntityDoc;
 import java.math.BigDecimal;
 import javax.persistence.*;
-import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +38,12 @@ public class CargoNominationPortDetails extends EntityDoc {
 
   @Column(name = "operation_xid")
   private Long operationId;
+
+  @Column(name = "sequence_no")
+  private Long sequenceNo;
+
+  @Column(name = "empty_max_no_of_tanks")
+  private Boolean emptyMaxNoOfTanks;
 
   @Transient private Long communicationRelatedEntityId;
 }

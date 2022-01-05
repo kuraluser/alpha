@@ -11,4 +11,6 @@ public class CargoNominationOperationDetails {
   private Long dscargoNominationId;
   private Long portId;
   private String quantity;
+  private Long sequenceNo;
+  private Boolean emptyMaxNoOfTanks;
 }

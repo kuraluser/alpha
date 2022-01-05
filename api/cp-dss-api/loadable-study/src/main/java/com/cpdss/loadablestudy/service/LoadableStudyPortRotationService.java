@@ -847,7 +847,8 @@ public class LoadableStudyPortRotationService {
       cargoNominations.stream()
           .forEach(
               cargoNomination -> {
-                cargoNomination.setEmptyMaxNoOfTanks(false);
+                cargoNomination.getCargoNominationPortDetails().stream()
+                    .forEach(item -> item.setEmptyMaxNoOfTanks(false));
               });
       cargoNominationService.saveAll(cargoNominations);
     }

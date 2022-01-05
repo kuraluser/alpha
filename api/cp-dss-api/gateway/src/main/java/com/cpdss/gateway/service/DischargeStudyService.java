@@ -582,6 +582,8 @@ public class DischargeStudyService {
               if (nominationPort.isPresent()) {
                 cargoNomination.setQuantity(new BigDecimal(nominationPort.get().getQuantity()));
                 cargoNomination.setMode(nominationPort.get().getMode());
+                cargoNomination.setSequenceNo(nominationPort.get().getSequenceNo());
+                cargoNomination.setEmptyMaxNoOfTanks(nominationPort.get().getEmptyMaxNoOfTanks());
               } else {
                 cargoNomination.setQuantity(new BigDecimal(cargoNominationDetail.getQuantity()));
                 cargoNomination.setMode(1L);
@@ -594,8 +596,6 @@ public class DischargeStudyService {
                           && !cargoNominationDetail.getMaxQuantity().isBlank()
                       ? new BigDecimal(cargoNominationDetail.getMaxQuantity())
                       : new BigDecimal(0));
-              cargoNomination.setSequenceNo(cargoNominationDetail.getSequenceNo());
-              cargoNomination.setEmptyMaxNoOfTanks(cargoNominationDetail.getEmptyMaxNoOfTanks());
               cargoNominations.add(cargoNomination);
             });
     //    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));

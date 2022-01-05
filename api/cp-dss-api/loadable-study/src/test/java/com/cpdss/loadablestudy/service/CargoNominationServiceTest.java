@@ -151,7 +151,7 @@ public class CargoNominationServiceTest {
     Long operationId = 1L;
     var cargonomination =
         this.cargoNominationService.createCargoNominationPortDetails(
-            dischargeStudyCargo, cargo, portId, operationId);
+            dischargeStudyCargo, cargo, portId, operationId, 1);
     assertEquals(cargonomination.contains(1L), getCargoNPDetails().contains(1L));
   }
 

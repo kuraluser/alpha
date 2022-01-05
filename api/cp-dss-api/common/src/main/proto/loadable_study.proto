@@ -937,6 +937,8 @@ message LoadingPortDetail{
 	string name=3;
 	int64 mode = 4;
 	int64 operationId = 5;
+	int64 sequenceNo =6;
+	bool emptyMaxNoOfTanks=7;
 }
 
 message segregationDetail{

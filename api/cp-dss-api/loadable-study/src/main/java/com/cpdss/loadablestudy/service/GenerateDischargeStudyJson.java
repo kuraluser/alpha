@@ -868,6 +868,10 @@ public class GenerateDischargeStudyJson {
                       .ifPresent(cargoNominationOperation::setPortId);
                   ofNullable(iteratorItem.getQuantity())
                       .ifPresent(i -> cargoNominationOperation.setQuantity(i.toString()));
+                  ofNullable(iteratorItem.getSequenceNo())
+                      .ifPresent(cargoNominationOperation::setSequenceNo);
+                  ofNullable(iteratorItem.getEmptyMaxNoOfTanks())
+                      .ifPresent(cargoNominationOperation::setEmptyMaxNoOfTanks);
                   cargoNominationOperationDetailsList.add(cargoNominationOperation);
                 }
               }
@@ -909,8 +913,8 @@ public class GenerateDischargeStudyJson {
             ofNullable(item.getSegregationXId()).ifPresent(nomination::setSegregationId);
             nomination.setIsCondensateCargo(null); // for future
             nomination.setIsHrvpCargo(null); // for future
-            nomination.setSequenceNo(item.getSequenceNo());
-            nomination.setEmptyMaxNoOfTanks(item.getEmptyMaxNoOfTanks());
+            //            nomination.setSequenceNo(item.getSequenceNo());
+            //            nomination.setEmptyMaxNoOfTanks(item.getEmptyMaxNoOfTanks());
             cargoNominationList.add(nomination);
           });
       log.info("Found {} items", cargoNominationList.size());
