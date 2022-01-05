@@ -692,12 +692,14 @@ public class CargoPortInfoService {
             cargoPortMappings -> {
               cargoPortMappings.forEach(
                   cargoPortMapping -> {
-                    PortInfo.CargoPortMapping cargoPortMappingGenerated =
-                        PortInfo.CargoPortMapping.newBuilder()
-                            .setCargoId(cargoReply.getCargo().getId())
-                            .setPortId(cargoPortMapping.getPort().getId())
-                            .build();
-                    cargoPortMappingRequest.addCargoPortMapping(cargoPortMappingGenerated);
+                    if (cargoPortMapping.getPort() != null) {
+                      PortInfo.CargoPortMapping cargoPortMappingGenerated =
+                          PortInfo.CargoPortMapping.newBuilder()
+                              .setCargoId(cargoReply.getCargo().getId())
+                              .setPortId(cargoPortMapping.getPort().getId())
+                              .build();
+                      cargoPortMappingRequest.addCargoPortMapping(cargoPortMappingGenerated);
+                    }
                   });
             });
   }
