@@ -47,4 +47,22 @@ public interface PortDischargingPlanRobDetailsRepository
   public List<PortDischargingPlanRobDetails>
       findByPortXIdAndPortRotationXIdAndConditionTypeAndIsActive(
           Long portXId, Long portRotationXId, Integer conditionType, Boolean isActive);
+
+  /**
+   * Fetching rob details
+   *
+   * @param portXId
+   * @param portRotationXId
+   * @param conditionType
+   * @param valueType
+   * @param isActive
+   * @return List<PortDischargingPlanRobDetails>
+   */
+  public List<PortDischargingPlanRobDetails>
+      findByPortXIdAndPortRotationXIdAndConditionTypeAndValueTypeAndIsActive(
+          Long portXId,
+          Long portRotationXId,
+          Integer conditionType,
+          Integer valueType,
+          Boolean isActive);
 }

@@ -1,17 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service;
 
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.DATE_FORMAT;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.DISCHARGING_RULE_MASTER_ID;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_EXCEL_TEMPLATE_TITLES;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_TITLE_FONT_HEIGHT;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.PORT_TITLE_FONT_STYLE;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.SHEET;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.SUCCESS;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_DATE;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_HEIGHT;
-import static com.cpdss.dischargeplan.common.DischargePlanConstants.TIDE_TIME;
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.*;
 
 import com.cpdss.common.constants.RedisConfigConstants;
 import com.cpdss.common.exception.GenericServiceException;
@@ -1475,10 +1465,11 @@ public class DischargeInformationService {
     List<com.cpdss.dischargeplan.entity.PortDischargingPlanRobDetails>
         portDischargingPlanRobDetailsList =
             this.portDischargingPlanRobDetailsRepository
-                .findByPortXIdAndPortRotationXIdAndConditionTypeAndIsActive(
+                .findByPortXIdAndPortRotationXIdAndConditionTypeAndValueTypeAndIsActive(
                     request.getPortXId(),
                     request.getPortRotationXId(),
                     request.getConditionType(),
+                    ACTUAL_TYPE_VALUE,
                     true);
     builder.addAllPortDischargingPlanRobDetails(
         this.informationBuilderService.buildPortDischargingPlanRobDetailsReply(

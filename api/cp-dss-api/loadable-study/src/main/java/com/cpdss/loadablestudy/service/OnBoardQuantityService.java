@@ -270,8 +270,12 @@ public class OnBoardQuantityService {
                     () -> onBoardQuantityEntity.setDensity(new BigDecimal(0)));
             Optional.ofNullable(lpCargo.get().getActualQuantity())
                 .ifPresentOrElse(
-                    onBoardQuantityEntity::setActualArrivalWeight,
-                    () -> onBoardQuantityEntity.setActualArrivalWeight(new BigDecimal(0)));
+                    onBoardQuantityEntity::setPlannedArrivalWeight,
+                    () -> onBoardQuantityEntity.setPlannedArrivalWeight(new BigDecimal(0)));
+            Optional.ofNullable(lpCargo.get().getActualQuantity())
+                .ifPresentOrElse(
+                    onBoardQuantityEntity::setPlannedDepartureWeight,
+                    () -> onBoardQuantityEntity.setPlannedDepartureWeight(new BigDecimal(0)));
             Optional.ofNullable(lpCargo.get().getTemperature())
                 .ifPresentOrElse(
                     onBoardQuantityEntity::setTemperature,
