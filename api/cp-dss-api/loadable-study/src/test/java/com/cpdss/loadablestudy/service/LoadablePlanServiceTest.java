@@ -28,6 +28,7 @@ import java.util.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -288,28 +289,66 @@ public class LoadablePlanServiceTest {
     LoadableStudy.LoadablePlanReportReply.Builder dataChunkBuilder =
         LoadableStudy.LoadablePlanReportReply.newBuilder();
     VesselPlanTable vesselPlanTable = VesselPlanTable.builder().build();
-    SheetCoordinates cargoDetailsTableCoordinates = new SheetCoordinates(1, 1);
+    SheetCoordinates sheetCoordinates = new SheetCoordinates(1, 1);
     PortOperationTable portOperationTable = PortOperationTable.builder().build();
     CargoDetailsTable cargoDetailsTable = CargoDetailsTable.builder().build();
+    List<CommingleDetails> commingleDetailsList = new ArrayList<>();
 
     when(synopticService.buildPortOperationsTable(anyLong(), anyLong()))
         .thenReturn(portOperationTable);
     doReturn(vesselPlanTable).when(spyService).buildVesselPlanTableData(anyLong(), anyLong());
-    doReturn(cargoDetailsTableCoordinates)
+
+    doReturn(sheetCoordinates)
         .when(spyService)
         .drawCargoDetailsTable(
             any(XSSFSheet.class), any(CargoDetailsTable.class), anyInt(), anyInt());
-    doReturn(cargoDetailsTableCoordinates)
+    doReturn(sheetCoordinates)
         .when(spyService)
         .drawPortOperationTable(
             any(XSSFSheet.class), any(PortOperationTable.class), anyInt(), anyInt());
-    doReturn(cargoDetailsTableCoordinates)
+    doReturn(sheetCoordinates)
         .when(spyService)
         .drawVesselPlanTable(any(XSSFSheet.class), any(VesselPlanTable.class), anyInt(), anyInt());
+    doReturn(sheetCoordinates)
+        .when(spyService)
+        .drawCommingleDetailsTable(any(XSSFSheet.class), anyList(), anyInt(), anyInt());
+
     doReturn(cargoDetailsTable).when(spyService).buildCargoDetailsTable(anyLong(), anyLong());
+    doReturn(commingleDetailsList).when(spyService).buildCommingleDetailsTable(anyLong());
+
     ReflectionTestUtils.setField(spyService, "synopticService", synopticService);
     spyService.getLoadablePlanReport(workbook, request, dataChunkBuilder);
     assertEquals(SUCCESS, dataChunkBuilder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testBuildCommingleDetailsTable() {
+
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    when(loadablePlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(anyList());
+
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsRepository",
+        loadablePlanCommingleDetailsRepository);
+    List<CommingleDetails> commingleDetailsList = spyService.buildCommingleDetailsTable(1L);
+    Assertions.assertNotNull(commingleDetailsList);
+  }
+
+  @Test
+  void testDrawCommingleDetailsTable() {
+
+    LoadablePlanService spyService = spy(LoadablePlanService.class);
+    XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+    XSSFSheet xssfSheet = xssfWorkbook.createSheet();
+
+    List<CommingleDetails> commingleDetailsList = new ArrayList<>();
+    commingleDetailsList.add(CommingleDetails.builder().grade("COM1").build());
+    SheetCoordinates sheetCoordinates =
+        spyService.drawCommingleDetailsTable(xssfSheet, commingleDetailsList, 1, 1);
+    Assertions.assertEquals(sheetCoordinates.getRow(), 9);
   }
 
   @Test

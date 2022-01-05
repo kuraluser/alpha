@@ -836,6 +836,16 @@ public class LoadablePlanService {
             vesselPlanTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
             LOADABLE_PLAN_REPORT_START_COLUMN);
 
+    //    Create commingle details table
+    List<CommingleDetails> commingleDetailsList =
+        buildCommingleDetailsTable(request.getLoadablePatternId());
+    SheetCoordinates commingleDetailsTableCoordinates =
+        drawCommingleDetailsTable(
+            spreadsheet,
+            commingleDetailsList,
+            cargoDetailsTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
+            LOADABLE_PLAN_REPORT_START_COLUMN);
+
     //    Create port operations table
     PortOperationTable portOperationTable =
         synopticService.buildPortOperationsTable(
@@ -843,7 +853,7 @@ public class LoadablePlanService {
     drawPortOperationTable(
         spreadsheet,
         portOperationTable,
-        cargoDetailsTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
+        commingleDetailsTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
         LOADABLE_PLAN_REPORT_START_COLUMN);
 
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -875,6 +885,220 @@ public class LoadablePlanService {
 
     byteArrayOutputStream.close();
     //    }
+  }
+
+  /**
+   * Method to draw commingle details table in Loadable Plan Report Excel
+   *
+   * @param spreadsheet
+   * @param commingleDetailsList
+   * @param startRow
+   * @param startColumn
+   * @return SheetCoordinates
+   */
+  public SheetCoordinates drawCommingleDetailsTable(
+      XSSFSheet spreadsheet,
+      List<CommingleDetails> commingleDetailsList,
+      int startRow,
+      int startColumn) {
+
+    int rowNo = startRow;
+    int columnNo = startColumn;
+
+    //    Set commingle rows >> START
+    for (CommingleDetailsTableTitles commingleDetailsTableTitles :
+        CommingleDetailsTableTitles.values()) {
+
+      columnNo = startColumn;
+      XSSFRow commingleRow = spreadsheet.createRow(rowNo);
+
+      //      Set commingle table titles
+      XSSFCell commingleTitleCell = commingleRow.createCell(columnNo);
+      commingleTitleCell.setCellValue(commingleDetailsTableTitles.getColumnName());
+      commingleTitleCell.setCellStyle(
+          getCellStyle(
+              spreadsheet, TableCellStyle.COMMINGLE_TITLES, Optional.empty(), Optional.empty()));
+
+      //      Merge title columns
+      if (commingleDetailsTableTitles.isColumnsMerge()) {
+        //      Merge columns
+        spreadsheet.addMergedRegion(
+            new CellRangeAddress(
+                rowNo,
+                rowNo,
+                startColumn,
+                startColumn + LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH));
+      }
+
+      //      Merge title rows
+      if (commingleDetailsTableTitles.isRowsMerge()) {
+        //      Merge rows
+        spreadsheet.addMergedRegion(
+            new CellRangeAddress(
+                rowNo,
+                rowNo + LOADABLE_PLAN_REPORT_COMMINGLE_ROW_MERGE_LENGTH,
+                startColumn,
+                startColumn));
+      }
+      columnNo += LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH;
+
+      //      Set commingle table sub columns
+      XSSFCell commingleSubTitleCell = commingleRow.createCell(columnNo);
+      commingleSubTitleCell.setCellValue(commingleDetailsTableTitles.getSubColumnName());
+      commingleSubTitleCell.setCellStyle(
+          getCellStyle(
+              spreadsheet, TableCellStyle.COMMINGLE_TITLES, Optional.empty(), Optional.empty()));
+      columnNo++;
+
+      int commingleDetailsColumn = columnNo;
+      //        Set values
+      for (CommingleDetails commingleDetails : commingleDetailsList) {
+        XSSFCell commingleValueCell = commingleRow.createCell(commingleDetailsColumn);
+
+        XSSFCellStyle cellStyle = spreadsheet.getWorkbook().createCellStyle();
+        XSSFCell commingleSplitValueCell =
+            commingleRow.createCell(
+                commingleDetailsColumn + LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH);
+
+        switch (commingleDetailsTableTitles) {
+          case GRADE:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.CARGO_CARGO_CODE,
+                    Optional.empty(),
+                    Optional.empty());
+
+            commingleValueCell.setCellValue(commingleDetails.getGrade());
+
+            spreadsheet.addMergedRegion(
+                new CellRangeAddress(
+                    rowNo,
+                    rowNo,
+                    commingleDetailsColumn,
+                    commingleDetailsColumn + LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH));
+            break;
+          case TANK:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet, TableCellStyle.COMMINGLE_TANK, Optional.empty(), Optional.empty());
+
+            commingleValueCell.setCellValue(commingleDetails.getTankName());
+
+            spreadsheet.addMergedRegion(
+                new CellRangeAddress(
+                    rowNo,
+                    rowNo,
+                    commingleDetailsColumn,
+                    commingleDetailsColumn + LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH));
+            break;
+          case API:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.COMMINGLE_API,
+                    Optional.empty(),
+                    Optional.of(commingleDetailsTableTitles.getFormat()));
+
+            commingleValueCell.setCellValue(commingleDetails.getApi());
+
+            spreadsheet.addMergedRegion(
+                new CellRangeAddress(
+                    rowNo,
+                    rowNo,
+                    commingleDetailsColumn,
+                    commingleDetailsColumn + LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH));
+            break;
+          case TEMPERATURE:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.COMMINGLE_TEMP,
+                    Optional.empty(),
+                    Optional.of(commingleDetailsTableTitles.getFormat()));
+
+            commingleValueCell.setCellValue(commingleDetails.getTemperature());
+
+            spreadsheet.addMergedRegion(
+                new CellRangeAddress(
+                    rowNo,
+                    rowNo,
+                    commingleDetailsColumn,
+                    commingleDetailsColumn + LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH));
+            break;
+          case QUANTITY:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.COMMINGLE_QUANTITY,
+                    Optional.empty(),
+                    Optional.of(commingleDetailsTableTitles.getFormat()));
+
+            commingleValueCell.setCellValue(commingleDetails.getQuantity());
+
+            spreadsheet.addMergedRegion(
+                new CellRangeAddress(
+                    rowNo,
+                    rowNo,
+                    commingleDetailsColumn,
+                    commingleDetailsColumn + LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH));
+            break;
+          case CARGO_CODE:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.COMMINGLE_CARGO_CODE,
+                    Optional.empty(),
+                    Optional.of(commingleDetailsTableTitles.getFormat()));
+
+            commingleValueCell.setCellValue(commingleDetails.getCargo1Abbreviation());
+            commingleSplitValueCell.setCellValue(commingleDetails.getCargo2Abbreviation());
+            break;
+          case CARGO_PERCENTAGE:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.COMMINGLE_CARGO_PERCENTAGE,
+                    Optional.empty(),
+                    Optional.of(commingleDetailsTableTitles.getFormat()));
+
+            commingleValueCell.setCellValue(commingleDetails.getCargo1Percentage());
+            commingleSplitValueCell.setCellValue(commingleDetails.getCargo2Percentage());
+            break;
+          case CARGO_QUANTITY:
+            cellStyle =
+                getCellStyle(
+                    spreadsheet,
+                    TableCellStyle.COMMINGLE_CARGO_QUANTITY,
+                    Optional.empty(),
+                    Optional.of(commingleDetailsTableTitles.getFormat()));
+
+            commingleValueCell.setCellValue(commingleDetails.getCargo1Mt());
+            commingleSplitValueCell.setCellValue(commingleDetails.getCargo2Mt());
+            break;
+        }
+
+        commingleValueCell.setCellStyle(cellStyle);
+        commingleSplitValueCell.setCellStyle(cellStyle);
+
+        commingleDetailsColumn += LOADABLE_PLAN_REPORT_COMMINGLE_ROW_MERGE_LENGTH;
+      }
+      rowNo++;
+    }
+    //    Set commingle rows >> END
+    return new SheetCoordinates(rowNo, columnNo);
+  }
+
+  /**
+   * Method to build CommingleDetailsTable from entity
+   *
+   * @param loadablePatternId
+   * @return CommingleDetailsList
+   */
+  public List<CommingleDetails> buildCommingleDetailsTable(long loadablePatternId) {
+
+    return this.loadablePlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActive(
+        loadablePatternId, true);
   }
 
   /**
@@ -1011,6 +1235,7 @@ public class LoadablePlanService {
       case VESSEL_TANK_TANK_NO:
       case VESSEL_TANK_CARGO_CODE:
       case VESSEL_TANK_DETAILS:
+      case PORT_OPERATIONS_VALUES:
         setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
       case VESSEL_TANK_ULLAGE:
@@ -1040,10 +1265,16 @@ public class LoadablePlanService {
       case CARGO_TOTAL:
       case CLOSED_CELL_STYLE:
       case PORT_OPERATIONS_TITLES:
+      case COMMINGLE_TITLES:
+      case COMMINGLE_GRADE:
+      case COMMINGLE_TANK:
+      case COMMINGLE_QUANTITY:
+      case COMMINGLE_API:
+      case COMMINGLE_TEMP:
+      case COMMINGLE_CARGO_CODE:
+      case COMMINGLE_CARGO_PERCENTAGE:
+      case COMMINGLE_CARGO_QUANTITY:
         font.setFontHeight(10);
-        setBorderStyle(cellStyle, CellBorder.CLOSED);
-        break;
-      case PORT_OPERATIONS_VALUES:
         setBorderStyle(cellStyle, CellBorder.CLOSED);
         break;
     }

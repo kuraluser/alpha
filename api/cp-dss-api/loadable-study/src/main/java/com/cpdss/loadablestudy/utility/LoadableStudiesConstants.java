@@ -106,6 +106,8 @@ public class LoadableStudiesConstants {
   public static final String COMMINGLE_DEFAULT_COLOR_CODE = "#7114d9";
   public static final String WHITE_COLOR_CODE = "#FFFFFF";
   public static final int LOADABLE_PLAN_REPORT_CARGO_TITLE_WIDTH = 2;
+  public static final int LOADABLE_PLAN_REPORT_COMMINGLE_ROW_MERGE_LENGTH = 2;
+  public static final int LOADABLE_PLAN_REPORT_COMMINGLE_COLUMN_MERGE_WIDTH = 1;
   public static final String LOADABLE_PLAN_REPORT_TOTAL_VALUE = "TOTAL";
   public static final int LOADABLE_PLAN_REPORT_TITLE_WIDTH = 4;
   public static final String LOADABLE_PLAN_REPORT_FPT_VALUE = "FPT";
