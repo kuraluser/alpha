@@ -734,7 +734,7 @@ public class DischargePlanCommunicationService {
                     DischargingPlanTables.CARGO_DISCHARGING_RATE,
                     data,
                     dataTransferStage.getId(),
-                    "discharging_sequence_xid");
+                    "discharging_sequences_xid");
             break;
           }
         case ballast_operation:
@@ -1335,10 +1335,7 @@ public class DischargePlanCommunicationService {
                   dischargingPlanPortWiseDetails ->
                       dischargingPlanPortWiseDetails
                           .getId()
-                          .equals(
-                              dischargingPlanBallastDetails
-                                  .getCommunicationRelatedIdMap()
-                                  .get("discharging_plan_portwise_details_xid")))
+                          .equals(dischargingPlanBallastDetails.getCommunicationRelatedEntityId()))
               .findFirst()
               .orElse(null));
     }
