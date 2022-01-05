@@ -205,6 +205,8 @@ public class UllageUpdateLoadicatorService {
         UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
         LoadingInfoLoadicatorDataRequest.Builder loadicatorDataRequestBuilder =
             LoadingInfoLoadicatorDataRequest.newBuilder();
+        loadicatorDataRequestBuilder.setConditionType(
+            request.getUpdateUllage(0).getArrivalDepartutre());
         loadicatorDataRequestBuilder.setProcessId(processId);
         buildUllageEditLoadicatorAlgoRequest(
             dischargingInfoOpt.get(), loadicatorDataRequestBuilder.build(), algoRequest);
