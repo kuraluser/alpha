@@ -824,19 +824,16 @@ export class DischargeStudyComponent implements OnInit {
           const findCargo = portDetails[i].cargoDetail.find((cargoDetailDetails, cargoIndex) => {
             if (cargoDetailDetails.storedKey.value === cargo.storedKey.value) {
               if (cargoDetailDetails.mode.value.id === 2) {
-                if (Number(totalBackLoadingKlValue) >= Number(cargoDetailDetails.kl.value) && (i !== (this.portDetails.length - 1) || isAutoModeAvailable)) {
+                (quantitySum += Number(cargoDetailDetails.kl.value)).toFixed(3); 
+                if(this.isQuantityWithInTheRange(quantitySum, maxQuantity)) {
+                  this.setFeildValueOptionsOnMode('cargoDetail',cargoIndex,'kl',true,cargoDetailDetails.kl.value, i, event.data.api.value, event.data.temp.value);
+                  totalBackLoadingKlValue = 0;
+                } else if (Number(totalBackLoadingKlValue) >= Number(cargoDetailDetails.kl.value) && (i !== (this.portDetails.length - 1) || isAutoModeAvailable)) {
                   totalBackLoadingKlValue = Number((totalBackLoadingKlValue - Number(cargoDetailDetails.kl.value)).toFixed(3));
-                  (quantitySum += Number(cargoDetailDetails.kl.value)).toFixed(3);
                   this.setFeildValueOptionsOnMode('cargoDetail',cargoIndex,'kl',true,cargoDetailDetails.kl.value, i, event.data.api.value, event.data.temp.value);
                 } else {
-                  (quantitySum += Number(cargoDetailDetails.kl.value)).toFixed(3); 
-                  if(i === (this.portDetails.length - 1) && this.isQuantityWithInTheRange(quantitySum, maxQuantity)) {
-                    this.setFeildValueOptionsOnMode('cargoDetail',cargoIndex,'kl',true,cargoDetailDetails.kl.value, i, event.data.api.value, event.data.temp.value);
-                  } else {
-                    this.setFeildValueOptionsOnMode('cargoDetail',cargoIndex,'kl',true,totalBackLoadingKlValue, i, event.data.api.value, event.data.temp.value);
-                  }
-                  
-                  totalBackLoadingKlValue = 0;
+                  this.setFeildValueOptionsOnMode('cargoDetail',cargoIndex,'kl',true,totalBackLoadingKlValue, i, event.data.api.value, event.data.temp.value);
+                  totalBackLoadingKlValue = 0;        
                 }
               } else if(cargoDetailDetails.mode.value.id === 3) {
                 entireModeDetails = {isAvailable: true ,  value: totalBackLoadingKlValue , portIndex: i , cargoIndex: cargoIndex };
@@ -957,7 +954,6 @@ export class DischargeStudyComponent implements OnInit {
       formGroup.get('temp').enable();
       formGroup.get('cargo').enable();
 
-      this.quantityFieldEnableDisable(formGroup,selectedPortCargo);
 
       selectedPortCargo['abbreviation'].value = data.cargo.value.abbreviation;
       selectedPortCargo['api'].value = cargoDetails.api;
@@ -966,6 +962,7 @@ export class DischargeStudyComponent implements OnInit {
       this.updatebackLoadingDetails(feildIndex, index, 'abbreviation', selectedPortCargo['abbreviation'].value, 'backLoadingDetails');
       this.updatebackLoadingDetails(feildIndex, index, 'api', selectedPortCargo['api'].value, 'backLoadingDetails');
       this.updatebackLoadingDetails(feildIndex, index, 'temp', selectedPortCargo['temp'].value, 'backLoadingDetails');
+      this.quantityFieldEnableDisable(formGroup,selectedPortCargo);
     } else if(event.field === 'api' || event.field === 'temp') {
       this.setFeildValueOptionsOnMode('backLoadingDetails',event.index,'kl',true,'0', index, event.data.api.value, event.data.temp.value);
       this.quantityFieldEnableDisable(formGroup,selectedPortCargo);
