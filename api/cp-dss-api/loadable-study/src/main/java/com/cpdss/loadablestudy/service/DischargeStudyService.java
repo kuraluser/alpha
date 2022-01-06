@@ -167,6 +167,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             HttpStatusCode.BAD_REQUEST);
       }
       LoadableStudy loadableStudy = loadables.get(0);
+
+      // Validate ullage update and bl values
+      validateActuals(loadableStudy);
+
+      // Validate Actual ETA/ETD values
       List<LoadableStudyPortRotation> portRotationsForNonDischargingOperations =
           loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idNotAndIsActive(
               loadableStudy, DISCHARGING_OPERATION_ID, true);
@@ -185,8 +190,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           }
         }
       }
-      LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
-      validateActuals(loadableStudy);
+
+      // Validate DS Name
       if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
           request.getName(), 2, voyage, true)) {
         throw new GenericServiceException(
@@ -194,6 +199,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
+
+      // Validate synoptical data
       List<SynopticalTable> synopticalData =
           this.synopticalTableRepository
               .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
@@ -204,6 +213,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
+
+      // Validate OHQ data
       List<OnHandQuantity> onhandQuantity =
           this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
               loadableStudy, loadableStudyPortRotation, true);
