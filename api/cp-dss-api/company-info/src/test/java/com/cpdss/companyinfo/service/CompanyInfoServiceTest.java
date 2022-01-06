@@ -11,29 +11,33 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.companyinfo.domain.CompanyInfoResponse;
+import com.cpdss.companyinfo.entity.Carousals;
 import com.cpdss.companyinfo.entity.Company;
 import com.cpdss.companyinfo.repository.CompanyRepository;
 import com.cpdss.companyinfo.services.CompanyInfoService;
+import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /** Test class for {@link CompanyInfoService} */
 @SpringJUnitConfig(classes = {CompanyInfoService.class})
 class CompanyInfoServiceTest {
 
-  @SpyBean @Autowired private CompanyInfoService companyInfoService;
+  @Autowired private CompanyInfoService companyInfoService;
 
   @MockBean private CompanyRepository companyRepository;
 
@@ -44,9 +48,11 @@ class CompanyInfoServiceTest {
    */
   @Test
   void testFindCompanyInfoByDomain() throws GenericServiceException {
+    CompanyInfoService spyService = spy(CompanyInfoService.class);
     when(this.companyRepository.findByDomain(anyString())).thenReturn(prepareCompanyEntity());
-    when(this.companyInfoService.isShore()).thenReturn(true);
-    CompanyInfoResponse response = this.companyInfoService.findCompanyInfoByDomain(TEST_DOMAIN);
+    when(spyService.isShore()).thenReturn(true);
+    ReflectionTestUtils.setField(spyService, "companyRepository", companyRepository);
+    CompanyInfoResponse response = spyService.findCompanyInfoByDomain(TEST_DOMAIN);
     assertNotNull(response);
     assertNotNull(response.getRealm());
     assertNotNull(response.getProviders());
@@ -95,5 +101,49 @@ class CompanyInfoServiceTest {
         () ->
             assertEquals(
                 HttpStatusCode.INTERNAL_SERVER_ERROR, ex.getStatus(), INVALID_HTTP_STATUS));
+  }
+
+  @Test
+  void testFindShipCarousals() throws GenericServiceException {
+    when(this.companyRepository.findAll()).thenReturn(getCompanyList());
+    when(this.companyRepository.findByIsActiveAndDomain(anyBoolean(), anyString()))
+        .thenReturn(Optional.of(getCompanyList().get(0)));
+    var result = companyInfoService.findShipCarousals("1");
+    assertEquals("1", result.getLogo());
+  }
+
+  @Test
+  void testFindShipCarousalsWithEmptyData() {
+    when(this.companyRepository.findAll()).thenReturn(null);
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class, () -> this.companyInfoService.findShipCarousals("1"));
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), INVALID_ERROR_CODE),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), INVALID_HTTP_STATUS));
+  }
+
+  @Test
+  void testIsShore() {
+    var result = companyInfoService.isShore();
+    assertEquals(false, result);
+  }
+
+  private List<Company> getCompanyList() {
+    List<Company> companyList = new ArrayList<>();
+    Company company = new Company();
+    company.setCompanyLogo("1");
+    company.setCompanyFavicon("1");
+    company.setRealm("1");
+    company.setKeycloakIdp("1");
+    company.setDocumentationSiteUrl("1");
+    company.setSimulatorSiteUrl("1");
+    Set<Carousals> carousals = new HashSet<>();
+    Carousals ca = new Carousals();
+    ca.setFilePath("1");
+    carousals.add(ca);
+    company.setCarousals(carousals);
+    companyList.add(company);
+    return companyList;
   }
 }

@@ -3,8 +3,10 @@ package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -12,7 +14,10 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
@@ -21,6 +26,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +81,37 @@ public class VoyageServiceTest {
     assertEquals(1L, builder.getId());
   }
 
+  @Test
+  void testFetchActiveVoyageByVesselIdConfirmedLs() {
+    LoadableStudy.ActiveVoyage.Builder builder = LoadableStudy.ActiveVoyage.newBuilder();
+    Long vesselId = 1L;
+    Long activeStatus = 1L;
+    Voyage voyage = getLV().get(0);
+    Set<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudies = new HashSet<>();
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.entity.LoadableStudy();
+    loadableStudy.setLoadableStudyStatus(getLSS());
+    loadableStudy.setId(1L);
+    loadableStudy.setPlanningTypeXId(1);
+    loadableStudy.setName("ACTIVE");
+    loadableStudy.setDraftMark(new BigDecimal(1));
+    loadableStudy.setCreatedDateTime(LocalDateTime.now());
+    loadableStudy.setPortRotations(getPR());
+    loadableStudies.add(loadableStudy);
+    voyage.setLoadableStudies(loadableStudies);
+    Mockito.when(
+            this.voyageRepository.findActiveVoyagesByVesselId(Mockito.anyLong(), Mockito.anyLong()))
+        .thenReturn(Arrays.asList(voyage));
+    Mockito.when(cargoNominationService.getCargoNominations(Mockito.anyLong()))
+        .thenReturn(getLCN());
+    Mockito.when(
+            loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+                Mockito.anyLong(), Mockito.anyLong()))
+        .thenReturn(getLP());
+    this.voyageService.fetchActiveVoyageByVesselId(builder, vesselId, activeStatus);
+    assertEquals(1L, builder.getId());
+  }
+
   private List<Voyage> getLV() {
     List<Voyage> voyages = new ArrayList<>();
     Voyage voyage = new Voyage();
@@ -93,12 +131,17 @@ public class VoyageServiceTest {
   private VoyageStatus getVS() {
     VoyageStatus voyageStatus = new VoyageStatus();
     voyageStatus.setName("ACTIVE");
-    voyageStatus.setId(1L);
+    voyageStatus.setId(3L);
     return voyageStatus;
   }
 
   private Set<com.cpdss.loadablestudy.entity.LoadableStudy> getLS() {
     Set<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudies = new HashSet<>();
+    loadableStudies.add(getLoadableStudy());
+    return loadableStudies;
+  }
+
+  private com.cpdss.loadablestudy.entity.LoadableStudy getLoadableStudy() {
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
         new com.cpdss.loadablestudy.entity.LoadableStudy();
     loadableStudy.setLoadableStudyStatus(getLSS());
@@ -108,8 +151,11 @@ public class VoyageServiceTest {
     loadableStudy.setDraftMark(new BigDecimal(1));
     loadableStudy.setCreatedDateTime(LocalDateTime.now());
     loadableStudy.setPortRotations(getPR());
-    loadableStudies.add(loadableStudy);
-    return loadableStudies;
+    Voyage voyage = new Voyage();
+    voyage.setId(1l);
+    loadableStudy.setVoyage(voyage);
+    loadableStudy.setCharterer("1");
+    return loadableStudy;
   }
 
   private LoadableStudyStatus getLSS() {
@@ -121,15 +167,22 @@ public class VoyageServiceTest {
 
   private Set<LoadableStudyPortRotation> getPR() {
     Set<LoadableStudyPortRotation> loadableStudyPortRotations = new HashSet<>();
+    loadableStudyPortRotations.add(getPortRotation());
+    return loadableStudyPortRotations;
+  }
+
+  private LoadableStudyPortRotation getPortRotation() {
     LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
     loadableStudyPortRotation.setId(1L);
     loadableStudyPortRotation.setPortXId(1L);
     loadableStudyPortRotation.setPortOrder(1L);
     loadableStudyPortRotation.setBerthXId(1L);
+    loadableStudyPortRotation.setActive(true);
     loadableStudyPortRotation.setOperation(getCO());
+    loadableStudyPortRotation.setEtd(LocalDateTime.now());
     loadableStudyPortRotation.setSeaWaterDensity(new BigDecimal(1));
-    loadableStudyPortRotations.add(loadableStudyPortRotation);
-    return loadableStudyPortRotations;
+    loadableStudyPortRotation.setSynopticalTable(Arrays.asList(getSynopticalTable().get()));
+    return loadableStudyPortRotation;
   }
 
   private List<CargoNomination> getLCN() {
@@ -179,7 +232,11 @@ public class VoyageServiceTest {
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     voyage.setLoadableStudies(getLS());
-    voyage.setVoyageStatus(getVS());
+    VoyageStatus voyageStatus = new VoyageStatus();
+    voyageStatus.setName("ACTIVE");
+    voyageStatus.setId(2L);
+    voyage.setVoyageStatus(voyageStatus);
+    voyage.setVoyageNo("1");
     return voyage;
   }
 
@@ -220,16 +277,50 @@ public class VoyageServiceTest {
     LoadableStudy.VoyageRequest request =
         LoadableStudy.VoyageRequest.newBuilder().setVesselId(1L).build();
     LoadableStudy.VoyageListReply.Builder builder = LoadableStudy.VoyageListReply.newBuilder();
+    Voyage voyage = getLV().get(0);
+    Set<com.cpdss.loadablestudy.entity.LoadableStudy> loadableStudies = new HashSet<>();
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.entity.LoadableStudy();
+    loadableStudy.setLoadableStudyStatus(getLSS());
+    loadableStudy.setId(1L);
+    loadableStudy.setPlanningTypeXId(1);
+    loadableStudy.setName("ACTIVE");
+    loadableStudy.setDraftMark(new BigDecimal(1));
+    loadableStudy.setCreatedDateTime(LocalDateTime.now());
+    loadableStudy.setPortRotations(getPR());
+    loadableStudies.add(loadableStudy);
+    voyage.setLoadableStudies(loadableStudies);
+
     Mockito.when(
-            this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(
+            this.voyageRepository.findByVesselXIdAndIsActiveOrderByCreatedDateTimeDesc(
                 Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getLV());
+        .thenReturn(Arrays.asList(voyage));
+    when(synopticService.checkDischargeStarted(anyLong(), anyLong())).thenReturn(getOLS());
     Mockito.when(
             loadableStudyRepository.getLoadableStudyByVesselVoyagePlanningType(
                 Mockito.anyLong(), Mockito.anyLong(), Mockito.anyInt()))
         .thenReturn(getOLS());
+    when(this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+                any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getPortRotation());
+    ReflectionTestUtils.setField(voyageService, "dayDifference", "3");
     var voyageListReply = this.voyageService.getVoyagesByVessel(request, builder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testCheckIfVoyageActive() throws GenericServiceException {
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLV().get(0));
+
+    final GenericServiceException ex =
+        assertThrows(GenericServiceException.class, () -> voyageService.checkIfVoyageActive(1l));
+    assertAll(
+        () ->
+            assertEquals(
+                CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   private Optional<List<com.cpdss.loadablestudy.entity.LoadableStudy>> getOLS() {
@@ -259,17 +350,22 @@ public class VoyageServiceTest {
   }
 
   @Test
-  void testsaveVoyageStatus() throws GenericServiceException {
+  void testSaveVoyageStatus() throws GenericServiceException {
     LoadableStudy.SaveVoyageStatusRequest request =
         LoadableStudy.SaveVoyageStatusRequest.newBuilder()
             .setActualStartDate("12-09-2021 11:23")
+            .setActualEndDate("")
             .setStatus("START")
             .setVoyageId(1L)
             .build();
     LoadableStudy.SaveVoyageStatusReply.Builder replyBuilder =
         LoadableStudy.SaveVoyageStatusReply.newBuilder();
+    LoadableStudyAlgoStatus algoStatus = new LoadableStudyAlgoStatus();
+    algoStatus.setCreatedDateTime(LocalDateTime.now());
+    algoStatus.setProcessId("1");
+
     Mockito.when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getVo());
+        .thenReturn(getLV().get(0));
     Mockito.when(
             this.voyageRepository.findByVoyageStatusAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
@@ -286,15 +382,86 @@ public class VoyageServiceTest {
             loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
                 Mockito.any(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getOLP());
-
     Mockito.when(
             cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLCN());
+    when(this.loadingPlanService.loadingPlanSynchronization(
+            any(LoadingPlanModels.LoadingPlanSyncDetails.class)))
+        .thenReturn(
+            LoadingPlanModels.LoadingPlanSyncReply.newBuilder()
+                .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(getPortRotation()));
+    when(this.synopticalTableRepository
+            .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
+                anyLong(), anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(getSynopticalTable().get()));
+    when(this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
+                any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getPortRotation());
+    doNothing().when(cargoService).saveCargoHistoryFromOperationsModule(anyLong(), anyLong());
+    when(loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(algoStatus));
+    when(this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getCargoDetailsList());
+    when(this.toppingOffSequenceRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(Arrays.asList(getToppingOffSequence()));
+    ReflectionTestUtils.setField(voyageService, "loadingPlanService", loadingPlanService);
 
     var result = voyageService.saveVoyageStatus(request, replyBuilder);
     assertEquals(SUCCESS, result.build().getResponseStatus().getStatus());
     verify(voyageRepository).save(any(Voyage.class));
+  }
+
+  private LoadablePatternCargoToppingOffSequence getToppingOffSequence() {
+    LoadablePatternCargoToppingOffSequence toppingOffSequence =
+        new LoadablePatternCargoToppingOffSequence();
+    toppingOffSequence.setCargoXId(1l);
+    toppingOffSequence.setLoadablePattern(getLP().get(0));
+    toppingOffSequence.setOrderNumber(1);
+    toppingOffSequence.setTankXId(1l);
+    toppingOffSequence.setDisplayOrder(1);
+    toppingOffSequence.setPortRotationXId(1l);
+    return toppingOffSequence;
+  }
+
+  private List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> getCargoDetailsList() {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
+        new ArrayList<>();
+    LoadablePatternCargoDetails cargoDetails = new LoadablePatternCargoDetails();
+    cargoDetails.setCargoId(1l);
+    cargoDetails.setId(1l);
+    cargoDetails.setTankId(1l);
+    cargoDetails.setCargoNominationId(1l);
+    cargoDetails.setPlannedQuantity(new BigDecimal(1));
+    cargoDetails.setColorCode("1");
+    cargoDetails.setAbbreviation("1");
+    cargoDetails.setColorCode("1");
+    cargoDetails.setCorrectedUllage(new BigDecimal(1));
+    cargoDetails.setFillingRatio("1");
+    cargoDetails.setPortRotationId(1l);
+    cargoDetails.setOperationType("DEP");
+    loadablePatternCargoDetails.add(cargoDetails);
+    return loadablePatternCargoDetails;
+  }
+
+  private Optional<SynopticalTable> getSynopticalTable() {
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setId(1L);
+    LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
+    portRotation.setId(1l);
+    synopticalTable.setOperationType("DEP");
+    synopticalTable.setLoadableStudyPortRotation(portRotation);
+    synopticalTable.setEtdActual(LocalDateTime.now());
+    synopticalTable.setIsActive(true);
+    return Optional.of(synopticalTable);
   }
 
   @Test
@@ -320,14 +487,26 @@ public class VoyageServiceTest {
   }
 
   @Test
-  void testgetVoyages() throws GenericServiceException {
+  void testgetVoyageByVoyageId() {
+    LoadableStudy.VoyageInfoRequest request = LoadableStudy.VoyageInfoRequest.newBuilder().build();
+    LoadableStudy.VoyageInfoReply.Builder replyBuilder = LoadableStudy.VoyageInfoReply.newBuilder();
+    when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(getVo());
+
+    voyageService.getVoyageByVoyageId(request, replyBuilder);
+    assertEquals("1", replyBuilder.getVoyageDetail().getVoyageNumber());
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2})
+  void testGetVoyages(Integer i) throws GenericServiceException {
     VoyageService spyService = spy(VoyageService.class);
     LoadableStudy.VoyageListReply.Builder builder = LoadableStudy.VoyageListReply.newBuilder();
     LoadableStudy.VoyageRequest request =
         LoadableStudy.VoyageRequest.newBuilder()
             .setVesselId(1l)
             .setStartDate("dd-MM-yyyy")
-            .setToStartDate("")
+            .setFromStartDate("20-12-2014")
+            .setToStartDate("20-09-2014")
             .build();
     PortInfo.PortReply portReply =
         PortInfo.PortReply.newBuilder()
@@ -338,9 +517,17 @@ public class VoyageServiceTest {
         CargoInfo.CargoReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
             .build();
-    Mockito.doReturn(cargoReply).when(spyService).getCargoInfo(any(CargoInfo.CargoRequest.class));
-    when(loadableStudyRepository.findByListOfVoyage(anyList())).thenReturn(getOLS().get());
     List<Object[]> list = new ArrayList<>();
+    Object obj[] = new Object[3];
+    obj[0] = 1l;
+    obj[1] = 1l;
+    list.add(obj);
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy = getLoadableStudy();
+    loadableStudy.setPlanningTypeXId(i);
+
+    Mockito.doReturn(cargoReply).when(spyService).getCargoInfo(any(CargoInfo.CargoRequest.class));
+    when(loadableStudyRepository.findByListOfVoyage(anyList()))
+        .thenReturn(Arrays.asList(loadableStudy));
     when(this.loadableStudyPortRotationRepository.getDistinctLoadingPorts(anyList()))
         .thenReturn(list);
     when(this.loadableStudyPortRotationRepository.getDistinctDischarigingPortsById(anyList()))
@@ -348,7 +535,7 @@ public class VoyageServiceTest {
     when(this.cargoNominationRepository.findByLoadableStudyIdIn(anyList())).thenReturn(list);
     when(voyageRepository.findByIsActiveAndVesselXIdAndActualStartDateBetween(
             anyBoolean(), anyLong(), any(LocalDate.class), any(LocalDate.class)))
-        .thenReturn(getLVe());
+        .thenReturn(getLV());
     List<Voyage> voyageList = new ArrayList<>();
     when(voyageRepository
             .findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
@@ -421,6 +608,7 @@ public class VoyageServiceTest {
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
         new com.cpdss.loadablestudy.entity.LoadableStudy();
     loadableStudy.setId(1L);
+    loadableStudy.setVesselXId(1l);
     return Optional.of(loadableStudy);
   }
 
@@ -428,6 +616,7 @@ public class VoyageServiceTest {
     LoadablePattern loadablePattern = new LoadablePattern();
     loadablePattern.setLoadableStudyStatus(1L);
     loadablePattern.setId(1L);
+    loadablePattern.setLoadableStudy(getOLSS().get());
     return Optional.of(loadablePattern);
   }
 

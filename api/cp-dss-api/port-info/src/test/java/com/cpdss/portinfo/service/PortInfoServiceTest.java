@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
+import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.PortInfo.PortEmptyRequest;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
@@ -22,6 +23,10 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /** Test class for methods related to port info */
@@ -289,18 +294,23 @@ public class PortInfoServiceTest {
             .build();
     StreamRecorder<com.cpdss.common.generated.PortInfo.CargoInfos> responseObserver =
         StreamRecorder.create();
-    List<CargoPortMapping> cargoIds = new ArrayList<>();
-    CargoPortMapping portMapping = new CargoPortMapping();
-    portMapping.setCargoXId(1l);
-    portMapping.setPortInfo(getPortInfoList().get(0));
 
-    when(this.cargoPortMappingRepository.findByportInfo_idIn(anyList())).thenReturn(cargoIds);
+    when(this.cargoPortMappingRepository.findByportInfo_idIn(anyList()))
+        .thenReturn(Arrays.asList(getPortMapping()));
 
     portService.getCargoInfoByPortIds(request, responseObserver);
     List<com.cpdss.common.generated.PortInfo.CargoInfos> replies = responseObserver.getValues();
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private CargoPortMapping getPortMapping() {
+    CargoPortMapping portMapping = new CargoPortMapping();
+    portMapping.setCargoXId(1l);
+    portMapping.setId(1l);
+    portMapping.setPortInfo(getPortInfoList().get(0));
+    return portMapping;
   }
 
   @Test
@@ -395,6 +405,195 @@ public class PortInfoServiceTest {
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAllCargoPortMapping() {
+    com.cpdss.common.generated.PortInfo.CargoPortRequest request =
+        com.cpdss.common.generated.PortInfo.CargoPortRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver =
+        StreamRecorder.create();
+
+    when(this.cargoPortMappingRepository.findAll()).thenReturn(Arrays.asList(getPortMapping()));
+
+    portService.getAllCargoPortMapping(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.CargoPortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAllCargoPortMappingWithException() {
+    com.cpdss.common.generated.PortInfo.CargoPortRequest request =
+        com.cpdss.common.generated.PortInfo.CargoPortRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver =
+        StreamRecorder.create();
+
+    when(this.cargoPortMappingRepository.findAll()).thenThrow(new RuntimeException("1"));
+
+    portService.getAllCargoPortMapping(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.CargoPortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAllCargoPortMappingById() {
+    com.cpdss.common.generated.PortInfo.CargoPortRequest request =
+        com.cpdss.common.generated.PortInfo.CargoPortRequest.newBuilder().setCargoId(1l).build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver =
+        StreamRecorder.create();
+
+    when(this.cargoPortMappingRepository.findByCargoXId(anyLong()))
+        .thenReturn(Arrays.asList(getPortMapping()));
+
+    portService.getAllCargoPortMappingById(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.CargoPortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAllCargoPortMappingByIdNullValues() {
+    com.cpdss.common.generated.PortInfo.CargoPortRequest request =
+        com.cpdss.common.generated.PortInfo.CargoPortRequest.newBuilder().setCargoId(1l).build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver =
+        StreamRecorder.create();
+    CargoPortMapping mapping = new CargoPortMapping();
+    mapping.setPortInfo(new PortInfo());
+    when(this.cargoPortMappingRepository.findByCargoXId(anyLong()))
+        .thenReturn(Arrays.asList(mapping));
+
+    portService.getAllCargoPortMappingById(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.CargoPortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAllCargoPortMappingByIdWithException() {
+    com.cpdss.common.generated.PortInfo.CargoPortRequest request =
+        com.cpdss.common.generated.PortInfo.CargoPortRequest.newBuilder().setCargoId(1l).build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver =
+        StreamRecorder.create();
+
+    when(this.cargoPortMappingRepository.findByCargoXId(anyLong()))
+        .thenThrow(new RuntimeException("1"));
+
+    portService.getAllCargoPortMappingById(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.CargoPortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveAllCargoPortMappings() {
+    com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request =
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.newBuilder()
+            .addAllCargoPortMapping(
+                Arrays.asList(
+                    com.cpdss.common.generated.PortInfo.CargoPortMapping.newBuilder()
+                        .setPortId(1l)
+                        .setCargoId(1l)
+                        .build()))
+            .build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver =
+        StreamRecorder.create();
+
+    when(this.portRepository.findByIdAndIsActiveTrue(anyLong()))
+        .thenReturn(Optional.of(getPortInfoList().get(0)));
+    when(this.cargoPortMappingRepository.findByCargoXIdAndPortIdAndIsActive(
+            anyLong(), anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(getPortMapping()));
+    when(this.cargoPortMappingRepository.save(any(CargoPortMapping.class)))
+        .thenReturn(getPortMapping());
+
+    portService.saveAllCargoPortMappings(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.CargoPortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveAllCargoPortMappingsWithException() {
+    com.cpdss.common.generated.PortInfo.CargoPortMappingRequest request =
+        com.cpdss.common.generated.PortInfo.CargoPortMappingRequest.newBuilder()
+            .addAllCargoPortMapping(
+                Arrays.asList(
+                    com.cpdss.common.generated.PortInfo.CargoPortMapping.newBuilder()
+                        .setPortId(1l)
+                        .setCargoId(1l)
+                        .build()))
+            .build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.CargoPortReply> responseObserver =
+        StreamRecorder.create();
+
+    when(this.portRepository.findByIdAndIsActiveTrue(anyLong()))
+        .thenThrow(new RuntimeException("1"));
+
+    portService.saveAllCargoPortMappings(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.CargoPortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetPortInfoDetailed() {
+    com.cpdss.common.generated.PortInfo.PortRequest request =
+        PortRequest.newBuilder()
+            .addAllParam(
+                Arrays.asList(CargoInfo.Param.newBuilder().setKey("id").setValue("1").build()))
+            .setPage(1)
+            .setPageSize(1)
+            .setOrderBy("ASC")
+            .setSortBy("ASC")
+            .build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.PortReply> responseObserver =
+        StreamRecorder.create();
+    List<PortInfo> portInfoList = getPortInfoList();
+    Page<PortInfo> portInfoPage = new PageImpl<>(portInfoList);
+
+    when(this.portRepository.findAll(any(Specification.class), any(Pageable.class)))
+        .thenReturn(portInfoPage);
+
+    portService.getPortInfoDetailed(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.PortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetPortInfoDetailedWithException() {
+    com.cpdss.common.generated.PortInfo.PortRequest request =
+        PortRequest.newBuilder()
+            .addAllParam(
+                Arrays.asList(CargoInfo.Param.newBuilder().setKey("id").setValue("1").build()))
+            .setPage(1)
+            .setPageSize(1)
+            .setOrderBy("ASC")
+            .setSortBy("ASC")
+            .build();
+    StreamRecorder<com.cpdss.common.generated.PortInfo.PortReply> responseObserver =
+        StreamRecorder.create();
+    List<PortInfo> portInfoList = getPortInfoList();
+    Page<PortInfo> portInfoPage = new PageImpl<>(portInfoList);
+
+    when(this.portRepository.findAll(any(Specification.class), any(Pageable.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    portService.getPortInfoDetailed(request, responseObserver);
+    List<com.cpdss.common.generated.PortInfo.PortReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals("FAILURE", replies.get(0).getResponseStatus().getStatus());
   }
 
   private List<Timezone> getTimezoneList() {

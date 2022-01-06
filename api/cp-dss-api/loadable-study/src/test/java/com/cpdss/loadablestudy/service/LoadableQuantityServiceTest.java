@@ -3,15 +3,17 @@ package com.cpdss.loadablestudy.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy.CargoToppingOffSequenceDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
 import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
@@ -24,6 +26,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -109,6 +113,34 @@ class LoadableQuantityServiceTest {
     }
   }
 
+  @Test
+  void testSaveLoadableQuantityNullValues() throws GenericServiceException {
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    loadableQuantity.setLoadableStudyXId(getLoadableStudyXid());
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest loadableQuantityRequest =
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityRequest.newBuilder().build();
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.Builder loadableQuantityReply =
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityReply.newBuilder();
+    Mockito.when(this.loadableStudyRepository.findById(Mockito.anyLong()))
+        .thenReturn(getLoadableStudy());
+    Mockito.when(
+            this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getListQuantity());
+
+    Mockito.when(
+            this.loadableStudyPortRotationRepository.findByIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLoadablePortROtation());
+    Mockito.when(this.loadableQuantityRepository.save(Mockito.any(LoadableQuantity.class)))
+        .thenReturn(getLoadablequnt());
+
+    this.loadableQuantityService.saveLoadableQuantity(
+        loadableQuantityRequest, loadableQuantityReply);
+    assertEquals("SUCCESS", loadableQuantityReply.getResponseStatus().getStatus());
+    assertEquals("SUCCESS", loadableQuantityReply.getResponseStatus().getMessage());
+  }
+
   private Optional<LoadableStudy> getLoadableStudy() {
     LoadableStudy load = new LoadableStudy();
     load.setId(1L);
@@ -118,6 +150,7 @@ class LoadableQuantityServiceTest {
     load.setCaseNo(1);
     load.setLastModifiedDateTime(LocalDateTime.now());
     load.setDraftMark(new BigDecimal(1));
+    load.setDraftRestriction(new BigDecimal(1));
     return Optional.of(load);
   }
 
@@ -157,6 +190,8 @@ class LoadableQuantityServiceTest {
     LoadableQuantity loadableQuantity = new LoadableQuantity();
     loadableQuantity.setId(1L);
     loadableQuantity.setLastModifiedDateTime(LocalDateTime.now());
+    loadableQuantity.setConstant(new BigDecimal(1));
+    loadableQuantity.setDistanceFromLastPort(new BigDecimal(1));
     loadableQuantity.setLoadableStudyPortRotation(getLoadablePortROtation());
     return loadableQuantity;
   }
@@ -199,6 +234,10 @@ class LoadableQuantityServiceTest {
 
   @Test
   void testSaveLoadableQuantity2Loadable() {
+    List<CargoToppingOffSequenceDetails> top = new ArrayList<CargoToppingOffSequenceDetails>();
+    CargoToppingOffSequenceDetails cargo =
+        CargoToppingOffSequenceDetails.newBuilder().setOrderNumber(1).setTankId(1L).build();
+    top.add(cargo);
     LoadableQuantityCargoDetails lo =
         LoadableQuantityCargoDetails.newBuilder()
             .setTimeRequiredForLoading("1")
@@ -217,24 +256,20 @@ class LoadableQuantityServiceTest {
             .setEstimatedTemp("1")
             .setEstimatedAPI("1")
             .setDifferencePercentage("1")
+            .addAllToppingOffSequences(top)
             .build();
     LoadablePlanDetailsReply loadablePlanDetailsReply =
         LoadablePlanDetailsReply.newBuilder()
             .addAllLoadableQuantityCargoDetails(Collections.singletonList(lo))
             .build();
 
+    LoadablePattern loadablePattern = new LoadablePattern();
+
     com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails
         loadablePlanPortWiseDetails =
             com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails.newBuilder()
                 .setDepartureCondition(loadablePlanDetailsReply)
                 .build();
-    LoadablePattern loadablePattern = new LoadablePattern();
-    List<LoadableQuantityCargoDetails> load = new ArrayList<LoadableQuantityCargoDetails>();
-
-    List<CargoToppingOffSequenceDetails> top = new ArrayList<CargoToppingOffSequenceDetails>();
-    CargoToppingOffSequenceDetails cargo =
-        CargoToppingOffSequenceDetails.newBuilder().setOrderNumber(1).setTankId(1L).build();
-    top.add(cargo);
     this.loadableQuantityService.saveLoadableQuantity(loadablePlanPortWiseDetails, loadablePattern);
     Mockito.verify(loadablePlanQuantityRepository).save(Mockito.any(LoadablePlanQuantity.class));
   }
@@ -260,8 +295,9 @@ class LoadableQuantityServiceTest {
   }
 
   @Test
-  void testValidateLoadableStudyWithLQ() {
+  void testValidateLoadableStudyWithLQ() throws GenericServiceException {
     LoadableStudy ls = new LoadableStudy();
+    ls.setId(1l);
     Mockito.when(
             this.loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(
                 Mockito.anyLong(), Mockito.anyBoolean()))
@@ -270,22 +306,160 @@ class LoadableQuantityServiceTest {
             this.loadableQuantityRepository.findByLSIdAndPortRotationId(
                 Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLoadableQuant());
+    this.loadableQuantityService.validateLoadableStudyWithLQ(ls);
+    assertEquals(1L, ls.getId());
+  }
+
+  @Test
+  void testValidateLoadableStudyWithLQWithGenericException() {
+    LoadableStudy ls = new LoadableStudy();
+    ls.setId(1l);
+    Mockito.when(
+            this.loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getPortsid());
+    Mockito.when(
+            this.loadableQuantityRepository.findByLSIdAndPortRotationId(
+                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(Optional.empty());
     try {
       this.loadableQuantityService.validateLoadableStudyWithLQ(ls);
-      assertEquals(1L, ls.getId());
+      verify(this.loadableQuantityRepository)
+          .findByLSIdAndPortRotationId(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean());
     } catch (GenericServiceException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  @Test
-  void testLoadableQuantityByPortId() throws GenericServiceException {
+  @ParameterizedTest
+  @CsvSource({"2,3", "4,5", "1,6"})
+  void testLoadableQuantityByPortId(Long id, Long fId) throws GenericServiceException {
     LoadableQuantityService spyService = spy(LoadableQuantityService.class);
     com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.Builder builder =
         com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.newBuilder();
     when(loadableQuantityRepository.findByLSIdAndPortRotationId(anyLong(), anyLong(), anyBoolean()))
-        .thenReturn(Optional.of(getLoadablequnt()));
+        .thenReturn(Optional.of(getLoadableQuantity().get(0)));
+    List<LoadableQuantity> list = new ArrayList<>();
+    list.add(getLoadablequnt());
+    Map<Long, Long> portRIds = new HashMap<>();
+    portRIds.put(0l, 1l);
+    LoadableStudyPortRotation lsPortRot = getLoadablePortROtation();
+    CargoOperation operation = new CargoOperation();
+    operation.setId(id);
+    lsPortRot.setOperation(operation);
+    lsPortRot.setId(0l);
+    OnHandQuantity ohq = getOnHandQuantity();
+    ohq.setFuelTypeXId(fId);
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setVesselId(1l)
+            .setVesselLoadableQuantityDetails(
+                VesselInfo.VesselLoadableQuantityDetails.newBuilder()
+                    .setDraftConditionName("1")
+                    .setVesselLightWeight("1")
+                    .setConstant("1")
+                    .setTpc("1")
+                    .build())
+            .build();
+    when(vesselInfoGrpcService.getVesselDetailsById(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+    when(vesselInfoGrpcService.getDWTFromVesselByVesselId(any(VesselInfo.VesselDWTRequest.class)))
+        .thenReturn(
+            VesselInfo.VesselDWTResponse.newBuilder()
+                .setResponseStatus(
+                    Common.ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage("1").build())
+                .setDwtResult("1")
+                .build());
+    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(Arrays.asList(ohq));
+    when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(list);
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLoadableStudy());
+    when(portRotationService.getPortRotationIdAndPortIds(any(LoadableStudy.class)))
+        .thenReturn(portRIds);
+    when(portRotationService.findLoadableStudyPortRotationById(anyLong())).thenReturn(lsPortRot);
+    ReflectionTestUtils.setField(
+        spyService, "loadableQuantityRepository", loadableQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(spyService, "portRotationService", portRotationService);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = spyService.loadableQuantityByPortId(builder, 1l, 0l);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @ParameterizedTest
+  @CsvSource({"2,3", "4,5", "1,6"})
+  void testLoadableQuantityByPortIdEmpty(Long id, Long fId) throws GenericServiceException {
+    LoadableQuantityService spyService = spy(LoadableQuantityService.class);
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.newBuilder();
+    when(loadableQuantityRepository.findByLSIdAndPortRotationId(anyLong(), anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    List<LoadableQuantity> list = new ArrayList<>();
+    list.add(getLoadablequnt());
+    Map<Long, Long> portRIds = new HashMap<>();
+    portRIds.put(0l, 1l);
+    LoadableStudyPortRotation lsPortRot = getLoadablePortROtation();
+    CargoOperation operation = new CargoOperation();
+    operation.setId(id);
+    lsPortRot.setOperation(operation);
+    lsPortRot.setId(0l);
+    OnHandQuantity ohq = getOnHandQuantity();
+    ohq.setFuelTypeXId(fId);
+    VesselInfo.VesselReply vesselReply =
+        VesselInfo.VesselReply.newBuilder()
+            .setVesselId(1l)
+            .setVesselLoadableQuantityDetails(
+                VesselInfo.VesselLoadableQuantityDetails.newBuilder()
+                    .setDraftConditionName("1")
+                    .setVesselLightWeight("1")
+                    .setConstant("1")
+                    .setTpc("1")
+                    .build())
+            .build();
+    when(vesselInfoGrpcService.getVesselDetailsById(any(VesselInfo.VesselRequest.class)))
+        .thenReturn(vesselReply);
+    when(vesselInfoGrpcService.getDWTFromVesselByVesselId(any(VesselInfo.VesselDWTRequest.class)))
+        .thenReturn(
+            VesselInfo.VesselDWTResponse.newBuilder()
+                .setResponseStatus(
+                    Common.ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage("1").build())
+                .setDwtResult("1")
+                .build());
+    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(Arrays.asList(ohq));
+    when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(list);
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLoadableStudy());
+    when(portRotationService.getPortRotationIdAndPortIds(any(LoadableStudy.class)))
+        .thenReturn(portRIds);
+    when(portRotationService.findLoadableStudyPortRotationById(anyLong())).thenReturn(lsPortRot);
+    ReflectionTestUtils.setField(
+        spyService, "loadableQuantityRepository", loadableQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(spyService, "portRotationService", portRotationService);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = spyService.loadableQuantityByPortId(builder, 1l, 0l);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testLoadableQuantityByPortIdWithGenericException() throws GenericServiceException {
+    LoadableQuantityService spyService = spy(LoadableQuantityService.class);
+    com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableQuantityResponse.newBuilder();
+    when(loadableQuantityRepository.findByLSIdAndPortRotationId(anyLong(), anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+    when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(getLoadablequnt()));
     List<LoadableQuantity> list = new ArrayList<>();
     list.add(getLoadablequnt());
     Map<Long, Long> portRIds = new HashMap<>();
@@ -301,7 +475,7 @@ class LoadableQuantityServiceTest {
     when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(list);
     when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(getLoadableStudy());
+        .thenReturn(Optional.empty());
     when(portRotationService.getPortRotationIdAndPortIds(any(LoadableStudy.class)))
         .thenReturn(portRIds);
     when(portRotationService.findLoadableStudyPortRotationById(anyLong()))
@@ -313,8 +487,14 @@ class LoadableQuantityServiceTest {
     ReflectionTestUtils.setField(spyService, "portRotationService", portRotationService);
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
 
-    var result = spyService.loadableQuantityByPortId(builder, 1l, 1l);
-    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () -> spyService.loadableQuantityByPortId(builder, 1l, -1l));
+
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
@@ -363,6 +543,7 @@ class LoadableQuantityServiceTest {
     List<LoadableQuantity> loadableQuantity = new ArrayList<LoadableQuantity>();
     LoadableQuantity load = new LoadableQuantity();
     load.setId(1L);
+    load.setLastModifiedDateTime(LocalDateTime.now());
     load.setBallast(new BigDecimal(1));
     load.setBoilerWaterOnBoard(new BigDecimal(1));
     load.setConstant(new BigDecimal(1));

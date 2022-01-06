@@ -2,14 +2,18 @@
 package com.cpdss.loadablestudy.service;
 
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.scheduler.ScheduledTaskRequest;
 import com.cpdss.loadablestudy.entity.AlgoErrorHeading;
+import com.cpdss.loadablestudy.entity.AlgoErrors;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.repository.*;
 import io.grpc.internal.testing.StreamRecorder;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Assert;
@@ -38,7 +42,11 @@ public class AlgoErrorServiceTest {
   @Test
   void testSaveAlgoError() {
     com.cpdss.common.generated.LoadableStudy.AlgoErrors request =
-        LoadableStudy.AlgoErrors.newBuilder().setErrorHeading("1").setId(1l).build();
+        LoadableStudy.AlgoErrors.newBuilder()
+            .setErrorHeading("1")
+            .setId(1l)
+            .addAllErrorMessages(Arrays.asList("1"))
+            .build();
     AlgoErrorHeading heading = new AlgoErrorHeading();
     heading.setId(1l);
     heading.setErrorHeading("1");
@@ -66,5 +74,25 @@ public class AlgoErrorServiceTest {
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     Assert.assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveAlgoInternalServerError() {
+    when(loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadablePattern()));
+    when(algoErrorsRepository.save(any(AlgoErrors.class))).thenReturn(new AlgoErrors());
+
+    algoErrorService.saveAlgoInternalServerError(1l, "1", true, "1");
+    verify(algoErrorsRepository).save(any(AlgoErrors.class));
+  }
+
+  @Test
+  void testSaveAlgoInternalServerErrorElse() {
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
+    when(algoErrorsRepository.save(any(AlgoErrors.class))).thenReturn(new AlgoErrors());
+
+    algoErrorService.saveAlgoInternalServerError(1l, "1", false, "1");
+    verify(algoErrorsRepository).save(any(AlgoErrors.class));
   }
 }

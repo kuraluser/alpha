@@ -2,13 +2,14 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.*;
@@ -18,8 +19,9 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.*;
 import javax.persistence.EntityManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +92,22 @@ public class LoadableStudyPortRotationServiceTest {
   }
 
   @Test
+  void testSetPortOrderingElse() {
+    LoadableStudy loadableStudy = new LoadableStudy();
+    List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
+    LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
+    CargoOperation cargoOperation = new CargoOperation();
+    cargoOperation.setId(2l);
+    portRotation.setOperation(cargoOperation);
+    loadableStudyPortRotations.add(portRotation);
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(loadableStudyPortRotations);
+    loadableStudyPortRotationService.setPortOrdering(loadableStudy);
+    Mockito.verify(this.loadableStudyPortRotationRepository).saveAll(Mockito.anyList());
+  }
+
+  @Test
   void testValidateTransitPorts() {
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy = new LoadableStudy();
     List<Long> requestedPortIds = new ArrayList<>();
@@ -125,6 +143,8 @@ public class LoadableStudyPortRotationServiceTest {
             any(LoadableStudy.class), any(CargoOperation.class), anyBoolean()))
         .thenReturn(ob);
     loadableStudyPortRotationService.getLastPortRotationData(loadableStudy, loading, true);
+    verify(loadableStudyPortRotationRepository)
+        .findLastPort(any(LoadableStudy.class), any(CargoOperation.class), anyBoolean());
   }
 
   @Test
@@ -152,6 +172,7 @@ public class LoadableStudyPortRotationServiceTest {
         .thenReturn(loadableStudyPortRotations);
     loadableStudyPortRotationService.buildLoadableStudyPortRotationDetails(
         loadableStudyId, loadableStudy, modelMapper);
+    assertFalse(loadableStudy.getLoadableStudyPortRotation().isEmpty());
   }
 
   @Test
@@ -195,7 +216,6 @@ public class LoadableStudyPortRotationServiceTest {
     when(this.loadableStudyPortRotationRepository.findById(Mockito.anyLong()))
         .thenReturn(portRotation);
     when(this.cargoOperationRepository.getOne(Mockito.anyLong())).thenReturn(cargoOperation);
-    // Mockito.verify(loadableStudyPortRotationRepository).saveAll(Mockito.anyList());
     try {
       var result =
           loadableStudyPortRotationService.saveLoadableStudyPortRotationList(request, replyBuilder);
@@ -205,25 +225,45 @@ public class LoadableStudyPortRotationServiceTest {
     }
   }
 
-  @Test
-  void testBuildLoadableStudyPortRotationEntity() {
+  @ParameterizedTest
+  @ValueSource(strings = {"ARR", "1"})
+  void testBuildLoadableStudyPortRotationEntity(String str) {
     LoadableStudyPortRotation entity = getLoadableStudyPortRotation();
     CargoOperation cargoOperation = new CargoOperation();
     cargoOperation.setId(1l);
     cargoOperation.setName("1");
+    com.cpdss.common.generated.LoadableStudy.PortRotationDetail.Builder builder =
+        getPortRotationDetail().toBuilder();
+    builder.setOperationType(str);
+
     when(this.cargoOperationRepository.getOne(Mockito.anyLong())).thenReturn(cargoOperation);
-    loadableStudyPortRotationService.buildLoadableStudyPortRotationEntity(
-        entity, getPortRotationDetail());
+    loadableStudyPortRotationService.buildLoadableStudyPortRotationEntity(entity, builder.build());
     var result = entity.getSynopticalTable().get(0).getEtaActual();
     LocalDateTime aDateTime = LocalDateTime.of(1999, 11, 21, 11, 11);
     assertEquals(aDateTime, result);
   }
 
   @Test
-  void testsaveLoadableStudyPortRotation() {
+  void testBuildLoadableStudyPortRotationEntityNullValues() {
+    LoadableStudyPortRotation entity = getLoadableStudyPortRotation();
+    CargoOperation cargoOperation = new CargoOperation();
+    cargoOperation.setId(1l);
+    cargoOperation.setName("1");
+
+    when(this.cargoOperationRepository.getOne(Mockito.anyLong())).thenReturn(cargoOperation);
+    loadableStudyPortRotationService.buildLoadableStudyPortRotationEntity(
+        entity, com.cpdss.common.generated.LoadableStudy.PortRotationDetail.newBuilder().build());
+    var result = entity.getSynopticalTable().get(0).getEtaActual();
+    assertEquals(null, result);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 2})
+  void testsaveLoadableStudyPortRotation(Integer i) {
     com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
-    Optional<LoadableStudy> loadableStudyOpt = Optional.of(getLoadableStudy());
+    LoadableStudy loadableStudy = getLoadableStudy();
+    loadableStudy.setPlanningTypeXId(i);
     Optional<LoadableStudyPortRotation> portRoationOpt =
         Optional.of(getLoadableStudyPortRotation());
     List<LoadablePattern> generatedPatterns = new ArrayList<>();
@@ -232,11 +272,16 @@ public class LoadableStudyPortRotationServiceTest {
             any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
             anyBoolean()))
         .thenReturn(generatedPatterns);
-    when(this.loadableStudyRepository.findById(Mockito.anyLong())).thenReturn(loadableStudyOpt);
+    when(this.loadableStudyRepository.findById(Mockito.anyLong()))
+        .thenReturn(Optional.of(getLoadableStudy()));
     when(this.loadableStudyPortRotationRepository.findById(Mockito.anyLong()))
         .thenReturn(portRoationOpt);
     when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
         .thenReturn(getLoadableStudyPortRotation());
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(new LoadableStudyPortRotation()));
+
     try {
       var result =
           loadableStudyPortRotationService.saveLoadableStudyPortRotation(
@@ -251,8 +296,16 @@ public class LoadableStudyPortRotationServiceTest {
     }
   }
 
+  private List<LoadableQuantity> getLoadableQuantities() {
+    LoadableQuantity loadableQuantity = new LoadableQuantity();
+    loadableQuantity.setTotalQuantity(new BigDecimal(1));
+    loadableQuantity.setLoadableStudyPortRotation(getLoadableStudyPortRotation());
+    List<LoadableQuantity> quantities = new ArrayList<>();
+    quantities.add(loadableQuantity);
+    return quantities;
+  }
+
   @Test
-  @Disabled
   void testGetPortRotationByLoadableStudyId() {
     com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
@@ -261,20 +314,47 @@ public class LoadableStudyPortRotationServiceTest {
             .setLoadableStudyId(1l)
             .setVoyageId(1l)
             .build();
-
     com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder portRotationReplyBuilder =
         com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
-    Optional<LoadableStudy> loadableStudyOpt = Optional.of(getLoadableStudy());
-    LoadableQuantity loadableQuantity = new LoadableQuantity();
-    loadableQuantity.setTotalQuantity(new BigDecimal(1));
-    loadableQuantity.setLoadableStudyPortRotation(getLoadableStudyPortRotation());
-    List<LoadableQuantity> quantities = new ArrayList<>();
-    quantities.add(loadableQuantity);
-    List<LoadableStudyPortRotation> ports = new ArrayList<>();
-    ports.add(getLoadableStudyPortRotation());
 
-    Map<Long, List<BackLoading>> backloadingDataByportIds = new HashMap<>();
-    List<BackLoading> backLoadingList = new ArrayList<>();
+    when(this.loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+
+    var result =
+        loadableStudyPortRotationService.getPortRotationByLoadableStudyId(
+            request, portRotationReplyBuilder);
+    assertEquals(FAILED, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetPortRotationByLoadableStudyIdEmptyPorts() {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
+            .setVesselId(1l)
+            .setIsLandingPage(true)
+            .setLoadableStudyId(1l)
+            .setVoyageId(1l)
+            .build();
+    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder portRotationReplyBuilder =
+        com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
+    List<LoadableStudyPortRotation> ports = new ArrayList<>();
+
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(ports);
+    when(this.loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(getLoadableStudy()));
+    when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
+            Mockito.anyLong(), anyBoolean()))
+        .thenReturn(getLoadableQuantities());
+
+    var result =
+        loadableStudyPortRotationService.getPortRotationByLoadableStudyId(
+            request, portRotationReplyBuilder);
+    assertEquals(FAILED, result.getResponseStatus().getStatus());
+  }
+
+  private BackLoading getBackLoading() {
     BackLoading backLoading = new BackLoading();
     backLoading.setAbbreviation("1");
     backLoading.setApi(new BigDecimal(1));
@@ -283,8 +363,23 @@ public class LoadableStudyPortRotationServiceTest {
     backLoading.setId(1l);
     backLoading.setQuantity(new BigDecimal(1));
     backLoading.setTemperature(new BigDecimal(1));
-    backLoadingList.add(backLoading);
-    backloadingDataByportIds.put(1l, backLoadingList);
+    return backLoading;
+  }
+
+  @Test
+  void testGetPortRotationByLoadableStudyIdElse() {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
+            .setVesselId(1l)
+            .setIsLandingPage(true)
+            .setLoadableStudyId(1l)
+            .setVoyageId(1l)
+            .build();
+    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder portRotationReplyBuilder =
+        com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
+
+    Map<Long, List<BackLoading>> backloadingDataByportIds = new HashMap<>();
+    backloadingDataByportIds.put(1l, Arrays.asList(getBackLoading()));
 
     List<DischargeStudyPortInstruction> dischargeStudyPortInstructionList = new ArrayList<>();
     DischargeStudyPortInstruction dischargeStudyPortInstruction =
@@ -299,16 +394,16 @@ public class LoadableStudyPortRotationServiceTest {
     dischargeStudyCowDetail.setCowType(1l);
     dischargeStudyCowDetail.setPercentage(1l);
     dischargeStudyCowDetail.setTankIds("1");
-
     cowDetails.put(1l, dischargeStudyCowDetail);
+
     when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
             any(LoadableStudy.class), anyBoolean()))
-        .thenReturn(ports);
+        .thenReturn(Arrays.asList(getLoadableStudyPortRotation()));
     when(this.loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(), anyBoolean()))
-        .thenReturn(loadableStudyOpt);
+        .thenReturn(Optional.of(getLoadableStudy()));
     when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
             Mockito.anyLong(), anyBoolean()))
-        .thenReturn(quantities);
+        .thenReturn(getLoadableQuantities());
     when(backLoadingService.getBackloadingDataByportIds(Mockito.anyLong(), Mockito.anyList()))
         .thenReturn(backloadingDataByportIds);
     when(portInstructionService.getPortWiseInstructions(Mockito.anyLong(), Mockito.anyList()))
@@ -321,7 +416,96 @@ public class LoadableStudyPortRotationServiceTest {
   }
 
   @Test
-  void testdeletePortRotation() {
+  void testDeletePortRotationWithGenericException() {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
+            .setVesselId(1l)
+            .setIsLandingPage(true)
+            .setLoadableStudyId(1l)
+            .setVoyageId(1l)
+            .build();
+    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder portRotationReplyBuilder =
+        com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
+    LoadableStudy loadableStudy = getLoadableStudy();
+    LoadableStudyStatus status = new LoadableStudyStatus();
+    status.setId(3l);
+    loadableStudy.setLoadableStudyStatus(status);
+    when(this.loadableStudyRepository.findById(Mockito.anyLong()))
+        .thenReturn(Optional.of(loadableStudy));
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                loadableStudyPortRotationService.deletePortRotation(
+                    request, portRotationReplyBuilder));
+
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testDeletePortRotationWithGenericException2() {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
+            .setVesselId(1l)
+            .setIsLandingPage(true)
+            .setLoadableStudyId(1l)
+            .setVoyageId(1l)
+            .build();
+    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder portRotationReplyBuilder =
+        com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
+    when(this.loadableStudyRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                loadableStudyPortRotationService.deletePortRotation(
+                    request, portRotationReplyBuilder));
+
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {1l, 2l})
+  void testDeletePortRotationWithGenericException3(Long l) {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
+            .setVesselId(1l)
+            .setIsLandingPage(true)
+            .setLoadableStudyId(1l)
+            .setVoyageId(1l)
+            .build();
+    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder portRotationReplyBuilder =
+        com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
+    Optional<LoadableStudy> loadableStudyOpt = Optional.of(getLoadableStudy());
+    LoadableStudyPortRotation portRotation = getLoadableStudyPortRotation();
+    CargoOperation operation = new CargoOperation();
+    operation.setId(l);
+    portRotation.setOperation(operation);
+
+    when(this.loadableStudyRepository.findById(Mockito.anyLong())).thenReturn(loadableStudyOpt);
+    when(this.loadableStudyPortRotationRepository.findById(Mockito.anyLong()))
+        .thenReturn(Optional.of(portRotation));
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                loadableStudyPortRotationService.deletePortRotation(
+                    request, portRotationReplyBuilder));
+
+    assertAll(
+        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
+  }
+
+  @Test
+  void testDeletePortRotation() throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
         com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
             .setVesselId(1l)
@@ -332,30 +516,40 @@ public class LoadableStudyPortRotationServiceTest {
 
     com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder portRotationReplyBuilder =
         com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
-    Optional<LoadableStudy> loadableStudyOpt = Optional.of(getLoadableStudy());
+    LoadableStudy loadableStudy = getLoadableStudy();
+    loadableStudy.setPlanningTypeXId(2);
     Voyage voyage = new Voyage();
     voyage.setId(1l);
     List<LoadablePattern> generatedPatterns = new ArrayList<>();
-    Optional<LoadableStudyPortRotation> portRoationOpt =
-        Optional.of(getLoadableStudyPortRotation());
+    LoadableStudyPortRotation portRotation = getLoadableStudyPortRotation();
+    CargoOperation operation = new CargoOperation();
+    operation.setId(3l);
+    portRotation.setOperation(operation);
+
+    CargoNomination nomination = new CargoNomination();
+    Set<CargoNominationPortDetails> portDetailsSet = new HashSet<>();
+    CargoNominationPortDetails portDetails = new CargoNominationPortDetails();
+    portDetails.setPortId(1l);
+    portDetailsSet.add(portDetails);
+    nomination.setCargoNominationPortDetails(portDetailsSet);
 
     when(this.loadableStudyPortRotationRepository.findById(Mockito.anyLong()))
-        .thenReturn(portRoationOpt);
+        .thenReturn(Optional.of(portRotation));
     when(loadablePatternRepository.findLoadablePatterns(
             Mockito.anyLong(),
             any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
             anyBoolean()))
         .thenReturn(generatedPatterns);
-    when(this.loadableStudyRepository.findById(Mockito.anyLong())).thenReturn(loadableStudyOpt);
+    when(this.loadableStudyRepository.findById(Mockito.anyLong()))
+        .thenReturn(Optional.of(loadableStudy));
     when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), anyBoolean()))
         .thenReturn(voyage);
-    try {
-      var result =
-          loadableStudyPortRotationService.deletePortRotation(request, portRotationReplyBuilder);
-      assertEquals(SUCCESS, result.getResponseStatus().getStatus());
-    } catch (GenericServiceException e) {
-      e.printStackTrace();
-    }
+    when(cargoNominationService.getCargoNominations(anyLong()))
+        .thenReturn(Arrays.asList(nomination));
+
+    var result =
+        loadableStudyPortRotationService.deletePortRotation(request, portRotationReplyBuilder);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
   }
 
   @Test
@@ -376,17 +570,30 @@ public class LoadableStudyPortRotationServiceTest {
   }
 
   @Test
-  void testbuildportRotationDetails() {
-    LoadableStudyPortRotationService spyService = spy(LoadableStudyPortRotationService.class);
-    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.domain.LoadableStudy();
-    List<Long> portIds = new ArrayList<>(Arrays.asList(1l));
+  void testGetPortRotationByPortRotationIdWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder().build();
+    com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply.newBuilder();
+    when(this.loadableStudyPortRotationRepository.findByIdAndIsActive(
+            Mockito.anyLong(), anyBoolean()))
+        .thenReturn(null);
+    final Exception ex =
+        assertThrows(
+            Exception.class,
+            () ->
+                loadableStudyPortRotationService.getPortRotationByPortRotationId(request, builder));
+  }
+
+  private PortInfo.PortReply getPortReply() {
     List<PortInfo.PortDetail> portDetailList = new ArrayList<>();
     PortInfo.PortDetail portDetail =
         PortInfo.PortDetail.newBuilder()
             .setAverageTideHeight("1")
             .setId(1l)
             .setName("1")
+            .setLat("1")
+            .setLon("1")
             .setCode("1")
             .setWaterDensity("1")
             .setCountryName("1")
@@ -397,12 +604,25 @@ public class LoadableStudyPortRotationServiceTest {
             .build();
     portDetailList.add(portDetail);
     PortInfo.PortReply portReply =
-        PortInfo.PortReply.newBuilder().addAllPorts(portDetailList).build();
+        PortInfo.PortReply.newBuilder()
+            .addAllPorts(portDetailList)
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    return portReply;
+  }
+
+  @Test
+  void testBuildportRotationDetails() {
+    LoadableStudyPortRotationService spyService = spy(LoadableStudyPortRotationService.class);
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    List<Long> portIds = new ArrayList<>(Arrays.asList(1l));
+
     when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
             any(LoadableStudy.class), anyBoolean()))
         .thenReturn(portIds);
     when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
-        .thenReturn(portReply);
+        .thenReturn(getPortReply());
     ReflectionTestUtils.setField(
         spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
     ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
@@ -416,12 +636,8 @@ public class LoadableStudyPortRotationServiceTest {
     LoadableStudyPortRotationService spyService = spy(LoadableStudyPortRotationService.class);
     PortInfo.GetPortInfoByPortIdsRequest request =
         PortInfo.GetPortInfoByPortIdsRequest.newBuilder().build();
-    PortInfo.PortReply reply =
-        PortInfo.PortReply.newBuilder()
-            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
-            .build();
     when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
-        .thenReturn(reply);
+        .thenReturn(getPortReply());
     ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
     var result = spyService.getPortInfo(request);
     assertEquals(SUCCESS, result.getResponseStatus().getStatus());
@@ -452,6 +668,7 @@ public class LoadableStudyPortRotationServiceTest {
         new ArrayList<>();
     com.cpdss.common.generated.LoadableStudy.VoyageDetail voyageDetail =
         com.cpdss.common.generated.LoadableStudy.VoyageDetail.newBuilder()
+            .setId(1l)
             .setStatus("Active")
             .build();
     voyageDetailList.add(voyageDetail);
@@ -462,12 +679,9 @@ public class LoadableStudyPortRotationServiceTest {
     list.add(getLoadableStudy());
     List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
     loadableStudyPortRotations.add(getLoadableStudyPortRotation());
-    PortInfo.PortReply reply =
-        PortInfo.PortReply.newBuilder()
-            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
-            .build();
+
     when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
-        .thenReturn(reply);
+        .thenReturn(getPortReply());
     when(loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
             anyLong(), anyBoolean()))
         .thenReturn(loadableStudyPortRotations);
@@ -476,18 +690,37 @@ public class LoadableStudyPortRotationServiceTest {
             any(com.cpdss.common.generated.LoadableStudy.VoyageRequest.class),
             any(com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder.class)))
         .thenReturn(replyBuilder);
-
     when(vesselInfoGrpcService.getAllVesselsByCompany(any(VesselInfo.VesselRequest.class)))
         .thenReturn(vesselReply);
-    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
-    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
-    ReflectionTestUtils.setField(
-        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
-    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
-    ReflectionTestUtils.setField(spyService, "voyageService", voyageService);
+    when(voyageService.getActiveVoyagesByVessel(
+            any(com.cpdss.common.generated.LoadableStudy.VoyageRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.VoyageListReply.Builder.class)))
+        .thenReturn(replyBuilder);
 
-    spyService.getLoadableStudyShore(request, builder);
+    ReflectionTestUtils.setField(
+        loadableStudyPortRotationService, "portInfoGrpcService", portInfoGrpcService);
+    ReflectionTestUtils.setField(
+        loadableStudyPortRotationService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    loadableStudyPortRotationService.getLoadableStudyShore(request, builder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableStudyShoreWithException() {
+    LoadableStudyPortRotationService spyService = spy(LoadableStudyPortRotationService.class);
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder().build();
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder builder =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.newBuilder();
+
+    when(vesselInfoGrpcService.getAllVesselsByCompany(any(VesselInfo.VesselRequest.class)))
+        .thenThrow(new RuntimeException("1"));
+    ReflectionTestUtils.setField(
+        loadableStudyPortRotationService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    loadableStudyPortRotationService.getLoadableStudyShore(request, builder);
+    assertTrue(builder.getShoreListList().isEmpty());
   }
 
   @Test
@@ -504,6 +737,42 @@ public class LoadableStudyPortRotationServiceTest {
         spyService, "loadableStudyServiceBlockingStub", loadableStudyServiceBlockingStub);
 
     spyService.getLoadableStudyList(request);
+    verify(loadableStudyServiceBlockingStub)
+        .findLoadableStudiesByVesselAndVoyage(
+            any(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest.class));
+  }
+
+  @Test
+  void testGetLoadableStudyPortRotation() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder()
+            .setLoadableStudyId(1l)
+            .setIsLandingPage(true)
+            .setVesselId(1l)
+            .setVoyageId(1l)
+            .build();
+    com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder();
+    List<LoadableStudyPortRotation> loadableStudyPortRotations = new ArrayList<>();
+    loadableStudyPortRotations.add(getLoadableStudyPortRotation());
+    when(loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(getLoadableStudy()));
+    when(synopticService.checkDischargeStarted(anyLong(), anyLong()))
+        .thenReturn(Optional.of(Arrays.asList(getLoadableStudy())));
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(loadableStudyPortRotations);
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    when(loadableQuantityRepository.findFirstByLoadableStudyXIdOrderByLastModifiedDateTimeDesc(
+            any(LoadableStudy.class)))
+        .thenReturn(Optional.of(getLoadableQuantities().get(0)));
+    when(this.cargoOperationRepository.findByIsActiveOrderById(anyBoolean()))
+        .thenReturn(Arrays.asList(getLoadableStudyPortRotation().getOperation()));
+    ReflectionTestUtils.setField(
+        loadableStudyPortRotationService, "portInfoGrpcService", portInfoGrpcService);
+
+    loadableStudyPortRotationService.getLoadableStudyPortRotation(request, replyBuilder);
+    assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
   }
 
   private LoadableStudyPortRotation getLoadableStudyPortRotation() {
@@ -529,7 +798,13 @@ public class LoadableStudyPortRotationServiceTest {
     loadableStudyPortRotation.setLayCanFrom(date);
     loadableStudyPortRotation.setLayCanTo(date);
     loadableStudyPortRotation.setPortOrder(1l);
+    loadableStudyPortRotation.setEta(LocalDateTime.now());
+    loadableStudyPortRotation.setEtd(LocalDateTime.now());
+
     loadableStudyPortRotation.setPortRotationType("1");
+    loadableStudyPortRotation.setFreshCrudeOil(true);
+    loadableStudyPortRotation.setFreshCrudeOilQuantity(new BigDecimal(1));
+    loadableStudyPortRotation.setFreshCrudeOilTime(new BigDecimal(1));
     loadableStudyPortRotation.setSynopticalTable(getSynopticalTableList());
     return loadableStudyPortRotation;
   }
@@ -542,10 +817,11 @@ public class LoadableStudyPortRotationServiceTest {
     voyage.setId(1l);
     loadableStudy.setActive(true);
     loadableStudy.setVoyage(voyage);
+    loadableStudy.setVesselXId(1l);
     loadableStudy.setPlanningTypeXId(1);
     loadableStudy.setConfirmedLoadableStudyId(1l);
     LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
-    loadableStudyStatus.setName("1");
+    loadableStudyStatus.setName("Confirmed");
     loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
     return loadableStudy;
   }
@@ -557,8 +833,18 @@ public class LoadableStudyPortRotationServiceTest {
     synopticalTable.setId(1l);
     synopticalTable.setDistance(new BigDecimal(1));
     synopticalTable.setOperationType(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL);
-    synopticalTable.setId(1l);
+    synopticalTable.setEtaActual(LocalDateTime.now());
+    synopticalTable.setEtdActual(LocalDateTime.now());
     synopticalTableList.add(synopticalTable);
+
+    com.cpdss.loadablestudy.entity.SynopticalTable synopticalTable2 =
+        new com.cpdss.loadablestudy.entity.SynopticalTable();
+    synopticalTable2.setId(1l);
+    synopticalTable2.setDistance(new BigDecimal(1));
+    synopticalTable2.setOperationType(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
+    synopticalTable2.setEtaActual(LocalDateTime.now());
+    synopticalTable2.setEtdActual(LocalDateTime.now());
+    synopticalTableList.add(synopticalTable2);
     return synopticalTableList;
   }
 
@@ -570,6 +856,7 @@ public class LoadableStudyPortRotationServiceTest {
             .setPortId(2l)
             .setDistanceBetweenPorts("1")
             .setMaxDraft("1")
+            .setMaxAirDraft("1")
             .setSeaWaterDensity("1")
             .setTimeOfStay("1")
             .setEta("21-11-1999 11:11")
@@ -581,6 +868,7 @@ public class LoadableStudyPortRotationServiceTest {
             .setEtdActual("21-11-1999 11:11")
             .setOperationType(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL)
             .setLoadableStudyId(1l)
+            .setPortOrder(1l)
             .setIsLandingPage(true)
             .build();
     return portRotationDetail;

@@ -2,17 +2,19 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.TestUtils.createDummyObject;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_EXC;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_RESOURCE_EXC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.CargoInfo.CargoDetail;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
 import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
@@ -73,13 +75,10 @@ import com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest;
 import com.cpdss.common.generated.LoadableStudy.VoyageListReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageReply;
 import com.cpdss.common.generated.LoadableStudy.VoyageRequest;
-import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.GetPortInfoByPortIdsRequest;
 import com.cpdss.common.generated.PortInfo.PortDetail;
 import com.cpdss.common.generated.PortInfo.PortReply;
 import com.cpdss.common.generated.PortInfo.PortRequest;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
@@ -102,6 +101,8 @@ import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import io.grpc.internal.testing.StreamRecorder;
 import java.io.File;
@@ -120,13 +121,15 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -140,6 +143,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -244,14 +248,15 @@ class LoadableStudyServiceTest {
   @MockBean private VoyageStatusRepository voyageStatusRepository;
   @MockBean SynopticServiceUtils synpoticServiceUtils;
   @MockBean private ApiTempHistoryRepository apiTempHistoryRepository;
-  // @MockBean private BillOfLandingRepository billOfLandingRepository;
   @MockBean private StabilityParameterRepository stabilityParameterRepository;
   @MockBean private PortRotationService portRotationService;
-  // @MockBean private LoadableQuantityService loadableQuantityService;
   @MockBean private JsonDataRepository jsonDataRepository;
   @MockBean private JsonTypeRepository jsonTypeRepository;
 
   @MockBean private LoadableStudyCommunicationData loadableStudyCommunicationData;
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @MockBean private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
 
   @MockBean
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
@@ -389,6 +394,21 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, response.getResponseStatus().getStatus());
   }
 
+  @Test
+  void testSaveVoyageWithException() {
+    VoyageRequest request = VoyageRequest.newBuilder().build();
+    StreamRecorder<VoyageReply> responseObserver = StreamRecorder.create();
+    Mockito.when(this.voyageService.saveVoyage(Mockito.any(VoyageRequest.class), Mockito.any()))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.saveVoyage(request, responseObserver);
+    List<VoyageReply> results = responseObserver.getValues();
+    assertNull(responseObserver.getError());
+    assertEquals(1, results.size());
+    VoyageReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
   private List<Voyage> getListvessel() {
     List<Voyage> voyages = new ArrayList<>();
     return voyages;
@@ -403,6 +423,8 @@ class LoadableStudyServiceTest {
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     voyage.setVoyageNo("1");
+    voyage.setVoyageStatus(getVoyageStatus());
+    voyage.setVesselXId(1l);
     return voyage;
   }
 
@@ -539,6 +561,39 @@ class LoadableStudyServiceTest {
         response.getResponseStatus());
   }
 
+  @Test
+  public void testLoadableQuantityWithException() throws GenericServiceException {
+    LoadableQuantityRequest loadableQuantityRequest = LoadableQuantityRequest.newBuilder().build();
+    StreamRecorder<LoadableQuantityReply> responseObserver = StreamRecorder.create();
+    Mockito.when(
+            loadableQuantityService.saveLoadableQuantity(
+                Mockito.any(LoadableQuantityRequest.class), Mockito.any()))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.saveLoadableQuantity(loadableQuantityRequest, responseObserver);
+    assertNull(responseObserver.getError());
+    List<LoadableQuantityReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    LoadableQuantityReply response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
+  public void testLoadableQuantityWithGenericException() throws GenericServiceException {
+    LoadableQuantityRequest loadableQuantityRequest = LoadableQuantityRequest.newBuilder().build();
+    StreamRecorder<LoadableQuantityReply> responseObserver = StreamRecorder.create();
+    Mockito.when(
+            loadableQuantityService.saveLoadableQuantity(
+                Mockito.any(LoadableQuantityRequest.class), Mockito.any()))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.saveLoadableQuantity(loadableQuantityRequest, responseObserver);
+    List<LoadableQuantityReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
   private Optional<LoadableStudy> getOLS() {
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setVoyage(getVoyage());
@@ -662,9 +717,19 @@ class LoadableStudyServiceTest {
     LoadableStudyRequest request = this.createLoadableStudyRequest();
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     when(this.voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
-    when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveOrderByCreatedDateTimeDesc(
-            anyLong(), any(Voyage.class), anyBoolean()))
+    when(this.loadableStudyRepository.findAllLoadableStudy(anyLong(), any(Voyage.class), anyInt()))
         .thenReturn(this.createLoadableStudyEntityList());
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(this.createLoadableStudyEntityList().get(0)));
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            any(LoadableStudy.class), any(LoadableStudyPortRotation.class), anyBoolean()))
+        .thenReturn(getLOHQ());
+    List<LoadableStudyAlgoStatus> algoStatusList = new ArrayList<>();
+    algoStatusList.add(createLoadableStudyAlgoStatus());
+    when(loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(algoStatusList);
+
     this.loadableStudyService.findLoadableStudiesByVesselAndVoyage(request, responseObserver);
     List<LoadableStudyReply> replies = responseObserver.getValues();
     assertEquals(1, replies.size());
@@ -708,6 +773,11 @@ class LoadableStudyServiceTest {
     requestBuilder.setLoadLineXId(loadlineXId);
     LoadableStudy entity = new LoadableStudy();
     entity.setId(2L);
+    Set<LoadableStudyAttachments> deletedAttachmentsList = new HashSet<>();
+    LoadableStudyAttachments attachments = new LoadableStudyAttachments();
+    attachments.setIsActive(true);
+    deletedAttachmentsList.add(attachments);
+
     when(this.voyageRepository.findById(anyLong()))
         .thenReturn(Optional.of(this.createVoyageEntity()));
     Mockito.when(
@@ -716,6 +786,8 @@ class LoadableStudyServiceTest {
         .thenReturn(getOLS());
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
     when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    when(this.loadableStudyAttachmentsRepository.findByIdInAndIsActive(anyList(), anyBoolean()))
+        .thenReturn(deletedAttachmentsList);
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     this.loadableStudyService.saveLoadableStudy(requestBuilder.build(), responseObserver);
     File file = new File(this.rootFolder);
@@ -813,6 +885,7 @@ class LoadableStudyServiceTest {
         .thenReturn(Optional.of(this.createVoyageEntity()));
     LoadableStudy entity = new LoadableStudy();
     entity.setId(2L);
+
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
     Mockito.when(
             this.loadableStudyRepository.findByIdAndIsActive(
@@ -820,6 +893,7 @@ class LoadableStudyServiceTest {
         .thenReturn(getOLS());
     when(this.loadableStudyRepository.save(any(LoadableStudy.class)))
         .thenThrow(RuntimeException.class);
+
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     this.loadableStudyService.saveLoadableStudy(request, responseObserver);
     File file = new File(this.rootFolder);
@@ -831,6 +905,55 @@ class LoadableStudyServiceTest {
     assertEquals(
         String.valueOf(HttpStatusCode.INTERNAL_SERVER_ERROR.value()),
         replies.get(0).getResponseStatus().getCode());
+  }
+
+  @Test
+  void testGetValveSegregation() {
+    com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request =
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
+        responseObserver = StreamRecorder.create();
+    List<CargoNominationValveSegregation> segregationsList = new ArrayList<>();
+    CargoNominationValveSegregation segregation = new CargoNominationValveSegregation();
+    segregation.setId(1l);
+    segregation.setName("1");
+    segregationsList.add(segregation);
+
+    when(cargoNominationService.getValveSegregation(
+            any(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.Builder.class)))
+        .thenCallRealMethod();
+    when(cargoNominationValveSegregationRepository.findAll()).thenReturn(segregationsList);
+    ReflectionTestUtils.setField(
+        cargoNominationService,
+        "valveSegregationRepository",
+        cargoNominationValveSegregationRepository);
+
+    loadableStudyService.getValveSegregation(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> replies =
+        responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetValveSegregationWithException() {
+    com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest request =
+        com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply>
+        responseObserver = StreamRecorder.create();
+
+    when(cargoNominationService.getValveSegregation(
+            any(com.cpdss.common.generated.LoadableStudy.ValveSegregationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.ValveSegregationReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+    loadableStudyService.getValveSegregation(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.ValveSegregationReply> replies =
+        responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 
   @Test
@@ -1032,6 +1155,7 @@ class LoadableStudyServiceTest {
             .setMaxWaterTemperature(MAX_TEMP_EXPECTED)
             .setLoadLineXId(LOAD_LINE_ID)
             .setDuplicatedFromId(1L)
+            .addAllDeletedAttachments(Arrays.asList(1l))
             .addAttachments(
                 LoadableStudyAttachment.newBuilder()
                     .setByteString(ByteString.copyFrom("test content".getBytes()))
@@ -1048,7 +1172,11 @@ class LoadableStudyServiceTest {
   }
 
   private LoadableStudyRequest createLoadableStudyRequest() {
-    return LoadableStudyRequest.newBuilder().setVesselId(1L).setVoyageId(1L).build();
+    return LoadableStudyRequest.newBuilder()
+        .setVesselId(1L)
+        .setVoyageId(1L)
+        .setPlanningType(Common.PLANNING_TYPE.forNumber(2))
+        .build();
   }
 
   private List<LoadableStudy> createLoadableStudyEntityList() {
@@ -1056,33 +1184,45 @@ class LoadableStudyServiceTest {
     LoadableStudyStatus status = new LoadableStudyStatus();
     status.setId(1L);
     status.setName("Open");
-    IntStream.range(0, 10)
-        .forEach(
-            i -> {
-              LoadableStudy entity = new LoadableStudy();
-              entity.setId(Long.valueOf(i));
-              entity.setName(LOADABLE_STUDY_NAME + i);
-              entity.setDetails(LOADABLE_STUDY_DETAILS + i);
-              entity.setCreatedDate(LocalDate.now());
-              entity.setLoadableStudyStatus(status);
-              entity.setCharterer(CHARTERER);
-              entity.setSubCharterer(SUB_CHARTERER);
-              entity.setDraftMark(new BigDecimal(DRAFT_MARK));
-              entity.setLoadLineXId(LOAD_LINE_ID);
-              entity.setDraftRestriction(new BigDecimal(DRAFT_RESTRICTION));
-              entity.setMaxAirTemperature(new BigDecimal(MAX_TEMP_EXPECTED));
-              entity.setMaxWaterTemperature(new BigDecimal(MAX_TEMP_EXPECTED));
-              LoadableStudyPortRotation port = new LoadableStudyPortRotation();
-              port.setActive(true);
-              CargoOperation operation = new CargoOperation();
-              operation.setId(DISCHARGING_OPERATION_ID);
-              port.setOperation(operation);
-              port.setPortXId(1L);
-              Set<LoadableStudyPortRotation> set = new HashSet<>();
-              set.add(port);
-              entity.setPortRotations(set);
-              entityList.add(entity);
-            });
+    LoadableStudy entity = new LoadableStudy();
+    entity.setId(1l);
+    entity.setName(LOADABLE_STUDY_NAME);
+    entity.setDetails(LOADABLE_STUDY_DETAILS);
+    entity.setCreatedDate(LocalDate.now());
+    entity.setCreatedDateTime(LocalDateTime.now());
+    entity.setLastModifiedDateTime(LocalDateTime.now());
+    entity.setDischargeCargoNominationId(1l);
+    entity.setLoadableStudyStatus(status);
+    entity.setDetails("1");
+    entity.setCharterer(CHARTERER);
+    entity.setSubCharterer(SUB_CHARTERER);
+    entity.setDraftMark(new BigDecimal(DRAFT_MARK));
+    entity.setLoadLineXId(LOAD_LINE_ID);
+    entity.setDraftRestriction(new BigDecimal(DRAFT_RESTRICTION));
+    entity.setMaxAirTemperature(new BigDecimal(MAX_TEMP_EXPECTED));
+    entity.setMaxWaterTemperature(new BigDecimal(MAX_TEMP_EXPECTED));
+    LoadableStudyPortRotation port = new LoadableStudyPortRotation();
+    port.setActive(true);
+    port.setIsPortRotationOhqComplete(false);
+
+    entity.setVoyage(getVoyage());
+    CargoOperation operation = new CargoOperation();
+    operation.setId(DISCHARGING_OPERATION_ID);
+    port.setOperation(operation);
+    port.setPortXId(1L);
+    port.setId(1l);
+    port.setEtd(LocalDateTime.now());
+    port.setPortOrder(1l);
+    Set<LoadableStudyPortRotation> set = new HashSet<>();
+    set.add(port);
+    entity.setPortRotations(set);
+    entity.setLoadOnTop(true);
+    entity.setIsObqComplete(true);
+    entity.setIsOhqComplete(true);
+    entity.setIsDischargeStudyComplete(true);
+    entity.setIsPortsComplete(true);
+    entity.setConfirmedLoadableStudyId(1l);
+    entityList.add(entity);
     return entityList;
   }
 
@@ -1094,17 +1234,10 @@ class LoadableStudyServiceTest {
         .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
     loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
     assertNull(responseObserver.getError());
-    // get results when no errors
     List<CargoNominationReply> results = responseObserver.getValues();
     assertEquals(true, results.size() > 0);
     CargoNominationReply returnedCargoNominationReply = results.get(0);
     CargoNominationReply.Builder cargoNominationReply = CargoNominationReply.newBuilder();
-    // ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-    // responseStatus.setStatus(SUCCESS);
-    // cargoNominationReply.setResponseStatus(responseStatus);
-    // assertEquals(
-    // cargoNominationReply.getResponseStatus(),
-    // returnedCargoNominationReply.getResponseStatus());
   }
 
   @Test
@@ -1117,18 +1250,8 @@ class LoadableStudyServiceTest {
         .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.CargoNomination()));
     loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
     assertNull(responseObserver.getError());
-    // get results when no errors
     List<CargoNominationReply> results = responseObserver.getValues();
     assertEquals(true, results.size() > 0);
-    // CargoNominationReply returnedCargoNominationReply = results.get(0);
-    // CargoNominationReply.Builder cargoNominationReply =
-    // CargoNominationReply.newBuilder();
-    // ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-    // responseStatus.setStatus(SUCCESS);
-    // cargoNominationReply.setResponseStatus(responseStatus);
-    // assertEquals(
-    // cargoNominationReply.getResponseStatus(),
-    // returnedCargoNominationReply.getResponseStatus());
   }
 
   @Test
@@ -1143,7 +1266,6 @@ class LoadableStudyServiceTest {
         cargoNominationService, "loadableStudyRepository", this.loadableStudyRepository);
     loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
     assertNull(responseObserver.getError());
-    // get results when no errors
     List<CargoNominationReply> results = responseObserver.getValues();
     assertEquals(true, results.size() > 0);
     CargoNominationReply returnedCargoNominationReply = results.get(0);
@@ -1166,9 +1288,9 @@ class LoadableStudyServiceTest {
         .thenCallRealMethod();
     ReflectionTestUtils.setField(
         cargoNominationService, "cargoNominationRepository", this.cargoNominationRepository);
+
     loadableStudyService.saveCargoNomination(cargoNominationRequest, responseObserver);
     assertNull(responseObserver.getError());
-    // get results when no errors
     List<CargoNominationReply> results = responseObserver.getValues();
     assertEquals(true, results.size() > 0);
     CargoNominationReply returnedCargoNominationReply = results.get(0);
@@ -1400,6 +1522,7 @@ class LoadableStudyServiceTest {
     List<OnHandQuantity> list = new ArrayList<>();
     OnHandQuantity onHandQuantity = new OnHandQuantity();
     onHandQuantity.setTankXId(1L);
+    onHandQuantity.setPortRotation(getLSPR());
     list.add(onHandQuantity);
     return list;
   }
@@ -1489,6 +1612,44 @@ class LoadableStudyServiceTest {
         response.getResponseStatus());
   }
 
+  @Test
+  void testGetVesselDetailsById() {
+    VesselRequest request = VesselRequest.newBuilder().build();
+    when(vesselInfoGrpcService.getVesselDetailsById(any(VesselRequest.class)))
+        .thenReturn(createVesselReply12().build());
+    ReflectionTestUtils.setField(
+        loadableStudyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = loadableStudyService.getVesselDetailsById(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselDetailForSynopticalTable() {
+    VesselRequest request = VesselRequest.newBuilder().build();
+    when(vesselInfoGrpcService.getVesselDetailForSynopticalTable(any(VesselRequest.class)))
+        .thenReturn(createVesselReply12().build());
+    ReflectionTestUtils.setField(
+        loadableStudyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = loadableStudyService.getVesselDetailForSynopticalTable(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselTankDetailsByTankIds() {
+    VesselInfo.VesselTankRequest request = VesselInfo.VesselTankRequest.newBuilder().build();
+    when(vesselInfoGrpcService.getVesselInfoBytankIds(any(VesselInfo.VesselTankRequest.class)))
+        .thenReturn(
+            VesselInfo.VesselTankResponse.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    ReflectionTestUtils.setField(
+        loadableStudyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = loadableStudyService.getVesselTankDetailsByTankIds(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
   /**
    * negative test case for get loadable quantity api
    *
@@ -1528,6 +1689,24 @@ class LoadableStudyServiceTest {
   }
 
   @Test
+  void testGetLoadableQuantityWithGenericException() throws GenericServiceException {
+    StreamRecorder<LoadableQuantityResponse> responseObserver = StreamRecorder.create();
+    LoadableQuantityReply request = LoadableQuantityReply.newBuilder().build();
+
+    Mockito.when(
+            loadableQuantityService.loadableQuantityByPortId(
+                Mockito.any(), Mockito.anyLong(), Mockito.anyLong()))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.getLoadableQuantity(request, responseObserver);
+    assertNull(responseObserver.getError());
+    List<LoadableQuantityResponse> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    LoadableQuantityResponse response = results.get(0);
+    assertEquals(FAILED, response.getResponseStatus().getStatus());
+  }
+
+  @Test
   void testGetVoyagesByVessel() {
     when(this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(anyLong(), eq(true)))
         .thenReturn(this.createVoyageEntities());
@@ -1543,21 +1722,67 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
   }
 
-  //  @Test
-  //  void testGetVoyagesByVesselRuntimeException() {
-  //    when(this.voyageRepository.findByVesselXIdAndIsActiveOrderByIdDesc(anyLong(), anyBoolean()))
-  //        .thenThrow(RuntimeException.class);
-  //    StreamRecorder<VoyageListReply> responseObserver = StreamRecorder.create();
-  //    VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1L).build();
-  //    Mockito.when(voyageService.getVoyagesByVessel(Mockito.any(), Mockito.any()))
-  //        .thenCallRealMethod();
-  //    ReflectionTestUtils.setField(voyageService, "voyageRepository", this.voyageRepository);
-  //    this.loadableStudyService.getVoyagesByVessel(request, responseObserver);
-  //    List<VoyageListReply> replies = responseObserver.getValues();
-  //    assertEquals(1, replies.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
-  //  }
+  @Test
+  void testGetVoyagesByVesselWithException() {
+    StreamRecorder<VoyageListReply> responseObserver = StreamRecorder.create();
+    VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1L).build();
+
+    Mockito.when(voyageService.getVoyagesByVessel(Mockito.any(), Mockito.any()))
+        .thenThrow(new RuntimeException("1"));
+
+    this.loadableStudyService.getVoyagesByVessel(request, responseObserver);
+    List<VoyageListReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeleteCargoNomination() throws GenericServiceException {
+    CargoNominationRequest request = CargoNominationRequest.newBuilder().build();
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(cargoNominationService.deleteCargoNomination(
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.CargoNominationReply.newBuilder());
+
+    loadableStudyService.deleteCargoNomination(request, responseObserver);
+    List<CargoNominationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testDeleteCargoNominationWithException() throws GenericServiceException {
+    CargoNominationRequest request = CargoNominationRequest.newBuilder().build();
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(cargoNominationService.deleteCargoNomination(
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.deleteCargoNomination(request, responseObserver);
+    List<CargoNominationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testDeleteCargoNominationWithGenericException() throws GenericServiceException {
+    CargoNominationRequest request = CargoNominationRequest.newBuilder().build();
+    StreamRecorder<CargoNominationReply> responseObserver = StreamRecorder.create();
+    when(cargoNominationService.deleteCargoNomination(
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.deleteCargoNomination(request, responseObserver);
+    List<CargoNominationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
 
   private List<Voyage> createVoyageEntities() {
     List<Voyage> entityList = new ArrayList<>();
@@ -1842,8 +2067,22 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
   }
 
+  @Test
+  void testGetPortInfo() {
+    PortInfo.GetPortInfoByPortIdsRequest request = GetPortInfoByPortIdsRequest.newBuilder().build();
+    when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
+        .thenReturn(getPortReply());
+    ReflectionTestUtils.setField(loadableStudyService, "portInfoGrpcService", portInfoGrpcService);
+
+    var result = loadableStudyService.getPortInfo(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
   private PortInfo.PortReply getPortReply() {
-    PortInfo.PortReply portReply = PortInfo.PortReply.newBuilder().build();
+    PortInfo.PortReply portReply =
+        PortReply.newBuilder()
+            .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
     return portReply;
   }
 
@@ -1927,13 +2166,25 @@ class LoadableStudyServiceTest {
 
   @Test
   void testDeleteLoadableStudy() {
-    LoadableStudy entity = new LoadableStudy();
-    entity.setVoyage(getVoyage());
-    when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(entity));
+    List<LoadableStudyRules> listOfLSRules = new ArrayList<>();
+    LoadableStudyRules rules = new LoadableStudyRules();
+    List<LoadableStudyRuleInput> inputList = new ArrayList<>();
+    LoadableStudyRuleInput input = new LoadableStudyRuleInput();
+    input.setId(1l);
+    inputList.add(input);
+    rules.setLoadableStudyRuleInputs(inputList);
+    rules.setId(1l);
+    listOfLSRules.add(rules);
+    when(loadableStudyRuleRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(listOfLSRules);
+    when(this.loadableStudyRepository.findById(anyLong()))
+        .thenReturn(Optional.of(createLoadableStudyEntityList().get(0)));
     Mockito.when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getVoyage());
     ReflectionTestUtils.setField(voyageService, "voyageRepository", this.voyageRepository);
-    when(this.loadableStudyRepository.save(any(LoadableStudy.class))).thenReturn(entity);
+    when(this.loadableStudyRepository.save(any(LoadableStudy.class)))
+        .thenReturn(createLoadableStudyEntityList().get(0));
     StreamRecorder<LoadableStudyReply> responseObserver = StreamRecorder.create();
     LoadableStudyRequest request = LoadableStudyRequest.newBuilder().setLoadableStudyId(1L).build();
     this.loadableStudyService.deleteLoadableStudy(request, responseObserver);
@@ -2208,79 +2459,69 @@ class LoadableStudyServiceTest {
    * @throws GenericServiceException void
    */
   @Test
-  @Disabled
-  public void testGetPortRotation() throws GenericServiceException {
-
+  void testGetPortRotationByLoadableStudyIdWithException() {
     PortRotationRequest portRotationRequest =
         PortRotationRequest.newBuilder().setLoadableStudyId(1L).build();
-
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
 
-    LoadableStudy loadableStudy = Mockito.mock(LoadableStudy.class);
-    LoadableQuantity loadableQuantity = new LoadableQuantity();
-    loadableQuantity.setId((long) 1);
-
-    List<LoadableStudyPortRotation> loadableStudyPortRotations =
-        new ArrayList<LoadableStudyPortRotation>();
-
-    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
-    loadableStudyPortRotation.setPortXId(1L);
-    loadableStudyPortRotations.add(loadableStudyPortRotation);
-    Mockito.when(
-            this.loadableStudyRepository.findByIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getOLS());
-    Mockito.when(
-            loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getLLQ());
-    Mockito.when(
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActiveOrderByPortOrder(
-                Mockito.any(), Mockito.anyBoolean()))
-        .thenReturn(getLLSPR());
-    Mockito.when(this.loadableStudyRepository.findById(ArgumentMatchers.anyLong()))
-        .thenReturn(Optional.of(loadableStudy));
-    Mockito.when(this.cargoOperationRepository.getOne(ArgumentMatchers.anyLong()))
-        .thenReturn(new CargoOperation());
-    Mockito.when(
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
-                ArgumentMatchers.any(LoadableStudy.class),
-                ArgumentMatchers.any(CargoOperation.class),
-                ArgumentMatchers.anyBoolean()))
-        .thenReturn(loadableStudyPortRotations);
     Mockito.when(
             loadableStudyPortRotationService.getPortRotationByLoadableStudyId(
                 Mockito.any(), Mockito.any()))
-        .thenCallRealMethod();
-    ReflectionTestUtils.setField(
-        loadableStudyPortRotationService, "loadableStudyRepository", this.loadableStudyRepository);
-    ReflectionTestUtils.setField(
-        loadableStudyPortRotationService,
-        "loadableQuantityRepository",
-        this.loadableQuantityRepository);
-    ReflectionTestUtils.setField(
-        loadableStudyPortRotationService,
-        "cargoOperationRepository",
-        this.cargoOperationRepository);
-    ReflectionTestUtils.setField(
-        loadableStudyPortRotationService,
-        "loadableStudyPortRotationRepository",
-        this.loadableStudyPortRotationRepository);
-    ReflectionTestUtils.setField(
-        loadableStudyPortRotationService, "backLoadingService", this.backLoadingService);
-    ReflectionTestUtils.setField(
-        loadableStudyPortRotationService, "cowDetailService", this.cowDetailService);
-    ReflectionTestUtils.setField(
-        loadableStudyPortRotationService, "portInstructionService", this.portInstructionService);
-    loadableStudyService.getPortRotationByLoadableStudyId(portRotationRequest, responseObserver);
+        .thenThrow(new RuntimeException("1"));
 
+    loadableStudyService.getPortRotationByLoadableStudyId(portRotationRequest, responseObserver);
+    List<PortRotationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
-    List<PortRotationReply> results = responseObserver.getValues();
-    assertEquals(1, results.size());
-    PortRotationReply response = results.get(0);
-    assertEquals(
-        ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS).build(),
-        response.getResponseStatus());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetPurposeOfCommingle() {
+    com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request =
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+        responseObserver = StreamRecorder.create();
+    List<PurposeOfCommingle> purposeList = new ArrayList<>();
+    PurposeOfCommingle commingle = new PurposeOfCommingle();
+    commingle.setId(1l);
+    commingle.setPurpose("1");
+    purposeList.add(commingle);
+
+    when(cargoService.getPurposeOfCommingle(
+            any(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.Builder.class)))
+        .thenCallRealMethod();
+    when(purposeOfCommingleRepository.findAll()).thenReturn(purposeList);
+    ReflectionTestUtils.setField(
+        cargoService, "purposeOfCommingleRepository", purposeOfCommingleRepository);
+
+    loadableStudyService.getPurposeOfCommingle(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply> replies =
+        responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetPurposeOfCommingleWithException() {
+    com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest request =
+        com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply>
+        responseObserver = StreamRecorder.create();
+
+    when(cargoService.getPurposeOfCommingle(
+            any(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getPurposeOfCommingle(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.PurposeOfCommingleReply> replies =
+        responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 
   private List<LoadableStudyPortRotation> getLLSPR() {
@@ -2803,71 +3044,6 @@ class LoadableStudyServiceTest {
     return LoadablePatternRequest.newBuilder().setLoadableStudyId(0L).build();
   }
 
-  @SuppressWarnings("unchecked")
-  //  @Test
-  //  void testValidateLoadablePatterns() {
-  //    AlgoResponse algoResponse = new AlgoResponse();
-  //    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
-  //    algoResponse.setProcessId("1");
-  //
-  //    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-  //        .thenReturn(Optional.of(createLoadablePattern()));
-  //
-  //    Mockito.doReturn(this.createPortReply())
-  //        .when(spyService)
-  //        .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
-  //    Mockito.when(
-  //            restTemplate.postForObject(
-  //                anyString(),
-  //                any(com.cpdss.loadablestudy.domain.LoadableStudy.class),
-  //                any(Class.class)))
-  //        .thenReturn(algoResponse);
-  //    Mockito.when(this.loadableStudyCommunicationStatusRepository.save(Mockito.any()))
-  //        .thenReturn(getLSCS());
-  //    try {
-  //      Mockito.when(
-  //              communicationService.passRequestPayloadToEnvoyWriter(
-  //                  Mockito.anyString(), Mockito.anyLong(), Mockito.anyString()))
-  //          .thenReturn(getWriterReply());
-  //    } catch (GenericServiceException e) {
-  //      e.printStackTrace();
-  //    }
-  //
-  //    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
-  //    try {
-  //      Mockito.when(loadablePlanService.validateLoadablePlan(Mockito.any(), Mockito.any()))
-  //          .thenCallRealMethod();
-  //    } catch (IOException e) {
-  //      e.printStackTrace();
-  //    } catch (GenericServiceException e) {
-  //      e.printStackTrace();
-  //    }
-  //    ReflectionTestUtils.setField(
-  //        loadablePlanService, "loadablePatternRepository", this.loadablePatternRepository);
-  //    ReflectionTestUtils.setField(
-  //        loadablePlanService, "loadableStudyService", this.loadableStudyService);
-  //    ReflectionTestUtils.setField(loadablePlanService, "voyageService", this.voyageService);
-  //    ReflectionTestUtils.setField(
-  //        loadablePlanService, "stowageDetailsTempRepository", this.stowageDetailsTempRepository);
-  //    ReflectionTestUtils.setField(loadablePlanService, "jsonDataService", this.jsonDataService);
-  //    ReflectionTestUtils.setField(
-  //        loadablePlanService, "communicationService", this.communicationService);
-  //    ReflectionTestUtils.setField(
-  //        loadablePlanService,
-  //        "loadableStudyCommunicationStatusRepository",
-  //        this.loadableStudyCommunicationStatusRepository);
-  //    ReflectionTestUtils.setField(loadablePlanService, "restTemplate", this.restTemplate);
-  //    ReflectionTestUtils.setField(loadablePlanService, "loadableStudyUrl", "URl");
-  //    ReflectionTestUtils.setField(loadablePlanService, "rootFolder", "D:\\Data");
-  //    spyService.validateLoadablePlan(
-  //        LoadablePlanDetailsRequest.newBuilder().setLoadablePatternId(1L).build(),
-  // responseObserver);
-  //    List<AlgoReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
-  //  }
-
   private EnvoyWriter.WriterReply getWriterReply() {
     EnvoyWriter.WriterReply writerReply =
         EnvoyWriter.WriterReply.newBuilder()
@@ -2882,97 +3058,6 @@ class LoadableStudyServiceTest {
     loadableStudyCommunicationStatus.setId(1L);
     return loadableStudyCommunicationStatus;
   }
-
-  // @SuppressWarnings("unchecked")
-  //  @Test
-  //  void testGenerateLoadablePatterns() {
-  //    Optional<LoadableStudy> optional = Optional.of(new LoadableStudy());
-  //    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
-  //    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-  //        .thenReturn(getOLS());
-  //    Mockito.when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(),
-  // Mockito.anyBoolean()))
-  //        .thenReturn(getVoyage());
-  //    Mockito.when(
-  //            loadableStudyPortRotationRepository.findAllIdAndPortIdsByLSId(
-  //                Mockito.anyLong(), Mockito.anyBoolean()))
-  //        .thenReturn(getPortsid());
-  //    Mockito.when(
-  //            loadableQuantityRepository.findByLSIdAndPortRotationId(
-  //                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
-  //        .thenReturn(getOLQ());
-  //
-  //    Mockito.doReturn(this.createPortReply())
-  //        .when(spyService)
-  //        .getPortInfo(any(GetPortInfoByPortIdsRequest.class));
-  //
-  //    Mockito.when(
-  //            restTemplate.postForObject(
-  //                anyString(),
-  //                any(com.cpdss.loadablestudy.domain.LoadableStudy.class),
-  //                any(Class.class)))
-  //        .thenReturn(getAlgoResponse());
-  //
-  //    when(this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(any(), anyBoolean()))
-  //        .thenReturn(prepareOnBoardQuantity());
-  //
-  //    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(any(), anyBoolean()))
-  //        .thenReturn(prepareHandQuantity());
-  //    when(this.cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
-  //            Mockito.anyList(), anyBoolean()))
-  //        .thenReturn(prepareCargoNominationOperationDetails());
-  //
-  //    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-  //            anyLong(), anyBoolean()))
-  //        .thenReturn(prepareLoadableStudyPortRotationDetails());
-  //
-  //    when(this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(),
-  // anyBoolean()))
-  //        .thenReturn(prepareLoadableQuantityDetails());
-  //
-  //    when(this.commingleCargoRepository.findByLoadableStudyXIdAndIsActive(anyLong(),
-  // anyBoolean()))
-  //        .thenReturn(prepareCommingleCargoDetails());
-  //
-  //    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActive(anyLong(),
-  // anyBoolean()))
-  //        .thenReturn(prepareCargoNomination());
-  //
-  //    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
-  //    try {
-  //      Mockito.when(loadablePatternService.generateLoadablePatterns(Mockito.any(),
-  // Mockito.any()))
-  //          .thenCallRealMethod();
-  //    } catch (GenericServiceException e) {
-  //      e.printStackTrace();
-  //    } catch (IOException e) {
-  //      e.printStackTrace();
-  //    }
-  //    ReflectionTestUtils.setField(
-  //        loadablePatternService, "loadableStudyRepository", this.loadableStudyRepository);
-  //    ReflectionTestUtils.setField(loadablePatternService, "restTemplate", this.restTemplate);
-  //    ReflectionTestUtils.setField(voyageService, "voyageRepository", this.voyageRepository);
-  //    ReflectionTestUtils.setField(loadablePatternService, "loadableStudyUrl", "URL");
-  //    ReflectionTestUtils.setField(loadablePatternService, "jsonDataService",
-  // this.jsonDataService);
-  //    ReflectionTestUtils.setField(loadablePatternService, "voyageService", this.voyageService);
-  //    ReflectionTestUtils.setField(
-  //        loadablePatternService,
-  //        "loadableStudyPortRotationRepository",
-  //        this.loadableStudyPortRotationRepository);
-  //    ReflectionTestUtils.setField(
-  //        loadablePatternService, "loadableQuantityRepository", this.loadableQuantityRepository);
-  //    ReflectionTestUtils.setField(
-  //        loadablePatternService, "cargoNominationService", this.cargoNominationService);
-  //    ReflectionTestUtils.setField(
-  //        loadablePatternService, "loadableStudyService", this.loadableStudyService);
-  //    ReflectionTestUtils.setField(loadablePatternService, "rootFolder", "D:\\Data");
-  //    spyService.generateLoadablePatterns(AlgoRequest.newBuilder().build(), responseObserver);
-  //    List<AlgoReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
-  //  }
 
   private AlgoResponse getAlgoResponse() {
     AlgoResponse algoResponse = new AlgoResponse();
@@ -3066,89 +3151,2045 @@ class LoadableStudyServiceTest {
     return builder.build();
   }
 
+  private com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest getRequest() {
+    List<com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetailsResults> resultsList =
+        new ArrayList<>();
+    List<com.cpdss.common.generated.LoadableStudy.LodicatorResultDetails> resultDetailsList =
+        new ArrayList<>();
+    com.cpdss.common.generated.LoadableStudy.LodicatorResultDetails resultDetails =
+        LodicatorResultDetails.newBuilder()
+            .setBlindSector("1")
+            .setCalculatedDraftAftPlanned("1")
+            .setCalculatedDraftFwdPlanned("1")
+            .setCalculatedDraftMidPlanned("1")
+            .setCalculatedTrimPlanned("1")
+            .setDeflection("1")
+            .setList("1")
+            .setSF("1")
+            .setBM("1")
+            .setPortId(1l)
+            .setOperationId(1l)
+            .setSynopticalId(1l)
+            .setPortId(1l)
+            .setPortId(1l)
+            .build();
+    resultDetailsList.add(resultDetails);
+    com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetailsResults patternDetailsResults =
+        com.cpdss.common.generated.LoadableStudy.LoadicatorPatternDetailsResults.newBuilder()
+            .addAllLoadicatorResultDetails(resultDetailsList)
+            .build();
+    resultsList.add(patternDetailsResults);
+    com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadicatorResultsRequest.newBuilder()
+            .addAllLoadicatorResultsPatternWise(resultsList)
+            .setLoadableStudyId(1l)
+            .setProcessId("1")
+            .build();
+    return request;
+  }
   /**
    * testSaveLoadicatorResults
    *
    * <p>void
    */
-  //  @Test
-  //  void testSaveLoadicatorResults() {
-  //    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-  //            .thenReturn(Optional.of(new LoadableStudy()));
-  //    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
-  //    Mockito.when(loadicatorService.saveLoadicatorResults(Mockito.any(), Mockito.any()))
-  //            .thenCallRealMethod();
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService, "loadableStudyRepository", this.loadableStudyRepository);
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService,
-  //            "loadableStudyAlgoStatusRepository",
-  //            this.loadableStudyAlgoStatusRepository);
-  //    loadableStudyService.saveLoadicatorResults(this.createLoadicatorResults(),
-  // responseObserver);
-  //    List<AlgoReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
-  //  }
+  @Test
+  void testSaveLoadicatorResults() {
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
 
-  //  @Test
-  //  void testSaveLoadicatorResultsInvalidLoadableStudy() {
-  //    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-  //            .thenReturn(Optional.empty());
-  //    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
-  //    Mockito.when(loadicatorService.saveLoadicatorResults(Mockito.any(), Mockito.any()))
-  //            .thenCallRealMethod();
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService, "loadableStudyRepository", this.loadableStudyRepository);
-  //    loadableStudyService.saveLoadicatorResults(this.createLoadicatorResults(),
-  // responseObserver);
-  //    List<AlgoReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST,
-  // results.get(0).getResponseStatus().getCode());
-  //  }
+    Mockito.when(loadicatorService.saveLoadicatorResults(Mockito.any(), Mockito.any()))
+        .thenCallRealMethod();
+    when(synopticalTableRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new SynopticalTable()));
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
 
-  //  @Test
-  //  void testSaveLoadicatorResultsRuntimeException() {
-  //    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-  //            .thenThrow(RuntimeException.class);
-  //    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
-  //    Mockito.when(loadicatorService.saveLoadicatorResults(Mockito.any(), Mockito.any()))
-  //            .thenCallRealMethod();
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService, "loadableStudyRepository", this.loadableStudyRepository);
-  //    loadableStudyService.saveLoadicatorResults(this.createLoadicatorResults(),
-  // responseObserver);
-  //    List<AlgoReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
-  //  }
+    ReflectionTestUtils.setField(
+        loadicatorService, "synopticalTableRepository", synopticalTableRepository);
+    ReflectionTestUtils.setField(
+        loadicatorService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(
+        loadicatorService,
+        "loadableStudyAlgoStatusRepository",
+        this.loadableStudyAlgoStatusRepository);
+    ReflectionTestUtils.setField(loadableStudyService, "lsLoadicatorService", loadicatorService);
 
-  /** @return LoadicatorResultsRequest */
-  //  private LoadicatorResultsRequest createLoadicatorResults() {
-  //    LoadicatorResultsRequest.Builder builder =
-  //            LoadicatorResultsRequest.newBuilder().setLoadableStudyId(1L);
-  //    builder.addLoadicatorPatternDetailsResults(buildLoadicatorPatternDetailsResults());
-  //    return builder.build();
-  //  }
-  //
-  //  /** @return LoadicatorPatternDetailsResults */
-  //  private LoadicatorPatternDetailsResults buildLoadicatorPatternDetailsResults() {
-  //    LoadicatorPatternDetailsResults.Builder builder =
-  // LoadicatorPatternDetailsResults.newBuilder();
-  //    builder.addLodicatorResultDetails(buildLodicatorResultDetails());
-  //    return builder.build();
-  //  }
-
-  /** @return LodicatorResultDetails */
-  private LodicatorResultDetails buildLodicatorResultDetails() {
-    LodicatorResultDetails.Builder builder = LodicatorResultDetails.newBuilder();
-    return builder.build();
+    loadableStudyService.saveLoadicatorResults(getRequest(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
+  @Test
+  void testSaveLoadicatorResultsRuntimeException() {
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    Mockito.when(loadicatorService.saveLoadicatorResults(Mockito.any(), Mockito.any()))
+        .thenThrow(RuntimeException.class);
+    ReflectionTestUtils.setField(loadableStudyService, "lsLoadicatorService", loadicatorService);
+
+    loadableStudyService.saveLoadicatorResults(getRequest(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetCommingleCargo() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getCommingleCargo(
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.newBuilder());
+
+    loadableStudyService.getCommingleCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetCommingleCargoWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getCommingleCargo(
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getCommingleCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetCommingleCargoWithGenericException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getCommingleCargo(
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.getCommingleCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveCommingleCargo() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.saveCommingleCargo(
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.newBuilder());
+
+    loadableStudyService.saveCommingleCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testSaveCommingleCargoWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.saveCommingleCargo(
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.saveCommingleCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveCommingleCargoWithGenericException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.saveCommingleCargo(
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CommingleCargoReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.saveCommingleCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CommingleCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testValidateLoadablePlan() throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePlanService.validateLoadablePlan(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder());
+
+    loadableStudyService.validateLoadablePlan(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testValidateLoadablePlanWithException() throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePlanService.validateLoadablePlan(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.validateLoadablePlan(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSavePatternValidateResult() throws GenericServiceException, JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.savePatternValidateResult(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder());
+
+    loadableStudyService.savePatternValidateResult(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testSavePatternValidateResultWithException()
+      throws GenericServiceException, JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.savePatternValidateResult(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.savePatternValidateResult(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSavePatternValidateResultWithGenericException()
+      throws GenericServiceException, JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.savePatternValidateResult(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.savePatternValidateResult(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGenerateLoadablePatterns2() throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.AlgoRequest request =
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.generateLoadablePatterns(
+            any(com.cpdss.common.generated.LoadableStudy.AlgoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder());
+
+    loadableStudyService.generateLoadablePatterns(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGenerateLoadablePatternsWithException() throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.AlgoRequest request =
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.generateLoadablePatterns(
+            any(com.cpdss.common.generated.LoadableStudy.AlgoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.generateLoadablePatterns(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGenerateLoadablePatternsWithResourceAccessException()
+      throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.AlgoRequest request =
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.generateLoadablePatterns(
+            any(com.cpdss.common.generated.LoadableStudy.AlgoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenThrow(new ResourceAccessException("1"));
+
+    loadableStudyService.generateLoadablePatterns(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGenerateLoadablePatternsWithGenericException()
+      throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.AlgoRequest request =
+        com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.generateLoadablePatterns(
+            any(com.cpdss.common.generated.LoadableStudy.AlgoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.generateLoadablePatterns(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetSynopticalDataByPortId() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    when(synopticService.getSynopticalDataByPortId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.newBuilder());
+
+    loadableStudyService.getSynopticalDataByPortId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetSynopticalDataByPortIdWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    when(synopticService.getSynopticalDataByPortId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getSynopticalDataByPortId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetSynopticalDataByPortIdWithGenericException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    when(synopticService.getSynopticalDataByPortId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.getSynopticalDataByPortId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationList() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadableStudyPortRotationService.saveLoadableStudyPortRotationList(
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.PortRotationReply.newBuilder());
+
+    loadableStudyService.saveLoadableStudyPortRotationList(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.PortRotationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationListWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadableStudyPortRotationService.saveLoadableStudyPortRotationList(
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.saveLoadableStudyPortRotationList(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.PortRotationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadableStudyPortRotationListWithGenericException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.PortRotationReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadableStudyPortRotationService.saveLoadableStudyPortRotationList(
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.saveLoadableStudyPortRotationList(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.PortRotationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadOnTopWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest request =
+        com.cpdss.common.generated.LoadableStudy.SaveLoadOnTopRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.saveLoadOnTop(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SaveCommentReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePlanReport() throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+        responseObserver = StreamRecorder.create();
+
+    doNothing()
+        .when(loadablePlanService)
+        .getLoadablePlanReport(
+            any(XSSFWorkbook.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder.class));
+
+    loadableStudyService.getLoadablePlanReport(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetLoadablePlanReportWithException() throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(loadablePlanService)
+        .getLoadablePlanReport(
+            any(XSSFWorkbook.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder.class));
+
+    loadableStudyService.getLoadablePlanReport(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveVoyageStatusWithException() throws GenericServiceException, IOException {
+    com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest request =
+        com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply>
+        responseObserver = StreamRecorder.create();
+
+    when(voyageService.saveVoyageStatus(
+            any(com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.saveVoyageStatus(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SaveVoyageStatusReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetCargoApiTempHistory() {
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request =
+        com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getCargoApiTempHistory(
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.newBuilder());
+
+    loadableStudyService.getCargoApiTempHistory(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetCargoApiTempHistoryWithException() {
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request =
+        com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getCargoApiTempHistory(
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getCargoApiTempHistory(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAllCargoHistory() {
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request =
+        com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getAllCargoHistory(
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.newBuilder());
+
+    loadableStudyService.getAllCargoHistory(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetAllCargoHistoryWithException() {
+    com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest request =
+        com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getAllCargoHistory(
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoHistoryReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getAllCargoHistory(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CargoHistoryReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetCargoHistoryByCargo() {
+    com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.LatestCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getCargoHistoryByCargo(
+            any(com.cpdss.common.generated.LoadableStudy.LatestCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LatestCargoReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.LatestCargoReply.newBuilder());
+
+    loadableStudyService.getCargoHistoryByCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testgetCargoHistoryByCargoWithException() {
+    com.cpdss.common.generated.LoadableStudy.LatestCargoRequest request =
+        com.cpdss.common.generated.LoadableStudy.LatestCargoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> responseObserver =
+        StreamRecorder.create();
+
+    when(cargoService.getCargoHistoryByCargo(
+            any(com.cpdss.common.generated.LoadableStudy.LatestCargoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LatestCargoReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getCargoHistoryByCargo(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LatestCargoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetSynopticDataByLoadableStudyId() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    when(synopticService.getSynopticDataByLoadableStudyId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.newBuilder());
+
+    loadableStudyService.getSynopticDataByLoadableStudyId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetSynopticDataByLoadableStudyIdWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    when(synopticService.getSynopticDataByLoadableStudyId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getSynopticDataByLoadableStudyId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testgetActiveVoyagesByVessel() {
+    VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1l).build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> responseObserver =
+        StreamRecorder.create();
+
+    doNothing()
+        .when(this.voyageService)
+        .fetchActiveVoyageByVesselId(
+            any(com.cpdss.common.generated.LoadableStudy.ActiveVoyage.Builder.class),
+            anyLong(),
+            anyLong());
+
+    loadableStudyService.getActiveVoyagesByVessel(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testgetActiveVoyagesByVesselWithException() {
+    VoyageRequest request = VoyageRequest.newBuilder().setVesselId(1l).build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> responseObserver =
+        StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(this.voyageService)
+        .fetchActiveVoyageByVesselId(
+            any(com.cpdss.common.generated.LoadableStudy.ActiveVoyage.Builder.class),
+            anyLong(),
+            anyLong());
+
+    loadableStudyService.getActiveVoyagesByVessel(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.ActiveVoyage> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetSynopticDataForLoadingPlan() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+        responseObserver = StreamRecorder.create();
+
+    doNothing()
+        .when(synopticService)
+        .fetchLoadingInformationSynopticDetails(
+            any(com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder.class),
+            any(ResponseStatus.Builder.class));
+
+    loadableStudyService.getSynopticDataForLoadingPlan(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetSynopticDataForLoadingPlanWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(synopticService)
+        .fetchLoadingInformationSynopticDetails(
+            any(com.cpdss.common.generated.LoadableStudy.LoadingPlanIdRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse.Builder.class),
+            any(ResponseStatus.Builder.class));
+
+    loadableStudyService.getSynopticDataForLoadingPlan(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadingPlanCommonResponse> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadingInfoToSynopticData() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest.newBuilder()
+            .build();
+    StreamRecorder<ResponseStatus> responseObserver = StreamRecorder.create();
+
+    when(synopticService.saveLoadingInformationToSynopticalTable(
+            any(com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest.class),
+            any(ResponseStatus.Builder.class)))
+        .thenReturn(ResponseStatus.newBuilder());
+
+    loadableStudyService.saveLoadingInfoToSynopticData(request, responseObserver);
+    List<ResponseStatus> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testSaveLoadingInfoToSynopticDataWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest.newBuilder()
+            .build();
+    StreamRecorder<ResponseStatus> responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(synopticService)
+        .saveLoadingInformationToSynopticalTable(
+            any(com.cpdss.common.generated.LoadableStudy.LoadingInfoSynopticalUpdateRequest.class),
+            any(ResponseStatus.Builder.class));
+
+    loadableStudyService.saveLoadingInfoToSynopticData(request, responseObserver);
+    List<ResponseStatus> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getStatus());
+  }
+
+  @Test
+  void testGetOrSaveRulesForLoadableStudy() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver =
+        StreamRecorder.create();
+
+    doNothing()
+        .when(loadableStudyRuleService)
+        .getOrSaveRulesForLoadableStudy(
+            any(com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder.class));
+
+    loadableStudyService.getOrSaveRulesForLoadableStudy(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetOrSaveRulesForLoadableStudyWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> responseObserver =
+        StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(loadableStudyRuleService)
+        .getOrSaveRulesForLoadableStudy(
+            any(com.cpdss.common.generated.LoadableStudy.LoadableRuleRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadableRuleReply.Builder.class));
+
+    loadableStudyService.getOrSaveRulesForLoadableStudy(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableRuleReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternDetailsJson() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson>
+        responseObserver = StreamRecorder.create();
+
+    when(loadablePatternService.getLoadablePatternDetailsJson(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class),
+            any(
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson.Builder
+                    .class)))
+        .thenReturn(
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson
+                .newBuilder());
+
+    loadableStudyService.getLoadablePatternDetailsJson(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetLoadablePatternDetailsJsonWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson>
+        responseObserver = StreamRecorder.create();
+
+    when(loadablePatternService.getLoadablePatternDetailsJson(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class),
+            any(
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson.Builder
+                    .class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getLoadablePatternDetailsJson(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternByVoyageAndStatus() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>
+        responseObserver = StreamRecorder.create();
+
+    when(loadablePatternService.getLoadablePatternByVoyageAndStatus(
+            any(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest.class),
+            any(
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.Builder
+                    .class)))
+        .thenReturn(
+            com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.newBuilder());
+
+    loadableStudyService.getLoadablePatternByVoyageAndStatus(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetLoadablePatternByVoyageAndStatusWithGenericException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply>
+        responseObserver = StreamRecorder.create();
+
+    when(loadablePatternService.getLoadablePatternByVoyageAndStatus(
+            any(com.cpdss.common.generated.LoadableStudy.LoadableStudyRequest.class),
+            any(
+                com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply.Builder
+                    .class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.getLoadablePatternByVoyageAndStatus(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadablePatternConfirmedReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetCargoNominationByCargoNominationId() {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>
+        responseObserver = StreamRecorder.create();
+
+    when(cargoNominationService.getCargoNominationByCargoNominationId(
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.Builder.class)))
+        .thenReturn(
+            com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.newBuilder());
+
+    loadableStudyService.getCargoNominationByCargoNominationId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetCargoNominationByCargoNominationIdWithException() {
+    com.cpdss.common.generated.LoadableStudy.CargoNominationRequest request =
+        com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply>
+        responseObserver = StreamRecorder.create();
+
+    when(cargoNominationService.getCargoNominationByCargoNominationId(
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getCargoNominationByCargoNominationId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.CargoNominationDetailReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableCommingleByPatternId() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+        responseObserver = StreamRecorder.create();
+
+    doNothing()
+        .when(loadablePatternService)
+        .getLoadableCommingleByPatternId(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class),
+            any(
+                com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply.Builder
+                    .class));
+
+    loadableStudyService.getLoadableCommingleByPatternId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetLoadableCommingleByPatternIdWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(loadablePatternService)
+        .getLoadableCommingleByPatternId(
+            any(com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.class),
+            any(
+                com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply.Builder
+                    .class));
+
+    loadableStudyService.getLoadableCommingleByPatternId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableCommingleDetailsReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testgetCargoInfoById() {
+    CargoRequest request = CargoRequest.newBuilder().build();
+
+    when(cargoInfoGrpcService.getCargoInfoById(any(CargoRequest.class)))
+        .thenReturn(
+            CargoInfo.CargoDetailReply.newBuilder()
+                .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    ReflectionTestUtils.setField(
+        loadableStudyService, "cargoInfoGrpcService", cargoInfoGrpcService);
+
+    var result = loadableStudyService.getCargoInfoById(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableStudyShore() {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+        responseObserver = StreamRecorder.create();
+
+    doNothing()
+        .when(loadableStudyPortRotationService)
+        .getLoadableStudyShore(
+            any(com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder.class));
+
+    loadableStudyService.getLoadableStudyShore(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetLoadableStudyShoreWithException() {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(loadableStudyPortRotationService)
+        .getLoadableStudyShore(
+            any(com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder.class));
+
+    loadableStudyService.getLoadableStudyShore(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableStudyPortRotationByPortRotationId() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+        responseObserver = StreamRecorder.create();
+
+    doNothing()
+        .when(loadableStudyPortRotationService)
+        .getPortRotationByPortRotationId(
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply.Builder.class));
+
+    loadableStudyService.getLoadableStudyPortRotationByPortRotationId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableStudyPortRotationByPortRotationIdWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.PortRotationRequest request =
+        com.cpdss.common.generated.LoadableStudy.PortRotationRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(loadableStudyPortRotationService)
+        .getPortRotationByPortRotationId(
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply.Builder.class));
+
+    loadableStudyService.getLoadableStudyPortRotationByPortRotationId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  private JsonData getJsonData() throws JsonProcessingException {
+    JsonData jsonData = new JsonData();
+    jsonData.setReferenceXId(10L);
+    LoadableStudyAlgoJson algoJson = new LoadableStudyAlgoJson();
+    List<LoadablePlanDetailsAlgoJson> algoJsonList = new ArrayList<>();
+    LoadablePlanDetailsAlgoJson planDetailsAlgoJson = new LoadablePlanDetailsAlgoJson();
+    planDetailsAlgoJson.setCaseNumber(1l);
+    List<LoadablePlanPortWiseDetailsAlgoJson> portWiseDetailsList = new ArrayList<>();
+    LoadablePlanPortWiseDetailsAlgoJson portWiseDetails = new LoadablePlanPortWiseDetailsAlgoJson();
+    portWiseDetails.setPortRotationId(1l);
+    portWiseDetailsList.add(portWiseDetails);
+    planDetailsAlgoJson.setLoadablePlanPortWiseDetails(portWiseDetailsList);
+    algoJsonList.add(planDetailsAlgoJson);
+    algoJson.setLoadablePlanDetails(algoJsonList);
+    ObjectMapper mapper = new ObjectMapper();
+    String json = mapper.writeValueAsString(algoJson);
+    jsonData.setJsonData(json);
+    return jsonData;
+  }
+
+  @Test
+  void testGetLoadableStudySimulatorJsonData() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request =
+        com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.newBuilder()
+            .setLoadableStudyId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply> responseObserver =
+        StreamRecorder.create();
+
+    doReturn(getJsonData()).when(jsonDataService).getJsonData(anyLong(), anyLong());
+    when(loadableStudyPortRotationRepository.findById(anyLong()))
+        .thenReturn(Optional.of(getLSPR()));
+
+    loadableStudyService.getLoadableStudySimulatorJsonData(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadableStudySimulatorJsonDataWithException() {
+    com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest request =
+        com.cpdss.common.generated.LoadableStudy.SimulatorJsonRequest.newBuilder()
+            .setLoadableStudyId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply> responseObserver =
+        StreamRecorder.create();
+
+    doThrow(new RuntimeException("1")).when(this.jsonDataService).getJsonData(anyLong(), anyLong());
+
+    loadableStudyService.getLoadableStudySimulatorJsonData(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SimulatorJsonReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetUllage() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request =
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePlanService.getUllage(
+            any(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.UpdateUllageReply.Builder.class)))
+        .thenReturn(UpdateUllageReply.newBuilder());
+
+    loadableStudyService.getUllage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetUllageWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request =
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePlanService.getUllage(
+            any(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.UpdateUllageReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getUllage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetUllageWithGenericException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest request =
+        com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePlanService.getUllage(
+            any(com.cpdss.common.generated.LoadableStudy.UpdateUllageRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.UpdateUllageReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.getUllage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.UpdateUllageReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testUpdateDischargeQuantityCargoDetails() throws GenericServiceException {
+    List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails> cargoDetailsList =
+        new ArrayList<>();
+    cargoDetailsList.add(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.newBuilder()
+            .setId(1l)
+            .setIfProtested(true)
+            .setIsCommingled(true)
+            .setSlopQuantity("1")
+            .build());
+    com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest.newBuilder()
+            .addAllCargoDetails(cargoDetailsList)
+            .build();
+    StreamRecorder<ResponseStatus> responseObserver = StreamRecorder.create();
+    List<DischargePatternQuantityCargoPortwiseDetails> cargoDetailsToUpdate = new ArrayList<>();
+    DischargePatternQuantityCargoPortwiseDetails portwiseDetails =
+        new DischargePatternQuantityCargoPortwiseDetails();
+    portwiseDetails.setId(1l);
+    cargoDetailsToUpdate.add(portwiseDetails);
+    when(dischargePatternQuantityCargoPortwiseRepository.findByIdIn(anyList()))
+        .thenReturn(cargoDetailsToUpdate);
+
+    loadableStudyService.updateDischargeQuantityCargoDetails(request, responseObserver);
+    List<ResponseStatus> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    verify(dischargePatternQuantityCargoPortwiseRepository).saveAll(anyList());
+  }
+
+  @Test
+  void testUpdateDischargeQuantityCargoDetailsWithException() throws GenericServiceException {
+    List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails> cargoDetailsList =
+        new ArrayList<>();
+    cargoDetailsList.add(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.newBuilder()
+            .setId(1l)
+            .setIfProtested(true)
+            .setIsCommingled(true)
+            .setSlopQuantity("1")
+            .build());
+    com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest.newBuilder()
+            .addAllCargoDetails(cargoDetailsList)
+            .build();
+    StreamRecorder<ResponseStatus> responseObserver = StreamRecorder.create();
+    when(dischargePatternQuantityCargoPortwiseRepository.findByIdIn(anyList()))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.updateDischargeQuantityCargoDetails(request, responseObserver);
+    List<ResponseStatus> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getStatus());
+  }
+
+  @Test
+  void testUpdateDischargeQuantityCargoDetailsWithGenericException()
+      throws GenericServiceException {
+    List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails> cargoDetailsList =
+        new ArrayList<>();
+    cargoDetailsList.add(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.newBuilder()
+            .setId(1l)
+            .setIfProtested(true)
+            .setIsCommingled(true)
+            .setSlopQuantity("1")
+            .build());
+    com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest request =
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsRequest.newBuilder()
+            .addAllCargoDetails(cargoDetailsList)
+            .build();
+    StreamRecorder<ResponseStatus> responseObserver = StreamRecorder.create();
+    List<DischargePatternQuantityCargoPortwiseDetails> cargoDetailsToUpdate = new ArrayList<>();
+    when(dischargePatternQuantityCargoPortwiseRepository.findByIdIn(anyList()))
+        .thenReturn(cargoDetailsToUpdate);
+
+    loadableStudyService.updateDischargeQuantityCargoDetails(request, responseObserver);
+    List<ResponseStatus> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getStatus());
+  }
+
+  @Test
+  void testGetLoadingSimulatorJsonData() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.newBuilder()
+            .setInfoId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+        responseObserver = StreamRecorder.create();
+
+    doReturn(getJsonData()).when(this.jsonDataService).getJsonData(anyLong(), anyLong());
+
+    loadableStudyService.getLoadingSimulatorJsonData(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadingSimulatorJsonDataWithException() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonRequest.newBuilder()
+            .setInfoId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1")).when(this.jsonDataService).getJsonData(anyLong(), anyLong());
+
+    loadableStudyService.getLoadingSimulatorJsonData(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadingSimulatorJsonReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVoyage() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request =
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder()
+            .setId(1l)
+            .setVoyageStatus(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> responseObserver =
+        StreamRecorder.create();
+    String j = "[{\"id\":1,\"voyage_status\":1}]";
+    when(voyageRepository.getVoyagebyId(anyLong())).thenReturn(j);
+
+    loadableStudyService.getVoyage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVoyageElse() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request =
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder()
+            .setId(1l)
+            .setVoyageStatus(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> responseObserver =
+        StreamRecorder.create();
+    String j = "";
+    when(voyageRepository.getVoyagebyId(anyLong())).thenReturn(j);
+
+    loadableStudyService.getVoyage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals("No Voyage Found", results.get(0).getResponseStatus().getMessage());
+  }
+
+  @Test
+  void testSaveActivatedVoyage() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request =
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder()
+            .setId(1l)
+            .setVoyageStatus(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> responseObserver =
+        StreamRecorder.create();
+    when(voyageRepository.findById(anyLong())).thenReturn(Optional.of(getVoyage()));
+    when(voyageRepository.findByVesselXIdAndVoyageStatusId(anyLong(), anyLong()))
+        .thenReturn(Arrays.asList(getVoyage()));
+    when(voyageStatusRepository.findById(anyLong())).thenReturn(Optional.of(getVoyageStatus()));
+
+    loadableStudyService.saveActivatedVoyage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveActivatedVoyageWithException() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request =
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder()
+            .setId(1l)
+            .setVoyageStatus(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> responseObserver =
+        StreamRecorder.create();
+    when(voyageRepository.findById(anyLong())).thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.saveActivatedVoyage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED_WITH_EXC, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveActivatedVoyageWithResourceAccessException() throws JsonProcessingException {
+    com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest request =
+        com.cpdss.common.generated.LoadableStudy.VoyageActivateRequest.newBuilder()
+            .setId(1l)
+            .setVoyageStatus(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> responseObserver =
+        StreamRecorder.create();
+    when(voyageRepository.findById(anyLong())).thenThrow(new ResourceAccessException("1"));
+
+    loadableStudyService.saveActivatedVoyage(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.VoyageActivateReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED_WITH_RESOURCE_EXC, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternForCommunication() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+            .newBuilder()
+            .setId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    when(loadablePatternRepository.getLoadablePatternWithId(anyLong())).thenReturn("1");
+
+    loadableStudyService.getLoadablePatternForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadablePatternForCommunicationElse() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+            .newBuilder()
+            .setId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    when(loadablePatternRepository.getLoadablePatternWithId(anyLong())).thenReturn(null);
+
+    loadableStudyService.getLoadablePatternForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals("No LoadablePattern Found", results.get(0).getResponseStatus().getMessage());
+  }
+
+  @Test
+  void testGetLoadicatorDataSynopticalForCommunication() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.newBuilder()
+            .setId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    when(synopticalTableLoadicatorDataRepository
+            .getSynopticalTableLoadicatorDataWithLoadablePatternId(anyLong()))
+        .thenReturn("1");
+
+    loadableStudyService.getLoadicatorDataSynopticalForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetLoadicatorDataSynopticalForCommunicationElse() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.newBuilder()
+            .setId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    when(synopticalTableLoadicatorDataRepository
+            .getSynopticalTableLoadicatorDataWithLoadablePatternId(anyLong()))
+        .thenReturn(null);
+
+    loadableStudyService.getLoadicatorDataSynopticalForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(
+        "No SynopticalTableLoadicatorData Found", results.get(0).getResponseStatus().getMessage());
+  }
+
+  @Test
+  void testSaveLoadablePatternForCommunication() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+            .newBuilder()
+            .setId(1l)
+            .setDataJson("1")
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    doNothing().when(loadableStudyCommunicationData).saveLoadablePattern(anyString());
+
+    loadableStudyService.saveLoadablePatternForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadablePatternForCommunicationWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+            .newBuilder()
+            .setId(1l)
+            .setDataJson("1")
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(loadableStudyCommunicationData)
+        .saveLoadablePattern(anyString());
+
+    loadableStudyService.saveLoadablePatternForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED_WITH_EXC, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadablePatternForCommunicationWithResourceAccessException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationRequest
+            .newBuilder()
+            .setId(1l)
+            .setDataJson("1")
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new ResourceAccessException("1"))
+        .when(loadableStudyCommunicationData)
+        .saveLoadablePattern(anyString());
+
+    loadableStudyService.saveLoadablePatternForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyPatternCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED_WITH_RESOURCE_EXC, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadicatorDataSynopticalForCommunication() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.newBuilder()
+            .setDataJson("1")
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    doNothing().when(loadableStudyCommunicationData).saveSynopticalTableLoadicatorData(anyString());
+
+    loadableStudyService.saveLoadicatorDataSynopticalForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadicatorDataSynopticalForCommunicationWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.newBuilder()
+            .setDataJson("1")
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(loadableStudyCommunicationData)
+        .saveSynopticalTableLoadicatorData(anyString());
+
+    loadableStudyService.saveLoadicatorDataSynopticalForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED_WITH_EXC, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveLoadicatorDataSynopticalForCommunicationWithResourceAccessException()
+      throws Exception {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.newBuilder()
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    doThrow(new ResourceAccessException("1"))
+        .when(loadableStudyCommunicationData)
+        .saveSynopticalTableLoadicatorData(anyString());
+
+    loadableStudyService.saveLoadicatorDataSynopticalForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED_WITH_RESOURCE_EXC, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVoyageByVoyageId() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request =
+        com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply> responseObserver =
+        StreamRecorder.create();
+
+    doNothing()
+        .when(voyageService)
+        .getVoyageByVoyageId(
+            any(com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.VoyageInfoReply.Builder.class));
+
+    loadableStudyService.getVoyageByVoyageId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetVoyageByVoyageIdWithException() throws Exception {
+    com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest request =
+        com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply> responseObserver =
+        StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(voyageService)
+        .getVoyageByVoyageId(
+            any(com.cpdss.common.generated.LoadableStudy.VoyageInfoRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.VoyageInfoReply.Builder.class));
+
+    loadableStudyService.getVoyageByVoyageId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.VoyageInfoReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetJsonDataForCommunication() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.newBuilder()
+            .setId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    when(jsonDataRepository.getJsonDataWithLoadingInfoId(anyLong())).thenReturn("1");
+
+    loadableStudyService.getJsonDataForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveJsonDataForCommunication() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request =
+        com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest.newBuilder()
+            .setId(1l)
+            .build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>
+        responseObserver = StreamRecorder.create();
+
+    when(jsonDataRepository.getJsonDataWithLoadingInfoId(anyLong())).thenReturn("1");
+
+    loadableStudyService.saveJsonDataForCommunication(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetSynopticalPortDataByPortId() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    doNothing()
+        .when(synopticService)
+        .getSynopticalPortDataByPortId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class));
+
+    loadableStudyService.getSynopticalPortDataByPortId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testgetSynopticalPortDataByPortIdWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(synopticService)
+        .getSynopticalPortDataByPortId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class));
+
+    loadableStudyService.getSynopticalPortDataByPortId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testgetSynopticalPortDataByPortIdWithGenericException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest request =
+        com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> responseObserver =
+        StreamRecorder.create();
+
+    doThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS))
+        .when(synopticService)
+        .getSynopticalPortDataByPortId(
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder.class));
+
+    loadableStudyService.getSynopticalPortDataByPortId(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.SynopticalTableReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testCheckDuplicatedFromAndCloneEntity() throws GenericServiceException {
+    LoadableStudyDetail studyDetail =
+        LoadableStudyDetail.newBuilder().setDuplicatedFromId(1l).build();
+
+    when(this.cargoNominationOperationDetailsRepository.findByCargoNominationnAndIsActive(
+            any(CargoNomination.class), anyBoolean()))
+        .thenReturn(prepareCargoNominationOperationDetails());
+    when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
+            anyLong(), anyBoolean()))
+        .thenReturn(getLCN());
+    when(cargoNominationRepository.save(any(CargoNomination.class))).thenReturn(getLCN().get(0));
+    when(this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getLLSPR());
+    doNothing().when(entityManager).detach(any(LoadableStudyPortRotation.class));
+    when(loadableStudyPortRotationRepository.saveAll(anyList())).thenReturn(getLLSPR());
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getOLS());
+    when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(getLOHQ());
+    doNothing().when(entityManager).detach(any(OnHandQuantity.class));
+    when(this.loadableStudyAttachmentsRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getAttachmentsList());
+    doNothing().when(entityManager).detach(any(LoadableStudyAttachments.class));
+    when(this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLLQ());
+    doNothing().when(entityManager).detach(any(LoadableQuantity.class));
+
+    loadableStudyService.checkDuplicatedFromAndCloneEntity(studyDetail, getLS());
+    verify(this.loadableStudyAttachmentsRepository).saveAll(anyList());
+    verify(this.onHandQuantityRepository).saveAll(anyList());
+    verify(this.loadableStudyPortRotationRepository).saveAll(anyList());
+    verify(this.loadableQuantityRepository).saveAll(anyList());
+    verify(this.cargoNominationRepository).save(any(CargoNomination.class));
+  }
+
+  @Test
+  void testConfirmPlanStatus() {
+    com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request =
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.confirmPlanStatus(
+            any(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.newBuilder());
+
+    loadableStudyService.confirmPlanStatus(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testConfirmPlanStatusWithException() {
+    com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request =
+        com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> responseObserver =
+        StreamRecorder.create();
+
+    when(loadablePatternService.confirmPlanStatus(
+            any(com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.confirmPlanStatus(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAlgoErrors() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request =
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> responseObserver =
+        StreamRecorder.create();
+
+    when(algoService.getAlgoErrors(
+            any(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder.class)))
+        .thenReturn(com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.newBuilder());
+
+    loadableStudyService.getAlgoErrors(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
+  @Test
+  void testGetAlgoErrorsWithException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request =
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> responseObserver =
+        StreamRecorder.create();
+
+    when(algoService.getAlgoErrors(
+            any(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    loadableStudyService.getAlgoErrors(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetAlgoErrorsWithGenericException() throws GenericServiceException {
+    com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest request =
+        com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.newBuilder().build();
+    StreamRecorder<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> responseObserver =
+        StreamRecorder.create();
+
+    when(algoService.getAlgoErrors(
+            any(com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest.class),
+            any(com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder.class)))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.getAlgoErrors(request, responseObserver);
+    List<com.cpdss.common.generated.LoadableStudy.AlgoErrorReply> results =
+        responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testBuildSynopticalTable() {
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    when(loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getLLSPR());
+    when(this.synopticalTableRepository.findByLoadableStudyPortRotationAndIsActive(
+            anyList(), anyBoolean()))
+        .thenReturn(createSynopticalEntities());
+
+    loadableStudyService.buildSynopticalTable(1l, loadableStudy);
+    Assertions.assertEquals(1l, loadableStudy.getSynopticalTableDetails().get(0).getId());
+  }
+
+  private List<LoadableStudyAttachments> getAttachmentsList() {
+    List<LoadableStudyAttachments> loadableStudyAttachments = new ArrayList<>();
+    LoadableStudyAttachments attachments = new LoadableStudyAttachments();
+    attachments.setFilePath("1");
+    attachments.setUploadedFileName("1");
+    loadableStudyAttachments.add(attachments);
+    return loadableStudyAttachments;
+  }
+
+  @Test
+  void testBuildLoadableAttachment() {
+    List<com.cpdss.loadablestudy.domain.LoadableStudyAttachment> attachmentsDomain =
+        new ArrayList<>();
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    loadableStudy.setLoadableStudyAttachment(attachmentsDomain);
+
+    when(this.loadableStudyAttachmentsRepository.findByLoadableStudyXIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getAttachmentsList());
+
+    loadableStudyService.buildLoadableAttachment(1l, loadableStudy);
+  }
+
+  @Test
+  void testBuildLoadableStudy() throws GenericServiceException {
+    com.cpdss.loadablestudy.domain.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.domain.LoadableStudy();
+    loadableStudyService.buildLoadableStudy(1l, getLS(), loadableStudy, new ModelMapper());
+  }
   /**
    * testGetLoadablePatternDetailsInvalidTankDetails
    *
@@ -3310,44 +5351,43 @@ class LoadableStudyServiceTest {
    *
    * <p>void
    */
-  //  @Test
-  //  void testSaveLoadablePatterns() throws GenericServiceException {
-  //    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-  //            .thenReturn(Optional.of(new LoadableStudy()));
-  //    when(this.loadablePatternService.saveLoadablePatterns(
-  //            any(LoadablePatternAlgoRequest.class), any(AlgoReply.Builder.class)))
-  //            .thenCallRealMethod();
-  //    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
-  //    ReflectionTestUtils.setField(
-  //            loadablePatternService, "loadableStudyRepository", loadableStudyRepository);
-  //    ReflectionTestUtils.setField(
-  //            loadablePatternService, "loadablePatternRepository", loadablePatternRepository);
-  //    ReflectionTestUtils.setField(
-  //            loadablePatternService,
-  //            "loadableStudyPortRotationRepository",
-  //            loadableStudyPortRotationRepository);
-  //    ReflectionTestUtils.setField(
-  //            loadablePatternService,
-  //            "loadablePatternCargoDetailsRepository",
-  //            loadablePatternCargoDetailsRepository);
-  //    ReflectionTestUtils.setField(
-  //            loadablePatternService,
-  //            "loadablePlanStowageBallastDetailsRepository",
-  //            loadablePlanStowageBallastDetailsRepository);
-  //    ReflectionTestUtils.setField(loadablePatternService, "loadicatorService",
-  // loadicatorService);
-  //    ReflectionTestUtils.setField(
-  //            loadablePatternService,
-  //            "loadableStudyAlgoStatusRepository",
-  //            loadableStudyAlgoStatusRepository);
-  //
-  //    loadableStudyService.saveLoadablePatterns(
-  //            this.createLoadablePatternRequest12(), responseObserver);
-  //    List<AlgoReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
-  //  }
+  @Test
+  void testSaveLoadablePatterns() throws GenericServiceException {
+    when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(new LoadableStudy()));
+    when(this.loadablePatternService.saveLoadablePatterns(
+            any(LoadablePatternAlgoRequest.class), any(AlgoReply.Builder.class)))
+        .thenCallRealMethod();
+    StreamRecorder<AlgoReply> responseObserver = StreamRecorder.create();
+    ReflectionTestUtils.setField(
+        loadablePatternService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(
+        loadablePatternService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(
+        loadablePatternService,
+        "loadableStudyPortRotationRepository",
+        loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(
+        loadablePatternService,
+        "loadablePatternCargoDetailsRepository",
+        loadablePatternCargoDetailsRepository);
+    ReflectionTestUtils.setField(
+        loadablePatternService,
+        "loadablePlanStowageBallastDetailsRepository",
+        loadablePlanStowageBallastDetailsRepository);
+    ReflectionTestUtils.setField(loadablePatternService, "loadicatorService", loadicatorService);
+    ReflectionTestUtils.setField(
+        loadablePatternService,
+        "loadableStudyAlgoStatusRepository",
+        loadableStudyAlgoStatusRepository);
+
+    loadableStudyService.saveLoadablePatterns(
+        this.createLoadablePatternRequest12(), responseObserver);
+    List<AlgoReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
 
   private LoadablePatternAlgoRequest createLoadablePatternRequest12() {
     LoadablePatternAlgoRequest.Builder builder = LoadablePatternAlgoRequest.newBuilder();
@@ -3574,6 +5614,7 @@ class LoadableStudyServiceTest {
   private ConfirmPlanRequest createConfirmPlan() {
     ConfirmPlanRequest.Builder builder = ConfirmPlanRequest.newBuilder();
     builder.setLoadablePatternId(1L);
+    builder.setVoyageId(1l);
     return builder.build();
   }
 
@@ -3735,6 +5776,18 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
+  @Test
+  void testGetVesselTanks() {
+    VesselRequest request = VesselRequest.newBuilder().build();
+    when(vesselInfoGrpcService.getVesselTanks(any(VesselRequest.class)))
+        .thenReturn(createVesselReply12().build());
+    ReflectionTestUtils.setField(
+        loadableStudyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+
+    var result = loadableStudyService.getVesselTanks(request);
+    assertEquals(SUCCESS, result.getResponseStatus().getStatus());
+  }
+
   private VesselReply.Builder createVesselReply12() {
     VesselReply.Builder builder = VesselReply.newBuilder();
     List<VesselInfo.VesselTankDetail> list = new ArrayList<>();
@@ -3858,6 +5911,20 @@ class LoadableStudyServiceTest {
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 
+  @Test
+  void testGetLoadablePlanDetailsWithGenericException() throws GenericServiceException {
+    StreamRecorder<LoadablePlanDetailsReply> responseObserver = StreamRecorder.create();
+    Mockito.when(loadablePlanService.getLoadablePlanDetails(Mockito.any(), Mockito.any()))
+        .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
+
+    loadableStudyService.getLoadablePlanDetails(
+        this.createGetLoadablePlanDetails(), responseObserver);
+    List<LoadablePlanDetailsReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
+  }
+
   /** @return List<LoadablePlanComments> */
   private List<LoadablePlanComments> preparePlanComments() {
     List<LoadablePlanComments> loadablePlanComments = new ArrayList<LoadablePlanComments>();
@@ -3938,6 +6005,27 @@ class LoadableStudyServiceTest {
     assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
   }
 
+  @Test
+  void testGetLoadableStudyStatusElse() {
+    LoadablePatternAlgoStatus algoStatus = new LoadablePatternAlgoStatus();
+    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
+    loadableStudyStatus.setId(4L);
+    algoStatus.setLoadableStudyStatus(loadableStudyStatus);
+    algoStatus.setLastModifiedDateTime(LocalDateTime.now());
+
+    when(loadablePatternAlgoStatusRepository.findByLoadablePatternIdAndProcessIdAndIsActive(
+            anyLong(), anyString(), anyBoolean()))
+        .thenReturn(Optional.of(algoStatus));
+    com.cpdss.common.generated.LoadableStudy.LoadableStudyStatusRequest request =
+        LoadableStudyStatusRequest.newBuilder().setLoadablePatternId(1l).setProcessId("1").build();
+    StreamRecorder<LoadableStudyStatusReply> responseObserver = StreamRecorder.create();
+
+    loadableStudyService.getLoadableStudyStatus(request, responseObserver);
+    List<LoadableStudyStatusReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
+  }
   /** @return Object */
   private LoadableStudyAlgoStatus createLoadableStudyAlgoStatus() {
     LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
@@ -4371,6 +6459,19 @@ class LoadableStudyServiceTest {
     assertEquals(0L, replies.get(0).getId());
   }
 
+  @Test
+  void testGetLoadicatorData() throws Exception {
+    StreamRecorder<LoadicatorDataReply> responseObserver = StreamRecorder.create();
+    when(loadicatorService.getLoadicatorData(
+            any(LoadicatorDataRequest.class), any(LoadicatorDataReply.Builder.class)))
+        .thenReturn(LoadicatorDataReply.newBuilder());
+
+    loadableStudyService.getLoadicatorData(createLoadicatorDataRequest(), responseObserver);
+    List<LoadicatorDataReply> results = responseObserver.getValues();
+    assertEquals(1, results.size());
+    assertNull(responseObserver.getError());
+  }
+
   @SuppressWarnings("unchecked")
   @Test
   void testGetLoadicatorDataRuntimeException() {
@@ -4398,80 +6499,13 @@ class LoadableStudyServiceTest {
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 
-  //  @SuppressWarnings("unchecked")
-  //  @Test
-  //  void testGetLoadicatorData() {
-  //    LoadableStudyService spyService = Mockito.spy(this.loadableStudyService);
-  //    AlgoResponse algoResponse = new AlgoResponse();
-  //    algoResponse.setProcessId("");
-  //
-  //    //    //    Mockito.when(
-  //    //                restTemplate.postForObject(
-  //    //                        anyString(),
-  //    //                        any(com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest.class),
-  //    //                        any(Class.class)))
-  //    //                .thenReturn(algoResponse);
-  //    Mockito.when(
-  //                    loadableStudyRepository.findByIdAndIsActive(Mockito.anyLong(),
-  // Mockito.anyBoolean()))
-  //            .thenReturn(getOLS());
-  //    Mockito.when(
-  //                    restTemplate.postForObject(
-  //                            Mockito.anyString(),
-  //
-  // Mockito.any(com.cpdss.loadablestudy.domain.LoadicatorAlgoRequest.class),
-  //                            Mockito.any(Class.class)))
-  //            .thenReturn(getLAR());
-  //    Mockito.when(
-  //                    this.loadablePatternRepository.findByIdAndIsActive(
-  //                            Mockito.anyLong(), Mockito.anyBoolean()))
-  //            .thenReturn(getOLP());
-  //    Mockito.when(
-  //
-  // this.loadableStudyCommunicationStatusRepository.findByReferenceIdAndMessageType(
-  //                            Mockito.anyLong(), Mockito.anyString()))
-  //            .thenReturn(getOLSCS());
-  //    Mockito.when(
-  //                    cargoNominationRepository.findByLoadableStudyXIdAndIsActive(
-  //                            Mockito.anyLong(), Mockito.anyBoolean()))
-  //            .thenReturn(getLCN());
-  //    StreamRecorder<LoadicatorDataReply> responseObserver = StreamRecorder.create();
-  //    try {
-  //      Mockito.when(loadicatorService.getLoadicatorData(Mockito.any(), Mockito.any()))
-  //              .thenCallRealMethod();
-  //    } catch (Exception e) {
-  //      e.printStackTrace();
-  //    }
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService, "loadableStudyRepository", this.loadableStudyRepository);
-  //    ReflectionTestUtils.setField(loadicatorService, "rootFolder", "D:\\Data");
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService, "loadableStudyService", this.loadableStudyService);
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService, "loadablePatternRepository", this.loadablePatternRepository);
-  //    ReflectionTestUtils.setField(loadicatorService, "restTemplate", this.restTemplate);
-  //    ReflectionTestUtils.setField(loadicatorService, "jsonDataService", this.jsonDataService);
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService, "loadicatorUrl",
-  // "http://54.151.227.169:8080/loadicator_results/");
-  //    ReflectionTestUtils.setField(
-  //            cargoNominationService, "cargoNominationRepository",
-  // this.cargoNominationRepository);
-  //    ReflectionTestUtils.setField(
-  //            loadicatorService,
-  //            "loadableStudyCommunicationStatusRepository",
-  //            this.loadableStudyCommunicationStatusRepository);
-  //    spyService.getLoadicatorData(this.createLoadicatorDataRequest(), responseObserver);
-  //    List<LoadicatorDataReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    assertNull(responseObserver.getError());
-  //    assertEquals(SUCCESS, results.get(0).getResponseStatus().getStatus());
-  //  }
-
   private List<CargoNomination> getLCN() {
     List<CargoNomination> list = new ArrayList<>();
     CargoNomination cargoNomination = new CargoNomination();
     cargoNomination.setCargoXId(1L);
+    Set<CargoNominationPortDetails> portDetailsSet = new HashSet<>();
+    portDetailsSet.add(prepareCargoNominationOperationDetails().get(0));
+    cargoNomination.setCargoNominationPortDetails(portDetailsSet);
     list.add(cargoNomination);
     return list;
   }
@@ -5155,14 +7189,6 @@ class LoadableStudyServiceTest {
             this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
                 anyLong(), anyBoolean()))
         .thenReturn(this.createBallastEntities());
-
-    //    Mockito.when(
-    //            this.voyageRepository
-    //
-    // .findFirstByVoyageEndDateLessThanAndVesselXIdAndIsActiveAndVoyageStatusOrderByVoyageEndDateDesc(
-    //                    any(LocalDateTime.class), anyLong(), anyBoolean(), any()))
-    //        .thenReturn(voyage);
-
     Mockito.when(
             this.voyageRepository
                 .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
@@ -5249,6 +7275,9 @@ class LoadableStudyServiceTest {
       throws InstantiationException, IllegalAccessException {
     LoadableStudy entity = (LoadableStudy) createDummyObject(LoadableStudy.class);
     entity.setVoyage(voyage);
+    LoadableStudyStatus status = new LoadableStudyStatus();
+    status.setId(1l);
+    entity.setLoadableStudyStatus(status);
     return entity;
   }
 
@@ -5342,21 +7371,12 @@ class LoadableStudyServiceTest {
 
   private List<SynopticalTable> createSynopticalEntities() {
     List<SynopticalTable> list = new ArrayList<>();
-    IntStream.of(1, 4)
-        .forEach(
-            i -> {
-              try {
-                SynopticalTable entity = (SynopticalTable) createDummyObject(SynopticalTable.class);
-                entity.setLoadableStudyPortRotation(
-                    (LoadableStudyPortRotation) createDummyObject(LoadableStudyPortRotation.class));
-                entity.setOperationType(i % 2 == 0 ? OPERATION_TYPE_ARR : OPERATION_TYPE_DEP);
-                list.add(entity);
-              } catch (InstantiationException e) {
-                e.printStackTrace();
-              } catch (IllegalAccessException e) {
-                e.printStackTrace();
-              }
-            });
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setOperationType("1");
+    synopticalTable.setId(1l);
+    synopticalTable.setPortXid(1l);
+    synopticalTable.setLoadableStudyPortRotation(getLSPR());
+    list.add(synopticalTable);
     return list;
   }
 
@@ -5421,7 +7441,7 @@ class LoadableStudyServiceTest {
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
   }
-  // completed
+
   @Test
   void testSaveSynopticalTableEmptyPorts()
       throws InstantiationException, IllegalAccessException, GenericServiceException {
@@ -6189,133 +8209,6 @@ class LoadableStudyServiceTest {
     SaveVoyageStatusReply response = results.get(0);
     assertEquals(FAILED, response.getResponseStatus().getStatus());
   }
-
-  //
-  //  @Test
-  //  public void testSaveVoyageStatusStop() throws GenericServiceException {
-  //
-  //    LoadableStudy loadableStudy = new LoadableStudy();
-  //    loadableStudy.setId(1L);
-  //    loadableStudy.setCharterer("CHARTERER");
-  //    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
-  //    loadableStudyStatus.setName("CONFIRMED");
-  //    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
-  //    Set<LoadableStudy> ls_list = new HashSet();
-  //    ls_list.add(loadableStudy);
-  //
-  //    SaveVoyageStatusRequest request =
-  //        SaveVoyageStatusRequest.newBuilder()
-  //            .setActualEndDate("18-02-2021 10:10")
-  //            .setActualStartDate("18-02-2021 10:10")
-  //            .setStatus("stop")
-  //            .setVoyageId(1L)
-  //            .build();
-  //    /* used for grpc testing */
-  //    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
-  //    Voyage voyage = new Voyage();
-  //    voyage.setId((long) 1);
-  //    voyage.setLoadableStudies(ls_list);
-  //
-  //    VoyageStatus status = new VoyageStatus();
-  //    status.setId(3L);
-  //    Mockito.when(
-  //            this.voyageRepository.findByIdAndIsActive(
-  //                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
-  //        .thenReturn(voyage);
-  //    Mockito.when(
-  //            this.voyageRepository.findByVoyageStatusAndIsActive(
-  //                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
-  //        .thenReturn(new ArrayList<Voyage>());
-  //    Mockito.when(
-  //            this.voyageStatusRepository.findByIdAndIsActive(
-  //                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
-  //        .thenReturn(Optional.of(status));
-  //
-  // Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
-  //    when(voyageService.saveVoyageStatus(
-  //            any(SaveVoyageStatusRequest.class), any(SaveVoyageStatusReply.Builder.class)))
-  //        .thenCallRealMethod();
-  //    ReflectionTestUtils.setField(voyageService, "voyageRepository", voyageRepository);
-  //    ReflectionTestUtils.setField(voyageService, "voyageStatusRepository",
-  // voyageStatusRepository);
-  //
-  //    loadableStudyService.saveVoyageStatus(request, responseObserver);
-  //
-  //    assertNull(responseObserver.getError());
-  //    List<SaveVoyageStatusReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    SaveVoyageStatusReply response = results.get(0);
-  //    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
-  //  }
-
-  //  @Test
-  //  public void testSaveVoyageStatusStopWithNullEndDate() throws GenericServiceException {
-  //
-  //    LoadableStudy loadableStudy = new LoadableStudy();
-  //    loadableStudy.setId(1L);
-  //    loadableStudy.setCharterer("CHARTERER");
-  //    LoadableStudyStatus loadableStudyStatus = new LoadableStudyStatus();
-  //    loadableStudyStatus.setName("CONFIRMED");
-  //    loadableStudy.setLoadableStudyStatus(loadableStudyStatus);
-  //    Set<LoadableStudy> ls_list = new HashSet();
-  //    ls_list.add(loadableStudy);
-  //
-  //    SaveVoyageStatusRequest request =
-  //        SaveVoyageStatusRequest.newBuilder().setStatus("stop").setVoyageId(1L).build();
-  //    /* used for grpc testing */
-  //    StreamRecorder<SaveVoyageStatusReply> responseObserver = StreamRecorder.create();
-  //    Voyage voyage = new Voyage();
-  //    voyage.setId((long) 1);
-  //    voyage.setLoadableStudies(ls_list);
-  //
-  //    VoyageStatus status = new VoyageStatus();
-  //    status.setId(3L);
-  //    Mockito.when(
-  //            this.voyageRepository.findByIdAndIsActive(
-  //                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
-  //        .thenReturn(voyage);
-  //    Mockito.when(
-  //            this.voyageRepository.findByVoyageStatusAndIsActive(
-  //                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
-  //        .thenReturn(new ArrayList<Voyage>());
-  //    Mockito.doNothing().when(voyageService).checkIfVoyageClosed(Mockito.anyLong());
-  //    Mockito.when(
-  //            this.voyageStatusRepository.findByIdAndIsActive(
-  //                ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean()))
-  //        .thenReturn(Optional.of(status));
-  //    LoadableStudyPortRotation maxPortOrderEntity = new LoadableStudyPortRotation();
-  //    maxPortOrderEntity.setId(1L);
-  //    SynopticalTable synoptical = new SynopticalTable();
-  //    synoptical.setLoadableStudyPortRotation(maxPortOrderEntity);
-  //    List<SynopticalTable> synopticalList = new ArrayList<>();
-  //    synopticalList.add(synoptical);
-  //    maxPortOrderEntity.setSynopticalTable(synopticalList);
-  //    Mockito.when(
-  //            this.loadableStudyPortRotationRepository
-  //                .findFirstByLoadableStudyAndIsActiveOrderByPortOrderDesc(
-  //                    ArgumentMatchers.any(), ArgumentMatchers.anyBoolean()))
-  //        .thenReturn(maxPortOrderEntity);
-  //
-  // Mockito.when(this.voyageRepository.save(ArgumentMatchers.any(Voyage.class))).thenReturn(voyage);
-  //    when(voyageService.saveVoyageStatus(
-  //            any(SaveVoyageStatusRequest.class), any(SaveVoyageStatusReply.Builder.class)))
-  //        .thenCallRealMethod();
-  //    ReflectionTestUtils.setField(voyageService, "voyageRepository", voyageRepository);
-  //    ReflectionTestUtils.setField(voyageService, "voyageStatusRepository",
-  // voyageStatusRepository);
-  //    ReflectionTestUtils.setField(
-  //        voyageService, "loadableStudyPortRotationRepository",
-  // loadableStudyPortRotationRepository);
-  //
-  //    ReflectionTestUtils.setField(loadableStudyService, "voyageService", voyageService);
-  //    loadableStudyService.saveVoyageStatus(request, responseObserver);
-  //
-  //    assertNull(responseObserver.getError());
-  //    List<SaveVoyageStatusReply> results = responseObserver.getValues();
-  //    assertEquals(1, results.size());
-  //    SaveVoyageStatusReply response = results.get(0);
-  //    assertEquals(SUCCESS, response.getResponseStatus().getStatus());
-  //  }
 
   @Test
   public void testSaveVoyageStatusStopWithNullStartDate() throws GenericServiceException {

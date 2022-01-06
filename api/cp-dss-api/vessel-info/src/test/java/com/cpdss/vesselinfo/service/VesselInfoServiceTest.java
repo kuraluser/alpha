@@ -4,7 +4,7 @@ package com.cpdss.vesselinfo.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -22,14 +22,22 @@ import com.cpdss.vesselinfo.entity.*;
 import com.cpdss.vesselinfo.repository.*;
 import io.grpc.internal.testing.StreamRecorder;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class VesselInfoServiceTest {
@@ -72,6 +80,12 @@ class VesselInfoServiceTest {
   @Mock VesselValveStrippingSequenceRepository strippingSequenceRepository;
   @Mock VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
   @Mock VesselCowService vesselCowService;
+  @Mock private BendingMomentRepositoryType2 bendingMomentRepositoryType2;
+  @Mock private ShearingForceRepositoryType2 shearingForceRepositoryType2;
+  @Mock private BendingMomentRepositoryType4 bendingMomentRepositoryType4;
+  @Mock private ShearingForceRepositoryType4 shearingForceRepositoryType4;
+  @Mock private BendingMomentShearingForceRepositoryType3 bendingMomentShearingForceRepositoryType3;
+  @Mock private VesselParticularService vesselParticularService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -152,8 +166,10 @@ class VesselInfoServiceTest {
   void testGetVesselDetailsForAlgo() {
     VesselAlgoRequest request = VesselAlgoRequest.newBuilder().setVesselId(1L).build();
     StreamRecorder<VesselAlgoReply> responseObserver = StreamRecorder.create();
+    Vessel vessel = getVesl();
+    vessel.setBm_sf_model_type(1);
     Mockito.when(this.vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
-        .thenReturn(getVesl());
+        .thenReturn(vessel);
     Mockito.when(
             vesselDraftConditionRepository.findByVesselAndIsActive(
                 Mockito.any(), Mockito.anyBoolean()))
@@ -169,6 +185,110 @@ class VesselInfoServiceTest {
         .thenReturn(getLVTT());
     Mockito.when(bendingMomentRepository.findByVessel(Mockito.any())).thenReturn(getLBMT());
     Mockito.when(shearingForceRepository.findByVessel(Mockito.any())).thenReturn(getLSFT());
+    Mockito.when(calculationSheetRepository.findByVessel(Mockito.any())).thenReturn(getLCS());
+    Mockito.when(calculationSheetTankgroupRepository.findByVessel(Mockito.any()))
+        .thenReturn(getCSTG());
+    Mockito.when(minMaxValuesForBmsfRepository.findByVessel(Mockito.any())).thenReturn(getMM());
+    Mockito.when(stationValuesRepository.findByVesselId(Mockito.anyLong())).thenReturn(getLSV());
+    Mockito.when(innerBulkHeadValuesRepository.findByVesselId(Mockito.anyLong()))
+        .thenReturn(getBHV());
+    Mockito.when(
+            ullageTableDataRepository.findByVesselOrderByVesselTankAscUllageDepthAsc(Mockito.any()))
+        .thenReturn(getLUTD());
+    Mockito.when(vesselFlowRateRepository.findByVessel(Mockito.any())).thenReturn(getLVFR());
+    Mockito.when(
+            vesselPumpTankMappingRepository.findByVesselXidAndIsActive(
+                Mockito.any(), Mockito.any()))
+        .thenReturn(getVPTM());
+    try {
+      Mockito.when(this.vesselPumpService.getVesselPumpsAndTypes(Mockito.any(), Mockito.anyLong()))
+          .thenReturn(getVPR());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    this.vesselInfoService.getVesselDetailsForAlgo(request, responseObserver);
+    List<VesselAlgoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselDetailsForAlgoType2() {
+    VesselAlgoRequest request = VesselAlgoRequest.newBuilder().setVesselId(1L).build();
+    StreamRecorder<VesselAlgoReply> responseObserver = StreamRecorder.create();
+    Vessel vessel = getVesl();
+    vessel.setBm_sf_model_type(2);
+    Mockito.when(this.vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(vessel);
+    Mockito.when(
+            vesselDraftConditionRepository.findByVesselAndIsActive(
+                Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLVDC());
+    Mockito.when(vesselTankRepository.findByVesselAndIsActive(Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLVesselTank());
+    Mockito.when(
+            hydrostaticTableRepository.findByVesselAndIsActive(Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLHST());
+    Mockito.when(
+            vesselTankTcgRepository.findByVesselIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLVTT());
+    Mockito.when(bendingMomentRepositoryType2.findByVessel(Mockito.any())).thenReturn(getLBMT2());
+    Mockito.when(shearingForceRepositoryType2.findByVessel(Mockito.any())).thenReturn(getLSFT2());
+    Mockito.when(calculationSheetRepository.findByVessel(Mockito.any())).thenReturn(getLCS());
+    Mockito.when(calculationSheetTankgroupRepository.findByVessel(Mockito.any()))
+        .thenReturn(getCSTG());
+    Mockito.when(minMaxValuesForBmsfRepository.findByVessel(Mockito.any())).thenReturn(getMM());
+    Mockito.when(stationValuesRepository.findByVesselId(Mockito.anyLong())).thenReturn(getLSV());
+    Mockito.when(innerBulkHeadValuesRepository.findByVesselId(Mockito.anyLong()))
+        .thenReturn(getBHV());
+    Mockito.when(
+            ullageTableDataRepository.findByVesselOrderByVesselTankAscUllageDepthAsc(Mockito.any()))
+        .thenReturn(getLUTD());
+    Mockito.when(vesselFlowRateRepository.findByVessel(Mockito.any())).thenReturn(getLVFR());
+    Mockito.when(
+            vesselPumpTankMappingRepository.findByVesselXidAndIsActive(
+                Mockito.any(), Mockito.any()))
+        .thenReturn(getVPTM());
+    try {
+      Mockito.when(this.vesselPumpService.getVesselPumpsAndTypes(Mockito.any(), Mockito.anyLong()))
+          .thenReturn(getVPR());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+    this.vesselInfoService.getVesselDetailsForAlgo(request, responseObserver);
+    List<VesselAlgoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselDetailsForAlgoType4() {
+    VesselAlgoRequest request = VesselAlgoRequest.newBuilder().setVesselId(1L).build();
+    StreamRecorder<VesselAlgoReply> responseObserver = StreamRecorder.create();
+    Vessel vessel = getVesl();
+    vessel.setBm_sf_model_type(4);
+    Mockito.when(this.vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(vessel);
+    Mockito.when(
+            vesselDraftConditionRepository.findByVesselAndIsActive(
+                Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLVDC());
+    Mockito.when(vesselTankRepository.findByVesselAndIsActive(Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLVesselTank());
+    Mockito.when(
+            hydrostaticTableRepository.findByVesselAndIsActive(Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getLHST());
+    Mockito.when(
+            vesselTankTcgRepository.findByVesselIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLVTT());
+    Mockito.when(bendingMomentRepositoryType4.findByVessel(Mockito.any())).thenReturn(getLBMT4());
+    Mockito.when(shearingForceRepositoryType4.findByVessel(Mockito.any())).thenReturn(getLSFT4());
+    when(bendingMomentShearingForceRepositoryType3.findByVessel(Mockito.any()))
+        .thenReturn(getLBMSFT3());
     Mockito.when(calculationSheetRepository.findByVessel(Mockito.any())).thenReturn(getLCS());
     Mockito.when(calculationSheetTankgroupRepository.findByVessel(Mockito.any()))
         .thenReturn(getCSTG());
@@ -352,6 +472,45 @@ class VesselInfoServiceTest {
     return list;
   }
 
+  private List<ShearingForceType2> getLSFT2() {
+    List<ShearingForceType2> list = new ArrayList<>();
+    ShearingForceType2 type = new ShearingForceType2();
+    type.setId(1L);
+    type.setFrameNumber(new BigDecimal(1));
+    type.setDisplacement(new BigDecimal(1));
+    type.setFrameNumber(new BigDecimal(1));
+    type.setBuay(new BigDecimal(1));
+    type.setDifft(new BigDecimal(1));
+    type.setCorrt(new BigDecimal(1));
+    type.setIsActive(true);
+    list.add(type);
+    return list;
+  }
+
+  private List<ShearingForceType4> getLSFT4() {
+    List<ShearingForceType4> list = new ArrayList<>();
+    ShearingForceType4 type = new ShearingForceType4();
+    type.setId(1L);
+    type.setFrameNumber(new BigDecimal(1));
+    type.setTrim_m1(new BigDecimal(1));
+    type.setTrim_1(new BigDecimal(1));
+    type.setTrim_3(new BigDecimal(1));
+    type.setTrim_4(new BigDecimal(1));
+    type.setTrim_5(new BigDecimal(1));
+    type.setTrim_2(new BigDecimal(1));
+    list.add(type);
+    return list;
+  }
+
+  private List<BendingMomentShearingForceType3> getLBMSFT3() {
+    List<BendingMomentShearingForceType3> list = new ArrayList<>();
+    BendingMomentShearingForceType3 type = new BendingMomentShearingForceType3();
+    type.setId(1L);
+    type.setFrameNumber(new BigDecimal(1));
+    list.add(type);
+    return list;
+  }
+
   private List<BendingMomentType1> getLBMT() {
     List<BendingMomentType1> list = new ArrayList<>();
     BendingMomentType1 bendingMomentType1 = new BendingMomentType1();
@@ -362,6 +521,35 @@ class VesselInfoServiceTest {
     bendingMomentType1.setDraftCorrection(new BigDecimal(1));
     bendingMomentType1.setTrimCorrection(new BigDecimal(1));
     list.add(bendingMomentType1);
+    return list;
+  }
+
+  private List<BendingMomentType2> getLBMT2() {
+    List<BendingMomentType2> list = new ArrayList<>();
+    BendingMomentType2 type = new BendingMomentType2();
+    type.setId(1L);
+    type.setDisplacement(new BigDecimal(1));
+    type.setFrameNumber(new BigDecimal(1));
+    type.setBuay(new BigDecimal(1));
+    type.setDifft(new BigDecimal(1));
+    type.setCorrt(new BigDecimal(1));
+    type.setIsActive(true);
+    list.add(type);
+    return list;
+  }
+
+  private List<BendingMomentType4> getLBMT4() {
+    List<BendingMomentType4> list = new ArrayList<>();
+    BendingMomentType4 type = new BendingMomentType4();
+    type.setId(1L);
+    type.setFrameNumber(new BigDecimal(1));
+    type.setTrim_m1(new BigDecimal(1));
+    type.setTrim_1(new BigDecimal(1));
+    type.setTrim_3(new BigDecimal(1));
+    type.setTrim_4(new BigDecimal(1));
+    type.setTrim_5(new BigDecimal(1));
+    type.setTrim_2(new BigDecimal(1));
+    list.add(type);
     return list;
   }
 
@@ -415,13 +603,20 @@ class VesselInfoServiceTest {
     Vessel vessel = new Vessel();
     vessel.setId(1L);
     vessel.setName("1");
+    vessel.setBuilder("1");
     vessel.setImoNumber("1");
     vessel.setPortOfRegistry("1");
     vessel.setOfficialNumber("1");
     vessel.setSignalLetter("1");
     vessel.setNavigationAreaId(1);
     vessel.setTypeOfShip("1");
+    vessel.setDateOfLaunching(new Date());
+    vessel.setDateOfDelivery(new Date());
+    vessel.setDateKeelLaid(new Date());
+    vessel.setClass1("1");
+    vessel.setNavigationArea("1");
     vessel.setBm_sf_model_type(1);
+    vessel.setBreadthMolded(new BigDecimal(1));
     vessel.setRegisterLength(new BigDecimal(1));
     vessel.setLengthOverall(new BigDecimal(1));
     vessel.setLengthBetweenPerpendiculars(new BigDecimal(1));
@@ -733,6 +928,8 @@ class VesselInfoServiceTest {
     vs.setTankName("1");
     vs.setTankType(getTT());
     vs.setShortName("1");
+    vs.setTankOrder(1);
+    vs.setDensity(new BigDecimal(1));
     vs.setTankCategory(gettc());
     vs.setCoatingTypeXid(1);
     vs.setFrameNumberFrom("1");
@@ -756,6 +953,7 @@ class VesselInfoServiceTest {
   private TankCategory gettc() {
     TankCategory tankCategory = new TankCategory();
     tankCategory.setId(1L);
+    tankCategory.setName("1");
     return tankCategory;
   }
 
@@ -914,8 +1112,8 @@ class VesselInfoServiceTest {
   private List<Object[]> getListObj() {
     List<Object[]> list = new ArrayList<Object[]>();
     Object[] array = new Object[20];
-    array[0] = 1;
-    array[1] = 2;
+    array[0] = new BigInteger("1");
+    array[1] = "1";
     list.add(array);
     return list;
   }
@@ -1043,15 +1241,16 @@ class VesselInfoServiceTest {
   }
 
   @Test
-  void testGetVesselPumpsByVesselIdRunTimeException() throws Exception {
+  void testGetVesselPumpsByVesselIdWithException() throws Exception {
     Mockito.when(this.vesselPumpService.getVesselPumpsAndTypes(Mockito.any(), Mockito.anyLong()))
-        .thenReturn(null);
+        .thenThrow(new RuntimeException("1"));
     StreamRecorder<VesselInfo.VesselPumpsResponse> responseObserver = StreamRecorder.create();
     this.vesselInfoService.getVesselPumpsByVesselId(
         VesselInfo.VesselIdRequest.newBuilder().setVesselId(1L).build(), responseObserver);
     List<VesselInfo.VesselPumpsResponse> replies = responseObserver.getValues();
     assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 
   private VesselInfo.VesselPumpsResponse getvsl() {
@@ -1059,8 +1258,47 @@ class VesselInfoServiceTest {
     return vessel;
   }
 
+  @ParameterizedTest
+  @CsvSource({
+    "true,Dropdown,**,**",
+    "false,MultiSelect,Commence loading only in,tanks",
+    "true,MultiSelect, 1, 1"
+  })
+  void testGetRulesByVesselIdAndSectionId(Boolean bool, String type, String pre, String suf) {
+    Common.RulePlans obj = Common.RulePlans.newBuilder().setHeader("1").build();
+    VesselInfo.VesselRuleRequest request =
+        VesselInfo.VesselRuleRequest.newBuilder()
+            .addRulePlan(obj)
+            .setIsFetchEnabledRules(false)
+            .setIsNoDefaultRule(bool)
+            .setSectionId(1L)
+            .setVesselId(1L)
+            .build();
+    VesselRule vesselRule =
+        new VesselRule(
+            "1", 1L, 1L, true, true, "1", 1L, null, pre, suf, "1", "1", "1", type, true, true, null,
+            1L, 1L, null, null);
+    Mockito.when(this.vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getVess());
+    Mockito.when(this.ruleVesselDropDownValuesRepository.findByIsActive(Mockito.anyBoolean()))
+        .thenReturn(getListRuleDrop());
+    Mockito.when(
+            this.vesselTankRepository.findCargoTankMaster(Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getListCargoTankMaster());
+    Mockito.when(this.ruleTypeRepository.findByIsActive(Mockito.anyBoolean()))
+        .thenReturn(getListRuleType());
+    Mockito.when(this.vesselRepository.findRulesAgainstVessel(Mockito.anyLong(), Mockito.anyLong()))
+        .thenReturn(Arrays.asList(vesselRule));
+    StreamRecorder<VesselInfo.VesselRuleReply> responseObserver = StreamRecorder.create();
+    this.vesselInfoService.getRulesByVesselIdAndSectionId(request, responseObserver);
+    List<VesselInfo.VesselRuleReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
   @Test
-  void testGetRulesByVesselIdAndSectionId() {
+  void testGetRulesByVesselIdAndSectionIdElse() {
     Common.RulePlans obj = Common.RulePlans.newBuilder().setHeader("1").build();
     VesselInfo.VesselRuleRequest request =
         VesselInfo.VesselRuleRequest.newBuilder()
@@ -1072,6 +1310,7 @@ class VesselInfoServiceTest {
             .build();
     Mockito.when(this.vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getVess());
+    when(vesselRepository.findDefaultAdminRule(anyLong())).thenReturn(getListVesselRule());
     Mockito.when(this.ruleVesselDropDownValuesRepository.findByIsActive(Mockito.anyBoolean()))
         .thenReturn(getListRuleDrop());
     Mockito.when(
@@ -1080,7 +1319,7 @@ class VesselInfoServiceTest {
     Mockito.when(this.ruleTypeRepository.findByIsActive(Mockito.anyBoolean()))
         .thenReturn(getListRuleType());
     Mockito.when(this.vesselRepository.findRulesAgainstVessel(Mockito.anyLong(), Mockito.anyLong()))
-        .thenReturn(getListVesselRule());
+        .thenReturn(null);
     StreamRecorder<VesselInfo.VesselRuleReply> responseObserver = StreamRecorder.create();
     this.vesselInfoService.getRulesByVesselIdAndSectionId(request, responseObserver);
     List<VesselInfo.VesselRuleReply> replies = responseObserver.getValues();
@@ -1446,17 +1685,18 @@ class VesselInfoServiceTest {
     return charterer;
   }
 
-  @Test
-  void testSaveRulesAgainstVessel() {
+  @ParameterizedTest
+  @CsvSource({"Dropdown,**,**", "MultiSelect,Commence loading only in,tanks", "MultiSelect, 1, 1"})
+  void testSaveRulesAgainstVessel(String type, String pre, String suf) {
     Common.RulesInputs input =
         Common.RulesInputs.newBuilder()
             .setId("1")
             .setDefaultValue("1")
             .setMax("1")
             .setMin("1")
-            .setPrefix("1")
-            .setSuffix("1")
-            .setType("1")
+            .setPrefix(pre)
+            .setSuffix(suf)
+            .setType(type)
             .setIsMandatory(true)
             .build();
     Common.Rules rule =
@@ -1478,6 +1718,7 @@ class VesselInfoServiceTest {
     List<RuleVesselDropDownValues> listOfDropDownValue = new ArrayList<>();
     RuleVesselDropDownValues ruleVesselDropDownValues = new RuleVesselDropDownValues();
     ruleVesselDropDownValues.setRuleTemplateXid(1L);
+    ruleVesselDropDownValues.setId(1l);
     listOfDropDownValue.add(ruleVesselDropDownValues);
 
     List<CargoTankMaster> cargoTankMaster = new ArrayList<>();
@@ -1499,6 +1740,193 @@ class VesselInfoServiceTest {
     this.vesselInfoService.saveRulesAgainstVessel(
         request, vessel, listOfDropDownValue, cargoTankMaster, ruleTypeList);
     Mockito.verify(ruleVesselMappingRepository).saveAll(Mockito.anyList());
+  }
+
+  @Test
+  void testGetVesselsInformation() {
+    VesselInfo.VesselsInfoRequest request =
+        VesselInfo.VesselsInfoRequest.newBuilder()
+            .setSortBy("asc")
+            .setOrderBy("asc")
+            .setPageNo(1)
+            .setPageSize(1l)
+            .setVesselName("")
+            .setVesselType("")
+            .setBuilder("")
+            .setDateOfLaunch("")
+            .build();
+    StreamRecorder<VesselInfo.VesselsInformationReply> responseObserver = StreamRecorder.create();
+    Page<Vessel> vesselPage = new PageImpl<Vessel>(Arrays.asList(getVesl()));
+
+    when(vesselRepository.findByIsActive(anyBoolean(), any(Pageable.class))).thenReturn(vesselPage);
+
+    vesselInfoService.getVesselsInformation(request, responseObserver);
+    List<VesselInfo.VesselsInformationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselsInformationElse() {
+    VesselInfo.VesselsInfoRequest request =
+        VesselInfo.VesselsInfoRequest.newBuilder()
+            .setSortBy("asc")
+            .setOrderBy("asc")
+            .setPageNo(1)
+            .setPageSize(1l)
+            .setVesselName("1")
+            .setVesselType("1")
+            .setBuilder("1")
+            .setDateOfLaunch("12-12-2012")
+            .build();
+    StreamRecorder<VesselInfo.VesselsInformationReply> responseObserver = StreamRecorder.create();
+    Page<Vessel> vesselPage = new PageImpl<Vessel>(Arrays.asList(getVesl()));
+
+    when(vesselRepository.findAll(any(Specification.class), any(Pageable.class)))
+        .thenReturn(vesselPage);
+
+    vesselInfoService.getVesselsInformation(request, responseObserver);
+    List<VesselInfo.VesselsInformationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselsInformationWithException() {
+    VesselInfo.VesselsInfoRequest request =
+        VesselInfo.VesselsInfoRequest.newBuilder()
+            .setSortBy("asc")
+            .setOrderBy("asc")
+            .setPageNo(1)
+            .setPageSize(1l)
+            .setVesselName("")
+            .setVesselType("")
+            .setBuilder("")
+            .setDateOfLaunch("")
+            .build();
+    StreamRecorder<VesselInfo.VesselsInformationReply> responseObserver = StreamRecorder.create();
+
+    when(vesselRepository.findByIsActive(anyBoolean(), any(Pageable.class)))
+        .thenThrow(new RuntimeException("1"));
+
+    vesselInfoService.getVesselsInformation(request, responseObserver);
+    List<VesselInfo.VesselsInformationReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselParticulars() throws GenericServiceException {
+    VesselInfo.LoadingInfoRulesRequest request =
+        VesselInfo.LoadingInfoRulesRequest.newBuilder().setVesselId(1l).build();
+    StreamRecorder<VesselInfo.VesselParticulars> responseObserver = StreamRecorder.create();
+
+    doNothing()
+        .when(vesselParticularService)
+        .getVesselParticulars(
+            any(VesselInfo.VesselParticulars.Builder.class),
+            any(VesselInfo.LoadingInfoRulesRequest.class));
+
+    vesselInfoService.getVesselParticulars(request, responseObserver);
+    List<VesselInfo.VesselParticulars> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselParticularsWithGenericException() throws GenericServiceException {
+    VesselInfo.LoadingInfoRulesRequest request =
+        VesselInfo.LoadingInfoRulesRequest.newBuilder().setVesselId(1l).build();
+    StreamRecorder<VesselInfo.VesselParticulars> responseObserver = StreamRecorder.create();
+
+    doCallRealMethod()
+        .when(vesselParticularService)
+        .getVesselParticulars(
+            any(VesselInfo.VesselParticulars.Builder.class),
+            any(VesselInfo.LoadingInfoRulesRequest.class));
+    when(vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(null);
+    ReflectionTestUtils.setField(
+        vesselInfoService, "vesselParticularService", vesselParticularService);
+    ReflectionTestUtils.setField(vesselParticularService, "vesselRepository", vesselRepository);
+
+    vesselInfoService.getVesselParticulars(request, responseObserver);
+    List<VesselInfo.VesselParticulars> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselDetaildInformation() {
+    VesselInfo.VesselIdRequest request =
+        VesselInfo.VesselIdRequest.newBuilder().setVesselId(1l).build();
+    StreamRecorder<VesselInfo.VesselDetaildInfoReply> responseObserver = StreamRecorder.create();
+
+    when(vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean())).thenReturn(getVesl());
+    when(this.tankCategoryRepository.getOne(anyLong())).thenReturn(new TankCategory());
+    when(this.vesselTankRepository.findByVesselAndTankCategoryInAndIsActive(
+            any(Vessel.class), anyList(), anyBoolean()))
+        .thenReturn(getLVesselTank());
+
+    vesselInfoService.getVesselDetaildInformation(request, responseObserver);
+    List<VesselInfo.VesselDetaildInfoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselDetaildInformationWithException() {
+    VesselInfo.VesselIdRequest request =
+        VesselInfo.VesselIdRequest.newBuilder().setVesselId(1l).build();
+    StreamRecorder<VesselInfo.VesselDetaildInfoReply> responseObserver = StreamRecorder.create();
+
+    when(vesselRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenThrow(new RuntimeException("1"));
+
+    vesselInfoService.getVesselDetaildInformation(request, responseObserver);
+    List<VesselInfo.VesselDetaildInfoReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselTanksByTankIdsWithException() {
+    VesselInfo.VesselTankRequest request = VesselInfo.VesselTankRequest.newBuilder().build();
+    StreamRecorder<VesselInfo.VesselTankReply> responseObserver = StreamRecorder.create();
+
+    doThrow(new RuntimeException("1"))
+        .when(this.vesselParticularService)
+        .getVesselTanksByTankIds(
+            any(VesselInfo.VesselTankRequest.class), any(VesselInfo.VesselTankReply.Builder.class));
+
+    vesselInfoService.getVesselTanksByTankIds(request, responseObserver);
+    List<VesselInfo.VesselTankReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testGetVesselTanksByTankIds() {
+    VesselInfo.VesselTankRequest request = VesselInfo.VesselTankRequest.newBuilder().build();
+    StreamRecorder<VesselInfo.VesselTankReply> responseObserver = StreamRecorder.create();
+
+    doNothing()
+        .when(this.vesselParticularService)
+        .getVesselTanksByTankIds(
+            any(VesselInfo.VesselTankRequest.class), any(VesselInfo.VesselTankReply.Builder.class));
+
+    vesselInfoService.getVesselTanksByTankIds(request, responseObserver);
+    List<VesselInfo.VesselTankReply> replies = responseObserver.getValues();
+    assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
   }
 
   private List<RuleTemplate> getLRuleTemplate() {

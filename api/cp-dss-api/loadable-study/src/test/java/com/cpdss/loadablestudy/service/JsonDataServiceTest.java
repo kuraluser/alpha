@@ -54,4 +54,29 @@ public class JsonDataServiceTest {
     var result = jsonDataService.getJsonData(1l, 1l);
     assertEquals(1l, result.getId());
   }
+
+  @Test
+  void testUpdateJsonData() {
+    JsonType jsonType = new JsonType();
+    jsonType.setTypeName("1");
+    JsonData jsonData = new JsonData();
+    jsonData.setId(1l);
+    when(jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(jsonType));
+    when(this.jsonDataRepository.findTopByReferenceXIdAndJsonTypeXIdOrderByIdDesc(
+            anyLong(), any(JsonType.class)))
+        .thenReturn(jsonData);
+
+    jsonDataService.updateJsonData(1l, 1l, "1");
+    verify(jsonDataRepository).save(any(JsonData.class));
+  }
+
+  @Test
+  void testUpdateJsonDataElse() {
+    when(jsonTypeRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+
+    jsonDataService.updateJsonData(1l, 1l, "1");
+    verify(jsonTypeRepository).findByIdAndIsActive(anyLong(), anyBoolean());
+  }
 }

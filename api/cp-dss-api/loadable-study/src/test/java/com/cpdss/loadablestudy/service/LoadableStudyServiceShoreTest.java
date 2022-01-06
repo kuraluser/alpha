@@ -2,6 +2,7 @@
 package com.cpdss.loadablestudy.service;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.domain.CommingleCargo;
@@ -13,9 +14,12 @@ import com.cpdss.loadablestudy.domain.SynopticalTable;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -62,6 +66,13 @@ public class LoadableStudyServiceShoreTest {
   @MockBean LoadablePlanStowageBallastDetailsRepository loadablePlanStowageBallastDetailsRepository;
   @MockBean SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
+  @Test
+  void testUpdateCommunicationStatus() {
+    loadableStudyServiceShore.updateCommunicationStatus("1", 1l);
+    verify(loadableStudyCommunicationStatusRepository)
+        .save(any(LoadableStudyCommunicationStatus.class));
+  }
+
   private PatternDetails getPatternDetails() {
     PatternDetails patternDetails = new PatternDetails();
     List<LoadablePlanQuantityDto> list = new ArrayList<>();
@@ -93,6 +104,7 @@ public class LoadableStudyServiceShoreTest {
     sequenceDto.setCargoXId(1l);
     sequenceDto.setTankXId(1l);
     sequenceDto.setOrderNumber(1);
+    dtoList.add(sequenceDto);
     patternDetails.setToppingOffSequenceList(dtoList);
 
     List<LoadablePlanCommingleDetailsDto> detailsDtoList = new ArrayList<>();
@@ -242,10 +254,38 @@ public class LoadableStudyServiceShoreTest {
     loadicatorDataDto.setBendingMoment(new BigDecimal(1));
     loadicatorDataDto.setShearingForce(new BigDecimal(1));
     loadicatorDataDto.setSynopticalTable(new SynopticalTableDto());
+    dataDtoList.add(loadicatorDataDto);
+    patternDetails.setSynopticalTableLoadicatorData(dataDtoList);
 
-    list1.add(stowageBallastDetailsDto);
-    patternDetails.setLoadablePlanStowageBallastDetailsList(list1);
-
+    List<SynopticalTableDto> synopticalTableDtoList = new ArrayList<>();
+    SynopticalTableDto dto = new SynopticalTableDto();
+    dto.setId(1l);
+    dto.setConstantActual(new BigDecimal(1));
+    dto.setConstantPlanned(new BigDecimal(1));
+    dto.setDeadWeightActual(new BigDecimal(1));
+    dto.setDisplacementActual(new BigDecimal(1));
+    dto.setDeadWeightPlanned(new BigDecimal(1));
+    dto.setDisplacementPlanned(new BigDecimal(1));
+    dto.setDistance(new BigDecimal(1));
+    dto.setEtaActual(LocalDateTime.now());
+    dto.setEtdActual(LocalDateTime.now());
+    dto.setHwTideFrom(new BigDecimal(1));
+    dto.setHwTideTimeFrom(LocalTime.now());
+    dto.setHwTideTo(new BigDecimal(1));
+    dto.setHwTideTimeTo(LocalTime.now());
+    dto.setInPortHours(new BigDecimal(1));
+    dto.setLoadableStudyXId(1l);
+    dto.setOperationType("1");
+    dto.setOthersActual(new BigDecimal(1));
+    dto.setOthersPlanned(new BigDecimal(1));
+    dto.setPortXid(1l);
+    dto.setRunningHours(new BigDecimal(1));
+    dto.setSpeed(new BigDecimal(1));
+    dto.setTimeOfSunrise(LocalTime.now());
+    dto.setTimeOfSunSet(LocalTime.now());
+    dto.setLoadableStudyPortRotation(new LoadableStudyPortRotationDto());
+    synopticalTableDtoList.add(dto);
+    patternDetails.setSynopticalTableDtoList(synopticalTableDtoList);
     return patternDetails;
   }
 
@@ -273,8 +313,17 @@ public class LoadableStudyServiceShoreTest {
     List<com.cpdss.loadablestudy.domain.CargoNomination> cargoNominationList = new ArrayList<>();
     com.cpdss.loadablestudy.domain.CargoNomination cargoNomination =
         new com.cpdss.loadablestudy.domain.CargoNomination();
+    cargoNomination.setId(1l);
+    cargoNomination.setPriority(1l);
+    cargoNomination.setCargoId(1l);
     cargoNomination.setAbbreviation("1");
     cargoNomination.setColor("1");
+    cargoNomination.setApi(new BigDecimal(1));
+    cargoNomination.setTemperature(new BigDecimal(1));
+    cargoNomination.setQuantity(new BigDecimal(1));
+    cargoNomination.setMaxTolerance(new BigDecimal(1));
+    cargoNomination.setMinTolerance(new BigDecimal(1));
+    cargoNomination.setSegregationId(1l);
     cargoNominationList.add(cargoNomination);
     return cargoNominationList;
   }
@@ -325,12 +374,12 @@ public class LoadableStudyServiceShoreTest {
 
     List<LoadableStudyAttachment> loadableStudyAttachmentList = new ArrayList<>();
     LoadableStudyAttachment loadableStudyAttachment = new LoadableStudyAttachment();
+    loadableStudyAttachment.setId(1l);
     loadableStudyAttachment.setFileName("1");
     loadableStudyAttachment.setFilePath("1");
-    loadableStudyAttachment.setContent(new byte[1]);
     loadableStudyAttachmentList.add(loadableStudyAttachment);
-
     loadableStudy.setLoadableStudyAttachment(loadableStudyAttachmentList);
+
     loadableStudy.setVoyage(getVoyageDto());
     loadableStudy.setCargoNomination(getCargoNominationList());
     loadableStudy.setCargoNominationOperationDetails(getCargoNominationOperationDetailsList());
@@ -387,6 +436,9 @@ public class LoadableStudyServiceShoreTest {
     List<CargoNominationOperationDetails> cargoNominationOperationDetailsList = new ArrayList<>();
     CargoNominationOperationDetails cargoNominationOperationDetails =
         new CargoNominationOperationDetails();
+    cargoNominationOperationDetails.setId(1l);
+    cargoNominationOperationDetails.setPortId(1l);
+    cargoNominationOperationDetails.setQuantity("1");
     cargoNominationOperationDetails.setCargoNominationId(1l);
     cargoNominationOperationDetailsList.add(cargoNominationOperationDetails);
     return cargoNominationOperationDetailsList;
@@ -395,6 +447,7 @@ public class LoadableStudyServiceShoreTest {
   private List<OnHandQuantity> getOnHandQuantityList() {
     List<OnHandQuantity> onHandQuantityList = new ArrayList<>();
     OnHandQuantity onHandQuantity = new OnHandQuantity();
+    onHandQuantity.setId(1l);
     onHandQuantity.setFueltypeId(1l);
     onHandQuantity.setTankId(1l);
     onHandQuantity.setPortId(1l);
@@ -412,6 +465,7 @@ public class LoadableStudyServiceShoreTest {
         new ArrayList<>();
     com.cpdss.loadablestudy.domain.OnBoardQuantity onBoardQuantity =
         new com.cpdss.loadablestudy.domain.OnBoardQuantity();
+    onBoardQuantity.setId(1l);
     onBoardQuantity.setPortId(1l);
     onBoardQuantity.setCargoId(1l);
     onBoardQuantity.setTankId(1l);
@@ -423,6 +477,7 @@ public class LoadableStudyServiceShoreTest {
 
   private com.cpdss.loadablestudy.domain.LoadableQuantity getLoadableQuantityDomain() {
     com.cpdss.loadablestudy.domain.LoadableQuantity loadableQuantityDomain = new LoadableQuantity();
+    loadableQuantityDomain.setId(1l);
     loadableQuantityDomain.setConstant("1");
     loadableQuantityDomain.setDeadWeight("1");
     loadableQuantityDomain.setDistanceFromLastPort("1");

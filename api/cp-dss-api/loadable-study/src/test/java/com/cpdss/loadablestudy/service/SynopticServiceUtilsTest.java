@@ -1,14 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
@@ -17,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -73,6 +77,20 @@ public class SynopticServiceUtilsTest {
   }
 
   @Test
+  void testSaveSynopticalBallastDataElse() {
+    List<LoadablePlanStowageBallastDetails> ballastDetailsList = new ArrayList<>();
+    LoadablePlanStowageBallastDetails ballastDetails = new LoadablePlanStowageBallastDetails();
+    ballastDetails.setTankXId(2l);
+    ballastDetailsList.add(ballastDetails);
+    when(this.loadablePlanStowageBallastDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(ballastDetailsList);
+    synopticServiceUtils.saveSynopticalBallastData(1l, getSynopticalRecord(), getSynopticalTable());
+    verify(this.loadablePlanStowageBallastDetailsRepository).saveAll(anyList());
+  }
+
+  @Test
   void testSaveSynopticalCargoData() throws GenericServiceException {
     LoadablePattern loadablePattern = new LoadablePattern();
     List<Long> list = new ArrayList<>(Arrays.asList(1l, 2l));
@@ -88,10 +106,46 @@ public class SynopticServiceUtilsTest {
             .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
                 anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenReturn(getcargoDetailsList());
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(getOnBoardQuantities());
+
     synopticServiceUtils.saveSynopticalCargoData(
         getSynopticalTableRequest(),
         getLoadableStudyEntity(),
         getSynopticalTable(),
+        getSynopticalRecord(),
+        true);
+    verify(this.onBoardQuantityRepository).saveAll(anyList());
+  }
+
+  @Test
+  void testSaveSynopticalCargoDataElseIf() throws GenericServiceException {
+    LoadablePattern loadablePattern = new LoadablePattern();
+    List<Long> list = new ArrayList<>(Arrays.asList(1l, 2l));
+    SynopticalTable synopticalTable = getSynopticalTable();
+    synopticalTable.setOperationType("1");
+
+    when(loadableStudyPortRotationService.getPortRoationPortIds(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class)))
+        .thenReturn(list);
+    when(this.loadablePatternRepository.getOne(anyLong())).thenReturn(loadablePattern);
+    when(this.loadablePlanCommingleDetailsPortwiseRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(getCommingleCargoEntities());
+    when(this.loadablePatternCargoDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(getcargoDetailsList());
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(getOnBoardQuantities());
+
+    synopticServiceUtils.saveSynopticalCargoData(
+        getSynopticalTableRequest(),
+        getLoadableStudyEntity(),
+        synopticalTable,
         getSynopticalRecord(),
         true);
     verify(this.loadablePlanCommingleDetailsPortwiseRepository).saveAll(anyList());
@@ -114,8 +168,43 @@ public class SynopticServiceUtilsTest {
     verify(this.loadablePlanCommingleDetailsPortwiseRepository).saveAll(anyList());
   }
 
+  @ParameterizedTest
+  @ValueSource(longs = {1l, 2l})
+  void testSaveSynopticalCargoByLoadablePatternElse(Long val) {
+    LoadablePattern loadablePattern = new LoadablePattern();
+    List<LoadableStudy.SynopticalCargoRecord> list = new ArrayList<>();
+    LoadableStudy.SynopticalCargoRecord cargoRecord =
+        LoadableStudy.SynopticalCargoRecord.newBuilder()
+            .setIsCommingleCargo(false)
+            .setActualWeight("1")
+            .setPlannedWeight("1")
+            .setTankId(1l)
+            .setUllage("1")
+            .setActualApi("1")
+            .setActualTemperature("1")
+            .build();
+    list.add(cargoRecord);
+    LoadableStudy.SynopticalRecord record =
+        LoadableStudy.SynopticalRecord.newBuilder().addAllCargo(list).build();
+    LoadablePatternCargoDetails cargoDetails = new LoadablePatternCargoDetails();
+    cargoDetails.setTankId(val);
+
+    when(this.loadablePatternRepository.getOne(anyLong())).thenReturn(loadablePattern);
+    when(this.loadablePlanCommingleDetailsPortwiseRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(getCommingleCargoEntities());
+    when(this.loadablePatternCargoDetailsRepository
+            .findByLoadablePatternIdAndPortRotationIdAndOperationTypeAndIsActive(
+                anyLong(), anyLong(), anyString(), anyBoolean()))
+        .thenReturn(Arrays.asList(cargoDetails));
+    synopticServiceUtils.saveSynopticalCargoByLoadablePattern(
+        getSynopticalTableRequest(), getSynopticalTable(), record);
+    verify(this.loadablePatternCargoDetailsRepository).saveAll(anyList());
+  }
+
   @Test
-  void testvalidateSaveSynopticalOhqData() throws GenericServiceException {
+  void testValidateSaveSynopticalOhqData() throws GenericServiceException {
     OnHandQuantity ohqEntity = new OnHandQuantity();
     ohqEntity.setArrivalQuantity(new BigDecimal(1));
     ohqEntity.setDepartureQuantity(new BigDecimal(1));
@@ -125,11 +214,21 @@ public class SynopticServiceUtilsTest {
     when(this.loadablePatternRepository.findLoadablePatterns(
             anyLong(), any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(loadablePatternList);
-    synopticServiceUtils.validateSaveSynopticalOhqData(
-        ohqEntity,
-        getSynopticalTable(),
-        LoadableStudy.SynopticalOhqRecord.newBuilder().setPlannedWeight("1").build(),
-        getLoadableStudyEntity());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                synopticServiceUtils.validateSaveSynopticalOhqData(
+                    ohqEntity,
+                    getSynopticalTable(),
+                    LoadableStudy.SynopticalOhqRecord.newBuilder().setPlannedWeight("2").build(),
+                    getLoadableStudyEntity()));
+
+    assertAll(
+        () ->
+            assertEquals(
+                CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
@@ -148,34 +247,83 @@ public class SynopticServiceUtilsTest {
     verify(this.onHandQuantityRepository).saveAll(anyList());
   }
 
+  private List<LoadablePattern> getLoadablePatternList() {
+    List<LoadablePattern> loadablePatternList = new ArrayList<>();
+    LoadablePattern loadablePattern = new LoadablePattern();
+    loadablePattern.setLoadableStudy(getLoadableStudyEntity());
+    loadablePatternList.add(loadablePattern);
+    return loadablePatternList;
+  }
+
   @Test
-  void testsaveSynopticalObqData() throws GenericServiceException {
-    List<OnBoardQuantity> obqList = new ArrayList<>();
-    OnBoardQuantity obqEntity = new OnBoardQuantity();
-    obqEntity.setTankId(1l);
-    obqList.add(obqEntity);
+  void testSaveSynopticalOhqDataElse() throws GenericServiceException {
+    List<OnHandQuantity> ohqList = new ArrayList<>();
+    OnHandQuantity ohqEntity = new OnHandQuantity();
+    ohqEntity.setTankXId(2l);
+    ohqList.add(ohqEntity);
+    when(this.loadablePatternRepository.findLoadablePatterns(
+            anyLong(), any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getLoadablePatternList());
+    when(this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            any(LoadableStudyPortRotation.class),
+            anyBoolean()))
+        .thenReturn(ohqList);
+    synopticServiceUtils.saveSynopticalOhqData(
+        getLoadableStudyEntity(), getSynopticalTable(), getSynopticalRecord(), false, false);
+    verify(this.onHandQuantityRepository).saveAll(anyList());
+  }
+
+  @Test
+  void testSaveSynopticalObqData() throws GenericServiceException {
     when(this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
             any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
-        .thenReturn(obqList);
+        .thenReturn(getOnBoardQuantities());
     synopticServiceUtils.saveSynopticalObqData(
         getLoadableStudyEntity(), getSynopticalRecord(), true);
     verify(this.onBoardQuantityRepository).saveAll(anyList());
   }
 
   @Test
-  void testValidateSaveSynopticalObqData() throws GenericServiceException {
+  void testSaveSynopticalObqDataElse() throws GenericServiceException {
+    OnBoardQuantity obqEntity = getOnBoardQuantities().get(0);
+    obqEntity.setTankId(3l);
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(obqEntity));
+    synopticServiceUtils.saveSynopticalObqData(
+        getLoadableStudyEntity(), getSynopticalRecord(), true);
+    verify(this.onBoardQuantityRepository).saveAll(anyList());
+  }
+
+  private List<OnBoardQuantity> getOnBoardQuantities() {
     List<OnBoardQuantity> obqList = new ArrayList<>();
     OnBoardQuantity obqEntity = new OnBoardQuantity();
     obqEntity.setTankId(1l);
-    obqList.add(obqEntity);
     obqEntity.setPlannedArrivalWeight(new BigDecimal(1));
-    List<LoadablePattern> loadablePatternList = new ArrayList<>();
-    LoadablePattern loadablePattern = new LoadablePattern();
-    loadablePatternList.add(loadablePattern);
-    synopticServiceUtils.validateSaveSynopticalObqData(
-        obqEntity,
-        LoadableStudy.SynopticalCargoRecord.newBuilder().setPlannedWeight("1").build(),
-        getLoadableStudyEntity());
+    obqList.add(obqEntity);
+    return obqList;
+  }
+
+  @Test
+  void testValidateSaveSynopticalObqData() throws GenericServiceException {
+    when(this.loadablePatternRepository.findLoadablePatterns(
+            anyLong(), any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getLoadablePatternList());
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                synopticServiceUtils.validateSaveSynopticalObqData(
+                    getOnBoardQuantities().get(0),
+                    LoadableStudy.SynopticalCargoRecord.newBuilder().setPlannedWeight("2").build(),
+                    getLoadableStudyEntity()));
+
+    assertAll(
+        () ->
+            assertEquals(
+                CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
@@ -208,19 +356,7 @@ public class SynopticServiceUtilsTest {
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
   }
 
-  @Test
-  void testbuildCargoToBeDischargedFroPort() {
-    LoadableStudy.LoadingPlanIdRequest request =
-        LoadableStudy.LoadingPlanIdRequest.newBuilder()
-            .setId(1l)
-            .setPatternId(1l)
-            .setPortId(1l)
-            .setCargoNominationFilter(true)
-            .build();
-    LoadableStudy.LoadingPlanCommonResponse.Builder builder =
-        LoadableStudy.LoadingPlanCommonResponse.newBuilder();
-    com.cpdss.common.generated.Common.ResponseStatus.Builder repBuilder =
-        Common.ResponseStatus.newBuilder();
+  private List<DischargePatternQuantityCargoPortwiseDetails> getDisPortwiseDetails() {
     List<DischargePatternQuantityCargoPortwiseDetails> disList = new ArrayList<>();
     DischargePatternQuantityCargoPortwiseDetails details =
         new DischargePatternQuantityCargoPortwiseDetails();
@@ -238,11 +374,29 @@ public class SynopticServiceUtilsTest {
     details.setPriority(1);
     details.setSlopQuantity(new BigDecimal(1));
     details.setLoadingOrder(1);
+    details.setOperationType("1");
     details.setOrderedQuantity(new BigDecimal(1));
     details.setDischargeCargoNominationId(1l);
     details.setCargoNominationId(1l);
     details.setTimeRequiredForDischarging(new BigDecimal(1));
     disList.add(details);
+    return disList;
+  }
+
+  @Test
+  void testBuildCargoToBeDischargedFroPort() {
+    LoadableStudy.LoadingPlanIdRequest request =
+        LoadableStudy.LoadingPlanIdRequest.newBuilder()
+            .setId(1l)
+            .setPatternId(1l)
+            .setPortId(1l)
+            .setOperationType("1")
+            .setCargoNominationFilter(true)
+            .build();
+    LoadableStudy.LoadingPlanCommonResponse.Builder builder =
+        LoadableStudy.LoadingPlanCommonResponse.newBuilder();
+    com.cpdss.common.generated.Common.ResponseStatus.Builder repBuilder =
+        Common.ResponseStatus.newBuilder();
 
     List<CargoNomination> cargoNominations = new ArrayList<>();
     CargoNomination cargo = new CargoNomination();
@@ -256,15 +410,37 @@ public class SynopticServiceUtilsTest {
     cargoNominations.add(cargo);
 
     when(this.disCargoQuantityRepository.findAllByLoadablePatternIdAndIsActiveTrue(anyLong()))
-        .thenReturn(disList);
+        .thenReturn(getDisPortwiseDetails());
     when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
             anyLong(), anyBoolean()))
         .thenReturn(cargoNominations);
     when(cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.empty());
+    when(loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(getLoadablePatternList().get(0)));
 
     synopticServiceUtils.buildCargoToBeDischargedFroPort(request, builder, repBuilder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testValidateSynopticalVesselData() throws GenericServiceException {
+    when(this.loadablePatternRepository.findLoadablePatterns(
+            anyLong(), any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(getLoadablePatternList());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                synopticServiceUtils.validateSynopticalVesselData(
+                    getLoadableStudyEntity(), getSynopticalTable(), getSynopticalRecord()));
+
+    assertAll(
+        () ->
+            assertEquals(
+                CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
@@ -282,7 +458,50 @@ public class SynopticServiceUtilsTest {
   }
 
   @Test
-  void testbuildCargoToBeLoadedForPort() {
+  void testSetLoadingPortNameFromCargoOperation() {
+    LoadableStudy.LoadableQuantityCargoDetails.Builder builder =
+        LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+    when(cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(getCargoNominations().get(0)));
+    when(loadablePlanService.fetchPortNameFromPortService(anyLong()))
+        .thenReturn(LoadableStudy.LoadingPortDetail.newBuilder());
+
+    var result = synopticServiceUtils.setLoadingPortNameFromCargoOperation(1l, 1l, builder);
+    assertEquals(true, result);
+  }
+
+  @Test
+  void testSaveSynopticalCommingleData() {
+    LoadableStudy.SynopticalTableRequest request =
+        LoadableStudy.SynopticalTableRequest.newBuilder().setLoadablePatternId(1l).build();
+    when(loadablePlanCommingleDetailsPortwiseRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getCommingleCargoEntities());
+
+    synopticServiceUtils.saveSynopticalCommingleData(
+        request, Optional.of(getSynopticalTable()), getSynopticalRecord());
+    verify(this.loadablePlanCommingleDetailsPortwiseRepository).saveAll(anyList());
+  }
+
+  @Test
+  void testSaveSynopticalCommingleDataElse() {
+    LoadableStudy.SynopticalTableRequest request =
+        LoadableStudy.SynopticalTableRequest.newBuilder().setLoadablePatternId(1l).build();
+    LoadablePlanComminglePortwiseDetails portwiseDetails = getCommingleCargoEntities().get(0);
+    portwiseDetails.setTankId(2l);
+    when(loadablePlanCommingleDetailsPortwiseRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(portwiseDetails));
+    when(loadablePatternRepository.findById(anyLong()))
+        .thenReturn(Optional.of(getLoadablePatternList().get(0)));
+
+    synopticServiceUtils.saveSynopticalCommingleData(
+        request, Optional.of(getSynopticalTable()), getSynopticalRecord());
+    verify(this.loadablePlanCommingleDetailsPortwiseRepository).saveAll(anyList());
+  }
+
+  @Test
+  void testBuildCargoToBeLoadedForPort() {
     LoadableStudy.LoadingPlanIdRequest request =
         LoadableStudy.LoadingPlanIdRequest.newBuilder()
             .setId(1l)
@@ -306,6 +525,17 @@ public class SynopticServiceUtilsTest {
     when(this.loadablePlanQuantityRepository.PORT_WISE_CARGO_DETAILS(
             anyLong(), anyString(), anyLong(), anyLong()))
         .thenReturn(getPlanQuantityList());
+    when(this.loadablePlanCommingleDetailsPortwiseRepository
+            .findCargoNominationIdsByPatternPortAndOperationType(anyLong(), anyLong(), anyString()))
+        .thenReturn(getCommingleCargoEntities());
+    when(this.loadablePlanQuantityRepository.findByPatternIdAndCargoNominationId(
+            anyLong(), anyLong()))
+        .thenReturn(getPlanQuantityList());
+    ReflectionTestUtils.setField(
+        synopticServiceUtils,
+        "commingleDetailsPortWiseRepository",
+        loadablePlanCommingleDetailsPortwiseRepository);
+
     synopticServiceUtils.buildCargoToBeLoadedForPort(request, builder, repBuilder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
   }
@@ -406,13 +636,14 @@ public class SynopticServiceUtilsTest {
   }
 
   @Test
-  void testbuildSynopticalPortDataReplyByPortId() {
+  void testBuildSynopticalPortDataReplyByPortId() {
     List<SynopticalTable> synopticalTableList = new ArrayList<>();
     synopticalTableList.add(getSynopticalTable());
     com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.SynopticalTableReply.newBuilder();
+
     synopticServiceUtils.buildSynopticalPortDataReplyByPortId(synopticalTableList, replyBuilder);
-    assertEquals("1", replyBuilder.getSynopticalRecords(0).getOperationType());
+    assertEquals("ARR", replyBuilder.getSynopticalRecords(0).getOperationType());
   }
 
   @Test
@@ -423,18 +654,27 @@ public class SynopticServiceUtilsTest {
     when(this.loadablePatternRepository.findLoadablePatterns(
             anyLong(), any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(loadablePatternList);
-    synopticServiceUtils.validateSaveSynopticalEtaEtdEstimates(
-        getSynopticalTable(),
-        getSynopticalRecord(),
-        getLoadableStudyEntity(),
-        getSynopticalTable().getLoadableStudyPortRotation());
+
+    final GenericServiceException ex =
+        assertThrows(
+            GenericServiceException.class,
+            () ->
+                synopticServiceUtils.validateSaveSynopticalEtaEtdEstimates(
+                    getSynopticalTable(),
+                    getSynopticalRecord(),
+                    getLoadableStudyEntity(),
+                    getSynopticalTable().getLoadableStudyPortRotation()));
+
+    assertAll(
+        () ->
+            assertEquals(
+                CommonErrorCodes.E_CPDSS_SAVE_NOT_ALLOWED, ex.getCode(), "Invalid error code"),
+        () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
   @Test
   void testbuidlSynopticalTableVesselData() throws GenericServiceException {
     List<LoadablePattern> loadablePatternList = new ArrayList<>();
-    LoadablePattern loadablePattern = new LoadablePattern();
-    loadablePatternList.add(loadablePattern);
     when(this.loadablePatternRepository.findLoadablePatterns(
             anyLong(), any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(loadablePatternList);
@@ -528,8 +768,15 @@ public class SynopticServiceUtilsTest {
         new LoadablePlanComminglePortwiseDetails();
     portwiseDetails.setTankId(1l);
     portwiseDetails.setId(1l);
+    portwiseDetails.setCargo1Mt("1");
+    portwiseDetails.setCargo2Mt("1");
+    portwiseDetails.setCargo1Abbreviation("1");
+    portwiseDetails.setCargo2Abbreviation("1");
+    portwiseDetails.setLoadingOrder(1);
+    portwiseDetails.setApi("1");
+    portwiseDetails.setTemperature("1");
     portwiseDetails.setCargo2NominationId(1l);
-
+    portwiseDetails.setCargo1NominationId(1l);
     commingleCargoEntities.add(portwiseDetails);
     return commingleCargoEntities;
   }
@@ -537,6 +784,7 @@ public class SynopticServiceUtilsTest {
   private List<LoadablePatternCargoDetails> getcargoDetailsList() {
     List<LoadablePatternCargoDetails> cargoDetailsList = new ArrayList<>();
     LoadablePatternCargoDetails cargoDetails = new LoadablePatternCargoDetails();
+    cargoDetails.setTankId(1l);
     cargoDetailsList.add(cargoDetails);
     return cargoDetailsList;
   }
@@ -550,6 +798,22 @@ public class SynopticServiceUtilsTest {
     return request;
   }
 
+  private List<LoadableStudy.SynopticalCargoRecord> getCargoRecordList() {
+    List<LoadableStudy.SynopticalCargoRecord> list = new ArrayList<>();
+    LoadableStudy.SynopticalCargoRecord cargoRecord =
+        LoadableStudy.SynopticalCargoRecord.newBuilder()
+            .setIsCommingleCargo(true)
+            .setActualWeight("1")
+            .setPlannedWeight("1")
+            .setTankId(1l)
+            .setUllage("1")
+            .setActualApi("1")
+            .setActualTemperature("1")
+            .build();
+    list.add(cargoRecord);
+    return list;
+  }
+
   private com.cpdss.common.generated.LoadableStudy.SynopticalRecord getSynopticalRecord() {
     List<LoadableStudy.SynopticalBallastRecord> ballastRecordList = new ArrayList<>();
     LoadableStudy.SynopticalBallastRecord ballastRecord =
@@ -559,15 +823,6 @@ public class SynopticServiceUtilsTest {
             .build();
     ballastRecordList.add(ballastRecord);
 
-    List<LoadableStudy.SynopticalCargoRecord> list = new ArrayList<>();
-    LoadableStudy.SynopticalCargoRecord cargoRecord =
-        LoadableStudy.SynopticalCargoRecord.newBuilder()
-            .setIsCommingleCargo(true)
-            .setActualWeight("1")
-            .setTankId(1l)
-            .build();
-    list.add(cargoRecord);
-
     List<LoadableStudy.SynopticalOhqRecord> ohqRecordList = new ArrayList<>();
     LoadableStudy.SynopticalOhqRecord ohqRecord =
         LoadableStudy.SynopticalOhqRecord.newBuilder()
@@ -576,12 +831,16 @@ public class SynopticServiceUtilsTest {
             .setPlannedWeight("1")
             .build();
     ohqRecordList.add(ohqRecord);
-
+    LoadableStudy.SynopticalCommingleRecord commingleRecord =
+        LoadableStudy.SynopticalCommingleRecord.newBuilder()
+            .setActualWeight("1")
+            .setTankId(1l)
+            .build();
     com.cpdss.common.generated.LoadableStudy.SynopticalRecord record =
         com.cpdss.common.generated.LoadableStudy.SynopticalRecord.newBuilder()
-            .addAllCargo(list)
+            .addAllCargo(getCargoRecordList())
             .addAllBallast(ballastRecordList)
-            .setEtaEtdEstimated("1")
+            .setEtaEtdEstimated("2021-12-15T15:42")
             .setOthersPlanned("1")
             .setOthersActual("1")
             .setConstantActual("1")
@@ -591,6 +850,7 @@ public class SynopticServiceUtilsTest {
             .setDisplacementActual("1")
             .setDisplacementPlanned("1")
             .addAllOhq(ohqRecordList)
+            .addAllCommingle(Arrays.asList(commingleRecord))
             .build();
 
     return record;
@@ -603,12 +863,12 @@ public class SynopticServiceUtilsTest {
     CargoOperation operation = new CargoOperation();
     operation.setId(1l);
     portRotation.setOperation(operation);
-    portRotation.setEta(LocalDateTime.now());
-    portRotation.setEtd(LocalDateTime.now());
+    portRotation.setEta(LocalDateTime.of(2021, 12, 15, 15, 42));
+    portRotation.setEtd(LocalDateTime.of(2021, 12, 15, 15, 42));
     portRotation.setLoadableStudy(getLoadableStudyEntity());
     entity.setLoadableStudyPortRotation(portRotation);
     entity.setPortXid(1l);
-    entity.setOperationType("1");
+    entity.setOperationType("ARR");
     entity.setDistance(new BigDecimal(1));
     entity.setEtaActual(LocalDateTime.now());
     entity.setEtdActual(LocalDateTime.now());
@@ -616,7 +876,8 @@ public class SynopticServiceUtilsTest {
     entity.setId(1l);
     entity.setTimeOfSunrise(LocalTime.now());
     entity.setTimeOfSunSet(LocalTime.now());
-
+    entity.setOthersPlanned(new BigDecimal(2));
+    entity.setConstantPlanned(new BigDecimal(2));
     return entity;
   }
 }

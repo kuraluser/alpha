@@ -8,6 +8,7 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.ExcludeFromJacocoGeneratedReport;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.RuleMasterSection;
 import com.cpdss.loadablestudy.domain.RulePlans;
@@ -71,6 +72,7 @@ public class LoadableStudyRuleService {
     return listOfExistingLSRules;
   }
 
+  @ExcludeFromJacocoGeneratedReport
   private void updateDisplayInSettingsInLoadableStudyRules(
       VesselInfo.VesselRuleReply vesselRuleReply) {
     Set<Long> setOfSelectedDisplayInSetting = new LinkedHashSet<>();

@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +113,7 @@ public class LoadicatorServiceTest {
         .thenReturn(getSynopticalTable());
     this.loadicatorService.saveLodicatorDataForSynoptical(
         loadablePattern, arrivalCondition, lpd, portType, portRotationId);
+    verify(synopticalTableLoadicatorDataRepository).save(any(SynopticalTableLoadicatorData.class));
   }
 
   private LoadableStudyPortRotation getLSPortRotation() {
@@ -150,12 +153,17 @@ public class LoadicatorServiceTest {
 
     List<VesselInfo.VesselTankDetail> vesselTankDetails = new ArrayList<>();
     VesselInfo.VesselTankDetail tankDetail =
-        VesselInfo.VesselTankDetail.newBuilder().setTankName("1").setShortName("1").build();
+        VesselInfo.VesselTankDetail.newBuilder()
+            .setTankName("1")
+            .setShortName("1")
+            .setTankId(1l)
+            .build();
     vesselTankDetails.add(tankDetail);
 
     VesselInfo.VesselReply vesselReply =
         VesselInfo.VesselReply.newBuilder()
             .addAllVessels(vesselDetailList)
+            .addAllVesselTanks(vesselTankDetails)
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
             .build();
     return vesselReply;
@@ -378,28 +386,29 @@ public class LoadicatorServiceTest {
     LoadicatorAlgoResponse response = new LoadicatorAlgoResponse();
     response.setFeedbackLoop(true);
     response.setFeedbackLoopCount(1);
-    LoadicatorPatternDetailsResults results = new LoadicatorPatternDetailsResults();
     List<LoadicatorResultDetails> detailsList = new ArrayList<>();
     LoadicatorResultDetails details = new LoadicatorResultDetails();
     details.setSynopticalId(1l);
     detailsList.add(details);
+
+    List<LoadicatorPatternDetailsResults> list = new ArrayList<>();
+    LoadicatorPatternDetailsResults results = new LoadicatorPatternDetailsResults();
+    results.setLoadablePatternId(1l);
     results.setLoadicatorResultDetails(detailsList);
     response.setLoadicatorResults(results);
-    List<LoadicatorPatternDetailsResults> list = new ArrayList<>();
-    LoadicatorPatternDetailsResults patternDetailsResults = new LoadicatorPatternDetailsResults();
-    patternDetailsResults.setLoadablePatternId(1l);
-    list.add(patternDetailsResults);
+    list.add(results);
     response.setLoadicatorResultsPatternWise(list);
     return response;
   }
 
-  @Test
-  void testGetloadicatordata() throws Exception {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void testGetloadicatordata(Boolean bool) throws Exception {
     LoadicatorService spyService = spy(LoadicatorService.class);
 
     LoadableStudy.LoadicatorDataRequest request =
         LoadableStudy.LoadicatorDataRequest.newBuilder()
-            .setIsPattern(true)
+            .setIsPattern(bool)
             .addLoadicatorPatternDetails(
                 LoadableStudy.LoadicatorPatternDetails.newBuilder()
                     .setLoadablePatternId(1l)
@@ -510,13 +519,14 @@ public class LoadicatorServiceTest {
     assertEquals(SUCCESS, result.getResponseStatus().getStatus());
   }
 
-  @Test
-  void testGetloadicatordataFeedbackLoopFalse() throws Exception {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void testGetloadicatordataFeedbackLoopFalse(Boolean bool) throws Exception {
     LoadicatorService spyService = spy(LoadicatorService.class);
 
     LoadableStudy.LoadicatorDataRequest request =
         LoadableStudy.LoadicatorDataRequest.newBuilder()
-            .setIsPattern(true)
+            .setIsPattern(bool)
             .addLoadicatorPatternDetails(
                 LoadableStudy.LoadicatorPatternDetails.newBuilder()
                     .setLoadablePatternId(1l)
@@ -661,7 +671,12 @@ public class LoadicatorServiceTest {
         new LoadablePatternCargoDetails();
     cargoDetails.setPortRotationId(1l);
     cargoDetails.setLoadablePatternId(1l);
+    cargoDetails.setCargoId(1l);
+    cargoDetails.setPortId(1l);
     cargoDetails.setOperationType("1");
+    cargoDetails.setAbbreviation("1");
+    cargoDetails.setApi(new BigDecimal(1));
+    cargoDetails.setTemperature(new BigDecimal(1));
     list.add(cargoDetails);
     return list;
   }
@@ -669,17 +684,33 @@ public class LoadicatorServiceTest {
   private List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails> getLLPCPD() {
     List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails>
         loadablePlanComminglePortwiseDetails = new ArrayList<>();
-    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails
-        loadablePlanComminglePortwiseDetails1 = new LoadablePlanComminglePortwiseDetails();
-    loadablePlanComminglePortwiseDetails.add(loadablePlanComminglePortwiseDetails1);
+    com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails commingleDetails =
+        new LoadablePlanComminglePortwiseDetails();
+    commingleDetails.setPortRotationXid(1l);
+    commingleDetails.setOperationType("1");
+    commingleDetails.setLoadablePattern(getLP().get());
+    commingleDetails.setTankId(1l);
+    commingleDetails.setCargo1Mt("1");
+    commingleDetails.setCargo2Mt("1");
+    commingleDetails.setPortId(1l);
+    commingleDetails.setApi("1");
+    commingleDetails.setTemperature("1");
+    commingleDetails.setCargo1Abbreviation("1");
+    commingleDetails.setCargo2Abbreviation("1");
+    loadablePlanComminglePortwiseDetails.add(commingleDetails);
     return loadablePlanComminglePortwiseDetails;
   }
 
   private List<LoadablePlanStowageBallastDetails> getLLPBD() {
     List<LoadablePlanStowageBallastDetails> loadablePlanStowageBallastDetails = new ArrayList<>();
-    LoadablePlanStowageBallastDetails loadablePlanStowageBallastDetails1 =
-        new LoadablePlanStowageBallastDetails();
-    loadablePlanStowageBallastDetails.add(loadablePlanStowageBallastDetails1);
+    LoadablePlanStowageBallastDetails ballastDetails = new LoadablePlanStowageBallastDetails();
+    ballastDetails.setOperationType("1");
+    ballastDetails.setPortRotationId(1l);
+    ballastDetails.setLoadablePatternId(1l);
+    ballastDetails.setTankXId(1l);
+    ballastDetails.setPortXId(1l);
+    ballastDetails.setQuantity(new BigDecimal(1));
+    loadablePlanStowageBallastDetails.add(ballastDetails);
     return loadablePlanStowageBallastDetails;
   }
 
@@ -745,22 +776,11 @@ public class LoadicatorServiceTest {
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLS());
     var algoReply = this.loadicatorService.saveLoadicatorResults(request, replyBuilder);
-    assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
-  }
-
-  private Optional<com.cpdss.loadablestudy.entity.LoadableStudy> getLS() {
-    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
-        new com.cpdss.loadablestudy.entity.LoadableStudy();
-    loadableStudy.setId(1L);
-    loadableStudy.setVesselXId(1L);
-    loadableStudy.setVoyage(getVoyage());
-    loadableStudy.setLoadLineXId(1l);
-    loadableStudy.setDraftMark(new BigDecimal(1));
-    return Optional.of(loadableStudy);
+    assertEquals(SUCCESS, algoReply.getResponseStatus().getStatus());
   }
 
   @Test
-  void testSaveLoadicatorResults1() {
+  void testSaveLoadicatorResultsNoLS() {
     List<LoadableStudy.LodicatorResultDetails> lodicatorResultDetails = new ArrayList<>();
     LoadableStudy.LodicatorResultDetails lodicatorResultDetails1 =
         LoadableStudy.LodicatorResultDetails.newBuilder()
@@ -781,6 +801,77 @@ public class LoadicatorServiceTest {
         LoadableStudy.LoadicatorPatternDetailsResults.newBuilder()
             .setLoadablePatternId(1L)
             .addLoadicatorResultDetails(lodicatorResultDetails1)
+            .build();
+    loadicatorPatternDetailsResults.add(loadicatorPatternDetailsResults1);
+    LoadableStudy.LoadicatorResultsRequest request =
+        LoadableStudy.LoadicatorResultsRequest.newBuilder()
+            .setLoadableStudyId(1L)
+            .addLoadicatorResultsPatternWise(loadicatorPatternDetailsResults1)
+            .build();
+    LoadableStudy.AlgoReply.Builder replyBuilder = LoadableStudy.AlgoReply.newBuilder();
+    Mockito.when(
+            this.loadableStudyRepository.findByIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(Optional.empty());
+    var algoReply = this.loadicatorService.saveLoadicatorResults(request, replyBuilder);
+    assertEquals(FAILED, algoReply.getResponseStatus().getStatus());
+  }
+
+  private Optional<com.cpdss.loadablestudy.entity.LoadableStudy> getLS() {
+    com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy =
+        new com.cpdss.loadablestudy.entity.LoadableStudy();
+    loadableStudy.setId(1L);
+    loadableStudy.setVesselXId(1L);
+    loadableStudy.setVoyage(getVoyage());
+    loadableStudy.setLoadLineXId(1l);
+    loadableStudy.setDraftMark(new BigDecimal(1));
+    return Optional.of(loadableStudy);
+  }
+
+  @Test
+  void testSaveLoadicatorResultsVoid() {
+    List<LoadableStudy.LodicatorResultDetails> lodicatorResultDetails = new ArrayList<>();
+    LoadableStudy.LodicatorResultDetails lodicatorResultDetails1 =
+        LoadableStudy.LodicatorResultDetails.newBuilder()
+            .setBlindSector("1")
+            .setCalculatedDraftAftPlanned("1")
+            .setCalculatedDraftFwdPlanned("1")
+            .setCalculatedTrimPlanned("1")
+            .setCalculatedDraftMidPlanned("1")
+            .setDeflection("1")
+            .setList("1")
+            .setPortId(1L)
+            .setOperationId(1L)
+            .build();
+    lodicatorResultDetails.add(lodicatorResultDetails1);
+    List<LoadableStudy.LoadicatorPatternDetailsResults> loadicatorPatternDetailsResults =
+        new ArrayList<>();
+    LoadableStudy.LoadicatorPatternDetailsResults loadicatorPatternDetailsResults1 =
+        LoadableStudy.LoadicatorPatternDetailsResults.newBuilder()
+            .setLoadablePatternId(1L)
+            .addLoadicatorResultDetails(lodicatorResultDetails1)
+            .build();
+    loadicatorPatternDetailsResults.add(loadicatorPatternDetailsResults1);
+    LoadableStudy.LoadicatorResultsRequest request =
+        LoadableStudy.LoadicatorResultsRequest.newBuilder()
+            .setLoadableStudyId(1L)
+            .addLoadicatorResultsPatternWise(loadicatorPatternDetailsResults1)
+            .build();
+    this.loadicatorService.saveLoadicatorResults(request);
+    Mockito.verify(synopticalTableLoadicatorDataRepository)
+        .save(Mockito.any(SynopticalTableLoadicatorData.class));
+  }
+
+  @Test
+  void testSaveLoadicatorResultsVoidNull() {
+    List<LoadableStudy.LodicatorResultDetails> lodicatorResultDetails = new ArrayList<>();
+    lodicatorResultDetails.add(LoadableStudy.LodicatorResultDetails.newBuilder().build());
+    List<LoadableStudy.LoadicatorPatternDetailsResults> loadicatorPatternDetailsResults =
+        new ArrayList<>();
+    LoadableStudy.LoadicatorPatternDetailsResults loadicatorPatternDetailsResults1 =
+        LoadableStudy.LoadicatorPatternDetailsResults.newBuilder()
+            .setLoadablePatternId(1L)
+            .addAllLoadicatorResultDetails(lodicatorResultDetails)
             .build();
     loadicatorPatternDetailsResults.add(loadicatorPatternDetailsResults1);
     LoadableStudy.LoadicatorResultsRequest request =

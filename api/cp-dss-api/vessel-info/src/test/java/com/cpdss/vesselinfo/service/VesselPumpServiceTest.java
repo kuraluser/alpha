@@ -2,6 +2,8 @@
 package com.cpdss.vesselinfo.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo;
@@ -46,26 +48,50 @@ public class VesselPumpServiceTest {
   void testGetVesselPumpsAndTypes() {
     VesselInfo.VesselPumpsResponse.Builder builder = VesselInfo.VesselPumpsResponse.newBuilder();
     Long vesselId = 1L;
-    Mockito.when(vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
+    when(vesselRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getVessel());
-    Mockito.when(pumpTypeRepository.findAll(Mockito.any(Pageable.class)))
-        .thenReturn(getPumpTypes());
-    Mockito.when(
-            vesselPumpRepository.findAllByVesselAndIsActiveTrueOrderById(
-                Mockito.any(Vessel.class), Mockito.any(Pageable.class)))
+    when(pumpTypeRepository.findAll(Mockito.any(Pageable.class))).thenReturn(getPumpTypes());
+    when(vesselPumpRepository.findAllByVesselAndIsActiveTrueOrderById(
+            Mockito.any(Vessel.class), Mockito.any(Pageable.class)))
         .thenReturn(getVesselPumps());
-    Mockito.when(tankTypeRepository.findAll(Mockito.any(Pageable.class)))
-        .thenReturn(getTankTypes());
-    Mockito.when(vesselManifoldRepository.findAll(Mockito.any(Pageable.class)))
+    when(tankTypeRepository.findAll(Mockito.any(Pageable.class))).thenReturn(getTankTypes());
+    when(vesselManifoldRepository.findAll(Mockito.any(Pageable.class)))
         .thenReturn(getVesselManifolds());
-    Mockito.when(vesselBottomLineRepository.findAll(Mockito.any(Pageable.class)))
+    when(vesselBottomLineRepository.findAll(Mockito.any(Pageable.class)))
         .thenReturn(getVesselBottomLine());
+    when(vesselManifoldRepository.findByVesselXidAndIsActiveTrue(anyLong()))
+        .thenReturn(getVesselManifolds().getContent());
+    when(vesselBottomLineRepository.findAllByVesselXidAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(getVesselBottomLine().getContent());
+
     try {
       var vesselPumpsResponse = this.vesselPumpService.getVesselPumpsAndTypes(builder, vesselId);
       assertEquals("SUCCESS", vesselPumpsResponse.getResponseStatus().getStatus());
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }
+  }
+
+  @Test
+  void testBuildVVSSCargoValve() {
+    List<VesselValveStrippingSequenceCargoValve> allByVesselId = new ArrayList<>();
+    VesselValveStrippingSequenceCargoValve cargoValve =
+        new VesselValveStrippingSequenceCargoValve();
+    cargoValve.setId(1l);
+    cargoValve.setValveId(1);
+    cargoValve.setVesselId(1l);
+    cargoValve.setVesselName("1");
+    cargoValve.setPipeLineId(1);
+    cargoValve.setPipeLineName("1");
+    cargoValve.setColour("1");
+    cargoValve.setValve("1");
+    cargoValve.setSequenceNumber(1);
+    cargoValve.setManifoldName("1");
+    cargoValve.setManifoldSide("1");
+    allByVesselId.add(cargoValve);
+
+    var result = vesselPumpService.buildVVSSCargoValve(allByVesselId);
+    assertEquals(result.iterator().next().getId(), 1l);
   }
 
   private Vessel getVessel() {

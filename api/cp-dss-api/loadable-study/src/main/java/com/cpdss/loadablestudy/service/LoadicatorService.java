@@ -10,6 +10,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.ExcludeFromJacocoGeneratedReport;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
@@ -1125,6 +1126,7 @@ public class LoadicatorService {
    * @param processId
    * @param feedbackLoopCount
    */
+  @ExcludeFromJacocoGeneratedReport
   private void passPatternWithLodicatorToEnvoyWriter(
       LoadableStudy.LoadicatorDataRequest request,
       long loadablePatternId,
@@ -1202,6 +1204,7 @@ public class LoadicatorService {
     }
   }
 
+  @ExcludeFromJacocoGeneratedReport
   private void passResultToCommunication(
       ObjectMapper objectMapper,
       LoadicatorAlgoResponse algoResponse,

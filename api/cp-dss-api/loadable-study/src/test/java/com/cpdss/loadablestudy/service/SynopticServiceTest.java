@@ -16,6 +16,7 @@ import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsRe
 import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsRequest;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.projections.LoadingPlanQtyAndOrder;
 import io.grpc.internal.testing.StreamRecorder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -90,7 +91,7 @@ public class SynopticServiceTest {
     LoadableStudy.LoadingPlanIdRequest request =
         LoadableStudy.LoadingPlanIdRequest.newBuilder()
             .setId(1L)
-            .setOperationType("1")
+            .setOperationType("LOADABLE_STUDY")
             .setIdType("PORT_ROTATION")
             .setPatternId(1L)
             .setPortRotationId(1L)
@@ -125,6 +126,11 @@ public class SynopticServiceTest {
             any(LoadableStudy.LoadingPlanCommonResponse.Builder.class),
             any(Common.ResponseStatus.Builder.class));
     this.synopticService.fetchLoadingInformationSynopticDetails(request, builder, repBuilder);
+    verify(synpoticServiceUtils)
+        .buildBallastDetailsBasedOnPort(
+            any(LoadableStudy.LoadingPlanIdRequest.class),
+            any(LoadableStudy.LoadingPlanCommonResponse.Builder.class),
+            any(Common.ResponseStatus.Builder.class));
   }
 
   private List<SynopticalTable> getST() {
@@ -493,24 +499,20 @@ public class SynopticServiceTest {
     LoadablePlanComminglePortwiseDetails loadablePlanComminglePortwiseDetails =
         new LoadablePlanComminglePortwiseDetails();
     loadablePlanComminglePortwiseDetails.setApi("1");
+    loadablePlanComminglePortwiseDetails.setTankId(1l);
+    loadablePlanComminglePortwiseDetails.setCargo1Mt("1");
+    loadablePlanComminglePortwiseDetails.setCargo2Mt("1");
     loadablePlanComminglePortwiseDetails.setPortRotationXid(1L);
     loadablePlanComminglePortwiseDetails.setOperationType("1");
+    loadablePlanComminglePortwiseDetails.setActualQuantity(new BigDecimal(1));
+    loadablePlanComminglePortwiseDetails.setCorrectedUllage("1");
+    loadablePlanComminglePortwiseDetails.setFillingRatio("1");
+    loadablePlanComminglePortwiseDetails.setLoadablePattern(new LoadablePattern());
     commingleCargoDetails.add(loadablePlanComminglePortwiseDetails);
     return commingleCargoDetails;
   }
 
-  @Test
-  void testSetSynopticalCargoDetails() {
-    LoadableStudy.SynopticalTableRequest request =
-        LoadableStudy.SynopticalTableRequest.newBuilder().build();
-    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetails =
-        new ArrayList<>();
-    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails loadablePatternCargoDetails =
-        new LoadablePatternCargoDetails();
-    loadablePatternCargoDetails.setCargoId(1L);
-    loadablePatternCargoDetails.setOperationType("1");
-    loadablePatternCargoDetails.setPortRotationId(1L);
-    cargoDetails.add(loadablePatternCargoDetails);
+  private List<OnBoardQuantity> getObqEntities() {
     List<OnBoardQuantity> obqEntities = new ArrayList<>();
     OnBoardQuantity onBoardQuantity = new OnBoardQuantity();
     onBoardQuantity.setTankId(1L);
@@ -519,10 +521,43 @@ public class SynopticServiceTest {
     onBoardQuantity.setDensity(new BigDecimal(1));
     onBoardQuantity.setAbbreviation("1");
     obqEntities.add(onBoardQuantity);
+    return obqEntities;
+  }
+
+  private List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> getCargoDetails() {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailsList =
+        new ArrayList<>();
+    com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails cargoDetails =
+        new LoadablePatternCargoDetails();
+    cargoDetails.setCargoId(1L);
+    cargoDetails.setOperationType("1");
+    cargoDetails.setPortRotationId(1L);
+    cargoDetails.setTankId(1l);
+    cargoDetails.setCargoNominationId(1l);
+    cargoDetails.setId(1l);
+    cargoDetails.setPlannedQuantity(new BigDecimal(1));
+    cargoDetails.setActualQuantity(new BigDecimal(1));
+    cargoDetails.setAbbreviation("1");
+    cargoDetails.setColorCode("1");
+    cargoDetails.setActualRdgUllage(new BigDecimal(1));
+    cargoDetails.setCorrectedUllage(new BigDecimal(1));
+    cargoDetails.setActualApi(new BigDecimal(1));
+    cargoDetails.setActualTemperature(new BigDecimal(1));
+    cargoDetails.setFillingRatio("1");
+    cargoDetailsList.add(cargoDetails);
+    return cargoDetailsList;
+  }
+
+  @Test
+  void testSetSynopticalCargoDetails() {
+    LoadableStudy.SynopticalTableRequest request =
+        LoadableStudy.SynopticalTableRequest.newBuilder().build();
+
     SynopticalTable synopticalEntity = new SynopticalTable();
     synopticalEntity.setLoadableStudyPortRotation(getLSPR());
     synopticalEntity.setOperationType("ARR");
     synopticalEntity.setPortXid(1L);
+
     LoadableStudy.SynopticalRecord.Builder builder = LoadableStudy.SynopticalRecord.newBuilder();
     List<VesselInfo.VesselTankDetail> sortedTankList = new ArrayList<>();
     VesselInfo.VesselTankDetail tankDetail =
@@ -533,12 +568,88 @@ public class SynopticServiceTest {
             .setFullCapacityCubm("1")
             .build();
     sortedTankList.add(tankDetail);
+
     Long firstPortId = 1L;
     Voyage voyage = new Voyage();
     this.synopticService.setSynopticalCargoDetails(
         request,
-        cargoDetails,
-        obqEntities,
+        getCargoDetails(),
+        getObqEntities(),
+        synopticalEntity,
+        builder,
+        sortedTankList,
+        firstPortId,
+        voyage,
+        getPortwiseDetailsList(),
+        Arrays.asList(1l));
+    assertEquals("1", builder.getCargoActualTotal());
+  }
+
+  private LoadablePlanCommingleDetails getCommingleDetails() {
+    LoadablePlanCommingleDetails commingleDetails = new LoadablePlanCommingleDetails();
+    commingleDetails.setTankId(1l);
+    commingleDetails.setGrade("1");
+    commingleDetails.setCommingleColour("1");
+    commingleDetails.setCargo1Mt("1");
+    commingleDetails.setCargo2Mt("1");
+    commingleDetails.setCargo1Lt("1");
+    commingleDetails.setCargo2Lt("1");
+    commingleDetails.setCargo1Abbreviation("1");
+    commingleDetails.setCargo2Abbreviation("1");
+    commingleDetails.setCargo1NominationId(1l);
+    commingleDetails.setCargo2NominationId(1l);
+    return commingleDetails;
+  }
+
+  @Test
+  void testSetSynopticalCargoDetailsElseif() {
+    LoadableStudy.SynopticalTableRequest request =
+        LoadableStudy.SynopticalTableRequest.newBuilder().setLoadablePatternId(1l).build();
+
+    SynopticalTable synopticalEntity = new SynopticalTable();
+    synopticalEntity.setLoadableStudyPortRotation(getLSPR());
+    synopticalEntity.setOperationType("1");
+    synopticalEntity.setPortXid(1L);
+
+    LoadableStudy.SynopticalRecord.Builder builder = LoadableStudy.SynopticalRecord.newBuilder();
+    List<VesselInfo.VesselTankDetail> sortedTankList = new ArrayList<>();
+    VesselInfo.VesselTankDetail tankDetail =
+        VesselInfo.VesselTankDetail.newBuilder()
+            .setTankCategoryId(1L)
+            .setTankId(1L)
+            .setShortName("1")
+            .setFullCapacityCubm("1")
+            .build();
+    sortedTankList.add(tankDetail);
+
+    Long firstPortId = 1L;
+    Voyage voyage = new Voyage();
+    LoadingPlanQtyAndOrder planQtyAndOrder =
+        new LoadingPlanQtyAndOrder() {
+          @Override
+          public Long getId() {
+            return 1l;
+          }
+
+          @Override
+          public Integer getLoadingOrder() {
+            return 1;
+          }
+        };
+
+    when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(getLS()));
+    when(loadablePlanQuantityRepository.findByCargoNominationIdAndIsActiveTrue(anyLong()))
+        .thenReturn(Arrays.asList(planQtyAndOrder));
+
+    when(this.loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(Arrays.asList(getCommingleDetails()));
+
+    this.synopticService.setSynopticalCargoDetails(
+        request,
+        getCargoDetails(),
+        getObqEntities(),
         synopticalEntity,
         builder,
         sortedTankList,
@@ -1111,24 +1222,6 @@ public class SynopticServiceTest {
     this.synopticService.buildSynopticalTableEtaEtdActuals(entity, record);
     assertEquals(etaEtdActual, entity.getEtaActual());
   }
-
-  //   @Test
-  //    void testValidateSynopticalVesselData() {
-  //       com.cpdss.loadablestudy.entity.LoadableStudy loadablestudy = new
-  // com.cpdss.loadablestudy.entity.LoadableStudy();
-  //       SynopticalTable entity = new SynopticalTable();
-  //       LoadableStudy.SynopticalRecord record =
-  // LoadableStudy.SynopticalRecord.newBuilder().build();
-  //       Mockito.when(this.loadablePatternRepository.findLoadablePatterns(Mockito.anyLong(),
-  // Mockito.any(), Mockito.anyBoolean())).thenReturn(getLP());
-  //       Mockito.when(this.loadablePatternRepository.findLoadablePatterns(Mockito.anyLong(),
-  // Mockito.any(), Mockito.anyBoolean())).thenReturn(getLP());
-  //       try {
-  //        this.synopticService.validateSynopticalVesselData(loadablestudy,entity,record);
-  //       } catch (GenericServiceException e) {
-  //           e.printStackTrace();
-  //       }
-  //   }
 
   @Test
   void testGetPortInfo() {

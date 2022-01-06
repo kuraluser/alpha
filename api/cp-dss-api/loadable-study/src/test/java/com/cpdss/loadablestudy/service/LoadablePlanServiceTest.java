@@ -28,13 +28,15 @@ import java.util.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -103,6 +105,7 @@ public class LoadablePlanServiceTest {
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
   private static final String SUCCESS = "SUCCESS";
+  public static final String FAILED = "FAILED";
   @MockBean AlgoService algoService;
   @MockBean private VoyageRepository voyageRepository;
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
@@ -187,6 +190,11 @@ public class LoadablePlanServiceTest {
     return stowageDetailsList;
   }
 
+  private SynopticalTable getSynopticalTable() {
+    SynopticalTable synopticalTable = new SynopticalTable();
+    return synopticalTable;
+  }
+
   @Test
   void testBuildLoadablePlanPortWiseDetails() {
     LoadablePlanService spyService = spy(LoadablePlanService.class);
@@ -239,7 +247,7 @@ public class LoadablePlanServiceTest {
         .thenReturn(portwiseDetailsList);
     when(synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
             anyLong(), anyLong(), anyString(), anyBoolean()))
-        .thenReturn(Optional.empty());
+        .thenReturn(Optional.of(getSynopticalTable()));
     when(synopticalTableLoadicatorDataRepository
             .findByloadablePatternIdAndSynopticalTableAndIsActive(
                 anyLong(), any(SynopticalTable.class), anyBoolean()))
@@ -289,72 +297,42 @@ public class LoadablePlanServiceTest {
     LoadableStudy.LoadablePlanReportReply.Builder dataChunkBuilder =
         LoadableStudy.LoadablePlanReportReply.newBuilder();
     VesselPlanTable vesselPlanTable = VesselPlanTable.builder().build();
-    SheetCoordinates sheetCoordinates = new SheetCoordinates(1, 1);
+    SheetCoordinates cargoDetailsTableCoordinates = new SheetCoordinates(1, 1);
     PortOperationTable portOperationTable = PortOperationTable.builder().build();
     CargoDetailsTable cargoDetailsTable = CargoDetailsTable.builder().build();
-    List<CommingleDetails> commingleDetailsList = new ArrayList<>();
 
     when(synopticService.buildPortOperationsTable(anyLong(), anyLong()))
         .thenReturn(portOperationTable);
+    CommingleDetails details =
+        new CommingleDetails("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1");
+    when(loadablePlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(Arrays.asList(details));
     doReturn(vesselPlanTable).when(spyService).buildVesselPlanTableData(anyLong(), anyLong());
-
-    doReturn(sheetCoordinates)
+    doReturn(cargoDetailsTableCoordinates)
         .when(spyService)
         .drawCargoDetailsTable(
             any(XSSFSheet.class), any(CargoDetailsTable.class), anyInt(), anyInt());
-    doReturn(sheetCoordinates)
+    doReturn(cargoDetailsTableCoordinates)
         .when(spyService)
         .drawPortOperationTable(
             any(XSSFSheet.class), any(PortOperationTable.class), anyInt(), anyInt());
-    doReturn(sheetCoordinates)
+    doReturn(cargoDetailsTableCoordinates)
         .when(spyService)
         .drawVesselPlanTable(any(XSSFSheet.class), any(VesselPlanTable.class), anyInt(), anyInt());
-    doReturn(sheetCoordinates)
-        .when(spyService)
-        .drawCommingleDetailsTable(any(XSSFSheet.class), anyList(), anyInt(), anyInt());
-
     doReturn(cargoDetailsTable).when(spyService).buildCargoDetailsTable(anyLong(), anyLong());
-    doReturn(commingleDetailsList).when(spyService).buildCommingleDetailsTable(anyLong());
-
     ReflectionTestUtils.setField(spyService, "synopticService", synopticService);
+    ReflectionTestUtils.setField(
+        spyService,
+        "loadablePlanCommingleDetailsRepository",
+        loadablePlanCommingleDetailsRepository);
+
     spyService.getLoadablePlanReport(workbook, request, dataChunkBuilder);
     assertEquals(SUCCESS, dataChunkBuilder.getResponseStatus().getStatus());
   }
 
   @Test
-  void testBuildCommingleDetailsTable() {
-
-    LoadablePlanService spyService = spy(LoadablePlanService.class);
-    when(loadablePlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActive(
-            anyLong(), anyBoolean()))
-        .thenReturn(anyList());
-
-    ReflectionTestUtils.setField(
-        spyService,
-        "loadablePlanCommingleDetailsRepository",
-        loadablePlanCommingleDetailsRepository);
-    List<CommingleDetails> commingleDetailsList = spyService.buildCommingleDetailsTable(1L);
-    Assertions.assertNotNull(commingleDetailsList);
-  }
-
-  @Test
-  void testDrawCommingleDetailsTable() {
-
-    LoadablePlanService spyService = spy(LoadablePlanService.class);
-    XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
-    XSSFSheet xssfSheet = xssfWorkbook.createSheet();
-
-    List<CommingleDetails> commingleDetailsList = new ArrayList<>();
-    commingleDetailsList.add(CommingleDetails.builder().grade("COM1").build());
-    SheetCoordinates sheetCoordinates =
-        spyService.drawCommingleDetailsTable(xssfSheet, commingleDetailsList, 1, 1);
-    Assertions.assertEquals(sheetCoordinates.getRow(), 9);
-  }
-
-  @Test
   void testBuildVesselPlanTableData() throws GenericServiceException, IOException {
-    LoadablePlanService spyService = spy(LoadablePlanService.class);
-
     List<LoadablePlanStowageDetails> stowageDetailsList = new ArrayList<>();
     stowageDetailsList.add(getLoadablePSD());
 
@@ -400,33 +378,10 @@ public class LoadablePlanServiceTest {
             any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(new ArrayList<>());
 
-    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     ReflectionTestUtils.setField(
-        spyService, "loadablePatternRepository", loadablePatternRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanQuantityRepository", loadablePlanQuantityRepository);
-    ReflectionTestUtils.setField(
-        spyService,
-        "loadablePlanCommingleDetailsRepository",
-        loadablePlanCommingleDetailsRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanStowageDetailsRespository", loadablePlanStowageDetailsRespository);
-    ReflectionTestUtils.setField(
-        spyService, "stowageDetailsTempRepository", stowageDetailsTempRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanBallastDetailsRepository", loadablePlanBallastDetailsRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanCommentsRepository", loadablePlanCommentsRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadableQuantityRepository", loadableQuantityRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
-    ReflectionTestUtils.setField(
-        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+        loadablePlanService, "vesselInfoGrpcService", vesselInfoGrpcService);
 
-    var result = spyService.buildVesselPlanTableData(1l, 1l);
+    var result = loadablePlanService.buildVesselPlanTableData(1l, 1l);
     assertEquals("1", result.getVesselName());
   }
 
@@ -445,7 +400,6 @@ public class LoadablePlanServiceTest {
 
   @Test
   void testBuildCargoDetailsTable() throws GenericServiceException {
-    LoadablePlanService spyService = spy(LoadablePlanService.class);
     VesselInfo.VesselRequest request = VesselInfo.VesselRequest.newBuilder().build();
     List<CargoNomination> cargoNominationList = new ArrayList<>();
     cargoNominationList.add(getCargoNomination().get());
@@ -499,36 +453,11 @@ public class LoadablePlanServiceTest {
             any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
         .thenReturn(new ArrayList<>());
 
-    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     ReflectionTestUtils.setField(
-        spyService, "cargoNominationRepository", cargoNominationRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePatternRepository", loadablePatternRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanQuantityRepository", loadablePlanQuantityRepository);
-    ReflectionTestUtils.setField(
-        spyService,
-        "loadablePlanCommingleDetailsRepository",
-        loadablePlanCommingleDetailsRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanStowageDetailsRespository", loadablePlanStowageDetailsRespository);
-    ReflectionTestUtils.setField(
-        spyService, "stowageDetailsTempRepository", stowageDetailsTempRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanBallastDetailsRepository", loadablePlanBallastDetailsRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePlanCommentsRepository", loadablePlanCommentsRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadableQuantityRepository", loadableQuantityRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadablePatternAlgoStatusRepository", loadablePatternAlgoStatusRepository);
-    ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
-    ReflectionTestUtils.setField(
-        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
-    ReflectionTestUtils.setField(
-        spyService, "loadableStudyPortRotationRepository", loadableStudyPortRotationRepository);
+        loadablePlanService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(loadablePlanService, "portInfoGrpcService", portInfoGrpcService);
 
-    var result = spyService.buildCargoDetailsTable(1l, 1l);
+    var result = loadablePlanService.buildCargoDetailsTable(1l, 1l);
     assertEquals(1.0, result.getCargosTableList().get(0).getApi());
   }
 
@@ -628,7 +557,7 @@ public class LoadablePlanServiceTest {
   }
 
   @Test
-  void testgetVesselTankDetailsByTankIds() {
+  void testGetVesselTankDetailsByTankIds() {
     LoadablePlanService spyService = spy(LoadablePlanService.class);
     VesselInfo.VesselTankRequest request = VesselInfo.VesselTankRequest.newBuilder().build();
     when(this.vesselInfoGrpcService.getVesselInfoBytankIds(any(VesselInfo.VesselTankRequest.class)))
@@ -732,26 +661,26 @@ public class LoadablePlanServiceTest {
     Assert.assertEquals(0.16677454f, bool, 0.0f);
   }
 
-  //  @Test
-  //  void testDrawVesselPlanTable() {
-  //    XSSFWorkbook workbook = new XSSFWorkbook();
-  //    XSSFSheet spreadsheet = workbook.createSheet();
-  //    VesselPlanTable vesselPlanTable = VesselPlanTable.builder().build();
-  //    vesselPlanTable.setVesselName("1");
-  //    vesselPlanTable.setVoyageNo("1");
-  //    vesselPlanTable.setDate("1");
-  //    vesselPlanTable.setFrameFromCellsList(getLF());
-  //    vesselPlanTable.setVesselTanksTableList(getVTTL());
-  //    int startRow = 1;
-  //    int starColumn = 1;
-  //    String vesselPlanTableTitle = VesselPlanTableTitles.VESSEL_NAME.getColumnName();
-  //    String stowagePlanTableTitles = StowagePlanTableTitles.CARGO_CODE.getColumnName();
-  //    var sheetCoordinates =
-  //        this.loadablePlanService.drawVesselPlanTable(
-  //            spreadsheet, vesselPlanTable, startRow, starColumn);
-  //    assertEquals(24, sheetCoordinates.getRow());
-  //    assertEquals(1, sheetCoordinates.getColumn());
-  //  }
+  @Test
+  void testDrawVesselPlanTable() {
+    XSSFWorkbook workbook = new XSSFWorkbook();
+    XSSFSheet spreadsheet = workbook.createSheet();
+    VesselPlanTable vesselPlanTable = VesselPlanTable.builder().build();
+    vesselPlanTable.setVesselName("1");
+    vesselPlanTable.setVoyageNo("1");
+    vesselPlanTable.setDate("1");
+    vesselPlanTable.setFrameFromCellsList(getLF());
+    vesselPlanTable.setVesselTanksTableList(getVTTL());
+    int startRow = 1;
+    int starColumn = 1;
+    String vesselPlanTableTitle = VesselPlanTableTitles.VESSEL_NAME.getColumnName();
+    String stowagePlanTableTitles = StowagePlanTableTitles.CARGO_CODE.getColumnName();
+    var sheetCoordinates =
+        this.loadablePlanService.drawVesselPlanTable(
+            spreadsheet, vesselPlanTable, startRow, starColumn);
+    assertEquals(24, sheetCoordinates.getRow());
+    assertEquals(1, sheetCoordinates.getColumn());
+  }
 
   @Test
   void testConvertFromBbls() {
@@ -763,44 +692,44 @@ public class LoadablePlanServiceTest {
     Assert.assertEquals(0.16677454f, bool, 0.0f);
   }
 
-  //  @Test
-  //  void testDrawPortOperationTable() {
-  //    XSSFWorkbook workbook = new XSSFWorkbook();
-  //    XSSFSheet spreadsheet = workbook.createSheet();
-  //    PortOperationTable portOperationTable = PortOperationTable.builder().build();
-  //    portOperationTable.setOperationsTableList(getLOT());
-  //    int startRow = 1;
-  //    int starColumn = 1;
-  //    String portOperationsTableTitle = PortOperationsTableTitles.PORT_NAME.getColumnName();
-  //    var sheetCoordinates =
-  //        this.loadablePlanService.drawPortOperationTable(
-  //            spreadsheet, portOperationTable, startRow, starColumn);
-  //    assertEquals(2, sheetCoordinates.getColumn());
-  //    assertEquals("1", portOperationTable.getOperationsTableList().get(0).getOperation());
-  //  }
+  @Test
+  void testDrawPortOperationTable() {
+    XSSFWorkbook workbook = new XSSFWorkbook();
+    XSSFSheet spreadsheet = workbook.createSheet();
+    PortOperationTable portOperationTable = PortOperationTable.builder().build();
+    portOperationTable.setOperationsTableList(getLOT());
+    int startRow = 1;
+    int starColumn = 1;
+    String portOperationsTableTitle = PortOperationsTableTitles.PORT_NAME.getColumnName();
+    var sheetCoordinates =
+        this.loadablePlanService.drawPortOperationTable(
+            spreadsheet, portOperationTable, startRow, starColumn);
+    assertEquals(2, sheetCoordinates.getColumn());
+    assertEquals("1", portOperationTable.getOperationsTableList().get(0).getOperation());
+  }
 
-  //  @Test
-  //  void testDrawCargoDetailsTable() {
-  //    XSSFWorkbook workbook = new XSSFWorkbook();
-  //    XSSFSheet spreadsheet = workbook.createSheet();
-  //    CargoDetailsTable cargoDetailsTable = CargoDetailsTable.builder().build();
-  //    cargoDetailsTable.setCargosTableList(getLCT());
-  //    cargoDetailsTable.setNBblsTotal(1d);
-  //    cargoDetailsTable.setMtTotal(1d);
-  //    cargoDetailsTable.setKl15CTotal(1d);
-  //    cargoDetailsTable.setLtTotal(1d);
-  //    cargoDetailsTable.setDiffBblsTotal(1d);
-  //    cargoDetailsTable.setDiffPercentageTotal(1d);
-  //    cargoDetailsTable.setCargoNominationTotal(1d);
-  //    int startRow = 1;
-  //    int starColumn = 1;
-  //    String cargoTableColumnDetails = CargoDetailsTableTitles.CARGO_CODE.getColumnName();
-  //    var sheetCoordinates =
-  //        this.loadablePlanService.drawCargoDetailsTable(
-  //            spreadsheet, cargoDetailsTable, startRow, starColumn);
-  //    assertEquals(3, sheetCoordinates.getColumn());
-  //    assertEquals(13, sheetCoordinates.getRow());
-  //  }
+  @Test
+  void testDrawCargoDetailsTable() {
+    XSSFWorkbook workbook = new XSSFWorkbook();
+    XSSFSheet spreadsheet = workbook.createSheet();
+    CargoDetailsTable cargoDetailsTable = CargoDetailsTable.builder().build();
+    cargoDetailsTable.setCargosTableList(getLCT());
+    cargoDetailsTable.setNBblsTotal(1d);
+    cargoDetailsTable.setMtTotal(1d);
+    cargoDetailsTable.setKl15CTotal(1d);
+    cargoDetailsTable.setLtTotal(1d);
+    cargoDetailsTable.setDiffBblsTotal(1d);
+    cargoDetailsTable.setDiffPercentageTotal(1d);
+    cargoDetailsTable.setCargoNominationTotal(1d);
+    int startRow = 1;
+    int starColumn = 1;
+    String cargoTableColumnDetails = CargoDetailsTableTitles.CARGO_CODE.getColumnName();
+    var sheetCoordinates =
+        this.loadablePlanService.drawCargoDetailsTable(
+            spreadsheet, cargoDetailsTable, startRow, starColumn);
+    assertEquals(3, sheetCoordinates.getColumn());
+    assertEquals(13, sheetCoordinates.getRow());
+  }
 
   // buildLoadablePlanDetails need grpc
 
@@ -934,15 +863,298 @@ public class LoadablePlanServiceTest {
   @Test
   void testSaveComment() {
     LoadableStudy.SaveCommentRequest request =
-        LoadableStudy.SaveCommentRequest.newBuilder().setUser(1L).build();
+        LoadableStudy.SaveCommentRequest.newBuilder()
+            .setUser(1L)
+            .setComment("1")
+            .setLoadablePatternId(1l)
+            .build();
     LoadableStudy.SaveCommentReply.Builder replyBuilder =
         LoadableStudy.SaveCommentReply.newBuilder();
     Mockito.when(
             this.loadablePatternRepository.findByIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLP());
+    when(this.loadablePlanCommentsRepository.save(any(LoadablePlanComments.class)))
+        .thenReturn(getPlanCommentsList().get(0));
     var saveCommentReply = this.loadablePlanService.saveComment(request, replyBuilder);
-    assertEquals("SUCCESS", replyBuilder.getResponseStatus().getStatus());
+    assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testAddLoadablePlanBallastDetails() {
+    List<com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails>
+        loadablePatternCargoDetails = new ArrayList<>();
+    List<Object> objectArray = new ArrayList<>();
+    Object[] obj = new Object[6];
+    obj[0] = 1l;
+    obj[1] = 1l;
+    obj[2] = "1";
+    obj[3] = "1";
+    obj[4] = "1";
+    objectArray.add(obj);
+
+    when(stowageDetailsTempRepository.findByLoadablePlanBallastTempDetailsAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(objectArray);
+
+    var results =
+        loadablePlanService.addLoadablePlanBallastDetails(loadablePatternCargoDetails, true, 1l);
+    assertEquals(1l, results.get(0).getId());
+  }
+
+  @Test
+  void testAddLoadablePlanBallastDetailsElse() {
+    List<com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails> stowageBallastDetails =
+        new ArrayList<>();
+    LoadablePlanStowageBallastDetails ballastDetails = new LoadablePlanStowageBallastDetails();
+    ballastDetails.setId(1l);
+    ballastDetails.setQuantity(new BigDecimal(1));
+    ballastDetails.setColorCode("1");
+    ballastDetails.setSg("1");
+    ballastDetails.setColorCode("1");
+    stowageBallastDetails.add(ballastDetails);
+
+    var results =
+        loadablePlanService.addLoadablePlanBallastDetails(stowageBallastDetails, false, 1l);
+    assertEquals(1l, results.get(0).getId());
+  }
+
+  @Test
+  void testAddLoadablePlanCommingleDetails() {
+    List<com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails> portwiseDetailsList =
+        new ArrayList<>();
+    LoadablePlanComminglePortwiseDetails portwiseDetails =
+        new LoadablePlanComminglePortwiseDetails();
+    portwiseDetails.setId(1l);
+    portwiseDetails.setTankId(1l);
+    portwiseDetails.setQuantity("1");
+    portwiseDetails.setCargo1Mt("1");
+    portwiseDetails.setCargo2Mt("1");
+    portwiseDetails.setCargo1NominationId(1l);
+    portwiseDetails.setCargo2NominationId(1l);
+    portwiseDetails.setCommingleColour("1");
+    portwiseDetails.setGrade("1");
+    portwiseDetailsList.add(portwiseDetails);
+
+    var results =
+        loadablePlanService.addLoadablePlanCommingleDetails(portwiseDetailsList, true, 1l);
+    assertEquals(1l, results.get(0).getId());
+  }
+
+  @Test
+  void testvalidateLoadablePlan() throws GenericServiceException, IOException {
+    LoadableStudy.LoadablePlanDetailsRequest request =
+        LoadableStudy.LoadablePlanDetailsRequest.newBuilder().build();
+    LoadableStudy.AlgoReply.Builder replyBuilder = LoadableStudy.AlgoReply.newBuilder();
+
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.empty());
+
+    loadablePlanService.validateLoadablePlan(request, replyBuilder);
+    assertEquals(FAILED, replyBuilder.getResponseStatus().getStatus());
+  }
+
+  @Disabled
+  @Test
+  void testBuildCommunicationServiceRequest() {
+    List<LoadablePlanPortWiseDetails> portWiseDetailsList = new ArrayList<>();
+    LoadablePlanPortWiseDetails portWiseDetails = new LoadablePlanPortWiseDetails();
+    portWiseDetails.setPortId(1l);
+    LoadabalePatternDetails patternDetails = new LoadabalePatternDetails();
+    patternDetails.setLoadablePlanStowageDetails(getStowageDetailsList());
+    portWiseDetails.setArrivalCondition(patternDetails);
+    portWiseDetails.setDepartureCondition(patternDetails);
+    portWiseDetailsList.add(portWiseDetails);
+    LoadabalePatternValidateRequest request = new LoadabalePatternValidateRequest();
+    request.setLoadablePlanPortWiseDetails(portWiseDetailsList);
+
+    List<LoadablePatternCargoToppingOffSequence> toppingOffSequenceList = new ArrayList<>();
+    SynopticalTableLoadicatorData data = new SynopticalTableLoadicatorData();
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLP());
+    when(stowageDetailsTempRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLPSDT());
+    when(loadablePatternCargoDetailsRepository.findAllByPatternIdAndPortId(anyLong(), anyLong()))
+        .thenReturn(getCargoDetailsList());
+    when(synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndPortIdAndOperationId(
+            anyLong(), anyLong(), anyLong()))
+        .thenReturn(data);
+    when(loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(getLoadablePlanQuantities());
+    when(loadablePatternCargoToppingOffSequenceRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(toppingOffSequenceList);
+
+    loadablePlanService.buildCommunicationServiceRequest(request, getLP().get());
+    var id =
+        request
+            .getLoadablePlanPortWiseDetails()
+            .get(0)
+            .getArrivalCondition()
+            .getLoadableQuantityCargoDetails()
+            .get(0)
+            .getId();
+    assertEquals(1l, id);
+  }
+
+  @Test
+  void testUpdateProcessIdForLoadablePattern() {
+    when(loadableStudyStatusRepository.getOne(anyLong()))
+        .thenReturn(getAlgoStatusList().get(0).getLoadableStudyStatus());
+
+    loadablePlanService.updateProcessIdForLoadablePattern("1", getLP().get(), 1l, "1", true);
+    verify(loadablePatternAlgoStatusRepository).save(any(LoadablePatternAlgoStatus.class));
+  }
+
+  @Test
+  void testUpdateUllageWithGenericServiceException() throws GenericServiceException {
+    LoadableStudy.UpdateUllageRequest request =
+        LoadableStudy.UpdateUllageRequest.newBuilder()
+            .setLoadablePlanStowageDetails(
+                LoadableStudy.LoadablePlanStowageDetails.newBuilder()
+                    .setCorrectedUllage("1")
+                    .setId(1l)
+                    .setTankId(1l)
+                    .setApi("1")
+                    .setTemperature("1")
+                    .setSg("1")
+                    .build())
+            .setVesselId(1l)
+            .setUpdateUllageForLoadingPlan(true)
+            .build();
+    LoadableStudy.UpdateUllageReply.Builder replyBuilder =
+        LoadableStudy.UpdateUllageReply.newBuilder();
+    ResponseEntity<UllageUpdateResponse> responseEntity =
+        new ResponseEntity<UllageUpdateResponse>(HttpStatus.ACCEPTED);
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLP());
+    when(this.cargoOperationRepository.getOne(anyLong())).thenReturn(getCargoOp());
+    when(loadableStudyPortRotationService.getLastPortRotationId(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), any(CargoOperation.class)))
+        .thenReturn(1l);
+    when(synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            anyLong(), anyString(), anyBoolean()))
+        .thenReturn(Optional.of(getSynopticalTable()));
+    when(synopticalTableLoadicatorDataRepository
+            .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                any(SynopticalTable.class), anyLong(), anyBoolean()))
+        .thenReturn(getLoadicatorData());
+    when(this.restTemplate.postForEntity(
+            anyString(), any(UllageUpdateRequest.class), any(Class.class)))
+        .thenReturn(responseEntity);
+
+    loadablePlanService.updateUllage(request, replyBuilder);
+    assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testUpdateUllage() throws GenericServiceException {
+    LoadableStudy.UpdateUllageRequest request =
+        LoadableStudy.UpdateUllageRequest.newBuilder()
+            .setLoadablePlanStowageDetails(
+                LoadableStudy.LoadablePlanStowageDetails.newBuilder()
+                    .setCorrectedUllage("1")
+                    .setId(1l)
+                    .setTankId(1l)
+                    .setApi("1")
+                    .setTemperature("1")
+                    .setSg("1")
+                    .setIsBallast(true)
+                    .build())
+            .setVesselId(1l)
+            .setUpdateUllageForLoadingPlan(false)
+            .build();
+    LoadableStudy.UpdateUllageReply.Builder replyBuilder =
+        LoadableStudy.UpdateUllageReply.newBuilder();
+    UllageUpdateResponse response = new UllageUpdateResponse();
+    response.setFillingRatio("1");
+    response.setId(1l);
+    response.setCorrectedUllage("1");
+    response.setCorrectionFactor("1");
+    response.setQuantityMt("1");
+
+    ResponseEntity<UllageUpdateResponse> responseEntity =
+        new ResponseEntity<UllageUpdateResponse>(response, HttpStatus.OK);
+
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getLP());
+    when(this.cargoOperationRepository.getOne(anyLong())).thenReturn(getCargoOp());
+    when(loadableStudyPortRotationService.getLastPortRotationId(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), any(CargoOperation.class)))
+        .thenReturn(1l);
+    when(synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            anyLong(), anyString(), anyBoolean()))
+        .thenReturn(Optional.of(getSynopticalTable()));
+    when(synopticalTableLoadicatorDataRepository
+            .findBySynopticalTableAndLoadablePatternIdAndIsActive(
+                any(SynopticalTable.class), anyLong(), anyBoolean()))
+        .thenReturn(getLoadicatorData());
+    when(this.restTemplate.postForEntity(
+            anyString(), any(UllageUpdateRequest.class), any(Class.class)))
+        .thenReturn(responseEntity);
+    when(this.loadablePlanBallastDetailsRepository.getOne(anyLong()))
+        .thenReturn(getLoadablePlanBallastDetails().get(0));
+    when(this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsAndIsActive(
+            any(LoadablePlanBallastDetails.class), anyBoolean()))
+        .thenReturn(getLPSDT().get(0));
+
+    loadablePlanService.updateUllage(request, replyBuilder);
+    assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
+    verify(this.stowageDetailsTempRepository).save(any(LoadablePlanStowageDetailsTemp.class));
+  }
+
+  @Test
+  void testAddLoadablePatternsStowageDetails() {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
+        new ArrayList<>();
+    List<Object> objectArray = new ArrayList<>();
+    Object[] obj = new Object[6];
+    obj[0] = 1l;
+    obj[1] = 1l;
+    obj[2] = 1l;
+    obj[3] = "1";
+    obj[4] = "1";
+    obj[5] = "1";
+    objectArray.add(obj);
+
+    when(stowageDetailsTempRepository.findByLoadablePlanStowageTempDetailsAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(objectArray);
+    when(this.cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getCargoNomination());
+
+    var results =
+        loadablePlanService.addLoadablePatternsStowageDetails(
+            loadablePatternCargoDetails, true, 1l);
+    assertEquals(1l, results.get(0).getId());
+  }
+
+  private List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> getCargoDetailsList() {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
+        new ArrayList<>();
+    LoadablePatternCargoDetails cargoDetails = new LoadablePatternCargoDetails();
+    cargoDetails.setCargoId(1l);
+    cargoDetails.setId(1l);
+    cargoDetails.setTankId(1l);
+    cargoDetails.setCargoNominationId(1l);
+    cargoDetails.setPlannedQuantity(new BigDecimal(1));
+    cargoDetails.setColorCode("1");
+    cargoDetails.setAbbreviation("1");
+    cargoDetails.setColorCode("1");
+    loadablePatternCargoDetails.add(cargoDetails);
+    return loadablePatternCargoDetails;
+  }
+
+  @Test
+  void testAddLoadablePatternsStowageDetailsElse() {
+    when(this.cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(getCargoNomination());
+
+    var results =
+        loadablePlanService.addLoadablePatternsStowageDetails(getCargoDetailsList(), false, 1l);
+    assertEquals(1l, results.get(0).getId());
   }
 
   private List<LoadablePlanComments> getPlanCommentsList() {
@@ -1011,10 +1223,21 @@ public class LoadablePlanServiceTest {
     VesselInfo.VesselDetail vesselDetail =
         VesselInfo.VesselDetail.newBuilder().setName("1").build();
     vesselDetailList.add(vesselDetail);
+    List<VesselInfo.VesselTankDetail> tankDetailList = new ArrayList<>();
+    VesselInfo.VesselTankDetail tankDetail =
+        VesselInfo.VesselTankDetail.newBuilder()
+            .setTankCategoryId(1l)
+            .setFrameNumberFrom("1")
+            .setTankId(1l)
+            .setShortName("1")
+            .setFrameNumberTo("1")
+            .build();
+    tankDetailList.add(tankDetail);
     VesselInfo.VesselReply vesselReply =
         VesselInfo.VesselReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
             .addAllVessels(vesselDetailList)
+            .addAllVesselTanks(tankDetailList)
             .build();
     return vesselReply;
   }
@@ -1085,6 +1308,7 @@ public class LoadablePlanServiceTest {
         new com.cpdss.loadablestudy.entity.LoadableStudy();
     loadableStudy.setId(1L);
     loadableStudy.setVesselXId(1L);
+    loadableStudy.setPlanningTypeXId(1);
     Voyage voyage = new Voyage();
     voyage.setVoyageNo("1");
     VoyageStatus status = new VoyageStatus();
