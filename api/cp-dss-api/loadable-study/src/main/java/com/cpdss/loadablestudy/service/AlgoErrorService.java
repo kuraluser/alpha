@@ -113,6 +113,13 @@ public class AlgoErrorService {
     algoErrors.setAlgoErrorHeading(algoErrorHeading);
     algoErrors.setErrorMessage(error);
     algoErrors.setIsActive(true);
-    algoErrors = algoErrorsRepository.save(algoErrors);
+    algoErrorsRepository.save(algoErrors);
+    if (processId != null) {
+      AlgoErrors processIdMsg = new AlgoErrors();
+      processIdMsg.setAlgoErrorHeading(algoErrorHeading);
+      processIdMsg.setErrorMessage(processId);
+      processIdMsg.setIsActive(true);
+      algoErrorsRepository.save(processIdMsg);
+    }
   }
 }

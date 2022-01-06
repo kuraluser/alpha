@@ -830,7 +830,13 @@ public class DischargeInformationService {
                   .equalsIgnoreCase(AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR)) {
                 algoError.setErrorDetails(error.getErrorMessagesList());
               } else {
-                algoError.setErrorDetails(Arrays.asList(ALGO_CANNOT_PROCESS_MSG));
+                // Second entry is the process ID.
+                algoError.setErrorDetails(
+                    Arrays.asList(
+                        ALGO_CANNOT_PROCESS_MSG,
+                        error.getErrorMessagesCount() > 1
+                            ? String.format("Process ID: %s", error.getErrorMessages(1))
+                            : ""));
               }
               algoErrors.add(algoError);
             });

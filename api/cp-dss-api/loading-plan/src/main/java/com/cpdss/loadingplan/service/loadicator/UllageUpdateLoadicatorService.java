@@ -495,7 +495,9 @@ public class UllageUpdateLoadicatorService {
           processId,
           conditionType);
       loadingPlanAlgoService.saveAlgoInternalError(
-          loadingInformation, conditionType, Lists.newArrayList(e.getResponseBodyAsString()));
+          loadingInformation,
+          conditionType,
+          Lists.newArrayList(e.getResponseBodyAsString(), processId));
       try {
         log.info("Communication side started for ullage update loadicator off With Algo Errors");
         ullageUpdateSaveForCommunication(
@@ -858,7 +860,7 @@ public class UllageUpdateLoadicatorService {
       loadingPlanAlgoService.saveAlgoInternalError(
           loadingInfoOpt.get(),
           request.getConditionType(),
-          Lists.newArrayList(e.getResponseBodyAsString()));
+          Lists.newArrayList(e.getResponseBodyAsString(), request.getProcessId()));
       try {
         log.info(
             "Communication side started for ullage update loadicator on With Algo Internal Errors");

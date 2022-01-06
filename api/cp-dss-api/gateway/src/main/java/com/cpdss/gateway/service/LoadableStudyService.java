@@ -4072,7 +4072,13 @@ public class LoadableStudyService {
         .equalsIgnoreCase(AlgoErrorHeaderConstants.ALGO_INTERNAL_SERVER_ERROR)) {
       error.setErrorDetails(buildErrorMessage(algoError.getErrorMessagesList()));
     } else {
-      error.setErrorDetails(Arrays.asList(ALGO_CANNOT_PROCESS_MSG));
+      // Second entry is the process ID.
+      error.setErrorDetails(
+          Arrays.asList(
+              ALGO_CANNOT_PROCESS_MSG,
+              algoError.getErrorMessagesCount() > 1
+                  ? String.format("Process ID: %s", algoError.getErrorMessages(1))
+                  : ""));
     }
     return error;
   }

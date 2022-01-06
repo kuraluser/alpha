@@ -812,7 +812,9 @@ public class LoadicatorService {
         loadingPlanAlgoService.updateLoadingInfoAlgoStatus(
             loadingInfoOpt.get(), request.getProcessId(), errorOccurredStatusOpt.get());
         loadingPlanAlgoService.saveAlgoInternalError(
-            loadingInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
+            loadingInfoOpt.get(),
+            null,
+            Lists.newArrayList(e.getResponseBodyAsString(), request.getProcessId()));
         try {
           log.info("Communication side started for loadicator on With Algo Errors");
           if (enableCommunication && !env.equals("ship")) {

@@ -82,7 +82,7 @@ public class AlgoErrorServiceTest {
         .thenReturn(Optional.of(new LoadablePattern()));
     when(algoErrorsRepository.save(any(AlgoErrors.class))).thenReturn(new AlgoErrors());
 
-    algoErrorService.saveAlgoInternalServerError(1l, "1", true, "1");
+    algoErrorService.saveAlgoInternalServerError(1l, null, true, "1");
     verify(algoErrorsRepository).save(any(AlgoErrors.class));
   }
 
@@ -92,7 +92,7 @@ public class AlgoErrorServiceTest {
         .thenReturn(Optional.of(new com.cpdss.loadablestudy.entity.LoadableStudy()));
     when(algoErrorsRepository.save(any(AlgoErrors.class))).thenReturn(new AlgoErrors());
 
-    algoErrorService.saveAlgoInternalServerError(1l, "1", false, "1");
+    algoErrorService.saveAlgoInternalServerError(1l, null, false, "1");
     verify(algoErrorsRepository).save(any(AlgoErrors.class));
   }
 }

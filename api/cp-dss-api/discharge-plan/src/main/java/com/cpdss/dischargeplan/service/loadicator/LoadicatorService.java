@@ -772,7 +772,9 @@ public class LoadicatorService {
         dischargePlanAlgoService.updateDischargingInfoAlgoStatus(
             dischargeInfoOpt.get(), request.getProcessId(), errorOccurredStatusOpt.get(), null);
         dischargePlanAlgoService.saveAlgoInternalError(
-            dischargeInfoOpt.get(), null, Lists.newArrayList(e.getResponseBodyAsString()));
+            dischargeInfoOpt.get(),
+            null,
+            Lists.newArrayList(e.getResponseBodyAsString(), request.getProcessId()));
         try {
           log.info("Communication side started for loadicator on With Algo Errors");
           if (enableCommunication && !env.equals("ship")) {
