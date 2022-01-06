@@ -1519,6 +1519,25 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           portDetail.setPortId(port.getPortXId());
                           portDetail.setQuantity(pCargo.getDischargeMT().toString());
                           portDetail.setMode(2L);
+                          // Getting sequence number against each cargo
+                          Optional<CargoNomination> cargoOpt =
+                              cargos.stream()
+                                  .filter(
+                                      item ->
+                                          item.getId()
+                                              .equals(pCargo.getDischargeCargoNominationId()))
+                                  .findFirst();
+                          if (cargoOpt.isPresent()) {
+                            Optional<CargoNominationPortDetails> cargoOperationOpt =
+                                cargoOpt.get().getCargoNominationPortDetails().stream()
+                                    .filter(item -> item.getPortId().equals(port.getPortXId()))
+                                    .findAny();
+                            if (cargoOperationOpt.isPresent()) {
+                              portDetail.setSequenceNo(cargoOperationOpt.get().getSequenceNo());
+                              portDetail.setEmptyMaxNoOfTanks(
+                                  cargoOperationOpt.get().getEmptyMaxNoOfTanks());
+                            }
+                          }
                           cargo.addLoadingPortDetails(portDetail);
                           replyBuilder.addCargoNominations(cargo);
                         });
