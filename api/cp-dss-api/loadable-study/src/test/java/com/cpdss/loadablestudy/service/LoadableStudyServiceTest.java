@@ -85,6 +85,7 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.domain.CargoHistory;
 import com.cpdss.loadablestudy.entity.*;
@@ -260,6 +261,8 @@ class LoadableStudyServiceTest {
 
   @MockBean
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
+
+  @MockBean private LoadableStudyStagingService loadableStudyStagingService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;

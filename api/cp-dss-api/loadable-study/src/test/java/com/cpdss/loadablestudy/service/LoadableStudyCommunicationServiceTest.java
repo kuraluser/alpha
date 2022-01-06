@@ -9,6 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
+import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.ProcessIdentifiers;
@@ -253,6 +254,8 @@ public class LoadableStudyCommunicationServiceTest {
     when(loadablePatternRepository.saveAll(anyList())).thenReturn(Arrays.asList(loadablePattern));
     when(loadableStudyStagingService.getAsEntityJson(any(HashMap.class), any(JsonArray.class)))
         .thenReturn(jsonArray);
+    when(loadableStudyServiceShore.updateCommunicationStatus(anyString(), anyLong()))
+        .thenReturn(new LoadableStudyCommunicationStatus());
 
     loadableStudyCommunicationService.processStagingData(transferStageList, "cloud", "1");
     verify(loadablePlanService)
@@ -325,6 +328,7 @@ public class LoadableStudyCommunicationServiceTest {
             any(LoadableStudy.AlgoReply.Builder.class)))
         .thenReturn(LoadableStudy.AlgoReply.newBuilder());
     when(voyageRepository.findById(anyLong())).thenReturn(Optional.of(new Voyage()));
+    when(voyageRepository.save(any(Voyage.class))).thenReturn(new Voyage());
     when(loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
     when(loadableStudyRepository.save(any(com.cpdss.loadablestudy.entity.LoadableStudy.class)))
         .thenReturn(loadableStudy);
