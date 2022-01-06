@@ -38,10 +38,10 @@ public class LoadingRuleInput extends EntityDoc {
   @Column(name = "type_value")
   private String typeValue;
 
-  private Long version;
-
   // bi-directional many-to-one association to LoadingRule
   @ManyToOne
   @JoinColumn(name = "loading_rule_xid", referencedColumnName = "id")
   private LoadingRule loadingRule;
+
+  @Transient private Long communicationRelatedEntityId;
 }

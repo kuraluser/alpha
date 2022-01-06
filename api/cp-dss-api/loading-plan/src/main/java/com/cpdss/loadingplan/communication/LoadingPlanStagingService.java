@@ -946,6 +946,40 @@ public class LoadingPlanStagingService extends StagingService {
             }
             break;
           }
+        case loading_rules:
+          {
+            String loadingRuleJson = loadingPlanStagingRepository.getLoadingRuleWithLoadingId(Id);
+            if (loadingRuleJson != null) {
+              JsonArray loadingRule = JsonParser.parseString(loadingRuleJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadingRule);
+            }
+            break;
+          }
+        case loading_rule_input:
+          {
+            String loadingRuleInputJson =
+                loadingPlanStagingRepository.getLoadingRuleInputWithLoadingId(Id);
+            if (loadingRuleInputJson != null) {
+              JsonArray loadingRuleInput =
+                  JsonParser.parseString(loadingRuleInputJson).getAsJsonArray();
+              addIntoProcessedList(
+                  array,
+                  object,
+                  processIdentifier,
+                  processId,
+                  processGroupId,
+                  processedList,
+                  loadingRuleInput);
+            }
+            break;
+          }
       }
     }
     return array;

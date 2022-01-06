@@ -5,6 +5,7 @@ import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.loadingplan.utility.LoadingPlanConstants.*;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
@@ -36,6 +37,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -44,7 +46,7 @@ import org.springframework.web.client.ResourceAccessException;
 @Log4j2
 @Service
 @Transactional
-@Scope(value = "prototype")
+@Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class LoadingPlanCommunicationService {
 
   @Value("${cpdss.build.env}")
@@ -53,6 +55,7 @@ public class LoadingPlanCommunicationService {
   @Value("${loadingplan.communication.timelimit}")
   private Long timeLimit;
 
+  // region Autowired
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
   @Autowired private LoadingInformationRepository loadingInformationRepository;
 
@@ -104,15 +107,6 @@ public class LoadingPlanCommunicationService {
 
   @Autowired private BillOfLandingRepository billOfLandingRepository;
 
-  @GrpcClient("vesselInfoService")
-  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
-
-  @GrpcClient("envoyReaderService")
-  private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
-
-  @GrpcClient("envoyWriterService")
-  private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
-
   @Autowired private StageOffsetRepository stageOffsetRepository;
   @Autowired private StageDurationRepository stageDurationRepository;
   @Autowired private LoadingInformationStatusRepository loadingInfoStatusRepository;
@@ -132,10 +126,79 @@ public class LoadingPlanCommunicationService {
   @Autowired
   private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
 
+  @Autowired private LoadingRuleRepository loadingRuleRepository;
+  @Autowired private LoadingRuleInputRepository loadingRuleInputRepository;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("envoyReaderService")
+  private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
+
+  @GrpcClient("envoyWriterService")
+  private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
+
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
 
+  // endregion
+
+  HashMap<String, Long> idMap = new HashMap<>();
+  LoadingInformation loadingInformation = null;
+  StageOffset stageOffset = null;
+  StageDuration stageDuration = null;
+  LoadingInformationStatus loadingInformationStatus = null;
+  LoadingInformationStatus arrivalStatus = null;
+  LoadingInformationStatus departureStatus = null;
+  List<CargoToppingOffSequence> cargoToppingOffSequences = null;
+  List<LoadingBerthDetail> loadingBerthDetails = null;
+  List<LoadingDelay> loadingDelays = null;
+  List<LoadingDelayReason> loadingDelayReasons = null;
+  List<LoadingMachineryInUse> loadingMachineryInUses = null;
+  VoyageActivate voyageActivate = null;
+  List<LoadingSequence> loadingSequencesList = null;
+  List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList = null;
+  List<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamList = null;
+  List<PortLoadingPlanRobDetails> portLoadingPlanRobDetailsList = null;
+  List<LoadingPlanBallastDetails> loadingPlanBallastDetailsList = null;
+  List<LoadingPlanRobDetails> loadingPlanRobDetailsList = null;
+  List<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetailsList = null;
+  List<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetailsList = null;
+  List<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetailsList = null;
+  List<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetailsList = null;
+  List<LoadingPlanStowageDetails> loadingPlanStowageDetailsList = null;
+  List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParametersList = null;
+  List<LoadingPlanStabilityParameters> loadingPlanStabilityParametersList = null;
+  List<BallastOperation> ballastOperationList = null;
+  List<EductionOperation> eductionOperationList = null;
+  List<CargoLoadingRate> cargoLoadingRateList = null;
+  List<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsList = null;
+  List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList = null;
+  List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
+  List<BillOfLanding> billOfLandingList = null;
+  PyUser pyUser = null;
+  String loadablePattern = null;
+  String loadicatorDataForSynoptical = null;
+  String jsonData = null;
+  String synopticalData = null;
+  String loadablePlanStowageBallastDetailsData = null;
+  String loadablePatternCargoDetailsData = null;
+  String loadablePlanComminglePortwiseDetailsData = null;
+  String onBoardQuantityData = null;
+  String onHandQuantityData = null;
+  String loadableStudyPortRotationData = null;
+  List<PortTideDetail> portTideDetailList = null;
+  List<AlgoErrorHeading> algoErrorHeadings = null;
+  List<AlgoErrors> algoErrors = null;
+  List<LoadingInstruction> loadingInstructions = null;
+  LoadingInformation loadingInfoError = null;
+  LoadingInformationAlgoStatus loadingInformationAlgoStatus = null;
+  String current_table_name = "";
+  Integer arrivalDeparture = null;
+  List<LoadingRule> loadingRules = null;
+  List<LoadingRuleInput> loadingRuleInputs = null;
+  // region Communication get data
   public void getDataFromCommunication(
       Map<String, String> taskReqParams, EnumSet<MessageTypes> messageTypesEnum)
       throws GenericServiceException {
@@ -165,7 +228,9 @@ public class LoadingPlanCommunicationService {
       }
     }
   }
+  // endregion
 
+  // region Stage table save
   private void saveLoadingPlanIntoStagingTable(EnvoyReader.EnvoyReaderResultReply erReply) {
     try {
       String jsonResult = erReply.getPatternResultJson();
@@ -180,7 +245,9 @@ public class LoadingPlanCommunicationService {
       log.error("Exception when save into the Loadingplan datatransfer table  ", e);
     }
   }
+  // endregion
 
+  // region Results From Envoy Reader
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReader(
       Map<String, String> taskReqParams, String messageType) {
     log.info("Inside getResultFromEnvoyReaderwith messageType:{}", messageType);
@@ -191,7 +258,9 @@ public class LoadingPlanCommunicationService {
     request.setShipId(taskReqParams.get("ShipId"));
     return this.envoyReaderGrpcService.getResultFromCommServer(request.build());
   }
+  // endregion
 
+  // region pass reguest payload to Envoy writer
   public EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
       String requestJson, Long VesselId, String messageType) throws GenericServiceException {
     VesselInfo.VesselDetail vesselReply = this.getVesselDetailsForEnvoy(VesselId);
@@ -203,7 +272,9 @@ public class LoadingPlanCommunicationService {
     writerRequest.setImoNumber(vesselReply.getImoNumber());
     return this.envoyWriterService.getCommunicationServer(writerRequest.build());
   }
+  // endregion
 
+  // region get vesseel details from envoy
   public VesselInfo.VesselDetail getVesselDetailsForEnvoy(Long vesselId)
       throws GenericServiceException {
     VesselInfo.VesselIdRequest replyBuilder =
@@ -218,7 +289,9 @@ public class LoadingPlanCommunicationService {
     }
     return vesselResponse.getVesselDetail();
   }
+  // endregion
 
+  // region Get Loading plan stage
   public void getLoadingPlanStagingData(String status, String env, String taskName)
       throws GenericServiceException {
     log.info("Inside getLoadingPlanStagingData for env:{} and status:{}", env, status);
@@ -239,7 +312,9 @@ public class LoadingPlanCommunicationService {
       getStagingData(dataTransferStages, env, retryStatus);
     }
   }
+  // endregion
 
+  // region Get Loading plan stage
   public void getUllageUpdateStagingData(String status, String env, String taskName)
       throws GenericServiceException {
     log.info("Inside getUllageUpdateStagingData for env:{} and status:{}", env, status);
@@ -260,7 +335,9 @@ public class LoadingPlanCommunicationService {
       getStagingData(dataTransferStages, env, retryStatus);
     }
   }
+  // endregion
 
+  // region get retry status
   private String getRetryStatus(String status) {
     String retryStatus = StagingStatus.RETRY.getStatus();
     if (status.equals(retryStatus)) {
@@ -268,7 +345,9 @@ public class LoadingPlanCommunicationService {
     }
     return retryStatus;
   }
+  // endregion
 
+  // region get data transfer with status
   private List<DataTransferStage> getDataTransferWithStatus(String status) {
     List<DataTransferStage> dataTransferStagesWithStatus = null;
     if (status.equals(StagingStatus.IN_PROGRESS.getStatus())) {
@@ -280,7 +359,9 @@ public class LoadingPlanCommunicationService {
     }
     return dataTransferStagesWithStatus;
   }
+  // endregion
 
+  // region save data to tables from stage table
   public void getStagingData(
       List<DataTransferStage> dataTransferStages, String env, String retryStatus)
       throws GenericServiceException {
@@ -289,69 +370,16 @@ public class LoadingPlanCommunicationService {
         dataTransferStages.stream().collect(Collectors.groupingBy(DataTransferStage::getProcessId));
     log.info("processId group:" + dataTransferByProcessId);
     for (Map.Entry<String, List<DataTransferStage>> entry : dataTransferByProcessId.entrySet()) {
-      HashMap<String, Long> idMap = new HashMap<>();
+      // Resetting all the global variables
+      clear();
       String processId = entry.getKey();
-      LoadingInformation loadingInformation = null;
-      StageOffset stageOffset = null;
-      StageDuration stageDuration = null;
-      LoadingInformationStatus loadingInformationStatus = null;
-      LoadingInformationStatus arrivalStatus = null;
-      LoadingInformationStatus departureStatus = null;
-      // loading plan tables
-      List<CargoToppingOffSequence> cargoToppingOffSequences = null;
-      List<LoadingBerthDetail> loadingBerthDetails = null;
-      List<LoadingDelay> loadingDelays = null;
-      List<LoadingDelayReason> loadingDelayReasons = null;
-      List<LoadingMachineryInUse> loadingMachineryInUses = null;
-      VoyageActivate voyageActivate = null;
-      // Pattern save tablesloadingPlanPortWiseDetailsList
-      List<LoadingSequence> loadingSequencesList = null;
-      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList = null;
-      List<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamList = null;
-      List<PortLoadingPlanRobDetails> portLoadingPlanRobDetailsList = null;
-      List<LoadingPlanBallastDetails> loadingPlanBallastDetailsList = null;
-      List<LoadingPlanRobDetails> loadingPlanRobDetailsList = null;
-      List<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetailsList = null;
-      List<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetailsList = null;
-      List<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetailsList = null;
-      List<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetailsList = null;
-      List<LoadingPlanStowageDetails> loadingPlanStowageDetailsList = null;
-      List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParametersList = null;
-      List<LoadingPlanStabilityParameters> loadingPlanStabilityParametersList = null;
-      List<BallastOperation> ballastOperationList = null;
-      List<EductionOperation> eductionOperationList = null;
-      List<CargoLoadingRate> cargoLoadingRateList = null;
-      List<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsList = null;
-      // Ullage update tables
-      List<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetailsList = null;
-      List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList = null;
-      List<BillOfLanding> billOfLandingList = null;
-      PyUser pyUser = null;
-      String loadablePattern = null;
-      String loadicatorDataForSynoptical = null;
-      String jsonData = null;
-      String synopticalData = null;
-      String loadablePlanStowageBallastDetailsData = null;
-      String loadablePatternCargoDetailsData = null;
-      String loadablePlanComminglePortwiseDetailsData = null;
-      String onBoardQuantityData = null;
-      String onHandQuantityData = null;
-      String loadableStudyPortRotationData = null;
-      List<PortTideDetail> portTideDetailList = null;
-      List<AlgoErrorHeading> algoErrorHeadings = null;
-      List<AlgoErrors> algoErrors = null;
-      List<LoadingInstruction> loadingInstructions = null;
-      LoadingInformation loadingInfoError = null;
-      LoadingInformationAlgoStatus loadingInformationAlgoStatus = null;
       loadingPlanStagingService.updateStatusForProcessId(
           processId, StagingStatus.IN_PROGRESS.getStatus());
       log.info(
           "updated status to in_progress for processId:{} and time:{}",
           processId,
           LocalDateTime.now());
-      String processGroupId = null;
-      Integer arrivalDeparture = null;
-      processGroupId = entry.getValue().get(0).getProcessGroupId();
+      String processGroupId = entry.getValue().get(0).getProcessGroupId();
       for (DataTransferStage dataTransferStage : entry.getValue()) {
         Type listType = null;
         String dataTransferString = dataTransferStage.getData();
@@ -985,1286 +1013,94 @@ public class LoadingPlanCommunicationService {
               idMap.put(LoadingPlanTables.ON_HAND_QUANTITY.getTable(), dataTransferStage.getId());
               break;
             }
+          case loading_rules:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingRule());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(), map, null);
+              listType = new TypeToken<ArrayList<LoadingRule>>() {}.getType();
+              loadingRules = new Gson().fromJson(jsonArray, listType);
+              idMap.put(LoadingPlanTables.LOADING_RULES.getTable(), dataTransferStage.getId());
+              break;
+            }
+          case loading_rule_input:
+            {
+              HashMap<String, String> map =
+                  loadingPlanStagingService.getAttributeMapping(new LoadingRuleInput());
+              JsonArray jsonArray =
+                  removeJsonFields(
+                      JsonParser.parseString(dataTransferString).getAsJsonArray(),
+                      map,
+                      "loading_rule_xid");
+              listType = new TypeToken<ArrayList<LoadingRuleInput>>() {}.getType();
+              loadingRuleInputs = new Gson().fromJson(jsonArray, listType);
+              idMap.put(LoadingPlanTables.LOADING_RULE_INPUT.getTable(), dataTransferStage.getId());
+              break;
+            }
         }
       }
       LoadingInformation loadingInfo = null;
-      if (loadingInformation != null) {
-        try {
-          if (stageOffset != null) {
-            Optional<StageOffset> defaultOffsetOpt =
-                stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
-            if (defaultOffsetOpt.isPresent()) {
-              loadingInformation.setStageOffset(defaultOffsetOpt.get());
-            }
-          }
-          if (stageDuration != null) {
-            Optional<StageDuration> defaultDurationOpt =
-                stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
-            if (defaultDurationOpt.isPresent()) {
-              loadingInformation.setStageDuration(defaultDurationOpt.get());
-            }
-          }
-          if (loadingInformationStatus != null) {
-            Optional<LoadingInformationStatus> informationStatusOpt =
-                loadingInfoStatusRepository.findByIdAndIsActive(
-                    loadingInformationStatus.getId(), true);
-            if (informationStatusOpt.isPresent()) {
-              loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
-            }
-          }
-
-          if (arrivalStatus != null) {
-            Optional<LoadingInformationStatus> arrivalStatusOpt =
-                loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
-            if (arrivalStatusOpt.isPresent()) {
-              loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
-            }
-          }
-          if (departureStatus != null) {
-            Optional<LoadingInformationStatus> departureStatusOpt =
-                loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
-            if (departureStatusOpt.isPresent()) {
-              loadingInformation.setDepartureStatus(departureStatusOpt.get());
-            }
-          }
-          Optional<LoadingInformation> loadingInfoObj =
-              loadingInformationCommunicationRepository.findById(loadingInformation.getId());
-          setEntityDocFields(loadingInformation, loadingInfoObj);
-          loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
-          log.info("LoadingInformation saved with id:" + loadingInfo.getId());
-        } catch (ResourceAccessException e) {
-          log.info("ResourceAccessException for LOADING_INFORMATION" + e.getMessage());
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_INFORMATION.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_INFORMATION.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null) {
-        if (cargoToppingOffSequences != null) {
-          try {
-            for (CargoToppingOffSequence cargoToppingOffSequence : cargoToppingOffSequences) {
-              Optional<CargoToppingOffSequence> cargoToppOffSeqObj =
-                  cargoToppingOffSequenceRepository.findById(cargoToppingOffSequence.getId());
-              setEntityDocFields(cargoToppingOffSequence, cargoToppOffSeqObj);
-              cargoToppingOffSequence.setLoadingInformation(loadingInfo);
-            }
-            cargoToppingOffSequenceRepository.saveAll(cargoToppingOffSequences);
-            log.info("CargoToppingOffSequence saved :" + cargoToppingOffSequences);
-          } catch (ResourceAccessException e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.CARGO_TOPPING_OFF_SEQUENCE.getTable()),
-                processId,
-                retryStatus,
-                e.getMessage());
-          } catch (Exception e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.CARGO_TOPPING_OFF_SEQUENCE.getTable()),
-                processId,
-                StagingStatus.FAILED.getStatus(),
-                e.getMessage());
-          }
-        }
-        if (loadingBerthDetails != null) {
-          try {
-            for (LoadingBerthDetail loadingBerthDetail : loadingBerthDetails) {
-              Optional<LoadingBerthDetail> loadingBerthDetailObj =
-                  loadingBerthDetailsRepository.findById(loadingBerthDetail.getId());
-              setEntityDocFields(loadingBerthDetail, loadingBerthDetailObj);
-              loadingBerthDetail.setLoadingInformation(loadingInfo);
-            }
-            loadingBerthDetailsRepository.saveAll(loadingBerthDetails);
-            log.info("LoadingBerthDetail saved :" + loadingBerthDetails);
-          } catch (ResourceAccessException e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_BERTH_DETAILS.getTable()),
-                processId,
-                retryStatus,
-                e.getMessage());
-          } catch (Exception e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_BERTH_DETAILS.getTable()),
-                processId,
-                StagingStatus.FAILED.getStatus(),
-                e.getMessage());
-          }
-        }
-        if (loadingDelays != null) {
-          try {
-            for (LoadingDelay loadingDelay : loadingDelays) {
-              Optional<LoadingDelay> loadingDelayObj =
-                  loadingDelayRepository.findById(loadingDelay.getId());
-              setEntityDocFields(loadingDelay, loadingDelayObj);
-              loadingDelay.setLoadingInformation(loadingInfo);
-            }
-            loadingDelayRepository.saveAll(loadingDelays);
-            log.info("LoadingDelay saved :" + loadingDelays);
-          } catch (ResourceAccessException e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_DELAY.getTable()),
-                processId,
-                retryStatus,
-                e.getMessage());
-          } catch (Exception e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_DELAY.getTable()),
-                processId,
-                StagingStatus.FAILED.getStatus(),
-                e.getMessage());
-          }
-        }
-
-        if (loadingDelayReasons != null) {
-          try {
-            for (LoadingDelayReason loadingDelayReason : loadingDelayReasons) {
-              Optional<LoadingDelayReason> loadingDelayReasonObj =
-                  loadingDelayReasonRepository.findById(loadingDelayReason.getId());
-              setEntityDocFields(loadingDelayReason, loadingDelayReasonObj);
-              // Set Loading Delay details
-              loadingDelayReason.setLoadingDelay(
-                  emptyIfNull(loadingDelays).stream()
-                      .filter(
-                          loadingDelay ->
-                              loadingDelay
-                                  .getId()
-                                  .equals(
-                                      loadingDelayReason
-                                          .getCommunicationRelatedIdMap()
-                                          .get("loading_delay_xid")))
-                      .findFirst()
-                      .orElse(null));
-              Long reasonForDelay =
-                  loadingDelayReason.getCommunicationRelatedIdMap().get("reason_xid");
-              if (reasonForDelay != null) {
-                Optional<ReasonForDelay> reasonForDelayOpt =
-                    reasonForDelayRepository.findByIdAndIsActiveTrue(reasonForDelay);
-                if (reasonForDelayOpt.isPresent()) {
-                  loadingDelayReason.setReasonForDelay(reasonForDelayOpt.get());
-                }
-              }
-            }
-            loadingDelayReasonRepository.saveAll(loadingDelayReasons);
-            log.info("LoadingDelayReason saved :" + loadingDelayReasons);
-          } catch (ResourceAccessException e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_DELAY_REASON.getTable()),
-                processId,
-                retryStatus,
-                e.getMessage());
-          } catch (Exception e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_DELAY_REASON.getTable()),
-                processId,
-                StagingStatus.FAILED.getStatus(),
-                e.getMessage());
-          }
-        }
-
-        if (loadingMachineryInUses != null) {
-          try {
-            for (LoadingMachineryInUse loadingMachineryInUse : loadingMachineryInUses) {
-              Optional<LoadingMachineryInUse> loadingMachineryInUseObj =
-                  loadingMachineryInUseRepository.findById(loadingMachineryInUse.getId());
-              setEntityDocFields(loadingMachineryInUse, loadingMachineryInUseObj);
-              loadingMachineryInUse.setLoadingInformation(loadingInfo);
-            }
-            loadingMachineryInUseRepository.saveAll(loadingMachineryInUses);
-            log.info("LoadingMachineryInUse saved :" + loadingMachineryInUses);
-          } catch (ResourceAccessException e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_MACHINARY_IN_USE.getTable()),
-                processId,
-                retryStatus,
-                e.getMessage());
-          } catch (Exception e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_MACHINARY_IN_USE.getTable()),
-                processId,
-                StagingStatus.FAILED.getStatus(),
-                e.getMessage());
-          }
-        }
-        if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
-          try {
-            for (LoadingSequence loadingSequence : loadingSequencesList) {
-              Optional<LoadingSequence> loadingSequenceObj =
-                  loadingSequenceRepository.findById(loadingSequence.getId());
-              setEntityDocFields(loadingSequence, loadingSequenceObj);
-              loadingSequence.setLoadingInformation(loadingInfo);
-            }
-            loadingSequenceRepository.saveAll(loadingSequencesList);
-            log.info("Saved LoadingSequence:" + loadingSequencesList);
-          } catch (ResourceAccessException e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_SEQUENCE.getTable()),
-                processId,
-                retryStatus,
-                e.getMessage());
-          } catch (Exception e) {
-            updateStatusInExceptionCase(
-                idMap.get(LoadingPlanTables.LOADING_SEQUENCE.getTable()),
-                processId,
-                StagingStatus.FAILED.getStatus(),
-                e.getMessage());
-          }
-        }
-      }
-      if (loadingPlanPortWiseDetailsList != null && !loadingPlanPortWiseDetailsList.isEmpty()) {
-        try {
-          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
-            for (LoadingSequence loadingSequence : loadingSequencesList) {
-              for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
-                  loadingPlanPortWiseDetailsList) {
-                if (loadingSequence
-                    .getId()
-                    .equals(
-                        Long.valueOf(
-                            loadingPlanPortWiseDetails.getCommunicationRelatedEntityId()))) {
-                  Optional<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailObj =
-                      loadingPlanPortWiseDetailsRepository.findById(
-                          loadingPlanPortWiseDetails.getId());
-                  setEntityDocFields(loadingPlanPortWiseDetails, loadingPlanPortWiseDetailObj);
-                  loadingPlanPortWiseDetails.setLoadingSequence(loadingSequence);
-                }
-              }
-            }
-            loadingPlanPortWiseDetailsRepository.saveAll(loadingPlanPortWiseDetailsList);
-            log.info("Saved LoadingPlanPortWiseDetails: " + loadingPlanPortWiseDetailsList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-
-      if (loadingInfo != null
-          && portLoadingPlanStabilityParamList != null
-          && !portLoadingPlanStabilityParamList.isEmpty()) {
-        try {
-          for (PortLoadingPlanStabilityParameters portLoadingPlanStabilityParameters :
-              portLoadingPlanStabilityParamList) {
-            Optional<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamObj =
-                portLoadingPlanStabilityParametersRepository.findById(
-                    portLoadingPlanStabilityParameters.getId());
-            setEntityDocFields(
-                portLoadingPlanStabilityParameters, portLoadingPlanStabilityParamObj);
-            portLoadingPlanStabilityParameters.setLoadingInformation(loadingInfo);
-          }
-          portLoadingPlanStabilityParametersRepository.saveAll(portLoadingPlanStabilityParamList);
-          log.info(
-              "Saved PortLoadingPlanStabilityParameters: " + portLoadingPlanStabilityParamList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && portLoadingPlanRobDetailsList != null
-          && !portLoadingPlanRobDetailsList.isEmpty()) {
-        try {
-          for (PortLoadingPlanRobDetails portLoadingPlanRobDetails :
-              portLoadingPlanRobDetailsList) {
-            Optional<PortLoadingPlanRobDetails> portLoadingPlanRobDetaObj =
-                portLoadingPlanRobDetailsRepository.findById(portLoadingPlanRobDetails.getId());
-            setEntityDocFields(portLoadingPlanRobDetails, portLoadingPlanRobDetaObj);
-            portLoadingPlanRobDetails.setLoadingInformation(loadingInfo.getId());
-          }
-          portLoadingPlanRobDetailsRepository.saveAll(portLoadingPlanRobDetailsList);
-          log.info("Saved PortLoadingPlanRobDetails: " + portLoadingPlanRobDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingPlanBallastDetailsList != null && !loadingPlanBallastDetailsList.isEmpty()) {
-        try {
-          if (loadingPlanPortWiseDetailsList != null && !loadingPlanPortWiseDetailsList.isEmpty()) {
-            for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
-                loadingPlanPortWiseDetailsList) {
-              for (LoadingPlanBallastDetails loadingPlanBallastDetails :
-                  loadingPlanBallastDetailsList) {
-                if (loadingPlanPortWiseDetails
-                    .getId()
-                    .equals(
-                        Long.valueOf(
-                            loadingPlanBallastDetails.getCommunicationRelatedEntityId()))) {
-                  Optional<LoadingPlanBallastDetails> loadingPlanBallastDetaObj =
-                      loadingPlanBallastDetailsRepository.findById(
-                          loadingPlanBallastDetails.getId());
-                  setEntityDocFields(loadingPlanBallastDetails, loadingPlanBallastDetaObj);
-                  loadingPlanBallastDetails.setLoadingPlanPortWiseDetails(
-                      loadingPlanPortWiseDetails);
-                }
-              }
-            }
-            loadingPlanBallastDetailsRepository.saveAll(loadingPlanBallastDetailsList);
-            log.info("Saved LoadingPlanBallastDetails:" + loadingPlanBallastDetailsList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingPlanRobDetailsList != null && !loadingPlanRobDetailsList.isEmpty()) {
-        try {
-          if (loadingPlanPortWiseDetailsList != null && !loadingPlanPortWiseDetailsList.isEmpty()) {
-            for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
-                loadingPlanPortWiseDetailsList) {
-              for (LoadingPlanRobDetails loadingPlanRobDetails : loadingPlanRobDetailsList) {
-                if (loadingPlanPortWiseDetails
-                    .getId()
-                    .equals(
-                        Long.valueOf(loadingPlanRobDetails.getCommunicationRelatedEntityId()))) {
-                  Optional<LoadingPlanRobDetails> loadingPlanRobDetaObj =
-                      loadingPlanRobDetailsRepository.findById(loadingPlanRobDetails.getId());
-                  setEntityDocFields(loadingPlanRobDetails, loadingPlanRobDetaObj);
-                  loadingPlanRobDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
-                }
-              }
-            }
-            loadingPlanRobDetailsRepository.saveAll(loadingPlanRobDetailsList);
-            log.info("Saved LoadingPlanRobDetails:" + loadingPlanRobDetailsList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && portLoadingPlanBallastDetailsList != null
-          && !portLoadingPlanBallastDetailsList.isEmpty()) {
-        try {
-          for (PortLoadingPlanBallastDetails portLoadingPlanBallastDetails :
-              portLoadingPlanBallastDetailsList) {
-            Optional<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetaObj =
-                portLoadingPlanBallastDetailsRepository.findById(
-                    portLoadingPlanBallastDetails.getId());
-            setEntityDocFields(portLoadingPlanBallastDetails, portLoadingPlanBallastDetaObj);
-            portLoadingPlanBallastDetails.setLoadingInformation(loadingInfo);
-          }
-          portLoadingPlanBallastDetailsRepository.saveAll(portLoadingPlanBallastDetailsList);
-          log.info("Saved PortLoadingPlanBallastDetails:" + portLoadingPlanBallastDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && portLoadingPlanBallastTempDetailsList != null
-          && !portLoadingPlanBallastTempDetailsList.isEmpty()) {
-        try {
-          arrivalDeparture = portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
-          for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
-              portLoadingPlanBallastTempDetailsList) {
-            Optional<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetaObj =
-                portLoadingPlanBallastTempDetailsRepository.findById(
-                    portLoadingPlanBallastTempDetails.getId());
-            setEntityDocFields(
-                portLoadingPlanBallastTempDetails, portLoadingPlanBallastTempDetaObj);
-            portLoadingPlanBallastTempDetails.setLoadingInformation(loadingInfo.getId());
-          }
-          portLoadingPlanBallastTempDetailsRepository.saveAll(
-              portLoadingPlanBallastTempDetailsList);
-          log.info(
-              "Saved PortLoadingPlanBallastTempDetails: " + portLoadingPlanBallastTempDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(
-                  LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(
-                  LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && portLoadingPlanStowageDetailsList != null
-          && !portLoadingPlanStowageDetailsList.isEmpty()) {
-        try {
-          for (PortLoadingPlanStowageDetails portLoadingPlanStowageDetails :
-              portLoadingPlanStowageDetailsList) {
-            Optional<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetaObj =
-                portLoadingPlanStowageDetailsRepository.findById(
-                    portLoadingPlanStowageDetails.getId());
-            setEntityDocFields(portLoadingPlanStowageDetails, portLoadingPlanStowageDetaObj);
-            portLoadingPlanStowageDetails.setLoadingInformation(loadingInfo);
-          }
-          portLoadingPlanStowageDetailsRepository.saveAll(portLoadingPlanStowageDetailsList);
-          log.info("Saved PortLoadingPlanStowageDetails:" + portLoadingPlanStowageDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && portLoadingPlanStowageTempDetailsList != null
-          && !portLoadingPlanStowageTempDetailsList.isEmpty()) {
-        try {
-          for (PortLoadingPlanStowageTempDetails portLoadingPlanStowageTempDetails :
-              portLoadingPlanStowageTempDetailsList) {
-            Optional<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetaObj =
-                portLoadingPlanStowageTempDetailsRepository.findById(
-                    portLoadingPlanStowageTempDetails.getId());
-            setEntityDocFields(
-                portLoadingPlanStowageTempDetails, portLoadingPlanStowageTempDetaObj);
-            portLoadingPlanStowageTempDetails.setLoadingInformation(loadingInfo.getId());
-          }
-          portLoadingPlanStowageTempDetailsRepository.saveAll(
-              portLoadingPlanStowageTempDetailsList);
-          log.info(
-              "Saved PortLoadingPlanStowageTempDetails:" + portLoadingPlanStowageTempDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingPlanStowageDetailsList != null && !loadingPlanStowageDetailsList.isEmpty()) {
-        try {
-          if (loadingPlanPortWiseDetailsList != null && !loadingPlanPortWiseDetailsList.isEmpty()) {
-            for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
-                loadingPlanPortWiseDetailsList) {
-              for (LoadingPlanStowageDetails loadingPlanStowageDetails :
-                  loadingPlanStowageDetailsList) {
-                if (loadingPlanPortWiseDetails
-                    .getId()
-                    .equals(
-                        Long.valueOf(
-                            loadingPlanStowageDetails.getCommunicationRelatedEntityId()))) {
-                  Optional<LoadingPlanStowageDetails> loadingPlanStowageDetaObj =
-                      loadingPlanStowageDetailsRepository.findById(
-                          loadingPlanStowageDetails.getId());
-                  setEntityDocFields(loadingPlanStowageDetails, loadingPlanStowageDetaObj);
-                  loadingPlanStowageDetails.setLoadingPlanPortWiseDetails(
-                      loadingPlanPortWiseDetails);
-                }
-              }
-            }
-            loadingPlanStowageDetailsRepository.saveAll(loadingPlanStowageDetailsList);
-            log.info("Saved LoadingPlanStowageDetails:" + loadingPlanStowageDetailsList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && loadingSequenceStabilityParametersList != null
-          && !loadingSequenceStabilityParametersList.isEmpty()) {
-        try {
-          for (LoadingSequenceStabilityParameters loadingSequenceStabilityParameters :
-              loadingSequenceStabilityParametersList) {
-            Optional<LoadingSequenceStabilityParameters> loadingSequenceStabilityParamObj =
-                loadingSequenceStabiltyParametersRepository.findById(
-                    loadingSequenceStabilityParameters.getId());
-            setEntityDocFields(
-                loadingSequenceStabilityParameters, loadingSequenceStabilityParamObj);
-            loadingSequenceStabilityParameters.setLoadingInformation(loadingInfo);
-          }
-          loadingSequenceStabiltyParametersRepository.saveAll(
-              loadingSequenceStabilityParametersList);
-          log.info(
-              "Saved LoadingSequenceStabilityParameters:" + loadingSequenceStabilityParametersList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingPlanStabilityParametersList != null
-          && !loadingPlanStabilityParametersList.isEmpty()) {
-        try {
-          if (loadingPlanPortWiseDetailsList != null && !loadingPlanPortWiseDetailsList.isEmpty()) {
-            for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails :
-                loadingPlanPortWiseDetailsList) {
-              for (LoadingPlanStabilityParameters loadingPlanStabilityParameters :
-                  loadingPlanStabilityParametersList) {
-                if (loadingPlanPortWiseDetails
-                    .getId()
-                    .equals(
-                        Long.valueOf(
-                            loadingPlanStabilityParameters.getCommunicationRelatedEntityId()))) {
-                  Optional<LoadingPlanStabilityParameters> loadingPlanStabilityParamObj =
-                      loadingPlanStabilityParametersRepository.findById(
-                          loadingPlanStabilityParameters.getId());
-                  setEntityDocFields(loadingPlanStabilityParameters, loadingPlanStabilityParamObj);
-                  loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(
-                      loadingPlanPortWiseDetails);
-                }
-              }
-            }
-            loadingPlanStabilityParametersRepository.saveAll(loadingPlanStabilityParametersList);
-            log.info("Saved LoadingPlanStabilityParameters:" + loadingPlanStabilityParametersList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && portLoadingPlanCommingleTempDetailsList != null
-          && !portLoadingPlanCommingleTempDetailsList.isEmpty()) {
-        try {
-          for (PortLoadingPlanCommingleTempDetails portLoadingPlanCommingleTempDetails :
-              portLoadingPlanCommingleTempDetailsList) {
-            Optional<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetaObj =
-                portLoadingPlanCommingleTempDetailsRepository.findById(
-                    portLoadingPlanCommingleTempDetails.getId());
-            setEntityDocFields(
-                portLoadingPlanCommingleTempDetails, portLoadingPlanCommingleTempDetaObj);
-            portLoadingPlanCommingleTempDetails.setLoadingInformation(loadingInfo.getId());
-          }
-          portLoadingPlanCommingleTempDetailsRepository.saveAll(
-              portLoadingPlanCommingleTempDetailsList);
-          log.info(
-              "Saved PortLoadingPlanCommingleTempDetails:"
-                  + portLoadingPlanCommingleTempDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null
-          && portLoadingPlanCommingleDetailsList != null
-          && !portLoadingPlanCommingleDetailsList.isEmpty()) {
-        try {
-          arrivalDeparture = portLoadingPlanCommingleDetailsList.get(0).getConditionType();
-          for (PortLoadingPlanCommingleDetails portLoadingPlanCommingleDetails :
-              portLoadingPlanCommingleDetailsList) {
-            Optional<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetaObj =
-                portLoadingPlanCommingleDetailsRepository.findById(
-                    portLoadingPlanCommingleDetails.getId());
-            setEntityDocFields(portLoadingPlanCommingleDetails, portLoadingPlanCommingleDetaObj);
-            portLoadingPlanCommingleDetails.setLoadingInformation(loadingInfo);
-          }
-          portLoadingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetailsList);
-          log.info("Saved PortLoadingPlanCommingleDetails:" + portLoadingPlanCommingleDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null && billOfLandingList != null && !billOfLandingList.isEmpty()) {
-        try {
-          for (BillOfLanding billOfLanding : billOfLandingList) {
-            Optional<BillOfLanding> BillOfLandingObj =
-                billOfLandingRepository.findById(billOfLanding.getId());
-            setEntityDocFields(billOfLanding, BillOfLandingObj);
-            billOfLanding.setLoadingId(loadingInfo.getId());
-          }
-          billOfLandingRepository.saveAll(billOfLandingList);
-          log.info("Saved BillOfLanding:" + billOfLandingList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.BILL_OF_LADDING.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.BILL_OF_LADDING.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (pyUser != null) {
-        try {
-          pyUserRepository.save(pyUser);
-          log.info("Saved PyUser:" + pyUser);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PYUSER.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.PYUSER.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (voyageActivate != null) {
-        LoadableStudy.VoyageActivateRequest.Builder builder =
-            LoadableStudy.VoyageActivateRequest.newBuilder();
-        builder.setId(voyageActivate.getId());
-        builder.setVoyageStatus(voyageActivate.getVoyageStatus());
-        LoadableStudy.VoyageActivateReply reply = saveActivatedVoyage(builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info(
-              "Voyage activated with status: {} and id:{} ",
-              voyageActivate.getVoyageStatus(),
-              voyageActivate.getId());
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.VOYAGE.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.VOYAGE.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (loadablePattern != null) {
-        LoadableStudy.LoadableStudyPatternCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyPatternCommunicationRequest.newBuilder();
-        log.info("loadablePattern get form staging table:{}", loadablePattern);
-        builder.setDataJson(loadablePattern);
-        LoadableStudy.LoadableStudyPatternCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveLoadablePatternForCommunication(builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("LoadablePattern saved in LoadableStudy");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PATTERN.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PATTERN.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (loadicatorDataForSynoptical != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info(
-            "loadicatorDataForSynoptical get form staging table:{}", loadicatorDataForSynoptical);
-        builder.setDataJson(loadicatorDataForSynoptical);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveLoadicatorDataSynopticalForCommunication(
-                builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("SynopticalTableLoadicatorData saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (ballastOperationList != null && !ballastOperationList.isEmpty()) {
-        try {
-          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
-            for (LoadingSequence loadingSequence : loadingSequencesList) {
-              for (BallastOperation ballastOperation : ballastOperationList) {
-                if (loadingSequence
-                    .getId()
-                    .equals(Long.valueOf(ballastOperation.getCommunicationRelatedEntityId()))) {
-                  Optional<BallastOperation> ballastOperationObj =
-                      ballastOperationRepository.findById(ballastOperation.getId());
-                  setEntityDocFields(ballastOperation, ballastOperationObj);
-                  ballastOperation.setLoadingSequence(loadingSequence);
-                }
-              }
-            }
-            ballastOperationRepository.saveAll(ballastOperationList);
-            log.info("Saved BallastOperation: " + ballastOperationList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.BALLAST_OPERATION.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.BALLAST_OPERATION.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (eductionOperationList != null && !eductionOperationList.isEmpty()) {
-        try {
-          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
-            for (LoadingSequence loadingSequence : loadingSequencesList) {
-              for (EductionOperation eductionOperation : eductionOperationList) {
-                if (loadingSequence
-                    .getId()
-                    .equals(Long.valueOf(eductionOperation.getCommunicationRelatedEntityId()))) {
-                  Optional<EductionOperation> eductionOperationObj =
-                      eductionOperationRepository.findById(eductionOperation.getId());
-                  setEntityDocFields(eductionOperation, eductionOperationObj);
-                  eductionOperation.setLoadingSequence(loadingSequence);
-                }
-              }
-            }
-            eductionOperationRepository.saveAll(eductionOperationList);
-            log.info("Saved EductionOperation: " + eductionOperationList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.EDUCTION_OPERATION.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.EDUCTION_OPERATION.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (cargoLoadingRateList != null && !cargoLoadingRateList.isEmpty()) {
-        try {
-          if (loadingSequencesList != null && !loadingSequencesList.isEmpty()) {
-            for (LoadingSequence loadingSequence : loadingSequencesList) {
-              for (CargoLoadingRate cargoLoadingRate : cargoLoadingRateList) {
-                if (loadingSequence
-                    .getId()
-                    .equals(Long.valueOf(cargoLoadingRate.getCommunicationRelatedEntityId()))) {
-                  Optional<CargoLoadingRate> cargoLoadingRateObj =
-                      cargoLoadingRateRepository.findById(cargoLoadingRate.getId());
-                  setEntityDocFields(cargoLoadingRate, cargoLoadingRateObj);
-                  cargoLoadingRate.setLoadingSequence(loadingSequence);
-                }
-              }
-            }
-            cargoLoadingRateRepository.saveAll(cargoLoadingRateList);
-            log.info("Saved CargoLoadingRate: " + cargoLoadingRateList);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.CARGO_LOADING_RATE.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.CARGO_LOADING_RATE.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (jsonData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info("jsonData from staging table:{}", jsonData);
-        builder.setDataJson(jsonData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveJsonDataForCommunication(builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("JsonData saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.JSON_DATA.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.JSON_DATA.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (loadingInfo != null && portTideDetailList != null && !portTideDetailList.isEmpty()) {
-        try {
-          for (PortTideDetail portTideDetail : portTideDetailList) {
-            Optional<PortTideDetail> portTideDetailObj =
-                portTideDetailsRepository.findById(portTideDetail.getId());
-            setEntityDocFields(portTideDetail, portTideDetailObj);
-            portTideDetail.setLoadingXid(loadingInfo.getId());
-          }
-          portTideDetailsRepository.saveAll(portTideDetailList);
-          log.info("Saved PortTideDetail:" + portTideDetailList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PORT_TIDE_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PORT_TIDE_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (algoErrorHeadings != null && !algoErrorHeadings.isEmpty()) {
-        try {
-          Optional<LoadingInformationStatus> loadingInfoErrorStatus =
-              loadingInfoStatusRepository.findById(
-                  LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
-          loadingInfoError.setLoadingInformationStatus(loadingInfoErrorStatus.get());
-          loadingInfoError = loadingInformationRepository.save(loadingInfoError);
-          for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
-            Optional<AlgoErrorHeading> algoErrorHeadingOptional =
-                algoErrorHeadingRepository.findById(algoErrorHeading.getId());
-            setEntityDocFields(algoErrorHeading, algoErrorHeadingOptional);
-            algoErrorHeading.setLoadingInformation(loadingInfoError);
-          }
-          algoErrorHeadingRepository.saveAll(algoErrorHeadings);
-          log.info("Saved AlgoErrorHeading:" + algoErrorHeadings);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ALGO_ERROR_HEADING.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ALGO_ERROR_HEADING.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (algoErrors != null && !algoErrors.isEmpty()) {
-        try {
-          if (algoErrorHeadings != null && !algoErrorHeadings.isEmpty()) {
-            for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
-              for (AlgoErrors algoError : algoErrors) {
-                if (algoErrorHeading
-                    .getId()
-                    .equals(Long.valueOf(algoError.getCommunicationRelatedEntityId()))) {
-                  Optional<AlgoErrors> algoErrorsOptional =
-                      algoErrorsRepository.findById(algoError.getId());
-                  setEntityDocFields(algoError, algoErrorsOptional);
-                  algoError.setAlgoErrorHeading(algoErrorHeading);
-                }
-              }
-            }
-            algoErrorsRepository.saveAll(algoErrors);
-            log.info("Saved AlgoErrors: " + algoErrors);
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ALGO_ERRORS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ALGO_ERRORS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadingInfo != null && loadingInstructions != null && !loadingInstructions.isEmpty()) {
-        try {
-          for (LoadingInstruction loadingInstruction : loadingInstructions) {
-            Optional<LoadingInstruction> loadingInstructionOptional =
-                loadingInstructionRepository.findById(loadingInstruction.getId());
-            setEntityDocFields(loadingInstruction, loadingInstructionOptional);
-            loadingInstruction.setLoadingXId(loadingInfo.getId());
-          }
-          loadingInstructionRepository.saveAll(loadingInstructions);
-          log.info("Saved LoadingInstruction:" + loadingInstructions);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_INSTRUCTIONS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_INSTRUCTIONS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (synopticalData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info("SynopticalData get from staging table:{}", synopticalData);
-        builder.setDataJson(synopticalData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveSynopticalDataForCommunication(builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("SynopticalData saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.SYNOPTICAL_TABLE.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.SYNOPTICAL_TABLE.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (loadableStudyPortRotationData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info(
-            "LoadableStudyPortRotation get from staging table:{}", loadableStudyPortRotationData);
-        builder.setDataJson(loadableStudyPortRotationData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveLoadableStudyPortRotationDataForCommunication(
-                builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("LoadableStudyPortRotation saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (loadingInformationAlgoStatus != null) {
-        try {
-          Optional<LoadingInformationStatus> loadingInfoStatus =
-              loadingInfoStatusRepository.findById(
-                  loadingInformationAlgoStatus.getCommunicationRelatedEntityId());
-          if (loadingInfoStatus.isPresent()) {
-            LoadingInformationAlgoStatus algoStatus =
-                loadingInformationAlgoStatusRepository.findByLoadingInformationId(
-                    loadingInfo.getId());
-            if (algoStatus != null) {
-              algoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
-              if (loadingInformationAlgoStatus.getProcessId() != null) {
-                algoStatus.setProcessId(loadingInformationAlgoStatus.getProcessId());
-              }
-              loadingInformationAlgoStatusRepository.save(algoStatus);
-              log.info(
-                  "Communication #######  LoadingInformationAlgoStatus saved with id:"
-                      + algoStatus.getId());
-            }
-            loadingInformationAlgoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
-            loadingInformationAlgoStatus.setLoadingInformation(loadingInfo);
-            setEntityDocFields(loadingInformationAlgoStatus, Optional.ofNullable(algoStatus));
-            loadingInformationAlgoStatus =
-                loadingInformationAlgoStatusRepository.save(loadingInformationAlgoStatus);
-            log.info(
-                "Communication #######  LoadingInformationAlgoStatus saved with id:"
-                    + loadingInformationAlgoStatus.getId());
-          }
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (!CollectionUtils.isEmpty(loadingPlanCommingleDetailsList)) {
-        try {
-          for (LoadingPlanCommingleDetails loadingPlanCommingleDetails :
-              loadingPlanCommingleDetailsList) {
-            Optional<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsObj =
-                loadingPlanCommingleDetailsRepository.findById(loadingPlanCommingleDetails.getId());
-            setEntityDocFields(loadingPlanCommingleDetails, loadingPlanCommingleDetailsObj);
-            // Set LoadingPlanPortWiseDetails
-            loadingPlanCommingleDetails.setLoadingPlanPortWiseDetails(
-                emptyIfNull(loadingPlanPortWiseDetailsList).stream()
-                    .filter(
-                        loadingPlanPortWiseDetails ->
-                            loadingPlanPortWiseDetails
-                                .getId()
-                                .equals(
-                                    Long.valueOf(
-                                        loadingPlanCommingleDetails
-                                            .getCommunicationRelatedEntityId())))
-                    .findFirst()
-                    .orElse(null));
-          }
-          loadingPlanCommingleDetailsRepository.saveAll(loadingPlanCommingleDetailsList);
-          log.info("Saved LoadingPlanCommingleDetails:" + loadingPlanCommingleDetailsList);
-        } catch (ResourceAccessException e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_COMMINGLE_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              e.getMessage());
-        } catch (Exception e) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADING_PLAN_COMMINGLE_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              e.getMessage());
-        }
-      }
-      if (loadablePlanStowageBallastDetailsData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info(
-            "LoadablePlanStowageBallastDetails get from staging table:{}",
-            loadablePlanStowageBallastDetailsData);
-        builder.setDataJson(loadablePlanStowageBallastDetailsData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveLoadablePlanStowageBallastDetailsForCommunication(
-                builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("LoadablePlanStowageBallastDetails saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (loadablePatternCargoDetailsData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info(
-            "LoadablePatternCargoDetails get from staging table:{}",
-            loadablePatternCargoDetailsData);
-        builder.setDataJson(loadablePatternCargoDetailsData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveLoadablePatternCargoDetailsForCommunication(
-                builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("LoadablePatternCargoDetails saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (loadablePlanComminglePortwiseDetailsData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info(
-            "LoadablePlanComminglePortwiseDetails get from staging table:{}",
-            loadablePlanComminglePortwiseDetailsData);
-        builder.setDataJson(loadablePlanComminglePortwiseDetailsData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub
-                .saveLoadablePlanCommingleDetailsPortwiseForCommunication(builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("LoadablePlanComminglePortwiseDetails saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (onBoardQuantityData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info("OnBoardQuantity get from staging table:{}", onBoardQuantityData);
-        builder.setDataJson(onBoardQuantityData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveOnBoardQuantityForCommunication(builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("OnBoardQuantity saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ON_BOARD_QUANTITY.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ON_BOARD_QUANTITY.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
-      }
-      if (onHandQuantityData != null) {
-        LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
-            LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-        log.info("OnHandQuantity get from staging table:{}", onHandQuantityData);
-        builder.setDataJson(onHandQuantityData);
-        LoadableStudy.LoadableStudyCommunicationReply reply =
-            loadableStudyServiceBlockingStub.saveOnHandQuantityForCommunication(builder.build());
-        if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-          log.info("OnHandQuantity saved in LoadableStudy ");
-        } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ON_HAND_QUANTITY.getTable()),
-              processId,
-              retryStatus,
-              reply.getResponseStatus().getMessage());
-        } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
-          updateStatusInExceptionCase(
-              idMap.get(LoadingPlanTables.ON_HAND_QUANTITY.getTable()),
-              processId,
-              StagingStatus.FAILED.getStatus(),
-              reply.getResponseStatus().getMessage());
-        }
+      try {
+        loadingInfo = saveLoadingInformation();
+        saveCargoToppingOffSequence(loadingInfo);
+        saveLoadingBerthDetail(loadingInfo);
+        loadingDelays = saveLoadingDelay(loadingInfo);
+        saveLoadingDelayReason(loadingDelays);
+        saveLoadingMachineryInUse(loadingInfo);
+        loadingSequencesList = saveLoadingSequence(loadingInfo);
+        loadingPlanPortWiseDetailsList = saveLoadingPlanPortWiseDetails(loadingSequencesList);
+        savePortLoadingPlanStabilityParameters(loadingInfo);
+        savePortLoadingPlanRobDetails(loadingInfo);
+        saveLoadingPlanBallastDetails(loadingPlanPortWiseDetailsList);
+        saveLoadingPlanRobDetails(loadingPlanPortWiseDetailsList);
+        savePortLoadingPlanBallastDetails(loadingInfo);
+        arrivalDeparture = savePortLoadingPlanBallastTempDetails(loadingInfo);
+        savePortLoadingPlanStowageDetails(loadingInfo);
+        savePortLoadingPlanStowageTempDetails(loadingInfo);
+        saveLoadingPlanStowageDetails(loadingPlanPortWiseDetailsList);
+        saveLoadingSequenceStabilityParameters(loadingInfo);
+        saveLoadingPlanStabilityParameters(loadingPlanPortWiseDetailsList);
+        savePortLoadingPlanCommingleTempDetails(loadingInfo);
+        arrivalDeparture = savePortLoadingPlanCommingleDetails(loadingInfo);
+        saveBillOfLanding(loadingInfo);
+        savePyUser();
+        activateVoyage();
+        saveLoadablePattern();
+        saveLoadicatorDataForSynoptical();
+        saveBallastOperation(loadingSequencesList);
+        saveEductionOperation(loadingSequencesList);
+        saveCargoLoadingRate(loadingSequencesList);
+        saveJsonData();
+        savePortTideDetail(loadingInfo);
+        algoErrorHeadings = saveAlgoErrorHeading();
+        saveAlgoErrors(algoErrorHeadings);
+        saveLoadingInstruction(loadingInfo);
+        saveSynopticalData();
+        saveLoadableStudyPortRotationData();
+        saveLoadingInformationAlgoStatus(loadingInfo);
+        saveLoadingPlanCommingleDetails(loadingPlanPortWiseDetailsList);
+        saveLoadablePlanStowageBallastDetailsData();
+        saveLoadablePatternCargoDetailsData();
+        saveLoadablePlanComminglePortwiseDetailsData();
+        saveOnBoardQuantityData();
+        saveOnHandQuantityData();
+        saveLoadingRule(loadingInfo);
+        saveLoadingRuleInput(loadingRules);
+      } catch (ResourceAccessException e) {
+        log.info("Communication ++++++++++++ Failed to save data for  : " + current_table_name);
+        log.info("Communication ++++++++++++ ResourceAccessException : " + e.getMessage());
+        updateStatusInExceptionCase(
+            idMap.get(current_table_name), processId, retryStatus, e.getMessage());
+      } catch (Exception e) {
+        log.info("Communication ++++++++++++ Failed to save data for  : " + current_table_name);
+        log.info("Communication ++++++++++++ Exception : " + e.getMessage());
+        updateStatusInExceptionCase(
+            idMap.get(current_table_name),
+            processId,
+            StagingStatus.FAILED.getStatus(),
+            e.getMessage());
       }
       loadingPlanStagingService.updateStatusCompletedForProcessId(
           processId, StagingStatus.COMPLETED.getStatus());
@@ -2308,6 +1144,1057 @@ public class LoadingPlanCommunicationService {
     }
   }
 
+  private LoadingInformation saveLoadingInformation() {
+    LoadingInformation loadingInfo = null;
+    current_table_name = LoadingPlanTables.LOADING_INFORMATION.getTable();
+    if (loadingInformation == null) {
+      log.info("Communication ++++ LoadingInformation is empty");
+      return null;
+    }
+    setStageOffset();
+    setStageDuration();
+    setLoadingInformationStatus();
+    setArrivalStatus();
+    setDepartureStatus();
+    Optional<LoadingInformation> loadingInfoObj =
+        loadingInformationCommunicationRepository.findById(loadingInformation.getId());
+    setEntityDocFields(loadingInformation, loadingInfoObj);
+    loadingInfo = loadingInformationCommunicationRepository.save(loadingInformation);
+    log.info("Communication ====  LoadingInformation saved with id:" + loadingInfo.getId());
+    return loadingInfo;
+  }
+
+  private void setDepartureStatus() {
+    if (departureStatus != null) {
+      Optional<LoadingInformationStatus> departureStatusOpt =
+          loadingInfoStatusRepository.findByIdAndIsActive(departureStatus.getId(), true);
+      if (departureStatusOpt.isPresent()) {
+        loadingInformation.setDepartureStatus(departureStatusOpt.get());
+      }
+    }
+  }
+
+  private void setArrivalStatus() {
+    if (arrivalStatus != null) {
+      Optional<LoadingInformationStatus> arrivalStatusOpt =
+          loadingInfoStatusRepository.findByIdAndIsActive(arrivalStatus.getId(), true);
+      if (arrivalStatusOpt.isPresent()) {
+        loadingInformation.setArrivalStatus(arrivalStatusOpt.get());
+      }
+    }
+  }
+
+  private void setLoadingInformationStatus() {
+    if (loadingInformationStatus != null) {
+      Optional<LoadingInformationStatus> informationStatusOpt =
+          loadingInfoStatusRepository.findByIdAndIsActive(loadingInformationStatus.getId(), true);
+      if (informationStatusOpt.isPresent()) {
+        loadingInformation.setLoadingInformationStatus(informationStatusOpt.get());
+      }
+    }
+  }
+
+  private void setStageDuration() {
+    if (stageDuration != null) {
+      Optional<StageDuration> defaultDurationOpt =
+          stageDurationRepository.findByIdAndIsActiveTrue(stageDuration.getId());
+      if (defaultDurationOpt.isPresent()) {
+        loadingInformation.setStageDuration(defaultDurationOpt.get());
+      }
+    }
+  }
+
+  private void setStageOffset() {
+    if (stageOffset != null) {
+      Optional<StageOffset> defaultOffsetOpt =
+          stageOffsetRepository.findByIdAndIsActiveTrue(stageOffset.getId());
+      if (defaultOffsetOpt.isPresent()) {
+        loadingInformation.setStageOffset(defaultOffsetOpt.get());
+      }
+    }
+  }
+
+  private void saveCargoToppingOffSequence(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.CARGO_TOPPING_OFF_SEQUENCE.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(cargoToppingOffSequences)) {
+      log.info("Communication ++++ LoadingInformation or CargoToppingOffSequence is empty");
+      return;
+    }
+    for (CargoToppingOffSequence cargoToppingOffSequence : cargoToppingOffSequences) {
+      Optional<CargoToppingOffSequence> cargoToppOffSeqObj =
+          cargoToppingOffSequenceRepository.findById(cargoToppingOffSequence.getId());
+      setEntityDocFields(cargoToppingOffSequence, cargoToppOffSeqObj);
+      cargoToppingOffSequence.setLoadingInformation(loadingInfo);
+    }
+    cargoToppingOffSequenceRepository.saveAll(cargoToppingOffSequences);
+    log.info("Communication ====  CargoToppingOffSequence saved :" + cargoToppingOffSequences);
+  }
+
+  private void saveLoadingBerthDetail(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_BERTH_DETAILS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(loadingBerthDetails)) {
+      log.info("Communication ++++ LoadingInformation or LoadingBerthDetail is empty");
+      return;
+    }
+    for (LoadingBerthDetail loadingBerthDetail : loadingBerthDetails) {
+      Optional<LoadingBerthDetail> loadingBerthDetailObj =
+          loadingBerthDetailsRepository.findById(loadingBerthDetail.getId());
+      setEntityDocFields(loadingBerthDetail, loadingBerthDetailObj);
+      loadingBerthDetail.setLoadingInformation(loadingInfo);
+    }
+    loadingBerthDetailsRepository.saveAll(loadingBerthDetails);
+    log.info("Communication ==== LoadingBerthDetail saved :" + loadingBerthDetails);
+  }
+
+  private List<LoadingDelay> saveLoadingDelay(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_DELAY.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(loadingDelays)) {
+      log.info("Communication ++++ LoadingInformation or LoadingDelay is empty");
+      return null;
+    }
+    for (LoadingDelay loadingDelay : loadingDelays) {
+      Optional<LoadingDelay> loadingDelayObj =
+          loadingDelayRepository.findById(loadingDelay.getId());
+      setEntityDocFields(loadingDelay, loadingDelayObj);
+      loadingDelay.setLoadingInformation(loadingInfo);
+    }
+    loadingDelays = loadingDelayRepository.saveAll(loadingDelays);
+    log.info("Communication ====  LoadingDelay saved :" + loadingDelays);
+    return loadingDelays;
+  }
+
+  private void saveLoadingDelayReason(List<LoadingDelay> loadingDelays) {
+    current_table_name = LoadingPlanTables.LOADING_DELAY_REASON.getTable();
+    if (CollectionUtils.isEmpty(loadingDelays) || CollectionUtils.isEmpty(loadingDelayReasons)) {
+      log.info("Communication ++++ LoadingDelay or LoadingDelayReason is empty");
+      return;
+    }
+    for (LoadingDelayReason loadingDelayReason : loadingDelayReasons) {
+      Optional<LoadingDelayReason> loadingDelayReasonObj =
+          loadingDelayReasonRepository.findById(loadingDelayReason.getId());
+      setEntityDocFields(loadingDelayReason, loadingDelayReasonObj);
+      // Set Loading Delay details
+      loadingDelayReason.setLoadingDelay(
+          emptyIfNull(loadingDelays).stream()
+              .filter(
+                  loadingDelay ->
+                      loadingDelay
+                          .getId()
+                          .equals(
+                              loadingDelayReason
+                                  .getCommunicationRelatedIdMap()
+                                  .get("loading_delay_xid")))
+              .findFirst()
+              .orElse(null));
+      Long reasonForDelay = loadingDelayReason.getCommunicationRelatedIdMap().get("reason_xid");
+      if (reasonForDelay != null) {
+        Optional<ReasonForDelay> reasonForDelayOpt =
+            reasonForDelayRepository.findByIdAndIsActiveTrue(reasonForDelay);
+        if (reasonForDelayOpt.isPresent()) {
+          loadingDelayReason.setReasonForDelay(reasonForDelayOpt.get());
+        }
+      }
+    }
+    loadingDelayReasonRepository.saveAll(loadingDelayReasons);
+    log.info("Communication ====  LoadingDelayReason saved :" + loadingDelayReasons);
+  }
+
+  private void saveLoadingMachineryInUse(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_MACHINARY_IN_USE.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(loadingMachineryInUses)) {
+      log.info("Communication ++++ LoadingInformation or LoadingMachineryInUse is empty");
+      return;
+    }
+    for (LoadingMachineryInUse loadingMachineryInUse : loadingMachineryInUses) {
+      Optional<LoadingMachineryInUse> loadingMachineryInUseObj =
+          loadingMachineryInUseRepository.findById(loadingMachineryInUse.getId());
+      setEntityDocFields(loadingMachineryInUse, loadingMachineryInUseObj);
+      loadingMachineryInUse.setLoadingInformation(loadingInfo);
+    }
+    loadingMachineryInUseRepository.saveAll(loadingMachineryInUses);
+    log.info("Communication ====  LoadingMachineryInUse saved :" + loadingMachineryInUses);
+  }
+
+  private List<LoadingSequence> saveLoadingSequence(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_SEQUENCE.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(loadingSequencesList)) {
+      log.info("Communication ++++ LoadingInformation or LoadingSequence is empty");
+      return null;
+    }
+    for (LoadingSequence loadingSequence : loadingSequencesList) {
+      Optional<LoadingSequence> loadingSequenceObj =
+          loadingSequenceRepository.findById(loadingSequence.getId());
+      setEntityDocFields(loadingSequence, loadingSequenceObj);
+      loadingSequence.setLoadingInformation(loadingInfo);
+    }
+    loadingSequencesList = loadingSequenceRepository.saveAll(loadingSequencesList);
+    log.info("Communication ====  Saved LoadingSequence:" + loadingSequencesList);
+    return loadingSequencesList;
+  }
+
+  private List<LoadingPlanPortWiseDetails> saveLoadingPlanPortWiseDetails(
+      List<LoadingSequence> loadingSequencesList) {
+    current_table_name = LoadingPlanTables.LOADING_PLAN_PORTWISE_DETAILS.getTable();
+    if (CollectionUtils.isEmpty(loadingSequencesList)
+        || CollectionUtils.isEmpty(loadingPlanPortWiseDetailsList)) {
+      log.info("Communication ++++ LoadingSequence or LoadingPlanPortWiseDetails is empty");
+      return null;
+    }
+    for (LoadingSequence loadingSequence : loadingSequencesList) {
+      for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails : loadingPlanPortWiseDetailsList) {
+        if (loadingSequence
+            .getId()
+            .equals(Long.valueOf(loadingPlanPortWiseDetails.getCommunicationRelatedEntityId()))) {
+          Optional<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailObj =
+              loadingPlanPortWiseDetailsRepository.findById(loadingPlanPortWiseDetails.getId());
+          setEntityDocFields(loadingPlanPortWiseDetails, loadingPlanPortWiseDetailObj);
+          loadingPlanPortWiseDetails.setLoadingSequence(loadingSequence);
+        }
+      }
+    }
+    loadingPlanPortWiseDetailsList =
+        loadingPlanPortWiseDetailsRepository.saveAll(loadingPlanPortWiseDetailsList);
+    log.info(
+        "Communication ====  Saved LoadingPlanPortWiseDetails: " + loadingPlanPortWiseDetailsList);
+    return loadingPlanPortWiseDetailsList;
+  }
+
+  private void savePortLoadingPlanStabilityParameters(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.PORT_LOADING_PLAN_STABILITY_PARAMETERS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanStabilityParamList)) {
+      log.info(
+          "Communication ++++ LoadingInformation or PortLoadingPlanStabilityParameters is empty");
+      return;
+    }
+    for (PortLoadingPlanStabilityParameters portLoadingPlanStabilityParameters :
+        portLoadingPlanStabilityParamList) {
+      Optional<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParamObj =
+          portLoadingPlanStabilityParametersRepository.findById(
+              portLoadingPlanStabilityParameters.getId());
+      setEntityDocFields(portLoadingPlanStabilityParameters, portLoadingPlanStabilityParamObj);
+      portLoadingPlanStabilityParameters.setLoadingInformation(loadingInfo);
+    }
+    portLoadingPlanStabilityParametersRepository.saveAll(portLoadingPlanStabilityParamList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanStabilityParameters: "
+            + portLoadingPlanStabilityParamList);
+  }
+
+  private void savePortLoadingPlanRobDetails(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.PORT_LOADING_PLAN_ROB_DETAILS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanRobDetailsList)) {
+      log.info("Communication ++++ LoadingInformation or PortLoadingPlanRobDetails is empty");
+      return;
+    }
+    for (PortLoadingPlanRobDetails portLoadingPlanRobDetails : portLoadingPlanRobDetailsList) {
+      Optional<PortLoadingPlanRobDetails> portLoadingPlanRobDetaObj =
+          portLoadingPlanRobDetailsRepository.findById(portLoadingPlanRobDetails.getId());
+      setEntityDocFields(portLoadingPlanRobDetails, portLoadingPlanRobDetaObj);
+      portLoadingPlanRobDetails.setLoadingInformation(loadingInfo.getId());
+    }
+    portLoadingPlanRobDetailsRepository.saveAll(portLoadingPlanRobDetailsList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanRobDetails: " + portLoadingPlanRobDetailsList);
+  }
+
+  private void saveLoadingPlanBallastDetails(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList) {
+    current_table_name = LoadingPlanTables.LOADING_PLAN_BALLAST_DETAILS.getTable();
+    if (CollectionUtils.isEmpty(loadingPlanPortWiseDetailsList)
+        || CollectionUtils.isEmpty(loadingPlanBallastDetailsList)) {
+      log.info(
+          "Communication ++++ LoadingPlanPortWiseDetails or LoadingPlanBallastDetails is empty");
+      return;
+    }
+    for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails : loadingPlanPortWiseDetailsList) {
+      for (LoadingPlanBallastDetails loadingPlanBallastDetails : loadingPlanBallastDetailsList) {
+        if (loadingPlanPortWiseDetails
+            .getId()
+            .equals(Long.valueOf(loadingPlanBallastDetails.getCommunicationRelatedEntityId()))) {
+          Optional<LoadingPlanBallastDetails> loadingPlanBallastDetaObj =
+              loadingPlanBallastDetailsRepository.findById(loadingPlanBallastDetails.getId());
+          setEntityDocFields(loadingPlanBallastDetails, loadingPlanBallastDetaObj);
+          loadingPlanBallastDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
+        }
+      }
+    }
+    loadingPlanBallastDetailsRepository.saveAll(loadingPlanBallastDetailsList);
+    log.info(
+        "Communication ====  Saved LoadingPlanBallastDetails:" + loadingPlanBallastDetailsList);
+  }
+
+  private void saveLoadingPlanRobDetails(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList) {
+    current_table_name = LoadingPlanTables.LOADING_PLAN_ROB_DETAILS.getTable();
+    if (CollectionUtils.isEmpty(loadingPlanPortWiseDetailsList)
+        || CollectionUtils.isEmpty(loadingPlanRobDetailsList)) {
+      log.info("Communication ++++ LoadingPlanPortWiseDetails or LoadingPlanRobDetails is empty");
+      return;
+    }
+    for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails : loadingPlanPortWiseDetailsList) {
+      for (LoadingPlanRobDetails loadingPlanRobDetails : loadingPlanRobDetailsList) {
+        if (loadingPlanPortWiseDetails
+            .getId()
+            .equals(Long.valueOf(loadingPlanRobDetails.getCommunicationRelatedEntityId()))) {
+          Optional<LoadingPlanRobDetails> loadingPlanRobDetaObj =
+              loadingPlanRobDetailsRepository.findById(loadingPlanRobDetails.getId());
+          setEntityDocFields(loadingPlanRobDetails, loadingPlanRobDetaObj);
+          loadingPlanRobDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
+        }
+      }
+    }
+    loadingPlanRobDetailsRepository.saveAll(loadingPlanRobDetailsList);
+    log.info("Communication ====  Saved LoadingPlanRobDetails:" + loadingPlanRobDetailsList);
+  }
+
+  private void savePortLoadingPlanBallastDetails(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanBallastDetailsList)) {
+      log.info("Communication ++++ LoadingInformation or PortLoadingPlanBallastDetails is empty");
+      return;
+    }
+    for (PortLoadingPlanBallastDetails portLoadingPlanBallastDetails :
+        portLoadingPlanBallastDetailsList) {
+      Optional<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetaObj =
+          portLoadingPlanBallastDetailsRepository.findById(portLoadingPlanBallastDetails.getId());
+      setEntityDocFields(portLoadingPlanBallastDetails, portLoadingPlanBallastDetaObj);
+      portLoadingPlanBallastDetails.setLoadingInformation(loadingInfo);
+    }
+    portLoadingPlanBallastDetailsRepository.saveAll(portLoadingPlanBallastDetailsList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanBallastDetails:"
+            + portLoadingPlanBallastDetailsList);
+  }
+
+  private Integer savePortLoadingPlanBallastTempDetails(LoadingInformation loadingInfo) {
+    current_table_name =
+        LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanBallastTempDetailsList)) {
+      log.info(
+          "Communication ++++ LoadingInformation or PortLoadingPlanBallastTempDetails is empty");
+      return null;
+    }
+    Integer arrivalDeparture = portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
+    for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
+        portLoadingPlanBallastTempDetailsList) {
+      Optional<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetaObj =
+          portLoadingPlanBallastTempDetailsRepository.findById(
+              portLoadingPlanBallastTempDetails.getId());
+      setEntityDocFields(portLoadingPlanBallastTempDetails, portLoadingPlanBallastTempDetaObj);
+      portLoadingPlanBallastTempDetails.setLoadingInformation(loadingInfo.getId());
+    }
+    portLoadingPlanBallastTempDetailsRepository.saveAll(portLoadingPlanBallastTempDetailsList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanBallastTempDetails: "
+            + portLoadingPlanBallastTempDetailsList);
+    return arrivalDeparture;
+  }
+
+  private void savePortLoadingPlanStowageDetails(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanStowageDetailsList)) {
+      log.info("Communication ++++ LoadingInformation or PortLoadingPlanStowageDetails is empty");
+      return;
+    }
+    for (PortLoadingPlanStowageDetails portLoadingPlanStowageDetails :
+        portLoadingPlanStowageDetailsList) {
+      Optional<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetaObj =
+          portLoadingPlanStowageDetailsRepository.findById(portLoadingPlanStowageDetails.getId());
+      setEntityDocFields(portLoadingPlanStowageDetails, portLoadingPlanStowageDetaObj);
+      portLoadingPlanStowageDetails.setLoadingInformation(loadingInfo);
+    }
+    portLoadingPlanStowageDetailsRepository.saveAll(portLoadingPlanStowageDetailsList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanStowageDetails:"
+            + portLoadingPlanStowageDetailsList);
+  }
+
+  private void savePortLoadingPlanStowageTempDetails(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_DETAILS_TEMP.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanStowageTempDetailsList)) {
+      log.info(
+          "Communication ++++ LoadingInformation or PortLoadingPlanStowageTempDetails is empty");
+      return;
+    }
+    for (PortLoadingPlanStowageTempDetails portLoadingPlanStowageTempDetails :
+        portLoadingPlanStowageTempDetailsList) {
+      Optional<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetaObj =
+          portLoadingPlanStowageTempDetailsRepository.findById(
+              portLoadingPlanStowageTempDetails.getId());
+      setEntityDocFields(portLoadingPlanStowageTempDetails, portLoadingPlanStowageTempDetaObj);
+      portLoadingPlanStowageTempDetails.setLoadingInformation(loadingInfo.getId());
+    }
+    portLoadingPlanStowageTempDetailsRepository.saveAll(portLoadingPlanStowageTempDetailsList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanStowageTempDetails:"
+            + portLoadingPlanStowageTempDetailsList);
+  }
+
+  private void saveLoadingPlanStowageDetails(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList) {
+    current_table_name = LoadingPlanTables.LOADING_PLAN_STOWAGE_DETAILS.getTable();
+    if (CollectionUtils.isEmpty(loadingPlanPortWiseDetailsList)
+        || CollectionUtils.isEmpty(loadingPlanStowageDetailsList)) {
+      log.info(
+          "Communication ++++ LoadingPlanPortWiseDetails or LoadingPlanStowageDetails is empty");
+      return;
+    }
+    for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails : loadingPlanPortWiseDetailsList) {
+      for (LoadingPlanStowageDetails loadingPlanStowageDetails : loadingPlanStowageDetailsList) {
+        if (loadingPlanPortWiseDetails
+            .getId()
+            .equals(Long.valueOf(loadingPlanStowageDetails.getCommunicationRelatedEntityId()))) {
+          Optional<LoadingPlanStowageDetails> loadingPlanStowageDetaObj =
+              loadingPlanStowageDetailsRepository.findById(loadingPlanStowageDetails.getId());
+          setEntityDocFields(loadingPlanStowageDetails, loadingPlanStowageDetaObj);
+          loadingPlanStowageDetails.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
+        }
+      }
+    }
+    loadingPlanStowageDetailsRepository.saveAll(loadingPlanStowageDetailsList);
+    log.info(
+        "Communication ====  Saved LoadingPlanStowageDetails:" + loadingPlanStowageDetailsList);
+  }
+
+  private void saveLoadingSequenceStabilityParameters(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_SEQUENCE_STABILITY_PARAMETERS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(loadingSequenceStabilityParametersList)) {
+      log.info(
+          "Communication ++++ LoadingInformation or LoadingSequenceStabilityParameters is empty");
+      return;
+    }
+    for (LoadingSequenceStabilityParameters loadingSequenceStabilityParameters :
+        loadingSequenceStabilityParametersList) {
+      Optional<LoadingSequenceStabilityParameters> loadingSequenceStabilityParamObj =
+          loadingSequenceStabiltyParametersRepository.findById(
+              loadingSequenceStabilityParameters.getId());
+      setEntityDocFields(loadingSequenceStabilityParameters, loadingSequenceStabilityParamObj);
+      loadingSequenceStabilityParameters.setLoadingInformation(loadingInfo);
+    }
+    loadingSequenceStabiltyParametersRepository.saveAll(loadingSequenceStabilityParametersList);
+    log.info(
+        "Communication ====  Saved LoadingSequenceStabilityParameters:"
+            + loadingSequenceStabilityParametersList);
+  }
+
+  private void saveLoadingPlanStabilityParameters(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList) {
+    current_table_name = LoadingPlanTables.LOADING_PLAN_STABILITY_PARAMETERS.getTable();
+    if (CollectionUtils.isEmpty(loadingPlanPortWiseDetailsList)
+        || CollectionUtils.isEmpty(loadingPlanStabilityParametersList)) {
+      log.info(
+          "Communication ++++ LoadingPlanPortWiseDetails or LoadingPlanStabilityParameters is empty");
+      return;
+    }
+    for (LoadingPlanPortWiseDetails loadingPlanPortWiseDetails : loadingPlanPortWiseDetailsList) {
+      for (LoadingPlanStabilityParameters loadingPlanStabilityParameters :
+          loadingPlanStabilityParametersList) {
+        if (loadingPlanPortWiseDetails
+            .getId()
+            .equals(
+                Long.valueOf(loadingPlanStabilityParameters.getCommunicationRelatedEntityId()))) {
+          Optional<LoadingPlanStabilityParameters> loadingPlanStabilityParamObj =
+              loadingPlanStabilityParametersRepository.findById(
+                  loadingPlanStabilityParameters.getId());
+          setEntityDocFields(loadingPlanStabilityParameters, loadingPlanStabilityParamObj);
+          loadingPlanStabilityParameters.setLoadingPlanPortWiseDetails(loadingPlanPortWiseDetails);
+        }
+      }
+    }
+    loadingPlanStabilityParametersRepository.saveAll(loadingPlanStabilityParametersList);
+    log.info(
+        "Communication ====  Saved LoadingPlanStabilityParameters:"
+            + loadingPlanStabilityParametersList);
+  }
+
+  private void savePortLoadingPlanCommingleTempDetails(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS_TEMP.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanCommingleTempDetailsList)) {
+      log.info(
+          "Communication ++++ LoadingInformation or PortLoadingPlanCommingleTempDetails is empty");
+      return;
+    }
+    for (PortLoadingPlanCommingleTempDetails portLoadingPlanCommingleTempDetails :
+        portLoadingPlanCommingleTempDetailsList) {
+      Optional<PortLoadingPlanCommingleTempDetails> portLoadingPlanCommingleTempDetaObj =
+          portLoadingPlanCommingleTempDetailsRepository.findById(
+              portLoadingPlanCommingleTempDetails.getId());
+      setEntityDocFields(portLoadingPlanCommingleTempDetails, portLoadingPlanCommingleTempDetaObj);
+      portLoadingPlanCommingleTempDetails.setLoadingInformation(loadingInfo.getId());
+    }
+    portLoadingPlanCommingleTempDetailsRepository.saveAll(portLoadingPlanCommingleTempDetailsList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanCommingleTempDetails:"
+            + portLoadingPlanCommingleTempDetailsList);
+  }
+
+  private Integer savePortLoadingPlanCommingleDetails(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanCommingleDetailsList)) {
+      log.info("Communication ++++ LoadingInformation or PortLoadingPlanCommingleDetails is empty");
+      return null;
+    }
+    Integer arrivalDeparture = portLoadingPlanCommingleDetailsList.get(0).getConditionType();
+    for (PortLoadingPlanCommingleDetails portLoadingPlanCommingleDetails :
+        portLoadingPlanCommingleDetailsList) {
+      Optional<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetaObj =
+          portLoadingPlanCommingleDetailsRepository.findById(
+              portLoadingPlanCommingleDetails.getId());
+      setEntityDocFields(portLoadingPlanCommingleDetails, portLoadingPlanCommingleDetaObj);
+      portLoadingPlanCommingleDetails.setLoadingInformation(loadingInfo);
+    }
+    portLoadingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetailsList);
+    log.info(
+        "Communication ====  Saved PortLoadingPlanCommingleDetails:"
+            + portLoadingPlanCommingleDetailsList);
+    return arrivalDeparture;
+  }
+
+  private void saveBillOfLanding(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.BILL_OF_LADDING.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(billOfLandingList)) {
+      log.info("Communication ++++ LoadingInformation or BillOfLanding is empty");
+      return;
+    }
+    for (BillOfLanding billOfLanding : billOfLandingList) {
+      Optional<BillOfLanding> BillOfLandingObj =
+          billOfLandingRepository.findById(billOfLanding.getId());
+      setEntityDocFields(billOfLanding, BillOfLandingObj);
+      billOfLanding.setLoadingId(loadingInfo.getId());
+    }
+    billOfLandingRepository.saveAll(billOfLandingList);
+    log.info("Communication ====  Saved BillOfLanding:" + billOfLandingList);
+  }
+
+  private void savePyUser() {
+    current_table_name = LoadingPlanTables.PYUSER.getTable();
+    if (pyUser == null) {
+      log.info("Communication ++++ pyUser is null");
+      return;
+    }
+    pyUserRepository.save(pyUser);
+    log.info("Communication ====  Saved PyUser:" + pyUser);
+  }
+
+  private void activateVoyage() throws Exception {
+    current_table_name = LoadingPlanTables.VOYAGE.getTable();
+    if (voyageActivate == null) {
+      log.info("Communication ++++ Voyage is null");
+      return;
+    }
+    LoadableStudy.VoyageActivateRequest.Builder builder =
+        LoadableStudy.VoyageActivateRequest.newBuilder();
+    builder.setId(voyageActivate.getId());
+    builder.setVoyageStatus(voyageActivate.getVoyageStatus());
+    LoadableStudy.VoyageActivateReply reply = saveActivatedVoyage(builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info(
+          "Voyage activated with status: {} and id:{} ",
+          voyageActivate.getVoyageStatus(),
+          voyageActivate.getId());
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when Voyage activated");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when Voyage activated");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveLoadablePattern() throws Exception {
+    current_table_name = LoadingPlanTables.LOADABLE_PATTERN.getTable();
+    if (loadablePattern == null) {
+      log.info("Communication ++++ LoadablePattern is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyPatternCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyPatternCommunicationRequest.newBuilder();
+    log.info("loadablePattern get form staging table:{}", loadablePattern);
+    builder.setDataJson(loadablePattern);
+    LoadableStudy.LoadableStudyPatternCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveLoadablePatternForCommunication(builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("LoadablePattern saved in LoadableStudy");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred in save loadablePattern");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred in save loadablePattern");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveLoadicatorDataForSynoptical() throws Exception {
+    current_table_name = LoadingPlanTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable();
+    if (loadicatorDataForSynoptical == null) {
+      log.info("Communication ++++ LoadicatorDataForSynoptical is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info("loadicatorDataForSynoptical get form staging table:{}", loadicatorDataForSynoptical);
+    builder.setDataJson(loadicatorDataForSynoptical);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveLoadicatorDataSynopticalForCommunication(
+            builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("SynopticalTableLoadicatorData saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred in save SynopticalTableLoadicatorData");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred in save SynopticalTableLoadicatorData");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveBallastOperation(List<LoadingSequence> loadingSequencesList) {
+    current_table_name = LoadingPlanTables.BALLAST_OPERATION.getTable();
+    if (CollectionUtils.isEmpty(loadingSequencesList)
+        || CollectionUtils.isEmpty(ballastOperationList)) {
+      log.info("Communication ++++ LoadingSequence or BallastOperation is empty");
+      return;
+    }
+    for (LoadingSequence loadingSequence : loadingSequencesList) {
+      for (BallastOperation ballastOperation : ballastOperationList) {
+        if (loadingSequence
+            .getId()
+            .equals(Long.valueOf(ballastOperation.getCommunicationRelatedEntityId()))) {
+          Optional<BallastOperation> ballastOperationObj =
+              ballastOperationRepository.findById(ballastOperation.getId());
+          setEntityDocFields(ballastOperation, ballastOperationObj);
+          ballastOperation.setLoadingSequence(loadingSequence);
+        }
+      }
+    }
+    ballastOperationRepository.saveAll(ballastOperationList);
+    log.info("Communication ====  Saved BallastOperation: " + ballastOperationList);
+  }
+
+  private void saveEductionOperation(List<LoadingSequence> loadingSequencesList) {
+    current_table_name = LoadingPlanTables.EDUCTION_OPERATION.getTable();
+    if (CollectionUtils.isEmpty(loadingSequencesList)
+        || CollectionUtils.isEmpty(eductionOperationList)) {
+      log.info("Communication ++++ LoadingSequence or EductionOperation is empty");
+      return;
+    }
+    for (LoadingSequence loadingSequence : loadingSequencesList) {
+      for (EductionOperation eductionOperation : eductionOperationList) {
+        if (loadingSequence
+            .getId()
+            .equals(Long.valueOf(eductionOperation.getCommunicationRelatedEntityId()))) {
+          Optional<EductionOperation> eductionOperationObj =
+              eductionOperationRepository.findById(eductionOperation.getId());
+          setEntityDocFields(eductionOperation, eductionOperationObj);
+          eductionOperation.setLoadingSequence(loadingSequence);
+        }
+      }
+    }
+    eductionOperationRepository.saveAll(eductionOperationList);
+    log.info("Communication ====  Saved EductionOperation: " + eductionOperationList);
+  }
+
+  private void saveCargoLoadingRate(List<LoadingSequence> loadingSequencesList) {
+    current_table_name = LoadingPlanTables.CARGO_LOADING_RATE.getTable();
+    if (CollectionUtils.isEmpty(loadingSequencesList)
+        || CollectionUtils.isEmpty(cargoLoadingRateList)) {
+      log.info("Communication ++++ LoadingSequence or CargoLoadingRate is empty");
+      return;
+    }
+    for (LoadingSequence loadingSequence : loadingSequencesList) {
+      for (CargoLoadingRate cargoLoadingRate : cargoLoadingRateList) {
+        if (loadingSequence
+            .getId()
+            .equals(Long.valueOf(cargoLoadingRate.getCommunicationRelatedEntityId()))) {
+          Optional<CargoLoadingRate> cargoLoadingRateObj =
+              cargoLoadingRateRepository.findById(cargoLoadingRate.getId());
+          setEntityDocFields(cargoLoadingRate, cargoLoadingRateObj);
+          cargoLoadingRate.setLoadingSequence(loadingSequence);
+        }
+      }
+    }
+    cargoLoadingRateRepository.saveAll(cargoLoadingRateList);
+    log.info("Communication ====  Saved CargoLoadingRate: " + cargoLoadingRateList);
+  }
+
+  private void saveJsonData() throws Exception {
+    current_table_name = LoadingPlanTables.JSON_DATA.getTable();
+    if (jsonData == null) {
+      log.info("Communication ++++ Json Data is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info("jsonData from staging table:{}", jsonData);
+    builder.setDataJson(jsonData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveJsonDataForCommunication(builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("JsonData saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when json_data save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when json_data save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void savePortTideDetail(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_PORT_TIDE_DETAILS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(portTideDetailList)) {
+      log.info("Communication ++++ LoadingInformation or PortTideDetail is empty");
+      return;
+    }
+    for (PortTideDetail portTideDetail : portTideDetailList) {
+      Optional<PortTideDetail> portTideDetailObj =
+          portTideDetailsRepository.findById(portTideDetail.getId());
+      setEntityDocFields(portTideDetail, portTideDetailObj);
+      portTideDetail.setLoadingXid(loadingInfo.getId());
+    }
+    portTideDetailsRepository.saveAll(portTideDetailList);
+    log.info("Communication ====  Saved PortTideDetail:" + portTideDetailList);
+  }
+
+  private List<AlgoErrorHeading> saveAlgoErrorHeading() {
+    current_table_name = LoadingPlanTables.ALGO_ERROR_HEADING.getTable();
+    if (CollectionUtils.isEmpty(algoErrorHeadings)) {
+      log.info("Communication ++++ AlgoErrorHeadingis empty");
+      return null;
+    }
+    Optional<LoadingInformationStatus> loadingInfoErrorStatus =
+        loadingInfoStatusRepository.findById(
+            LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
+    loadingInfoError.setLoadingInformationStatus(loadingInfoErrorStatus.get());
+    loadingInfoError = loadingInformationRepository.save(loadingInfoError);
+    for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
+      Optional<AlgoErrorHeading> algoErrorHeadingOptional =
+          algoErrorHeadingRepository.findById(algoErrorHeading.getId());
+      setEntityDocFields(algoErrorHeading, algoErrorHeadingOptional);
+      algoErrorHeading.setLoadingInformation(loadingInfoError);
+    }
+    algoErrorHeadings = algoErrorHeadingRepository.saveAll(algoErrorHeadings);
+    log.info("Communication ====  Saved AlgoErrorHeading:" + algoErrorHeadings);
+    return algoErrorHeadings;
+  }
+
+  private void saveAlgoErrors(List<AlgoErrorHeading> algoErrorHeadings) {
+    current_table_name = LoadingPlanTables.ALGO_ERRORS.getTable();
+    if (CollectionUtils.isEmpty(algoErrorHeadings) || CollectionUtils.isEmpty(algoErrors)) {
+      log.info("Communication ++++ AlgoErrorHeading or AlgoErrors is empty");
+      return;
+    }
+    for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
+      for (AlgoErrors algoError : algoErrors) {
+        if (algoErrorHeading
+            .getId()
+            .equals(Long.valueOf(algoError.getCommunicationRelatedEntityId()))) {
+          Optional<AlgoErrors> algoErrorsOptional =
+              algoErrorsRepository.findById(algoError.getId());
+          setEntityDocFields(algoError, algoErrorsOptional);
+          algoError.setAlgoErrorHeading(algoErrorHeading);
+        }
+      }
+    }
+    algoErrorsRepository.saveAll(algoErrors);
+    log.info("Communication ====  Saved AlgoErrors: " + algoErrors);
+  }
+
+  private void saveLoadingInstruction(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_INSTRUCTIONS.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(loadingInstructions)) {
+      log.info("Communication ++++ LoadingInformation or LoadingInstruction is empty");
+      return;
+    }
+    for (LoadingInstruction loadingInstruction : loadingInstructions) {
+      Optional<LoadingInstruction> loadingInstructionOptional =
+          loadingInstructionRepository.findById(loadingInstruction.getId());
+      setEntityDocFields(loadingInstruction, loadingInstructionOptional);
+      loadingInstruction.setLoadingXId(loadingInfo.getId());
+    }
+    loadingInstructionRepository.saveAll(loadingInstructions);
+    log.info("Communication ====  Saved LoadingInstruction:" + loadingInstructions);
+  }
+
+  private void saveSynopticalData() throws Exception {
+    current_table_name = LoadingPlanTables.SYNOPTICAL_TABLE.getTable();
+    if (synopticalData == null) {
+      log.info("Communication ++++ SynopticalData  is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info("SynopticalData get from staging table:{}", synopticalData);
+    builder.setDataJson(synopticalData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveSynopticalDataForCommunication(builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("SynopticalData saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when SynopticalData save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when SynopticalData save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveLoadableStudyPortRotationData() throws Exception {
+    current_table_name = LoadingPlanTables.LOADABLE_STUDY_PORT_ROTATION.getTable();
+    if (loadableStudyPortRotationData == null) {
+      log.info("Communication ++++ LoadableStudyPortRotationData is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info("LoadableStudyPortRotation get from staging table:{}", loadableStudyPortRotationData);
+    builder.setDataJson(loadableStudyPortRotationData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveLoadableStudyPortRotationDataForCommunication(
+            builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("LoadableStudyPortRotation saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when LoadableStudyPortRotation save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when LoadableStudyPortRotation save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveLoadingInformationAlgoStatus(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_INFORMATION_ALGO_STATUS.getTable();
+    if (loadingInfo == null || loadingInformationAlgoStatus == null) {
+      log.info("Communication ++++ LoadingInformation or LoadingInformationAlgoStatus is null");
+      return;
+    }
+    Optional<LoadingInformationStatus> loadingInfoStatus =
+        loadingInfoStatusRepository.findById(
+            loadingInformationAlgoStatus.getCommunicationRelatedEntityId());
+    if (loadingInfoStatus.isPresent()) {
+      LoadingInformationAlgoStatus algoStatus =
+          loadingInformationAlgoStatusRepository.findByLoadingInformationId(loadingInfo.getId());
+      if (algoStatus != null) {
+        algoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
+        if (loadingInformationAlgoStatus.getProcessId() != null) {
+          algoStatus.setProcessId(loadingInformationAlgoStatus.getProcessId());
+        }
+        loadingInformationAlgoStatusRepository.save(algoStatus);
+        log.info(
+            "Communication ====  LoadingInformationAlgoStatus saved with id:" + algoStatus.getId());
+      }
+      loadingInformationAlgoStatus.setLoadingInformationStatus(loadingInfoStatus.get());
+      loadingInformationAlgoStatus.setLoadingInformation(loadingInfo);
+      setEntityDocFields(loadingInformationAlgoStatus, Optional.ofNullable(algoStatus));
+      loadingInformationAlgoStatus =
+          loadingInformationAlgoStatusRepository.save(loadingInformationAlgoStatus);
+      log.info(
+          "Communication ====  LoadingInformationAlgoStatus saved with id:"
+              + loadingInformationAlgoStatus.getId());
+    }
+  }
+
+  private void saveLoadingPlanCommingleDetails(
+      List<LoadingPlanPortWiseDetails> loadingPlanPortWiseDetailsList) {
+    current_table_name = LoadingPlanTables.LOADING_PLAN_COMMINGLE_DETAILS.getTable();
+    if (CollectionUtils.isEmpty(loadingPlanPortWiseDetailsList)
+        || CollectionUtils.isEmpty(loadingPlanCommingleDetailsList)) {
+      log.info(
+          "Communication ++++ LoadingPlanPortWiseDetails or LoadingPlanCommingleDetails is empty");
+      return;
+    }
+    for (LoadingPlanCommingleDetails loadingPlanCommingleDetails :
+        loadingPlanCommingleDetailsList) {
+      Optional<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsObj =
+          loadingPlanCommingleDetailsRepository.findById(loadingPlanCommingleDetails.getId());
+      setEntityDocFields(loadingPlanCommingleDetails, loadingPlanCommingleDetailsObj);
+      // Set LoadingPlanPortWiseDetails
+      loadingPlanCommingleDetails.setLoadingPlanPortWiseDetails(
+          emptyIfNull(loadingPlanPortWiseDetailsList).stream()
+              .filter(
+                  loadingPlanPortWiseDetails ->
+                      loadingPlanPortWiseDetails
+                          .getId()
+                          .equals(
+                              Long.valueOf(
+                                  loadingPlanCommingleDetails.getCommunicationRelatedEntityId())))
+              .findFirst()
+              .orElse(null));
+    }
+    loadingPlanCommingleDetailsRepository.saveAll(loadingPlanCommingleDetailsList);
+    log.info(
+        "Communication ====  Saved LoadingPlanCommingleDetails:" + loadingPlanCommingleDetailsList);
+  }
+
+  private void saveLoadablePlanStowageBallastDetailsData() throws Exception {
+    current_table_name = LoadingPlanTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable();
+    if (loadablePlanStowageBallastDetailsData == null) {
+      log.info("Communication ++++ LoadablePlanStowageBallastDetailsData  is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info(
+        "LoadablePlanStowageBallastDetails get from staging table:{}",
+        loadablePlanStowageBallastDetailsData);
+    builder.setDataJson(loadablePlanStowageBallastDetailsData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveLoadablePlanStowageBallastDetailsForCommunication(
+            builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("LoadablePlanStowageBallastDetails saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when LoadablePlanStowageBallastDetails save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when LoadablePlanStowageBallastDetails save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveLoadablePatternCargoDetailsData() throws Exception {
+    current_table_name = LoadingPlanTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable();
+    if (loadablePatternCargoDetailsData == null) {
+      log.info("Communication ++++ LoadablePatternCargoDetailsData  is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info(
+        "LoadablePatternCargoDetails get from staging table:{}", loadablePatternCargoDetailsData);
+    builder.setDataJson(loadablePatternCargoDetailsData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveLoadablePatternCargoDetailsForCommunication(
+            builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("LoadablePatternCargoDetails saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when LoadablePatternCargoDetails save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when LoadablePatternCargoDetails save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveLoadablePlanComminglePortwiseDetailsData() throws Exception {
+    current_table_name = LoadingPlanTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable();
+    if (loadablePlanComminglePortwiseDetailsData == null) {
+      log.info("Communication ++++ LoadablePlanComminglePortwiseDetailsData  is null");
+      return;
+    }
+    if (loadablePlanComminglePortwiseDetailsData != null) {
+      LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+          LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+      log.info(
+          "LoadablePlanComminglePortwiseDetails get from staging table:{}",
+          loadablePlanComminglePortwiseDetailsData);
+      builder.setDataJson(loadablePlanComminglePortwiseDetailsData);
+      LoadableStudy.LoadableStudyCommunicationReply reply =
+          loadableStudyServiceBlockingStub.saveLoadablePlanCommingleDetailsPortwiseForCommunication(
+              builder.build());
+      if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+        log.info("LoadablePlanComminglePortwiseDetails saved in LoadableStudy ");
+      } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+        log.error(
+            "ResourceAccessException occurred when LoadablePlanComminglePortwiseDetails save");
+        throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+      } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+        log.error("Exception occurred when LoadablePlanComminglePortwiseDetails save");
+        throw new Exception(reply.getResponseStatus().getMessage());
+      }
+    }
+  }
+
+  private void saveOnBoardQuantityData() throws Exception {
+    current_table_name = LoadingPlanTables.ON_BOARD_QUANTITY.getTable();
+    if (onBoardQuantityData == null) {
+      log.info("Communication ++++ HnBoardQuantityData  is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info("OnBoardQuantity get from staging table:{}", onBoardQuantityData);
+    builder.setDataJson(onBoardQuantityData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveOnBoardQuantityForCommunication(builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("OnBoardQuantity saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when OnBoardQuantity save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when OnBoardQuantity save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveOnHandQuantityData() throws Exception {
+    current_table_name = LoadingPlanTables.ON_HAND_QUANTITY.getTable();
+    if (onHandQuantityData == null) {
+      log.info("Communication ++++ OnHandQuantityData  is null");
+      return;
+    }
+    LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
+        LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
+    log.info("OnHandQuantity get from staging table:{}", onHandQuantityData);
+    builder.setDataJson(onHandQuantityData);
+    LoadableStudy.LoadableStudyCommunicationReply reply =
+        loadableStudyServiceBlockingStub.saveOnHandQuantityForCommunication(builder.build());
+    if (SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("OnHandQuantity saved in LoadableStudy ");
+    } else if (FAILED_WITH_RESOURCE_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when OnHandQuantity save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (FAILED_WITH_EXC.equals(reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when OnHandQuantity save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
+  private void saveLoadingRule(LoadingInformation loadingInfo) {
+    current_table_name = LoadingPlanTables.LOADING_RULES.getTable();
+    if (loadingInfo == null || CollectionUtils.isEmpty(loadingRules)) {
+      log.info("Communication ++++ LoadingInformation or LoadingRule is empty");
+      return;
+    }
+    for (LoadingRule loadingRule : loadingRules) {
+      Optional<LoadingRule> loadingRuleOptional =
+          loadingRuleRepository.findById(loadingRule.getId());
+      setEntityDocFields(loadingRule, loadingRuleOptional);
+      loadingRule.setLoadingXid(loadingInfo.getId());
+    }
+    loadingRuleRepository.saveAll(loadingRules);
+    log.info("Communication ====  Saved LoadingRule :{}", loadingRules.size());
+  }
+
+  private void saveLoadingRuleInput(List<LoadingRule> loadingRules) {
+    current_table_name = LoadingPlanTables.LOADING_RULE_INPUT.getTable();
+    if (CollectionUtils.isEmpty(loadingRules) || CollectionUtils.isEmpty(loadingRuleInputs)) {
+      log.info("Communication ++++ LoadingRule or LoadingRuleInput is empty");
+      return;
+    }
+    for (LoadingRuleInput loadingRuleInput : loadingRuleInputs) {
+      Optional<LoadingRuleInput> loadingRuleInputOptional =
+          loadingRuleInputRepository.findById(loadingRuleInput.getId());
+      setEntityDocFields(loadingRuleInput, loadingRuleInputOptional);
+      // setting loading rule to loading rule input
+      if (!isEmpty(loadingRules)) {
+        loadingRules.forEach(
+            loadingRule -> {
+              if (loadingRule.getId().equals(loadingRuleInput.getCommunicationRelatedEntityId())) {
+                loadingRuleInput.setLoadingRule(loadingRule);
+              }
+            });
+      }
+    }
+    loadingRuleInputRepository.saveAll(loadingRuleInputs);
+    log.info("Communication ====  Saved LoadingRuleInput:{}", loadingRuleInputs.size());
+  }
+  // endregion
+
+  // region update status in the case exception
   private void updateStatusInExceptionCase(
       Long id, String processId, String status, String statusDescription) {
     loadingPlanStagingService.updateStatusAndStatusDescriptionForId(
@@ -2320,6 +2207,7 @@ public class LoadingPlanCommunicationService {
       LoadableStudy.VoyageActivateRequest grpcRequest) {
     return this.loadableStudyServiceBlockingStub.saveActivatedVoyage(grpcRequest);
   }
+  // endregion
 
   private JsonArray removeJsonFields(JsonArray array, HashMap<String, String> map, String... xIds) {
     JsonArray json = loadingPlanStagingService.getAsEntityJson(map, array);
@@ -2548,5 +2436,62 @@ public class LoadingPlanCommunicationService {
    */
   private boolean isShip() {
     return CPDSS_BUILD_ENV_SHIP.equals(env);
+  }
+
+  // endregion
+  private void clear() {
+    idMap = new HashMap<>();
+    loadingInformation = null;
+    stageOffset = null;
+    stageDuration = null;
+    loadingInformationStatus = null;
+    arrivalStatus = null;
+    departureStatus = null;
+    cargoToppingOffSequences = null;
+    loadingBerthDetails = null;
+    loadingDelays = null;
+    loadingDelayReasons = null;
+    loadingMachineryInUses = null;
+    voyageActivate = null;
+    loadingSequencesList = null;
+    loadingPlanPortWiseDetailsList = null;
+    portLoadingPlanStabilityParamList = null;
+    portLoadingPlanRobDetailsList = null;
+    loadingPlanBallastDetailsList = null;
+    loadingPlanRobDetailsList = null;
+    portLoadingPlanBallastDetailsList = null;
+    portLoadingPlanBallastTempDetailsList = null;
+    portLoadingPlanStowageDetailsList = null;
+    portLoadingPlanStowageTempDetailsList = null;
+    loadingPlanStowageDetailsList = null;
+    loadingSequenceStabilityParametersList = null;
+    loadingPlanStabilityParametersList = null;
+    ballastOperationList = null;
+    eductionOperationList = null;
+    cargoLoadingRateList = null;
+    loadingPlanCommingleDetailsList = null;
+    portLoadingPlanCommingleTempDetailsList = null;
+    portLoadingPlanCommingleDetailsList = null;
+    billOfLandingList = null;
+    pyUser = null;
+    loadablePattern = null;
+    loadicatorDataForSynoptical = null;
+    jsonData = null;
+    synopticalData = null;
+    loadablePlanStowageBallastDetailsData = null;
+    loadablePatternCargoDetailsData = null;
+    loadablePlanComminglePortwiseDetailsData = null;
+    onBoardQuantityData = null;
+    onHandQuantityData = null;
+    loadableStudyPortRotationData = null;
+    portTideDetailList = null;
+    algoErrorHeadings = null;
+    algoErrors = null;
+    loadingInstructions = null;
+    loadingInfoError = null;
+    loadingInformationAlgoStatus = null;
+    arrivalDeparture = null;
+    loadingRules = null;
+    loadingRuleInputs = null;
   }
 }

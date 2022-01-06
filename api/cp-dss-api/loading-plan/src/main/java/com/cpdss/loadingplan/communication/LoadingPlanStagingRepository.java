@@ -194,4 +194,16 @@ public interface LoadingPlanStagingRepository extends StagingRepository {
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loading_plan_commingle_details u where loading_plan_portwise_details_xid IN ?1",
       nativeQuery = true)
   String getLoadingPlanCommingleDetailsWithPortIds(List<Long> loadingPlanPortWiseDetailsIds);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loading_rules u where loading_xid=?1",
+      nativeQuery = true)
+  String getLoadingRuleWithLoadingId(Long id);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loading_rule_input u where loading_rule_xid in (SELECT id FROM loading_rules u where loading_xid=?1)",
+      nativeQuery = true)
+  String getLoadingRuleInputWithLoadingId(Long id);
 }

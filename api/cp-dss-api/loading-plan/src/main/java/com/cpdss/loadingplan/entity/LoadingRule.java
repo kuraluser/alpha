@@ -47,8 +47,6 @@ public class LoadingRule extends EntityDoc {
   @Column(name = "ruletype_xid")
   private Long ruleTypeXid;
 
-  private Long version;
-
   @Column(name = "vessel_rule_xid")
   private Long vesselRuleXid;
 

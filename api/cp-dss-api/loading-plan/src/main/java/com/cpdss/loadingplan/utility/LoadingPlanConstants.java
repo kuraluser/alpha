@@ -65,7 +65,9 @@ public class LoadingPlanConstants {
     LOADABLE_PATTERN_CARGO_DETAILS("loadable_pattern_cargo_details"),
     LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE("loadable_plan_commingle_details_portwise"),
     ON_BOARD_QUANTITY("on_board_quantity"),
-    ON_HAND_QUANTITY("on_hand_quantity");
+    ON_HAND_QUANTITY("on_hand_quantity"),
+    LOADING_RULES("loading_rules"),
+    LOADING_RULE_INPUT("loading_rule_input");
 
     public final String table;
   }
@@ -116,7 +118,9 @@ public class LoadingPlanConstants {
           "loading_port_tide_details",
           "loading_instructions",
           "synoptical_table",
-          "loadable_study_port_rotation");
+          "loadable_study_port_rotation",
+          "loading_rules",
+          "loading_rule_input");
 
   public static final List<String> ULLAGE_UPDATE_SHIP_TO_SHORE =
       Arrays.asList(

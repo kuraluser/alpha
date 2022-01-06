@@ -49,5 +49,7 @@ public enum ProcessIdentifiers {
   loadable_pattern_cargo_details,
   loadable_plan_commingle_details_portwise,
   on_board_quantity,
-  on_hand_quantity;
+  on_hand_quantity,
+  loading_rules,
+  loading_rule_input;
 }

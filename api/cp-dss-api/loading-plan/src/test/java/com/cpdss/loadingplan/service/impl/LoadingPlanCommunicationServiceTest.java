@@ -3,6 +3,7 @@ package com.cpdss.loadingplan.service.impl;
 
 import static com.cpdss.loadingplan.utility.LoadingPlanConstants.SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.spy;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
@@ -106,6 +107,9 @@ public class LoadingPlanCommunicationServiceTest {
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
 
+  @MockBean private LoadingRuleRepository loadingRuleRepository;
+  @MockBean private LoadingRuleInputRepository loadingRuleInputRepository;
+
   //    @Test
   //     void  testGetDataFromCommunication() {
   //        Map<String, String> taskReqParams
@@ -117,17 +121,19 @@ public class LoadingPlanCommunicationServiceTest {
     String requestJson = "1";
     Long vesselId = 1L;
     String messageType = "1";
-    Mockito.when(this.vesselInfoGrpcService.getVesselInfoByVesselId(Mockito.any()))
+    LoadingPlanCommunicationService spyService = spy(LoadingPlanCommunicationService.class);
+    Mockito.when(
+            this.vesselInfoGrpcService.getVesselInfoByVesselId(
+                Mockito.any(VesselInfo.VesselIdRequest.class)))
         .thenReturn(getVIR());
-    Mockito.when(this.envoyWriterService.getCommunicationServer(Mockito.any())).thenReturn(getWR());
-    ReflectionTestUtils.setField(
-        loadingPlanCommunicationService, "vesselInfoGrpcService", this.vesselInfoGrpcService);
-    ReflectionTestUtils.setField(
-        loadingPlanCommunicationService, "envoyWriterService", this.envoyWriterService);
+    Mockito.when(
+            this.envoyWriterService.getCommunicationServer(
+                Mockito.any(EnvoyWriter.EnvoyWriterRequest.class)))
+        .thenReturn(getWR());
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
+    ReflectionTestUtils.setField(spyService, "envoyWriterService", envoyWriterService);
     try {
-      var reply =
-          this.loadingPlanCommunicationService.passRequestPayloadToEnvoyWriter(
-              requestJson, vesselId, messageType);
+      var reply = spyService.passRequestPayloadToEnvoyWriter(requestJson, vesselId, messageType);
       assertEquals(SUCCESS, reply.getResponseStatus().getStatus());
     } catch (GenericServiceException e) {
       e.printStackTrace();
@@ -155,12 +161,14 @@ public class LoadingPlanCommunicationServiceTest {
   @Test
   void testGetVesselDetailsForEnvoy() {
     Long vesselId = 1L;
-    Mockito.when(this.vesselInfoGrpcService.getVesselInfoByVesselId(Mockito.any()))
+    LoadingPlanCommunicationService spyService = spy(LoadingPlanCommunicationService.class);
+    Mockito.when(
+            this.vesselInfoGrpcService.getVesselInfoByVesselId(
+                Mockito.any(VesselInfo.VesselIdRequest.class)))
         .thenReturn(getVIR());
-    ReflectionTestUtils.setField(
-        loadingPlanCommunicationService, "vesselInfoGrpcService", this.vesselInfoGrpcService);
+    ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
     try {
-      var reply = this.loadingPlanCommunicationService.getVesselDetailsForEnvoy(vesselId);
+      var reply = spyService.getVesselDetailsForEnvoy(vesselId);
       assertEquals("1", reply.getName());
     } catch (GenericServiceException e) {
       e.printStackTrace();
