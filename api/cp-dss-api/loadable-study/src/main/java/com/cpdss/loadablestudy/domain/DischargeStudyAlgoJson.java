@@ -25,4 +25,5 @@ public class DischargeStudyAlgoJson {
   private ArrivalConditionJson loadablePlanPortWiseDetails;
   private List<RulePlans> dischargeStudyRuleList;
   private CowDetail cowDetails;
+  private List<DischargingMode> dischargingModeMaster;
 }

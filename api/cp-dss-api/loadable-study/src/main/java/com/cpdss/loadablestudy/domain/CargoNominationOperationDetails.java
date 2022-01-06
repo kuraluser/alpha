@@ -13,4 +13,5 @@ public class CargoNominationOperationDetails {
   private String quantity;
   private Long sequenceNo;
   private Boolean emptyMaxNoOfTanks;
+  private Long dischargingMode;
 }

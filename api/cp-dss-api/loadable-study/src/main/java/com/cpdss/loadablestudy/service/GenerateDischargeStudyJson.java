@@ -273,6 +273,12 @@ public class GenerateDischargeStudyJson {
     dischargeStudyAlgoJson.setCargoNominationOperationDetails(
         getCargoNominationOperationDetails(dischargeStudyId, cargoNominations));
 
+    List<DischargingMode> dischargingModes =
+        Stream.of(DischargingModesEnum.values())
+            .map(item -> new DischargingMode(item.getId(), item.getMode()))
+            .collect(Collectors.toList());
+    dischargeStudyAlgoJson.setDischargingModeMaster(dischargingModes);
+
     dischargeStudyAlgoJson.setOnHandQuantity(getOnHandQuantity(dischargeStudyId));
 
     dischargeStudyAlgoJson.setPortDetails(getPortDetails(portRotationList));
@@ -872,6 +878,8 @@ public class GenerateDischargeStudyJson {
                       .ifPresent(cargoNominationOperation::setSequenceNo);
                   ofNullable(iteratorItem.getEmptyMaxNoOfTanks())
                       .ifPresent(cargoNominationOperation::setEmptyMaxNoOfTanks);
+                  ofNullable(iteratorItem.getMode())
+                      .ifPresent(cargoNominationOperation::setDischargingMode);
                   cargoNominationOperationDetailsList.add(cargoNominationOperation);
                 }
               }
