@@ -989,32 +989,31 @@ public class LoadableStudyCommunicationService {
     }
   }
 
-  /** Method to save cargo nomination operation details */
+  /** Method to save cargo_nomination_operation_details table */
   @SuppressWarnings("unused")
-  // TODO refactor v2
   private void saveCargoNominationOperationDetails() {
     currentTableName = LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS.getTable();
-    if (null == cargoNominationOperationDetailsStage
-        || cargoNominationOperationDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  CargoNomination Operation Details is empty");
-      return;
+
+    if (isValidStageEntity(cargoNominationOperationDetailsStage, currentTableName)) {
+      cargoNominationOperationDetailsStage.forEach(
+          cargoNominationOperationDetails -> {
+            Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
+                cargoNominationOperationDetailsRepository.findById(
+                    cargoNominationOperationDetails.getId());
+            setEntityDocFields(
+                cargoNominationOperationDetails, optionalCargoNominationOperationDetails);
+
+            Optional<CargoNomination> optionalCargoNomination =
+                cargoNominationRepository.findById(
+                    cargoNominationOperationDetails.getCommunicationRelatedEntityId());
+            optionalCargoNomination.ifPresent(cargoNominationOperationDetails::setCargoNomination);
+          });
+
+      // Save data
+      cargoNominationOperationDetailsStage =
+          cargoNominationOperationDetailsRepository.saveAll(cargoNominationOperationDetailsStage);
+      logSavedEntity(cargoNominationOperationDetailsStage);
     }
-
-    cargoNominationOperationDetailsStage.forEach(
-        cargoNominationOperationDetails -> {
-          Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
-              cargoNominationOperationDetailsRepository.findById(
-                  cargoNominationOperationDetails.getId());
-          setEntityDocFields(
-              cargoNominationOperationDetails, optionalCargoNominationOperationDetails);
-
-          Optional<CargoNomination> optionalCargoNomination =
-              cargoNominationRepository.findById(
-                  cargoNominationOperationDetails.getCommunicationRelatedEntityId());
-          optionalCargoNomination.ifPresent(cargoNominationOperationDetails::setCargoNomination);
-        });
-    cargoNominationOperationDetailsRepository.saveAll(cargoNominationOperationDetailsStage);
-    log.info("Communication #######  CargoNomination Operation Details saved");
   }
 
   /** Method to save loadable study port rotation */
@@ -1036,8 +1035,9 @@ public class LoadableStudyCommunicationService {
 
       // Save data
       // TODO Check the below implementation
-      loadableStudyPortRotationCommuncationRepository.saveAll(
-          loadableStudyPortRotationStageCommunication);
+      loadableStudyPortRotationStageCommunication =
+          loadableStudyPortRotationCommuncationRepository.saveAll(
+              loadableStudyPortRotationStageCommunication);
       loadableStudyPortRotationStage =
           loadableStudyPortRotationRepository.findByLoadableStudy(loadableStudyStage);
       logSavedEntity(loadableStudyPortRotationStageCommunication);
@@ -1108,119 +1108,138 @@ public class LoadableStudyCommunicationService {
     }
   }
 
-  /** Method to save synoptical table */
-  // TODO refactor v2
+  /** Method to save synoptical_table table */
   private void saveSynopticalTable() {
     currentTableName = LoadableStudyTables.SYNOPTICAL_TABLE.getTable();
-    if (null == synopticalTableStage || synopticalTableStage.isEmpty()) {
-      log.info("Communication XXXXXXX  synopticalTable is empty");
-      return;
-    }
-    for (SynopticalTable stStage : synopticalTableStage) {
-      stStage.setLoadableStudyXId(loadableStudyStage.getId());
-      Optional<SynopticalTable> st = synopticalTableRepository.findById(stStage.getId());
-      setEntityDocFields(stStage, st);
 
-      Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
-          loadableStudyPortRotationRepository.findById(stStage.getCommunicationRelatedEntityId());
-      loadableStudyPortRotationOpt.ifPresent(stStage::setLoadableStudyPortRotation);
-    }
+    if (isValidStageEntity(synopticalTableStage, currentTableName)) {
+      for (SynopticalTable stStage : synopticalTableStage) {
+        Optional<SynopticalTable> st = synopticalTableRepository.findById(stStage.getId());
+        setEntityDocFields(stStage, st);
 
-    synopticalTableStage = synopticalTableRepository.saveAll(synopticalTableStage);
-    log.info("Communication #######  synopticalTable saved with id:" + synopticalTableStage);
+        stStage.setLoadableStudyXId(loadableStudyStage.getId());
+        Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
+            loadableStudyPortRotationRepository.findById(stStage.getCommunicationRelatedEntityId());
+        loadableStudyPortRotationOpt.ifPresent(stStage::setLoadableStudyPortRotation);
+      }
+
+      // Save data
+      synopticalTableStage = synopticalTableRepository.saveAll(synopticalTableStage);
+      logSavedEntity(synopticalTableStage);
+    }
   }
 
-  /** Method to save json data */
-  // TODO refactor v2
-  private void saveJsonData() {
+  /**
+   * Method to save json_data table
+   *
+   * @throws GenericServiceException Exception when JSON type not found in table
+   */
+  private void saveJsonData() throws GenericServiceException {
     currentTableName = LoadableStudyTables.JSON_DATA.getTable();
-    if (null == jsonDataStage || jsonDataStage.isEmpty()) {
-      log.info("Communication XXXXXXX  JSON_DATA is empty");
-      return;
+
+    if (isValidStageEntity(jsonDataStage, currentTableName)) {
+      for (JsonData jsonData : jsonDataStage) {
+        JsonType jsonType =
+            jsonTypeRepository
+                .findById(jsonData.getCommunicationRelatedEntityId())
+                .orElseThrow(
+                    () -> {
+                      log.error(
+                          "Master data not found in json_type. Id: {}",
+                          jsonData.getCommunicationRelatedEntityId());
+                      return new GenericServiceException(
+                          "Master data not found in json_type. Id: "
+                              + jsonData.getCommunicationRelatedEntityId(),
+                          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                          HttpStatusCode.INTERNAL_SERVER_ERROR);
+                    });
+
+        Optional<JsonData> jsonDataOpt = jsonDataRepository.findById(jsonData.getId());
+        setEntityDocFields(jsonData, jsonDataOpt);
+
+        jsonData.setJsonTypeXId(jsonType);
+      }
+
+      // Save data
+      jsonDataStage = jsonDataRepository.saveAll(jsonDataStage);
+      logSavedEntity(jsonDataStage);
     }
-    jsonDataStage.forEach(
-        jsonData -> {
-          Optional<JsonType> jsonType =
-              jsonTypeRepository.findById(jsonData.getCommunicationRelatedEntityId());
-          if (jsonType.isPresent()) {
-            jsonData.setJsonTypeXId(jsonType.get());
-            Optional<JsonData> jData = jsonDataRepository.findById(jsonData.getId());
-            setEntityDocFields(jsonData, jData);
-          } else {
-            log.info(
-                "Communication XXXXXXX  JsonData is not saved , Json Type is not found : "
-                    + jsonData.getCommunicationRelatedEntityId());
-          }
-        });
-    jsonDataStage = jsonDataRepository.saveAll(jsonDataStage);
-    log.info("Communication #######  JsonData saved");
   }
 
-  /** Method to save loadable study algo status */
-  // TODO refactor v2
-  private void saveLoadableStudyAlgoStatus() {
+  /**
+   * Method to save loadable_study_algo_status table
+   *
+   * @throws GenericServiceException Exception when master data not found
+   */
+  private void saveLoadableStudyAlgoStatus() throws GenericServiceException {
     currentTableName = LoadableStudyTables.LOADABLE_STUDY_ALGO_STATUS.getTable();
-    if (null == loadableStudyAlgoStatusStage) {
-      log.info("Communication XXXXXXX  LOADABLE_STUDY_ALGO_STATUS is empty");
-      return;
-    }
-    Optional<LoadableStudyStatus> loadableStudyStatus =
-        loadableStudyStatusRepository.findById(
-            loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
-    if (loadableStudyStatus.isPresent()) {
-      Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOptional =
+
+    if (isValidStageEntity(loadableStudyAlgoStatusStage, currentTableName)) {
+      LoadableStudyStatus loadableStudyStatus =
+          loadableStudyStatusRepository
+              .findById(loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId())
+              .orElseThrow(
+                  () -> {
+                    log.error(
+                        "Master data not found in loadable_study_status. Id: {}",
+                        loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
+                    return new GenericServiceException(
+                        "Master data not found in loadable_study_status. Id: "
+                            + loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId(),
+                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                        HttpStatusCode.INTERNAL_SERVER_ERROR);
+                  });
+
+      Optional<LoadableStudyAlgoStatus> loadableStudyAlgoStatusOpt =
           loadableStudyAlgoStatusRepository.findByLoadableStudyId(loadableStudyStage.getId());
-      loadableStudyAlgoStatusOptional.ifPresentOrElse(
+      setEntityDocFields(loadableStudyAlgoStatusStage, loadableStudyAlgoStatusOpt);
+
+      loadableStudyAlgoStatusOpt.ifPresentOrElse(
           loadableStudyAlgoStatus -> {
             loadableStudyAlgoStatus.setProcessId(loadableStudyAlgoStatusStage.getProcessId());
             loadableStudyAlgoStatusStage = loadableStudyAlgoStatus;
           },
           () -> loadableStudyAlgoStatusStage.setLoadableStudy(loadableStudyStage));
-      setEntityDocFields(loadableStudyAlgoStatusStage, loadableStudyAlgoStatusOptional);
       loadableStudyAlgoStatusStage.setGeneratedFromShore(true);
-      loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
+      loadableStudyAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus);
+
+      // Save data
       loadableStudyAlgoStatusStage =
           loadableStudyAlgoStatusRepository.save(loadableStudyAlgoStatusStage);
-      log.info(
-          "Communication #######  loadableStudyAlgoStatus saved with id:"
-              + loadableStudyAlgoStatusStage.getId());
-
-    } else {
-      log.info(
-          "Communication XXXXXXX  loadableStudyAlgoStatus is not saved , loadableStudyStatus is not found : "
-              + loadableStudyAlgoStatusStage.getCommunicationRelatedEntityId());
+      logSavedEntity(loadableStudyAlgoStatusStage);
     }
   }
 
-  /** Method to save loadable plan */
+  /** Method to save loadable_plan table */
   @SuppressWarnings("unused")
-  // TODO refactor v2
   private void saveLoadablePlan() {
     currentTableName = LoadableStudyTables.LOADABLE_PLAN.getTable();
-    if (null == loadablePlanStage || loadablePlanStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlan is empty");
-      return;
-    }
-    for (LoadablePlan lPlan : loadablePlanStage) {
-      Optional<LoadablePlan> loadablePlanOptional = loadablePlanRepository.findById(lPlan.getId());
-      setEntityDocFields(lPlan, loadablePlanOptional);
-      lPlan.setLoadablePatternXId(
-          getLoadablePattern(lPlan.getCommunicationRelatedEntityId()).orElse(null));
 
-      loadablePlanRepository.saveAll(loadablePlanStage);
-      log.info("Communication #######  LoadablePlan saved");
+    if (isValidStageEntity(loadablePlanStage, currentTableName)) {
+      for (LoadablePlan loadablePlan : loadablePlanStage) {
+        Optional<LoadablePlan> loadablePlanOpt =
+            loadablePlanRepository.findById(loadablePlan.getId());
+        setEntityDocFields(loadablePlan, loadablePlanOpt);
+
+        loadablePlan.setLoadablePatternXId(
+            getLoadablePattern(loadablePlan.getCommunicationRelatedEntityId()).orElse(null));
+      }
+
+      // Save data
+      loadablePlanStage = loadablePlanRepository.saveAll(loadablePlanStage);
+      logSavedEntity(loadablePlanStage);
     }
   }
 
-  /** Method to save loadable pattern */
+  /** Method to save loadable_pattern table */
   private void saveLoadablePattern() {
     currentTableName = LoadableStudyTables.LOADABLE_PATTERN.getTable();
 
     if (isValidStageEntity(loadablePatternStage, currentTableName)) {
       for (LoadablePattern lp : loadablePatternStage) {
-        Optional<LoadablePattern> loadablePatternOptional =
+        Optional<LoadablePattern> loadablePatternOpt =
             loadablePatternRepository.findById(lp.getId());
-        setEntityDocFields(lp, loadablePatternOptional);
+        setEntityDocFields(lp, loadablePatternOpt);
 
         // Set loadable study
         Optional.ofNullable(loadableStudyStage)
@@ -1239,378 +1258,364 @@ public class LoadableStudyCommunicationService {
     }
   }
 
-  /** Method to save algo error heading */
-  // TODO refactor v2
+  /** Method to save algo_error_heading table */
   private void saveAlgoErrorHeading() {
     currentTableName = LoadableStudyTables.ALGO_ERROR_HEADING.getTable();
-    if (null == algoErrorHeadingStage || algoErrorHeadingStage.isEmpty()) {
-      log.info("Communication XXXXXXX  AlgoErrorHeading  is empty");
-      return;
-    }
-    for (AlgoErrorHeading arStage : algoErrorHeadingStage) {
-      log.info("Communication +++++++  AlgoErrorHeading  id : " + arStage.getId());
-      Optional<AlgoErrorHeading> algoErrorHeadingOptional =
-          algoErrorHeadingRepository.findById(arStage.getId());
-      setEntityDocFields(arStage, algoErrorHeadingOptional);
-      log.info(
-          "Communication +++++++  AlgoErrorHeading  CommunicationRelatedEntityId : "
-              + arStage.getCommunicationRelatedEntityId());
-      if (arStage.getCommunicationRelatedEntityId() != null) {
-        arStage.setLoadablePattern(
-            getLoadablePattern(arStage.getCommunicationRelatedEntityId()).orElse(null));
-      } else {
-        arStage.setLoadableStudy(loadableStudyStage);
-      }
-    }
 
-    algoErrorHeadingStage = algoErrorHeadingRepository.saveAll(algoErrorHeadingStage);
-    log.info("Communication #######  AlgoErrorHeading  saved");
-  }
+    if (isValidStageEntity(algoErrorHeadingStage, currentTableName)) {
+      for (AlgoErrorHeading arStage : algoErrorHeadingStage) {
+        Optional<AlgoErrorHeading> algoErrorHeadingOpt =
+            algoErrorHeadingRepository.findById(arStage.getId());
+        setEntityDocFields(arStage, algoErrorHeadingOpt);
 
-  /** Method to save algo errors */
-  // TODO refactor v2
-  private void saveAlgoErrors() {
-    currentTableName = LoadableStudyTables.ALGO_ERRORS.getTable();
-    if (null == algoErrorsStage || algoErrorsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  ALGO_ERRORS  is empty");
-      return;
-    }
-    for (AlgoErrors ae : algoErrorsStage) {
-      Optional<AlgoErrors> algoErrorsOptional = algoErrorsRepository.findById(ae.getId());
-      setEntityDocFields(ae, algoErrorsOptional);
-
-      for (AlgoErrorHeading aeh : algoErrorHeadingStage) {
-        if (Objects.equals(aeh.getId(), ae.getCommunicationRelatedEntityId())) {
-          ae.setAlgoErrorHeading(aeh);
+        if (null != arStage.getCommunicationRelatedEntityId()) {
+          arStage.setLoadablePattern(
+              getLoadablePattern(arStage.getCommunicationRelatedEntityId()).orElse(null));
+        } else {
+          arStage.setLoadableStudy(loadableStudyStage);
         }
-      }
-    }
-    algoErrorsStage = algoErrorsRepository.saveAll(algoErrorsStage);
-    log.info("Communication #######  AlgoErrors  saved");
-  }
-
-  /** Method to save loadable plan constraints */
-  // TODO refactor v2
-  private void saveLoadablePlanConstraints() {
-    currentTableName = LoadableStudyTables.LOADABLE_PLAN_CONSTRAINTS.getTable();
-    if (null == loadablePlanConstraintsStage || loadablePlanConstraintsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlanConstraints is empty");
-      return;
-    }
-    for (LoadablePlanConstraints lpConstraint : loadablePlanConstraintsStage) {
-      Optional<LoadablePlanConstraints> loadablePlanConstraintsOptional =
-          loadablePlanConstraintsRespository.findById(lpConstraint.getId());
-      setEntityDocFields(lpConstraint, loadablePlanConstraintsOptional);
-      lpConstraint.setLoadablePattern(
-          getLoadablePattern(lpConstraint.getCommunicationRelatedEntityId()).orElse(null));
-    }
-
-    loadablePlanConstraintsStage =
-        loadablePlanConstraintsRespository.saveAll(loadablePlanConstraintsStage);
-    log.info("Communication #######  LoadablePlanConstraints are saved");
-  }
-
-  /** Method to save loadable plan quantity */
-  // TODO refactor v2
-  private void saveLoadablePlanQuantity() {
-    currentTableName = LoadableStudyTables.LOADABLE_PLAN_QUANTITY.getTable();
-    if (null == loadablePlanQuantityStage || loadablePlanQuantityStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlanQuantity is empty");
-      return;
-    }
-    for (LoadablePlanQuantity lpQuantity : loadablePlanQuantityStage) {
-      Optional<LoadablePlanQuantity> loadablePlanConstraintsOptional =
-          loadablePlanQuantityRepository.findById(lpQuantity.getId());
-      setEntityDocFields(lpQuantity, loadablePlanConstraintsOptional);
-      lpQuantity.setLoadablePattern(
-          getLoadablePattern(lpQuantity.getCommunicationRelatedEntityId()).orElse(null));
-    }
-
-    loadablePlanQuantityStage = loadablePlanQuantityRepository.saveAll(loadablePlanQuantityStage);
-    log.info("Communication #######  LoadablePlanQuantity are saved");
-  }
-
-  /** Method to save loadable plan commingle details */
-  // TODO refactor v2
-  private void saveLoadablePlanCommingleDetails() {
-    currentTableName = LoadableStudyTables.LOADABLE_PLAN_COMMINGLE_DETAILS.getTable();
-    if (null == loadablePlanCommingleDetailsStage || loadablePlanCommingleDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  loadable_plan_commingle_details is empty");
-      return;
-    }
-    // Set relations and version
-    for (LoadablePlanCommingleDetails lpCommingleDetail : loadablePlanCommingleDetailsStage) {
-      Optional<LoadablePlanCommingleDetails> lpCommingleDetailsOptional =
-          loadablePlanCommingleDetailsRepository.findById(lpCommingleDetail.getId());
-      LoadablePattern loadablePattern =
-          loadablePatternRepository
-              .findById(lpCommingleDetail.getCommunicationRelatedEntityId())
-              .orElse(null);
-      lpCommingleDetail.setLoadablePattern(loadablePattern);
-      setEntityDocFields(lpCommingleDetail, lpCommingleDetailsOptional);
-    }
-
-    loadablePlanCommingleDetailsStage =
-        loadablePlanCommingleDetailsRepository.saveAll(loadablePlanCommingleDetailsStage);
-    log.info(
-        "Communication #######  loadable_plan_commingle_details are saved. Entries: {}",
-        loadablePlanCommingleDetailsStage.size());
-  }
-
-  /** Method to save loadable pattern cargo topping off sequence */
-  // TODO refactor v2
-  private void saveLoadablePatternCargoToppingOffSequence() {
-    currentTableName = LoadableStudyTables.LOADABLE_PATTERN_CARGO_TOPPING_OFF_SEQUENCE.getTable();
-    if (null == loadablePatternCargoToppingOffSequenceStage
-        || loadablePatternCargoToppingOffSequenceStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePatternCargoToppingOffSequence is empty");
-      return;
-    }
-    for (LoadablePatternCargoToppingOffSequence lpCargoToppingOffSequence :
-        loadablePatternCargoToppingOffSequenceStage) {
-      Optional<LoadablePatternCargoToppingOffSequence> lpCargoToppingOffSequenceOptional =
-          loadablePatternCargoToppingOffSequenceRepository.findById(
-              lpCargoToppingOffSequence.getId());
-      setEntityDocFields(lpCargoToppingOffSequence, lpCargoToppingOffSequenceOptional);
-      lpCargoToppingOffSequence.setLoadablePattern(
-          getLoadablePattern(lpCargoToppingOffSequence.getCommunicationRelatedEntityId())
-              .orElse(null));
-    }
-
-    loadablePatternCargoToppingOffSequenceStage =
-        loadablePatternCargoToppingOffSequenceRepository.saveAll(
-            loadablePatternCargoToppingOffSequenceStage);
-    log.info("Communication #######  LoadablePatternCargoToppingOffSequence are saved");
-  }
-
-  /** Method to save loadable plan stowage details */
-  // TODO refactor v2
-  private void saveLoadablePlanStowageDetails() {
-    currentTableName = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS.getTable();
-    if (null == loadablePlanStowageDetailsStage || loadablePlanStowageDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlanStowageDetails is empty");
-      return;
-    }
-    for (LoadablePlanStowageDetails lpStowageDetail : loadablePlanStowageDetailsStage) {
-      Optional<LoadablePlanStowageDetails> lpStowageDetailsOptional =
-          loadablePlanStowageDetailsRespository.findById(lpStowageDetail.getId());
-      setEntityDocFields(lpStowageDetail, lpStowageDetailsOptional);
-
-      LoadablePlan loadablePlan =
-          getLoadablePlan(lpStowageDetail.getCommunicationRelatedEntityId()).orElse(null);
-      lpStowageDetail.setLoadablePlan(loadablePlan);
-      LoadablePattern loadablePattern =
-          getLoadablePattern(lpStowageDetail.getCommunicationRelatedEntityId()).orElse(null);
-      lpStowageDetail.setLoadablePattern(loadablePattern);
-    }
-
-    loadablePlanStowageDetailsStage =
-        loadablePlanStowageDetailsRespository.saveAll(loadablePlanStowageDetailsStage);
-    log.info("Communication #######  LoadablePlanStowageDetails are saved");
-  }
-
-  /** Method to save loadable plan ballast details */
-  // TODO refactor v2
-  private void saveLoadablePlanBallastDetails() {
-    currentTableName = LoadableStudyTables.LOADABLE_PLAN_BALLAST_DETAILS.getTable();
-    if (loadablePlanBallastDetailsStage == null || loadablePlanBallastDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlanBallastDetails is empty");
-      return;
-    }
-    for (LoadablePlanBallastDetails lpBallastDetail : loadablePlanBallastDetailsStage) {
-      Optional<LoadablePlanBallastDetails> lpBallastDetailsOptional =
-          loadablePlanBallastDetailsRepository.findById(lpBallastDetail.getId());
-      setEntityDocFields(lpBallastDetail, lpBallastDetailsOptional);
-      lpBallastDetail.setLoadablePattern(
-          getLoadablePattern(lpBallastDetail.getCommunicationRelatedEntityId()).orElse(null));
-    }
-
-    loadablePlanBallastDetailsStage =
-        loadablePlanBallastDetailsRepository.saveAll(loadablePlanBallastDetailsStage);
-    log.info("Communication #######  LoadablePlanBallastDetails are saved");
-  }
-
-  /** Method to save loadable plan commingle details port-wise */
-  // TODO refactor v2
-  private void saveLoadablePlanCommingleDetailsPortwise() {
-    currentTableName = LoadableStudyTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable();
-    if (null == loadablePlanComminglePortwiseDetailsStage
-        || loadablePlanComminglePortwiseDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePlanComminglePortwiseDetails is empty");
-      return;
-    }
-    for (LoadablePlanComminglePortwiseDetails lpComminglePortwiseDetail :
-        loadablePlanComminglePortwiseDetailsStage) {
-      Optional<LoadablePlanComminglePortwiseDetails> lpComminglePortwiseDetailsOptional =
-          loadablePlanCommingleDetailsPortwiseRepository.findById(
-              lpComminglePortwiseDetail.getId());
-      setEntityDocFields(lpComminglePortwiseDetail, lpComminglePortwiseDetailsOptional);
-      lpComminglePortwiseDetail.setLoadablePattern(
-          getLoadablePattern(lpComminglePortwiseDetail.getCommunicationRelatedEntityId())
-              .orElse(null));
-    }
-
-    loadablePlanComminglePortwiseDetailsStage =
-        loadablePlanCommingleDetailsPortwiseRepository.saveAll(
-            loadablePlanComminglePortwiseDetailsStage);
-    log.info("Communication #######  LoadablePlanComminglePortwiseDetails are saved");
-  }
-
-  /** Method to save communication status update table */
-  // TODO refactor v2
-  private void saveCommunicationStatusUpdate(String messageType) {
-    if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)) {
-      loadableStudyServiceShore.updateCommunicationStatus(
-          UUID.randomUUID().toString(), loadablePatternStage.get(0).getId());
-      log.info("Communication #######  communication_status_update table saved");
-    }
-  }
-
-  /** Method to save stability parameter */
-  // TODO refactor v2
-  private void saveStabilityParameter() {
-    currentTableName = LoadableStudyTables.STABILITY_PARAMETERS.getTable();
-    if (null == stabilityParametersStage || stabilityParametersStage.isEmpty()) {
-      log.info("Communication XXXXXXX  StabilityParameters is empty");
-      return;
-    }
-    for (StabilityParameters stabilityParameter : stabilityParametersStage) {
-      Optional<StabilityParameters> stabilityParametersOptional =
-          stabilityParameterRepository.findById(stabilityParameter.getId());
-      setEntityDocFields(stabilityParameter, stabilityParametersOptional);
-      stabilityParameter.setLoadablePattern(
-          getLoadablePattern(stabilityParameter.getCommunicationRelatedEntityId()).orElse(null));
-    }
-
-    stabilityParameterRepository.saveAll(stabilityParametersStage);
-    log.info("Communication #######  StabilityParameters are saved");
-  }
-
-  /** Method to save loadable pattern cargo details */
-  // TODO refactor v2
-  private void saveLoadablePatternCargoDetails() {
-    currentTableName = LoadableStudyTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable();
-    if (null == loadablePatternCargoDetailsStage || loadablePatternCargoDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  LoadablePatternCargoDetails is empty");
-      return;
-    }
-    for (LoadablePatternCargoDetails lpCargoDetail : loadablePatternCargoDetailsStage) {
-      Optional<LoadablePatternCargoDetails> loadablePatternCargoDetailsOptional =
-          loadablePatternCargoDetailsRepository.findById(lpCargoDetail.getId());
-      setEntityDocFields(lpCargoDetail, loadablePatternCargoDetailsOptional);
-    }
-
-    loadablePatternCargoDetailsRepository.saveAll(loadablePatternCargoDetailsStage);
-    log.info("Communication #######  LoadablePatternCargoDetails are saved");
-  }
-
-  /** Method to save loadable_plan_stowage_ballast_details */
-  // TODO refactor v2
-  private void saveLoadablePlanStowageBallastDetails() {
-    currentTableName = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable();
-    if (null == loadablePlanStowageBallastDetailsStage
-        || loadablePlanStowageBallastDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  {} is empty", currentTableName);
-      return;
-    }
-    for (LoadablePlanStowageBallastDetails lpStowageBallastDetail :
-        loadablePlanStowageBallastDetailsStage) {
-      Optional<LoadablePlanStowageBallastDetails> loadablePatternCargoDetailsOptional =
-          loadablePlanStowageBallastDetailsRepository.findById(lpStowageBallastDetail.getId());
-      setEntityDocFields(lpStowageBallastDetail, loadablePatternCargoDetailsOptional);
-      lpStowageBallastDetail.setLoadablePlan(
-          getLoadablePlan(lpStowageBallastDetail.getCommunicationRelatedEntityId()).orElse(null));
-    }
-
-    loadablePlanStowageBallastDetailsRepository.saveAll(loadablePlanStowageBallastDetailsStage);
-    log.info(
-        "Communication #######  {} are saved. Entries: {}",
-        currentTableName,
-        loadablePlanStowageBallastDetailsStage.size());
-  }
-
-  /** Method to save synoptical table loadicator data */
-  // TODO refactor v2
-  private void saveSynopticalTableLoadicatorData() {
-    currentTableName = LoadableStudyTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable();
-    if (null == synopticalTableLoadicatorDataStage
-        || synopticalTableLoadicatorDataStage.isEmpty()) {
-      log.info("Communication XXXXXXX  SynopticalTableLoadicatorData is empty");
-      return;
-    }
-    for (SynopticalTableLoadicatorData sTableLoadicatorData : synopticalTableLoadicatorDataStage) {
-      Optional<SynopticalTableLoadicatorData> sTableLoadicatorDataOptional =
-          synopticalTableLoadicatorDataRepository.findById(sTableLoadicatorData.getId());
-      setEntityDocFields(sTableLoadicatorData, sTableLoadicatorDataOptional);
-      for (SynopticalTable st : synopticalTableStage) {
-        if (Objects.equals(sTableLoadicatorData.getCommunicationRelatedEntityId(), st.getId())) {
-          sTableLoadicatorData.setSynopticalTable(st);
-        }
-      }
-    }
-    synopticalTableLoadicatorDataStage =
-        synopticalTableLoadicatorDataRepository.saveAll(synopticalTableLoadicatorDataStage);
-    log.info("Communication #######  SynopticalTableLoadicatorData are saved");
-  }
-
-  /** Method to save CowHistory table */
-  // TODO refactor v2
-  private void saveCowHistory() {
-    currentTableName = LoadableStudyTables.COW_HISTORY.getTable();
-    if (null == cowHistoryStage || cowHistoryStage.isEmpty()) {
-      log.info("Communication XXXXXXX  CowHistoryData is empty");
-      return;
-    }
-    for (CowHistory cowHistory : cowHistoryStage) {
-      Optional<CowHistory> cowHistoryOptional = cowHistoryRepository.findById(cowHistory.getId());
-      setEntityDocFields(cowHistory, cowHistoryOptional);
-    }
-    cowHistoryRepository.saveAll(cowHistoryStage);
-    log.info("Communication #######  CowHistory are saved");
-  }
-
-  /** Method to save DischargePatternQuantityCargoPortwiseDetails table */
-  // TODO refactor v2
-  private void saveDischargePatternQuantityCargoPortwiseDetails() {
-    currentTableName = LoadableStudyTables.DISCHARGE_QUANTITY_CARGO_DETAILS.getTable();
-    if (null == dischargePatternQuantityCargoPortwiseDetailsStage
-        || dischargePatternQuantityCargoPortwiseDetailsStage.isEmpty()) {
-      log.info("Communication XXXXXXX  DischargePatternQuantityCargoPortwiseDetails is empty");
-      return;
-    }
-    for (DischargePatternQuantityCargoPortwiseDetails dischargenQuantityDetails :
-        dischargePatternQuantityCargoPortwiseDetailsStage) {
-      Optional<DischargePatternQuantityCargoPortwiseDetails> dischargenQuantityDetailsOptional =
-          dischargePatternQuantityCargoPortwiseRepository.findById(
-              dischargenQuantityDetails.getId());
-      setEntityDocFields(dischargenQuantityDetails, dischargenQuantityDetailsOptional);
-    }
-    dischargePatternQuantityCargoPortwiseRepository.saveAll(
-        dischargePatternQuantityCargoPortwiseDetailsStage);
-    log.info("Communication #######  DischargePatternQuantityCargoPortwiseDetails are saved");
-  }
-
-  /** Method to save loadable_study_rules table */
-  // TODO refactor v2
-  private void saveLoadableStudyRules() {
-    currentTableName = LoadableStudyTables.LOADABLE_STUDY_RULES.getTable();
-
-    if (!isEmpty(loadableStudyRulesStage)) {
-      for (LoadableStudyRules loadableStudyRules : loadableStudyRulesStage) {
-        // Set detached entities
-        Optional<LoadableStudyRules> loadableStudyRulesOpt =
-            loadableStudyRuleRepository.findById(loadableStudyRules.getId());
-        loadableStudyRules.setLoadableStudy(loadableStudyStage);
-
-        // Set version
-        setEntityDocFields(loadableStudyRules, loadableStudyRulesOpt);
       }
 
       // Save data
-      loadableStudyRuleRepository.saveAll(loadableStudyRulesStage);
-      log.info(
-          "Communication #######  loadable_study_rules saved. Entries: {}",
-          loadableStudyRulesStage.size());
+      algoErrorHeadingStage = algoErrorHeadingRepository.saveAll(algoErrorHeadingStage);
+      logSavedEntity(algoErrorHeadingStage);
+    }
+  }
+
+  /** Method to save algo_errors table */
+  private void saveAlgoErrors() {
+    currentTableName = LoadableStudyTables.ALGO_ERRORS.getTable();
+
+    if (isValidStageEntity(algoErrorsStage, currentTableName)) {
+      for (AlgoErrors algoErrors : algoErrorsStage) {
+        Optional<AlgoErrors> algoErrorsOptional = algoErrorsRepository.findById(algoErrors.getId());
+        setEntityDocFields(algoErrors, algoErrorsOptional);
+
+        for (AlgoErrorHeading algoErrorHeading : algoErrorHeadingStage) {
+          if (Objects.equals(
+              algoErrorHeading.getId(), algoErrors.getCommunicationRelatedEntityId())) {
+            algoErrors.setAlgoErrorHeading(algoErrorHeading);
+          }
+        }
+      }
+
+      // Save data
+      algoErrorsStage = algoErrorsRepository.saveAll(algoErrorsStage);
+      logSavedEntity(algoErrorsStage);
+    }
+  }
+
+  /** Method to save loadable_plan_constraints table */
+  private void saveLoadablePlanConstraints() {
+    currentTableName = LoadableStudyTables.LOADABLE_PLAN_CONSTRAINTS.getTable();
+
+    if (isValidStageEntity(loadablePlanConstraintsStage, currentTableName)) {
+      for (LoadablePlanConstraints lpConstraint : loadablePlanConstraintsStage) {
+        Optional<LoadablePlanConstraints> loadablePlanConstraintsOpt =
+            loadablePlanConstraintsRespository.findById(lpConstraint.getId());
+        setEntityDocFields(lpConstraint, loadablePlanConstraintsOpt);
+
+        lpConstraint.setLoadablePattern(
+            getLoadablePattern(lpConstraint.getCommunicationRelatedEntityId()).orElse(null));
+      }
+
+      loadablePlanConstraintsStage =
+          loadablePlanConstraintsRespository.saveAll(loadablePlanConstraintsStage);
+      logSavedEntity(loadablePlanConstraintsStage);
+    }
+  }
+
+  /** Method to save loadable_plan_quantity table */
+  private void saveLoadablePlanQuantity() {
+    currentTableName = LoadableStudyTables.LOADABLE_PLAN_QUANTITY.getTable();
+
+    if (isValidStageEntity(loadablePlanQuantityStage, currentTableName)) {
+      for (LoadablePlanQuantity lpQuantity : loadablePlanQuantityStage) {
+        Optional<LoadablePlanQuantity> loadablePlanConstraintsOpt =
+            loadablePlanQuantityRepository.findById(lpQuantity.getId());
+        setEntityDocFields(lpQuantity, loadablePlanConstraintsOpt);
+
+        lpQuantity.setLoadablePattern(
+            getLoadablePattern(lpQuantity.getCommunicationRelatedEntityId()).orElse(null));
+      }
+
+      // Save data
+      loadablePlanQuantityStage = loadablePlanQuantityRepository.saveAll(loadablePlanQuantityStage);
+      logSavedEntity(loadablePlanQuantityStage);
+    }
+  }
+
+  /** Method to save loadable_plan_commingle_details table */
+  private void saveLoadablePlanCommingleDetails() {
+    currentTableName = LoadableStudyTables.LOADABLE_PLAN_COMMINGLE_DETAILS.getTable();
+
+    if (isValidStageEntity(loadablePlanCommingleDetailsStage, currentTableName)) {
+      for (LoadablePlanCommingleDetails lpCommingleDetail : loadablePlanCommingleDetailsStage) {
+        Optional<LoadablePlanCommingleDetails> lpCommingleDetailsOpt =
+            loadablePlanCommingleDetailsRepository.findById(lpCommingleDetail.getId());
+        setEntityDocFields(lpCommingleDetail, lpCommingleDetailsOpt);
+
+        LoadablePattern loadablePattern =
+            loadablePatternRepository
+                .findById(lpCommingleDetail.getCommunicationRelatedEntityId())
+                .orElse(null);
+        lpCommingleDetail.setLoadablePattern(loadablePattern);
+      }
+
+      // Save data
+      loadablePlanCommingleDetailsStage =
+          loadablePlanCommingleDetailsRepository.saveAll(loadablePlanCommingleDetailsStage);
+      logSavedEntity(loadablePlanCommingleDetailsStage);
+    }
+  }
+
+  /** Method to save loadable_pattern_cargo_topping_off_sequence table */
+  private void saveLoadablePatternCargoToppingOffSequence() {
+    currentTableName = LoadableStudyTables.LOADABLE_PATTERN_CARGO_TOPPING_OFF_SEQUENCE.getTable();
+
+    if (isValidStageEntity(loadablePatternCargoToppingOffSequenceStage, currentTableName)) {
+      for (LoadablePatternCargoToppingOffSequence lpCargoToppingOffSequence :
+          loadablePatternCargoToppingOffSequenceStage) {
+        Optional<LoadablePatternCargoToppingOffSequence> lpCargoToppingOffSequenceOpt =
+            loadablePatternCargoToppingOffSequenceRepository.findById(
+                lpCargoToppingOffSequence.getId());
+        setEntityDocFields(lpCargoToppingOffSequence, lpCargoToppingOffSequenceOpt);
+
+        lpCargoToppingOffSequence.setLoadablePattern(
+            getLoadablePattern(lpCargoToppingOffSequence.getCommunicationRelatedEntityId())
+                .orElse(null));
+      }
+
+      // Save data
+      loadablePatternCargoToppingOffSequenceStage =
+          loadablePatternCargoToppingOffSequenceRepository.saveAll(
+              loadablePatternCargoToppingOffSequenceStage);
+      logSavedEntity(loadablePatternCargoToppingOffSequenceStage);
+    }
+  }
+
+  /** Method to save loadable_plan_stowage_details table */
+  private void saveLoadablePlanStowageDetails() {
+    currentTableName = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS.getTable();
+
+    if (isValidStageEntity(loadablePlanStowageDetailsStage, currentTableName)) {
+      for (LoadablePlanStowageDetails lpStowageDetail : loadablePlanStowageDetailsStage) {
+        Optional<LoadablePlanStowageDetails> lpStowageDetailsOpt =
+            loadablePlanStowageDetailsRespository.findById(lpStowageDetail.getId());
+        setEntityDocFields(lpStowageDetail, lpStowageDetailsOpt);
+
+        LoadablePlan loadablePlan =
+            getLoadablePlan(lpStowageDetail.getCommunicationRelatedEntityId()).orElse(null);
+        lpStowageDetail.setLoadablePlan(loadablePlan);
+        LoadablePattern loadablePattern =
+            getLoadablePattern(lpStowageDetail.getCommunicationRelatedEntityId()).orElse(null);
+        lpStowageDetail.setLoadablePattern(loadablePattern);
+      }
+
+      loadablePlanStowageDetailsStage =
+          loadablePlanStowageDetailsRespository.saveAll(loadablePlanStowageDetailsStage);
+      logSavedEntity(loadablePlanStowageDetailsStage);
+    }
+  }
+
+  /** Method to save loadable_plan_ballast_details table */
+  private void saveLoadablePlanBallastDetails() {
+    currentTableName = LoadableStudyTables.LOADABLE_PLAN_BALLAST_DETAILS.getTable();
+
+    if (isValidStageEntity(loadablePlanBallastDetailsStage, currentTableName)) {
+      for (LoadablePlanBallastDetails lpBallastDetail : loadablePlanBallastDetailsStage) {
+        Optional<LoadablePlanBallastDetails> lpBallastDetailsOpt =
+            loadablePlanBallastDetailsRepository.findById(lpBallastDetail.getId());
+        setEntityDocFields(lpBallastDetail, lpBallastDetailsOpt);
+
+        lpBallastDetail.setLoadablePattern(
+            getLoadablePattern(lpBallastDetail.getCommunicationRelatedEntityId()).orElse(null));
+      }
+
+      // Save data
+      loadablePlanBallastDetailsStage =
+          loadablePlanBallastDetailsRepository.saveAll(loadablePlanBallastDetailsStage);
+      logSavedEntity(loadablePlanBallastDetailsStage);
+    }
+  }
+
+  /** Method to save loadable_plan_commingle_details_portwise table */
+  private void saveLoadablePlanCommingleDetailsPortwise() {
+    currentTableName = LoadableStudyTables.LOADABLE_PLAN_COMMINGLE_DETAILS_PORTWISE.getTable();
+
+    if (isValidStageEntity(loadablePlanComminglePortwiseDetailsStage, currentTableName)) {
+      for (LoadablePlanComminglePortwiseDetails lpComminglePortwiseDetail :
+          loadablePlanComminglePortwiseDetailsStage) {
+        Optional<LoadablePlanComminglePortwiseDetails> lpComminglePortwiseDetailsOpt =
+            loadablePlanCommingleDetailsPortwiseRepository.findById(
+                lpComminglePortwiseDetail.getId());
+        setEntityDocFields(lpComminglePortwiseDetail, lpComminglePortwiseDetailsOpt);
+
+        lpComminglePortwiseDetail.setLoadablePattern(
+            getLoadablePattern(lpComminglePortwiseDetail.getCommunicationRelatedEntityId())
+                .orElse(null));
+      }
+
+      // Save data
+      loadablePlanComminglePortwiseDetailsStage =
+          loadablePlanCommingleDetailsPortwiseRepository.saveAll(
+              loadablePlanComminglePortwiseDetailsStage);
+      logSavedEntity(loadablePlanComminglePortwiseDetailsStage);
+    }
+  }
+
+  /** Method to save communication_status_update table */
+  private void saveCommunicationStatusUpdate(String messageType) {
+    currentTableName = LoadableStudyTables.COMMUNICATION_STATUS_UPDATE.getTable();
+
+    if (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType)) {
+      // Save data
+      LoadableStudyCommunicationStatus savedEntity =
+          loadableStudyServiceShore.updateCommunicationStatus(
+              UUID.randomUUID().toString(), loadablePatternStage.get(0).getId());
+      logSavedEntity(savedEntity);
+    }
+  }
+
+  /** Method to save stability_parameters table */
+  private void saveStabilityParameter() {
+    currentTableName = LoadableStudyTables.STABILITY_PARAMETERS.getTable();
+
+    if (isValidStageEntity(stabilityParametersStage, currentTableName)) {
+      for (StabilityParameters stabilityParameter : stabilityParametersStage) {
+        Optional<StabilityParameters> stabilityParametersOpt =
+            stabilityParameterRepository.findById(stabilityParameter.getId());
+        setEntityDocFields(stabilityParameter, stabilityParametersOpt);
+
+        stabilityParameter.setLoadablePattern(
+            getLoadablePattern(stabilityParameter.getCommunicationRelatedEntityId()).orElse(null));
+      }
+
+      // Save data
+      stabilityParametersStage = stabilityParameterRepository.saveAll(stabilityParametersStage);
+      logSavedEntity(stabilityParametersStage);
+    }
+  }
+
+  /** Method to loadable_pattern_cargo_details table */
+  private void saveLoadablePatternCargoDetails() {
+    currentTableName = LoadableStudyTables.LOADABLE_PATTERN_CARGO_DETAILS.getTable();
+
+    if (isValidStageEntity(loadablePatternCargoDetailsStage, currentTableName)) {
+      for (LoadablePatternCargoDetails lpCargoDetail : loadablePatternCargoDetailsStage) {
+        Optional<LoadablePatternCargoDetails> loadablePatternCargoDetailsOpt =
+            loadablePatternCargoDetailsRepository.findById(lpCargoDetail.getId());
+        setEntityDocFields(lpCargoDetail, loadablePatternCargoDetailsOpt);
+      }
+
+      // Save data
+      loadablePatternCargoDetailsStage =
+          loadablePatternCargoDetailsRepository.saveAll(loadablePatternCargoDetailsStage);
+      logSavedEntity(loadablePatternCargoDetailsStage);
+    }
+  }
+
+  /** Method to save loadable_plan_stowage_ballast_details table */
+  private void saveLoadablePlanStowageBallastDetails() {
+    currentTableName = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_BALLAST_DETAILS.getTable();
+
+    if (isValidStageEntity(loadablePlanStowageBallastDetailsStage, currentTableName)) {
+      for (LoadablePlanStowageBallastDetails lpStowageBallastDetail :
+          loadablePlanStowageBallastDetailsStage) {
+        Optional<LoadablePlanStowageBallastDetails> loadablePatternCargoDetailsOptional =
+            loadablePlanStowageBallastDetailsRepository.findById(lpStowageBallastDetail.getId());
+        setEntityDocFields(lpStowageBallastDetail, loadablePatternCargoDetailsOptional);
+
+        lpStowageBallastDetail.setLoadablePlan(
+            getLoadablePlan(lpStowageBallastDetail.getCommunicationRelatedEntityId()).orElse(null));
+      }
+
+      // Save data
+      loadablePlanStowageBallastDetailsStage =
+          loadablePlanStowageBallastDetailsRepository.saveAll(
+              loadablePlanStowageBallastDetailsStage);
+      logSavedEntity(loadablePlanStowageBallastDetailsStage);
+    }
+  }
+
+  /** Method to save loadicator_data_for_synoptical_table table */
+  private void saveSynopticalTableLoadicatorData() {
+    currentTableName = LoadableStudyTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable();
+
+    if (isValidStageEntity(synopticalTableLoadicatorDataStage, currentTableName)) {
+      for (SynopticalTableLoadicatorData sTableLoadicatorData :
+          synopticalTableLoadicatorDataStage) {
+        Optional<SynopticalTableLoadicatorData> sTableLoadicatorDataOpt =
+            synopticalTableLoadicatorDataRepository.findById(sTableLoadicatorData.getId());
+        setEntityDocFields(sTableLoadicatorData, sTableLoadicatorDataOpt);
+
+        for (SynopticalTable st : synopticalTableStage) {
+          if (Objects.equals(sTableLoadicatorData.getCommunicationRelatedEntityId(), st.getId())) {
+            sTableLoadicatorData.setSynopticalTable(st);
+          }
+        }
+      }
+
+      // Save data
+      synopticalTableLoadicatorDataStage =
+          synopticalTableLoadicatorDataRepository.saveAll(synopticalTableLoadicatorDataStage);
+      logSavedEntity(synopticalTableLoadicatorDataStage);
+    }
+  }
+
+  /** Method to save cow_history table */
+  private void saveCowHistory() {
+    currentTableName = LoadableStudyTables.COW_HISTORY.getTable();
+
+    if (isValidStageEntity(cowHistoryStage, currentTableName)) {
+      for (CowHistory cowHistory : cowHistoryStage) {
+        Optional<CowHistory> cowHistoryOpt = cowHistoryRepository.findById(cowHistory.getId());
+        setEntityDocFields(cowHistory, cowHistoryOpt);
+      }
+
+      // Save data
+      cowHistoryStage = cowHistoryRepository.saveAll(cowHistoryStage);
+      logSavedEntity(cowHistoryStage);
+    }
+  }
+
+  /** Method to save discharge_quantity_cargo_details table */
+  private void saveDischargePatternQuantityCargoPortwiseDetails() {
+    currentTableName = LoadableStudyTables.DISCHARGE_QUANTITY_CARGO_DETAILS.getTable();
+
+    if (isValidStageEntity(dischargePatternQuantityCargoPortwiseDetailsStage, currentTableName)) {
+      for (DischargePatternQuantityCargoPortwiseDetails dischargenQuantityDetails :
+          dischargePatternQuantityCargoPortwiseDetailsStage) {
+        Optional<DischargePatternQuantityCargoPortwiseDetails> dischargenQuantityDetailsOpt =
+            dischargePatternQuantityCargoPortwiseRepository.findById(
+                dischargenQuantityDetails.getId());
+        setEntityDocFields(dischargenQuantityDetails, dischargenQuantityDetailsOpt);
+      }
+
+      // Save data
+      dischargePatternQuantityCargoPortwiseDetailsStage =
+          dischargePatternQuantityCargoPortwiseRepository.saveAll(
+              dischargePatternQuantityCargoPortwiseDetailsStage);
+      logSavedEntity(dischargePatternQuantityCargoPortwiseDetailsStage);
+    }
+  }
+
+  /** Method to save loadable_study_rules table */
+  private void saveLoadableStudyRules() {
+    currentTableName = LoadableStudyTables.LOADABLE_STUDY_RULES.getTable();
+
+    if (isValidStageEntity(loadableStudyRulesStage, currentTableName)) {
+      for (LoadableStudyRules loadableStudyRules : loadableStudyRulesStage) {
+        Optional<LoadableStudyRules> loadableStudyRulesOpt =
+            loadableStudyRuleRepository.findById(loadableStudyRules.getId());
+        setEntityDocFields(loadableStudyRules, loadableStudyRulesOpt);
+
+        loadableStudyRules.setLoadableStudy(loadableStudyStage);
+      }
+
+      // Save data
+      loadableStudyRulesStage = loadableStudyRuleRepository.saveAll(loadableStudyRulesStage);
+      logSavedEntity(loadableStudyRulesStage);
     }
   }
 
@@ -1619,13 +1624,15 @@ public class LoadableStudyCommunicationService {
    *
    * @throws GenericServiceException Exception when rule not found
    */
-  // TODO refactor v2
   private void saveLoadableStudyRuleInputs() throws GenericServiceException {
     currentTableName = LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable();
 
-    if (!isEmpty(loadableStudyRuleInputsStage)) {
+    if (isValidStageEntity(loadableStudyRuleInputsStage, currentTableName)) {
       for (LoadableStudyRuleInput loadableStudyRuleInput : loadableStudyRuleInputsStage) {
-        // Set detached entities
+        Optional<LoadableStudyRuleInput> loadableStudyRuleInputOpt =
+            loadableStudyRuleInputRepository.findById(loadableStudyRuleInput.getId());
+        setEntityDocFields(loadableStudyRuleInput, loadableStudyRuleInputOpt);
+
         LoadableStudyRules loadableStudyRule =
             loadableStudyRuleRepository
                 .findById(loadableStudyRuleInput.getCommunicationRelatedEntityId())
@@ -1638,18 +1645,12 @@ public class LoadableStudyCommunicationService {
                             CommonErrorCodes.E_GEN_INTERNAL_ERR,
                             HttpStatusCode.INTERNAL_SERVER_ERROR));
         loadableStudyRuleInput.setLoadableStudyRuleXId(loadableStudyRule);
-
-        // Set version
-        Optional<LoadableStudyRuleInput> loadableStudyRuleInputOpt =
-            loadableStudyRuleInputRepository.findById(loadableStudyRuleInput.getId());
-        setEntityDocFields(loadableStudyRuleInput, loadableStudyRuleInputOpt);
       }
 
       // Save data
-      loadableStudyRuleInputRepository.saveAll(loadableStudyRuleInputsStage);
-      log.info(
-          "Communication #######  loadable_study_rule_input saved. Entries: {}",
-          loadableStudyRuleInputsStage.size());
+      loadableStudyRuleInputsStage =
+          loadableStudyRuleInputRepository.saveAll(loadableStudyRuleInputsStage);
+      logSavedEntity(loadableStudyRuleInputsStage);
     }
   }
 
@@ -1658,13 +1659,15 @@ public class LoadableStudyCommunicationService {
    *
    * @throws GenericServiceException Exception when pattern not found
    */
-  // TODO refactor v2
   private void saveLoadablePlanComments() throws GenericServiceException {
     currentTableName = LoadableStudyTables.LOADABLE_PLAN_COMMENTS.getTable();
 
-    if (!isEmpty(loadablePlanCommentsStage)) {
+    if (isValidStageEntity(loadablePlanCommentsStage, currentTableName)) {
       for (LoadablePlanComments comment : loadablePlanCommentsStage) {
-        // Set detached entities
+        Optional<LoadablePlanComments> commentOpt =
+            loadablePlanCommentsRepository.findById(comment.getId());
+        setEntityDocFields(comment, commentOpt);
+
         LoadablePattern loadablePattern =
             loadablePatternRepository
                 .findById(comment.getCommunicationRelatedEntityId())
@@ -1677,31 +1680,21 @@ public class LoadableStudyCommunicationService {
                             CommonErrorCodes.E_GEN_INTERNAL_ERR,
                             HttpStatusCode.INTERNAL_SERVER_ERROR));
         comment.setLoadablePattern(loadablePattern);
-
-        // Set version
-        Optional<LoadablePlanComments> commentOpt =
-            loadablePlanCommentsRepository.findById(comment.getId());
-        setEntityDocFields(comment, commentOpt);
       }
 
       // Save data
-      loadablePlanCommentsRepository.saveAll(loadablePlanCommentsStage);
-      log.info(
-          "Communication #######  loadable_plan_comments saved. Entries: {}",
-          loadablePlanCommentsStage.size());
+      loadablePlanCommentsStage = loadablePlanCommentsRepository.saveAll(loadablePlanCommentsStage);
+      logSavedEntity(loadablePlanCommentsStage);
     }
   }
 
   /** Method to save loadable_plan_stowage_details_temp table */
-  // TODO refactor v2
   private void saveLoadablePlanStowageDetailsTemp() {
     currentTableName = LoadableStudyTables.LOADABLE_PLAN_STOWAGE_DETAILS_TEMP.getTable();
 
-    if (!isEmpty(loadablePlanStowageDetailsTempStage)) {
+    if (isValidStageEntity(loadablePlanStowageDetailsTempStage, currentTableName)) {
       for (LoadablePlanStowageDetailsTemp loadablePlanStowageDetailsTemp :
           loadablePlanStowageDetailsTempStage) {
-
-        // Set version
         Optional<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTempOpt =
             loadablePlanStowageDetailsTempRepository.findById(
                 loadablePlanStowageDetailsTemp.getId());
@@ -1765,36 +1758,51 @@ public class LoadableStudyCommunicationService {
       }
 
       // Save data
-      loadablePlanStowageDetailsTempRepository.saveAll(loadablePlanStowageDetailsTempStage);
-      log.info(
-          "Communication #######  loadable_plan_stowage_details_temp saved. Entries: {}",
-          loadablePlanStowageDetailsTempStage.size());
+      loadablePlanStowageDetailsTempStage =
+          loadablePlanStowageDetailsTempRepository.saveAll(loadablePlanStowageDetailsTempStage);
+      logSavedEntity(loadablePlanStowageDetailsTempStage);
     }
   }
 
-  /** Method to save loadable_pattern_algo_status table */
-  // TODO refactor v2
-  private void saveLoadablePatternAlgoStatus() {
+  /**
+   * Method to save loadable_pattern_algo_status table
+   *
+   * @throws GenericServiceException Exception when master data not found
+   */
+  private void saveLoadablePatternAlgoStatus() throws GenericServiceException {
     currentTableName = LoadableStudyTables.LOADABLE_PATTERN_ALGO_STATUS.getTable();
 
-    if (null == loadablePatternAlgoStatusStage) {
-      log.info("Communication XXXXXXX  loadable_pattern_algo_status is empty");
-      return;
-    }
-    Optional<LoadableStudyStatus> loadableStudyStatus =
-        loadableStudyStatusRepository.findById(
-            loadablePatternAlgoStatusStage
-                .getCommunicationRelatedIdMap()
-                .get("loadable_study_status"));
+    if (isValidStageEntity(loadablePatternAlgoStatusStage, currentTableName)) {
+      LoadableStudyStatus loadableStudyStatus =
+          loadableStudyStatusRepository
+              .findById(
+                  loadablePatternAlgoStatusStage
+                      .getCommunicationRelatedIdMap()
+                      .get("loadable_study_status"))
+              .orElseThrow(
+                  () -> {
+                    log.error(
+                        "Master data not found in loadable_study_status. Id: {}",
+                        loadablePatternAlgoStatusStage
+                            .getCommunicationRelatedIdMap()
+                            .get("loadable_study_status"));
+                    return new GenericServiceException(
+                        "Master data not found in loadable_study_status. Id: "
+                            + loadablePatternAlgoStatusStage
+                                .getCommunicationRelatedIdMap()
+                                .get("loadable_study_status"),
+                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                        HttpStatusCode.INTERNAL_SERVER_ERROR);
+                  });
 
-    // Update status for recent record
-    if (loadableStudyStatus.isPresent()) {
-      Optional<LoadablePatternAlgoStatus> lpAlgoStatus =
+      Optional<LoadablePatternAlgoStatus> lpAlgoStatusOpt =
           loadablePatternAlgoStatusRepository.findByLoadablePatternId(
               loadablePatternAlgoStatusStage
                   .getCommunicationRelatedIdMap()
                   .get("loadabale_pattern_xid"));
-      lpAlgoStatus.ifPresentOrElse(
+      setEntityDocFields(loadablePatternAlgoStatusStage, lpAlgoStatusOpt);
+
+      lpAlgoStatusOpt.ifPresentOrElse(
           loadablePatternAlgoStatus -> loadablePatternAlgoStatusStage = loadablePatternAlgoStatus,
           () -> {
             Optional<LoadablePattern> loadablePattern =
@@ -1802,40 +1810,31 @@ public class LoadableStudyCommunicationService {
                     loadablePatternAlgoStatusStage.getLoadablePattern().getId());
             loadablePatternAlgoStatusStage.setLoadablePattern(loadablePattern.orElse(null));
           });
-      setEntityDocFields(loadablePatternAlgoStatusStage, lpAlgoStatus);
       loadablePatternAlgoStatusStage.setGenerateFromShore(true);
-      loadablePatternAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus.get());
+      loadablePatternAlgoStatusStage.setLoadableStudyStatus(loadableStudyStatus);
+
+      // Save data
       loadablePatternAlgoStatusStage =
           loadablePatternAlgoStatusRepository.save(loadablePatternAlgoStatusStage);
-      log.info(
-          "Communication #######  loadable_pattern_algo_status saved with id:"
-              + loadablePatternAlgoStatusStage.getId());
-
-    } else {
-      log.info(
-          "Communication XXXXXXX  loadable_pattern_algo_status is not saved , loadableStudyStatus is not found : "
-              + loadablePatternAlgoStatusStage
-                  .getCommunicationRelatedIdMap()
-                  .get("loadable_study_status"));
+      logSavedEntity(loadablePatternAlgoStatusStage);
     }
   }
 
   /** Method to save discharge_cow_details table */
-  // TODO refactor v2
   private void saveDischargeStudyCowDetail() {
     currentTableName = LoadableStudyTables.DISCHARGE_COW_DETAILS.getTable();
-    if (!isEmpty(dischargeStudyCowDetailStage)) {
+
+    if (isValidStageEntity(dischargeStudyCowDetailStage, currentTableName)) {
       for (DischargeStudyCowDetail dischargeStudyCowDetail : dischargeStudyCowDetailStage) {
-        // Set version
         Optional<DischargeStudyCowDetail> dischargeStudyCowDetailOpt =
             dischargeStudyCowDetailRepository.findById(dischargeStudyCowDetail.getId());
         setEntityDocFields(dischargeStudyCowDetail, dischargeStudyCowDetailOpt);
       }
+
       // Save data
-      dischargeStudyCowDetailRepository.saveAll(dischargeStudyCowDetailStage);
-      log.info(
-          "Communication #######  discharge_cow_details saved. Entries: {}",
-          dischargeStudyCowDetailStage.size());
+      dischargeStudyCowDetailStage =
+          dischargeStudyCowDetailRepository.saveAll(dischargeStudyCowDetailStage);
+      logSavedEntity(dischargeStudyCowDetailStage);
     }
   }
 

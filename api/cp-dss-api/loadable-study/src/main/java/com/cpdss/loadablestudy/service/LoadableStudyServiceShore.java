@@ -19,7 +19,8 @@ public class LoadableStudyServiceShore {
   @Autowired
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
-  public void updateCommunicationStatus(String messageId, Long loadablePatternId) {
+  public LoadableStudyCommunicationStatus updateCommunicationStatus(
+      String messageId, Long loadablePatternId) {
     LoadableStudyCommunicationStatus lsCommunicationStatus = new LoadableStudyCommunicationStatus();
     lsCommunicationStatus.setMessageUUID(messageId);
     lsCommunicationStatus.setCommunicationStatus(
@@ -27,6 +28,6 @@ public class LoadableStudyServiceShore {
     lsCommunicationStatus.setReferenceId(loadablePatternId);
     lsCommunicationStatus.setMessageType(MessageTypes.VALIDATEPLAN.getMessageType());
     lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-    this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+    return this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
   }
 }
