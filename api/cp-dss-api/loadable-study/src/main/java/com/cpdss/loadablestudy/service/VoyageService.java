@@ -668,19 +668,9 @@ public class VoyageService {
                 }
               });
     } else {
-      Optional<VoyageStatus> status =
-          this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
-      if (!status.isPresent()) {
-        throw new GenericServiceException(
-            "Voyage status does not  exist",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
 
       if (validationBeforeVoyageClosureEnabled) {
 
-        // Validations before closing the voyage
-        // 1. ETA Actual and ETD Actual check for all port rotations
         Set<com.cpdss.loadablestudy.entity.LoadableStudy> allLoadableStudies =
             voyageEntity.getLoadableStudies();
         if (allLoadableStudies == null) {
@@ -705,12 +695,18 @@ public class VoyageService {
           log.error("No confirmed discharge study");
           throw new GenericServiceException(
               "No confirmed discharge study",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
               HttpStatusCode.BAD_REQUEST);
         }
 
         com.cpdss.loadablestudy.entity.LoadableStudy dischargeStudy = dischargeStudies.get(0);
 
+        // Validations before closing the voyage
+        // 1. Update Ullage verified for last DS port
+        // 2. Updated bl figure for all cargo
+        validateActuals(dischargeStudy);
+
+        // 3. ETA Actual and ETD Actual check for all port rotations
         List<LoadableStudyPortRotation> loadableStudyPortRotations =
             this.loadableStudyPortRotationRepository.findByLoadableStudyIdAndIsActive(
                 dischargeStudy.getId(), true);
@@ -731,10 +727,15 @@ public class VoyageService {
             }
           }
         }
+      }
 
-        // 2. Update Ullage verified for last DS port
-        // 3. Updated bl figure for all cargo
-        validateActuals(dischargeStudy);
+      Optional<VoyageStatus> status =
+          this.voyageStatusRepository.findByIdAndIsActive(CLOSE_VOYAGE_STATUS, true);
+      if (status.isEmpty()) {
+        throw new GenericServiceException(
+            "Voyage status does not  exist",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
       }
 
       voyageEntity.setVoyageStatus(status.get());
