@@ -60,6 +60,11 @@ public final class PortDischargingPlanRobDetailsRequest
               conditionType_ = input.readInt32();
               break;
             }
+          case 32:
+            {
+              valueType_ = input.readInt32();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -128,6 +133,17 @@ public final class PortDischargingPlanRobDetailsRequest
     return conditionType_;
   }
 
+  public static final int VALUETYPE_FIELD_NUMBER = 4;
+  private int valueType_;
+  /**
+   * <code>int32 valueType = 4;</code>
+   *
+   * @return The valueType.
+   */
+  public int getValueType() {
+    return valueType_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -151,6 +167,9 @@ public final class PortDischargingPlanRobDetailsRequest
     if (conditionType_ != 0) {
       output.writeInt32(3, conditionType_);
     }
+    if (valueType_ != 0) {
+      output.writeInt32(4, valueType_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -168,6 +187,9 @@ public final class PortDischargingPlanRobDetailsRequest
     }
     if (conditionType_ != 0) {
       size += com.google.protobuf.CodedOutputStream.computeInt32Size(3, conditionType_);
+    }
+    if (valueType_ != 0) {
+      size += com.google.protobuf.CodedOutputStream.computeInt32Size(4, valueType_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -190,6 +212,7 @@ public final class PortDischargingPlanRobDetailsRequest
     if (getPortXId() != other.getPortXId()) return false;
     if (getPortRotationXId() != other.getPortRotationXId()) return false;
     if (getConditionType() != other.getConditionType()) return false;
+    if (getValueType() != other.getValueType()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -207,6 +230,8 @@ public final class PortDischargingPlanRobDetailsRequest
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationXId());
     hash = (37 * hash) + CONDITIONTYPE_FIELD_NUMBER;
     hash = (53 * hash) + getConditionType();
+    hash = (37 * hash) + VALUETYPE_FIELD_NUMBER;
+    hash = (53 * hash) + getValueType();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -359,6 +384,8 @@ public final class PortDischargingPlanRobDetailsRequest
 
       conditionType_ = 0;
 
+      valueType_ = 0;
+
       return this;
     }
 
@@ -393,6 +420,7 @@ public final class PortDischargingPlanRobDetailsRequest
       result.portXId_ = portXId_;
       result.portRotationXId_ = portRotationXId_;
       result.conditionType_ = conditionType_;
+      result.valueType_ = valueType_;
       onBuilt();
       return result;
     }
@@ -456,6 +484,9 @@ public final class PortDischargingPlanRobDetailsRequest
       }
       if (other.getConditionType() != 0) {
         setConditionType(other.getConditionType());
+      }
+      if (other.getValueType() != 0) {
+        setValueType(other.getValueType());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -584,6 +615,39 @@ public final class PortDischargingPlanRobDetailsRequest
     public Builder clearConditionType() {
 
       conditionType_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private int valueType_;
+    /**
+     * <code>int32 valueType = 4;</code>
+     *
+     * @return The valueType.
+     */
+    public int getValueType() {
+      return valueType_;
+    }
+    /**
+     * <code>int32 valueType = 4;</code>
+     *
+     * @param value The valueType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setValueType(int value) {
+
+      valueType_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 valueType = 4;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearValueType() {
+
+      valueType_ = 0;
       onChanged();
       return this;
     }

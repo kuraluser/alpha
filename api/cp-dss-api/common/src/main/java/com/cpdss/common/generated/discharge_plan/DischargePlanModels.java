@@ -497,14 +497,15 @@ public final class DischargePlanModels {
           + "\030\001 \001(\003\022\027\n\017portRotationXId\030\002 \001(\003\022\017\n\007tankX"
           + "Id\030\003 \001(\003\022\020\n\010quantity\030\004 \001(\001\022\025\n\rconditionT"
           + "ype\030\005 \001(\005\022\021\n\tvalueType\030\006 \001(\005\022\017\n\007density\030"
-          + "\007 \001(\001\"g\n$PortDischargingPlanRobDetailsRe"
+          + "\007 \001(\001\"z\n$PortDischargingPlanRobDetailsRe"
           + "quest\022\017\n\007portXId\030\001 \001(\003\022\027\n\017portRotationXI"
-          + "d\030\002 \001(\003\022\025\n\rconditionType\030\003 \001(\005\"\224\001\n\"PortD"
-          + "ischargingPlanRobDetailsReply\022\'\n\016respons"
-          + "eStatus\030\001 \001(\0132\017.ResponseStatus\022E\n\035portDi"
-          + "schargingPlanRobDetails\030\002 \003(\0132\036.PortDisc"
-          + "hargingPlanRobDetailsB-\n)com.cpdss.commo"
-          + "n.generated.discharge_planP\001b\006proto3"
+          + "d\030\002 \001(\003\022\025\n\rconditionType\030\003 \001(\005\022\021\n\tvalueT"
+          + "ype\030\004 \001(\005\"\224\001\n\"PortDischargingPlanRobDeta"
+          + "ilsReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respo"
+          + "nseStatus\022E\n\035portDischargingPlanRobDetai"
+          + "ls\030\002 \003(\0132\036.PortDischargingPlanRobDetails"
+          + "B-\n)com.cpdss.common.generated.discharge"
+          + "_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1120,7 +1121,7 @@ public final class DischargePlanModels {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortDischargingPlanRobDetailsRequest_descriptor,
             new java.lang.String[] {
-              "PortXId", "PortRotationXId", "ConditionType",
+              "PortXId", "PortRotationXId", "ConditionType", "ValueType",
             });
     internal_static_PortDischargingPlanRobDetailsReply_descriptor =
         getDescriptor().getMessageTypes().get(52);

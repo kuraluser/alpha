@@ -490,6 +490,7 @@ message PortDischargingPlanRobDetailsRequest{
     int64 portXId = 1;
     int64 portRotationXId = 2;
     int32 conditionType = 3;
+    int32 valueType = 4;
 }
 
 message PortDischargingPlanRobDetailsReply{

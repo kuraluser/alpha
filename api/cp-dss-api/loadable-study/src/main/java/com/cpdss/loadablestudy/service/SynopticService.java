@@ -507,6 +507,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                   .setPortXId(lastDischargingPortPortRotation.getPortXId())
                   .setPortRotationXId(lastDischargingPortPortRotation.getId())
                   .setConditionType(2)
+                  .setValueType(1)
                   .build());
       if (!SUCCESS.equals(response.getResponseStatus().getStatus())) {
         throw new GenericServiceException(

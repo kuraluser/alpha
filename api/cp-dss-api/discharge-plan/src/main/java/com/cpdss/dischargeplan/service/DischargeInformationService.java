@@ -1469,7 +1469,7 @@ public class DischargeInformationService {
                     request.getPortXId(),
                     request.getPortRotationXId(),
                     request.getConditionType(),
-                    ACTUAL_TYPE_VALUE,
+                    request.getValueType(),
                     true);
     builder.addAllPortDischargingPlanRobDetails(
         this.informationBuilderService.buildPortDischargingPlanRobDetailsReply(

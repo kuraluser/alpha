@@ -26,4 +26,11 @@ public interface PortDischargingPlanRobDetailsRequestOrBuilder
    * @return The conditionType.
    */
   int getConditionType();
+
+  /**
+   * <code>int32 valueType = 4;</code>
+   *
+   * @return The valueType.
+   */
+  int getValueType();
 }
