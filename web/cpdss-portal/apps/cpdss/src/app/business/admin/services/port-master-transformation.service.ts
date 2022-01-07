@@ -45,10 +45,12 @@ export class PortMasterTransformationService {
       },
       tideHeightHigh: {
         'required': "PORT_MASTER_TIDE_HEIGHT_REQUIRRED",
+        'max': "PORT_MASTER_HIGH_TIDE_HEIGHT_MAX_ERROR",
         'invalidNumber': "PORT_MASTER_TIDE_HEIGHT_INVALID"
       },
       tideHeightLow: {
         'required': "PORT_MASTER_LOW_TIDE_HEIGHT_REQUIRED",
+        'max': "PORT_MASTER_LOW_TIDE_HEIGHT_MAX_ERROR",
         'invalidNumber': "PORT_MASTER_LOW_TIDE_HEIGHT_INVALID"
       },
       maxPermissibleDraft: {
@@ -231,7 +233,8 @@ export class PortMasterTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_MAXIMUM_LOA_PLACEHOLDER',
         errorMessages: {
-          'required': 'PORTMASTER_BERTH_MAXIMUM_LOA_REQUIRED'
+          'required': 'PORTMASTER_BERTH_MAXIMUM_LOA_REQUIRED',
+          'max': 'PORTMASTER_BERTH_MAXIMUM_LOA_MAX_ERROR'
         }
       },
       {
@@ -240,7 +243,8 @@ export class PortMasterTransformationService {
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'PORTMASTER_BERTH_MAXIMUM_DWT_PLACEHOLDER',
         errorMessages: {
-          'required': 'PORTMASTER_BERTH_MAXIMUM_DWT_REQUIRED'
+          'required': 'PORTMASTER_BERTH_MAXIMUM_DWT_REQUIRED',
+          'max': 'PORTMASTER_BERTH_MAXIMUM_DWT_MAX_ERROR'
         }
       },
       {
