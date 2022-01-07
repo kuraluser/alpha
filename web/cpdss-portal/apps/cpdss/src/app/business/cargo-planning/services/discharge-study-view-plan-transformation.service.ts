@@ -83,6 +83,12 @@ export class DischargeStudyViewPlanTransformationService {
         numberType: 'quantity'
       },
       {
+        field: 'dischargeRate',
+        header: 'DISCHARGE_STUDY_VIEW_DISCHARGE_RATE',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberType: 'quantity'
+      },
+      {
         field: 'dischargeTime',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right',
@@ -232,6 +238,7 @@ export class DischargeStudyViewPlanTransformationService {
     _cargoDetailValuObject.api = new ValueObject<number>(cargoDetail.api);
     _cargoDetailValuObject.temp = new ValueObject<number>(cargoDetail.temperature);
     _cargoDetailValuObject.sequenceNo = new ValueObject<number>(cargoDetail.sequenceNo);
+    _cargoDetailValuObject.dischargeRate = new ValueObject<number>(cargoDetail.dischargeRate);
     return _cargoDetailValuObject;
   }
 

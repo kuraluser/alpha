@@ -74,6 +74,7 @@ export interface IBackLoadingDetails {
     maxKl: ValueObject<number>;
     sequenceNo: ValueObject<number>;
     abbreviation: ValueObject<string>;
+    dischargeRate: ValueObject<number>;
 }
 
 /**
@@ -144,4 +145,5 @@ export interface IBackLoadingDetails {
     temperature: number;
     dischargeTime: number;
     sequenceNo: number;
+    dischargeRate: number;
 }

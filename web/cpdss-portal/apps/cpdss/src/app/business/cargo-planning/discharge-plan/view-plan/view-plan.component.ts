@@ -236,6 +236,7 @@ export class ViewPlanComponent implements OnInit {
       mt: this.fb.control(cargo.mt.value),
       api: this.fb.control(cargo.api?.value),
       temp: this.fb.control(cargo.temp?.value),
+      dischargeRate: this.fb.control(cargo.dischargeRate?.value),
     })
   }
 
