@@ -20,11 +20,14 @@ import com.cpdss.vesselinfo.domain.VesselRule;
 import com.cpdss.vesselinfo.domain.VesselTankDetails;
 import com.cpdss.vesselinfo.entity.*;
 import com.cpdss.vesselinfo.repository.*;
+import com.google.protobuf.Empty;
 import io.grpc.internal.testing.StreamRecorder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.IntStream;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -86,6 +89,8 @@ class VesselInfoServiceTest {
   @Mock private ShearingForceRepositoryType4 shearingForceRepositoryType4;
   @Mock private BendingMomentShearingForceRepositoryType3 bendingMomentShearingForceRepositoryType3;
   @Mock private VesselParticularService vesselParticularService;
+  @Mock CrewService crewService;
+  @Mock CrewRankRepository crewRankRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -1947,5 +1952,29 @@ class VesselInfoServiceTest {
     RuleVesselMappingInput ruleVesselMappingInput = new RuleVesselMappingInput();
     ruleVesselMappingInput.setId(1L);
     return Optional.of(ruleVesselMappingInput);
+  }
+
+  @Test
+  void getAllCrewRank() {
+    Empty request = Empty.newBuilder().build();
+    StreamRecorder<VesselInfo.CrewReply> responseObserver = StreamRecorder.create();
+    doNothing().when(crewService).getAllCrewRank(Mockito.any());
+    vesselInfoService.getAllCrewRank(request, responseObserver);
+    List<VesselInfo.CrewReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    Assertions.assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void getAllCrewRankWithException() {
+    Empty request = Empty.newBuilder().build();
+    StreamRecorder<VesselInfo.CrewReply> responseObserver = StreamRecorder.create();
+    doThrow(new RuntimeException("1")).when(crewService).getAllCrewRank(Mockito.any());
+    vesselInfoService.getAllCrewRank(request, responseObserver);
+    List<com.cpdss.common.generated.VesselInfo.CrewReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    assertNull(responseObserver.getError());
+    Assertions.assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
   }
 }

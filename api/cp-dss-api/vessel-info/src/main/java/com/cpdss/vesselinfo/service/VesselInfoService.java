@@ -1,91 +1,42 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.vesselinfo.service;
 
-import static com.cpdss.vesselinfo.constants.VesselInfoConstants.*;
+import static com.cpdss.vesselinfo.constants.VesselInfoConstants.VESSEL_INFO_TABLES;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
-import com.cpdss.common.generated.Common.ResponseStatus;
-import com.cpdss.common.generated.Common.RuleDropDownMaster;
-import com.cpdss.common.generated.Common.RulePlans;
-import com.cpdss.common.generated.Common.Rules;
-import com.cpdss.common.generated.Common.RulesInputs;
-import com.cpdss.common.generated.VesselInfo.BMAndSF;
+import com.cpdss.common.generated.Common.*;
+import com.cpdss.common.generated.VesselInfo.*;
 import com.cpdss.common.generated.VesselInfo.BendingMomentShearingForceType3;
 import com.cpdss.common.generated.VesselInfo.BendingMomentType1;
 import com.cpdss.common.generated.VesselInfo.BendingMomentType2;
 import com.cpdss.common.generated.VesselInfo.BendingMomentType4;
 import com.cpdss.common.generated.VesselInfo.CalculationSheet;
-import com.cpdss.common.generated.VesselInfo.CalculationSheetTankGroup;
-import com.cpdss.common.generated.VesselInfo.HydrostaticData;
-import com.cpdss.common.generated.VesselInfo.InnerBulkHeadSF;
-import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
-import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
-import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
-import com.cpdss.common.generated.VesselInfo.MinMaxValuesForBMAndSf;
-import com.cpdss.common.generated.VesselInfo.ParameterValue;
-import com.cpdss.common.generated.VesselInfo.SelectableParameter;
 import com.cpdss.common.generated.VesselInfo.ShearingForceType1;
 import com.cpdss.common.generated.VesselInfo.ShearingForceType2;
 import com.cpdss.common.generated.VesselInfo.ShearingForceType4;
 import com.cpdss.common.generated.VesselInfo.StationValues;
-import com.cpdss.common.generated.VesselInfo.UllageDetails;
-import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
-import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
-import com.cpdss.common.generated.VesselInfo.VesselDetail;
 import com.cpdss.common.generated.VesselInfo.VesselDetail.Builder;
-import com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply;
-import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
-import com.cpdss.common.generated.VesselInfo.VesselIdResponse;
-import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
-import com.cpdss.common.generated.VesselInfo.VesselParticulars;
-import com.cpdss.common.generated.VesselInfo.VesselReply;
-import com.cpdss.common.generated.VesselInfo.VesselRequest;
-import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
-import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
-import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
-import com.cpdss.common.generated.VesselInfo.VesselTankInfo;
-import com.cpdss.common.generated.VesselInfo.VesselTankOrder;
-import com.cpdss.common.generated.VesselInfo.VesselTankRequest;
-import com.cpdss.common.generated.VesselInfo.VesselTankResponse;
-import com.cpdss.common.generated.VesselInfo.VesselTankTCG;
-import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest;
-import com.cpdss.common.generated.VesselInfo.VesselsInformation;
-import com.cpdss.common.generated.VesselInfo.VesselsInformationReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.vesselinfo.domain.*;
 import com.cpdss.vesselinfo.domain.CargoTankMaster;
-import com.cpdss.vesselinfo.domain.RuleMasterData;
-import com.cpdss.vesselinfo.domain.SearchCriteria;
-import com.cpdss.vesselinfo.domain.TypeValue;
-import com.cpdss.vesselinfo.domain.VesselDetails;
-import com.cpdss.vesselinfo.domain.VesselInfo;
-import com.cpdss.vesselinfo.domain.VesselInfoSpecification;
-import com.cpdss.vesselinfo.domain.VesselRule;
-import com.cpdss.vesselinfo.domain.VesselTankDetails;
 import com.cpdss.vesselinfo.entity.*;
+import com.cpdss.vesselinfo.entity.UllageTrimCorrection;
+import com.cpdss.vesselinfo.entity.VesselDraftCondition;
+import com.cpdss.vesselinfo.entity.VesselPumpTankMapping;
 import com.cpdss.vesselinfo.repository.*;
 import com.google.common.base.Strings;
+import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -151,6 +102,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired VVStrippingSequenceCargoValveRepository sequenceCargoValveRepository;
   @Autowired VesselCowService vesselCowService;
   @Autowired VesselInfoCommunicationService vesselInfoCommunicationService;
+  @Autowired CrewService crewService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -3094,6 +3046,28 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       // Build response
       responseObserver.onNext(responseBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getAllCrewRank(
+      Empty request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.CrewReply> replyStreamObserver) {
+    com.cpdss.common.generated.VesselInfo.CrewReply.Builder builder =
+        com.cpdss.common.generated.VesselInfo.CrewReply.newBuilder();
+    try {
+      crewService.getAllCrewRank(builder);
+      Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      builder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Fetch crew rank failed, e - {}", e.getMessage());
+      Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      replyStreamObserver.onNext(builder.build());
+      replyStreamObserver.onCompleted();
     }
   }
 }

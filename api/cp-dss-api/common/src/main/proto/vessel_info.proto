@@ -5,6 +5,7 @@ option java_package = "com.cpdss.common.generated";
 
 // import common definitions like ResponseStatus
 import "common.proto";
+import "google/protobuf/empty.proto";
 
 service VesselInfoService {
 
@@ -58,6 +59,8 @@ service VesselInfoService {
 
 	//	Method to update vessel DB data using the table name and JSON data
 	rpc UpdateVesselData(CommunicationDataUpdateRequest) returns (ResponseStatus){}
+
+	rpc GetAllCrewRank(google.protobuf.Empty) returns (CrewReply) {}
 }
 
 
@@ -802,4 +805,14 @@ message BendingMomentType1 {
 		
 		
 	}
-	
+
+	message CrewRank {
+			int64 id = 1;
+			string crewName = 2;
+			string rankShortName = 3;
+	}
+
+	message CrewReply {
+		ResponseStatus responseStatus = 1;
+		repeated CrewRank crewRanks = 2;
+	}

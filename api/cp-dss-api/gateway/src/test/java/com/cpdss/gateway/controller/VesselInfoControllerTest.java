@@ -9,18 +9,9 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
-import com.cpdss.gateway.domain.RulePlans;
-import com.cpdss.gateway.domain.RuleRequest;
-import com.cpdss.gateway.domain.RuleResponse;
-import com.cpdss.gateway.domain.Rules;
-import com.cpdss.gateway.domain.VesselDetailsResponse;
-import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.VesselTankResponse;
-import com.cpdss.gateway.security.ship.ShipAuthenticationProvider;
-import com.cpdss.gateway.security.ship.ShipJwtService;
-import com.cpdss.gateway.security.ship.ShipTokenExtractor;
-import com.cpdss.gateway.security.ship.ShipUserAuthenticationProvider;
-import com.cpdss.gateway.security.ship.ShipUserDetailService;
+import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.security.ship.*;
+import com.cpdss.gateway.service.CrewService;
 import com.cpdss.gateway.service.SyncRedisMasterService;
 import com.cpdss.gateway.service.VesselInfoService;
 import com.cpdss.gateway.service.VesselInfoServiceTest;
@@ -50,6 +41,7 @@ public class VesselInfoControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @MockBean private VesselInfoService vesselInfoService;
+  @MockBean private CrewService crewService;
 
   @MockBean private VesselInfoServiceTest vesselInfoServiceTest;
   @MockBean private SyncRedisMasterService syncRedisMasterService;
