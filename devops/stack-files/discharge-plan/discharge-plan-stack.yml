@@ -19,6 +19,7 @@ services:
     - ENABLE_JUDGEMENT=${ENABLE_JUDGEMENT}
     - ENABLE_COMM=${ENABLE_COMM}
     - CPDSS_BUILD_ENV=${CPDSS_BUILD_ENV}
+    - ENABLE_COMM_SEQ_TRIGGER=${ENABLE_COMM_SEQ_TRIGGER}
     dns: 8.8.8.8
     healthcheck:
       test: "wget --no-verbose --spider http://localhost:8080/actuator/health || exit 1"

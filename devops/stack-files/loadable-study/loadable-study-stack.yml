@@ -22,6 +22,7 @@ services:
     - ENABLE_VOYAGE_CLOSE_VALIDATION=${ENABLE_VOYAGE_CLOSE_VALIDATION}
     - CPDSS_LOADICATOR_SAVEFOLDER=${CPDSS_LOADICATOR_SAVEFOLDER}
     - CPDSS_LOADICATOR_DATASAVE=${CPDSS_LOADICATOR_DATASAVE}
+    - ENABLE_COMM_SEQ_TRIGGER=${ENABLE_COMM_SEQ_TRIGGER}
     dns: 8.8.8.8
     healthcheck:
       test: "wget --no-verbose --spider http://localhost:8080/actuator/health || exit 1"
