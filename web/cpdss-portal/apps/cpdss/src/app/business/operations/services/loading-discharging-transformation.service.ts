@@ -72,7 +72,8 @@ export class LoadingDischargingTransformationService {
 
   constructor(
     private quantityPipe: QuantityPipe,
-    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
+    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe
+  ) { }
 
   /** Set loading information complete status */
   setLoadingInformationValidity(isValid: boolean) {
@@ -523,7 +524,7 @@ export class LoadingDischargingTransformationService {
       } else {
         _loadingDischargingDelays.quantity = loadingValueObject?.quantity?.value;
       }
-      if(operation === OPERATIONS.DISCHARGING) {
+      if (operation === OPERATIONS.DISCHARGING) {
         _loadingDischargingDelays.quantity = Number(loadingValueObject?.quantityMT);
       }
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
@@ -730,6 +731,7 @@ export class LoadingDischargingTransformationService {
         numberFormat: quantityNumberFormat,
         errorMessages: {
           'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
+          'min': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MIN_ERROR',
           'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
         }
       },
@@ -769,8 +771,6 @@ export class LoadingDischargingTransformationService {
     }
     return cargoTank;
   }
-
-
 
   /**
   *
@@ -891,17 +891,17 @@ export class LoadingDischargingTransformationService {
           default:
             break;
         }
-        if(className) {
+        if (className) {
           tanks?.forEach(tank => {
             const data = {
-                "tankId": tank?.tankId,
-                "start": tank?.start,
-                "end": tank?.end,
-                "className": className,
-                "color": 'transparent',
-                "id": "cow-" + tank?.tankName // NB:- id must be unique
-              }
-              cargos?.push(data);
+              "tankId": tank?.tankId,
+              "start": tank?.start,
+              "end": tank?.end,
+              "className": className,
+              "color": 'transparent',
+              "id": "cow-" + tank?.tankName // NB:- id must be unique
+            }
+            cargos?.push(data);
           });
         }
 
@@ -928,7 +928,7 @@ export class LoadingDischargingTransformationService {
       const rate = new Set<number>();
       cargoRates?.forEach(element => {
         if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end <= element.endTime)) {
-          if(type === OPERATIONS.LOADING){
+          if (type === OPERATIONS.LOADING) {
             element.loadingRates.forEach(rate.add, rate);
           } else {
             element.dischargingRates.forEach(rate.add, rate);
@@ -946,7 +946,7 @@ export class LoadingDischargingTransformationService {
       }
 
     }
-    return type === OPERATIONS.LOADING ? _cargoLoadingRates: _cargoDischargingRates;
+    return type === OPERATIONS.LOADING ? _cargoLoadingRates : _cargoDischargingRates;
   }
 
   /**
@@ -1348,7 +1348,7 @@ export class LoadingDischargingTransformationService {
       }
     });
 
-    if(emptyTanks?.length) {
+    if (emptyTanks?.length) {
       tanksWashingWithDifferentCargo.push({
         cargo: { id: 0, abbreviation: 'NIL', cargoNominationId: 0 },
         washingCargo: null,
@@ -1509,46 +1509,46 @@ export class LoadingDischargingTransformationService {
 * @returns {IDataTableColumn[]}
 * @memberof LoadingDischargingTransformationService
 */
-getCommingleDetailsDatatableColumns(): IDataTableColumn[] {
-  return [
-    {
-      field: 'abbreviation',
-      header: 'LOADABLE_PATTERN_GRADE'
-    },
-    {
-      field: 'tankName',
-      header: 'LOADABLE_PATTERN_TANK'
-    },
-    {
-      field: 'quantity',
-      header: 'LOADABLE_PATTERN_TOTAL_QUANTITY'
-    },
-    {
-      field: 'api',
-      header: 'LOADABLE_PATTERN_API'
-    },
-    {
-      field: 'temperature',
-      header: 'LOADABLE_PATTERN_TEMP'
-    },
-    {
-      field: '',
-      header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
-      fieldColumnClass: 'commingle-composition colspan-header',
-      columns: [
-        {
-          field: 'cargoPercentage',
-          header: 'LOADABLE_PATTERN_PERCENTAGE',
-          fieldClass: 'commingle-composition-percentage'
-        },
-        {
-          field: 'cargoQuantity',
-          header: 'LOADABLE_PATTERN_QUANTITY',
-          fieldClass: 'commingle-composition-quantity'
-        }
-      ]
-    }
+  getCommingleDetailsDatatableColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'abbreviation',
+        header: 'LOADABLE_PATTERN_GRADE'
+      },
+      {
+        field: 'tankName',
+        header: 'LOADABLE_PATTERN_TANK'
+      },
+      {
+        field: 'quantity',
+        header: 'LOADABLE_PATTERN_TOTAL_QUANTITY'
+      },
+      {
+        field: 'api',
+        header: 'LOADABLE_PATTERN_API'
+      },
+      {
+        field: 'temperature',
+        header: 'LOADABLE_PATTERN_TEMP'
+      },
+      {
+        field: '',
+        header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
+        fieldColumnClass: 'commingle-composition colspan-header',
+        columns: [
+          {
+            field: 'cargoPercentage',
+            header: 'LOADABLE_PATTERN_PERCENTAGE',
+            fieldClass: 'commingle-composition-percentage'
+          },
+          {
+            field: 'cargoQuantity',
+            header: 'LOADABLE_PATTERN_QUANTITY',
+            fieldClass: 'commingle-composition-quantity'
+          }
+        ]
+      }
+    ]
+  }
 
-  ]
-}
 }

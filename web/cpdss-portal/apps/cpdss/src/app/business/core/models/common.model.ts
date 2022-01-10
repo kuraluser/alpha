@@ -682,6 +682,7 @@ export interface ILoadableQuantityCargo {
     maxDischargingRate?: string;
     blFigure?: string;
     timeRequiredForDischarging?: string;
+    dischargeCargoNominationId?: number;
 }
 
 /**

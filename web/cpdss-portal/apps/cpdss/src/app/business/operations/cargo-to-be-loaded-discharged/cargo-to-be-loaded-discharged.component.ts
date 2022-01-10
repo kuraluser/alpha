@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -53,6 +54,22 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   }
   set cargoVesselTankDetails(cargoVesselTankDetails: ICargoVesselTankDetails) {
     this._cargoVesselTankDetails = cargoVesselTankDetails;
+    cargoVesselTankDetails.cargoTanks.forEach(tanksArray => {
+      tanksArray.forEach(tank => {
+        if (tank.slopTank) {
+          cargoVesselTankDetails.cargoQuantities.forEach(cargo => {
+            if (tank.id === cargo.tankId && this.operation === OPERATIONS.DISCHARGING && cargo.plannedWeight !== 0) {
+              cargoVesselTankDetails.loadableQuantityCargoDetails.map(lqCargo => {
+                if (cargo.dischargeCargoNominationId === lqCargo.cargoNominationId) {
+                  lqCargo.slopTankFullCapacity = this.quantityPipe.transform(cargo?.capacity, QUANTITY_UNIT.OBSKL, QUANTITY_UNIT.BBLS, lqCargo?.estimatedAPI, lqCargo?.estimatedTemp, 0);
+                  return lqCargo;
+                }
+              });
+            }
+          });
+        }
+      })
+    })
     if (cargoVesselTankDetails?.loadableQuantityCargoDetails) {
       this.updateCargoTobeLoadedDischargedData();
     }
@@ -86,6 +103,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private fb: FormBuilder,
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
+    private translateService: TranslateService,
     private quantityDecimalService: QuantityDecimalService
   ) { }
 
@@ -152,7 +170,8 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   *
   * @memberof LoadingDischargingCargoDetailsComponent
   */
-  updateCargoTobeDischargedData() {
+  async updateCargoTobeDischargedData() {
+    const translatedMessages = await this.translateService.get(['DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MAX_ERROR']).toPromise();
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails.loadableQuantityCargoDetails?.map(cargo => {
       if (cargo) {
         cargo.grade = this.findCargo(cargo);
@@ -178,16 +197,23 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
       return cargo;
     });
 
-    const quantityDecimal = this.quantityDecimalService.quantityDecimal();
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.BBLS);
     const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
     const cargoToBeDischarged = this.cargoTobeLoadedDischarged?.map(cargo => {
+      this.cargoTobeLoadedDischargedColumns.map(column => {
+        if (column?.field === 'slopQuantity' && cargo?.slopTankFullCapacity) {
+          column.errorMessages['max'] = translatedMessages['DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MAX_ERROR'] + cargo?.slopTankFullCapacity?.toString();
+          return column
+        }
+      })
       return this.fb.group({
         isCommingledCargo: cargo?.isCommingledCargo ?? false,
         protested: this.fb.control(cargo.protested.value),
         isCommingledDischarge: this.fb.control(cargo?.isCommingledDischarge.value),
         slopQuantityMT: cargo?.slopQuantityMT,
-        slopQuantity: this.fb.control((<ValueObject<number>>cargo?.slopQuantity)?.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)]),
+        slopQuantity: this.fb.control({ value: (<ValueObject<number>>cargo?.slopQuantity)?.value, disabled: !cargo?.slopTankFullCapacity }, [Validators.required, Validators.min(min), Validators.max(cargo?.slopTankFullCapacity), numberValidator(quantityDecimal, 7, false)]),
       })
+
     });
 
     if (this.form) {

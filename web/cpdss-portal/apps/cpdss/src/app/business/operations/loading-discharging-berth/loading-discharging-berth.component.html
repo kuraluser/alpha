@@ -98,12 +98,12 @@
             </div>
             <div class="row form-group">
               <label for="berth-sea-draft"
-                class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_SEA_DRAFT_LABEL' |
+                class="col-5 no-left-padding">{{'LOADING_DISCHARGING_BERTH_SELECTED_DRAFT_RESTRICTION' |
                 translate}}</label>
               <div class="col error-icon-wrapper text-right">
                 <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control" id="berth-sea-draft"
                   *ngIf="editMode;else seaDraftLimitation" formControlName="seaDraftLimitation"
-                  placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_SEA_DRAFT_PLACE_HOLDER' | translate}}"
+                  placeholder="{{'LOADING_DISCHARGING_BERTH_SELECTED_DRAFT_RESTRICTION_PLACEHOLDER' | translate}}"
                   (change)="change('seaDraftLimitation')" [readonly]="false">
                 <ng-template #seaDraftLimitation>
                   <div class="text-right">{{berthDetailsFormControl?.seaDraftLimitation?.value}}</div>
