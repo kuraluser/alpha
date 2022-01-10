@@ -9,6 +9,8 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
@@ -59,6 +61,11 @@ public class SynopticServiceUtilsTest {
   @MockBean DischargePatternQuantityCargoPortwiseRepository disCargoQuantityRepository;
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @MockBean
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 
@@ -531,6 +538,14 @@ public class SynopticServiceUtilsTest {
     when(this.loadablePlanQuantityRepository.findByPatternIdAndCargoNominationId(
             anyLong(), anyLong()))
         .thenReturn(getPlanQuantityList());
+
+    LoadingPlanModels.LoadingInformation loadingInformation =
+        LoadingPlanModels.LoadingInformation.newBuilder().build();
+    when(loadingInfoServiceBlockingStub.getCargoToBeLoaded(any())).thenReturn(loadingInformation);
+
+    ReflectionTestUtils.setField(
+        synopticServiceUtils, "loadingInfoServiceBlockingStub", loadingInfoServiceBlockingStub);
+
     ReflectionTestUtils.setField(
         synopticServiceUtils,
         "commingleDetailsPortWiseRepository",

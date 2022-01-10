@@ -65,7 +65,8 @@ public interface LoadingPlanGrpcService {
       Long portRotationId,
       Long portId,
       Boolean isFilterOn,
-      Common.PLANNING_TYPE planning_type);
+      Common.PLANNING_TYPE planning_type,
+      Long loadingInfoId);
 
   List<LoadableStudy.LoadablePlanBallastDetails> fetchLoadablePlanBallastDetails(
       Long patternId, Long portRotationId);

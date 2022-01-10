@@ -866,6 +866,117 @@ public final class LoadingInformationServiceGrpc {
     return getDownloadPortTideDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveCargoToBeLoadedMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveCargoToBeLoaded",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+      getSaveCargoToBeLoadedMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        getSaveCargoToBeLoadedMethod;
+    if ((getSaveCargoToBeLoadedMethod = LoadingInformationServiceGrpc.getSaveCargoToBeLoadedMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getSaveCargoToBeLoadedMethod =
+                LoadingInformationServiceGrpc.getSaveCargoToBeLoadedMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getSaveCargoToBeLoadedMethod =
+              getSaveCargoToBeLoadedMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveCargoToBeLoaded"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInfoSaveResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "SaveCargoToBeLoaded"))
+                      .build();
+        }
+      }
+    }
+    return getSaveCargoToBeLoadedMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+      getGetCargoToBeLoadedMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoToBeLoaded",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+      getGetCargoToBeLoadedMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+        getGetCargoToBeLoadedMethod;
+    if ((getGetCargoToBeLoadedMethod = LoadingInformationServiceGrpc.getGetCargoToBeLoadedMethod)
+        == null) {
+      synchronized (LoadingInformationServiceGrpc.class) {
+        if ((getGetCargoToBeLoadedMethod =
+                LoadingInformationServiceGrpc.getGetCargoToBeLoadedMethod)
+            == null) {
+          LoadingInformationServiceGrpc.getGetCargoToBeLoadedMethod =
+              getGetCargoToBeLoadedMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingInformation>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetCargoToBeLoaded"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingInformation.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingInformationServiceMethodDescriptorSupplier(
+                              "GetCargoToBeLoaded"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoToBeLoadedMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingInformationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingInformationServiceStub> factory =
@@ -1102,6 +1213,26 @@ public final class LoadingInformationServiceGrpc {
           getDownloadPortTideDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void saveCargoToBeLoaded(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveCargoToBeLoadedMethod(), responseObserver);
+    }
+
+    /** */
+    public void getCargoToBeLoaded(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoToBeLoadedMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1219,6 +1350,20 @@ public final class LoadingInformationServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .DownloadTideDetailStatusReply>(
                       this, METHODID_DOWNLOAD_PORT_TIDE_DETAILS)))
+          .addMethod(
+              getSaveCargoToBeLoadedMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>(this, METHODID_SAVE_CARGO_TO_BE_LOADED)))
+          .addMethod(
+              getGetCargoToBeLoadedMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>(
+                      this, METHODID_GET_CARGO_TO_BE_LOADED)))
           .build();
     }
   }
@@ -1457,6 +1602,30 @@ public final class LoadingInformationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveCargoToBeLoaded(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveCargoToBeLoadedMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getCargoToBeLoaded(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetCargoToBeLoadedMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1636,6 +1805,22 @@ public final class LoadingInformationServiceGrpc {
                 request) {
       return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getDownloadPortTideDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse
+        saveCargoToBeLoaded(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveCargoToBeLoadedMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation
+        getCargoToBeLoaded(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCargoToBeLoadedMethod(), getCallOptions(), request);
     }
   }
 
@@ -1823,6 +2008,24 @@ public final class LoadingInformationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getUploadPortTideDetailsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSaveResponse>
+        saveCargoToBeLoaded(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveCargoToBeLoadedMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>
+        getCargoToBeLoaded(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetCargoToBeLoadedMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_LOADING_INFORMATION = 0;
@@ -1840,6 +2043,8 @@ public final class LoadingInformationServiceGrpc {
   private static final int METHODID_GET_LOADING_INFO_ALGO_ERRORS = 12;
   private static final int METHODID_UPLOAD_PORT_TIDE_DETAILS = 13;
   private static final int METHODID_DOWNLOAD_PORT_TIDE_DETAILS = 14;
+  private static final int METHODID_SAVE_CARGO_TO_BE_LOADED = 15;
+  private static final int METHODID_GET_CARGO_TO_BE_LOADED = 16;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1988,6 +2193,23 @@ public final class LoadingInformationServiceGrpc {
                           .DownloadTideDetailStatusReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_CARGO_TO_BE_LOADED:
+          serviceImpl.saveCargoToBeLoaded(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingInfoSaveResponse>)
+                  responseObserver);
+          break;
+        case METHODID_GET_CARGO_TO_BE_LOADED:
+          serviceImpl.getCargoToBeLoaded(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2067,6 +2289,8 @@ public final class LoadingInformationServiceGrpc {
                       .addMethod(getGetLoadingInfoAlgoErrorsMethod())
                       .addMethod(getUploadPortTideDetailsMethod())
                       .addMethod(getDownloadPortTideDetailsMethod())
+                      .addMethod(getSaveCargoToBeLoadedMethod())
+                      .addMethod(getGetCargoToBeLoadedMethod())
                       .build();
         }
       }

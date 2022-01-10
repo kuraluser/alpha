@@ -595,7 +595,7 @@ class LoadingPlanControllerTest {
   public void testGetLoadingInformation(String url) throws Exception {
     Mockito.when(
             this.loadingPlanServiceImpl.getLoadingInformationByPortRotation(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
+                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
         .thenReturn(new LoadingInformation());
     this.mockMvc
         .perform(
@@ -612,7 +612,7 @@ class LoadingPlanControllerTest {
   public void testGetLoadingInformationServiceException(String url) throws Exception {
     Mockito.when(
             this.loadingPlanServiceImpl.getLoadingInformationByPortRotation(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
+                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
         .thenThrow(this.getGenericException());
     Mockito.when(
             loadingPlanController.getLoadingInformation(
@@ -639,7 +639,7 @@ class LoadingPlanControllerTest {
   public void testGetLoadingInformationRuntimeException(String url) throws Exception {
     Mockito.when(
             this.loadingPlanServiceImpl.getLoadingInformationByPortRotation(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
+                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
         .thenThrow(RuntimeException.class);
     Mockito.when(
             loadingPlanController.getLoadingInformation(

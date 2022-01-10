@@ -18,8 +18,8 @@ public interface LoadingPlanService {
 
   Object getLoadingPortRotationDetails(Long vesselId, Long portRId) throws GenericServiceException;
 
-  LoadingInformation getLoadingInformationByPortRotation(Long vesselId, Long planId, Long portRId)
-      throws GenericServiceException;
+  LoadingInformation getLoadingInformationByPortRotation(
+      Long vesselId, Long planId, Long portRId, Long loadingInfoId) throws GenericServiceException;
 
   public LoadingInformationResponse saveLoadingInformation(
       LoadingInformationRequest request, String correlationId) throws GenericServiceException;

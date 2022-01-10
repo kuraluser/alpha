@@ -617,10 +617,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       Long portRotationId,
       Long portId,
       PLANNING_TYPE planningType,
-      boolean b) {
+      boolean b,
+      Long loadingInfoId) {
     LoadableStudy.LoadingPlanCommonResponse replay =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetailsReplay(
-            patternId, operationType, portRotationId, portId, true, planningType);
+            patternId, operationType, portRotationId, portId, true, planningType, loadingInfoId);
 
     // Cargo To Loaded Grid
     var1.setLoadableQuantityCargoDetails(

@@ -38,6 +38,7 @@ public class LoadingInformationGrpcServiceTest {
   @MockBean LoadingMachineryInUseService loadingMachineryInUseService;
   @MockBean LoadingDelayService loadingDelayService;
   @MockBean LoadingBerthService loadingBerthService;
+  @MockBean private LoadingCargoToBeLoadedService loadingCargoToBeLoadedService;
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 

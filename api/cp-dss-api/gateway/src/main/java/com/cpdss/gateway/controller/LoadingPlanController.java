@@ -106,7 +106,7 @@ public class LoadingPlanController {
       log.info("Get Loading Info, api for vessel {}, Port Rotation {}", vesselId, portRotationId);
       LoadingInformation var1 =
           this.loadingPlanService.getLoadingInformationByPortRotation(
-              vesselId, infoId, portRotationId);
+              vesselId, infoId, portRotationId, infoId);
       return var1;
     } catch (GenericServiceException e) {
       e.printStackTrace();

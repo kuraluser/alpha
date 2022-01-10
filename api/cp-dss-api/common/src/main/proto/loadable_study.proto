@@ -724,6 +724,7 @@ message LoadableQuantityCargoDetails {
 	 bool ifProtested = 37;
 	 bool isCommingled = 38;
 	 string loadingRateM3Hr = 39;
+	 string maxLoadingRate = 40;
 }
 
 message COWDetail {
@@ -1601,6 +1602,7 @@ message LoadingPlanIdRequest {
 	int64 portId = 6;
 	bool cargoNominationFilter = 7; // default value - false
 	PLANNING_TYPE planningType = 8; // to indicate is the request from loading OR discharging
+	int64 loadingInfoId = 9;
 }
 
 message LoadingPlanCommonResponse{

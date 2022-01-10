@@ -476,7 +476,7 @@ public class LoadingPlanGrpcServiceImplTest {
         this.loadableStudyServiceBlockingStub);
     var response =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetailsReplay(
-            patternId, operationType, portRotationId, portId, isFilterOn, planning_type);
+            patternId, operationType, portRotationId, portId, isFilterOn, planning_type, 0L);
     assertEquals(SUCCESS, response.getResponseStatus().getStatus());
   }
 

@@ -46,7 +46,11 @@ service LoadingInformationService {
   rpc UploadPortTideDetails(UploadTideDetailRequest) returns (UploadTideDetailStatusReply){}
   
   rpc DownloadPortTideDetails(DownloadTideDetailRequest) returns (stream DownloadTideDetailStatusReply) {}
-  
+
+  rpc SaveCargoToBeLoaded(LoadingInformation) returns (LoadingInfoSaveResponse) {}
+
+  rpc GetCargoToBeLoaded(LoadingInformation) returns (LoadingInformation) {}
+
 }
 
 service LoadingInstructionService {

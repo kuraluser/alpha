@@ -31,6 +31,8 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
@@ -52,12 +54,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -114,6 +111,10 @@ public class SynopticServiceUtils {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
 
   @Autowired SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
@@ -833,6 +834,25 @@ public class SynopticServiceUtils {
       e.printStackTrace();
     }
 
+    // Get api, temp and maxLoadingRate edited if present from
+    // loading_cargo_api_temperature table in loading plan DB
+    LoadingPlanModels.LoadingInformation.Builder loadingInfoBuilder =
+        LoadingPlanModels.LoadingInformation.newBuilder()
+            .setLoadingInfoId(request.getLoadingInfoId());
+    LoadingPlanModels.LoadingInformation loadingInformation =
+        this.loadingInfoServiceBlockingStub.getCargoToBeLoaded(loadingInfoBuilder.build());
+
+    // Map to map cargoNominationId with Cargo To Be Loaded Details
+    Map<Long, LoadableStudy.LoadableQuantityCargoDetails> cargoNominationMapped = new HashMap<>();
+
+    loadingInformation
+        .getLoadableQuantityCargoDetailsList()
+        .forEach(
+            loadableQuantityCargoDetails ->
+                cargoNominationMapped.put(
+                    loadableQuantityCargoDetails.getCargoNominationId(),
+                    loadableQuantityCargoDetails));
+
     // Above list provide all cargo details at this port,
     // we don't need this data (only need what loading/discharge at that port) by nomination
     List<LoadablePlanQuantity> dataList = new ArrayList<>();
@@ -853,10 +873,27 @@ public class SynopticServiceUtils {
             LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
         Optional.ofNullable(var1.getId()).ifPresent(builder1::setId);
         Optional.ofNullable(var1.getGrade()).ifPresent(builder1::setGrade);
-        Optional.ofNullable(var1.getEstimatedApi())
-            .ifPresent(v -> builder1.setEstimatedAPI(v.toString()));
-        Optional.ofNullable(var1.getEstimatedTemperature())
-            .ifPresent(v -> builder1.setEstimatedTemp(v.toString()));
+
+        // Fetch edited cargo to be loaded details if present against cargoNominationId
+        if (cargoNominationMapped.containsKey(var1.getCargoNominationId())) {
+          LoadableStudy.LoadableQuantityCargoDetails loadableQuantityCargoDetails =
+              cargoNominationMapped.get(var1.getCargoNominationId());
+
+          Optional.of(loadableQuantityCargoDetails.getEstimatedAPI())
+              .ifPresent(builder1::setEstimatedAPI);
+          Optional.of(loadableQuantityCargoDetails.getEstimatedTemp())
+              .ifPresent(builder1::setEstimatedTemp);
+          Optional.of(loadableQuantityCargoDetails.getMaxLoadingRate())
+              .ifPresent(builder1::setLoadingRateM3Hr);
+        } else {
+          Optional.ofNullable(var1.getEstimatedApi())
+              .ifPresent(v -> builder1.setEstimatedAPI(v.toString()));
+          Optional.ofNullable(var1.getEstimatedTemperature())
+              .ifPresent(v -> builder1.setEstimatedTemp(v.toString()));
+          Optional.ofNullable(var1.getLoadingRateM3Hr())
+              .ifPresent(loadingRate -> builder1.setLoadingRateM3Hr(loadingRate.toString()));
+        }
+
         Optional.ofNullable(var1.getCargoNominationTemperature())
             .ifPresent(v -> builder1.setCargoNominationTemperature(v.toString()));
 
@@ -895,8 +932,7 @@ public class SynopticServiceUtils {
         Optional.ofNullable(var1.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
         Optional.ofNullable(var1.getTimeRequiredForLoading())
             .ifPresent(builder1::setTimeRequiredForLoading);
-        Optional.ofNullable(var1.getLoadingRateM3Hr())
-            .ifPresent(loadingRate -> builder1.setLoadingRateM3Hr(loadingRate.toString()));
+
         try {
           this.setLoadingPortNameFromCargoOperation(
               var1.getCargoXId(), var1.getCargoNominationId(), builder1);

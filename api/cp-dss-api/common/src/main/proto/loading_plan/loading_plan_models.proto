@@ -51,6 +51,7 @@ message LoadingInformation{
   bool isLoadingInstructionsComplete = 19;
   bool isLoadingSequenceGenerated = 20;
   bool isLoadingPlanGenerated = 21;
+  repeated LoadableQuantityCargoDetails loadableQuantityCargoDetails = 22;
 }
 
 message LoadingDetails{

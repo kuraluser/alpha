@@ -58,6 +58,7 @@ public class LoadingInformationGrpcService
   @Autowired LoadingDelayService loadingDelayService;
 
   @Autowired LoadingBerthService loadingBerthService;
+  @Autowired private LoadingCargoToBeLoadedService loadingCargoToBeLoadedService;
 
   /**
    * Loading Information Is the First page in Loading module (UI).
@@ -575,6 +576,87 @@ public class LoadingInformationGrpcService
               .setStatus(FAILED)
               .setMessage(e.getMessage())
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR));
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Method to save cargo to be loaded
+   *
+   * @param request LoadingInformation input
+   * @param responseObserver LoadingInfoSaveResponse response output
+   */
+  @Override
+  public void saveCargoToBeLoaded(
+      LoadingInformation request, StreamObserver<LoadingInfoSaveResponse> responseObserver) {
+
+    log.info("Inside saveCargoToBeLoaded method!");
+    LoadingInfoSaveResponse.Builder builder = LoadingInfoSaveResponse.newBuilder();
+
+    try {
+      Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
+          loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
+      log.info("Save Loading Info, Cargo To Be Loaded!");
+      log.info("Request payload {}", Utils.toJson(request));
+
+      // Save cargo to be loaded
+      if (loadingInformation.isPresent()) {
+        loadingCargoToBeLoadedService.saveCargoToBeLoaded(
+            request.getLoadableQuantityCargoDetailsList(), loadingInformation.get());
+        loadingInformationService.updateIsLoadingInfoCompeteStatus(
+            loadingInformation.get().getId(), request.getIsLoadingInfoComplete());
+        buildLoadingInfoSaveResponse(builder, loadingInformation.get());
+      }
+
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setMessage("Successfully saved Loading Cargo To Be Loaded Details!")
+              .setStatus(SUCCESS)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Method to fetch cargo to be loaded details
+   *
+   * @param request LoadingInformation grpc request input
+   * @param responseObserver Response object to be returned
+   */
+  @Override
+  public void getCargoToBeLoaded(
+      LoadingInformation request, StreamObserver<LoadingInformation> responseObserver) {
+
+    log.info("Inside getCargoToBeLoaded method!");
+    LoadingInformation.Builder builder = LoadingInformation.newBuilder();
+
+    try {
+      Optional<com.cpdss.loadingplan.entity.LoadingInformation> loadingInformation =
+          loadingInformationService.getLoadingInformation(request.getLoadingInfoId());
+      log.info("Fetch Loading Info, Cargo To Be Loaded!");
+      log.info("Request payload {}", Utils.toJson(request));
+
+      // Fetch cargo to be loaded
+      loadingInformation.ifPresent(
+          information -> loadingCargoToBeLoadedService.getCargoToBeLoaded(information, builder));
+
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setMessage("Successfully saved Loading Cargo To Be Loaded Details!")
+              .setStatus(SUCCESS)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

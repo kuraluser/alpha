@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
@@ -15,6 +16,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingToppingO
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.TrimAllowed;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
+import com.cpdss.gateway.domain.loadingplan.CargoApiTempDetails;
 import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
 import com.cpdss.gateway.domain.loadingplan.ToppingOffSequence;
 import java.util.ArrayList;
@@ -120,6 +122,17 @@ public class LoadingInformationBuilderService {
           };
       callableTasks.add(t6);
     }
+
+    // Loading Info Case 7 - Cargo To Be Loaded
+    if (request.getCargoToBeLoaded() != null) {
+      Callable<LoadingPlanModels.LoadingInfoSaveResponse> t7 =
+          () -> {
+            buildCargoToBeLoaded(request.getCargoToBeLoaded(), builder);
+            return loadingInfoServiceBlockingStub.saveCargoToBeLoaded(builder.build());
+          };
+      callableTasks.add(t7);
+    }
+
     // builder.addAllToppingOffSequence(buildToppingOffSequences(request.getToppingOffSequence()));
 
     ExecutorService executorService =
@@ -136,9 +149,7 @@ public class LoadingInformationBuilderService {
                       return true;
                     }
                     log.error("Failed to save Thread {}", v.get());
-                  } catch (InterruptedException e) {
-                    e.printStackTrace();
-                  } catch (ExecutionException e) {
+                  } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                   }
                   return false;
@@ -149,6 +160,35 @@ public class LoadingInformationBuilderService {
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
+  }
+
+  /**
+   * Method to build Cargo to be loaded
+   *
+   * @param cargoToBeLoaded CargoApiTempDetails input
+   * @param builder LoadingInformation.Builder grpc model object builder
+   */
+  public void buildCargoToBeLoaded(
+      CargoApiTempDetails cargoToBeLoaded, LoadingInformation.Builder builder) {
+
+    log.info("Inside buildCargoToBeLoaded method!");
+
+    cargoToBeLoaded
+        .getLoadableQuantityCargoDetails()
+        .forEach(
+            loadableQuantityCargoDetails -> {
+              LoadableStudy.LoadableQuantityCargoDetails.Builder cargoDetailBuilder =
+                  LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
+
+              cargoDetailBuilder.setEstimatedAPI(loadableQuantityCargoDetails.getEstimatedAPI());
+              cargoDetailBuilder.setEstimatedTemp(loadableQuantityCargoDetails.getEstimatedTemp());
+              cargoDetailBuilder.setMaxLoadingRate(
+                  loadableQuantityCargoDetails.getMaxLoadingRate());
+              cargoDetailBuilder.setCargoNominationId(
+                  loadableQuantityCargoDetails.getCargoNominationId());
+
+              builder.addLoadableQuantityCargoDetails(cargoDetailBuilder.build());
+            });
   }
 
   public LoadingDetails buildLoadingDetails(

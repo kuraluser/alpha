@@ -210,11 +210,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
    * @param vesselId
    * @param planId
    * @param portRId
+   * @param loadingInfoId
    * @return
    */
   @Override
   public LoadingInformation getLoadingInformationByPortRotation(
-      Long vesselId, Long planId, Long portRId) throws GenericServiceException {
+      Long vesselId, Long planId, Long portRId, Long loadingInfoId) throws GenericServiceException {
     LoadingInformation var1 = new LoadingInformation();
 
     final String OPERATION_TYPE = "DEP";
@@ -339,7 +340,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         portRotation.get().getId(),
         portRotation.get().getPortId(),
         Common.PLANNING_TYPE.LOADABLE_STUDY,
-        false);
+        false,
+        loadingInfoId);
 
     // Manage Sequence
     LoadingSequences loadingSequences =
@@ -373,7 +375,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.saveLoadingInformation(request, correlationId);
     response.setLoadingInformation(
         this.getLoadingInformationByPortRotation(
-            response.getVesseld(), 0L, response.getPortRotationId()));
+            response.getVesseld(), 0L, response.getPortRotationId(), request.getLoadingInfoId()));
     return response;
   }
 
