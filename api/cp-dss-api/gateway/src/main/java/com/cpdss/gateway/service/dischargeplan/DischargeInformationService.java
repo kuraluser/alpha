@@ -728,7 +728,7 @@ public class DischargeInformationService {
    * Updates Discharging Information status
    *
    * @param request
-   * @param first
+   * @param correlationId
    * @return LoadingInfoAlgoResponse
    * @throws GenericServiceException
    * @throws NumberFormatException
@@ -835,8 +835,9 @@ public class DischargeInformationService {
                     Arrays.asList(
                         ALGO_CANNOT_PROCESS_MSG,
                         error.getErrorMessagesCount() > 1
-                            ? String.format("Process ID: %s", error.getErrorMessages(1))
-                            : ""));
+                            ? String.format("%s: %s", PROCESS_ID, error.getErrorMessages(1))
+                            : "",
+                        String.format("%s: %d", REFERENCE_ID, error.getId())));
               }
               algoErrors.add(algoError);
             });

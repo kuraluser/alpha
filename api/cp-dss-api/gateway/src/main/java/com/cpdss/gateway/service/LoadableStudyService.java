@@ -4077,8 +4077,9 @@ public class LoadableStudyService {
           Arrays.asList(
               ALGO_CANNOT_PROCESS_MSG,
               algoError.getErrorMessagesCount() > 1
-                  ? String.format("Process ID: %s", algoError.getErrorMessages(1))
-                  : ""));
+                  ? String.format("%s: %s", PROCESS_ID, algoError.getErrorMessages(1))
+                  : "",
+              String.format("%s: %d", REFERENCE_ID, algoError.getId())));
     }
     return error;
   }

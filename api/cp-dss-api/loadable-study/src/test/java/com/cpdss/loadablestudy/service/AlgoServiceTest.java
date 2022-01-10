@@ -234,6 +234,7 @@ public class AlgoServiceTest {
     List<AlgoErrorHeading> algoErrorHeadingList = new ArrayList<>();
     AlgoErrorHeading algoErrorHeading = new AlgoErrorHeading();
     List<AlgoErrors> algoErrorsList = new ArrayList<>();
+    algoErrorHeading.setId(1L);
     AlgoErrors algoErrors = new AlgoErrors();
     algoErrors.setErrorMessage("1");
     algoErrorsList.add(algoErrors);

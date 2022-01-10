@@ -139,7 +139,7 @@ public class AlgoService {
                   .collect(Collectors.toList()));
           errorBuilder.addAllErrorMessages(res);
         }
-
+        errorBuilder.setId(errorHeading.getId());
         errorBuilder.setErrorHeading(errorHeading.getErrorHeading());
         replyBuilder.addAlgoErrors(errorBuilder);
       }
@@ -249,7 +249,7 @@ public class AlgoService {
                   .collect(Collectors.toList()));
           errorBuilder.addAllErrorMessages(res);
         }
-
+        errorBuilder.setId(errorHeading.getId());
         errorBuilder.setErrorHeading(errorHeading.getErrorHeading());
         replyBuilder.addAlgoErrors(errorBuilder);
       }

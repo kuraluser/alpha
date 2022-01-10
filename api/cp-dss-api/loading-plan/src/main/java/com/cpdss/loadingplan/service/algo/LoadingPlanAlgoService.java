@@ -1088,6 +1088,7 @@ public class LoadingPlanAlgoService {
         header -> {
           com.cpdss.common.generated.LoadableStudy.AlgoErrors.Builder errorBuilder =
               com.cpdss.common.generated.LoadableStudy.AlgoErrors.newBuilder();
+          errorBuilder.setId(header.getId());
           errorBuilder.setErrorHeading(header.getErrorHeading());
           header
               .getAlgoErrors()

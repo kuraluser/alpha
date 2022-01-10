@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
+import static com.cpdss.gateway.common.GatewayConstants.PROCESS_ID;
+import static com.cpdss.gateway.common.GatewayConstants.REFERENCE_ID;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
@@ -1196,8 +1198,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                     Arrays.asList(
                         GatewayConstants.ALGO_CANNOT_PROCESS_MSG,
                         error.getErrorMessagesCount() > 1
-                            ? String.format("Process ID: %s", error.getErrorMessages(1))
-                            : ""));
+                            ? String.format("%s: %s", PROCESS_ID, error.getErrorMessages(1))
+                            : "",
+                        String.format("%s: %d", REFERENCE_ID, error.getId())));
               }
               algoErrors.add(algoError);
             });

@@ -483,6 +483,7 @@ public class LoadingPlanAlgoServiceTest {
     errorsList.add(algoErrors);
     List<AlgoErrorHeading> headingList = new ArrayList<>();
     AlgoErrorHeading heading = new AlgoErrorHeading();
+    heading.setId(1L);
     heading.setErrorHeading("1");
     heading.setAlgoErrors(errorsList);
     headingList.add(heading);

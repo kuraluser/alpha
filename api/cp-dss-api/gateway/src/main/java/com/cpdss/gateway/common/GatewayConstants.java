@@ -83,4 +83,6 @@ public class GatewayConstants {
   public static final Long DISCHARGING_OPERATION_TYPE_ID = 2L;
 
   public static final String ALGO_CANNOT_PROCESS_MSG = "Something went wrong in ALGO";
+  public static final String PROCESS_ID = "Process ID";
+  public static final String REFERENCE_ID = "Reference ID";
 }
