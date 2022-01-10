@@ -195,7 +195,6 @@ public class LoadingPlanCommunicationService {
   LoadingInformation loadingInfoError = null;
   LoadingInformationAlgoStatus loadingInformationAlgoStatus = null;
   String current_table_name = "";
-  Integer arrivalDeparture = null;
   List<LoadingRule> loadingRules = null;
   List<LoadingRuleInput> loadingRuleInputs = null;
   // region Communication get data
@@ -1056,14 +1055,14 @@ public class LoadingPlanCommunicationService {
         saveLoadingPlanBallastDetails(loadingPlanPortWiseDetailsList);
         saveLoadingPlanRobDetails(loadingPlanPortWiseDetailsList);
         savePortLoadingPlanBallastDetails(loadingInfo);
-        arrivalDeparture = savePortLoadingPlanBallastTempDetails(loadingInfo);
+        savePortLoadingPlanBallastTempDetails(loadingInfo);
         savePortLoadingPlanStowageDetails(loadingInfo);
         savePortLoadingPlanStowageTempDetails(loadingInfo);
         saveLoadingPlanStowageDetails(loadingPlanPortWiseDetailsList);
         saveLoadingSequenceStabilityParameters(loadingInfo);
         saveLoadingPlanStabilityParameters(loadingPlanPortWiseDetailsList);
         savePortLoadingPlanCommingleTempDetails(loadingInfo);
-        arrivalDeparture = savePortLoadingPlanCommingleDetails(loadingInfo);
+        savePortLoadingPlanCommingleDetails(loadingInfo);
         saveBillOfLanding(loadingInfo);
         savePyUser();
         activateVoyage();
@@ -1112,6 +1111,12 @@ public class LoadingPlanCommunicationService {
         if (processGroupId.equals(MessageTypes.ULLAGE_UPDATE.getMessageType())) {
           log.info("Algo call started for Update Ullage");
           try {
+            Integer arrivalDeparture = null;
+            if (!CollectionUtils.isEmpty(portLoadingPlanCommingleDetailsList)) {
+              arrivalDeparture = portLoadingPlanCommingleDetailsList.get(0).getConditionType();
+            } else if (!CollectionUtils.isEmpty(portLoadingPlanBallastTempDetailsList)) {
+              arrivalDeparture = portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
+            }
             LoadingPlanModels.UllageBillRequest.Builder builder =
                 LoadingPlanModels.UllageBillRequest.newBuilder();
             LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
@@ -1466,15 +1471,14 @@ public class LoadingPlanCommunicationService {
             + portLoadingPlanBallastDetailsList);
   }
 
-  private Integer savePortLoadingPlanBallastTempDetails(LoadingInformation loadingInfo) {
+  private void savePortLoadingPlanBallastTempDetails(LoadingInformation loadingInfo) {
     current_table_name =
         LoadingPlanTables.PORT_LOADING_PLAN_STOWAGE_BALLAST_DETAILS_TEMP.getTable();
     if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanBallastTempDetailsList)) {
       log.info(
           "Communication ++++ LoadingInformation or PortLoadingPlanBallastTempDetails is empty");
-      return null;
+      return;
     }
-    Integer arrivalDeparture = portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
     for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
         portLoadingPlanBallastTempDetailsList) {
       Optional<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetaObj =
@@ -1487,7 +1491,6 @@ public class LoadingPlanCommunicationService {
     log.info(
         "Communication ====  Saved PortLoadingPlanBallastTempDetails: "
             + portLoadingPlanBallastTempDetailsList);
-    return arrivalDeparture;
   }
 
   private void savePortLoadingPlanStowageDetails(LoadingInformation loadingInfo) {
@@ -1628,13 +1631,12 @@ public class LoadingPlanCommunicationService {
             + portLoadingPlanCommingleTempDetailsList);
   }
 
-  private Integer savePortLoadingPlanCommingleDetails(LoadingInformation loadingInfo) {
+  private void savePortLoadingPlanCommingleDetails(LoadingInformation loadingInfo) {
     current_table_name = LoadingPlanTables.PORT_LOADABLE_PLAN_COMMINGLE_DETAILS.getTable();
     if (loadingInfo == null || CollectionUtils.isEmpty(portLoadingPlanCommingleDetailsList)) {
       log.info("Communication ++++ LoadingInformation or PortLoadingPlanCommingleDetails is empty");
-      return null;
+      return;
     }
-    Integer arrivalDeparture = portLoadingPlanCommingleDetailsList.get(0).getConditionType();
     for (PortLoadingPlanCommingleDetails portLoadingPlanCommingleDetails :
         portLoadingPlanCommingleDetailsList) {
       Optional<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetaObj =
@@ -1647,7 +1649,6 @@ public class LoadingPlanCommunicationService {
     log.info(
         "Communication ====  Saved PortLoadingPlanCommingleDetails:"
             + portLoadingPlanCommingleDetailsList);
-    return arrivalDeparture;
   }
 
   private void saveBillOfLanding(LoadingInformation loadingInfo) {
@@ -2490,7 +2491,6 @@ public class LoadingPlanCommunicationService {
     loadingInstructions = null;
     loadingInfoError = null;
     loadingInformationAlgoStatus = null;
-    arrivalDeparture = null;
     loadingRules = null;
     loadingRuleInputs = null;
   }
