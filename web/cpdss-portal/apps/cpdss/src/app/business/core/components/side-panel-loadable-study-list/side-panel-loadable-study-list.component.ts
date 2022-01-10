@@ -50,6 +50,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
 
   @Input() voyage: Voyage;
   @Input() vesselInfo: IVessel;
+  @Input() voyages: Voyage[];
 
   @Output() selectedLoadableStudyChange = new EventEmitter<LoadableStudy>();
   @Output() deleteLoadableStudy = new EventEmitter<Event>();

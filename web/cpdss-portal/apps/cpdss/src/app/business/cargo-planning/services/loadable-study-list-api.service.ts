@@ -4,9 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { IResponse } from '../../../shared/models/common.model';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
-import { INewLoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
+import { ILoadableStudy } from '../../core/components/new-loadable-study-popup/new-loadable-study-popup.model';
 import { ILoadablePatternsResponse, ILoadableStudiesResponse, ILoadableStudyResponse, LoadableStudy } from '../models/loadable-study-list.model'
-import { saveAs } from 'file-saver';
+
 @Injectable()
 export class LoadableStudyListApiService {
   loadableStudyList: LoadableStudy[];
@@ -42,7 +42,7 @@ export class LoadableStudyListApiService {
    * @returns {Observable<ILoadableStudyResponse>}
    * @memberof LoadableStudyListApiService
    */
-  setLodableStudy(vesselId: number, voyageId: number, loadableStudy: INewLoadableStudy): Observable<ILoadableStudyResponse> {
+  setLodableStudy(vesselId: number, voyageId: number, loadableStudy: ILoadableStudy): Observable<ILoadableStudyResponse> {
     const formData: FormData = new FormData();
     formData.append('charterer', loadableStudy.charterer);
     formData.append('createdFromId', loadableStudy.createdFromId ? loadableStudy.createdFromId?.toString() : "");
@@ -61,7 +61,7 @@ export class LoadableStudyListApiService {
       }
 
     }
-    
+
     return this.commonApiService.postFormData<ILoadableStudyResponse>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudy.id}`, formData);
   }
 
@@ -90,4 +90,4 @@ export class LoadableStudyListApiService {
   downloadAttachment(vesselId: number, voyageId: number, loadableStudyId: number, attachmentId: number) : Observable<any>{
     return this.commonApiService.get<any>(`vessels/${vesselId}/voyages/${voyageId}/loadable-studies/${loadableStudyId}/attachments/${attachmentId}`, {responseType: 'blob' as 'json'});
   }
-}  
+}

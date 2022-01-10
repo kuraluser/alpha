@@ -10,15 +10,33 @@
 
                 <div class="col-sm-6">
                     <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
-                        </div>
-                        <div class="col dropdowm-medium">
-                            <p-dropdown styleClass="form-control" [options]="loadableStudyList" [tooltipPosition]="'top'" [tooltip]="getControlLabel('duplicateExisting')?.name?.length > 13 ? getControlLabel('duplicateExisting')?.name: ''"
-                                id="ddl_duplicateExisting" formControlName="duplicateExisting" optionLabel="name"
-                                (onChange)="onDuplicateExisting($event)" resetFilterOnHide="true"
-                                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [disabled]="isEdit" focusTrap>
-                            </p-dropdown>
-                        </div>
+                      <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_VOYAGE' | translate}}
+                      </div>
+                      <div class="col dropdowm-medium">
+                        <p-dropdown styleClass="form-control" [options]="voyages" id="voyage" formControlName="voyage" optionLabel="voyageNo" (onChange)="onVoyageChange($event)" [filter]="true" resetFilterOnHide="true" placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [virtualScroll]="true" [itemSize]="30" focusTrap>
+                        </p-dropdown>
+                      </div>
+                    </div>
+                    <div class="row form-group">
+                      <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
+                      </div>
+                      <div class="col dropdowm-medium">
+                        <p-dropdown styleClass="form-control" [options]="loadableStudies" [tooltipPosition]="'top'"
+                          [tooltip]="getControlLabel('duplicateExisting')?.name?.length > 13 ? getControlLabel('duplicateExisting')?.name: ''"
+                          id="ddl_duplicateExisting" formControlName="duplicateExisting" optionLabel="name"
+                          (onChange)="onDuplicateExisting($event)" resetFilterOnHide="true" [filter]="true"
+                          placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
+                          <ng-template let-loadableStudy pTemplate="selectedItem">
+                            <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status" tooltipPosition="right">
+                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}}"></i></span>
+                          </ng-template>
+                          <ng-template let-loadableStudy pTemplate="item">
+                            <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status"
+                              tooltipPosition="right">
+                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}}"></i></span>
+                          </ng-template>
+                        </p-dropdown>
+                      </div>
                     </div>
                     <div class="row form-group">
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_NAME' | translate}}</div>

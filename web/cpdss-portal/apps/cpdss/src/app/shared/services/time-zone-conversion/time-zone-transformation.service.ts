@@ -242,4 +242,25 @@ export class TimeZoneTransformationService {
     ]
   }
 
+  /**
+  * Convert date time(dd-mm-yyyy hh:mm) to Date object
+  *
+  * @memberof TimeZoneTransformationService
+  */
+  convertToDate(value: string): Date {
+    if (value) {
+      const arr = value.toString().split(' ')
+      const dateArr = arr[0]?.split('-');
+      if (arr[1]) {
+        const timeArr = arr[1].split(':')
+        if (dateArr.length > 2 && timeArr.length > 1) {
+          return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]), Number(timeArr[0]), Number(timeArr[1]));
+        }
+      } else {
+        return new Date(Number(dateArr[2]), Number(dateArr[1]) - 1, Number(dateArr[0]))
+      }
+    }
+    return null
+  }
+
 }

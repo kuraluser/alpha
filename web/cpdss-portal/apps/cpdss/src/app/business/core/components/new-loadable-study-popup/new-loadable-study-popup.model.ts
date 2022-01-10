@@ -1,7 +1,7 @@
 /**
  *  model for new-loadable-study
  */
-export interface INewLoadableStudy {
+export interface ILoadableStudy {
     id: number;
     createdFromId: number;
     name: string;
@@ -15,6 +15,7 @@ export interface INewLoadableStudy {
     maxWaterTempExpected: string;
     attachMail: any[];
     deletedAttachments: string;
+    voyageId: number;
 }
 
 

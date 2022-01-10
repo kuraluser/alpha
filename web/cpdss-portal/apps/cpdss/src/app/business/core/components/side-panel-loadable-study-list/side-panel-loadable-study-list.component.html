@@ -13,11 +13,11 @@
 </div>
 <ng-container>
     <div class="text-center pt-10">
-    <button class="btn btn-main btn-sm" 
+    <button class="btn btn-main btn-sm"
     id="btn_view_details" (click)="navigateToLoadableStudyList()">{{'LOADABLE_STUDY_DETAILS_VIEW_DETAILS_BUTTON_LABEL' | translate}}</button>
 </div>
 </ng-container>
 <cpdss-portal-new-loadable-study-popup *ngIf="loadableStudies && voyage && vesselInfo && display" [display]="display"
-    (displayPopup)="closeLoadableStudyPopup($event)" [loadableStudyList]="loadableStudies" [vesselInfoList]="vesselInfo"
-    [voyage]="voyage" [duplicateLoadableStudy]="duplicateLoadableStudy" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)" [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy">
+    (displayPopup)="closeLoadableStudyPopup($event)" [loadableStudies]="loadableStudies" [vesselInfoList]="vesselInfo" [duplicateLoadableStudy]="duplicateLoadableStudy"
+    [voyages]="voyages" [voyage]="voyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)" [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy">
 </cpdss-portal-new-loadable-study-popup>

@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileUpload } from 'primeng/fileupload';
-import { IDropdownEvent, INewLoadableStudy } from "./new-loadable-study-popup.model";
+import { IDropdownEvent, ILoadableStudy } from "./new-loadable-study-popup.model";
 import { IdraftMarks, ILoadLineList, INewLoadableStudyListNames, Voyage } from "../../models/common.model";
 import { IVessel } from '../../../core/models/vessel-details.model';
 import { LoadableStudyListApiService } from '../../../cargo-planning/services/loadable-study-list-api.service';
@@ -16,6 +16,7 @@ import { whiteSpaceValidator } from '../../directives/space-validator.directive'
 import { saveAs } from 'file-saver';
 import { LoadableStudyDetailsTransformationService } from '../../../cargo-planning/services/loadable-study-details-transformation.service';
 import { isAlphaCharacterAvaiable } from '../../directives/alpha-validator.directive';
+import { TimeZoneTransformationService } from '../../../../shared/services/time-zone-conversion/time-zone-transformation.service';
 
 /**
  *  popup for creating / editing loadable-study
@@ -35,14 +36,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this._vesselInfoList = vesselInfoList;
   }
   @Input()
-  get voyage(): Voyage { return this._voyage; }
-  set voyage(voyage: Voyage) {
-    this._voyage = voyage;
-  }
-  @Input()
-  get loadableStudyList(): LoadableStudy[] { return this._loadableStudyList; }
-  set loadableStudyList(loadableStudyList: LoadableStudy[]) {
-    this._loadableStudyList = loadableStudyList.filter(loadable => 
+  get loadableStudies(): LoadableStudy[] { return this._loadableStudyList; }
+  set loadableStudies(value: LoadableStudy[]) {
+    this._loadableStudyList = value.filter(loadable =>
       ![LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED , LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE , LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadable?.statusId));
   }
 
@@ -53,6 +49,27 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   }
   @Input() isEdit = false;
   @Input() selectedLoadableStudy: LoadableStudy;
+  @Input()
+  set voyages(value: Voyage[]) {
+    const pastVoyages = value?.filter((voyage) => {
+      const date = new Date();
+      date.setFullYear(date.getFullYear() - 5);
+      return (this.timeZoneTransformationService.convertToDate(voyage?.actualStartDate)?.getTime() > date?.getTime() || this.timeZoneTransformationService.convertToDate(voyage?.startDate)?.getTime() > date?.getTime()) || (!voyage?.actualStartDate && !voyage?.startDate);
+    })
+      .sort((a, b) => this.timeZoneTransformationService.convertToDate(b?.actualStartDate)?.getTime() - this.timeZoneTransformationService.convertToDate(a?.actualStartDate)?.getTime());
+    this._voyages = pastVoyages;
+  }
+  get voyages(): Voyage[] {
+    return this._voyages;
+  }
+
+  @Input()
+  get voyage(): Voyage { return this._voyage; }
+  set voyage(voyage: Voyage) {
+    this._voyage = this.voyages?.find(_voyage => voyage?.voyageNo === _voyage?.voyageNo);
+    this.getVesselInfo();
+  }
+
   @Output() displayPopup = new EventEmitter();
   @Output() addedNewLoadableStudy = new EventEmitter<Object>();
 
@@ -62,9 +79,10 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   private _voyage: Voyage;
   private _loadableStudyList: LoadableStudy[];
   private _duplicateLoadableStudy: LoadableStudy;
+  private _voyages: Voyage[];
 
   newLoadableStudyFormGroup: FormGroup;
-  newLoadableStudyPopupModel: INewLoadableStudy;
+  newLoadableStudyPopupModel: ILoadableStudy;
   newLoadableStudyListNames: INewLoadableStudyListNames;
   loadlineList: ILoadLineList;
   draftMarkList: IdraftMarks[] = [];
@@ -78,19 +96,20 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   saveButtonLabel = "";
   savedloadableDetails: any;
   deletedAttachments: number[];
+
   constructor(private loadableStudyListApiService: LoadableStudyListApiService,
     private formBuilder: FormBuilder,
     private router: Router,
     private messageService: MessageService,
     private translateService: TranslateService,
     private ngxSpinnerService: NgxSpinnerService,
-    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService) { }
+    private loadableStudyDetailsTransformationService: LoadableStudyDetailsTransformationService,
+    private timeZoneTransformationService: TimeZoneTransformationService) { }
 
   ngOnInit(): void {
     this.deletedAttachments = [];
     this.popUpHeader = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_EDIT_HEADER" : "NEW_LOADABLE_STUDY_POPUP_HEADER"
     this.saveButtonLabel = this.isEdit ? "NEW_LOADABLE_STUDY_POPUP_UPDATE_BUTTON" : "NEW_LOADABLE_STUDY_POPUP_SAVE_BUTTON";
-    this.getVesselInfo();
   }
 
   //get loadlines data and create form group
@@ -128,6 +147,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   // creating form-group for new-loadable-study
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
+      voyage: this.formBuilder.control(this.voyage, [Validators.required]),
       duplicateExisting: '',
       newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator , isAlphaCharacterAvaiable]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
@@ -144,7 +164,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   // is Loadable Study Name Exist
   isNewLoadableStudyExist() {
-    const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
+    const nameExistence = this.loadableStudies.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
     this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
   }
 
@@ -152,7 +172,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   public async saveLoadableStudy() {
     console.log('saveLoadableStudy' + Date.now()); // TODO: Need to remove after testing
     if (this.newLoadableStudyFormGroup.valid) {
-      const nameExistence = this.loadableStudyList.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
+      const nameExistence = this.loadableStudies.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
       this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
       const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST', 'LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY', 'NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED']).toPromise();
       let isLoadableStudyAvailable;
@@ -160,6 +180,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       if (!this.newLoadableStudyNameExist) {
         this.newLoadableStudyPopupModel = {
           id: this.isEdit ? this.selectedLoadableStudy.id : 0,
+          voyageId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
+            this.newLoadableStudyFormGroup.controls.voyage.value?.id : '',
           createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
             this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
           name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
@@ -202,7 +224,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           }
           this.ngxSpinnerService.hide();
         }
-        
+
       } else {
         //TODO: This must be moved to above catch expression
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['LOADABLE_STUDY_ALREADY_EXIST'] });
@@ -318,7 +340,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
       }
       if (loadableStudyObj?.createdFromId) {
-        this.loadableStudyList?.map((loadableStudy) => {
+        this.loadableStudies?.map((loadableStudy) => {
           if (loadableStudyObj.createdFromId === loadableStudy.id) {
             this.newLoadableStudyFormGroup.patchValue({
               duplicateExisting: loadableStudy
@@ -327,6 +349,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         })
       }
 
+      this.newLoadableStudyFormGroup.controls['voyage'].disable();
       this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
     } else {
       this.newLoadableStudyFormGroup.patchValue({
@@ -380,6 +403,21 @@ export class NewLoadableStudyPopupComponent implements OnInit {
    */
   getControlLabel(type: string) {
     return this.newLoadableStudyFormGroup.controls[type].value;
+  }
+
+  /**
+   * Handler for change event of voyages dropdown
+   *
+   * @param {*} event
+   * @memberof NewLoadableStudyPopupComponent
+   */
+  async onVoyageChange(event) {
+    this.ngxSpinnerService.show();
+    const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, event.value?.id).toPromise();
+    this.loadableStudies = result?.loadableStudies ?? [];
+    this.newLoadableStudyFormGroup.controls.duplicateExisting.reset(null);
+    this.duplicateLoadableStudy = null;
+    this.ngxSpinnerService.hide();
   }
 
 }
