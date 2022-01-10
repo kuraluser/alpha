@@ -540,10 +540,12 @@ public class LoadingPlanRuleServiceImpl implements LoadingPlanRuleService {
               .ifPresentOrElse(
                   rulesBuilder::setNumericScale, () -> rulesBuilder.setNumericScale(0));
           Common.RulesInputs.Builder ruleInput = Common.RulesInputs.newBuilder();
+          List<LoadingRuleInput> loadingRuleInputList =
+              loadingRuleInputRepository.findAllByLoadingRule(ruleList);
           List<LoadingRuleInput> loadableStudyRuleInputs;
-          if (ruleList != null && ruleList.getLoadingRuleInputs().size() != 0) {
+          if (!CollectionUtils.isEmpty(loadingRuleInputList)) {
             loadableStudyRuleInputs =
-                ruleList.getLoadingRuleInputs().stream()
+                loadingRuleInputList.stream()
                     .sorted(Comparator.comparingLong(LoadingRuleInput::getId))
                     .collect(Collectors.toList());
           } else {
