@@ -512,11 +512,11 @@ public class OnBoardQuantityService {
             }
             return dischargePlanStowageBallastResponse.getDischargingPlanTankDetailsList();
           }
+          log.info(
+              "Get On-Board-Quantity, previous voyage, DS id - {}, name - {}",
+              confirmedDS.get().getId(),
+              confirmedDS.get().getName());
         }
-        log.info(
-            "Get On-Board-Quantity, previous voyage, DS id - {}, name - {}",
-            confirmedDS.get().getId(),
-            confirmedDS.get().getName());
       }
     }
     return new ArrayList<>();
