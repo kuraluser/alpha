@@ -2272,13 +2272,13 @@ public class LoadablePatternService {
               .getLoadableStudy()
               .getPlanningTypeXId()
               .equals(PLANNING_TYPE_LOADING)
-          && loadablePatternOpt
+          && !loadablePatternOpt
               .get()
               .getLoadableStudy()
               .getVoyage()
               .getVoyageStatus()
               .getId()
-              .equals(ACTIVE_VOYAGE_STATUS)) {
+              .equals(CLOSE_VOYAGE_STATUS)) {
         // Creates loading information for the port rotations of the confirmed loadable pattern in
         // the
         // loading module.
