@@ -40,11 +40,7 @@ import com.cpdss.dischargeplan.repository.PortDischargingPlanCommingleDetailsRep
 import com.cpdss.dischargeplan.repository.PortDischargingPlanRobDetailsRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStabilityParametersRepository;
 import com.cpdss.dischargeplan.repository.PortDischargingPlanStowageDetailsRepository;
-import com.cpdss.dischargeplan.service.DischargeInformationBuilderService;
-import com.cpdss.dischargeplan.service.DischargeInformationService;
-import com.cpdss.dischargeplan.service.DischargingBerthService;
-import com.cpdss.dischargeplan.service.DischargingDelayService;
-import com.cpdss.dischargeplan.service.DischargingMachineryInUseService;
+import com.cpdss.dischargeplan.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -87,6 +83,7 @@ public class DischargeInformationRPCService
   @Autowired CowTankDetailRepository cowTankDetailRepository;
   @Autowired DischargeInformationRepository dischargeInformationRepository;
   @Autowired PortDischargingPlanCommingleDetailsRepository pdpCommingleDetailsRepository;
+  @Autowired private DischargingCargoToBeDischargedService dischargingCargoToBeDischargedService;
 
   @Override
   public void getDischargeInformation(
@@ -975,6 +972,97 @@ public class DischargeInformationRPCService
               .setMessage(e.getMessage())
               .setStatus(DischargePlanConstants.FAILED)
               .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Method to save cargo to be discharged details
+   *
+   * @param request DischargeInformation input request
+   * @param responseObserver Response output object
+   */
+  @Override
+  public void saveCargoToBeDischarged(
+      DischargeInformation request, StreamObserver<DischargingInfoSaveResponse> responseObserver) {
+
+    log.info("Inside saveCargoToBeDischarged method!");
+    DischargingInfoSaveResponse.Builder builder = DischargingInfoSaveResponse.newBuilder();
+
+    try {
+
+      log.info("Request payload {}", Utils.toJson(request));
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+
+      log.info(
+          "Save Discharging Info, CargoToBeDischarged With Info Id {}",
+          request.getDischargeInfoId());
+      if (dischargingInformation != null) {
+
+        // Save cargo to be discharged details
+        dischargingCargoToBeDischargedService.saveCargoToBeDischarged(
+            request.getDischargeQuantityCargoDetailsList(), dischargingInformation);
+        this.dischargeInformationService.updateIsDischargingInfoCompeteStatus(
+            dischargingInformation.getId(), request.getIsDischargingInfoComplete());
+        buildDischargingInfoSaveResponse(builder, dischargingInformation);
+      }
+
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setMessage("Successfully saved Discharging Cargo to be discharged details")
+                  .setStatus(SUCCESS)
+                  .build())
+          .build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder
+          .setResponseStatus(
+              ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build())
+          .build();
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Method to fetch cargo to be discharged details
+   *
+   * @param request DischargeInformation request input
+   * @param responseObserver Response output
+   */
+  @Override
+  public void getCargoToBeDischarged(
+      DischargeInformation request, StreamObserver<DischargeInformation> responseObserver) {
+
+    log.info("Inside getCargoToBeDischarged method!");
+    DischargeInformation.Builder builder = DischargeInformation.newBuilder();
+
+    try {
+      com.cpdss.dischargeplan.entity.DischargeInformation dischargingInformation =
+          dischargeInformationService.getDischargeInformation(request.getDischargeInfoId());
+      log.info("Fetch Discharge Info, Cargo To Be Discharged!");
+      log.info("Request payload {}", Utils.toJson(request));
+
+      // Fetch cargo to be discharged
+      if (dischargingInformation != null) {
+        dischargingCargoToBeDischargedService.getCargoToBeDischarged(
+            dischargingInformation, builder);
+      }
+
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setMessage("Successfully fetched Discharging cargo to be discharged Details!")
+              .setStatus(SUCCESS)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder().setMessage(e.getMessage()).setStatus(FAILED).build());
     } finally {
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();

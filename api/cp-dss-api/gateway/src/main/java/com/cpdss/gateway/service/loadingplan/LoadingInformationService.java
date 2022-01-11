@@ -72,7 +72,12 @@ public interface LoadingInformationService {
       boolean isDischarging);
 
   List<DischargeQuantityCargoDetails> getDischargePlanCargoDetailsByPort(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId);
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      Long dischargeInfoId);
 
   LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay);
 

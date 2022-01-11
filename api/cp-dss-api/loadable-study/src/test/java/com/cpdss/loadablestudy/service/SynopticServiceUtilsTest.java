@@ -9,6 +9,8 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.discharge_plan.DischargeInformation;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -61,6 +63,10 @@ public class SynopticServiceUtilsTest {
   @MockBean DischargePatternQuantityCargoPortwiseRepository disCargoQuantityRepository;
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @MockBean
+  private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
+      dischargeInformationGrpcService;
 
   @MockBean
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
@@ -425,6 +431,13 @@ public class SynopticServiceUtilsTest {
         .thenReturn(Optional.empty());
     when(loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(getLoadablePatternList().get(0)));
+
+    DischargeInformation dischargeInformation =
+        DischargeInformation.newBuilder().setDischargeInfoId(0L).build();
+    when(dischargeInformationGrpcService.getCargoToBeDischarged(any()))
+        .thenReturn(dischargeInformation);
+    ReflectionTestUtils.setField(
+        synopticServiceUtils, "dischargeInformationGrpcService", dischargeInformationGrpcService);
 
     synopticServiceUtils.buildCargoToBeDischargedFroPort(request, builder, repBuilder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());

@@ -604,7 +604,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       boolean isDischarging) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId, operationType, portRotationId, portId, true, planningType);
+            patternId, operationType, portRotationId, portId, true, planningType, 0L);
     return this.buildLoadablePlanQuantity(list, vesselId, isDischarging);
   }
 
@@ -742,13 +742,18 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       boolean isDischarging) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId, operationType, portRotationId, portId, false, planningType);
+            patternId, operationType, portRotationId, portId, false, planningType, 0L);
     return this.buildLoadablePlanQuantity(list, vesselId, isDischarging);
   }
 
   @Override
   public List<DischargeQuantityCargoDetails> getDischargePlanCargoDetailsByPort(
-      Long vesselId, Long patternId, String operationType, Long portRotationId, Long portId) {
+      Long vesselId,
+      Long patternId,
+      String operationType,
+      Long portRotationId,
+      Long portId,
+      Long dischargeInfoId) {
     List<LoadableStudy.LoadableQuantityCargoDetails> list =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
             patternId,
@@ -756,7 +761,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             portRotationId,
             portId,
             true,
-            Common.PLANNING_TYPE.DISCHARGE_STUDY);
+            Common.PLANNING_TYPE.DISCHARGE_STUDY,
+            dischargeInfoId);
     return this.buildDischargePlanQuantity(list, vesselId);
   }
 

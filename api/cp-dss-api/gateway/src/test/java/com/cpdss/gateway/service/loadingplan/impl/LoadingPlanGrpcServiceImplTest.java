@@ -446,6 +446,7 @@ public class LoadingPlanGrpcServiceImplTest {
     String operationType = "1";
     Long portRotationId = 1L;
     Long portId = 1L;
+    Long dischargeInfoId = 0L;
     Boolean isFilterOn = true;
     Common.PLANNING_TYPE planning_type = Common.PLANNING_TYPE.LOADABLE_STUDY;
     Mockito.when(this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(Mockito.any()))
@@ -456,7 +457,13 @@ public class LoadingPlanGrpcServiceImplTest {
         this.loadableStudyServiceBlockingStub);
     var response =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
-            patternId, operationType, portRotationId, portId, isFilterOn, planning_type);
+            patternId,
+            operationType,
+            portRotationId,
+            portId,
+            isFilterOn,
+            planning_type,
+            dischargeInfoId);
     assertEquals(1, response.get(0).getPriority());
   }
 

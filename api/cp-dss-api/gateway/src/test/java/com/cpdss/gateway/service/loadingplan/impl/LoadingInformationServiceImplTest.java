@@ -326,7 +326,8 @@ public class LoadingInformationServiceImplTest {
                 Mockito.anyLong(),
                 Mockito.anyLong(),
                 Mockito.any(),
-                Mockito.any()))
+                Mockito.any(),
+                Mockito.anyLong()))
         .thenReturn(getLLQCD());
     var response =
         this.loadingInformationService.getLoadablePlanCargoDetailsByPort(
@@ -390,6 +391,7 @@ public class LoadingInformationServiceImplTest {
     String operationType = "1";
     Long portRotationId = 1L;
     Long portId = 1L;
+    Long dischargeInfoId = 0L;
     Mockito.when(
             this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
                 Mockito.anyLong(),
@@ -397,11 +399,12 @@ public class LoadingInformationServiceImplTest {
                 Mockito.anyLong(),
                 Mockito.anyLong(),
                 Mockito.any(),
-                Mockito.any()))
+                Mockito.any(),
+                Mockito.anyLong()))
         .thenReturn(getLLQCD());
     var response =
         this.loadingInformationService.getDischargePlanCargoDetailsByPort(
-            vesselId, patternId, operationType, portRotationId, portId);
+            vesselId, patternId, operationType, portRotationId, portId, dischargeInfoId);
     assertEquals("1", response.get(0).getCargoAbbreviation());
   }
 

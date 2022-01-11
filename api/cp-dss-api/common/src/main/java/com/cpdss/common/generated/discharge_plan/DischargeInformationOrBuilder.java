@@ -302,4 +302,20 @@ public interface DischargeInformationOrBuilder
    * @return The isDischargeInfoComplete.
    */
   boolean getIsDischargeInfoComplete();
+
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  java.util.List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>
+      getDischargeQuantityCargoDetailsList();
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails
+      getDischargeQuantityCargoDetails(int index);
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  int getDischargeQuantityCargoDetailsCount();
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  java.util.List<
+          ? extends com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder>
+      getDischargeQuantityCargoDetailsOrBuilderList();
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder
+      getDischargeQuantityCargoDetailsOrBuilder(int index);
 }

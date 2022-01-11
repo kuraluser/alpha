@@ -51,6 +51,7 @@ public class DischargeInformationRPCServiceTest {
   @Autowired DischargeStageMinAmountRepository dischargeStageMinAmountRepository;
   @MockBean ReasonForDelayRepository reasonForDelayRepository;
   @MockBean CowPlanService cowPlanService;
+  @MockBean private DischargingCargoToBeDischargedService dischargingCargoToBeDischargedService;
 
   @Test
   void testGetDischargeInformation() throws GenericServiceException {

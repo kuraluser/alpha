@@ -39,6 +39,11 @@ service DischargeInformationService {
   // Case 7, post discharge stage
   rpc savePostDischargeStage(DischargeInformation) returns (DischargingInfoSaveResponse) {}
 
+  // Case 10, Cargo to be discharged
+  rpc SaveCargoToBeDischarged(DischargeInformation) returns (DischargingInfoSaveResponse) {}
+
+  rpc GetCargoToBeDischarged(DischargeInformation) returns (DischargeInformation) {}
+
   rpc GetOrSaveRulesForDischargingPlan (DischargeRuleRequest) returns (DischargeRuleReply) {}
   rpc getPortDischargingPlanRobDetails(PortDischargingPlanRobDetailsRequest) returns (PortDischargingPlanRobDetailsReply) {}
 }

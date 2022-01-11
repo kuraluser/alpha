@@ -31,6 +31,8 @@ import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargeInformation;
+import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -115,6 +117,10 @@ public class SynopticServiceUtils {
   @GrpcClient("loadingInformationService")
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
       loadingInfoServiceBlockingStub;
+
+  @GrpcClient("dischargeInformationService")
+  private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
+      dischargeInformationGrpcService;
 
   @Autowired SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
@@ -642,6 +648,25 @@ public class SynopticServiceUtils {
         dataList = disList; // no filter, add all data
       }
 
+      // Get api, temp and maxDischargingRate edited if present from
+      // discharging_cargo_api_temperature table in discharging plan DB
+      DischargeInformation.Builder dischargingInfoBuilder =
+          DischargeInformation.newBuilder().setDischargeInfoId(request.getDischargingInfoId());
+      DischargeInformation dischargeInformation =
+          this.dischargeInformationGrpcService.getCargoToBeDischarged(
+              dischargingInfoBuilder.build());
+
+      // Map to map cargoNominationId with Cargo To Be Discharged Details
+      Map<Long, LoadableStudy.DischargeQuantityCargoDetails> cargoNominationMapped =
+          new HashMap<>();
+
+      dischargeInformation
+          .getDischargeQuantityCargoDetailsList()
+          .forEach(
+              dischargeQuantityCargoDetails ->
+                  cargoNominationMapped.put(
+                      dischargeQuantityCargoDetails.getCargoNominationId(),
+                      dischargeQuantityCargoDetails));
       // Filter by PortId, Operation Type
       var quantityList =
           dataList.stream()
@@ -658,10 +683,28 @@ public class SynopticServiceUtils {
               LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
           Optional.ofNullable(var1.getId()).ifPresent(builder1::setId);
           // Optional.ofNullable(var1.getGrade()).ifPresent(builder1::setGrade);
-          Optional.ofNullable(var1.getEstimatedAPI())
-              .ifPresent(v -> builder1.setEstimatedAPI(v.toString()));
-          Optional.ofNullable(var1.getEstimatedTemp())
-              .ifPresent(v -> builder1.setEstimatedTemp(v.toString()));
+
+          if (cargoNominationMapped.containsKey(var1.getCargoNominationId())) {
+
+            LoadableStudy.DischargeQuantityCargoDetails dischargeQuantityCargoDetails =
+                cargoNominationMapped.get(var1.getCargoNominationId());
+
+            Optional.of(dischargeQuantityCargoDetails.getEstimatedApi())
+                .ifPresent(builder1::setEstimatedAPI);
+            Optional.of(dischargeQuantityCargoDetails.getEstimatedTemp())
+                .ifPresent(builder1::setEstimatedTemp);
+            Optional.of(dischargeQuantityCargoDetails.getMaxDischargingRate())
+                .ifPresent(builder1::setDischargingRate);
+          } else {
+
+            Optional.ofNullable(var1.getEstimatedAPI())
+                .ifPresent(v -> builder1.setEstimatedAPI(v.toString()));
+            Optional.ofNullable(var1.getEstimatedTemp())
+                .ifPresent(v -> builder1.setEstimatedTemp(v.toString()));
+            Optional.ofNullable(var1.getDischargingRate())
+                .ifPresent(value -> builder1.setDischargingRate(value.toString()));
+          }
+
           Optional.ofNullable(var1.getCargoNominationTemperature())
               .ifPresent(v -> builder1.setCargoNominationTemperature(v.toString()));
           Optional.ofNullable(var1.getDischargeMT())
@@ -692,8 +735,6 @@ public class SynopticServiceUtils {
               .ifPresent(builder1::setDscargoNominationId);
           Optional.ofNullable(var1.getTimeRequiredForDischarging())
               .ifPresent(value -> builder1.setTimeRequiredForDischarging(String.valueOf(value)));
-          Optional.ofNullable(var1.getDischargingRate())
-              .ifPresent(value -> builder1.setDischargingRate(value.toString()));
 
           Optional.ofNullable(var1.getIsCommingled()).ifPresent(builder1::setIsCommingled);
           Optional.ofNullable(var1.getIfProtested()).ifPresent(builder1::setIfProtested);

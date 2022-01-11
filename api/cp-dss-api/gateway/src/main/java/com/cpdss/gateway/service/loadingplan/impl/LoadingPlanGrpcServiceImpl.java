@@ -264,7 +264,8 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
       Long portRotationId,
       Long portId,
       Boolean isFilterOn,
-      Common.PLANNING_TYPE planning_type) {
+      Common.PLANNING_TYPE planning_type,
+      Long dischargeInfoId) {
     LoadableStudy.LoadingPlanCommonResponse response =
         this.loadableStudyServiceBlockingStub.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
@@ -274,6 +275,7 @@ public class LoadingPlanGrpcServiceImpl implements LoadingPlanGrpcService {
                 .setPortId(portId)
                 .setCargoNominationFilter(isFilterOn)
                 .setPlanningType(planning_type)
+                .setDischargingInfoId(dischargeInfoId)
                 .build());
 
     if (response.getResponseStatus().getStatus().equals(SUCCESS)) {

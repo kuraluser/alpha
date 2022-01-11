@@ -52,7 +52,7 @@ public class DischargeInformationServiceTest {
   public void getDischargeInformationTestCase1() throws GenericServiceException {
     Mockito.when(
             this.dischargeInformationService.getDischargeInformation(
-                anyLong(), anyLong(), anyLong()))
+                anyLong(), anyLong(), anyLong(), anyLong()))
         .thenReturn(getDummyDischargeInfoData());
   }
 

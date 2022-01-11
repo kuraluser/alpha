@@ -16,6 +16,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     berthDetails_ = java.util.Collections.emptyList();
     machineInUse_ = java.util.Collections.emptyList();
     dischargeStudyProcessId_ = "";
+    dischargeQuantityCargoDetails_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -291,6 +292,21 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
               isDischargeInfoComplete_ = input.readBool();
               break;
             }
+          case 226:
+            {
+              if (!((mutable_bitField0_ & 0x00000004) != 0)) {
+                dischargeQuantityCargoDetails_ =
+                    new java.util.ArrayList<
+                        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              dischargeQuantityCargoDetails_.add(
+                  input.readMessage(
+                      com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails
+                          .parser(),
+                      extensionRegistry));
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -310,6 +326,10 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       }
       if (((mutable_bitField0_ & 0x00000002) != 0)) {
         machineInUse_ = java.util.Collections.unmodifiableList(machineInUse_);
+      }
+      if (((mutable_bitField0_ & 0x00000004) != 0)) {
+        dischargeQuantityCargoDetails_ =
+            java.util.Collections.unmodifiableList(dischargeQuantityCargoDetails_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -822,6 +842,35 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     return isDischargeInfoComplete_;
   }
 
+  public static final int DISCHARGEQUANTITYCARGODETAILS_FIELD_NUMBER = 28;
+  private java.util.List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>
+      dischargeQuantityCargoDetails_;
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  public java.util.List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>
+      getDischargeQuantityCargoDetailsList() {
+    return dischargeQuantityCargoDetails_;
+  }
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  public java.util.List<
+          ? extends com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder>
+      getDischargeQuantityCargoDetailsOrBuilderList() {
+    return dischargeQuantityCargoDetails_;
+  }
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  public int getDischargeQuantityCargoDetailsCount() {
+    return dischargeQuantityCargoDetails_.size();
+  }
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  public com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails
+      getDischargeQuantityCargoDetails(int index) {
+    return dischargeQuantityCargoDetails_.get(index);
+  }
+  /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+  public com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder
+      getDischargeQuantityCargoDetailsOrBuilder(int index) {
+    return dischargeQuantityCargoDetails_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -916,6 +965,9 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     }
     if (isDischargeInfoComplete_ != false) {
       output.writeBool(27, isDischargeInfoComplete_);
+    }
+    for (int i = 0; i < dischargeQuantityCargoDetails_.size(); i++) {
+      output.writeMessage(28, dischargeQuantityCargoDetails_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -1018,6 +1070,11 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (isDischargeInfoComplete_ != false) {
       size += com.google.protobuf.CodedOutputStream.computeBoolSize(27, isDischargeInfoComplete_);
     }
+    for (int i = 0; i < dischargeQuantityCargoDetails_.size(); i++) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(
+              28, dischargeQuantityCargoDetails_.get(i));
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1085,6 +1142,8 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
     if (getDischargeCommingledCargoSeparately() != other.getDischargeCommingledCargoSeparately())
       return false;
     if (getIsDischargeInfoComplete() != other.getIsDischargeInfoComplete()) return false;
+    if (!getDischargeQuantityCargoDetailsList()
+        .equals(other.getDischargeQuantityCargoDetailsList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -1173,6 +1232,10 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
             + com.google.protobuf.Internal.hashBoolean(getDischargeCommingledCargoSeparately());
     hash = (37 * hash) + ISDISCHARGEINFOCOMPLETE_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsDischargeInfoComplete());
+    if (getDischargeQuantityCargoDetailsCount() > 0) {
+      hash = (37 * hash) + DISCHARGEQUANTITYCARGODETAILS_FIELD_NUMBER;
+      hash = (53 * hash) + getDischargeQuantityCargoDetailsList().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -1308,6 +1371,7 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
         getBerthDetailsFieldBuilder();
         getMachineInUseFieldBuilder();
+        getDischargeQuantityCargoDetailsFieldBuilder();
       }
     }
 
@@ -1404,6 +1468,12 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
 
       isDischargeInfoComplete_ = false;
 
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        dischargeQuantityCargoDetails_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.clear();
+      }
       return this;
     }
 
@@ -1504,6 +1574,16 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       result.dischargeSlopTanksFirst_ = dischargeSlopTanksFirst_;
       result.dischargeCommingledCargoSeparately_ = dischargeCommingledCargoSeparately_;
       result.isDischargeInfoComplete_ = isDischargeInfoComplete_;
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0)) {
+          dischargeQuantityCargoDetails_ =
+              java.util.Collections.unmodifiableList(dischargeQuantityCargoDetails_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.dischargeQuantityCargoDetails_ = dischargeQuantityCargoDetails_;
+      } else {
+        result.dischargeQuantityCargoDetails_ = dischargeQuantityCargoDetailsBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -1684,6 +1764,34 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       }
       if (other.getIsDischargeInfoComplete() != false) {
         setIsDischargeInfoComplete(other.getIsDischargeInfoComplete());
+      }
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        if (!other.dischargeQuantityCargoDetails_.isEmpty()) {
+          if (dischargeQuantityCargoDetails_.isEmpty()) {
+            dischargeQuantityCargoDetails_ = other.dischargeQuantityCargoDetails_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureDischargeQuantityCargoDetailsIsMutable();
+            dischargeQuantityCargoDetails_.addAll(other.dischargeQuantityCargoDetails_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.dischargeQuantityCargoDetails_.isEmpty()) {
+          if (dischargeQuantityCargoDetailsBuilder_.isEmpty()) {
+            dischargeQuantityCargoDetailsBuilder_.dispose();
+            dischargeQuantityCargoDetailsBuilder_ = null;
+            dischargeQuantityCargoDetails_ = other.dischargeQuantityCargoDetails_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+            dischargeQuantityCargoDetailsBuilder_ =
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                    ? getDischargeQuantityCargoDetailsFieldBuilder()
+                    : null;
+          } else {
+            dischargeQuantityCargoDetailsBuilder_.addAllMessages(
+                other.dischargeQuantityCargoDetails_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -3758,6 +3866,243 @@ public final class DischargeInformation extends com.google.protobuf.GeneratedMes
       isDischargeInfoComplete_ = false;
       onChanged();
       return this;
+    }
+
+    private java.util.List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>
+        dischargeQuantityCargoDetails_ = java.util.Collections.emptyList();
+
+    private void ensureDischargeQuantityCargoDetailsIsMutable() {
+      if (!((bitField0_ & 0x00000004) != 0)) {
+        dischargeQuantityCargoDetails_ =
+            new java.util.ArrayList<
+                com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>(
+                dischargeQuantityCargoDetails_);
+        bitField0_ |= 0x00000004;
+      }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails,
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder,
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder>
+        dischargeQuantityCargoDetailsBuilder_;
+
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public java.util.List<com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>
+        getDischargeQuantityCargoDetailsList() {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(dischargeQuantityCargoDetails_);
+      } else {
+        return dischargeQuantityCargoDetailsBuilder_.getMessageList();
+      }
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public int getDischargeQuantityCargoDetailsCount() {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        return dischargeQuantityCargoDetails_.size();
+      } else {
+        return dischargeQuantityCargoDetailsBuilder_.getCount();
+      }
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails
+        getDischargeQuantityCargoDetails(int index) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        return dischargeQuantityCargoDetails_.get(index);
+      } else {
+        return dischargeQuantityCargoDetailsBuilder_.getMessage(index);
+      }
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder setDischargeQuantityCargoDetails(
+        int index, com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails value) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        dischargeQuantityCargoDetails_.set(index, value);
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder setDischargeQuantityCargoDetails(
+        int index,
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder
+            builderForValue) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        dischargeQuantityCargoDetails_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder addDischargeQuantityCargoDetails(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails value) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        dischargeQuantityCargoDetails_.add(value);
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder addDischargeQuantityCargoDetails(
+        int index, com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails value) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        dischargeQuantityCargoDetails_.add(index, value);
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder addDischargeQuantityCargoDetails(
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder
+            builderForValue) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        dischargeQuantityCargoDetails_.add(builderForValue.build());
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder addDischargeQuantityCargoDetails(
+        int index,
+        com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder
+            builderForValue) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        dischargeQuantityCargoDetails_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder addAllDischargeQuantityCargoDetails(
+        java.lang.Iterable<
+                ? extends com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails>
+            values) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, dischargeQuantityCargoDetails_);
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder clearDischargeQuantityCargoDetails() {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        dischargeQuantityCargoDetails_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public Builder removeDischargeQuantityCargoDetails(int index) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        ensureDischargeQuantityCargoDetailsIsMutable();
+        dischargeQuantityCargoDetails_.remove(index);
+        onChanged();
+      } else {
+        dischargeQuantityCargoDetailsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder
+        getDischargeQuantityCargoDetailsBuilder(int index) {
+      return getDischargeQuantityCargoDetailsFieldBuilder().getBuilder(index);
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder
+        getDischargeQuantityCargoDetailsOrBuilder(int index) {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        return dischargeQuantityCargoDetails_.get(index);
+      } else {
+        return dischargeQuantityCargoDetailsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public java.util.List<
+            ? extends
+                com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder>
+        getDischargeQuantityCargoDetailsOrBuilderList() {
+      if (dischargeQuantityCargoDetailsBuilder_ != null) {
+        return dischargeQuantityCargoDetailsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(dischargeQuantityCargoDetails_);
+      }
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder
+        addDischargeQuantityCargoDetailsBuilder() {
+      return getDischargeQuantityCargoDetailsFieldBuilder()
+          .addBuilder(
+              com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails
+                  .getDefaultInstance());
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder
+        addDischargeQuantityCargoDetailsBuilder(int index) {
+      return getDischargeQuantityCargoDetailsFieldBuilder()
+          .addBuilder(
+              index,
+              com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails
+                  .getDefaultInstance());
+    }
+    /** <code>repeated .DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;</code> */
+    public java.util.List<
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder>
+        getDischargeQuantityCargoDetailsBuilderList() {
+      return getDischargeQuantityCargoDetailsFieldBuilder().getBuilderList();
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails,
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder,
+            com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder>
+        getDischargeQuantityCargoDetailsFieldBuilder() {
+      if (dischargeQuantityCargoDetailsBuilder_ == null) {
+        dischargeQuantityCargoDetailsBuilder_ =
+            new com.google.protobuf.RepeatedFieldBuilderV3<
+                com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails,
+                com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetails.Builder,
+                com.cpdss.common.generated.LoadableStudy.DischargeQuantityCargoDetailsOrBuilder>(
+                dischargeQuantityCargoDetails_,
+                ((bitField0_ & 0x00000004) != 0),
+                getParentForChildren(),
+                isClean());
+        dischargeQuantityCargoDetails_ = null;
+      }
+      return dischargeQuantityCargoDetailsBuilder_;
     }
 
     @java.lang.Override

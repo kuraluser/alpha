@@ -290,6 +290,10 @@ message DischargeQuantityCargoDetails {
 	bool ifProtested=2;
 	int64 id=3;
 	string slopQuantity = 4;
+	int64 cargoNominationId = 5;
+	string estimatedApi = 6;
+	string estimatedTemp = 7;
+	string maxDischargingRate = 8;
 }
 
 message CowHistoryRequest {
@@ -1603,6 +1607,7 @@ message LoadingPlanIdRequest {
 	bool cargoNominationFilter = 7; // default value - false
 	PLANNING_TYPE planningType = 8; // to indicate is the request from loading OR discharging
 	int64 loadingInfoId = 9;
+	int64 dischargingInfoId = 10;
 }
 
 message LoadingPlanCommonResponse{

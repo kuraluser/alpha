@@ -95,6 +95,7 @@ message DischargeInformation {
   bool dischargeSlopTanksFirst = 25;
   bool dischargeCommingledCargoSeparately = 26;
   bool isDischargeInfoComplete = 27;
+  repeated DischargeQuantityCargoDetails dischargeQuantityCargoDetails = 28;
 }
 message DischargingInfoSaveResponse {
   int64 dischargingInfoId = 1;

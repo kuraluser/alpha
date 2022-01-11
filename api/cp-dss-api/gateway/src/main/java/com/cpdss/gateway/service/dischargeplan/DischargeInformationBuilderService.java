@@ -21,11 +21,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageOffsets;
 import com.cpdss.gateway.common.GatewayConstants;
-import com.cpdss.gateway.domain.dischargeplan.CargoForCowDetails;
-import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
-import com.cpdss.gateway.domain.dischargeplan.DischargingDelays;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
-import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
+import com.cpdss.gateway.domain.dischargeplan.*;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.LoadingDelays;
@@ -551,6 +547,19 @@ public class DischargeInformationBuilderService {
           };
       callableTasks.add(t9);
     }
+
+    // Discharging Info Case 10 - CargoToBeDischarged
+    if (request.getCargoToBeDischarged() != null) {
+      Callable<DischargingInfoSaveResponse> t10 =
+          () -> {
+            builder.addAllDischargeQuantityCargoDetails(
+                buildDischargeQuantityCargoDetails(
+                    request.getCargoToBeDischarged(), request.getDischargeInfoId()));
+            return dischargeInfoServiceStub.saveCargoToBeDischarged(builder.build());
+          };
+      callableTasks.add(t10);
+    }
+
     ExecutorService executorService =
         new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
     List<Future<DischargingInfoSaveResponse>> futures = executorService.invokeAll(callableTasks);
@@ -573,9 +582,7 @@ public class DischargeInformationBuilderService {
                       return true;
                     }
                     log.error("Failed to save Thread {}", v.get());
-                  } catch (InterruptedException e) {
-                    e.printStackTrace();
-                  } catch (ExecutionException e) {
+                  } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                   }
                   return false;
@@ -586,6 +593,46 @@ public class DischargeInformationBuilderService {
         callableTasks.size(),
         data.size());
     return data.isEmpty() ? null : data.stream().findFirst().get().get();
+  }
+
+  /**
+   * Method to build cargo to be discharged details
+   *
+   * @param cargoToBeDischarged PlannedCargo input
+   * @param dischargeInfoId Discharge Information Id input
+   * @return List of LoadableStudy.DischargeQuantityCargoDetails grpc object
+   */
+  public List<LoadableStudy.DischargeQuantityCargoDetails> buildDischargeQuantityCargoDetails(
+      PlannedCargo cargoToBeDischarged, Long dischargeInfoId) {
+
+    log.info("Inside buildDischargeQuantityCargoDetails method!");
+
+    List<LoadableStudy.DischargeQuantityCargoDetails> dischargeQuantityCargoDetailsList =
+        new ArrayList<>();
+    if (cargoToBeDischarged.getDischargeQuantityCargoDetails() != null) {
+
+      cargoToBeDischarged
+          .getDischargeQuantityCargoDetails()
+          .forEach(
+              dischargeQuantityCargoDetails -> {
+                LoadableStudy.DischargeQuantityCargoDetails.Builder builder =
+                    LoadableStudy.DischargeQuantityCargoDetails.newBuilder();
+
+                // Set fields
+                Optional.ofNullable(dischargeQuantityCargoDetails.getCargoNominationId())
+                    .ifPresent(builder::setCargoNominationId);
+                Optional.ofNullable(dischargeQuantityCargoDetails.getMaxDischargingRate())
+                    .ifPresent(builder::setMaxDischargingRate);
+                Optional.ofNullable(dischargeQuantityCargoDetails.getEstimatedTemp())
+                    .ifPresent(builder::setEstimatedTemp);
+                Optional.ofNullable(dischargeQuantityCargoDetails.getEstimatedAPI())
+                    .ifPresent(builder::setEstimatedApi);
+
+                dischargeQuantityCargoDetailsList.add(builder.build());
+              });
+    }
+
+    return dischargeQuantityCargoDetailsList;
   }
 
   private PostDischargeStageTime buildPostDischargeStageDetails(

@@ -706,6 +706,112 @@ public final class DischargeInformationServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformation,
+          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+      getSaveCargoToBeDischargedMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveCargoToBeDischarged",
+      requestType = com.cpdss.common.generated.discharge_plan.DischargeInformation.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformation,
+          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+      getSaveCargoToBeDischargedMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargeInformation,
+            com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+        getSaveCargoToBeDischargedMethod;
+    if ((getSaveCargoToBeDischargedMethod =
+            DischargeInformationServiceGrpc.getSaveCargoToBeDischargedMethod)
+        == null) {
+      synchronized (DischargeInformationServiceGrpc.class) {
+        if ((getSaveCargoToBeDischargedMethod =
+                DischargeInformationServiceGrpc.getSaveCargoToBeDischargedMethod)
+            == null) {
+          DischargeInformationServiceGrpc.getSaveCargoToBeDischargedMethod =
+              getSaveCargoToBeDischargedMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan.DischargeInformation,
+                          com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveCargoToBeDischarged"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeInformation
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeInformationServiceMethodDescriptorSupplier(
+                              "SaveCargoToBeDischarged"))
+                      .build();
+        }
+      }
+    }
+    return getSaveCargoToBeDischargedMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformation,
+          com.cpdss.common.generated.discharge_plan.DischargeInformation>
+      getGetCargoToBeDischargedMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoToBeDischarged",
+      requestType = com.cpdss.common.generated.discharge_plan.DischargeInformation.class,
+      responseType = com.cpdss.common.generated.discharge_plan.DischargeInformation.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.discharge_plan.DischargeInformation,
+          com.cpdss.common.generated.discharge_plan.DischargeInformation>
+      getGetCargoToBeDischargedMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.discharge_plan.DischargeInformation,
+            com.cpdss.common.generated.discharge_plan.DischargeInformation>
+        getGetCargoToBeDischargedMethod;
+    if ((getGetCargoToBeDischargedMethod =
+            DischargeInformationServiceGrpc.getGetCargoToBeDischargedMethod)
+        == null) {
+      synchronized (DischargeInformationServiceGrpc.class) {
+        if ((getGetCargoToBeDischargedMethod =
+                DischargeInformationServiceGrpc.getGetCargoToBeDischargedMethod)
+            == null) {
+          DischargeInformationServiceGrpc.getGetCargoToBeDischargedMethod =
+              getGetCargoToBeDischargedMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.discharge_plan.DischargeInformation,
+                          com.cpdss.common.generated.discharge_plan.DischargeInformation>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetCargoToBeDischarged"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeInformation
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.discharge_plan.DischargeInformation
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeInformationServiceMethodDescriptorSupplier(
+                              "GetCargoToBeDischarged"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoToBeDischargedMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.discharge_plan.DischargeRuleRequest,
           com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
       getGetOrSaveRulesForDischargingPlanMethod;
@@ -1035,6 +1141,31 @@ public final class DischargeInformationServiceGrpc {
           getSavePostDischargeStageMethod(), responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Case 10, Cargo to be discharged
+     * </pre>
+     */
+    public void saveCargoToBeDischarged(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveCargoToBeDischargedMethod(), responseObserver);
+    }
+
+    /** */
+    public void getCargoToBeDischarged(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoToBeDischargedMethod(), responseObserver);
+    }
+
     /** */
     public void getOrSaveRulesForDischargingPlan(
         com.cpdss.common.generated.discharge_plan.DischargeRuleRequest request,
@@ -1151,6 +1282,20 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargeInformation,
                       com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>(
                       this, METHODID_SAVE_POST_DISCHARGE_STAGE)))
+          .addMethod(
+              getSaveCargoToBeDischargedMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargeInformation,
+                      com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>(
+                      this, METHODID_SAVE_CARGO_TO_BE_DISCHARGED)))
+          .addMethod(
+              getGetCargoToBeDischargedMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.discharge_plan.DischargeInformation,
+                      com.cpdss.common.generated.discharge_plan.DischargeInformation>(
+                      this, METHODID_GET_CARGO_TO_BE_DISCHARGED)))
           .addMethod(
               getGetOrSaveRulesForDischargingPlanMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1385,6 +1530,35 @@ public final class DischargeInformationServiceGrpc {
           responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Case 10, Cargo to be discharged
+     * </pre>
+     */
+    public void saveCargoToBeDischarged(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveCargoToBeDischargedMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getCargoToBeDischarged(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.discharge_plan.DischargeInformation>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetCargoToBeDischargedMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
     /** */
     public void getOrSaveRulesForDischargingPlan(
         com.cpdss.common.generated.discharge_plan.DischargeRuleRequest request,
@@ -1572,6 +1746,27 @@ public final class DischargeInformationServiceGrpc {
             com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSavePostDischargeStageMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Case 10, Cargo to be discharged
+     * </pre>
+     */
+    public com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse
+        saveCargoToBeDischarged(
+            com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveCargoToBeDischargedMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.discharge_plan.DischargeInformation getCargoToBeDischarged(
+        com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCargoToBeDischargedMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -1762,6 +1957,30 @@ public final class DischargeInformationServiceGrpc {
           getChannel().newCall(getSavePostDischargeStageMethod(), getCallOptions()), request);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Case 10, Cargo to be discharged
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>
+        saveCargoToBeDischarged(
+            com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveCargoToBeDischargedMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.discharge_plan.DischargeInformation>
+        getCargoToBeDischarged(
+            com.cpdss.common.generated.discharge_plan.DischargeInformation request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetCargoToBeDischargedMethod(), getCallOptions()), request);
+    }
+
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.discharge_plan.DischargeRuleReply>
@@ -1797,8 +2016,10 @@ public final class DischargeInformationServiceGrpc {
   private static final int METHODID_SAVE_DISCHARGING_INFO_STAGES = 10;
   private static final int METHODID_SAVE_COW_PLAN = 11;
   private static final int METHODID_SAVE_POST_DISCHARGE_STAGE = 12;
-  private static final int METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING_PLAN = 13;
-  private static final int METHODID_GET_PORT_DISCHARGING_PLAN_ROB_DETAILS = 14;
+  private static final int METHODID_SAVE_CARGO_TO_BE_DISCHARGED = 13;
+  private static final int METHODID_GET_CARGO_TO_BE_DISCHARGED = 14;
+  private static final int METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING_PLAN = 15;
+  private static final int METHODID_GET_PORT_DISCHARGING_PLAN_ROB_DETAILS = 16;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1912,6 +2133,20 @@ public final class DischargeInformationServiceGrpc {
                       com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>)
                   responseObserver);
           break;
+        case METHODID_SAVE_CARGO_TO_BE_DISCHARGED:
+          serviceImpl.saveCargoToBeDischarged(
+              (com.cpdss.common.generated.discharge_plan.DischargeInformation) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargingInfoSaveResponse>)
+                  responseObserver);
+          break;
+        case METHODID_GET_CARGO_TO_BE_DISCHARGED:
+          serviceImpl.getCargoToBeDischarged(
+              (com.cpdss.common.generated.discharge_plan.DischargeInformation) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.discharge_plan.DischargeInformation>)
+                  responseObserver);
+          break;
         case METHODID_GET_OR_SAVE_RULES_FOR_DISCHARGING_PLAN:
           serviceImpl.getOrSaveRulesForDischargingPlan(
               (com.cpdss.common.generated.discharge_plan.DischargeRuleRequest) request,
@@ -2005,6 +2240,8 @@ public final class DischargeInformationServiceGrpc {
                       .addMethod(getSaveDischargingInfoStagesMethod())
                       .addMethod(getSaveCowPlanMethod())
                       .addMethod(getSavePostDischargeStageMethod())
+                      .addMethod(getSaveCargoToBeDischargedMethod())
+                      .addMethod(getGetCargoToBeDischargedMethod())
                       .addMethod(getGetOrSaveRulesForDischargingPlanMethod())
                       .addMethod(getGetPortDischargingPlanRobDetailsMethod())
                       .build();

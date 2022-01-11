@@ -57,7 +57,8 @@ public interface LoadingPlanGrpcService {
       Long portRotationId,
       Long portId,
       Boolean isFilterOn,
-      Common.PLANNING_TYPE planning_type);
+      Common.PLANNING_TYPE planning_type,
+      Long dischargeInfoId);
 
   LoadableStudy.LoadingPlanCommonResponse fetchLoadablePlanCargoDetailsReplay(
       Long patternId,

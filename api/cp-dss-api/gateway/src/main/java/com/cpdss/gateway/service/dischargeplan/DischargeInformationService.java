@@ -105,7 +105,8 @@ public class DischargeInformationService {
    *
    * @return
    */
-  public DischargeInformation getDischargeInformation(Long vesselId, Long voyageId, Long portRoId)
+  public DischargeInformation getDischargeInformation(
+      Long vesselId, Long voyageId, Long portRoId, Long dischargeInfoId)
       throws GenericServiceException {
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
@@ -243,7 +244,8 @@ public class DischargeInformationService {
             activeVoyage.getDischargePatternId(),
             GatewayConstants.OPERATION_TYPE_DEP, // Discharge Info needed Arrival Conditions
             portRotation.get().getId(),
-            portRotation.get().getPortId()));
+            portRotation.get().getPortId(),
+            dischargeInfoId));
 
     // Call No. 3 To Loading Info for quantity in BBLS (by passing LS pattern ID)
     var lsInfoCargo =
@@ -412,7 +414,8 @@ public class DischargeInformationService {
             activeVoyage.getDischargePatternId(),
             GatewayConstants.OPERATION_TYPE_DEP,
             portRotation.get().getId(),
-            portRotation.get().getPortId()));
+            portRotation.get().getPortId(),
+            infoId));
     // setting discharge cargo nomination id
     this.setDischargeCargoNominationId(vesselTankDetails);
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
@@ -491,7 +494,8 @@ public class DischargeInformationService {
             portRotationId,
             portRotation.get().getPortId(),
             false,
-            Common.PLANNING_TYPE.DISCHARGE_STUDY);
+            Common.PLANNING_TYPE.DISCHARGE_STUDY,
+            infoId);
     List<DischargeQuantityCargoDetails> currentPortCargos =
         loadingInformationService.buildDischargePlanQuantity(portCargos, vesselId);
     dischargingPlanResponse.setCurrentPortCargos(currentPortCargos);
@@ -582,7 +586,8 @@ public class DischargeInformationService {
           this.getDischargeInformation(
               dischargingInformationResponse.getVesseld(),
               dischargingInformationResponse.getVoyageId(),
-              response.getPortRotationId()));
+              response.getPortRotationId(),
+              request.getDischargeInfoId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
       log.error("Failed to save DischargingInformation {}", request.getDischargeInfoId());

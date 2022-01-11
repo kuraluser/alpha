@@ -309,11 +309,13 @@ public class DischargeInformationServiceTest {
     Long vesselId = 1L;
     Long voyageId = 1L;
     Long portRoId = 1L;
+    Long dischargeInfoId = 0L;
     try {
       Mockito.when(this.loadingPlanGrpcService.getActiveVoyageDetails(Mockito.anyLong()))
           .thenReturn(getVRNS());
       var response =
-          this.dischargeInformationService.getDischargeInformation(vesselId, voyageId, portRoId);
+          this.dischargeInformationService.getDischargeInformation(
+              vesselId, voyageId, portRoId, dischargeInfoId);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }
@@ -387,6 +389,7 @@ public class DischargeInformationServiceTest {
                 Mockito.anyLong(),
                 Mockito.any(),
                 Mockito.anyLong(),
+                Mockito.anyLong(),
                 Mockito.anyLong()))
         .thenReturn(getLDQCD());
     Mockito.when(this.infoBuilderService.buildDischargeSequencesAndDelayFromMessage(Mockito.any()))
@@ -408,7 +411,8 @@ public class DischargeInformationServiceTest {
                 Mockito.anyLong(),
                 Mockito.anyLong(),
                 Mockito.any(),
-                Mockito.any()))
+                Mockito.any(),
+                Mockito.anyLong()))
         .thenReturn(getLQCD());
     Mockito.when(
             loadingInformationService.buildDischargePlanQuantity(
