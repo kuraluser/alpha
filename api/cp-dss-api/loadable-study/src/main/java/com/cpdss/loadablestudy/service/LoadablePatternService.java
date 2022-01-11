@@ -2268,10 +2268,17 @@ public class LoadablePatternService {
           CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
 
       if (loadablePatternOpt
-          .get()
-          .getLoadableStudy()
-          .getPlanningTypeXId()
-          .equals(PLANNING_TYPE_LOADING)) {
+              .get()
+              .getLoadableStudy()
+              .getPlanningTypeXId()
+              .equals(PLANNING_TYPE_LOADING)
+          && loadablePatternOpt
+              .get()
+              .getLoadableStudy()
+              .getVoyage()
+              .getVoyageStatus()
+              .getId()
+              .equals(ACTIVE_VOYAGE_STATUS)) {
         // Creates loading information for the port rotations of the confirmed loadable pattern in
         // the
         // loading module.
@@ -2294,7 +2301,10 @@ public class LoadablePatternService {
     LoadingPlanModels.LoadingPlanSyncRequest.Builder requestBuilder =
         LoadingPlanModels.LoadingPlanSyncRequest.newBuilder();
     loadablePattern.getLoadableStudy().getPortRotations().stream()
-        .filter(LoadableStudyPortRotation::isActive)
+        .filter(
+            loadableStudyPortRotation ->
+                loadableStudyPortRotation.getOperation().getId().equals(LOADING_OPERATION_ID)
+                    && loadableStudyPortRotation.isActive())
         .forEach(
             portRotation -> {
               LoadingPlanModels.LoadingPlanSyncDetails.Builder builder =

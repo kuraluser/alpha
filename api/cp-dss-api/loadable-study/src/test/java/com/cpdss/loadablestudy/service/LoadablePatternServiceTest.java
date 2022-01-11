@@ -174,6 +174,7 @@ public class LoadablePatternServiceTest {
     loadableStudy.setVesselXId(1l);
     loadableStudy.setPlanningTypeXId(1);
     loadableStudy.setPortRotations(getLSPR());
+    loadableStudy.setVoyage(getVoyage());
     return loadableStudy;
   }
 
@@ -219,6 +220,9 @@ public class LoadablePatternServiceTest {
   private Voyage getVoyage() {
     Voyage voyage = new Voyage();
     voyage.setId(1L);
+    VoyageStatus voyageStatus = new VoyageStatus();
+    voyageStatus.setId(3L);
+    voyage.setVoyageStatus(voyageStatus);
     return voyage;
   }
 
@@ -781,6 +785,9 @@ public class LoadablePatternServiceTest {
     loadableStudyPortRotation.setActive(true);
     loadableStudyPortRotation.setPortXId(1L);
     loadableStudyPortRotation.setSynopticalTable(getST());
+    CargoOperation operation = new CargoOperation();
+    operation.setId(1L);
+    loadableStudyPortRotation.setOperation(operation);
     loadableStudyPortRotations.add(loadableStudyPortRotation);
     return loadableStudyPortRotations;
   }

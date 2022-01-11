@@ -5646,6 +5646,9 @@ class LoadableStudyServiceTest {
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     voyage.setVoyageNo(VOYAGE);
+    VoyageStatus voyageStatus = new VoyageStatus();
+    voyageStatus.setId(3L);
+    voyage.setVoyageStatus(voyageStatus);
     loadableStudy.setVoyage(voyage);
     loadablePattern.setLoadableStudy(loadableStudy);
     loadablePattern.setCaseNumber(1);
