@@ -131,7 +131,7 @@ export class LoadingDischargingDetailsComponent implements OnInit, OnDestroy {
     const etaObj = this.dateStringToDate(this.loadingDischargingDetails?.eta);
     const etdObj = this.dateStringToDate(this.loadingDischargingDetails?.etd);
     this.loadingDischargingDetailsForm = this.fb.group({
-      commonDate: this.fb.control(commonDateObj, [dateInRangeValidator(etaObj, etdObj)]),
+      commonDate: this.fb.control(commonDateObj, [Validators.required, dateInRangeValidator(etaObj, etdObj)]),
       timeOfSunrise: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunrise), timeOfSunriseValidation),
       timeOfSunset: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.timeOfSunset), timeOfSunsetValidation),
       startTime: this.fb.control(this.getDateByDate(this.loadingDischargingDetails?.startTime)),
