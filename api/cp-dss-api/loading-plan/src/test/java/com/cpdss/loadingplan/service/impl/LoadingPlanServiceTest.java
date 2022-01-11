@@ -116,20 +116,23 @@ class LoadingPlanServiceTest {
     LoadingPlanModels.CargoToppingOffSequence cargoToppingOffSequence =
         LoadingPlanModels.CargoToppingOffSequence.newBuilder().build();
     list.add(cargoToppingOffSequence);
-    LoadingPlanModels.LoadingPlanSyncDetails request =
-        LoadingPlanModels.LoadingPlanSyncDetails.newBuilder()
-            .setLoadablePlanDetailsReply(
-                LoadableStudy.LoadablePlanDetailsReply.newBuilder()
-                    .addAllLoadablePlanStowageDetails(list4)
-                    .addAllLoadableQuantityCargoDetails(list3)
-                    .addAllLoadableQuantityCommingleCargoDetails(list2)
-                    .addAllLoadablePlanBallastDetails(list1)
-                    .build())
-            .addAllCargoToppingOffSequences(list)
-            .setLoadingInformationDetail(
-                LoadingPlanModels.LoadingInformationDetail.newBuilder()
-                    .setPortId(1L)
-                    .setLoadablePatternId(1L)
+    LoadingPlanModels.LoadingPlanSyncRequest request =
+        LoadingPlanModels.LoadingPlanSyncRequest.newBuilder()
+            .addLoadingPlanSyncDetails(
+                LoadingPlanModels.LoadingPlanSyncDetails.newBuilder()
+                    .setLoadablePlanDetailsReply(
+                        LoadableStudy.LoadablePlanDetailsReply.newBuilder()
+                            .addAllLoadablePlanStowageDetails(list4)
+                            .addAllLoadableQuantityCargoDetails(list3)
+                            .addAllLoadableQuantityCommingleCargoDetails(list2)
+                            .addAllLoadablePlanBallastDetails(list1)
+                            .build())
+                    .addAllCargoToppingOffSequences(list)
+                    .setLoadingInformationDetail(
+                        LoadingPlanModels.LoadingInformationDetail.newBuilder()
+                            .setPortId(1L)
+                            .setLoadablePatternId(1L)
+                            .build())
                     .build())
             .build();
     LoadingPlanModels.LoadingPlanSyncReply.Builder builder =
@@ -149,12 +152,15 @@ class LoadingPlanServiceTest {
 
   @Test
   void testloadingPlanSynchronizationFailed() {
-    LoadingPlanModels.LoadingPlanSyncDetails request =
-        LoadingPlanModels.LoadingPlanSyncDetails.newBuilder()
-            .setLoadingInformationDetail(
-                LoadingPlanModels.LoadingInformationDetail.newBuilder()
-                    .setPortId(1L)
-                    .setLoadablePatternId(1L)
+    LoadingPlanModels.LoadingPlanSyncRequest request =
+        LoadingPlanModels.LoadingPlanSyncRequest.newBuilder()
+            .addLoadingPlanSyncDetails(
+                LoadingPlanModels.LoadingPlanSyncDetails.newBuilder()
+                    .setLoadingInformationDetail(
+                        LoadingPlanModels.LoadingInformationDetail.newBuilder()
+                            .setPortId(1L)
+                            .setLoadablePatternId(1L)
+                            .build())
                     .build())
             .build();
     LoadingPlanModels.LoadingPlanSyncReply.Builder builder =

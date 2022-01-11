@@ -83,6 +83,8 @@ import com.cpdss.common.generated.VesselInfo.VesselLoadableQuantityDetails;
 import com.cpdss.common.generated.VesselInfo.VesselReply;
 import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
@@ -263,6 +265,8 @@ class LoadableStudyServiceTest {
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
 
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
+
+  @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
@@ -5558,7 +5562,7 @@ class LoadableStudyServiceTest {
    * <p>void
    */
   @Test
-  void testConfirmPlan() {
+  void testConfirmPlan() throws GenericServiceException {
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(createLoadablePattern()));
     List<LoadablePattern> loadablePatterns = new ArrayList<LoadablePattern>();
@@ -5566,7 +5570,14 @@ class LoadableStudyServiceTest {
     when(this.loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
             anyLong(), anyLong(), anyBoolean()))
         .thenReturn(loadablePatterns);
-
+    when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
+        .thenReturn(Optional.of(createLoadablePattern()));
+    when(loadingPlanService.loadingPlanSynchronization(
+            any(LoadingPlanModels.LoadingPlanSyncRequest.class)))
+        .thenReturn(
+            LoadingPlanModels.LoadingPlanSyncReply.newBuilder()
+                .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
     StreamRecorder<ConfirmPlanReply> responseObserver = StreamRecorder.create();
     Mockito.when(loadablePatternService.confirmPlan(Mockito.any(), Mockito.any()))
         .thenCallRealMethod();
@@ -5574,6 +5585,7 @@ class LoadableStudyServiceTest {
         loadablePatternService, "loadablePatternRepository", this.loadablePatternRepository);
     ReflectionTestUtils.setField(
         loadablePatternService, "loadableStudyRepository", this.loadableStudyRepository);
+    ReflectionTestUtils.setField(loadablePatternService, "loadingPlanService", loadingPlanService);
     loadableStudyService.confirmPlan(this.createConfirmPlan(), responseObserver);
     List<ConfirmPlanReply> results = responseObserver.getValues();
     assertEquals(1, results.size());
@@ -5582,7 +5594,7 @@ class LoadableStudyServiceTest {
   }
 
   @Test
-  void testConfirmPlanInvalidLoadablePatternId() {
+  void testConfirmPlanInvalidLoadablePatternId() throws GenericServiceException {
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.empty());
     StreamRecorder<ConfirmPlanReply> responseObserver = StreamRecorder.create();
@@ -5598,7 +5610,7 @@ class LoadableStudyServiceTest {
   }
 
   @Test
-  void testConfirmPlanRuntimeException() {
+  void testConfirmPlanRuntimeException() throws GenericServiceException {
     when(this.loadablePatternRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenThrow(RuntimeException.class);
     StreamRecorder<ConfirmPlanReply> responseObserver = StreamRecorder.create();
@@ -5630,6 +5642,7 @@ class LoadableStudyServiceTest {
     LoadableStudy loadableStudy = new LoadableStudy();
     loadableStudy.setId(1L);
     loadableStudy.setVesselXId(1L);
+    loadableStudy.setPortRotations(Set.of(getLSPR()));
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     voyage.setVoyageNo(VOYAGE);

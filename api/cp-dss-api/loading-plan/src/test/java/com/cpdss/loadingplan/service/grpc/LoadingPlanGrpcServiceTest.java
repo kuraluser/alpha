@@ -57,8 +57,8 @@ public class LoadingPlanGrpcServiceTest {
 
   @Test
   void testLoadingPlanSynchronization() {
-    LoadingPlanModels.LoadingPlanSyncDetails request =
-        LoadingPlanModels.LoadingPlanSyncDetails.newBuilder().build();
+    LoadingPlanModels.LoadingPlanSyncRequest request =
+        LoadingPlanModels.LoadingPlanSyncRequest.newBuilder().build();
     StreamRecorder<LoadingPlanModels.LoadingPlanSyncReply> responseObserver =
         StreamRecorder.create();
     LoadingPlanModels.LoadingInformation builder =
@@ -67,7 +67,7 @@ public class LoadingPlanGrpcServiceTest {
     doNothing()
         .when(this.loadingPlanService)
         .loadingPlanSynchronization(
-            any(LoadingPlanModels.LoadingPlanSyncDetails.class),
+            any(LoadingPlanModels.LoadingPlanSyncRequest.class),
             any(LoadingPlanModels.LoadingPlanSyncReply.Builder.class));
 
     loadingPlanGrpcService.loadingPlanSynchronization(request, responseObserver);
@@ -79,15 +79,15 @@ public class LoadingPlanGrpcServiceTest {
 
   @Test
   void testLoadingPlanSynchronizationWithException() {
-    LoadingPlanModels.LoadingPlanSyncDetails request =
-        LoadingPlanModels.LoadingPlanSyncDetails.newBuilder().build();
+    LoadingPlanModels.LoadingPlanSyncRequest request =
+        LoadingPlanModels.LoadingPlanSyncRequest.newBuilder().build();
     StreamRecorder<LoadingPlanModels.LoadingPlanSyncReply> responseObserver =
         StreamRecorder.create();
 
     doThrow(new RuntimeException("1"))
         .when(this.loadingPlanService)
         .loadingPlanSynchronization(
-            any(LoadingPlanModels.LoadingPlanSyncDetails.class),
+            any(LoadingPlanModels.LoadingPlanSyncRequest.class),
             any(LoadingPlanModels.LoadingPlanSyncReply.Builder.class));
 
     loadingPlanGrpcService.loadingPlanSynchronization(request, responseObserver);

@@ -66,7 +66,7 @@ public final class LoadingPlanServiceOuterClass {
           + "structions\022\031.LoadingInstructionStatus\032\017."
           + "ResponseStatus\"\0002\312\010\n\022LoadingPlanService\022"
           + "N\n\032LoadingPlanSynchronization\022\027.LoadingP"
-          + "lanSyncDetails\032\025.LoadingPlanSyncReply\"\000\022"
+          + "lanSyncRequest\032\025.LoadingPlanSyncReply\"\000\022"
           + "F\n\017SaveLoadingPlan\022\027.LoadingPlanSaveRequ"
           + "est\032\030.LoadingPlanSaveResponse\"\000\022A\n\016GetLo"
           + "adingPlan\022\032.LoadingInformationRequest\032\021."

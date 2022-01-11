@@ -387,7 +387,7 @@ public class VoyageServiceTest {
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLCN());
     when(this.loadingPlanService.loadingPlanSynchronization(
-            any(LoadingPlanModels.LoadingPlanSyncDetails.class)))
+            any(LoadingPlanModels.LoadingPlanSyncRequest.class)))
         .thenReturn(
             LoadingPlanModels.LoadingPlanSyncReply.newBuilder()
                 .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -413,7 +413,6 @@ public class VoyageServiceTest {
     when(this.toppingOffSequenceRepository.findByLoadablePatternAndIsActive(
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(Arrays.asList(getToppingOffSequence()));
-    ReflectionTestUtils.setField(voyageService, "loadingPlanService", loadingPlanService);
 
     var result = voyageService.saveVoyageStatus(request, replyBuilder);
     assertEquals(SUCCESS, result.build().getResponseStatus().getStatus());

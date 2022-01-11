@@ -758,7 +758,7 @@ class DischargeStudyServiceTest {
   }
 
   @Test
-  void testConfirmPlan() {
+  void testConfirmPlan() throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request =
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.newBuilder()
             .setLoadablePatternId(1l)
@@ -810,7 +810,7 @@ class DischargeStudyServiceTest {
   }
 
   @Test
-  void testConfirmPlanWithException() {
+  void testConfirmPlanWithException() throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request =
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.newBuilder()
             .setLoadablePatternId(1l)

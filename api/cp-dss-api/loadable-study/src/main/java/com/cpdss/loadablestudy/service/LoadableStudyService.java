@@ -1927,7 +1927,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     log.info("inside confirmPlan loadable study service");
     ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
     try {
-      voyageService.checkIfVoyageActive(request.getVoyageId());
       loadablePatternService.confirmPlan(request, replyBuilder);
     } catch (GenericServiceException e) {
       log.error("confrim plan not allowed for active voyage", e);

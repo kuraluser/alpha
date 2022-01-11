@@ -1,12 +1,15 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.PatternDetails;
 import com.cpdss.loadablestudy.entity.*;
@@ -21,6 +24,7 @@ import com.google.protobuf.util.JsonFormat;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -101,6 +105,7 @@ public class LoadablePatternServiceTest {
   @MockBean private SynopticalTableRepository synopticalTableRepository;
   @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
   @MockBean CargoService cargoService;
+  @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
@@ -168,6 +173,7 @@ public class LoadablePatternServiceTest {
     loadableStudy.setVoyage(getVoyage());
     loadableStudy.setVesselXId(1l);
     loadableStudy.setPlanningTypeXId(1);
+    loadableStudy.setPortRotations(getLSPR());
     return loadableStudy;
   }
 
@@ -772,8 +778,18 @@ public class LoadablePatternServiceTest {
     Set<LoadableStudyPortRotation> loadableStudyPortRotations = new HashSet<>();
     LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
     loadableStudyPortRotation.setId(1L);
+    loadableStudyPortRotation.setActive(true);
+    loadableStudyPortRotation.setPortXId(1L);
+    loadableStudyPortRotation.setSynopticalTable(getST());
     loadableStudyPortRotations.add(loadableStudyPortRotation);
     return loadableStudyPortRotations;
+  }
+
+  private List<SynopticalTable> getST() {
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setId(1L);
+    synopticalTable.setIsActive(false);
+    return Arrays.asList(synopticalTable);
   }
 
   private List<LoadablePatternAlgoStatus> getLPAS() {
@@ -833,21 +849,54 @@ public class LoadablePatternServiceTest {
   }
 
   @Test
-  void testConfirmPlan() {
+  void testConfirmPlan() throws GenericServiceException {
     com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request =
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest.newBuilder()
             .setLoadablePatternId(1L)
             .build();
     com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder replyBuilder =
         com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.newBuilder();
+    LoadablePatternService spyService = spy(LoadablePatternService.class);
     when(this.loadablePatternRepository.findByIdAndIsActive(
             Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLP());
     when(loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningType(
             Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean(), anyInt()))
         .thenReturn(getLPattern());
-    var confirmPlanReply = this.loadablePatternService.confirmPlan(request, replyBuilder);
+    when(loadingPlanService.loadingPlanSynchronization(
+            any(LoadingPlanModels.LoadingPlanSyncRequest.class)))
+        .thenReturn(
+            LoadingPlanModels.LoadingPlanSyncReply.newBuilder()
+                .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+                .build());
+    when(loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(getAlgoStatus());
+    when(loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            anyLong(), anyBoolean()))
+        .thenReturn(new ArrayList<>());
+    when(toppingOffSequenceRepository.findByLoadablePatternAndIsActive(
+            any(LoadablePattern.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
+    ReflectionTestUtils.setField(spyService, "loadingPlanService", loadingPlanService);
+    ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadableStudyAlgoStatusRepository", loadableStudyAlgoStatusRepository);
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternCargoDetailsRepository", loadablePatternCargoDetailsRepository);
+    ReflectionTestUtils.setField(
+        spyService, "toppingOffSequenceRepository", toppingOffSequenceRepository);
+    var confirmPlanReply = spyService.confirmPlan(request, replyBuilder);
     assertEquals(SUCCESS, confirmPlanReply.getResponseStatus().getStatus());
+  }
+
+  private List<LoadableStudyAlgoStatus> getAlgoStatus() {
+    LoadableStudyAlgoStatus algoStatus = new LoadableStudyAlgoStatus();
+    algoStatus.setCreatedDateTime(LocalDateTime.now());
+    algoStatus.setProcessId("");
+    return Arrays.asList(algoStatus);
   }
 
   @Test

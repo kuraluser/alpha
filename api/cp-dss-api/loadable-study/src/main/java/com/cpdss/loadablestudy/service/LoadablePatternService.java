@@ -14,6 +14,8 @@ import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
@@ -203,6 +205,9 @@ public class LoadablePatternService {
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
 
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;
@@ -2230,7 +2235,8 @@ public class LoadablePatternService {
 
   public com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder confirmPlan(
       com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest request,
-      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder replyBuilder) {
+      com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder replyBuilder)
+      throws GenericServiceException {
     Optional<LoadablePattern> loadablePatternOpt =
         this.loadablePatternRepository.findByIdAndIsActive(request.getLoadablePatternId(), true);
     if (!loadablePatternOpt.isPresent()) {
@@ -2260,9 +2266,200 @@ public class LoadablePatternService {
           CONFIRMED_STATUS_ID, loadablePatternOpt.get().getId());
       loadableStudyRepository.updateLoadableStudyStatus(
           CONFIRMED_STATUS_ID, loadablePatternOpt.get().getLoadableStudy().getId());
+
+      if (loadablePatternOpt
+          .get()
+          .getLoadableStudy()
+          .getPlanningTypeXId()
+          .equals(PLANNING_TYPE_LOADING)) {
+        // Creates loading information for the port rotations of the confirmed loadable pattern in
+        // the
+        // loading module.
+        this.synchronizeWithLoading(loadablePatternOpt.get());
+      }
       replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     }
     return replyBuilder;
+  }
+
+  /**
+   * Creates loading information in the loading module for the provided loadable pattern.
+   *
+   * @param loadablePattern
+   * @throws GenericServiceException
+   */
+  private void synchronizeWithLoading(LoadablePattern loadablePattern)
+      throws GenericServiceException {
+    // Synchronizing with Loading Plan Microservice
+    LoadingPlanModels.LoadingPlanSyncRequest.Builder requestBuilder =
+        LoadingPlanModels.LoadingPlanSyncRequest.newBuilder();
+    loadablePattern.getLoadableStudy().getPortRotations().stream()
+        .filter(LoadableStudyPortRotation::isActive)
+        .forEach(
+            portRotation -> {
+              LoadingPlanModels.LoadingPlanSyncDetails.Builder builder =
+                  LoadingPlanModels.LoadingPlanSyncDetails.newBuilder();
+              this.buildLoadingPlanSyncDetails(
+                  builder,
+                  loadablePattern,
+                  portRotation,
+                  loadablePattern.getLoadableStudy().getVoyage().getId());
+              requestBuilder.addLoadingPlanSyncDetails(builder.build());
+            });
+    LoadingPlanModels.LoadingPlanSyncReply loadablePlanSyncReply =
+        this.loadingPlanSynchronization(requestBuilder.build());
+    if (loadablePlanSyncReply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      log.info(
+          "Loading plan synchronization successful for loadable pattern "
+              + loadablePattern.getId());
+    } else {
+      log.error(
+          "Loading plan synchronization failed for loadable pattern " + loadablePattern.getId());
+      throw new GenericServiceException(
+          "Loading plan synchronization failed for loadable pattern " + loadablePattern.getId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Builds the loading plan sync details message for synchronization request.
+   *
+   * @param builder
+   * @param loadablePattern
+   * @param portRotation
+   * @param voyageId
+   */
+  private void buildLoadingPlanSyncDetails(
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
+    this.buildLoadingInformationDetails(builder, loadablePattern, portRotation, voyageId);
+    this.buildCargoToppingOffSequence(builder, loadablePattern, portRotation);
+  }
+
+  /**
+   * Builds the loading information details message
+   *
+   * @param builder
+   * @param loadablePattern
+   * @param portRotation
+   * @param voyageId
+   */
+  private void buildLoadingInformationDetails(
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation,
+      Long voyageId) {
+    builder.getLoadingInformationDetailBuilder().setLoadablePatternId(loadablePattern.getId());
+    builder.getLoadingInformationDetailBuilder().setPortId(portRotation.getPortXId());
+    builder.getLoadingInformationDetailBuilder().setVoyageId(voyageId);
+    List<LoadableStudyAlgoStatus> algoStatuses =
+        loadableStudyAlgoStatusRepository.findByLoadableStudyIdAndIsActive(
+            loadablePattern.getLoadableStudy().getId(), true);
+    Optional<LoadableStudyAlgoStatus> latestStatusOpt =
+        algoStatuses.stream()
+            .sorted(Comparator.comparing(LoadableStudyAlgoStatus::getCreatedDateTime).reversed())
+            .findFirst();
+    latestStatusOpt.ifPresent(
+        status ->
+            builder
+                .getLoadingInformationDetailBuilder()
+                .setLoadableStudyProcessId(status.getProcessId()));
+    Optional<com.cpdss.loadablestudy.entity.SynopticalTable> synopticalTableOpt =
+        portRotation.getSynopticalTable().stream()
+            .filter(
+                synopticalTable ->
+                    synopticalTable.getIsActive()
+                        && synopticalTable
+                            .getOperationType()
+                            .equalsIgnoreCase(SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL))
+            .findFirst();
+    if (synopticalTableOpt.isPresent()) {
+      builder
+          .getLoadingInformationDetailBuilder()
+          .setSynopticalTableId(synopticalTableOpt.get().getId());
+      builder.getLoadingInformationDetailBuilder().setPortRotationId(portRotation.getId());
+    }
+    builder
+        .getLoadingInformationDetailBuilder()
+        .setVesselId(loadablePattern.getLoadableStudy().getVesselXId());
+  }
+
+  /**
+   * Builds the cargo topping off sequence message.
+   *
+   * @param builder
+   * @param loadablePattern
+   * @param portRotation
+   */
+  private void buildCargoToppingOffSequence(
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder,
+      LoadablePattern loadablePattern,
+      LoadableStudyPortRotation portRotation) {
+    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> loadablePatternCargoDetails =
+        this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
+            loadablePattern.getId(), true);
+    this.toppingOffSequenceRepository.findByLoadablePatternAndIsActive(loadablePattern, true)
+        .stream()
+        .forEach(
+            toppingSequence -> {
+              LoadingPlanModels.CargoToppingOffSequence.Builder sequenceBuilder =
+                  LoadingPlanModels.CargoToppingOffSequence.newBuilder();
+              Optional.ofNullable(toppingSequence.getCargoXId())
+                  .ifPresent(sequenceBuilder::setCargoXId);
+              Optional.ofNullable(toppingSequence.getLoadablePattern().getId())
+                  .ifPresent(sequenceBuilder::setLoadablePatternId);
+              Optional.ofNullable(toppingSequence.getOrderNumber())
+                  .ifPresent(sequenceBuilder::setOrderNumber);
+              Optional.ofNullable(toppingSequence.getTankXId())
+                  .ifPresent(sequenceBuilder::setTankXId);
+              Optional<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailOpt =
+                  loadablePatternCargoDetails.stream()
+                      .filter(
+                          details ->
+                              details.getPortRotationId().equals(portRotation.getId())
+                                  && details.getTankId().equals(sequenceBuilder.getTankXId())
+                                  && details
+                                      .getOperationType()
+                                      .equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE))
+                      .findAny();
+              if (cargoDetailOpt.isPresent()) {
+                Optional.ofNullable(cargoDetailOpt.get().getApi())
+                    .ifPresent(api -> sequenceBuilder.setApi(String.valueOf(api)));
+                Optional.ofNullable(cargoDetailOpt.get().getTemperature())
+                    .ifPresent(
+                        temperature -> sequenceBuilder.setTemperature(String.valueOf(temperature)));
+                Optional.ofNullable(cargoDetailOpt.get().getCorrectedUllage())
+                    .ifPresent(ullage -> sequenceBuilder.setUllage(String.valueOf(ullage)));
+                Optional.ofNullable(cargoDetailOpt.get().getPlannedQuantity())
+                    .ifPresent(weight -> sequenceBuilder.setWeight(String.valueOf(weight)));
+                Optional.ofNullable(cargoDetailOpt.get().getFillingRatio())
+                    .ifPresent(
+                        fillingRatio ->
+                            sequenceBuilder.setFillingRatio(String.valueOf(fillingRatio)));
+                Optional.ofNullable(cargoDetailOpt.get().getAbbreviation())
+                    .ifPresent(
+                        abbreviation ->
+                            sequenceBuilder.setAbbreviation(String.valueOf(abbreviation)));
+
+                Optional.ofNullable(cargoDetailOpt.get().getCargoNominationId())
+                    .ifPresent(
+                        cargoNominationId ->
+                            sequenceBuilder.setCargoNominationId(cargoNominationId));
+              }
+              Optional.ofNullable(toppingSequence.getDisplayOrder())
+                  .ifPresent(sequenceBuilder::setDisplayOrder);
+              Optional.ofNullable(toppingSequence.getPortRotationXId())
+                  .ifPresent(sequenceBuilder::setPortRotationId);
+              builder.addCargoToppingOffSequences(sequenceBuilder.build());
+            });
+  }
+
+  private LoadingPlanModels.LoadingPlanSyncReply loadingPlanSynchronization(
+      LoadingPlanModels.LoadingPlanSyncRequest request) {
+    return this.loadingPlanService.loadingPlanSynchronization(request);
   }
 
   public void saveLoadablePatternDetails(

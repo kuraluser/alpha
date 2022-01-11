@@ -16,23 +16,23 @@ public final class LoadingPlanServiceGrpc {
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
       getLoadingPlanSynchronizationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "LoadingPlanSynchronization",
       requestType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails.class,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest.class,
       responseType =
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest,
           com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
       getLoadingPlanSynchronizationMethod() {
     io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest,
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
         getLoadingPlanSynchronizationMethod;
     if ((getLoadingPlanSynchronizationMethod =
@@ -46,7 +46,7 @@ public final class LoadingPlanServiceGrpc {
               getLoadingPlanSynchronizationMethod =
                   io.grpc.MethodDescriptor
                       .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .LoadingPlanSyncDetails,
+                              .LoadingPlanSyncRequest,
                           com.cpdss.common.generated.loading_plan.LoadingPlanModels
                               .LoadingPlanSyncReply>
                           newBuilder()
@@ -57,7 +57,7 @@ public final class LoadingPlanServiceGrpc {
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .LoadingPlanSyncDetails.getDefaultInstance()))
+                                  .LoadingPlanSyncRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.cpdss.common.generated.loading_plan.LoadingPlanModels
@@ -794,7 +794,7 @@ public final class LoadingPlanServiceGrpc {
 
     /** */
     public void loadingPlanSynchronization(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest request,
         io.grpc.stub.StreamObserver<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
             responseObserver) {
@@ -938,7 +938,7 @@ public final class LoadingPlanServiceGrpc {
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .LoadingPlanSyncDetails,
+                          .LoadingPlanSyncRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingPlanSyncReply>(this, METHODID_LOADING_PLAN_SYNCHRONIZATION)))
           .addMethod(
@@ -1056,7 +1056,7 @@ public final class LoadingPlanServiceGrpc {
 
     /** */
     public void loadingPlanSynchronization(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails request,
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest request,
         io.grpc.stub.StreamObserver<
                 com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
             responseObserver) {
@@ -1236,7 +1236,7 @@ public final class LoadingPlanServiceGrpc {
     /** */
     public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply
         loadingPlanSynchronization(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest
                 request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getLoadingPlanSynchronizationMethod(), getCallOptions(), request);
@@ -1368,7 +1368,7 @@ public final class LoadingPlanServiceGrpc {
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply>
         loadingPlanSynchronization(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest
                 request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getLoadingPlanSynchronizationMethod(), getCallOptions()), request);
@@ -1534,7 +1534,7 @@ public final class LoadingPlanServiceGrpc {
       switch (methodId) {
         case METHODID_LOADING_PLAN_SYNCHRONIZATION:
           serviceImpl.loadingPlanSynchronization(
-              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails)
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncRequest)
                   request,
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels

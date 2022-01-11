@@ -360,6 +360,10 @@ message LoadingPlanSyncDetails {
   repeated CargoToppingOffSequence cargoToppingOffSequences = 3;
 }
 
+message LoadingPlanSyncRequest {
+  repeated LoadingPlanSyncDetails loadingPlanSyncDetails = 1;
+}
+
 message LoadingPlanSyncReply {
   ResponseStatus responseStatus = 1;
 }

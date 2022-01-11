@@ -6,7 +6,6 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -123,84 +122,96 @@ public class LoadingPlanService {
    * @param builder
    */
   public void loadingPlanSynchronization(
-      LoadingPlanSyncDetails request, LoadingPlanSyncReply.Builder builder) {
+      LoadingPlanModels.LoadingPlanSyncRequest request, LoadingPlanSyncReply.Builder builder) {
     try {
-      LoadingInformation loadingInformation = new LoadingInformation();
-      LoadingInformation savedLoadingInformation =
-          loadingInformationService.saveLoadingInformationDetail(
-              request.getLoadingInformationDetail(), loadingInformation);
-      // collect all machines and pumps for the vessel
-      VesselInfo.VesselPumpsResponse rpcReplay =
-          this.vesselInfoGrpcService.getVesselPumpsByVesselId(
-              VesselInfo.VesselIdRequest.newBuilder()
-                  .setVesselId(savedLoadingInformation.getVesselXId())
-                  .build());
-      // saving the machine information for loading
-      this.loadingMachineInUseService.saveMachineInUseByLoadingInfo(
-          savedLoadingInformation, rpcReplay);
-      cargoToppingOffSequenceService.saveCargoToppingOffSequenceList(
-          request.getCargoToppingOffSequencesList(), savedLoadingInformation);
-      loadablePlanBallastDetailsService.saveLoadablePlanBallastDetailsList(
-          request.getLoadablePlanDetailsReply().getLoadablePlanBallastDetailsList(),
-          savedLoadingInformation);
-      loadablePlanCommingleDetailsService.saveLoadablePlanCommingleDetailsList(
-          request.getLoadablePlanDetailsReply().getLoadableQuantityCommingleCargoDetailsList(),
-          savedLoadingInformation);
-      loadablePlanQuantityService.saveLoadablePlanQuantyList(
-          request.getLoadablePlanDetailsReply().getLoadableQuantityCargoDetailsList(),
-          savedLoadingInformation);
-      loadablePlanStowageDetailsService.saveLoadablePlanStowageDetailsList(
-          request.getLoadablePlanDetailsReply().getLoadablePlanStowageDetailsList(),
-          savedLoadingInformation);
-      loadingPlanRuleService.saveRulesAgainstLoadingInformation(savedLoadingInformation);
-      log.info(" Saved Loading Information Id : ", savedLoadingInformation.getId());
-      log.info(
-          "Saved LoadingInformation on port "
-              + request.getLoadingInformationDetail().getPortId()
-              + " of Loadable pattern "
-              + request.getLoadingInformationDetail().getLoadablePatternId());
-      log.info("Communication Started for LoadingInfo when voyage activated");
-      if (enableCommunication && env.equals("ship")) {
-        String processId = UUID.randomUUID().toString();
-        JsonArray jsonArray =
-            loadingPlanStagingService.getCommunicationData(
-                Arrays.asList("loading_information"),
-                processId,
-                MessageTypes.LOADINGPLAN_SAVE.getMessageType(),
-                savedLoadingInformation.getId(),
-                null);
+      for (LoadingPlanModels.LoadingPlanSyncDetails loadingPlanSyncDetails :
+          request.getLoadingPlanSyncDetailsList()) {
+        LoadingInformation loadingInformation = new LoadingInformation();
+        LoadingInformation savedLoadingInformation =
+            loadingInformationService.saveLoadingInformationDetail(
+                loadingPlanSyncDetails.getLoadingInformationDetail(), loadingInformation);
+        // collect all machines and pumps for the vessel
+        VesselInfo.VesselPumpsResponse rpcReplay =
+            this.vesselInfoGrpcService.getVesselPumpsByVesselId(
+                VesselInfo.VesselIdRequest.newBuilder()
+                    .setVesselId(savedLoadingInformation.getVesselXId())
+                    .build());
+        // saving the machine information for loading
+        this.loadingMachineInUseService.saveMachineInUseByLoadingInfo(
+            savedLoadingInformation, rpcReplay);
+        cargoToppingOffSequenceService.saveCargoToppingOffSequenceList(
+            loadingPlanSyncDetails.getCargoToppingOffSequencesList(), savedLoadingInformation);
+        loadablePlanBallastDetailsService.saveLoadablePlanBallastDetailsList(
+            loadingPlanSyncDetails
+                .getLoadablePlanDetailsReply()
+                .getLoadablePlanBallastDetailsList(),
+            savedLoadingInformation);
+        loadablePlanCommingleDetailsService.saveLoadablePlanCommingleDetailsList(
+            loadingPlanSyncDetails
+                .getLoadablePlanDetailsReply()
+                .getLoadableQuantityCommingleCargoDetailsList(),
+            savedLoadingInformation);
+        loadablePlanQuantityService.saveLoadablePlanQuantyList(
+            loadingPlanSyncDetails
+                .getLoadablePlanDetailsReply()
+                .getLoadableQuantityCargoDetailsList(),
+            savedLoadingInformation);
+        loadablePlanStowageDetailsService.saveLoadablePlanStowageDetailsList(
+            loadingPlanSyncDetails
+                .getLoadablePlanDetailsReply()
+                .getLoadablePlanStowageDetailsList(),
+            savedLoadingInformation);
+        loadingPlanRuleService.saveRulesAgainstLoadingInformation(savedLoadingInformation);
+        log.info(" Saved Loading Information Id : {}", savedLoadingInformation.getId());
+        log.info(
+            "Saved LoadingInformation of port "
+                + loadingPlanSyncDetails.getLoadingInformationDetail().getPortId()
+                + " of Loadable pattern "
+                + loadingPlanSyncDetails.getLoadingInformationDetail().getLoadablePatternId());
+        log.info("Communication Started for LoadingInfo when voyage activated");
+        if (enableCommunication && env.equals("ship")) {
+          String processId = UUID.randomUUID().toString();
+          JsonArray jsonArray =
+              loadingPlanStagingService.getCommunicationData(
+                  Arrays.asList("loading_information"),
+                  processId,
+                  MessageTypes.LOADINGPLAN_SAVE.getMessageType(),
+                  savedLoadingInformation.getId(),
+                  null);
 
-        log.info("Json Array in Loading plan service: " + jsonArray.toString());
-        EnvoyWriter.WriterReply ewReply =
-            loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
-                jsonArray.toString(),
-                savedLoadingInformation.getVesselXId(),
+          log.info("Json Array in Loading plan service: " + jsonArray.toString());
+          EnvoyWriter.WriterReply ewReply =
+              loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(
+                  jsonArray.toString(),
+                  savedLoadingInformation.getVesselXId(),
+                  MessageTypes.LOADINGPLAN_SAVE.getMessageType());
+
+          if (LoadingPlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+            log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+            LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+                new LoadingPlanCommunicationStatus();
+            if (ewReply.getMessageId() != null) {
+              loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
+              loadingPlanCommunicationStatus.setCommunicationStatus(
+                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+            }
+            loadingPlanCommunicationStatus.setReferenceId(savedLoadingInformation.getId());
+            loadingPlanCommunicationStatus.setMessageType(
                 MessageTypes.LOADINGPLAN_SAVE.getMessageType());
-
-        if (LoadingPlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-          log.info("------- Envoy writer has called successfully : " + ewReply.toString());
-          LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
-              new LoadingPlanCommunicationStatus();
-          if (ewReply.getMessageId() != null) {
-            loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-            loadingPlanCommunicationStatus.setCommunicationStatus(
-                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+            loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+            loadingPlanCommunicationStatus.setActive(true);
+            LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
+                this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+            log.info("Communication table updated : " + loadingPlanCommunicationStat.getId());
+            // Set Loading Status
+            //          Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+            //              loadingInfoStatusRepository.findByIdAndIsActive(
+            //                  LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE,
+            // true);
+            //          loadingInformationRepository.updateLoadingInfoWithInfoStatus(
+            //              loadingInfoStatusOpt.get(), false, false,
+            // savedLoadingInformation.getId());
           }
-          loadingPlanCommunicationStatus.setReferenceId(savedLoadingInformation.getId());
-          loadingPlanCommunicationStatus.setMessageType(
-              MessageTypes.LOADINGPLAN_SAVE.getMessageType());
-          loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-          loadingPlanCommunicationStatus.setActive(true);
-          LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
-              this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
-          log.info("Communication table updated : " + loadingPlanCommunicationStat.getId());
-          // Set Loading Status
-          //          Optional<LoadingInformationStatus> loadingInfoStatusOpt =
-          //              loadingInfoStatusRepository.findByIdAndIsActive(
-          //                  LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE, true);
-          //          loadingInformationRepository.updateLoadingInfoWithInfoStatus(
-          //              loadingInfoStatusOpt.get(), false, false,
-          // savedLoadingInformation.getId());
         }
       }
       builder.setResponseStatus(
@@ -210,10 +221,16 @@ public class LoadingPlanService {
               .build());
     } catch (Exception e) {
       log.info(
-          "Failed to save LoadingInformation on port "
-              + request.getLoadingInformationDetail().getPortId()
-              + " of Loadable pattern "
-              + request.getLoadingInformationDetail().getLoadablePatternId());
+          "Failed to save LoadingInformation for vessel {}, loadable pattern {}",
+          request.getLoadingPlanSyncDetailsCount() > 0
+              ? request.getLoadingPlanSyncDetails(0).getLoadingInformationDetail().getVesselId()
+              : "",
+          request.getLoadingPlanSyncDetailsCount() > 0
+              ? request
+                  .getLoadingPlanSyncDetails(0)
+                  .getLoadingInformationDetail()
+                  .getLoadablePatternId()
+              : "");
       builder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setMessage("Error occured while saving loading information in database")

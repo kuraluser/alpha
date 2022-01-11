@@ -15,7 +15,6 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformat
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
@@ -81,13 +80,12 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
 
   @Override
   public void loadingPlanSynchronization(
-      LoadingPlanSyncDetails request, StreamObserver<LoadingPlanSyncReply> responseObserver) {
+      LoadingPlanModels.LoadingPlanSyncRequest request,
+      StreamObserver<LoadingPlanSyncReply> responseObserver) {
     log.info("Inside loadablePlanSynchronization");
     LoadingPlanSyncReply.Builder builder = LoadingPlanSyncReply.newBuilder();
     try {
-
       loadingPlanService.loadingPlanSynchronization(request, builder);
-
       builder.setResponseStatus(
           ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
 
