@@ -341,7 +341,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         portRotation.get().getPortId(),
         Common.PLANNING_TYPE.LOADABLE_STUDY,
         false,
-        loadingInfoId);
+        loadingInfo.getLoadingInfoId());
 
     // Manage Sequence
     LoadingSequences loadingSequences =
