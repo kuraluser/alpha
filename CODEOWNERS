@@ -1,14 +1,14 @@
 # UI application code owners
 
-/web/cpdss-portal/apps/login/ @varunKn-ao varsha.ts@alphaori.sg @rishi-tp-alphaori
-/web/cpdss-portal/apps/cpdss/src/app/login/ @varunKn-ao varsha.ts@alphaori.sg @rishi-tp-alphaori
-/web/cpdss-portal/apps/cpdss/src/app/business/voyage-status/ rishiraj.cr@alphaori.sg varsha.ts@alphaori.sg @varunKn-ao
-/web/cpdss-portal/apps/cpdss/src/app/business/cargo-planning/ @varunKn-ao varsha.ts@alphaori.sg @rishi-tp-alphaori
-/web/cpdss-portal/apps/cpdss/src/app/business/operations/ varsha.ts@alphaori.sg @rishi-tp-alphaori @varunKn-ao
-/web/cpdss-portal/apps/cpdss/src/app/business/admin/ varsha.ts@alphaori.sg @rishi-tp-alphaori @varunKn-ao
-/web/cpdss-portal/apps/cpdss/src/app/business/voyages/ varsha.ts@alphaori.sg @varunKn-ao @rishi-tp-alphaori
-/web/cpdss-portal/apps/cpdss/src/app/business/fleet/ varsha.ts@alphaori.sg @varunKn-ao @rishi-tp-alphaori
-/web/cpdss-portal/apps/cpdss/src/app/business/synoptical/ varsha.ts@alphaori.sg @varunKn-ao @rishi-tp-alphaori
+/web/cpdss-portal/apps/login/ @varunKn-ao varsha.ts@alphaori.sg @rishi-tp-alphaori @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/login/ @varunKn-ao varsha.ts@alphaori.sg @rishi-tp-alphaori @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/business/voyage-status/ rishiraj.cr@alphaori.sg varsha.ts@alphaori.sg @varunKn-ao @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/business/cargo-planning/ @varunKn-ao varsha.ts@alphaori.sg @rishi-tp-alphaori @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/business/operations/ varsha.ts@alphaori.sg @rishi-tp-alphaori @varunKn-ao @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/business/admin/ varsha.ts@alphaori.sg @rishi-tp-alphaori @varunKn-ao @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/business/voyages/ varsha.ts@alphaori.sg @varunKn-ao @rishi-tp-alphaori @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/business/fleet/ varsha.ts@alphaori.sg @varunKn-ao @rishi-tp-alphaori @sreekumar-ao
+/web/cpdss-portal/apps/cpdss/src/app/business/synoptical/ varsha.ts@alphaori.sg @varunKn-ao @rishi-tp-alphaori @sreekumar-ao
 
 # API applications code owners
 
