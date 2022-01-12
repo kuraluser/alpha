@@ -223,6 +223,7 @@
   "LOADABLE_QUANTITY_FO_CONS_IN": "Fo Cons In",
   "LOADABLE_QUANTITY_INFO": "The calculation below is based on condition at selected port",
   "LOADABLE_QUANTITY": "Loadable Quantity",
+  "LOADABLE_QUANTITY_MAX": "Max. Loadable Quantity",
   "LOADABLE_QUANTITY_CANCEL": "Cancel",
   "LOADABLE_QUANTITY_SAVE": "Save",
   "LOADABLE_QUANTITY_PORTNAME_REQUIRED": "Port name is required",
