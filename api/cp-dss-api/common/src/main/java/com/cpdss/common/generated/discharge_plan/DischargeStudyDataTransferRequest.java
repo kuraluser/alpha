@@ -88,6 +88,26 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
               dischargeProcessId_ = s;
               break;
             }
+          case 58:
+            {
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                      .Builder
+                  subBuilder = null;
+              if (loadingPlanSyncDetails_ != null) {
+                subBuilder = loadingPlanSyncDetails_.toBuilder();
+              }
+              loadingPlanSyncDetails_ =
+                  input.readMessage(
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanSyncDetails.parser(),
+                      extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(loadingPlanSyncDetails_);
+                loadingPlanSyncDetails_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -230,6 +250,35 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     }
   }
 
+  public static final int LOADINGPLANSYNCDETAILS_FIELD_NUMBER = 7;
+  private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+      loadingPlanSyncDetails_;
+  /**
+   * <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code>
+   *
+   * @return Whether the loadingPlanSyncDetails field is set.
+   */
+  public boolean hasLoadingPlanSyncDetails() {
+    return loadingPlanSyncDetails_ != null;
+  }
+  /**
+   * <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code>
+   *
+   * @return The loadingPlanSyncDetails.
+   */
+  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+      getLoadingPlanSyncDetails() {
+    return loadingPlanSyncDetails_ == null
+        ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+            .getDefaultInstance()
+        : loadingPlanSyncDetails_;
+  }
+  /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetailsOrBuilder
+      getLoadingPlanSyncDetailsOrBuilder() {
+    return getLoadingPlanSyncDetails();
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -262,6 +311,9 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     if (!getDischargeProcessIdBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 6, dischargeProcessId_);
     }
+    if (loadingPlanSyncDetails_ != null) {
+      output.writeMessage(7, getLoadingPlanSyncDetails());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -289,6 +341,10 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     if (!getDischargeProcessIdBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, dischargeProcessId_);
     }
+    if (loadingPlanSyncDetails_ != null) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(7, getLoadingPlanSyncDetails());
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -312,6 +368,10 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     if (getVesselId() != other.getVesselId()) return false;
     if (getDischargeStudyId() != other.getDischargeStudyId()) return false;
     if (!getDischargeProcessId().equals(other.getDischargeProcessId())) return false;
+    if (hasLoadingPlanSyncDetails() != other.hasLoadingPlanSyncDetails()) return false;
+    if (hasLoadingPlanSyncDetails()) {
+      if (!getLoadingPlanSyncDetails().equals(other.getLoadingPlanSyncDetails())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -337,6 +397,10 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getDischargeStudyId());
     hash = (37 * hash) + DISCHARGEPROCESSID_FIELD_NUMBER;
     hash = (53 * hash) + getDischargeProcessId().hashCode();
+    if (hasLoadingPlanSyncDetails()) {
+      hash = (37 * hash) + LOADINGPLANSYNCDETAILS_FIELD_NUMBER;
+      hash = (53 * hash) + getLoadingPlanSyncDetails().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -501,6 +565,12 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
 
       dischargeProcessId_ = "";
 
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        loadingPlanSyncDetails_ = null;
+      } else {
+        loadingPlanSyncDetails_ = null;
+        loadingPlanSyncDetailsBuilder_ = null;
+      }
       return this;
     }
 
@@ -547,6 +617,11 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
       result.vesselId_ = vesselId_;
       result.dischargeStudyId_ = dischargeStudyId_;
       result.dischargeProcessId_ = dischargeProcessId_;
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        result.loadingPlanSyncDetails_ = loadingPlanSyncDetails_;
+      } else {
+        result.loadingPlanSyncDetails_ = loadingPlanSyncDetailsBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -643,6 +718,9 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
       if (!other.getDischargeProcessId().isEmpty()) {
         dischargeProcessId_ = other.dischargeProcessId_;
         onChanged();
+      }
+      if (other.hasLoadingPlanSyncDetails()) {
+        mergeLoadingPlanSyncDetails(other.getLoadingPlanSyncDetails());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1097,6 +1175,140 @@ public final class DischargeStudyDataTransferRequest extends com.google.protobuf
       dischargeProcessId_ = value;
       onChanged();
       return this;
+    }
+
+    private com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+        loadingPlanSyncDetails_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                .Builder,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingPlanSyncDetailsOrBuilder>
+        loadingPlanSyncDetailsBuilder_;
+    /**
+     * <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code>
+     *
+     * @return Whether the loadingPlanSyncDetails field is set.
+     */
+    public boolean hasLoadingPlanSyncDetails() {
+      return loadingPlanSyncDetailsBuilder_ != null || loadingPlanSyncDetails_ != null;
+    }
+    /**
+     * <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code>
+     *
+     * @return The loadingPlanSyncDetails.
+     */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+        getLoadingPlanSyncDetails() {
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        return loadingPlanSyncDetails_ == null
+            ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                .getDefaultInstance()
+            : loadingPlanSyncDetails_;
+      } else {
+        return loadingPlanSyncDetailsBuilder_.getMessage();
+      }
+    }
+    /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+    public Builder setLoadingPlanSyncDetails(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails value) {
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        loadingPlanSyncDetails_ = value;
+        onChanged();
+      } else {
+        loadingPlanSyncDetailsBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+    public Builder setLoadingPlanSyncDetails(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails.Builder
+            builderForValue) {
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        loadingPlanSyncDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        loadingPlanSyncDetailsBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+    public Builder mergeLoadingPlanSyncDetails(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails value) {
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        if (loadingPlanSyncDetails_ != null) {
+          loadingPlanSyncDetails_ =
+              com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                  .newBuilder(loadingPlanSyncDetails_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          loadingPlanSyncDetails_ = value;
+        }
+        onChanged();
+      } else {
+        loadingPlanSyncDetailsBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+    public Builder clearLoadingPlanSyncDetails() {
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        loadingPlanSyncDetails_ = null;
+        onChanged();
+      } else {
+        loadingPlanSyncDetails_ = null;
+        loadingPlanSyncDetailsBuilder_ = null;
+      }
+
+      return this;
+    }
+    /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails.Builder
+        getLoadingPlanSyncDetailsBuilder() {
+
+      onChanged();
+      return getLoadingPlanSyncDetailsFieldBuilder().getBuilder();
+    }
+    /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetailsOrBuilder
+        getLoadingPlanSyncDetailsOrBuilder() {
+      if (loadingPlanSyncDetailsBuilder_ != null) {
+        return loadingPlanSyncDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        return loadingPlanSyncDetails_ == null
+            ? com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                .getDefaultInstance()
+            : loadingPlanSyncDetails_;
+      }
+    }
+    /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                .Builder,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingPlanSyncDetailsOrBuilder>
+        getLoadingPlanSyncDetailsFieldBuilder() {
+      if (loadingPlanSyncDetailsBuilder_ == null) {
+        loadingPlanSyncDetailsBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+                    .Builder,
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanSyncDetailsOrBuilder>(
+                getLoadingPlanSyncDetails(), getParentForChildren(), isClean());
+        loadingPlanSyncDetails_ = null;
+      }
+      return loadingPlanSyncDetailsBuilder_;
     }
 
     @java.lang.Override

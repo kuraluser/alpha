@@ -235,6 +235,7 @@ message DischargeStudyDataTransferRequest{
 	int64 vesselId = 4;
   int64 dischargeStudyId = 5;
   string dischargeProcessId = 6;
+  LoadingPlanSyncDetails loadingPlanSyncDetails = 7;
 }
 
 message PortData{

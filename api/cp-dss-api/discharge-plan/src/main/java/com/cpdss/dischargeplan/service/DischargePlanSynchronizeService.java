@@ -46,7 +46,10 @@ public class DischargePlanSynchronizeService {
   @Autowired DischargingMachineryInUseService dischargingMachineryInUseService;
 
   @Autowired DischargingStagesMinAmountRepository dischargingStagesMinAmountRepository;
+
   @Autowired DischargingStagesDurationRepository dischargingStagesDurationRepository;
+
+  @Autowired private DischargingDelayService dischargingDelayService;
 
   public void saveDischargeInformation(DischargeStudyDataTransferRequest request)
       throws GenericServiceException {
@@ -93,12 +96,8 @@ public class DischargePlanSynchronizeService {
       Optional<DischargingStagesDuration> defaultDurationOpt =
           dischargingStagesDurationRepository.findByDurationAndIsActiveTrue(
               DEFAULT_STAGE_DURATION_VALUE);
-      if (defaultOffsetOpt.isPresent()) {
-        dischargeInformation.setDischargingStagesMinAmount(defaultOffsetOpt.get());
-      }
-      if (defaultDurationOpt.isPresent()) {
-        dischargeInformation.setDischargingStagesDuration(defaultDurationOpt.get());
-      }
+      defaultOffsetOpt.ifPresent(dischargeInformation::setDischargingStagesMinAmount);
+      defaultDurationOpt.ifPresent(dischargeInformation::setDischargingStagesDuration);
       infos.add(dischargeInformation);
       log.info("Discharge Study Synchronization Port Data - {}", Utils.toJson(port));
     }
@@ -116,7 +115,14 @@ public class DischargePlanSynchronizeService {
             saveRulesAgainstDischargingInformation(dischargeInformationService);
             this.dischargingMachineryInUseService.saveMachineInUseByDsInfo(
                 dischargeInformationService, rpcReplay);
-            log.info("Discharge Info Id : ", dischargeInformationService.getId());
+            log.info("Discharge Info Id : {}", dischargeInformationService.getId());
+
+            // Save discharging delays for default populating of cargos in managing sequence in
+            // discharging information
+            dischargingDelayService.saveDefaultManagingSequence(
+                dischargeInformationService,
+                request.getLoadingPlanSyncDetails().getManagingSequenceRequestList());
+
           } catch (GenericServiceException e) {
             e.printStackTrace();
           }

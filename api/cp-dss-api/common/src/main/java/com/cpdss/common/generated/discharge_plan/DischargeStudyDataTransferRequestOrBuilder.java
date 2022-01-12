@@ -58,4 +58,21 @@ public interface DischargeStudyDataTransferRequestOrBuilder
    * @return The bytes for dischargeProcessId.
    */
   com.google.protobuf.ByteString getDischargeProcessIdBytes();
+
+  /**
+   * <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code>
+   *
+   * @return Whether the loadingPlanSyncDetails field is set.
+   */
+  boolean hasLoadingPlanSyncDetails();
+  /**
+   * <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code>
+   *
+   * @return The loadingPlanSyncDetails.
+   */
+  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetails
+      getLoadingPlanSyncDetails();
+  /** <code>.LoadingPlanSyncDetails loadingPlanSyncDetails = 7;</code> */
+  com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSyncDetailsOrBuilder
+      getLoadingPlanSyncDetailsOrBuilder();
 }

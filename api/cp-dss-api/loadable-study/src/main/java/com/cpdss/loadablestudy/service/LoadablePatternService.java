@@ -2297,6 +2297,7 @@ public class LoadablePatternService {
    */
   private void synchronizeWithLoading(LoadablePattern loadablePattern)
       throws GenericServiceException {
+
     // Synchronizing with Loading Plan Microservice
     LoadingPlanModels.LoadingPlanSyncRequest.Builder requestBuilder =
         LoadingPlanModels.LoadingPlanSyncRequest.newBuilder();
@@ -2314,8 +2315,14 @@ public class LoadablePatternService {
                   loadablePattern,
                   portRotation,
                   loadablePattern.getLoadableStudy().getVoyage().getId());
+
+              // Fetching cargo ids from cargo nomination using loadable study for default managing
+              // sequence in loading information
+              cargoNominationService.fetchCargoDetails(loadablePattern.getLoadableStudy(), builder);
+
               requestBuilder.addLoadingPlanSyncDetails(builder.build());
             });
+
     LoadingPlanModels.LoadingPlanSyncReply loadablePlanSyncReply =
         this.loadingPlanSynchronization(requestBuilder.build());
     if (loadablePlanSyncReply.getResponseStatus().getStatus().equals(SUCCESS)) {

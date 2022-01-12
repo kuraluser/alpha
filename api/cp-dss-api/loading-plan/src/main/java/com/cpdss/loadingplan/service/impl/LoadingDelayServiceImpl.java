@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelays;
 import com.cpdss.loadingplan.entity.LoadingDelayReason;
@@ -131,5 +132,35 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
     delay.getLoadingDelayReasons().forEach(v -> v.setIsActive(false));
     loadingDelayRepository.save(delay);
     log.info("Deleted old delay Id {}", delay.getId());
+  }
+
+  /**
+   * Method to save default managing sequence cargos in loading information delay
+   *
+   * @param managingSequenceRequestList List of grpc objects input
+   * @param savedLoadingInformation LoadingInformation entity input
+   */
+  @Override
+  public void saveDefaultManagingSequence(
+      List<LoadingPlanModels.ManagingSequenceRequest> managingSequenceRequestList,
+      LoadingInformation savedLoadingInformation) {
+
+    log.info("Inside saveDefaultManagingSequence method!");
+
+    List<com.cpdss.loadingplan.entity.LoadingDelay> loadingDelays = new ArrayList<>();
+    managingSequenceRequestList.forEach(
+        managingSequenceRequest -> {
+          com.cpdss.loadingplan.entity.LoadingDelay loadingDelay =
+              new com.cpdss.loadingplan.entity.LoadingDelay();
+
+          // Set fields
+          loadingDelay.setLoadingInformation(savedLoadingInformation);
+          loadingDelay.setCargoXId(managingSequenceRequest.getCargoId());
+          loadingDelay.setQuantity(new BigDecimal(managingSequenceRequest.getQuantity()));
+
+          loadingDelays.add(loadingDelay);
+        });
+
+    loadingDelayRepository.saveAll(loadingDelays);
   }
 }

@@ -358,10 +358,17 @@ message LoadingPlanSyncDetails {
   LoadingInformationDetail loadingInformationDetail = 1;
   LoadablePlanDetailsReply loadablePlanDetailsReply = 2;
   repeated CargoToppingOffSequence cargoToppingOffSequences = 3;
+  repeated ManagingSequenceRequest managingSequenceRequest = 4;
 }
 
 message LoadingPlanSyncRequest {
   repeated LoadingPlanSyncDetails loadingPlanSyncDetails = 1;
+}
+
+message ManagingSequenceRequest {
+  int64 cargoId = 1;
+  string quantity = 2;
+  string cargoColor = 3;
 }
 
 message LoadingPlanSyncReply {

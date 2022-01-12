@@ -87,6 +87,7 @@ class LoadingPlanServiceTest {
   @MockBean LoadingInformationStatusRepository loadingInfoStatusRepository;
 
   @MockBean LoadingMachineInUseService loadingMachineInUseService;
+  @MockBean private LoadingDelayServiceImpl loadingDelayService;
 
   @Value("${cpdss.communication.enable}")
   private boolean enableCommunication;

@@ -42,6 +42,7 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStud
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortWiseCargo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
@@ -1670,6 +1671,17 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               }
               request.addPortData(portDataBuilder);
             });
+
+    // Fetching cargo ids from cargo nomination using discharge study for default managing sequence
+    // in discharging information
+    LoadingPlanModels.LoadingPlanSyncDetails.Builder builder =
+        LoadingPlanModels.LoadingPlanSyncDetails.newBuilder();
+    confirmedLoadablePatternOpt.ifPresent(
+        loadablePattern -> {
+          cargoNominationService.fetchCargoDetails(loadablePattern.getLoadableStudy(), builder);
+          request.setLoadingPlanSyncDetails(builder.build());
+        });
+
     dischargePlanServiceBlockingStub.dischargePlanSynchronization(request.build());
   }
 

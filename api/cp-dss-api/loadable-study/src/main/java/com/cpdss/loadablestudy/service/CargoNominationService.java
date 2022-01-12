@@ -12,6 +12,7 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
@@ -1044,5 +1045,38 @@ public class CargoNominationService {
               }
             });
     return new ArrayList<CargoNomination>(firstPortCargos);
+  }
+
+  /**
+   * Method to fetch cargo details from cargo nomination
+   *
+   * @param loadableStudy LoadableStudy entity input
+   * @param builder LoadingPlanModels.LoadingPlanSyncDetails.Builder grpc object
+   */
+  public void fetchCargoDetails(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
+      LoadingPlanModels.LoadingPlanSyncDetails.Builder builder) {
+
+    log.info("Inside fetchCargoDetails method!");
+
+    if (loadableStudy != null) {
+      List<CargoNomination> cargoNominations =
+          cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudy.getId(), true);
+      cargoNominations.forEach(
+          cargoNomination -> {
+            LoadingPlanModels.ManagingSequenceRequest.Builder sequenceBuilder =
+                LoadingPlanModels.ManagingSequenceRequest.newBuilder();
+
+            // Set fields
+            Optional.ofNullable(cargoNomination.getCargoXId())
+                .ifPresent(sequenceBuilder::setCargoId);
+            Optional.ofNullable(cargoNomination.getColor())
+                .ifPresent(sequenceBuilder::setCargoColor);
+            Optional.ofNullable(cargoNomination.getQuantity())
+                .ifPresent(quantity -> sequenceBuilder.setQuantity(String.valueOf(quantity)));
+
+            builder.addManagingSequenceRequest(sequenceBuilder.build());
+          });
+    }
   }
 }
