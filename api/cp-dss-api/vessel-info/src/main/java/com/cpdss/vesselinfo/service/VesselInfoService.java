@@ -3070,4 +3070,55 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       replyStreamObserver.onCompleted();
     }
   }
+
+  /**
+   * to get list of crew details
+   *
+   * @param request
+   * @param responseObserver
+   */
+  @Override
+  public void getAllCrewVesselMapping(
+      com.cpdss.common.generated.VesselInfo.CrewVesselRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.CrewVesselReply> responseObserver) {
+    com.cpdss.common.generated.VesselInfo.CrewVesselReply.Builder replyBuilder =
+        CrewVesselReply.newBuilder();
+    try {
+      this.crewService.getAllCrewVesselMapping(request.getVesselName(), replyBuilder);
+      Common.ResponseStatus.Builder responseStatus = Common.ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      replyBuilder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getPortInfoByCargoId method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      replyBuilder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getAllCrewDetails(
+      com.cpdss.common.generated.VesselInfo.VesselsInfoRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewDetailedReply>
+          responseObserver) {
+    com.cpdss.common.generated.VesselInfo.CrewDetailedReply.Builder crewDetailReply =
+        com.cpdss.common.generated.VesselInfo.CrewDetailedReply.newBuilder();
+    try {
+      this.crewService.getAllCrewDetails(crewDetailReply, request);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      crewDetailReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getAllCrewDetails method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      crewDetailReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(crewDetailReply.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

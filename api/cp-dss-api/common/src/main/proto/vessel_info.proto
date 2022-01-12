@@ -6,6 +6,7 @@ option java_package = "com.cpdss.common.generated";
 // import common definitions like ResponseStatus
 import "common.proto";
 import "google/protobuf/empty.proto";
+import "cargo_info.proto";
 
 service VesselInfoService {
 
@@ -61,6 +62,10 @@ service VesselInfoService {
 	rpc UpdateVesselData(CommunicationDataUpdateRequest) returns (ResponseStatus){}
 
 	rpc GetAllCrewRank(google.protobuf.Empty) returns (CrewReply) {}
+
+	rpc GetAllCrewVesselMapping (CrewVesselRequest) returns (CrewVesselReply);
+
+	rpc GetAllCrewDetails (VesselsInfoRequest) returns (CrewDetailedReply);
 }
 
 
@@ -730,7 +735,9 @@ message BendingMomentType1 {
 		string builder = 8;
 		string dateOfLaunch = 9;
 		string signalLetter = 10;
-		string officialNumber = 11;	
+		string officialNumber = 11;
+		repeated Param param = 12;
+		repeated int64 crewXIds = 13;
 	}
 	
 	message VesselsInformation{
@@ -815,4 +822,36 @@ message BendingMomentType1 {
 	message CrewReply {
 		ResponseStatus responseStatus = 1;
 		repeated CrewRank crewRanks = 2;
+		int64 totalElements = 3;
 	}
+
+
+message CrewVesselMappingDetail {
+	int64 id = 1;
+	int64 crewId = 2;
+	int64 vesselId = 3;
+	string vesselName = 4;
+}
+
+message CrewVesselRequest {
+	int64 crewId = 1;
+	string vesselName = 2;
+}
+
+message CrewVesselReply {
+	ResponseStatus responseStatus = 1;
+	repeated CrewVesselMappingDetail vessels = 2;
+}
+
+message CrewDetailed {
+	int64 id = 1;
+	string crewName = 2;
+	string crewRank = 3;
+	int64  crewRankId = 4;
+}
+
+message CrewDetailedReply {
+	ResponseStatus responseStatus = 1;
+	repeated CrewDetailed crewDetails = 2;
+	int64 totalElements = 3;
+}

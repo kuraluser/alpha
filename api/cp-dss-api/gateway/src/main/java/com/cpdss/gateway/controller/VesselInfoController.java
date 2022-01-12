@@ -6,8 +6,10 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.crewmaster.CrewDetailedResponse;
 import com.cpdss.gateway.service.CrewService;
 import com.cpdss.gateway.service.VesselInfoService;
+import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.websocket.server.PathParam;
@@ -290,5 +292,43 @@ public class VesselInfoController {
           e.getMessage(),
           e);
     }
+  }
+
+  /**
+   * To get CrewDetails
+   *
+   * @param headers
+   * @param pageSize
+   * @param pageNo
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/crewlisting")
+  public CrewDetailedResponse getCrewDetails(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int pageNo,
+      @RequestParam(required = false, defaultValue = "crewName") String sortBy,
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+    CrewDetailedResponse response;
+    try {
+      response =
+          crewService.getCrewDetails(
+              pageNo, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+    } catch (Exception e) {
+      log.error("Error in listing crews", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
   }
 }
