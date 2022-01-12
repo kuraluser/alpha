@@ -2063,9 +2063,9 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
           .setStatus(FAILED)
           .build();
     } catch (Exception e) {
+      e.printStackTrace();
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       replyBuilder.setStatus(FAILED).setMessage(e.getMessage()).build();
-      e.printStackTrace();
       log.info("Failed to build synoptic data, {}", e.getMessage());
     } finally {
       responseObserver.onNext(replyBuilder.build());

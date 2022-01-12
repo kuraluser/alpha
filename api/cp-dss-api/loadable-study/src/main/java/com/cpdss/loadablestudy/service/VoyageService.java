@@ -606,8 +606,11 @@ public class VoyageService {
                                     .equals(minPortOrderEntity.getId())
                                 && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(data.getOperationType()))
                     .findAny();
-            if (synoptical.isPresent()) {
+            if (synoptical.isPresent() && synoptical.get().getEtaActual() != null) {
               voyageEntity.setActualStartDate(synoptical.get().getEtaActual());
+            } else {
+              // Set today's date as the actual start date of the voyage.
+              voyageEntity.setActualStartDate(LocalDateTime.now());
             }
           }
         }
@@ -709,8 +712,11 @@ public class VoyageService {
                                     data.getOperationType()))
                     .findAny();
 
-            if (synoptical.isPresent()) {
+            if (synoptical.isPresent() && synoptical.get().getEtdActual() != null) {
               voyageEntity.setActualEndDate(synoptical.get().getEtdActual());
+            } else {
+              // Set today's date as the actual start date of the voyage.
+              voyageEntity.setActualEndDate(LocalDateTime.now());
             }
           }
         }

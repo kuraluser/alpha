@@ -1310,7 +1310,8 @@ public class LoadingPlanService {
     newBuilder.setLoadablePatternId(request.getPatternId());
     newBuilder.setId(portWiseCommingleDetail.getId());
     newBuilder.setLoadingInformationId(loadingInfo.get().getId());
-    newBuilder.setLoadablePlanId(portWiseCommingleDetail.getLoadablePatternId());
+    Optional.ofNullable(portWiseCommingleDetail.getLoadablePatternId())
+        .ifPresent(newBuilder::setLoadablePlanId);
     newBuilder.setCargoNomination1Id(portWiseCommingleDetail.getCargoNomination1XId());
     newBuilder.setCargoNomination2Id(portWiseCommingleDetail.getCargoNomination2XId());
     newBuilder.setCargo1Id(portWiseCommingleDetail.getCargo1XId());
