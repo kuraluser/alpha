@@ -27,7 +27,7 @@
             </span>
         </div>
 
-        <div class="text-right pr-15" *ngIf="this.selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE && this.selectedVoyage?.statusId !== VOYAGE_STATUS.ACTIVE">
+        <div class="text-right pr-15" *ngIf="this.selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE">
             <button class="btn btn-main" (click)="callNewLoadableStudyPopup(false)"
                 id="btn_callNewLoadableStudyPopup" *cpdssPortalPermission="addLSBtnPermissionContext">{{'LOADABLE_STUDY_LIST_CREATE_NEW_LOADABLE_STUDY' | translate}}</button>
         </div>
@@ -42,7 +42,7 @@
         </div>
     </div>
 </div>
-<cpdss-portal-new-loadable-study-popup *ngIf="loadableStudyList && selectedVoyage && display" [display]="display"
+<cpdss-portal-new-loadable-study-popup *ngIf="loadableStudyList && selectedVoyage && display" [display]="display" [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy"
     (displayPopup)="setPopupVisibility($event)" [loadableStudies]="loadableStudyList" [vesselInfoList]="vesselDetails" [voyages]="voyages"
-    [voyage]="selectedVoyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)" [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy">
+    [voyage]="selectedVoyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)">
 </cpdss-portal-new-loadable-study-popup>

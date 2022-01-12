@@ -566,7 +566,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         else if ([2, 3].includes(statusId)) {
           loadableStudy.isEditable = false;
           loadableStudy.isDeletable = false;
-          loadableStudy.isActionsEnabled = [VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) ? false : true;
+          loadableStudy.isActionsEnabled = true;
         }
         else if ([6, 1, 11].includes(statusId)) {
           loadableStudy.isActionsEnabled = true;
@@ -575,8 +575,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
           }
         }
       } else if (!loadableStudyId && !statusId) {
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ||
-        ([VOYAGE_STATUS.ACTIVE].includes(this.selectedVoyage?.statusId) && [LOADABLE_STUDY_STATUS.PLAN_CONFIRMED , LOADABLE_STUDY_STATUS.PLAN_GENERATED].includes(loadableStudy?.statusId)) ? false : true;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadableStudy?.statusId) ? false : true;
         loadableStudy.isEditable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
         loadableStudy.isDeletable = (loadableStudy?.statusId === 3 || loadableStudy?.statusId === 2) ? false : true;
       }

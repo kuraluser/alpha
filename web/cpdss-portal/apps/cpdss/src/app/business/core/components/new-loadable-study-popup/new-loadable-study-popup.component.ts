@@ -162,72 +162,59 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     });
   }
 
-  // is Loadable Study Name Exist
-  isNewLoadableStudyExist() {
-    const nameExistence = this.loadableStudies.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
-    this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
-  }
-
   // post newLoadableStudyFormGroup for saving newly created loadable-study
   public async saveLoadableStudy() {
     console.log('saveLoadableStudy' + Date.now()); // TODO: Need to remove after testing
     if (this.newLoadableStudyFormGroup.valid) {
-      const nameExistence = this.loadableStudies.some(e => e.name.toLowerCase() === this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim());
-      this.newLoadableStudyNameExist = this.isEdit ? (this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.toLowerCase().trim() === this.selectedLoadableStudy.name.toLocaleLowerCase() ? false : nameExistence) : nameExistence;
       const translationKeys = await this.translateService.get(['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST', 'LOADABLE_STUDY_CREATE_SUCCESS', 'LOADABLE_STUDY_CREATED_SUCCESSFULLY', 'LOADABLE_STUDY_CREATE_ERROR', 'LOADABLE_STUDY_ALREADY_EXIST', 'LOADABLE_STUDY_UPDATE_SUCCESS', 'LOADABLE_STUDY_UPDATED_SUCCESSFULLY', 'NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED', 'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED']).toPromise();
       let isLoadableStudyAvailable;
       isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object;
-      if (!this.newLoadableStudyNameExist) {
-        this.newLoadableStudyPopupModel = {
-          id: this.isEdit ? this.selectedLoadableStudy.id : 0,
-          voyageId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
-            this.newLoadableStudyFormGroup.controls.voyage.value?.id : '',
-          createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
-            this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
-          name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
-          detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
-          attachMail: this.uploadedFiles,
-          charterer: this.newLoadableStudyFormGroup.controls.charterer.value,
-          subCharterer: this.newLoadableStudyFormGroup?.controls?.subCharterer?.value ? this.newLoadableStudyFormGroup?.controls?.subCharterer?.value : "",
-          loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
-          draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
-          draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
-          maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '' : '',
-          maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value + '' : '',
-          deletedAttachments: this.deletedAttachments.join(',')
-        }
-        this.ngxSpinnerService.show();
-        try {
-          const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
-          if (result.responseStatus.status === "200") {
-            if (this.isEdit) {
-              if (this.isLoadlineChanged()) {
-                this.loadableStudyDetailsTransformationService.setLoadLineChange(true);
-              }
-              this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
-              this.ngxSpinnerService.hide();
-              this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);
-            } else {
-              this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
-              this.ngxSpinnerService.hide();
+      this.newLoadableStudyPopupModel = {
+        id: this.isEdit ? this.selectedLoadableStudy.id : 0,
+        voyageId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
+          this.newLoadableStudyFormGroup.controls.voyage.value?.id : '',
+        createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
+          this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
+        name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
+        detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
+        attachMail: this.uploadedFiles,
+        charterer: this.newLoadableStudyFormGroup.controls.charterer.value,
+        subCharterer: this.newLoadableStudyFormGroup?.controls?.subCharterer?.value ? this.newLoadableStudyFormGroup?.controls?.subCharterer?.value : "",
+        loadLineXId: this.newLoadableStudyFormGroup.controls.loadLine.value?.id,
+        draftMark: this.newLoadableStudyFormGroup.controls.draftMark.value?.id,
+        draftRestriction: this.newLoadableStudyFormGroup.controls.draftRestriction.value,
+        maxAirTempExpected: this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxAirTempExpected.value + '' : '',
+        maxWaterTempExpected: this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value !== undefined ? this.newLoadableStudyFormGroup.controls.maxWaterTempExpected.value + '' : '',
+        deletedAttachments: this.deletedAttachments.join(',')
+      }
+      this.ngxSpinnerService.show();
+      try {
+        const result = await this.loadableStudyListApiService.setLodableStudy(this.vesselInfoList?.id, this.voyage.id, this.newLoadableStudyPopupModel).toPromise();
+        if (result.responseStatus.status === "200") {
+          this.newLoadableStudyNameExist = false;
+          if (this.isEdit) {
+            if (this.isLoadlineChanged()) {
+              this.loadableStudyDetailsTransformationService.setLoadLineChange(true);
             }
-            this.closeDialog();
-            this.addedNewLoadableStudy.emit(result.loadableStudyId);
+            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_UPDATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_UPDATED_SUCCESSFULLY'] });
+            this.ngxSpinnerService.hide();
+            this.loadableStudyDetailsTransformationService.updateLoadableStudyData(true);
+          } else {
+            this.messageService.add({ severity: 'success', summary: translationKeys['LOADABLE_STUDY_CREATE_SUCCESS'], detail: translationKeys['LOADABLE_STUDY_CREATED_SUCCESSFULLY'] });
+            this.ngxSpinnerService.hide();
           }
-        } catch (error) {
-          if (error.error.errorCode === 'ERR-RICO-105') {
-            this.newLoadableStudyNameExist = true;
-            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST'] });
-          } else if (error.error.errorCode === 'ERR-RICO-110') {
-            const messageKey = this.isEdit ? translationKeys['NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED'] : this.newLoadableStudyPopupModel?.createdFromId ? translationKeys['NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED'] : translationKeys['NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED'];
-            this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: messageKey, life: 10000 });
-          }
-          this.ngxSpinnerService.hide();
+          this.closeDialog();
+          this.addedNewLoadableStudy.emit(result.loadableStudyId);
         }
-
-      } else {
-        //TODO: This must be moved to above catch expression
-        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['LOADABLE_STUDY_ALREADY_EXIST'] });
+      } catch (error) {
+        if (error.error.errorCode === 'ERR-RICO-105') {
+          this.newLoadableStudyNameExist = true;
+          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST'] });
+        } else if (error.error.errorCode === 'ERR-RICO-110') {
+          const messageKey = this.isEdit ? translationKeys['NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED'] : this.newLoadableStudyPopupModel?.createdFromId ? translationKeys['NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED'] : translationKeys['NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED'];
+          this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: messageKey, life: 10000 });
+        }
+        this.ngxSpinnerService.hide();
       }
     } else {
       this.newLoadableStudyFormGroup.markAllAsTouched();
@@ -334,10 +321,12 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //for edit/duplicate update the values
   updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
     if (isEdit) {
+      this.newLoadableStudyFormGroup.controls['voyage'].disable();
+      this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
       this.savedloadableDetails = {
-        draftMark: loadableStudyObj.draftMark,
-        loadLineXId: loadableStudyObj.loadLineXId,
-        draftRestriction: loadableStudyObj.draftRestriction ? loadableStudyObj.draftRestriction : ''
+        draftMark: loadableStudyObj?.draftMark,
+        loadLineXId: loadableStudyObj?.loadLineXId,
+        draftRestriction: loadableStudyObj?.draftRestriction ? loadableStudyObj?.draftRestriction : ''
       }
       if (loadableStudyObj?.createdFromId) {
         this.loadableStudies?.map((loadableStudy) => {
@@ -348,9 +337,6 @@ export class NewLoadableStudyPopupComponent implements OnInit {
           }
         })
       }
-
-      this.newLoadableStudyFormGroup.controls['voyage'].disable();
-      this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
     } else {
       this.newLoadableStudyFormGroup.patchValue({
         duplicateExisting: loadableStudyObj

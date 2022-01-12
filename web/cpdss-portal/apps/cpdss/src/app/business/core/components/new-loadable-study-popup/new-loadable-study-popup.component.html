@@ -42,7 +42,7 @@
                         <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_NAME' | translate}}</div>
                         <div class="col">
                             <input class="form-control" type="text" id="txt_newLoadableStudyName"
-                                formControlName="newLoadableStudyName" focusTrap (change)="isNewLoadableStudyExist()">
+                                formControlName="newLoadableStudyName" focusTrap>
                             <span
                                 *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.required || form.newLoadableStudyName.errors?.whitespace)"
                                 class="text-danger">

@@ -5,6 +5,7 @@ import { FileRepositoryTransformationService } from './../services/file-reposito
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { IVessel } from '../../core/models/vessel-details.model';
 
 /**
  * Component class for file repositiry add/edit
@@ -20,6 +21,14 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AddEditFileComponent implements OnInit {
 
+  @Output() closePopup = new EventEmitter();
+  @Input() editMode: boolean;
+  @Input() voyages: any;
+  @ViewChild('fileUpload') fileUpload;
+  @Input() data;
+  @Input() vessel: IVessel;
+  @Output() updateData = new EventEmitter();
+
   display: boolean;
   sectionList: any;
   categoryList: any;
@@ -31,14 +40,6 @@ export class AddEditFileComponent implements OnInit {
     'csv',
     'xlsx'
   ];
-
-  @Output() closePopup = new EventEmitter();
-  @Input() editMode: boolean;
-  @Input() voyages: any;
-  @ViewChild('fileUpload') fileUpload;
-  @Input() data;
-  @Output() updateData = new EventEmitter();
-
   fileFormGroup: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -117,6 +118,7 @@ export class AddEditFileComponent implements OnInit {
     const translationKeys = await this.translateService.get(['FILE_REPOSITORY_SUCCESS_LABEL', 'FILE_REPOSITORY_UPLOAD_SUCCESS_LABEL']).toPromise();
     const formData: FormData = new FormData();
     formData.append('file', this.fileUpload.nativeElement.files[0]);
+    formData.append('vesselId', this.vessel?.id?.toString());
     formData.append('voyageNo', this.fileFormGroup.controls.voyageNo.value?.voyageNo);
     formData.append('fileName', this.fileFormGroup.controls.fileName.value);
     formData.append('fileType', this.fileFormGroup.controls.fileType.value);
@@ -145,6 +147,7 @@ export class AddEditFileComponent implements OnInit {
     if (this.fileUpload.nativeElement.files?.length) {
       formData.append('file', this.fileUpload.nativeElement.files[0]);
     }
+    formData.append('vesselId', this.vessel?.id?.toString());
     formData.append('section', this.fileFormGroup.controls.section.value?.label);
     formData.append('category', this.fileFormGroup.controls.category.value?.label);
     formData.append('hasFileChanged', this.fileUpload.nativeElement.files?.length ? 'true' : 'false');
@@ -170,7 +173,7 @@ export class AddEditFileComponent implements OnInit {
     return formControl?.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
   /**
-  * Get form control of newVoyageForm 
+  * Get form control of newVoyageForm
   * @param {string} formControlName
   * @returns {FormControl}
   * @memberof AddEditFileComponent

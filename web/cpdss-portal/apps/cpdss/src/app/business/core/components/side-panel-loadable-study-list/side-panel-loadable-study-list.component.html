@@ -1,4 +1,4 @@
-<ng-container *ngIf="voyage && voyage?.statusId !== VOYAGE_STATUS.ACTIVE && voyage?.statusId !== VOYAGE_STATUS.CLOSE">
+<ng-container *ngIf="voyage && voyage?.statusId !== VOYAGE_STATUS.CLOSE">
     <button class="btn btn-main btn-sm btn-new-loadable-study" (click)="openLoadableStudyPopup()"
     id="btn_new_loadable_study" *cpdssPortalPermission="addLSBtnPermissionContext">{{'LOADABLE_STUDY_DETAILS_LOADABLE_NEW_BUTTON_LABEL' | translate}}</button>
 </ng-container>
@@ -17,7 +17,7 @@
     id="btn_view_details" (click)="navigateToLoadableStudyList()">{{'LOADABLE_STUDY_DETAILS_VIEW_DETAILS_BUTTON_LABEL' | translate}}</button>
 </div>
 </ng-container>
-<cpdss-portal-new-loadable-study-popup *ngIf="loadableStudies && voyage && vesselInfo && display" [display]="display"
+<cpdss-portal-new-loadable-study-popup *ngIf="loadableStudies && voyage && vesselInfo && display" [display]="display"  [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy"
     (displayPopup)="closeLoadableStudyPopup($event)" [loadableStudies]="loadableStudies" [vesselInfoList]="vesselInfo" [duplicateLoadableStudy]="duplicateLoadableStudy"
-    [voyages]="voyages" [voyage]="voyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)" [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy">
+    [voyages]="voyages" [voyage]="voyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)">
 </cpdss-portal-new-loadable-study-popup>

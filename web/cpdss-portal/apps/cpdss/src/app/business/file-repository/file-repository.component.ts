@@ -88,17 +88,17 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['FileRepositoryComponent']);
     this.repositoryColumns = this.fileRepositoryTransformationService.repositoryTableColumn(this.permission);
-    this.getVesselInfo();
+    await this.getVesselInfo();
     this.getFiles(false);
 
     this.getFiles$.pipe(
       debounceTime(1000),
       switchMap(() => {
         this.ngxSpinnerService.show();
-        return this.fileRepositoryApiService.getFiles(this.pageState);
+        return this.fileRepositoryApiService.getFiles(this.pageState, this.vessel?.id);
       })
     ).subscribe((result: any) => {
       this.ngxSpinnerService.hide();
@@ -133,7 +133,7 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     if (loader) {
       this.ngxSpinnerService.show();
     }
-    const result = await this.fileRepositoryApiService.getFiles(this.pageState).toPromise();
+    const result = await this.fileRepositoryApiService.getFiles(this.pageState, this.vessel?.id).toPromise();
     if (loader) {
       this.ngxSpinnerService.hide();
     }
