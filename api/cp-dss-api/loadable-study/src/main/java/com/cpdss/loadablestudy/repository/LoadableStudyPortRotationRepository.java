@@ -7,6 +7,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import java.util.List;
+import java.util.Set;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +77,11 @@ public interface LoadableStudyPortRotationRepository
       "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id = ?1 AND LSPR.isActive = ?2 ORDER BY LSPR.portOrder")
   public List<LoadableStudyPortRotation> findByLoadableStudyAndIsActive(
       Long loadableStudyId, Boolean isActive);
+
+  @Query(
+      "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy.id in ?1 AND LSPR.isActive = ?2 ORDER BY LSPR.portOrder")
+  public List<LoadableStudyPortRotation> findByLoadableStudyInAndIsActive(
+      Set<Long> loadableStudyId, Boolean isActive);
 
   /**
    * @param loadableStudy
