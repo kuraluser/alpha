@@ -49,4 +49,7 @@ public class FileRepo extends EntityDoc {
 
   @Column(name = "is_system_generated")
   private Boolean isSystemGenerated;
+
+  @Column(name = "vessel_xid")
+  private Long vesselXId;
 }

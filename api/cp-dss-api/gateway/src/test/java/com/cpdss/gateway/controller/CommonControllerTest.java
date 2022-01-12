@@ -254,6 +254,7 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyString(),
+                Mockito.anyLong(),
                 Mockito.anyBoolean()))
         .thenReturn(new FileRepoReply());
     MockMultipartFile firstFile =
@@ -267,6 +268,7 @@ public class CommonControllerTest {
                 .param("fileType", "200001242")
                 .param("section", "1")
                 .param("category", "2123")
+                .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -285,6 +287,7 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyString(),
+                Mockito.anyLong(),
                 Mockito.anyBoolean()))
         .thenThrow(
             new GenericServiceException(
@@ -302,6 +305,7 @@ public class CommonControllerTest {
                 .param("fileType", "200001242")
                 .param("section", "1")
                 .param("category", "2123")
+                .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -320,6 +324,7 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyString(),
+                Mockito.anyLong(),
                 Mockito.anyBoolean()))
         .thenThrow(RuntimeException.class);
     MockMultipartFile firstFile =
@@ -333,6 +338,7 @@ public class CommonControllerTest {
                 .param("fileType", "200001242")
                 .param("section", "1")
                 .param("category", "2123")
+                .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -420,7 +426,8 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyBoolean(),
-                Mockito.anyString()))
+                Mockito.anyString(),
+                Mockito.anyLong()))
         .thenReturn(new FileRepoReply());
     MockMultipartFile firstFile =
         new MockMultipartFile("file", "filename.pdf", "text/plain", "test".getBytes());
@@ -431,6 +438,7 @@ public class CommonControllerTest {
                 .param("section", "234")
                 .param("category", "200001242")
                 .param("hasFileChanged", "true")
+                .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -447,7 +455,8 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyBoolean(),
-                Mockito.anyString()))
+                Mockito.anyString(),
+                Mockito.anyLong()))
         .thenThrow(RuntimeException.class);
     MockMultipartFile firstFile =
         new MockMultipartFile("file", "filename.pdf", "text/plain", "test".getBytes());
@@ -458,6 +467,7 @@ public class CommonControllerTest {
                 .param("section", "234")
                 .param("category", "200001242")
                 .param("hasFileChanged", "true")
+                .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))

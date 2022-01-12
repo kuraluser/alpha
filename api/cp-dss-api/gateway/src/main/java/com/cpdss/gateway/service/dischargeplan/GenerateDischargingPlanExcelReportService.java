@@ -247,6 +247,7 @@ public class GenerateDischargingPlanExcelReportService {
                 "Discharging",
                 "Process",
                 null,
+                vesselId,
                 true);
         if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
           log.info("Succesfully added entry in FileRepo : {}", reply.getId());

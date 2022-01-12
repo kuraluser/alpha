@@ -79,6 +79,11 @@ public class FileRepoService {
             LocalDate.parse(filterParams.get(key), DateTimeFormatter.ofPattern(DATE_FORMAT));
         specification =
             specification.and(new FileRepoSpecification(new SearchCriteria(key, "EQUALS", date)));
+      } else if (key.equalsIgnoreCase("vesselId") && null != filterParams.get(key)) {
+        Long vesselId = Long.valueOf(filterParams.get(key));
+        specification =
+            specification.and(
+                new FileRepoSpecification(new SearchCriteria("vesselXId", "EQUALS", vesselId)));
       } else if (null != filterParams.get(key)) {
         specification =
             specification.and(
@@ -99,6 +104,7 @@ public class FileRepoService {
       String section,
       String category,
       String correlationId,
+      Long vesselId,
       Boolean isSystemGenerated)
       throws GenericServiceException {
     FileRepo repo = new FileRepo();
@@ -112,6 +118,7 @@ public class FileRepoService {
             filePath,
             fileNameX,
             correlationId,
+            vesselId,
             isSystemGenerated);
     return reply;
   }
@@ -155,7 +162,8 @@ public class FileRepoService {
       String section,
       String category,
       Boolean hasFileChanged,
-      String correlationId)
+      String correlationId,
+      Long vesselId)
       throws GenericServiceException {
     FileRepoReply reply = new FileRepoReply();
     FileRepo repo = this.getFileRepoDetailsById(repoId);
@@ -178,6 +186,7 @@ public class FileRepoService {
                 null,
                 null,
                 correlationId,
+                vesselId,
                 false);
       }
     } else {
@@ -201,6 +210,7 @@ public class FileRepoService {
       String filePath,
       String originalFileName,
       String correlationId,
+      Long vesselId,
       Boolean isSystemGenerated)
       throws GenericServiceException {
     FileRepoReply reply = new FileRepoReply();
@@ -240,6 +250,7 @@ public class FileRepoService {
         Files.write(
             path, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
       }
+      repo.setVesselXId(vesselId);
       repo.setVoyageNumber(voyageNo);
       repo.setFileName(originalFileName);
       repo.setFileType(extension);

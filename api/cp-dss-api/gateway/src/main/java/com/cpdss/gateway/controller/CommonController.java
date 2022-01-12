@@ -105,7 +105,13 @@ public class CommonController {
       // Get filters
       List<String> filterKeys =
           Arrays.asList(
-              "voyageNumber", "fileName", "fileType", "section", "category", "createdDate");
+              "voyageNumber",
+              "fileName",
+              "fileType",
+              "section",
+              "category",
+              "createdDate",
+              "vesselId");
 
       Map<String, String> filterParams =
           params.entrySet().stream()
@@ -153,7 +159,8 @@ public class CommonController {
       @RequestParam(name = "fileName", required = true) String fileName,
       @RequestParam(name = "fileType", required = true) String fileType,
       @RequestParam(name = "section", required = true) String section,
-      @RequestParam(name = "category", required = true) String category)
+      @RequestParam(name = "category", required = true) String category,
+      @RequestParam(name = "vesselId", required = true) Long vesselId)
       throws CommonRestException {
     try {
       return fileRepoService.addFileToRepo(
@@ -164,6 +171,7 @@ public class CommonController {
           section,
           category,
           headers.getFirst(CORRELATION_ID_HEADER),
+          vesselId,
           false);
 
     } catch (GenericServiceException e) {
@@ -279,11 +287,18 @@ public class CommonController {
       @RequestParam(name = "section", required = true) String section,
       @RequestParam(name = "category", required = true) String category,
       @RequestParam(name = "hasFileChanged", required = true, defaultValue = "true")
-          Boolean hasFileChanged)
+          Boolean hasFileChanged,
+      @RequestParam(name = "vesselId", required = true) Long vesselId)
       throws CommonRestException {
     try {
       return fileRepoService.editFileRepo(
-          repoId, file, section, category, hasFileChanged, headers.getFirst(CORRELATION_ID_HEADER));
+          repoId,
+          file,
+          section,
+          category,
+          hasFileChanged,
+          headers.getFirst(CORRELATION_ID_HEADER),
+          vesselId);
 
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when editing file repo details", e);
