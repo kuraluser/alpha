@@ -113,7 +113,7 @@ export class DatePopUpComponent implements OnInit {
       'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_BL_ULLAGE_UPDATE',
       'VOYAGE_LIST_ACTIVE_VOYAGE_ERROR_NO_ETA_ETD_ACTUAL',
       'VOYAGE_LIST_ACTIVE_VOYAGE_STOP_REJECTION_LABEL']).toPromise();
-    const formattedDate = this.timeZoneTransformationService.formatDateTime(this.defaultDate, { customFormat: 'DD-MM-YYYY HH:mm' });
+    const formattedDate = this.defaultDate ? this.timeZoneTransformationService.formatDateTime(this.defaultDate, { customFormat: 'DD-MM-YYYY HH:mm' }) : null;
     if (this.isStart) {
       try {
         const result = await this.voyageListApiService.startVoyage(this.vesselId, this.voyageId, formattedDate).toPromise();
