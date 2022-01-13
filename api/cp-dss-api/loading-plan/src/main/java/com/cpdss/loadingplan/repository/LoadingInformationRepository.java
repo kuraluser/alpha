@@ -18,6 +18,9 @@ public interface LoadingInformationRepository
   public List<LoadingInformation> findByVesselXIdAndLoadablePatternXIdNotAndIsActive(
       Long vesselXId, Long loadablePatternXId, Boolean isActive);
 
+  public List<LoadingInformation> findByVesselXIdAndVoyageIdAndIsActive(
+      Long vesselXId, Long voyageId, Boolean isActive);
+
   List<LoadingInformation> findAllByVesselXIdAndVoyageIdAndIsActiveTrue(Long id1, Long id2);
 
   @Transactional
