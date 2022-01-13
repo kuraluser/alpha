@@ -1619,7 +1619,7 @@ public class DischargePlanCommunicationService {
               dischargeInfo.getId());
       dischargingInformationAlgoStatusOptional.ifPresentOrElse(
           dischargingInfoAlgo -> {
-            dischargingInfoAlgo.setProcessId(dischargingInfoAlgoStatus.getProcessId());
+            // dischargingInfoAlgo.setProcessId(dischargingInfoAlgoStatus.getProcessId());
             dischargingInfoAlgoStatus = dischargingInfoAlgo;
           },
           () -> dischargingInfoAlgoStatus.setDischargeInformation(dischargeInfo));

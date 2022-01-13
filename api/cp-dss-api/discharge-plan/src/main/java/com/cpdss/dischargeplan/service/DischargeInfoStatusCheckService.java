@@ -26,7 +26,11 @@ public class DischargeInfoStatusCheckService {
       DischargeInfoStatusRequest request, DischargeInfoStatusReply.Builder builder)
       throws GenericServiceException {
     Optional<DischargingInformationAlgoStatus> data = Optional.empty();
-    log.info("Get Status for Discharge info - {}", request.getDischargeInfoId());
+    log.info(
+        "Get Status for Discharge info - {}, processId - {} and condition type - {}",
+        request.getDischargeInfoId(),
+        request.getProcessId(),
+        request.getConditionType());
     if (request.getConditionType() == 0) {
       data =
           this.algoStatusRepository.findByProcessIdAndDischargeInformationIdAndIsActiveTrue(

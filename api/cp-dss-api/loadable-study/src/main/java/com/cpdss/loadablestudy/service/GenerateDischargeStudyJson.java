@@ -194,6 +194,7 @@ public class GenerateDischargeStudyJson {
                   loadableStudyCommunicationStatus);
           log.info("Communication table update : " + loadingPlanCommunication.getId());
           loadableStudyRepository.updateLoadableStudyStatus(status, loadableStudyOpt.get().getId());
+          updateProcessIdForDischargeStudy("", loadableStudyOpt.get(), status);
         }
       } else {
         log.info("Before Create algo payload");
@@ -217,8 +218,8 @@ public class GenerateDischargeStudyJson {
         log.info("Algo response :{}", algoResponse);
         status = LOADABLE_STUDY_PROCESSING_STARTED_ID;
         loadableStudyRepository.updateLoadableStudyStatus(status, loadableStudyOpt.get().getId());
+        updateProcessIdForDischargeStudy(processId, loadableStudyOpt.get(), status);
       }
-      updateProcessIdForDischargeStudy(processId, loadableStudyOpt.get(), status);
       replyBuilder
           .setProcesssId(processId)
           .setResponseStatus(

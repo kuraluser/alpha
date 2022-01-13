@@ -74,7 +74,8 @@ public class DischargePlanConstants {
           "discharging_sequence",
           "discharging_berth_details",
           "discharging_delay_reason",
-          "loadable_pattern");
+          "loadable_pattern",
+          "synoptical_table");
 
   public static List<String> DISCHARGE_PLAN_SHORE_TO_SHIP =
       Arrays.asList(
