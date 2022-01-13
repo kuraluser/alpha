@@ -37,6 +37,14 @@ public interface OnHandQuantityRepository extends CommonCrudRepository<OnHandQua
   public List<OnHandQuantity> findByLoadableStudyAndPortRotationAndIsActive(
       LoadableStudy loadableStudy, LoadableStudyPortRotation portRotation, boolean isActive);
 
+  @Query(
+      value =
+          "SELECT port_rotation_xid FROM on_hand_quantity OHQ where OHQ.loadable_study_xid = ?1 AND "
+              + "OHQ.port_rotation_xid in ?2 AND OHQ.is_active = ?3",
+      nativeQuery = true)
+  public List<Long> findByLoadableStudyAndPortRotationInAndIsActive(
+      Long loadableStudyId, List<Long> portRotationIds, boolean isActive);
+
   /**
    * Find entity by id
    *

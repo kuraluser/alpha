@@ -175,6 +175,12 @@ public interface LoadableStudyPortRotationRepository
       "UPDATE LoadableStudyPortRotation SET isPortRotationOhqComplete = ?2 WHERE id = ?1 AND isActive = true")
   public void updateIsOhqCompleteByIdAndIsActiveTrue(Long id, Boolean isOhqComplete);
 
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadableStudyPortRotation SET isPortRotationOhqComplete = ?2 WHERE id in ?1 AND isActive = true")
+  public void updateIsOhqCompleteByIdInAndIsActiveTrue(List<Long> id, Boolean isOhqComplete);
+
   @Query(
       "FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy= ?1 AND  LSPR.portXId= ?2 and LSPR.operation.id = 2 AND LSPR.isActive = true")
   public LoadableStudyPortRotation findByLoadableStudyAndPortAndOperation(

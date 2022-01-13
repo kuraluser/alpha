@@ -411,8 +411,30 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 builder.addAttachments(loadableStudyAttachmentBuilder.build());
               });
         }
+
+        // changes made for code optimization
         if (null != portRotations && !portRotations.isEmpty()) {
           OhqPorts.Builder ohqPortsBuilder = OhqPorts.newBuilder();
+          List<Long> portRotationIds = new ArrayList<>();
+          portRotations.forEach(
+              portRotation -> {
+                if (portRotation.getIsPortRotationOhqComplete() != null
+                    && !portRotation.getIsPortRotationOhqComplete()) {
+                  portRotationIds.add(portRotation.getId());
+                }
+              });
+
+          List<Long> ohqPortRotationIds = new ArrayList<>();
+          if (portRotationIds.size() > 0) {
+            ohqPortRotationIds =
+                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationInAndIsActive(
+                    entity.getId(), portRotationIds, true);
+          }
+          if (ohqPortRotationIds.size() > 0) {
+            this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdInAndIsActiveTrue(
+                ohqPortRotationIds, true);
+          }
+          List<Long> finalOhqPortRotationIds = ohqPortRotationIds;
           portRotations.forEach(
               port -> {
                 if (port.isActive()) {
@@ -421,18 +443,13 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                       port.getIsPortRotationOhqComplete() == null
                           ? false
                           : port.getIsPortRotationOhqComplete());
-                  List<OnHandQuantity> onHandQuantities =
-                      this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                          entity, port, true);
 
                   // If there are ohqQuantities for the port rotation and the port rotation
                   // ohqComplete flag is false we set the flag as true since the ohq is already
                   //  there for the port rotation in the DB.
-                  if (!onHandQuantities.isEmpty()
+                  if (finalOhqPortRotationIds.contains(port.getId())
                       && (port.getIsPortRotationOhqComplete() != null)
                       && !port.getIsPortRotationOhqComplete()) {
-                    this.loadableStudyPortRotationRepository.updateIsOhqCompleteByIdAndIsActiveTrue(
-                        port.getId(), true);
                     ohqPortsBuilder.setIsPortRotationOhqComplete(true);
                   }
                   builder.addOhqPorts(ohqPortsBuilder.build());
