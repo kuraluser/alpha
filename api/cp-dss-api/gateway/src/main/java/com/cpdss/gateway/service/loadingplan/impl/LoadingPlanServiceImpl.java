@@ -480,7 +480,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
-        "Get Loading Plan, Active Voyage Number and Id {} ",
+        "Get Loading Plan, Active Voyage Number {} and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     loadingPlanResponse.setVoyageDate(activeVoyage.getActualStartDate());

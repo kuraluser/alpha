@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.algo;
 
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
@@ -26,6 +27,7 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanRobDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
+import com.cpdss.loadingplan.utility.LoadingPlanUtility;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -460,8 +462,7 @@ public class LoadingPlanBuilderService {
   public void buildPortCommingle(
       LoadingInformation loadingInformation,
       PortLoadingPlanCommingleDetails commingleDetails,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails
-          commingle) {
+      LoadingPlanModels.LoadingPlanCommingleDetails commingle) {
     commingleDetails.setApi(commingle.getApi());
     commingleDetails.setGrade(commingle.getAbbreviation());
     commingleDetails.setIsActive(true);
@@ -483,6 +484,12 @@ public class LoadingPlanBuilderService {
     commingleDetails.setQuantity2M3(commingle.getQuantity2M3());
     commingleDetails.setUllage1(commingle.getUllage1());
     commingleDetails.setUllage2(commingle.getUllage2());
+    commingleDetails.setCargo1Percentage(
+        LoadingPlanUtility.calculateCommingleCargoPercentage(
+            commingle.getQuantity1MT(), commingle.getQuantityMT()));
+    commingleDetails.setCargo2Percentage(
+        LoadingPlanUtility.calculateCommingleCargoPercentage(
+            commingle.getQuantity2MT(), commingle.getQuantityMT()));
     commingleDetails.setConditionType(commingle.getConditionType());
     commingleDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }

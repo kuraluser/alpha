@@ -604,7 +604,7 @@ public class LoadingPlanAlgoService {
   private void saveLoadingSequenceStabilityParams(
       LoadingPlanSaveRequest request, LoadingInformation loadingInformation) {
     log.info(
-        "Saving Loading Sequence Stability Params for LoadingInformation {}, PortRotation",
+        "Saving Loading Sequence Stability Params for LoadingInformation {}, PortRotation {}",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
     List<LoadingSequenceStabilityParameters> loadingSequenceStabilityParams =
@@ -688,7 +688,7 @@ public class LoadingPlanAlgoService {
       LoadingInformation loadingInformation,
       List<LoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList) {
     log.info(
-        "Saving Loading Plan Commingle Details for LoadingInformation {}, PortRotation",
+        "Saving Loading Plan Commingle Details for LoadingInformation {}, PortRotation {}",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
     List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetails =
@@ -707,7 +707,7 @@ public class LoadingPlanAlgoService {
       LoadingInformation loadingInformation,
       List<LoadingPlanTankDetails> portLoadingPlanStowageDetailsList) {
     log.info(
-        "Saving Loading Plan Stowage Details for LoadingInformation {}, PortRotation",
+        "Saving Loading Plan Stowage Details for LoadingInformation {}, PortRotation {}",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
     List<PortLoadingPlanStowageDetails> portLoadingPlanStowages =
@@ -725,7 +725,7 @@ public class LoadingPlanAlgoService {
       LoadingInformation loadingInformation,
       List<LoadingPlanStabilityParameters> portLoadingPlanStabilityParametersList) {
     log.info(
-        "Saving Loading Plan Stability Parameters for LoadingInformation {}, PortRotation",
+        "Saving Loading Plan Stability Parameters for LoadingInformation {}, PortRotation {}",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
     List<PortLoadingPlanStabilityParameters> portLoadingPlanStabilityParams =
@@ -745,7 +745,7 @@ public class LoadingPlanAlgoService {
       LoadingInformation loadingInformation,
       List<LoadingPlanTankDetails> portLoadingPlanRobDetailsList) {
     log.info(
-        "Saving Loading Plan ROB Details for LoadingInformation {}, PortRotation",
+        "Saving Loading Plan ROB Details for LoadingInformation {}, PortRotation {}",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
     List<PortLoadingPlanRobDetails> portLoadingPlanRobDetails =
@@ -763,7 +763,7 @@ public class LoadingPlanAlgoService {
       LoadingInformation loadingInformation,
       List<LoadingPlanTankDetails> portLoadingPlanBallastDetailsList) {
     log.info(
-        "Saving Loading Plan Ballast Details for LoadingInformation {}, PortRotation",
+        "Saving Loading Plan Ballast Details for LoadingInformation {}, PortRotation {}",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
     List<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetails =

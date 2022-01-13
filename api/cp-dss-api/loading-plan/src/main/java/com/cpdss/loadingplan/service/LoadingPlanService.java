@@ -589,7 +589,23 @@ public class LoadingPlanService {
 
   public void getLoadableStudyShoreTwo(
       LoadingPlanModels.UllageBillRequest request,
-      LoadingPlanModels.UllageBillReply.Builder builder) {
+      LoadingPlanModels.UllageBillReply.Builder builder)
+      throws GenericServiceException {
+
+    Optional<LoadingInformation> loadingInfoOpt =
+        this.loadingInformationRepository.findByIdAndIsActiveTrue(
+            request.getUpdateUllage(0).getLoadingInformationId());
+
+    if (loadingInfoOpt.isEmpty()) {
+      log.error(
+          "Cannot find loading information with id {}",
+          request.getUpdateUllage(0).getLoadingInformationId());
+      throw new GenericServiceException(
+          "Cannot find Loading Information: "
+              + request.getUpdateUllage(0).getLoadingInformationId(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
 
     String processId = "";
     try {
@@ -906,6 +922,13 @@ public class LoadingPlanService {
                   tempData.setUllage2(ullageInsert.getUllage2());
                   tempData.setGrade(ullageInsert.getAbbreviation());
                   tempData.setColorCode(ullageInsert.getColorCode());
+                  tempData.setCargo1Percentage(
+                      LoadingPlanUtility.calculateCommingleCargoPercentage(
+                          ullageInsert.getQuantity1MT(), ullageInsert.getQuantityMT()));
+                  tempData.setCargo2Percentage(
+                      LoadingPlanUtility.calculateCommingleCargoPercentage(
+                          ullageInsert.getQuantity2MT(), ullageInsert.getQuantityMT()));
+                  tempData.setLoadablePatternId(loadingInfoOpt.get().getLoadablePatternXId());
                   portLoadingPlanCommingleTempDetailsRepository.save(tempData);
                 }
               });

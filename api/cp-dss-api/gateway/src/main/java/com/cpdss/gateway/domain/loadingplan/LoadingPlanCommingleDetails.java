@@ -29,4 +29,6 @@ public class LoadingPlanCommingleDetails {
   private BigDecimal quantity2M3;
   private BigDecimal ullage1;
   private BigDecimal ullage2;
+  private BigDecimal cargo1Percentage;
+  private BigDecimal cargo2Percentage;
 }

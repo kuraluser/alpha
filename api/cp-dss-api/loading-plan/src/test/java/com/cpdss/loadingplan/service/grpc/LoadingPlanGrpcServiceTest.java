@@ -383,7 +383,7 @@ public class LoadingPlanGrpcServiceTest {
   }
 
   @Test
-  void testGetLoadableStudyShoreTwo() {
+  void testGetLoadableStudyShoreTwo() throws GenericServiceException {
     LoadingPlanModels.UllageBillRequest request =
         LoadingPlanModels.UllageBillRequest.newBuilder().build();
     StreamRecorder<LoadingPlanModels.UllageBillReply> responseObserver = StreamRecorder.create();
@@ -401,7 +401,7 @@ public class LoadingPlanGrpcServiceTest {
   }
 
   @Test
-  void testGetLoadableStudyShoreTwoWithException() {
+  void testGetLoadableStudyShoreTwoWithException() throws GenericServiceException {
     LoadingPlanModels.UllageBillRequest request =
         LoadingPlanModels.UllageBillRequest.newBuilder().build();
     StreamRecorder<LoadingPlanModels.UllageBillReply> responseObserver = StreamRecorder.create();

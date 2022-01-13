@@ -9,10 +9,13 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
 import com.cpdss.loadingplan.domain.algo.BerthDetails;
 import com.cpdss.loadingplan.domain.algo.LoadingSequences;
 import com.cpdss.loadingplan.domain.algo.ReasonForDelay;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.util.StringUtils;
 
 /** @author pranav.k */
 @Log4j2
@@ -120,5 +123,18 @@ public class LoadingPlanUtility {
           .ifPresent(v -> builder.setShoreLoadingRate(v.toString()));
     }
     return builder.build();
+  }
+
+  public static String calculateCommingleCargoPercentage(
+      String cargoQuantity, String totalQuantity) {
+    if (StringUtils.hasLength(cargoQuantity) && StringUtils.hasLength(totalQuantity)) {
+      BigDecimal cargoPercentage =
+          (new BigDecimal(cargoQuantity))
+              .divide(new BigDecimal(totalQuantity), RoundingMode.UNNECESSARY)
+              .multiply(new BigDecimal(100));
+      return cargoPercentage.toString();
+    } else {
+      return BigDecimal.ZERO.toString();
+    }
   }
 }

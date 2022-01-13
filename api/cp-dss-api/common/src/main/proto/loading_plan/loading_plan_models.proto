@@ -467,6 +467,8 @@ message LoadingPlanCommingleDetails {
     string quantity2M3 = 20;
     string ullage1 = 21;
     string ullage2 = 22;
+    string cargo1Percentage = 23;
+    string cargo2Percentage = 24;
 }
 
 message LoadingSequence {

@@ -640,6 +640,8 @@ class LoadingPlanServiceTest {
         .thenReturn(getLPPCTD());
     Mockito.when(ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(Mockito.any()))
         .thenReturn("1");
+    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(Optional.of(getLI()));
     this.loadingPlanService.getLoadableStudyShoreTwo(request, builder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
   }
@@ -849,6 +851,8 @@ class LoadingPlanServiceTest {
         .thenReturn(getOLI());
     Mockito.when(loadingPlanAlgoService.getLoadingInformationStatus(Mockito.anyLong()))
         .thenReturn(getOLIS());
+    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(Optional.of(getLI()));
     this.loadingPlanService.getLoadableStudyShoreTwo(request, builder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
   }
@@ -940,6 +944,8 @@ class LoadingPlanServiceTest {
                 .findByLoadingInformationAndConditionTypeAndIsActive(
                     Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenThrow(new RuntimeException("error"));
+    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+        .thenReturn(Optional.of(getLI()));
     this.loadingPlanService.getLoadableStudyShoreTwo(request, builder);
     assertEquals(FAILED, builder.getResponseStatus().getStatus());
   }

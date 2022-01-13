@@ -168,6 +168,14 @@ public class LoadingPlanBuilderService {
       commingleDetails.setConditionType(commingle.getConditionType());
       commingleDetails.setValueType(commingle.getValueType());
       commingleDetails.setColorCode(commingle.getColorCode());
+      commingleDetails.setCargo1Percentage(
+          StringUtils.hasLength(commingle.getCargo1Percentage())
+              ? new BigDecimal(commingle.getCargo1Percentage())
+              : null);
+      commingleDetails.setCargo2Percentage(
+          StringUtils.hasLength(commingle.getCargo2Percentage())
+              ? new BigDecimal(commingle.getCargo2Percentage())
+              : null);
       response.add(commingleDetails);
     }
     return response;
