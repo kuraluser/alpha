@@ -525,7 +525,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       } else {
         entity = new LoadableStudy();
         if (request.getDuplicatedFromId() == 0) {
-          voyageService.checkIfVoyageActive(request.getVoyageId());
+          // voyageService.checkIfVoyageActive(request.getVoyageId());
           entity.setIsCargoNominationComplete(false);
           entity.setIsPortsComplete(false);
           entity.setIsOhqComplete(false);
