@@ -585,7 +585,7 @@ public class GenerateDischargingPlanExcelReportService {
     newCellStyle.setBorderLeft(cellStyle.getBorderLeft());
     newCellStyle.setBorderRight(cellStyle.getBorderRight());
     // setting cell color
-    Color color = Color.decode(colorCode);
+    Color color = Color.decode(colorCode.toUpperCase());
     newCellStyle.setFillForegroundColor(new XSSFColor(color, new DefaultIndexedColorMap()));
     newCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
     // Changing font color
