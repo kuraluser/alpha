@@ -9,5 +9,6 @@ public class CrewDetailed {
   private Long id;
   private String crewName;
   private String crewRank;
+  private Long crewRankId;
   private List<CrewVesselMapping> vesselInformation;
 }

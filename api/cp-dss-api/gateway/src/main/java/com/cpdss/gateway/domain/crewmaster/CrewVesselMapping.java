@@ -7,6 +7,5 @@ import lombok.Data;
 @Data
 public class CrewVesselMapping {
   private Long id;
-  private Long crewXId;
   private Vessel vessel;
 }

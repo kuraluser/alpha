@@ -113187,6 +113187,1632 @@ public final class VesselInfo {
     }
   }
 
+  public interface CrewDetailsReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:CrewDetailsReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+    /**
+     * <code>.CrewDetailed crewDetails = 2;</code>
+     *
+     * @return Whether the crewDetails field is set.
+     */
+    boolean hasCrewDetails();
+    /**
+     * <code>.CrewDetailed crewDetails = 2;</code>
+     *
+     * @return The crewDetails.
+     */
+    com.cpdss.common.generated.VesselInfo.CrewDetailed getCrewDetails();
+    /** <code>.CrewDetailed crewDetails = 2;</code> */
+    com.cpdss.common.generated.VesselInfo.CrewDetailedOrBuilder getCrewDetailsOrBuilder();
+  }
+  /** Protobuf type {@code CrewDetailsReply} */
+  public static final class CrewDetailsReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:CrewDetailsReply)
+      CrewDetailsReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use CrewDetailsReply.newBuilder() to construct.
+    private CrewDetailsReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private CrewDetailsReply() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new CrewDetailsReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private CrewDetailsReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                com.cpdss.common.generated.VesselInfo.CrewDetailed.Builder subBuilder = null;
+                if (crewDetails_ != null) {
+                  subBuilder = crewDetails_.toBuilder();
+                }
+                crewDetails_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.CrewDetailed.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(crewDetails_);
+                  crewDetails_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo.internal_static_CrewDetailsReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_CrewDetailsReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.CrewDetailsReply.class,
+              com.cpdss.common.generated.VesselInfo.CrewDetailsReply.Builder.class);
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 1;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 1;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    public static final int CREWDETAILS_FIELD_NUMBER = 2;
+    private com.cpdss.common.generated.VesselInfo.CrewDetailed crewDetails_;
+    /**
+     * <code>.CrewDetailed crewDetails = 2;</code>
+     *
+     * @return Whether the crewDetails field is set.
+     */
+    public boolean hasCrewDetails() {
+      return crewDetails_ != null;
+    }
+    /**
+     * <code>.CrewDetailed crewDetails = 2;</code>
+     *
+     * @return The crewDetails.
+     */
+    public com.cpdss.common.generated.VesselInfo.CrewDetailed getCrewDetails() {
+      return crewDetails_ == null
+          ? com.cpdss.common.generated.VesselInfo.CrewDetailed.getDefaultInstance()
+          : crewDetails_;
+    }
+    /** <code>.CrewDetailed crewDetails = 2;</code> */
+    public com.cpdss.common.generated.VesselInfo.CrewDetailedOrBuilder getCrewDetailsOrBuilder() {
+      return getCrewDetails();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (responseStatus_ != null) {
+        output.writeMessage(1, getResponseStatus());
+      }
+      if (crewDetails_ != null) {
+        output.writeMessage(2, getCrewDetails());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+      }
+      if (crewDetails_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getCrewDetails());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.CrewDetailsReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.CrewDetailsReply other =
+          (com.cpdss.common.generated.VesselInfo.CrewDetailsReply) obj;
+
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (hasCrewDetails() != other.hasCrewDetails()) return false;
+      if (hasCrewDetails()) {
+        if (!getCrewDetails().equals(other.getCrewDetails())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      if (hasCrewDetails()) {
+        hash = (37 * hash) + CREWDETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getCrewDetails().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.CrewDetailsReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code CrewDetailsReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:CrewDetailsReply)
+        com.cpdss.common.generated.VesselInfo.CrewDetailsReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_CrewDetailsReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_CrewDetailsReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.CrewDetailsReply.class,
+                com.cpdss.common.generated.VesselInfo.CrewDetailsReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.CrewDetailsReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        if (crewDetailsBuilder_ == null) {
+          crewDetails_ = null;
+        } else {
+          crewDetails_ = null;
+          crewDetailsBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo.internal_static_CrewDetailsReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CrewDetailsReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.CrewDetailsReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CrewDetailsReply build() {
+        com.cpdss.common.generated.VesselInfo.CrewDetailsReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CrewDetailsReply buildPartial() {
+        com.cpdss.common.generated.VesselInfo.CrewDetailsReply result =
+            new com.cpdss.common.generated.VesselInfo.CrewDetailsReply(this);
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        if (crewDetailsBuilder_ == null) {
+          result.crewDetails_ = crewDetails_;
+        } else {
+          result.crewDetails_ = crewDetailsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.CrewDetailsReply) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.CrewDetailsReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.VesselInfo.CrewDetailsReply other) {
+        if (other == com.cpdss.common.generated.VesselInfo.CrewDetailsReply.getDefaultInstance())
+          return this;
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        if (other.hasCrewDetails()) {
+          mergeCrewDetails(other.getCrewDetails());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.CrewDetailsReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.CrewDetailsReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 1;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      private com.cpdss.common.generated.VesselInfo.CrewDetailed crewDetails_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.CrewDetailed,
+              com.cpdss.common.generated.VesselInfo.CrewDetailed.Builder,
+              com.cpdss.common.generated.VesselInfo.CrewDetailedOrBuilder>
+          crewDetailsBuilder_;
+      /**
+       * <code>.CrewDetailed crewDetails = 2;</code>
+       *
+       * @return Whether the crewDetails field is set.
+       */
+      public boolean hasCrewDetails() {
+        return crewDetailsBuilder_ != null || crewDetails_ != null;
+      }
+      /**
+       * <code>.CrewDetailed crewDetails = 2;</code>
+       *
+       * @return The crewDetails.
+       */
+      public com.cpdss.common.generated.VesselInfo.CrewDetailed getCrewDetails() {
+        if (crewDetailsBuilder_ == null) {
+          return crewDetails_ == null
+              ? com.cpdss.common.generated.VesselInfo.CrewDetailed.getDefaultInstance()
+              : crewDetails_;
+        } else {
+          return crewDetailsBuilder_.getMessage();
+        }
+      }
+      /** <code>.CrewDetailed crewDetails = 2;</code> */
+      public Builder setCrewDetails(com.cpdss.common.generated.VesselInfo.CrewDetailed value) {
+        if (crewDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          crewDetails_ = value;
+          onChanged();
+        } else {
+          crewDetailsBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.CrewDetailed crewDetails = 2;</code> */
+      public Builder setCrewDetails(
+          com.cpdss.common.generated.VesselInfo.CrewDetailed.Builder builderForValue) {
+        if (crewDetailsBuilder_ == null) {
+          crewDetails_ = builderForValue.build();
+          onChanged();
+        } else {
+          crewDetailsBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.CrewDetailed crewDetails = 2;</code> */
+      public Builder mergeCrewDetails(com.cpdss.common.generated.VesselInfo.CrewDetailed value) {
+        if (crewDetailsBuilder_ == null) {
+          if (crewDetails_ != null) {
+            crewDetails_ =
+                com.cpdss.common.generated.VesselInfo.CrewDetailed.newBuilder(crewDetails_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            crewDetails_ = value;
+          }
+          onChanged();
+        } else {
+          crewDetailsBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.CrewDetailed crewDetails = 2;</code> */
+      public Builder clearCrewDetails() {
+        if (crewDetailsBuilder_ == null) {
+          crewDetails_ = null;
+          onChanged();
+        } else {
+          crewDetails_ = null;
+          crewDetailsBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.CrewDetailed crewDetails = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.CrewDetailed.Builder getCrewDetailsBuilder() {
+
+        onChanged();
+        return getCrewDetailsFieldBuilder().getBuilder();
+      }
+      /** <code>.CrewDetailed crewDetails = 2;</code> */
+      public com.cpdss.common.generated.VesselInfo.CrewDetailedOrBuilder getCrewDetailsOrBuilder() {
+        if (crewDetailsBuilder_ != null) {
+          return crewDetailsBuilder_.getMessageOrBuilder();
+        } else {
+          return crewDetails_ == null
+              ? com.cpdss.common.generated.VesselInfo.CrewDetailed.getDefaultInstance()
+              : crewDetails_;
+        }
+      }
+      /** <code>.CrewDetailed crewDetails = 2;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.CrewDetailed,
+              com.cpdss.common.generated.VesselInfo.CrewDetailed.Builder,
+              com.cpdss.common.generated.VesselInfo.CrewDetailedOrBuilder>
+          getCrewDetailsFieldBuilder() {
+        if (crewDetailsBuilder_ == null) {
+          crewDetailsBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.CrewDetailed,
+                  com.cpdss.common.generated.VesselInfo.CrewDetailed.Builder,
+                  com.cpdss.common.generated.VesselInfo.CrewDetailedOrBuilder>(
+                  getCrewDetails(), getParentForChildren(), isClean());
+          crewDetails_ = null;
+        }
+        return crewDetailsBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:CrewDetailsReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:CrewDetailsReply)
+    private static final com.cpdss.common.generated.VesselInfo.CrewDetailsReply DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.CrewDetailsReply();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewDetailsReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CrewDetailsReply> PARSER =
+        new com.google.protobuf.AbstractParser<CrewDetailsReply>() {
+          @java.lang.Override
+          public CrewDetailsReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CrewDetailsReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<CrewDetailsReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CrewDetailsReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.CrewDetailsReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface CrewVesselMappingRequestOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:CrewVesselMappingRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    java.util.List<com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>
+        getCrewVesselMappingsList();
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail getCrewVesselMappings(int index);
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    int getCrewVesselMappingsCount();
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    java.util.List<? extends com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder>
+        getCrewVesselMappingsOrBuilderList();
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder
+        getCrewVesselMappingsOrBuilder(int index);
+  }
+  /** Protobuf type {@code CrewVesselMappingRequest} */
+  public static final class CrewVesselMappingRequest extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:CrewVesselMappingRequest)
+      CrewVesselMappingRequestOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use CrewVesselMappingRequest.newBuilder() to construct.
+    private CrewVesselMappingRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private CrewVesselMappingRequest() {
+      crewVesselMappings_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new CrewVesselMappingRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private CrewVesselMappingRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  crewVesselMappings_ =
+                      new java.util.ArrayList<
+                          com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                crewVesselMappings_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.parser(),
+                        extensionRegistry));
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          crewVesselMappings_ = java.util.Collections.unmodifiableList(crewVesselMappings_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_CrewVesselMappingRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.VesselInfo
+          .internal_static_CrewVesselMappingRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.class,
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.Builder.class);
+    }
+
+    public static final int CREWVESSELMAPPINGS_FIELD_NUMBER = 1;
+    private java.util.List<com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>
+        crewVesselMappings_;
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    public java.util.List<com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>
+        getCrewVesselMappingsList() {
+      return crewVesselMappings_;
+    }
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder>
+        getCrewVesselMappingsOrBuilderList() {
+      return crewVesselMappings_;
+    }
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    public int getCrewVesselMappingsCount() {
+      return crewVesselMappings_.size();
+    }
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    public com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail getCrewVesselMappings(
+        int index) {
+      return crewVesselMappings_.get(index);
+    }
+    /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+    public com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder
+        getCrewVesselMappingsOrBuilder(int index) {
+      return crewVesselMappings_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      for (int i = 0; i < crewVesselMappings_.size(); i++) {
+        output.writeMessage(1, crewVesselMappings_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < crewVesselMappings_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(1, crewVesselMappings_.get(i));
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest other =
+          (com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest) obj;
+
+      if (!getCrewVesselMappingsList().equals(other.getCrewVesselMappingsList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getCrewVesselMappingsCount() > 0) {
+        hash = (37 * hash) + CREWVESSELMAPPINGS_FIELD_NUMBER;
+        hash = (53 * hash) + getCrewVesselMappingsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        byte[] data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code CrewVesselMappingRequest} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:CrewVesselMappingRequest)
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_CrewVesselMappingRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_CrewVesselMappingRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.class,
+                com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getCrewVesselMappingsFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (crewVesselMappingsBuilder_ == null) {
+          crewVesselMappings_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          crewVesselMappingsBuilder_.clear();
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.VesselInfo
+            .internal_static_CrewVesselMappingRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest
+          getDefaultInstanceForType() {
+        return com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest build() {
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest buildPartial() {
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest result =
+            new com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest(this);
+        int from_bitField0_ = bitField0_;
+        if (crewVesselMappingsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            crewVesselMappings_ = java.util.Collections.unmodifiableList(crewVesselMappings_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.crewVesselMappings_ = crewVesselMappings_;
+        } else {
+          result.crewVesselMappings_ = crewVesselMappingsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest) {
+          return mergeFrom((com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(
+          com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest other) {
+        if (other
+            == com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.getDefaultInstance())
+          return this;
+        if (crewVesselMappingsBuilder_ == null) {
+          if (!other.crewVesselMappings_.isEmpty()) {
+            if (crewVesselMappings_.isEmpty()) {
+              crewVesselMappings_ = other.crewVesselMappings_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureCrewVesselMappingsIsMutable();
+              crewVesselMappings_.addAll(other.crewVesselMappings_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.crewVesselMappings_.isEmpty()) {
+            if (crewVesselMappingsBuilder_.isEmpty()) {
+              crewVesselMappingsBuilder_.dispose();
+              crewVesselMappingsBuilder_ = null;
+              crewVesselMappings_ = other.crewVesselMappings_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              crewVesselMappingsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getCrewVesselMappingsFieldBuilder()
+                      : null;
+            } else {
+              crewVesselMappingsBuilder_.addAllMessages(other.crewVesselMappings_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest)
+                  e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private java.util.List<com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>
+          crewVesselMappings_ = java.util.Collections.emptyList();
+
+      private void ensureCrewVesselMappingsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          crewVesselMappings_ =
+              new java.util.ArrayList<
+                  com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>(
+                  crewVesselMappings_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail,
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder,
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder>
+          crewVesselMappingsBuilder_;
+
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>
+          getCrewVesselMappingsList() {
+        if (crewVesselMappingsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(crewVesselMappings_);
+        } else {
+          return crewVesselMappingsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public int getCrewVesselMappingsCount() {
+        if (crewVesselMappingsBuilder_ == null) {
+          return crewVesselMappings_.size();
+        } else {
+          return crewVesselMappingsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail getCrewVesselMappings(
+          int index) {
+        if (crewVesselMappingsBuilder_ == null) {
+          return crewVesselMappings_.get(index);
+        } else {
+          return crewVesselMappingsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder setCrewVesselMappings(
+          int index, com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail value) {
+        if (crewVesselMappingsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCrewVesselMappingsIsMutable();
+          crewVesselMappings_.set(index, value);
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder setCrewVesselMappings(
+          int index,
+          com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder builderForValue) {
+        if (crewVesselMappingsBuilder_ == null) {
+          ensureCrewVesselMappingsIsMutable();
+          crewVesselMappings_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder addCrewVesselMappings(
+          com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail value) {
+        if (crewVesselMappingsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCrewVesselMappingsIsMutable();
+          crewVesselMappings_.add(value);
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder addCrewVesselMappings(
+          int index, com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail value) {
+        if (crewVesselMappingsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureCrewVesselMappingsIsMutable();
+          crewVesselMappings_.add(index, value);
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder addCrewVesselMappings(
+          com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder builderForValue) {
+        if (crewVesselMappingsBuilder_ == null) {
+          ensureCrewVesselMappingsIsMutable();
+          crewVesselMappings_.add(builderForValue.build());
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder addCrewVesselMappings(
+          int index,
+          com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder builderForValue) {
+        if (crewVesselMappingsBuilder_ == null) {
+          ensureCrewVesselMappingsIsMutable();
+          crewVesselMappings_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder addAllCrewVesselMappings(
+          java.lang.Iterable<
+                  ? extends com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail>
+              values) {
+        if (crewVesselMappingsBuilder_ == null) {
+          ensureCrewVesselMappingsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, crewVesselMappings_);
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder clearCrewVesselMappings() {
+        if (crewVesselMappingsBuilder_ == null) {
+          crewVesselMappings_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public Builder removeCrewVesselMappings(int index) {
+        if (crewVesselMappingsBuilder_ == null) {
+          ensureCrewVesselMappingsIsMutable();
+          crewVesselMappings_.remove(index);
+          onChanged();
+        } else {
+          crewVesselMappingsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder
+          getCrewVesselMappingsBuilder(int index) {
+        return getCrewVesselMappingsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder
+          getCrewVesselMappingsOrBuilder(int index) {
+        if (crewVesselMappingsBuilder_ == null) {
+          return crewVesselMappings_.get(index);
+        } else {
+          return crewVesselMappingsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public java.util.List<
+              ? extends com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder>
+          getCrewVesselMappingsOrBuilderList() {
+        if (crewVesselMappingsBuilder_ != null) {
+          return crewVesselMappingsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(crewVesselMappings_);
+        }
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder
+          addCrewVesselMappingsBuilder() {
+        return getCrewVesselMappingsFieldBuilder()
+            .addBuilder(
+                com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.getDefaultInstance());
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder
+          addCrewVesselMappingsBuilder(int index) {
+        return getCrewVesselMappingsFieldBuilder()
+            .addBuilder(
+                index,
+                com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.getDefaultInstance());
+      }
+      /** <code>repeated .CrewVesselMappingDetail crewVesselMappings = 1;</code> */
+      public java.util.List<com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder>
+          getCrewVesselMappingsBuilderList() {
+        return getCrewVesselMappingsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail,
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder,
+              com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder>
+          getCrewVesselMappingsFieldBuilder() {
+        if (crewVesselMappingsBuilder_ == null) {
+          crewVesselMappingsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail,
+                  com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetail.Builder,
+                  com.cpdss.common.generated.VesselInfo.CrewVesselMappingDetailOrBuilder>(
+                  crewVesselMappings_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          crewVesselMappings_ = null;
+        }
+        return crewVesselMappingsBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:CrewVesselMappingRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:CrewVesselMappingRequest)
+    private static final com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest
+        DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest();
+    }
+
+    public static com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest
+        getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CrewVesselMappingRequest> PARSER =
+        new com.google.protobuf.AbstractParser<CrewVesselMappingRequest>() {
+          @java.lang.Override
+          public CrewVesselMappingRequest parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CrewVesselMappingRequest(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<CrewVesselMappingRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CrewVesselMappingRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest
+        getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_VesselParticulars_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -113467,6 +115093,14 @@ public final class VesselInfo {
       internal_static_CrewDetailedReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_CrewDetailedReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_CrewDetailsReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CrewDetailsReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_CrewVesselMappingRequest_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CrewVesselMappingRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -113842,55 +115476,63 @@ public final class VesselInfo {
           + "\004 \001(\003\"w\n\021CrewDetailedReply\022\'\n\016responseSt"
           + "atus\030\001 \001(\0132\017.ResponseStatus\022\"\n\013crewDetai"
           + "ls\030\002 \003(\0132\r.CrewDetailed\022\025\n\rtotalElements"
-          + "\030\003 \001(\003*\277\001\n\017VesselPumpTypes\022\016\n\nEMPTY_PUMP"
-          + "\020\000\022\016\n\nCARGO_PUMP\020\001\022\020\n\014BALLAST_PUMP\020\002\022\013\n\007"
-          + "GS_PUMP\020\003\022\013\n\007IG_PUMP\020\004\022\022\n\016STRIPPING_PUMP"
-          + "\020\005\022\021\n\rSTRIP_EDUCTOR\020\006\022\014\n\010COW_PUMP\020\007\022\023\n\017B"
-          + "ALLAST_EDUCTOR\020\010\022\026\n\022TANK_CLEANING_PUMP\020\t"
-          + "*\\\n\025TankTypeForOperations\022\023\n\017EMPTY_TANK_"
-          + "TYPE\020\000\022\010\n\004PORT\020\001\022\n\n\006CENTER\020\002\022\010\n\004STBD\020\003\022\006"
-          + "\n\002WP\020\004\022\006\n\002WS\020\0052\321\014\n\021VesselInfoService\0228\n\026"
-          + "GetAllVesselsByCompany\022\016.VesselRequest\032\014"
-          + ".VesselReply\"\000\0226\n\024GetVesselDetailsById\022\016"
-          + ".VesselRequest\032\014.VesselReply\"\000\0220\n\016GetVes"
-          + "selTanks\022\016.VesselRequest\032\014.VesselReply\"\000"
-          + "\0225\n\023GetVesselCargoTanks\022\016.VesselRequest\032"
-          + "\014.VesselReply\"\000\022A\n\027GetVesselDetailsForAl"
-          + "go\022\022.VesselAlgoRequest\032\020.VesselAlgoReply"
-          + "\"\000\022C\n!GetVesselDetailForSynopticalTable\022"
-          + "\016.VesselRequest\032\014.VesselReply\"\000\022;\n\031GetVe"
-          + "sselDetailByVesselId\022\016.VesselRequest\032\014.V"
-          + "esselReply\"\000\022A\n\025GetVesselInfoByPaging\022\030."
-          + "VesselRequestWithPaging\032\014.VesselReply\"\000\022"
-          + "C\n\026GetVesselInfoBytankIds\022\022.VesselTankRe"
-          + "quest\032\023.VesselTankResponse\"\000\022C\n\032GetDWTFr"
-          + "omVesselByVesselId\022\021.VesselDWTRequest\032\022."
-          + "VesselDWTResponse\022@\n\027GetVesselInfoByVess"
-          + "elId\022\020.VesselIdRequest\032\021.VesselIdRespons"
-          + "e\"\000\022D\n\030GetVesselPumpsByVesselId\022\020.Vessel"
-          + "IdRequest\032\024.VesselPumpsResponse\"\000\022H\n\036Get"
-          + "RulesByVesselIdAndSectionId\022\022.VesselRule"
-          + "Request\032\020.VesselRuleReply\"\000\022E\n\026GetVessel"
-          + "ValveSequence\022\016.VesselRequest\032\031.VesselVa"
-          + "lveSequenceReply\"\000\022I\n\023GetLoadingInfoRule"
-          + "s\022\030.LoadingInfoRulesRequest\032\026.LoadingInf"
-          + "oRulesReply\"\000\022H\n\025GetVesselsInformation\022\023"
-          + ".VesselsInfoRequest\032\030.VesselsInformation",
-      "Reply\"\000\022F\n\024GetVesselParticulars\022\030.Loadin"
-          + "gInfoRulesRequest\032\022.VesselParticulars\"\000\022"
-          + "J\n\033GetVesselDetaildInformation\022\020.VesselI"
-          + "dRequest\032\027.VesselDetaildInfoReply\"\000\022A\n\027G"
-          + "etVesselTanksByTankIds\022\022.VesselTankReque"
-          + "st\032\020.VesselTankReply\"\000\022K\n\rGetVesselData\022"
-          + "\034.CommunicationDataGetRequest\032\032.Communic"
-          + "ationDataResponse\"\000\022F\n\020UpdateVesselData\022"
-          + "\037.CommunicationDataUpdateRequest\032\017.Respo"
-          + "nseStatus\"\000\0226\n\016GetAllCrewRank\022\026.google.p"
-          + "rotobuf.Empty\032\n.CrewReply\"\000\022?\n\027GetAllCre"
-          + "wVesselMapping\022\022.CrewVesselRequest\032\020.Cre"
-          + "wVesselReply\022<\n\021GetAllCrewDetails\022\023.Vess"
-          + "elsInfoRequest\032\022.CrewDetailedReplyB\036\n\032co"
-          + "m.cpdss.common.generatedP\000b\006proto3"
+          + "\030\003 \001(\003\"_\n\020CrewDetailsReply\022\'\n\016responseSt"
+          + "atus\030\001 \001(\0132\017.ResponseStatus\022\"\n\013crewDetai"
+          + "ls\030\002 \001(\0132\r.CrewDetailed\"P\n\030CrewVesselMap"
+          + "pingRequest\0224\n\022crewVesselMappings\030\001 \003(\0132"
+          + "\030.CrewVesselMappingDetail*\277\001\n\017VesselPump"
+          + "Types\022\016\n\nEMPTY_PUMP\020\000\022\016\n\nCARGO_PUMP\020\001\022\020\n"
+          + "\014BALLAST_PUMP\020\002\022\013\n\007GS_PUMP\020\003\022\013\n\007IG_PUMP\020"
+          + "\004\022\022\n\016STRIPPING_PUMP\020\005\022\021\n\rSTRIP_EDUCTOR\020\006"
+          + "\022\014\n\010COW_PUMP\020\007\022\023\n\017BALLAST_EDUCTOR\020\010\022\026\n\022T"
+          + "ANK_CLEANING_PUMP\020\t*\\\n\025TankTypeForOperat"
+          + "ions\022\023\n\017EMPTY_TANK_TYPE\020\000\022\010\n\004PORT\020\001\022\n\n\006C"
+          + "ENTER\020\002\022\010\n\004STBD\020\003\022\006\n\002WP\020\004\022\006\n\002WS\020\0052\315\r\n\021Ve"
+          + "sselInfoService\0228\n\026GetAllVesselsByCompan"
+          + "y\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024Get"
+          + "VesselDetailsById\022\016.VesselRequest\032\014.Vess"
+          + "elReply\"\000\0220\n\016GetVesselTanks\022\016.VesselRequ"
+          + "est\032\014.VesselReply\"\000\0225\n\023GetVesselCargoTan"
+          + "ks\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\027Ge"
+          + "tVesselDetailsForAlgo\022\022.VesselAlgoReques"
+          + "t\032\020.VesselAlgoReply\"\000\022C\n!GetVesselDetail"
+          + "ForSynopticalTable\022\016.VesselRequest\032\014.Ves"
+          + "selReply\"\000\022;\n\031GetVesselDetailByVesselId\022"
+          + "\016.VesselRequest\032\014.VesselReply\"\000\022A\n\025GetVe"
+          + "sselInfoByPaging\022\030.VesselRequestWithPagi"
+          + "ng\032\014.VesselReply\"\000\022C\n\026GetVesselInfoBytan"
+          + "kIds\022\022.VesselTankRequest\032\023.VesselTankRes"
+          + "ponse\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021."
+          + "VesselDWTRequest\032\022.VesselDWTResponse\022@\n\027"
+          + "GetVesselInfoByVesselId\022\020.VesselIdReques"
+          + "t\032\021.VesselIdResponse\"\000\022D\n\030GetVesselPumps"
+          + "ByVesselId\022\020.VesselIdRequest\032\024.VesselPum"
+          + "psResponse\"\000\022H\n\036GetRulesByVesselIdAndSec"
+          + "tionId\022\022.VesselRuleRequest\032\020.VesselRuleR"
+          + "eply\"\000\022E\n\026GetVesselValveSequence\022\016.Vesse",
+      "lRequest\032\031.VesselValveSequenceReply\"\000\022I\n"
+          + "\023GetLoadingInfoRules\022\030.LoadingInfoRulesR"
+          + "equest\032\026.LoadingInfoRulesReply\"\000\022H\n\025GetV"
+          + "esselsInformation\022\023.VesselsInfoRequest\032\030"
+          + ".VesselsInformationReply\"\000\022F\n\024GetVesselP"
+          + "articulars\022\030.LoadingInfoRulesRequest\032\022.V"
+          + "esselParticulars\"\000\022J\n\033GetVesselDetaildIn"
+          + "formation\022\020.VesselIdRequest\032\027.VesselDeta"
+          + "ildInfoReply\"\000\022A\n\027GetVesselTanksByTankId"
+          + "s\022\022.VesselTankRequest\032\020.VesselTankReply\""
+          + "\000\022K\n\rGetVesselData\022\034.CommunicationDataGe"
+          + "tRequest\032\032.CommunicationDataResponse\"\000\022F"
+          + "\n\020UpdateVesselData\022\037.CommunicationDataUp"
+          + "dateRequest\032\017.ResponseStatus\"\000\0226\n\016GetAll"
+          + "CrewRank\022\026.google.protobuf.Empty\032\n.CrewR"
+          + "eply\"\000\022?\n\027GetAllCrewVesselMapping\022\022.Crew"
+          + "VesselRequest\032\020.CrewVesselReply\022<\n\021GetAl"
+          + "lCrewDetails\022\023.VesselsInfoRequest\032\022.Crew"
+          + "DetailedReply\0223\n\017SaveCrewDetails\022\r.CrewD"
+          + "etailed\032\021.CrewDetailsReply\022E\n\026SaveCrewVe"
+          + "sselMappings\022\031.CrewVesselMappingRequest\032"
+          + "\020.CrewVesselReplyB\036\n\032com.cpdss.common.ge"
+          + "neratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -114786,6 +116428,20 @@ public final class VesselInfo {
             internal_static_CrewDetailedReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "CrewDetails", "TotalElements",
+            });
+    internal_static_CrewDetailsReply_descriptor = getDescriptor().getMessageTypes().get(70);
+    internal_static_CrewDetailsReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_CrewDetailsReply_descriptor,
+            new java.lang.String[] {
+              "ResponseStatus", "CrewDetails",
+            });
+    internal_static_CrewVesselMappingRequest_descriptor = getDescriptor().getMessageTypes().get(71);
+    internal_static_CrewVesselMappingRequest_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_CrewVesselMappingRequest_descriptor,
+            new java.lang.String[] {
+              "CrewVesselMappings",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.google.protobuf.EmptyProto.getDescriptor();

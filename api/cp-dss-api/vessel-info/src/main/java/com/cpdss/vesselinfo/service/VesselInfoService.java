@@ -3121,4 +3121,47 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void saveCrewDetails(
+      CrewDetailed request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+          responseObserver) {
+    CrewDetailsReply.Builder crewDetailsReply = CrewDetailsReply.newBuilder();
+    try {
+      crewService.saveCrewDetails(request, crewDetailsReply);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      crewDetailsReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in saveCrewDetails method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      crewDetailsReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(crewDetailsReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveCrewVesselMappings(
+      com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest request,
+      StreamObserver<com.cpdss.common.generated.VesselInfo.CrewVesselReply> responseObserver) {
+    CrewVesselReply.Builder crewVesselReply = CrewVesselReply.newBuilder();
+    try {
+      crewService.saveAllCrewVesselMapping(request);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      crewVesselReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in saveCrewVesselMapping method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      crewVesselReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(crewVesselReply.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

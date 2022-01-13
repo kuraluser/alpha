@@ -66,6 +66,10 @@ service VesselInfoService {
 	rpc GetAllCrewVesselMapping (CrewVesselRequest) returns (CrewVesselReply);
 
 	rpc GetAllCrewDetails (VesselsInfoRequest) returns (CrewDetailedReply);
+
+	rpc SaveCrewDetails (CrewDetailed) returns (CrewDetailsReply);
+
+	rpc SaveCrewVesselMappings (CrewVesselMappingRequest) returns (CrewVesselReply);
 }
 
 
@@ -854,4 +858,13 @@ message CrewDetailedReply {
 	ResponseStatus responseStatus = 1;
 	repeated CrewDetailed crewDetails = 2;
 	int64 totalElements = 3;
+}
+
+message CrewDetailsReply {
+	ResponseStatus responseStatus = 1;
+	CrewDetailed crewDetails = 2;
+}
+
+message CrewVesselMappingRequest {
+	repeated CrewVesselMappingDetail crewVesselMappings =1;
 }

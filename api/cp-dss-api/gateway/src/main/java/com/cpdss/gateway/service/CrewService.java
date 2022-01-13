@@ -14,11 +14,13 @@ import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.crewmaster.CrewDetailed;
 import com.cpdss.gateway.domain.crewmaster.CrewDetailedResponse;
 import com.cpdss.gateway.domain.crewmaster.CrewVesselMapping;
+import com.cpdss.gateway.domain.crewmaster.CrewsDetailedResponse;
 import com.google.protobuf.Empty;
 import io.micrometer.core.instrument.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -69,7 +71,7 @@ public class CrewService {
     return crewRankResponse;
   }
 
-  public CrewDetailedResponse getCrewDetails(
+  public CrewsDetailedResponse getCrewDetails(
       int page,
       int pageSize,
       String sortBy,
@@ -77,7 +79,7 @@ public class CrewService {
       Map<String, String> params,
       String correlationIdHeader)
       throws GenericServiceException {
-    CrewDetailedResponse crewDetailedResponse = new CrewDetailedResponse();
+    CrewsDetailedResponse crewDetailedResponse = new CrewsDetailedResponse();
     VesselInfo.VesselsInfoRequest.Builder crewDetailsBuilder =
         VesselInfo.VesselsInfoRequest.newBuilder();
     String vesselName = "";
@@ -137,6 +139,7 @@ public class CrewService {
     commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
     commonSuccessResponse.setCorrelationId(correlationIdHeader);
     crewDetailedResponse.setResponseStatus(commonSuccessResponse);
+    crewDetailedResponse.setTotalElements(crewReply.getTotalElements());
 
     return crewDetailedResponse;
   }
@@ -160,7 +163,7 @@ public class CrewService {
   }
 
   private void buildCrewDetailResponse(
-      CrewDetailedResponse crewDetailedResponse,
+      CrewsDetailedResponse crewDetailedResponse,
       VesselInfo.CrewDetailedReply crewReply,
       List<VesselInfo.CrewVesselMappingDetail> crewVesselMappingDetails) {
     List<CrewDetailed> crewDetails = new ArrayList<>();
@@ -195,7 +198,6 @@ public class CrewService {
             crewVesselMappingDetail -> {
               CrewVesselMapping crewVesselMapping = new CrewVesselMapping();
               crewVesselMapping.setId(crewVesselMappingDetail.getId());
-              crewVesselMapping.setCrewXId(crewVesselMappingDetail.getCrewId());
               Vessel vessel = new Vessel();
               vessel.setId(crewVesselMappingDetail.getVesselId());
               vessel.setName(crewVesselMappingDetail.getVesselName());
@@ -203,5 +205,64 @@ public class CrewService {
               crewVesselMappings.add(crewVesselMapping);
             });
     return crewVesselMappings;
+  }
+
+  public CrewDetailedResponse saveCrewDetails(
+      String correlationIdHeader, Long crewId, CrewDetailed crewDetailed)
+      throws GenericServiceException {
+    CrewDetailedResponse crewDetailedResponse = new CrewDetailedResponse();
+    VesselInfo.CrewDetailed.Builder crewDetailsRequest = VesselInfo.CrewDetailed.newBuilder();
+    crewDetailsRequest.setId(crewId);
+    crewDetailsRequest.setCrewName(crewDetailed.getCrewName());
+    crewDetailsRequest.setCrewRank(crewDetailed.getCrewRank());
+    crewDetailsRequest.setCrewRankId(crewDetailed.getCrewRankId());
+    VesselInfo.CrewDetailsReply crewDetailsReply =
+        this.vesselInfoServiceBlockingStub.saveCrewDetails(crewDetailsRequest.build());
+    if (crewDetailsReply == null
+        || !(SUCCESS.equalsIgnoreCase(crewDetailsReply.getResponseStatus().getStatus()))) {
+      log.error("Failed to save crew!");
+      throw new GenericServiceException(
+          "Failed to save crew!",
+          crewDetailsReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(crewDetailsReply.getResponseStatus().getHttpStatusCode()));
+    }
+    VesselInfo.CrewVesselMappingRequest.Builder crewVesselMappingRequest =
+        VesselInfo.CrewVesselMappingRequest.newBuilder();
+    buildCrewVesselMapping(crewDetailsReply, crewDetailed, crewVesselMappingRequest);
+    VesselInfo.CrewVesselReply crewVesselReply =
+        this.vesselInfoServiceBlockingStub.saveCrewVesselMappings(crewVesselMappingRequest.build());
+    if (crewVesselReply == null
+        || !(SUCCESS.equalsIgnoreCase(crewVesselReply.getResponseStatus().getStatus()))) {
+      log.error("Failed to save Crew Vessel Mapping!");
+      throw new GenericServiceException(
+          "Failed to save Crew Vessel Mapping!",
+          crewVesselReply.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(crewVesselReply.getResponseStatus().getHttpStatusCode()));
+    }
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    commonSuccessResponse.setCorrelationId(correlationIdHeader);
+    crewDetailedResponse.setResponseStatus(commonSuccessResponse);
+    return crewDetailedResponse;
+  }
+
+  private void buildCrewVesselMapping(
+      VesselInfo.CrewDetailsReply crewDetailsReply,
+      CrewDetailed crewDetailed,
+      VesselInfo.CrewVesselMappingRequest.Builder crewVesselMappingRequest) {
+    Optional.ofNullable(crewDetailed.getVesselInformation())
+        .ifPresent(
+            crewVesselMappings -> {
+              crewVesselMappings.forEach(
+                  crewVesselMapping -> {
+                    if (crewVesselMapping.getVessel() != null) {
+                      VesselInfo.CrewVesselMappingDetail.Builder crewVesselMappingDetail =
+                          VesselInfo.CrewVesselMappingDetail.newBuilder();
+                      crewVesselMappingDetail.setVesselId(crewVesselMapping.getVessel().getId());
+                      crewVesselMappingDetail.setCrewId(crewDetailsReply.getCrewDetails().getId());
+                      crewVesselMappingRequest.addCrewVesselMappings(crewVesselMappingDetail);
+                    }
+                  });
+            });
   }
 }

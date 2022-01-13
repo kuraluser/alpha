@@ -1219,6 +1219,104 @@ public final class VesselInfoServiceGrpc {
     return getGetAllCrewDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.CrewDetailed,
+          com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+      getSaveCrewDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveCrewDetails",
+      requestType = com.cpdss.common.generated.VesselInfo.CrewDetailed.class,
+      responseType = com.cpdss.common.generated.VesselInfo.CrewDetailsReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.CrewDetailed,
+          com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+      getSaveCrewDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.VesselInfo.CrewDetailed,
+            com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+        getSaveCrewDetailsMethod;
+    if ((getSaveCrewDetailsMethod = VesselInfoServiceGrpc.getSaveCrewDetailsMethod) == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getSaveCrewDetailsMethod = VesselInfoServiceGrpc.getSaveCrewDetailsMethod) == null) {
+          VesselInfoServiceGrpc.getSaveCrewDetailsMethod =
+              getSaveCrewDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.VesselInfo.CrewDetailed,
+                          com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SaveCrewDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.CrewDetailed
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.CrewDetailsReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("SaveCrewDetails"))
+                      .build();
+        }
+      }
+    }
+    return getSaveCrewDetailsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest,
+          com.cpdss.common.generated.VesselInfo.CrewVesselReply>
+      getSaveCrewVesselMappingsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SaveCrewVesselMappings",
+      requestType = com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest.class,
+      responseType = com.cpdss.common.generated.VesselInfo.CrewVesselReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest,
+          com.cpdss.common.generated.VesselInfo.CrewVesselReply>
+      getSaveCrewVesselMappingsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest,
+            com.cpdss.common.generated.VesselInfo.CrewVesselReply>
+        getSaveCrewVesselMappingsMethod;
+    if ((getSaveCrewVesselMappingsMethod = VesselInfoServiceGrpc.getSaveCrewVesselMappingsMethod)
+        == null) {
+      synchronized (VesselInfoServiceGrpc.class) {
+        if ((getSaveCrewVesselMappingsMethod =
+                VesselInfoServiceGrpc.getSaveCrewVesselMappingsMethod)
+            == null) {
+          VesselInfoServiceGrpc.getSaveCrewVesselMappingsMethod =
+              getSaveCrewVesselMappingsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest,
+                          com.cpdss.common.generated.VesselInfo.CrewVesselReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "SaveCrewVesselMappings"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.VesselInfo.CrewVesselReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new VesselInfoServiceMethodDescriptorSupplier("SaveCrewVesselMappings"))
+                      .build();
+        }
+      }
+    }
+    return getSaveCrewVesselMappingsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static VesselInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<VesselInfoServiceStub> factory =
@@ -1491,6 +1589,24 @@ public final class VesselInfoServiceGrpc {
           getGetAllCrewDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void saveCrewDetails(
+        com.cpdss.common.generated.VesselInfo.CrewDetailed request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveCrewDetailsMethod(), responseObserver);
+    }
+
+    /** */
+    public void saveCrewVesselMappings(
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewVesselReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSaveCrewVesselMappingsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1661,6 +1777,20 @@ public final class VesselInfoServiceGrpc {
                       com.cpdss.common.generated.VesselInfo.VesselsInfoRequest,
                       com.cpdss.common.generated.VesselInfo.CrewDetailedReply>(
                       this, METHODID_GET_ALL_CREW_DETAILS)))
+          .addMethod(
+              getSaveCrewDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.VesselInfo.CrewDetailed,
+                      com.cpdss.common.generated.VesselInfo.CrewDetailsReply>(
+                      this, METHODID_SAVE_CREW_DETAILS)))
+          .addMethod(
+              getSaveCrewVesselMappingsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest,
+                      com.cpdss.common.generated.VesselInfo.CrewVesselReply>(
+                      this, METHODID_SAVE_CREW_VESSEL_MAPPINGS)))
           .build();
     }
   }
@@ -1953,6 +2083,28 @@ public final class VesselInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void saveCrewDetails(
+        com.cpdss.common.generated.VesselInfo.CrewDetailed request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveCrewDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void saveCrewVesselMappings(
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewVesselReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSaveCrewVesselMappingsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -2147,6 +2299,20 @@ public final class VesselInfoServiceGrpc {
         com.cpdss.common.generated.VesselInfo.VesselsInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllCrewDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.VesselInfo.CrewDetailsReply saveCrewDetails(
+        com.cpdss.common.generated.VesselInfo.CrewDetailed request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveCrewDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.VesselInfo.CrewVesselReply saveCrewVesselMappings(
+        com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSaveCrewVesselMappingsMethod(), getCallOptions(), request);
     }
   }
 
@@ -2372,6 +2538,23 @@ public final class VesselInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAllCrewDetailsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.VesselInfo.CrewDetailsReply>
+        saveCrewDetails(com.cpdss.common.generated.VesselInfo.CrewDetailed request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveCrewDetailsMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.VesselInfo.CrewVesselReply>
+        saveCrewVesselMappings(
+            com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSaveCrewVesselMappingsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_ALL_VESSELS_BY_COMPANY = 0;
@@ -2398,6 +2581,8 @@ public final class VesselInfoServiceGrpc {
   private static final int METHODID_GET_ALL_CREW_RANK = 21;
   private static final int METHODID_GET_ALL_CREW_VESSEL_MAPPING = 22;
   private static final int METHODID_GET_ALL_CREW_DETAILS = 23;
+  private static final int METHODID_SAVE_CREW_DETAILS = 24;
+  private static final int METHODID_SAVE_CREW_VESSEL_MAPPINGS = 25;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2567,6 +2752,18 @@ public final class VesselInfoServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewDetailedReply>)
                   responseObserver);
           break;
+        case METHODID_SAVE_CREW_DETAILS:
+          serviceImpl.saveCrewDetails(
+              (com.cpdss.common.generated.VesselInfo.CrewDetailed) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewDetailsReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_CREW_VESSEL_MAPPINGS:
+          serviceImpl.saveCrewVesselMappings(
+              (com.cpdss.common.generated.VesselInfo.CrewVesselMappingRequest) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewVesselReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2655,6 +2852,8 @@ public final class VesselInfoServiceGrpc {
                       .addMethod(getGetAllCrewRankMethod())
                       .addMethod(getGetAllCrewVesselMappingMethod())
                       .addMethod(getGetAllCrewDetailsMethod())
+                      .addMethod(getSaveCrewDetailsMethod())
+                      .addMethod(getSaveCrewVesselMappingsMethod())
                       .build();
         }
       }

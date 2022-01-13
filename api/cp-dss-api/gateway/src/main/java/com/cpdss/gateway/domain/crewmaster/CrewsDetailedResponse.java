@@ -3,11 +3,16 @@ package com.cpdss.gateway.domain.crewmaster;
 
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.Data;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class CrewDetailedResponse {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CrewsDetailedResponse {
+
   private CommonSuccessResponse responseStatus;
-  private CrewDetailed crewDetailed;
+
+  private List<CrewDetailed> crewDetails;
+
+  private Long totalElements;
 }

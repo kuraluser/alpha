@@ -1,15 +1,18 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.vesselinfo.service;
 
+import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.vesselinfo.domain.CrewDetailsSpecification;
 import com.cpdss.vesselinfo.domain.CrewVesselSpecification;
 import com.cpdss.vesselinfo.domain.FilterCriteria;
 import com.cpdss.vesselinfo.entity.CrewDetails;
+import com.cpdss.vesselinfo.entity.CrewRank;
 import com.cpdss.vesselinfo.entity.CrewVesselMapping;
-import com.cpdss.vesselinfo.repository.CrewDetailsRepository;
-import com.cpdss.vesselinfo.repository.CrewRankRepository;
-import com.cpdss.vesselinfo.repository.CrewVesselMappingRepository;
+import com.cpdss.vesselinfo.entity.Vessel;
+import com.cpdss.vesselinfo.repository.*;
 import io.micrometer.core.instrument.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +35,7 @@ public class CrewService {
   @Autowired CrewRankRepository crewRankRepository;
   @Autowired CrewVesselMappingRepository crewVesselMappingRepository;
   @Autowired CrewDetailsRepository crewDetailsRepository;
+  @Autowired VesselRepository vesselRepository;
 
   /**
    * To get all crew rank
@@ -143,5 +147,65 @@ public class CrewService {
           crewDetailed.setCrewRankId(crew.getCrewRank() == null ? 0 : crew.getCrewRank().getId());
           crewDetailReply.addCrewDetails(crewDetailed);
         });
+    crewDetailReply.setTotalElements(pagedResult.getTotalElements());
+  }
+
+  public void saveCrewDetails(
+      VesselInfo.CrewDetailed request, VesselInfo.CrewDetailsReply.Builder crewDetailsReply)
+      throws GenericServiceException {
+    CrewDetails crewDetails;
+    if (request.getId() == 0) {
+      crewDetails = new CrewDetails();
+    } else {
+      crewDetails = this.crewDetailsRepository.getById(request.getId());
+    }
+    crewDetails.setIsActive(true);
+    if (request.getId() == 0
+        || (crewDetails.getCrewRank() != null
+            && crewDetails.getCrewRank().getId() != request.getCrewRankId())) {
+      CrewRank crewRank = this.crewRankRepository.getById(request.getCrewRankId());
+      if (crewRank == null) {
+        log.info("Unknown Crew Rank ");
+        throw new GenericServiceException(
+            "Error in retrieving CrewRank",
+            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+      crewDetails.setCrewRank(crewRank);
+    }
+    crewDetails.setCrewName(request.getCrewName());
+    CrewDetails crewDetailEntity = this.crewDetailsRepository.save(crewDetails);
+    VesselInfo.CrewDetailed.Builder crewDetailed = VesselInfo.CrewDetailed.newBuilder();
+    crewDetailed.setId(crewDetailEntity.getId());
+    crewDetailed.setCrewName(crewDetailEntity.getCrewName());
+    crewDetailsReply.setCrewDetails(crewDetailed);
+  }
+
+  public void saveAllCrewVesselMapping(VesselInfo.CrewVesselMappingRequest request) {
+    Optional.of(request.getCrewVesselMappingsList())
+        .ifPresent(
+            crewVesselMappingDetails -> {
+              crewVesselMappingDetails.forEach(
+                  crewVesselMappingDetail -> {
+                    Optional<Vessel> vesselWrapper =
+                        this.vesselRepository.findByIdAndIsActiveTrue(
+                            crewVesselMappingDetail.getVesselId());
+                    vesselWrapper.ifPresent(
+                        vessel -> {
+                          Optional<CrewVesselMapping> crewVesselMappingWrapper =
+                              this.crewVesselMappingRepository.findByCargoXIdAndPortIdAndIsActive(
+                                  crewVesselMappingDetail.getCrewId(),
+                                  crewVesselMappingDetail.getVesselId(),
+                                  true);
+                          if (crewVesselMappingWrapper.isEmpty()) {
+                            CrewVesselMapping crewVesselMapping = new CrewVesselMapping();
+                            crewVesselMapping.setCrewXId(crewVesselMappingDetail.getCrewId());
+                            crewVesselMapping.setVessel(vessel);
+                            crewVesselMapping.setIsActive(true);
+                            this.crewVesselMappingRepository.save(crewVesselMapping);
+                          }
+                        });
+                  });
+            });
   }
 }

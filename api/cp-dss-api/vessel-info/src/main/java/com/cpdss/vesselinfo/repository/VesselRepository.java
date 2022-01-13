@@ -8,6 +8,7 @@ import com.cpdss.vesselinfo.domain.VesselRule;
 import com.cpdss.vesselinfo.entity.Vessel;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -93,4 +94,6 @@ public interface VesselRepository
           + " AND ruleMasterSection.isActive = true  ORDER BY ruleListMaster.ruleOrder, ruleVesselInput.id ASC")
   public List<VesselRule> findRulesAgainstVessel(
       @Param("vesselId") Long vesselId, @Param("sectionId") Long sectionId);
+
+  Optional<Vessel> findByIdAndIsActiveTrue(Long id);
 }
