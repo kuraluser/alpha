@@ -2689,7 +2689,9 @@ textarea{
 
 .auto-layout{
   table{
-    table-layout: auto!important;
+    table-layout: auto !important;
+    min-width: 100% !important;
+    width: auto !important;
   }
 }
 .v-bottom{
@@ -3223,6 +3225,16 @@ textarea{
   padding-top: 2px;
 }
 
+.column-cargo-api {
+  width: 105px !important;
+  padding-right: 0!important;
+}
+.column-api-loading-info {
+  width: 115px !important;
+}
+.column-class.column-cargo-loaded-header {
+  width: 80px !important;
+}
 .column-ls-abbr {
   width: 80px!important;
 }
@@ -3237,4 +3249,19 @@ textarea{
 
 .column-stowage-total-header {
   width: 105px!important;
+}
+.x-auto {
+  overflow-x: auto;
+}
+.column-class.column-rate {
+  width: 90px !important;
+}
+.column-class.column-cargo-discharged-header {
+  width: 90px !important;
+}
+.column-class.column-nomination-qty-header {
+  width: 80px !important;
+}
+.column-class.column-loading-port-header {
+  width: 80px !important;
 }

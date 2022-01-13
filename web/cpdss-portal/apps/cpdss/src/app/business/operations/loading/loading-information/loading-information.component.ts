@@ -2,7 +2,7 @@ import { Component, Input, OnInit, EventEmitter, Output , ViewChild , OnDestroy}
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { QUANTITY_UNIT, RATE_UNIT } from '../../../../shared/models/common.model';
-import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset, ULLAGE_STATUS_VALUE } from '../../models/loading-discharging.model';
+import { ICargoVesselTankDetails, ILoadingDischargingStages, ILoadingInformation, ILoadingInformationResponse, ILoadingInformationSaveResponse, IStageDuration, IStageOffset, ULLAGE_STATUS_VALUE, ILoadableQuantityCargoSave } from '../../models/loading-discharging.model';
 import { LoadingDischargingInformationApiService } from '../../services/loading-discharging-information-api.service';
 import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,6 +35,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   @ViewChild('dischargeDetails') dischargeDetails;
   @ViewChild('loadingRate') loadingRate;
   @ViewChild('cargoMachinery')cargoMachineryRef;
+  @ViewChild('cargoToBeloaded') cargoToBeloaded;
 
   @Input() voyageId: number;
   @Input() vesselId: number;
@@ -222,6 +223,48 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   }
 
   /**
+  * Method for event cargo to be loaded data update
+  *
+  * @memberof LoadingInformationComponent
+  */
+  cargoToBeLoadedChange(event){
+    this.loadingInformationPostData.cargoToBeLoaded = <ILoadableQuantityCargoSave>{};
+    this.loadingInformationPostData.cargoToBeLoaded.loadableQuantityCargoDetails = event;
+    this.hasUnSavedData = true;
+    this.checkLoadingRateErrors();
+  }
+
+  /**
+  * Method for loading rate error check
+  *
+  * @memberof LoadingInformationComponent
+  */
+  checkLoadingRateErrors() {
+    this.loadingInformationPostData?.cargoToBeLoaded?.loadableQuantityCargoDetails?.map((item, index) => {
+      if (this.loadingRate.loadingRatesFormGroup.controls?.maxLoadingRate?.value < item.maxLoadingRate) {
+        setTimeout(() => {
+          this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.setErrors({ maxRate: true });
+        });
+      } else if (this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged?.controls?.dataTable?.controls[index].controls?.maxLoadingRateEdit?.errors?.maxRate) {
+        delete this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.errors?.maxRate;
+        if (Object.keys(this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.errors).length === 0) {
+          this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.setErrors(null);
+        }
+      }
+      if (this.loadingRate.loadingRatesFormGroup.controls?.minLoadingRate?.value > item.maxLoadingRate) {
+        setTimeout(() => {
+          this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.setErrors({ minRate: true });
+        });
+      } else if (this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged?.controls?.dataTable?.controls[index].controls?.maxLoadingRateEdit?.errors?.minRate) {
+        delete this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.errors?.minRate;
+        if (Object.keys(this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.errors).length === 0) {
+          this.cargoToBeloaded?.form?.controls?.cargoTobeLoadedDischarged.controls.dataTable.controls[index].controls.maxLoadingRateEdit.setErrors(null);
+        }
+      }
+    });
+  }
+
+  /**
   * Method for event berth data update
   *
   * @memberof LoadingInformationComponent
@@ -354,9 +397,9 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   */
   async saveLoadingInformationData() {
     const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
-
+    this.checkLoadingRateErrors();
     if(this.loadingRate?.loadingRatesFormGroup?.invalid || this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
-      this.dischargeDetails.loadingDischargingDetailsForm.invalid || this.loadingRate.loadingRatesFormGroup.invalid || this.cargoMachineryRef.machineryForm.invalid) {
+      this.dischargeDetails.loadingDischargingDetailsForm.invalid || this.loadingRate.loadingRatesFormGroup.invalid || this.cargoMachineryRef.machineryForm.invalid || this.cargoToBeloaded?.form?.invalid) {
 
 
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
@@ -380,8 +423,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
       }
       if((this.loadingInformationPostData?.loadingBerths && this.loadingInformationPostData?.loadingBerths.length === 0) || (!this.loadingInformationPostData?.loadingBerths && this.loadingInformationData.berthDetails.selectedBerths.length === 0)){
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_NO_BERTHS'] });
-      }
-      else{
+      } else{
         this.ngxSpinnerService.show();
         this.loadingInformationPostData.isLoadingInfoComplete = true
         const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();

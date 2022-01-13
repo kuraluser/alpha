@@ -600,25 +600,45 @@ export class LoadingDischargingTransformationService {
         badgeColorField: 'colorCode'
       },
       {
-        field: 'estimatedAPI',
+        field: 'estimatedAPIEdit',
         header: 'LOADING_CARGO_TO_BE_LOADED_API',
-        numberFormat: '1.2-2',
-        fieldColumnClass: 'text-right',
-        fieldClass: 'text-right no-ediable-field'
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: quantityNumberFormat,
+        fieldHeaderClass: 'column-cargo-loaded-header',
+        fieldClass: 'column-api-loading-info',
+        errorMessages: {
+          'required': 'CARGO_LOADED_REQUIRED',
+          'min': 'CARGO_LOADED_API_MIN_ERROR',
+          'max': 'CARGO_LOADED_API_MAX_ERROR',
+          'invalidNumber': 'CARGO_LOADED_INVALID'
+        }
       },
       {
-        field: 'estimatedTemp',
+        field: 'estimatedTempEdit',
         header: 'LOADING_CARGO_TO_BE_LOADED_TEMP',
-        numberFormat: '1.2-2',
-        fieldColumnClass: 'text-right',
-        fieldClass: 'text-right no-ediable-field'
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: quantityNumberFormat,
+        fieldHeaderClass: 'column-cargo-loaded-header',
+        fieldClass: 'column-api-loading-info',
+        errorMessages: {
+          'required': 'CARGO_LOADED_REQUIRED',
+          'min': 'CARGO_LOADED_TEMPERATURE_MIN_ERROR',
+          'max': 'CARGO_LOADED_TEMPERATURE_MAX_ERROR',
+          'invalidNumber': 'CARGO_LOADED_INVALID'
+        }
       },
       {
-        field: 'maxLoadingRate',
+        field: 'maxLoadingRateEdit',
         header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE',
-        fieldColumnClass: 'text-right',
-        numberFormat: '1.0-0',
-        fieldClass: 'text-right no-ediable-field'
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: quantityNumberFormat,
+        fieldHeaderClass: 'column-rate',
+        fieldClass: 'text-right column-api-loading-info',
+        errorMessages: {
+          'required': 'CARGO_LOADED_REQUIRED',
+          'maxRate': 'CARGO_LOADED_MAX_RATE_ERROR',
+          'minRate': 'CARGO_LOADED_MIN_RATE_ERROR'
+        }
       },
       {
         field: 'convertedOrderedQuantity',
@@ -677,32 +697,61 @@ export class LoadingDischargingTransformationService {
         field: 'cargoAbbreviation',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_GRADE',
         fieldType: DATATABLE_FIELD_TYPE.BADGE,
-        badgeColorField: 'colorCode'
+        badgeColorField: 'colorCode',
+        fieldHeaderClass: 'column-cargo-discharged-header',
       },
       {
-        field: 'estimatedAPI',
+        field: 'estimatedAPIEdit',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_API',
-        numberFormat: '1.2-2'
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: quantityNumberFormat,
+        fieldHeaderClass: 'column-cargo-discharged-header',
+        fieldClass: 'column-api-loading-info',
+        errorMessages: {
+          'required': 'CARGO_LOADED_REQUIRED',
+          'min': 'CARGO_LOADED_API_MIN_ERROR',
+          'max': 'CARGO_LOADED_API_MAX_ERROR',
+          'invalidNumber': 'CARGO_LOADED_INVALID'
+        }
       },
       {
-        field: 'estimatedTemp',
+        field: 'estimatedTempEdit',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_TEMP',
-        numberFormat: '1.2-2'
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: quantityNumberFormat,
+        fieldHeaderClass: 'column-cargo-discharged-header',
+        fieldClass: 'column-api-loading-info',
+        errorMessages: {
+          'required': 'CARGO_LOADED_REQUIRED',
+          'min': 'CARGO_LOADED_TEMPERATURE_MIN_ERROR',
+          'max': 'CARGO_LOADED_TEMPERATURE_MAX_ERROR',
+          'invalidNumber': 'CARGO_LOADED_INVALID'
+        }
       },
       {
         field: 'loadingPortsLabels',
-        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_LOADING_PORT'
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_LOADING_PORT',
+        fieldHeaderClass: 'column-loading-port-header'
       },
       {
-        field: 'maxDischargingRate',
-        numberFormat: '1.0-0',
-        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_MAX_DISCHARGE_RATE'
+        field: 'maxDischargingRateEdit',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        numberFormat: quantityNumberFormat,
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_MAX_DISCHARGE_RATE',
+        fieldHeaderClass: 'column-rate',
+        fieldClass: 'column-api-loading-info',
+        errorMessages: {
+          'required': 'CARGO_LOADED_REQUIRED',
+          'maxRate': 'CARGO_DISCHARGED_MAX_RATE_ERROR',
+          'minRate': 'CARGO_DISCHARGED_MIN_RATE_ERROR'
+        }
       },
       {
         field: 'blFigure',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_BL_FIGURE',
         numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
+        fieldHeaderClass: 'column-nomination-qty-header',
         fieldClass: 'text-right no-ediable-field'
       },
       {
@@ -710,11 +759,13 @@ export class LoadingDischargingTransformationService {
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SHIP_FIGURE',
         numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
-        fieldClass: 'text-right no-ediable-field'
+        fieldClass: 'text-right no-ediable-field',
+        fieldHeaderClass: 'column-nomination-qty-header',
       },
       {
         field: 'timeRequiredForDischarging',
-        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_DISCHARGE_TIME'
+        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_DISCHARGE_TIME',
+        fieldHeaderClass: 'column-nomination-qty-header',
       },
       {
         field: 'protested',
@@ -723,13 +774,16 @@ export class LoadingDischargingTransformationService {
         listName: 'protestedOptions',
         filterField: 'protested.value.name',
         fieldPlaceholder: 'DISCHARGING_SELECT_PROTESTED',
-        fieldOptionLabel: 'name'
+        fieldOptionLabel: 'name',
+        fieldHeaderClass: 'column-nomination-qty-header',
       },
       {
         field: 'slopQuantity',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberFormat: quantityNumberFormat,
+        fieldClass: 'text-right column-api-loading-info',
+        fieldColumnClass: 'column-api-loading-info',
         errorMessages: {
           'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
           'min': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MIN_ERROR',

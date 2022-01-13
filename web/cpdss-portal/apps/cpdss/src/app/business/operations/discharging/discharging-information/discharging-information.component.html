@@ -81,7 +81,7 @@
               </label>
             </div>
           </div>
-          <cpdss-portal-cargo-to-be-loaded-discharged
+          <cpdss-portal-cargo-to-be-loaded-discharged #cargoToBeDischarged
             *ngIf="dischargingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails && cargos && listData && dischargingInformationForm && currentQuantitySelectedUnit"
             [operation]="OPERATIONS.DISCHARGING" [form]="dischargingInformationForm"
             [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"

@@ -231,6 +231,7 @@ export class DatatableComponent implements OnInit {
   @Output() currentPageChange = new EventEmitter<number>();
   @Output() resetChange = new EventEmitter<boolean>();
   @Output() buttonClick = new EventEmitter<IDataTableEvent>();
+  @Output() cellOnBlur = new EventEmitter<IDataTableEvent>();
 
   // public fields
   readonly fieldType = DATATABLE_FIELD_TYPE;
@@ -337,6 +338,19 @@ export class DatatableComponent implements OnInit {
   onChange(event, rowData: any, rowIndex: number, col: IDataTableColumn) {
     rowData[col.field].value = this.field(rowIndex, col.field).value;
     this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
+  }
+
+  /**
+   * Hadler for cell blur 
+   *
+   * @param event
+   * @param {any} rowData
+   * @param {number} rowIndex
+   * @param {IDataTableColumn} col
+   * @memberof DatatableComponent
+   */
+  onBlur(event, rowData: any, rowIndex: number, col: IDataTableColumn) {
+    this.cellOnBlur.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field })
   }
 
   /**

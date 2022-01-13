@@ -2282,6 +2282,16 @@
   "DASHBOARD_INFO_MESSAGE": "The data displayed here will be planned values if actuals are not updated",
   "DOWNLOAD_DAT_FILE": "Download as .zip",
   "LOADABLE_PLAN_OBQ_BBLS": "Obq. bbls",
-  "LOADABLE_PLAN_OBS_BBLS": "Obs. bbls"
+  "LOADABLE_PLAN_OBS_BBLS": "Obs. bbls",
+  "CARGO_LOADED_REQUIRED": "Required",
+  "CARGO_LOADED_TEMPERATURE_MIN_ERROR": "TEMP Est. must be greater than or equal to 40°F",
+  "CARGO_LOADED_TEMPERATURE_MAX_ERROR": "TEMP Est. must be less than or equal to 160°F",
+  "CARGO_LOADED_INVALID": "Invalid",
+  "CARGO_LOADED_API_MIN_ERROR": "API Est. must be greater than or equal to 8",
+  "CARGO_LOADED_API_MAX_ERROR": "API Est. must be less than or equal to 99.99",
+  "CARGO_LOADED_MAX_RATE_ERROR": "Max loading rate should be less than Vessel Max Loading Rate",
+  "CARGO_LOADED_MIN_RATE_ERROR": "Min loading rate should be greater than the Min Loading Rates specified in Loading Rates section",
+  "CARGO_DISCHARGED_MAX_RATE_ERROR": "Max Discharging rate should be less than Max Discharging rate specified in Discharging Rates section",
+  "CARGO_DISCHARGED_MIN_RATE_ERROR": "Min Discharging rate should be greater than the Initial Discharging Rate"
 }
 

@@ -19,6 +19,7 @@ import { LoadingDischargingDetailsComponent } from '../../loading-discharging-de
 import { DischargingRatesComponent } from '../../discharging-rates/discharging-rates.component';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import * as moment from 'moment';
+import { CargoToBeLoadedDischargedComponent } from '../../cargo-to-be-loaded-discharged/cargo-to-be-loaded-discharged.component';
 
 /**
  * Component class for discharge information component
@@ -38,6 +39,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   @ViewChild(LoadingDischargingCargoMachineryComponent) machineryRefComponent: LoadingDischargingCargoMachineryComponent;
   @ViewChild(LoadingDischargingDetailsComponent) dischargeDetailsComponent: LoadingDischargingDetailsComponent;
   @ViewChild(DischargingRatesComponent) dischargeRatesComponent: DischargingRatesComponent;
+  @ViewChild(CargoToBeLoadedDischargedComponent) cargoToBeDischarged: CargoToBeLoadedDischargedComponent;
 
   @Input() voyageId: number;
   @Input() vesselId: number;
@@ -344,7 +346,38 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
    */
   onCargoToBeDischargedChange(event: ILoadedCargo[]) {
     this.dischargingInformationPostData.cargoToBeDischarged = { ...this.dischargingInformationPostData?.cargoToBeDischarged, dischargeQuantityCargoDetails: this.loadingDischargingTransformationService.getCargoToBeDischargedAsValue(event, this.listData, this.currentQuantitySelectedUnit) };
+    this.checkDischargingRateErrors();
     this.hasUnSavedData = true;
+  }
+
+  /**
+  * Method for discharging rate error check
+  *
+  * @memberof DischargingInformationComponent
+  */
+   checkDischargingRateErrors() {
+    this.dischargingInformationPostData?.cargoToBeDischarged?.dischargeQuantityCargoDetails?.map((item, index) => {
+      if (this.dischargeRatesComponent.dischargingRatesFormGroup.controls?.maxDischargingRate?.value < item.maxDischargingRate) {
+        setTimeout(() => {
+          this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.setErrors({ maxRate: true });
+        });
+      } else if (this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable?.controls[index].controls?.maxDischargingRateEdit?.errors?.maxRate) {
+        delete this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.errors?.maxRate;
+        if (Object.keys(this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.errors).length === 0) {
+          this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.setErrors(null);
+        }
+      }
+      if (this.dischargeRatesComponent.dischargingRatesFormGroup.controls?.initialDischargingRate?.value > item.maxDischargingRate) {
+        setTimeout(() => {
+          this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.setErrors({ minRate: true });
+        });
+      } else if (this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable?.controls[index].controls?.maxDischargingRateEdit?.errors?.minRate) {
+        delete this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.errors?.minRate;
+        if (Object.keys(this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.errors).length === 0) {
+          this.cargoToBeDischarged?.form?.controls?.cargoTobeLoadedDischarged['controls'].dataTable.controls[index].controls.maxDischargingRateEdit.setErrors(null);
+        }
+      }
+    });
   }
 
   /**
@@ -482,8 +515,9 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       }
       return false
     }
-
-    if (this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && this.dischargeBerthComponent.berthFormArray?.valid && this.dischargeBerthComponent.berthFormArray?.value?.every(berth => berth.formValid) && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid) {
+    
+    this.checkDischargingRateErrors();
+    if (this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && this.dischargeBerthComponent.berthFormArray?.valid && this.dischargeBerthComponent.berthFormArray?.value?.every(berth => berth.formValid) && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid && this.cargoToBeDischarged?.form.valid) {
       return true
     } else {
       if (showToast) {

@@ -654,11 +654,11 @@ export interface ICargoQuantities {
 export interface ILoadableQuantityCargo {
     id: number,
     grade: string,
-    estimatedAPI: string,
-    estimatedTemp: string,
+    estimatedAPI: string | number,
+    estimatedTemp: string | number,
     orderBblsdbs?: string,
     orderBbls60f?: string,
-    maxLoadingRate?: string,
+    maxLoadingRate?: string | number,
     orderedQuantity?: string,
     minTolerence?: string,
     maxTolerence?: string,
@@ -682,6 +682,10 @@ export interface ILoadableQuantityCargo {
     maxDischargingRate?: string;
     blFigure?: string;
     timeRequiredForDischarging?: string;
+    estimatedAPIEdit?: ValueObject<number|string>;
+    estimatedTempEdit?: ValueObject<number|string>;
+    maxLoadingRateEdit?: ValueObject<number|string>;
+    maxDischargingRateEdit?: ValueObject<number|string>;
     dischargeCargoNominationId?: number;
 }
 

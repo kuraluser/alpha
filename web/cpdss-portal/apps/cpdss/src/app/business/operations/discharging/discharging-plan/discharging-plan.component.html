@@ -25,7 +25,7 @@
         </cpdss-portal-departure-condition>
 
         <div class="row mt-30">
-          <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
+          <div class="col-md-12 pt-5">
             <h5 class="text-uppercase  heading-border">
               {{ 'DISCHARGING_INFORMATION_CARGO_TO_BE_DISCHARGED' | translate }}
             </h5>
@@ -33,7 +33,7 @@
               [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
               [cargoVesselTankDetails]="dischargingInformation?.cargoVesselTankDetails"
               [operation]="OPERATIONS.DISCHARGING" [listData]="listData"
-              [isDischargePlanGenerated]="dischargingInformation?.isDischargePlanGenerated">
+              [isPlanGenerated]="dischargingInformation?.isDischargePlanGenerated">
             </cpdss-portal-cargo-to-be-loaded-discharged>
           </div>
         </div>

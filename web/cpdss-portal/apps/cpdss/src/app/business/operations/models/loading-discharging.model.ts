@@ -516,8 +516,18 @@ export interface ILoadingInformation {
   isLoadingPlanGenerated: boolean;
   isLoadingSequenceGenerated: boolean;
   isLoadingInstructionsComplete: boolean
+  cargoToBeLoaded?: ILoadableQuantityCargoSave;
 
+}
 
+/**
+ * Interface for discharging info
+ *
+ * @export
+ * @interface IDischargingInformation
+ */
+export interface ILoadableQuantityCargoSave {
+  loadableQuantityCargoDetails: ILoadedCargo[];
 }
 
 /**

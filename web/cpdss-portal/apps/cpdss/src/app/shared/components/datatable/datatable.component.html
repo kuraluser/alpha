@@ -191,7 +191,7 @@
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <input type="text" class="form-control" [formControlName]="col.field"
                                             [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
-                                            (change)="onChange($event, rowData, rowIndex, col)"
+                                            (change)="onChange($event, rowData, rowIndex, col)" (blur)="onBlur($event, rowData, rowIndex, col)"
                                             id="{{col.field+'_'+rowIndex}}"
                                             [readonly]="!rowData[col.field]?.isEditable">
                                         <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
@@ -206,7 +206,7 @@
                                 <ng-container *ngSwitchCase="fieldType.NUMBER">
                                     <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
                                         <input type="text" cpdssPortalNumberDecimal class="form-control"
-                                            [formControlName]="col.field"
+                                            [formControlName]="col.field" (blur)="onBlur($event, rowData, rowIndex, col)"
                                             [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
                                             (change)="onChange($event, rowData, rowIndex, col)"
                                             (keydown.enter)="onChange($event, rowData, rowIndex, col)"

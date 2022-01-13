@@ -36,12 +36,12 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
 
   set operation(value: OPERATIONS) {
     this._operation = value;
-    this.editMode = value === OPERATIONS.DISCHARGING ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = DATATABLE_EDITMODE.CELL;
   }
 
   @Input() cargos: ICargo[];
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
-  @Input() isDischargePlanGenerated: boolean;
+  @Input() isPlanGenerated: boolean;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
     return this._currentQuantitySelectedUnit;
   }
@@ -154,13 +154,36 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         const convertedSlopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.convertedSlopQuantity = convertedSlopQuantity?.toString();
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
+        cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, true, true, true);
+        cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, true, true, true);
+        cargo['maxLoadingRateEdit'] = new ValueObject<number | string>(cargo?.maxLoadingRate, true, true, true, true);
+        
+        if (this.isPlanGenerated) {
+          for (const key in cargo) {
+            if (cargo[key]?.hasOwnProperty('_isEditMode') && cargo[key]?.hasOwnProperty('_isEditable')) {
+              cargo[key].isEditMode = false;
+              cargo[key].isEditable = false;
+            }
+          }
+        }
+        cargo.isAdd = true;
       }
       return cargo;
     });
 
+    const cargoToBeLoaded = this.cargoTobeLoadedDischarged?.map(cargo => {
+      return this.fb.group({
+        estimatedAPIEdit: this.fb.control(cargo.estimatedAPIEdit.value, [Validators.required, Validators.min(8), numberValidator(2, 2, false)]),
+        estimatedTempEdit: this.fb.control(cargo.estimatedTempEdit.value, [Validators.required, Validators.min(40), Validators.max(160), numberValidator(2, 3, false)]),
+        maxLoadingRateEdit: this.fb.control(cargo.maxLoadingRateEdit.value, [Validators.required, numberValidator(0, 7, false)]),
+      })
+    });
+    this.cargoTobeLoadedDischargedForm = this.fb.group({
+      dataTable: this.fb.array([...cargoToBeLoaded])
+    });
     this.form = this.fb.group({
       cargoTobeLoadedDischarged: this.fb.group({
-        dataTable: this.fb.array([...this.cargoTobeLoadedDischarged])
+        dataTable: this.fb.array([...cargoToBeLoaded])
       })
     });
   }
@@ -185,7 +208,10 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         const slopQuantity = cargo?.slopQuantityMT ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo.slopQuantityMT), QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo?.estimatedAPI, cargo?.estimatedTemp) : 0;
         slopQuantityObj.value = slopQuantity;
 
-        if (this.isDischargePlanGenerated) {
+        cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, true, true, true);
+        cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, true, true, true);
+        cargo['maxDischargingRateEdit'] = new ValueObject<number | string>(cargo?.maxDischargingRate, true, true, true, true);
+        if (this.isPlanGenerated) {
           for (const key in cargo) {
             if (cargo[key]?.hasOwnProperty('_isEditMode') && cargo[key]?.hasOwnProperty('_isEditable')) {
               cargo[key].isEditMode = false;
@@ -193,6 +219,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
             }
           }
         }
+        cargo.isAdd = true;
       }
       return cargo;
     });
@@ -212,6 +239,9 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         isCommingledDischarge: this.fb.control(cargo?.isCommingledDischarge.value),
         slopQuantityMT: cargo?.slopQuantityMT,
         slopQuantity: this.fb.control({ value: (<ValueObject<number>>cargo?.slopQuantity)?.value, disabled: !cargo?.slopTankFullCapacity }, [Validators.required, Validators.min(min), Validators.max(cargo?.slopTankFullCapacity), numberValidator(quantityDecimal, 7, false)]),
+        estimatedAPIEdit: this.fb.control(cargo.estimatedAPIEdit.value, [Validators.required, Validators.min(8), numberValidator(2, 2, false)]),
+        estimatedTempEdit: this.fb.control(cargo.estimatedTempEdit.value, [Validators.required, Validators.min(40), Validators.max(160), numberValidator(2, 3, false)]),
+        maxDischargingRateEdit: this.fb.control(cargo.maxDischargingRateEdit.value, [Validators.required, numberValidator(0, 7, false)])
       })
 
     });
@@ -271,8 +301,39 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
       if (event?.field === 'slopQuantity') {
         this.cargoTobeLoadedDischarged[event?.index].slopQuantityMT = this.quantityPipe.transform(event?.data[event?.field]?.value, QUANTITY_UNIT.BBLS, QUANTITY_UNIT.MT, event?.data?.estimatedAPI, event?.data?.estimatedTemp, -1).toString();
       }
-      this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischarged);
     }
+    switch (event?.field) {
+      case 'estimatedAPIEdit':
+        this.cargoTobeLoadedDischarged[event?.index].estimatedAPI = event?.data[event?.field]?.value;
+        break;
+      case 'estimatedTempEdit':
+        this.cargoTobeLoadedDischarged[event?.index].estimatedTemp = event?.data[event?.field]?.value;
+        break;
+      case 'maxDischargingRateEdit':
+        this.cargoTobeLoadedDischarged[event?.index].maxDischargingRate = event?.data[event?.field]?.value;
+        break;
+      case 'maxLoadingRateEdit':
+        this.cargoTobeLoadedDischarged[event?.index].maxLoadingRate = event?.data[event?.field]?.value;
+        break;
+      default: {
+        break;
+      }
+    }
+    this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischarged);
+    this.cargoTobeLoadedDischargedForm.markAllAsTouched();
+    this.cargoTobeLoadedDischargedForm.markAsDirty();
+  }
+
+  /**
+   * Handler for cargo setting loading rate validation check
+   *
+   * @param {IDataTableEvent} event
+   * @memberof CargoToBeLoadedDischargedComponent
+   */
+  updateRateValidation() {
+    setTimeout(()=>{
+      this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischarged);
+    });
   }
 
 }
