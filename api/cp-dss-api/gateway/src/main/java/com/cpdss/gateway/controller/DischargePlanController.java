@@ -704,7 +704,7 @@ public class DischargePlanController {
       throws CommonRestException {
     try {
       return dischargeInformationService.getDischargeInformation(
-          vesselId, voyageId, portRotationId, infoId);
+          vesselId, voyageId, portRotationId);
     } catch (GenericServiceException e) {
       log.error("get discharge info", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

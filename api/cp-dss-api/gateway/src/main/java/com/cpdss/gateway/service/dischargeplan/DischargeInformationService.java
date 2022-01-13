@@ -105,13 +105,12 @@ public class DischargeInformationService {
    *
    * @return
    */
-  public DischargeInformation getDischargeInformation(
-      Long vesselId, Long voyageId, Long portRoId, Long dischargeInfoId)
+  public DischargeInformation getDischargeInformation(Long vesselId, Long voyageId, Long portRoId)
       throws GenericServiceException {
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
-        "Get Discharging Info, Active Voyage Number and Id {} ",
+        "Get Discharging Info, Active Voyage Number {} and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
@@ -119,7 +118,7 @@ public class DischargeInformationService {
             .filter(v -> v.getId().equals(portRoId))
             .findFirst();
 
-    if (!portRotation.isPresent() || portRotation.get().getPortId() == null) {
+    if (portRotation.isEmpty() || portRotation.get().getPortId() == null) {
       log.error("Port Rotation Id cannot be empty");
       throw new GenericServiceException(
           "Port Rotation Id Cannot be empty",
@@ -245,7 +244,7 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_DEP, // Discharge Info needed Arrival Conditions
             portRotation.get().getId(),
             portRotation.get().getPortId(),
-            dischargeInfoId));
+            disRpcReplay.getDischargeInfoId()));
 
     // Call No. 3 To Loading Info for quantity in BBLS (by passing LS pattern ID)
     var lsInfoCargo =
@@ -586,8 +585,7 @@ public class DischargeInformationService {
           this.getDischargeInformation(
               dischargingInformationResponse.getVesseld(),
               dischargingInformationResponse.getVoyageId(),
-              response.getPortRotationId(),
-              request.getDischargeInfoId()));
+              response.getPortRotationId()));
       return dischargingInformationResponse;
     } catch (Exception e) {
       log.error("Failed to save DischargingInformation {}", request.getDischargeInfoId());

@@ -13,4 +13,8 @@ public class LoadingStagesRequest {
   private StageOffset stageOffset;
 
   private StageDuration stageDuration;
+
+  private Boolean isStageOffsetUsed;
+
+  private Boolean isStageDurationUsed;
 }

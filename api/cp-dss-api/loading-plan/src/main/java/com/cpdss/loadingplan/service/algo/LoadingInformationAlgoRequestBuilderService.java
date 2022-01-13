@@ -365,6 +365,8 @@ public class LoadingInformationAlgoRequestBuilderService {
     loadingStages.setStageOffset(loadingStage.getStageOffset());
     loadingStages.setTrackGradeSwitch(loadingStage.getTrackGradeSwitch());
     loadingStages.setTrackStartEndStage(loadingStage.getTrackStartEndStage());
+    loadingStages.setIsStageDurationUsed(loadingStage.getIsStageDurationUsed());
+    loadingStages.setIsStageOffsetUsed(loadingStage.getIsStageOffsetUsed());
     loadingInfo.setLoadingStages(loadingStages);
   }
 

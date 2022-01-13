@@ -222,8 +222,7 @@ public class DischargePlanControllerTest {
       strings = {CLOUD_API_URL_PREFIX + DIS_INFO_GET_URL, SHIP_API_URL_PREFIX + DIS_INFO_GET_URL})
   @ParameterizedTest
   public void getDischargeInformationByPortRIdTestCase1(String url) throws Exception {
-    when(this.dischargeInformationService.getDischargeInformation(
-            anyLong(), anyLong(), anyLong(), anyLong()))
+    when(this.dischargeInformationService.getDischargeInformation(anyLong(), anyLong(), anyLong()))
         .thenReturn(new DischargeInformation());
     when(dischargePlanController.getDischargeInformationByPortRId(
             any(), anyLong(), anyLong(), anyLong(), any()))
@@ -1615,8 +1614,7 @@ public class DischargePlanControllerTest {
       strings = {CLOUD_API_URL_PREFIX + DIS_INFO_GET_URL, SHIP_API_URL_PREFIX + DIS_INFO_GET_URL})
   @ParameterizedTest
   public void testGetDischargeInformationByPortRIdServiceException(String url) throws Exception {
-    when(this.dischargeInformationService.getDischargeInformation(
-            anyLong(), anyLong(), anyLong(), anyLong()))
+    when(this.dischargeInformationService.getDischargeInformation(anyLong(), anyLong(), anyLong()))
         .thenThrow(this.getGenericException());
     when(dischargePlanController.getDischargeInformationByPortRId(
             any(), anyLong(), anyLong(), anyLong(), any()))
@@ -1639,8 +1637,7 @@ public class DischargePlanControllerTest {
       strings = {CLOUD_API_URL_PREFIX + DIS_INFO_GET_URL, SHIP_API_URL_PREFIX + DIS_INFO_GET_URL})
   @ParameterizedTest
   public void testGetDischargeInformationByPortRIdRuntimeException(String url) throws Exception {
-    when(this.dischargeInformationService.getDischargeInformation(
-            anyLong(), anyLong(), anyLong(), anyLong()))
+    when(this.dischargeInformationService.getDischargeInformation(anyLong(), anyLong(), anyLong()))
         .thenThrow(RuntimeException.class);
     when(dischargePlanController.getDischargeInformationByPortRId(
             any(), anyLong(), anyLong(), anyLong(), any()))

@@ -557,12 +557,22 @@ public class DischargeInformationBuilderService {
     }
   }
 
+  /**
+   * Method to build Discharge stage
+   *
+   * @param disEntity DischargeInformation object
+   * @param builder DischargeInformation.Builder object
+   */
   public void buildDischargeStageMessageFromEntity(
       DischargeInformation disEntity,
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
+
+    log.info("Inside buildDischargeStageMessageFromEntity method!");
     try {
       LoadingPlanModels.LoadingStages.Builder builder1 =
           LoadingPlanModels.LoadingStages.newBuilder();
+
+      // Set fields
       Optional.ofNullable(disEntity.getId()).ifPresent(builder1::setId);
       Optional.ofNullable(disEntity.getDischargingStagesMinAmount())
           .ifPresent(v -> builder1.setStageOffset(v.getId().intValue()));
@@ -572,6 +582,12 @@ public class DischargeInformationBuilderService {
           .ifPresent(builder1::setTrackStartEndStage);
       Optional.ofNullable(disEntity.getIsTrackGradeSwitching())
           .ifPresent(builder1::setTrackGradeSwitch);
+
+      // Set flags for check boxes
+      Optional.ofNullable(disEntity.getIsStageDurationUsed())
+          .ifPresent(builder1::setIsStageDurationUsed);
+      Optional.ofNullable(disEntity.getIsStageOffsetUsed())
+          .ifPresent(builder1::setIsStageOffsetUsed);
 
       // Master data Offset
       List<DischargingStagesDuration> var1 =

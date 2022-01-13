@@ -514,27 +514,45 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return machineryInUse;
   }
 
+  /**
+   * Method to build Loading stages
+   *
+   * @param var1 LoadingPlanModels.LoadingStages object
+   * @return loadingStages
+   */
   @Override
   public LoadingStages getLoadingStagesAndMasters(LoadingPlanModels.LoadingStages var1) {
+
+    log.info("Inside getLoadingStagesAndMasters method!");
     LoadingStages loadingStages = new LoadingStages();
+
     try {
+
+      // Set fields
       List<StageOffset> list1 = new ArrayList<>();
       List<StageDuration> list2 = new ArrayList<>();
       for (LoadingPlanModels.StageOffsets val1 : var1.getStageOffsetsList()) {
         StageOffset stageOffset = new StageOffset();
-        Optional.ofNullable(val1.getId()).ifPresent(stageOffset::setId);
-        Optional.ofNullable(val1.getStageOffsetVal()).ifPresent(stageOffset::setStageOffsetVal);
+        Optional.of(val1.getId()).ifPresent(stageOffset::setId);
+        Optional.of(val1.getStageOffsetVal()).ifPresent(stageOffset::setStageOffsetVal);
         list1.add(stageOffset);
       }
+
       for (LoadingPlanModels.StageDuration val1 : var1.getStageDurationsList()) {
         StageDuration duration = new StageDuration();
-        Optional.ofNullable(val1.getId()).ifPresent(duration::setId);
-        Optional.ofNullable(val1.getDuration()).ifPresent(duration::setDuration);
+        Optional.of(val1.getId()).ifPresent(duration::setId);
+        Optional.of(val1.getDuration()).ifPresent(duration::setDuration);
         list2.add(duration);
       }
+
       loadingStages.setId(var1.getId());
       loadingStages.setTrackStartEndStage(var1.getTrackStartEndStage());
       loadingStages.setTrackGradeSwitch(var1.getTrackGradeSwitch());
+
+      // Set flags for check boxes
+      loadingStages.setIsStageDurationUsed(var1.getIsStageDurationUsed());
+      loadingStages.setIsStageOffsetUsed(var1.getIsStageOffsetUsed());
+
       if (var1.getStageOffset() != 0) {
         loadingStages.setStageOffset(var1.getStageOffset());
       }

@@ -210,25 +210,25 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
    * @param vesselId
    * @param planId
    * @param portRId
-   * @param loadingInfoId
+   * @param voyageId
    * @return
    */
   @Override
   public LoadingInformation getLoadingInformationByPortRotation(
-      Long vesselId, Long planId, Long portRId, Long loadingInfoId) throws GenericServiceException {
+      Long vesselId, Long planId, Long portRId, Long voyageId) throws GenericServiceException {
     LoadingInformation var1 = new LoadingInformation();
 
     final String OPERATION_TYPE = "DEP";
 
     VoyageResponse activeVoyage = this.loadingPlanGrpcService.getActiveVoyageDetails(vesselId);
     log.info(
-        "Get Loading Info, Active Voyage Number and Id {} ",
+        "Get Loading Info, Active Voyage Number {} and Id {} ",
         activeVoyage.getVoyageNumber(),
         activeVoyage.getId());
     Optional<PortRotation> portRotation =
         activeVoyage.getPortRotations().stream().filter(v -> v.getId().equals(portRId)).findFirst();
 
-    if (!portRotation.isPresent() || portRotation.get().getPortId() == null) {
+    if (portRotation.isEmpty() || portRotation.get().getPortId() == null) {
       log.error("Port Rotation Id cannot be empty");
       throw new GenericServiceException(
           "Port Rotation Id Cannot be empty",
@@ -375,7 +375,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.saveLoadingInformation(request, correlationId);
     response.setLoadingInformation(
         this.getLoadingInformationByPortRotation(
-            response.getVesseld(), 0L, response.getPortRotationId(), request.getLoadingInfoId()));
+            response.getVesseld(), 0L, response.getPortRotationId(), response.getVoyageId()));
     return response;
   }
 

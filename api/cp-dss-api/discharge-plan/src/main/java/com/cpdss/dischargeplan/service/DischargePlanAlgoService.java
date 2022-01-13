@@ -251,6 +251,8 @@ public class DischargePlanAlgoService {
         dischargeStages.setStageOffset(entity.getDischargingStagesMinAmount().getMinAmount());
       dischargeStages.setTrackGradeSwitch(entity.getIsTrackGradeSwitching());
       dischargeStages.setTrackStartEndStage(entity.getIsTrackStartEndStage());
+      dischargeStages.setIsStageDurationUsed(entity.getIsStageDurationUsed());
+      dischargeStages.setIsStageOffsetUsed(entity.getIsStageOffsetUsed());
       disDto.setDischargeStages(dischargeStages);
 
       // discharge delays

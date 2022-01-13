@@ -103,9 +103,13 @@ public interface DischargeInformationRepository
   @Transactional
   @Modifying
   @Query(
-      "UPDATE DischargeInformation SET isTrackStartEndStage = ?1, isTrackGradeSwitching=?2 WHERE id = ?3")
-  void updateIsTrackStartEndAndTrackGradeSwitching(
-      boolean trackStartEndStage, boolean trackGradeSwitch, Long id);
+      "UPDATE DischargeInformation SET isTrackStartEndStage = ?1, isTrackGradeSwitching = ?2, isStageDurationUsed = ?3, isStageOffsetUsed = ?4 WHERE id = ?5")
+  void updateFlagsInDischargingStage(
+      boolean trackStartEndStage,
+      boolean trackGradeSwitch,
+      boolean isStageDurationUsed,
+      boolean isStageOffsetUsed,
+      Long id);
 
   @Transactional
   @Modifying

@@ -178,7 +178,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
   public void generateDischargingPlan(
       DischargeInformationRequest request, DischargePlanAlgoRequest.Builder builder)
       throws GenericServiceException, JsonProcessingException {
-    log.info("Generate Discharge Plan RPC: Payload", Utils.toJson(request));
+    log.info("Generate Discharge Plan RPC: Payload {}", Utils.toJson(request));
     com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest algoRequest =
         new com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest();
     DischargeInformation dischargeInformation =

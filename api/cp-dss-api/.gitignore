@@ -7,6 +7,7 @@ build/
 !**/src/test/**
 logs/
 projectInfo.properties
+sh.exe.stackdump
 
 ### STS ###
 .apt_generated

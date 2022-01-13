@@ -887,23 +887,34 @@ public class DischargeInformationRPCService
     }
   }
 
+  /**
+   * Method to save discharge stage
+   *
+   * @param dischargeStage LoadingStages object
+   * @param dsInfo DischargeInformation entity
+   */
   private void saveDischargingStages(
       LoadingStages dischargeStage, com.cpdss.dischargeplan.entity.DischargeInformation dsInfo) {
 
+    log.info("Inside saveDischargingStages method!");
     if (dischargeStage != null) {
-      dischargeInformationRepository.updateIsTrackStartEndAndTrackGradeSwitching(
+
+      // Update Discharge Information
+      dischargeInformationRepository.updateFlagsInDischargingStage(
           dischargeStage.getTrackStartEndStage(),
           dischargeStage.getTrackGradeSwitch(),
+          dischargeStage.getIsStageDurationUsed(),
+          dischargeStage.getIsStageOffsetUsed(),
           dsInfo.getId());
 
       Optional<DischargingStagesDuration> dur1 = Optional.empty();
-      if (dischargeStage.getDuration() != null && dischargeStage.getDuration().getId() > 0) {
+      if (dischargeStage.getDuration().getId() > 0) {
         dur1 =
             stageDurationRepository.findByIdAndIsActiveTrue(dischargeStage.getDuration().getId());
       }
 
       Optional<DischargingStagesMinAmount> min1 = Optional.empty();
-      if (dischargeStage.getOffset() != null && dischargeStage.getOffset().getId() > 0) {
+      if (dischargeStage.getOffset().getId() > 0) {
         min1 = minAmountRepository.findByIdAndIsActiveTrue(dischargeStage.getOffset().getId());
       }
 

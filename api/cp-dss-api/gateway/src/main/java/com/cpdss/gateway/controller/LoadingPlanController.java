@@ -104,10 +104,8 @@ public class LoadingPlanController {
       throws CommonRestException {
     try {
       log.info("Get Loading Info, api for vessel {}, Port Rotation {}", vesselId, portRotationId);
-      LoadingInformation var1 =
-          this.loadingPlanService.getLoadingInformationByPortRotation(
-              vesselId, infoId, portRotationId, infoId);
-      return var1;
+      return this.loadingPlanService.getLoadingInformationByPortRotation(
+          vesselId, infoId, portRotationId, voyageId);
     } catch (GenericServiceException e) {
       e.printStackTrace();
       log.error("Custom exception in Get Loading Information API - {}", e.getMessage());

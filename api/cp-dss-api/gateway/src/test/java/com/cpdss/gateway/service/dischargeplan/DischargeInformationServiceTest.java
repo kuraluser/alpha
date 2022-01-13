@@ -309,13 +309,12 @@ public class DischargeInformationServiceTest {
     Long vesselId = 1L;
     Long voyageId = 1L;
     Long portRoId = 1L;
-    Long dischargeInfoId = 0L;
+
     try {
       Mockito.when(this.loadingPlanGrpcService.getActiveVoyageDetails(Mockito.anyLong()))
           .thenReturn(getVRNS());
       var response =
-          this.dischargeInformationService.getDischargeInformation(
-              vesselId, voyageId, portRoId, dischargeInfoId);
+          this.dischargeInformationService.getDischargeInformation(vesselId, voyageId, portRoId);
     } catch (GenericServiceException e) {
       e.printStackTrace();
     }

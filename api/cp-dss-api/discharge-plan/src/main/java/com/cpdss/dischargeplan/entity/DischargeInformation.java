@@ -166,6 +166,12 @@ public class DischargeInformation extends EntityDoc {
   @Column(name = "common_date")
   private LocalDate commonDate;
 
+  @Column(name = "is_stage_duration_used")
+  private Boolean isStageDurationUsed;
+
+  @Column(name = "is_stage_offset_used")
+  private Boolean isStageOffsetUsed;
+
   public DischargeInformation(Long pk) {
     this.setId(pk);
   }

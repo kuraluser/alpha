@@ -146,4 +146,10 @@ public class LoadingInformation extends EntityDoc {
 
   @Column(name = "common_date")
   private LocalDate commonDate;
+
+  @Column(name = "is_stage_offset_used")
+  private Boolean isStageOffsetUsed;
+
+  @Column(name = "is_stage_duration_used")
+  private Boolean isStageDurationUsed;
 }

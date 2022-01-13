@@ -109,6 +109,8 @@ message LoadingStages{
   repeated StageDuration stageDurations = 7; // master data
   StageOffsets offset = 8;
   StageDuration duration = 9;
+  bool isStageOffsetUsed = 10;
+  bool isStageDurationUsed = 11;
 }
 
 // stage min_amount

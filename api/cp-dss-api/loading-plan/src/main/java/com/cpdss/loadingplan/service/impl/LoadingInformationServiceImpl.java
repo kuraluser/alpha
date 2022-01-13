@@ -229,7 +229,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
             request.getVoyageId(),
             request.getLoadingPatternId(),
             request.getPortRotationId());
-    if (!var1.isPresent()) {
+    if (var1.isEmpty()) {
       log.info("No Loading Information found for Id {}", request.getLoadingPlanId());
     }
 
@@ -424,10 +424,13 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       LoadingPlanModels.LoadingStages loadingStage, LoadingInformation loadingInformation) {
 
     if (loadingStage != null) {
+
       loadingInformation.setTrackStartEndStage(loadingStage.getTrackStartEndStage());
       loadingInformation.setTrackGradeSwitch(loadingStage.getTrackGradeSwitch());
-      if (Optional.ofNullable(loadingStage.getDuration().getId()).isPresent()
-          && loadingStage.getDuration().getId() != 0) {
+      loadingInformation.setIsStageDurationUsed(loadingStage.getIsStageDurationUsed());
+      loadingInformation.setIsStageOffsetUsed(loadingStage.getIsStageOffsetUsed());
+
+      if (loadingStage.getDuration().getId() != 0) {
         Optional<StageDuration> stageDurationOpt =
             stageDurationRepository.findByIdAndIsActiveTrue(loadingStage.getDuration().getId());
         if (stageDurationOpt.isPresent()) {
@@ -436,8 +439,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           log.error("Duration not found id {}", loadingStage.getDuration().getId());
         }
       }
-      if (Optional.of(loadingStage.getOffset().getId()).isPresent()
-          && loadingStage.getOffset().getId() != 0) {
+      if (loadingStage.getOffset().getId() != 0) {
         Optional<StageOffset> stageOffsetOpt =
             stageOffsetRepository.findByIdAndIsActiveTrue(loadingStage.getOffset().getId());
         if (stageOffsetOpt.isPresent()) {

@@ -137,12 +137,24 @@ public class LoadingInformationBuilderService {
     return machinery;
   }
 
+  /**
+   * Method to build Loading Stage
+   *
+   * @param var1 LoadingInformation object
+   * @param list3 List<StageOffset>
+   * @param list4 List<com.cpdss.loadingplan.entity.StageDuration>
+   * @return builder.build()
+   */
   public LoadingStages buildLoadingStageMessage(
       LoadingInformation var1,
       List<StageOffset> list3,
       List<com.cpdss.loadingplan.entity.StageDuration> list4) {
+
+    log.info("Inside buildLoadingStageMessage method!");
     LoadingStages.Builder builder = LoadingStages.newBuilder();
     if (var1 != null) {
+
+      // Set fields
       Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
       Optional.ofNullable(var1.getStageOffset())
           .ifPresent(value -> builder.setStageOffset(value.getId().intValue()));
@@ -150,6 +162,10 @@ public class LoadingInformationBuilderService {
           .ifPresent(value -> builder.setStageDuration(value.getId().intValue()));
       Optional.ofNullable(var1.getTrackStartEndStage()).ifPresent(builder::setTrackStartEndStage);
       Optional.ofNullable(var1.getTrackGradeSwitch()).ifPresent(builder::setTrackGradeSwitch);
+
+      // Set flags for check boxes
+      Optional.ofNullable(var1.getIsStageDurationUsed()).ifPresent(builder::setIsStageDurationUsed);
+      Optional.ofNullable(var1.getIsStageOffsetUsed()).ifPresent(builder::setIsStageOffsetUsed);
     }
 
     // Set Offset Master

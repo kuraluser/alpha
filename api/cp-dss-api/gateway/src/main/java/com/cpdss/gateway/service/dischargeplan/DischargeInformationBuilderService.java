@@ -844,30 +844,50 @@ public class DischargeInformationBuilderService {
     return builder.build();
   }
 
+  /**
+   * Method to build discharge stage
+   *
+   * @param request DischargingInformationRequest object
+   * @return LoadingStages object
+   */
   public LoadingStages buildDischargingStage(DischargingInformationRequest request) {
+
+    log.info("Inside buildDischargingStage method!");
     LoadingStages.Builder builder = LoadingStages.newBuilder();
     com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.Builder
         durationBuilder =
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.StageDuration.newBuilder();
     StageOffsets.Builder offsetBuilder = StageOffsets.newBuilder();
+
     if (request.getDischargeStages() != null) {
       if (request.getDischargeStages().getStageDuration() != null) {
+
+        // Set fields
         Optional.ofNullable(request.getDischargeStages().getStageDuration().getId())
             .ifPresent(durationBuilder::setId);
         Optional.ofNullable(request.getDischargeStages().getStageDuration().getDuration())
             .ifPresent(durationBuilder::setDuration);
       }
+
       if (request.getDischargeStages().getStageOffset() != null) {
         Optional.ofNullable(request.getDischargeStages().getStageOffset().getId())
             .ifPresent(offsetBuilder::setId);
         Optional.ofNullable(request.getDischargeStages().getStageOffset().getStageOffsetVal())
             .ifPresent(offsetBuilder::setStageOffsetVal);
       }
+
       Optional.ofNullable(request.getDischargeStages().getTrackGradeSwitch())
           .ifPresent(builder::setTrackGradeSwitch);
       Optional.ofNullable(request.getDischargeStages().getTrackStartEndStage())
           .ifPresent(builder::setTrackStartEndStage);
+
+      // Set flags for check boxes
+      Optional.ofNullable(request.getDischargeStages().getIsStageDurationUsed())
+          .ifPresent(builder::setIsStageDurationUsed);
+      Optional.ofNullable(request.getDischargeStages().getIsStageOffsetUsed())
+          .ifPresent(builder::setIsStageOffsetUsed);
     }
+
     builder.setDuration(durationBuilder.build());
     builder.setOffset(offsetBuilder.build());
     return builder.build();
