@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 
 import { CommonApiService } from '../common/common-api.service';
 import { AppConfigurationService } from '../app-configuration/app-configuration.service';
-import { ICountriesResponse, ICountry, IDateTimeFormatOptions, IMonth, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
+import { ICountriesResponse, ICountry, IDateTimeFormatOptions, IDaysHours, IMonth, ITimeZone, ITimeZoneResponse } from '../../models/common.model';
 import * as moment from 'moment';
 
 /**
@@ -125,7 +125,7 @@ export class TimeZoneTransformationService {
     if (offsetValue.charAt(0) === '-') {
       let unsignedOffset = offsetValue.split('-')[1];
       if (unsignedOffset.includes('.')) {
-        let splittedOffset = offsetValue.split('.');
+        const splittedOffset = offsetValue.split('.');
         splittedOffset[0] = splittedOffset[0].length !== 2 ? '0' + splittedOffset[0] : splittedOffset[0];
         splittedOffset[1] = splittedOffset[1] === '5' && '30';
         _offsetValue = '-' + splittedOffset[0] + ':' + splittedOffset[1];
@@ -135,7 +135,7 @@ export class TimeZoneTransformationService {
       }
     } else {
       if (offsetValue.includes('.')) {
-        let splittedOffset = offsetValue.split('.');
+        const splittedOffset = offsetValue.split('.');
         splittedOffset[0] = splittedOffset[0].length !== 2 ? '0' + splittedOffset[0] : splittedOffset[0];
         splittedOffset[1] = splittedOffset[1] === '5' && '30';
         _offsetValue = '+' + splittedOffset[0] + ':' + splittedOffset[1];
@@ -147,7 +147,7 @@ export class TimeZoneTransformationService {
 
     const addedPortTZ = moment(dateTime, this.momentInputStringFormat).add(_offsetValue, 'hours').format(AppConfigurationService.settings?.dateFormat);
     const tzFormat = AppConfigurationService.settings?.dateFormat + ' (UTC Z)';
-    let convertedPortTZ = moment(dateTime, this.momentInputStringFormat).utcOffset(_offsetValue).format(tzFormat);
+    const convertedPortTZ = moment(dateTime, this.momentInputStringFormat).utcOffset(_offsetValue).format(tzFormat);
 
     const dateTimeSplitIndex = convertedPortTZ.indexOf('(UTC');
     const dateTimeWithAbbr = [addedPortTZ, abbreviation, convertedPortTZ.slice(dateTimeSplitIndex)].join('');
@@ -261,6 +261,34 @@ export class TimeZoneTransformationService {
       }
     }
     return null
+  }
+
+  /**
+   * Function to convert hours into days & hours and vice-versa
+   *
+   * @param {(number | IDaysHours)} value
+   * @return {*}
+   * @memberof TimeZoneTransformationService
+   */
+  convertHoursToDaysHours(value: number | IDaysHours): any {
+    let convertedTime: number | IDaysHours;
+    if (typeof value === 'number') {
+      if (value === 0) {
+        convertedTime = { days: 0, hours: 0 };
+      } else {
+        convertedTime = {
+          days: Math.floor(value / 24),
+          hours: Math.floor(value % 24)
+        };
+      }
+    } else {
+      if (value.days === 0 && value.hours === 0) {
+        convertedTime = 0;
+      } else {
+        convertedTime = (value.days * 24) + value.hours;
+      }
+    }
+    return convertedTime;
   }
 
 }

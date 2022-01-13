@@ -11,7 +11,10 @@ export interface ISynopticalRecords {
     operationType: string,
     distance: number,
     speed: number,
+    runningHoursCalculated: number,
     runningHours: number,
+    runningDays?: number,
+    runningDaysHours?: number,
     inPortHours: number,
     timeOfSunrise: string,
     timeOfSunset: string,
@@ -28,7 +31,7 @@ export interface ISynopticalRecords {
 
 }
 /**
- * Model for synoptical response 
+ * Model for synoptical response
  */
 export interface ISynopticalResponse {
     responseStatus: IResponse;
@@ -36,7 +39,7 @@ export interface ISynopticalResponse {
 }
 
 /**
-* Model for synoptical column 
+* Model for synoptical column
 */
 export interface SynopticField {
     key: string;
@@ -59,7 +62,7 @@ export interface SynopticField {
 }
 
 /**
-* Model for synoptical column 
+* Model for synoptical column
 */
 export interface SynopticalColumn {
     fields?: SynopticField[];
@@ -78,7 +81,7 @@ export interface SynopticalColumn {
 }
 
 /**
-* Model for synoptical dynamic column 
+* Model for synoptical dynamic column
 */
 export interface SynopticalDynamicColumn {
     fieldKey: string;

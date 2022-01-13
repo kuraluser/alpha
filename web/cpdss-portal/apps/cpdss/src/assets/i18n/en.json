@@ -404,7 +404,7 @@
   "TOTAL_QUANTITY_INFO": "Info",
   "TOTAL_QUANTITY_ERROR_DETAILS": "Total quantity entered exceeds the loadable quantity. Please correct.",
   "LOADABLE_QUANTITY_WARNING": "Warning",
-  "LOADABLE_QUANTITY_WARNING_MISMATCH": "Loadable quantity is changed. Please save/update",
+  "LOADABLE_QUANTITY_WARNING_MISMATCH": "Loadable quantity is changed. Go to Loadable Quantity popup screen and click on the Save/Update button",
   "PORT_ROW_ADD_ERROR": "Warning",
   "PORT_ROW_ADD_ERROR_DETAILS": "Please complete the data of previous port before saving this",
   "LOADABLE_QUANTITY_UNIT_TONNE": "T/CM",

@@ -9,7 +9,6 @@
                 <col class="column-class column-third">
                 <ng-container *ngFor="let col of columns; let i= index">>
                     <col class="column-class column-port">
-                    
                 </ng-container>
             </colgroup>
         </ng-template>
@@ -20,8 +19,17 @@
                 <th></th>
                 <th></th>
                 <ng-container *ngFor="let col of columns; let i= index">
-                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" [ngClass]="{'text-right': !(i !== columns.length - 1 && hideDepartureData ), 'text-center': (i !== columns.length - 1 && hideDepartureData )}">
-                        {{col[headerColumn.fields[0].key]}}</th>
+                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" [ngClass]="{'text-right': headerColumn.fields[0].key === 'operationType'}">
+                      <ng-container *ngIf="headerColumn.fields[0].key === 'portName'">
+                        <div class="row pr-20">
+                          <div class="col-6 "></div>
+                          <div class="col-6  text-center">{{col[headerColumn.fields[0].key]}}</div>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="headerColumn.fields[0].key !== 'portName'">
+                        {{col[headerColumn.fields[0].key]}}
+                      </ng-container>
+                    </th>
                 </ng-container>
             </tr>
         </ng-template>

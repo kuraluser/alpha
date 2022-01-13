@@ -413,3 +413,11 @@ export interface IMonth {
 export interface ComponentCanDeactivate {
   canDeactivate: () => boolean | Observable<boolean>;
 }
+
+/**
+ * Interface for convert hours to days & hours
+ */
+export interface IDaysHours {
+  days: number,
+  hours: number
+}

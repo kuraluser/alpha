@@ -119,7 +119,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               if (Number(route.loadableStudyId) !== 0) {
                 this.synopticalService.loadableOrDischargeStudyId = Number(route.loadableStudyId);
               }
-              if(this.synopticalService.hasDischargeStarted){
+              if (this.synopticalService.hasDischargeStarted) {
                 this.synopticalService.loadablePatternId = null;
                 await this.synopticalService.setSelectedDischargeStudy();
                 await this.initData();
@@ -214,10 +214,17 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     const result = await this.synoticalApiService.getSynopticalTable(this.synopticalService.vesselId, this.synopticalService.voyageId, this.synopticalService.loadableOrDischargeStudyId, this.synopticalService.loadablePatternId)
       .toPromise();
     if (result.responseStatus.status === "200") {
+      result.synopticalRecords?.map(record => {
+        const daysHours = this.timeZoneTransformationService.convertHoursToDaysHours(Number(record.runningHours));
+        record.runningDays = daysHours.days;
+        record.runningDaysHours = daysHours.hours;
+        record.runningHoursCalculated = Number(record.runningHours);
+        return record;
+      });
       this.synopticalService.synopticalRecords = await this.convertIntoZoneTimeZone(result.synopticalRecords);
-      if((this.synopticalService.synopticalRecords.length % 2 ) !== 0){
+      if ((this.synopticalService.synopticalRecords.length % 2) !== 0) {
         this.hideDepartureData = true;
-        this.synopticalService.synopticalRecords.push({ disabled : true});
+        this.synopticalService.synopticalRecords.push({ disabled: true });
       } else {
         this.hideDepartureData = false;
       }
@@ -333,6 +340,36 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           validators: ['ddddddd.dd.+'],
         }],
         header: 'Running Hours',
+        editable: true,
+        view: false,
+        colSpan: 2,
+        betweenPorts: true,
+      },
+      {
+        fields: [{
+          key: 'runningHoursCalculated',
+          type: this.fieldType.NUMBER,
+          validators: ['ddddddd.dd.+'],
+        }],
+        header: 'Running Hours',
+        editable: true,
+        colSpan: 2,
+        betweenPorts: true,
+      },
+      {
+        header: 'Running Time (in days - hours)',
+        fields: [
+          {
+            key: 'runningDays',
+            type: this.fieldType.NUMBER,
+            validators: ['ddd.+']
+          },
+          {
+            key: 'runningDaysHours',
+            type: this.fieldType.NUMBER,
+            validators: ['dd.+']
+          }
+        ],
         editable: true,
         colSpan: 2,
         betweenPorts: true,
@@ -1164,13 +1201,17 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     this.allColumns = this.getAllColumns(this.cols);
 
     this.synopticalService.synopticalRecords.forEach((record, colIndex) => {
-      if(!record.disabled){
+      if (!record.disabled) {
         this.setTotal(colIndex);
         const fg = new FormGroup({})
         this.allColumns.forEach(column => {
           if (column.editable) {
             column.fields?.forEach(field => {
-              fg.addControl(field.key, new FormControl(this.getValue(record[field.key], field.type)))
+              if (field.key === "runningHoursCalculated") {
+                fg.addControl(field.key, new FormControl({ value: this.getValue(record[field.key], field.type), disabled: true }));
+              } else {
+                fg.addControl(field.key, new FormControl(this.getValue(record[field.key], field.type)));
+              }
             });
             column.fields?.forEach(field => {
               const validators: ValidatorFn[] = []
@@ -1179,7 +1220,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
               })
               const fc = fg.get(field.key);
               fc.setValidators(validators);
-              if(!this.checkEditableCondition(field.key,colIndex,column)){
+              if (!this.checkEditableCondition(field.key, colIndex, column)) {
                 fc.disable();
               }
             })
@@ -1351,10 +1392,21 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     const operationType = this.synopticalService.synopticalRecords[colIndex].operationType;
     const otherIndex = operationType === 'ARR' ? colIndex + 1 : colIndex - 1;
     switch (field.key) {
-      case 'speed': case 'distance': case 'runningHours':
+      case 'speed': case 'distance':
       case 'inPortHours':
         if (otherIndex >= 0 && otherIndex < this.synopticalService.synopticalRecords.length) {
           this.getControl(otherIndex, field.key)?.setValue(fc.value)
+        }
+        break;
+      case 'runningDays': case 'runningDaysHours':
+        if (otherIndex >= 0 && otherIndex < this.synopticalService.synopticalRecords.length) {
+          this.getControl(otherIndex, field.key)?.setValue(fc.value)
+          const daysHours = {
+            days: Number(this.getControl(colIndex, 'runningDays').value),
+            hours: Number(this.getControl(colIndex, 'runningDaysHours').value),
+          }
+          const hours = this.timeZoneTransformationService.convertHoursToDaysHours(daysHours);
+          this.getControl(otherIndex, 'runningHours')?.setValue(hours);
         }
         break;
       default:
@@ -1626,7 +1678,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         if (updateValues) {
           const speedControl = this.getControl(colIndex, 'speed')
           const distanceControl = this.getControl(colIndex, 'distance')
-          let speed = 0, distance = 0, runningHours = 0;
+          let speed = 0, distance = 0, runningHoursCalculated = 0, daysAndHours: any = 0;
           if (speedControl.valid) {
             speed = Number(speedControl.value);
           }
@@ -1634,7 +1686,34 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
             distance = Number(distanceControl.value);
           }
           if (speed && distance) {
-            runningHours = Number(Number(distance / speed).toFixed(2));
+            runningHoursCalculated = Number(Number(distance / speed).toFixed(2));
+          }
+          daysAndHours = this.timeZoneTransformationService.convertHoursToDaysHours(runningHoursCalculated);
+          this.getControl(colIndex, 'runningDays')?.setValue(daysAndHours?.days);
+          this.getControl(otherIndex, 'runningDays')?.setValue(daysAndHours?.days);
+          this.getControl(colIndex, 'runningDaysHours')?.setValue(daysAndHours?.hours);
+          this.getControl(otherIndex, 'runningDaysHours')?.setValue(daysAndHours?.hours);
+          this.getControl(colIndex, 'runningHoursCalculated')?.setValue(runningHoursCalculated);
+          this.getControl(otherIndex, 'runningHoursCalculated')?.setValue(runningHoursCalculated);
+          this.getControl(colIndex, 'runningHours')?.setValue(runningHoursCalculated);
+          this.getControl(otherIndex, 'runningHours')?.setValue(runningHoursCalculated);
+        }
+        break;
+      case 'runningDays': case 'runningDaysHours':
+        if (updateValues) {
+          const runningDaysControl = this.getControl(colIndex, 'runningDays');
+          const runningDaysHoursControl = this.getControl(colIndex, 'runningDaysHours');
+          let daysAndHours;
+          let runningDays = 0, runningDaysHours = 0, runningHours = 0;
+          if (runningDaysControl.valid) {
+            runningDays = Number(runningDaysControl.value);
+          }
+          if (runningDaysHoursControl.valid) {
+            runningDaysHours = Number(runningDaysHoursControl.value);
+          }
+          if (runningDays || runningDaysHours) {
+            daysAndHours = { days: runningDays, hours: runningDaysHours };
+            runningHours = this.timeZoneTransformationService.convertHoursToDaysHours(daysAndHours);
           }
           this.getControl(colIndex, 'runningHours')?.setValue(runningHours)
           this.getControl(otherIndex, 'runningHours')?.setValue(runningHours)
@@ -1646,7 +1725,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'calculatedDraftAftPlanned': case 'calculatedDraftAftActual':
         const draftValueAft = fc.value ? fc.value : this.synopticalService.synopticalRecords[colIndex]['calculatedDraftAftPlanned'];
-        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] =  Number((draftValueAft + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
+        this.synopticalService.synopticalRecords[colIndex]['finalDraftAft'] = Number((draftValueAft + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
         break;
       case 'calculatedDraftFwdPlanned': case 'calculatedDraftFwdActual':
         const draftValueFwd = fc.value ? fc.value : this.synopticalService.synopticalRecords[colIndex]['calculatedDraftFwdPlanned'];
@@ -1719,7 +1798,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     if (this.synopticalService.selectedLoadablePattern) {
       return this.synopticalService.selectedLoadablePattern.loadableStudyStatusId === LOADABLE_STUDY_STATUS.PLAN_CONFIRMED ?? false
     }
-    if(this.synopticalService.hasDischargeStarted){
+    if (this.synopticalService.hasDischargeStarted) {
       return this.synopticalService.selectedDischargeStudy?.status === "Confirmed" ?? false
     } else {
       return this.synopticalService.selectedLoadableStudy?.status === "Confirmed" ?? false
@@ -1733,13 +1812,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
    * @memberof SynopticalTableComponent
    */
   checkIfEnableEditMode(): boolean {
-    if(this.synopticalService?.selectedVoyage?.statusId === VOYAGE_STATUS.CLOSE){
+    if (this.synopticalService?.selectedVoyage?.statusId === VOYAGE_STATUS.CLOSE) {
       return false;
     }
-    if(this.synopticalService.hasDischargeStarted){
-      return [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedDischargeStudy?.statusId) ;
-    } else{
-      return [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedLoadableStudy?.statusId) ;
+    if (this.synopticalService.hasDischargeStarted) {
+      return [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedDischargeStudy?.statusId);
+    } else {
+      return [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.synopticalService?.selectedLoadableStudy?.statusId);
     }
   }
 
@@ -1801,11 +1880,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @memberof SynopticalTableComponent
  */
   async saveChanges() {
-    let msgkeys, severity, valid = true;
+    let msgkeys, severity;
+    const valid = true;
     // Prompt all validations
     this.tableForm.markAllAsTouched();
     this.synopticalService.synopticalRecords.forEach((_, portIndex) => {
-      if(!_.disabled){
+      if (!_.disabled) {
         this.allColumns.forEach(col => {
           col.fields.forEach(field => {
             this.onBlur(field, portIndex, false)
@@ -1819,7 +1899,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         this.ngxSpinner.show();
         const synopticalRecords = []
         this.synopticalService.synopticalRecords.forEach((row, index: number) => {
-          if(!row.disabled){
+          if (!row.disabled) {
             const saveJson = {};
             saveJson['id'] = row.id;
             saveJson['portId'] = row.portId;
@@ -1924,8 +2004,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       return this.convertToString(this.getControl(index, key).value, type, this.synopticalService.synopticalRecords[index])
     }
 
-    else if (type == this.fieldType.DATETIME && this.synopticalService.synopticalRecords[index][key]) {
-      const item = this.globalTimeZones.find((item) => item.id == this.synopticalService.synopticalRecords[index].portTimezoneId)
+    else if (type === this.fieldType.DATETIME && this.synopticalService.synopticalRecords[index][key]) {
+      const item = this.globalTimeZones.find((tz) => tz.id === this.synopticalService.synopticalRecords[index].portTimezoneId)
       if (item)
         return this.timeZoneTransformationService.revertZoneTimetoUTC(this.convertIntoDate(this.synopticalService.synopticalRecords[index][key]), item.offsetValue);
       else
@@ -1970,7 +2050,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   resetFormValues() {
     this.allColumns.forEach(col => {
       this.synopticalService.synopticalRecords.forEach((record, index) => {
-        if(!record.disabled){
+        if (!record.disabled) {
           col.fields.forEach(field => {
             const fc = this.getControl(index, field.key)
             if (fc) {
@@ -2043,13 +2123,13 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   * @returns {boolean}
   * @memberof SynopticalTableComponent
   */
-  checkEditableCondition(key: string, index: number, rowData:SynopticalColumn) {
+  checkEditableCondition(key: string, index: number, rowData: SynopticalColumn) {
     let editable = true;
     if (key.startsWith('cargos') && index > 0) {
       editable = false;
     }
-    if(this.synopticalService.hasDischargeStarted && this.synopticalService.synopticalRecords[index].portRotationType === "LOADING" &&
-    (!rowData.betweenPorts || this.synopticalService.synopticalRecords[index + 1]?.portRotationType !== "DISCHARGE")){
+    if (this.synopticalService.hasDischargeStarted && this.synopticalService.synopticalRecords[index].portRotationType === "LOADING" &&
+      (!rowData.betweenPorts || this.synopticalService.synopticalRecords[index + 1]?.portRotationType !== "DISCHARGE")) {
       editable = false;
     }
     return editable;
@@ -2152,7 +2232,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
   /**
    * Check if plan generated
   */
-  checkIfPlanGenerated(){
+  checkIfPlanGenerated() {
     return this.synopticalService.selectedLoadablePattern ? true : false;
   }
 }
