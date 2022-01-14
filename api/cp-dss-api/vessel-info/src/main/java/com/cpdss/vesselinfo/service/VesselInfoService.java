@@ -1319,6 +1319,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         .ifPresent(shortName -> vesselTankBuilder.setShortName(shortName));
     Optional.ofNullable(vesselTank.getIsLoadicatorUsing())
         .ifPresent(isLoadicatorUsing -> vesselTankBuilder.setIsLoadicatorUsing(isLoadicatorUsing));
+    vesselTankBuilder.setIsSlopTank(
+        vesselTank.getIsSlopTank() == null ? false : vesselTank.getIsSlopTank());
     return vesselTankBuilder.build();
   }
 

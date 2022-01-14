@@ -1095,6 +1095,7 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
               tank.setTcg(vesselTank.getTcg());
               tank.setVcg(vesselTank.getVcg());
               tank.setIsLoadicatorUsing(vesselTank.getIsLoadicatorUsing());
+              tank.setSlopTank(vesselTank.getIsSlopTank());
               vesselTanks.add(tank);
             });
     return vesselTanks;
