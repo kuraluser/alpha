@@ -1,7 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -103,7 +102,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
     private fb: FormBuilder,
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
-    private translateService: TranslateService,
     private quantityDecimalService: QuantityDecimalService
   ) { }
 
@@ -194,7 +192,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   * @memberof LoadingDischargingCargoDetailsComponent
   */
   async updateCargoTobeDischargedData() {
-    const translatedMessages = await this.translateService.get(['DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MAX_ERROR']).toPromise();
     this.cargoTobeLoadedDischarged = this.cargoVesselTankDetails.loadableQuantityCargoDetails?.map(cargo => {
       if (cargo) {
         cargo.grade = this.findCargo(cargo);
@@ -227,12 +224,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.BBLS);
     const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
     const cargoToBeDischarged = this.cargoTobeLoadedDischarged?.map(cargo => {
-      this.cargoTobeLoadedDischargedColumns.map(column => {
-        if (column?.field === 'slopQuantity' && cargo?.slopTankFullCapacity) {
-          column.errorMessages['max'] = translatedMessages['DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MAX_ERROR'] + cargo?.slopTankFullCapacity?.toString();
-          return column
-        }
-      })
       return this.fb.group({
         isCommingledCargo: cargo?.isCommingledCargo ?? false,
         protested: this.fb.control(cargo.protested.value),

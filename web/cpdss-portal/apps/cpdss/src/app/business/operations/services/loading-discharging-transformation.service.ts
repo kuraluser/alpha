@@ -787,6 +787,7 @@ export class LoadingDischargingTransformationService {
         errorMessages: {
           'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
           'min': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MIN_ERROR',
+          'max': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MAX_ERROR',
           'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
         }
       },

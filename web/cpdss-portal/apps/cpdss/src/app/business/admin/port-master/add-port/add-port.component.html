@@ -44,7 +44,7 @@
       <div class="col-4">
         <div class="form-group row">
           <label for="max_permissible_draft"
-            class="col-sm-6 col-form-label">{{ 'PORT_MASTER_MAX_SHIP_DRAFT' | translate}}</label>
+            class="col-sm-6 col-form-label pr-0">{{ 'PORT_MASTER_MAX_SHIP_DRAFT' | translate}}</label>
           <div class="col-sm-6 error-icon-wrapper">
             <input type="text" class="form-control" id="max_permissible_draft" formControlName="maxPermissibleDraft"
               placeholder="{{'PORT_MASTER_MAX_SHIP_DRAFT_PLACEHOLDER' | translate}}">
@@ -143,7 +143,7 @@
           <div class="col-sm-6 lat-long error-icon-wrapper">
             <input type="text" class="form-control" id="position_map" formControlName="position"
               placeholder="{{'PORT_MASTER_POSITION_PLACEHOLDER' | translate}}" readonly>
-            <div class="loc-ico pl-5">
+            <div class="loc-ico">
               <span class="pi pi-map-marker pointer" style="font-size: 1.5rem" (click)="showMapPopup()"></span>
             </div>
             <cpdss-portal-validation-error [errors]="fieldError('position')" [errorMessages]="errorMessages?.position">
