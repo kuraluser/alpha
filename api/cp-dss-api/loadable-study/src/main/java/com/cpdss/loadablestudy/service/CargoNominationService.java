@@ -271,7 +271,6 @@ public class CargoNominationService {
 
     CargoNomination cargoNomination = null;
     List<Long> existingCargoPortIds = null;
-    ApiTempHistory apiTempHistory = null;
     if (request.getCargoNominationDetail() != null
         && request.getCargoNominationDetail().getId() != 0) {
       Optional<CargoNomination> existingCargoNomination =
@@ -298,12 +297,10 @@ public class CargoNominationService {
                 .collect(Collectors.toList());
       }
       cargoNomination = buildCargoNomination(cargoNomination, request, loadableStudyRecord);
-      apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
     } else if (request.getCargoNominationDetail() != null
         && request.getCargoNominationDetail().getId() == 0) {
       cargoNomination = new CargoNomination();
       cargoNomination = buildCargoNomination(cargoNomination, request, loadableStudyRecord);
-      apiTempHistory = buildApiTempHistory(cargoNomination, request, existingCargoPortIds);
     }
 
     // update port rotation table with loading ports from cargo nomination
@@ -324,7 +321,6 @@ public class CargoNominationService {
     }
 
     this.cargoNominationRepository.save(cargoNomination);
-    this.apiTempHistoryRepository.save(apiTempHistory);
     this.updatePortRotationWithLoadingPorts(
         loadableStudyRecord, cargoNomination, existingCargoPortIds);
     cargoNominationReplyBuilder

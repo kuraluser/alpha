@@ -62,6 +62,7 @@ public class CargoService {
   @Autowired LoadableStudyStatusRepository loadableStudyStatusRepository;
   @Autowired LoadablePatternRepository loadablePatternRepository;
   @Autowired LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+  @Autowired private SynopticalTableRepository synopticalTableRepository;
 
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
@@ -598,6 +599,18 @@ public class CargoService {
     apiTempHistory.setTemp(var1.getTemperature().isEmpty() ? null : new BigDecimal(var1.getApi()));
     apiTempHistory.setLoadingPortId(var1.getPortId());
     apiTempHistory.setIsActive(true);
+    Optional<SynopticalTable> synopticalTableOpt =
+        this.synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+            var1.getPortRotationId(), SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL, true);
+    synopticalTableOpt
+        .flatMap(synopticalTable -> Optional.ofNullable(synopticalTable.getEtaActual()))
+        .ifPresent(
+            etaActual -> {
+              apiTempHistory.setLoadedDate(etaActual);
+              apiTempHistory.setDate(etaActual.getDayOfMonth());
+              apiTempHistory.setMonth(etaActual.getMonthValue());
+              apiTempHistory.setYear(etaActual.getYear());
+            });
     apiTempHistoryRepository.save(apiTempHistory);
     log.info("Save API History for cargo - {}", apiTempHistory.getCargoId());
   }

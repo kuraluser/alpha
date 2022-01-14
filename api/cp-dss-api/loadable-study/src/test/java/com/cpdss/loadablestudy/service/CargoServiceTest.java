@@ -46,6 +46,8 @@ public class CargoServiceTest {
   @MockBean VoyageStatusRepository voyageStatusRepository;
   @MockBean LoadableStudyStatusRepository loadableStudyStatusRepository;
   @MockBean LoadablePlanStowageDetailsRespository loadablePlanStowageDetailsRespository;
+  @MockBean private SynopticalTableRepository synopticalTableRepository;
+
   private static final String SUCCESS = "SUCCESS";
 
   @Test

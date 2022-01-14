@@ -46,6 +46,7 @@ public class LoadingCargoHistoryService {
               .ifPresent(v -> builder1.setQuantity(v.toString()));
           Optional.ofNullable(data.getLastModifiedDateTime())
               .ifPresent(v -> builder1.setUpdateDate(v.toString()));
+          Optional.ofNullable(data.getPortRotationXId()).ifPresent(builder1::setPortRotationId);
           builder.addCargoHistory(builder1.build());
         }
       }

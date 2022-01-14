@@ -737,11 +737,12 @@ public class VoyageService {
       }
     }
     this.voyageRepository.save(voyageEntity);
-    try {
-      this.updateApiTempWithCargoNominations(voyageEntity);
-    } catch (Exception e) {
-      log.info("Voyage Close, update api-temp - Failed {} - {}", e.getMessage(), e);
-    }
+    // API History is now fetched from loading and discharging modules.
+    //    try {
+    //      this.updateApiTempWithCargoNominations(voyageEntity);
+    //    } catch (Exception e) {
+    //      log.info("Voyage Close, update api-temp - Failed {} - {}", e.getMessage(), e);
+    //    }
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
   }

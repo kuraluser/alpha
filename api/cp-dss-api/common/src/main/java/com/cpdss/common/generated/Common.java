@@ -10773,6 +10773,13 @@ public final class Common {
      * @return The bytes for updateDate.
      */
     com.google.protobuf.ByteString getUpdateDateBytes();
+
+    /**
+     * <code>int64 portRotationId = 9;</code>
+     *
+     * @return The portRotationId.
+     */
+    long getPortRotationId();
   }
   /** Protobuf type {@code CargoHistoryOps} */
   public static final class CargoHistoryOps extends com.google.protobuf.GeneratedMessageV3
@@ -10867,6 +10874,11 @@ public final class Common {
                 java.lang.String s = input.readStringRequireUtf8();
 
                 updateDate_ = s;
+                break;
+              }
+            case 72:
+              {
+                portRotationId_ = input.readInt64();
                 break;
               }
             default:
@@ -11091,6 +11103,17 @@ public final class Common {
       }
     }
 
+    public static final int PORTROTATIONID_FIELD_NUMBER = 9;
+    private long portRotationId_;
+    /**
+     * <code>int64 portRotationId = 9;</code>
+     *
+     * @return The portRotationId.
+     */
+    public long getPortRotationId() {
+      return portRotationId_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -11129,6 +11152,9 @@ public final class Common {
       if (!getUpdateDateBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, updateDate_);
       }
+      if (portRotationId_ != 0L) {
+        output.writeInt64(9, portRotationId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -11162,6 +11188,9 @@ public final class Common {
       if (!getUpdateDateBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, updateDate_);
       }
+      if (portRotationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(9, portRotationId_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -11186,6 +11215,7 @@ public final class Common {
       if (getPortId() != other.getPortId()) return false;
       if (!getQuantity().equals(other.getQuantity())) return false;
       if (!getUpdateDate().equals(other.getUpdateDate())) return false;
+      if (getPortRotationId() != other.getPortRotationId()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -11213,6 +11243,8 @@ public final class Common {
       hash = (53 * hash) + getQuantity().hashCode();
       hash = (37 * hash) + UPDATEDATE_FIELD_NUMBER;
       hash = (53 * hash) + getUpdateDate().hashCode();
+      hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11366,6 +11398,8 @@ public final class Common {
 
         updateDate_ = "";
 
+        portRotationId_ = 0L;
+
         return this;
       }
 
@@ -11400,6 +11434,7 @@ public final class Common {
         result.portId_ = portId_;
         result.quantity_ = quantity_;
         result.updateDate_ = updateDate_;
+        result.portRotationId_ = portRotationId_;
         onBuilt();
         return result;
       }
@@ -11479,6 +11514,9 @@ public final class Common {
         if (!other.getUpdateDate().isEmpty()) {
           updateDate_ = other.updateDate_;
           onChanged();
+        }
+        if (other.getPortRotationId() != 0L) {
+          setPortRotationId(other.getPortRotationId());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -11960,6 +11998,39 @@ public final class Common {
         checkByteStringIsUtf8(value);
 
         updateDate_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long portRotationId_;
+      /**
+       * <code>int64 portRotationId = 9;</code>
+       *
+       * @return The portRotationId.
+       */
+      public long getPortRotationId() {
+        return portRotationId_;
+      }
+      /**
+       * <code>int64 portRotationId = 9;</code>
+       *
+       * @param value The portRotationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortRotationId(long value) {
+
+        portRotationId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portRotationId = 9;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortRotationId() {
+
+        portRotationId_ = 0L;
         onChanged();
         return this;
       }
@@ -14472,25 +14543,26 @@ public final class Common {
           + "eId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\"g\n\024CargoHist"
           + "oryResponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
           + "sponseStatus\022&\n\014cargoHistory\030\002 \003(\0132\020.Car"
-          + "goHistoryOps\"\245\001\n\017CargoHistoryOps\022\016\n\006tank"
+          + "goHistoryOps\"\275\001\n\017CargoHistoryOps\022\016\n\006tank"
           + "Id\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\023\n\013temperature\030\003 \001"
           + "(\t\022\031\n\021cargoNominationId\030\004 \001(\003\022\017\n\007cargoId"
           + "\030\005 \001(\003\022\016\n\006portId\030\006 \001(\003\022\020\n\010quantity\030\007 \001(\t"
-          + "\022\022\n\nupdateDate\030\010 \001(\t\"<\n\033CommunicationDat"
-          + "aGetRequest\022\n\n\002id\030\001 \003(\003\022\021\n\ttableName\030\002 \001"
-          + "(\t\"E\n\036CommunicationDataUpdateRequest\022\020\n\010"
-          + "dataJson\030\001 \001(\t\022\021\n\ttableName\030\002 \001(\t\"V\n\031Com"
-          + "municationDataResponse\022\020\n\010dataJson\030\001 \001(\t"
-          + "\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStatu"
-          + "s*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADA"
-          + "BLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002*H\n\013Mach"
-          + "ineType\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP\020\001\022\014\n\010M"
-          + "ANIFOLD\020\002\022\017\n\013BOTTOM_LINE\020\003*S\n\010COW_TYPE\022\022"
-          + "\n\016EMPTY_COW_TYPE\020\000\022\013\n\007ALL_COW\020\001\022\016\n\nBOTTO"
-          + "M_COW\020\002\022\013\n\007TOP_COW\020\003\022\t\n\005CARGO\020\004*B\n\017COW_O"
-          + "PTION_TYPE\022\031\n\025EMPTY_COW_OPTION_TYPE\020\000\022\010\n"
-          + "\004AUTO\020\001\022\n\n\006MANUAL\020\002B\036\n\032com.cpdss.common."
-          + "generatedP\000b\006proto3"
+          + "\022\022\n\nupdateDate\030\010 \001(\t\022\026\n\016portRotationId\030\t"
+          + " \001(\003\"<\n\033CommunicationDataGetRequest\022\n\n\002i"
+          + "d\030\001 \003(\003\022\021\n\ttableName\030\002 \001(\t\"E\n\036Communicat"
+          + "ionDataUpdateRequest\022\020\n\010dataJson\030\001 \001(\t\022\021"
+          + "\n\ttableName\030\002 \001(\t\"V\n\031CommunicationDataRe"
+          + "sponse\022\020\n\010dataJson\030\001 \001(\t\022\'\n\016responseStat"
+          + "us\030\002 \001(\0132\017.ResponseStatus*E\n\rPLANNING_TY"
+          + "PE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADABLE_STUDY\020\001\022\023\n\017D"
+          + "ISCHARGE_STUDY\020\002*H\n\013MachineType\022\t\n\005EMPTY"
+          + "\020\000\022\017\n\013VESSEL_PUMP\020\001\022\014\n\010MANIFOLD\020\002\022\017\n\013BOT"
+          + "TOM_LINE\020\003*S\n\010COW_TYPE\022\022\n\016EMPTY_COW_TYPE"
+          + "\020\000\022\013\n\007ALL_COW\020\001\022\016\n\nBOTTOM_COW\020\002\022\013\n\007TOP_C"
+          + "OW\020\003\022\t\n\005CARGO\020\004*B\n\017COW_OPTION_TYPE\022\031\n\025EM"
+          + "PTY_COW_OPTION_TYPE\020\000\022\010\n\004AUTO\020\001\022\n\n\006MANUA"
+          + "L\020\002B\036\n\032com.cpdss.common.generatedP\000b\006pro"
+          + "to3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -14597,6 +14669,7 @@ public final class Common {
               "PortId",
               "Quantity",
               "UpdateDate",
+              "PortRotationId",
             });
     internal_static_CommunicationDataGetRequest_descriptor =
         getDescriptor().getMessageTypes().get(9);
