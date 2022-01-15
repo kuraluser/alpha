@@ -128,9 +128,10 @@ public class LoadingPlanUtility {
   public static String calculateCommingleCargoPercentage(
       String cargoQuantity, String totalQuantity) {
     if (StringUtils.hasLength(cargoQuantity) && StringUtils.hasLength(totalQuantity)) {
-      BigDecimal cargoPercentage =
+      BigDecimal cargoPercentage = BigDecimal.ZERO;
+      cargoPercentage =
           (new BigDecimal(cargoQuantity))
-              .divide(new BigDecimal(totalQuantity), RoundingMode.UNNECESSARY)
+              .divide(new BigDecimal(totalQuantity), 4, RoundingMode.HALF_EVEN)
               .multiply(new BigDecimal(100));
       return cargoPercentage.toString();
     } else {
