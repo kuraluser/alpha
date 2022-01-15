@@ -37,11 +37,7 @@ import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.AlgoError;
 import com.cpdss.gateway.domain.Cleaning;
 import com.cpdss.gateway.domain.CleaningTankDetails;
-import com.cpdss.gateway.domain.Tank;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlan;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanPortWiseDetails;
-import com.cpdss.gateway.domain.dischargeplan.TransferDetail;
+import com.cpdss.gateway.domain.dischargeplan.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.*;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
@@ -63,6 +59,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -452,8 +449,6 @@ public class DischargingSequenceService {
       transfer.forEach(
           transferDetails -> {
             TankTransfer.Builder builder = TankTransfer.newBuilder();
-            Optional.ofNullable(transferDetails.getEndQuantity())
-                .ifPresent(builder::setEndQuantity);
             Optional.ofNullable(transferDetails.getCargoNominationId())
                 .ifPresent(builder::setCargoNominationId);
             Optional.ofNullable(transferDetails.getFromTankId())
@@ -467,13 +462,25 @@ public class DischargingSequenceService {
                 StringUtils.hasLength(transferDetails.getTimeStart())
                     ? Integer.valueOf(transferDetails.getTimeStart())
                     : 0);
-            Optional.ofNullable(transferDetails.getEndUllage()).ifPresent(builder::setEndUllage);
-            Optional.ofNullable(transferDetails.getStartQuantity())
-                .ifPresent(builder::setStartQuantity);
-            Optional.ofNullable(transferDetails.getStartUllage())
-                .ifPresent(builder::setStartUllage);
             Optional.ofNullable(transferDetails.getToTankId())
                 .ifPresent(toTankId -> builder.setToTankId(toTankId.get(0)));
+            Set<Long> tankIds = new LinkedHashSet<>();
+            tankIds.addAll(transferDetails.getFromTankId());
+            tankIds.addAll(transferDetails.getToTankId());
+            tankIds.forEach(
+                tankId -> {
+                  TankTransferDetail.Builder detailBuilder = TankTransferDetail.newBuilder();
+                  detailBuilder.setTankId(tankId);
+                  Optional.ofNullable(transferDetails.getStartQuantity().get(tankId.toString()))
+                      .ifPresent(detailBuilder::setStartQuantity);
+                  Optional.ofNullable(transferDetails.getEndQuantity().get(tankId.toString()))
+                      .ifPresent(detailBuilder::setEndQuantity);
+                  Optional.ofNullable(transferDetails.getStartUllage().get(tankId.toString()))
+                      .ifPresent(detailBuilder::setStartUllage);
+                  Optional.ofNullable(transferDetails.getEndUllage().get(tankId.toString()))
+                      .ifPresent(detailBuilder::setEndUllage);
+                  builder.addTankTransferDetails(detailBuilder.build());
+                });
             tankTransfers.add(builder.build());
           });
     }
@@ -784,6 +791,7 @@ public class DischargingSequenceService {
     List<DriveTank> driveTanks = new ArrayList<>();
     List<TransferDetail> transferDetails = new ArrayList<>();
     List<TransferDetail> freshOilTanks = new ArrayList<>();
+    List<TransferDetail> tankRefills = new ArrayList<>();
     inititalizeStabilityParams(stabilityParams);
 
     PortDetail portDetail = getPortInfo(reply.getPortId());
@@ -943,7 +951,13 @@ public class DischargingSequenceService {
 
       dischargeRates.addAll(dischargeSeq.getDischargingRatesList());
       this.buildTankTransferDetailsAndFreshOil(
-          dischargeSeq, portEta, vesselTankMap, cargoNomDetails, transferDetails, freshOilTanks);
+          dischargeSeq,
+          portEta,
+          vesselTankMap,
+          cargoNomDetails,
+          transferDetails,
+          freshOilTanks,
+          tankRefills);
     }
 
     this.addFinalCargoStage(cargoStages, stageNumber, response);
@@ -991,6 +1005,7 @@ public class DischargingSequenceService {
     response.setDriveTanks(driveTanks);
     response.setTransfers(transferDetails);
     response.setFreshOilTanks(freshOilTanks);
+    response.setTankRefills(tankRefills);
   }
 
   /**
@@ -1044,7 +1059,7 @@ public class DischargingSequenceService {
   }
 
   /**
-   * Removes stage tick posisitons that are shorter than the intervals given
+   * Removes stage tick positions that are shorter than the intervals given
    *
    * @param stageTickPositions
    * @param interval
@@ -1071,6 +1086,7 @@ public class DischargingSequenceService {
    * @param cargoNomDetails
    * @param transferDetails
    * @param freshOilTanks
+   * @param tankRefills
    */
   private void buildTankTransferDetailsAndFreshOil(
       DischargingSequence dischargeSeq,
@@ -1078,29 +1094,68 @@ public class DischargingSequenceService {
       Map<Long, VesselTankDetail> vesselTankMap,
       Map<Long, CargoNominationDetail> cargoNomDetails,
       List<TransferDetail> transferDetails,
-      List<TransferDetail> freshOilTanks) {
+      List<TransferDetail> freshOilTanks,
+      List<TransferDetail> tankRefills) {
     dischargeSeq
         .getTankTransfersList()
         .forEach(
             transfer -> {
+              Map<Long, TankTransferDetail> tankTransferDetailMap =
+                  transfer.getTankTransferDetailsList().stream()
+                      .collect(
+                          Collectors.toMap(TankTransferDetail::getTankId, Function.identity()));
               TransferDetail transferDetail = new TransferDetail();
               transferDetail.setEnd(portEta + (Long.valueOf(transfer.getTimeEnd()) * 60 * 1000));
               transferDetail.setStart(
                   portEta + (Long.valueOf(transfer.getTimeStart()) * 60 * 1000));
-              List<Tank> fromTanks = new ArrayList<>();
+              List<TransferTank> fromTanks = new ArrayList<>();
               transfer
                   .getFromTankIdsList()
                   .forEach(
                       tankId -> {
-                        Tank tank = new Tank();
+                        TransferTank tank = new TransferTank();
                         tank.setTankId(tankId);
                         VesselTankDetail vesselTankDetail = vesselTankMap.get(tankId);
                         tank.setTankName(vesselTankDetail.getShortName());
+                        TankTransferDetail detail = tankTransferDetailMap.get(tankId);
+                        tank.setEndQuantity(
+                            StringUtils.hasLength(detail.getEndQuantity())
+                                ? new BigDecimal(detail.getEndQuantity())
+                                : BigDecimal.ZERO);
+                        tank.setEndUllage(
+                            StringUtils.hasLength(detail.getEndUllage())
+                                ? new BigDecimal(detail.getEndUllage())
+                                : BigDecimal.ZERO);
+                        tank.setStartQuantity(
+                            StringUtils.hasLength(detail.getStartQuantity())
+                                ? new BigDecimal(detail.getStartQuantity())
+                                : BigDecimal.ZERO);
+                        tank.setStartUllage(
+                            StringUtils.hasLength(detail.getStartUllage())
+                                ? new BigDecimal(detail.getStartUllage())
+                                : BigDecimal.ZERO);
                         fromTanks.add(tank);
                       });
               transferDetail.setFromTanks(fromTanks);
-              Tank tank = new Tank();
+              TransferTank tank = new TransferTank();
               tank.setTankId(transfer.getToTankId());
+              TankTransferDetail detail = tankTransferDetailMap.get(transfer.getToTankId());
+              tank.setEndQuantity(
+                  StringUtils.hasLength(detail.getEndQuantity())
+                      ? new BigDecimal(detail.getEndQuantity())
+                      : BigDecimal.ZERO);
+              tank.setEndUllage(
+                  StringUtils.hasLength(detail.getEndUllage())
+                      ? new BigDecimal(detail.getEndUllage())
+                      : BigDecimal.ZERO);
+              tank.setStartQuantity(
+                  StringUtils.hasLength(detail.getStartQuantity())
+                      ? new BigDecimal(detail.getStartQuantity())
+                      : BigDecimal.ZERO);
+              tank.setStartUllage(
+                  StringUtils.hasLength(detail.getStartUllage())
+                      ? new BigDecimal(detail.getStartUllage())
+                      : BigDecimal.ZERO);
               VesselTankDetail vesselTankDetail = vesselTankMap.get(transfer.getToTankId());
               tank.setTankName(vesselTankDetail.getShortName());
               transferDetail.setToTank(tank);
@@ -1112,26 +1167,12 @@ public class DischargingSequenceService {
               cargo.setName(cargoNominationDetail.getCargoName());
               cargo.setApi(cargoNominationDetail.getApi());
               transferDetail.setCargo(cargo);
-              transferDetail.setStartQuantity(
-                  StringUtils.hasLength(transfer.getStartQuantity())
-                      ? new BigDecimal(transfer.getStartQuantity())
-                      : null);
-              transferDetail.setStartUllage(
-                  StringUtils.hasLength(transfer.getStartUllage())
-                      ? new BigDecimal(transfer.getStartUllage())
-                      : null);
-              transferDetail.setEndQuantity(
-                  StringUtils.hasLength(transfer.getEndQuantity())
-                      ? new BigDecimal(transfer.getEndQuantity())
-                      : null);
-              transferDetail.setEndUllage(
-                  StringUtils.hasLength(transfer.getEndUllage())
-                      ? new BigDecimal(transfer.getEndUllage())
-                      : null);
               if (transfer.getPurpose().equals(TANK_TRANSFER_PURPOSE_STRIP)) {
                 transferDetails.add(transferDetail);
               } else if (transfer.getPurpose().equals(TANK_TRANSFER_PURPOSE_FRESH_OIL)) {
                 freshOilTanks.add(transferDetail);
+              } else if (transfer.getPurpose().equals(TANK_TRANSFER_PURPOSE_TANK_REFILL)) {
+                tankRefills.add(transferDetail);
               }
             });
   }

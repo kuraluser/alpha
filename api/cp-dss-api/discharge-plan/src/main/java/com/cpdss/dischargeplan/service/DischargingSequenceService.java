@@ -305,14 +305,27 @@ public class DischargingSequenceService {
           Optional.ofNullable(dischargingTankTransfer.getTimeStart())
               .ifPresent(builder::setTimeStart);
           Optional.ofNullable(dischargingTankTransfer.getPurpose()).ifPresent(builder::setPurpose);
-          Optional.ofNullable(dischargingTankTransfer.getEndQuantity())
-              .ifPresent(endQuantity -> builder.setEndQuantity(endQuantity.toString()));
-          Optional.ofNullable(dischargingTankTransfer.getEndUllage())
-              .ifPresent(endUllage -> builder.setEndUllage(endUllage.toString()));
-          Optional.ofNullable(dischargingTankTransfer.getStartQuantity())
-              .ifPresent(startQuantity -> builder.setStartQuantity(startQuantity.toString()));
-          Optional.ofNullable(dischargingTankTransfer.getStartUllage())
-              .ifPresent(startUllage -> builder.setStartUllage(startUllage.toString()));
+          if (dischargingTankTransfer.getDischargingTankTransferDetails() != null) {
+            dischargingTankTransfer
+                .getDischargingTankTransferDetails()
+                .forEach(
+                    dischargingTankTransferDetails -> {
+                      TankTransferDetail.Builder detailBuilder = TankTransferDetail.newBuilder();
+                      Optional.ofNullable(dischargingTankTransferDetails.getEndQuantity())
+                          .ifPresent(
+                              endQuantity -> detailBuilder.setEndQuantity(endQuantity.toString()));
+                      Optional.ofNullable(dischargingTankTransferDetails.getEndUllage())
+                          .ifPresent(endUllage -> detailBuilder.setEndUllage(endUllage.toString()));
+                      Optional.ofNullable(dischargingTankTransferDetails.getStartQuantity())
+                          .ifPresent(
+                              startQuantity ->
+                                  detailBuilder.setStartQuantity(startQuantity.toString()));
+                      Optional.ofNullable(dischargingTankTransferDetails.getStartUllage())
+                          .ifPresent(
+                              startUllage -> detailBuilder.setStartUllage(startUllage.toString()));
+                      builder.addTankTransferDetails(detailBuilder.build());
+                    });
+          }
           tankTransfers.add(builder.build());
         });
     sequenceBuilder.addAllTankTransfers(tankTransfers);

@@ -2227,23 +2227,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           }
           this.onHandQuantityRepository.saveAll(OnHandQuantities);
         }
-        List<OnBoardQuantity> onBoardQuantityList =
-            this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(
-                loadableStudyOpt.get(), true);
-        if (!onBoardQuantityList.isEmpty()) {
-          List<OnBoardQuantity> OnBoardQuantities = new ArrayList<OnBoardQuantity>();
 
-          onBoardQuantityList.forEach(
-              onBoardQuantity -> {
-                entityManager.detach(onBoardQuantity);
-                onBoardQuantity.setId(null);
-                onBoardQuantity.setLoadableStudy(entity);
-                onBoardQuantity.setActualArrivalWeight(null);
-                onBoardQuantity.setActualDepartureWeight(null);
-                OnBoardQuantities.add(onBoardQuantity);
-              });
-          this.onBoardQuantityRepository.saveAll(OnBoardQuantities);
-        }
+        // Fetching On Board Quantities from Previous voyage's Discharging Plan.
+        List<OnBoardQuantity> onBoardQuantities =
+            this.onBoardQuantityService.populateOnBoardQuantities(entity);
+        this.onBoardQuantityRepository.saveAll(onBoardQuantities);
 
         List<LoadableQuantity> loadableQuantityList =
             this.loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(

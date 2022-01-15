@@ -171,6 +171,10 @@ public final class DischargePlanModels {
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_TankTransfer_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_TankTransferDetail_descriptor;
+  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_TankTransferDetail_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
       internal_static_DriveTankDetail_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DriveTankDetail_fieldAccessorTable;
@@ -457,58 +461,60 @@ public final class DischargePlanModels {
           + "ctorOperation\030\021 \003(\0132\021.EductorOperation\022%"
           + "\n\rcleaningTanks\030\022 \001(\0132\016.CleaningTanks\022\'\n"
           + "\017cargoOperations\030\023 \003(\0132\016.PumpOperation\022$"
-          + "\n\rtankTransfers\030\024 \003(\0132\r.TankTransfer\"\331\001\n"
+          + "\n\rtankTransfers\030\024 \003(\0132\r.TankTransfer\"\267\001\n"
           + "\014TankTransfer\022\023\n\013fromTankIds\030\001 \003(\003\022\020\n\010to"
           + "TankId\030\002 \001(\003\022\021\n\ttimeStart\030\003 \001(\005\022\017\n\007timeE"
-          + "nd\030\004 \001(\005\022\031\n\021cargoNominationId\030\005 \001(\003\022\025\n\rs"
-          + "tartQuantity\030\006 \001(\t\022\023\n\013endQuantity\030\007 \001(\t\022"
-          + "\023\n\013startUllage\030\010 \001(\t\022\021\n\tendUllage\030\t \001(\t\022"
-          + "\017\n\007purpose\030\n \001(\t\"\\\n\017DriveTankDetail\022\025\n\rt"
-          + "ankShortName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\tti"
-          + "meStart\030\003 \001(\t\022\017\n\007timeEnd\030\004 \001(\t\"\210\001\n\rClean"
-          + "ingTanks\022%\n\007topTank\030\001 \003(\0132\024.CleaningTank"
-          + "Details\022(\n\nbottomTank\030\002 \003(\0132\024.CleaningTa"
-          + "nkDetails\022&\n\010fullTank\030\003 \003(\0132\024.CleaningTa"
-          + "nkDetails\"`\n\023CleaningTankDetails\022\025\n\rtank"
-          + "ShortName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022\021\n\ttimeS"
-          + "tart\030\003 \001(\t\022\017\n\007timeEnd\030\004 \001(\t\"\252\003\n\034Discharg"
-          + "ePlanPortWiseDetails\022,\n\021deballastingRate"
-          + "s\030\001 \003(\0132\021.DeBallastingRate\022>\n\035dischargin"
-          + "gPlanBallastDetails\030\002 \003(\0132\027.LoadingPlanT"
-          + "ankDetails\022:\n\031dischargingPlanRobDetails\030"
-          + "\003 \003(\0132\027.LoadingPlanTankDetails\022K\n\"discha"
-          + "rgingPlanStabilityParameters\030\004 \001(\0132\037.Loa"
-          + "dingPlanStabilityParameters\022>\n\035dischargi"
-          + "ngPlanStowageDetails\030\005 \003(\0132\027.LoadingPlan"
-          + "TankDetails\022\014\n\004time\030\006 \001(\005\022E\n\037discharging"
-          + "PlanCommingleDetails\030\007 \003(\0132\034.LoadingPlan"
-          + "CommingleDetails\"G\n\"DischargePlanStowage"
-          + "DetailsRequest\022!\n\031lastLoadingPortRotatio"
-          + "nId\030\001 \001(\003\"\213\001\n#DischargePlanStowageDetail"
-          + "sResponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
-          + "onseStatus\022;\n\032dischargingPlanTankDetails"
-          + "\030\002 \003(\0132\027.LoadingPlanTankDetails\"\316\001\n$Disc"
-          + "hargingInfoLoadicatorDataRequest\022\021\n\tproc"
-          + "essId\030\001 \001(\t\022 \n\030dischargingInformationId\030"
-          + "\002 \001(\003\022B\n\034loadingInfoLoadicatorDetails\030\003 "
-          + "\003(\0132\034.LoadingInfoLoadicatorDetail\022\026\n\016isU"
-          + "llageUpdate\030\004 \001(\010\022\025\n\rconditionType\030\005 \001(\005"
-          + "\"y\n\"DischargingInfoLoadicatorDataReply\022\021"
-          + "\n\tprocessId\030\001 \001(\t\022\027\n\017loadableStudyId\030\002 \001"
-          + "(\003\022\'\n\016responseStatus\030\003 \001(\0132\017.ResponseSta"
-          + "tus\"\247\001\n\035PortDischargingPlanRobDetails\022\017\n"
-          + "\007portXId\030\001 \001(\003\022\027\n\017portRotationXId\030\002 \001(\003\022"
-          + "\017\n\007tankXId\030\003 \001(\003\022\020\n\010quantity\030\004 \001(\001\022\025\n\rco"
-          + "nditionType\030\005 \001(\005\022\021\n\tvalueType\030\006 \001(\005\022\017\n\007"
-          + "density\030\007 \001(\001\"z\n$PortDischargingPlanRobD"
-          + "etailsRequest\022\017\n\007portXId\030\001 \001(\003\022\027\n\017portRo"
-          + "tationXId\030\002 \001(\003\022\025\n\rconditionType\030\003 \001(\005\022\021"
-          + "\n\tvalueType\030\004 \001(\005\"\224\001\n\"PortDischargingPla"
-          + "nRobDetailsReply\022\'\n\016responseStatus\030\001 \001(\013"
-          + "2\017.ResponseStatus\022E\n\035portDischargingPlan"
-          + "RobDetails\030\002 \003(\0132\036.PortDischargingPlanRo"
-          + "bDetailsB-\n)com.cpdss.common.generated.d"
-          + "ischarge_planP\001b\006proto3"
+          + "nd\030\004 \001(\005\022\031\n\021cargoNominationId\030\005 \001(\003\022\017\n\007p"
+          + "urpose\030\006 \001(\t\0220\n\023tankTransferDetails\030\007 \003("
+          + "\0132\023.TankTransferDetail\"x\n\022TankTransferDe"
+          + "tail\022\016\n\006tankId\030\001 \001(\003\022\025\n\rstartQuantity\030\002 "
+          + "\001(\t\022\023\n\013endQuantity\030\003 \001(\t\022\023\n\013startUllage\030"
+          + "\004 \001(\t\022\021\n\tendUllage\030\005 \001(\t\"\\\n\017DriveTankDet"
+          + "ail\022\025\n\rtankShortName\030\001 \001(\t\022\016\n\006tankId\030\002 \001"
+          + "(\003\022\021\n\ttimeStart\030\003 \001(\t\022\017\n\007timeEnd\030\004 \001(\t\"\210"
+          + "\001\n\rCleaningTanks\022%\n\007topTank\030\001 \003(\0132\024.Clea"
+          + "ningTankDetails\022(\n\nbottomTank\030\002 \003(\0132\024.Cl"
+          + "eaningTankDetails\022&\n\010fullTank\030\003 \003(\0132\024.Cl"
+          + "eaningTankDetails\"`\n\023CleaningTankDetails"
+          + "\022\025\n\rtankShortName\030\001 \001(\t\022\016\n\006tankId\030\002 \001(\003\022"
+          + "\021\n\ttimeStart\030\003 \001(\t\022\017\n\007timeEnd\030\004 \001(\t\"\252\003\n\034"
+          + "DischargePlanPortWiseDetails\022,\n\021deballas"
+          + "tingRates\030\001 \003(\0132\021.DeBallastingRate\022>\n\035di"
+          + "schargingPlanBallastDetails\030\002 \003(\0132\027.Load"
+          + "ingPlanTankDetails\022:\n\031dischargingPlanRob"
+          + "Details\030\003 \003(\0132\027.LoadingPlanTankDetails\022K"
+          + "\n\"dischargingPlanStabilityParameters\030\004 \001"
+          + "(\0132\037.LoadingPlanStabilityParameters\022>\n\035d"
+          + "ischargingPlanStowageDetails\030\005 \003(\0132\027.Loa"
+          + "dingPlanTankDetails\022\014\n\004time\030\006 \001(\005\022E\n\037dis"
+          + "chargingPlanCommingleDetails\030\007 \003(\0132\034.Loa"
+          + "dingPlanCommingleDetails\"G\n\"DischargePla"
+          + "nStowageDetailsRequest\022!\n\031lastLoadingPor"
+          + "tRotationId\030\001 \001(\003\"\213\001\n#DischargePlanStowa"
+          + "geDetailsResponse\022\'\n\016responseStatus\030\001 \001("
+          + "\0132\017.ResponseStatus\022;\n\032dischargingPlanTan"
+          + "kDetails\030\002 \003(\0132\027.LoadingPlanTankDetails\""
+          + "\316\001\n$DischargingInfoLoadicatorDataRequest"
+          + "\022\021\n\tprocessId\030\001 \001(\t\022 \n\030dischargingInform"
+          + "ationId\030\002 \001(\003\022B\n\034loadingInfoLoadicatorDe"
+          + "tails\030\003 \003(\0132\034.LoadingInfoLoadicatorDetai"
+          + "l\022\026\n\016isUllageUpdate\030\004 \001(\010\022\025\n\rconditionTy"
+          + "pe\030\005 \001(\005\"y\n\"DischargingInfoLoadicatorDat"
+          + "aReply\022\021\n\tprocessId\030\001 \001(\t\022\027\n\017loadableStu"
+          + "dyId\030\002 \001(\003\022\'\n\016responseStatus\030\003 \001(\0132\017.Res"
+          + "ponseStatus\"\247\001\n\035PortDischargingPlanRobDe"
+          + "tails\022\017\n\007portXId\030\001 \001(\003\022\027\n\017portRotationXI"
+          + "d\030\002 \001(\003\022\017\n\007tankXId\030\003 \001(\003\022\020\n\010quantity\030\004 \001"
+          + "(\001\022\025\n\rconditionType\030\005 \001(\005\022\021\n\tvalueType\030\006"
+          + " \001(\005\022\017\n\007density\030\007 \001(\001\"z\n$PortDischarging"
+          + "PlanRobDetailsRequest\022\017\n\007portXId\030\001 \001(\003\022\027"
+          + "\n\017portRotationXId\030\002 \001(\003\022\025\n\rconditionType"
+          + "\030\003 \001(\005\022\021\n\tvalueType\030\004 \001(\005\"\224\001\n\"PortDischa"
+          + "rgingPlanRobDetailsReply\022\'\n\016responseStat"
+          + "us\030\001 \001(\0132\017.ResponseStatus\022E\n\035portDischar"
+          + "gingPlanRobDetails\030\002 \003(\0132\036.PortDischargi"
+          + "ngPlanRobDetailsB-\n)com.cpdss.common.gen"
+          + "erated.discharge_planP\001b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -1029,27 +1035,31 @@ public final class DischargePlanModels {
               "TimeStart",
               "TimeEnd",
               "CargoNominationId",
-              "StartQuantity",
-              "EndQuantity",
-              "StartUllage",
-              "EndUllage",
               "Purpose",
+              "TankTransferDetails",
             });
-    internal_static_DriveTankDetail_descriptor = getDescriptor().getMessageTypes().get(42);
+    internal_static_TankTransferDetail_descriptor = getDescriptor().getMessageTypes().get(42);
+    internal_static_TankTransferDetail_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_TankTransferDetail_descriptor,
+            new java.lang.String[] {
+              "TankId", "StartQuantity", "EndQuantity", "StartUllage", "EndUllage",
+            });
+    internal_static_DriveTankDetail_descriptor = getDescriptor().getMessageTypes().get(43);
     internal_static_DriveTankDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DriveTankDetail_descriptor,
             new java.lang.String[] {
               "TankShortName", "TankId", "TimeStart", "TimeEnd",
             });
-    internal_static_CleaningTanks_descriptor = getDescriptor().getMessageTypes().get(43);
+    internal_static_CleaningTanks_descriptor = getDescriptor().getMessageTypes().get(44);
     internal_static_CleaningTanks_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CleaningTanks_descriptor,
             new java.lang.String[] {
               "TopTank", "BottomTank", "FullTank",
             });
-    internal_static_CleaningTankDetails_descriptor = getDescriptor().getMessageTypes().get(44);
+    internal_static_CleaningTankDetails_descriptor = getDescriptor().getMessageTypes().get(45);
     internal_static_CleaningTankDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CleaningTankDetails_descriptor,
@@ -1057,7 +1067,7 @@ public final class DischargePlanModels {
               "TankShortName", "TankId", "TimeStart", "TimeEnd",
             });
     internal_static_DischargePlanPortWiseDetails_descriptor =
-        getDescriptor().getMessageTypes().get(45);
+        getDescriptor().getMessageTypes().get(46);
     internal_static_DischargePlanPortWiseDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargePlanPortWiseDetails_descriptor,
@@ -1071,7 +1081,7 @@ public final class DischargePlanModels {
               "DischargingPlanCommingleDetails",
             });
     internal_static_DischargePlanStowageDetailsRequest_descriptor =
-        getDescriptor().getMessageTypes().get(46);
+        getDescriptor().getMessageTypes().get(47);
     internal_static_DischargePlanStowageDetailsRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargePlanStowageDetailsRequest_descriptor,
@@ -1079,7 +1089,7 @@ public final class DischargePlanModels {
               "LastLoadingPortRotationId",
             });
     internal_static_DischargePlanStowageDetailsResponse_descriptor =
-        getDescriptor().getMessageTypes().get(47);
+        getDescriptor().getMessageTypes().get(48);
     internal_static_DischargePlanStowageDetailsResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargePlanStowageDetailsResponse_descriptor,
@@ -1087,7 +1097,7 @@ public final class DischargePlanModels {
               "ResponseStatus", "DischargingPlanTankDetails",
             });
     internal_static_DischargingInfoLoadicatorDataRequest_descriptor =
-        getDescriptor().getMessageTypes().get(48);
+        getDescriptor().getMessageTypes().get(49);
     internal_static_DischargingInfoLoadicatorDataRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingInfoLoadicatorDataRequest_descriptor,
@@ -1099,7 +1109,7 @@ public final class DischargePlanModels {
               "ConditionType",
             });
     internal_static_DischargingInfoLoadicatorDataReply_descriptor =
-        getDescriptor().getMessageTypes().get(49);
+        getDescriptor().getMessageTypes().get(50);
     internal_static_DischargingInfoLoadicatorDataReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_DischargingInfoLoadicatorDataReply_descriptor,
@@ -1107,7 +1117,7 @@ public final class DischargePlanModels {
               "ProcessId", "LoadableStudyId", "ResponseStatus",
             });
     internal_static_PortDischargingPlanRobDetails_descriptor =
-        getDescriptor().getMessageTypes().get(50);
+        getDescriptor().getMessageTypes().get(51);
     internal_static_PortDischargingPlanRobDetails_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortDischargingPlanRobDetails_descriptor,
@@ -1121,7 +1131,7 @@ public final class DischargePlanModels {
               "Density",
             });
     internal_static_PortDischargingPlanRobDetailsRequest_descriptor =
-        getDescriptor().getMessageTypes().get(51);
+        getDescriptor().getMessageTypes().get(52);
     internal_static_PortDischargingPlanRobDetailsRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortDischargingPlanRobDetailsRequest_descriptor,
@@ -1129,7 +1139,7 @@ public final class DischargePlanModels {
               "PortXId", "PortRotationXId", "ConditionType", "ValueType",
             });
     internal_static_PortDischargingPlanRobDetailsReply_descriptor =
-        getDescriptor().getMessageTypes().get(52);
+        getDescriptor().getMessageTypes().get(53);
     internal_static_PortDischargingPlanRobDetailsReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortDischargingPlanRobDetailsReply_descriptor,

@@ -55,67 +55,29 @@ public interface TankTransferOrBuilder
   long getCargoNominationId();
 
   /**
-   * <code>string startQuantity = 6;</code>
-   *
-   * @return The startQuantity.
-   */
-  java.lang.String getStartQuantity();
-  /**
-   * <code>string startQuantity = 6;</code>
-   *
-   * @return The bytes for startQuantity.
-   */
-  com.google.protobuf.ByteString getStartQuantityBytes();
-
-  /**
-   * <code>string endQuantity = 7;</code>
-   *
-   * @return The endQuantity.
-   */
-  java.lang.String getEndQuantity();
-  /**
-   * <code>string endQuantity = 7;</code>
-   *
-   * @return The bytes for endQuantity.
-   */
-  com.google.protobuf.ByteString getEndQuantityBytes();
-
-  /**
-   * <code>string startUllage = 8;</code>
-   *
-   * @return The startUllage.
-   */
-  java.lang.String getStartUllage();
-  /**
-   * <code>string startUllage = 8;</code>
-   *
-   * @return The bytes for startUllage.
-   */
-  com.google.protobuf.ByteString getStartUllageBytes();
-
-  /**
-   * <code>string endUllage = 9;</code>
-   *
-   * @return The endUllage.
-   */
-  java.lang.String getEndUllage();
-  /**
-   * <code>string endUllage = 9;</code>
-   *
-   * @return The bytes for endUllage.
-   */
-  com.google.protobuf.ByteString getEndUllageBytes();
-
-  /**
-   * <code>string purpose = 10;</code>
+   * <code>string purpose = 6;</code>
    *
    * @return The purpose.
    */
   java.lang.String getPurpose();
   /**
-   * <code>string purpose = 10;</code>
+   * <code>string purpose = 6;</code>
    *
    * @return The bytes for purpose.
    */
   com.google.protobuf.ByteString getPurposeBytes();
+
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  java.util.List<com.cpdss.common.generated.discharge_plan.TankTransferDetail>
+      getTankTransferDetailsList();
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  com.cpdss.common.generated.discharge_plan.TankTransferDetail getTankTransferDetails(int index);
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  int getTankTransferDetailsCount();
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  java.util.List<? extends com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder>
+      getTankTransferDetailsOrBuilderList();
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder
+      getTankTransferDetailsOrBuilder(int index);
 }

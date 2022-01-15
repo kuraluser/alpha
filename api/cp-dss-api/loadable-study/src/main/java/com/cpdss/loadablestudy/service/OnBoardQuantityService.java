@@ -21,12 +21,14 @@ import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * Master Service for Loadable Pattern
@@ -238,108 +240,60 @@ public class OnBoardQuantityService {
     List<LoadableStudy.OnBoardQuantityDetail> obqDetailList = new ArrayList<>();
     List<VesselInfo.VesselTankDetail> modifieableList = new ArrayList<>(vesselTanksList);
     List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailsList = null;
-    List<LoadingPlanModels.LoadingPlanTankDetails> dischargingPlanStowageDetails = null;
+    List<LoadingPlanModels.LoadingPlanTankDetails> dischargingPlanStowageDetails =
+        this.findPortDischargingPlanStowageDetailsForPrevVoyage(voyage);
     Collections.sort(
         modifieableList, Comparator.comparing(VesselInfo.VesselTankDetail::getTankDisplayOrder));
+    Set<Long> cargoNominationIds =
+        dischargingPlanStowageDetails.stream()
+            .map(LoadingPlanModels.LoadingPlanTankDetails::getCargoNominationId)
+            .collect(Collectors.toSet());
+    Map<Long, CargoNomination> cargoNominationMap =
+        cargoNominationIds.stream()
+            .collect(
+                Collectors.toMap(
+                    Function.identity(),
+                    id -> {
+                      Optional<CargoNomination> cargoNominationOpt =
+                          this.cargoNominationRepository.findByIdAndIsActive(id, true);
+                      return cargoNominationOpt.isEmpty()
+                          ? new CargoNomination()
+                          : cargoNominationOpt.get();
+                    }));
     List<OnBoardQuantity> onBoardQuantityEntityList = new ArrayList<>();
     if (obqEntities == null || obqEntities.size() == 0) {
       for (VesselInfo.VesselTankDetail tank : modifieableList) {
         OnBoardQuantity onBoardQuantityEntity = new OnBoardQuantity();
-
-        // if planingType = 1 means save OBQ for loadable study
-        if (request.getPlaningType() == Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE) {
-          if (null == dischargingPlanStowageDetails) {
-            dischargingPlanStowageDetails =
-                this.findPortDischargingPlanStowageDetailsForPrevVoyage(voyage);
-          }
-          Optional<LoadingPlanModels.LoadingPlanTankDetails> dsCargo =
-              dischargingPlanStowageDetails.stream()
-                  .filter(var -> var.getTankId() == (tank.getTankId()))
-                  .findAny();
-          if (dsCargo.isPresent()) {
-
-            Optional.ofNullable(dsCargo.get().getColorCode())
-                .ifPresent(onBoardQuantityEntity::setColorCode);
-            Optional.ofNullable(dsCargo.get().getAbbreviation())
-                .ifPresent(onBoardQuantityEntity::setAbbreviation);
-            Optional.ofNullable(dsCargo.get().getApi())
-                .ifPresentOrElse(
-                    api -> onBoardQuantityEntity.setDensity(new BigDecimal(api)),
-                    () -> onBoardQuantityEntity.setDensity(new BigDecimal(0)));
-            Optional.ofNullable(dsCargo.get().getTemperature())
-                .ifPresentOrElse(
-                    temp -> onBoardQuantityEntity.setTemperature(new BigDecimal(temp)),
-                    () -> onBoardQuantityEntity.setTemperature(new BigDecimal(0)));
-            Optional.ofNullable(dsCargo.get().getQuantity())
-                .ifPresentOrElse(
-                    quantity -> {
-                      onBoardQuantityEntity.setPlannedArrivalWeight(new BigDecimal(quantity));
-                      onBoardQuantityEntity.setPlannedDepartureWeight(new BigDecimal(quantity));
-                    },
-                    () -> {
-                      onBoardQuantityEntity.setPlannedArrivalWeight(new BigDecimal(0));
-                      onBoardQuantityEntity.setPlannedDepartureWeight(new BigDecimal(0));
-                    });
-            Optional<Long> cargoNomination =
-                Optional.ofNullable(dsCargo.get().getCargoNominationId());
-            if (cargoNomination.isPresent()) {
-              Optional<CargoNomination> cargoNominationEntity =
-                  cargoNominationRepository.findByIdAndIsActive(cargoNomination.get(), true);
-              if (cargoNominationEntity.isPresent()) {
-                Optional.ofNullable(cargoNominationEntity.get().getCargoXId())
-                    .ifPresent(onBoardQuantityEntity::setCargoId);
-              }
-            }
+        Optional<LoadingPlanModels.LoadingPlanTankDetails> dsCargo =
+            dischargingPlanStowageDetails.stream()
+                .filter(var -> var.getTankId() == (tank.getTankId()))
+                .findAny();
+        if (dsCargo.isPresent()) {
+          onBoardQuantityEntity.setColorCode(dsCargo.get().getColorCode());
+          onBoardQuantityEntity.setAbbreviation(dsCargo.get().getAbbreviation());
+          onBoardQuantityEntity.setDensity(
+              StringUtils.hasLength(dsCargo.get().getApi())
+                  ? new BigDecimal(dsCargo.get().getApi())
+                  : BigDecimal.ZERO);
+          onBoardQuantityEntity.setTemperature(
+              StringUtils.hasLength(dsCargo.get().getTemperature())
+                  ? new BigDecimal(dsCargo.get().getTemperature())
+                  : BigDecimal.ZERO);
+          onBoardQuantityEntity.setPlannedArrivalWeight(
+              StringUtils.hasLength(dsCargo.get().getQuantity())
+                  ? new BigDecimal(dsCargo.get().getQuantity())
+                  : BigDecimal.ZERO);
+          onBoardQuantityEntity.setPlannedDepartureWeight(
+              StringUtils.hasLength(dsCargo.get().getQuantity())
+                  ? new BigDecimal(dsCargo.get().getQuantity())
+                  : BigDecimal.ZERO);
+          CargoNomination cargoNominationEntity =
+              cargoNominationMap.get(dsCargo.get().getCargoNominationId());
+          if (cargoNominationEntity != null) {
+            Optional.ofNullable(cargoNominationEntity.getCargoXId())
+                .ifPresent(onBoardQuantityEntity::setCargoId);
           }
         }
-
-        // if planingType = 2 means save OBQ for discharge plan
-        if (request.getPlaningType() == Common.PLANNING_TYPE.DISCHARGE_STUDY_VALUE) {
-          if (null == dischargingPlanStowageDetails) {
-            dischargingPlanStowageDetails =
-                this.findPortDischargingPlanStowageDetailsForPrevVoyage(voyage);
-          }
-          Optional<LoadingPlanModels.LoadingPlanTankDetails> dsCargo =
-              dischargingPlanStowageDetails.stream()
-                  .filter(var -> var.getTankId() == (tank.getTankId()))
-                  .findAny();
-          if (dsCargo.isPresent()) {
-
-            Optional.ofNullable(dsCargo.get().getColorCode())
-                .ifPresent(onBoardQuantityEntity::setColorCode);
-            Optional.ofNullable(dsCargo.get().getAbbreviation())
-                .ifPresent(onBoardQuantityEntity::setAbbreviation);
-            Optional.ofNullable(dsCargo.get().getApi())
-                .ifPresentOrElse(
-                    api -> onBoardQuantityEntity.setDensity(new BigDecimal(api)),
-                    () -> onBoardQuantityEntity.setDensity(new BigDecimal(0)));
-            Optional.ofNullable(dsCargo.get().getTemperature())
-                .ifPresentOrElse(
-                    temp -> onBoardQuantityEntity.setTemperature(new BigDecimal(temp)),
-                    () -> onBoardQuantityEntity.setTemperature(new BigDecimal(0)));
-            Optional.ofNullable(dsCargo.get().getQuantity())
-                .ifPresentOrElse(
-                    quantity -> {
-                      onBoardQuantityEntity.setPlannedArrivalWeight(new BigDecimal(quantity));
-                      onBoardQuantityEntity.setPlannedDepartureWeight(new BigDecimal(quantity));
-                    },
-                    () -> {
-                      onBoardQuantityEntity.setPlannedArrivalWeight(new BigDecimal(0));
-                      onBoardQuantityEntity.setPlannedDepartureWeight(new BigDecimal(0));
-                    });
-            Optional<Long> cargoNomination =
-                Optional.ofNullable(dsCargo.get().getCargoNominationId());
-            if (cargoNomination.isPresent()) {
-              Optional<CargoNomination> cargoNominationEntity =
-                  cargoNominationRepository.findByIdAndIsActive(cargoNomination.get(), true);
-              if (cargoNominationEntity.isPresent()) {
-                Optional.ofNullable(cargoNominationEntity.get().getCargoXId())
-                    .ifPresent(onBoardQuantityEntity::setCargoId);
-              }
-            }
-          }
-        }
-
         onBoardQuantityEntity.setIsActive(true);
         onBoardQuantityEntity.setLoadableStudy(loadableStudy);
         onBoardQuantityEntity.setPortId(request.getPortId());
@@ -520,5 +474,89 @@ public class OnBoardQuantityService {
       }
     }
     return new ArrayList<>();
+  }
+
+  /**
+   * Populates OBQ for a loadable Study
+   *
+   * @param loadableStudy
+   * @return
+   * @throws GenericServiceException
+   */
+  public List<OnBoardQuantity> populateOnBoardQuantities(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) throws GenericServiceException {
+    LoadableStudy.OnBoardQuantityRequest.Builder obqRequestBuilder =
+        LoadableStudy.OnBoardQuantityRequest.newBuilder();
+    obqRequestBuilder.setCompanyId(loadableStudy.getVoyage().getCompanyXId());
+    obqRequestBuilder.setVesselId(loadableStudy.getVoyage().getVesselXId());
+    VesselInfo.VesselReply reply = this.getObqTanks(obqRequestBuilder.build());
+    List<LoadingPlanModels.LoadingPlanTankDetails> dischargingPlanStowageDetails =
+        this.findPortDischargingPlanStowageDetailsForPrevVoyage(loadableStudy.getVoyage());
+    Set<Long> cargoNominationIds =
+        dischargingPlanStowageDetails.stream()
+            .map(LoadingPlanModels.LoadingPlanTankDetails::getCargoNominationId)
+            .collect(Collectors.toSet());
+    Map<Long, CargoNomination> cargoNominationMap =
+        cargoNominationIds.stream()
+            .collect(
+                Collectors.toMap(
+                    Function.identity(),
+                    id -> {
+                      Optional<CargoNomination> cargoNominationOpt =
+                          this.cargoNominationRepository.findByIdAndIsActive(id, true);
+                      return cargoNominationOpt.isEmpty()
+                          ? new CargoNomination()
+                          : cargoNominationOpt.get();
+                    }));
+    List<OnBoardQuantity> onBoardQuantityEntityList = new ArrayList<>();
+    for (VesselInfo.VesselTankDetail tank : reply.getVesselTanksList()) {
+      OnBoardQuantity onBoardQuantityEntity = new OnBoardQuantity();
+      Optional<LoadingPlanModels.LoadingPlanTankDetails> dsCargo =
+          dischargingPlanStowageDetails.stream()
+              .filter(var -> var.getTankId() == (tank.getTankId()))
+              .findAny();
+      if (dsCargo.isPresent()) {
+        onBoardQuantityEntity.setColorCode(dsCargo.get().getColorCode());
+        onBoardQuantityEntity.setAbbreviation(dsCargo.get().getAbbreviation());
+        onBoardQuantityEntity.setDensity(
+            StringUtils.hasLength(dsCargo.get().getApi())
+                ? new BigDecimal(dsCargo.get().getApi())
+                : BigDecimal.ZERO);
+        onBoardQuantityEntity.setTemperature(
+            StringUtils.hasLength(dsCargo.get().getTemperature())
+                ? new BigDecimal(dsCargo.get().getTemperature())
+                : BigDecimal.ZERO);
+        onBoardQuantityEntity.setPlannedArrivalWeight(
+            StringUtils.hasLength(dsCargo.get().getQuantity())
+                ? new BigDecimal(dsCargo.get().getQuantity())
+                : BigDecimal.ZERO);
+        onBoardQuantityEntity.setPlannedDepartureWeight(
+            StringUtils.hasLength(dsCargo.get().getQuantity())
+                ? new BigDecimal(dsCargo.get().getQuantity())
+                : BigDecimal.ZERO);
+        CargoNomination cargoNominationEntity =
+            cargoNominationMap.get(dsCargo.get().getCargoNominationId());
+        if (cargoNominationEntity != null) {
+          Optional.ofNullable(cargoNominationEntity.getCargoXId())
+              .ifPresent(onBoardQuantityEntity::setCargoId);
+        }
+      }
+      onBoardQuantityEntity.setIsActive(true);
+      onBoardQuantityEntity.setLoadableStudy(loadableStudy);
+      if (loadableStudy.getPortRotations() != null) {
+        Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
+            loadableStudy.getPortRotations().stream()
+                .filter(LoadableStudyPortRotation::isActive)
+                .min(
+                    Comparator.comparing(
+                        com.cpdss.loadablestudy.entity.LoadableStudyPortRotation::getPortOrder));
+        loadableStudyPortRotationOpt.ifPresent(
+            loadableStudyPortRotation ->
+                onBoardQuantityEntity.setPortId(loadableStudyPortRotation.getPortXId()));
+      }
+      onBoardQuantityEntity.setTankId(tank.getTankId());
+      onBoardQuantityEntityList.add(onBoardQuantityEntity);
+    }
+    return onBoardQuantityEntityList;
   }
 }

@@ -418,11 +418,16 @@ message TankTransfer {
   int32 timeStart = 3;
   int32 timeEnd = 4;
   int64 cargoNominationId = 5;
-  string startQuantity = 6;
-  string endQuantity = 7;
-  string startUllage = 8;
-  string endUllage = 9;
-  string purpose = 10;
+  string purpose = 6;
+  repeated TankTransferDetail tankTransferDetails = 7;
+}
+
+message TankTransferDetail {
+  int64 tankId = 1;
+  string startQuantity = 2;
+  string endQuantity = 3;
+  string startUllage = 4;
+  string endUllage = 5;
 }
 
 message DriveTankDetail {

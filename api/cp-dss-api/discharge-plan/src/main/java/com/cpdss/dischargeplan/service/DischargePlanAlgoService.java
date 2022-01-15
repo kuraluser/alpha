@@ -87,14 +87,14 @@ import org.springframework.util.StringUtils;
 @Service
 public class DischargePlanAlgoService {
 
-  @Autowired DischargeInformationService dischargeInformationService;
+  @Autowired private DischargeInformationService dischargeInformationService;
 
-  @Autowired DischargeBerthDetailRepository dischargeBerthDetailRepository;
+  @Autowired private DischargeBerthDetailRepository dischargeBerthDetailRepository;
 
-  @Autowired ReasonForDelayRepository reasonForDelayRepository;
+  @Autowired private ReasonForDelayRepository reasonForDelayRepository;
 
-  @Autowired CowPlanDetailRepository cowPlanDetailRepository;
-  @Autowired CowTankDetailRepository cowTankDetailRepository;
+  @Autowired private CowPlanDetailRepository cowPlanDetailRepository;
+  @Autowired private CowTankDetailRepository cowTankDetailRepository;
   @Autowired private CowWithDifferentCargoRepository cowWithDifferentCargoRepository;
 
   @Autowired private DischargeInformationStatusRepository dischargeInformationStatusRepository;
@@ -105,9 +105,9 @@ public class DischargePlanAlgoService {
 
   @Autowired private DischargingSequenceRepository dischargingSequenceRepository;
   @Autowired private LoadicatorService loadicatorService;
-  @Autowired BallastOperationRepository ballastOperationRepository;
-  @Autowired CargoDischargingRateRepository cargoDischargingRateRepository;
-  @Autowired DeballastingRateRepository deballastingRateRepository;
+  @Autowired private BallastOperationRepository ballastOperationRepository;
+  @Autowired private CargoDischargingRateRepository cargoDischargingRateRepository;
+  @Autowired private DeballastingRateRepository deballastingRateRepository;
 
   @Autowired
   private DischargingSequenceStabiltyParametersRepository
@@ -144,10 +144,12 @@ public class DischargePlanAlgoService {
       portDischargingPlanCommingleDetailsRepository;
 
   @Autowired
-  PortDischargingPlanStowageTempDetailsRepository portDischargingPlanStowageTempDetailsRepository;
+  private PortDischargingPlanStowageTempDetailsRepository
+      portDischargingPlanStowageTempDetailsRepository;
 
   @Autowired
-  PortDischargingPlanBallastTempDetailsRepository portDischargingPlanBallastTempDetailsRepository;
+  private PortDischargingPlanBallastTempDetailsRepository
+      portDischargingPlanBallastTempDetailsRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub loadableStudyService;
@@ -169,8 +171,8 @@ public class DischargePlanAlgoService {
   private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
       dischargeStudyOperationServiceBlockingStub;
 
-  @Autowired DischargingDelayRepository dischargingDelayRepository;
-  @Autowired DischargingDelayReasonRepository dischargingDelayReasonRepository;
+  @Autowired private DischargingDelayRepository dischargingDelayRepository;
+  @Autowired private DischargingDelayReasonRepository dischargingDelayReasonRepository;
 
   @Value("${cpdss.build.env}")
   private String env;
@@ -185,12 +187,15 @@ public class DischargePlanAlgoService {
 
   @Autowired private DischargePlanStagingService dischargePlanStagingService;
 
-  @Autowired EductionOperationRepository eductionOperationRepository;
+  @Autowired private EductionOperationRepository eductionOperationRepository;
 
-  @Autowired DischargingDriveTankRepository dischargingDriveTankRepository;
-  @Autowired PortTideDetailsRepository portTideDetailsRepository;
+  @Autowired private DischargingDriveTankRepository dischargingDriveTankRepository;
+  @Autowired private PortTideDetailsRepository portTideDetailsRepository;
 
-  @Autowired DischargingTankTransferRepository dischargingTankTransferRepository;
+  @Autowired private DischargingTankTransferRepository dischargingTankTransferRepository;
+
+  @Autowired
+  private DischargingTankTransferDetailsRepository dischargingTankTransferDetailsRepository;
 
   private static final Integer cowBottomTypeId = 2;
   private static final Integer cowTopTypeId = 3;
@@ -1359,7 +1364,6 @@ public class DischargePlanAlgoService {
   private void saveTankTransfers(
       DischargingSequence dischargingSequence, List<TankTransfer> tankTransfersList) {
     log.info("Save Tank transfers for discharging sequence: {}", dischargingSequence.getId());
-    List<DischargingTankTransfer> dischargingTankTransfers = new ArrayList<>();
     tankTransfersList.forEach(
         tankTransfer -> {
           DischargingTankTransfer dischargingTankTransfer = new DischargingTankTransfer();
@@ -1371,28 +1375,50 @@ public class DischargePlanAlgoService {
                   .map(tankId -> tankId.toString())
                   .collect(Collectors.joining(",")));
           dischargingTankTransfer.setIsActive(true);
-          dischargingTankTransfer.setEndQuantity(
-              StringUtils.hasLength(tankTransfer.getEndQuantity())
-                  ? new BigDecimal(tankTransfer.getEndQuantity())
-                  : null);
-          dischargingTankTransfer.setEndUllage(
-              StringUtils.hasLength(tankTransfer.getEndUllage())
-                  ? new BigDecimal(tankTransfer.getEndUllage())
-                  : null);
           dischargingTankTransfer.setPurpose(tankTransfer.getPurpose());
           dischargingTankTransfer.setTimeEnd(tankTransfer.getTimeEnd());
-          dischargingTankTransfer.setStartQuantity(
-              StringUtils.hasLength(tankTransfer.getStartQuantity())
-                  ? new BigDecimal(tankTransfer.getStartQuantity())
-                  : null);
-          dischargingTankTransfer.setStartUllage(
-              StringUtils.hasLength(tankTransfer.getStartUllage())
-                  ? new BigDecimal(tankTransfer.getStartUllage())
-                  : null);
           dischargingTankTransfer.setTimeStart(tankTransfer.getTimeStart());
-          dischargingTankTransfers.add(dischargingTankTransfer);
+          DischargingTankTransfer savedDischargingTankTransfer =
+              dischargingTankTransferRepository.save(dischargingTankTransfer);
+          saveDischargingTankTransferDetails(
+              savedDischargingTankTransfer, tankTransfer.getTankTransferDetailsList());
         });
-    dischargingTankTransferRepository.saveAll(dischargingTankTransfers);
+  }
+
+  /**
+   * Saves the transfer details of the tank-to-tank transfer
+   *
+   * @param dischargingTankTransfer DischargingTankTransfer entity
+   * @param tankTransferDetailsList TankTransferDetails messages
+   */
+  private void saveDischargingTankTransferDetails(
+      DischargingTankTransfer dischargingTankTransfer,
+      List<TankTransferDetail> tankTransferDetailsList) {
+    List<DischargingTankTransferDetails> dischargingTankTransferDetails = new ArrayList<>();
+    for (TankTransferDetail tankTransferDetail : tankTransferDetailsList) {
+      DischargingTankTransferDetails tankTransferDetails = new DischargingTankTransferDetails();
+      tankTransferDetails.setTankXId(tankTransferDetail.getTankId());
+      tankTransferDetails.setStartQuantity(
+          StringUtils.hasLength(tankTransferDetail.getStartQuantity())
+              ? new BigDecimal(tankTransferDetail.getStartQuantity())
+              : null);
+      tankTransferDetails.setEndQuantity(
+          StringUtils.hasLength(tankTransferDetail.getEndQuantity())
+              ? new BigDecimal(tankTransferDetail.getEndQuantity())
+              : null);
+      tankTransferDetails.setStartUllage(
+          StringUtils.hasLength(tankTransferDetail.getStartUllage())
+              ? new BigDecimal(tankTransferDetail.getStartUllage())
+              : null);
+      tankTransferDetails.setEndUllage(
+          StringUtils.hasLength(tankTransferDetail.getEndUllage())
+              ? new BigDecimal(tankTransferDetail.getEndUllage())
+              : null);
+      tankTransferDetails.setDischargingTankTransfer(dischargingTankTransfer);
+      tankTransferDetails.setIsActive(true);
+      dischargingTankTransferDetails.add(tankTransferDetails);
+    }
+    dischargingTankTransferDetailsRepository.saveAll(dischargingTankTransferDetails);
   }
 
   /**
@@ -1507,6 +1533,7 @@ public class DischargePlanAlgoService {
           deleteDischargingPlanPortWiseDetailsByDischargingSequence(dischargingSequence);
           eductionOperationRepository.deleteByDischargingSequence(dischargingSequence);
           dischargingTankTransferRepository.deleteByDischargingSequence(dischargingSequence);
+          dischargingTankTransferDetailsRepository.deleteByDischargingSequence(dischargingSequence);
         });
   }
 

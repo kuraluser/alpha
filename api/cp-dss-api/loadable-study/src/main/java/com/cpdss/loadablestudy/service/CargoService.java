@@ -596,7 +596,8 @@ public class CargoService {
       apiTempHistory.setCargoId(cn.getCargoXId());
     }
     apiTempHistory.setApi(var1.getApi().isEmpty() ? null : new BigDecimal(var1.getApi()));
-    apiTempHistory.setTemp(var1.getTemperature().isEmpty() ? null : new BigDecimal(var1.getApi()));
+    apiTempHistory.setTemp(
+        var1.getTemperature().isEmpty() ? null : new BigDecimal(var1.getTemperature()));
     apiTempHistory.setLoadingPortId(var1.getPortId());
     apiTempHistory.setIsActive(true);
     Optional<SynopticalTable> synopticalTableOpt =

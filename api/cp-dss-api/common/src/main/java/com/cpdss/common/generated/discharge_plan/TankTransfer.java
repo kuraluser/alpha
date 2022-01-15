@@ -14,11 +14,8 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
 
   private TankTransfer() {
     fromTankIds_ = emptyLongList();
-    startQuantity_ = "";
-    endQuantity_ = "";
-    startUllage_ = "";
-    endUllage_ = "";
     purpose_ = "";
+    tankTransferDetails_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -98,35 +95,21 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
             {
               java.lang.String s = input.readStringRequireUtf8();
 
-              startQuantity_ = s;
+              purpose_ = s;
               break;
             }
           case 58:
             {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              endQuantity_ = s;
-              break;
-            }
-          case 66:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              startUllage_ = s;
-              break;
-            }
-          case 74:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              endUllage_ = s;
-              break;
-            }
-          case 82:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              purpose_ = s;
+              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                tankTransferDetails_ =
+                    new java.util.ArrayList<
+                        com.cpdss.common.generated.discharge_plan.TankTransferDetail>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              tankTransferDetails_.add(
+                  input.readMessage(
+                      com.cpdss.common.generated.discharge_plan.TankTransferDetail.parser(),
+                      extensionRegistry));
               break;
             }
           default:
@@ -145,6 +128,9 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     } finally {
       if (((mutable_bitField0_ & 0x00000001) != 0)) {
         fromTankIds_.makeImmutable(); // C
+      }
+      if (((mutable_bitField0_ & 0x00000002) != 0)) {
+        tankTransferDetails_ = java.util.Collections.unmodifiableList(tankTransferDetails_);
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -240,150 +226,10 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     return cargoNominationId_;
   }
 
-  public static final int STARTQUANTITY_FIELD_NUMBER = 6;
-  private volatile java.lang.Object startQuantity_;
-  /**
-   * <code>string startQuantity = 6;</code>
-   *
-   * @return The startQuantity.
-   */
-  public java.lang.String getStartQuantity() {
-    java.lang.Object ref = startQuantity_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      startQuantity_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string startQuantity = 6;</code>
-   *
-   * @return The bytes for startQuantity.
-   */
-  public com.google.protobuf.ByteString getStartQuantityBytes() {
-    java.lang.Object ref = startQuantity_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      startQuantity_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int ENDQUANTITY_FIELD_NUMBER = 7;
-  private volatile java.lang.Object endQuantity_;
-  /**
-   * <code>string endQuantity = 7;</code>
-   *
-   * @return The endQuantity.
-   */
-  public java.lang.String getEndQuantity() {
-    java.lang.Object ref = endQuantity_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      endQuantity_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string endQuantity = 7;</code>
-   *
-   * @return The bytes for endQuantity.
-   */
-  public com.google.protobuf.ByteString getEndQuantityBytes() {
-    java.lang.Object ref = endQuantity_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      endQuantity_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int STARTULLAGE_FIELD_NUMBER = 8;
-  private volatile java.lang.Object startUllage_;
-  /**
-   * <code>string startUllage = 8;</code>
-   *
-   * @return The startUllage.
-   */
-  public java.lang.String getStartUllage() {
-    java.lang.Object ref = startUllage_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      startUllage_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string startUllage = 8;</code>
-   *
-   * @return The bytes for startUllage.
-   */
-  public com.google.protobuf.ByteString getStartUllageBytes() {
-    java.lang.Object ref = startUllage_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      startUllage_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int ENDULLAGE_FIELD_NUMBER = 9;
-  private volatile java.lang.Object endUllage_;
-  /**
-   * <code>string endUllage = 9;</code>
-   *
-   * @return The endUllage.
-   */
-  public java.lang.String getEndUllage() {
-    java.lang.Object ref = endUllage_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      endUllage_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string endUllage = 9;</code>
-   *
-   * @return The bytes for endUllage.
-   */
-  public com.google.protobuf.ByteString getEndUllageBytes() {
-    java.lang.Object ref = endUllage_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      endUllage_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int PURPOSE_FIELD_NUMBER = 10;
+  public static final int PURPOSE_FIELD_NUMBER = 6;
   private volatile java.lang.Object purpose_;
   /**
-   * <code>string purpose = 10;</code>
+   * <code>string purpose = 6;</code>
    *
    * @return The purpose.
    */
@@ -399,7 +245,7 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     }
   }
   /**
-   * <code>string purpose = 10;</code>
+   * <code>string purpose = 6;</code>
    *
    * @return The bytes for purpose.
    */
@@ -413,6 +259,35 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
+  }
+
+  public static final int TANKTRANSFERDETAILS_FIELD_NUMBER = 7;
+  private java.util.List<com.cpdss.common.generated.discharge_plan.TankTransferDetail>
+      tankTransferDetails_;
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  public java.util.List<com.cpdss.common.generated.discharge_plan.TankTransferDetail>
+      getTankTransferDetailsList() {
+    return tankTransferDetails_;
+  }
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  public java.util.List<
+          ? extends com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder>
+      getTankTransferDetailsOrBuilderList() {
+    return tankTransferDetails_;
+  }
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  public int getTankTransferDetailsCount() {
+    return tankTransferDetails_.size();
+  }
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  public com.cpdss.common.generated.discharge_plan.TankTransferDetail getTankTransferDetails(
+      int index) {
+    return tankTransferDetails_.get(index);
+  }
+  /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+  public com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder
+      getTankTransferDetailsOrBuilder(int index) {
+    return tankTransferDetails_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -449,20 +324,11 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     if (cargoNominationId_ != 0L) {
       output.writeInt64(5, cargoNominationId_);
     }
-    if (!getStartQuantityBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, startQuantity_);
-    }
-    if (!getEndQuantityBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 7, endQuantity_);
-    }
-    if (!getStartUllageBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, startUllage_);
-    }
-    if (!getEndUllageBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 9, endUllage_);
-    }
     if (!getPurposeBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 10, purpose_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, purpose_);
+    }
+    for (int i = 0; i < tankTransferDetails_.size(); i++) {
+      output.writeMessage(7, tankTransferDetails_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -498,20 +364,12 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     if (cargoNominationId_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, cargoNominationId_);
     }
-    if (!getStartQuantityBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, startQuantity_);
-    }
-    if (!getEndQuantityBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, endQuantity_);
-    }
-    if (!getStartUllageBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, startUllage_);
-    }
-    if (!getEndUllageBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, endUllage_);
-    }
     if (!getPurposeBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, purpose_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, purpose_);
+    }
+    for (int i = 0; i < tankTransferDetails_.size(); i++) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(7, tankTransferDetails_.get(i));
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -534,11 +392,8 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     if (getTimeStart() != other.getTimeStart()) return false;
     if (getTimeEnd() != other.getTimeEnd()) return false;
     if (getCargoNominationId() != other.getCargoNominationId()) return false;
-    if (!getStartQuantity().equals(other.getStartQuantity())) return false;
-    if (!getEndQuantity().equals(other.getEndQuantity())) return false;
-    if (!getStartUllage().equals(other.getStartUllage())) return false;
-    if (!getEndUllage().equals(other.getEndUllage())) return false;
     if (!getPurpose().equals(other.getPurpose())) return false;
+    if (!getTankTransferDetailsList().equals(other.getTankTransferDetailsList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -562,16 +417,12 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + getTimeEnd();
     hash = (37 * hash) + CARGONOMINATIONID_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
-    hash = (37 * hash) + STARTQUANTITY_FIELD_NUMBER;
-    hash = (53 * hash) + getStartQuantity().hashCode();
-    hash = (37 * hash) + ENDQUANTITY_FIELD_NUMBER;
-    hash = (53 * hash) + getEndQuantity().hashCode();
-    hash = (37 * hash) + STARTULLAGE_FIELD_NUMBER;
-    hash = (53 * hash) + getStartUllage().hashCode();
-    hash = (37 * hash) + ENDULLAGE_FIELD_NUMBER;
-    hash = (53 * hash) + getEndUllage().hashCode();
     hash = (37 * hash) + PURPOSE_FIELD_NUMBER;
     hash = (53 * hash) + getPurpose().hashCode();
+    if (getTankTransferDetailsCount() > 0) {
+      hash = (37 * hash) + TANKTRANSFERDETAILS_FIELD_NUMBER;
+      hash = (53 * hash) + getTankTransferDetailsList().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -704,7 +555,9 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
     }
 
     private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+        getTankTransferDetailsFieldBuilder();
+      }
     }
 
     @java.lang.Override
@@ -720,16 +573,14 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
 
       cargoNominationId_ = 0L;
 
-      startQuantity_ = "";
-
-      endQuantity_ = "";
-
-      startUllage_ = "";
-
-      endUllage_ = "";
-
       purpose_ = "";
 
+      if (tankTransferDetailsBuilder_ == null) {
+        tankTransferDetails_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+      } else {
+        tankTransferDetailsBuilder_.clear();
+      }
       return this;
     }
 
@@ -767,11 +618,16 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       result.timeStart_ = timeStart_;
       result.timeEnd_ = timeEnd_;
       result.cargoNominationId_ = cargoNominationId_;
-      result.startQuantity_ = startQuantity_;
-      result.endQuantity_ = endQuantity_;
-      result.startUllage_ = startUllage_;
-      result.endUllage_ = endUllage_;
       result.purpose_ = purpose_;
+      if (tankTransferDetailsBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0)) {
+          tankTransferDetails_ = java.util.Collections.unmodifiableList(tankTransferDetails_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.tankTransferDetails_ = tankTransferDetails_;
+      } else {
+        result.tankTransferDetails_ = tankTransferDetailsBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -844,25 +700,36 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       if (other.getCargoNominationId() != 0L) {
         setCargoNominationId(other.getCargoNominationId());
       }
-      if (!other.getStartQuantity().isEmpty()) {
-        startQuantity_ = other.startQuantity_;
-        onChanged();
-      }
-      if (!other.getEndQuantity().isEmpty()) {
-        endQuantity_ = other.endQuantity_;
-        onChanged();
-      }
-      if (!other.getStartUllage().isEmpty()) {
-        startUllage_ = other.startUllage_;
-        onChanged();
-      }
-      if (!other.getEndUllage().isEmpty()) {
-        endUllage_ = other.endUllage_;
-        onChanged();
-      }
       if (!other.getPurpose().isEmpty()) {
         purpose_ = other.purpose_;
         onChanged();
+      }
+      if (tankTransferDetailsBuilder_ == null) {
+        if (!other.tankTransferDetails_.isEmpty()) {
+          if (tankTransferDetails_.isEmpty()) {
+            tankTransferDetails_ = other.tankTransferDetails_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureTankTransferDetailsIsMutable();
+            tankTransferDetails_.addAll(other.tankTransferDetails_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.tankTransferDetails_.isEmpty()) {
+          if (tankTransferDetailsBuilder_.isEmpty()) {
+            tankTransferDetailsBuilder_.dispose();
+            tankTransferDetailsBuilder_ = null;
+            tankTransferDetails_ = other.tankTransferDetails_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+            tankTransferDetailsBuilder_ =
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                    ? getTankTransferDetailsFieldBuilder()
+                    : null;
+          } else {
+            tankTransferDetailsBuilder_.addAllMessages(other.tankTransferDetails_);
+          }
+        }
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1112,313 +979,9 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
 
-    private java.lang.Object startQuantity_ = "";
-    /**
-     * <code>string startQuantity = 6;</code>
-     *
-     * @return The startQuantity.
-     */
-    public java.lang.String getStartQuantity() {
-      java.lang.Object ref = startQuantity_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        startQuantity_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string startQuantity = 6;</code>
-     *
-     * @return The bytes for startQuantity.
-     */
-    public com.google.protobuf.ByteString getStartQuantityBytes() {
-      java.lang.Object ref = startQuantity_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        startQuantity_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string startQuantity = 6;</code>
-     *
-     * @param value The startQuantity to set.
-     * @return This builder for chaining.
-     */
-    public Builder setStartQuantity(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-
-      startQuantity_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string startQuantity = 6;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearStartQuantity() {
-
-      startQuantity_ = getDefaultInstance().getStartQuantity();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string startQuantity = 6;</code>
-     *
-     * @param value The bytes for startQuantity to set.
-     * @return This builder for chaining.
-     */
-    public Builder setStartQuantityBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      startQuantity_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object endQuantity_ = "";
-    /**
-     * <code>string endQuantity = 7;</code>
-     *
-     * @return The endQuantity.
-     */
-    public java.lang.String getEndQuantity() {
-      java.lang.Object ref = endQuantity_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        endQuantity_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string endQuantity = 7;</code>
-     *
-     * @return The bytes for endQuantity.
-     */
-    public com.google.protobuf.ByteString getEndQuantityBytes() {
-      java.lang.Object ref = endQuantity_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        endQuantity_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string endQuantity = 7;</code>
-     *
-     * @param value The endQuantity to set.
-     * @return This builder for chaining.
-     */
-    public Builder setEndQuantity(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-
-      endQuantity_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string endQuantity = 7;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearEndQuantity() {
-
-      endQuantity_ = getDefaultInstance().getEndQuantity();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string endQuantity = 7;</code>
-     *
-     * @param value The bytes for endQuantity to set.
-     * @return This builder for chaining.
-     */
-    public Builder setEndQuantityBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      endQuantity_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object startUllage_ = "";
-    /**
-     * <code>string startUllage = 8;</code>
-     *
-     * @return The startUllage.
-     */
-    public java.lang.String getStartUllage() {
-      java.lang.Object ref = startUllage_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        startUllage_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string startUllage = 8;</code>
-     *
-     * @return The bytes for startUllage.
-     */
-    public com.google.protobuf.ByteString getStartUllageBytes() {
-      java.lang.Object ref = startUllage_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        startUllage_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string startUllage = 8;</code>
-     *
-     * @param value The startUllage to set.
-     * @return This builder for chaining.
-     */
-    public Builder setStartUllage(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-
-      startUllage_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string startUllage = 8;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearStartUllage() {
-
-      startUllage_ = getDefaultInstance().getStartUllage();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string startUllage = 8;</code>
-     *
-     * @param value The bytes for startUllage to set.
-     * @return This builder for chaining.
-     */
-    public Builder setStartUllageBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      startUllage_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object endUllage_ = "";
-    /**
-     * <code>string endUllage = 9;</code>
-     *
-     * @return The endUllage.
-     */
-    public java.lang.String getEndUllage() {
-      java.lang.Object ref = endUllage_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        endUllage_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string endUllage = 9;</code>
-     *
-     * @return The bytes for endUllage.
-     */
-    public com.google.protobuf.ByteString getEndUllageBytes() {
-      java.lang.Object ref = endUllage_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        endUllage_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string endUllage = 9;</code>
-     *
-     * @param value The endUllage to set.
-     * @return This builder for chaining.
-     */
-    public Builder setEndUllage(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-
-      endUllage_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string endUllage = 9;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearEndUllage() {
-
-      endUllage_ = getDefaultInstance().getEndUllage();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string endUllage = 9;</code>
-     *
-     * @param value The bytes for endUllage to set.
-     * @return This builder for chaining.
-     */
-    public Builder setEndUllageBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      endUllage_ = value;
-      onChanged();
-      return this;
-    }
-
     private java.lang.Object purpose_ = "";
     /**
-     * <code>string purpose = 10;</code>
+     * <code>string purpose = 6;</code>
      *
      * @return The purpose.
      */
@@ -1434,7 +997,7 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       }
     }
     /**
-     * <code>string purpose = 10;</code>
+     * <code>string purpose = 6;</code>
      *
      * @return The bytes for purpose.
      */
@@ -1450,7 +1013,7 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       }
     }
     /**
-     * <code>string purpose = 10;</code>
+     * <code>string purpose = 6;</code>
      *
      * @param value The purpose to set.
      * @return This builder for chaining.
@@ -1465,7 +1028,7 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
     /**
-     * <code>string purpose = 10;</code>
+     * <code>string purpose = 6;</code>
      *
      * @return This builder for chaining.
      */
@@ -1476,7 +1039,7 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
     /**
-     * <code>string purpose = 10;</code>
+     * <code>string purpose = 6;</code>
      *
      * @param value The bytes for purpose to set.
      * @return This builder for chaining.
@@ -1490,6 +1053,233 @@ public final class TankTransfer extends com.google.protobuf.GeneratedMessageV3
       purpose_ = value;
       onChanged();
       return this;
+    }
+
+    private java.util.List<com.cpdss.common.generated.discharge_plan.TankTransferDetail>
+        tankTransferDetails_ = java.util.Collections.emptyList();
+
+    private void ensureTankTransferDetailsIsMutable() {
+      if (!((bitField0_ & 0x00000002) != 0)) {
+        tankTransferDetails_ =
+            new java.util.ArrayList<com.cpdss.common.generated.discharge_plan.TankTransferDetail>(
+                tankTransferDetails_);
+        bitField0_ |= 0x00000002;
+      }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.TankTransferDetail,
+            com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder,
+            com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder>
+        tankTransferDetailsBuilder_;
+
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.TankTransferDetail>
+        getTankTransferDetailsList() {
+      if (tankTransferDetailsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(tankTransferDetails_);
+      } else {
+        return tankTransferDetailsBuilder_.getMessageList();
+      }
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public int getTankTransferDetailsCount() {
+      if (tankTransferDetailsBuilder_ == null) {
+        return tankTransferDetails_.size();
+      } else {
+        return tankTransferDetailsBuilder_.getCount();
+      }
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransferDetail getTankTransferDetails(
+        int index) {
+      if (tankTransferDetailsBuilder_ == null) {
+        return tankTransferDetails_.get(index);
+      } else {
+        return tankTransferDetailsBuilder_.getMessage(index);
+      }
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder setTankTransferDetails(
+        int index, com.cpdss.common.generated.discharge_plan.TankTransferDetail value) {
+      if (tankTransferDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTankTransferDetailsIsMutable();
+        tankTransferDetails_.set(index, value);
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder setTankTransferDetails(
+        int index,
+        com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder builderForValue) {
+      if (tankTransferDetailsBuilder_ == null) {
+        ensureTankTransferDetailsIsMutable();
+        tankTransferDetails_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder addTankTransferDetails(
+        com.cpdss.common.generated.discharge_plan.TankTransferDetail value) {
+      if (tankTransferDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTankTransferDetailsIsMutable();
+        tankTransferDetails_.add(value);
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder addTankTransferDetails(
+        int index, com.cpdss.common.generated.discharge_plan.TankTransferDetail value) {
+      if (tankTransferDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTankTransferDetailsIsMutable();
+        tankTransferDetails_.add(index, value);
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder addTankTransferDetails(
+        com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder builderForValue) {
+      if (tankTransferDetailsBuilder_ == null) {
+        ensureTankTransferDetailsIsMutable();
+        tankTransferDetails_.add(builderForValue.build());
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder addTankTransferDetails(
+        int index,
+        com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder builderForValue) {
+      if (tankTransferDetailsBuilder_ == null) {
+        ensureTankTransferDetailsIsMutable();
+        tankTransferDetails_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder addAllTankTransferDetails(
+        java.lang.Iterable<? extends com.cpdss.common.generated.discharge_plan.TankTransferDetail>
+            values) {
+      if (tankTransferDetailsBuilder_ == null) {
+        ensureTankTransferDetailsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, tankTransferDetails_);
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder clearTankTransferDetails() {
+      if (tankTransferDetailsBuilder_ == null) {
+        tankTransferDetails_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public Builder removeTankTransferDetails(int index) {
+      if (tankTransferDetailsBuilder_ == null) {
+        ensureTankTransferDetailsIsMutable();
+        tankTransferDetails_.remove(index);
+        onChanged();
+      } else {
+        tankTransferDetailsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder
+        getTankTransferDetailsBuilder(int index) {
+      return getTankTransferDetailsFieldBuilder().getBuilder(index);
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder
+        getTankTransferDetailsOrBuilder(int index) {
+      if (tankTransferDetailsBuilder_ == null) {
+        return tankTransferDetails_.get(index);
+      } else {
+        return tankTransferDetailsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public java.util.List<
+            ? extends com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder>
+        getTankTransferDetailsOrBuilderList() {
+      if (tankTransferDetailsBuilder_ != null) {
+        return tankTransferDetailsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(tankTransferDetails_);
+      }
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder
+        addTankTransferDetailsBuilder() {
+      return getTankTransferDetailsFieldBuilder()
+          .addBuilder(
+              com.cpdss.common.generated.discharge_plan.TankTransferDetail.getDefaultInstance());
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder
+        addTankTransferDetailsBuilder(int index) {
+      return getTankTransferDetailsFieldBuilder()
+          .addBuilder(
+              index,
+              com.cpdss.common.generated.discharge_plan.TankTransferDetail.getDefaultInstance());
+    }
+    /** <code>repeated .TankTransferDetail tankTransferDetails = 7;</code> */
+    public java.util.List<com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder>
+        getTankTransferDetailsBuilderList() {
+      return getTankTransferDetailsFieldBuilder().getBuilderList();
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+            com.cpdss.common.generated.discharge_plan.TankTransferDetail,
+            com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder,
+            com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder>
+        getTankTransferDetailsFieldBuilder() {
+      if (tankTransferDetailsBuilder_ == null) {
+        tankTransferDetailsBuilder_ =
+            new com.google.protobuf.RepeatedFieldBuilderV3<
+                com.cpdss.common.generated.discharge_plan.TankTransferDetail,
+                com.cpdss.common.generated.discharge_plan.TankTransferDetail.Builder,
+                com.cpdss.common.generated.discharge_plan.TankTransferDetailOrBuilder>(
+                tankTransferDetails_,
+                ((bitField0_ & 0x00000002) != 0),
+                getParentForChildren(),
+                isClean());
+        tankTransferDetails_ = null;
+      }
+      return tankTransferDetailsBuilder_;
     }
 
     @java.lang.Override

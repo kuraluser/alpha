@@ -74,6 +74,7 @@ public class GatewayConstants {
 
   public static final String TANK_TRANSFER_PURPOSE_STRIP = "strip";
   public static final String TANK_TRANSFER_PURPOSE_FRESH_OIL = "freshOil";
+  public static final String TANK_TRANSFER_PURPOSE_TANK_REFILL = "tankRefill";
 
   public static final Long CARGO_TANK_CATEGORY_ID = 1L;
   public static final Long BALLAST_TANK_CATEGORY_ID = 2L;

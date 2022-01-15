@@ -2,7 +2,7 @@
 package com.cpdss.dischargeplan.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import java.math.BigDecimal;
+import java.util.List;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,18 +33,6 @@ public class DischargingTankTransfer extends EntityDoc {
   @Column(name = "cargo_nomination_id")
   private Long cargoNominationId;
 
-  @Column(name = "start_quantity")
-  private BigDecimal startQuantity;
-
-  @Column(name = "end_quantity")
-  private BigDecimal endQuantity;
-
-  @Column(name = "start_ullage")
-  private BigDecimal startUllage;
-
-  @Column(name = "end_ullage")
-  private BigDecimal endUllage;
-
   @Column(name = "purpose")
   private String purpose;
 
@@ -54,4 +42,7 @@ public class DischargingTankTransfer extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "discharging_sequence_xid", referencedColumnName = "id", nullable = true)
   private DischargingSequence dischargingSequence;
+
+  @OneToMany(mappedBy = "dischargingTankTransfer", fetch = FetchType.LAZY)
+  private List<DischargingTankTransferDetails> dischargingTankTransferDetails;
 }
