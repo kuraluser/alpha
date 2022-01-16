@@ -17,6 +17,7 @@ import io.micrometer.core.instrument.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -207,5 +208,62 @@ public class CrewService {
                         });
                   });
             });
+  }
+
+  /**
+   * to get crew details based on vessel and rank
+   *
+   * @param crewDetailReply
+   * @param request
+   */
+  public void getAllCrewDetailsByRank(
+      com.cpdss.common.generated.VesselInfo.CrewDetailedReply.Builder crewDetailReply,
+      VesselInfo.VesselsInfoRequest request) {
+
+    List<Long> crewXIds = new ArrayList<>();
+    crewXIds.addAll(request.getCrewXIdsList());
+    if (request.getVesselId() != 0) {
+      List<Long> reponseCrewXIds = crewVesselMappingRepository.getAllCrewXId(request.getVesselId());
+      if (reponseCrewXIds != null) {
+        crewXIds.addAll(reponseCrewXIds);
+      }
+    }
+
+    Specification<CrewDetails> specification =
+        Specification.where(
+            new CrewDetailsSpecification(new FilterCriteria("isActive", ":", true, "")));
+
+    if (!CollectionUtils.isEmpty(crewXIds)) {
+      specification =
+          specification.and(
+              new CrewDetailsSpecification(new FilterCriteria("id", "in", crewXIds, "")));
+    }
+    if (request.getRankId() != 0) {
+      specification =
+          specification.and(
+              new CrewDetailsSpecification(
+                  new FilterCriteria("id", "join-with-equals", request.getRankId(), "crewRank")));
+    }
+    if (!StringUtils.isEmpty(request.getRankName())) {
+      specification =
+          specification.and(
+              new CrewDetailsSpecification(
+                  new FilterCriteria(
+                      "rankName", "join-with-equals", request.getRankName(), "crewRank")));
+    }
+
+    List<CrewDetails> crewDetails = this.crewDetailsRepository.findAll(specification);
+    if (crewDetails == null) return;
+    crewDetails.forEach(
+        crew -> {
+          VesselInfo.CrewDetailed.Builder crewDetailed = VesselInfo.CrewDetailed.newBuilder();
+          crewDetailed.setId(crew.getId() == null ? 0 : crew.getId());
+          crewDetailed.setCrewName(crew.getCrewName() == null ? "" : crew.getCrewName());
+          crewDetailed.setCrewRank(
+              crew.getCrewRank() == null ? "" : crew.getCrewRank().getRankName());
+          crewDetailed.setCrewRankId(crew.getCrewRank() == null ? 0 : crew.getCrewRank().getId());
+          crewDetailReply.addCrewDetails(crewDetailed);
+        });
+    crewDetailReply.setTotalElements(crewDetails.size());
   }
 }

@@ -70,6 +70,8 @@ service VesselInfoService {
 	rpc SaveCrewDetails (CrewDetailed) returns (CrewDetailsReply);
 
 	rpc SaveCrewVesselMappings (CrewVesselMappingRequest) returns (CrewVesselReply);
+
+	rpc GetAllCrewDetailsByRank (VesselsInfoRequest) returns (CrewDetailedReply);
 }
 
 
@@ -732,7 +734,7 @@ message BendingMomentType1 {
 		int64 pageSize = 1;
 		int64 pageNo = 2;
 		string sortBy = 3;
-      	string orderBy = 4;
+		string orderBy = 4;
 		string vesselName = 5;
 		string vesselType = 6;
 		string owner = 7;
@@ -742,6 +744,9 @@ message BendingMomentType1 {
 		string officialNumber = 11;
 		repeated Param param = 12;
 		repeated int64 crewXIds = 13;
+		int64 vesselId = 14;
+		int64 rankId = 15;
+		string rankName =16;
 	}
 	
 	message VesselsInformation{

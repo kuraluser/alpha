@@ -94471,6 +94471,33 @@ public final class VesselInfo {
      * @return The crewXIds at the given index.
      */
     long getCrewXIds(int index);
+
+    /**
+     * <code>int64 vesselId = 14;</code>
+     *
+     * @return The vesselId.
+     */
+    long getVesselId();
+
+    /**
+     * <code>int64 rankId = 15;</code>
+     *
+     * @return The rankId.
+     */
+    long getRankId();
+
+    /**
+     * <code>string rankName = 16;</code>
+     *
+     * @return The rankName.
+     */
+    java.lang.String getRankName();
+    /**
+     * <code>string rankName = 16;</code>
+     *
+     * @return The bytes for rankName.
+     */
+    com.google.protobuf.ByteString getRankNameBytes();
   }
   /** Protobuf type {@code VesselsInfoRequest} */
   public static final class VesselsInfoRequest extends com.google.protobuf.GeneratedMessageV3
@@ -94495,6 +94522,7 @@ public final class VesselInfo {
       officialNumber_ = "";
       param_ = java.util.Collections.emptyList();
       crewXIds_ = emptyLongList();
+      rankName_ = "";
     }
 
     @java.lang.Override
@@ -94632,6 +94660,23 @@ public final class VesselInfo {
                   crewXIds_.addLong(input.readInt64());
                 }
                 input.popLimit(limit);
+                break;
+              }
+            case 112:
+              {
+                vesselId_ = input.readInt64();
+                break;
+              }
+            case 120:
+              {
+                rankId_ = input.readInt64();
+                break;
+              }
+            case 130:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                rankName_ = s;
                 break;
               }
             default:
@@ -95064,6 +95109,63 @@ public final class VesselInfo {
 
     private int crewXIdsMemoizedSerializedSize = -1;
 
+    public static final int VESSELID_FIELD_NUMBER = 14;
+    private long vesselId_;
+    /**
+     * <code>int64 vesselId = 14;</code>
+     *
+     * @return The vesselId.
+     */
+    public long getVesselId() {
+      return vesselId_;
+    }
+
+    public static final int RANKID_FIELD_NUMBER = 15;
+    private long rankId_;
+    /**
+     * <code>int64 rankId = 15;</code>
+     *
+     * @return The rankId.
+     */
+    public long getRankId() {
+      return rankId_;
+    }
+
+    public static final int RANKNAME_FIELD_NUMBER = 16;
+    private volatile java.lang.Object rankName_;
+    /**
+     * <code>string rankName = 16;</code>
+     *
+     * @return The rankName.
+     */
+    public java.lang.String getRankName() {
+      java.lang.Object ref = rankName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        rankName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string rankName = 16;</code>
+     *
+     * @return The bytes for rankName.
+     */
+    public com.google.protobuf.ByteString getRankNameBytes() {
+      java.lang.Object ref = rankName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        rankName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -95121,6 +95223,15 @@ public final class VesselInfo {
       }
       for (int i = 0; i < crewXIds_.size(); i++) {
         output.writeInt64NoTag(crewXIds_.getLong(i));
+      }
+      if (vesselId_ != 0L) {
+        output.writeInt64(14, vesselId_);
+      }
+      if (rankId_ != 0L) {
+        output.writeInt64(15, rankId_);
+      }
+      if (!getRankNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 16, rankName_);
       }
       unknownFields.writeTo(output);
     }
@@ -95180,6 +95291,15 @@ public final class VesselInfo {
         }
         crewXIdsMemoizedSerializedSize = dataSize;
       }
+      if (vesselId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(14, vesselId_);
+      }
+      if (rankId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(15, rankId_);
+      }
+      if (!getRankNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(16, rankName_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -95209,6 +95329,9 @@ public final class VesselInfo {
       if (!getOfficialNumber().equals(other.getOfficialNumber())) return false;
       if (!getParamList().equals(other.getParamList())) return false;
       if (!getCrewXIdsList().equals(other.getCrewXIdsList())) return false;
+      if (getVesselId() != other.getVesselId()) return false;
+      if (getRankId() != other.getRankId()) return false;
+      if (!getRankName().equals(other.getRankName())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -95250,6 +95373,12 @@ public final class VesselInfo {
         hash = (37 * hash) + CREWXIDS_FIELD_NUMBER;
         hash = (53 * hash) + getCrewXIdsList().hashCode();
       }
+      hash = (37 * hash) + VESSELID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVesselId());
+      hash = (37 * hash) + RANKID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getRankId());
+      hash = (37 * hash) + RANKNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getRankName().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -95421,6 +95550,12 @@ public final class VesselInfo {
         }
         crewXIds_ = emptyLongList();
         bitField0_ = (bitField0_ & ~0x00000002);
+        vesselId_ = 0L;
+
+        rankId_ = 0L;
+
+        rankName_ = "";
+
         return this;
       }
 
@@ -95473,6 +95608,9 @@ public final class VesselInfo {
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.crewXIds_ = crewXIds_;
+        result.vesselId_ = vesselId_;
+        result.rankId_ = rankId_;
+        result.rankName_ = rankName_;
         onBuilt();
         return result;
       }
@@ -95602,6 +95740,16 @@ public final class VesselInfo {
             ensureCrewXIdsIsMutable();
             crewXIds_.addAll(other.crewXIds_);
           }
+          onChanged();
+        }
+        if (other.getVesselId() != 0L) {
+          setVesselId(other.getVesselId());
+        }
+        if (other.getRankId() != 0L) {
+          setRankId(other.getRankId());
+        }
+        if (!other.getRankName().isEmpty()) {
+          rankName_ = other.rankName_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -96671,6 +96819,148 @@ public final class VesselInfo {
       public Builder clearCrewXIds() {
         crewXIds_ = emptyLongList();
         bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+
+      private long vesselId_;
+      /**
+       * <code>int64 vesselId = 14;</code>
+       *
+       * @return The vesselId.
+       */
+      public long getVesselId() {
+        return vesselId_;
+      }
+      /**
+       * <code>int64 vesselId = 14;</code>
+       *
+       * @param value The vesselId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVesselId(long value) {
+
+        vesselId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 vesselId = 14;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearVesselId() {
+
+        vesselId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long rankId_;
+      /**
+       * <code>int64 rankId = 15;</code>
+       *
+       * @return The rankId.
+       */
+      public long getRankId() {
+        return rankId_;
+      }
+      /**
+       * <code>int64 rankId = 15;</code>
+       *
+       * @param value The rankId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRankId(long value) {
+
+        rankId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 rankId = 15;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRankId() {
+
+        rankId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object rankName_ = "";
+      /**
+       * <code>string rankName = 16;</code>
+       *
+       * @return The rankName.
+       */
+      public java.lang.String getRankName() {
+        java.lang.Object ref = rankName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          rankName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string rankName = 16;</code>
+       *
+       * @return The bytes for rankName.
+       */
+      public com.google.protobuf.ByteString getRankNameBytes() {
+        java.lang.Object ref = rankName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          rankName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string rankName = 16;</code>
+       *
+       * @param value The rankName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRankName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        rankName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string rankName = 16;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearRankName() {
+
+        rankName_ = getDefaultInstance().getRankName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string rankName = 16;</code>
+       *
+       * @param value The bytes for rankName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRankNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        rankName_ = value;
         onChanged();
         return this;
       }
@@ -115415,123 +115705,126 @@ public final class VesselInfo {
           + "\003\022\021\n\tshortName\030\002 \001(\t\"L\n\027RuleDropDownValu"
           + "eMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\022\026\n\016ru"
           + "leTemplateId\030\003 \001(\003\".\n\016RuleTypeMaster\022\n\n\002"
-          + "id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t\"\214\002\n\022VesselsIn"
+          + "id\030\001 \001(\003\022\020\n\010ruleType\030\002 \001(\t\"\300\002\n\022VesselsIn"
           + "foRequest\022\020\n\010pageSize\030\001 \001(\003\022\016\n\006pageNo\030\002 "
           + "\001(\003\022\016\n\006sortBy\030\003 \001(\t\022\017\n\007orderBy\030\004 \001(\t\022\022\n\n"
           + "vesselName\030\005 \001(\t\022\022\n\nvesselType\030\006 \001(\t\022\r\n\005"
           + "owner\030\007 \001(\t\022\017\n\007builder\030\010 \001(\t\022\024\n\014dateOfLa"
           + "unch\030\t \001(\t\022\024\n\014signalLetter\030\n \001(\t\022\026\n\016offi"
           + "cialNumber\030\013 \001(\t\022\025\n\005param\030\014 \003(\0132\006.Param\022"
-          + "\020\n\010crewXIds\030\r \003(\003\"\262\001\n\022VesselsInformation"
-          + "\022\020\n\010vesselId\030\001 \001(\003\022\022\n\nvesselName\030\002 \001(\t\022\022"
-          + "\n\nvesselType\030\003 \001(\t\022\r\n\005owner\030\004 \001(\t\022\017\n\007bui"
-          + "lder\030\005 \001(\t\022\024\n\014dateOfLaunch\030\006 \001(\t\022\024\n\014sign"
-          + "alLetter\030\007 \001(\t\022\026\n\016officialNumber\030\010 \001(\t\"\211"
-          + "\001\n\027VesselsInformationReply\022/\n\022vesselsInf"
-          + "ormation\030\001 \003(\0132\023.VesselsInformation\022\'\n\016r"
-          + "esponseStatus\030\002 \001(\0132\017.ResponseStatus\022\024\n\014"
-          + "totalElement\030\003 \001(\003\"\214\002\n\016VesselTankInfo\022\016\n"
-          + "\006tankId\030\001 \001(\003\022\026\n\016tankCategoryId\030\002 \001(\003\022\030\n"
-          + "\020tankCategoryName\030\003 \001(\t\022\020\n\010tankName\030\004 \001("
-          + "\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025\n\rframeNumbe"
-          + "rTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t\022\030\n\020fullCapa"
-          + "cityCubm\030\010 \001(\001\022\017\n\007density\030\t \001(\001\022\022\n\nisSlo"
-          + "pTank\030\n \001(\010\022\021\n\ttankOrder\030\013 \001(\005\022\021\n\ttankGr"
-          + "oup\030\014 \001(\005\"c\n\017VesselTankReply\022\'\n\016vesselTa"
-          + "nkInfo\030\001 \003(\0132\017.VesselTankInfo\022\'\n\016respons"
-          + "eStatus\030\002 \001(\0132\017.ResponseStatus\"\267\006\n\026Vesse"
-          + "lDetaildInfoReply\022\020\n\010vesselId\030\001 \001(\003\022\022\n\nv"
-          + "esselName\030\002 \001(\t\022\022\n\nvesselType\030\003 \001(\t\022\021\n\ti"
-          + "moNumber\030\004 \001(\t\022\017\n\007builder\030\005 \001(\t\022\024\n\014dateO"
-          + "fLaunch\030\006 \001(\t\022\024\n\014signalLetter\030\007 \001(\t\022\026\n\016o"
-          + "fficialNumber\030\010 \001(\t\022\026\n\016dateOfKeelLaid\030\t "
-          + "\001(\t\022\026\n\016dateOfDelivery\030\n \001(\t\022\r\n\005class\030\013 \001"
-          + "(\t\022\026\n\016navigationArea\030\014 \001(\t\022\026\n\016registerLe"
-          + "ngth\030\r \001(\003\022\025\n\rlengthOverall\030\016 \001(\003\022\025\n\rdra"
-          + "ftFullLoad\030\017 \001(\001\022\026\n\016breadthMoulded\030\020 \001(\003"
-          + "\022#\n\033lengthBetweenPerpendiculars\030\021 \001(\003\022\024\n"
-          + "\014depthMoulded\030\022 \001(\001\022\031\n\021designedLoadDraft"
-          + "\030\023 \001(\001\022\034\n\024thicknessOfUpperDeck\030\024 \001(\001\022\034\n\024"
-          + "thicknessOfKeelPlate\030\025 \001(\001\022\022\n\ntotalDepth"
-          + "\030\026 \001(\001\022(\n\017bunkerRearTanks\030\027 \003(\0132\017.Vessel"
-          + "TankInfo\022$\n\013bunkerTanks\030\030 \003(\0132\017.VesselTa"
-          + "nkInfo\022*\n\021ballastFrontTanks\030\031 \003(\0132\017.Vess"
-          + "elTankInfo\022+\n\022ballastCenterTanks\030\032 \003(\0132\017"
-          + ".VesselTankInfo\022)\n\020ballastRearTanks\030\033 \003("
-          + "\0132\017.VesselTankInfo\022#\n\ncargoTanks\030\034 \003(\0132\017"
-          + ".VesselTankInfo\022\'\n\016responseStatus\030\035 \001(\0132"
-          + "\017.ResponseStatus\"?\n\010CrewRank\022\n\n\002id\030\001 \001(\003"
-          + "\022\020\n\010crewName\030\002 \001(\t\022\025\n\rrankShortName\030\003 \001("
-          + "\t\"i\n\tCrewReply\022\'\n\016responseStatus\030\001 \001(\0132\017"
-          + ".ResponseStatus\022\034\n\tcrewRanks\030\002 \003(\0132\t.Cre"
-          + "wRank\022\025\n\rtotalElements\030\003 \001(\003\"[\n\027CrewVess"
-          + "elMappingDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006crewId\030\002 "
-          + "\001(\003\022\020\n\010vesselId\030\003 \001(\003\022\022\n\nvesselName\030\004 \001("
-          + "\t\"7\n\021CrewVesselRequest\022\016\n\006crewId\030\001 \001(\003\022\022"
-          + "\n\nvesselName\030\002 \001(\t\"e\n\017CrewVesselReply\022\'\n"
-          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022)"
-          + "\n\007vessels\030\002 \003(\0132\030.CrewVesselMappingDetai"
-          + "l\"R\n\014CrewDetailed\022\n\n\002id\030\001 \001(\003\022\020\n\010crewNam"
-          + "e\030\002 \001(\t\022\020\n\010crewRank\030\003 \001(\t\022\022\n\ncrewRankId\030"
-          + "\004 \001(\003\"w\n\021CrewDetailedReply\022\'\n\016responseSt"
-          + "atus\030\001 \001(\0132\017.ResponseStatus\022\"\n\013crewDetai"
-          + "ls\030\002 \003(\0132\r.CrewDetailed\022\025\n\rtotalElements"
-          + "\030\003 \001(\003\"_\n\020CrewDetailsReply\022\'\n\016responseSt"
-          + "atus\030\001 \001(\0132\017.ResponseStatus\022\"\n\013crewDetai"
-          + "ls\030\002 \001(\0132\r.CrewDetailed\"P\n\030CrewVesselMap"
-          + "pingRequest\0224\n\022crewVesselMappings\030\001 \003(\0132"
-          + "\030.CrewVesselMappingDetail*\277\001\n\017VesselPump"
-          + "Types\022\016\n\nEMPTY_PUMP\020\000\022\016\n\nCARGO_PUMP\020\001\022\020\n"
-          + "\014BALLAST_PUMP\020\002\022\013\n\007GS_PUMP\020\003\022\013\n\007IG_PUMP\020"
-          + "\004\022\022\n\016STRIPPING_PUMP\020\005\022\021\n\rSTRIP_EDUCTOR\020\006"
-          + "\022\014\n\010COW_PUMP\020\007\022\023\n\017BALLAST_EDUCTOR\020\010\022\026\n\022T"
-          + "ANK_CLEANING_PUMP\020\t*\\\n\025TankTypeForOperat"
-          + "ions\022\023\n\017EMPTY_TANK_TYPE\020\000\022\010\n\004PORT\020\001\022\n\n\006C"
-          + "ENTER\020\002\022\010\n\004STBD\020\003\022\006\n\002WP\020\004\022\006\n\002WS\020\0052\315\r\n\021Ve"
-          + "sselInfoService\0228\n\026GetAllVesselsByCompan"
-          + "y\022\016.VesselRequest\032\014.VesselReply\"\000\0226\n\024Get"
-          + "VesselDetailsById\022\016.VesselRequest\032\014.Vess"
-          + "elReply\"\000\0220\n\016GetVesselTanks\022\016.VesselRequ"
-          + "est\032\014.VesselReply\"\000\0225\n\023GetVesselCargoTan"
-          + "ks\022\016.VesselRequest\032\014.VesselReply\"\000\022A\n\027Ge"
-          + "tVesselDetailsForAlgo\022\022.VesselAlgoReques"
-          + "t\032\020.VesselAlgoReply\"\000\022C\n!GetVesselDetail"
-          + "ForSynopticalTable\022\016.VesselRequest\032\014.Ves"
-          + "selReply\"\000\022;\n\031GetVesselDetailByVesselId\022"
-          + "\016.VesselRequest\032\014.VesselReply\"\000\022A\n\025GetVe"
-          + "sselInfoByPaging\022\030.VesselRequestWithPagi"
-          + "ng\032\014.VesselReply\"\000\022C\n\026GetVesselInfoBytan"
-          + "kIds\022\022.VesselTankRequest\032\023.VesselTankRes"
-          + "ponse\"\000\022C\n\032GetDWTFromVesselByVesselId\022\021."
-          + "VesselDWTRequest\032\022.VesselDWTResponse\022@\n\027"
-          + "GetVesselInfoByVesselId\022\020.VesselIdReques"
-          + "t\032\021.VesselIdResponse\"\000\022D\n\030GetVesselPumps"
-          + "ByVesselId\022\020.VesselIdRequest\032\024.VesselPum"
-          + "psResponse\"\000\022H\n\036GetRulesByVesselIdAndSec"
-          + "tionId\022\022.VesselRuleRequest\032\020.VesselRuleR"
-          + "eply\"\000\022E\n\026GetVesselValveSequence\022\016.Vesse",
-      "lRequest\032\031.VesselValveSequenceReply\"\000\022I\n"
-          + "\023GetLoadingInfoRules\022\030.LoadingInfoRulesR"
-          + "equest\032\026.LoadingInfoRulesReply\"\000\022H\n\025GetV"
-          + "esselsInformation\022\023.VesselsInfoRequest\032\030"
-          + ".VesselsInformationReply\"\000\022F\n\024GetVesselP"
-          + "articulars\022\030.LoadingInfoRulesRequest\032\022.V"
-          + "esselParticulars\"\000\022J\n\033GetVesselDetaildIn"
-          + "formation\022\020.VesselIdRequest\032\027.VesselDeta"
-          + "ildInfoReply\"\000\022A\n\027GetVesselTanksByTankId"
-          + "s\022\022.VesselTankRequest\032\020.VesselTankReply\""
-          + "\000\022K\n\rGetVesselData\022\034.CommunicationDataGe"
-          + "tRequest\032\032.CommunicationDataResponse\"\000\022F"
-          + "\n\020UpdateVesselData\022\037.CommunicationDataUp"
-          + "dateRequest\032\017.ResponseStatus\"\000\0226\n\016GetAll"
-          + "CrewRank\022\026.google.protobuf.Empty\032\n.CrewR"
-          + "eply\"\000\022?\n\027GetAllCrewVesselMapping\022\022.Crew"
-          + "VesselRequest\032\020.CrewVesselReply\022<\n\021GetAl"
-          + "lCrewDetails\022\023.VesselsInfoRequest\032\022.Crew"
-          + "DetailedReply\0223\n\017SaveCrewDetails\022\r.CrewD"
-          + "etailed\032\021.CrewDetailsReply\022E\n\026SaveCrewVe"
-          + "sselMappings\022\031.CrewVesselMappingRequest\032"
-          + "\020.CrewVesselReplyB\036\n\032com.cpdss.common.ge"
+          + "\020\n\010crewXIds\030\r \003(\003\022\020\n\010vesselId\030\016 \001(\003\022\016\n\006r"
+          + "ankId\030\017 \001(\003\022\020\n\010rankName\030\020 \001(\t\"\262\001\n\022Vessel"
+          + "sInformation\022\020\n\010vesselId\030\001 \001(\003\022\022\n\nvessel"
+          + "Name\030\002 \001(\t\022\022\n\nvesselType\030\003 \001(\t\022\r\n\005owner\030"
+          + "\004 \001(\t\022\017\n\007builder\030\005 \001(\t\022\024\n\014dateOfLaunch\030\006"
+          + " \001(\t\022\024\n\014signalLetter\030\007 \001(\t\022\026\n\016officialNu"
+          + "mber\030\010 \001(\t\"\211\001\n\027VesselsInformationReply\022/"
+          + "\n\022vesselsInformation\030\001 \003(\0132\023.VesselsInfo"
+          + "rmation\022\'\n\016responseStatus\030\002 \001(\0132\017.Respon"
+          + "seStatus\022\024\n\014totalElement\030\003 \001(\003\"\214\002\n\016Vesse"
+          + "lTankInfo\022\016\n\006tankId\030\001 \001(\003\022\026\n\016tankCategor"
+          + "yId\030\002 \001(\003\022\030\n\020tankCategoryName\030\003 \001(\t\022\020\n\010t"
+          + "ankName\030\004 \001(\t\022\027\n\017frameNumberFrom\030\005 \001(\t\022\025"
+          + "\n\rframeNumberTo\030\006 \001(\t\022\021\n\tshortName\030\007 \001(\t"
+          + "\022\030\n\020fullCapacityCubm\030\010 \001(\001\022\017\n\007density\030\t "
+          + "\001(\001\022\022\n\nisSlopTank\030\n \001(\010\022\021\n\ttankOrder\030\013 \001"
+          + "(\005\022\021\n\ttankGroup\030\014 \001(\005\"c\n\017VesselTankReply"
+          + "\022\'\n\016vesselTankInfo\030\001 \003(\0132\017.VesselTankInf"
+          + "o\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStat"
+          + "us\"\267\006\n\026VesselDetaildInfoReply\022\020\n\010vesselI"
+          + "d\030\001 \001(\003\022\022\n\nvesselName\030\002 \001(\t\022\022\n\nvesselTyp"
+          + "e\030\003 \001(\t\022\021\n\timoNumber\030\004 \001(\t\022\017\n\007builder\030\005 "
+          + "\001(\t\022\024\n\014dateOfLaunch\030\006 \001(\t\022\024\n\014signalLette"
+          + "r\030\007 \001(\t\022\026\n\016officialNumber\030\010 \001(\t\022\026\n\016dateO"
+          + "fKeelLaid\030\t \001(\t\022\026\n\016dateOfDelivery\030\n \001(\t\022"
+          + "\r\n\005class\030\013 \001(\t\022\026\n\016navigationArea\030\014 \001(\t\022\026"
+          + "\n\016registerLength\030\r \001(\003\022\025\n\rlengthOverall\030"
+          + "\016 \001(\003\022\025\n\rdraftFullLoad\030\017 \001(\001\022\026\n\016breadthM"
+          + "oulded\030\020 \001(\003\022#\n\033lengthBetweenPerpendicul"
+          + "ars\030\021 \001(\003\022\024\n\014depthMoulded\030\022 \001(\001\022\031\n\021desig"
+          + "nedLoadDraft\030\023 \001(\001\022\034\n\024thicknessOfUpperDe"
+          + "ck\030\024 \001(\001\022\034\n\024thicknessOfKeelPlate\030\025 \001(\001\022\022"
+          + "\n\ntotalDepth\030\026 \001(\001\022(\n\017bunkerRearTanks\030\027 "
+          + "\003(\0132\017.VesselTankInfo\022$\n\013bunkerTanks\030\030 \003("
+          + "\0132\017.VesselTankInfo\022*\n\021ballastFrontTanks\030"
+          + "\031 \003(\0132\017.VesselTankInfo\022+\n\022ballastCenterT"
+          + "anks\030\032 \003(\0132\017.VesselTankInfo\022)\n\020ballastRe"
+          + "arTanks\030\033 \003(\0132\017.VesselTankInfo\022#\n\ncargoT"
+          + "anks\030\034 \003(\0132\017.VesselTankInfo\022\'\n\016responseS"
+          + "tatus\030\035 \001(\0132\017.ResponseStatus\"?\n\010CrewRank"
+          + "\022\n\n\002id\030\001 \001(\003\022\020\n\010crewName\030\002 \001(\t\022\025\n\rrankSh"
+          + "ortName\030\003 \001(\t\"i\n\tCrewReply\022\'\n\016responseSt"
+          + "atus\030\001 \001(\0132\017.ResponseStatus\022\034\n\tcrewRanks"
+          + "\030\002 \003(\0132\t.CrewRank\022\025\n\rtotalElements\030\003 \001(\003"
+          + "\"[\n\027CrewVesselMappingDetail\022\n\n\002id\030\001 \001(\003\022"
+          + "\016\n\006crewId\030\002 \001(\003\022\020\n\010vesselId\030\003 \001(\003\022\022\n\nves"
+          + "selName\030\004 \001(\t\"7\n\021CrewVesselRequest\022\016\n\006cr"
+          + "ewId\030\001 \001(\003\022\022\n\nvesselName\030\002 \001(\t\"e\n\017CrewVe"
+          + "sselReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Resp"
+          + "onseStatus\022)\n\007vessels\030\002 \003(\0132\030.CrewVessel"
+          + "MappingDetail\"R\n\014CrewDetailed\022\n\n\002id\030\001 \001("
+          + "\003\022\020\n\010crewName\030\002 \001(\t\022\020\n\010crewRank\030\003 \001(\t\022\022\n"
+          + "\ncrewRankId\030\004 \001(\003\"w\n\021CrewDetailedReply\022\'"
+          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022"
+          + "\"\n\013crewDetails\030\002 \003(\0132\r.CrewDetailed\022\025\n\rt"
+          + "otalElements\030\003 \001(\003\"_\n\020CrewDetailsReply\022\'"
+          + "\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022"
+          + "\"\n\013crewDetails\030\002 \001(\0132\r.CrewDetailed\"P\n\030C"
+          + "rewVesselMappingRequest\0224\n\022crewVesselMap"
+          + "pings\030\001 \003(\0132\030.CrewVesselMappingDetail*\277\001"
+          + "\n\017VesselPumpTypes\022\016\n\nEMPTY_PUMP\020\000\022\016\n\nCAR"
+          + "GO_PUMP\020\001\022\020\n\014BALLAST_PUMP\020\002\022\013\n\007GS_PUMP\020\003"
+          + "\022\013\n\007IG_PUMP\020\004\022\022\n\016STRIPPING_PUMP\020\005\022\021\n\rSTR"
+          + "IP_EDUCTOR\020\006\022\014\n\010COW_PUMP\020\007\022\023\n\017BALLAST_ED"
+          + "UCTOR\020\010\022\026\n\022TANK_CLEANING_PUMP\020\t*\\\n\025TankT"
+          + "ypeForOperations\022\023\n\017EMPTY_TANK_TYPE\020\000\022\010\n"
+          + "\004PORT\020\001\022\n\n\006CENTER\020\002\022\010\n\004STBD\020\003\022\006\n\002WP\020\004\022\006\n"
+          + "\002WS\020\0052\221\016\n\021VesselInfoService\0228\n\026GetAllVes"
+          + "selsByCompany\022\016.VesselRequest\032\014.VesselRe"
+          + "ply\"\000\0226\n\024GetVesselDetailsById\022\016.VesselRe"
+          + "quest\032\014.VesselReply\"\000\0220\n\016GetVesselTanks\022"
+          + "\016.VesselRequest\032\014.VesselReply\"\000\0225\n\023GetVe"
+          + "sselCargoTanks\022\016.VesselRequest\032\014.VesselR"
+          + "eply\"\000\022A\n\027GetVesselDetailsForAlgo\022\022.Vess"
+          + "elAlgoRequest\032\020.VesselAlgoReply\"\000\022C\n!Get"
+          + "VesselDetailForSynopticalTable\022\016.VesselR"
+          + "equest\032\014.VesselReply\"\000\022;\n\031GetVesselDetai"
+          + "lByVesselId\022\016.VesselRequest\032\014.VesselRepl"
+          + "y\"\000\022A\n\025GetVesselInfoByPaging\022\030.VesselReq"
+          + "uestWithPaging\032\014.VesselReply\"\000\022C\n\026GetVes"
+          + "selInfoBytankIds\022\022.VesselTankRequest\032\023.V"
+          + "esselTankResponse\"\000\022C\n\032GetDWTFromVesselB"
+          + "yVesselId\022\021.VesselDWTRequest\032\022.VesselDWT"
+          + "Response\022@\n\027GetVesselInfoByVesselId\022\020.Ve"
+          + "sselIdRequest\032\021.VesselIdResponse\"\000\022D\n\030Ge"
+          + "tVesselPumpsByVesselId\022\020.VesselIdRequest"
+          + "\032\024.VesselPumpsResponse\"\000\022H\n\036GetRulesByVe"
+          + "sselIdAndSectionId\022\022.VesselRuleRequest\032\020",
+      ".VesselRuleReply\"\000\022E\n\026GetVesselValveSequ"
+          + "ence\022\016.VesselRequest\032\031.VesselValveSequen"
+          + "ceReply\"\000\022I\n\023GetLoadingInfoRules\022\030.Loadi"
+          + "ngInfoRulesRequest\032\026.LoadingInfoRulesRep"
+          + "ly\"\000\022H\n\025GetVesselsInformation\022\023.VesselsI"
+          + "nfoRequest\032\030.VesselsInformationReply\"\000\022F"
+          + "\n\024GetVesselParticulars\022\030.LoadingInfoRule"
+          + "sRequest\032\022.VesselParticulars\"\000\022J\n\033GetVes"
+          + "selDetaildInformation\022\020.VesselIdRequest\032"
+          + "\027.VesselDetaildInfoReply\"\000\022A\n\027GetVesselT"
+          + "anksByTankIds\022\022.VesselTankRequest\032\020.Vess"
+          + "elTankReply\"\000\022K\n\rGetVesselData\022\034.Communi"
+          + "cationDataGetRequest\032\032.CommunicationData"
+          + "Response\"\000\022F\n\020UpdateVesselData\022\037.Communi"
+          + "cationDataUpdateRequest\032\017.ResponseStatus"
+          + "\"\000\0226\n\016GetAllCrewRank\022\026.google.protobuf.E"
+          + "mpty\032\n.CrewReply\"\000\022?\n\027GetAllCrewVesselMa"
+          + "pping\022\022.CrewVesselRequest\032\020.CrewVesselRe"
+          + "ply\022<\n\021GetAllCrewDetails\022\023.VesselsInfoRe"
+          + "quest\032\022.CrewDetailedReply\0223\n\017SaveCrewDet"
+          + "ails\022\r.CrewDetailed\032\021.CrewDetailsReply\022E"
+          + "\n\026SaveCrewVesselMappings\022\031.CrewVesselMap"
+          + "pingRequest\032\020.CrewVesselReply\022B\n\027GetAllC"
+          + "rewDetailsByRank\022\023.VesselsInfoRequest\032\022."
+          + "CrewDetailedReplyB\036\n\032com.cpdss.common.ge"
           + "neratedP\000b\006proto3"
     };
     descriptor =
@@ -116298,6 +116591,9 @@ public final class VesselInfo {
               "OfficialNumber",
               "Param",
               "CrewXIds",
+              "VesselId",
+              "RankId",
+              "RankName",
             });
     internal_static_VesselsInformation_descriptor = getDescriptor().getMessageTypes().get(58);
     internal_static_VesselsInformation_fieldAccessorTable =

@@ -51,6 +51,10 @@ public class CrewDetailsSpecification implements Specification<CrewDetails> {
       return builder.like(
           root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
           "%" + criteria.getValue() + "%");
+    } else if ("join-with-equals".equalsIgnoreCase(criteria.getOperation())) {
+      return builder.equal(
+          root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
+          criteria.getValue());
     }
     return null;
   }

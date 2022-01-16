@@ -175,6 +175,7 @@ public class CrewService {
               eachCrew.setId(crewDetailed.getId());
               eachCrew.setCrewName(crewDetailed.getCrewName());
               eachCrew.setCrewRank(crewDetailed.getCrewRank());
+              eachCrew.setCrewRankId(crewDetailed.getCrewRankId());
               List<VesselInfo.CrewVesselMappingDetail> crewVesselMappingDetailList =
                   crewVesselMappingDetails.stream()
                       .filter(
@@ -264,5 +265,46 @@ public class CrewService {
                     }
                   });
             });
+  }
+
+  /**
+   * To get the crew details based on the vessel and rank
+   *
+   * @param vesselId
+   * @param rankId
+   * @param rankName
+   * @param correlationIdHeader
+   * @return
+   * @throws GenericServiceException
+   */
+  public CrewsDetailedResponse getCrewDetailsByRank(
+      Long vesselId, Long rankId, String rankName, String correlationIdHeader)
+      throws GenericServiceException {
+    CrewsDetailedResponse crewDetailedResponse = new CrewsDetailedResponse();
+    VesselInfo.VesselsInfoRequest.Builder crewDetailsBuilder =
+        VesselInfo.VesselsInfoRequest.newBuilder();
+    if (vesselId != null) crewDetailsBuilder.setVesselId(vesselId);
+    if (rankId != null) crewDetailsBuilder.setRankId(rankId);
+    if (rankName != null) crewDetailsBuilder.setRankName(rankName);
+
+    VesselInfo.CrewDetailedReply crewReply =
+        this.vesselInfoServiceBlockingStub.getAllCrewDetailsByRank(crewDetailsBuilder.build());
+
+    if (crewReply == null
+        || !(SUCCESS.equalsIgnoreCase(crewReply.getResponseStatus().getStatus()))) {
+      log.info("Failed to get crew list");
+      throw new GenericServiceException(
+          "Error in calling crew list service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    buildCrewDetailResponse(crewDetailedResponse, crewReply, new ArrayList<>());
+    CommonSuccessResponse commonSuccessResponse = new CommonSuccessResponse();
+    commonSuccessResponse.setStatus(String.valueOf(HttpStatus.OK.value()));
+    commonSuccessResponse.setCorrelationId(correlationIdHeader);
+    crewDetailedResponse.setResponseStatus(commonSuccessResponse);
+    crewDetailedResponse.setTotalElements(crewReply.getTotalElements());
+
+    return crewDetailedResponse;
   }
 }

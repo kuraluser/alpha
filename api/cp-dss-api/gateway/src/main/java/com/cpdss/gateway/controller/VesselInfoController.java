@@ -366,4 +366,36 @@ public class VesselInfoController {
     }
     return response;
   }
+
+  /**
+   * To get CrewDetails Based on Vessel and Rank
+   *
+   * @param headers
+   * @param
+   * @param
+   * @return response
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/crewdetails")
+  public CrewsDetailedResponse getCrewDetailsByRank(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = true) Long vesselId,
+      @RequestParam(required = false) Long rankId,
+      @RequestParam(required = false) String rankName)
+      throws CommonRestException {
+    CrewsDetailedResponse response;
+    try {
+      response =
+          crewService.getCrewDetailsByRank(vesselId, rankId, rankName, CORRELATION_ID_HEADER);
+    } catch (Exception e) {
+      log.error("Error in listing crews", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
 }

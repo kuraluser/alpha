@@ -3166,4 +3166,27 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void getAllCrewDetailsByRank(
+      com.cpdss.common.generated.VesselInfo.VesselsInfoRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CrewDetailedReply>
+          responseObserver) {
+    com.cpdss.common.generated.VesselInfo.CrewDetailedReply.Builder crewDetailReply =
+        com.cpdss.common.generated.VesselInfo.CrewDetailedReply.newBuilder();
+    try {
+      this.crewService.getAllCrewDetailsByRank(crewDetailReply, request);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      crewDetailReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getAllCrewDetails method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      crewDetailReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(crewDetailReply.build());
+      responseObserver.onCompleted();
+    }
+  }
 }
