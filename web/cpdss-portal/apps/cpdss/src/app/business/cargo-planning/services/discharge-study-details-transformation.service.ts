@@ -1193,7 +1193,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _cargoDetailValuObject.kl = new ValueObject<string>(mode?.id === 2 || (!isAutoAvailable && mode?.id === 3) ? (unitConversion.kl ? unitConversion.kl+'' : '0'): '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.id = new ValueObject<string>(cargoDetail.id+''),
 
-      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(cargoDetail.maxQuantity), false , false);
+      _cargoDetailValuObject.maxKl = new ValueObject<number>(Number(this.quantityPipe.transform(cargoDetail.maxQuantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature)), false , false);
       _cargoDetailValuObject.quantity = unitConversion.quantity;
 
       _cargoDetailValuObject.mt = new ValueObject<string>(mode?.id === 2 || (!isAutoAvailable && mode?.id === 3) ? (unitConversion.mt ? unitConversion.mt+'' : '0'): '-', true , false , false,isKlEditable);

@@ -211,6 +211,18 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             this.gradeDropdown.push(item);
           }
         });
+        if (data.isPlannedValues) {
+          data.portPlanStowageDetails?.map(item => {
+            if (!(Number(item.api) && Number(item.temperature))) {
+              data.cargoQuantityDetails?.map(cargo => {
+                if (item.cargoNominationId === cargo.cargoNominationId) {
+                  item.api = Number(item.api) ? item.api : cargo.nominationApi;
+                  item.temperature = Number(item.temperature) ? item.temperature : cargo.nominationTemp;
+                }
+              });
+            }
+          });
+        }
       }
 
       if (data.planCommingleDetails?.length) {

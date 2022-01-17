@@ -7,7 +7,8 @@ import { Voyage , IPort } from '../../../core/models/common.model';
 import { ILoadableQuantityCommingleCargo, ICommingleCargoDispaly, IBillingFigValueObject, IBillingOfLaddings } from '../../models/discharge-study-list.model';
 import { DischargeStudyDetailsTransformationService } from '../../services/discharge-study-details-transformation.service';
 import { DischargeStudyDetailsApiService } from '../../services/discharge-study-details-api.service';
-
+import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
+import { QUANTITY_UNIT } from '../../../../shared/models/common.model';
 
 /**
  * Component class of cargo nomination  screen
@@ -57,7 +58,8 @@ export class CargoNominationComponent implements OnInit {
   constructor(
     private decimalPipe: DecimalPipe,
     private dischargeStudyDetailsApiService: DischargeStudyDetailsApiService,
-    private dischargeStudyDetailsTransformationService: DischargeStudyDetailsTransformationService
+    private dischargeStudyDetailsTransformationService: DischargeStudyDetailsTransformationService,
+    private quantityPipe: QuantityPipe
   ) { }
 
   /**
@@ -93,6 +95,10 @@ export class CargoNominationComponent implements OnInit {
     this.listData = {
       portsList: this.ports
     }
+    result?.billOfLaddings?.map(item=>{
+      item.quantityKl = this.quantityPipe.transform(item.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, item.api, item.temperature);
+      item.quantityBbls = this.quantityPipe.transform(item.quantityMt, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, item.api, item.temperature);
+    });
     const billOfLaddings = result.billOfLaddings;
     const loadableQuantityCommingleCargoDetails = result.loadableQuantityCommingleCargoDetails; 
     const billOfLaddingsValueObject = [];
