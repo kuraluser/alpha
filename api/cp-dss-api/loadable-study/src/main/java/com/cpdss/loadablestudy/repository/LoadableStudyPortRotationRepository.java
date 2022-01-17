@@ -194,9 +194,9 @@ public interface LoadableStudyPortRotationRepository
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_port_rotation u where loadable_study_xid=?2 and port_xid=?1",
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_port_rotation u where loadable_study_xid=?1",
       nativeQuery = true)
-  String getLoadableStudyPortRotationWithPortIdAndLoadableStudyId(Long id, Long loadableStudyId);
+  String getLoadableStudyPortRotation(Long loadableStudyId);
 
   @Query(
       value =

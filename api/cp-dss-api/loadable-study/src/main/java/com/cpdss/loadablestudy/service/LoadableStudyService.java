@@ -3464,9 +3464,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       Long loadableStudyId = loadablePattern.get().getLoadableStudy().getId();
       log.info("portXid:{} and loadableStudyId:{}", request.getId(), loadableStudyId);
       loadableStudyPortRotationData =
-          loadableStudyPortRotationRepository
-              .getLoadableStudyPortRotationWithPortIdAndLoadableStudyId(
-                  request.getId(), loadableStudyId);
+          loadableStudyPortRotationRepository.getLoadableStudyPortRotation(loadableStudyId);
     }
     if (loadableStudyPortRotationData != null) {
       replyBuilder.setDataJson(loadableStudyPortRotationData);
