@@ -258,6 +258,12 @@ service LoadableStudyService {
 	rpc getOnHandQuantityForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
 
 	rpc saveOnHandQuantityForCommunication(LoadableStudyCommunicationRequest) returns (LoadableStudyCommunicationReply) {}
+
+	rpc checkDependentProcess(DependentProcessCheckRequestComm) returns (CommunicationCheckResponse) {}
+
+	rpc checkCommunicated(CommunicationStatusCheckRequest) returns (CommunicationCheckResponse) {}
+
+	rpc triggerCommunication(CommunicationTriggerRequest) returns (CommunicationTriggerResponse) {}
 }
 
 service SynopticalOperationService{

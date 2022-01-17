@@ -748,6 +748,104 @@ public final class LoadingPlanServiceGrpc {
     return getGetLoadingPlanCargoHistoryMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckDependentProcessMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "checkDependentProcess",
+      requestType = com.cpdss.common.generated.Common.DependentProcessCheckRequestComm.class,
+      responseType = com.cpdss.common.generated.Common.CommunicationCheckResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckDependentProcessMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        getCheckDependentProcessMethod;
+    if ((getCheckDependentProcessMethod = LoadingPlanServiceGrpc.getCheckDependentProcessMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getCheckDependentProcessMethod = LoadingPlanServiceGrpc.getCheckDependentProcessMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getCheckDependentProcessMethod =
+              getCheckDependentProcessMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+                          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "checkDependentProcess"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.DependentProcessCheckRequestComm
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationCheckResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier("checkDependentProcess"))
+                      .build();
+        }
+      }
+    }
+    return getCheckDependentProcessMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckCommunicatedMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "checkCommunicated",
+      requestType = com.cpdss.common.generated.Common.CommunicationStatusCheckRequest.class,
+      responseType = com.cpdss.common.generated.Common.CommunicationCheckResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckCommunicatedMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        getCheckCommunicatedMethod;
+    if ((getCheckCommunicatedMethod = LoadingPlanServiceGrpc.getCheckCommunicatedMethod) == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getCheckCommunicatedMethod = LoadingPlanServiceGrpc.getCheckCommunicatedMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getCheckCommunicatedMethod =
+              getCheckCommunicatedMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+                          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "checkCommunicated"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationStatusCheckRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationCheckResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier("checkCommunicated"))
+                      .build();
+        }
+      }
+    }
+    return getCheckCommunicatedMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -930,6 +1028,24 @@ public final class LoadingPlanServiceGrpc {
           getGetLoadingPlanCargoHistoryMethod(), responseObserver);
     }
 
+    /** */
+    public void checkDependentProcess(
+        com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCheckDependentProcessMethod(), responseObserver);
+    }
+
+    /** */
+    public void checkCommunicated(
+        com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCheckCommunicatedMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1037,6 +1153,20 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.Common.CargoHistoryOpsRequest,
                       com.cpdss.common.generated.Common.CargoHistoryResponse>(
                       this, METHODID_GET_LOADING_PLAN_CARGO_HISTORY)))
+          .addMethod(
+              getCheckDependentProcessMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>(
+                      this, METHODID_CHECK_DEPENDENT_PROCESS)))
+          .addMethod(
+              getCheckCommunicatedMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>(
+                      this, METHODID_CHECK_COMMUNICATED)))
           .build();
     }
   }
@@ -1217,6 +1347,28 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void checkDependentProcess(
+        com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCheckDependentProcessMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void checkCommunicated(
+        com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCheckCommunicatedMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1348,6 +1500,20 @@ public final class LoadingPlanServiceGrpc {
         com.cpdss.common.generated.Common.CargoHistoryOpsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetLoadingPlanCargoHistoryMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.CommunicationCheckResponse checkDependentProcess(
+        com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCheckDependentProcessMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.CommunicationCheckResponse checkCommunicated(
+        com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCheckCommunicatedMethod(), getCallOptions(), request);
     }
   }
 
@@ -1499,6 +1665,24 @@ public final class LoadingPlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetLoadingPlanCargoHistoryMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        checkDependentProcess(
+            com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCheckDependentProcessMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        checkCommunicated(
+            com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCheckCommunicatedMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -1514,6 +1698,8 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING = 10;
   private static final int METHODID_GET_LOADING_PLAN_COMMINGLE_DETAILS = 11;
   private static final int METHODID_GET_LOADING_PLAN_CARGO_HISTORY = 12;
+  private static final int METHODID_CHECK_DEPENDENT_PROCESS = 13;
+  private static final int METHODID_CHECK_COMMUNICATED = 14;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1644,6 +1830,20 @@ public final class LoadingPlanServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>)
                   responseObserver);
           break;
+        case METHODID_CHECK_DEPENDENT_PROCESS:
+          serviceImpl.checkDependentProcess(
+              (com.cpdss.common.generated.Common.DependentProcessCheckRequestComm) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>)
+                  responseObserver);
+          break;
+        case METHODID_CHECK_COMMUNICATED:
+          serviceImpl.checkCommunicated(
+              (com.cpdss.common.generated.Common.CommunicationStatusCheckRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1721,6 +1921,8 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getValidateStowageAndBillOfLaddingMethod())
                       .addMethod(getGetLoadingPlanCommingleDetailsMethod())
                       .addMethod(getGetLoadingPlanCargoHistoryMethod())
+                      .addMethod(getCheckDependentProcessMethod())
+                      .addMethod(getCheckCommunicatedMethod())
                       .build();
         }
       }

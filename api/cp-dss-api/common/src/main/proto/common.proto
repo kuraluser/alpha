@@ -133,3 +133,31 @@ message CommunicationDataResponse {
 	string dataJson = 1;
 	ResponseStatus responseStatus = 2;
 }
+
+//Communication dependent process check request
+message DependentProcessCheckRequestComm {
+	string dependantProcessId = 3;
+}
+
+//Communication process check response
+message CommunicationCheckResponse {
+	bool isCompleted = 1;
+	ResponseStatus responseStatus = 2;
+}
+
+//	Communication request object for checking isCommunicated
+message CommunicationStatusCheckRequest {
+	int64 referenceId = 1;
+}
+
+//	Communication request object for triggering communication
+message CommunicationTriggerRequest {
+	int64 referenceId = 1;
+	string messageType = 2;
+}
+
+//Communication trigger response
+message CommunicationTriggerResponse {
+	string processId = 3;
+	ResponseStatus responseStatus = 2;
+}

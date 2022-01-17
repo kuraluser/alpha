@@ -10,8 +10,8 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CPDSS_BUI
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableStudyTables;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
+import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -23,6 +23,7 @@ import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
+import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferInBoundRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COLUMNS;
 import com.cpdss.loadablestudy.utility.ProcessIdentifiers;
 import com.google.common.reflect.TypeToken;
@@ -122,6 +123,8 @@ public class LoadableStudyCommunicationService {
   private DischargePatternQuantityCargoPortwiseRepository
       dischargePatternQuantityCargoPortwiseRepository;
 
+  @Autowired LoadableStudyDataTransferInBoundRepository dataTransferInBoundRepository;
+
   @Autowired LoadableStudyRuleRepository loadableStudyRuleRepository;
   @Autowired LoadableStudyRuleInputRepository loadableStudyRuleInputRepository;
   @Autowired LoadablePlanCommentsRepository loadablePlanCommentsRepository;
@@ -199,7 +202,8 @@ public class LoadableStudyCommunicationService {
                 dataTransfer ->
                     Arrays.asList(
                             MessageTypes.LOADABLESTUDY.getMessageType(),
-                            MessageTypes.ALGORESULT.getMessageType())
+                            MessageTypes.ALGORESULT.getMessageType(),
+                            MessageTypes.LOADABLESTUDY_WITHOUT_ALGO.getMessageType())
                         .contains(dataTransfer.getProcessGroupId()))
             .collect(Collectors.toList());
     log.info("DataTransferStages in LOADABLE_STUDY_DATA_UPDATE task:" + dataTransferStages);
@@ -784,6 +788,7 @@ public class LoadableStudyCommunicationService {
       }
 
       // Save all -save order should not be changed
+      boolean saved = false;
       try {
         saveVoyage();
         saveLoadableStudy();
@@ -821,6 +826,10 @@ public class LoadableStudyCommunicationService {
         saveRuleVesselMapping();
         saveRuleVesselMappingInput();
         saveCommunicationStatusUpdate(processGroupId);
+        loadableStudyStagingService.updateStatusCompletedForProcessId(
+            processId, StagingStatus.COMPLETED.getStatus());
+        log.info("updated status to completed for processId:" + processId);
+        saved = true;
       } catch (ResourceAccessException e) {
         log.error(
             "Save failed loadable study communication data: processId: {}. Sent for retry.",
@@ -836,47 +845,81 @@ public class LoadableStudyCommunicationService {
             StagingStatus.FAILED.getStatus(),
             e.getMessage());
       }
-      loadableStudyStagingService.updateStatusCompletedForProcessId(
-          processId, StagingStatus.COMPLETED.getStatus());
-      log.info("updated status to completed for processId:" + processId);
-      // Generate pattern with communicated data at shore
-      if (CPDSS_BUILD_ENV_SHORE.equals(env)) {
-        try {
-          if (processGroupId.equals(MessageTypes.LOADABLESTUDY.getMessageType())) {
-            com.cpdss.common.generated.LoadableStudy.AlgoRequest algoRequest =
-                com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
-                    .setLoadableStudyId(loadableStudyStage.getId())
-                    .build();
-            com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
-                com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
-            loadablePatternService.generateLoadablePatterns(algoRequest, algoReply);
-            log.info("Invoking generateLoadablePatterns method.");
-          } else if (processGroupId.equals(MessageTypes.VALIDATEPLAN.getMessageType())) {
-            com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest algoRequest =
-                com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest.newBuilder()
-                    .setLoadablePatternId(loadablePatternStage.get(0).getId())
-                    .build();
-            com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
-                com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
-            loadablePlanService.validateLoadablePlan(algoRequest, algoReply);
-            log.info("Invoking validateLoadablePlan method.");
-          } else if (processGroupId.equals(MessageTypes.DISCHARGESTUDY.getMessageType())) {
-            com.cpdss.common.generated.LoadableStudy.AlgoRequest algoRequest =
-                com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
-                    .setLoadableStudyId(loadableStudyStage.getId())
-                    .build();
-            com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
-                com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
-            generateDischargeStudyJson.generateDischargePatterns(algoRequest, algoReply);
-            log.info("Invoking generateDischargePatterns method in Discharge Study.");
+
+      if (saved) {
+        // Generate pattern with communicated data at shore
+        MessageTypes messageType = MessageTypes.getMessageType(processGroupId);
+
+        if (CPDSS_BUILD_ENV_SHORE.equals(env)) {
+          try {
+            switch (messageType) {
+              case LOADABLESTUDY:
+                {
+                  com.cpdss.common.generated.LoadableStudy.AlgoRequest algoRequest =
+                      com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
+                          .setLoadableStudyId(loadableStudyStage.getId())
+                          .build();
+                  com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
+                  loadablePatternService.generateLoadablePatterns(algoRequest, algoReply);
+                  log.info("Invoking generateLoadablePatterns method.");
+                  break;
+                }
+              case VALIDATEPLAN:
+                {
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest algoRequest =
+                      com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest
+                          .newBuilder()
+                          .setLoadablePatternId(loadablePatternStage.get(0).getId())
+                          .build();
+                  com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
+                  loadablePlanService.validateLoadablePlan(algoRequest, algoReply);
+                  log.info("Invoking validateLoadablePlan method.");
+                  break;
+                }
+              case DISCHARGESTUDY:
+                {
+                  com.cpdss.common.generated.LoadableStudy.AlgoRequest algoRequest =
+                      com.cpdss.common.generated.LoadableStudy.AlgoRequest.newBuilder()
+                          .setLoadableStudyId(loadableStudyStage.getId())
+                          .build();
+                  com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder algoReply =
+                      com.cpdss.common.generated.LoadableStudy.AlgoReply.newBuilder();
+                  generateDischargeStudyJson.generateDischargePatterns(algoRequest, algoReply);
+                  log.info("Invoking generateDischargePatterns method in Discharge Study.");
+                  break;
+                }
+              case LOADABLESTUDY_WITHOUT_ALGO:
+                {
+                  // Update inbound status - shore
+                  dataTransferInBoundRepository.updateStatus(
+                      processId, StagingStatus.COMPLETED.getStatus());
+                  break;
+                }
+              default:
+                {
+                  log.warn(
+                      "Trigger after save not configured for MessageType: {}, ENV: {}",
+                      messageType.getMessageType(),
+                      CPDSS_BUILD_ENV_SHORE);
+                  break;
+                }
+            }
+          } catch (IOException e) {
+            log.error("Exception calling generate loadable patterns.", e);
+            throw new GenericServiceException(
+                "Exception calling generate loadable patterns",
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR,
+                e);
           }
-        } catch (IOException e) {
-          log.error("Exception calling generate loadable patterns.", e);
-          throw new GenericServiceException(
-              "Exception calling generate loadable patterns",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e);
+        } else {
+          // Save communicated to outbound store
+          loadableStudyStagingService.saveDataTransferOutBound(
+              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName(),
+              loadableStudyStage.getId(),
+              true);
         }
       }
     }
@@ -960,7 +1003,9 @@ public class LoadableStudyCommunicationService {
             setEntityDocFields(cargoNomination, optionalCargoNomination);
 
             // setting cargoNomination to CargoNominationPortDetails
-            if (!isEmpty(cargoNominationOperationDetailsStage)) {
+            if (isValidStageEntity(
+                cargoNominationOperationDetailsStage,
+                LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS.getTable())) {
               cargoNominationOperationDetailsStage.forEach(
                   cargoNominationOperationDetails -> {
                     Optional<CargoNominationPortDetails> optionalCargoNominationOperationDetails =
@@ -976,11 +1021,12 @@ public class LoadableStudyCommunicationService {
                       cargoNominationOperationDetails.setCargoNomination(cargoNomination);
                     }
                   });
+
+              // setting cargoNominationPortDetails to cargoNomination
+              Set<CargoNominationPortDetails> cargoNominationPortDetails =
+                  new HashSet<>(cargoNominationOperationDetailsStage);
+              cargoNomination.setCargoNominationPortDetails(cargoNominationPortDetails);
             }
-            // setting cargoNominationPortDetails to cargoNomination
-            Set<CargoNominationPortDetails> cargoNominationPortDetails =
-                new HashSet<>(cargoNominationOperationDetailsStage);
-            cargoNomination.setCargoNominationPortDetails(cargoNominationPortDetails);
           });
 
       // Save data
@@ -1054,9 +1100,13 @@ public class LoadableStudyCommunicationService {
         setEntityDocFields(ohqStage, ohq);
 
         ohqStage.setLoadableStudy(loadableStudyStage);
-        for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
-          if (Objects.equals(ohqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
-            ohqStage.setPortRotation(lspr);
+        if (isValidStageEntity(
+            loadableStudyPortRotationStage,
+            LoadableStudyTables.LOADABLE_STUDY_PORT_ROTATION.getTable())) {
+          for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
+            if (Objects.equals(ohqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
+              ohqStage.setPortRotation(lspr);
+            }
           }
         }
       }
@@ -1095,9 +1145,13 @@ public class LoadableStudyCommunicationService {
         setEntityDocFields(lqStage, lq);
 
         lqStage.setLoadableStudyXId(loadableStudyStage);
-        for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
-          if (Objects.equals(lqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
-            lqStage.setLoadableStudyPortRotation(lspr);
+        if (isValidStageEntity(
+            loadableStudyPortRotationStage,
+            LoadableStudyTables.LOADABLE_STUDY_PORT_ROTATION.getTable())) {
+          for (LoadableStudyPortRotation lspr : loadableStudyPortRotationStage) {
+            if (Objects.equals(lqStage.getCommunicationRelatedEntityId(), lspr.getId())) {
+              lqStage.setLoadableStudyPortRotation(lspr);
+            }
           }
         }
       }
@@ -1291,10 +1345,13 @@ public class LoadableStudyCommunicationService {
         Optional<AlgoErrors> algoErrorsOptional = algoErrorsRepository.findById(algoErrors.getId());
         setEntityDocFields(algoErrors, algoErrorsOptional);
 
-        for (AlgoErrorHeading algoErrorHeading : algoErrorHeadingStage) {
-          if (Objects.equals(
-              algoErrorHeading.getId(), algoErrors.getCommunicationRelatedEntityId())) {
-            algoErrors.setAlgoErrorHeading(algoErrorHeading);
+        if (isValidStageEntity(
+            algoErrorHeadingStage, LoadableStudyTables.ALGO_ERROR_HEADING.getTable())) {
+          for (AlgoErrorHeading algoErrorHeading : algoErrorHeadingStage) {
+            if (Objects.equals(
+                algoErrorHeading.getId(), algoErrors.getCommunicationRelatedEntityId())) {
+              algoErrors.setAlgoErrorHeading(algoErrorHeading);
+            }
           }
         }
       }
@@ -1549,9 +1606,13 @@ public class LoadableStudyCommunicationService {
             synopticalTableLoadicatorDataRepository.findById(sTableLoadicatorData.getId());
         setEntityDocFields(sTableLoadicatorData, sTableLoadicatorDataOpt);
 
-        for (SynopticalTable st : synopticalTableStage) {
-          if (Objects.equals(sTableLoadicatorData.getCommunicationRelatedEntityId(), st.getId())) {
-            sTableLoadicatorData.setSynopticalTable(st);
+        if (isValidStageEntity(
+            synopticalTableStage, LoadableStudyTables.SYNOPTICAL_TABLE.getTable())) {
+          for (SynopticalTable st : synopticalTableStage) {
+            if (Objects.equals(
+                sTableLoadicatorData.getCommunicationRelatedEntityId(), st.getId())) {
+              sTableLoadicatorData.setSynopticalTable(st);
+            }
           }
         }
       }

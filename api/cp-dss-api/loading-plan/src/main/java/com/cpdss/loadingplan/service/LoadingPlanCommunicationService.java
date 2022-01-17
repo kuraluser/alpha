@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service;
 
+import static com.cpdss.common.communication.CommunicationConstants.*;
+import static com.cpdss.common.communication.CommunicationConstants.SUCCESS;
 import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 import static com.cpdss.loadingplan.common.LoadingPlanConstants.CPDSS_BUILD_ENV_SHIP;
 import static com.cpdss.loadingplan.utility.LoadingPlanConstants.*;
@@ -21,6 +23,7 @@ import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.domain.VoyageActivate;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.repository.communication.LoadingPlanDataTransferInBoundRepository;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
@@ -128,6 +131,7 @@ public class LoadingPlanCommunicationService {
 
   @Autowired private LoadingRuleRepository loadingRuleRepository;
   @Autowired private LoadingRuleInputRepository loadingRuleInputRepository;
+  @Autowired LoadingPlanDataTransferInBoundRepository dataTransferInBoundRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -379,6 +383,16 @@ public class LoadingPlanCommunicationService {
           processId,
           LocalDateTime.now());
       String processGroupId = entry.getValue().get(0).getProcessGroupId();
+
+      if (MessageTypes.LOADINGPLAN.getMessageType().equals(processGroupId)) {
+        if (!loadingPlanStagingService.dependantProcessIsCompleted(
+            processId, CommunicationModule.LOADING_PLAN.getModuleName())) {
+          loadingPlanStagingService.updateStatusForProcessId(
+              processId, StagingStatus.READY_TO_PROCESS.getStatus());
+          continue;
+        }
+      }
+
       for (DataTransferStage dataTransferStage : entry.getValue()) {
         Type listType = null;
         String dataTransferString = dataTransferStage.getData();
@@ -1107,8 +1121,10 @@ public class LoadingPlanCommunicationService {
       if (!env.equals("ship") && loadingInfo != null) {
         if (processGroupId.equals(MessageTypes.LOADINGPLAN.getMessageType())) {
           generateLoadingPlan(loadingInformation.getId());
-        }
-        if (processGroupId.equals(MessageTypes.ULLAGE_UPDATE.getMessageType())) {
+        } else if (MessageTypes.LOADINGPLAN_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
+          dataTransferInBoundRepository.updateStatus(
+              processId, StagingStatus.COMPLETED.getStatus());
+        } else if (processGroupId.equals(MessageTypes.ULLAGE_UPDATE.getMessageType())) {
           log.info("Algo call started for Update Ullage");
           try {
             Integer arrivalDeparture = null;
@@ -2281,7 +2297,18 @@ public class LoadingPlanCommunicationService {
         LoadingInformation loadingInformation =
             loadingInformationRepository
                 .findByIdAndIsActiveTrue(communicationStatusRow.getReferenceId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(
+                    () -> {
+                      log.error(
+                          "Loading Info not found. LoadingInformation Id: {}, MessageType: {}",
+                          communicationStatusRow.getReferenceId(),
+                          messageType.getMessageType());
+                      return new GenericServiceException(
+                          "Loading Info not found. LoadingInformation Id: "
+                              + communicationStatusRow.getReferenceId(),
+                          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                          HttpStatusCode.INTERNAL_SERVER_ERROR);
+                    });
 
         // Check timer and update timeout
         if (isCommunicationTimedOut(

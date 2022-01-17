@@ -403,10 +403,6 @@ public class LoadablePatternService {
     if (enableCommunication
         && !env.equals("ship")
         && (!request.getHasLodicator() || request.getAlgoErrorsCount() > 0)) {
-      Optional<LoadableStudyCommunicationStatus> loadableStudyCommunicationStatus =
-          this.loadableStudyCommunicationStatusRepository
-              .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
-                  request.getLoadableStudyId(), MessageTypes.LOADABLESTUDY.getMessageType());
       JsonArray jsonArray =
           loadableStudyStagingService.getCommunicationData(
               LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
@@ -1601,48 +1597,18 @@ public class LoadablePatternService {
       if (enableCommunication && env.equals("ship")) {
         this.voyageService.buildVoyageDetails(modelMapper, loadableStudy);
 
-        JsonArray jsonArray =
-            loadableStudyStagingService.getCommunicationData(
-                LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
-                UUID.randomUUID().toString(),
-                MessageTypes.LOADABLESTUDY.getMessageType(),
-                loadableStudy.getId());
-        log.info("Json Array in Loadable study service: " + jsonArray.toString());
-
-        EnvoyWriter.WriterReply ewReply =
-            communicationService.passRequestPayloadToEnvoyWriter(
-                jsonArray.toString(),
-                loadableStudy.getVesselId(),
-                MessageTypes.LOADABLESTUDY.getMessageType());
-        if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-          LoadableStudyCommunicationStatus lsCommunicationStatus =
-              new LoadableStudyCommunicationStatus();
-          if (ewReply.getMessageId() != null) {
-            lsCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-            lsCommunicationStatus.setCommunicationStatus(
-                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-          }
-          lsCommunicationStatus.setReferenceId(request.getLoadableStudyId());
-          lsCommunicationStatus.setMessageType(MessageTypes.LOADABLESTUDY.getMessageType());
-          lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-          this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
-          updateProcessIdForLoadableStudy(
-              "",
-              loadableStudyOpt.get(),
-              LOADABLE_STUDY_COMMUNICATED_TO_SHORE,
-              ewReply.getMessageId(),
-              true);
-
-          loadableStudyRepository.updateLoadableStudyStatus(
-              LOADABLE_STUDY_COMMUNICATED_TO_SHORE, loadableStudyOpt.get().getId());
+        try {
+          final String communicationId =
+              communicateLoadableStudy(loadableStudyOpt.get().getId(), true);
           replyBuilder
-              .setProcesssId(ewReply.getMessageId())
+              .setProcesssId(communicationId)
               .setResponseStatus(
                   Common.ResponseStatus.newBuilder()
                       .setMessage(SUCCESS)
                       .setStatus(SUCCESS)
                       .build());
-        } else {
+        } catch (GenericServiceException e) {
+          // Call Ship Algo on communication failure
           getAlgoCall(replyBuilder, loadableStudyOpt, loadableStudy);
         }
       } else {
@@ -1660,6 +1626,115 @@ public class LoadablePatternService {
     replyBuilder.setResponseStatus(
         Common.ResponseStatus.newBuilder().setMessage(SUCCESS).setStatus(SUCCESS).build());
     return replyBuilder;
+  }
+
+  /**
+   * Method to communicate loadable study
+   *
+   * @param loadableStudyId loadableStudyId loadable study id value
+   * @return communication id value
+   * @throws GenericServiceException Exception on invalid response from envoy-writer or invalid
+   *     loadableStudyId
+   */
+  public String communicateLoadableStudy(final long loadableStudyId, boolean callRemoteAlgo)
+      throws GenericServiceException {
+
+    LoadableStudy loadableStudy =
+        loadableStudyRepository
+            .findById(loadableStudyId)
+            .orElseThrow(
+                () -> {
+                  log.error("Loadable Study not found. Id: {}", loadableStudyId);
+                  return new GenericServiceException(
+                      "Loadable Study not found. Id: " + loadableStudyId,
+                      CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                      HttpStatusCode.INTERNAL_SERVER_ERROR);
+                });
+
+    final String communicationId = UUID.randomUUID().toString();
+
+    if (callRemoteAlgo) {
+
+      final String messageId =
+          communicateData(
+              loadableStudy.getId(),
+              communicationId,
+              LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
+              loadableStudy.getVesselXId(),
+              MessageTypes.LOADABLESTUDY);
+
+      // Update LS communication status
+      LoadableStudyCommunicationStatus lsCommunicationStatus =
+          new LoadableStudyCommunicationStatus();
+      lsCommunicationStatus.setMessageUUID(messageId);
+      lsCommunicationStatus.setCommunicationStatus(
+          CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+      lsCommunicationStatus.setReferenceId(loadableStudy.getId());
+      lsCommunicationStatus.setMessageType(MessageTypes.LOADABLESTUDY.getMessageType());
+      lsCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+      this.loadableStudyCommunicationStatusRepository.save(lsCommunicationStatus);
+
+      // Update LS algo status
+      updateProcessIdForLoadableStudy(
+          "", loadableStudy, LOADABLE_STUDY_COMMUNICATED_TO_SHORE, messageId, true);
+
+      // Update LS status
+      loadableStudyRepository.updateLoadableStudyStatus(
+          LOADABLE_STUDY_COMMUNICATED_TO_SHORE, loadableStudy.getId());
+    } else {
+
+      // Sequence communication
+      Set<String> lsSequenceTables = new LinkedHashSet<>(LOADABLE_STUDY_COMM_TABLES_SHIP_TO_SHORE);
+      lsSequenceTables.addAll(LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP);
+
+      communicateData(
+          loadableStudy.getId(),
+          communicationId,
+          new ArrayList<>(lsSequenceTables),
+          loadableStudy.getVesselXId(),
+          MessageTypes.LOADABLESTUDY_WITHOUT_ALGO);
+    }
+    return communicationId;
+  }
+
+  /**
+   * Method to communicate data
+   *
+   * @param referenceId referenceId value
+   * @param communicationId communicationId UUID value
+   * @param communicationTables tables to be communicated
+   * @param vesselId vesselId value
+   * @param messageType messageType value
+   * @return UUID from envoy-writer
+   * @throws GenericServiceException Exception on failure
+   */
+  private String communicateData(
+      final Long referenceId,
+      final String communicationId,
+      final List<String> communicationTables,
+      final Long vesselId,
+      final MessageTypes messageType)
+      throws GenericServiceException {
+
+    // Get JSON to be communicated
+    JsonArray jsonArray =
+        loadableStudyStagingService.getCommunicationData(
+            communicationTables, communicationId, messageType.getMessageType(), referenceId);
+    log.debug("Communication Request: {}", jsonArray.toString());
+
+    // Communicate data
+    EnvoyWriter.WriterReply ewReply =
+        communicationService.passRequestPayloadToEnvoyWriter(
+            jsonArray.toString(), vesselId, messageType.getMessageType());
+    if (!SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+      log.error("Invalid response from envoy-writer. Response: {}", ewReply);
+      throw new GenericServiceException(
+          "Invalid response from envoy-writer. Response: " + ewReply,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+
+    return ewReply.getMessageId();
   }
 
   private void getAlgoCall(

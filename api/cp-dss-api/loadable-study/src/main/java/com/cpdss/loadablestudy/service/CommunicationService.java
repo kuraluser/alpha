@@ -110,13 +110,7 @@ public class CommunicationService {
         if (!erReply.getPatternResultJson().isEmpty()) {
           log.info("Executing Task: {}. Message Type: {}", taskName, messageType);
           // Get request and save to staging table
-          if (MessageTypes.LOADABLESTUDY.getMessageType().equals(messageType.getMessageType())
-              || (MessageTypes.VALIDATEPLAN.getMessageType().equals(messageType.getMessageType())
-                  || MessageTypes.DISCHARGESTUDY
-                      .getMessageType()
-                      .equals(messageType.getMessageType()))) {
-            saveLoadableStudyIntoStagingTable(erReply);
-          }
+          saveLoadableStudyIntoStagingTable(erReply);
         } else {
           log.debug(
               "No data received from envoy-reader. Message Type: {}. Params: {}",

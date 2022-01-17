@@ -186,7 +186,7 @@ public class LoadingPlanService {
           String processId = UUID.randomUUID().toString();
           JsonArray jsonArray =
               loadingPlanStagingService.getCommunicationData(
-                  Arrays.asList("loading_information"),
+                  List.of("loading_information"),
                   processId,
                   MessageTypes.LOADINGPLAN_SAVE.getMessageType(),
                   savedLoadingInformation.getId(),

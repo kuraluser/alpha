@@ -9,6 +9,7 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.BillOfLadding;
 import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.LoadingInformationStatus;
@@ -52,6 +53,8 @@ public class LoadingPlanGrpcServiceTest {
   @MockBean PortLoadingPlanCommingleDetailsRepository portLoadingPlanCommingleDetailsRepository;
   @MockBean LoadingCargoHistoryService loadingCargoHistoryService;
   @MockBean LoadingInformationBuilderService informationBuilderService;
+  @MockBean LoadingPlanStagingService loadingPlanStagingService;
+
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
 

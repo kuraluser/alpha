@@ -1,15 +1,24 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.communication;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.SUCCESS;
+
+import com.cpdss.common.communication.CommunicationConstants.CommunicationModule;
 import com.cpdss.common.communication.StagingService;
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.domain.VoyageActivate;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.repository.communication.LoadingPlanDataTransferInBoundRepository;
+import com.cpdss.loadingplan.repository.communication.LoadingPlanDataTransferOutBoundRepository;
 import com.cpdss.loadingplan.utility.LoadingPlanConstants;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -18,49 +27,67 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-/** @Author Selvy Thomas */
+/** @author Selvy Thomas */
 @Log4j2
 @Service
 public class LoadingPlanStagingService extends StagingService {
 
+  /**
+   * Constructor for injecting
+   *
+   * @param loadingPlanStagingRepository staging repo
+   * @param dataTransferOutBoundRepository outbound repo
+   * @param dataTransferInBoundRepository inbound repo
+   */
+  public LoadingPlanStagingService(
+      @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository,
+      @Autowired LoadingPlanDataTransferOutBoundRepository dataTransferOutBoundRepository,
+      @Autowired LoadingPlanDataTransferInBoundRepository dataTransferInBoundRepository) {
+    super(
+        loadingPlanStagingRepository,
+        dataTransferOutBoundRepository,
+        dataTransferInBoundRepository);
+  }
+
+  // GRPC Services
+  @GrpcClient("loadableStudyService")
+  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
+      loadableStudyServiceBlockingStub;
+
+  // Repositories
+  @Autowired private LoadingPlanStagingRepository loadingPlanStagingRepository;
+  @Autowired private LoadingPlanDataTransferOutBoundRepository dataTransferOutBoundRepository;
+  @Autowired private LoadingPlanDataTransferInBoundRepository dataTransferInBoundRepository;
   @Autowired private LoadingPlanPortWiseDetailsRepository loadingPlanPortWiseDetailsRepository;
   @Autowired private LoadingSequenceRepository loadingSequenceRepository;
   @Autowired private StageOffsetRepository stageOffsetRepository;
   @Autowired private StageDurationRepository stageDurationRepository;
   @Autowired private LoadingInformationStatusRepository loadingInformationStatusRepository;
-  @Autowired private LoadingPlanStagingRepository loadingPlanStagingRepository;
   @Autowired private PyUserRepository pyUserRepository;
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired private LoadingInformationRepository loadingInformationRepository;
 
-  @GrpcClient("loadableStudyService")
-  private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
-      loadableStudyServiceBlockingStub;
-
-  public LoadingPlanStagingService(
-      @Autowired LoadingPlanStagingRepository loadingPlanStagingRepository) {
-    super(loadingPlanStagingRepository);
-  }
-
-  LoadingInformation loadingInformation = null;
   List<Long> loadingPlanPortWiseDetailsIds = null;
   List<Long> loadingSequenceIds = null;
   Long voyageId = null;
   Long loadablePatternId = null;
   Long synopticalTableXId = null;
   Long portXId = null;
+
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
    *
    * @param processIdentifierList - list of processIdentifier
    * @param processId - processId
    * @param processGroupId - processGroupId
-   * @param Id- id
+   * @param referenceId- referenceId value
    * @param pyUserId- processId of algoResponse
    * @return JsonArray
    */
@@ -68,9 +95,69 @@ public class LoadingPlanStagingService extends StagingService {
       List<String> processIdentifierList,
       String processId,
       String processGroupId,
-      Long Id,
-      String pyUserId) {
-    log.info("LoadingPlanStaging Service processidentifier list:" + processIdentifierList);
+      Long referenceId,
+      String pyUserId)
+      throws GenericServiceException {
+
+    log.debug(
+        "Converting Tables -> JSON ::: MessageType: {}, Reference referenceId: {}, ProcessId: {}, Tables: {}",
+        processGroupId,
+        referenceId,
+        processId,
+        processIdentifierList);
+
+    String dependantProcessId = null;
+    String dependantProcessModule = null;
+
+    // Communication referenceId set as patternId between Loading Plan and Loadable Study to convert
+    // to LS Id at LS service
+    if (MessageTypes.LOADINGPLAN.getMessageType().equals(processGroupId)) {
+
+      // Check prev module communicated
+      final LoadingInformation loadingInfo =
+          loadingInformationRepository
+              .findById(referenceId)
+              .orElseThrow(
+                  () -> {
+                    log.error("LoadingInformation not found. Id: {}", referenceId);
+                    return new GenericServiceException(
+                        "LoadingInformation not found. Id: " + referenceId,
+                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                        HttpStatusCode.INTERNAL_SERVER_ERROR);
+                  });
+
+      if (!isCommunicated(
+          MessageTypes.LOADABLESTUDY.getMessageType(),
+          loadingInfo.getLoadablePatternXId(),
+          CommunicationModule.LOADABLE_STUDY.getModuleName())) {
+
+        Common.CommunicationTriggerRequest communicationTriggerRequest =
+            Common.CommunicationTriggerRequest.newBuilder()
+                .setReferenceId(loadingInfo.getLoadablePatternXId())
+                .setMessageType(MessageTypes.LOADABLESTUDY.getMessageType())
+                .build();
+        final Common.CommunicationTriggerResponse response =
+            loadableStudyServiceBlockingStub.triggerCommunication(communicationTriggerRequest);
+
+        // Communication trigger failure
+        if (!SUCCESS.equals(response.getResponseStatus().getStatus())) {
+          log.error(
+              "Previous module trigger failed. MessageType: {}, ReferenceId: {}, Module: {}, Response: {}",
+              MessageTypes.LOADABLESTUDY.getMessageType(),
+              referenceId,
+              CommunicationModule.LOADABLE_STUDY.getModuleName(),
+              response);
+          throw new GenericServiceException(
+              "Previous module trigger failed. ReferenceId: " + referenceId,
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+
+        dependantProcessId = response.getProcessId();
+        dependantProcessModule = CommunicationModule.LOADABLE_STUDY.getModuleName();
+      }
+    }
+
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
     for (String processIdentifier : processIdentifierList) {
@@ -78,19 +165,26 @@ public class LoadingPlanStagingService extends StagingService {
         log.info("Table already fetched :" + processIdentifier);
         continue;
       }
-      JsonObject jsonObject = new JsonObject();
-      List<Object> object = new ArrayList<Object>();
+      List<Object> object = new ArrayList<>();
       switch (ProcessIdentifiers.valueOf(processIdentifier)) {
         case loading_information:
           {
             getLoadingInformation(
-                array, Id, processIdentifier, processId, processGroupId, processedList, object);
+                array,
+                referenceId,
+                processIdentifier,
+                processId,
+                processGroupId,
+                processedList,
+                object,
+                dependantProcessId,
+                dependantProcessModule);
             break;
           }
         case cargo_topping_off_sequence:
           {
             String cargoToppingOffSequencesJson =
-                loadingPlanStagingRepository.getCargoToppingOffSequenceWithLoadingId(Id);
+                loadingPlanStagingRepository.getCargoToppingOffSequenceWithLoadingId(referenceId);
             if (cargoToppingOffSequencesJson != null) {
               JsonArray cargoToppingOffSequences =
                   JsonParser.parseString(cargoToppingOffSequencesJson).getAsJsonArray();
@@ -101,14 +195,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  cargoToppingOffSequences);
+                  cargoToppingOffSequences,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case loading_berth_details:
           {
             String loadingBerthDetailsJson =
-                loadingPlanStagingRepository.getLoadingBerthDetailWithLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingBerthDetailWithLoadingId(referenceId);
             if (loadingBerthDetailsJson != null) {
               JsonArray loadingBerthDetails =
                   JsonParser.parseString(loadingBerthDetailsJson).getAsJsonArray();
@@ -119,13 +215,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingBerthDetails);
+                  loadingBerthDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case loading_delay:
           {
-            String loadingDelayJson = loadingPlanStagingRepository.getLoadingDelayWithLoadingId(Id);
+            String loadingDelayJson =
+                loadingPlanStagingRepository.getLoadingDelayWithLoadingId(referenceId);
             if (loadingDelayJson != null) {
               JsonArray loadingDelay = JsonParser.parseString(loadingDelayJson).getAsJsonArray();
               addIntoProcessedList(
@@ -135,14 +234,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingDelay);
+                  loadingDelay,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case loading_delay_reason:
           {
             String loadingDelayReasonJson =
-                loadingPlanStagingRepository.getLoadingDelayReasonWithLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingDelayReasonWithLoadingId(referenceId);
             if (loadingDelayReasonJson != null) {
               JsonArray loadingDelayReason =
                   JsonParser.parseString(loadingDelayReasonJson).getAsJsonArray();
@@ -153,14 +254,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingDelayReason);
+                  loadingDelayReason,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case loading_machinary_in_use:
           {
             String loadingMachineryInUseJson =
-                loadingPlanStagingRepository.getLoadingMachineryInUseWithLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingMachineryInUseWithLoadingId(referenceId);
             if (loadingMachineryInUseJson != null) {
               JsonArray loadingMachineryInUse =
                   JsonParser.parseString(loadingMachineryInUseJson).getAsJsonArray();
@@ -171,19 +274,21 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingMachineryInUse);
+                  loadingMachineryInUse,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case loading_sequence:
           {
             String loadingSequenceJson =
-                loadingPlanStagingRepository.getLoadingSequenceByLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingSequenceByLoadingId(referenceId);
             if (loadingSequenceJson != null) {
               JsonArray loadingSequence =
                   JsonParser.parseString(loadingSequenceJson).getAsJsonArray();
               List<LoadingSequence> loadingSequenceList =
-                  loadingSequenceRepository.findByLoadingInformationId(Id);
+                  loadingSequenceRepository.findByLoadingInformationId(referenceId);
               addIntoProcessedList(
                   array,
                   object,
@@ -191,7 +296,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingSequence);
+                  loadingSequence,
+                  dependantProcessId,
+                  dependantProcessModule);
               loadingSequenceIds =
                   loadingSequenceList.stream()
                       .map(LoadingSequence::getId)
@@ -202,13 +309,22 @@ public class LoadingPlanStagingService extends StagingService {
         case loading_plan_portwise_details:
           {
             getLoadingPlanPortWiseDetails(
-                array, Id, processIdentifier, processId, processGroupId, processedList, object);
+                array,
+                referenceId,
+                processIdentifier,
+                processId,
+                processGroupId,
+                processedList,
+                object,
+                dependantProcessId,
+                dependantProcessModule);
             break;
           }
         case port_loading_plan_stability_parameters:
           {
             String portLoadingPlanStabilityParamJson =
-                loadingPlanStagingRepository.getPortLoadingPlanStabilityParamWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortLoadingPlanStabilityParamWithLoadingId(
+                    referenceId);
             if (portLoadingPlanStabilityParamJson != null) {
               JsonArray portLoadingPlanStabilityParams =
                   JsonParser.parseString(portLoadingPlanStabilityParamJson).getAsJsonArray();
@@ -219,7 +335,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanStabilityParams);
+                  portLoadingPlanStabilityParams,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -227,7 +345,7 @@ public class LoadingPlanStagingService extends StagingService {
         case port_loading_plan_rob_details:
           {
             String portLoadingPlanRobDetailsJson =
-                loadingPlanStagingRepository.getPortLoadingPlanRobDetailsWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortLoadingPlanRobDetailsWithLoadingId(referenceId);
             if (portLoadingPlanRobDetailsJson != null) {
               JsonArray portLoadingPlanRobDetails =
                   JsonParser.parseString(portLoadingPlanRobDetailsJson).getAsJsonArray();
@@ -238,7 +356,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanRobDetails);
+                  portLoadingPlanRobDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -258,7 +378,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    loadingPlanBallastDetails);
+                    loadingPlanBallastDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -279,7 +401,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    loadingPlanRobDetails);
+                    loadingPlanRobDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -288,7 +412,8 @@ public class LoadingPlanStagingService extends StagingService {
         case port_loading_plan_stowage_ballast_details:
           {
             String portLoadingPlanBallastDetailsJson =
-                loadingPlanStagingRepository.getPortLoadingPlanBallastDetailsWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortLoadingPlanBallastDetailsWithLoadingId(
+                    referenceId);
             if (portLoadingPlanBallastDetailsJson != null) {
               JsonArray portLoadingPlanBallastDetails =
                   JsonParser.parseString(portLoadingPlanBallastDetailsJson).getAsJsonArray();
@@ -299,14 +424,17 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanBallastDetails);
+                  portLoadingPlanBallastDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case port_loading_plan_stowage_ballast_details_temp:
           {
             String portLoadingPlanBallastTempDetailsJson =
-                loadingPlanStagingRepository.getPortLoadingPlanBallastTempDetailsWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortLoadingPlanBallastTempDetailsWithLoadingId(
+                    referenceId);
             if (portLoadingPlanBallastTempDetailsJson != null) {
               JsonArray portLoadingPlanBallastTempDetails =
                   JsonParser.parseString(portLoadingPlanBallastTempDetailsJson).getAsJsonArray();
@@ -317,14 +445,17 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanBallastTempDetails);
+                  portLoadingPlanBallastTempDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case port_loading_plan_stowage_details:
           {
             String portLoadingPlanStowageDetailsJson =
-                loadingPlanStagingRepository.getPortLoadingPlanStowageDetailsWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortLoadingPlanStowageDetailsWithLoadingId(
+                    referenceId);
             if (portLoadingPlanStowageDetailsJson != null) {
               JsonArray portLoadingPlanStowageDetails =
                   JsonParser.parseString(portLoadingPlanStowageDetailsJson).getAsJsonArray();
@@ -335,14 +466,17 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanStowageDetails);
+                  portLoadingPlanStowageDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case port_loading_plan_stowage_details_temp:
           {
             String portLoadingPlanStowageTempDetailsJson =
-                loadingPlanStagingRepository.getPortLoadingPlanStowageTempDetailsWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortLoadingPlanStowageTempDetailsWithLoadingId(
+                    referenceId);
             if (portLoadingPlanStowageTempDetailsJson != null) {
               JsonArray portLoadingPlanStowageTempDetails =
                   JsonParser.parseString(portLoadingPlanStowageTempDetailsJson).getAsJsonArray();
@@ -353,7 +487,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanStowageTempDetails);
+                  portLoadingPlanStowageTempDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -374,7 +510,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    loadingPlanStowageDetails);
+                    loadingPlanStowageDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -382,7 +520,8 @@ public class LoadingPlanStagingService extends StagingService {
         case loading_sequence_stability_parameters:
           {
             String loadingSequenceStabilityParametersJson =
-                loadingPlanStagingRepository.getLoadingSequenceStabilityParametersWithLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingSequenceStabilityParametersWithLoadingId(
+                    referenceId);
             if (loadingSequenceStabilityParametersJson != null) {
               JsonArray loadingSequenceStabilityParameters =
                   JsonParser.parseString(loadingSequenceStabilityParametersJson).getAsJsonArray();
@@ -393,7 +532,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingSequenceStabilityParameters);
+                  loadingSequenceStabilityParameters,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -413,7 +554,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    loadingPlanStabilityParameters);
+                    loadingPlanStabilityParameters,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -422,7 +565,7 @@ public class LoadingPlanStagingService extends StagingService {
           {
             String portLoadingPlanCommingleTempDetailsJson =
                 loadingPlanStagingRepository.getPortLoadingPlanCommingleTempDetailsWithLoadingId(
-                    Id);
+                    referenceId);
             if (portLoadingPlanCommingleTempDetailsJson != null) {
               JsonArray portLoadingPlanCommingleTempDetails =
                   JsonParser.parseString(portLoadingPlanCommingleTempDetailsJson).getAsJsonArray();
@@ -433,14 +576,17 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanCommingleTempDetails);
+                  portLoadingPlanCommingleTempDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case port_loadable_plan_commingle_details:
           {
             String portLoadingPlanCommingleDetailsJson =
-                loadingPlanStagingRepository.getPortLoadingPlanCommingleDetailsWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortLoadingPlanCommingleDetailsWithLoadingId(
+                    referenceId);
             if (portLoadingPlanCommingleDetailsJson != null) {
               JsonArray portLoadingPlanCommingleDetails =
                   JsonParser.parseString(portLoadingPlanCommingleDetailsJson).getAsJsonArray();
@@ -451,14 +597,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portLoadingPlanCommingleDetails);
+                  portLoadingPlanCommingleDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case bill_of_ladding:
           {
             String billOfLandingJson =
-                loadingPlanStagingRepository.getBillOfLandingWithLoadingId(Id);
+                loadingPlanStagingRepository.getBillOfLandingWithLoadingId(referenceId);
             if (billOfLandingJson != null) {
               JsonArray billOfLanding = JsonParser.parseString(billOfLandingJson).getAsJsonArray();
               addIntoProcessedList(
@@ -468,7 +616,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  billOfLanding);
+                  billOfLanding,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -485,7 +635,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    null);
+                    null,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -511,7 +663,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    null);
+                    null,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -536,7 +690,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      loadablePattern);
+                      loadablePattern,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -562,7 +718,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      synopticalTableLoadicatorData);
+                      synopticalTableLoadicatorData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -584,7 +742,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    ballastOperation);
+                    ballastOperation,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -605,7 +765,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    eductionOperation);
+                    eductionOperation,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -626,7 +788,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    cargoLoadingRate);
+                    cargoLoadingRate,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -635,7 +799,7 @@ public class LoadingPlanStagingService extends StagingService {
           {
             LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
                 LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-            builder.setId(Id);
+            builder.setId(referenceId);
             LoadableStudy.LoadableStudyCommunicationReply reply =
                 this.loadableStudyServiceBlockingStub.getJsonDataForCommunication(builder.build());
             if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
@@ -648,7 +812,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    jsonData);
+                    jsonData,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -656,7 +822,7 @@ public class LoadingPlanStagingService extends StagingService {
         case loading_port_tide_details:
           {
             String portTideDetailJson =
-                loadingPlanStagingRepository.getPortTideDetailWithLoadingId(Id);
+                loadingPlanStagingRepository.getPortTideDetailWithLoadingId(referenceId);
             if (portTideDetailJson != null) {
               JsonArray portTideDetail =
                   JsonParser.parseString(portTideDetailJson).getAsJsonArray();
@@ -667,14 +833,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portTideDetail);
+                  portTideDetail,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case algo_error_heading:
           {
             String algoErrorHeadingJson =
-                loadingPlanStagingRepository.getAlgoErrorHeadingWithLoadingId(Id);
+                loadingPlanStagingRepository.getAlgoErrorHeadingWithLoadingId(referenceId);
             if (algoErrorHeadingJson != null) {
               JsonArray algoErrorHeading =
                   JsonParser.parseString(algoErrorHeadingJson).getAsJsonArray();
@@ -685,14 +853,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  algoErrorHeading);
+                  algoErrorHeading,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case algo_errors:
           {
             String algoErrorsJson =
-                loadingPlanStagingRepository.getAlgoErrorsWithAlgoErrorHeadingIds(Id);
+                loadingPlanStagingRepository.getAlgoErrorsWithAlgoErrorHeadingIds(referenceId);
             if (algoErrorsJson != null) {
               JsonArray algoErrors = JsonParser.parseString(algoErrorsJson).getAsJsonArray();
               addIntoProcessedList(
@@ -702,14 +872,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  algoErrors);
+                  algoErrors,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case loading_instructions:
           {
             String loadingInstructionJson =
-                loadingPlanStagingRepository.getLoadingInstructionWithLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingInstructionWithLoadingId(referenceId);
             if (loadingInstructionJson != null) {
               JsonArray loadingInstruction =
                   JsonParser.parseString(loadingInstructionJson).getAsJsonArray();
@@ -720,7 +892,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingInstruction);
+                  loadingInstruction,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -734,7 +908,7 @@ public class LoadingPlanStagingService extends StagingService {
                   this.loadableStudyServiceBlockingStub.getSynopticalDataForCommunication(
                       builder.build());
               if (LoadingPlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-                if (reply.getDataJson() != null) {
+                if (!reply.getDataJson().isEmpty()) {
                   JsonArray synopticalTableData =
                       JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
                   addIntoProcessedList(
@@ -744,7 +918,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      synopticalTableData);
+                      synopticalTableData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -771,7 +947,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      loadableStudyPortRotationData);
+                      loadableStudyPortRotationData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -780,7 +958,8 @@ public class LoadingPlanStagingService extends StagingService {
         case loading_information_algo_status:
           {
             String loadingInformationAlgoStatusJson =
-                loadingPlanStagingRepository.getLoadingInformationAlgoStatusWithLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingInformationAlgoStatusWithLoadingId(
+                    referenceId);
             if (loadingInformationAlgoStatusJson != null) {
               JsonArray loadingInformationAlgoStatus =
                   JsonParser.parseString(loadingInformationAlgoStatusJson).getAsJsonArray();
@@ -791,7 +970,9 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingInformationAlgoStatus);
+                  loadingInformationAlgoStatus,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -811,7 +992,9 @@ public class LoadingPlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    loadingPlanCommingleDetails);
+                    loadingPlanCommingleDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -836,7 +1019,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      loadablePlanStowageBallastDetailsData);
+                      loadablePlanStowageBallastDetailsData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -862,7 +1047,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      loadablePatternCargoDetailsData);
+                      loadablePatternCargoDetailsData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -888,7 +1075,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      loadablePlanComminglePortwiseDetailsData);
+                      loadablePlanComminglePortwiseDetailsData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -914,7 +1103,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      onBoardQuantityData);
+                      onBoardQuantityData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -940,7 +1131,9 @@ public class LoadingPlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      onHandQuantityData);
+                      onHandQuantityData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -948,7 +1141,8 @@ public class LoadingPlanStagingService extends StagingService {
           }
         case loading_rules:
           {
-            String loadingRuleJson = loadingPlanStagingRepository.getLoadingRuleWithLoadingId(Id);
+            String loadingRuleJson =
+                loadingPlanStagingRepository.getLoadingRuleWithLoadingId(referenceId);
             if (loadingRuleJson != null) {
               JsonArray loadingRule = JsonParser.parseString(loadingRuleJson).getAsJsonArray();
               addIntoProcessedList(
@@ -958,14 +1152,16 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingRule);
+                  loadingRule,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case loading_rule_input:
           {
             String loadingRuleInputJson =
-                loadingPlanStagingRepository.getLoadingRuleInputWithLoadingId(Id);
+                loadingPlanStagingRepository.getLoadingRuleInputWithLoadingId(referenceId);
             if (loadingRuleInputJson != null) {
               JsonArray loadingRuleInput =
                   JsonParser.parseString(loadingRuleInputJson).getAsJsonArray();
@@ -976,25 +1172,18 @@ public class LoadingPlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  loadingRuleInput);
+                  loadingRuleInput,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
+        default:
+          log.warn("Process Identifier Not Configured: {}", processIdentifier);
+          break;
       }
     }
     return array;
-  }
-
-  private void addIntoProcessedList(
-      JsonArray array,
-      List<Object> object,
-      String processIdentifier,
-      String processId,
-      String processGroupId,
-      List<String> processedList,
-      JsonArray jsonArray) {
-    array.add(createJsonObject(object, processIdentifier, processId, processGroupId, jsonArray));
-    processedList.add(processIdentifier);
   }
 
   private void getLoadingInformation(
@@ -1004,7 +1193,9 @@ public class LoadingPlanStagingService extends StagingService {
       String processId,
       String processGroupId,
       List<String> processedList,
-      List<Object> object) {
+      List<Object> object,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     String loadingInformationJson = loadingPlanStagingRepository.getLoadingInformationJson(id);
     if (loadingInformationJson != null) {
       JsonObject loadingInfoJsonObj =
@@ -1020,11 +1211,25 @@ public class LoadingPlanStagingService extends StagingService {
       Long departureStatusId = loadingInfoJsonObj.get("departure_status_xid").getAsLong();
       if (stageOffsetId != null) {
         getStageOffset(
-            array, stageOffsetId, "stages_min_amount", processId, processGroupId, processedList);
+            array,
+            stageOffsetId,
+            "stages_min_amount",
+            processId,
+            processGroupId,
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       if (stageDurationId != null) {
         getStageDuration(
-            array, stageDurationId, "stages_duration", processId, processGroupId, processedList);
+            array,
+            stageDurationId,
+            "stages_duration",
+            processId,
+            processGroupId,
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       if (loadingInformationStatusId != null) {
         getLoadingInformationStatus(
@@ -1033,7 +1238,9 @@ public class LoadingPlanStagingService extends StagingService {
             "loading_information_status",
             processId,
             processGroupId,
-            processedList);
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       if (arrivalStatusId != null) {
         getArrivalStatus(
@@ -1042,7 +1249,9 @@ public class LoadingPlanStagingService extends StagingService {
             "loading_information_arrival_status",
             processId,
             processGroupId,
-            processedList);
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       if (departureStatusId != null) {
         getDepartureStatus(
@@ -1051,11 +1260,21 @@ public class LoadingPlanStagingService extends StagingService {
             "loading_information_departure_status",
             processId,
             processGroupId,
-            processedList);
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       object.addAll(Arrays.asList(loadingInfoJsonObj));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -1065,13 +1284,23 @@ public class LoadingPlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<StageOffset> stageOffsetObj = stageOffsetRepository.findById(id);
     if (!stageOffsetObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(stageOffsetObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -1081,13 +1310,23 @@ public class LoadingPlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<StageDuration> stageDurationObj = stageDurationRepository.findById(id);
     if (!stageDurationObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(stageDurationObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -1097,14 +1336,24 @@ public class LoadingPlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<LoadingInformationStatus> loadingInformationStatusObj =
         loadingInformationStatusRepository.findById(id);
     if (!loadingInformationStatusObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(loadingInformationStatusObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -1114,14 +1363,24 @@ public class LoadingPlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<LoadingInformationStatus> arrivalStatusObj =
         loadingInformationStatusRepository.findById(id);
     if (!arrivalStatusObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(arrivalStatusObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -1131,14 +1390,24 @@ public class LoadingPlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<LoadingInformationStatus> departureStatusObj =
         loadingInformationStatusRepository.findById(id);
     if (!departureStatusObj.isEmpty()) {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(departureStatusObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -1149,7 +1418,9 @@ public class LoadingPlanStagingService extends StagingService {
       String processId,
       String processGroupId,
       List<String> processedList,
-      List<Object> object) {
+      List<Object> object,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     if (loadingSequenceIds != null && !loadingSequenceIds.isEmpty()) {
       String loadingPlanPortWiseDetailsJson =
           loadingPlanStagingRepository.getLoadingPlanPortWiseDetailsWithLoadingSeqIds(
@@ -1166,46 +1437,15 @@ public class LoadingPlanStagingService extends StagingService {
             processId,
             processGroupId,
             processedList,
-            loadingPlanPortWiseDetails);
+            loadingPlanPortWiseDetails,
+            dependantProcessId,
+            dependantProcessModule);
         loadingPlanPortWiseDetailsIds =
             loadingPlanPortWiseDetailsList.stream()
                 .map(LoadingPlanPortWiseDetails::getId)
                 .collect(Collectors.toList());
       }
     }
-  }
-  /**
-   * method for create JsonObject
-   *
-   * @param list - List
-   * @param processIdentifier - processId
-   * @param processId - processGroupId
-   * @param processGroupId- processGroupId
-   * @return JsonObject
-   */
-  public JsonObject createJsonObject(
-      List<Object> list,
-      String processIdentifier,
-      String processId,
-      String processGroupId,
-      JsonArray jsonArray) {
-
-    JsonObject jsonObject = new JsonObject();
-    JsonObject metaData = new JsonObject();
-    metaData.addProperty("processIdentifier", processIdentifier);
-    metaData.addProperty("processId", processId);
-    metaData.addProperty("processGroupId", processGroupId);
-    jsonObject.add("meta_data", metaData);
-    if (jsonArray != null) {
-      jsonObject.add("data", jsonArray);
-    } else {
-      JsonArray array = new JsonArray();
-      for (Object obj : list) {
-        array.add(new Gson().toJson(obj));
-      }
-      jsonObject.add("data", array);
-    }
-    return jsonObject;
   }
 
   public LoadableStudy.VoyageActivateReply getVoyage(

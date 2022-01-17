@@ -5,7 +5,6 @@ ext{
   dbUser = System.getenv('DB_USER') ?: ""
   dbPassword = System.getenv('DB_PASSWORD') ?: ""
   grpcPort = System.getenv('GRPC_PORT') ?: ""
-
 }
 
 appConfig {

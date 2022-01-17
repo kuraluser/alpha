@@ -4995,6 +4995,156 @@ public final class LoadableStudyServiceGrpc {
     return getSaveOnHandQuantityForCommunicationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckDependentProcessMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "checkDependentProcess",
+      requestType = com.cpdss.common.generated.Common.DependentProcessCheckRequestComm.class,
+      responseType = com.cpdss.common.generated.Common.CommunicationCheckResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckDependentProcessMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        getCheckDependentProcessMethod;
+    if ((getCheckDependentProcessMethod = LoadableStudyServiceGrpc.getCheckDependentProcessMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getCheckDependentProcessMethod =
+                LoadableStudyServiceGrpc.getCheckDependentProcessMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getCheckDependentProcessMethod =
+              getCheckDependentProcessMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+                          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "checkDependentProcess"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.DependentProcessCheckRequestComm
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationCheckResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("checkDependentProcess"))
+                      .build();
+        }
+      }
+    }
+    return getCheckDependentProcessMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckCommunicatedMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "checkCommunicated",
+      requestType = com.cpdss.common.generated.Common.CommunicationStatusCheckRequest.class,
+      responseType = com.cpdss.common.generated.Common.CommunicationCheckResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+      getCheckCommunicatedMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        getCheckCommunicatedMethod;
+    if ((getCheckCommunicatedMethod = LoadableStudyServiceGrpc.getCheckCommunicatedMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getCheckCommunicatedMethod = LoadableStudyServiceGrpc.getCheckCommunicatedMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getCheckCommunicatedMethod =
+              getCheckCommunicatedMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+                          com.cpdss.common.generated.Common.CommunicationCheckResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "checkCommunicated"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationStatusCheckRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationCheckResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("checkCommunicated"))
+                      .build();
+        }
+      }
+    }
+    return getCheckCommunicatedMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+          com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+      getTriggerCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "triggerCommunication",
+      requestType = com.cpdss.common.generated.Common.CommunicationTriggerRequest.class,
+      responseType = com.cpdss.common.generated.Common.CommunicationTriggerResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+          com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+      getTriggerCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+            com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+        getTriggerCommunicationMethod;
+    if ((getTriggerCommunicationMethod = LoadableStudyServiceGrpc.getTriggerCommunicationMethod)
+        == null) {
+      synchronized (LoadableStudyServiceGrpc.class) {
+        if ((getTriggerCommunicationMethod = LoadableStudyServiceGrpc.getTriggerCommunicationMethod)
+            == null) {
+          LoadableStudyServiceGrpc.getTriggerCommunicationMethod =
+              getTriggerCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+                          com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "triggerCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationTriggerRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationTriggerResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadableStudyServiceMethodDescriptorSupplier("triggerCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getTriggerCommunicationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadableStudyServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadableStudyServiceStub> factory =
@@ -5947,6 +6097,33 @@ public final class LoadableStudyServiceGrpc {
           getSaveOnHandQuantityForCommunicationMethod(), responseObserver);
     }
 
+    /** */
+    public void checkDependentProcess(
+        com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCheckDependentProcessMethod(), responseObserver);
+    }
+
+    /** */
+    public void checkCommunicated(
+        com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCheckCommunicatedMethod(), responseObserver);
+    }
+
+    /** */
+    public void triggerCommunication(
+        com.cpdss.common.generated.Common.CommunicationTriggerRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getTriggerCommunicationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -6630,6 +6807,27 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest,
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>(
                       this, METHODID_SAVE_ON_HAND_QUANTITY_FOR_COMMUNICATION)))
+          .addMethod(
+              getCheckDependentProcessMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>(
+                      this, METHODID_CHECK_DEPENDENT_PROCESS)))
+          .addMethod(
+              getCheckCommunicatedMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>(
+                      this, METHODID_CHECK_COMMUNICATED)))
+          .addMethod(
+              getTriggerCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+                      com.cpdss.common.generated.Common.CommunicationTriggerResponse>(
+                      this, METHODID_TRIGGER_COMMUNICATION)))
           .build();
     }
   }
@@ -7764,6 +7962,39 @@ public final class LoadableStudyServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void checkDependentProcess(
+        com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCheckDependentProcessMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void checkCommunicated(
+        com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCheckCommunicatedMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void triggerCommunication(
+        com.cpdss.common.generated.Common.CommunicationTriggerRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getTriggerCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -8543,6 +8774,27 @@ public final class LoadableStudyServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSaveOnHandQuantityForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.CommunicationCheckResponse checkDependentProcess(
+        com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCheckDependentProcessMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.CommunicationCheckResponse checkCommunicated(
+        com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCheckCommunicatedMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.Common.CommunicationTriggerResponse triggerCommunication(
+        com.cpdss.common.generated.Common.CommunicationTriggerRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getTriggerCommunicationMethod(), getCallOptions(), request);
     }
   }
 
@@ -9455,6 +9707,33 @@ public final class LoadableStudyServiceGrpc {
           getChannel().newCall(getSaveOnHandQuantityForCommunicationMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        checkDependentProcess(
+            com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCheckDependentProcessMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CommunicationCheckResponse>
+        checkCommunicated(
+            com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCheckCommunicatedMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+        triggerCommunication(
+            com.cpdss.common.generated.Common.CommunicationTriggerRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getTriggerCommunicationMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SAVE_VOYAGE = 0;
@@ -9557,6 +9836,9 @@ public final class LoadableStudyServiceGrpc {
   private static final int METHODID_SAVE_ON_BOARD_QUANTITY_FOR_COMMUNICATION = 93;
   private static final int METHODID_GET_ON_HAND_QUANTITY_FOR_COMMUNICATION = 94;
   private static final int METHODID_SAVE_ON_HAND_QUANTITY_FOR_COMMUNICATION = 95;
+  private static final int METHODID_CHECK_DEPENDENT_PROCESS = 96;
+  private static final int METHODID_CHECK_COMMUNICATED = 97;
+  private static final int METHODID_TRIGGER_COMMUNICATION = 98;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -10241,6 +10523,27 @@ public final class LoadableStudyServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.LoadableStudyCommunicationReply>)
                   responseObserver);
           break;
+        case METHODID_CHECK_DEPENDENT_PROCESS:
+          serviceImpl.checkDependentProcess(
+              (com.cpdss.common.generated.Common.DependentProcessCheckRequestComm) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>)
+                  responseObserver);
+          break;
+        case METHODID_CHECK_COMMUNICATED:
+          serviceImpl.checkCommunicated(
+              (com.cpdss.common.generated.Common.CommunicationStatusCheckRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.Common.CommunicationCheckResponse>)
+                  responseObserver);
+          break;
+        case METHODID_TRIGGER_COMMUNICATION:
+          serviceImpl.triggerCommunication(
+              (com.cpdss.common.generated.Common.CommunicationTriggerRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.Common.CommunicationTriggerResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -10402,6 +10705,9 @@ public final class LoadableStudyServiceGrpc {
                       .addMethod(getSaveOnBoardQuantityForCommunicationMethod())
                       .addMethod(getGetOnHandQuantityForCommunicationMethod())
                       .addMethod(getSaveOnHandQuantityForCommunicationMethod())
+                      .addMethod(getCheckDependentProcessMethod())
+                      .addMethod(getCheckCommunicatedMethod())
+                      .addMethod(getTriggerCommunicationMethod())
                       .build();
         }
       }

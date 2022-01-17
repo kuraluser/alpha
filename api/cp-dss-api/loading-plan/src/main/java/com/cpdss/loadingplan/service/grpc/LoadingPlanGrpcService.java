@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.grpc;
 
+import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.BillOfLadding;
@@ -26,7 +27,9 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillO
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
+import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
@@ -39,6 +42,7 @@ import com.cpdss.loadingplan.service.LoadingSequenceService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
+import com.google.common.base.Strings;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
 import java.util.List;
@@ -71,6 +75,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
 
   @Autowired LoadingCargoHistoryService loadingCargoHistoryService;
   @Autowired LoadingInformationBuilderService informationBuilderService;
+  @Autowired LoadingPlanStagingService loadingPlanStagingService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
@@ -607,6 +612,104 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
               .build());
     } finally {
       responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void checkDependentProcess(
+      Common.DependentProcessCheckRequestComm request,
+      StreamObserver<Common.CommunicationCheckResponse> responseObserver) {
+
+    log.debug("checkDependentProcess Request: {}", request);
+
+    Common.CommunicationCheckResponse.Builder responseBuilder =
+        Common.CommunicationCheckResponse.newBuilder();
+    try {
+      final boolean isDependentProcessCompleted =
+          loadingPlanStagingService.dependantProcessIsCompleted(
+              request.getDependantProcessId(),
+              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+      log.info(
+          "checkDependentProcess Completed ::: Dependent Process Id: {}, Completed Status: {}",
+          request.getDependantProcessId(),
+          isDependentProcessCompleted);
+
+      // Set response status
+      responseBuilder
+          .setIsCompleted(isDependentProcessCompleted)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setMessage(SUCCESS)
+                  .setCode(String.valueOf(HttpStatusCode.OK.value()))
+                  .setHttpStatusCode(HttpStatusCode.OK.value())
+                  .build())
+          .build();
+    } catch (Exception e) {
+      log.error(
+          "checkDependentProcess failed. Dependent Process Id: {}",
+          request.getDependantProcessId(),
+          e);
+      // Set response status
+      responseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .build());
+    } finally {
+      // Build response
+      responseObserver.onNext(responseBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void checkCommunicated(
+      Common.CommunicationStatusCheckRequest request,
+      StreamObserver<Common.CommunicationCheckResponse> responseObserver) {
+
+    log.debug("checkCommunicated Request: {}", request);
+
+    Common.CommunicationCheckResponse.Builder responseBuilder =
+        Common.CommunicationCheckResponse.newBuilder();
+    try {
+      final boolean isCommunicated =
+          loadingPlanStagingService.isCommunicated(
+              MessageTypes.LOADABLESTUDY.getMessageType(),
+              request.getReferenceId(),
+              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+      log.info(
+          "checkCommunicated Completed ::: Reference Id: {}, isCommunicated: {}",
+          request.getReferenceId(),
+          isCommunicated);
+
+      // Set response status
+      responseBuilder
+          .setIsCompleted(isCommunicated)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setMessage(SUCCESS)
+                  .setCode(String.valueOf(HttpStatusCode.OK.value()))
+                  .setHttpStatusCode(HttpStatusCode.OK.value())
+                  .build())
+          .build();
+    } catch (Exception e) {
+      log.error("checkCommunicated failed. Reference Id: {}", request.getReferenceId(), e);
+      // Set response status
+      responseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .build());
+    } finally {
+      // Build response
+      responseObserver.onNext(responseBuilder.build());
       responseObserver.onCompleted();
     }
   }

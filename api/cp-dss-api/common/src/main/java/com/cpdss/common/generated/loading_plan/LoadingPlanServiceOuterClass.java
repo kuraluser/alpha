@@ -64,7 +64,7 @@ public final class LoadingPlanServiceOuterClass {
           + "eleteLoadingInstructions\022\031.LoadingInstru"
           + "ctionStatus\032\017.ResponseStatus\"\000\022@\n\020EditIn"
           + "structions\022\031.LoadingInstructionStatus\032\017."
-          + "ResponseStatus\"\0002\312\010\n\022LoadingPlanService\022"
+          + "ResponseStatus\"\0002\373\t\n\022LoadingPlanService\022"
           + "N\n\032LoadingPlanSynchronization\022\027.LoadingP"
           + "lanSyncRequest\032\025.LoadingPlanSyncReply\"\000\022"
           + "F\n\017SaveLoadingPlan\022\027.LoadingPlanSaveRequ"
@@ -91,9 +91,13 @@ public final class LoadingPlanServiceOuterClass {
           + "oadingInformationSynopticalRequest\032\'.Loa"
           + "dablePlanCommingleCargoDetailsReply\"\000\022N\n"
           + "\032getLoadingPlanCargoHistory\022\027.CargoHisto"
-          + "ryOpsRequest\032\025.CargoHistoryResponse\"\000B+\n"
-          + "\'com.cpdss.common.generated.loading_plan"
-          + "P\000b\006proto3"
+          + "ryOpsRequest\032\025.CargoHistoryResponse\"\000\022Y\n"
+          + "\025checkDependentProcess\022!.DependentProces"
+          + "sCheckRequestComm\032\033.CommunicationCheckRe"
+          + "sponse\"\000\022T\n\021checkCommunicated\022 .Communic"
+          + "ationStatusCheckRequest\032\033.CommunicationC"
+          + "heckResponse\"\000B+\n\'com.cpdss.common.gener"
+          + "ated.loading_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

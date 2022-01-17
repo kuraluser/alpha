@@ -89,5 +89,9 @@ service LoadingPlanService {
   rpc GetLoadingPlanCommingleDetails(LoadingInformationSynopticalRequest) returns (LoadablePlanCommingleCargoDetailsReply){}
 
   rpc getLoadingPlanCargoHistory(CargoHistoryOpsRequest) returns (CargoHistoryResponse) {}
-  
+
+  rpc checkDependentProcess(DependentProcessCheckRequestComm) returns (CommunicationCheckResponse) {}
+
+  rpc checkCommunicated(CommunicationStatusCheckRequest) returns (CommunicationCheckResponse) {}
+
 }

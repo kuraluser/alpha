@@ -17,6 +17,7 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.repository.communication.LoadingPlanDataTransferInBoundRepository;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.ProcessIdentifiers;
@@ -125,6 +126,7 @@ public class LoadingPlanCommunicationServiceTest {
 
   @MockBean private LoadingRuleRepository loadingRuleRepository;
   @MockBean private LoadingRuleInputRepository loadingRuleInputRepository;
+  @MockBean LoadingPlanDataTransferInBoundRepository dataTransferInBoundRepository;
 
   @Value("${cpdss.build.env}")
   private String env;

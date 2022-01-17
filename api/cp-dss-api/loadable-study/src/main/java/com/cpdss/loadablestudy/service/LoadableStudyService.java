@@ -16,6 +16,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
+import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
@@ -102,7 +103,9 @@ import com.cpdss.common.generated.VesselInfo.VesselRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.Utils;
+import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
@@ -111,6 +114,7 @@ import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.grpc.stub.StreamObserver;
@@ -183,6 +187,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired CommunicationService communicationService;
   @Autowired JsonDataService jsonDataService;
   @Autowired OnHandQuantityService onHandQuantityService;
+  @Autowired LoadableStudyStagingService loadableStudyStagingService;
 
   @Autowired
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
@@ -3963,6 +3968,154 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .build());
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void checkDependentProcess(
+      Common.DependentProcessCheckRequestComm request,
+      StreamObserver<Common.CommunicationCheckResponse> responseObserver) {
+
+    log.debug("checkDependentProcess Request: {}", request);
+
+    Common.CommunicationCheckResponse.Builder responseBuilder =
+        Common.CommunicationCheckResponse.newBuilder();
+    try {
+      final boolean isDependentProcessCompleted =
+          loadableStudyStagingService.dependantProcessIsCompleted(
+              request.getDependantProcessId(),
+              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+      log.info(
+          "checkDependentProcess Completed ::: Dependent Process Id: {}, Completed Status: {}",
+          request.getDependantProcessId(),
+          isDependentProcessCompleted);
+
+      // Set response status
+      responseBuilder
+          .setIsCompleted(isDependentProcessCompleted)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setMessage(SUCCESS)
+                  .setCode(String.valueOf(HttpStatusCode.OK.value()))
+                  .setHttpStatusCode(HttpStatusCode.OK.value())
+                  .build())
+          .build();
+    } catch (Exception e) {
+      log.error(
+          "checkDependentProcess failed. Dependent Process Id: {}",
+          request.getDependantProcessId(),
+          e);
+      // Set response status
+      responseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .build());
+    } finally {
+      // Build response
+      responseObserver.onNext(responseBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void checkCommunicated(
+      Common.CommunicationStatusCheckRequest request,
+      StreamObserver<Common.CommunicationCheckResponse> responseObserver) {
+
+    log.debug("checkCommunicated Request: {}", request);
+
+    Common.CommunicationCheckResponse.Builder responseBuilder =
+        Common.CommunicationCheckResponse.newBuilder();
+    try {
+      // referenceId for loadable study trigger is loadablePatternId from loading plan
+      final long loadableStudyId =
+          loadablePatternRepository.getLoadableStudyId(request.getReferenceId());
+      final boolean isCommunicated =
+          loadableStudyStagingService.isCommunicated(
+              MessageTypes.LOADABLESTUDY.getMessageType(),
+              loadableStudyId,
+              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+      log.info(
+          "checkCommunicated Completed ::: LS Id: {}, isCommunicated: {}",
+          loadableStudyId,
+          isCommunicated);
+
+      // Set response status
+      responseBuilder
+          .setIsCompleted(isCommunicated)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setMessage(SUCCESS)
+                  .setCode(String.valueOf(HttpStatusCode.OK.value()))
+                  .setHttpStatusCode(HttpStatusCode.OK.value())
+                  .build())
+          .build();
+    } catch (Exception e) {
+      log.error("checkCommunicated failed. Reference Id: {}", request.getReferenceId(), e);
+      // Set response status
+      responseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .build());
+    } finally {
+      // Build response
+      responseObserver.onNext(responseBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void triggerCommunication(
+      Common.CommunicationTriggerRequest request,
+      StreamObserver<Common.CommunicationTriggerResponse> responseObserver) {
+
+    log.debug("triggerCommunication Request: {}", request);
+
+    Common.CommunicationTriggerResponse.Builder responseBuilder =
+        Common.CommunicationTriggerResponse.newBuilder();
+    try {
+      // referenceId for loadable study trigger is loadablePatternId from loading plan
+      final long loadableStudyId =
+          loadablePatternRepository.getLoadableStudyId(request.getReferenceId());
+      final String communicationId =
+          loadablePatternService.communicateLoadableStudy(loadableStudyId, false);
+      log.info(
+          "triggerCommunication Completed ::: LS Id: {}, CommunicationId: {}",
+          loadableStudyId,
+          communicationId);
+      // Set response status
+      responseBuilder
+          .setProcessId(communicationId)
+          .setResponseStatus(
+              ResponseStatus.newBuilder()
+                  .setStatus(SUCCESS)
+                  .setMessage(SUCCESS)
+                  .setCode(String.valueOf(HttpStatusCode.OK.value()))
+                  .setHttpStatusCode(HttpStatusCode.OK.value())
+                  .build())
+          .build();
+    } catch (Exception e) {
+      log.error("triggerCommunication failed. Reference Id: {}", request.getReferenceId(), e);
+      // Set response status
+      responseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .build());
+    } finally {
+      // Build response
+      responseObserver.onNext(responseBuilder.build());
       responseObserver.onCompleted();
     }
   }
