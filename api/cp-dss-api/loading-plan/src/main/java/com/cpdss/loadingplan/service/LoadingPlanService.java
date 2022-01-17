@@ -16,7 +16,6 @@ import com.cpdss.loadingplan.domain.CommunicationStatus;
 import com.cpdss.loadingplan.entity.*;
 import com.cpdss.loadingplan.repository.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
-import com.cpdss.loadingplan.service.impl.LoadingDelayServiceImpl;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
 import com.cpdss.loadingplan.utility.LoadingPlanUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -104,7 +103,7 @@ public class LoadingPlanService {
   @Autowired private LoadingPlanRuleService loadingPlanRuleService;
   @Autowired private LoadingPlanCommunicationService loadingPlancommunicationService;
   @Autowired private LoadingPlanStagingService loadingPlanStagingService;
-  @Autowired private LoadingDelayServiceImpl loadingDelayService;
+  @Autowired private LoadingDelayService loadingDelayService;
 
   @Autowired
   private LoadingPlanCommunicationStatusRepository loadingPlanCommunicationStatusRepository;
@@ -163,16 +162,20 @@ public class LoadingPlanService {
                 .getLoadablePlanDetailsReply()
                 .getLoadableQuantityCargoDetailsList(),
             savedLoadingInformation);
+
+        // Save loading delays for default populating of cargos in managing sequence in loading
+        // information
+        loadingDelayService.saveDefaultManagingSequence(
+            loadingPlanSyncDetails
+                .getLoadablePlanDetailsReply()
+                .getLoadableQuantityCargoDetailsList(),
+            savedLoadingInformation);
+
         loadablePlanStowageDetailsService.saveLoadablePlanStowageDetailsList(
             loadingPlanSyncDetails
                 .getLoadablePlanDetailsReply()
                 .getLoadablePlanStowageDetailsList(),
             savedLoadingInformation);
-
-        // Save loading delays for default populating of cargos in managing sequence in loading
-        // information
-        loadingDelayService.saveDefaultManagingSequence(
-            loadingPlanSyncDetails.getManagingSequenceRequestList(), savedLoadingInformation);
 
         loadingPlanRuleService.saveRulesAgainstLoadingInformation(savedLoadingInformation);
         log.info(" Saved Loading Information Id : {}", savedLoadingInformation.getId());

@@ -573,6 +573,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         this.loadingInformationService.getLoadingSequence(
             planReply.getLoadingInformation().getLoadingDelays());
     loadingInformation.setLoadingSequences(loadingSequences);
+    loadingInformation.setIsLoadingPlanGenerated(true);
 
     loadingPlanResponse.setLoadingInformation(loadingInformation);
 

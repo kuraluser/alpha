@@ -51,6 +51,10 @@ public class DischargeRuleService {
     if (initialTrim != null && !initialTrim.isEmpty()) {
       dischargeInformation.setInitialTrim(new BigDecimal(initialTrim));
     }
+
+    // Setting Initial Trim value with default as zero since the rules module is on hold.
+    dischargeInformation.setInitialTrim(new BigDecimal(0));
+
     var maximumTrim = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_MAXIMUM_TRIM, true);
     log.info(
         "Discharge Info Default Admin Rule Id {}, Value {}",

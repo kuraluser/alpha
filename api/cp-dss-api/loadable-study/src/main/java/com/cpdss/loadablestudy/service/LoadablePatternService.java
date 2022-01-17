@@ -2391,10 +2391,6 @@ public class LoadablePatternService {
                   portRotation,
                   loadablePattern.getLoadableStudy().getVoyage().getId());
 
-              // Fetching cargo ids from cargo nomination using loadable study for default managing
-              // sequence in loading information
-              cargoNominationService.fetchCargoDetails(loadablePattern.getLoadableStudy(), builder);
-
               requestBuilder.addLoadingPlanSyncDetails(builder.build());
             });
 
