@@ -1321,6 +1321,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
         .ifPresent(isLoadicatorUsing -> vesselTankBuilder.setIsLoadicatorUsing(isLoadicatorUsing));
     vesselTankBuilder.setIsSlopTank(
         vesselTank.getIsSlopTank() == null ? false : vesselTank.getIsSlopTank());
+    Optional.ofNullable(vesselTank.getTankDisplayOrder())
+        .ifPresent(vesselTankBuilder::setTankDisplayOrder);
     return vesselTankBuilder.build();
   }
 

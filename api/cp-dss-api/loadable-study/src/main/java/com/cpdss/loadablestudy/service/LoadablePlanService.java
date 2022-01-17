@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
+import static java.util.Comparator.reverseOrder;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -1374,7 +1375,9 @@ public class LoadablePlanService {
     List<VesselInfo.VesselTankDetail> vesselTankDetailList =
         vesselReply.getVesselTanksList().stream()
             .filter(vessel -> CARGO_TANK_CATEGORY_ID == vessel.getTankCategoryId())
-            .sorted(Comparator.comparing(VesselInfo.VesselTankDetail::getFrameNumberFrom))
+            .sorted(
+                Comparator.comparing(
+                    VesselInfo.VesselTankDetail::getTankDisplayOrder, reverseOrder()))
             .collect(Collectors.toList());
 
     //    Get stowage plan details
