@@ -163,13 +163,17 @@ public class ShoreUserService {
         notificationRepository.findByNotificationTypeAndIsActive(
             NotificationStatusValue.NEW.getNotificationType(), true);
     //    Join keycloak user list with notifications
+    // changed for code optimization
     Set<KeycloakUser> keycloakUserList = new HashSet<>();
+    Set<Long> requestedBy = new HashSet<>();
     for (Notifications notifications : notificationsList) {
-      Users usersEntity =
-          this.usersRepository.findByIdAndIsActive(notifications.getRequestedBy(), false);
-      if (null != usersEntity) {
-        KeycloakUser keycloakUser = userCachingService.getUser(usersEntity.getKeycloakId());
-        keycloakUser.setUserId(usersEntity.getId());
+      requestedBy.add(notifications.getRequestedBy());
+    }
+    List<Users> usersEntity = this.usersRepository.findByIdInAndIsActive(requestedBy, false);
+    for (Users user : usersEntity) {
+      if (user.getKeycloakId() != null && !user.getKeycloakId().isEmpty()) {
+        KeycloakUser keycloakUser = userCachingService.getUser(user.getKeycloakId());
+        keycloakUser.setUserId(user.getId());
         keycloakUserList.add(keycloakUser);
       }
     }

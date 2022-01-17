@@ -6,6 +6,7 @@ import com.cpdss.gateway.entity.UserStatus;
 import com.cpdss.gateway.entity.Users;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,6 +41,9 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
   public List<Users> findByCompanyXIdAndIdIn(Long companyXId, List<Long> userId);
 
   public Users findByIdAndIsActive(Long id, boolean isActive);
+
+  @Query("FROM Users us where us.id in ?1 and us.isActive = ?2")
+  public List<Users> findByIdInAndIsActive(Set<Long> ids, boolean isActive);
 
   public Users findByUsernameAndIsActive(String username, boolean isActive);
 
