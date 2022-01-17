@@ -134,6 +134,7 @@ public class LoadableStudyCommunicationService {
   @Autowired private VoyageStatusRepository voyageStatusRepository;
   @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
+  @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   // endregion
 
   // region Declarations
@@ -179,6 +180,8 @@ public class LoadableStudyCommunicationService {
   private List<DischargeStudyCowDetail> dischargeStudyCowDetailStage = null;
   private String ruleVesselMappingStage = null;
   private String ruleVesselMappingInputStage = null;
+  private List<LoadableStudyAttachments> loadableStudyAttachmentsStage = null;
+
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
   Long loadableStudyStatusId;
@@ -780,6 +783,18 @@ public class LoadableStudyCommunicationService {
               ruleVesselMappingInputStage = data;
               break;
             }
+          case loadable_study_attachments:
+            {
+              Type type = new TypeToken<ArrayList<LoadableStudyAttachments>>() {}.getType();
+              loadableStudyAttachmentsStage =
+                  bindDataToEntity(
+                      new LoadableStudyAttachments(),
+                      type,
+                      LoadableStudyTables.LOADABLE_STUDY_ATTACHMENTS,
+                      data,
+                      dataTransferStage.getId());
+              break;
+            }
           default:
             log.warn(
                 "Process Identifier Not Configured: {}", dataTransferStage.getProcessIdentifier());
@@ -826,6 +841,7 @@ public class LoadableStudyCommunicationService {
         saveRuleVesselMapping();
         saveRuleVesselMappingInput();
         saveCommunicationStatusUpdate(processGroupId);
+        saveLoadableStudyAttachments();
         loadableStudyStagingService.updateStatusCompletedForProcessId(
             processId, StagingStatus.COMPLETED.getStatus());
         log.info("updated status to completed for processId:" + processId);
@@ -1917,6 +1933,23 @@ public class LoadableStudyCommunicationService {
     }
   }
 
+  /** Method to save loadable_study_attachments table */
+  private void saveLoadableStudyAttachments() {
+    currentTableName = LoadableStudyTables.LOADABLE_STUDY_ATTACHMENTS.getTable();
+
+    if (isValidStageEntity(loadableStudyAttachmentsStage, currentTableName)) {
+      for (LoadableStudyAttachments loadableStudyAttachment : loadableStudyAttachmentsStage) {
+        Optional<LoadableStudyAttachments> loadableStudyAttachmentOpt =
+            loadableStudyAttachmentsRepository.findById(loadableStudyAttachment.getId());
+        setEntityDocFields(loadableStudyAttachment, loadableStudyAttachmentOpt);
+      }
+
+      // Save data
+      loadableStudyAttachmentsRepository.saveAll(loadableStudyAttachmentsStage);
+      logSavedEntity(loadableStudyAttachmentsStage);
+    }
+  }
+
   // endregion
 
   // region Data Binding
@@ -2058,6 +2091,7 @@ public class LoadableStudyCommunicationService {
     dischargeStudyCowDetailStage = null;
     ruleVesselMappingStage = null;
     ruleVesselMappingInputStage = null;
+    loadableStudyAttachmentsStage = null;
   }
 
   /**

@@ -108,6 +108,7 @@ public class LoadableStudyCommunicationServiceTest {
   @MockBean private LoadableStudyServiceShore loadableStudyServiceShore;
   @MockBean private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @MockBean LoadableStudyDataTransferInBoundRepository inBoundRepository;
+  @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
 
   @Test
   void testGetLoadableStudyStagingDataWithRetryStatus() throws GenericServiceException {

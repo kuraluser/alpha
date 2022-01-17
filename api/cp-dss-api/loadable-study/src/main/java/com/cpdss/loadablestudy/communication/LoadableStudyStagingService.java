@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.communication;
 
 import static com.cpdss.common.communication.CommunicationConstants.*;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static org.springframework.util.StringUtils.hasLength;
 
 import com.cpdss.common.communication.StagingService;
 import com.cpdss.common.exception.GenericServiceException;
@@ -932,6 +933,27 @@ public class LoadableStudyStagingService extends StagingService {
                       dependantProcessId,
                       dependantProcessModule);
                 }
+              }
+              break;
+            }
+          case loadable_study_attachments:
+            {
+              final String loadableStudyAttachmentsJson =
+                  loadableStudyStagingRepository.getLoadableStudyAttachments(loadableStudyId);
+
+              if (hasLength(loadableStudyAttachmentsJson)) {
+                JsonArray loadableStudyAttachments =
+                    JsonParser.parseString(loadableStudyAttachmentsJson).getAsJsonArray();
+                addIntoProcessedList(
+                    array,
+                    object,
+                    processIdentifier,
+                    processId,
+                    processGroupId,
+                    processedList,
+                    loadableStudyAttachments,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
               break;
             }

@@ -237,4 +237,10 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM discharge_cow_details u where discharge_study_xid=?1",
       nativeQuery = true)
   String getDischargeStudyCowDetailWithDischargeStudyId(Long dischargeStudyId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_attachments u where loadable_study_xid=?1",
+      nativeQuery = true)
+  String getLoadableStudyAttachments(Long loadableStudyId);
 }

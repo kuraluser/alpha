@@ -4,8 +4,6 @@ package com.cpdss.loadablestudy.utility;
 public enum ProcessIdentifiers {
   voyage,
   loadable_study,
-  // duplicated_from_loadable_study,
-  // loadable_study_status,
   comingle_cargo,
   cargo_nomination,
   loadable_study_port_rotation,
@@ -42,5 +40,6 @@ public enum ProcessIdentifiers {
   loadable_plan_comments,
   loadable_plan_stowage_details_temp,
   loadable_pattern_algo_status,
-  discharge_cow_details
+  discharge_cow_details,
+  loadable_study_attachments
 }

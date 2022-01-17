@@ -227,6 +227,7 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.CARGO_NOMINATION_OPERATION_DETAILS.getTable(),
           LoadableStudyTables.LOADABLE_STUDY_RULES.getTable(),
           LoadableStudyTables.LOADABLE_STUDY_RULE_INPUT.getTable(),
+          LoadableStudyTables.LOADABLE_STUDY_ATTACHMENTS.getTable(),
           // vessel-info tables
           VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING.getTableName(),
           VESSEL_INFO_TABLES.RULE_VESSEL_MAPPING_INPUT.getTableName());
@@ -327,7 +328,8 @@ public class LoadableStudiesConstants {
     LOADABLE_PLAN_COMMENTS("loadable_plan_comments"),
     LOADABLE_PLAN_STOWAGE_DETAILS_TEMP("loadable_plan_stowage_details_temp"),
     LOADABLE_PATTERN_ALGO_STATUS("loadable_pattern_algo_status"),
-    DISCHARGE_COW_DETAILS("discharge_cow_details");
+    DISCHARGE_COW_DETAILS("discharge_cow_details"),
+    LOADABLE_STUDY_ATTACHMENTS("loadable_study_attachments");
 
     public final String table;
   }
