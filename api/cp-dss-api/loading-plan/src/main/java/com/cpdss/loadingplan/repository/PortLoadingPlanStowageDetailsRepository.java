@@ -76,4 +76,11 @@ public interface PortLoadingPlanStowageDetailsRepository
   @Query(
       "FROM PortLoadingPlanStowageDetails plpsd WHERE plpsd.loadingInformation.id = ?1 and plpsd.conditionType = 2 and plpsd.valueType = 1 and plpsd.isActive = true")
   List<PortLoadingPlanStowageDetails> findCargoHistoryData(Long infoId);
+
+  public List<PortLoadingPlanStowageDetails>
+      findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionType(
+          Long cargoNominationId,
+          long lastLoadingPortId,
+          Integer valueTypeActuals,
+          Integer conditionTypeDep);
 }

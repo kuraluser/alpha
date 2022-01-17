@@ -6,13 +6,14 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoLoadicatorDataRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationDetail;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
@@ -234,7 +235,8 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Override
   public void getBillOfLaddingDetails(
       BillOfLaddingRequest request,
-      StreamObserver<LoadingInformationSynopticalReply> responseObserver) {
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>
+          responseObserver) {
     log.info(
         "Inside getBillOfLaddingDetails - getting bill of ladding details agianst cargonomination Id {}",
         request.getCargoNominationId());
@@ -344,6 +346,66 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   }
 
   @Override
+  public void getCargoQuantityLoadingRatio(
+      MaxQuantityRequest request, StreamObserver<MaxQuantityResponse> responseObserver) {
+    log.info(
+        "Inside getCargoLoadingRatio - calculation ratio agianst each cargonomination Id {}",
+        request.getCargoNominationIdList());
+    MaxQuantityResponse.Builder reply = MaxQuantityResponse.newBuilder();
+    try {
+      List<com.cpdss.loadingplan.entity.BillOfLadding> billOfLaddingList =
+          billOfLaddingRepository.findByCargoNominationIdInAndIsActive(
+              request.getCargoNominationIdList(), true);
+      if (!CollectionUtils.isEmpty(billOfLaddingList)) {
+        Map<Long, List<com.cpdss.loadingplan.entity.BillOfLadding>> cargoWiseQuantity =
+            billOfLaddingList.stream()
+                .collect(
+                    Collectors.groupingBy(
+                        com.cpdss.loadingplan.entity.BillOfLadding::getCargoNominationId));
+        cargoWiseQuantity.forEach(
+            (key, quantity) -> {
+              MaxQuantityDetails.Builder maxQuantity = MaxQuantityDetails.newBuilder();
+              maxQuantity.setCargoNominationId(key);
+              Double blFig =
+                  quantity.stream()
+                      .mapToDouble(billOfLadding -> billOfLadding.getQuantityMt().doubleValue())
+                      .sum();
+              maxQuantity.setMaxQuantity(String.valueOf(blFig));
+              // Finding quantity ration Actual/BL
+              List<PortLoadingPlanStowageDetails> actualQuantityList =
+                  portLoadingPlanStowageDetailsRepository
+                      .findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionType(
+                          key,
+                          request.getLastLoadingPortId(),
+                          VALUE_TYPE_ACTUALS,
+                          CONDITION_TYPE_DEP);
+              Double cargoActual =
+                  actualQuantityList.stream()
+                      .mapToDouble(item -> item.getQuantity().doubleValue())
+                      .sum();
+              if (blFig > 0) {
+                maxQuantity.setRatio(String.valueOf(cargoActual / blFig));
+              }
+              reply.addCargoMaxQuantity(maxQuantity);
+            });
+      }
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder().setStatus(LoadingPlanConstants.SUCCESS).build());
+    } catch (Exception e) {
+      log.error("Exception when getting ratio agianst cargonomination Id", e);
+      reply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(reply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
   public void getLoadicatorData(
       LoadingInfoLoadicatorDataRequest request,
       StreamObserver<LoadingInfoLoadicatorDataReply> responseObserver) {
@@ -422,9 +484,11 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           blList.stream()
               .collect(
                   Collectors.groupingBy(com.cpdss.loadingplan.entity.BillOfLadding::getPortId));
-      // Bug fix 4564 : in case once validated ullage update is edited and not validated true again
+      // Bug fix 4564 : in case once validated ullage update is edited and not
+      // validated true again
       // DS should not be created
-      // Adding if condition to check deparcher condition ullage update status 13 or not.13 : Ullage
+      // Adding if condition to check deparcher condition ullage update status 13 or
+      // not.13 : Ullage
       // Update Validation Successful"
       if (!blList.isEmpty()
           && blList.stream()
@@ -537,58 +601,76 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleEntityList =
         portLoadingPlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
             request.getLoadablePatternId());
-    portLoadingPlanCommingleEntityList.forEach(
-        item -> {
-          LoadablePlanCommingleCargoDetails.Builder builder =
-              LoadablePlanCommingleCargoDetails.newBuilder();
-          Optional.ofNullable(item.getId()).ifPresent(builder::setId);
-          Optional.ofNullable(item.getGrade()).ifPresent(builder::setGrade);
-          Optional.ofNullable(item.getTankName()).ifPresent(builder::setTankName);
-          Optional.ofNullable(item.getQuantity()).ifPresent(builder::setQuantity);
-          Optional.ofNullable(item.getApi()).ifPresent(builder::setApi);
-          Optional.ofNullable(item.getTemperature()).ifPresent(builder::setTemp);
-          Optional.ofNullable(item.getCargo1Abbreviation())
-              .ifPresent(builder::setCargo1Abbreviation);
-          Optional.ofNullable(item.getCargo2Abbreviation())
-              .ifPresent(builder::setCargo2Abbreviation);
-          Optional.ofNullable(item.getCargo1Percentage()).ifPresent(builder::setCargo1Percentage);
-          Optional.ofNullable(item.getCargo2Percentage()).ifPresent(builder::setCargo2Percentage);
-          Optional.ofNullable(item.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
-          Optional.ofNullable(item.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
-          Optional.ofNullable(item.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
-          Optional.ofNullable(item.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
-          Optional.ofNullable(item.getCargo1Lt()).ifPresent(builder::setCargo1LT);
-          Optional.ofNullable(item.getCargo2Lt()).ifPresent(builder::setCargo2LT);
-          Optional.ofNullable(item.getCargo1Mt()).ifPresent(builder::setCargo1MT);
-          Optional.ofNullable(item.getCargo2Mt()).ifPresent(builder::setCargo2MT);
-          Optional.ofNullable(item.getCargo1Kl()).ifPresent(builder::setCargo1KL);
-          Optional.ofNullable(item.getCargo2Kl()).ifPresent(builder::setCargo2KL);
-          Optional.ofNullable(item.getOrderQuantity()).ifPresent(builder::setOrderedMT);
-          Optional.ofNullable(item.getPriority()).ifPresent(builder::setPriority);
-          Optional.ofNullable(item.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
-          Optional.ofNullable(item.getTankId()).ifPresent(builder::setTankId);
-          Optional.ofNullable(item.getFillingRatio()).ifPresent(builder::setFillingRatio);
-          Optional.ofNullable(item.getCorrectedUllage())
-              .ifPresent(i -> builder.setCorrectedUllage(i.toString()));
-          Optional.ofNullable(item.getRdgUllage())
-              .ifPresent(i -> builder.setRdgUllage(i.toString()));
-          Optional.ofNullable(item.getCorrectionFactor()).ifPresent(builder::setCorrectionFactor);
-          Optional.ofNullable(item.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
-          Optional.ofNullable(item.getTimeRequiredForLoading())
-              .ifPresent(builder::setTimeRequiredForLoading);
-          Optional.ofNullable(item.getShortName()).ifPresent(builder::setTankShortName);
-          Optional.ofNullable(item.getCargo1XId()).ifPresent(builder::setCargo1Id);
-          Optional.ofNullable(item.getCargo2XId()).ifPresent(builder::setCargo2Id);
-          Optional.ofNullable(item.getQuantity1MT()).ifPresent(builder::setQuantity1MT);
-          Optional.ofNullable(item.getQuantity2MT()).ifPresent(builder::setQuantity2MT);
-          Optional.ofNullable(item.getQuantity1M3()).ifPresent(builder::setQuantity1M3);
-          Optional.ofNullable(item.getQuantity2M3()).ifPresent(builder::setQuantity2M3);
-          Optional.ofNullable(item.getCargoNomination1XId())
-              .ifPresent(builder::setCargo1NominationId);
-          Optional.ofNullable(item.getCargoNomination2XId())
-              .ifPresent(builder::setCargo2NominationId);
-          reply.addLoadablePlanCommingleCargoList(builder.build());
-        });
+    portLoadingPlanCommingleEntityList.stream()
+        .filter(
+            item ->
+                item.getLoadingInformation().getPortRotationXId().equals(request.getSynopticalId()))
+        .forEach(
+            item -> {
+              LoadablePlanCommingleCargoDetails.Builder builder =
+                  LoadablePlanCommingleCargoDetails.newBuilder();
+              Optional.ofNullable(item.getId()).ifPresent(builder::setId);
+              Optional.ofNullable(item.getGrade()).ifPresent(builder::setGrade);
+              Optional.ofNullable(item.getColorCode()).ifPresent(builder::setColorCode);
+              Optional.ofNullable(item.getTankName()).ifPresent(builder::setTankName);
+              Optional.ofNullable(item.getQuantity()).ifPresent(builder::setQuantity);
+              Optional.ofNullable(item.getApi()).ifPresent(builder::setApi);
+              Optional.ofNullable(item.getTemperature()).ifPresent(builder::setTemp);
+              Optional.ofNullable(item.getCargo1Abbreviation())
+                  .ifPresent(builder::setCargo1Abbreviation);
+              Optional.ofNullable(item.getCargo2Abbreviation())
+                  .ifPresent(builder::setCargo2Abbreviation);
+              Optional.ofNullable(item.getCargo1Percentage())
+                  .ifPresent(builder::setCargo1Percentage);
+              Optional.ofNullable(item.getCargo2Percentage())
+                  .ifPresent(builder::setCargo2Percentage);
+              Optional.ofNullable(item.getCargo1BblsDbs()).ifPresent(builder::setCargo1Bblsdbs);
+              Optional.ofNullable(item.getCargo2BblsDbs()).ifPresent(builder::setCargo2Bblsdbs);
+              Optional.ofNullable(item.getCargo1Bbls60f()).ifPresent(builder::setCargo1Bbls60F);
+              Optional.ofNullable(item.getCargo2Bbls60f()).ifPresent(builder::setCargo2Bbls60F);
+              Optional.ofNullable(item.getCargo1Lt()).ifPresent(builder::setCargo1LT);
+              Optional.ofNullable(item.getCargo2Lt()).ifPresent(builder::setCargo2LT);
+              Optional.ofNullable(item.getCargo1Mt()).ifPresent(builder::setCargo1MT);
+              Optional.ofNullable(item.getCargo2Mt()).ifPresent(builder::setCargo2MT);
+              Optional.ofNullable(item.getCargo1Kl()).ifPresent(builder::setCargo1KL);
+              Optional.ofNullable(item.getCargo2Kl()).ifPresent(builder::setCargo2KL);
+              Optional.ofNullable(item.getOrderQuantity()).ifPresent(builder::setOrderedMT);
+              Optional.ofNullable(item.getPriority()).ifPresent(builder::setPriority);
+              Optional.ofNullable(item.getLoadingOrder()).ifPresent(builder::setLoadingOrder);
+              Optional.ofNullable(item.getTankId()).ifPresent(builder::setTankId);
+              Optional.ofNullable(item.getFillingRatio()).ifPresent(builder::setFillingRatio);
+              Optional.ofNullable(item.getCorrectedUllage())
+                  .ifPresent(i -> builder.setCorrectedUllage(i.toString()));
+              Optional.ofNullable(item.getRdgUllage())
+                  .ifPresent(i -> builder.setRdgUllage(i.toString()));
+              Optional.ofNullable(item.getCorrectionFactor())
+                  .ifPresent(builder::setCorrectionFactor);
+              Optional.ofNullable(item.getSlopQuantity()).ifPresent(builder::setSlopQuantity);
+              Optional.ofNullable(item.getTimeRequiredForLoading())
+                  .ifPresent(builder::setTimeRequiredForLoading);
+              Optional.ofNullable(item.getShortName()).ifPresent(builder::setTankShortName);
+              Optional.ofNullable(item.getCargo1XId()).ifPresent(builder::setCargo1Id);
+              Optional.ofNullable(item.getCargo2XId()).ifPresent(builder::setCargo2Id);
+              Optional.ofNullable(item.getQuantity1MT()).ifPresent(builder::setQuantity1MT);
+              Optional.ofNullable(item.getQuantity2MT()).ifPresent(builder::setQuantity2MT);
+              Optional.ofNullable(item.getQuantity1M3()).ifPresent(builder::setQuantity1M3);
+              Optional.ofNullable(item.getQuantity2M3()).ifPresent(builder::setQuantity2M3);
+              Optional.ofNullable(item.getCargoNomination1XId())
+                  .ifPresent(builder::setCargo1NominationId);
+              Optional.ofNullable(item.getCargoNomination2XId())
+                  .ifPresent(builder::setCargo2NominationId);
+              // Added loading info to builder object for showing commingle as separate grade change
+              Optional.ofNullable(item.getLoadingInformation())
+                  .ifPresent(
+                      loadingInfo ->
+                          builder.setLoadingInformation(
+                              LoadingInformationDetail.newBuilder()
+                                  .setPortId(loadingInfo.getPortXId())
+                                  .setPortRotationId(loadingInfo.getPortRotationXId())));
+              Optional.ofNullable(item.getConditionType()).ifPresent(builder::setArrivalDeparcher);
+              Optional.ofNullable(item.getValueType()).ifPresent(builder::setActualPlanned);
+              reply.addLoadablePlanCommingleCargoList(builder.build());
+            });
     reply.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     responseObserver.onNext(reply.build());
     responseObserver.onCompleted();

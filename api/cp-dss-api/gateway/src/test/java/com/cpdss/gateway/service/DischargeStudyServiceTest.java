@@ -10,6 +10,7 @@ import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingInstructionServiceGrpc.LoadingInstructionServiceBlockingStub;
@@ -154,6 +155,18 @@ class DischargeStudyServiceTest {
         dischargeStudyService,
         "loadingPlanServiceBlockingStub",
         this.loadingPlanServiceBlockingStub);
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    Mockito.when(
+            dischargeStudyOperationServiceBlockingStub.getCommingleCargoAsSeperateGrade(
+                Mockito.any()))
+        .thenReturn(reply);
+    ReflectionTestUtils.setField(
+        dischargeStudyService,
+        "dischargeStudyOperationServiceBlockingStub",
+        this.dischargeStudyOperationServiceBlockingStub);
     try {
       var response =
           this.dischargeStudyService.getDischargeStudyByVoyage(
@@ -173,12 +186,12 @@ class DischargeStudyServiceTest {
     return reply;
   }
 
-  private LoadingPlanModels.LoadingInformationSynopticalReply getLISR() {
+  private LoadingInformationSynopticalReply getLISR() {
     List<Common.BillOfLadding> list = new ArrayList<>();
     Common.BillOfLadding bill = Common.BillOfLadding.newBuilder().setCargoAbbrevation("1").build();
     list.add(bill);
-    LoadingPlanModels.LoadingInformationSynopticalReply reply =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder()
             .addAllBillOfLadding(list)
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
             .build();
@@ -286,9 +299,9 @@ class DischargeStudyServiceTest {
     }
   }
 
-  private LoadingPlanModels.LoadingInformationSynopticalReply getLISRNS() {
-    LoadingPlanModels.LoadingInformationSynopticalReply reply =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+  private LoadingInformationSynopticalReply getLISRNS() {
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setCode("400").build())
             .build();
     return reply;
@@ -319,6 +332,18 @@ class DischargeStudyServiceTest {
         dischargeStudyService,
         "loadingPlanServiceBlockingStub",
         this.loadingPlanServiceBlockingStub);
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder()
+            .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
+            .build();
+    Mockito.when(
+            dischargeStudyOperationServiceBlockingStub.getCommingleCargoAsSeperateGrade(
+                Mockito.any()))
+        .thenReturn(reply);
+    ReflectionTestUtils.setField(
+        dischargeStudyService,
+        "dischargeStudyOperationServiceBlockingStub",
+        this.dischargeStudyOperationServiceBlockingStub);
     try {
       var response =
           this.dischargeStudyService.getDischargeStudyByVoyage(

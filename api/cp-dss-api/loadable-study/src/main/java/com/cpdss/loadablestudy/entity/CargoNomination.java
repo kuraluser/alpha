@@ -72,6 +72,10 @@ public class CargoNomination extends EntityDoc {
   // This data against each cargo (cargo-service)
   @Transient private Boolean isCondensateCargo;
 
+  // Added as part of DSS- 4936
+  @Column(name = "is_comingled_cargo")
+  private Boolean isCommingled = false;
+
   //  @Column(name = "sequence_no")
   //  private Long sequenceNo;
   //

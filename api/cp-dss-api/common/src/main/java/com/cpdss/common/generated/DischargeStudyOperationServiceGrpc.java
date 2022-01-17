@@ -608,6 +608,61 @@ public final class DischargeStudyOperationServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeCowRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>
+      getGetCommingleCargoAsSeperateGradeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getCommingleCargoAsSeperateGrade",
+      requestType = com.cpdss.common.generated.LoadableStudy.DischargeCowRequest.class,
+      responseType =
+          com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeCowRequest,
+          com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>
+      getGetCommingleCargoAsSeperateGradeMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.DischargeCowRequest,
+            com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>
+        getGetCommingleCargoAsSeperateGradeMethod;
+    if ((getGetCommingleCargoAsSeperateGradeMethod =
+            DischargeStudyOperationServiceGrpc.getGetCommingleCargoAsSeperateGradeMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getGetCommingleCargoAsSeperateGradeMethod =
+                DischargeStudyOperationServiceGrpc.getGetCommingleCargoAsSeperateGradeMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getGetCommingleCargoAsSeperateGradeMethod =
+              getGetCommingleCargoAsSeperateGradeMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.DischargeCowRequest,
+                          com.cpdss.common.generated.LoadableStudy
+                              .LoadingInformationSynopticalReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getCommingleCargoAsSeperateGrade"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.DischargeCowRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .LoadingInformationSynopticalReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "getCommingleCargoAsSeperateGrade"))
+                      .build();
+        }
+      }
+    }
+    return getGetCommingleCargoAsSeperateGradeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.LoadableStudy.JsonRequest,
           com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyJsonReply>
       getGetDischargeStudyRequestJsonMethod;
@@ -823,6 +878,22 @@ public final class DischargeStudyOperationServiceGrpc {
           getGetDischargeCowDetailsMethod(), responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Used to fetch commingle details portwise data against a DS - re using response format from loading plan.
+     * </pre>
+     */
+    public void getCommingleCargoAsSeperateGrade(
+        com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCommingleCargoAsSeperateGradeMethod(), responseObserver);
+    }
+
     /** */
     public void getDischargeStudyRequestJson(
         com.cpdss.common.generated.LoadableStudy.JsonRequest request,
@@ -952,6 +1023,13 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.DischargeCowRequest,
                       com.cpdss.common.generated.LoadableStudy.DischargeCowResponse>(
                       this, METHODID_GET_DISCHARGE_COW_DETAILS)))
+          .addMethod(
+              getGetCommingleCargoAsSeperateGradeMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.DischargeCowRequest,
+                      com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>(
+                      this, METHODID_GET_COMMINGLE_CARGO_AS_SEPERATE_GRADE)))
           .addMethod(
               getGetDischargeStudyRequestJsonMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1107,6 +1185,24 @@ public final class DischargeStudyOperationServiceGrpc {
           responseObserver);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Used to fetch commingle details portwise data against a DS - re using response format from loading plan.
+     * </pre>
+     */
+    public void getCommingleCargoAsSeperateGrade(
+        com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetCommingleCargoAsSeperateGradeMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
     /** */
     public void getDischargeStudyRequestJson(
         com.cpdss.common.generated.LoadableStudy.JsonRequest request,
@@ -1216,6 +1312,20 @@ public final class DischargeStudyOperationServiceGrpc {
         com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargeCowDetailsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Used to fetch commingle details portwise data against a DS - re using response format from loading plan.
+     * </pre>
+     */
+    public com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply
+        getCommingleCargoAsSeperateGrade(
+            com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCommingleCargoAsSeperateGradeMethod(), getCallOptions(), request);
     }
 
     /** */
@@ -1334,6 +1444,22 @@ public final class DischargeStudyOperationServiceGrpc {
           getChannel().newCall(getGetDischargeCowDetailsMethod(), getCallOptions()), request);
     }
 
+    /**
+     *
+     *
+     * <pre>
+     * Used to fetch commingle details portwise data against a DS - re using response format from loading plan.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>
+        getCommingleCargoAsSeperateGrade(
+            com.cpdss.common.generated.LoadableStudy.DischargeCowRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetCommingleCargoAsSeperateGradeMethod(), getCallOptions()),
+          request);
+    }
+
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyJsonReply>
@@ -1353,7 +1479,8 @@ public final class DischargeStudyOperationServiceGrpc {
   private static final int METHODID_CONFIRM_PLAN = 7;
   private static final int METHODID_GET_COW_HISTORY_BY_VESSEL_ID = 8;
   private static final int METHODID_GET_DISCHARGE_COW_DETAILS = 9;
-  private static final int METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON = 10;
+  private static final int METHODID_GET_COMMINGLE_CARGO_AS_SEPERATE_GRADE = 10;
+  private static final int METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON = 11;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1471,6 +1598,13 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.DischargeCowResponse>)
                   responseObserver);
           break;
+        case METHODID_GET_COMMINGLE_CARGO_AS_SEPERATE_GRADE:
+          serviceImpl.getCommingleCargoAsSeperateGrade(
+              (com.cpdss.common.generated.LoadableStudy.DischargeCowRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply>)
+                  responseObserver);
+          break;
         case METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON:
           serviceImpl.getDischargeStudyRequestJson(
               (com.cpdss.common.generated.LoadableStudy.JsonRequest) request,
@@ -1558,6 +1692,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getConfirmPlanMethod())
                       .addMethod(getGetCowHistoryByVesselIdMethod())
                       .addMethod(getGetDischargeCowDetailsMethod())
+                      .addMethod(getGetCommingleCargoAsSeperateGradeMethod())
                       .addMethod(getGetDischargeStudyRequestJsonMethod())
                       .build();
         }

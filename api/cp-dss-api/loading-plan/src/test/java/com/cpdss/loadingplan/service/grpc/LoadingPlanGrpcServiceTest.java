@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.BillOfLadding;
@@ -273,15 +274,13 @@ public class LoadingPlanGrpcServiceTest {
   void testGetBillOfLaddingDetails() {
     LoadingPlanModels.BillOfLaddingRequest request =
         LoadingPlanModels.BillOfLaddingRequest.newBuilder().setCargoNominationId(1l).build();
-    StreamRecorder<LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver =
-        StreamRecorder.create();
+    StreamRecorder<LoadingInformationSynopticalReply> responseObserver = StreamRecorder.create();
 
     when(billOfLaddingRepository.findByCargoNominationIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(getLaddingList());
 
     loadingPlanGrpcService.getBillOfLaddingDetails(request, responseObserver);
-    List<LoadingPlanModels.LoadingInformationSynopticalReply> replies =
-        responseObserver.getValues();
+    List<LoadingInformationSynopticalReply> replies = responseObserver.getValues();
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
@@ -291,15 +290,13 @@ public class LoadingPlanGrpcServiceTest {
   void testGetBillOfLaddingDetailsWithException() {
     LoadingPlanModels.BillOfLaddingRequest request =
         LoadingPlanModels.BillOfLaddingRequest.newBuilder().setCargoNominationId(1l).build();
-    StreamRecorder<LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver =
-        StreamRecorder.create();
+    StreamRecorder<LoadingInformationSynopticalReply> responseObserver = StreamRecorder.create();
 
     when(billOfLaddingRepository.findByCargoNominationIdAndIsActive(anyLong(), anyBoolean()))
         .thenThrow(new RuntimeException("1"));
 
     loadingPlanGrpcService.getBillOfLaddingDetails(request, responseObserver);
-    List<LoadingPlanModels.LoadingInformationSynopticalReply> replies =
-        responseObserver.getValues();
+    List<LoadingInformationSynopticalReply> replies = responseObserver.getValues();
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
@@ -482,14 +479,15 @@ public class LoadingPlanGrpcServiceTest {
   @Test
   void testgetLoadingPlanCommingleDetails() {
     LoadingPlanModels.LoadingInformationSynopticalRequest request =
-        LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder().build();
+        LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder()
+            .setSynopticalId(1L)
+            .build();
     StreamRecorder<LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply> responseObserver =
         StreamRecorder.create();
 
     when(portLoadingPlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActiveTrue(
             anyLong()))
         .thenReturn(getCommingleDetailsList());
-
     loadingPlanGrpcService.getLoadingPlanCommingleDetails(request, responseObserver);
     List<LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply> replies =
         responseObserver.getValues();
@@ -580,6 +578,13 @@ public class LoadingPlanGrpcServiceTest {
     commingleDetails.setSlopQuantity("1");
     commingleDetails.setTimeRequiredForLoading("1");
     commingleDetails.setShortName("1");
+    LoadingInformation loadingInformation = new LoadingInformation();
+    LoadingInformationStatus loadingInformationStatus = new LoadingInformationStatus();
+    loadingInformationStatus.setId(13L);
+    loadingInformation.setDepartureStatus(loadingInformationStatus);
+    loadingInformation.setPortRotationXId(1L);
+    loadingInformation.setPortXId(1L);
+    commingleDetails.setLoadingInformation(loadingInformation);
     commingleDetailsList.add(commingleDetails);
     return commingleDetailsList;
   }

@@ -621,7 +621,7 @@ public class LoadableStudyPortRotationService {
 
     loadableStudy.setIsPortsComplete(request.getIsPortsComplete());
     Boolean isPortRotationComplete = true;
-    if (loadableStudy.getPlanningTypeXId() == PLANNING_TYPE_LOADING) {
+    if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
       List<LoadableStudyPortRotation> portRotations =
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
               loadableStudy.getId(), true);
@@ -636,7 +636,7 @@ public class LoadableStudyPortRotationService {
       }
       loadableStudy.setIsPortsComplete(isPortRotationComplete);
     }
-    if (loadableStudy.getPlanningTypeXId() == 2) {
+    if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_DISCHARGE)) {
       loadableStudy.setIsDischargeStudyComplete(false);
     }
     this.loadableStudyRepository.save(loadableStudy);

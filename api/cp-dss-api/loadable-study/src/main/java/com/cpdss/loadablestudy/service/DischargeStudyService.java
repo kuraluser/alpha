@@ -10,18 +10,22 @@ import com.cpdss.common.generated.CargoInfo.CargoListRequest;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfoServiceGrpc.CargoInfoServiceBlockingStub;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.Common.BillOfLadding;
 import com.cpdss.common.generated.Common.ResponseStatus;
 import com.cpdss.common.generated.DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceImplBase;
 import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
+import com.cpdss.common.generated.LoadableStudy.CommingleWithBL;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply.Builder;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.DischargeCowRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.PortInfo;
@@ -43,6 +47,11 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStud
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortWiseCargo;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillOfLaddingValidationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
@@ -51,19 +60,6 @@ import com.cpdss.common.utils.EntityDoc;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.DischargeStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.entity.BackLoading;
-import com.cpdss.loadablestudy.entity.CargoNomination;
-import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
-import com.cpdss.loadablestudy.entity.CargoOperation;
-import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
-import com.cpdss.loadablestudy.entity.DischargeStudyCowDetail;
-import com.cpdss.loadablestudy.entity.DischargeStudyPortInstruction;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
@@ -125,6 +121,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @Autowired CowHistoryRepository cowHistoryRepository;
   @Autowired LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
+  @Autowired CommingleCargoRepository commingleCargoRepository;
+
+  @Autowired
+  CommingleCargoToDischargePortwiseDetailsRepository
+      commingleCargoToDischargePortwiseDetailsRepository;
+
   @Autowired JsonDataService jsonDataService;
 
   @GrpcClient("dischargeInformationService")
@@ -144,6 +146,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
 
+  private final Integer ACTUAL_VALUE_TYPE = 1;
+  private final Integer DEPARCHER_CONDITION = 2;
+
+  /** Create/save a DS */
   @Override
   public void saveDischargeStudy(
       DischargeStudyDetail request, StreamObserver<DischargeStudyReply> responseObserver) {
@@ -202,7 +208,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       }
 
       LoadableStudyPortRotation loadableStudyPortRotation = getportRotationData(loadableStudy);
-
       // Validate synoptical data
       List<SynopticalTable> synopticalData =
           this.synopticalTableRepository
@@ -231,11 +236,58 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           createDischargeStudyPortRotationData(loadableStudyPortRotation, savedDischargeStudy);
       LoadableStudyPortRotation savedDischargeport =
           loadableStudyPortRotationRepository.save(dischargeStudyPortRotation);
-      this.cargoNominationService.saveDsichargeStudyCargoNominations(
-          savedDischargeStudy.getId(),
-          loadableStudy.getId(),
-          savedDischargeport.getPortXId(),
-          savedDischargeport.getOperation().getId());
+
+      // save comingle portwise data - Added as part of DSS- 4936
+      Optional<LoadablePattern> pattern =
+          loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+              loadableStudy, CONFIRMED_STATUS_ID, true);
+      LoadableStudyPortRotation lastLoadingPort =
+          portRotationsForNonDischargingOperations.stream()
+              .max(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
+              .get();
+      List<CommingleCargoToDischargePortwiseDetails> commingleCargoList =
+          this.saveDsichargeStudyCommingleCargoNominations(
+              savedDischargeStudy.getId(),
+              loadableStudy.getId(),
+              savedDischargeport.getPortXId(),
+              savedDischargeport.getId(),
+              pattern,
+              lastLoadingPort);
+
+      List<CargoNomination> savedCargos =
+          this.cargoNominationService.saveDsichargeStudyCargoNominations(
+              savedDischargeStudy.getId(),
+              loadableStudy.getId(),
+              savedDischargeport.getPortXId(),
+              savedDischargeport.getOperation().getId());
+
+      // Getting quantity ratio Actual/BL figure
+      MaxQuantityRequest.Builder lRequest = MaxQuantityRequest.newBuilder();
+      lRequest.addAllCargoNominationId(
+          savedCargos.stream()
+              .map(item -> item.getLsCargoNominationId())
+              .collect(Collectors.toList()));
+      lRequest.setLastLoadingPortId(lastLoadingPort.getId());
+      MaxQuantityResponse cargoQuantityRatioResponse =
+          loadingPlanServiceBlockingStub.getCargoQuantityLoadingRatio(lRequest.build());
+      if (!SUCCESS.equals(cargoQuantityRatioResponse.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "ratio from loading plan is not available",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
+      // Add commingle as a separate grade in cargo nomination DSS- 4936
+      if (commingleCargoList != null && !commingleCargoList.isEmpty()) {
+        this.cargoNominationService.saveDsichargeStudyCommingleAsCargoNominations(
+            savedDischargeStudy.getId(),
+            loadableStudy.getId(),
+            savedDischargeport.getPortXId(),
+            savedDischargeport.getOperation().getId(),
+            commingleCargoList,
+            savedCargos,
+            cargoQuantityRatioResponse.getCargoMaxQuantityList());
+      }
 
       this.synopticalTableRepository.saveAll(
           createDischargeSynoptical(synopticalData, savedDischargeport));
@@ -245,7 +297,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       dischargeStudyCowDetail.setCowType(1L);
       dischargeStudyCowDetail.setPercentage(100L);
       dischargeStudyCowDetail.setDischargeStudyStudyId(savedDischargeStudy.getId());
-      System.out.println(dischargeStudyCowDetail.getDischargeStudyStudyId());
+      // System.out.println(dischargeStudyCowDetail.getDischargeStudyStudyId());
       cowDetailService.saveAll(Arrays.asList(dischargeStudyCowDetail));
       builder.setId(savedDischargeStudy.getId());
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
@@ -267,6 +319,231 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
     }
+  }
+
+  /** Method to fetch actual commingle cargo details against LS and store it against a new DS */
+  private List<CommingleCargoToDischargePortwiseDetails>
+      saveDsichargeStudyCommingleCargoNominations(
+          Long dsId,
+          Long lsId,
+          Long portXId,
+          Long portRotationId,
+          Optional<LoadablePattern> pattern,
+          LoadableStudyPortRotation lastLoadingPort)
+          throws NumberFormatException, GenericServiceException {
+    List<CommingleCargo> commingleCargoList =
+        commingleCargoRepository.findByLoadableStudyXIdAndIsActive(lsId, true);
+    List<CommingleCargoToDischargePortwiseDetails> result = null;
+    if (!commingleCargoList.isEmpty() && pattern.isPresent()) {
+      // calling Loading plan GRPC to fetch commingle data portwise
+      LoadingInformationSynopticalRequest.Builder requestBuilder =
+          LoadingInformationSynopticalRequest.newBuilder();
+      requestBuilder.setSynopticalId(
+          lastLoadingPort.getId()); // using this field to pass last loading port
+      requestBuilder.setLoadablePatternId(pattern.get().getId());
+      LoadablePlanCommingleCargoDetailsReply loadableCommingleDetailsReply =
+          loadingPlanServiceBlockingStub.getLoadingPlanCommingleDetails(requestBuilder.build());
+
+      if (!SUCCESS.equals(loadableCommingleDetailsReply.getResponseStatus().getStatus())) {
+        throw new GenericServiceException(
+            "Failed to fetch getDischargeStudyByVoyage",
+            loadableCommingleDetailsReply.getResponseStatus().getCode(),
+            HttpStatusCode.valueOf(
+                Integer.valueOf(loadableCommingleDetailsReply.getResponseStatus().getCode())));
+      }
+      List<LoadablePlanCommingleCargoDetails> commingleDetailsOfLastLoadingPort =
+          loadableCommingleDetailsReply.getLoadablePlanCommingleCargoListList().stream()
+              .filter(
+                  item ->
+                      ((Long) item.getLoadingInformation().getPortRotationId())
+                              .equals(lastLoadingPort.getId())
+                          && DEPARCHER_CONDITION.equals(item.getArrivalDeparcher())
+                          && ACTUAL_VALUE_TYPE.equals(item.getActualPlanned()))
+              .collect(Collectors.toList());
+      if (commingleDetailsOfLastLoadingPort == null
+          || commingleDetailsOfLastLoadingPort.isEmpty()) {
+        log.info(
+            "Failed: Commingle details not found in Loading plan - Last loading port not having entries in commingle tables");
+        //        throw new GenericServiceException(
+        //            "Commingle details not found in Loading plan - Last loading port not having
+        // entries in commingle tables",
+        //            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+        //            HttpStatusCode.BAD_REQUEST);
+        return null;
+      }
+      List<CommingleCargoToDischargePortwiseDetails> commingleDetailsOfFirstDischargePortList =
+          new ArrayList<>();
+      // Save commingle details against first discharge port
+      commingleDetailsOfLastLoadingPort.stream()
+          .forEach(
+              commingleDetails -> {
+                CommingleCargoToDischargePortwiseDetails commingleDetailsOfFirstDischargePort =
+                    new CommingleCargoToDischargePortwiseDetails();
+                commingleDetailsOfFirstDischargePort.setDischargeStudyId(dsId);
+                commingleDetailsOfFirstDischargePort.setPortId(portXId);
+                commingleDetailsOfFirstDischargePort.setPortRotationId(portRotationId);
+                Optional.ofNullable(commingleDetails.getGrade())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setGrade);
+                Optional.ofNullable(commingleDetails.getColorCode())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setColorCode);
+                Optional.ofNullable(commingleDetails.getTankName())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setTankName);
+                if (commingleDetails.getQuantity() != null
+                    && !commingleDetails.getQuantity().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setQuantity(
+                      new BigDecimal(commingleDetails.getQuantity()));
+                }
+                if (commingleDetails.getApi() != null && !commingleDetails.getApi().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setApi(
+                      Double.parseDouble(commingleDetails.getApi()));
+                }
+                if (commingleDetails.getTemp() != null && !commingleDetails.getTemp().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setTemperature(
+                      Double.parseDouble(commingleDetails.getTemp()));
+                }
+                Optional.ofNullable(commingleDetails.getCargo1Abbreviation())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setCargo1Abbreviation);
+                Optional.ofNullable(commingleDetails.getCargo2Abbreviation())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setCargo2Abbreviation);
+                if (commingleDetails.getCargo1Percentage() != null
+                    && !commingleDetails.getCargo1Percentage().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo1Percentage(
+                      Double.parseDouble(commingleDetails.getCargo1Percentage()));
+                }
+                if (commingleDetails.getCargo2Percentage() != null
+                    && !commingleDetails.getCargo2Percentage().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo2Percentage(
+                      Double.parseDouble(commingleDetails.getCargo2Percentage()));
+                }
+                if (commingleDetails.getCargo1Bblsdbs() != null
+                    && !commingleDetails.getCargo1Bblsdbs().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo1BblsDbs(
+                      new BigDecimal(commingleDetails.getCargo1Bblsdbs()));
+                }
+                if (commingleDetails.getCargo2Bblsdbs() != null
+                    && !commingleDetails.getCargo2Bblsdbs().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo2BblsDbs(
+                      new BigDecimal(commingleDetails.getCargo2Bblsdbs()));
+                }
+                if (commingleDetails.getCargo1Bbls60F() != null
+                    && !commingleDetails.getCargo1Bbls60F().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo1Bbls60f(
+                      new BigDecimal(commingleDetails.getCargo1Bbls60F()));
+                }
+                if (commingleDetails.getCargo2Bbls60F() != null
+                    && !commingleDetails.getCargo2Bbls60F().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo2Bbls60f(
+                      new BigDecimal(commingleDetails.getCargo2Bbls60F()));
+                }
+                if (commingleDetails.getCargo1LT() != null
+                    && !commingleDetails.getCargo1LT().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo1Lt(
+                      new BigDecimal(commingleDetails.getCargo1LT()));
+                }
+                if (commingleDetails.getCargo2LT() != null
+                    && !commingleDetails.getCargo2LT().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo2Lt(
+                      new BigDecimal(commingleDetails.getCargo2LT()));
+                }
+                if (commingleDetails.getCargo1MT() != null
+                    && !commingleDetails.getCargo1MT().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo1Mt(
+                      new BigDecimal(commingleDetails.getCargo1MT()));
+                }
+                if (commingleDetails.getCargo2MT() != null
+                    && !commingleDetails.getCargo2MT().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo2Mt(
+                      new BigDecimal(commingleDetails.getCargo2MT()));
+                }
+                if (commingleDetails.getCargo1KL() != null
+                    && !commingleDetails.getCargo1KL().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo1Kl(
+                      new BigDecimal(commingleDetails.getCargo1KL()));
+                }
+                if (commingleDetails.getCargo2KL() != null
+                    && !commingleDetails.getCargo2KL().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo2Kl(
+                      new BigDecimal(commingleDetails.getCargo2KL()));
+                }
+                if (commingleDetails.getCargo2Bblsdbs() != null
+                    && !commingleDetails.getCargo2Bblsdbs().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCargo2BblsDbs(
+                      new BigDecimal(commingleDetails.getCargo2Bblsdbs()));
+                }
+                Optional.ofNullable(commingleDetails.getOrderedMT())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setOrderQuantity);
+                Optional.ofNullable(commingleDetails.getPriority())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setPriority);
+                Optional.ofNullable(commingleDetails.getLoadingOrder())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setLoadingOrder);
+                Optional.ofNullable(commingleDetails.getTankId())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setTankId);
+                if (commingleDetails.getFillingRatio() != null
+                    && !commingleDetails.getFillingRatio().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setFillingRatio(
+                      Long.parseLong(commingleDetails.getFillingRatio()));
+                }
+                //                Optional.ofNullable(commingleDetails.getCorrectedUllage())
+                //                    .ifPresent(
+                //                        i ->
+                //
+                // commingleDetailsOfFirstDischargePort.setCorrectedUllage(
+                //                                Long.parseLong(i)));
+                if (commingleDetails.getRdgUllage() != null
+                    && !commingleDetails.getRdgUllage().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setRdgUllage(
+                      Long.parseLong(commingleDetails.getRdgUllage()));
+                }
+                if (commingleDetails.getCorrectionFactor() != null
+                    && !commingleDetails.getCorrectionFactor().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setCorrectionFactor(
+                      Long.parseLong(commingleDetails.getCorrectionFactor()));
+                }
+                if (commingleDetails.getSlopQuantity() != null
+                    && !commingleDetails.getSlopQuantity().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setSlopQuantity(
+                      new BigDecimal(commingleDetails.getSlopQuantity()));
+                }
+                Optional.ofNullable(commingleDetails.getTimeRequiredForLoading())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setTimeRequiredForLoading);
+                Optional.ofNullable(commingleDetails.getTankShortName())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setShortName);
+                Optional.ofNullable(commingleDetails.getCargo1Id())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setCargo1XId);
+                Optional.ofNullable(commingleDetails.getCargo2Id())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setCargo2XId);
+                if (commingleDetails.getQuantity1MT() != null
+                    && !commingleDetails.getQuantity1MT().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setQuantity1MT(
+                      new BigDecimal(commingleDetails.getQuantity1MT()));
+                }
+                if (commingleDetails.getQuantity2MT() != null
+                    && !commingleDetails.getQuantity2MT().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setQuantity2MT(
+                      new BigDecimal(commingleDetails.getQuantity2MT()));
+                }
+                if (commingleDetails.getQuantity1M3() != null
+                    && !commingleDetails.getQuantity1M3().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setQuantity1M3(
+                      new BigDecimal(commingleDetails.getQuantity1M3()));
+                }
+                if (commingleDetails.getQuantity2M3() != null
+                    && !commingleDetails.getQuantity2M3().isBlank()) {
+                  commingleDetailsOfFirstDischargePort.setQuantity2M3(
+                      new BigDecimal(commingleDetails.getQuantity2M3()));
+                }
+                Optional.ofNullable(commingleDetails.getCargo1NominationId())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setCargoNomination1XId);
+                Optional.ofNullable(commingleDetails.getCargo2NominationId())
+                    .ifPresent(commingleDetailsOfFirstDischargePort::setCargoNomination2XId);
+                commingleDetailsOfFirstDischargePort.setIsActive(true);
+                commingleDetailsOfFirstDischargePortList.add(commingleDetailsOfFirstDischargePort);
+              });
+      result =
+          commingleCargoToDischargePortwiseDetailsRepository.saveAll(
+              commingleDetailsOfFirstDischargePortList);
+    }
+    return result;
   }
 
   private void validateActuals(LoadableStudy loadableStudy) throws GenericServiceException {
@@ -1031,7 +1308,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       dischargeStudyCowDetail = cowDetailForThePort;
     } else {
       dischargeStudyCowDetail = new DischargeStudyCowDetail();
-      //      dischargeStudyCowDetail.setPortId(portCargoId);
+      // dischargeStudyCowDetail.setPortId(portCargoId);
       dischargeStudyCowDetail.setDischargeStudyStudyId(dischargestudyId);
     }
     dischargeStudyCowDetail.setCowType(cowId);
@@ -1047,6 +1324,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cowDetailsToSave.add(dischargeStudyCowDetail);
   }
 
+  /** Method used to retrieve portwise cargo detail in DS */
   @Override
   public void getDischargeStudyPortWiseCargos(
       DischargeStudyRequest request, StreamObserver<DishargeStudyCargoReply> responseObserver) {
@@ -1055,7 +1333,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     try {
       if (!dischargeStudyRepository.existsById(request.getDischargeStudyId())) {
         throw new GenericServiceException(
-            "Loadable study does not exist",
+            "Discharge study does not exist",
             CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
             HttpStatusCode.BAD_REQUEST);
       }
@@ -1115,7 +1393,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           });
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     } catch (GenericServiceException e) {
-      log.error("GenericServiceException when deleting discharge study", e);
+      log.error("GenericServiceException when getting portwise cargo", e);
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setCode(e.getCode())
@@ -1771,6 +2049,72 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
 
     } finally {
       responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getCommingleCargoAsSeperateGrade(
+      DischargeCowRequest request,
+      StreamObserver<LoadingInformationSynopticalReply> responseObserver) {
+    LoadingInformationSynopticalReply.Builder responseObject =
+        LoadingInformationSynopticalReply.newBuilder();
+    List<BillOfLadding> commingleAsCargoList = new ArrayList<>();
+    // Array used to return commingled cargo BL values to subtract from normal cargo bl values in
+    // gateway
+    List<CommingleWithBL> commingleCargoBLfigList = new ArrayList<>();
+    try {
+      List<CommingleCargoToDischargePortwiseDetails> commingleList =
+          commingleCargoToDischargePortwiseDetailsRepository.findByDischargeStudyIdAndIsActiveTrue(
+              request.getDischargeStudyId());
+      if (!commingleList.isEmpty()) {
+        commingleList.forEach(
+            item -> {
+              BillOfLadding.Builder comm = BillOfLadding.newBuilder();
+              CommingleWithBL.Builder commingle1BL = CommingleWithBL.newBuilder();
+              commingle1BL.setCargoId(item.getCargo1XId());
+              commingle1BL.setCargoBLFig(String.valueOf(0));
+              CommingleWithBL.Builder commingle2BL = CommingleWithBL.newBuilder();
+              commingle2BL.setCargoId(item.getCargo2XId());
+              commingle2BL.setCargoBLFig(String.valueOf(0));
+              ofNullable(item.getApi()).ifPresent(i -> comm.setApi(Double.toString(i)));
+              ofNullable(item.getTemperature())
+                  .ifPresent(i -> comm.setTemperature(Double.toString(i)));
+              ofNullable(item.getGrade()).ifPresent(comm::setCargoAbbrevation);
+              ofNullable(item.getColorCode()).ifPresent(comm::setCargoColor);
+
+              if (item.getBlfigure() != null) {
+                comm.setQuantityMt(String.valueOf(item.getBlfigure()));
+                ofNullable(item.getCargo1BLfigure())
+                    .ifPresent(i -> commingle1BL.setCargoBLFig(String.valueOf(i)));
+                ofNullable(item.getCargo2BLfigure())
+                    .ifPresent(i -> commingle2BL.setCargoBLFig(String.valueOf(i)));
+              } else if (item.getQuantity() != null) {
+                // Setting actual value if BL fig is missing
+                comm.setQuantityMt(String.valueOf(item.getQuantity().doubleValue()));
+              }
+              ofNullable(item.getPortId()).ifPresent(portId -> comm.setPortId(portId));
+              ofNullable(item.getCargo2LoadingPortId())
+                  .ifPresent(i -> comm.addAllLoadingPort(new ArrayList(Arrays.asList(i))));
+              ofNullable(item.getId()).ifPresent(id -> comm.setId(id));
+              commingleCargoBLfigList.add(commingle1BL.build());
+              commingleCargoBLfigList.add(commingle2BL.build());
+              commingleAsCargoList.add(comm.build());
+            });
+      }
+      responseObject.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      responseObject.addAllBillOfLadding(commingleAsCargoList);
+      responseObject.addAllCommingleBL(commingleCargoBLfigList);
+
+    } catch (Exception e) {
+      log.error("Exception when getting commingle details ", e);
+      responseObject.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when getting commingle details "));
+    } finally {
+      responseObserver.onNext(responseObject.build());
       responseObserver.onCompleted();
     }
   }

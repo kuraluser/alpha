@@ -12,6 +12,7 @@ import lombok.Data;
 public class BillOfLadding {
   private Long id;
   private Long portId;
+  private Long cargoId;
   private Long cargoNominationId;
   private BigDecimal quantityBbls;
   private BigDecimal quantityMt;

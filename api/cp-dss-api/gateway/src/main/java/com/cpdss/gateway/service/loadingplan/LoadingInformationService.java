@@ -4,6 +4,7 @@ package com.cpdss.gateway.service.loadingplan;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common.PLANNING_TYPE;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.AlgoErrorResponse;
@@ -124,8 +125,8 @@ public interface LoadingInformationService {
   public List<DischargeQuantityCargoDetails> buildDischargePlanQuantity(
       List<LoadableStudy.LoadableQuantityCargoDetails> list, Long vesselId);
 
-  LoadingPlanModels.LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(
-      Long patternId) throws GenericServiceException;
+  LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(Long patternId)
+      throws GenericServiceException;
 
   void setCargoTobeLoadedAndCargoGrade(
       CargoVesselTankDetails vesselTankDetails,

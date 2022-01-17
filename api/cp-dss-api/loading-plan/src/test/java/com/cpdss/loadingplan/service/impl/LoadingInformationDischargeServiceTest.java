@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -54,12 +55,8 @@ public class LoadingInformationDischargeServiceTest {
         LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder()
             .setLoadablePatternId(1L)
             .build();
-    com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply
-            .Builder
-        builder =
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                .LoadingInformationSynopticalReply.newBuilder()
-                .addAllBillOfLadding(list);
+    LoadingInformationSynopticalReply.Builder builder =
+        LoadingInformationSynopticalReply.newBuilder().addAllBillOfLadding(list);
     Mockito.when(
             billOfLaddingRepository.findByLoadablePatternXIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))

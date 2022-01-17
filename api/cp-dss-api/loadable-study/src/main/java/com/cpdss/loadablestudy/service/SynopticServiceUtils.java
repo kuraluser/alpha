@@ -825,12 +825,10 @@ public class SynopticServiceUtils {
               ccN.getCargo1ActualMT() != null ? ccN.getCargo1ActualMT().toString() : "");
           cargo2.setActualWeight(
               ccN.getCargo2ActualMT() != null ? ccN.getCargo2ActualMT().toString() : "");
-
           cargo1.setCargo1Mt(
               ccN.getCargo1ActualMT() != null ? ccN.getCargo1ActualMT().toString() : "");
           cargo2.setCargo2Mt(
               ccN.getCargo2ActualMT() != null ? ccN.getCargo2ActualMT().toString() : "");
-
           cargo1.setApi(ccN.getApi());
           cargo2.setApi(ccN.getApi());
 

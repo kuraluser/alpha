@@ -267,6 +267,8 @@ public class DischargePlanController {
   }
 
   /**
+   * Get cargo nomination details for DS screen
+   *
    * @param vesselId
    * @param voyageId
    * @param dischargeStudyId
@@ -309,7 +311,7 @@ public class DischargePlanController {
   }
 
   /**
-   * Retrieve cargos information from cargo master based on the ports
+   * Retrieve cargos information from cargo master based on the ports port cargo mappings
    *
    * @param headers
    * @return
@@ -515,6 +517,7 @@ public class DischargePlanController {
     }
   }
 
+  /** API used to get details for DS tab in DS */
   @GetMapping(
       "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/cargoByPort")
   public DischargeStudyCargoResponse getDischargeStudyCargoByVoyage(

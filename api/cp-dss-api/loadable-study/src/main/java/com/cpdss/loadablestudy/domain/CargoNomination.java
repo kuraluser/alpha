@@ -41,4 +41,6 @@ public class CargoNomination {
   private Long sequenceNo;
 
   private Boolean emptyMaxNoOfTanks;
+  // Added as part of DSS- 4936
+  private Boolean isCommingled;
 }

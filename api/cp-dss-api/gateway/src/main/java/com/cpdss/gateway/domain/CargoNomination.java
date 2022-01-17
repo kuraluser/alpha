@@ -58,5 +58,7 @@ public class CargoNomination {
 
   private Boolean emptyMaxNoOfTanks;
 
+  private Boolean isCommingled;
+
   private BigDecimal dischargeRate;
 }

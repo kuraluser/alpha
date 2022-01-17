@@ -9,6 +9,7 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.entity.LoadingInformation;
@@ -85,20 +86,18 @@ public class LoadingInformationGrpcServiceTest {
   void testGetLoadigInformationByVoyage() throws Exception {
     LoadingPlanModels.LoadingInformationSynopticalRequest request =
         LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder().build();
-    StreamRecorder<LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver =
-        StreamRecorder.create();
-    LoadingPlanModels.LoadingInformationSynopticalReply.Builder builder =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+    StreamRecorder<LoadingInformationSynopticalReply> responseObserver = StreamRecorder.create();
+    LoadingInformationSynopticalReply.Builder builder =
+        LoadingInformationSynopticalReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 
     when(this.loadingInfoService.getLoadigInformationByVoyage(
             any(LoadingPlanModels.LoadingInformationSynopticalRequest.class),
-            any(LoadingPlanModels.LoadingInformationSynopticalReply.Builder.class)))
+            any(LoadingInformationSynopticalReply.Builder.class)))
         .thenReturn(builder);
 
     loadingInformationGrpcService.getLoadigInformationByVoyage(request, responseObserver);
-    List<LoadingPlanModels.LoadingInformationSynopticalReply> replies =
-        responseObserver.getValues();
+    List<LoadingInformationSynopticalReply> replies = responseObserver.getValues();
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
   }
@@ -107,20 +106,18 @@ public class LoadingInformationGrpcServiceTest {
   void testGetLoadigInformationByVoyageWithException() throws Exception {
     LoadingPlanModels.LoadingInformationSynopticalRequest request =
         LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder().build();
-    StreamRecorder<LoadingPlanModels.LoadingInformationSynopticalReply> responseObserver =
-        StreamRecorder.create();
-    LoadingPlanModels.LoadingInformationSynopticalReply.Builder builder =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+    StreamRecorder<LoadingInformationSynopticalReply> responseObserver = StreamRecorder.create();
+    LoadingInformationSynopticalReply.Builder builder =
+        LoadingInformationSynopticalReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 
     when(this.loadingInfoService.getLoadigInformationByVoyage(
             any(LoadingPlanModels.LoadingInformationSynopticalRequest.class),
-            any(LoadingPlanModels.LoadingInformationSynopticalReply.Builder.class)))
+            any(LoadingInformationSynopticalReply.Builder.class)))
         .thenThrow(new GenericServiceException("1", "1", HttpStatusCode.MULTI_STATUS));
 
     loadingInformationGrpcService.getLoadigInformationByVoyage(request, responseObserver);
-    List<LoadingPlanModels.LoadingInformationSynopticalReply> replies =
-        responseObserver.getValues();
+    List<LoadingInformationSynopticalReply> replies = responseObserver.getValues();
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());

@@ -74,6 +74,10 @@ public class GenerateDischargeStudyJsonTest {
   @MockBean
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
+  @MockBean
+  private CommingleCargoToDischargePortwiseDetailsRepository
+      commingleCargoToDischargePortwiseDetailsRepository;
+
   private static final String SUCCESS = "SUCCESS";
 
   @Test

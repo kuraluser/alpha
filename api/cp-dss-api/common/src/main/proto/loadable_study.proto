@@ -281,11 +281,25 @@ service DischargeStudyOperationService {
   rpc ConfirmPlan(ConfirmPlanRequest) returns (ConfirmPlanReply) {}
   rpc getCowHistoryByVesselId(CowHistoryRequest) returns (CowHistoryReply);
   rpc getDischargeCowDetails(DischargeCowRequest) returns (DischargeCowResponse) {}
-	rpc GetDischargeStudyRequestJson(JsonRequest) returns (DischargeStudyJsonReply) {}
+  //Used to fetch commingle details portwise data against a DS - re using response format from loading plan.
+  rpc getCommingleCargoAsSeperateGrade (DischargeCowRequest) returns (LoadingInformationSynopticalReply){}
+  rpc GetDischargeStudyRequestJson(JsonRequest) returns (DischargeStudyJsonReply) {}
 }
+
 
 service PortInstructionService {
     rpc getInstructions (EmptyRequest)  returns (InstructionReply){}
+}
+
+message LoadingInformationSynopticalReply{
+  ResponseStatus responseStatus = 1;
+  repeated BillOfLadding billOfLadding = 2;
+  repeated CommingleWithBL commingleBL = 3;
+}
+
+message CommingleWithBL {
+	int64 cargoId =1;
+	string cargoBLFig = 2;
 }
 
 message DischargeQuantityCargoDetailsRequest {
@@ -981,6 +995,7 @@ message CargoNominationDetail {
 	string dischargingTime = 22;
 	int64 sequenceNo = 23;
 	bool emptyMaxNoOfTanks = 24;
+	bool isCommingled = 25;
 }
 
 message CargoNominationRequest {

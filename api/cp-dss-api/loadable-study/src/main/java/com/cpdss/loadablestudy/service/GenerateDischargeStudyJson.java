@@ -149,6 +149,10 @@ public class GenerateDischargeStudyJson {
 
   @Autowired SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
+  @Autowired
+  private CommingleCargoToDischargePortwiseDetailsRepository
+      commingleCargoToDischargePortwiseDetailsRepository;
+
   public AlgoReply.Builder generateDischargePatterns(
       AlgoRequest request, AlgoReply.Builder replyBuilder)
       throws GenericServiceException, JsonGenerationException, JsonMappingException, IOException {
@@ -262,9 +266,6 @@ public class GenerateDischargeStudyJson {
     List<LoadableStudyInstruction> instructionsDetails = getAllLoadableStudyInstruction();
     dischargeStudyAlgoJson.setInstructionMaster(instructionsDetails);
 
-    dischargeStudyAlgoJson.setCommingleCargos(
-        new ArrayList<>()); // reserved for future.Keeping empty for now
-
     List<DischargeStudyPortRotationJson> portRotationList =
         getDischargeStudyPortRotation(dischargeStudyId, instructionsDetails);
     dischargeStudyAlgoJson.setDischargeStudyPortRotation(portRotationList);
@@ -272,7 +273,7 @@ public class GenerateDischargeStudyJson {
     List<CargoNomination> cargoNominations = getCargoNomination(dischargeStudyId);
     dischargeStudyAlgoJson.setCargoNomination(cargoNominations);
     dischargeStudyAlgoJson.setCargoNominationOperationDetails(
-        getCargoNominationOperationDetails(dischargeStudyId, cargoNominations));
+        getCargoNominationOperationDetails(dischargeStudyId));
 
     List<DischargingMode> dischargingModes =
         Stream.of(DischargingModesEnum.values())
@@ -847,12 +848,13 @@ public class GenerateDischargeStudyJson {
   }
 
   private List<CargoNominationOperationDetails> getCargoNominationOperationDetails(
-      Long dischargeStudyId, List<CargoNomination> cargoNominations) {
+      Long dischargeStudyId) {
     log.info("Fetching CargoNomination Operation details for discharge id {}", dischargeStudyId);
+    List<CargoNominationOperationDetails> cargoNominationOperationDetailsList = new ArrayList<>();
     List<com.cpdss.loadablestudy.entity.CargoNomination> cargoNominationReply =
         getCargoNominationforDischargeID(dischargeStudyId);
     if (!CollectionUtils.isEmpty(cargoNominationReply)) {
-      List<CargoNominationOperationDetails> cargoNominationOperationDetailsList = new ArrayList<>();
+
       cargoNominationReply.forEach(
           item -> {
             List<CargoNominationPortDetails> cargoNominationPortDetails =
@@ -886,11 +888,9 @@ public class GenerateDischargeStudyJson {
               }
             }
           });
-      log.info("Found {} items", cargoNominationOperationDetailsList.size());
-      return cargoNominationOperationDetailsList;
     }
-    log.info("No CargoNomination operation details found ");
-    return null;
+    log.info("Found {} items", cargoNominationOperationDetailsList.size());
+    return cargoNominationOperationDetailsList;
   }
 
   private List<com.cpdss.loadablestudy.entity.CargoNomination> getCargoNominationforDischargeID(
@@ -922,15 +922,15 @@ public class GenerateDischargeStudyJson {
             ofNullable(item.getSegregationXId()).ifPresent(nomination::setSegregationId);
             nomination.setIsCondensateCargo(null); // for future
             nomination.setIsHrvpCargo(null); // for future
+            // Added as part of DSS- 4936
+            nomination.setIsCommingled(item.getIsCommingled());
             //            nomination.setSequenceNo(item.getSequenceNo());
             //            nomination.setEmptyMaxNoOfTanks(item.getEmptyMaxNoOfTanks());
             cargoNominationList.add(nomination);
           });
-      log.info("Found {} items", cargoNominationList.size());
-      return cargoNominationList;
     }
-    log.info("No CargoNomination details found ");
-    return null;
+    log.info("Found {} items", cargoNominationList.size());
+    return cargoNominationList;
   }
 
   private List<DischargeStudyPortRotationJson> getDischargeStudyPortRotation(

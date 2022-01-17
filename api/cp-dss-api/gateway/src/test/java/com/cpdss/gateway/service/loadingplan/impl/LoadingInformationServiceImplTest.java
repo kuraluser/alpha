@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -447,9 +448,9 @@ public class LoadingInformationServiceImplTest {
     }
   }
 
-  private LoadingPlanModels.LoadingInformationSynopticalReply getLISR() {
-    LoadingPlanModels.LoadingInformationSynopticalReply reply =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+  private LoadingInformationSynopticalReply getLISR() {
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
             .build();
     return reply;
@@ -472,9 +473,9 @@ public class LoadingInformationServiceImplTest {
     }
   }
 
-  private LoadingPlanModels.LoadingInformationSynopticalReply getLISRNS() {
-    LoadingPlanModels.LoadingInformationSynopticalReply reply =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+  private LoadingInformationSynopticalReply getLISRNS() {
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder()
             .setResponseStatus(
                 Common.ResponseStatus.newBuilder().setStatus(FAILED).setCode("400").build())
             .build();

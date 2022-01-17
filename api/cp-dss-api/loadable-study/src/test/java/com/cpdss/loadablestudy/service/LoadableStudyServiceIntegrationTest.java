@@ -79,6 +79,10 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadablePlanService loadablePlanService;
 
   @MockBean
+  private CommingleCargoToDischargePortwiseDetailsRepository
+      commingleCargoToDischargePortwiseDetailsRepository;
+
+  @MockBean
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
 

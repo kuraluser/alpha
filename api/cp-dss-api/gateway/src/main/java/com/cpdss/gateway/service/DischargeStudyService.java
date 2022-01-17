@@ -10,11 +10,14 @@ import com.cpdss.common.generated.LoadableStudy.AlgoReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoRequest;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationDetail;
 import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
+import com.cpdss.common.generated.LoadableStudy.CommingleWithBL;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanReply;
 import com.cpdss.common.generated.LoadableStudy.ConfirmPlanRequest;
+import com.cpdss.common.generated.LoadableStudy.DischargeCowRequest;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingDetail;
 import com.cpdss.common.generated.LoadableStudy.DishargeStudyBackLoadingSaveRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DischargeStudyDetail;
@@ -23,9 +26,6 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStud
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyCargoReply;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -42,7 +42,6 @@ import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyUpdateResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyValue;
-import com.cpdss.gateway.domain.LoadableQuantityCommingleCargoDetails;
 import com.cpdss.gateway.domain.LoadableStudyResponse;
 import com.cpdss.gateway.domain.OnHandQuantity;
 import com.cpdss.gateway.domain.OnHandQuantityResponse;
@@ -112,55 +111,51 @@ public class DischargeStudyService {
     LoadableStudy.LoadablePatternConfirmedReply patternReply =
         loadableStudyServiceBlockingStub.getLoadablePatternByVoyageAndStatus(
             loadableStudyRequest.build());
-    System.out.println(patternReply);
+    // System.out.println(patternReply);
     if (patternReply != null
         && patternReply.getResponseStatus() != null
         && SUCCESS.equalsIgnoreCase(patternReply.getResponseStatus().getStatus())) {
+      // Getting cargo details form bill of ladding
       LoadingInformationSynopticalRequest.Builder requestBuilder =
           LoadingInformationSynopticalRequest.newBuilder();
       requestBuilder.setLoadablePatternId(patternReply.getPattern().getLoadablePatternId());
       LoadingInformationSynopticalReply grpcReply =
           loadingInfoServiceBlockingStub.getLoadigInformationByVoyage(requestBuilder.build());
-      System.out.println(grpcReply);
+      // System.out.println(grpcReply);
       if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
             "Failed to fetch getDischargeStudyByVoyage",
             grpcReply.getResponseStatus().getCode(),
             HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
-      LoadableStudy.LoadablePlanDetailsRequest.Builder loadablePlanRequest =
-          LoadableStudy.LoadablePlanDetailsRequest.newBuilder();
-      loadablePlanRequest.setLoadablePatternId(patternReply.getPattern().getLoadablePatternId());
-      // Changing commingle details flow - need to fetch actual commingle data from
-      // loading plan
-      // LoadableStudy.LoadableCommingleDetailsReply loadableCommingleDetailsReply =
-      // loadableStudyServiceBlockingStub.getLoadableCommingleByPatternId(
-      // loadablePlanRequest.build());
-
-      LoadablePlanCommingleCargoDetailsReply loadableCommingleDetailsReply =
-          loadingPlanServiceBlockingStub.getLoadingPlanCommingleDetails(requestBuilder.build());
-
       DischargeStudyResponse dischargeStudyResponse = new DischargeStudyResponse();
-      if (!SUCCESS.equals(loadableCommingleDetailsReply.getResponseStatus().getStatus())) {
+      buildDischargeStudyResponse(grpcReply.getBillOfLaddingList(), dischargeStudyResponse);
+
+      // Changing commingle details flow again  - commingle data needs to be read from new port wise
+      // commingle table
+      // added as part of showing commingle as a seperate grade. DSS 4936
+      log.info("Checking if commingle cargo details present for DS");
+      DischargeCowRequest.Builder request = DischargeCowRequest.newBuilder();
+      request.setDischargeStudyId(dischargeStudyId);
+      LoadingInformationSynopticalReply reply =
+          dischargeStudyOperationServiceBlockingStub.getCommingleCargoAsSeperateGrade(
+              request.build());
+      if (!SUCCESS.equals(reply.getResponseStatus().getStatus())) {
         throw new GenericServiceException(
-            "Failed to fetch getDischargeStudyByVoyage",
-            loadableCommingleDetailsReply.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(
-                Integer.valueOf(loadableCommingleDetailsReply.getResponseStatus().getCode())));
+            "Failed to fetch commingle details",
+            grpcReply.getResponseStatus().getCode(),
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
       }
-      dischargeStudyResponse.setLoadableQuantityCommingleCargoDetails(
-          new ArrayList<LoadableQuantityCommingleCargoDetails>());
-      loadableCommingleDetailsReply
-          .getLoadablePlanCommingleCargoListList()
-          .forEach(
-              lqcd -> {
-                LoadableQuantityCommingleCargoDetails details =
-                    this.buildCommingleCargoDetails(lqcd);
-                dischargeStudyResponse.getLoadableQuantityCommingleCargoDetails().add(details);
-              });
+      // reduce commingled BL from normal cargoBL
+      if (!reply.getCommingleBLList().isEmpty()) {
+        reduceCommingledCargoBL(reply.getCommingleBLList(), dischargeStudyResponse);
+      }
+      if (!reply.getBillOfLaddingList().isEmpty()) {
+        buildDischargeStudyResponse(reply.getBillOfLaddingList(), dischargeStudyResponse);
+      }
       dischargeStudyResponse.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-      return buildDischargeStudyResponse(grpcReply, dischargeStudyResponse);
+      return dischargeStudyResponse;
 
     } else {
       throw new GenericServiceException(
@@ -170,64 +165,117 @@ public class DischargeStudyService {
     }
   }
 
-  private LoadableQuantityCommingleCargoDetails buildCommingleCargoDetails(
-      LoadablePlanCommingleCargoDetails lqccd) {
-    LoadableQuantityCommingleCargoDetails details = new LoadableQuantityCommingleCargoDetails();
-    details.setId(lqccd.getId());
-    details.setApi(lqccd.getApi());
-    details.setCargo1Abbreviation(lqccd.getCargo1Abbreviation());
-    details.setCargo1Bbls60f(lqccd.getCargo1Bbls60F());
-    details.setCargo1Bblsdbs(lqccd.getCargo1Bblsdbs());
-    details.setCargo1KL(lqccd.getCargo1KL());
-    details.setCargo1LT(lqccd.getCargo1LT());
-    details.setCargo1MT(lqccd.getQuantity1MT());
-    details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
-    details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
-    details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
-    details.setCargo2KL(lqccd.getCargo2KL());
-    details.setCargo2LT(lqccd.getCargo2LT());
-    details.setCargo2MT(lqccd.getQuantity2MT());
-    details.setGrade(lqccd.getGrade());
-    details.setQuantity(lqccd.getQuantity());
-    details.setTankName(lqccd.getTankName());
-    details.setTemp(lqccd.getTemp());
-    details.setTankShortName(lqccd.getTankShortName());
-    // Bug fix 4677
-    details.setCargo1Percentage(lqccd.getCargo1Abbreviation() + "-" + lqccd.getCargo1Percentage());
-    details.setCargo2Percentage(lqccd.getCargo2Abbreviation() + "-" + lqccd.getCargo2Percentage());
-    Optional.ofNullable(lqccd.getCargo1Id()).ifPresent(details::setCargo1Id);
-    Optional.ofNullable(lqccd.getCargo2Id()).ifPresent(details::setCargo2Id);
-    Optional.ofNullable(lqccd.getQuantity1MT())
-        .ifPresent(value -> details.setQuantity1MT(new BigDecimal(value)));
-    Optional.ofNullable(lqccd.getQuantity2MT())
-        .ifPresent(value -> details.setQuantity2MT(new BigDecimal(value)));
-    Optional.ofNullable(lqccd.getQuantity1M3())
-        .ifPresent(value -> details.setQuantity1M3(new BigDecimal(value)));
-    Optional.ofNullable(lqccd.getQuantity2M3())
-        .ifPresent(value -> details.setQuantity2M3(new BigDecimal(value)));
-    Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(details::setCargo1NominationId);
-    Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(details::setCargo2NominationId);
-    return details;
-  }
-
-  private DischargeStudyResponse buildDischargeStudyResponse(
-      LoadingInformationSynopticalReply grpcReply, DischargeStudyResponse dischargeStudyResponse) {
-    ModelMapper modelMapper = new ModelMapper();
-
-    ArrayList<BillOfLadding> billOfLaddingValue = new ArrayList<>();
-    grpcReply
-        .getBillOfLaddingList()
+  /**
+   * Method used to subtract commingled BL from normal cargo BL
+   *
+   * @param commingleBLList
+   * @param dischargeStudyResponse
+   */
+  private void reduceCommingledCargoBL(
+      List<CommingleWithBL> commingleBLList, DischargeStudyResponse dischargeStudyResponse) {
+    dischargeStudyResponse.getBillOfLaddings().stream()
         .forEach(
-            billOfLadding -> {
-              BillOfLadding blfigure = new BillOfLadding();
-              blfigure =
-                  modelMapper.map(billOfLadding, com.cpdss.gateway.domain.BillOfLadding.class);
-              billOfLaddingValue.add(blfigure);
+            item -> {
+              Double commingledBLValue =
+                  commingleBLList.stream()
+                      .filter(com -> item.getCargoId().equals(com.getCargoId()))
+                      .mapToDouble(com -> Double.parseDouble(com.getCargoBLFig()))
+                      .sum();
+              item.setQuantityMt(
+                  new BigDecimal(item.getQuantityMt().doubleValue() - commingledBLValue));
+              // Setting other unit values  to null to avoid inconsistency - UI will convert MT to
+              // respective units
+              item.setQuantityBbls(null);
+              item.setQuantityKl(null);
             });
-    billOfLaddingValue.sort(Comparator.comparing(BillOfLadding::getCargoAbbrevation));
-    dischargeStudyResponse.setBillOfLaddings(billOfLaddingValue);
-    return dischargeStudyResponse;
   }
+
+  private void buildDischargeStudyResponse(
+      List<com.cpdss.common.generated.Common.BillOfLadding> billOfLaddingList,
+      DischargeStudyResponse dischargeStudyResponse) {
+    ModelMapper modelMapper = new ModelMapper();
+    ArrayList<BillOfLadding> billOfLaddingValue = new ArrayList<>();
+    billOfLaddingList.forEach(
+        billOfLadding -> {
+          BillOfLadding blfigure = new BillOfLadding();
+          blfigure = modelMapper.map(billOfLadding, com.cpdss.gateway.domain.BillOfLadding.class);
+          billOfLaddingValue.add(blfigure);
+        });
+
+    if (dischargeStudyResponse.getBillOfLaddings() == null
+        || dischargeStudyResponse.getBillOfLaddings().isEmpty()) {
+      dischargeStudyResponse.setBillOfLaddings(billOfLaddingValue);
+    } else {
+      dischargeStudyResponse.getBillOfLaddings().addAll(billOfLaddingValue);
+    }
+    dischargeStudyResponse
+        .getBillOfLaddings()
+        .sort(Comparator.comparing(BillOfLadding::getCargoAbbrevation));
+  }
+
+  // private LoadableQuantityCommingleCargoDetails buildCommingleCargoDetails(
+  //      LoadablePlanCommingleCargoDetails lqccd) {
+  //    LoadableQuantityCommingleCargoDetails details = new LoadableQuantityCommingleCargoDetails();
+  //    details.setId(lqccd.getId());
+  //    details.setApi(lqccd.getApi());
+  //    details.setCargo1Abbreviation(lqccd.getCargo1Abbreviation());
+  //    details.setCargo1Bbls60f(lqccd.getCargo1Bbls60F());
+  //    details.setCargo1Bblsdbs(lqccd.getCargo1Bblsdbs());
+  //    details.setCargo1KL(lqccd.getCargo1KL());
+  //    details.setCargo1LT(lqccd.getCargo1LT());
+  //    details.setCargo1MT(lqccd.getQuantity1MT());
+  //    details.setCargo2Abbreviation(lqccd.getCargo2Abbreviation());
+  //    details.setCargo2Bbls60f(lqccd.getCargo2Bbls60F());
+  //    details.setCargo2Bblsdbs(lqccd.getCargo2Bblsdbs());
+  //    details.setCargo2KL(lqccd.getCargo2KL());
+  //    details.setCargo2LT(lqccd.getCargo2LT());
+  //    details.setCargo2MT(lqccd.getQuantity2MT());
+  //    details.setGrade(lqccd.getGrade());
+  //    details.setQuantity(lqccd.getQuantity());
+  //    details.setTankName(lqccd.getTankName());
+  //    details.setTemp(lqccd.getTemp());
+  //    details.setTankShortName(lqccd.getTankShortName());
+  //    // Bug fix 4677
+  //    details.setCargo1Percentage(lqccd.getCargo1Abbreviation() + "-" +
+  // lqccd.getCargo1Percentage());
+  //    details.setCargo2Percentage(lqccd.getCargo2Abbreviation() + "-" +
+  // lqccd.getCargo2Percentage());
+  //    Optional.ofNullable(lqccd.getCargo1Id()).ifPresent(details::setCargo1Id);
+  //    Optional.ofNullable(lqccd.getCargo2Id()).ifPresent(details::setCargo2Id);
+  //    Optional.ofNullable(lqccd.getQuantity1MT())
+  //        .ifPresent(value -> details.setQuantity1MT(new BigDecimal(value)));
+  //    Optional.ofNullable(lqccd.getQuantity2MT())
+  //        .ifPresent(value -> details.setQuantity2MT(new BigDecimal(value)));
+  //    Optional.ofNullable(lqccd.getQuantity1M3())
+  //        .ifPresent(value -> details.setQuantity1M3(new BigDecimal(value)));
+  //    Optional.ofNullable(lqccd.getQuantity2M3())
+  //        .ifPresent(value -> details.setQuantity2M3(new BigDecimal(value)));
+  //
+  // Optional.ofNullable(lqccd.getCargo1NominationId()).ifPresent(details::setCargo1NominationId);
+  //
+  // Optional.ofNullable(lqccd.getCargo2NominationId()).ifPresent(details::setCargo2NominationId);
+  //    return details;
+  //  }
+
+  //  private DischargeStudyResponse buildDischargeStudyResponse(
+  //      LoadingInformationSynopticalReply grpcReply, DischargeStudyResponse
+  // dischargeStudyResponse) {
+  //    ModelMapper modelMapper = new ModelMapper();
+  //
+  //    ArrayList<BillOfLadding> billOfLaddingValue = new ArrayList<>();
+  //    grpcReply
+  //        .getBillOfLaddingList()
+  //        .forEach(
+  //            billOfLadding -> {
+  //              BillOfLadding blfigure = new BillOfLadding();
+  //              blfigure =
+  //                  modelMapper.map(billOfLadding, com.cpdss.gateway.domain.BillOfLadding.class);
+  //              billOfLaddingValue.add(blfigure);
+  //            });
+  //    billOfLaddingValue.sort(Comparator.comparing(BillOfLadding::getCargoAbbrevation));
+  //    dischargeStudyResponse.setBillOfLaddings(billOfLaddingValue);
+  //    return dischargeStudyResponse;
+  //  }
 
   public PortRotationResponse getDischargeStudyPortDataByVoyage(
       Long vesselId,
@@ -422,6 +470,9 @@ public class DischargeStudyService {
   public DischargeStudyCargoResponse getDischargeStudyCargoByVoyage(
       Long vesselId, Long voyageId, Long dischargeStudyId, String correlationId)
       throws GenericServiceException {
+    log.info(
+        "Inside getDischargeStudyCargoByVoyage gateway service with correlationId : "
+            + correlationId);
     DischargeStudyCargoResponse response = new DischargeStudyCargoResponse();
 
     response.setDischargeStudyId(dischargeStudyId);
@@ -444,9 +495,7 @@ public class DischargeStudyService {
             : new BigDecimal(dischargeStudyCowDetails.getPercentage()));
     response.setTanks(dischargeStudyCowDetails.getTanksList());
     response.setPortList(new ArrayList<>());
-    log.info(
-        "Inside getDischargeStudyCargoByVoyage gateway service with correlationId : "
-            + correlationId);
+
     LoadableStudy.PortRotationRequest portRotationRequest =
         LoadableStudy.PortRotationRequest.newBuilder().setLoadableStudyId(dischargeStudyId).build();
     LoadableStudy.PortRotationReply portRotationReply =
@@ -596,6 +645,7 @@ public class DischargeStudyService {
                           && !cargoNominationDetail.getMaxQuantity().isBlank()
                       ? new BigDecimal(cargoNominationDetail.getMaxQuantity())
                       : new BigDecimal(0));
+              cargoNomination.setIsCommingled(cargoNominationDetail.getIsCommingled());
               cargoNominations.add(cargoNomination);
             });
     //    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));

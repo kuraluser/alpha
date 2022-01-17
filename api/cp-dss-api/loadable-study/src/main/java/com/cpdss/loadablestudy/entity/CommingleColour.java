@@ -25,4 +25,7 @@ public class CommingleColour extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Column(name = "cargo_xid")
+  private Long commingleCargoId;
 }

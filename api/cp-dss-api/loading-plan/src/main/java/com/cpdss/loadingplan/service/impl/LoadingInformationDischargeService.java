@@ -7,6 +7,7 @@ import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.ResponseStatus;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.loadingplan.entity.BillOfLadding;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
@@ -37,14 +38,10 @@ public class LoadingInformationDischargeService {
    * @param request
    * @param builder void
    */
-  public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply
-          .Builder
-      getLoadigInformationByVoyage(
-          LoadingInformationSynopticalRequest request,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                  .LoadingInformationSynopticalReply.Builder
-              builder)
-          throws Exception {
+  public LoadingInformationSynopticalReply.Builder getLoadigInformationByVoyage(
+      LoadingInformationSynopticalRequest request,
+      LoadingInformationSynopticalReply.Builder builder)
+      throws Exception {
     List<BillOfLadding> billOfLaddings =
         billOfLaddingRepository.findByLoadablePatternXIdAndIsActive(
             request.getLoadablePatternId(), true);
@@ -124,10 +121,7 @@ public class LoadingInformationDischargeService {
    * @param builder void
    */
   private void buildBillOfLading(
-      List<BillOfLadding> billOfLaddings,
-      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply
-              .Builder
-          builder) {
+      List<BillOfLadding> billOfLaddings, LoadingInformationSynopticalReply.Builder builder) {
     billOfLaddings.forEach(
         billOfLadding -> {
           com.cpdss.common.generated.Common.BillOfLadding.Builder bolBuilder =

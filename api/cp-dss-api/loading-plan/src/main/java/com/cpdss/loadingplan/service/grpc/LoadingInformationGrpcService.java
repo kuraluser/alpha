@@ -10,6 +10,7 @@ import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DownloadTideDetailRequest;
@@ -21,7 +22,6 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoSave
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoStatusRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UploadTideDetailStatusReply;

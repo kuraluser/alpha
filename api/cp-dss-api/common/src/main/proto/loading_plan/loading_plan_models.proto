@@ -23,10 +23,6 @@ message LoadingInformationSynopticalRequest {
   int64 loadablePatternId = 2;
 }
 
-message LoadingInformationSynopticalReply{
-  ResponseStatus responseStatus = 1;
-  repeated BillOfLadding billOfLadding = 2;
-}
 
 // Plane response, can edit
 message LoadingInformation{
@@ -817,6 +813,7 @@ message BillOfLaddingRequest{
 }
 message MaxQuantityRequest{
   repeated int64 cargoNominationId = 1;
+  int64 lastLoadingPortId = 2;
 }
 
 message MaxQuantityResponse{
@@ -829,6 +826,7 @@ message MaxQuantityDetails{
     string maxQuantity = 2;
     string api = 3;
     string temp = 4;
+    string ratio = 5;
 }
 
 message LoadingInfoLoadicatorDataRequest {
@@ -1096,4 +1094,8 @@ message LoadablePlanCommingleCargoDetails {
      string quantity2M3 = 39;
      int64 cargo1Id = 40;
      int64 cargo2Id = 41;
+     LoadingInformationDetail loadingInformation = 42;
+     int32 arrivalDeparcher = 43;
+     int32 actualPlanned = 44;
+     string colorCode = 45;
 }

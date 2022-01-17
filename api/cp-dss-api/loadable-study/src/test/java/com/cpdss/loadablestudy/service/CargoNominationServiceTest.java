@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
@@ -53,6 +54,12 @@ public class CargoNominationServiceTest {
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private CargoInfoServiceGrpc.CargoInfoServiceBlockingStub cargoInfoGrpcService;
   @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanGrpcService;
+  @MockBean private CommingleColourRepository commingleColourRepository;
+
+  @MockBean
+  private CommingleCargoToDischargePortwiseDetailsRepository
+      commingleCargoToDischargePortwiseDetailsRepository;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 
@@ -585,11 +592,11 @@ public class CargoNominationServiceTest {
     CargoNominationService spyService = spy(CargoNominationService.class);
     List<com.cpdss.common.generated.Common.BillOfLadding> list = new ArrayList<>();
     com.cpdss.common.generated.Common.BillOfLadding billOfLadding =
-        Common.BillOfLadding.newBuilder().setQuantityKl("1").build();
+        Common.BillOfLadding.newBuilder().setQuantityMt("1").build();
     list.add(billOfLadding);
     if (i == 1) {
-      LoadingPlanModels.LoadingInformationSynopticalReply reply =
-          LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+      LoadingInformationSynopticalReply reply =
+          LoadingInformationSynopticalReply.newBuilder()
               .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
               .addAllBillOfLadding(list)
               .build();
@@ -599,12 +606,10 @@ public class CargoNominationServiceTest {
       ReflectionTestUtils.setField(spyService, "loadingPlanGrpcService", loadingPlanGrpcService);
 
       var result = spyService.getMaxQuantityFromBillOfLadding(1l);
-      assertFalse(result.isEmpty());
+      assertFalse(result == null);
     } else {
-      LoadingPlanModels.LoadingInformationSynopticalReply reply =
-          LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
-              .addAllBillOfLadding(list)
-              .build();
+      LoadingInformationSynopticalReply reply =
+          LoadingInformationSynopticalReply.newBuilder().addAllBillOfLadding(list).build();
       when(loadingPlanGrpcService.getBillOfLaddingDetails(
               any(LoadingPlanModels.BillOfLaddingRequest.class)))
           .thenReturn(reply);
@@ -620,11 +625,11 @@ public class CargoNominationServiceTest {
     CargoNominationService spyService = spy(CargoNominationService.class);
     List<com.cpdss.common.generated.Common.BillOfLadding> list = new ArrayList<>();
     com.cpdss.common.generated.Common.BillOfLadding billOfLadding =
-        Common.BillOfLadding.newBuilder().setQuantityKl("1").build();
+        Common.BillOfLadding.newBuilder().setQuantityMt("1").build();
     list.add(billOfLadding);
-    list.add(Common.BillOfLadding.newBuilder().setQuantityKl("2").build());
-    LoadingPlanModels.LoadingInformationSynopticalReply reply =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
+    list.add(Common.BillOfLadding.newBuilder().setQuantityMt("2").build());
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
             .addAllBillOfLadding(list)
             .build();
@@ -634,7 +639,7 @@ public class CargoNominationServiceTest {
     ReflectionTestUtils.setField(spyService, "loadingPlanGrpcService", loadingPlanGrpcService);
 
     var result = spyService.getMaxQuantityFromBillOfLadding(1l);
-    assertEquals("3", result);
+    assertEquals(3.0, result);
   }
 
   @ParameterizedTest

@@ -12,6 +12,7 @@ import com.cpdss.common.generated.Common.PLANNING_TYPE;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.discharge_plan.PostDischargeStageTime;
@@ -947,12 +948,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public LoadingPlanModels.LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(
-      Long patternId) throws GenericServiceException {
+  public LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(Long patternId)
+      throws GenericServiceException {
     LoadingPlanModels.LoadingInformationSynopticalRequest.Builder requestBuilder =
         LoadingPlanModels.LoadingInformationSynopticalRequest.newBuilder();
     requestBuilder.setLoadablePatternId(patternId);
-    LoadingPlanModels.LoadingInformationSynopticalReply grpcReply =
+    LoadingInformationSynopticalReply grpcReply =
         loadingInfoServiceBlockingStub.getLoadigInformationByVoyage(requestBuilder.build());
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(

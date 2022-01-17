@@ -10,11 +10,11 @@ import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.CargoInfoServiceGrpc;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.BillOfLaddingRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse;
@@ -25,6 +25,8 @@ import com.cpdss.loadablestudy.entity.ApiTempHistory;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.CargoNominationValveSegregation;
+import com.cpdss.loadablestudy.entity.CommingleCargoToDischargePortwiseDetails;
+import com.cpdss.loadablestudy.entity.CommingleColour;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.repository.ApiTempHistoryRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationOperationDetailsRepository;
@@ -32,6 +34,8 @@ import com.cpdss.loadablestudy.repository.CargoNominationRepository;
 import com.cpdss.loadablestudy.repository.CargoNominationValveSegregationRepository;
 import com.cpdss.loadablestudy.repository.CargoOperationRepository;
 import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
+import com.cpdss.loadablestudy.repository.CommingleCargoToDischargePortwiseDetailsRepository;
+import com.cpdss.loadablestudy.repository.CommingleColourRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
@@ -89,6 +93,12 @@ public class CargoNominationService {
   @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
 
   @Autowired private CargoNominationValveSegregationRepository valveSegregationRepository;
+
+  @Autowired private CommingleColourRepository commingleColourRepository;
+
+  @Autowired
+  private CommingleCargoToDischargePortwiseDetailsRepository
+      commingleCargoToDischargePortwiseDetailsRepository;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -162,6 +172,181 @@ public class CargoNominationService {
     return savedCargos;
   }
 
+  /**
+   * Save commingle as a separate cargo put entry in cargo nomination and cargo nomination operation
+   * tables
+   *
+   * @param dischargeStudyId
+   * @param loadableStudyId
+   * @param portId
+   * @param operationId
+   * @param commingleCargoList
+   * @param savedCargos
+   * @throws GenericServiceException
+   */
+  public List<CargoNomination> saveDsichargeStudyCommingleAsCargoNominations(
+      Long dischargeStudyId,
+      Long loadableStudyId,
+      Long portId,
+      Long operationId,
+      List<CommingleCargoToDischargePortwiseDetails> commingleCargoList,
+      List<CargoNomination> savedCargos,
+      List<MaxQuantityDetails> quantityRatioList)
+      throws GenericServiceException {
+    log.info("Adding commingle cargos as seperate grade for DS " + dischargeStudyId);
+
+    List<CargoNomination> dischargeStudyCargoList = new ArrayList<>();
+    commingleCargoList.stream()
+        .forEach(
+            cargo -> {
+              CargoNomination dischargeStudyCargo = new CargoNomination();
+              dischargeStudyCargo.setAbbreviation(cargo.getGrade());
+              dischargeStudyCargo.setApi(new BigDecimal(cargo.getApi()));
+              Optional<CommingleColour> commingleDetails =
+                  commingleColourRepository.findByAbbreviationAndIsActive(cargo.getGrade(), true);
+              if (commingleDetails.isPresent()) {
+                dischargeStudyCargo.setCargoXId(commingleDetails.get().getCommingleCargoId());
+                dischargeStudyCargo.setColor(commingleDetails.get().getCommingleColour());
+              }
+              dischargeStudyCargo.setIsActive(true);
+              dischargeStudyCargo.setLoadableStudyXId(dischargeStudyId);
+              //			dischargeStudyCargo.setMaxTolerance(cargo.getMaxTolerance());
+              //			dischargeStudyCargo.setMinTolerance(cargo.getMinTolerance());
+              dischargeStudyCargo.setPriority(cargo.getPriority().longValue());
+              dischargeStudyCargo.setQuantity(cargo.getQuantity());
+              //			dischargeStudyCargo.setSegregationXId(cargo.getSegregationXId());
+              dischargeStudyCargo.setTemperature(new BigDecimal(cargo.getTemperature()));
+              dischargeStudyCargo.setVersion(cargo.getVersion());
+              dischargeStudyCargo.setIsCommingled(true);
+              //			dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
+
+              // setting operation details against cargo nomination
+              CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
+              portDetail.setPortId(portId);
+              portDetail.setOperationId(operationId);
+              portDetail.setIsActive(true);
+              portDetail.setCargoNomination(dischargeStudyCargo);
+              if (cargo.getQuantity() != null) {
+                calculateBLfigForCommingle(cargo, quantityRatioList, portId, savedCargos);
+                portDetail.setQuantity(
+                    new BigDecimal(cargo.getCargo1BLfigure() + cargo.getCargo2BLfigure()));
+                portDetail.setMode(2L);
+                // keeping blfigure in comming to discharge tabel as well.
+                cargo.setBlfigure(portDetail.getQuantity());
+                commingleCargoToDischargePortwiseDetailsRepository.save(cargo);
+              } else {
+                portDetail.setQuantity(new BigDecimal(0));
+                portDetail.setMode(1L);
+              }
+              if (dischargeStudyCargoList.isEmpty()) {
+                portDetail.setSequenceNo(Long.valueOf(savedCargos.size() + 1));
+              } else {
+                portDetail.setSequenceNo(
+                    Long.valueOf(dischargeStudyCargoList.size() + savedCargos.size() + 1));
+              }
+              portDetail.setEmptyMaxNoOfTanks(false);
+              dischargeStudyCargo.setCargoNominationPortDetails(
+                  new HashSet<CargoNominationPortDetails>(Arrays.asList(portDetail)));
+              dischargeStudyCargoList.add(dischargeStudyCargo);
+            });
+    List<CargoNomination> savedCommingleCargos =
+        cargoNominationRepository.saveAll(dischargeStudyCargoList);
+    log.info(
+        "ds save API saved DS commingle cargos :: "
+            + savedCommingleCargos.stream()
+                .map(CargoNomination::getId)
+                .collect(Collectors.toList()));
+    return savedCommingleCargos;
+  }
+
+  @Transactional
+  private void calculateBLfigForCommingle(
+      CommingleCargoToDischargePortwiseDetails cargo,
+      List<MaxQuantityDetails> quantityRatioList,
+      Long portId,
+      List<CargoNomination> savedCargos) {
+    Double cargo1Bl = 0.0;
+    Double cargo2Bl = 0.0;
+    cargo.setCargo1BLfigure(cargo1Bl);
+    cargo.setCargo2BLfigure(cargo2Bl);
+    Optional<MaxQuantityDetails> cargo1Opt =
+        quantityRatioList.stream()
+            .filter(
+                item -> cargo.getCargoNomination1XId().equals((Long) item.getCargoNominationId()))
+            .findAny();
+    if (cargo1Opt.isPresent() && cargo1Opt.get().getRatio() != null) {
+      cargo1Bl =
+          ((cargo.getQuantity().doubleValue() * cargo.getCargo1Percentage().doubleValue()) / 100)
+              * Double.parseDouble(cargo1Opt.get().getRatio());
+      cargo.setCargo1BLfigure(cargo1Bl);
+      Optional<CargoNomination> cargoNominationOpt =
+          savedCargos.stream()
+              .filter(
+                  item ->
+                      item.getCargoXId().equals(cargo.getCargo1XId())
+                          && item.getLsCargoNominationId().equals(cargo.getCargoNomination1XId()))
+              .findFirst();
+      if (cargoNominationOpt.isPresent()) {
+        Optional<CargoNominationPortDetails> cargoOperationOpt =
+            cargoNominationOpt.get().getCargoNominationPortDetails().stream()
+                .filter(item -> item.getPortId().equals(portId))
+                .findFirst();
+        if (cargoOperationOpt.isPresent()) {
+          if (cargoOperationOpt.get().getQuantity().doubleValue() > cargo1Bl) {
+            cargoOperationOpt
+                .get()
+                .setQuantity(
+                    new BigDecimal(cargoOperationOpt.get().getQuantity().doubleValue() - cargo1Bl));
+          } else {
+            cargoOperationOpt
+                .get()
+                .setQuantity(
+                    new BigDecimal(cargo1Bl - cargoOperationOpt.get().getQuantity().doubleValue()));
+          }
+          cargoNominationOperationDetailsRepository.save(cargoOperationOpt.get());
+        }
+      }
+    }
+    Optional<MaxQuantityDetails> cargo2Opt =
+        quantityRatioList.stream()
+            .filter(
+                item -> cargo.getCargoNomination2XId().equals((Long) item.getCargoNominationId()))
+            .findAny();
+    if (cargo2Opt.isPresent() && cargo2Opt.get().getRatio() != null) {
+      cargo2Bl =
+          ((cargo.getQuantity().doubleValue() * cargo.getCargo2Percentage().doubleValue()) / 100)
+              * Double.parseDouble(cargo2Opt.get().getRatio());
+      cargo.setCargo2BLfigure(cargo2Bl);
+      Optional<CargoNomination> cargoNominationOpt =
+          savedCargos.stream()
+              .filter(
+                  item ->
+                      item.getCargoXId().equals(cargo.getCargo2XId())
+                          && item.getLsCargoNominationId().equals(cargo.getCargoNomination2XId()))
+              .findFirst();
+      if (cargoNominationOpt.isPresent()) {
+        Optional<CargoNominationPortDetails> cargoOperationOpt =
+            cargoNominationOpt.get().getCargoNominationPortDetails().stream()
+                .filter(item -> item.getPortId().equals(portId))
+                .findFirst();
+        if (cargoOperationOpt.isPresent()) {
+          if (cargoOperationOpt.get().getQuantity().doubleValue() > cargo2Bl) {
+            cargoOperationOpt
+                .get()
+                .setQuantity(
+                    new BigDecimal(cargoOperationOpt.get().getQuantity().doubleValue() - cargo2Bl));
+          } else {
+            cargoOperationOpt
+                .get()
+                .setQuantity(
+                    new BigDecimal(cargo2Bl - cargoOperationOpt.get().getQuantity().doubleValue()));
+          }
+          cargoNominationOperationDetailsRepository.save(cargoOperationOpt.get());
+        }
+      }
+    }
+  }
+
   public CargoNomination createDsCargoNomination(
       Long dischargeStudyId, CargoNomination cargo, Long portId, Long operationId, int seqNo) {
     CargoNomination dischargeStudyCargo = new CargoNomination();
@@ -179,6 +364,7 @@ public class CargoNominationService {
     dischargeStudyCargo.setTemperature(cargo.getTemperature());
     dischargeStudyCargo.setVersion(cargo.getVersion());
     dischargeStudyCargo.setLsCargoNominationId(cargo.getId());
+    dischargeStudyCargo.setIsCommingled(false);
     //    dischargeStudyCargo.setSequenceNo(Long.valueOf(seqNo));
     //    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
     dischargeStudyCargo.setCargoNominationPortDetails(
@@ -212,10 +398,6 @@ public class CargoNominationService {
               cargoMaxQuantityList.stream()
                   .filter(quantity -> item.getId().equals(quantity.getCargoNominationId()))
                   .findFirst();
-          if (itemQuantity.isPresent()) {
-            String api = itemQuantity.get().getApi();
-            item.setApi(new BigDecimal(itemQuantity.get().getApi()));
-          }
           item.setQuantity(
               itemQuantity.isPresent()
                   ? new BigDecimal(itemQuantity.get().getMaxQuantity())
@@ -525,11 +707,11 @@ public class CargoNominationService {
       loadableStudyPortRotationService.setPortOrdering(loadableStudy);
     }
 
-    //    AtomicLong newPortOrder = new AtomicLong(0);
-    //    loadableStudyPortRotations.forEach(
-    //        portRotation -> {
-    //          portRotation.setPortOrder(newPortOrder.incrementAndGet());
-    //        });
+    // AtomicLong newPortOrder = new AtomicLong(0);
+    // loadableStudyPortRotations.forEach(
+    // portRotation -> {
+    // portRotation.setPortOrder(newPortOrder.incrementAndGet());
+    // });
     // this.loadableStudyPortRotationRepository.saveAll(loadableStudyPortRotations);
   }
 
@@ -623,10 +805,54 @@ public class CargoNominationService {
     List<ApiTempHistory> apiTempHistories =
         apiTempHistoryRepository.findByOrderByCreatedDateTimeDesc();
 
+    //    // get commingle list and append to cargoNominationList - to show commingle as
+    //    // seperate cargo DSS-4936
+    //    List<CommingleCargoToDischargePortwiseDetails> commingleCargoList =
+    //
+    // commingleCargoToDischargePortwiseDetailsRepository.findByDischargeStudyIdAndIsActiveTrue(
+    //            request.getLoadableStudyId());
+    //    if (!commingleCargoList.isEmpty()) {
+    //      this.appendCommingleCargoDetailsWithCargoList(commingleCargoList, cargoNominationList);
+    //    }
+
     buildCargoNominationReply(cargoNominationList, apiTempHistories, replyBuilder);
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS));
     return replyBuilder;
   }
+
+  //  /**
+  //   * Method used to append commingle cargo details to cargo nomination list
+  //   *
+  //   * @param commingleCargoList
+  //   * @param cargoNominationList
+  //   */
+  //  private void appendCommingleCargoDetailsWithCargoList(
+  //      List<CommingleCargoToDischargePortwiseDetails> commingleCargoList,
+  //      List<CargoNomination> cargoNominationList) {
+  //    commingleCargoList.stream()
+  //        .forEach(
+  //            item -> {
+  //              CargoNomination cargoObj = new CargoNomination();
+  //              Optional.ofNullable(item.getId()).ifPresent(cargoObj::setId);
+  //              ofNullable(item.getDischargeStudyId()).ifPresent(cargoObj::setLoadableStudyXId);
+  //              ofNullable(item.getPriority()).ifPresent(i ->
+  // cargoObj.setPriority(i.longValue()));
+  //              ofNullable(item.getColorCode()).ifPresent(cargoObj::setColor);
+  //              // ofNullable(item.getCargo1XId()).ifPresent(cargoObj::setCargoId);
+  //              ofNullable(item.getGrade()).ifPresent(cargoObj::setAbbreviation);
+  //              Optional.ofNullable(item.getApi())
+  //                  .ifPresent(val -> cargoObj.setApi(new BigDecimal(val)));
+  //              Optional.ofNullable(item.getTemperature())
+  //                  .ifPresent(val -> cargoObj.setTemperature(new BigDecimal(val)));
+  //              // Optional.ofNullable(item.getSequenceNo())
+  //              // .ifPresent(val -> cargoObj.setSequenceNo(val));
+  //              // Optional.ofNullable(item.getEmptyMaxNoOfTanks())
+  //              // .ifPresent(val -> cargoObj.setEmptyMaxNoOfTanks(val));
+  //              ofNullable(item.getQuantity())
+  //                  .ifPresent(quantity -> cargoObj.setQuantity(new BigDecimal(quantity)));
+  //              cargoNominationList.add(cargoObj);
+  //            });
+  //  }
 
   private void buildCargoNominationReply(
       List<CargoNomination> cargoNominationList,
@@ -649,6 +875,9 @@ public class CargoNominationService {
                 .ifPresent(val -> builder.setApi(String.valueOf(val)));
             Optional.ofNullable(cargoNomination.getTemperature())
                 .ifPresent(val -> builder.setTemperature(String.valueOf(val)));
+            Optional.ofNullable(cargoNomination.getIsCommingled())
+                .ifPresent(val -> builder.setIsCommingled(val));
+            // System.out.println(cargoNomination.getCargoNominationPortDetails());
             //            Optional.ofNullable(cargoNomination.getSequenceNo())
             //                .ifPresent(val -> builder.setSequenceNo(val));
             //            Optional.ofNullable(cargoNomination.getEmptyMaxNoOfTanks())
@@ -663,6 +892,7 @@ public class CargoNominationService {
                   .filter(operation -> operation.getIsActive())
                   .forEach(
                       loadingPort -> {
+                        // System.out.println(loadingPort.getPortId());
                         //                        System.out.println(loadingPort.getPortId());
                         if (loadingPort.getIsActive()) {
                           LoadableStudy.LoadingPortDetail.Builder loadingPortDetailBuilder =
@@ -717,8 +947,54 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getMinTolerance())
                 .ifPresent(minTolerance -> builder.setMinTolerance(String.valueOf(minTolerance)));
             ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
-            ofNullable(getMaxQuantityFromBillOfLadding(cargoNomination.getLsCargoNominationId()))
-                .ifPresent(builder::setMaxQuantity);
+            //        	getting max quantity of commingled cargo from cargo to be discharge
+            // table with BL fig calculated at time of DS creation
+            List<CommingleCargoToDischargePortwiseDetails> commingeToDischarge =
+                commingleCargoToDischargePortwiseDetailsRepository
+                    .findByDischargeStudyIdAndIsActiveTrue(cargoNomination.getLoadableStudyXId());
+            if (cargoNomination.getIsCommingled()) {
+              if (!commingeToDischarge.isEmpty()) {
+                Optional<CommingleCargoToDischargePortwiseDetails> opt =
+                    commingeToDischarge.stream()
+                        .filter(item -> item.getGrade().equals(cargoNomination.getAbbreviation()))
+                        .findFirst();
+                if (opt.isPresent()) {
+                  builder.setMaxQuantity(String.valueOf(opt.get().getBlfigure()));
+                }
+              }
+            } else {
+              // Getting toatal BL of cargo from Loading plan
+              Double cargoBL =
+                  getMaxQuantityFromBillOfLadding(cargoNomination.getLsCargoNominationId());
+              // Subtract commingle BL form normal cargo BL
+              if (!commingeToDischarge.isEmpty()) {
+                Double comBL = 0.0;
+                List<CommingleCargoToDischargePortwiseDetails> cargoList =
+                    commingeToDischarge.stream()
+                        .filter(
+                            item ->
+                                item.getCargoNomination1XId()
+                                    .equals(cargoNomination.getLsCargoNominationId()))
+                        .collect(Collectors.toList());
+                if (!cargoList.isEmpty()) {
+                  comBL = cargoList.stream().mapToDouble(item -> item.getCargo1BLfigure()).sum();
+
+                } else {
+                  cargoList =
+                      commingeToDischarge.stream()
+                          .filter(
+                              item ->
+                                  item.getCargoNomination2XId()
+                                      .equals(cargoNomination.getLsCargoNominationId()))
+                          .collect(Collectors.toList());
+                  comBL = cargoList.stream().mapToDouble(item -> item.getCargo1BLfigure()).sum();
+                }
+
+                if (cargoBL != null) {
+                  builder.setMaxQuantity(String.valueOf(cargoBL - comBL));
+                }
+              }
+            }
             cargoNominationReplyBuilder.addCargoNominations(builder);
 
             if (!CollectionUtils.isEmpty(apiTempHistoriesAll)) {
@@ -755,9 +1031,8 @@ public class CargoNominationService {
   }
 
   // Get max Quantity in a Cargo Nomination
-  public String getMaxQuantityFromBillOfLadding(Long cargoNominationId) {
+  public Double getMaxQuantityFromBillOfLadding(Long cargoNominationId) {
     if (cargoNominationId != null) {
-
       log.info(
           "Getting max quantity of each cargo nomination, from loading plan {}", cargoNominationId);
       BillOfLaddingRequest request =
@@ -767,13 +1042,13 @@ public class CargoNominationService {
       if (SUCCESS.equals(reply.getResponseStatus().getStatus())
           && !CollectionUtils.isEmpty(reply.getBillOfLaddingList())) {
         if (reply.getBillOfLaddingList().size() == 1) {
-          return reply.getBillOfLaddingList().get(0).getQuantityKl();
+          return Double.parseDouble(reply.getBillOfLaddingList().get(0).getQuantityMt());
         } else {
-          return String.valueOf(
-              reply.getBillOfLaddingList().stream()
-                  .map(item -> new BigDecimal(item.getQuantityKl()))
-                  .reduce(BigDecimal::add)
-                  .get());
+          return reply.getBillOfLaddingList().stream()
+              .map(item -> new BigDecimal(item.getQuantityMt()))
+              .reduce(BigDecimal::add)
+              .get()
+              .doubleValue();
         }
       }
     }

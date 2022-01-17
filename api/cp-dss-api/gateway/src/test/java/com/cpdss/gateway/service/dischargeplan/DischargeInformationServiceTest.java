@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doNothing;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
+import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.discharge_plan.CowPlan;
@@ -145,15 +146,13 @@ public class DischargeInformationServiceTest {
   //            .getCargoAbbreviation());
   //  }
 
-  private LoadingPlanModels.LoadingInformationSynopticalReply getLISR() {
+  private LoadingInformationSynopticalReply getLISR() {
     List<Common.BillOfLadding> list = new ArrayList<>();
     Common.BillOfLadding bill =
         Common.BillOfLadding.newBuilder().setCargoAbbrevation("1").setQuantityBbls("1").build();
     list.add(bill);
-    LoadingPlanModels.LoadingInformationSynopticalReply reply =
-        LoadingPlanModels.LoadingInformationSynopticalReply.newBuilder()
-            .addAllBillOfLadding(list)
-            .build();
+    LoadingInformationSynopticalReply reply =
+        LoadingInformationSynopticalReply.newBuilder().addAllBillOfLadding(list).build();
     return reply;
   }
 
