@@ -77,4 +77,6 @@ public interface LoadingInformationService {
       DownloadTideDetailRequest request,
       LoadingPlanModels.DownloadTideDetailStatusReply.Builder builder)
       throws GenericServiceException, IOException;
+
+  public void deleteLoadingInformationOfVessel(Long vesselId, Long voyageId);
 }

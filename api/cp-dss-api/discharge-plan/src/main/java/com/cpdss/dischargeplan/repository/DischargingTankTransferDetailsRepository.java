@@ -15,6 +15,6 @@ public interface DischargingTankTransferDetailsRepository
 
   @Modifying
   @Query(
-      "UPDATE DischargingTankTransferDetails SET isActive = false WHERE dischargingTankTransfer.dischargingSequence = ?1")
+      "UPDATE DischargingTankTransferDetails DTTD SET DTTD.isActive = false WHERE DTTD.dischargingTankTransfer.id IN (SELECT DTT.id FROM DischargingTankTransfer DTT WHERE DTT.dischargingSequence = ?1 AND DTT.isActive = true) AND DTTD.isActive = true")
   void deleteByDischargingSequence(DischargingSequence dischargingSequence);
 }

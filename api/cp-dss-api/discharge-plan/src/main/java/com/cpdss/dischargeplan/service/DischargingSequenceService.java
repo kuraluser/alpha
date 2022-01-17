@@ -311,6 +311,8 @@ public class DischargingSequenceService {
                 .forEach(
                     dischargingTankTransferDetails -> {
                       TankTransferDetail.Builder detailBuilder = TankTransferDetail.newBuilder();
+                      Optional.ofNullable(dischargingTankTransferDetails.getTankXId())
+                          .ifPresent(detailBuilder::setTankId);
                       Optional.ofNullable(dischargingTankTransferDetails.getEndQuantity())
                           .ifPresent(
                               endQuantity -> detailBuilder.setEndQuantity(endQuantity.toString()));

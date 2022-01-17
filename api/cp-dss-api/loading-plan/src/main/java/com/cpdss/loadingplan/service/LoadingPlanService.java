@@ -126,6 +126,11 @@ public class LoadingPlanService {
   public void loadingPlanSynchronization(
       LoadingPlanModels.LoadingPlanSyncRequest request, LoadingPlanSyncReply.Builder builder) {
     try {
+      if (request.getLoadingPlanSyncDetailsCount() > 0) {
+        loadingInformationService.deleteLoadingInformationOfVessel(
+            request.getLoadingPlanSyncDetails(0).getLoadingInformationDetail().getVesselId(),
+            request.getLoadingPlanSyncDetails(0).getLoadingInformationDetail().getVoyageId());
+      }
       for (LoadingPlanModels.LoadingPlanSyncDetails loadingPlanSyncDetails :
           request.getLoadingPlanSyncDetailsList()) {
         LoadingInformation loadingInformation = new LoadingInformation();

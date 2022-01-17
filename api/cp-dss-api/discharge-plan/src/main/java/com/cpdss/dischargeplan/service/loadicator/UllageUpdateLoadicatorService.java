@@ -1050,7 +1050,6 @@ public class UllageUpdateLoadicatorService {
           loadicatorRobDetails.add(robDetail);
         });
     loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
-    dischargingPlanAlgoService.buildDischargeStudy(algoRequest, dischargeInformation);
     algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
   }
 
@@ -1287,7 +1286,6 @@ public class UllageUpdateLoadicatorService {
           loadicatorRobDetails.add(robDetail);
         });
     loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
-    dischargingPlanAlgoService.buildDischargeStudy(algoRequest, dischargeInformation);
     algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
   }
 }

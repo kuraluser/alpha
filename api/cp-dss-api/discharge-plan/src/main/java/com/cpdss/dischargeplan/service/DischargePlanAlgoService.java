@@ -46,7 +46,6 @@ import com.cpdss.dischargeplan.domain.DischargeStages;
 import com.cpdss.dischargeplan.domain.PostDischargeRates;
 import com.cpdss.dischargeplan.domain.ReasonForDelay;
 import com.cpdss.dischargeplan.domain.TrimAllowed;
-import com.cpdss.dischargeplan.domain.algo.UllageEditLoadicatorAlgoRequest;
 import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
 import com.cpdss.dischargeplan.domain.cargo.LoadablePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.cargo.OnBoardQuantity;
@@ -303,18 +302,12 @@ public class DischargePlanAlgoService {
   }
 
   /**
-   * Builds the discharge study input details
+   * Fetches discharge study request JSON from loadable-study MS.
    *
-   * @param algoRequest
    * @param entity
+   * @return
+   * @throws GenericServiceException
    */
-  public void buildDischargeStudy(
-      UllageEditLoadicatorAlgoRequest algoRequest, DischargeInformation entity)
-      throws GenericServiceException {
-    Object dischargeStudy = getDischargeStudy(entity);
-    algoRequest.setDischargeStudy(dischargeStudy);
-  }
-
   private Object getDischargeStudy(DischargeInformation entity) throws GenericServiceException {
     JsonRequest.Builder requestBuilder = JsonRequest.newBuilder();
     requestBuilder.setReferenceId(entity.getDischargingPatternXid());

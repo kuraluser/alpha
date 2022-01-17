@@ -103,9 +103,6 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   @Override
   public LoadingInformation saveLoadingInformationDetail(
       LoadingInformationDetail loadingInformationDetail, LoadingInformation loadingInformation) {
-    deleteLoadingInformationOfVessel(
-        loadingInformationDetail.getVesselId(), loadingInformationDetail.getVoyageId());
-
     Optional.ofNullable(loadingInformationDetail.getLoadablePatternId())
         .ifPresent(loadingInformation::setLoadablePatternXId);
     Optional.ofNullable(loadingInformationDetail.getPortId())
@@ -148,7 +145,8 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return loadingInformationRepository.save(loadingInformation);
   }
 
-  private void deleteLoadingInformationOfVessel(Long vesselId, Long voyageId) {
+  @Override
+  public void deleteLoadingInformationOfVessel(Long vesselId, Long voyageId) {
 
     List<LoadingInformation> loadingInformations =
         loadingInformationRepository.findByVesselXIdAndVoyageIdAndIsActive(

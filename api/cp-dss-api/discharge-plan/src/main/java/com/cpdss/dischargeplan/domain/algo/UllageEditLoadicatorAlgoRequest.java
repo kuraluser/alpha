@@ -16,7 +16,6 @@ public class UllageEditLoadicatorAlgoRequest {
   private Long vesselId;
   private Long portId;
   private Long portRotationId;
-  private Object dischargeStudy;
   private List<LoadicatorStage> stages;
   private DischargingPlanLoadicatorDetails planDetails;
 }

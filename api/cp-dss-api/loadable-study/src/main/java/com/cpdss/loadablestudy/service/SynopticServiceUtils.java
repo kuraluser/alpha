@@ -114,7 +114,7 @@ public class SynopticServiceUtils {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
-  @GrpcClient("loadingInformationService")
+  @GrpcClient("loadingPlanService")
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
       loadingInfoServiceBlockingStub;
 
@@ -822,9 +822,9 @@ public class SynopticServiceUtils {
           cargo2.setCargoAbbreviation(ccN.getCargo2Abbreviation());
 
           cargo1.setActualWeight(
-              ccN.getActualQuantity() != null ? ccN.getActualQuantity().toString() : "");
+              ccN.getCargo1ActualMT() != null ? ccN.getCargo1ActualMT().toString() : "");
           cargo2.setActualWeight(
-              ccN.getActualQuantity() != null ? ccN.getActualQuantity().toString() : "");
+              ccN.getCargo2ActualMT() != null ? ccN.getCargo2ActualMT().toString() : "");
 
           cargo1.setCargo1Mt(
               ccN.getCargo1ActualMT() != null ? ccN.getCargo1ActualMT().toString() : "");
