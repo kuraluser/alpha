@@ -247,7 +247,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
 
     const isStrippingShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballasts?.some(tank => tank.id?.includes('stripping') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
     const isGravityShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballastPumps?.some(tank => tank.id?.includes('gravity') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
-    const isDense = this.stageTickPositions.length > totalDuration || (minStageDuration < 1 && totalDuration < 24) || isStrippingShortDuration || isGravityShortDuration;
+    const isDense = this.stageTickPositions.length > totalDuration || (minStageDuration < 1 && (totalDuration < 24 || totalDuration / this.stageTickPositions.length < 2)) || isStrippingShortDuration || isGravityShortDuration;
 
     let maxXAxisValue = 0;
 
@@ -261,7 +261,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         break;
 
       case totalDuration >= 24 && isDense:
-        maxXAxisValue = 12;
+        maxXAxisValue = 12 - (2 * Math.ceil(totalDuration / this.stageTickPositions.length / 2));
         break;
 
       case totalDuration >= 24 && !isDense:
@@ -2123,12 +2123,14 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           }
           if (distanceLeft < 36 && distanceRight < 36) {
             attr['textLength'] = dataLabelFixedWidth / 2;
-          } else if (distanceLeft < 36 && (!distanceRight || distanceRight > 36)) {
+          } else if (distanceLeft < 36 && distanceRight > 36) {
             attr['align'] = 'left';
           } else if ((!distanceLeft || distanceLeft > 36) && distanceRight < 36) {
             attr['align'] = 'right';
           } else if (distanceLeft > 36 && !distanceRight) {
             attr['align'] = 'right';
+          } else if (distanceLeft < 36 && !distanceRight) {
+            attr['align'] = 'center';
           }
           if (visibleTickPositions?.some(tickPosition => category === tickPosition)) {
             renderer.text(dataLabel, x, y, false).attr(attr).css({

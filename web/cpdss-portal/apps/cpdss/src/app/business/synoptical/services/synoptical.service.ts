@@ -112,8 +112,8 @@ export class SynopticalService {
         this.loadableOrDischargeStudyId = dischargeStudy.id;
       } else {
         this.dischargeStudyList = result.dischargeStudies;
-        if (this.route.snapshot.params?.loadableStudyId) {
-          this.loadableOrDischargeStudyId = Number(this.route.snapshot.params.loadableStudyId);
+        if (this.route?.snapshot?.children[0]?.params?.loadableStudyId) {
+          this.loadableOrDischargeStudyId = Number(this.route?.snapshot?.children[0]?.params?.loadableStudyId);
         } else {
           this.loadableOrDischargeStudyId = this.dischargeStudyList[0].id;
         }
@@ -134,7 +134,7 @@ export class SynopticalService {
         this.getLoadablePatterns()
       } else {
         this.loadableStudyList = result.loadableStudies;
-        this.loadableOrDischargeStudyId = this.route.snapshot.params?.loadableStudyId ? Number(this.route.snapshot.params?.loadableStudyId) : this.loadableStudyList[0]?.id;
+        this.loadableOrDischargeStudyId = this.route?.snapshot?.children[0]?.params?.loadableStudyId ? Number(this.route?.snapshot?.children[0]?.params?.loadableStudyId) : this.loadableStudyList[0]?.id;
         if (this.selectedLoadableStudy) {
           this.loadableOrDischargeStudyId = this.selectedLoadableStudy?.id;
         } else if (this.loadableOrDischargeStudyId) {
@@ -188,7 +188,7 @@ export class SynopticalService {
   }
 
   /**
-  * Method to edit and cancel 
+  * Method to edit and cancel
   */
   onEditOrCancel() {
     if (this.editMode) {

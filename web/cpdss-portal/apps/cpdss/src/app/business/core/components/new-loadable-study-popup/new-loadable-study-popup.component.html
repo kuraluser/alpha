@@ -28,12 +28,12 @@
                           placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
                           <ng-template let-loadableStudy pTemplate="selectedItem">
                             <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status" tooltipPosition="right">
-                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}}"></i></span>
+                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}} pull-right"></i></span>
                           </ng-template>
                           <ng-template let-loadableStudy pTemplate="item">
                             <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status"
                               tooltipPosition="right">
-                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}}"></i></span>
+                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}} pull-right"></i></span>
                           </ng-template>
                         </p-dropdown>
                       </div>
