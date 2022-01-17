@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.CargoInfo;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -91,9 +93,11 @@ class VesselInfoServiceTest {
   @Mock private VesselParticularService vesselParticularService;
   @Mock CrewService crewService;
   @Mock CrewRankRepository crewRankRepository;
+  @Mock CrewDetailsRepository crewDetailsRepository;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
+  private static final String FAILURE = "FAILURE";
   private static final Long TEST_ID = 1L;
 
   @Test
@@ -1976,5 +1980,93 @@ class VesselInfoServiceTest {
     Assert.assertEquals(1, replies.size());
     assertNull(responseObserver.getError());
     Assertions.assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"id", "crewName", "rankName"})
+  void testGetAllCrewDetails() {
+    VesselInfo.VesselsInfoRequest request =
+        VesselInfo.VesselsInfoRequest.newBuilder()
+            .setPageNo(1)
+            .setPageSize(1)
+            .setOrderBy("ASC")
+            .setSortBy("ASC")
+            .build();
+    StreamRecorder<VesselInfo.CrewDetailedReply> responseObserver = StreamRecorder.create();
+    Page<CrewDetails> crewPage = new PageImpl<>(getCrewList());
+
+    vesselInfoService.getAllCrewDetails(request, responseObserver);
+    List<VesselInfo.CrewDetailedReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    Assert.assertNull(responseObserver.getError());
+    Assert.assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  private List<CrewDetails> getCrewList() {
+    List<CrewDetails> crewDetailsList = new ArrayList<>();
+    CrewDetails crewDetails = new CrewDetails();
+    crewDetails.setId(1L);
+    crewDetails.setCrewName("Test");
+    crewDetailsList.add(crewDetails);
+    return crewDetailsList;
+  }
+
+  @Test
+  void testGetAllCrewDetailsWithException() {
+    VesselInfo.VesselsInfoRequest request =
+        VesselInfo.VesselsInfoRequest.newBuilder()
+            .addAllParam(
+                Arrays.asList(CargoInfo.Param.newBuilder().setKey("id").setValue("1").build()))
+            .setPageNo(1)
+            .setPageSize(1)
+            .setOrderBy("asc")
+            .setSortBy("asc")
+            .build();
+    StreamRecorder<VesselInfo.CrewDetailedReply> responseObserver = StreamRecorder.create();
+    com.cpdss.common.generated.VesselInfo.CrewDetailedReply.Builder crewDetailReply =
+        com.cpdss.common.generated.VesselInfo.CrewDetailedReply.newBuilder();
+    doThrow(new RuntimeException("1"))
+        .when(crewService)
+        .getAllCrewDetails(crewDetailReply, request);
+
+    vesselInfoService.getAllCrewDetails(request, responseObserver);
+    List<VesselInfo.CrewDetailedReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    Assert.assertNull(responseObserver.getError());
+    Assert.assertEquals(FAILED, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveCrewDetails() {
+    com.cpdss.common.generated.VesselInfo.CrewDetailed request =
+        VesselInfo.CrewDetailed.newBuilder().setId(0).setCrewName("1").setCrewRankId(1).build();
+    StreamRecorder<VesselInfo.CrewDetailsReply> responseObserver = StreamRecorder.create();
+
+    vesselInfoService.saveCrewDetails(request, responseObserver);
+    List<VesselInfo.CrewDetailsReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    Assert.assertNull(responseObserver.getError());
+    Assert.assertEquals(SUCCESS, replies.get(0).getResponseStatus().getStatus());
+  }
+
+  @Test
+  void testSaveCrewDetailsWithException() {
+    com.cpdss.common.generated.VesselInfo.CrewDetailed request =
+        VesselInfo.CrewDetailed.newBuilder().setId(1l).build();
+    StreamRecorder<VesselInfo.CrewDetailsReply> responseObserver = StreamRecorder.create();
+    VesselInfo.CrewDetailsReply.Builder crewDetailsReply = VesselInfo.CrewDetailsReply.newBuilder();
+    try {
+      doThrow(new RuntimeException("1"))
+          .when(crewService)
+          .saveCrewDetails(request, crewDetailsReply);
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+    }
+
+    vesselInfoService.saveCrewDetails(request, responseObserver);
+    List<VesselInfo.CrewDetailsReply> replies = responseObserver.getValues();
+    Assert.assertEquals(1, replies.size());
+    Assert.assertNull(responseObserver.getError());
+    Assert.assertEquals(FAILURE, replies.get(0).getResponseStatus().getStatus());
   }
 }
