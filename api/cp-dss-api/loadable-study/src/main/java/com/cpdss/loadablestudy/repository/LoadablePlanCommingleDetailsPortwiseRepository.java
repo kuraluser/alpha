@@ -45,7 +45,7 @@ public interface LoadablePlanCommingleDetailsPortwiseRepository
   @Transactional
   @Modifying
   @Query(
-      "UPDATE LoadablePlanComminglePortwiseDetails SET isActive = false WHERE loadablePattern.id = ?2")
+      "UPDATE LoadablePlanComminglePortwiseDetails SET isActive = false WHERE loadablePattern.id = ?1")
   void deleteByLoadablePatternId(Long loadablePatternId);
 
   @Query(

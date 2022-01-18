@@ -448,7 +448,14 @@ public class LoadingSequenceService {
       Integer end,
       List<CargoStage> cargoStages) {
     CargoStage cargoStage = new CargoStage();
-    if (portWiseDetails.getLoadingPlanCommingleDetailsCount() > 0) {
+    long filteredCommingleCount =
+        portWiseDetails.getLoadingPlanCommingleDetailsList().stream()
+            .filter(
+                commingle ->
+                    commingle.getCargoNomination1Id() == cargoNominationId
+                        || commingle.getCargoNomination2Id() == cargoNominationId)
+            .count();
+    if (portWiseDetails.getLoadingPlanCommingleDetailsCount() > 0 && filteredCommingleCount > 0) {
       List<Cargo> cargos = new ArrayList<Cargo>();
       Cargo cargo = new Cargo();
       CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNominationId);
@@ -743,7 +750,11 @@ public class LoadingSequenceService {
       Integer end,
       List<CargoStage> cargoStages) {
     CargoStage cargoStage = new CargoStage();
-    if (portWiseDetails.getLoadingPlanStowageDetailsCount() > 0) {
+    long filteredStowageCount =
+        portWiseDetails.getLoadingPlanStowageDetailsList().stream()
+            .filter(stowage -> stowage.getCargoNominationId() == cargoNomId)
+            .count();
+    if (portWiseDetails.getLoadingPlanStowageDetailsCount() > 0 && filteredStowageCount > 0) {
       List<Cargo> cargos = new ArrayList<Cargo>();
       Cargo cargo = new Cargo();
       CargoNominationDetail cargoNomination = cargoNomDetails.get(cargoNomId);
