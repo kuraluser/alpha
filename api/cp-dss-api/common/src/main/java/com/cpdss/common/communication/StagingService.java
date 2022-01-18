@@ -125,13 +125,23 @@ public class StagingService {
           if (!processId.equals(dataTransferStage.getProcessId())) {
             processId = dataTransferStage.getProcessId();
 
+            final String dependantProcessModule =
+                getString(
+                    metaData.get(CommunicationMetadata.DEPENDANT_PROCESS_MODULE.getFieldName()));
+            final String dependantProcessId =
+                getString(metaData.get(CommunicationMetadata.DEPENDANT_PROCESS_ID.getFieldName()));
+            String inboundStatus = StagingStatus.DRAFT.getStatus();
+
+            if (!StringUtils.hasLength(dependantProcessModule)
+                && !StringUtils.hasLength(dependantProcessId)) {
+              inboundStatus = StagingStatus.COMPLETED.getStatus();
+            }
             saveDataTransferInBound(
                 processId,
                 MessageTypes.getMessageType(dataTransferStageobj.getProcessGroupId()),
-                getString(metaData.get(CommunicationMetadata.DEPENDANT_PROCESS_ID.getFieldName())),
-                getString(
-                    metaData.get(CommunicationMetadata.DEPENDANT_PROCESS_MODULE.getFieldName())),
-                STATUS);
+                dependantProcessId,
+                dependantProcessModule,
+                inboundStatus);
           }
         }
         log.info(

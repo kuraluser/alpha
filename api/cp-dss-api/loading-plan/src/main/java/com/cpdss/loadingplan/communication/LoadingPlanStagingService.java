@@ -1183,6 +1183,9 @@ public class LoadingPlanStagingService extends StagingService {
           break;
       }
     }
+
+    // Save to outbound table
+    saveDataTransferOutBound(processGroupId, referenceId);
     return array;
   }
 
