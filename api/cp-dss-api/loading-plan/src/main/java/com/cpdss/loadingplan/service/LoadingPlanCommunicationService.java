@@ -1118,7 +1118,7 @@ public class LoadingPlanCommunicationService {
       loadingPlanStagingService.updateStatusCompletedForProcessId(
           processId, StagingStatus.COMPLETED.getStatus());
       log.info("updated status to completed for processId:" + processId);
-      if (!env.equals("ship") && loadingInfo != null) {
+      if (!isShip() && loadingInfo != null) {
         if (processGroupId.equals(MessageTypes.LOADINGPLAN.getMessageType())) {
           generateLoadingPlan(loadingInformation.getId());
         } else if (MessageTypes.LOADINGPLAN_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
@@ -1149,7 +1149,7 @@ public class LoadingPlanCommunicationService {
                 e);
           }
         }
-      } else if (isShip()) {
+      } else if (isShip() && loadingInfo != null) {
         if (MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType().equals(processGroupId)
             || MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT
                 .getMessageType()
@@ -2266,11 +2266,9 @@ public class LoadingPlanCommunicationService {
    *
    * @param taskReqParams map of params used by the scheduler
    * @param messageType messageType value
-   * @throws GenericServiceException Exception on failure
    */
   public void checkCommunicationStatus(
-      final Map<String, String> taskReqParams, MessageTypes messageType)
-      throws GenericServiceException {
+      final Map<String, String> taskReqParams, MessageTypes messageType) {
 
     // Status check only enabled for ship. Shore not implemented as retrial not done at shore
     if (isShip()) {
@@ -2278,60 +2276,66 @@ public class LoadingPlanCommunicationService {
       // Get loadable study messages in envoy-client
       List<LoadingPlanCommunicationStatus> communicationStatusList =
           loadingPlanCommunicationStatusRepository
-              .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
-                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
+              .findByCommunicationStatusInAndMessageTypeOrderByCommunicationDateTimeAsc(
+                  Arrays.asList(
+                      CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
+                      CommunicationStatus.TIME_OUT.getId()),
                   messageType.getMessageType())
               .orElse(Collections.emptyList());
 
       for (LoadingPlanCommunicationStatus communicationStatusRow : communicationStatusList) {
 
-        // TODO call cancel API of envoy-client
+        try {
+          // TODO call cancel API of envoy-client
 
-        // Get status from envoy-client
-        checkEnvoyStatus(
-            communicationStatusRow.getMessageUUID(),
-            taskReqParams.get("ClientId"),
-            taskReqParams.get("ShipId"),
-            communicationStatusRow.getReferenceId());
+          // Get status from envoy-client
+          checkEnvoyStatus(
+              communicationStatusRow.getMessageUUID(),
+              taskReqParams.get("ClientId"),
+              taskReqParams.get("ShipId"),
+              communicationStatusRow.getReferenceId());
 
-        LoadingInformation loadingInformation =
-            loadingInformationRepository
-                .findByIdAndIsActiveTrue(communicationStatusRow.getReferenceId())
-                .orElseThrow(
-                    () -> {
-                      log.error(
-                          "Loading Info not found. LoadingInformation Id: {}, MessageType: {}",
-                          communicationStatusRow.getReferenceId(),
-                          messageType.getMessageType());
-                      return new GenericServiceException(
-                          "Loading Info not found. LoadingInformation Id: "
-                              + communicationStatusRow.getReferenceId(),
-                          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                          HttpStatusCode.INTERNAL_SERVER_ERROR);
-                    });
+          LoadingInformation loadingInformation =
+              loadingInformationRepository
+                  .findByIdAndIsActiveTrue(communicationStatusRow.getReferenceId())
+                  .orElseThrow(
+                      () -> {
+                        log.error(
+                            "Loading Info not found. LoadingInformation Id: {}, MessageType: {}",
+                            communicationStatusRow.getReferenceId(),
+                            messageType.getMessageType());
+                        return new GenericServiceException(
+                            "Loading Info not found. LoadingInformation Id: "
+                                + communicationStatusRow.getReferenceId(),
+                            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                            HttpStatusCode.INTERNAL_SERVER_ERROR);
+                      });
 
-        // Check timer and update timeout
-        if (isCommunicationTimedOut(
-            loadingInformation.getId(), communicationStatusRow.getCreatedDateTime())) {
-          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
-              CommunicationStatus.TIME_OUT.getId(), loadingInformation.getId());
+          // Check timer and update timeout
+          if (isCommunicationTimedOut(
+              loadingInformation.getId(), communicationStatusRow.getCreatedDateTime())) {
+            loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+                CommunicationStatus.TIME_OUT.getId(), loadingInformation.getId());
 
-          // Call fallback mechanism on timeout
-          log.info(
-              "Retrying {} at {}. Id: {}",
-              messageType.getMessageType(),
-              env,
-              loadingInformation.getId());
-          if (MessageTypes.LOADINGPLAN.equals(messageType)) {
-            loadingPlanAlgoService.processAlgoLoading(loadingInformation);
-          } else if (MessageTypes.ULLAGE_UPDATE.equals(messageType)) {
-            updateUllage(loadingInformation);
-          } else {
-            log.warn("Message Type: {} not configured", messageType);
+            // Call fallback mechanism on timeout
+            log.info(
+                "Retrying {} at {}. Id: {}",
+                messageType.getMessageType(),
+                env,
+                loadingInformation.getId());
+            if (MessageTypes.LOADINGPLAN.equals(messageType)) {
+              loadingPlanAlgoService.processAlgoLoading(loadingInformation);
+            } else if (MessageTypes.ULLAGE_UPDATE.equals(messageType)) {
+              updateUllage(loadingInformation);
+            } else {
+              log.warn("Message Type: {} not configured", messageType);
+            }
+
+            loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+                CommunicationStatus.RETRY_AT_SOURCE.getId(), loadingInformation.getId());
           }
-
-          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
-              CommunicationStatus.RETRY_AT_SOURCE.getId(), loadingInformation.getId());
+        } catch (GenericServiceException e) {
+          log.error("Retrial failed. Reference Id: {}", communicationStatusRow.getReferenceId(), e);
         }
       }
     }

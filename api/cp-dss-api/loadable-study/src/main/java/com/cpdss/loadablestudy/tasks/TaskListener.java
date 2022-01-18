@@ -87,10 +87,6 @@ public class TaskListener implements ExecuteTaskListener {
         loadableStudyCommunicationService.getStowageStagingData(
             StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get(ENV), taskName);
       }
-      // Status check task - fallback mechanism on timeout
-      else if (taskName.startsWith(STATUS_CHECK_TASK_PREFIX)) {
-        // communicationService.checkLoadableStudyStatus(taskReqParams);
-      }
       // Download result task for Discharge Study
       else if (taskName.startsWith(DISCHARGE_STUDY_DOWNLOAD_TASK_PREFIX)) {
         if (CPDSS_BUILD_ENV_SHORE.equals(taskReqParams.get(ENV))) {
@@ -116,6 +112,12 @@ public class TaskListener implements ExecuteTaskListener {
       else {
         log.warn("Task not implemented. Task: {}, Params: {}", taskName, taskReqParams);
       }
+    }
+
+    // Status check task - fallback mechanism on timeout
+    if (taskName.startsWith(STATUS_CHECK_TASK_PREFIX)) {
+      communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.LOADABLESTUDY);
+      communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.VALIDATEPLAN);
     }
   }
 }

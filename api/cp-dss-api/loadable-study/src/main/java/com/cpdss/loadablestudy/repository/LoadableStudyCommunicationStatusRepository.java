@@ -27,14 +27,20 @@ public interface LoadableStudyCommunicationStatusRepository
   @Modifying
   @Query(
       "UPDATE LoadableStudyCommunicationStatus LS SET LS.communicationStatus = ?1 WHERE referenceId = ?2 ")
-  public void updateLoadableStudyCommunicationStatus(String communicationStatus, Long referenceId);
+  void updateLoadableStudyCommunicationStatus(String communicationStatus, Long referenceId);
+
+  @Transactional
+  @Modifying
+  @Query(
+      "UPDATE LoadingPlanCommunicationStatus LS SET LS.communicationStatus = ?1, LS.isActive = ?2 WHERE referenceId = ?3 ")
+  void updateCommunicationStatus(String communicationStatus, Boolean isActive, Long referenceId);
 
   // Get recent message
   Optional<LoadableStudyCommunicationStatus>
       findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(
           Long referenceId, String messageType);
 
-  List<LoadableStudyCommunicationStatus>
-      findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
-          final String communicationStatus, final String messageType);
+  Optional<List<LoadableStudyCommunicationStatus>>
+      findByCommunicationStatusInAndMessageTypeOrderByCommunicationDateTimeAsc(
+          final List<String> communicationStatus, final String messageType);
 }

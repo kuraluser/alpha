@@ -11,6 +11,7 @@ import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
+import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.domain.PatternDetails;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
@@ -914,8 +915,7 @@ public class LoadablePatternServiceTest {
   }
 
   @Test
-  void testSaveLoadablePatternDetails()
-      throws JsonProcessingException, InvalidProtocolBufferException {
+  void testSaveLoadablePatternDetails() throws InvalidProtocolBufferException {
     com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.Builder builder =
         com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.newBuilder();
     ObjectMapper mapper = new ObjectMapper();
@@ -927,7 +927,8 @@ public class LoadablePatternServiceTest {
 
     this.loadablePatternService.saveLoadablePatternDetails(json, builder);
     verify(loadableStudyCommunicationStatusRepository)
-        .updateLoadableStudyCommunicationStatus(anyString(), anyLong());
+        .updateCommunicationStatus(
+            CommunicationStatus.COMPLETED.getId(), false, getLS().get().getId());
   }
 
   private com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.Builder getBuilder() {
@@ -960,14 +961,13 @@ public class LoadablePatternServiceTest {
   }
 
   @Test
-  void testSaveLoadablePatternDetailsEmpty()
-      throws JsonProcessingException, InvalidProtocolBufferException {
+  void testSaveLoadablePatternDetailsEmpty() throws InvalidProtocolBufferException {
     com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.Builder load =
         getBuilder()
             .setLoadablePatternAlgoRequest(
                 com.cpdss.common.generated.LoadableStudy.LoadablePatternAlgoRequest.newBuilder()
                     .addAllLoadablePlanDetails(
-                        Arrays.asList(
+                        List.of(
                             com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails
                                 .newBuilder()
                                 .build()))
@@ -975,7 +975,6 @@ public class LoadablePatternServiceTest {
 
     com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.Builder builder =
         com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication.newBuilder();
-    ObjectMapper mapper = new ObjectMapper();
     String json = JsonFormat.printer().print(load);
 
     when(this.loadableStudyCommunicationStatusRepository.findByMessageUUID(Mockito.any()))
@@ -984,7 +983,8 @@ public class LoadablePatternServiceTest {
 
     this.loadablePatternService.saveLoadablePatternDetails(json, builder);
     verify(loadableStudyCommunicationStatusRepository)
-        .updateLoadableStudyCommunicationStatus(anyString(), anyLong());
+        .updateCommunicationStatus(
+            CommunicationStatus.COMPLETED.getId(), false, getLS().get().getId());
   }
 
   @Test

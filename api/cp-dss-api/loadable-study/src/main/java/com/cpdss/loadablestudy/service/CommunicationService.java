@@ -12,6 +12,7 @@ import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
 import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.entity.JsonData;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.repository.*;
@@ -19,6 +20,7 @@ import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import javax.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
@@ -49,6 +51,7 @@ public class CommunicationService {
   @Autowired private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
   @Autowired private LoadicatorService loadicatorService;
   @Autowired private LoadableStudyStagingService loadableStudyStagingService;
+  @Autowired private AlgoService algoService;
 
   // Repositories
   @Autowired
@@ -203,12 +206,13 @@ public class CommunicationService {
   }
 
   /**
-   * Method to process Algo and update status
+   * Method to process Algo and update status for LS
    *
    * @param loadableStudyEntity loadable study object
    * @param messageId communication messageId value
    */
-  private void processAlgo(final LoadableStudy loadableStudyEntity, final String messageId) {
+  private void processAlgoLoadableStudy(
+      final LoadableStudy loadableStudyEntity, final String messageId) {
 
     // Get saved request JSON
     JsonData algoRequestJson =
@@ -232,6 +236,40 @@ public class CommunicationService {
         LoadableStudiesConstants.LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyEntity.getId());
   }
 
+  /**
+   * Method to process Algo and update status for validate plan
+   *
+   * @param loadablePattern loadable pattern object
+   * @param messageId communication messageId value
+   * @throws GenericServiceException Exception on calling Algo
+   */
+  private void processAlgoLoadablePattern(
+      final LoadablePattern loadablePattern, final String messageId)
+      throws GenericServiceException {
+
+    // Get saved request JSON
+    JsonData algoRequestJson =
+        jsonDataService.getJsonData(
+            loadablePattern.getLoadableStudy().getId(),
+            LoadableStudiesConstants.LOADABLE_PATTERN_EDIT_REQUEST);
+
+    AlgoResponse algoResponse =
+        algoService.callAlgo(
+            loadablePattern.getId(),
+            loadableStudyUrl,
+            algoRequestJson,
+            AlgoResponse.class,
+            true,
+            null);
+
+    loadablePlanService.updateProcessIdForLoadablePattern(
+        algoResponse.getProcessId(),
+        loadablePattern,
+        LOADABLE_PATTERN_VALIDATION_STARTED_ID,
+        messageId,
+        false);
+  }
+
   private EnvoyReader.EnvoyReaderResultReply getResultFromEnvoyReaderShore(
       Map<String, String> taskReqParams, MessageTypes messageType) {
     log.info("inside getResultFromEnvoyReaderShore ");
@@ -253,12 +291,13 @@ public class CommunicationService {
   }
 
   /**
-   * Method to check loadable study status and call ship algo on timeout
+   * Method to check communication status and call fallback mechanism on timeout
    *
-   * @param taskReqParams map containing request params from task_req_param_attributes
+   * @param taskReqParams map of params used by the scheduler
+   * @param messageType messageType value
    */
-  public void checkLoadableStudyStatus(final Map<String, String> taskReqParams)
-      throws GenericServiceException {
+  public void checkCommunicationStatus(
+      final Map<String, String> taskReqParams, MessageTypes messageType) {
 
     // Status check only enabled for ship. Shore not implemented as retrial not done at shore
     if (isShip()) {
@@ -266,66 +305,129 @@ public class CommunicationService {
       // Get loadable study messages in envoy-client
       List<LoadableStudyCommunicationStatus> communicationStatusList =
           loadableStudyCommunicationStatusRepository
-              .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
-                  CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
-                  MessageTypes.LOADABLESTUDY.getMessageType());
+              .findByCommunicationStatusInAndMessageTypeOrderByCommunicationDateTimeAsc(
+                  Arrays.asList(
+                      CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId(),
+                      CommunicationStatus.TIME_OUT.getId()),
+                  messageType.getMessageType())
+              .orElse(Collections.emptyList());
 
       for (LoadableStudyCommunicationStatus communicationStatusRow : communicationStatusList) {
 
-        // TODO call cancel API of envoy-client
+        try {
+          // TODO call cancel API of envoy-client
 
-        // Get status from envoy-client
-        EnvoyWriter.EnvoyWriterRequest.Builder request =
-            EnvoyWriter.EnvoyWriterRequest.newBuilder();
-        request.setMessageId(communicationStatusRow.getMessageUUID());
-        request.setClientId(taskReqParams.get("ClientId"));
-        request.setImoNumber(taskReqParams.get("ShipId"));
-        EnvoyWriter.WriterReply statusReply = this.envoyWriterService.statusCheck(request.build());
-
-        // Check response status, code and message Id
-        if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())
-            || !Integer.toString(HttpStatusCode.OK.value()).equals(statusReply.getStatusCode())
-            || !communicationStatusRow.getMessageUUID().equals(statusReply.getMessageId())) {
-          log.error(
-              "Invalid response from envoy-writer for retrial. LS Id: {}, Message Id: {}, Response: {}",
-              communicationStatusRow.getReferenceId(),
+          // Get status from envoy-client
+          checkEnvoyStatus(
               communicationStatusRow.getMessageUUID(),
-              statusReply);
-          throw new GenericServiceException(
-              "Invalid response from envoy-writer for retrial. Message Id: "
-                  + communicationStatusRow.getMessageUUID(),
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
-        }
+              taskReqParams.get("ClientId"),
+              taskReqParams.get("ShipId"),
+              communicationStatusRow.getReferenceId());
 
-        LoadableStudy loadableStudy =
-            loadableStudyRepository
-                .findByIdAndIsActive(communicationStatusRow.getReferenceId(), true)
-                .orElseThrow(RuntimeException::new);
+          // Check timer and update timeout
+          if (isCommunicationTimedOut(
+              communicationStatusRow.getReferenceId(),
+              communicationStatusRow.getCreatedDateTime())) {
+            loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
+                CommunicationStatus.TIME_OUT.getId(), communicationStatusRow.getReferenceId());
 
-        // Check timer and update timeout
-        final long start = Timestamp.valueOf(communicationStatusRow.getCreatedDateTime()).getTime();
-        // timeLimit is in seconds
-        final long end = start + timeLimit * 1000; // Convert time to ms
-        final long currentTime = System.currentTimeMillis();
-        if (currentTime > end) {
-          log.info(
-              "Communication Timeout: {} minutes reached. Communication ignored. Generating at: {}. LS Id: {}. Unix Times ::: Start: {} ms, End: {} ms, Current Time: {} ms.",
-              timeLimit / 60,
-              env,
-              loadableStudy.getId(),
-              start,
-              end,
-              currentTime);
-          loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
-              CommunicationStatus.TIME_OUT.getId(), loadableStudy.getId());
-          // Call fallback mechanism on timeout
-          processAlgo(loadableStudy, communicationStatusRow.getMessageUUID());
+            // Call fallback mechanism on timeout
+            log.info(
+                "Retrying {} at {}. Id: {}",
+                messageType.getMessageType(),
+                env,
+                communicationStatusRow.getReferenceId());
+            if (MessageTypes.LOADABLESTUDY.equals(messageType)) {
+              LoadableStudy loadableStudy =
+                  loadableStudyRepository
+                      .findByIdAndIsActive(communicationStatusRow.getReferenceId(), true)
+                      .orElseThrow(RuntimeException::new);
 
-          loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
-              CommunicationStatus.RETRY_AT_SOURCE.getId(), loadableStudy.getId());
+              processAlgoLoadableStudy(loadableStudy, communicationStatusRow.getMessageUUID());
+            } else if (MessageTypes.VALIDATEPLAN.equals(messageType)) {
+              LoadablePattern loadablePattern =
+                  loadablePatternRepository
+                      .findByIdAndIsActive(communicationStatusRow.getReferenceId(), true)
+                      .orElseThrow(RuntimeException::new);
+
+              processAlgoLoadablePattern(loadablePattern, communicationStatusRow.getMessageUUID());
+            } else {
+              log.error("Message Type: {} not configured", messageType);
+              throw new GenericServiceException(
+                  "Not configured. Message Type: " + messageType,
+                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                  HttpStatusCode.INTERNAL_SERVER_ERROR);
+            }
+
+            loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
+                CommunicationStatus.RETRY_AT_SOURCE.getId(),
+                communicationStatusRow.getReferenceId());
+          }
+        } catch (GenericServiceException | RuntimeException e) {
+          log.error("Retrial failed. Reference Id: {}", communicationStatusRow.getReferenceId(), e);
         }
       }
+    }
+  }
+
+  /**
+   * Method to check if communication timed out
+   *
+   * @param referenceId reference id value
+   * @param createdTime communication record created time
+   * @return true if timed out and false otherwise
+   */
+  private boolean isCommunicationTimedOut(final long referenceId, final LocalDateTime createdTime) {
+    final long start = Timestamp.valueOf(createdTime).getTime();
+    // timeLimit is in seconds
+    final long end = start + timeLimit * 1000; // Convert time to ms
+    final long currentTime = System.currentTimeMillis();
+
+    if (currentTime > end) {
+      log.warn(
+          "Communication Timeout: {} minutes reached. Communication ignored. Generating at: {}. Ref Id: {}. Unix Times ::: Start: {} ms, End: {} ms, Current Time: {} ms.",
+          timeLimit / 60,
+          env,
+          referenceId,
+          start,
+          end,
+          currentTime);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Method to check message status in envoy service
+   *
+   * @param messageId messageId value
+   * @param clientId clientId value
+   * @param shipId shipId value
+   * @param referenceId referenceId value
+   * @throws GenericServiceException Exception on invalid response
+   */
+  private void checkEnvoyStatus(
+      final String messageId, final String clientId, final String shipId, final long referenceId)
+      throws GenericServiceException {
+    EnvoyWriter.EnvoyWriterRequest.Builder request = EnvoyWriter.EnvoyWriterRequest.newBuilder();
+    request.setMessageId(messageId);
+    request.setClientId(clientId);
+    request.setImoNumber(shipId);
+    EnvoyWriter.WriterReply statusReply = this.envoyWriterService.statusCheck(request.build());
+
+    // Check response status, code and message id
+    if (!SUCCESS.equals(statusReply.getResponseStatus().getStatus())
+        || !Integer.toString(HttpStatusCode.OK.value()).equals(statusReply.getStatusCode())
+        || !messageId.equals(statusReply.getMessageId())) {
+      log.error(
+          "Invalid response from envoy-writer for retrial. Ref Id: {}, Message Id: {}, Response: {}",
+          referenceId,
+          messageId,
+          statusReply);
+      throw new GenericServiceException(
+          "Invalid response from envoy-writer for retrial. Message Id: " + messageId,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 

@@ -21,6 +21,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
+import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferInBoundRepository;
@@ -936,6 +937,16 @@ public class LoadableStudyCommunicationService {
               CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName(),
               loadableStudyStage.getId(),
               true);
+        }
+      } else if (CPDSS_BUILD_ENV_SHIP.equals(env)) {
+        if (MessageTypes.ALGORESULT.getMessageType().equals(processGroupId)) {
+          // Update communication status table with final state
+          loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.COMPLETED.getId(), false, loadableStudyStage.getId());
+        } else if (MessageTypes.PATTERNDETAIL.getMessageType().equals(processGroupId)) {
+          // Update communication status table with final state
+          loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.COMPLETED.getId(), false, loadablePatternStage.get(0).getId());
         }
       }
     }

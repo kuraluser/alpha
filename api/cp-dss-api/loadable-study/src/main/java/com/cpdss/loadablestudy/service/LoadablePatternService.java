@@ -415,6 +415,10 @@ public class LoadablePatternService {
           jsonArray.toString(),
           loadableStudyOpt.get().getVesselXId(),
           MessageTypes.ALGORESULT.getMessageType());
+    } else if (enableCommunication && CPDSS_BUILD_ENV_SHIP.equals(env)) {
+      // Update communication status table with final state
+      loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
+          CommunicationStatus.COMPLETED.getId(), false, loadableStudyOpt.get().getId());
     }
 
     builder
@@ -938,6 +942,10 @@ public class LoadablePatternService {
           log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
         }
       }
+    } else if (enableCommunication && CPDSS_BUILD_ENV_SHIP.equals(env)) {
+      // Update communication status table with final state
+      loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
+          CommunicationStatus.COMPLETED.getId(), false, loadablePatternOpt.get().getId());
     }
 
     builder
@@ -1807,7 +1815,7 @@ public class LoadablePatternService {
 
     status.setIsActive(true);
     status.setLoadableStudy(loadableStudy);
-    status.setLoadableStudyStatus(loadableStudyStatusRepository.getOne(loadableStudyStatus));
+    status.setLoadableStudyStatus(loadableStudyStatusRepository.getById(loadableStudyStatus));
     status.setProcessId(processId);
     status.setVesselxid(loadableStudy.getVesselXId());
     status.setMessageId(messageId);
@@ -2601,8 +2609,8 @@ public class LoadablePatternService {
       }
 
       // Update communication status table with final state
-      loadableStudyCommunicationStatusRepository.updateLoadableStudyCommunicationStatus(
-          CommunicationStatus.COMPLETED.getId(), loadableStudyOpt.get().getId());
+      loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
+          CommunicationStatus.COMPLETED.getId(), false, loadableStudyOpt.get().getId());
     } catch (InvalidProtocolBufferException | GenericServiceException e) {
       e.printStackTrace();
     }

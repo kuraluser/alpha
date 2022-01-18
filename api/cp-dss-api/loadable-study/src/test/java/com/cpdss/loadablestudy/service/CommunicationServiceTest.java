@@ -2,7 +2,6 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.common.rest.CommonErrorCodes.E_GEN_INTERNAL_ERR;
-import static com.cpdss.common.utils.MessageTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -14,8 +13,8 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.AlgoResponse;
+import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.entity.JsonData;
-import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.entity.Voyage;
 import com.cpdss.loadablestudy.repository.*;
@@ -52,6 +51,7 @@ public class CommunicationServiceTest {
   @MockBean private LoadablePlanStowageDetailsTempRepository stowageDetailsTempRepository;
   @MockBean private LoadicatorService loadicatorService;
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
+  @MockBean private AlgoService algoService;
 
   @MockBean
   private LoadableStudyCommunicationStatusRepository loadableStudyCommunicationStatusRepository;
@@ -73,7 +73,9 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN, DISCHARGESTUDY);
+    EnumSet<MessageTypes> shore =
+        EnumSet.of(
+            MessageTypes.LOADABLESTUDY, MessageTypes.VALIDATEPLAN, MessageTypes.DISCHARGESTUDY);
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -97,7 +99,9 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN, DISCHARGESTUDY);
+    EnumSet<MessageTypes> shore =
+        EnumSet.of(
+            MessageTypes.LOADABLESTUDY, MessageTypes.VALIDATEPLAN, MessageTypes.DISCHARGESTUDY);
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -121,7 +125,9 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN, DISCHARGESTUDY);
+    EnumSet<MessageTypes> shore =
+        EnumSet.of(
+            MessageTypes.LOADABLESTUDY, MessageTypes.VALIDATEPLAN, MessageTypes.DISCHARGESTUDY);
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -146,7 +152,9 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN, DISCHARGESTUDY);
+    EnumSet<MessageTypes> shore =
+        EnumSet.of(
+            MessageTypes.LOADABLESTUDY, MessageTypes.VALIDATEPLAN, MessageTypes.DISCHARGESTUDY);
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -169,7 +177,9 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = EnumSet.of(LOADABLESTUDY, VALIDATEPLAN, DISCHARGESTUDY);
+    EnumSet<MessageTypes> shore =
+        EnumSet.of(
+            MessageTypes.LOADABLESTUDY, MessageTypes.VALIDATEPLAN, MessageTypes.DISCHARGESTUDY);
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -221,7 +231,7 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = EnumSet.of(ALGORESULT, PATTERNDETAIL);
+    EnumSet<MessageTypes> shore = EnumSet.of(MessageTypes.ALGORESULT, MessageTypes.PATTERNDETAIL);
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -245,7 +255,7 @@ public class CommunicationServiceTest {
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     CommunicationService spyService = spy(CommunicationService.class);
-    EnumSet<MessageTypes> shore = EnumSet.of(ALGORESULT, PATTERNDETAIL);
+    EnumSet<MessageTypes> shore = EnumSet.of(MessageTypes.ALGORESULT, MessageTypes.PATTERNDETAIL);
     EnvoyReader.EnvoyReaderResultReply resultReply =
         EnvoyReader.EnvoyReaderResultReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -314,14 +324,14 @@ public class CommunicationServiceTest {
   }
 
   @Test
-  void testCheckLoadableStudyStatus() throws GenericServiceException {
+  void testCheckLoadableStudyStatus() {
     Map<String, String> taskReqParams = new HashMap<>();
     taskReqParams.put("ClientId", "1");
     taskReqParams.put("ShipId", "1");
     List<LoadableStudyCommunicationStatus> communicationStatusList = new ArrayList<>();
     LoadableStudyCommunicationStatus status = new LoadableStudyCommunicationStatus();
     status.setMessageUUID("1");
-    status.setReferenceId(1l);
+    status.setReferenceId(1L);
     status.setCreatedDateTime(LocalDateTime.now());
     status.setCommunicationDateTime(LocalDateTime.now());
     communicationStatusList.add(status);
@@ -329,9 +339,9 @@ public class CommunicationServiceTest {
             .findByCommunicationStatusOrderByCommunicationDateTimeASC(anyString()))
         .thenReturn(communicationStatusList);
     when(loadableStudyCommunicationStatusRepository
-            .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
-                anyString(), anyString()))
-        .thenReturn(communicationStatusList);
+            .findByCommunicationStatusInAndMessageTypeOrderByCommunicationDateTimeAsc(
+                anyList(), anyString()))
+        .thenReturn(Optional.of(communicationStatusList));
     EnvoyWriter.WriterReply statusReply =
         EnvoyWriter.WriterReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build())
@@ -356,16 +366,22 @@ public class CommunicationServiceTest {
     doNothing()
         .when(loadablePatternService)
         .updateProcessIdForLoadableStudy(
-            anyString(), any(LoadableStudy.class), anyLong(), anyString(), anyBoolean());
+            anyString(),
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class),
+            anyLong(),
+            anyString(),
+            anyBoolean());
     doNothing().when(loadableStudyRepository).updateLoadableStudyStatus(anyLong(), anyLong());
 
-    ReflectionTestUtils.setField(communicationService, "timeLimit", 2l);
+    ReflectionTestUtils.setField(communicationService, "timeLimit", 2L);
     ReflectionTestUtils.setField(communicationService, "env", "ship");
     ReflectionTestUtils.setField(communicationService, "loadableStudyUrl", "url");
     ReflectionTestUtils.setField(communicationService, "envoyWriterService", envoyWriterService);
 
-    communicationService.checkLoadableStudyStatus(taskReqParams);
-    verify(loadableStudyRepository).findByIdAndIsActive(anyLong(), anyBoolean());
+    communicationService.checkCommunicationStatus(taskReqParams, MessageTypes.LOADABLESTUDY);
+    verify(loadableStudyCommunicationStatusRepository)
+        .findByCommunicationStatusInAndMessageTypeOrderByCommunicationDateTimeAsc(
+            anyList(), anyString());
   }
 
   @Test
@@ -376,14 +392,14 @@ public class CommunicationServiceTest {
     List<LoadableStudyCommunicationStatus> communicationStatusList = new ArrayList<>();
     LoadableStudyCommunicationStatus status = new LoadableStudyCommunicationStatus();
     status.setMessageUUID("1");
-    status.setReferenceId(1l);
+    status.setReferenceId(1L);
     status.setCreatedDateTime(LocalDateTime.now());
     status.setCommunicationDateTime(LocalDateTime.now());
     communicationStatusList.add(status);
     when(loadableStudyCommunicationStatusRepository
-            .findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
-                anyString(), anyString()))
-        .thenReturn(communicationStatusList);
+            .findByCommunicationStatusInAndMessageTypeOrderByCommunicationDateTimeAsc(
+                anyList(), anyString()))
+        .thenReturn(Optional.of(communicationStatusList));
     EnvoyWriter.WriterReply statusReply =
         EnvoyWriter.WriterReply.newBuilder()
             .setResponseStatus(Common.ResponseStatus.newBuilder().build())
@@ -399,16 +415,8 @@ public class CommunicationServiceTest {
     ReflectionTestUtils.setField(communicationService, "loadableStudyUrl", "url");
     ReflectionTestUtils.setField(communicationService, "envoyWriterService", envoyWriterService);
 
-    final GenericServiceException ex =
-        assertThrows(
-            GenericServiceException.class,
-            () -> communicationService.checkLoadableStudyStatus(taskReqParams));
-
-    assertAll(
-        () -> assertEquals(CommonErrorCodes.E_GEN_INTERNAL_ERR, ex.getCode(), "Invalid error code"),
-        () ->
-            assertEquals(
-                HttpStatusCode.INTERNAL_SERVER_ERROR, ex.getStatus(), "Invalid http status"));
+    verify(loadableStudyCommunicationStatusRepository, never())
+        .updateLoadableStudyCommunicationStatus(CommunicationStatus.RETRY_AT_SOURCE.getId(), 1L);
   }
 
   @Test

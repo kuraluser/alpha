@@ -14,8 +14,8 @@ public interface LoadingPlanCommunicationStatusRepository
     extends CommonCrudRepository<LoadingPlanCommunicationStatus, Long> {
 
   Optional<List<LoadingPlanCommunicationStatus>>
-      findByCommunicationStatusAndMessageTypeOrderByCommunicationDateTimeAsc(
-          final String communicationStatus, final String messageType);
+      findByCommunicationStatusInAndMessageTypeOrderByCommunicationDateTimeAsc(
+          final List<String> communicationStatus, final String messageType);
 
   @Transactional
   @Modifying
