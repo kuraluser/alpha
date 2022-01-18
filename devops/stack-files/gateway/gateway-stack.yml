@@ -28,6 +28,7 @@ services:
     - SHIP_USER_PASSWORD_MIN_LENGTH=8
     - SHIP_USER_PASSWORD_MAX_LENGTH=16
     - ENABLE_COMM_SEQ_TRIGGER=${ENABLE_COMM_SEQ_TRIGGER}
+    - ENABLE_COMM=${ENABLE_COMM}
     dns: 8.8.8.8
     healthcheck:
       test: "wget --no-verbose --spider http://localhost:8080/actuator/health || exit 1"

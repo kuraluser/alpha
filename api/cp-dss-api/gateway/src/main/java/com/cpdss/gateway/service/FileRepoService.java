@@ -2,22 +2,27 @@
 package com.cpdss.gateway.service;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.EnvoyWriter;
+import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
+import com.cpdss.common.generated.VesselInfo;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.gateway.domain.filerepo.*;
 import com.cpdss.gateway.entity.FileRepo;
 import com.cpdss.gateway.repository.FileRepoRepository;
+import com.cpdss.gateway.service.communication.models.FileData;
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -36,12 +41,23 @@ public class FileRepoService {
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
 
+  @Value("${cpdss.communication.enable}")
+  private Boolean enableCommunication;
+
   private static final int ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
       Arrays.asList("docx", "pdf", "txt", "csv", "xlsx");
   public static final String DATE_FORMAT = "dd-MMM-yyyy";
 
+  public static final String SUCCESS = "SUCCESS";
+
   @Autowired FileRepoRepository fileRepoRepository;
+
+  @GrpcClient("envoyWriterService")
+  private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
+
+  @GrpcClient("vesselInfoService")
+  private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   public FileRepoGetResponse getFileRepoDetails(
       int pageSize,
@@ -240,12 +256,12 @@ public class FileRepoService {
       } else {
         folderLocation = filePath;
       }
-
+      Path path = null;
       if (file != null) {
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         String fileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
         filePath = folderLocation + fileName + '.' + extension;
-        Path path = Paths.get(this.rootFolder + filePath);
+        path = Paths.get(this.rootFolder + filePath);
         Files.createFile(path);
         Files.write(
             path, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -264,6 +280,17 @@ public class FileRepoService {
       reply.setId(repo.getId());
       reply.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+      if (enableCommunication) {
+        repo.setIsTransferred(false);
+        FileData fileData = new FileData();
+        fileData.setDetails(getRowAsJsonById(repo.getId()));
+        fileData.setData(Files.readString(path));
+        log.info("File Data object :{}", fileData);
+        writeToEnvoy(
+            new Gson().toJson(fileData),
+            MessageTypes.FILE_SHAREING.getMessageType(),
+            repo.getVesselXId());
+      }
       return reply;
     } catch (IOException e) {
       e.printStackTrace();
@@ -272,6 +299,36 @@ public class FileRepoService {
           CommonErrorCodes.E_HTTP_INTERNAL_SERVER_ERROR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  private void writeToEnvoy(String json, String messageType, Long vesselId) {
+    log.info("Json Array in File repo service: " + json);
+    EnvoyWriter.WriterReply ewReply = passRequestPayloadToEnvoyWriter(json, messageType, vesselId);
+    if (SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+      log.info("------- Envoy writer has called successfully " + ewReply);
+    } else {
+      log.info("----- Failed to write in writeToEnvoy ----- ");
+    }
+  }
+
+  public EnvoyWriter.WriterReply passRequestPayloadToEnvoyWriter(
+      String requestJson, String messageType, Long vesselId) {
+    EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
+        EnvoyWriter.EnvoyWriterRequest.newBuilder();
+    try {
+      VesselInfo.VesselDetail vesselReply = this.getVesselDetailsForEnvoy(vesselId);
+      writerRequest.setJsonPayload(requestJson);
+      writerRequest.setClientId(vesselReply.getName());
+      writerRequest.setMessageType(messageType);
+      writerRequest.setImoNumber(vesselReply.getImoNumber());
+    } catch (GenericServiceException e) {
+      log.error("Error in passRequestPayloadToEnvoyWriter", e);
+    }
+    return this.envoyWriterService.getCommunicationServer(writerRequest.build());
+  }
+
+  private String getRowAsJsonById(Long id) {
+    return fileRepoRepository.getRowAsJsonById(id);
   }
 
   private List<FileRepoResponse> formatFileRepos(List<FileRepo> list) {
@@ -300,4 +357,21 @@ public class FileRepoService {
     }
     return formattedList;
   }
+
+  // region get vessel details
+  public VesselInfo.VesselDetail getVesselDetailsForEnvoy(Long vesselId)
+      throws GenericServiceException {
+    VesselInfo.VesselIdRequest replyBuilder =
+        VesselInfo.VesselIdRequest.newBuilder().setVesselId(vesselId).build();
+    VesselInfo.VesselIdResponse vesselResponse =
+        this.vesselInfoGrpcService.getVesselInfoByVesselId(replyBuilder);
+    if (!SUCCESS.equalsIgnoreCase(vesselResponse.getResponseStatus().getStatus())) {
+      throw new GenericServiceException(
+          "Error in calling vessel service",
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return vesselResponse.getVesselDetail();
+  }
+  // endregion
 }

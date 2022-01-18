@@ -19,6 +19,7 @@ ext{
     imageNameVal = System.getenv('IMAGE_NAME') ?: 'cpdss-gateway'
     containerNameVal = System.getenv('CONTAINER_NAME') ?: 'gateway-container'
     serviceNameVal = System.getenv('SERVICE_NAME') ?: 'gateway-service'
+    enableComm = System.getenv('ENABLE_COMM') ?: ""
 }
 
 appConfig {
@@ -61,7 +62,7 @@ appConfig {
         }
 	  dns = ['8.8.8.8']	
       environment = ['GRPC_PORT': '8090', 'REST_PORT': '8080', 'ATTACHMENT_ROOT_PATH': '/data',
-                     'CPDSS_BUILD_ENV': cpdssBuildEnv]
+                     'CPDSS_BUILD_ENV': cpdssBuildEnv, 'ENABLE_COMM': enableComm]
   }
   javaMainClass = "com.cpdss.gateway.Application"
   keyvaluestore = 'y'

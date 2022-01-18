@@ -4,6 +4,8 @@ package com.cpdss.gateway.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
+import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.gateway.entity.FileRepo;
 import com.cpdss.gateway.repository.FileRepoRepository;
 import java.io.File;
@@ -18,17 +20,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 @SpringJUnitConfig(classes = {FileRepoService.class})
+@TestPropertySource(properties = "cpdss.communication.enable = false")
 public class FileRepoServiceTest {
 
   @Autowired FileRepoService fileRepoService;
 
   @MockBean FileRepoRepository fileRepoRepository;
 
+  @MockBean private EnvoyWriterServiceGrpc.EnvoyWriterServiceBlockingStub envoyWriterService;
+
+  @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
+
+  @Value("${cpdss.communication.enable}")
+  private Boolean enableCommunication;
 
   @Test
   void testGetFileRepoDetails() {

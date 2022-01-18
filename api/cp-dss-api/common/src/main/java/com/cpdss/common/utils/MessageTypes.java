@@ -30,7 +30,8 @@ public enum MessageTypes {
   DISCHARGEPLAN_ALGORESULT("DischargePlan_AlgoResult", "DischargePlan_AlgoResult"),
   DISCHARGEPLAN_ULLAGE_UPDATE("DischargePlan_Ullage_Update", "DischargePlan_Ullage_Update"),
   DISCHARGEPLAN_ULLAGE_UPDATE_ALGORESULT(
-      "DischargePlan_Ullage_Update_AlgoResult", "DischargePlan_Ullage_Update_AlgoResult");
+      "DischargePlan_Ullage_Update_AlgoResult", "DischargePlan_Ullage_Update_AlgoResult"),
+  FILE_SHAREING("FileSharing", "FileSharing");
 
   public static EnumSet<MessageTypes> loadableShip = EnumSet.of(ALGORESULT, PATTERNDETAIL);
   public static EnumSet<MessageTypes> loadableShore =
