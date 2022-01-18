@@ -2948,15 +2948,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                         loadablePlanDetailsAlgoJson.getCaseNumber().equals(request.getCaseNumber()))
                 .findFirst();
         if (loadablePlanDetails.isPresent()) {
-          for (LoadablePlanPortWiseDetailsAlgoJson portWiseDetails :
-              loadablePlanDetails.get().getLoadablePlanPortWiseDetails()) {
-            Optional<com.cpdss.loadablestudy.entity.LoadableStudyPortRotation> portRotationDetail =
-                this.loadableStudyPortRotationRepository.findById(
-                    portWiseDetails.getPortRotationId());
-            if (portRotationDetail.isPresent()
-                && portRotationDetail.get().getOperation().getId().equals(LOADING_OPERATION_ID)) {
-              departureCondition = portWiseDetails.getDepartureCondition();
-            }
+          List<Long> portRotationIds =
+              loadablePlanDetails.get().getLoadablePlanPortWiseDetails().stream()
+                  .map(LoadablePlanPortWiseDetailsAlgoJson::getPortRotationId)
+                  .collect(Collectors.toList());
+          List<Long> operationIds =
+              this.loadableStudyPortRotationRepository.findByIdIn(portRotationIds);
+          if (operationIds.size() > 0 && operationIds.contains(LOADING_OPERATION_ID)) {
+            departureCondition =
+                loadablePlanDetails
+                    .get()
+                    .getLoadablePlanPortWiseDetails()
+                    .get(0)
+                    .getDepartureCondition();
           }
         }
       }

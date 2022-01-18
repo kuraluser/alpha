@@ -202,4 +202,9 @@ public interface LoadableStudyPortRotationRepository
       value =
           "SELECT DISTINCT portXId, lspr.loadableStudy.id, lspr.portOrder FROM LoadableStudyPortRotation lspr where lspr.loadableStudy.id IN ?1 AND lspr.operation.id = ?2 AND isActive = true ORDER BY lspr.portOrder ASC")
   List<Object[]> getPortIdListForLSAndDSForVoyages(List<Long> ids, Long operationType);
+
+  @Query(
+      value = "SELECT operation_xid FROM loadable_study_port_rotation LSPR where LSPR.id in ?1",
+      nativeQuery = true)
+  List<Long> findByIdIn(List<Long> portRotationIds);
 }
