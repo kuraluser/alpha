@@ -32,7 +32,7 @@ public interface LoadableStudyCommunicationStatusRepository
   @Transactional
   @Modifying
   @Query(
-      "UPDATE LoadingPlanCommunicationStatus LS SET LS.communicationStatus = ?1, LS.isActive = ?2 WHERE referenceId = ?3 ")
+      "UPDATE LoadableStudyCommunicationStatus LS SET LS.communicationStatus = ?1, LS.isActive = ?2 WHERE referenceId = ?3")
   void updateCommunicationStatus(String communicationStatus, Boolean isActive, Long referenceId);
 
   // Get recent message
