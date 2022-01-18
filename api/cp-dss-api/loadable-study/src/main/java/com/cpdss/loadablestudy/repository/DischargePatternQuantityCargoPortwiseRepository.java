@@ -11,7 +11,8 @@ public interface DischargePatternQuantityCargoPortwiseRepository
       findByCargoNominationIdInAndOperationType(List<Long> cargoIds, String operationType);
 
   public List<DischargePatternQuantityCargoPortwiseDetails>
-      findByDischargeCargoNominationIdInAndOperationType(List<Long> cargoIds, String operationType);
+      findByDischargeCargoNominationIdInAndOperationTypeAndIsActiveTrue(
+          List<Long> cargoIds, String operationType);
 
   public List<DischargePatternQuantityCargoPortwiseDetails> findByCargoNominationIdIn(
       List<Long> cargoIds);

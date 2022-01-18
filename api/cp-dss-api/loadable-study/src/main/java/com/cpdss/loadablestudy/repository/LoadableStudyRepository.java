@@ -105,4 +105,8 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
               + "where ls.vessel_xid  =?1 and lspr.is_active = true ) temp where temp.row_number =1",
       nativeQuery = true)
   public List<Object[]> getVesellEtd(Long vesselId);
+
+  List<LoadableStudy>
+      findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_idAndPlanningTypeXId(
+          long vesselId, Voyage voyage, boolean b, Long confirmedStatusId, int i);
 }

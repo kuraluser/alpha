@@ -162,47 +162,70 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             CommonErrorCodes.E_HTTP_BAD_REQUEST,
             HttpStatusCode.BAD_REQUEST);
       }
-
-      List<LoadableStudy> loadables =
+      LoadableStudy loadableStudy = null;
+      // Checking if any other confirm DS exists
+      List<LoadableStudy> confirmedDs =
           this.dischargeStudyRepository
-              .findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
-                  request.getVesselId(), voyage, true, CONFIRMED_STATUS_ID);
-      if (loadables.isEmpty()) {
-        throw new GenericServiceException(
-            "No confirmed loadable study",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      }
-      LoadableStudy loadableStudy = loadables.get(0);
+              .findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_idAndPlanningTypeXId(
+                  request.getVesselId(),
+                  voyage,
+                  true,
+                  CONFIRMED_STATUS_ID,
+                  DISCHARGING_OPERATION_ID.intValue());
+      if (!confirmedDs.isEmpty()) {
+        log.info("Found another DS already in confirmed state - so skipping LS validations");
+        loadableStudy =
+            this.dischargeStudyRepository
+                .findByIdAndIsActive(confirmedDs.get(0).getConfirmedLoadableStudyId(), true)
+                .get();
+        // validateActuals2(loadableStudy,DISCHARGING_OPERATION_ID);
+      } else {
+        List<LoadableStudy> loadables =
+            this.dischargeStudyRepository
+                .findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_idAndPlanningTypeXId(
+                    request.getVesselId(),
+                    voyage,
+                    true,
+                    CONFIRMED_STATUS_ID,
+                    LOADING_OPERATION_ID.intValue());
+        if (loadables.isEmpty()) {
+          throw new GenericServiceException(
+              "No confirmed loadable study",
+              CommonErrorCodes.E_HTTP_BAD_REQUEST,
+              HttpStatusCode.BAD_REQUEST);
+        }
+        loadableStudy = loadables.get(0);
 
-      // Validate ullage update and bl values
-      validateActuals(loadableStudy);
+        // Validate ullage update and bl values
+        validateActuals(loadableStudy);
+      }
 
       // Validate Actual ETA/ETD values
       List<LoadableStudyPortRotation> portRotationsForNonDischargingOperations =
           loadableStudyPortRotationRepository.findByLoadableStudyAndOperation_idNotAndIsActive(
               loadableStudy, DISCHARGING_OPERATION_ID, true);
-      for (LoadableStudyPortRotation loadableStudyPortRotation :
-          portRotationsForNonDischargingOperations) {
-        List<SynopticalTable> synopticalTables =
-            this.synopticalTableRepository
-                .findByLoadableStudyXIdAndLoadableStudyPortRotation_idAndIsActive(
-                    loadableStudy.getId(), loadableStudyPortRotation.getId(), true);
-        for (SynopticalTable synopticalTable : synopticalTables) {
-          if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
-            throw new GenericServiceException(
-                "No Actual ETA/ETD values found",
-                CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
-                HttpStatusCode.BAD_REQUEST);
-          }
+      // Optimizing DB calls
+      List<Long> loadableStudyPortRotationIds =
+          portRotationsForNonDischargingOperations.stream()
+              .map(item -> item.getId())
+              .collect(Collectors.toList());
+      List<SynopticalTable> synopticalTables =
+          this.synopticalTableRepository
+              .findByLoadableStudyXIdAndLoadableStudyPortRotation_idInAndIsActive(
+                  loadableStudy.getId(), loadableStudyPortRotationIds, true);
+      for (SynopticalTable synopticalTable : synopticalTables) {
+        if (synopticalTable.getEtaActual() == null && synopticalTable.getEtdActual() == null) {
+          throw new GenericServiceException(
+              "No Actual ETA/ETD values found",
+              CommonErrorCodes.E_CPDSS_NO_ACTUAL_ETA_OR_ETD_FOUND,
+              HttpStatusCode.BAD_REQUEST);
         }
       }
-
       // Validate DS Name
       if (dischargeStudyRepository.existsByNameIgnoreCaseAndPlanningTypeXIdAndVoyageAndIsActive(
           request.getName(), 2, voyage, true)) {
         throw new GenericServiceException(
-            "name already exists",
+            "Name already exists",
             CommonErrorCodes.E_CPDSS_LS_NAME_EXISTS,
             HttpStatusCode.BAD_REQUEST);
       }
@@ -313,6 +336,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (Exception e) {
+      e.printStackTrace();
       TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
       builder.setResponseStatus(ResponseStatus.newBuilder().setStatus(FAILED).build());
     } finally {
@@ -582,6 +606,63 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           "No Atcuals",
           CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
           HttpStatusCode.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Method used to verify if actuals present for loading/discharge study.
+   *
+   * @param loadableStudy
+   * @param operation
+   * @throws GenericServiceException
+   */
+  public void validateActuals2(LoadableStudy loadableStudy, Long operation)
+      throws GenericServiceException {
+
+    List<CargoNomination> cargoNominations =
+        cargoNominationService.getCargoNominationByLoadableStudyId(loadableStudy.getId());
+    List<LoadableStudyPortRotation> ports =
+        loadableStudyPortRotationRepository
+            .findByLoadableStudyAndIsActive(loadableStudy.getId(), true).stream()
+            .filter(p -> p.getOperation().getId().equals(operation))
+            .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
+            .collect(Collectors.toList());
+    StowageAndBillOfLaddingValidationRequest.Builder request =
+        StowageAndBillOfLaddingValidationRequest.newBuilder();
+    ports.forEach(
+        port -> {
+          PortWiseCargo.Builder portBuilder = PortWiseCargo.newBuilder();
+          portBuilder.setPortRotationId(port.getId());
+          portBuilder.setPortId(port.getPortXId());
+          List<Long> cargoIds =
+              cargoNominations.stream()
+                  .filter(
+                      cargo ->
+                          cargo.getCargoNominationPortDetails().stream()
+                              .anyMatch(portData -> portData.getPortId().equals(port.getPortXId())))
+                  .map(CargoNomination::getId)
+                  .collect(Collectors.toList());
+
+          portBuilder.addAllCargoIds(cargoIds);
+          request.addPortWiseCargos(portBuilder);
+        });
+    ResponseStatus response = null;
+    if (operation.equals(LOADING_OPERATION_ID)) {
+      response = loadingPlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
+      if (!SUCCESS.equalsIgnoreCase(response.getStatus())) {
+        throw new GenericServiceException(
+            "No Atcuals Present for Loading",
+            CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
+            HttpStatusCode.BAD_REQUEST);
+      }
+    } else {
+      response = dischargePlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
+      if (SUCCESS.equalsIgnoreCase(response.getStatus())) {
+        throw new GenericServiceException(
+            "Actuals Presnt for another Discharge Study",
+            CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
+            HttpStatusCode.BAD_REQUEST);
+      }
     }
   }
 
@@ -1761,7 +1842,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           cargoNominationService.getCargoNominationByLoadableStudyId(dischargeStudy.getId());
       List<DischargePatternQuantityCargoPortwiseDetails> generatedCargos =
           dischargePatternQuantityCargoPortwiseRepository
-              .findByDischargeCargoNominationIdInAndOperationType(
+              .findByDischargeCargoNominationIdInAndOperationTypeAndIsActiveTrue(
                   cargos.stream().map(CargoNomination::getId).collect(Collectors.toList()),
                   SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
       Map<Long, List<DischargePatternQuantityCargoPortwiseDetails>> portWiseCargo =
@@ -1843,7 +1924,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Override
   public void confirmPlan(
       ConfirmPlanRequest request, StreamObserver<ConfirmPlanReply> responseObserver) {
-    log.info("inside confirmPlan loadable study service");
+    log.info("inside confirmPlan Discharge study service");
     ConfirmPlanReply.Builder replyBuilder = ConfirmPlanReply.newBuilder();
     try {
       Builder reply = loadablePatternService.confirmPlan(request, replyBuilder);
@@ -1857,6 +1938,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           this.loadablePatternRepository
               .findByIdAndIsActive(request.getLoadablePatternId(), true)
               .get();
+      //      validateActuals2(loadablePatternOpt.getLoadableStudy(),DISCHARGING_OPERATION_ID);
       transferDSConfirmedPlanData(loadablePatternOpt.getLoadableStudy());
     } catch (Exception e) {
       log.error("Exception when confirmPlan ", e);

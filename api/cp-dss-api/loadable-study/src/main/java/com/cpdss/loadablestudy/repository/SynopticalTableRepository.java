@@ -86,4 +86,7 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
       value = "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM synoptical_table u where id=?1",
       nativeQuery = true)
   String getSynopticalTableDataWithId(Long id);
+
+  public List<SynopticalTable> findByLoadableStudyXIdAndLoadableStudyPortRotation_idInAndIsActive(
+      Long id, List<Long> loadableStudyPortRotationIds, boolean isActive);
 }

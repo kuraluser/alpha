@@ -1287,7 +1287,7 @@ class LoadableStudyControllerTest {
       strings = {GET_CONFIRM_PLAN_STATUS_CLOUD_API_URL, GET_CONFIRM_PLAN_STATUS_SHIP_API_URL})
   @ParameterizedTest
   void testConfirmPlanStatus(String url) throws Exception {
-    when(this.loadableStudyService.confirmPlanStatus(anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.confirmPlanStatus(anyLong(), anyLong(), anyInt(), anyString()))
         .thenReturn(new ConfirmPlanStatusResponse());
     this.mockMvc
         .perform(
@@ -1314,7 +1314,8 @@ class LoadableStudyControllerTest {
               CommonErrorCodes.E_GEN_INTERNAL_ERR,
               HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
-    when(this.loadableStudyService.confirmPlanStatus(anyLong(), anyLong(), anyString()))
+    when(this.loadableStudyService.confirmPlanStatus(
+            1L, TEST_VOYAGE_ID, null, CORRELATION_ID_HEADER_VALUE))
         .thenThrow(ex);
     this.mockMvc
         .perform(

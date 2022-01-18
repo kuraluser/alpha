@@ -198,9 +198,10 @@ class DischargeStudyServiceTest {
     entity.setId(2L);
     when(this.voyageRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(new com.cpdss.loadablestudy.entity.Voyage());
-
-    when(this.loadableStudyRepository.findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_id(
-            anyLong(), any(Voyage.class), anyBoolean(), anyLong()))
+    when(this.loadableStudyRepository
+            .findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_idAndPlanningTypeXId(
+                anyLong(), any(Voyage.class), anyBoolean(), anyLong(), anyInt()))
+        .thenReturn(new ArrayList<LoadableStudy>())
         .thenReturn(createLoadableList());
     ReflectionTestUtils.setField(
         this.dischargeStudyService, "dischargeStudyRepository", loadableStudyRepository);
@@ -699,7 +700,8 @@ class DischargeStudyServiceTest {
     when(cargoNominationService.getCargoNominationByLoadableStudyId(anyLong()))
         .thenReturn(getCargoNominationList());
     when(dischargePatternQuantityCargoPortwiseRepository
-            .findByDischargeCargoNominationIdInAndOperationType(anyList(), anyString()))
+            .findByDischargeCargoNominationIdInAndOperationTypeAndIsActiveTrue(
+                anyList(), anyString()))
         .thenReturn(Arrays.asList(getPortwiseDetails()));
     when(loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
             any(LoadableStudy.class), anyBoolean()))

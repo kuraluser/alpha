@@ -2285,18 +2285,21 @@ public class LoadablePatternService {
             patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
       }
 
-      if (!patternStatus.isEmpty()) {
-        if (stowageDetailsTempRepository
-                .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
-                .isEmpty()
-            || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
-          replyBuilder.setValidated(true);
-        }
-      } else {
-        if (stowageDetailsTempRepository
-            .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
-            .isEmpty()) {
-          replyBuilder.setValidated(true);
+      // check for Stowage edit only if request came from LS
+      if (request.getRequestType() != LS_REQUEST) {
+        if (!patternStatus.isEmpty()) {
+          if (stowageDetailsTempRepository
+                  .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+                  .isEmpty()
+              || VALIDATED_CONDITIONS.contains(replyBuilder.getLoadablePatternStatusId())) {
+            replyBuilder.setValidated(true);
+          }
+        } else {
+          if (stowageDetailsTempRepository
+              .findByLoadablePatternAndIsActive(loadablePatternOpt.get(), true)
+              .isEmpty()) {
+            replyBuilder.setValidated(true);
+          }
         }
       }
       List<LoadablePattern> loadablePatternConfirmedOpt =

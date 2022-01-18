@@ -163,6 +163,7 @@ public class LoadableStudiesConstants {
   public static final Long LOAD_LINE_TROPICAL_TO_SUMMER_ID = 7L;
   public static final Long LOAD_LINE_TROPICAL_TO_WINTER_ID = 8L;
   public static final Long LOAD_LINE_SUMMER_TO_WINTER_ID = 9L;
+  public static final int LS_REQUEST = 2;
 
   public static final List<Long> CASE_1_LOAD_LINES =
       Arrays.asList(

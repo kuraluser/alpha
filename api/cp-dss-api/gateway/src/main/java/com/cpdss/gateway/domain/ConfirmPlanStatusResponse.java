@@ -10,5 +10,6 @@ public class ConfirmPlanStatusResponse {
   private Boolean confirmed;
   private CommonSuccessResponse responseStatus;
   private Long loadablePatternStatusId;
+  private Long dischargePatternStatusId;
   private Boolean validated;
 }

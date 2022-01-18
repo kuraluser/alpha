@@ -63,7 +63,7 @@ public class CargoNomination extends EntityDoc {
       mappedBy = "cargoNomination",
       cascade = CascadeType.ALL,
       orphanRemoval = true,
-      fetch = FetchType.LAZY)
+      fetch = FetchType.EAGER)
   private Set<CargoNominationPortDetails> cargoNominationPortDetails = new LinkedHashSet<>();
 
   @Column(name = "is_backloading")

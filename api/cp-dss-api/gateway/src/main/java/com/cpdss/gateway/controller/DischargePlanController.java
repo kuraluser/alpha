@@ -8,6 +8,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.AlgoErrorResponse;
 import com.cpdss.gateway.domain.AlgoStatusRequest;
 import com.cpdss.gateway.domain.CommonResponse;
+import com.cpdss.gateway.domain.ConfirmPlanStatusResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyCargoResponse;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyRequest;
 import com.cpdss.gateway.domain.DischargeStudy.DischargeStudyResponse;
@@ -40,6 +41,7 @@ import com.cpdss.gateway.domain.loadingplan.LoadingInfoAlgoStatusRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.service.DischargeStudyService;
+import com.cpdss.gateway.service.LoadableStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
 import com.cpdss.gateway.service.dischargeplan.DischargingInstructionService;
@@ -97,6 +99,8 @@ public class DischargePlanController {
 
   @Autowired
   private GenerateDischargingPlanExcelReportService generateDischargingPlanExcelReportService;
+
+  @Autowired private LoadableStudyService loadableStudyService;
 
   /**
    * Delete port rotation by id
@@ -553,6 +557,8 @@ public class DischargePlanController {
   }
 
   /**
+   * DS View Plan API
+   *
    * @param vesselId
    * @param voyageId
    * @param dischargeStudyId
@@ -1530,6 +1536,41 @@ public class DischargePlanController {
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
     } catch (Exception e) {
       log.error("Exception in generateDischargingPlanExcel method", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+  }
+
+  /**
+   * @param vesselId
+   * @param voyageId
+   * @param loadablePatternId
+   * @param headers
+   * @return
+   * @throws CommonRestException ConfirmPlanStatusResponse
+   */
+  @GetMapping(
+      value =
+          "/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/confirm-plan-status/{dischargePatternId}")
+  public ConfirmPlanStatusResponse confirmPlanStatus(
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long vesselId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST) Long voyageId,
+      @PathVariable @Min(value = 1, message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
+          Long dischargePatternId,
+      @RequestHeader HttpHeaders headers)
+      throws CommonRestException {
+    try {
+      return this.loadableStudyService.confirmPlanStatus(
+          dischargePatternId, voyageId, 2, headers.getFirst(CORRELATION_ID_HEADER));
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when confirmPlanStatus", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Exception when confirmPlanStatus", e);
       throw new CommonRestException(
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           headers,

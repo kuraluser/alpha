@@ -5029,12 +5029,16 @@ public class LoadableStudyService {
    * @return ConfirmPlanStatusResponse
    */
   public ConfirmPlanStatusResponse confirmPlanStatus(
-      Long loadablePatternId, Long voyageId, String correlationId) throws GenericServiceException {
+      Long loadablePatternId, Long voyageId, Integer requestType, String correlationId)
+      throws GenericServiceException {
     log.info("Inside confirmPlanStatus in gateway micro service");
     ConfirmPlanStatusResponse confirmPlanStatusResponse = new ConfirmPlanStatusResponse();
     ConfirmPlanRequest.Builder requestBuilder = ConfirmPlanRequest.newBuilder();
     requestBuilder.setLoadablePatternId(loadablePatternId);
     requestBuilder.setVoyageId(voyageId);
+    //  Added parameter to reuse LS API for DS .
+    requestBuilder.setRequestType(
+        requestType != null ? requestType : 1); // 1 - Loading, 2 Discharging .
     ConfirmPlanReply grpcReply = this.confirmPlanStatusReply(requestBuilder);
     if (!SUCCESS.equals(grpcReply.getResponseStatus().getStatus())) {
 
@@ -5047,7 +5051,11 @@ public class LoadableStudyService {
     confirmPlanStatusResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     confirmPlanStatusResponse.setConfirmed(grpcReply.getConfirmed());
-    confirmPlanStatusResponse.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    if (requestType != null) {
+      confirmPlanStatusResponse.setDischargePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    } else {
+      confirmPlanStatusResponse.setLoadablePatternStatusId(grpcReply.getLoadablePatternStatusId());
+    }
     confirmPlanStatusResponse.setValidated(grpcReply.getValidated());
     return confirmPlanStatusResponse;
   }
