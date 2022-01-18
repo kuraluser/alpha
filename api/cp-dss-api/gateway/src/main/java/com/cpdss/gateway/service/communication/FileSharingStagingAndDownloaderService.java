@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.communication;
 
+import com.cpdss.common.communication.StagingService;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyReader;
@@ -33,15 +34,19 @@ import org.springframework.web.client.ResourceAccessException;
 @Service
 @Transactional
 @Log4j2
-public class FileSharingStagingAndDownloaderService {
+public class FileSharingStagingAndDownloaderService extends StagingService {
 
-  // region Autowired
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
 
-  @Autowired private FileSharingStagingRepository fileSharingStagingRepository;
+  public FileSharingStagingAndDownloaderService(
+      @Autowired FileSharingStagingRepository fileSharingStagingRepository) {
+    super(fileSharingStagingRepository);
+  }
 
-  @Autowired FileSharingService fileSharingService;
+  // region Autowired
+
+  @Autowired private FileSharingStagingRepository fileSharingStagingRepository;
 
   @GrpcClient("envoyReaderService")
   private EnvoyReaderServiceGrpc.EnvoyReaderServiceBlockingStub envoyReaderGrpcService;
@@ -133,7 +138,7 @@ public class FileSharingStagingAndDownloaderService {
   public void saveToFileRepo() {
     log.info("Inside saveToFileRepo");
     List<DataTransferStage> readyStatusFiles =
-        fileSharingService.getAllWithStatus(StagingStatus.READY_TO_PROCESS.getStatus());
+        this.getAllWithStatus(StagingStatus.READY_TO_PROCESS.getStatus());
     if (!CollectionUtils.isEmpty(readyStatusFiles)) {
       log.info("File details to save:{}", readyStatusFiles.size());
       Map<String, List<DataTransferStage>> groupedData =
@@ -153,14 +158,14 @@ public class FileSharingStagingAndDownloaderService {
                                     .equals(MessageTypes.FILE_SHAREING.getMessageType()))
                         .collect(Collectors.toList())
                         .get(0);
-                fileSharingService.updateStatusForProcessId(
+                this.updateStatusForProcessId(
                     details.getProcessId(), StagingStatus.IN_PROGRESS.getStatus());
                 log.info("updated status to in_progress for processId:{}", details.getProcessId());
                 FileRepo repo = new Gson().fromJson(details.getData(), FileRepo.class);
                 try {
                   repo = fileRepoRepository.save(repo);
                   log.info("Communication ====  Saved File Repo:" + repo.getId());
-                  fileSharingService.updateStatusCompletedForProcessId(
+                  this.updateStatusCompletedForProcessId(
                       details.getProcessId(), StagingStatus.COMPLETED.getStatus());
                   log.info("updated status to completed for processId:" + details.getProcessId());
                 } catch (Exception e) {
@@ -192,7 +197,7 @@ public class FileSharingStagingAndDownloaderService {
   // region Data Binding
   private <T> T bindDataToEntity(Object entity, Type listType, String jsonData) {
     try {
-      HashMap<String, String> map = fileSharingService.getAttributeMapping(entity);
+      HashMap<String, String> map = this.getAttributeMapping(entity);
       JsonArray jsonArray =
           convertToEntityFields(JsonParser.parseString(jsonData).getAsJsonArray(), map);
       return new Gson().fromJson(jsonArray.get(0).getAsJsonObject(), listType);
@@ -206,7 +211,7 @@ public class FileSharingStagingAndDownloaderService {
   }
 
   private JsonArray convertToEntityFields(JsonArray array, HashMap<String, String> map) {
-    JsonArray json = fileSharingService.getAsEntityJson(map, array);
+    JsonArray json = this.getAsEntityJson(map, array);
     JsonArray jsonArray = new JsonArray();
     for (JsonElement jsonElement : json) {
       final JsonObject jsonObj = jsonElement.getAsJsonObject();
@@ -219,10 +224,8 @@ public class FileSharingStagingAndDownloaderService {
   // region update status in the case exception
   private void updateStatusInExceptionCase(
       Long id, String processId, String status, String statusDescription) {
-    fileSharingService.updateStatusAndStatusDescriptionForId(
-        id, status, statusDescription, LocalDateTime.now());
-    fileSharingService.updateStatusAndModifiedDateTimeForProcessId(
-        processId, status, LocalDateTime.now());
+    this.updateStatusAndStatusDescriptionForId(id, status, statusDescription, LocalDateTime.now());
+    this.updateStatusAndModifiedDateTimeForProcessId(processId, status, LocalDateTime.now());
   }
   // endregion
 }
