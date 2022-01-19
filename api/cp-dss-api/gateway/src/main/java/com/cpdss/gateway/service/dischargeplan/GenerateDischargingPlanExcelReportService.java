@@ -1,6 +1,9 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
+import static com.cpdss.common.constants.FileRepoConstants.*;
+
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
@@ -26,7 +29,6 @@ import com.cpdss.gateway.domain.dischargeplan.DischargingInstructions;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanExcelDetails;
 import com.cpdss.gateway.domain.dischargeplan.DischargingPlanExcelDischargingSequenceDetails;
 import com.cpdss.gateway.domain.dischargeplan.TanksWashedWithCargo;
-import com.cpdss.gateway.domain.filerepo.FileRepoReply;
 import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.BerthInformation;
@@ -244,7 +246,7 @@ public class GenerateDischargingPlanExcelReportService {
                 loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
                 actualFileName.split("/")[actualFileName.split("/").length - 1],
                 SUB_FOLDER_NAME + "/",
-                "Discharging",
+                FileRepoSection.DISCHARGE_PLAN,
                 "Process",
                 null,
                 vesselId,

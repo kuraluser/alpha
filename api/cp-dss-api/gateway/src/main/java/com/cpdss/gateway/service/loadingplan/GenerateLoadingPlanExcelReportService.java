@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
+import com.cpdss.common.constants.FileRepoConstants.FileRepoSection;
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
@@ -14,7 +16,6 @@ import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.dischargeplan.CargoPumpDetailsForSequence;
-import com.cpdss.gateway.domain.filerepo.FileRepoReply;
 import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.BerthInformation;
@@ -223,7 +224,7 @@ public class GenerateLoadingPlanExcelReportService {
                 loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
                 actualFileName.split("/")[actualFileName.split("/").length - 1],
                 SUB_FOLDER_NAME + "/",
-                "Loading",
+                FileRepoSection.LOADING_PLAN,
                 "Process",
                 null,
                 vesselId,

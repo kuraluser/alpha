@@ -1,13 +1,15 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.common.constants.FileRepoConstants.*;
+
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.CommonRestException;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.ListOfUllageReportResponse;
 import com.cpdss.gateway.domain.filerepo.FileRepoGetResponse;
-import com.cpdss.gateway.domain.filerepo.FileRepoReply;
 import com.cpdss.gateway.entity.FileRepo;
 import com.cpdss.gateway.service.FileRepoService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
@@ -168,7 +170,7 @@ public class CommonController {
           voyageNo,
           fileName,
           fileType,
-          section,
+          getFileRepoSection(section),
           category,
           headers.getFirst(CORRELATION_ID_HEADER),
           vesselId,
@@ -294,7 +296,7 @@ public class CommonController {
       return fileRepoService.editFileRepo(
           repoId,
           file,
-          section,
+          getFileRepoSection(section),
           category,
           hasFileChanged,
           headers.getFirst(CORRELATION_ID_HEADER),

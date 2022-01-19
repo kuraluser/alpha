@@ -382,4 +382,6 @@ public class LoadableStudiesConstants {
 
     private final String tableName;
   }
+
+  public static final String FILE_REPO_CATEGORY = "Process";
 }

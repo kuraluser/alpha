@@ -30,12 +30,14 @@ jobs:
       wrapperScript: api/cp-dss-api/company-info/gradlew
       cwd: api/cp-dss-api/company-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Company-Info
     inputs:
       wrapperScript: api/cp-dss-api/company-info/gradlew
       cwd: api/cp-dss-api/company-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Cargo-Info
@@ -43,12 +45,14 @@ jobs:
       wrapperScript: api/cp-dss-api/cargo-info/gradlew
       cwd: api/cp-dss-api/cargo-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Cargo-Info
     inputs:
       wrapperScript: api/cp-dss-api/cargo-info/gradlew
       cwd: api/cp-dss-api/cargo-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Port-Info
@@ -56,12 +60,14 @@ jobs:
       wrapperScript: api/cp-dss-api/port-info/gradlew
       cwd: api/cp-dss-api/port-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Port-Info
     inputs:
       wrapperScript: api/cp-dss-api/port-info/gradlew
       cwd: api/cp-dss-api/port-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Vessel-Info
@@ -69,12 +75,14 @@ jobs:
       wrapperScript: api/cp-dss-api/vessel-info/gradlew
       cwd: api/cp-dss-api/vessel-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Vessel-Info
     inputs:
       wrapperScript: api/cp-dss-api/vessel-info/gradlew
       cwd: api/cp-dss-api/vessel-info
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Loadicator-Integration
@@ -82,12 +90,14 @@ jobs:
       wrapperScript: api/cp-dss-api/loadicator-integration/gradlew
       cwd: api/cp-dss-api/loadicator-integration
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Loadicator-Integration
     inputs:
       wrapperScript: api/cp-dss-api/loadicator-integration/gradlew
       cwd: api/cp-dss-api/loadicator-integration
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Loading-Plan
@@ -95,12 +105,14 @@ jobs:
       wrapperScript: api/cp-dss-api/loading-plan/gradlew
       cwd: api/cp-dss-api/loading-plan
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Loading-Plan
     inputs:
       wrapperScript: api/cp-dss-api/loading-plan/gradlew
       cwd: api/cp-dss-api/loading-plan
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Envoy-Writer
@@ -108,12 +120,14 @@ jobs:
       wrapperScript: api/cp-dss-api/envoy-writer/gradlew
       cwd: api/cp-dss-api/envoy-writer
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Envoy-Writer
     inputs:
       wrapperScript: api/cp-dss-api/envoy-writer/gradlew
       cwd: api/cp-dss-api/envoy-writer
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Envoy-Reader
@@ -121,12 +135,14 @@ jobs:
       wrapperScript: api/cp-dss-api/envoy-reader/gradlew
       cwd: api/cp-dss-api/envoy-reader
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Envoy-Reader
     inputs:
       wrapperScript: api/cp-dss-api/envoy-reader/gradlew
       cwd: api/cp-dss-api/envoy-reader
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Task-Manager
@@ -134,12 +150,14 @@ jobs:
       wrapperScript: api/cp-dss-api/task-manager/gradlew
       cwd: api/cp-dss-api/task-manager
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Task-Manager
     inputs:
       wrapperScript: api/cp-dss-api/task-manager/gradlew
       cwd: api/cp-dss-api/task-manager
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Loadable-Study
@@ -147,12 +165,14 @@ jobs:
       wrapperScript: api/cp-dss-api/loadable-study/gradlew
       cwd: api/cp-dss-api/loadable-study
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Loadable-Study
     inputs:
       wrapperScript: api/cp-dss-api/loadable-study/gradlew
       cwd: api/cp-dss-api/loadable-study
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Discharge-Plan
@@ -160,12 +180,14 @@ jobs:
       wrapperScript: api/cp-dss-api/discharge-plan/gradlew
       cwd: api/cp-dss-api/discharge-plan
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Discharge-Plan
     inputs:
       wrapperScript: api/cp-dss-api/discharge-plan/gradlew
       cwd: api/cp-dss-api/discharge-plan
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Gradle@2
     displayName: Run Build Gateway
@@ -173,12 +195,14 @@ jobs:
       wrapperScript: api/cp-dss-api/gateway/gradlew
       cwd: api/cp-dss-api/gateway
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
   - task: Gradle@2
     displayName: Run Jib Gateway
     inputs:
       wrapperScript: api/cp-dss-api/gateway/gradlew
       cwd: api/cp-dss-api/gateway
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11
       tasks: jib
   - task: Bash@3
     displayName: Configure Docker

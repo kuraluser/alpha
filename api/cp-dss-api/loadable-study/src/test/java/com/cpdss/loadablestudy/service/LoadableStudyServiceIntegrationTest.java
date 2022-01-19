@@ -158,6 +158,7 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
   @MockBean private LoadableStudyCommunicationData loadableStudyCommunicationData;
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
+  @MockBean private FileRepoService fileRepoService;
 
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;

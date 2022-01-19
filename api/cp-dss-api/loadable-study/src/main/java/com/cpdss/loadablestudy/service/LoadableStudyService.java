@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
+import static com.cpdss.common.constants.FileRepoConstants.*;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ACTIVE_VOYAGE_STATUS;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_TIME_FORMAT;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_TIME_FORMAT_LAST_MODIFIED;
@@ -9,6 +10,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ERRO_CALL
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_EXC;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_RESOURCE_EXC;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FILE_REPO_CATEGORY;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_INITIAL_STATUS_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
@@ -17,6 +19,7 @@ import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.communication.CommunicationConstants;
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
@@ -106,6 +109,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
+import com.cpdss.loadablestudy.domain.FileRepoAddRequest;
 import com.cpdss.loadablestudy.domain.LoadablePlanDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadablePlanPortWiseDetailsAlgoJson;
 import com.cpdss.loadablestudy.domain.LoadableStudyAlgoJson;
@@ -188,6 +192,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   @Autowired JsonDataService jsonDataService;
   @Autowired OnHandQuantityService onHandQuantityService;
   @Autowired LoadableStudyStagingService loadableStudyStagingService;
+  @Autowired private FileRepoService fileRepoService;
 
   @Autowired
   private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
@@ -607,6 +612,19 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           attachmentEntity.setLoadableStudy(entity);
           attachmentEntity.setIsActive(true);
           attachmentCollection.add(attachmentEntity);
+
+          // Save to file repo
+          FileRepoAddRequest fileRepoAddRequest = new FileRepoAddRequest();
+          fileRepoAddRequest.setVoyageNo(entity.getVoyage().getVoyageNo());
+          fileRepoAddRequest.setFileName(fileName);
+          fileRepoAddRequest.setVesselId(entity.getVesselXId());
+          fileRepoAddRequest.setSection(FileRepoSection.LOADABLE_STUDY);
+          fileRepoAddRequest.setCategory(FILE_REPO_CATEGORY);
+          fileRepoAddRequest.setFileType(path.toString());
+          fileRepoAddRequest.setFile(attachment.getByteString().toByteArray());
+
+          FileRepoReply fileRepoReply = fileRepoService.addFileToFileRepo(fileRepoAddRequest);
+          log.debug("Added to file repo. Response: {}", fileRepoReply);
         }
         this.loadableStudyAttachmentsRepository.saveAll(attachmentCollection);
       }
