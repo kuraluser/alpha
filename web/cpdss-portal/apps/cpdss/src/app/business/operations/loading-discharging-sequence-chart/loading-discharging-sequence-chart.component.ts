@@ -4,7 +4,7 @@ import * as Highcharts from 'highcharts';
 import Theme from 'highcharts/themes/grid-light';
 import GanttChart from 'highcharts/modules/gantt';
 import Annotations from 'highcharts/modules/annotations';
-import { ISequenceData, SEQUENCE_CHARTS } from './loading-discharging-sequence-chart.model';
+import { DATA_TYPE, ISequenceData, SEQUENCE_CHARTS } from './loading-discharging-sequence-chart.model';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { OPERATIONS } from '../../core/models/common.model';
 import { LoadingDischargingSequenceApiService } from '../services/loading-discharging-sequence-api.service';
@@ -245,9 +245,10 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       return duration;
     }, totalDuration);
 
-    const isStrippingShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballasts?.some(tank => tank.id?.includes('stripping') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
-    const isGravityShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballastPumps?.some(tank => tank.id?.includes('gravity') && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
-    const isDense = this.stageTickPositions.length > totalDuration || (minStageDuration < 1 && (totalDuration < 24 || totalDuration / this.stageTickPositions.length < 2)) || isStrippingShortDuration || isGravityShortDuration;
+    const isStrippingShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballasts?.some(tank => tank.type === DATA_TYPE.BALLAST_STRIPPING && (tank.end - tank.start) / (60 * 60 * 1000) < 1) || LoadingDischargingSequenceChartComponent.sequenceData.cargos?.some(tank => tank.type === DATA_TYPE.CARGO_STRIPPING && (tank.end - tank.start) / (60 * 60 * 1000) < 1);
+    const isGravityShortDuration = LoadingDischargingSequenceChartComponent.sequenceData.ballastPumps?.some(pump => pump?.type === DATA_TYPE.BALLAST_GRAVITY && (pump.end - pump.start) / (60 * 60 * 1000) < 1);
+    const stageDensity = totalDuration / this.stageTickPositions.length;
+    const isDense = this.stageTickPositions.length > totalDuration || (minStageDuration < 1 && (totalDuration < 24 || stageDensity < 2)) || isStrippingShortDuration || isGravityShortDuration;
 
     let maxXAxisValue = 0;
 
@@ -261,7 +262,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         break;
 
       case totalDuration >= 24 && isDense:
-        maxXAxisValue = 12 - (2 * Math.ceil(totalDuration / this.stageTickPositions.length / 2));
+        maxXAxisValue = 12 - (stageDensity < 2 ? 2 * Math.ceil(stageDensity / 2) : 0);
         break;
 
       case totalDuration >= 24 && !isDense:
@@ -380,7 +381,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    */
   setCargoTankSequenceData() {
     const cargoSequenceSeriesData = [];
-    LoadingDischargingSequenceChartComponent.sequenceData?.cargos?.forEach((dataObj: any) => {
+    LoadingDischargingSequenceChartComponent.sequenceData?.cargos?.forEach((dataObj) => {
       const tankIndex = LoadingDischargingSequenceChartComponent.sequenceData?.cargoTankCategories.findIndex(i => i?.id === dataObj.tankId);
       cargoSequenceSeriesData.push({
         tankId: dataObj?.tankId,
@@ -391,10 +392,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         ullage: dataObj?.ullage,
         quantity: dataObj?.quantity,
         id: dataObj?.id,
-        color: dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
+        type: dataObj?.type,
+        color: dataObj?.type === DATA_TYPE.CARGO_STRIPPING ? '#f8f8f8' : dataObj.color,
         abbreviation: dataObj.abbreviation,
         y: tankIndex,
-        pointWidth: dataObj?.id?.includes('stripping') ? 0 : 6,
+        pointWidth: dataObj?.pointWidth,
+        dependency: dataObj?.dependency,
+        tooltipHeader: dataObj?.tooltipHeader
       });
     });
     this.cargoSequenceChartSeries = [{
@@ -430,6 +434,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       },
       plotOptions: {
         gantt: {
+          animation: false,
           colorAxis: false,
           pointWidth: 6,
           borderWidth: 0,
@@ -443,7 +448,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               verticalAlign: 'bottom',
               color: '#666666',
               formatter: function () {
-                return !this.point?.options?.className && !this.point?.options?.id?.includes('stripping') ? this.point?.ullage : undefined;
+                return [DATA_TYPE.CARGO].includes(this.point?.type) ? this.point?.ullage : undefined;
               }
             },
             {
@@ -672,7 +677,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                   return this.value <= data.end && data.end <= nextTick;
                 }
                 );
-                const lastStage = LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks[LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks.length - 1];
+                const lastStage = LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks[LoadingDischargingSequenceChartComponent.sequenceData?.driveTanks?.length - 1];
                 if (stage) {
                   categoryLabel = stage?.tankName;
                 } else if (equalIndex + 1 === this.axis.tickPositions?.length - 1 && lastStage.end >= nextTick) {
@@ -780,13 +785,13 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         useHTML: true,
         className: 'sequence-chart-tooltip container-fluid',
         formatter: function () {
-          let tooltipContent, cargoNames, duration, startingTime, endingTime, quantity, ullage, isCOW = false;
+          let tooltipContent, tooltipHeader, duration, startingTime, endingTime, quantity, ullage, isCOW = false;
           const min = LoadingDischargingSequenceChartComponent.minXAxisValue;
           startingTime = (this?.point?.start - min) / (1000 * 60 * 60);
           endingTime = (this?.point?.end - min) / (1000 * 60 * 60);
           duration = (this?.point?.end - min) / (1000 * 60 * 60);
 
-          if (this?.point?.options?.id?.includes('cow')) {
+          if (this?.point?.type === DATA_TYPE.CARGO_COW) {
             isCOW = true;
             tooltipContent = `
               <table>
@@ -803,17 +808,17 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                   <td>${endingTime.toFixed(2)}</td>
                 </tr>
               </table>`;
-          } else if (this?.point?.options?.id?.includes('stripping')) {
+          } else if (this?.point?.type === DATA_TYPE.CARGO_STRIPPING) {
             return false;
           } else {
-            cargoNames = this?.point?.abbreviation;
+            tooltipHeader = [DATA_TYPE.CARGO_TRANSFER, DATA_TYPE.CARGO_FRESH_OIL_DISCHARGE, DATA_TYPE.CARGO_REFILL].includes(this?.point?.type) ? this.point?.tooltipHeader : this?.point?.abbreviation;
             quantity = this?.point?.quantity;
             ullage = this?.point?.ullage;
 
             tooltipContent = `
               <table>
                 <tr>
-                  <th>${cargoNames}</th>
+                  <th>${tooltipHeader}</th>
                 </tr>
                 <tr>
                   <th>${LoadingDischargingSequenceChartComponent.translationKeys['SEQUENCE_CHART_TOOLTIP_HOURS']}</th>
@@ -852,7 +857,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    */
   setCargoPumpSequenceData() {
     const cargoPumpSequenceSeriesData = [];
-    LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumps?.forEach((dataObj: any) => {
+    LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumps?.forEach((dataObj) => {
       const pumpIndex = LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories?.findIndex(i => i?.id === dataObj.pumpId);
       cargoPumpSequenceSeriesData.push({
         pumpId: dataObj?.pumpId,
@@ -862,6 +867,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         pumpName: LoadingDischargingSequenceChartComponent.sequenceData?.cargoPumpCategories[pumpIndex].pumpName,
         rate: dataObj?.rate?.toFixed(),
         id: dataObj?.id,
+        type: dataObj?.type,
         color: dataObj.color,
         y: pumpIndex,
         pointWidth: 6,
@@ -1081,7 +1087,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    */
   setBallastTankSequenceData() {
     const ballastSequenceSeriesData = [];
-    LoadingDischargingSequenceChartComponent.sequenceData?.ballasts.forEach((dataObj: any) => {
+    LoadingDischargingSequenceChartComponent.sequenceData?.ballasts.forEach((dataObj) => {
       const tankIndex = LoadingDischargingSequenceChartComponent.sequenceData?.ballastTankCategories.findIndex(i => i?.id === dataObj.tankId);
       ballastSequenceSeriesData.push({
         tankId: dataObj?.tankId,
@@ -1092,11 +1098,12 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         rate: dataObj?.rate?.toFixed(),
         sounding: dataObj?.sounding,
         quantity: dataObj?.quantity,
+        type: dataObj?.type,
         id: dataObj?.id,
-        color: dataObj?.id?.includes('stripping') ? '#f8f8f8' : dataObj.color,
+        color: dataObj?.type === DATA_TYPE.BALLAST_STRIPPING ? '#f8f8f8' : dataObj.color,
         abbreviation: 'Ballast',
         y: tankIndex,
-        pointWidth: dataObj?.id?.includes('stripping') ? 0 : 6,
+        pointWidth: dataObj?.pointWidth,
       });
     });
     this.ballastSequenceChartSeries = [{
@@ -1142,7 +1149,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               verticalAlign: 'bottom',
               color: '#666666',
               formatter: function () {
-                return !this.point?.options?.id?.includes('stripping') && !this.point?.options?.className ? this.point?.sounding : undefined;
+                return this.point?.type === DATA_TYPE.BALLAST ? this.point?.sounding : undefined;
               }
             },
             {
@@ -1347,7 +1354,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
    */
   setBallastPumpSequenceData() {
     const ballastPumpSequenceSeriesData = [];
-    LoadingDischargingSequenceChartComponent.sequenceData?.ballastPumps?.forEach((dataObj: any) => {
+    LoadingDischargingSequenceChartComponent.sequenceData?.ballastPumps?.forEach((dataObj) => {
       const pumpIndex = LoadingDischargingSequenceChartComponent.sequenceData?.ballastPumpCategories.findIndex(i => i?.id === dataObj.pumpId);
       ballastPumpSequenceSeriesData.push({
         pumpId: dataObj?.pumpId,
@@ -1356,13 +1363,11 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         className: dataObj?.className,
         pumpName: LoadingDischargingSequenceChartComponent.sequenceData?.ballastPumpCategories[pumpIndex]?.pumpName,
         rate: dataObj?.rate?.toFixed(),
+        type: dataObj?.type,
         id: dataObj?.id,
-        color: dataObj?.id?.includes('gravity') ? '#f8f8f8' : dataObj.color,
+        color: dataObj?.type === DATA_TYPE.BALLAST_GRAVITY ? '#f8f8f8' : dataObj.color,
         y: pumpIndex,
-        pointWidth: dataObj?.id?.includes('gravity') ? 40 : 6,
-        borderColor: dataObj?.id?.includes('gravity') ? '#bebebe' : null,
-        borderWidth: dataObj?.id?.includes('gravity') ? 1 : 0,
-        borderRadius: dataObj?.id?.includes('gravity') ? 5 : 0,
+        pointWidth: dataObj?.pointWidth,
       });
     });
 
@@ -2005,7 +2010,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
               number++;
             }
           });
-          chart?.tooltip?.refresh(points); // Show the tooltip
+            chart?.tooltip?.refresh(points); // Show the tooltip
         } else {
           chart?.tooltip?.hide();
         }
@@ -2330,7 +2335,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       .add(chart.cargoStrippingGroup);
 
     chart.series[0].data.forEach((point) => {
-      if (point?.options?.id?.includes('stripping')) {
+      if (point?.type === DATA_TYPE.CARGO_STRIPPING) {
         const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
         const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
         const rectHeight = 40;
@@ -2399,7 +2404,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       .add(chart.ballastStrippingGroup);
 
     chart.series[0].data.forEach((point) => {
-      if (point?.options?.id?.includes('stripping')) {
+      if (point?.type === DATA_TYPE.BALLAST_STRIPPING) {
         const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
         const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
         const rectHeight = 40;
@@ -2468,7 +2473,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
       .add(chart.ballastGravityGroup);
 
     chart.series[0].data.forEach((point) => {
-      if (point?.options?.id?.includes('gravity')) {
+      if (point?.type === DATA_TYPE.BALLAST_GRAVITY) {
         const rectX = point.plotX < 0 ? chart.plotLeft : point.plotX + chart.plotLeft;
         const rectWidth = point.plotX < 0 ? point?.shapeArgs?.width - 10 : point?.shapeArgs?.width;
         const rectHeight = 40;
@@ -2494,6 +2499,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
         )
           .css({
             width: rectWidth,
+            height: 40,
             textOverflow: 'ellipsis',
             color: '#666666'
           })

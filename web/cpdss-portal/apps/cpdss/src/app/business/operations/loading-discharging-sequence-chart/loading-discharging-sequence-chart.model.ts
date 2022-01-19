@@ -1,4 +1,6 @@
+import { XrangePointConnectorsOptionsObject } from "highcharts";
 import { IResponseStatus } from "../../../shared/models/common.model";
+import { ICargo } from "../../core/models/common.model";
 
 declare module 'highcharts' {
 
@@ -20,6 +22,8 @@ declare module 'highcharts' {
     shapeArgs?: IShapeArgs;
     plotX: number;
     plotY: number;
+    type?: DATA_TYPE;
+    tooltipHeader?: string;
     highlight: (event: Highcharts.PointerEventObject) => void;
   }
 
@@ -129,7 +133,7 @@ export interface Pump {
 export interface ITankData {
   tankId?: number;
   start: number;
-  end: number;
+  end?: number;
   ullage?: number;
   quantityMT?: number;
   quantity?: number;
@@ -143,6 +147,11 @@ export interface ITankData {
   cargoNominationId?: number;
   tankName?: string;
   api?: number;
+  type?: DATA_TYPE;
+  dependency?: (string | XrangePointConnectorsOptionsObject | Array<(string | XrangePointConnectorsOptionsObject)>);
+  pointWidth?: number;
+  milestone?: boolean;
+  tooltipHeader?: string;
 }
 
 /**
@@ -163,6 +172,8 @@ export interface IPumpData {
   id?: string;
   className?: string;
   pumpName?: string;
+  type?: DATA_TYPE;
+  pointWidth?: number;
 }
 
 /**
@@ -227,6 +238,9 @@ export interface ISequenceData {
   cargoEduction?: IEduction[];
   cleaningTanks: ICOW;
   driveTanks?: ITankData[];
+  transfers?: ITankTransferData[];
+  freshOilTanks?: ITankTransferData[];
+  tankRefills?: ITankTransferData[];
 }
 
 /**
@@ -338,4 +352,52 @@ export interface ICOW {
   bottomTanks: ITankData[];
   fullTanks: ITankData[];
   topTanks: ITankData[];
+}
+
+/**
+ * Interface for tank to tank transfer data
+ *
+ * @export
+ * @interface ITankTransferData
+ */
+export interface ITankTransferData {
+  fromTanks: ITransferTankData[];
+  toTank: ITransferTankData;
+  start: number;
+  end: number;
+  cargo: ICargo;
+}
+
+/**
+ * ENUM for data point types
+ *
+ * @export
+ * @enum {number}
+ */
+export enum DATA_TYPE {
+  CARGO = "CARGO",
+  CARGO_STRIPPING = "CARGO_STRIPPING",
+  CARGO_PUMP = "CARGO_PUMP",
+  CARGO_COW = "CARGO_COW",
+  CARGO_TRANSFER = "CARGO_TRANSFER",
+  CARGO_FRESH_OIL_DISCHARGE = "CARGO_FRESH_OIL_DISCHARGE",
+  CARGO_REFILL = "CARGO_REFILL",
+  BALLAST = "BALLAST",
+  BALLAST_STRIPPING = "BALLAST_STRIPPING",
+  BALLAST_PUMP = "BALLAST_PUMP",
+  BALLAST_GRAVITY = "BALLAST_GRAVITY"
+}
+
+/**
+ * Interface for transfer tank data
+ *
+ * @export
+ * @interface ITransferTankData
+ * @extends {ITankData}
+ */
+export interface ITransferTankData extends ITankData {
+  startQuantity: number;
+  endQuantity: number;
+  startUllage: number;
+  endUllage: number;
 }

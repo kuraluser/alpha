@@ -6,7 +6,7 @@ import { QUANTITY_UNIT, RATE_UNIT, ValueObject } from '../../../shared/models/co
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { ICargoQuantities, ILoadableQuantityCargo, IProtested, IShipCargoTank, ITank, OPERATIONS } from '../../core/models/common.model';
-import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage, IEduction, ITankData, ITank as ISequenceTank, IDischargingRate, ICOW } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
+import { IPumpData, IPump, ILoadingRate, ISequenceData, ICargoStage, IEduction, ITankData, ITank as ISequenceTank, IDischargingRate, ICOW, ITankTransferData, DATA_TYPE } from '../loading-discharging-sequence-chart/loading-discharging-sequence-chart.model';
 import { ICOWDetails, IDischargeOperationListData, IDischargingInformation, IDischargingInformationResponse, ILoadedCargo, ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequenceValueObject, IReasonForDelays, ITanksWashingWithDifferentCargo, ITanksWashingWithDifferentCargoResponse, ILoadedCargoResponse } from '../models/loading-discharging.model';
 import { QuantityDecimalFormatPipe } from '../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { OPERATION_TAB } from '../models/operations.model';
@@ -524,7 +524,7 @@ export class LoadingDischargingTransformationService {
       } else {
         _loadingDischargingDelays.quantity = loadingValueObject?.quantity?.value;
       }
-      if (operation === OPERATIONS.DISCHARGING) {
+      if(operation === OPERATIONS.DISCHARGING) {
         _loadingDischargingDelays.quantity = Number(loadingValueObject?.quantityMT);
       }
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
@@ -871,7 +871,7 @@ export class LoadingDischargingTransformationService {
    * @return {*}
    * @memberof LoadingDischargingTransformationService
    */
-  setEduction(tankData: ITankData[], eduction: IEduction[], tankCategories: ISequenceTank[], type: string) {
+  setEduction(tankData: ITankData[], eduction: IEduction[], tankCategories: ISequenceTank[], type: DATA_TYPE) {
     eduction?.forEach(item => {
       item?.tanks?.forEach(tankId => {
         const _tank = tankCategories.find(tank => tank?.id === tankId);
@@ -883,7 +883,9 @@ export class LoadingDischargingTransformationService {
           quantityMT: 0,
           sounding: 0,
           ullage: 0,
-          id: `${type}-stripping-${_tank.tankName}` // NB:- id must be unique
+          type: type,
+          pointWidth: 0,
+          id: `${type === DATA_TYPE.CARGO_STRIPPING ? 'cargo': 'ballast'}-stripping-${_tank.tankName}` // NB:- id must be unique
         }
         tankData?.push(data);
       });
@@ -910,6 +912,8 @@ export class LoadingDischargingTransformationService {
         "quantityM3": gravity.quantityM3 ?? 0,
         "rate": gravity.rate ?? 0,
         "rateM3PerHr": gravity.rate ?? 0,
+        "type": DATA_TYPE.BALLAST_GRAVITY,
+        "pointWidth": 0,
         "id": "gravity-" + pump.pumpName // NB:- id must be unique
       }
       ballastPumps?.push(data);
@@ -947,22 +951,117 @@ export class LoadingDischargingTransformationService {
           default:
             break;
         }
-        if (className) {
+        if(className) {
           tanks?.forEach(tank => {
             const data = {
-              "tankId": tank?.tankId,
-              "start": tank?.start,
-              "end": tank?.end,
-              "className": className,
-              "color": 'transparent',
-              "id": "cow-" + tank?.tankName // NB:- id must be unique
-            }
-            cargos?.push(data);
+                "tankId": tank?.tankId,
+                "start": tank?.start,
+                "end": tank?.end,
+                "className": className,
+                "color": 'transparent',
+                "type": DATA_TYPE.CARGO_COW,
+                "pointWidth": 6,
+                "id": "cow-" + tank?.tankName // NB:- id must be unique
+              }
+              cargos?.push(data);
           });
         }
 
       }
     }
+
+    return cargos;
+  }
+
+  /**
+   * Set tank to tank transfer/ fresh oil discharge/ tank refill data in cargo sequence
+   *
+   * @param {ITankData[]} cargos
+   * @param {ITankTransferData[]} transfers
+   * @return {*}  {ITankData[]}
+   * @memberof LoadingDischargingTransformationService
+   */
+  setTankToTankTransfer(cargos: ITankData[], transfers: ITankTransferData[], type: DATA_TYPE): ITankData[] {
+    transfers?.forEach(transfer => {
+      const fromIds = [];
+      let key;
+      switch (type) {
+        case DATA_TYPE.CARGO_TRANSFER:
+          key = 'transfer'
+          break;
+        case DATA_TYPE.CARGO_FRESH_OIL_DISCHARGE:
+          key = 'fresh-oil-discharge'
+          break;
+        case DATA_TYPE.CARGO_REFILL:
+          key = 'refill'
+          break;
+
+        default:
+          break;
+      }
+      transfer?.fromTanks?.forEach(tank => {
+        const fromId = `${key}-${tank?.tankName}-${transfer?.start}`;
+        fromIds.push(tank?.tankName);
+        const tooltipHeader = `${key.replaceAll('-', ' ')} ${transfer?.cargo?.abbreviation} from ${tank?.tankName} to ${transfer?.toTank?.tankName}`.toUpperCase();
+        const fromData: ITankData = {
+          tankId: tank?.tankId,
+          start: transfer?.start,
+          end: transfer?.end,
+          abbreviation: transfer?.cargo?.abbreviation,
+          color: transfer?.cargo?.colorCode,
+          name: transfer?.cargo?.name,
+          quantity: tank?.startQuantity - tank?.endQuantity,
+          quantityMT: tank?.startQuantity - tank?.endQuantity,
+          ullage: tank?.endUllage,
+          cargoNominationId: transfer?.cargo?.cargoNominationId,
+          tankName: tank?.tankName,
+          api: transfer?.cargo?.api,
+          className: key,
+          type: type,
+          tooltipHeader: tooltipHeader,
+          id: fromId // NB:- id must be unique
+        };
+        cargos?.push(fromData);
+      });
+      if (fromIds.length) {
+        const tooltipHeader = `${key.replaceAll('-', ' ')} ${transfer?.cargo?.abbreviation} from ${fromIds.join(',')} to ${transfer?.toTank?.tankName}`.toUpperCase();
+        const toData: ITankData = {
+          tankId: transfer?.toTank?.tankId,
+          start: transfer?.start,
+          end: transfer?.end,
+          abbreviation: transfer?.cargo?.abbreviation,
+          color: transfer?.cargo?.colorCode,
+          name: transfer?.cargo?.name,
+          quantity: transfer?.toTank?.endQuantity - transfer?.toTank?.startQuantity,
+          quantityMT: transfer?.toTank?.endQuantity - transfer?.toTank?.startQuantity,
+          ullage: transfer?.toTank?.endUllage,
+          cargoNominationId: transfer?.cargo?.cargoNominationId,
+          tankName: transfer?.toTank?.tankName,
+          api: transfer?.cargo?.api,
+          type: type,
+          className: key,
+          tooltipHeader: tooltipHeader,
+          dependency: fromIds.map(fromId => {
+            return {
+              to: `${key}-${fromId}-${transfer?.start}`,
+              type: 'straight',
+              lineWidth: 2,
+              startMarker: {
+                align: 'left',
+                verticalAlign: 'top',
+                radius: 8
+              },
+              endMarker: {
+                align: 'left',
+                verticalAlign: 'bottom',
+              }
+            }
+          }),
+          id: `${key}-${fromIds.join('-')}-${transfer?.toTank?.tankName}-${transfer?.start}` // NB:- id must be unique
+        };
+        cargos?.push(toData);
+      }
+    })
 
     return cargos;
   }
@@ -984,7 +1083,7 @@ export class LoadingDischargingTransformationService {
       const rate = new Set<number>();
       cargoRates?.forEach(element => {
         if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end <= element.endTime)) {
-          if (type === OPERATIONS.LOADING) {
+          if(type === OPERATIONS.LOADING){
             element.loadingRates.forEach(rate.add, rate);
           } else {
             element.dischargingRates.forEach(rate.add, rate);
@@ -1002,7 +1101,7 @@ export class LoadingDischargingTransformationService {
       }
 
     }
-    return type === OPERATIONS.LOADING ? _cargoLoadingRates : _cargoDischargingRates;
+    return type === OPERATIONS.LOADING ? _cargoLoadingRates: _cargoDischargingRates;
   }
 
   /**
@@ -1061,10 +1160,15 @@ export class LoadingDischargingTransformationService {
   transformSequenceData(sequenceData: ISequenceData): ISequenceData {
     sequenceData.cargos = sequenceData?.cargos?.map(cargo => {
       cargo.quantityMT = cargo.quantity;
+      cargo.type = DATA_TYPE.CARGO;
+      cargo.pointWidth = 6;
       return cargo;
     });
-    sequenceData.cargos = this.setEduction(sequenceData?.cargos, sequenceData?.cargoEduction, sequenceData.cargoTankCategories, 'cargo');
+    sequenceData.cargos = this.setEduction(sequenceData?.cargos, sequenceData?.cargoEduction, sequenceData.cargoTankCategories, DATA_TYPE.CARGO_STRIPPING);
     sequenceData.cargos = this.setCargoCOW(sequenceData?.cargos, sequenceData?.cleaningTanks);
+    sequenceData.cargos = this.setTankToTankTransfer(sequenceData?.cargos, sequenceData?.transfers, DATA_TYPE.CARGO_TRANSFER);
+    sequenceData.cargos = this.setTankToTankTransfer(sequenceData?.cargos, sequenceData?.freshOilTanks, DATA_TYPE.CARGO_FRESH_OIL_DISCHARGE);
+    sequenceData.cargos = this.setTankToTankTransfer(sequenceData?.cargos, sequenceData?.tankRefills, DATA_TYPE.CARGO_REFILL);
 
     sequenceData.cargoStages = sequenceData?.cargoStages?.map(stage => {
       stage.cargos = stage.cargos.map(cargo => {
@@ -1078,13 +1182,18 @@ export class LoadingDischargingTransformationService {
       return tank;
     })
     sequenceData.cargoStageTickPositions = this.setCargoTickPositions(sequenceData?.cargoStages);
-    const ballastPumps = this.setBallastPumpGravity(sequenceData?.ballastPumps, sequenceData?.gravity, sequenceData?.ballastPumpCategories);
-    sequenceData.ballastPumps = ballastPumps?.map(pump => {
+    sequenceData.ballastPumps = sequenceData.ballastPumps?.map(pump => {
       pump.rateM3PerHr = pump.rate;
+      pump.type = DATA_TYPE.BALLAST_PUMP;
+      pump.pointWidth = 6;
       return pump;
     });
+    sequenceData.ballastPumps = this.setBallastPumpGravity(sequenceData?.ballastPumps, sequenceData?.gravity, sequenceData?.ballastPumpCategories);
+
     sequenceData.cargoPumps = sequenceData?.cargoPumps?.map(pump => {
       pump.rateM3PerHr = pump.rate;
+      pump.pointWidth = 6;
+      pump.type = DATA_TYPE.CARGO_PUMP;
       return pump;
     });
     sequenceData.stabilityParams = sequenceData?.stabilityParams?.map(param => {
@@ -1101,7 +1210,7 @@ export class LoadingDischargingTransformationService {
     sequenceData.tickPositions = this.setTickPositions(sequenceData?.minXAxisValue, sequenceData?.maxXAxisValue);
     sequenceData.cargoLoadingRates = <ILoadingRate[]>this.setCargoRate(sequenceData?.stageTickPositions, sequenceData?.cargoLoadingRates, OPERATIONS.LOADING);
     sequenceData.cargoDischargingRates = <IDischargingRate[]>this.setCargoRate(sequenceData?.stageTickPositions, sequenceData?.cargoDischargingRates, OPERATIONS.DISCHARGING);
-    sequenceData.ballasts = this.setEduction(sequenceData?.ballasts, sequenceData?.ballastEduction, sequenceData.ballastTankCategories, 'ballast');
+    sequenceData.ballasts = this.setEduction(sequenceData?.ballasts, sequenceData?.ballastEduction, sequenceData.ballastTankCategories, DATA_TYPE.BALLAST_STRIPPING);
     return { ...sequenceData };
   }
 
@@ -1404,7 +1513,7 @@ export class LoadingDischargingTransformationService {
       }
     });
 
-    if (emptyTanks?.length) {
+    if(emptyTanks?.length) {
       tanksWashingWithDifferentCargo.push({
         cargo: { id: 0, abbreviation: 'NIL', cargoNominationId: 0 },
         washingCargo: null,
@@ -1565,46 +1674,46 @@ export class LoadingDischargingTransformationService {
 * @returns {IDataTableColumn[]}
 * @memberof LoadingDischargingTransformationService
 */
-  getCommingleDetailsDatatableColumns(): IDataTableColumn[] {
-    return [
-      {
-        field: 'abbreviation',
-        header: 'LOADABLE_PATTERN_GRADE'
-      },
-      {
-        field: 'tankName',
-        header: 'LOADABLE_PATTERN_TANK'
-      },
-      {
-        field: 'quantity',
-        header: 'LOADABLE_PATTERN_TOTAL_QUANTITY'
-      },
-      {
-        field: 'api',
-        header: 'LOADABLE_PATTERN_API'
-      },
-      {
-        field: 'temperature',
-        header: 'LOADABLE_PATTERN_TEMP'
-      },
-      {
-        field: '',
-        header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
-        fieldColumnClass: 'commingle-composition colspan-header',
-        columns: [
-          {
-            field: 'cargoPercentage',
-            header: 'LOADABLE_PATTERN_PERCENTAGE',
-            fieldClass: 'commingle-composition-percentage'
-          },
-          {
-            field: 'cargoQuantity',
-            header: 'LOADABLE_PATTERN_QUANTITY',
-            fieldClass: 'commingle-composition-quantity'
-          }
-        ]
-      }
-    ]
-  }
+getCommingleDetailsDatatableColumns(): IDataTableColumn[] {
+  return [
+    {
+      field: 'abbreviation',
+      header: 'LOADABLE_PATTERN_GRADE'
+    },
+    {
+      field: 'tankName',
+      header: 'LOADABLE_PATTERN_TANK'
+    },
+    {
+      field: 'quantity',
+      header: 'LOADABLE_PATTERN_TOTAL_QUANTITY'
+    },
+    {
+      field: 'api',
+      header: 'LOADABLE_PATTERN_API'
+    },
+    {
+      field: 'temperature',
+      header: 'LOADABLE_PATTERN_TEMP'
+    },
+    {
+      field: '',
+      header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
+      fieldColumnClass: 'commingle-composition colspan-header',
+      columns: [
+        {
+          field: 'cargoPercentage',
+          header: 'LOADABLE_PATTERN_PERCENTAGE',
+          fieldClass: 'commingle-composition-percentage'
+        },
+        {
+          field: 'cargoQuantity',
+          header: 'LOADABLE_PATTERN_QUANTITY',
+          fieldClass: 'commingle-composition-quantity'
+        }
+      ]
+    }
+  ]
+}
 
 }
