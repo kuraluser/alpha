@@ -11,7 +11,6 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableS
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
-import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -931,22 +930,20 @@ public class LoadableStudyCommunicationService {
                 HttpStatusCode.INTERNAL_SERVER_ERROR,
                 e);
           }
-        } else {
-          // Save communicated to outbound store
+        } else if (CPDSS_BUILD_ENV_SHIP.equals(env)) {
+          // Update outbound status
           loadableStudyStagingService.saveDataTransferOutBound(
-              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName(),
-              loadableStudyStage.getId(),
-              true);
-        }
-      } else if (CPDSS_BUILD_ENV_SHIP.equals(env)) {
-        if (MessageTypes.ALGORESULT.getMessageType().equals(processGroupId)) {
-          // Update communication status table with final state
-          loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
-              CommunicationStatus.COMPLETED.getId(), false, loadableStudyStage.getId());
-        } else if (MessageTypes.PATTERNDETAIL.getMessageType().equals(processGroupId)) {
-          // Update communication status table with final state
-          loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
-              CommunicationStatus.COMPLETED.getId(), false, loadablePatternStage.get(0).getId());
+              processGroupId, loadableStudyStage.getId(), true);
+
+          if (MessageTypes.ALGORESULT.equals(messageType)) {
+            // Update communication status table with final state
+            loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
+                CommunicationStatus.COMPLETED.getId(), false, loadableStudyStage.getId());
+          } else if (MessageTypes.PATTERNDETAIL.equals(messageType)) {
+            // Update communication status table with final state
+            loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
+                CommunicationStatus.COMPLETED.getId(), false, loadablePatternStage.get(0).getId());
+          }
         }
       }
     }
