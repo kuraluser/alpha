@@ -483,8 +483,9 @@ public class UllageUpdateLoadicatorService {
                 .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_OFF,
             loadingInformation.getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT.getMessageType(),
-            // algoResponse.getProcessId(),
-            processId,
+            StringUtils.hasLength(algoRequest.getLoadableStudyProcessId())
+                ? algoRequest.getLoadableStudyProcessId()
+                : null,
             loadingInformation.getVesselXId());
       }
     } catch (HttpStatusCodeException e) {
@@ -789,7 +790,7 @@ public class UllageUpdateLoadicatorService {
 
     UllageEditLoadicatorAlgoRequest algoRequest = new UllageEditLoadicatorAlgoRequest();
     buildUllageEditLoadicatorAlgoRequest(loadingInfoOpt.get(), request, algoRequest);
-    log.info("Algo reuest for ullage update:{}", algoRequest);
+    log.info("Algo request for ullage update:{}", algoRequest);
     saveUllageEditLoadicatorRequestJson(algoRequest, loadingInfoOpt.get().getId());
     try {
       LoadicatorAlgoResponse algoResponse =
@@ -846,8 +847,9 @@ public class UllageUpdateLoadicatorService {
                 .ULLAGE_UPDATE_SHORE_TO_SHIP_LOADICATOR_ON,
             loadingInfoOpt.get().getId(),
             MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT.getMessageType(),
-            // algoResponse.getProcessId(),
-            request.getProcessId(),
+            StringUtils.hasLength(algoRequest.getLoadableStudyProcessId())
+                ? algoRequest.getLoadableStudyProcessId()
+                : null,
             loadingInfoOpt.get().getVesselXId());
       }
     } catch (HttpStatusCodeException e) {

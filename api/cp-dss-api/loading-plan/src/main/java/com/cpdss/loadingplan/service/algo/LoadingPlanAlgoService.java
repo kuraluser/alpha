@@ -96,6 +96,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -522,7 +523,9 @@ public class LoadingPlanAlgoService {
             UUID.randomUUID().toString(),
             MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
             loadingInformation.getId(),
-            null);
+            StringUtils.hasLength(loadingInformation.getLoadableStudyProcessId())
+                ? loadingInformation.getLoadableStudyProcessId()
+                : null);
     log.info("Json Array in After Algo call: " + jsonArray.toString());
     EnvoyWriter.WriterReply ewReply =
         loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(

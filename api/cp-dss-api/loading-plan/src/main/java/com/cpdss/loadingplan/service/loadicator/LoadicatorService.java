@@ -1228,7 +1228,9 @@ public class LoadicatorService {
             UUID.randomUUID().toString(),
             MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
             loadingInformation.getId(),
-            null);
+            StringUtils.hasLength(loadingInformation.getLoadableStudyProcessId())
+                ? loadingInformation.getLoadableStudyProcessId()
+                : null);
     log.info("Json Array in After Algo call: " + jsonArray.toString());
     EnvoyWriter.WriterReply ewReply =
         loadingPlancommunicationService.passRequestPayloadToEnvoyWriter(

@@ -96,7 +96,8 @@ public class LoadingPlanConstants {
           "algo_errors",
           "loading_information_algo_status",
           "port_loadable_plan_commingle_details",
-          "loading_plan_commingle_details");
+          "loading_plan_commingle_details",
+          "pyuser");
 
   public static final List<String> LOADING_PLAN_ALGO_ERRORS_SHORE_TO_SHIP =
       Arrays.asList(
