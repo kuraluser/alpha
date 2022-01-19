@@ -77,7 +77,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
       maxShipDepth: this.fb.control('', [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
       hoseConnections: this.fb.control('', [Validators.maxLength(100),alphaNumericSpecialCharacterValidator]),
       seaDraftLimitation: this.fb.control(null, [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
-      airDraftLimitation: this.fb.control('', [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
+      airDraftLimitation: this.fb.control('', [ Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
       maxManifoldHeight: this.fb.control('', [Validators.required, Validators.min(1), Validators.max(99.99), numberValidator(4, 2)]),
       regulationAndRestriction: this.fb.control('', [Validators.maxLength(500), Validators.pattern(/[a-zA-Z0-9]/)]),
       itemsToBeAgreedWith: this.fb.control('', [Validators.maxLength(500), Validators.pattern(/[a-zA-Z0-9]/)]),
@@ -167,7 +167,8 @@ export class LoadingDischargingBerthComponent implements OnInit {
     } else {
       this.selectedBerths.map((berth) => {
         if(berth.berthId === this.berthDetailsForm.value.berthId) {
-          if (!(field === 'lineDisplacement' ||  field === 'hoseConnections')) {
+          if (!(field === 'lineDisplacement' ||  field === 'hoseConnections' || 
+          field === 'airDraftLimitation')) {
             berth[field] = 0;
           } else {
             berth[field] = '';
