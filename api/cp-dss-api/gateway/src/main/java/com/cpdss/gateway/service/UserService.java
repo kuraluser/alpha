@@ -480,27 +480,23 @@ public class UserService {
     List<Users> users;
     switch (userType) {
       case SHIP:
-        UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
-        users = this.usersRepository.findByIsActiveAndStatusOrderById(true, userStatus);
-        if (users != null && !users.isEmpty()) {
-          users.forEach(
-              userEntity -> {
-                User user = new User();
-                user.setId(userEntity.getId());
-                user.setFirstName(userEntity.getFirstName());
-                user.setLastName(userEntity.getLastName());
-                user.setUsername(userEntity.getUsername());
-                user.setDesignation(userEntity.getDesignation());
-                List<RoleUserMapping> mapping =
-                    this.roleUserMappingRepository.findByUsersAndIsActive(userEntity, true);
-                if (!mapping.isEmpty()) {
-                  user.setRole(mapping.get(0).getRoles().getName());
-                }
-                user.setDefaultUser(userEntity.getIsShipUser());
-                userList.add(user);
-              });
-        }
+        Long userStatus = UserStatusValue.APPROVED.getId();
+        List<Object[]> userRoleList =
+            this.usersRepository.findByIsActiveAndStatusOrderByIdAndRole(true, userStatus);
+        userRoleList.forEach(
+            userRole -> {
+              User user = new User();
+              user.setId(Long.parseLong(String.valueOf(userRole[0])));
+              user.setFirstName((String) userRole[1]);
+              user.setLastName((String) userRole[2]);
+              user.setUsername((String) userRole[3]);
+              user.setDesignation((String) userRole[4]);
+              user.setRole((String) userRole[5]);
+              user.setDefaultUser((Boolean) userRole[6]);
+              userList.add(user);
+            });
         break;
+
       case CLOUD:
         // Get all keycloak users
         KeycloakUser[] keycloakUsersList = keycloakService.getUsers();

@@ -28,6 +28,15 @@ public interface UsersRepository extends CommonCrudRepository<Users, Long> {
 
   public List<Users> findByIsActiveAndStatusOrderById(boolean isActive, UserStatus status);
 
+  @Query(
+      value =
+          "SELECT u.id , u.first_name , u.last_name , u.user_name , u.designation , r.name, u.is_ship_user FROM "
+              + "public.users u left join role_user_mapping m on u.id = m.user_xid and m.is_active = true "
+              + "left join roles r on r.id = m.role_xid "
+              + "where u.user_status_xid = 1 and u.is_active = true order by id desc ",
+      nativeQuery = true)
+  public List<Object[]> findByIsActiveAndStatusOrderByIdAndRole(boolean isActive, Long id);
+
   public List<Users> findByKeycloakIdInAndStatusAndIsActiveOrderById(
       List<String> keycloakIds, UserStatus status, boolean isActive);
 
