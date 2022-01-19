@@ -12,7 +12,6 @@ import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.gateway.entity.FileRepo;
 import com.cpdss.gateway.repository.FileRepoRepository;
 import com.cpdss.gateway.service.communication.models.FileData;
-import com.cpdss.gateway.service.communication.models.TaskExecutionRequest;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import java.io.IOException;
@@ -61,11 +60,9 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
   // endregion
 
   // region save file details to stage and write file data
-  public void saveToStage(TaskExecutionRequest taskExecutionRequest)
-      throws GenericServiceException {
+  public void saveToStage(Map<String, String> taskReqParams) throws GenericServiceException {
     var erReply =
-        getResultFromEnvoyReader(
-            taskExecutionRequest.getTaskReqParam(), MessageTypes.FILE_SHAREING.getMessageType());
+        getResultFromEnvoyReader(taskReqParams, MessageTypes.FILE_SHAREING.getMessageType());
     if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
           "Failed to get Result from Communication Server for: "

@@ -20,6 +20,7 @@ ext{
     containerNameVal = System.getenv('CONTAINER_NAME') ?: 'gateway-container'
     serviceNameVal = System.getenv('SERVICE_NAME') ?: 'gateway-service'
     enableComm = System.getenv('ENABLE_COMM') ?: ""
+    grpcPortHost = System.getenv('GRPC_PORT_HOST') ?: '8090'
 }
 
 appConfig {
@@ -48,6 +49,7 @@ appConfig {
         hostPortMapping {
           hostRestPort = Integer.parseInt(restPortHost)
           hostDebugPort = Integer.parseInt(debugPortHost)
+          hostGrpcPort = Integer.parseInt(grpcPortHost)
         }
         healthCheck {
           healthCheckCmd = 'wget --no-verbose --spider http://localhost:8080/actuator/health'
