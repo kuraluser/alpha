@@ -47,7 +47,8 @@ public class CloudSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-patterns",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-study-status",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-plan",
-          "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status");
+          "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status",
+          "/api/cloud/file-repo-internal");
 
   /** Registers the KeycloakAuthenticationProvider with the authentication manager. */
   @Autowired

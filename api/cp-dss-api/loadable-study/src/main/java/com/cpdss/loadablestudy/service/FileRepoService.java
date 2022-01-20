@@ -5,6 +5,7 @@ import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.loadablestudy.domain.FileRepoAddRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,10 +19,14 @@ import org.springframework.web.client.RestTemplate;
 @Log4j2
 public class FileRepoService {
 
+  @Value("${cpdss.build.env}")
+  private String environment;
+
   @Autowired private RestTemplate restTemplate;
 
   private static final String SERVICE_URL = "http://gateway-service:8080";
-  private static final String ADD_FILE_REPO_CONTEXT = "/file-repo";
+  private static final String ROOT_CONTEXT = "/api/";
+  private static final String ADD_FILE_REPO_CONTEXT = "/file-repo-internal";
 
   /**
    * Method to add file to file repo
@@ -50,6 +55,8 @@ public class FileRepoService {
 
     // Call API
     return restTemplate.postForObject(
-        SERVICE_URL + ADD_FILE_REPO_CONTEXT, requestEntity, FileRepoReply.class);
+        SERVICE_URL + ROOT_CONTEXT + environment + ADD_FILE_REPO_CONTEXT,
+        requestEntity,
+        FileRepoReply.class);
   }
 }
