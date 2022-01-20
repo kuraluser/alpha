@@ -956,7 +956,7 @@ public class DischargePlanAlgoService {
         this.loadableStudyService.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
                 .setPatternId(entity.getDischargingPatternXid())
-                .setOperationType("ARR")
+                .setOperationType("DEP")
                 .setPortRotationId(entity.getPortRotationXid())
                 .setPortId(entity.getPortXid())
                 .setCargoNominationFilter(false)
