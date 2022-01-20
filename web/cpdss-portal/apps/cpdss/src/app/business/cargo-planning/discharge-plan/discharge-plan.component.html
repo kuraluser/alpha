@@ -36,7 +36,7 @@
                 <span class="download-icon v-top"></span>
                 {{'DOWNLOAD_DAT_FILE' | translate}}</button>
                     <button class="btn btn-main mr-10" id="ds_confirm_plan"
-                    [disabled]="selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED || !confirmPlanPermission || planConfirmed || VOYAGE_STATUS.ACTIVE !== selectedVoyage?.statusId"
+                    [disabled]="selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED || !confirmPlanPermission || VOYAGE_STATUS.ACTIVE !== selectedVoyage?.statusId"
                     [ngClass]="{'confirmed': selectedDischargeStudy.statusId === DISCHARGE_STUDY_STATUS.PLAN_CONFIRMED}"
                     *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE && isPlanGenerated"
                     (click)="confirmPlan()">
