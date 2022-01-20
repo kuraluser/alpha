@@ -359,7 +359,9 @@ export interface ILoadingDischargingStagesResponse {
   id: number;
   trackStartEndStage: boolean;
   trackGradeSwitch: boolean;
+  isStageOffsetUsed: boolean;
   stageOffset: number;
+  isStageDurationUsed: boolean;
   stageDuration: number;
   stageOffsetList: IStageOffset[];
   stageDurationList: IStageDuration[];
@@ -574,7 +576,9 @@ export interface IDischargingInformation {
 export interface ILoadingDischargingStages {
   trackStartEndStage: boolean;
   trackGradeSwitch: boolean;
+  isStageOffsetUsed: boolean;
   stageOffset: IStageOffset;
+  isStageDurationUsed: boolean;
   stageDuration: IStageDuration;
   stageOffsetList?: IStageOffset[];
   stageDurationList?: IStageDuration[];

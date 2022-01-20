@@ -1367,7 +1367,9 @@ export class LoadingDischargingTransformationService {
     dischargingInformation.dischargeStages = {
       trackStartEndStage: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
       trackGradeSwitch: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
+      isStageDurationUsed: dischargingInformationResponse?.dischargeStages?.isStageDurationUsed,
       stageDuration,
+      isStageOffsetUsed: dischargingInformationResponse?.dischargeStages?.isStageOffsetUsed,
       stageOffset,
       stageDurationList: dischargingInformationResponse?.dischargeStages?.stageDurationList,
       stageOffsetList: dischargingInformationResponse?.dischargeStages?.stageOffsetList
