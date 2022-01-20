@@ -594,15 +594,17 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         String folderLocation = this.constructFolderPath(entity);
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         for (LoadableStudyAttachment attachment : request.getAttachmentsList()) {
-          String fileName =
-              attachment.getFileName().substring(0, attachment.getFileName().lastIndexOf("."));
           String extension =
               attachment
                   .getFileName()
                   .substring(attachment.getFileName().lastIndexOf("."))
                   .toLowerCase();
-          String filePath =
-              folderLocation + fileName + "_" + System.currentTimeMillis() + extension;
+          String fileName =
+              attachment.getFileName().substring(0, attachment.getFileName().lastIndexOf("."))
+                  + "_"
+                  + System.currentTimeMillis()
+                  + extension;
+          String filePath = folderLocation + fileName;
           Path path = Paths.get(this.rootFolder + filePath);
           Files.createFile(path);
           Files.write(path, attachment.getByteString().toByteArray());
