@@ -66,6 +66,8 @@ public class PortRotation {
 
   private List<BackLoading> backLoading = new ArrayList<>(Arrays.asList(new BackLoading()));
 
+  private StabilityParameter stabilityParams;
+
   private Boolean cow;
 
   private BigDecimal dischargeRate;

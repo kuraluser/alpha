@@ -49,6 +49,7 @@ import com.cpdss.gateway.domain.PortRotation;
 import com.cpdss.gateway.domain.PortRotationResponse;
 import com.cpdss.gateway.domain.PortWiseCargo;
 import com.cpdss.gateway.domain.PortWiseCargoResponse;
+import com.cpdss.gateway.domain.StabilityParameter;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -575,6 +576,15 @@ public class DischargeStudyService {
             buildCargoNomination(cargoNominationDetailList, portRotation);
           } else {
             portRotation.setCargoNominationList(new ArrayList<>());
+          }
+          // adding stability params to response DSS - 5429
+          if (grpcReply.getStabilityParams() != null) {
+            StabilityParameter stabilityParam = new StabilityParameter();
+            stabilityParam.setAfterDraft(grpcReply.getStabilityParams().getAfterDraft());
+            stabilityParam.setMeanDraft(grpcReply.getStabilityParams().getMeanDraft());
+            stabilityParam.setForwardDraft(grpcReply.getStabilityParams().getForwardDraft());
+            stabilityParam.setTrim(grpcReply.getStabilityParams().getTrim());
+            portRotation.setStabilityParams(stabilityParam);
           }
           response.getPortList().add(portRotation);
         });

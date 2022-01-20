@@ -1012,7 +1012,8 @@ message CargoNominationReply {
 	int64 cargoNominationId = 2;
 	repeated CargoNominationDetail cargoNominations = 3;
 	repeated CargoHistoryDetail cargoHistory = 4;
-	int64 patternId =5;
+	int64 patternId = 5;
+	StabilityParameter stabilityParams = 6;
 }
 
 

@@ -28,6 +28,7 @@ import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
 import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.LoadableStudy.LoadingPortDetail;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetail;
+import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfo.CargoInfos;
 import com.cpdss.common.generated.PortInfo.CargoPortMapping;
@@ -61,16 +62,6 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.DischargeStudyAlgoJson;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.DischargeStudyCowDetailRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
@@ -136,6 +127,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired
   private DischargePatternQuantityCargoPortwiseRepository
       dischargePatternQuantityCargoPortwiseRepository;
+
+  @Autowired
+  private SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
   @GrpcClient("cargoService")
   private CargoInfoServiceBlockingStub cargoInfoGrpcService;
@@ -1850,6 +1844,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .collect(
                   Collectors.groupingBy(
                       DischargePatternQuantityCargoPortwiseDetails::getPortRotationId));
+      List<SynopticalTable> synopticalRecords =
+          synopticalTableRepository
+              .findByLoadableStudyXIdAndLoadableStudyPortRotation_IdInAndOperationTypeAndIsActiveTrue(
+                  dischargeStudy.getId(),
+                  ports.stream().map(item -> item.getId()).collect(Collectors.toList()),
+                  SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE);
       ports.stream()
           .forEach(
               port -> {
@@ -1901,7 +1901,37 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           cargo.addLoadingPortDetails(portDetail);
                           replyBuilder.addCargoNominations(cargo);
                         });
+                // Fetch stability params port wise DSS-5429
+                // Getting planned stability param  values of deparcher condition form synoptical
+                // tables
+                if (!synopticalRecords.isEmpty()) {
+                  Optional<SynopticalTable> synOpt =
+                      synopticalRecords.stream()
+                          .filter(
+                              item ->
+                                  item.getLoadableStudyPortRotation().getId().equals(port.getId()))
+                          .findFirst();
+                  if (synOpt.isPresent()) {
+                    SynopticalTableLoadicatorData stabilityParam =
+                        synopticalTableLoadicatorDataRepository.findBySynopticalTableAndIsActive(
+                            synOpt.get(), true);
+                    if (stabilityParam != null) {
+                      StabilityParameter.Builder stabilityParamBuilder =
+                          StabilityParameter.newBuilder();
+                      Optional.ofNullable(stabilityParam.getCalculatedDraftAftPlanned())
+                          .ifPresent(i -> stabilityParamBuilder.setAfterDraft(i.toPlainString()));
+                      Optional.ofNullable(stabilityParam.getCalculatedDraftMidPlanned())
+                          .ifPresent(i -> stabilityParamBuilder.setMeanDraft(i.toPlainString()));
+                      Optional.ofNullable(stabilityParam.getCalculatedDraftAftPlanned())
+                          .ifPresent(i -> stabilityParamBuilder.setForwardDraft(i.toPlainString()));
+                      Optional.ofNullable(stabilityParam.getCalculatedTrimPlanned())
+                          .ifPresent(i -> stabilityParamBuilder.setTrim(i.toPlainString()));
+                      replyBuilder.setStabilityParams(stabilityParamBuilder.build());
+                    }
+                  }
+                }
               });
+
       // getting discharge pattern Id
       List<LoadablePattern> patterns =
           loadablePatternRepository.findByLoadableStudyAndIsActiveOrderByCaseNumberAsc(
