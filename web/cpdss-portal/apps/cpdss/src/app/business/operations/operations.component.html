@@ -9,7 +9,7 @@
         </div>
         <div class="col">
             <cpdss-portal-unit-dropdown (unitChange)="onUnitChange($event)"></cpdss-portal-unit-dropdown>
-            <cpdss-portal-rate-unit-dropdown *ngIf="currentTab === OPERATION_TAB.SEQUENCE" (unitChange)="onRateUnitChange($event)"></cpdss-portal-rate-unit-dropdown>
+            <cpdss-portal-rate-unit-dropdown *ngIf="currentTab === OPERATION_TAB.SEQUENCE && !(OPERATIONS.DISCHARGING === operationId && !(selectedVoyage?.isDischargeStarted && selectedVoyage?.confirmedDischargeStudyId))" (unitChange)="onRateUnitChange($event)"></cpdss-portal-rate-unit-dropdown>
         </div>
         <div class="pr-15 pt-10 col text-right">
           {{'OPERATIONS_VOYAGE_DISTANCE' | translate}}
