@@ -903,20 +903,22 @@ export class LoadingDischargingTransformationService {
    * @memberof LoadingDischargingTransformationService
    */
   setBallastPumpGravity(ballastPumps: IPumpData[], gravity: IPumpData, ballastPumpCategories: IPump[]) {
-    ballastPumpCategories?.forEach(pump => {
-      const data = {
-        "pumpId": pump.id,
-        "start": gravity.start,
-        "end": gravity.end,
-        "quantityM3": gravity.quantityM3 ?? 0,
-        "rate": gravity.rate ?? 0,
-        "rateM3PerHr": gravity.rate ?? 0,
-        "type": DATA_TYPE.BALLAST_GRAVITY,
-        "pointWidth": 0,
-        "id": "gravity-" + pump.pumpName // NB:- id must be unique
-      }
-      ballastPumps?.push(data);
-    });
+    if (gravity?.start && gravity?.end) {
+      ballastPumpCategories?.forEach(pump => {
+        const data: IPumpData = {
+          pumpId: pump.id,
+          start: gravity.start,
+          end: gravity.end,
+          quantityM3: gravity.quantityM3 ?? 0,
+          rate: gravity.rate ?? 0,
+          rateM3PerHr: gravity.rate ?? 0,
+          type: DATA_TYPE.BALLAST_GRAVITY,
+          pointWidth: 0,
+          id: "gravity-" + pump.pumpName // NB:- id must be unique
+        }
+        ballastPumps?.push(data);
+      });
+    }
 
     return ballastPumps;
   }
