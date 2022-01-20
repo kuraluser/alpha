@@ -40,8 +40,9 @@ public class ShipSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final List<String> permitAllEndpointList =
       Arrays.asList(
-          "/api/ship/authenticate",
           "/actuator/health",
+          "/actuator/prometheus",
+          "/api/ship/authenticate",
           "/api/ship/vessel-details/*",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns",

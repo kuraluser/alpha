@@ -38,6 +38,7 @@ public class CloudSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   private static final List<String> permitAllEndpointList =
       Arrays.asList(
           "/actuator/health",
+          "/actuator/prometheus",
           "/api/cloud/vessel-details/*",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns",
