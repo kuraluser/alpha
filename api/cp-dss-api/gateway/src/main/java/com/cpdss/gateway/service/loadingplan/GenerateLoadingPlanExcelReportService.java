@@ -1581,6 +1581,7 @@ public class GenerateLoadingPlanExcelReportService {
     sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
     sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
     sheetOne.setCargoTobeLoaded(getCargoTobeLoadedDetails(requestPayload));
+    sheetOne.setLoadingPlanCommingleDetailsList(requestPayload.getPlanCommingleDetails());
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;

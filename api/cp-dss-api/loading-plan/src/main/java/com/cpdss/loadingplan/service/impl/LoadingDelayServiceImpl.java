@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.impl;
 
-import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelays;
 import com.cpdss.loadingplan.entity.LoadingDelayReason;
@@ -76,42 +75,6 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
           loadingDelay.getId(),
           loadingDelay.getLoadingDelayReasons());
     }
-  }
-
-  /**
-   * Method to save default managing sequence cargos in loading information delay
-   *
-   * @param loadableQuantityCargoDetailsList LoadableQuantityCargoDetails list
-   * @param savedLoadingInformation LoadingInformation entity input
-   */
-  @Override
-  public void saveDefaultManagingSequence(
-      List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList,
-      LoadingInformation savedLoadingInformation) {
-
-    log.info("Inside saveDefaultManagingSequence method!");
-
-    List<com.cpdss.loadingplan.entity.LoadingDelay> loadingDelays = new ArrayList<>();
-    loadableQuantityCargoDetailsList.forEach(
-        loadableQuantityCargoDetails -> {
-          com.cpdss.loadingplan.entity.LoadingDelay loadingDelay =
-              new com.cpdss.loadingplan.entity.LoadingDelay();
-
-          // Set fields
-          Optional.of(loadableQuantityCargoDetails.getCargoId())
-              .ifPresent(loadingDelay::setCargoXId);
-          Optional.of(loadableQuantityCargoDetails.getCargoNominationId())
-              .ifPresent(loadingDelay::setCargoNominationId);
-          loadingDelay.setQuantity(
-              StringUtils.isEmpty(loadableQuantityCargoDetails.getOrderedMT())
-                  ? null
-                  : new BigDecimal(loadableQuantityCargoDetails.getOrderedMT()));
-
-          loadingDelay.setLoadingInformation(savedLoadingInformation);
-          loadingDelay.setIsActive(true);
-          loadingDelays.add(loadingDelay);
-        });
-    loadingDelayRepository.saveAll(loadingDelays);
   }
 
   private void buildLoadingDelay(

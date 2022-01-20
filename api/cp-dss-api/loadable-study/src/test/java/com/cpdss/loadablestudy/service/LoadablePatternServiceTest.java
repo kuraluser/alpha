@@ -887,12 +887,6 @@ public class LoadablePatternServiceTest {
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(new ArrayList<>());
 
-    doNothing()
-        .when(cargoNominationService)
-        .fetchCargoDetails(
-            any(LoadableStudy.class), any(LoadingPlanModels.LoadingPlanSyncDetails.Builder.class));
-    ReflectionTestUtils.setField(spyService, "cargoNominationService", cargoNominationService);
-
     ReflectionTestUtils.setField(
         spyService, "loadablePatternRepository", loadablePatternRepository);
     ReflectionTestUtils.setField(spyService, "loadingPlanService", loadingPlanService);
