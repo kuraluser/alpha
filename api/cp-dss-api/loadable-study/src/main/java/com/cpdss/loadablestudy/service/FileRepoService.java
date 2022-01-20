@@ -6,6 +6,7 @@ import com.cpdss.loadablestudy.domain.FileRepoAddRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -42,7 +43,15 @@ public class FileRepoService {
 
     // Set request
     MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
-    requestBody.add("file", fileRepoAddRequest.getFile());
+
+    ByteArrayResource fileContent =
+        new ByteArrayResource(fileRepoAddRequest.getFile()) {
+          @Override
+          public String getFilename() {
+            return fileRepoAddRequest.getFileName();
+          }
+        };
+    requestBody.add("file", fileContent);
     requestBody.add("voyageNo", fileRepoAddRequest.getVoyageNo());
     requestBody.add("fileName", fileRepoAddRequest.getFileName());
     requestBody.add("fileType", fileRepoAddRequest.getFileType());

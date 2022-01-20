@@ -165,6 +165,12 @@ public class CommonController {
       @RequestParam(name = "vesselId", required = true) Long vesselId)
       throws CommonRestException {
     try {
+      log.debug(
+          "File repo add request received. Voyage: {}, FileName: {}, FileType: {}, Section: {}",
+          voyageNo,
+          fileName,
+          fileType,
+          section);
       return fileRepoService.addFileToRepo(
           file,
           voyageNo,
