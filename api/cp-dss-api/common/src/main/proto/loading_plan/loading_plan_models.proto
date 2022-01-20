@@ -1099,3 +1099,13 @@ message LoadablePlanCommingleCargoDetails {
      int32 actualPlanned = 44;
      string colorCode = 45;
 }
+
+  message LoadingPlanCommunicationRequest{
+    string id=1;
+    string dataJson=2;
+  }
+
+  message LoadingPlanCommunicationReply {
+    ResponseStatus responseStatus = 1;
+    string dataJson=2;
+  }

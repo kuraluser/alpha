@@ -270,7 +270,7 @@ public class UllageUpdateLoadicatorService {
                     .ULLAGE_UPDATE_SHORE_TO_SHIP,
                 dischargingInfoOpt.get().getId(),
                 MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE_ALGORESULT.getMessageType(),
-                null,
+                algoRequest.getDischargeStudyProcessId(),
                 dischargingInfoOpt.get().getVesselXid());
           }
         } catch (HttpStatusCodeException e) {
@@ -1122,7 +1122,7 @@ public class UllageUpdateLoadicatorService {
                 .ULLAGE_UPDATE_SHORE_TO_SHIP,
             dischargeInformation.getId(),
             MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE_ALGORESULT.getMessageType(),
-            null,
+            algoRequest.getDischargeStudyProcessId(),
             dischargeInformation.getVesselXid());
       }
     } catch (HttpStatusCodeException e) {

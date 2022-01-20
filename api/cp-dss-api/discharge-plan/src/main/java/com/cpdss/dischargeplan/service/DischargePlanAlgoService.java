@@ -1964,7 +1964,7 @@ public class DischargePlanAlgoService {
             UUID.randomUUID().toString(),
             MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType(),
             dischargeInformation.getId(),
-            null);
+            dischargeInformation.getDischargeStudyProcessId());
     log.info("Json Array in Loading plan service: " + jsonArray.toString());
     EnvoyWriter.WriterReply ewReply =
         dischargePlanCommunicationService.passRequestPayloadToEnvoyWriter(

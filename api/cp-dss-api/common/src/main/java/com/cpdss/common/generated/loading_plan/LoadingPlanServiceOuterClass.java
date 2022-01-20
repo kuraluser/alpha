@@ -64,7 +64,7 @@ public final class LoadingPlanServiceOuterClass {
           + "eleteLoadingInstructions\022\031.LoadingInstru"
           + "ctionStatus\032\017.ResponseStatus\"\000\022@\n\020EditIn"
           + "structions\022\031.LoadingInstructionStatus\032\017."
-          + "ResponseStatus\"\0002\310\n\n\022LoadingPlanService\022"
+          + "ResponseStatus\"\0002\213\014\n\022LoadingPlanService\022"
           + "N\n\032LoadingPlanSynchronization\022\027.LoadingP"
           + "lanSyncRequest\032\025.LoadingPlanSyncReply\"\000\022"
           + "F\n\017SaveLoadingPlan\022\027.LoadingPlanSaveRequ"
@@ -98,8 +98,13 @@ public final class LoadingPlanServiceOuterClass {
           + "eckRequestComm\032\033.CommunicationCheckRespo"
           + "nse\"\000\022T\n\021checkCommunicated\022 .Communicati"
           + "onStatusCheckRequest\032\033.CommunicationChec"
-          + "kResponse\"\000B+\n\'com.cpdss.common.generate"
-          + "d.loading_planP\000b\006proto3"
+          + "kResponse\"\000\022_\n\031getPyUserForCommunication"
+          + "\022 .LoadingPlanCommunicationRequest\032\036.Loa"
+          + "dingPlanCommunicationReply\"\000\022`\n\032savePyUs"
+          + "erForCommunication\022 .LoadingPlanCommunic"
+          + "ationRequest\032\036.LoadingPlanCommunicationR"
+          + "eply\"\000B+\n\'com.cpdss.common.generated.loa"
+          + "ding_planP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
