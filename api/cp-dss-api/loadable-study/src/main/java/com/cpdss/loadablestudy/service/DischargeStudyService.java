@@ -499,7 +499,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 if (commingleDetails.getFillingRatio() != null
                     && !commingleDetails.getFillingRatio().isBlank()) {
                   commingleDetailsOfFirstDischargePort.setFillingRatio(
-                      Long.parseLong(commingleDetails.getFillingRatio()));
+                      Double.parseDouble(commingleDetails.getFillingRatio()));
                 }
                 //                Optional.ofNullable(commingleDetails.getCorrectedUllage())
                 //                    .ifPresent(
@@ -510,12 +510,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 if (commingleDetails.getRdgUllage() != null
                     && !commingleDetails.getRdgUllage().isBlank()) {
                   commingleDetailsOfFirstDischargePort.setRdgUllage(
-                      Long.parseLong(commingleDetails.getRdgUllage()));
+                      Double.parseDouble(commingleDetails.getRdgUllage()));
                 }
                 if (commingleDetails.getCorrectionFactor() != null
                     && !commingleDetails.getCorrectionFactor().isBlank()) {
                   commingleDetailsOfFirstDischargePort.setCorrectionFactor(
-                      Long.parseLong(commingleDetails.getCorrectionFactor()));
+                      Double.parseDouble(commingleDetails.getCorrectionFactor()));
                 }
                 if (commingleDetails.getSlopQuantity() != null
                     && !commingleDetails.getSlopQuantity().isBlank()) {
