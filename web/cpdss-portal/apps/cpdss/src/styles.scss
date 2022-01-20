@@ -3265,3 +3265,10 @@ textarea{
 .column-class.column-loading-port-header {
   width: 80px !important;
 }
+.column-class.column-abbr{
+  width: 80px !important;
+}
+
+.column-class.column-nomination-qty, .column-class.column-ship-figure, .column-class.column-time, .column-class.column-protested{
+  width: 90px !important;
+}
