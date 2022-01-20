@@ -98,7 +98,7 @@
     <div class="pr-15 clearfix">
         <ng-container
             *ngIf="selectedTab === DISCHARGE_STUDY_DETAILS_TABS.PORTS && [VOYAGE_STATUS.ACTIVE].includes(selectedVoyage?.statusId)
-            && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(selectedDischargeStudy?.statusId) && !isPlanConfirmed">
+            && [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(selectedDischargeStudy?.statusId)">
             <a id="add_port_btn" class="btn btn-link icon-btn plus-icon-rounded float-right"
                 [ngClass]="{'disabled': !dischargeStudies?.length || (!portsTabPermission?.add || !portsTabPermission?.add === undefined)}"
                 (click)="addPort()">{{'ADD_PORT_BUTTON_LABEL'|

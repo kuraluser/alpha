@@ -969,3 +969,20 @@ export enum OPERATIONS_PLAN_STATUS {
     LOADICATOR_VERIFICATION_WITH_ALGO_COMPLETED = 11,
     COMMUNICATED_TO_SHORE = 18
 }
+
+/**
+* Interface for loading plan stowage details
+*
+* @export
+* @interface IPlanStabilityParams
+*/
+export interface IPlanStabilityParams {
+  afterDraft: string;
+  bm: string;
+  conditionType: number;
+  forwardDraft: string;
+  meanDraft: string;
+  sf: string;
+  trim: string;
+  valueType: number;
+}
