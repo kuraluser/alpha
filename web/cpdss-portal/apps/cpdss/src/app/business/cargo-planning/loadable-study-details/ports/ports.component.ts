@@ -275,7 +275,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       portOrder: this.fb.control(ports.portOrder),
       portcode: this.fb.control(ports.portcode.value, [Validators.required]),
       operation: this.fb.control(ports.operation.value, [Validators.required, portDuplicationValidator('operation')]),
-      seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0), numberValidator(4, 1), seaWaterDensityRangeValidator()]),
+      seaWaterDensity: this.fb.control(ports.seaWaterDensity.value, [Validators.required, Validators.min(0.6), Validators.max(1.10), numberValidator(4, 1)]),
       layCan: this.fb.control({ value: layCanFrom && layCanTo ? layCanArray : null, disabled: layCanData }, { validators: [] }),
       layCanFrom: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[0]?.trim(), true), disabled: layCanData }, layCanData ? [] : { validators: [] }),
       layCanTo: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[1]?.trim(), true), disabled: layCanData }, layCanData ? [] : { validators: [] }),
@@ -529,7 +529,7 @@ export class PortsComponent implements OnInit, OnDestroy {
         } else {
           this.updateValidityAndEditMode(valueIndex, 'eta');
         }
-        
+
       }
     }
     form.markAsTouched();
