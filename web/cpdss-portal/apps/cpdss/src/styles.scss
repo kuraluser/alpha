@@ -820,7 +820,7 @@ tr{
   position: relative;
 }
 
-[class^="icon-status-"]{
+[class*="icon-status-"]{
   width: 17px;
   height: 17px;
   display: inline-block;
