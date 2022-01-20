@@ -840,12 +840,17 @@ public class LoadablePlanService {
     //    Create commingle details table
     List<CommingleDetails> commingleDetailsList =
         buildCommingleDetailsTable(request.getLoadablePatternId());
-    SheetCoordinates commingleDetailsTableCoordinates =
-        drawCommingleDetailsTable(
-            spreadsheet,
-            commingleDetailsList,
-            cargoDetailsTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
-            LOADABLE_PLAN_REPORT_START_COLUMN);
+    SheetCoordinates commingleDetailsTableCoordinates = cargoDetailsTableCoordinates;
+
+    //    Draw commingle table only if commingles are available
+    if (!commingleDetailsList.isEmpty()) {
+      commingleDetailsTableCoordinates =
+          drawCommingleDetailsTable(
+              spreadsheet,
+              commingleDetailsList,
+              cargoDetailsTableCoordinates.getRow() + LOADABLE_PLAN_REPORT_TABLE_SPACER,
+              LOADABLE_PLAN_REPORT_START_COLUMN);
+    }
 
     //    Create port operations table
     PortOperationTable portOperationTable =
