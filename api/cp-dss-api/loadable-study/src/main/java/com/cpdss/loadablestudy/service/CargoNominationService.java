@@ -988,7 +988,7 @@ public class CargoNominationService {
                                   item.getCargoNomination2XId()
                                       .equals(cargoNomination.getLsCargoNominationId()))
                           .collect(Collectors.toList());
-                  comBL = cargoList.stream().mapToDouble(item -> item.getCargo1BLfigure()).sum();
+                  comBL = cargoList.stream().mapToDouble(item -> item.getCargo2BLfigure()).sum();
                 }
 
                 if (cargoBL != null) {

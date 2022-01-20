@@ -371,10 +371,10 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                       .mapToDouble(billOfLadding -> billOfLadding.getQuantityMt().doubleValue())
                       .sum();
               maxQuantity.setMaxQuantity(String.valueOf(blFig));
-              // Finding quantity ration Actual/BL
+              // Finding quantity ratio Actual/BL
               List<PortLoadingPlanStowageDetails> actualQuantityList =
                   portLoadingPlanStowageDetailsRepository
-                      .findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionType(
+                      .findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionTypeAndIsActiveTrue(
                           key,
                           request.getLastLoadingPortId(),
                           VALUE_TYPE_ACTUALS,
