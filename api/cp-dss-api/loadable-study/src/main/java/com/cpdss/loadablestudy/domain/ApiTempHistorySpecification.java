@@ -20,6 +20,9 @@ public class ApiTempHistorySpecification implements Specification<ApiTempHistory
   public Predicate toPredicate(
       Root<ApiTempHistory> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
+    if (criteria.getOperation().equalsIgnoreCase("EQUALS")) {
+      predicates.add(builder.equal(root.get(criteria.getKey()), criteria.getValue()));
+    }
     if (criteria.getOperation().equalsIgnoreCase("IN")) {
       predicates.add(builder.in(root.get(criteria.getKey())).value(criteria.getValue()));
     }

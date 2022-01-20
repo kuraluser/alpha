@@ -495,59 +495,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     LoadableStudyPortRotation lastDischargingPortPortRotation = null;
     List<OnHandQuantity> onHandQuantityList = null;
     if (confirmedLoadableStudyOpt.isPresent()) {
-      lastDischargingPortPortRotation =
-          this.loadableStudyPortRotationRepository
-              .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
-                  confirmedLoadableStudyOpt.get(),
-                  this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
-                  true);
-      PortDischargingPlanRobDetailsReply response =
-          this.dischargeInformationGrpcService.getPortDischargingPlanRobDetails(
-              PortDischargingPlanRobDetailsRequest.newBuilder()
-                  .setPortXId(lastDischargingPortPortRotation.getPortXId())
-                  .setPortRotationXId(lastDischargingPortPortRotation.getId())
-                  .setConditionType(2)
-                  .setValueType(1)
-                  .build());
-      if (!SUCCESS.equals(response.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Failed to fetch rob details",
-            response.getResponseStatus().getCode(),
-            HttpStatusCode.valueOf(Integer.valueOf(response.getResponseStatus().getCode())));
-      }
-      List<Long> tankIds = new ArrayList<>();
-      response
-          .getPortDischargingPlanRobDetailsList()
-          .forEach(
-              robDetail -> {
-                tankIds.add(robDetail.getTankXId());
-              });
-      // GRPC call to Vessel
-      VesselInfo.VesselTankRequest vesselTankRequest =
-          VesselInfo.VesselTankRequest.newBuilder().addAllTankIds(tankIds).build();
-      VesselInfo.VesselTankReply vesselTankReply =
-          this.vesselInfoGrpcService.getVesselTanksByTankIds(vesselTankRequest);
-      Map<Long, Long> tankIdsWithCategoryIds = new HashMap<>();
-      vesselTankReply
-          .getVesselTankInfoList()
-          .forEach(
-              vesselTankInfo -> {
-                tankIdsWithCategoryIds.putIfAbsent(
-                    vesselTankInfo.getTankId(), vesselTankInfo.getTankCategoryId());
-              });
-      onHandQuantityList = new ArrayList<>();
-      for (PortDischargingPlanRobDetails robDetail :
-          response.getPortDischargingPlanRobDetailsList()) {
-        OnHandQuantity onHandQuantity = new OnHandQuantity();
-        onHandQuantity.setArrivalQuantity(new BigDecimal(robDetail.getQuantity()));
-        onHandQuantity.setDepartureQuantity(new BigDecimal(robDetail.getQuantity()));
-        onHandQuantity.setDensity(new BigDecimal(robDetail.getDensity()));
-        onHandQuantity.setPortXId(robDetail.getPortXId());
-        onHandQuantity.setTankXId(robDetail.getTankXId());
-        onHandQuantity.setFuelTypeXId(tankIdsWithCategoryIds.get(robDetail.getTankXId()));
-        onHandQuantity.setIsActive(true);
-        onHandQuantityList.add(onHandQuantity);
-      }
+      onHandQuantityList =
+          populateOHQFromDischarging(confirmedLoadableStudyOpt.get(), previousVoyage);
     } else {
       confirmedLoadableStudyOpt =
           this.loadableStudyRepository
@@ -557,15 +506,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
                   true,
                   Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
       if (confirmedLoadableStudyOpt.isPresent()) {
-        lastDischargingPortPortRotation =
-            this.loadableStudyPortRotationRepository
-                .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
-                    confirmedLoadableStudyOpt.get(),
-                    this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
-                    true);
-        onHandQuantityList =
-            this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                confirmedLoadableStudyOpt.get(), lastDischargingPortPortRotation, true);
+        onHandQuantityList = populateOHQFromLoadableStudy(confirmedLoadableStudyOpt.get());
       }
     }
 
@@ -643,6 +584,100 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
         }
       }
     }
+  }
+
+  private List<OnHandQuantity> populateOHQFromLoadableStudy(
+      com.cpdss.loadablestudy.entity.LoadableStudy confirmedLoadableStudy) {
+    LoadableStudyPortRotation lastDischargingPortPortRotation;
+    List<OnHandQuantity> onHandQuantityList;
+    lastDischargingPortPortRotation =
+        this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
+                confirmedLoadableStudy,
+                this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
+                true);
+    onHandQuantityList =
+        this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
+            confirmedLoadableStudy, lastDischargingPortPortRotation, true);
+    return onHandQuantityList;
+  }
+
+  private List<OnHandQuantity> populateOHQFromDischarging(
+      com.cpdss.loadablestudy.entity.LoadableStudy confirmedDischargeStudy, Voyage previousVoyage)
+      throws GenericServiceException {
+    LoadableStudyPortRotation lastDischargingPortPortRotation;
+    List<OnHandQuantity> onHandQuantityList;
+    lastDischargingPortPortRotation =
+        this.loadableStudyPortRotationRepository
+            .findFirstByLoadableStudyAndOperationAndIsActiveOrderByPortOrderDesc(
+                confirmedDischargeStudy,
+                this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID),
+                true);
+    PortDischargingPlanRobDetailsReply response =
+        this.dischargeInformationGrpcService.getPortDischargingPlanRobDetails(
+            PortDischargingPlanRobDetailsRequest.newBuilder()
+                .setPortXId(lastDischargingPortPortRotation.getPortXId())
+                .setPortRotationXId(lastDischargingPortPortRotation.getId())
+                .setConditionType(2)
+                .setValueType(1)
+                .build());
+    if (!SUCCESS.equals(response.getResponseStatus().getStatus())) {
+      log.error(
+          "Failed to fetch ROB details of port rotation: {}, response: {}",
+          lastDischargingPortPortRotation.getId(),
+          response.getResponseStatus().getMessage());
+      throw new GenericServiceException(
+          "Failed to fetch rob details",
+          response.getResponseStatus().getCode(),
+          HttpStatusCode.valueOf(Integer.valueOf(response.getResponseStatus().getCode())));
+    }
+    List<Long> tankIds = new ArrayList<>();
+    response
+        .getPortDischargingPlanRobDetailsList()
+        .forEach(
+            robDetail -> {
+              tankIds.add(robDetail.getTankXId());
+            });
+    // GRPC call to Vessel
+    VesselInfo.VesselTankRequest vesselTankRequest =
+        VesselInfo.VesselTankRequest.newBuilder().addAllTankIds(tankIds).build();
+    VesselInfo.VesselTankReply vesselTankReply =
+        this.vesselInfoGrpcService.getVesselTanksByTankIds(vesselTankRequest);
+    Map<Long, Long> tankIdsWithCategoryIds = new HashMap<>();
+    vesselTankReply
+        .getVesselTankInfoList()
+        .forEach(
+            vesselTankInfo -> {
+              tankIdsWithCategoryIds.putIfAbsent(
+                  vesselTankInfo.getTankId(), vesselTankInfo.getTankCategoryId());
+            });
+    onHandQuantityList = new ArrayList<>();
+    if (response.getPortDischargingPlanRobDetailsCount() > 0) {
+      for (PortDischargingPlanRobDetails robDetail :
+          response.getPortDischargingPlanRobDetailsList()) {
+        OnHandQuantity onHandQuantity = new OnHandQuantity();
+        onHandQuantity.setArrivalQuantity(new BigDecimal(robDetail.getQuantity()));
+        onHandQuantity.setDepartureQuantity(new BigDecimal(robDetail.getQuantity()));
+        onHandQuantity.setDensity(new BigDecimal(robDetail.getDensity()));
+        onHandQuantity.setPortXId(robDetail.getPortXId());
+        onHandQuantity.setTankXId(robDetail.getTankXId());
+        onHandQuantity.setFuelTypeXId(tankIdsWithCategoryIds.get(robDetail.getTankXId()));
+        onHandQuantity.setIsActive(true);
+        onHandQuantityList.add(onHandQuantity);
+      }
+    } else {
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedLoadableStudyOpt =
+          this.loadableStudyRepository
+              .findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningTypeXId(
+                  previousVoyage,
+                  CONFIRMED_STATUS_ID,
+                  true,
+                  Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE);
+      if (confirmedLoadableStudyOpt.isPresent()) {
+        onHandQuantityList = populateOHQFromLoadableStudy(confirmedLoadableStudyOpt.get());
+      }
+    }
+    return onHandQuantityList;
   }
 
   /**

@@ -1042,6 +1042,23 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
+      OptionalDouble actualCommingleTotal =
+          response.getLoadablePlanCommingleDetailsList().stream()
+              .filter(
+                  commingle ->
+                      (commingle.getCargoNomination1Id() == cargoNominationId
+                              || commingle.getCargoNomination2Id() == cargoNominationId)
+                          && commingle.getActualPlanned().equalsIgnoreCase(ACTUAL)
+                          && commingle.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
+              .mapToDouble(
+                  commingle ->
+                      commingle.getCargoNomination1Id() == cargoNominationId
+                          ? Double.parseDouble(commingle.getQuantity1MT())
+                          : Double.parseDouble(commingle.getQuantity2MT()))
+              .reduce(Double::sum);
+      if (actualCommingleTotal.isPresent()) {
+        actualQuantityTotal = Double.sum(actualQuantityTotal, actualCommingleTotal.getAsDouble());
+      }
       cargoQuantityDetail.setActualQuantityTotal(actualQuantityTotal);
       Double plannedQuantityTotal =
           response.getPortLoadablePlanStowageDetailsList().stream()
@@ -1052,6 +1069,24 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
+      OptionalDouble plannedCommingleTotal =
+          response.getLoadablePlanCommingleDetailsList().stream()
+              .filter(
+                  commingle ->
+                      (commingle.getCargoNomination1Id() == cargoNominationId
+                              || commingle.getCargoNomination2Id() == cargoNominationId)
+                          && commingle.getActualPlanned().equalsIgnoreCase(PLANNED)
+                          && commingle.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
+              .mapToDouble(
+                  commingle ->
+                      commingle.getCargoNomination1Id() == cargoNominationId
+                          ? Double.parseDouble(commingle.getQuantity1MT())
+                          : Double.parseDouble(commingle.getQuantity2MT()))
+              .reduce(Double::sum);
+      if (plannedCommingleTotal.isPresent()) {
+        plannedQuantityTotal =
+            Double.sum(plannedQuantityTotal, plannedCommingleTotal.getAsDouble());
+      }
       cargoQuantityDetail.setPlannedQuantityTotal(plannedQuantityTotal);
       Double blQuantityMtTotal =
           billOfLaddings.stream()
