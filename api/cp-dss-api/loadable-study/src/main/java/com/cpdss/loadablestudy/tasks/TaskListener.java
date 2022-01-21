@@ -11,6 +11,7 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
 import com.cpdss.loadablestudy.service.CommunicationService;
 import com.cpdss.loadablestudy.service.LoadableStudyCommunicationService;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import java.util.Map;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class TaskListener implements ExecuteTaskListener {
       "DISCHARGE_STUDY_DOWNLOAD_RESULT";
   public static final String DISCHARGE_STUDY_DATA_UPDATE_TASK_PREFIX =
       "DISCHARGE_STUDY_DATA_UPDATE";
+
   /**
    * Task Listener
    *
@@ -107,6 +109,10 @@ public class TaskListener implements ExecuteTaskListener {
             StagingStatus.RETRY.getStatus(), taskReqParams.get(ENV), taskName);
         loadableStudyCommunicationService.getDischargeStudyStagingData(
             StagingStatus.IN_PROGRESS.getStatus(), taskReqParams.get(ENV), taskName);
+      } else if (taskName.startsWith(LoadableStudiesConstants.FILE_SHARE_STAGE_DOWNLOAD_TASK)) {
+        loadableStudyCommunicationService.callSaveToStageInGateWay(taskName, taskReqParams);
+      } else if (taskName.startsWith(LoadableStudiesConstants.FILE_SHARE_DATA_UPDATE_TASK)) {
+        loadableStudyCommunicationService.callSaveToFileRepoInGateWay(taskName, taskReqParams);
       }
       // Task configured in DB but not implemented
       else {

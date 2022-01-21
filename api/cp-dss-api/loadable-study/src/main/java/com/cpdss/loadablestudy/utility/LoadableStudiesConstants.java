@@ -384,4 +384,6 @@ public class LoadableStudiesConstants {
   }
 
   public static final String FILE_REPO_CATEGORY = "Process";
+  public static final String FILE_SHARE_STAGE_DOWNLOAD_TASK = "FILE_SHARE_STAGE_DOWNLOAD";
+  public static final String FILE_SHARE_DATA_UPDATE_TASK = "FILE_SHARE_DATA_UPDATE";
 }
