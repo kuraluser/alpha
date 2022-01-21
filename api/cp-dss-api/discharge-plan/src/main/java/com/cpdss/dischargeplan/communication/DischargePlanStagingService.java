@@ -49,9 +49,21 @@ public class DischargePlanStagingService extends StagingService {
   @GrpcClient("loadingPlanService")
   private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
 
+  /**
+   * Constructor for injecting
+   *
+   * @param dischargePlanStagingRepository staging repo
+   * @param dataTransferOutBoundRepository outbound repo
+   * @param dataTransferInBoundRepository inbound repo
+   */
   public DischargePlanStagingService(
-      @Autowired DischargePlanStagingRepository dischargePlanStagingRepository) {
-    super(dischargePlanStagingRepository);
+      @Autowired DischargePlanStagingRepository dischargePlanStagingRepository,
+      @Autowired DischargePlanDataTransferOutBoundRepository dataTransferOutBoundRepository,
+      @Autowired DischargePlanDataTransferInBoundRepository dataTransferInBoundRepository) {
+    super(
+        dischargePlanStagingRepository,
+        dataTransferOutBoundRepository,
+        dataTransferInBoundRepository);
   }
 
   Long dischargingPatternId = null;
