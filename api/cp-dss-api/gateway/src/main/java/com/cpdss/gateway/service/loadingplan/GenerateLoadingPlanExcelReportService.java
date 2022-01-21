@@ -1450,10 +1450,11 @@ public class GenerateLoadingPlanExcelReportService {
       int end = positions.indexOf(rate.getEndTime());
       for (int i = start; i < end; i++) {
         for (BigDecimal value : rate.getLoadingRates()) {
+          String val = UnitConversionUtility.setPrecision(value.doubleValue(), 0).toString();
           if (loadingRates.get(i).getRate().isEmpty()) {
-            loadingRates.get(i).setRate(value.toString());
-          } else if (!loadingRates.get(i).getRate().contains(value.toString())) {
-            loadingRates.get(i).setRate(loadingRates.get(i).getRate() + "/" + value.toString());
+            loadingRates.get(i).setRate(val);
+          } else if (!loadingRates.get(i).getRate().contains(val)) {
+            loadingRates.get(i).setRate(loadingRates.get(i).getRate() + "/" + val);
           }
         }
       }
@@ -1766,13 +1767,13 @@ public class GenerateLoadingPlanExcelReportService {
                       if (item.getEstimatedAPI() != null
                           && item.getCargoNominationTemperature() != null) {
                         cargoTobeLoaded.setNomination(
-                            UnitConversionUtility.convertToBBLS(
-                                    UnitTypes.MT,
-                                    Double.parseDouble(cargoTobeLoaded.getApi()),
-                                    Double.parseDouble(cargoTobeLoaded.getTemperature()),
-                                    Double.parseDouble(
-                                        UnitConversionUtility.setPrecision(
-                                            Double.parseDouble(value), 2)))
+                            UnitConversionUtility.setPrecision(
+                                    UnitConversionUtility.convertToBBLS(
+                                        UnitTypes.MT,
+                                        Double.parseDouble(cargoTobeLoaded.getApi()),
+                                        Double.parseDouble(item.getCargoNominationTemperature()),
+                                        Double.parseDouble(value)),
+                                    2)
                                 .toString());
                       }
                     });
@@ -1787,11 +1788,13 @@ public class GenerateLoadingPlanExcelReportService {
                     value -> {
                       if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
                         cargoTobeLoaded.setSlopQuantity(
-                            UnitConversionUtility.convertToBBLS(
-                                    UnitTypes.MT,
-                                    Double.parseDouble(cargoTobeLoaded.getApi()),
-                                    Double.parseDouble(cargoTobeLoaded.getTemperature()),
-                                    Double.parseDouble(value))
+                            UnitConversionUtility.setPrecision(
+                                    UnitConversionUtility.convertToBBLS(
+                                        UnitTypes.MT,
+                                        Double.parseDouble(cargoTobeLoaded.getApi()),
+                                        Double.parseDouble(cargoTobeLoaded.getTemperature()),
+                                        Double.parseDouble(value)),
+                                    2)
                                 .toString());
                       }
                     });
