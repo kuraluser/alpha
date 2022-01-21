@@ -1731,18 +1731,8 @@ public class LoadablePatternService {
     log.debug("Communication Request: {}", jsonArray.toString());
 
     // Communicate data
-    EnvoyWriter.WriterReply ewReply =
-        communicationService.passRequestPayloadToEnvoyWriter(
-            jsonArray.toString(), vesselId, messageType.getMessageType());
-    if (!SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-      log.error("Invalid response from envoy-writer. Response: {}", ewReply);
-      throw new GenericServiceException(
-          "Invalid response from envoy-writer. Response: " + ewReply,
-          CommonErrorCodes.E_GEN_INTERNAL_ERR,
-          HttpStatusCode.INTERNAL_SERVER_ERROR);
-    }
-
-    return ewReply.getMessageId();
+    return communicationService.passRequestPayloadToEnvoyWriter(
+        jsonArray.toString(), vesselId, messageType.getMessageType(), referenceId);
   }
 
   private void getAlgoCall(
