@@ -312,8 +312,10 @@ public class DischargeInformationService {
             dischargingDelays.setCargoNominationId(
                 dischargeQuantityCargoDetails.getCargoNominationId());
             dischargingDelays.setDischargeInfoId(dischargeInfoId);
-            dischargingDelays.setQuantity(
-                new BigDecimal(dischargeQuantityCargoDetails.getOrderedQuantity()));
+            Optional.ofNullable(dischargeQuantityCargoDetails.getOrderedQuantity())
+                .ifPresent(
+                    orderedQuantity ->
+                        dischargingDelays.setQuantity(new BigDecimal(orderedQuantity)));
 
             dischargingDelaysList.add(dischargingDelays);
           });
