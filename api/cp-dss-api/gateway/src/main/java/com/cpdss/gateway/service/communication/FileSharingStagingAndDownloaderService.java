@@ -83,7 +83,7 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
               new FileRepo(), new TypeToken<FileRepo>() {}.getType(), fileData.getDetails());
       if (fileRepo != null) {
         // save File data details to stage
-        saveFileDetailsIntoStagingTable(fileRepo.toString());
+        saveFileDetailsIntoStagingTable(new Gson().toJson(fileRepo));
         log.info("File details saved into staging table with Id :{} ", fileRepo.getId());
         // write file data to corresponding path
         writeDataToFile(fileRepo, fileData.getData());
