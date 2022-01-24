@@ -87,4 +87,6 @@ public class LoadableStudy {
   private String lastLoadingPortETD;
 
   private Boolean isDischargeStudyComplete;
+
+  private Long createdFromVoyageId;
 }

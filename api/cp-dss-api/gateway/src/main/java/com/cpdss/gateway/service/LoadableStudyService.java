@@ -371,7 +371,7 @@ public class LoadableStudyService {
         dto.setLoadableStudyStatusLastModifiedTime(
             grpcReply.getLoadableStudyStatusLastModifiedTime());
       }
-
+      dto.setCreatedFromVoyageId(grpcReply.getCreatedFromVoyageId());
       List<LoadableStudyAttachmentData> attachmentList = new ArrayList();
 
       grpcReply

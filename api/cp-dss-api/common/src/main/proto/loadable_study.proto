@@ -948,7 +948,7 @@ message LoadableStudyDetail{
 	string lastEdited = 30;
 	string lastLoadingPortETD = 31;
 	bool isDischargeStudyComplete=32;
-	
+	int64 createdFromVoyageId = 33;
 }
 
 message LoadableStudyReply{

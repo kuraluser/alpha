@@ -265,6 +265,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
             .ifPresent(
                 duplicatedFrom -> {
                   builder.setCreatedFromId(duplicatedFrom.getId());
+                  builder.setCreatedFromVoyageId(duplicatedFrom.getVoyage().getId());
                 });
         ofNullable(entity.getLoadableStudyStatus())
             .ifPresent(

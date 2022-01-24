@@ -1291,6 +1291,7 @@ public final class LoadingPlanServiceGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getSavePyUserForCommunicationMethod(), responseObserver);
     }
+
     /** */
     public void triggerCommunication(
         com.cpdss.common.generated.Common.CommunicationTriggerRequest request,
@@ -1691,6 +1692,7 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
     /** */
     public void triggerCommunication(
         com.cpdss.common.generated.Common.CommunicationTriggerRequest request,
@@ -1878,6 +1880,7 @@ public final class LoadingPlanServiceGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSavePyUserForCommunicationMethod(), getCallOptions(), request);
     }
+
     /** */
     public com.cpdss.common.generated.Common.CommunicationTriggerResponse triggerCommunication(
         com.cpdss.common.generated.Common.CommunicationTriggerRequest request) {
@@ -2081,6 +2084,7 @@ public final class LoadingPlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSavePyUserForCommunicationMethod(), getCallOptions()), request);
     }
+
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.Common.CommunicationTriggerResponse>
@@ -2115,10 +2119,10 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_GET_LOADING_PLAN_CARGO_HISTORY = 12;
   private static final int METHODID_CHECK_DEPENDENT_PROCESS = 13;
   private static final int METHODID_CHECK_COMMUNICATED = 14;
-  private static final int METHODID_TRIGGER_COMMUNICATION = 15;
-  private static final int METHODID_GET_CARGO_QUANTITY_LOADING_RATIO = 16;
-  private static final int METHODID_GET_PY_USER_FOR_COMMUNICATION = 16;
-  private static final int METHODID_SAVE_PY_USER_FOR_COMMUNICATION = 17;
+  private static final int METHODID_GET_PY_USER_FOR_COMMUNICATION = 15;
+  private static final int METHODID_SAVE_PY_USER_FOR_COMMUNICATION = 16;
+  private static final int METHODID_TRIGGER_COMMUNICATION = 17;
+  private static final int METHODID_GET_CARGO_QUANTITY_LOADING_RATIO = 18;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
