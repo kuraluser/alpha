@@ -1616,10 +1616,17 @@ public class LoadablePatternService {
                       .setStatus(SUCCESS)
                       .build());
         } catch (GenericServiceException e) {
+          log.error(
+              "Failed communication for LS pattern generation. LS Id: {}, Trace: {}",
+              loadableStudyOpt.get().getId(),
+              e);
+
           // Call Ship Algo on communication failure
+          log.info("LS Id: {}. Generating pattern at: {}", loadableStudyOpt.get().getId(), env);
           getAlgoCall(replyBuilder, loadableStudyOpt, loadableStudy);
         }
       } else {
+        log.info("LS Id: {}. Generating pattern at: {}", loadableStudyOpt.get().getId(), env);
         getAlgoCall(replyBuilder, loadableStudyOpt, loadableStudy);
       }
     } else {

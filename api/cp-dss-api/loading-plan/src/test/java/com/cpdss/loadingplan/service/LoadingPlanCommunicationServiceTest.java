@@ -38,7 +38,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.ResourceAccessException;
 
-@TestPropertySource(properties = "loadingplan.communication.timelimit = 1")
+@TestPropertySource(
+    properties = {"loadingplan.communication.timelimit = 1", "cpdss.build.env = cloud"})
 @SpringJUnitConfig(classes = {LoadingPlanCommunicationService.class})
 public class LoadingPlanCommunicationServiceTest {
 
@@ -553,7 +554,7 @@ public class LoadingPlanCommunicationServiceTest {
         "loadableStudyServiceBlockingStub",
         loadableStudyServiceBlockingStub);
 
-    loadingPlanCommunicationService.getStagingData(list, "", "");
+    loadingPlanCommunicationService.getStagingData(list, env, "ready_to_process");
     verify(loadingPlanStagingService, atLeast(1))
         .updateStatusForProcessId(Mockito.anyString(), anyString());
   }

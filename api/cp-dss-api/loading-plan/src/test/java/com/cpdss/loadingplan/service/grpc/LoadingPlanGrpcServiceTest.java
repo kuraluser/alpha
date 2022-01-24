@@ -17,6 +17,7 @@ import com.cpdss.loadingplan.entity.LoadingInformationStatus;
 import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
+import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.PyUserRepository;
@@ -57,6 +58,7 @@ public class LoadingPlanGrpcServiceTest {
   @MockBean LoadingInformationBuilderService informationBuilderService;
   @MockBean LoadingPlanStagingService loadingPlanStagingService;
   @MockBean PyUserRepository pyUserRepository;
+  @MockBean LoadingInformationRepository loadingInformationRepository;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";

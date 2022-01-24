@@ -105,6 +105,9 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
       } else {
         folderLocation = fileRepo.getFilePath() + "/";
       }
+      if (!Files.exists(Path.of(folderLocation + fileRepo.getFileName()))) {
+        Files.createDirectories(Path.of(folderLocation + fileRepo.getFileName()));
+      }
       Files.writeString(Path.of(folderLocation + fileRepo.getFileName()), data);
       log.info("File data wrote into :{}", folderLocation);
     } catch (IOException e) {
@@ -165,6 +168,8 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
                 log.info("updated status to in_progress for processId:{}", details.getProcessId());
                 FileRepo repo = new Gson().fromJson(details.getData(), FileRepo.class);
                 try {
+                  Optional<FileRepo> fileRepoOptional = fileRepoRepository.findById(repo.getId());
+                  setEntityDocFields(repo, fileRepoOptional);
                   repo = fileRepoRepository.save(repo);
                   log.info("Communication ====  Saved File Repo:" + repo.getId());
                   this.updateStatusCompletedForProcessId(

@@ -131,7 +131,7 @@ public class LoadingPlanCommunicationService {
 
   @Autowired private LoadingRuleRepository loadingRuleRepository;
   @Autowired private LoadingRuleInputRepository loadingRuleInputRepository;
-  @Autowired LoadingPlanDataTransferInBoundRepository dataTransferInBoundRepository;
+  @Autowired private LoadingPlanDataTransferInBoundRepository dataTransferInBoundRepository;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -1055,6 +1055,7 @@ public class LoadingPlanCommunicationService {
         }
       }
       LoadingInformation loadingInfo = null;
+      boolean saved = false;
       try {
         loadingInfo = saveLoadingInformation();
         saveCargoToppingOffSequence(loadingInfo);
@@ -1101,6 +1102,10 @@ public class LoadingPlanCommunicationService {
         saveOnHandQuantityData();
         saveLoadingRule(loadingInfo);
         saveLoadingRuleInput(loadingRules);
+        loadingPlanStagingService.updateStatusCompletedForProcessId(
+            processId, StagingStatus.COMPLETED.getStatus());
+        log.info("updated status to completed for processId:" + processId);
+        saved = true;
       } catch (ResourceAccessException e) {
         log.info("Communication ++++++++++++ Failed to save data for  : " + current_table_name);
         log.info("Communication ++++++++++++ ResourceAccessException : " + e.getMessage());
@@ -1115,32 +1120,55 @@ public class LoadingPlanCommunicationService {
             StagingStatus.FAILED.getStatus(),
             e.getMessage());
       }
-      loadingPlanStagingService.updateStatusCompletedForProcessId(
-          processId, StagingStatus.COMPLETED.getStatus());
-      log.info("updated status to completed for processId:" + processId);
-      if (!isShip() && loadingInfo != null) {
-        if (processGroupId.equals(MessageTypes.LOADINGPLAN.getMessageType())) {
-          generateLoadingPlan(loadingInformation.getId());
-        } else if (MessageTypes.LOADINGPLAN_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
-          dataTransferInBoundRepository.updateStatus(
-              processId, StagingStatus.COMPLETED.getStatus());
-        } else if (processGroupId.equals(MessageTypes.ULLAGE_UPDATE.getMessageType())) {
-          log.info("Algo call started for Update Ullage");
+
+      if (saved) {
+        MessageTypes messageType = MessageTypes.getMessageType(processGroupId);
+        if (CPDSS_BUILD_ENV_SHORE.equals(env)) {
+          // Generate pattern with communicated data at shore
           try {
-            Integer arrivalDeparture = null;
-            if (!CollectionUtils.isEmpty(portLoadingPlanCommingleDetailsList)) {
-              arrivalDeparture = portLoadingPlanCommingleDetailsList.get(0).getConditionType();
-            } else if (!CollectionUtils.isEmpty(portLoadingPlanBallastTempDetailsList)) {
-              arrivalDeparture = portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
+            switch (messageType) {
+              case LOADINGPLAN:
+                {
+                  generateLoadingPlan(loadingInformation.getId());
+                  break;
+                }
+              case ULLAGE_UPDATE:
+                {
+                  log.info("Algo call started for Update Ullage");
+                  Integer arrivalDeparture = null;
+                  if (!CollectionUtils.isEmpty(portLoadingPlanCommingleDetailsList)) {
+                    arrivalDeparture =
+                        portLoadingPlanCommingleDetailsList.get(0).getConditionType();
+                  } else if (!CollectionUtils.isEmpty(portLoadingPlanBallastTempDetailsList)) {
+                    arrivalDeparture =
+                        portLoadingPlanBallastTempDetailsList.get(0).getConditionType();
+                  }
+                  LoadingPlanModels.UllageBillRequest.Builder builder =
+                      LoadingPlanModels.UllageBillRequest.newBuilder();
+                  LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
+                      LoadingPlanModels.UpdateUllage.newBuilder();
+                  updateUllageBuilder.setLoadingInformationId(loadingInfo.getId());
+                  updateUllageBuilder.setArrivalDepartutre(arrivalDeparture);
+                  builder.addUpdateUllage(updateUllageBuilder.build());
+                  ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
+                  break;
+                }
+              case LOADINGPLAN_WITHOUT_ALGO:
+                {
+                  // Update inbound status - shore
+                  dataTransferInBoundRepository.updateStatus(
+                      processId, StagingStatus.COMPLETED.getStatus());
+                  break;
+                }
+              default:
+                {
+                  log.warn(
+                      "Trigger after save not configured for MessageType: {}, ENV: {}",
+                      messageType.getMessageType(),
+                      env);
+                  break;
+                }
             }
-            LoadingPlanModels.UllageBillRequest.Builder builder =
-                LoadingPlanModels.UllageBillRequest.newBuilder();
-            LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
-                LoadingPlanModels.UpdateUllage.newBuilder();
-            updateUllageBuilder.setLoadingInformationId(loadingInfo.getId());
-            updateUllageBuilder.setArrivalDepartutre(arrivalDeparture);
-            builder.addUpdateUllage(updateUllageBuilder.build());
-            ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
           } catch (InvocationTargetException | IllegalAccessException e) {
             throw new GenericServiceException(
                 e.getMessage(),
@@ -1148,18 +1176,22 @@ public class LoadingPlanCommunicationService {
                 HttpStatusCode.INTERNAL_SERVER_ERROR,
                 e);
           }
-        }
-      } else if (isShip() && loadingInfo != null) {
-        if (MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType().equals(processGroupId)
-            || MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT
-                .getMessageType()
-                .equals(processGroupId)
-            || MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT
-                .getMessageType()
-                .equals(processGroupId)) {
-          // Update communication status table with final state
-          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
-              CommunicationStatus.COMPLETED.getId(), false, loadingInfo.getId());
+        } else if (isShip()) {
+          // Save communicated to outbound store
+          loadingPlanStagingService.saveDataTransferOutBound(
+              processGroupId, loadingInfo.getId(), true);
+
+          if (MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType().equals(processGroupId)
+              || MessageTypes.ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT
+                  .getMessageType()
+                  .equals(processGroupId)
+              || MessageTypes.ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT
+                  .getMessageType()
+                  .equals(processGroupId)) {
+            // Update communication status table with final state
+            loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+                CommunicationStatus.COMPLETED.getId(), false, loadingInfo.getId());
+          }
         }
       }
     }

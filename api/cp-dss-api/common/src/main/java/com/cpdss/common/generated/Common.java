@@ -15810,6 +15810,19 @@ public final class Common {
      * @return The referenceId.
      */
     long getReferenceId();
+
+    /**
+     * <code>string reference = 2;</code>
+     *
+     * @return The reference.
+     */
+    java.lang.String getReference();
+    /**
+     * <code>string reference = 2;</code>
+     *
+     * @return The bytes for reference.
+     */
+    com.google.protobuf.ByteString getReferenceBytes();
   }
   /**
    *
@@ -15832,7 +15845,9 @@ public final class Common {
       super(builder);
     }
 
-    private CommunicationStatusCheckRequest() {}
+    private CommunicationStatusCheckRequest() {
+      reference_ = "";
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -15866,6 +15881,13 @@ public final class Common {
             case 8:
               {
                 referenceId_ = input.readInt64();
+                break;
+              }
+            case 18:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                reference_ = s;
                 break;
               }
             default:
@@ -15913,6 +15935,41 @@ public final class Common {
       return referenceId_;
     }
 
+    public static final int REFERENCE_FIELD_NUMBER = 2;
+    private volatile java.lang.Object reference_;
+    /**
+     * <code>string reference = 2;</code>
+     *
+     * @return The reference.
+     */
+    public java.lang.String getReference() {
+      java.lang.Object ref = reference_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        reference_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string reference = 2;</code>
+     *
+     * @return The bytes for reference.
+     */
+    public com.google.protobuf.ByteString getReferenceBytes() {
+      java.lang.Object ref = reference_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        reference_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -15930,6 +15987,9 @@ public final class Common {
       if (referenceId_ != 0L) {
         output.writeInt64(1, referenceId_);
       }
+      if (!getReferenceBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, reference_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -15941,6 +16001,9 @@ public final class Common {
       size = 0;
       if (referenceId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, referenceId_);
+      }
+      if (!getReferenceBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, reference_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -15959,6 +16022,7 @@ public final class Common {
           (com.cpdss.common.generated.Common.CommunicationStatusCheckRequest) obj;
 
       if (getReferenceId() != other.getReferenceId()) return false;
+      if (!getReference().equals(other.getReference())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -15972,6 +16036,8 @@ public final class Common {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + REFERENCEID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getReferenceId());
+      hash = (37 * hash) + REFERENCE_FIELD_NUMBER;
+      hash = (53 * hash) + getReference().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -16124,6 +16190,8 @@ public final class Common {
         super.clear();
         referenceId_ = 0L;
 
+        reference_ = "";
+
         return this;
       }
 
@@ -16154,6 +16222,7 @@ public final class Common {
         com.cpdss.common.generated.Common.CommunicationStatusCheckRequest result =
             new com.cpdss.common.generated.Common.CommunicationStatusCheckRequest(this);
         result.referenceId_ = referenceId_;
+        result.reference_ = reference_;
         onBuilt();
         return result;
       }
@@ -16211,6 +16280,10 @@ public final class Common {
                 .getDefaultInstance()) return this;
         if (other.getReferenceId() != 0L) {
           setReferenceId(other.getReferenceId());
+        }
+        if (!other.getReference().isEmpty()) {
+          reference_ = other.reference_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -16272,6 +16345,82 @@ public final class Common {
       public Builder clearReferenceId() {
 
         referenceId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object reference_ = "";
+      /**
+       * <code>string reference = 2;</code>
+       *
+       * @return The reference.
+       */
+      public java.lang.String getReference() {
+        java.lang.Object ref = reference_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          reference_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string reference = 2;</code>
+       *
+       * @return The bytes for reference.
+       */
+      public com.google.protobuf.ByteString getReferenceBytes() {
+        java.lang.Object ref = reference_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          reference_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string reference = 2;</code>
+       *
+       * @param value The reference to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReference(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        reference_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string reference = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearReference() {
+
+        reference_ = getDefaultInstance().getReference();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string reference = 2;</code>
+       *
+       * @param value The bytes for reference to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReferenceBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        reference_ = value;
         onChanged();
         return this;
       }
@@ -17935,21 +18084,21 @@ public final class Common {
           + "ocessCheckRequestComm\022\032\n\022dependantProces"
           + "sId\030\003 \001(\t\"Z\n\032CommunicationCheckResponse\022"
           + "\023\n\013isCompleted\030\001 \001(\010\022\'\n\016responseStatus\030\002"
-          + " \001(\0132\017.ResponseStatus\"6\n\037CommunicationSt"
-          + "atusCheckRequest\022\023\n\013referenceId\030\001 \001(\003\"G\n"
-          + "\033CommunicationTriggerRequest\022\023\n\013referenc"
-          + "eId\030\001 \001(\003\022\023\n\013messageType\030\002 \001(\t\"Z\n\034Commun"
-          + "icationTriggerResponse\022\021\n\tprocessId\030\003 \001("
-          + "\t\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStat"
-          + "us*E\n\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOAD"
-          + "ABLE_STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002*H\n\013Mac"
-          + "hineType\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP\020\001\022\014\n\010"
-          + "MANIFOLD\020\002\022\017\n\013BOTTOM_LINE\020\003*S\n\010COW_TYPE\022"
-          + "\022\n\016EMPTY_COW_TYPE\020\000\022\013\n\007ALL_COW\020\001\022\016\n\nBOTT"
-          + "OM_COW\020\002\022\013\n\007TOP_COW\020\003\022\t\n\005CARGO\020\004*B\n\017COW_"
-          + "OPTION_TYPE\022\031\n\025EMPTY_COW_OPTION_TYPE\020\000\022\010"
-          + "\n\004AUTO\020\001\022\n\n\006MANUAL\020\002B\036\n\032com.cpdss.common"
-          + ".generatedP\000b\006proto3"
+          + " \001(\0132\017.ResponseStatus\"I\n\037CommunicationSt"
+          + "atusCheckRequest\022\023\n\013referenceId\030\001 \001(\003\022\021\n"
+          + "\treference\030\002 \001(\t\"G\n\033CommunicationTrigger"
+          + "Request\022\023\n\013referenceId\030\001 \001(\003\022\023\n\013messageT"
+          + "ype\030\002 \001(\t\"Z\n\034CommunicationTriggerRespons"
+          + "e\022\021\n\tprocessId\030\003 \001(\t\022\'\n\016responseStatus\030\002"
+          + " \001(\0132\017.ResponseStatus*E\n\rPLANNING_TYPE\022\013"
+          + "\n\007VALUE_A\020\000\022\022\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCH"
+          + "ARGE_STUDY\020\002*H\n\013MachineType\022\t\n\005EMPTY\020\000\022\017"
+          + "\n\013VESSEL_PUMP\020\001\022\014\n\010MANIFOLD\020\002\022\017\n\013BOTTOM_"
+          + "LINE\020\003*S\n\010COW_TYPE\022\022\n\016EMPTY_COW_TYPE\020\000\022\013"
+          + "\n\007ALL_COW\020\001\022\016\n\nBOTTOM_COW\020\002\022\013\n\007TOP_COW\020\003"
+          + "\022\t\n\005CARGO\020\004*B\n\017COW_OPTION_TYPE\022\031\n\025EMPTY_"
+          + "COW_OPTION_TYPE\020\000\022\010\n\004AUTO\020\001\022\n\n\006MANUAL\020\002B"
+          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -18104,7 +18253,7 @@ public final class Common {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CommunicationStatusCheckRequest_descriptor,
             new java.lang.String[] {
-              "ReferenceId",
+              "ReferenceId", "Reference",
             });
     internal_static_CommunicationTriggerRequest_descriptor =
         getDescriptor().getMessageTypes().get(15);

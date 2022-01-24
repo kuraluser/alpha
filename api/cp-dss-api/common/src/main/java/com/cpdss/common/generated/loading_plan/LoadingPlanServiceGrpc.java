@@ -745,63 +745,6 @@ public final class LoadingPlanServiceGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
-      getGetCargoQuantityLoadingRatioMethod;
-
-  @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "getCargoQuantityLoadingRatio",
-      requestType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.class,
-      responseType =
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
-          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
-      getGetCargoQuantityLoadingRatioMethod() {
-    io.grpc.MethodDescriptor<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
-        getGetCargoQuantityLoadingRatioMethod;
-    if ((getGetCargoQuantityLoadingRatioMethod =
-            LoadingPlanServiceGrpc.getGetCargoQuantityLoadingRatioMethod)
-        == null) {
-      synchronized (LoadingPlanServiceGrpc.class) {
-        if ((getGetCargoQuantityLoadingRatioMethod =
-                LoadingPlanServiceGrpc.getGetCargoQuantityLoadingRatioMethod)
-            == null) {
-          LoadingPlanServiceGrpc.getGetCargoQuantityLoadingRatioMethod =
-              getGetCargoQuantityLoadingRatioMethod =
-                  io.grpc.MethodDescriptor
-                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .MaxQuantityRequest,
-                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                              .MaxQuantityResponse>
-                          newBuilder()
-                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "getCargoQuantityLoadingRatio"))
-                      .setSampledToLocalTracing(true)
-                      .setRequestMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .MaxQuantityRequest.getDefaultInstance()))
-                      .setResponseMarshaller(
-                          io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                                  .MaxQuantityResponse.getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new LoadingPlanServiceMethodDescriptorSupplier(
-                              "getCargoQuantityLoadingRatio"))
-                      .build();
-        }
-      }
-    }
-    return getGetCargoQuantityLoadingRatioMethod;
-  }
-
-  private static volatile io.grpc.MethodDescriptor<
           com.cpdss.common.generated.Common.DependentProcessCheckRequestComm,
           com.cpdss.common.generated.Common.CommunicationCheckResponse>
       getCheckDependentProcessMethod;
@@ -1019,6 +962,113 @@ public final class LoadingPlanServiceGrpc {
     return getSavePyUserForCommunicationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+          com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+      getTriggerCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "triggerCommunication",
+      requestType = com.cpdss.common.generated.Common.CommunicationTriggerRequest.class,
+      responseType = com.cpdss.common.generated.Common.CommunicationTriggerResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+          com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+      getTriggerCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+            com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+        getTriggerCommunicationMethod;
+    if ((getTriggerCommunicationMethod = LoadingPlanServiceGrpc.getTriggerCommunicationMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getTriggerCommunicationMethod = LoadingPlanServiceGrpc.getTriggerCommunicationMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getTriggerCommunicationMethod =
+              getTriggerCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+                          com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "triggerCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationTriggerRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.Common.CommunicationTriggerResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier("triggerCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getTriggerCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+      getGetCargoQuantityLoadingRatioMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getCargoQuantityLoadingRatio",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+      getGetCargoQuantityLoadingRatioMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+        getGetCargoQuantityLoadingRatioMethod;
+    if ((getGetCargoQuantityLoadingRatioMethod =
+            LoadingPlanServiceGrpc.getGetCargoQuantityLoadingRatioMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getGetCargoQuantityLoadingRatioMethod =
+                LoadingPlanServiceGrpc.getGetCargoQuantityLoadingRatioMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getGetCargoQuantityLoadingRatioMethod =
+              getGetCargoQuantityLoadingRatioMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .MaxQuantityRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .MaxQuantityResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getCargoQuantityLoadingRatio"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .MaxQuantityRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .MaxQuantityResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "getCargoQuantityLoadingRatio"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoQuantityLoadingRatioMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -1201,16 +1251,6 @@ public final class LoadingPlanServiceGrpc {
     }
 
     /** */
-    public void getCargoQuantityLoadingRatio(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
-            responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
-          getGetCargoQuantityLoadingRatioMethod(), responseObserver);
-    }
-
-    /** */
     public void checkDependentProcess(
         com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
@@ -1250,6 +1290,24 @@ public final class LoadingPlanServiceGrpc {
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getSavePyUserForCommunicationMethod(), responseObserver);
+    }
+    /** */
+    public void triggerCommunication(
+        com.cpdss.common.generated.Common.CommunicationTriggerRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getTriggerCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void getCargoQuantityLoadingRatio(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoQuantityLoadingRatioMethod(), responseObserver);
     }
 
     @java.lang.Override
@@ -1359,13 +1417,6 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.Common.CargoHistoryResponse>(
                       this, METHODID_GET_LOADING_PLAN_CARGO_HISTORY)))
           .addMethod(
-              getGetCargoQuantityLoadingRatioMethod(),
-              io.grpc.stub.ServerCalls.asyncUnaryCall(
-                  new MethodHandlers<
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .MaxQuantityResponse>(this, METHODID_GET_CARGO_QUANTITY_LOADING_RATIO)))
-          .addMethod(
               getCheckDependentProcessMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
@@ -1397,6 +1448,20 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingPlanCommunicationReply>(
                       this, METHODID_SAVE_PY_USER_FOR_COMMUNICATION)))
+          .addMethod(
+              getTriggerCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.Common.CommunicationTriggerRequest,
+                      com.cpdss.common.generated.Common.CommunicationTriggerResponse>(
+                      this, METHODID_TRIGGER_COMMUNICATION)))
+          .addMethod(
+              getGetCargoQuantityLoadingRatioMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .MaxQuantityResponse>(this, METHODID_GET_CARGO_QUANTITY_LOADING_RATIO)))
           .build();
     }
   }
@@ -1578,18 +1643,6 @@ public final class LoadingPlanServiceGrpc {
     }
 
     /** */
-    public void getCargoQuantityLoadingRatio(
-        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
-        io.grpc.stub.StreamObserver<
-                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
-            responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getGetCargoQuantityLoadingRatioMethod(), getCallOptions()),
-          request,
-          responseObserver);
-    }
-
-    /** */
     public void checkDependentProcess(
         com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request,
         io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationCheckResponse>
@@ -1635,6 +1688,28 @@ public final class LoadingPlanServiceGrpc {
             responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSavePyUserForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+    /** */
+    public void triggerCommunication(
+        com.cpdss.common.generated.Common.CommunicationTriggerRequest request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getTriggerCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void getCargoQuantityLoadingRatio(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetCargoQuantityLoadingRatioMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -1771,14 +1846,6 @@ public final class LoadingPlanServiceGrpc {
     }
 
     /** */
-    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
-        getCargoQuantityLoadingRatio(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getGetCargoQuantityLoadingRatioMethod(), getCallOptions(), request);
-    }
-
-    /** */
     public com.cpdss.common.generated.Common.CommunicationCheckResponse checkDependentProcess(
         com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -1810,6 +1877,20 @@ public final class LoadingPlanServiceGrpc {
                 request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSavePyUserForCommunicationMethod(), getCallOptions(), request);
+    }
+    /** */
+    public com.cpdss.common.generated.Common.CommunicationTriggerResponse triggerCommunication(
+        com.cpdss.common.generated.Common.CommunicationTriggerRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getTriggerCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse
+        getCargoQuantityLoadingRatio(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCargoQuantityLoadingRatioMethod(), getCallOptions(), request);
     }
   }
 
@@ -1963,15 +2044,6 @@ public final class LoadingPlanServiceGrpc {
 
     /** */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
-        getCargoQuantityLoadingRatio(
-            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getGetCargoQuantityLoadingRatioMethod(), getCallOptions()), request);
-    }
-
-    /** */
-    public com.google.common.util.concurrent.ListenableFuture<
             com.cpdss.common.generated.Common.CommunicationCheckResponse>
         checkDependentProcess(
             com.cpdss.common.generated.Common.DependentProcessCheckRequestComm request) {
@@ -2009,6 +2081,23 @@ public final class LoadingPlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSavePyUserForCommunicationMethod(), getCallOptions()), request);
     }
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.Common.CommunicationTriggerResponse>
+        triggerCommunication(
+            com.cpdss.common.generated.Common.CommunicationTriggerRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getTriggerCommunicationMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityResponse>
+        getCargoQuantityLoadingRatio(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetCargoQuantityLoadingRatioMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -2024,9 +2113,10 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING = 10;
   private static final int METHODID_GET_LOADING_PLAN_COMMINGLE_DETAILS = 11;
   private static final int METHODID_GET_LOADING_PLAN_CARGO_HISTORY = 12;
-  private static final int METHODID_GET_CARGO_QUANTITY_LOADING_RATIO = 13;
-  private static final int METHODID_CHECK_DEPENDENT_PROCESS = 14;
-  private static final int METHODID_CHECK_COMMUNICATED = 15;
+  private static final int METHODID_CHECK_DEPENDENT_PROCESS = 13;
+  private static final int METHODID_CHECK_COMMUNICATED = 14;
+  private static final int METHODID_TRIGGER_COMMUNICATION = 15;
+  private static final int METHODID_GET_CARGO_QUANTITY_LOADING_RATIO = 16;
   private static final int METHODID_GET_PY_USER_FOR_COMMUNICATION = 16;
   private static final int METHODID_SAVE_PY_USER_FOR_COMMUNICATION = 17;
 
@@ -2158,15 +2248,6 @@ public final class LoadingPlanServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.CargoHistoryResponse>)
                   responseObserver);
           break;
-        case METHODID_GET_CARGO_QUANTITY_LOADING_RATIO:
-          serviceImpl.getCargoQuantityLoadingRatio(
-              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest)
-                  request,
-              (io.grpc.stub.StreamObserver<
-                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
-                          .MaxQuantityResponse>)
-                  responseObserver);
-          break;
         case METHODID_CHECK_DEPENDENT_PROCESS:
           serviceImpl.checkDependentProcess(
               (com.cpdss.common.generated.Common.DependentProcessCheckRequestComm) request,
@@ -2199,6 +2280,22 @@ public final class LoadingPlanServiceGrpc {
               (io.grpc.stub.StreamObserver<
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .LoadingPlanCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_TRIGGER_COMMUNICATION:
+          serviceImpl.triggerCommunication(
+              (com.cpdss.common.generated.Common.CommunicationTriggerRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.Common.CommunicationTriggerResponse>)
+                  responseObserver);
+          break;
+        case METHODID_GET_CARGO_QUANTITY_LOADING_RATIO:
+          serviceImpl.getCargoQuantityLoadingRatio(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .MaxQuantityResponse>)
                   responseObserver);
           break;
         default:
@@ -2278,11 +2375,12 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getValidateStowageAndBillOfLaddingMethod())
                       .addMethod(getGetLoadingPlanCommingleDetailsMethod())
                       .addMethod(getGetLoadingPlanCargoHistoryMethod())
-                      .addMethod(getGetCargoQuantityLoadingRatioMethod())
                       .addMethod(getCheckDependentProcessMethod())
                       .addMethod(getCheckCommunicatedMethod())
                       .addMethod(getGetPyUserForCommunicationMethod())
                       .addMethod(getSavePyUserForCommunicationMethod())
+                      .addMethod(getTriggerCommunicationMethod())
+                      .addMethod(getGetCargoQuantityLoadingRatioMethod())
                       .build();
         }
       }

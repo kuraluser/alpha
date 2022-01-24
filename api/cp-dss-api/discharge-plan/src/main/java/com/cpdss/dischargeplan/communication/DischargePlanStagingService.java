@@ -3,16 +3,21 @@ package com.cpdss.dischargeplan.communication;
 
 import static com.cpdss.dischargeplan.service.utility.ProcessIdentifiers.port_discharge_plan_commingle_details_temp;
 
+import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.communication.StagingService;
+import com.cpdss.common.exception.GenericServiceException;
+import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
+import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.utils.HttpStatusCode;
+import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants;
 import com.cpdss.dischargeplan.service.utility.ProcessIdentifiers;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +44,13 @@ public class DischargePlanStagingService extends StagingService {
   @Autowired private DischargeStageDurationRepository dischargeStageDurationRepository;
   @Autowired private DischargeStageMinAmountRepository dischargeStageMinAmountRepository;
   @Autowired private AlgoErrorHeadingRepository algoErrorHeadingRepository;
+  @Autowired private DischargeInformationRepository dischargeInformationRepository;
 
   @Autowired
   private DischargingPlanPortWiseDetailsRepository dischargingPlanPortWiseDetailsRepository;
+
+  @Autowired private DischargePlanDataTransferOutBoundRepository dataTransferOutBoundRepository;
+  @Autowired private DischargePlanDataTransferInBoundRepository dataTransferInBoundRepository;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
@@ -75,7 +85,7 @@ public class DischargePlanStagingService extends StagingService {
    * @param processIdentifierList - list of processIdentifier
    * @param processId - processId
    * @param processGroupId - processGroupId
-   * @param Id- id
+   * @param dischargeInformationId- -dischargeInformationId value
    * @param pyUserId- processId of algoResponse
    * @return JsonArray
    */
@@ -83,9 +93,67 @@ public class DischargePlanStagingService extends StagingService {
       List<String> processIdentifierList,
       String processId,
       String processGroupId,
-      Long Id,
-      String pyUserId) {
-    log.info("DischargePlanStaging Service processidentifier list:" + processIdentifierList);
+      Long dischargeInformationId,
+      String pyUserId)
+      throws GenericServiceException {
+
+    log.debug(
+        "Converting Tables -> JSON ::: MessageType: {}, Reference referenceId: {}, ProcessId: {}, Tables: {}, pyUserId: {}",
+        processGroupId,
+        dischargeInformationId,
+        processId,
+        processIdentifierList,
+        pyUserId);
+
+    String dependantProcessId = null;
+    String dependantProcessModule = null;
+
+    // Communication referenceId set as patternId between Discharge Plan and Discharge Study
+    if (MessageTypes.DISCHARGEPLAN.getMessageType().equals(processGroupId)) {
+      // Check prev module communicated
+      final DischargeInformation dischargeInformation =
+          dischargeInformationRepository
+              .findById(dischargeInformationId)
+              .orElseThrow(
+                  () -> {
+                    log.error("DischargeInformation not found. Id: {}", dischargeInformationId);
+                    return new GenericServiceException(
+                        "DischargeInformation not found. Id: " + dischargeInformationId,
+                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                        HttpStatusCode.INTERNAL_SERVER_ERROR);
+                  });
+
+      if (!isCommunicated(
+          MessageTypes.DISCHARGESTUDY.getMessageType(),
+          dischargeInformation.getDischargingPatternXid(),
+          CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName())) {
+        Common.CommunicationTriggerRequest communicationTriggerRequest =
+            Common.CommunicationTriggerRequest.newBuilder()
+                .setReferenceId(dischargeInformation.getDischargingPatternXid())
+                .setMessageType(MessageTypes.DISCHARGESTUDY.getMessageType())
+                .build();
+        final Common.CommunicationTriggerResponse response =
+            loadableStudyServiceBlockingStub.triggerCommunication(communicationTriggerRequest);
+
+        dependantProcessId = response.getProcessId();
+        dependantProcessModule =
+            CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName();
+
+        // Communication trigger failure
+        if (!DischargePlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
+          log.error(
+              "Previous module trigger failed. MessageType: {}, ReferenceId: {}, Module: {}, Response: {}",
+              MessageTypes.DISCHARGESTUDY.getMessageType(),
+              dischargeInformationId,
+              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName(),
+              response);
+          throw new GenericServiceException(
+              "Previous module trigger failed. ReferenceId: " + dischargeInformationId,
+              CommonErrorCodes.E_GEN_INTERNAL_ERR,
+              HttpStatusCode.INTERNAL_SERVER_ERROR);
+        }
+      }
+    }
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
     List<Long> dischargingDelaysIds = null;
@@ -102,13 +170,22 @@ public class DischargePlanStagingService extends StagingService {
         case discharging_information:
           {
             getDischargingInformation(
-                array, Id, processIdentifier, processId, processGroupId, processedList, object);
+                array,
+                dischargeInformationId,
+                processIdentifier,
+                processId,
+                processGroupId,
+                processedList,
+                object,
+                dependantProcessId,
+                dependantProcessModule);
             break;
           }
         case cow_plan_details:
           {
             String cowPlanDetailJson =
-                dischargePlanStagingRepository.getCowPlanDetailWithDischargeId(Id);
+                dischargePlanStagingRepository.getCowPlanDetailWithDischargeId(
+                    dischargeInformationId);
             if (cowPlanDetailJson != null) {
               JsonArray cowPlanDetail = JsonParser.parseString(cowPlanDetailJson).getAsJsonArray();
               addIntoProcessedList(
@@ -118,14 +195,17 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  cowPlanDetail);
+                  cowPlanDetail,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case cow_with_different_cargo:
           {
             String cowWithDifferentCargosJson =
-                dischargePlanStagingRepository.getCowWithDifferentCargoWithDischargeId(Id);
+                dischargePlanStagingRepository.getCowWithDifferentCargoWithDischargeId(
+                    dischargeInformationId);
             if (cowWithDifferentCargosJson != null) {
               JsonArray cowWithDifferentCargos =
                   JsonParser.parseString(cowWithDifferentCargosJson).getAsJsonArray();
@@ -136,14 +216,17 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  cowWithDifferentCargos);
+                  cowWithDifferentCargos,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case cow_tank_details:
           {
             String cowTankDetailsJson =
-                dischargePlanStagingRepository.getCowTankDetailWithDischargeId(Id);
+                dischargePlanStagingRepository.getCowTankDetailWithDischargeId(
+                    dischargeInformationId);
             if (cowTankDetailsJson != null) {
               JsonArray cowTankDetails =
                   JsonParser.parseString(cowTankDetailsJson).getAsJsonArray();
@@ -154,19 +237,22 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  cowTankDetails);
+                  cowTankDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case discharging_delay:
           {
             String dischargingDelaysJson =
-                dischargePlanStagingRepository.getDischargingDelayWithDischargeId(Id);
+                dischargePlanStagingRepository.getDischargingDelayWithDischargeId(
+                    dischargeInformationId);
             if (dischargingDelaysJson != null) {
               JsonArray dischargingDelays =
                   JsonParser.parseString(dischargingDelaysJson).getAsJsonArray();
               List<DischargingDelay> dischargingDelaysList =
-                  dischargingDelayRepository.findByDischargingInformationId(Id);
+                  dischargingDelayRepository.findByDischargingInformationId(dischargeInformationId);
               addIntoProcessedList(
                   array,
                   object,
@@ -174,7 +260,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  dischargingDelays);
+                  dischargingDelays,
+                  dependantProcessId,
+                  dependantProcessModule);
               if (dischargingDelaysList != null && !dischargingDelaysList.isEmpty()) {
                 dischargingDelaysIds =
                     dischargingDelaysList.stream()
@@ -200,7 +288,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    dischargingDelayReasons);
+                    dischargingDelayReasons,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -208,7 +298,8 @@ public class DischargePlanStagingService extends StagingService {
         case discharging_machinary_in_use:
           {
             String dischargingMachineryInUsesJson =
-                dischargePlanStagingRepository.getDischargingMachineryInUseWithDischargeId(Id);
+                dischargePlanStagingRepository.getDischargingMachineryInUseWithDischargeId(
+                    dischargeInformationId);
             if (dischargingMachineryInUsesJson != null) {
               JsonArray dischargingMachineryInUses =
                   JsonParser.parseString(dischargingMachineryInUsesJson).getAsJsonArray();
@@ -219,14 +310,17 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  dischargingMachineryInUses);
+                  dischargingMachineryInUses,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
         case discharging_port_tide_details:
           {
             String portTideDetailsJson =
-                dischargePlanStagingRepository.getPortTideDetailWithDischargeId(Id);
+                dischargePlanStagingRepository.getPortTideDetailWithDischargeId(
+                    dischargeInformationId);
             if (portTideDetailsJson != null) {
               JsonArray portTideDetails =
                   JsonParser.parseString(portTideDetailsJson).getAsJsonArray();
@@ -237,7 +331,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portTideDetails);
+                  portTideDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -245,7 +341,8 @@ public class DischargePlanStagingService extends StagingService {
         case discharging_berth_details:
           {
             String dischargingBerthDetailsJson =
-                dischargePlanStagingRepository.getDischargingBerthDetailWithDischargeId(Id);
+                dischargePlanStagingRepository.getDischargingBerthDetailWithDischargeId(
+                    dischargeInformationId);
             if (dischargingBerthDetailsJson != null) {
               JsonArray dischargingBerthDetails =
                   JsonParser.parseString(dischargingBerthDetailsJson).getAsJsonArray();
@@ -256,7 +353,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  dischargingBerthDetails);
+                  dischargingBerthDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -264,7 +363,7 @@ public class DischargePlanStagingService extends StagingService {
           {
             String dischargingInformationAlgoStatusJson =
                 dischargePlanStagingRepository.getDischargingInformationAlgoStatusWithDischargeId(
-                    Id);
+                    dischargeInformationId);
             if (dischargingInformationAlgoStatusJson != null) {
               JsonArray dischargingInformationAlgoStatus =
                   JsonParser.parseString(dischargingInformationAlgoStatusJson).getAsJsonArray();
@@ -275,7 +374,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  dischargingInformationAlgoStatus);
+                  dischargingInformationAlgoStatus,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -283,12 +384,13 @@ public class DischargePlanStagingService extends StagingService {
         case algo_error_heading:
           {
             String algoErrorHeadingsJson =
-                dischargePlanStagingRepository.getAlgoErrorHeadingWithDischargeId(Id);
+                dischargePlanStagingRepository.getAlgoErrorHeadingWithDischargeId(
+                    dischargeInformationId);
             if (algoErrorHeadingsJson != null) {
               JsonArray algoErrorHeadings =
                   JsonParser.parseString(algoErrorHeadingsJson).getAsJsonArray();
               List<AlgoErrorHeading> algoErrorHeadingsList =
-                  algoErrorHeadingRepository.findByDischargingInformationId(Id);
+                  algoErrorHeadingRepository.findByDischargingInformationId(dischargeInformationId);
               addIntoProcessedList(
                   array,
                   object,
@@ -296,7 +398,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  algoErrorHeadings);
+                  algoErrorHeadings,
+                  dependantProcessId,
+                  dependantProcessModule);
               if (algoErrorHeadingsList != null && !algoErrorHeadingsList.isEmpty()) {
                 algoErrorHeadingsIds =
                     algoErrorHeadingsList.stream()
@@ -321,7 +425,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    algoErrors);
+                    algoErrors,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -329,12 +435,14 @@ public class DischargePlanStagingService extends StagingService {
         case discharging_sequence:
           {
             String dischargingSequencesJson =
-                dischargePlanStagingRepository.getDischargingSequenceWithDischargeId(Id);
+                dischargePlanStagingRepository.getDischargingSequenceWithDischargeId(
+                    dischargeInformationId);
             if (dischargingSequencesJson != null) {
               JsonArray dischargingSequences =
                   JsonParser.parseString(dischargingSequencesJson).getAsJsonArray();
               List<DischargingSequence> dischargingSequencesList =
-                  dischargingSequenceRepository.findByDischargeInformationId(Id);
+                  dischargingSequenceRepository.findByDischargeInformationId(
+                      dischargeInformationId);
               addIntoProcessedList(
                   array,
                   object,
@@ -342,7 +450,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  dischargingSequences);
+                  dischargingSequences,
+                  dependantProcessId,
+                  dependantProcessModule);
               if (dischargingSequencesList != null && !dischargingSequencesList.isEmpty()) {
                 dischargingSequenceIds =
                     dischargingSequencesList.stream()
@@ -368,7 +478,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    ballastValves);
+                    ballastValves,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -388,7 +500,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    cargoValves);
+                    cargoValves,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -409,7 +523,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    cargoDischargingRates);
+                    cargoDischargingRates,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -430,7 +546,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    ballastOperations);
+                    ballastOperations,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -455,7 +573,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    dischargingPlanPortWiseDetails);
+                    dischargingPlanPortWiseDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -476,7 +596,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    ballastingRates);
+                    ballastingRates,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -497,7 +619,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    deballastingRates);
+                    deballastingRates,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -520,7 +644,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    dischargingPlanStowageDetails);
+                    dischargingPlanStowageDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -543,7 +669,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    dischargingPlanBallastDetails);
+                    dischargingPlanBallastDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -566,7 +694,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    dischargingPlanRobDetails);
+                    dischargingPlanRobDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -589,7 +719,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    dischargingPlanStabilityParameters);
+                    dischargingPlanStabilityParameters,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -612,7 +744,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    dischargingPlanCommingleDetails);
+                    dischargingPlanCommingleDetails,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -621,7 +755,8 @@ public class DischargePlanStagingService extends StagingService {
           {
             String dischargingSequenceStabilityParamJson =
                 dischargePlanStagingRepository
-                    .getPortDischargingSequenceStabilityParamsWithDischargeId(Id);
+                    .getPortDischargingSequenceStabilityParamsWithDischargeId(
+                        dischargeInformationId);
             if (dischargingSequenceStabilityParamJson != null) {
               JsonArray dischargingSequenceStabilityParam =
                   JsonParser.parseString(dischargingSequenceStabilityParamJson).getAsJsonArray();
@@ -632,7 +767,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  dischargingSequenceStabilityParam);
+                  dischargingSequenceStabilityParam,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -640,7 +777,7 @@ public class DischargePlanStagingService extends StagingService {
           {
             String portDischargingPlanBallastDetailsJson =
                 dischargePlanStagingRepository.getPortDischargingPlanBallastDetailsWithDischargeId(
-                    Id);
+                    dischargeInformationId);
             if (portDischargingPlanBallastDetailsJson != null) {
               JsonArray portDischargingPlanBallastDetails =
                   JsonParser.parseString(portDischargingPlanBallastDetailsJson).getAsJsonArray();
@@ -651,7 +788,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portDischargingPlanBallastDetails);
+                  portDischargingPlanBallastDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -659,7 +798,7 @@ public class DischargePlanStagingService extends StagingService {
           {
             String portDischargingPlanRobDetailsJson =
                 dischargePlanStagingRepository.getPortPortDischargingPlanRobDetailsWithDischargeId(
-                    Id);
+                    dischargeInformationId);
             if (portDischargingPlanRobDetailsJson != null) {
               JsonArray portDischargingPlanRobDetails =
                   JsonParser.parseString(portDischargingPlanRobDetailsJson).getAsJsonArray();
@@ -670,7 +809,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portDischargingPlanRobDetails);
+                  portDischargingPlanRobDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -678,7 +819,8 @@ public class DischargePlanStagingService extends StagingService {
           {
             String portDischargingPlanStabilityParamJson =
                 dischargePlanStagingRepository
-                    .getPortDischargingPlanStabilityParametersWithDischargeId(Id);
+                    .getPortDischargingPlanStabilityParametersWithDischargeId(
+                        dischargeInformationId);
             if (portDischargingPlanStabilityParamJson != null) {
               JsonArray portDischargingPlanStabilityParam =
                   JsonParser.parseString(portDischargingPlanStabilityParamJson).getAsJsonArray();
@@ -689,7 +831,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portDischargingPlanStabilityParam);
+                  portDischargingPlanStabilityParam,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -697,7 +841,7 @@ public class DischargePlanStagingService extends StagingService {
           {
             String portDischargingPlanStowageDetailsJson =
                 dischargePlanStagingRepository.getPortDischargingPlanStowageDetailsWithDischargeId(
-                    Id);
+                    dischargeInformationId);
             if (portDischargingPlanStowageDetailsJson != null) {
               JsonArray portDischargingPlanStowageDetails =
                   JsonParser.parseString(portDischargingPlanStowageDetailsJson).getAsJsonArray();
@@ -708,7 +852,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portDischargingPlanStowageDetails);
+                  portDischargingPlanStowageDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -716,7 +862,7 @@ public class DischargePlanStagingService extends StagingService {
           {
             String portDischargingPlanCommingleDetailsJson =
                 dischargePlanStagingRepository
-                    .getPortDischargingPlanCommingleDetailsWithDischargeId(Id);
+                    .getPortDischargingPlanCommingleDetailsWithDischargeId(dischargeInformationId);
             if (portDischargingPlanCommingleDetailsJson != null) {
               JsonArray portDischargingPlanCommingleDetails =
                   JsonParser.parseString(portDischargingPlanCommingleDetailsJson).getAsJsonArray();
@@ -727,7 +873,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portDischargingPlanCommingleDetails);
+                  portDischargingPlanCommingleDetails,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -735,7 +883,8 @@ public class DischargePlanStagingService extends StagingService {
           {
             String portDischargingPlanCommingleDetailsTempJson =
                 dischargePlanStagingRepository
-                    .getPortDischargingPlanCommingleDetailsTempWithDischargeId(Id);
+                    .getPortDischargingPlanCommingleDetailsTempWithDischargeId(
+                        dischargeInformationId);
             if (portDischargingPlanCommingleDetailsTempJson != null) {
               JsonArray portDischargingPlanCommingleDetailsTemp =
                   JsonParser.parseString(portDischargingPlanCommingleDetailsTempJson)
@@ -747,7 +896,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  portDischargingPlanCommingleDetailsTemp);
+                  portDischargingPlanCommingleDetailsTemp,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -755,12 +906,12 @@ public class DischargePlanStagingService extends StagingService {
           {
             LoadableStudy.LoadableStudyCommunicationRequest.Builder builder =
                 LoadableStudy.LoadableStudyCommunicationRequest.newBuilder();
-            builder.setId(Id);
+            builder.setId(dischargeInformationId);
             LoadableStudy.LoadableStudyCommunicationReply reply =
                 this.loadableStudyServiceBlockingStub.getJsonDataForDischargePlanCommunication(
                     builder.build());
             if (DischargePlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
-              if (reply.getDataJson() != null) {
+              if (!reply.getDataJson().isEmpty()) {
                 JsonArray jsonData = JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
                 addIntoProcessedList(
                     array,
@@ -769,7 +920,9 @@ public class DischargePlanStagingService extends StagingService {
                     processId,
                     processGroupId,
                     processedList,
-                    jsonData);
+                    jsonData,
+                    dependantProcessId,
+                    dependantProcessModule);
               }
             }
             break;
@@ -794,7 +947,9 @@ public class DischargePlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      loadablePattern);
+                      loadablePattern,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -803,7 +958,8 @@ public class DischargePlanStagingService extends StagingService {
         case bill_of_ladding:
           {
             String billOfLandingJson =
-                dischargePlanStagingRepository.getBillOfLandingWithDischargeInfoId(Id);
+                dischargePlanStagingRepository.getBillOfLandingWithDischargeInfoId(
+                    dischargeInformationId);
             if (billOfLandingJson != null) {
               JsonArray billOfLanding = JsonParser.parseString(billOfLandingJson).getAsJsonArray();
               addIntoProcessedList(
@@ -813,7 +969,9 @@ public class DischargePlanStagingService extends StagingService {
                   processId,
                   processGroupId,
                   processedList,
-                  billOfLanding);
+                  billOfLanding,
+                  dependantProcessId,
+                  dependantProcessModule);
             }
             break;
           }
@@ -837,7 +995,9 @@ public class DischargePlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      synopticalTableData);
+                      synopticalTableData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -862,7 +1022,9 @@ public class DischargePlanStagingService extends StagingService {
                       processId,
                       processGroupId,
                       processedList,
-                      pyUserData);
+                      pyUserData,
+                      dependantProcessId,
+                      dependantProcessModule);
                 }
               }
             }
@@ -870,19 +1032,9 @@ public class DischargePlanStagingService extends StagingService {
           }
       }
     }
+    // Save to outbound table
+    saveDataTransferOutBound(processGroupId, dischargeInformationId);
     return array;
-  }
-
-  private void addIntoProcessedList(
-      JsonArray array,
-      List<Object> object,
-      String processIdentifier,
-      String processId,
-      String processGroupId,
-      List<String> processedList,
-      JsonArray jsonArray) {
-    array.add(createJsonObject(object, processIdentifier, processId, processGroupId, jsonArray));
-    processedList.add(processIdentifier);
   }
 
   private void getDischargingInformation(
@@ -892,7 +1044,9 @@ public class DischargePlanStagingService extends StagingService {
       String processId,
       String processGroupId,
       List<String> processedList,
-      List<Object> object) {
+      List<Object> object,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     String dischargeInformationJson =
         dischargePlanStagingRepository.getDischargeInformationJson(id);
     if (dischargeInformationJson != null) {
@@ -918,7 +1072,9 @@ public class DischargePlanStagingService extends StagingService {
             "discharging_information_status",
             processId,
             processGroupId,
-            processedList);
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       if (dischargingStagesMinAmtId != null) {
         getDischargingStagesMinAmount(
@@ -927,7 +1083,9 @@ public class DischargePlanStagingService extends StagingService {
             "discharging_stages_min_amount",
             processId,
             processGroupId,
-            processedList);
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       if (dischargingStagesDurationId != null) {
         getDischargingStagesDuration(
@@ -936,11 +1094,21 @@ public class DischargePlanStagingService extends StagingService {
             "discharging_stages_duration",
             processId,
             processGroupId,
-            processedList);
+            processedList,
+            dependantProcessId,
+            dependantProcessModule);
       }
       object.addAll(Arrays.asList(dischargeInformation));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -950,7 +1118,9 @@ public class DischargePlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<DischargingInformationStatus> dischargingInformationStatusObj =
         dischargeInformationStatusRepository.findById(id);
     if (!dischargingInformationStatusObj.isEmpty()) {
@@ -958,7 +1128,15 @@ public class DischargePlanStagingService extends StagingService {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(dischargingInformationStatusObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -968,7 +1146,9 @@ public class DischargePlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<DischargingStagesMinAmount> dischargingStagesMinAmountObj =
         dischargeStageMinAmountRepository.findById(id);
     if (!dischargingStagesMinAmountObj.isEmpty()) {
@@ -976,7 +1156,15 @@ public class DischargePlanStagingService extends StagingService {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(dischargingStagesMinAmountObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
   }
 
@@ -986,7 +1174,9 @@ public class DischargePlanStagingService extends StagingService {
       String processIdentifier,
       String processId,
       String processGroupId,
-      List<String> processedList) {
+      List<String> processedList,
+      @Nullable final String dependantProcessId,
+      @Nullable final String dependantProcessModule) {
     Optional<DischargingStagesDuration> dischargingStagesDurationObj =
         dischargeStageDurationRepository.findById(id);
     if (!dischargingStagesDurationObj.isEmpty()) {
@@ -994,42 +1184,15 @@ public class DischargePlanStagingService extends StagingService {
       List<Object> object = new ArrayList<>();
       object.addAll(Arrays.asList(dischargingStagesDurationObj.get()));
       addIntoProcessedList(
-          array, object, processIdentifier, processId, processGroupId, processedList, null);
+          array,
+          object,
+          processIdentifier,
+          processId,
+          processGroupId,
+          processedList,
+          null,
+          dependantProcessId,
+          dependantProcessModule);
     }
-  }
-
-  /**
-   * method for create JsonObject
-   *
-   * @param list - List
-   * @param processIdentifier - processId
-   * @param processId - processGroupId
-   * @param processGroupId- processGroupId
-   * @param jsonArray- JsonArray
-   * @return JsonObject
-   */
-  public JsonObject createJsonObject(
-      List<Object> list,
-      String processIdentifier,
-      String processId,
-      String processGroupId,
-      JsonArray jsonArray) {
-
-    JsonObject jsonObject = new JsonObject();
-    JsonObject metaData = new JsonObject();
-    metaData.addProperty("processIdentifier", processIdentifier);
-    metaData.addProperty("processId", processId);
-    metaData.addProperty("processGroupId", processGroupId);
-    jsonObject.add("meta_data", metaData);
-    if (jsonArray != null) {
-      jsonObject.add("data", jsonArray);
-    } else {
-      JsonArray array = new JsonArray();
-      for (Object obj : list) {
-        array.add(new Gson().toJson(obj));
-      }
-      jsonObject.add("data", array);
-    }
-    return jsonObject;
   }
 }

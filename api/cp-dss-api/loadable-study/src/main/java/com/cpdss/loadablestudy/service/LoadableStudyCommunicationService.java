@@ -11,6 +11,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LoadableS
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
+import com.cpdss.common.communication.CommunicationConstants.CommunicationModule;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.domain.TaskExecutionRequest;
 import com.cpdss.common.exception.GenericServiceException;
@@ -261,9 +262,10 @@ public class LoadableStudyCommunicationService {
         dataTransferStagesWithStatus.stream()
             .filter(
                 dataTransfer ->
-                    Objects.equals(
-                        MessageTypes.DISCHARGESTUDY.getMessageType(),
-                        dataTransfer.getProcessGroupId()))
+                    Arrays.asList(
+                            MessageTypes.DISCHARGESTUDY.getMessageType(),
+                            MessageTypes.DISCHARGESTUDY_WITHOUT_ALGO.getMessageType())
+                        .contains(dataTransfer.getProcessGroupId()))
             .collect(Collectors.toList());
     log.info("DataTransferStages in DISCHARGE_STUDY_DATA_UPDATE task:" + dataTransferStages);
     if (!dataTransferStages.isEmpty()) {
@@ -327,6 +329,16 @@ public class LoadableStudyCommunicationService {
           processId,
           LocalDateTime.now());
       String processGroupId = entry.getValue().get(0).getProcessGroupId();
+
+      if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(processGroupId)) {
+        if (!loadableStudyStagingService.dependantProcessIsCompleted(
+            processId, CommunicationModule.LOADABLE_STUDY.getModuleName())) {
+          loadableStudyStagingService.updateStatusForProcessId(
+              processId, StagingStatus.READY_TO_PROCESS.getStatus());
+          continue;
+        }
+      }
+
       for (DataTransferStage dataTransferStage : entry.getValue()) {
         String dataTransferString = dataTransferStage.getData();
         String data;
@@ -919,6 +931,7 @@ public class LoadableStudyCommunicationService {
                   break;
                 }
               case LOADABLESTUDY_WITHOUT_ALGO:
+              case DISCHARGESTUDY_WITHOUT_ALGO:
                 {
                   // Update inbound status - shore
                   dataTransferInBoundRepository.updateStatus(

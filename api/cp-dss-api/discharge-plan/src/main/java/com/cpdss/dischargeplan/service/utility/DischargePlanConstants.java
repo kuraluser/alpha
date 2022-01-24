@@ -11,6 +11,8 @@ public class DischargePlanConstants {
   public static final String FAILED = "FAILED";
   public static final String FAILED_WITH_RESOURCE_EXC = "FAILED_WITH_RESOURCE_EXC";
   public static final String FAILED_WITH_EXC = "FAILED_WITH_EXC";
+  public static final String CPDSS_BUILD_ENV_SHIP = "ship";
+  public static final String CPDSS_BUILD_ENV_SHORE = "cloud";
 
   @Getter
   @AllArgsConstructor

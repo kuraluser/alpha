@@ -537,7 +537,10 @@ public class StagingService {
     else {
 
       Common.CommunicationStatusCheckRequest communicationStatusCheckRequest =
-          Common.CommunicationStatusCheckRequest.newBuilder().setReferenceId(referenceId).build();
+          Common.CommunicationStatusCheckRequest.newBuilder()
+              .setReferenceId(referenceId)
+              .setReference(reference)
+              .build();
       Common.CommunicationCheckResponse communicationCheckResponse = null;
 
       switch (requestModule) {

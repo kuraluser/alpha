@@ -2,20 +2,22 @@
 package com.cpdss.loadablestudy.communication;
 
 import static com.cpdss.common.communication.CommunicationConstants.*;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.springframework.util.StringUtils.hasLength;
 
+import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.communication.StagingService;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
-import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.entity.LoadablePattern;
+import com.cpdss.loadablestudy.entity.LoadableStudy;
+import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferInBoundRepository;
 import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferOutBoundRepository;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COLUMNS;
@@ -31,6 +33,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /** @author Selvy Thomas */
 @Log4j2
@@ -58,6 +61,9 @@ public class LoadableStudyStagingService extends StagingService {
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
+
   // Repositories
   @Autowired private LoadableStudyStagingRepository loadableStudyStagingRepository;
   @Autowired private LoadableStudyDataTransferOutBoundRepository dataTransferOutBoundRepository;
@@ -66,6 +72,7 @@ public class LoadableStudyStagingService extends StagingService {
   @Autowired private LoadablePatternRepository loadablePatternRepository;
   @Autowired private SynopticalTableRepository synopticalTableRepository;
   @Autowired private CargoNominationRepository cargoNominationRepository;
+  @Autowired private LoadableStudyRepository loadableStudyRepository;
 
   /**
    * getCommunicationData method for get JsonArray from processIdentifierList
@@ -73,7 +80,7 @@ public class LoadableStudyStagingService extends StagingService {
    * @param processIdentifierList - list of processIdentifier
    * @param processId - processId
    * @param processGroupId - processGroupId
-   * @param referenceId- referenceId
+   * @param referenceId- referenceId can be loadableStudyId or patternId
    * @return JsonArray
    * @throws GenericServiceException Exception if module not configured
    */
@@ -90,6 +97,58 @@ public class LoadableStudyStagingService extends StagingService {
 
     String dependantProcessId = null;
     String dependantProcessModule = null;
+
+    if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(processGroupId)) {
+      // Check prev module communicated
+      final LoadableStudy dischargeStudyGet =
+          loadableStudyRepository
+              .findById(referenceId)
+              .orElseThrow(
+                  () -> {
+                    log.error("DischargeStudy not found. Id: {}", referenceId);
+                    return new GenericServiceException(
+                        "DischargeStudy not found. Id: " + referenceId,
+                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                        HttpStatusCode.INTERNAL_SERVER_ERROR);
+                  });
+      // Communication referenceId set as patternId between DischargeStudy and LoadingPlan
+      // at Lp service
+      List<LoadablePattern> loadablePatternGet =
+          loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+              dischargeStudyGet.getConfirmedLoadableStudyId(), LS_STATUS_CONFIRMED);
+      if (!CollectionUtils.isEmpty(loadablePatternGet)) {
+        Long patternId = loadablePatternGet.stream().findFirst().get().getId();
+        if (!isCommunicated(
+            MessageTypes.LOADINGPLAN.getMessageType(),
+            patternId,
+            CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName())) {
+          Common.CommunicationTriggerRequest communicationTriggerRequest =
+              Common.CommunicationTriggerRequest.newBuilder()
+                  .setReferenceId(referenceId)
+                  .setMessageType(MessageTypes.LOADINGPLAN.getMessageType())
+                  .build();
+          final Common.CommunicationTriggerResponse response =
+              loadingPlanServiceBlockingStub.triggerCommunication(communicationTriggerRequest);
+          dependantProcessId = response.getProcessId();
+          dependantProcessModule =
+              CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName();
+
+          // Communication trigger failure
+          if (!SUCCESS.equals(response.getResponseStatus().getStatus())) {
+            log.error(
+                "Previous module trigger failed. MessageType: {}, ReferenceId: {}, Module: {}, Response: {}",
+                MessageTypes.LOADINGPLAN.getMessageType(),
+                referenceId,
+                CommunicationModule.LOADING_PLAN.getModuleName(),
+                response);
+            throw new GenericServiceException(
+                "Previous module trigger failed. ReferenceId: " + referenceId,
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR);
+          }
+        }
+      }
+    }
 
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
