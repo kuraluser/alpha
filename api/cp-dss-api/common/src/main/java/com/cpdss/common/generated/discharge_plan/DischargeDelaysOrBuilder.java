@@ -92,4 +92,17 @@ public interface DischargeDelaysOrBuilder
    * @return The sequenceNo.
    */
   long getSequenceNo();
+
+  /**
+   * <code>string dischargingRate = 9;</code>
+   *
+   * @return The dischargingRate.
+   */
+  java.lang.String getDischargingRate();
+  /**
+   * <code>string dischargingRate = 9;</code>
+   *
+   * @return The bytes for dischargingRate.
+   */
+  com.google.protobuf.ByteString getDischargingRateBytes();
 }

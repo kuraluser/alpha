@@ -16,6 +16,7 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     reasonForDelayIds_ = emptyLongList();
     duration_ = "";
     quantity_ = "";
+    dischargingRate_ = "";
   }
 
   @java.lang.Override
@@ -108,6 +109,13 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
           case 64:
             {
               sequenceNo_ = input.readInt64();
+              break;
+            }
+          case 74:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              dischargingRate_ = s;
               break;
             }
           default:
@@ -308,6 +316,41 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     return sequenceNo_;
   }
 
+  public static final int DISCHARGINGRATE_FIELD_NUMBER = 9;
+  private volatile java.lang.Object dischargingRate_;
+  /**
+   * <code>string dischargingRate = 9;</code>
+   *
+   * @return The dischargingRate.
+   */
+  public java.lang.String getDischargingRate() {
+    java.lang.Object ref = dischargingRate_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      dischargingRate_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string dischargingRate = 9;</code>
+   *
+   * @return The bytes for dischargingRate.
+   */
+  public com.google.protobuf.ByteString getDischargingRateBytes() {
+    java.lang.Object ref = dischargingRate_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      dischargingRate_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -350,6 +393,9 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     }
     if (sequenceNo_ != 0L) {
       output.writeInt64(8, sequenceNo_);
+    }
+    if (!getDischargingRateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 9, dischargingRate_);
     }
     unknownFields.writeTo(output);
   }
@@ -395,6 +441,9 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     if (sequenceNo_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(8, sequenceNo_);
     }
+    if (!getDischargingRateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, dischargingRate_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -419,6 +468,7 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     if (!getQuantity().equals(other.getQuantity())) return false;
     if (getCargoNominationId() != other.getCargoNominationId()) return false;
     if (getSequenceNo() != other.getSequenceNo()) return false;
+    if (!getDischargingRate().equals(other.getDischargingRate())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -448,6 +498,8 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCargoNominationId());
     hash = (37 * hash) + SEQUENCENO_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getSequenceNo());
+    hash = (37 * hash) + DISCHARGINGRATE_FIELD_NUMBER;
+    hash = (53 * hash) + getDischargingRate().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -602,6 +654,8 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
 
       sequenceNo_ = 0L;
 
+      dischargingRate_ = "";
+
       return this;
     }
 
@@ -642,6 +696,7 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
       result.quantity_ = quantity_;
       result.cargoNominationId_ = cargoNominationId_;
       result.sequenceNo_ = sequenceNo_;
+      result.dischargingRate_ = dischargingRate_;
       onBuilt();
       return result;
     }
@@ -724,6 +779,10 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
       }
       if (other.getSequenceNo() != 0L) {
         setSequenceNo(other.getSequenceNo());
+      }
+      if (!other.getDischargingRate().isEmpty()) {
+        dischargingRate_ = other.dischargingRate_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1172,6 +1231,82 @@ public final class DischargeDelays extends com.google.protobuf.GeneratedMessageV
     public Builder clearSequenceNo() {
 
       sequenceNo_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object dischargingRate_ = "";
+    /**
+     * <code>string dischargingRate = 9;</code>
+     *
+     * @return The dischargingRate.
+     */
+    public java.lang.String getDischargingRate() {
+      java.lang.Object ref = dischargingRate_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        dischargingRate_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string dischargingRate = 9;</code>
+     *
+     * @return The bytes for dischargingRate.
+     */
+    public com.google.protobuf.ByteString getDischargingRateBytes() {
+      java.lang.Object ref = dischargingRate_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        dischargingRate_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string dischargingRate = 9;</code>
+     *
+     * @param value The dischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargingRate(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      dischargingRate_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string dischargingRate = 9;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDischargingRate() {
+
+      dischargingRate_ = getDefaultInstance().getDischargingRate();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string dischargingRate = 9;</code>
+     *
+     * @param value The bytes for dischargingRate to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDischargingRateBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      dischargingRate_ = value;
       onChanged();
       return this;
     }

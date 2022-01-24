@@ -16,4 +16,5 @@ public class DischargeDelays {
   private Long cargoId;
   private Long dsCargoNominationId;
   private BigDecimal quantity;
+  private BigDecimal dischargingRate;
 }

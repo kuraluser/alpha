@@ -86,6 +86,8 @@ public class LoadingPlanUtility {
               .ifPresent(value -> delayBuilder.setQuantity(value.toString()));
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(delayBuilder::setCargoNominationId);
+          Optional.ofNullable(delay.getLoadingRate())
+              .ifPresent(loadingRate -> delayBuilder.setLoadingRate(loadingRate.toString()));
           builder.addDelays(delayBuilder);
         }
       }

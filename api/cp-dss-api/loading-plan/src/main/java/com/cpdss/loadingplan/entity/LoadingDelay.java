@@ -40,5 +40,8 @@ public class LoadingDelay extends EntityDoc {
   @Column(name = "cargo_nomination_xid")
   private Long cargoNominationId;
 
+  @Column(name = "loading_rate")
+  private BigDecimal loadingRate;
+
   @Transient private Long communicationRelatedEntityId;
 }
