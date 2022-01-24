@@ -977,27 +977,21 @@ public class UserService {
       throws GenericServiceException {
     Optional<Users> users = usersRepository.findById(userId);
     if (users.isPresent()) {
-      boolean firstNameCheck =
-          users.get().getFirstName() == null
-              ? false
-              : password.toLowerCase().contains(users.get().getFirstName().toLowerCase());
-      boolean lastNameCheck =
-          users.get().getLastName() == null
-              ? false
-              : password.toLowerCase().contains(users.get().getLastName().toLowerCase());
-      boolean userNameCheck =
-          users.get().getUsername() == null
-              ? false
-              : password.toLowerCase().contains(users.get().getUsername().toLowerCase());
-      if (!firstNameCheck && !lastNameCheck && !userNameCheck) {
-        validateRegularExpression(password);
-        return true;
-      } else {
-        throw new GenericServiceException(
-            "Password cannot contain first name/last name",
-            CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_1,
-            HttpStatusCode.BAD_REQUEST);
-      }
+      /**
+       * Now Commenting below code for the ticket DSS-5446, password may contain username boolean
+       * firstNameCheck = users.get().getFirstName() == null ? false :
+       * password.toLowerCase().contains(users.get().getFirstName().toLowerCase()); boolean
+       * lastNameCheck = users.get().getLastName() == null ? false :
+       * password.toLowerCase().contains(users.get().getLastName().toLowerCase()); boolean
+       * userNameCheck = users.get().getUsername() == null ? false :
+       * password.toLowerCase().contains(users.get().getUsername().toLowerCase()); if
+       * (!firstNameCheck && !lastNameCheck && !userNameCheck) {
+       * validateRegularExpression(password); return true; } else { throw new
+       * GenericServiceException( "Password cannot contain first name/last name",
+       * CommonErrorCodes.E_CPDSS_PASSWORD_POLICIES_VIOLATION_1, HttpStatusCode.BAD_REQUEST); }
+       */
+      validateRegularExpression(password);
+      return true;
     } else {
       throw new GenericServiceException(
           "User not found for ID: " + userId,
