@@ -1536,7 +1536,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
               .setHttpStatusCode(e.getStatus().value())
               .build());
     } catch (ResourceAccessException e) {
-      log.info("Error calling ALGO ", request.getLoadableStudyId());
+      log.error("Error calling ALGO. LS Id: {}, Trace: {}", request.getLoadableStudyId(), e);
       replyBuilder =
           AlgoReply.newBuilder()
               .setResponseStatus(
