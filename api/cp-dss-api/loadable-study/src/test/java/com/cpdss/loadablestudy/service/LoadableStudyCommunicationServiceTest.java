@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestTemplate;
 
 @SpringJUnitConfig(
     classes = {
@@ -109,6 +110,7 @@ public class LoadableStudyCommunicationServiceTest {
   @MockBean private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @MockBean LoadableStudyDataTransferInBoundRepository inBoundRepository;
   @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
+  @MockBean private RestTemplate restTemplate;
 
   @Test
   void testGetLoadableStudyStagingDataWithRetryStatus() throws GenericServiceException {

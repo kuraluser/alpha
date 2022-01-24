@@ -10,9 +10,9 @@
             <div class="row mb-15">
                 <div class="pl-15 pr-15">
                     {{ 'DISCHARGE_STUDY_INSTRUCTION' | translate }} <span class="ml-5 sub-head-color"> {{getFeild(portIndex,'instruction','instruction')}}</span>
-                   
+
                 </div>
-                
+
                 <div  class="pl-15 pr-15">
                     {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION_VIEW_PLAN' | translate }}
                     <span class="ml-5 sub-head-color">{{getFeild(portIndex,'draftRestriction')}}</span>
@@ -40,6 +40,24 @@
                     [value]="portDetail?.backLoadingDetails"  [listData]="listData"
                     [showTotal]="true">
                 </cpdss-portal-datatable>
+            </div>
+            <div class="row mb-10 mt-10">
+              <div class="pl-15 pr-15">
+                {{ 'DISCHARGE_STUDY_FORE_DRAFT' | translate }}
+                <span class="ml-5 sub-head-color">{{getFeild(portIndex,'forwardDraft') | number: '1.2-2'}}</span>
+              </div>
+              <div class="pl-15 pr-15">
+                {{ 'DISCHARGE_STUDY_MID_DRAFT' | translate }}
+                <span class="ml-5 sub-head-color">{{getFeild(portIndex,'meanDraft') | number: '1.2-2'}}</span>
+              </div>
+              <div class="pl-15 pr-15">
+                {{ 'DISCHARGE_STUDY_AFT_DRAFT' | translate }}
+                <span class="ml-5 sub-head-color">{{getFeild(portIndex,'afterDraft') | number: '1.2-2'}}</span>
+              </div>
+              <div class="pl-15 pr-15">
+                {{ 'DISCHARGE_STUDY_TRIM' | translate }}
+                <span class="ml-5 sub-head-color">{{getFeild(portIndex,'trim') | number: '1.2-2'}}</span>
+              </div>
             </div>
             <br>
         </div>

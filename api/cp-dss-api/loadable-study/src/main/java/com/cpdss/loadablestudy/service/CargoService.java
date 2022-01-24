@@ -145,17 +145,23 @@ public class CargoService {
                           var1.getValue().getOperation(),
                           var1.getValue().getValues(0))));
         }
-
         log.info("Cargo History grpc: Filter Key {}, Value {}", var1.getKey(), var1.getValue());
       }
+
+      specification =
+          specification.and(
+              new ApiTempHistorySpecification(
+                  new SearchCriteria("isActive", "EQUALS", Boolean.TRUE)));
 
       Page<ApiTempHistory> pagedResult = apiTempHistoryRepository.findAll(specification, pageable);
       apiTempHistList = pagedResult.toList();
       replyBuilder.setTotal(pagedResult.getTotalElements());
       log.info("ApiTempHistory paged result total {}", pagedResult.getTotalElements());
     } else { // on page load, no filter case
+      Specification<ApiTempHistory> specification =
+          new ApiTempHistorySpecification(new SearchCriteria("isActive", "EQUALS", Boolean.TRUE));
       Page<com.cpdss.loadablestudy.entity.ApiTempHistory> pagedResult =
-          this.apiTempHistoryRepository.findAll(pageable);
+          this.apiTempHistoryRepository.findAll(specification, pageable);
       apiTempHistList = pagedResult.toList();
       replyBuilder.setTotal(pagedResult.getTotalElements());
       log.info("ApiTempHistory no filter paged result total {}", pagedResult.getTotalElements());

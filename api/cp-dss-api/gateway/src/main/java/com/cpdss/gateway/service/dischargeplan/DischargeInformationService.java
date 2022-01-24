@@ -21,17 +21,12 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.dischargeplan.*;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
-import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
 import com.cpdss.gateway.domain.dischargeplan.DischargeRates;
-import com.cpdss.gateway.domain.dischargeplan.DischargeUpdateUllageResponse;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInfoAlgoStatus;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInformationResponse;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
-import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
@@ -61,6 +56,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -212,11 +208,6 @@ public class DischargeInformationService {
     LoadingStages dischargeStages =
         this.loadingInformationService.getLoadingStagesAndMasters(disRpcReplay.getDischargeStage());
 
-    // discharge sequence (reason/delay)
-    LoadingSequences dischargeSequences =
-        this.infoBuilderService.buildDischargeSequencesAndDelayFromMessage(
-            disRpcReplay.getDischargeDelay());
-
     // cow plan
     CowPlan cowPlan =
         this.infoBuilderService.buildDischargeCowPlan(disRpcReplay.getCowPlan(), extract);
@@ -237,14 +228,15 @@ public class DischargeInformationService {
             GatewayConstants.OPERATION_TYPE_ARR); // Discharge Info needed Arrival Conditions
 
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
-    vesselTankDetails.setDischargeQuantityCargoDetails(
+    List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetailsList =
         this.loadingInformationService.getDischargePlanCargoDetailsByPort(
             vesselId,
             activeVoyage.getDischargePatternId(),
             GatewayConstants.OPERATION_TYPE_DEP, // Discharge Info needed Arrival Conditions
             portRotation.get().getId(),
             portRotation.get().getPortId(),
-            disRpcReplay.getDischargeInfoId()));
+            disRpcReplay.getDischargeInfoId());
+    vesselTankDetails.setDischargeQuantityCargoDetails(dischargeQuantityCargoDetailsList);
 
     // Call No. 3 To Loading Info for quantity in BBLS (by passing LS pattern ID)
     var lsInfoCargo =
@@ -269,6 +261,15 @@ public class DischargeInformationService {
     // setting discharge cargo nomination id
     this.setDischargeCargoNominationId(vesselTankDetails);
 
+    // discharge sequence (reason/delay)
+    LoadingSequences dischargeSequences =
+        this.infoBuilderService.buildDischargeSequencesAndDelayFromMessage(
+            disRpcReplay.getDischargeDelay());
+    addDefaultCargoDetailsForManagingSequence(
+        dischargeQuantityCargoDetailsList,
+        dischargeSequences,
+        dischargeInformation.getDischargeInfoId());
+
     dischargeInformation.setDischargeDetails(dischargeDetails);
     dischargeInformation.setDischargeRates(dischargeRates);
     dischargeInformation.setBerthDetails(new LoadingBerthDetails(availableBerths, selectedBerths));
@@ -280,6 +281,50 @@ public class DischargeInformationService {
 
     dischargeInformation.setCargoVesselTankDetails(vesselTankDetails);
     return dischargeInformation;
+  }
+
+  /**
+   * Method to set default cargo details for managing sequence
+   *
+   * @param dischargeQuantityCargoDetailsList List of DischargeQuantityCargoDetails objects from
+   *     synoptical table
+   * @param dischargeSequences LoadingSequences object
+   * @param dischargeInfoId Discharge Information id
+   */
+  private void addDefaultCargoDetailsForManagingSequence(
+      List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetailsList,
+      LoadingSequences dischargeSequences,
+      Long dischargeInfoId) {
+
+    log.info("Inside addDefaultCargoDetailsForManagingSequence method!");
+
+    if (dischargeSequences != null
+        && (dischargeSequences.getDischargingDelays() == null
+            || dischargeSequences.getDischargingDelays().isEmpty())) {
+
+      // Set default values
+      List<DischargingDelays> dischargingDelaysList = new ArrayList<>();
+      dischargeQuantityCargoDetailsList.forEach(
+          dischargeQuantityCargoDetails -> {
+            DischargingDelays dischargingDelays = new DischargingDelays();
+
+            // Set fields
+            dischargingDelays.setCargoId(dischargeQuantityCargoDetails.getCargoId());
+            dischargingDelays.setCargoNominationId(
+                dischargeQuantityCargoDetails.getCargoNominationId());
+            dischargingDelays.setDischargeInfoId(dischargeInfoId);
+            Optional.ofNullable(dischargeQuantityCargoDetails.getOrderedQuantity())
+                .ifPresent(
+                    orderedQuantity ->
+                        dischargingDelays.setQuantity(new BigDecimal(orderedQuantity)));
+            dischargingDelays.setDischargingRate(
+                StringUtils.hasLength(dischargeQuantityCargoDetails.getMaxDischargingRate())
+                    ? new BigDecimal(dischargeQuantityCargoDetails.getMaxDischargingRate())
+                    : null);
+            dischargingDelaysList.add(dischargingDelays);
+          });
+      dischargeSequences.setDischargingDelays(dischargingDelaysList);
+    }
   }
 
   public void setDischargeCargoNominationId(CargoVesselTankDetails vesselTankDetails) {

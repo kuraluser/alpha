@@ -149,6 +149,7 @@ message LoadingDelays{
   int64 cargoId = 5;
   string quantity = 6; // was added in gateway
   int64 cargoNominationId = 7;
+  string loadingRate = 8;
 }
 
 // pure cargo details based on the port rotation
@@ -356,17 +357,10 @@ message LoadingPlanSyncDetails {
   LoadingInformationDetail loadingInformationDetail = 1;
   LoadablePlanDetailsReply loadablePlanDetailsReply = 2;
   repeated CargoToppingOffSequence cargoToppingOffSequences = 3;
-  repeated ManagingSequenceRequest managingSequenceRequest = 4;
 }
 
 message LoadingPlanSyncRequest {
   repeated LoadingPlanSyncDetails loadingPlanSyncDetails = 1;
-}
-
-message ManagingSequenceRequest {
-  int64 cargoId = 1;
-  string quantity = 2;
-  string cargoColor = 3;
 }
 
 message LoadingPlanSyncReply {
@@ -467,6 +461,8 @@ message LoadingPlanCommingleDetails {
     string ullage2 = 22;
     string cargo1Percentage = 23;
     string cargo2Percentage = 24;
+    string cargo1Abbreviation = 25;
+    string cargo2Abbreviation = 26;
 }
 
 message LoadingSequence {
@@ -1099,3 +1095,13 @@ message LoadablePlanCommingleCargoDetails {
      int32 actualPlanned = 44;
      string colorCode = 45;
 }
+
+  message LoadingPlanCommunicationRequest{
+    string id=1;
+    string dataJson=2;
+  }
+
+  message LoadingPlanCommunicationReply {
+    ResponseStatus responseStatus = 1;
+    string dataJson=2;
+  }

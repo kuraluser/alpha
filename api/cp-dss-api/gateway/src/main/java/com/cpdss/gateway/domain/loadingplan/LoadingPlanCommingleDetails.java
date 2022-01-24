@@ -31,4 +31,7 @@ public class LoadingPlanCommingleDetails {
   private BigDecimal ullage2;
   private BigDecimal cargo1Percentage;
   private BigDecimal cargo2Percentage;
+  private String cargo1Abbreviation;
+  private String cargo2Abbreviation;
+  private String tankName;
 }

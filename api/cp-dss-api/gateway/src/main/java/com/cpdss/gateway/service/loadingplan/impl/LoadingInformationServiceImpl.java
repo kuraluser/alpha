@@ -57,6 +57,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -626,7 +627,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public void setCargoTobeLoadedAndCargoGrade(
+  public LoadableStudy.LoadingPlanCommonResponse setCargoTobeLoadedAndCargoGrade(
       CargoVesselTankDetails var1,
       Long vesselId,
       Long patternId,
@@ -704,6 +705,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         }
       }
     }
+    return replay;
   }
 
   private List<SynopticalCargoBallastRecord> buildSynopticCargoToDTO(
@@ -805,6 +807,10 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               v -> {
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
+      val1.setLoadingRate(
+          StringUtils.hasLength(var2.getLoadingRate())
+              ? new BigDecimal(var2.getLoadingRate())
+              : null);
       BeanUtils.copyProperties(var2, val1);
       val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
       loadingDelays.add(val1);

@@ -122,28 +122,19 @@ public class AlgoService {
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy,
       com.cpdss.common.generated.LoadableStudy.AlgoErrorReply.Builder replyBuilder) {
 
-    Optional<List<AlgoErrorHeading>> alogError =
-        algoErrorHeadingRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
-    if (alogError.isPresent()) {
-      log.info("Adding ALGO error");
-      for (AlgoErrorHeading errorHeading : alogError.get()) {
-        LoadableStudy.AlgoErrors.Builder errorBuilder = LoadableStudy.AlgoErrors.newBuilder();
-
-        Optional<List<com.cpdss.loadablestudy.entity.AlgoErrors>> algoError =
-            algoErrorsRepository.findByAlgoErrorHeadingAndIsActive(errorHeading, true);
-        if (algoError.isPresent()) {
-          List<String> res = new ArrayList<>();
-          res.addAll(
-              algoError.get().stream()
-                  .map(val -> val.getErrorMessage())
-                  .collect(Collectors.toList()));
-          errorBuilder.addAllErrorMessages(res);
-        }
-        errorBuilder.setId(errorHeading.getId());
-        errorBuilder.setErrorHeading(errorHeading.getErrorHeading());
-        replyBuilder.addAlgoErrors(errorBuilder);
-      }
-    }
+    List<Object[]> algoError =
+        algoErrorHeadingRepository.findByLoadableStudyIdAndIsActive(loadableStudy.getId(), true);
+    LoadableStudy.AlgoErrors.Builder errorBuilder = LoadableStudy.AlgoErrors.newBuilder();
+    List<String> res = new ArrayList<>();
+    algoError.forEach(
+        err -> {
+          // err[0]-id, err[1]-error heading, err[2]-error message
+          errorBuilder.setId(Long.parseLong(String.valueOf(err[0])));
+          errorBuilder.setErrorHeading((String) err[1]);
+          res.add((String) err[2]);
+        });
+    errorBuilder.addAllErrorMessages(res);
+    replyBuilder.addAlgoErrors(errorBuilder);
     replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
   }
 

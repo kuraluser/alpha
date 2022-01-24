@@ -6,6 +6,7 @@ import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyReader;
 import com.cpdss.common.generated.EnvoyReaderServiceGrpc;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
@@ -25,6 +26,7 @@ import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -60,7 +62,8 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
   // endregion
 
   // region save file details to stage and write file data
-  public void saveToStage(Map<String, String> taskReqParams) throws GenericServiceException {
+  public CommonSuccessResponse saveToStage(Map<String, String> taskReqParams, String correlationId)
+      throws GenericServiceException {
     var erReply =
         getResultFromEnvoyReader(taskReqParams, MessageTypes.FILE_SHAREING.getMessageType());
     if (!SUCCESS.equals(erReply.getResponseStatus().getStatus())) {
@@ -68,9 +71,9 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
           "Failed to get Result from Communication Server for: "
               + MessageTypes.FILE_SHAREING.getMessageType(),
           erReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(erReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(Integer.parseInt(erReply.getResponseStatus().getCode())));
     }
-    if (erReply != null && !erReply.getPatternResultJson().isEmpty()) {
+    if (!erReply.getPatternResultJson().isEmpty()) {
       log.info(
           "Data received from envoy reader for: " + MessageTypes.FILE_SHAREING.getMessageType());
       FileData fileData = new Gson().fromJson(erReply.getPatternResultJson(), FileData.class);
@@ -78,15 +81,17 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
       FileRepo fileRepo =
           bindDataToEntity(
               new FileRepo(), new TypeToken<FileRepo>() {}.getType(), fileData.getDetails());
-      // save File data details to stage
-      saveFileDetailsIntoStagingTable(fileRepo.toString());
-      log.info("File details saved into staging table with Id :{} ", fileRepo.getId());
-      // write file data to corresponding path
-      writeDataToFile(fileRepo, fileData.getData());
-    } else {
-      log.info(
-          "No data found for the message type: " + MessageTypes.FILE_SHAREING.getMessageType());
+      if (fileRepo != null) {
+        // save File data details to stage
+        saveFileDetailsIntoStagingTable(new Gson().toJson(fileRepo));
+        log.info("File details saved into staging table with Id :{} ", fileRepo.getId());
+        // write file data to corresponding path
+        writeDataToFile(fileRepo, fileData.getData());
+        return new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId);
+      }
     }
+    log.info("No data found for the message type: " + MessageTypes.FILE_SHAREING.getMessageType());
+    return new CommonSuccessResponse("FAILED", correlationId);
   }
   // endregion
 
@@ -132,7 +137,7 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
   // endregion
 
   // region save file details to FileRepo
-  public void saveToFileRepo() {
+  public CommonSuccessResponse saveToFileRepo(String correlationId) {
     log.info("Inside saveToFileRepo");
     List<DataTransferStage> readyStatusFiles =
         this.getAllWithStatus(StagingStatus.READY_TO_PROCESS.getStatus());
@@ -174,7 +179,9 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
                       e.getMessage());
                 }
               });
+      return new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId);
     }
+    return new CommonSuccessResponse("FAILED", correlationId);
   }
   // endregion
 

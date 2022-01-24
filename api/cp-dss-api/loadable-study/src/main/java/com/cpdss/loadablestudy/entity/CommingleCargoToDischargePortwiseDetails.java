@@ -104,16 +104,16 @@ public class CommingleCargoToDischargePortwiseDetails extends EntityDoc {
   private Long tankId;
 
   @Column(name = "filling_ratio")
-  private Long fillingRatio;
+  private Double fillingRatio;
 
   @Column(name = "corrected_ullage")
-  private Long correctedUllage;
+  private Double correctedUllage;
 
   @Column(name = "rdg_ullage")
-  private Long rdgUllage;
+  private Double rdgUllage;
 
   @Column(name = "correction_factor")
-  private Long correctionFactor;
+  private Double correctionFactor;
 
   @Column(name = "slop_quantity")
   private BigDecimal slopQuantity;
@@ -131,7 +131,7 @@ public class CommingleCargoToDischargePortwiseDetails extends EntityDoc {
   private String shortName;
 
   @Column(name = "ullage")
-  private Long ullage;
+  private Double ullage;
 
   @Column(name = "cargo_nomination1_xid")
   private Long cargoNomination1XId;

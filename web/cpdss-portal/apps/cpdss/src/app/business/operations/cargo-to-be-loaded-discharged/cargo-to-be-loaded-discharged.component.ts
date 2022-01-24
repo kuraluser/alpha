@@ -124,7 +124,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     this.cargoTobeLoadedDischargedColumns = this.operation === OPERATIONS.LOADING ? this.loadingDischargingTransformationService.getCargoToBeLoadedDatatableColumns(QUANTITY_UNIT.BBLS) : this.loadingDischargingTransformationService.getCargoToBeDischargedDatatableColumns(QUANTITY_UNIT.BBLS);
     if (this.operation === OPERATIONS.LOADING) {
       this.updateCargoTobeLoadedData();
-    } else {
+    } else if (this.operation === OPERATIONS.DISCHARGING) {
       this.updateCargoTobeDischargedData();
     }
   }
@@ -155,7 +155,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, true, true, true);
         cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, true, true, true);
         cargo['maxLoadingRateEdit'] = new ValueObject<number | string>(cargo?.maxLoadingRate, true, true, true, true);
-        
+
         if (this.isPlanGenerated) {
           for (const key in cargo) {
             if (cargo[key]?.hasOwnProperty('_isEditMode') && cargo[key]?.hasOwnProperty('_isEditable')) {
@@ -322,7 +322,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
    * @memberof CargoToBeLoadedDischargedComponent
    */
   updateRateValidation() {
-    setTimeout(()=>{
+    setTimeout(() => {
       this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischarged);
     });
   }

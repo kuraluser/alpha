@@ -206,6 +206,7 @@ export class DischargeStudyViewPlanTransformationService {
       return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData, isNewValue);
     }) : [];
     _portDetail.tank = listData.tank?.length ? listData.tank?.filter(tankDetails =>  portDetail.tanks?.some(tankId => tankId === tankDetails.id)).map(tank => tank.shortName) : [];
+    _portDetail.stabilityParams = portDetail?.stabilityParams;
     return _portDetail;
   }
 
@@ -220,9 +221,9 @@ export class DischargeStudyViewPlanTransformationService {
   */
   getCargoDetailsAsValueObject(cargoDetail: IDischargeStudyCargoNominationList, listData: IDischargeStudyDropdownData, isNewValue = true) {
     const _cargoDetailValuObject = <IPortCargo>{};
-    
+
     const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
-    
+
     const unitConversion = {
       kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
       bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature)
@@ -231,7 +232,7 @@ export class DischargeStudyViewPlanTransformationService {
     _cargoDetailValuObject.bbls = new ValueObject<string>(unitConversion.bbls ? unitConversion.bbls?.toString() : '0', true, false);
     _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj, true, false);
     _cargoDetailValuObject.kl = new ValueObject<string>(unitConversion.kl ? unitConversion.kl?.toString() : '0', true, false, false, false);
-    
+
     _cargoDetailValuObject.mt = new ValueObject<string>(cargoDetail.quantity?.toString(), true, false);
     _cargoDetailValuObject.dischargeTime = cargoDetail.dischargeTime;
     _cargoDetailValuObject.abbreviation = new ValueObject<string>(cargoDetail.abbreviation, true, false);

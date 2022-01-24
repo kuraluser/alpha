@@ -59,7 +59,7 @@ export class ViewPlanComponent implements OnInit {
   percentageList: IPercentage[];
   tank: ITankDetails[];
   listData: IDischargeStudyDropdownData;
-  
+
   private _dischargeStudy: IDischargeStudy;
 
   constructor(
@@ -96,7 +96,7 @@ export class ViewPlanComponent implements OnInit {
     await this.setDropDownDetails();
     const instruction = await this.dischargePlanApiService.getInstructionDetails().toPromise();
     const tankList = await this.dischargePlanApiService.getTankDetails(this.vesselId).toPromise();
-    
+
     this.instructions = instruction.instructions;
     this.tank = tankList.cargoVesselTanks;
 
@@ -125,8 +125,8 @@ export class ViewPlanComponent implements OnInit {
   }
 
   /**
-   * Method set drop down details 
-   * 
+   * Method set drop down details
+   *
    * @private
    * @memberof DischargeStudyComponent
  */
@@ -167,7 +167,11 @@ export class ViewPlanComponent implements OnInit {
       cargoDetail: this.fb.group({ dataTable: this.fb.array(this.dischargeCargoFormGroup(portDetail)) }),
       cow: this.fb.control(portDetail?.cow),
       dischargeRate: this.fb.control(portDetail?.dischargeRate),
-      backLoadingDetails: this.fb.group({ dataTable: this.fb.array(this.initBackLoadingFormGroup(portDetail)) })
+      backLoadingDetails: this.fb.group({ dataTable: this.fb.array(this.initBackLoadingFormGroup(portDetail)) }),
+      afterDraft: this.fb.control(portDetail?.stabilityParams?.afterDraft),
+      forwardDraft: this.fb.control(portDetail?.stabilityParams?.forwardDraft),
+      meanDraft: this.fb.control(portDetail?.stabilityParams?.meanDraft),
+      trim: this.fb.control(portDetail?.stabilityParams?.trim)
     });
   }
 

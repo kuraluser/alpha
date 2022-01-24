@@ -169,7 +169,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
         this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(true);
       }
 
-      if(dischargingInformationResponse?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS){
+      if (dischargingInformationResponse?.dischargePlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
         this.loadingDischargingTransformationService.disableDischargePlanViewErrorBtn(true);
         this.loadingDischargingTransformationService.disableGenerateDischargePlanBtn(true);
@@ -197,8 +197,10 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       stageDetails: this.fb.group({
         trackStartEndStage: this.fb.control(dischargingInformationData?.dischargeStages?.trackStartEndStage),
         trackGradeSwitch: this.fb.control(dischargingInformationData?.dischargeStages?.trackGradeSwitch),
-        stageOffset: this.fb.control(dischargingInformationData?.dischargeStages?.stageOffset),
-        stageDuration: this.fb.control(dischargingInformationData?.dischargeStages?.stageDuration),
+        isStageOffsetUsed: this.fb.control(dischargingInformationData?.dischargeStages?.isStageOffsetUsed),
+        stageOffset: this.fb.control({ value: dischargingInformationData?.dischargeStages?.stageOffset, disabled: !dischargingInformationData?.dischargeStages?.isStageOffsetUsed }),
+        isStageDurationUsed: this.fb.control(dischargingInformationData?.dischargeStages?.isStageDurationUsed),
+        stageDuration: this.fb.control({ value: dischargingInformationData?.dischargeStages?.stageDuration, disabled: !dischargingInformationData?.dischargeStages?.isStageDurationUsed }),
       }),
       dischargeSlopTanksFirst: this.fb.control(dischargingInformationData?.dischargeSlopTanksFirst),
       dischargeCommingledCargoSeparately: this.fb.control(dischargingInformationData?.dischargeCommingledCargoSeparately),
@@ -261,6 +263,25 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   */
   onStageDurationValChange(event) {
     this.dischargingInformationData.dischargeStages.stageDuration = event?.value;
+    this.onUpdateDischargingStages();
+  }
+
+  /**
+   * Method to enable / disable no.of stages items
+   *
+   * @param {string} checkedItemControl
+   * @memberof DischargingInformationComponent
+   */
+  onChangeNoOfStagesCheck(checkedItemControl: string) {
+    const stageDetailsForm = this.dischargingInformationForm.get('stageDetails');
+    const formControlChecked = stageDetailsForm.value[checkedItemControl];
+    if (checkedItemControl === 'isStageOffsetUsed') {
+      this.dischargingInformationData.dischargeStages.isStageOffsetUsed = formControlChecked;
+      formControlChecked ? stageDetailsForm.get('stageOffset').enable() : stageDetailsForm.get('stageOffset').disable();
+    } else {
+      this.dischargingInformationData.dischargeStages.isStageOffsetUsed = formControlChecked;
+      formControlChecked ? stageDetailsForm.get('stageDuration').enable() : stageDetailsForm.get('stageDuration').disable();
+    }
     this.onUpdateDischargingStages();
   }
 
@@ -355,7 +376,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   *
   * @memberof DischargingInformationComponent
   */
-   checkDischargingRateErrors() {
+  checkDischargingRateErrors() {
     this.dischargingInformationPostData?.cargoToBeDischarged?.dischargeQuantityCargoDetails?.map((item, index) => {
       if (this.dischargeRatesComponent.dischargingRatesFormGroup.controls?.maxDischargingRate?.value < item.maxDischargingRate) {
         setTimeout(() => {
@@ -436,9 +457,13 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
     this.dischargingInformationData.isDischargeInfoComplete = this.checkIfValid(true);
     this.loadingDischargingTransformationService.setDischargingInformationValidity(this.dischargingInformationData?.isDischargeInfoComplete)
 
-    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY']).toPromise();
+    const translationKeys = await this.translateService.get(['DISCHARGING_INFORMATION_SAVE_ERROR', 'DISCHARGING_INFORMATION_SAVE_NO_DATA_ERROR', 'DISCHARGING_INFORMATION_SAVE_SUCCESS', 'DISCHARGING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_DISCHARGING_INFO_NO_OF_STAGES_ERROR']).toPromise();
 
     if (this.dischargingInformationData.isDischargeInfoComplete) {
+      if (!this.dischargingInformationForm.get('stageDetails').value['stageOffset'] && !this.dischargingInformationForm.get('stageDetails').value['stageDuration']) {
+        this.messageService.add({ severity: 'error', summary: translationKeys['DISCHARGING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_DISCHARGING_INFO_NO_OF_STAGES_ERROR'] });
+        return;
+      }
       if (this.hasUnSavedData) {
         this.ngxSpinnerService.show();
         this.dischargingInformationPostData.isDischargeInfoComplete = true;
@@ -515,7 +540,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       }
       return false
     }
-    
+
     this.checkDischargingRateErrors();
     if (this.dischargingInformationForm.valid && this.dischargingInformationForm.valid && this.dischargeDetailsComponent.loadingDischargingDetailsForm?.valid && this.dischargeBerthComponent.berthFormArray?.valid && this.dischargeBerthComponent.berthFormArray?.value?.every(berth => berth.formValid) && this.dischargeRatesComponent.dischargingRatesFormGroup?.valid && this.cargoToBeDischarged?.form.valid) {
       return true

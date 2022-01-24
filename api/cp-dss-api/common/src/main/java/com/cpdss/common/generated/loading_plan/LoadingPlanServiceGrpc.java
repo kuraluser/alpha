@@ -899,6 +899,126 @@ public final class LoadingPlanServiceGrpc {
     return getCheckCommunicatedMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+      getGetPyUserForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "getPyUserForCommunication",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest
+              .class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply
+              .class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+      getGetPyUserForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingPlanCommunicationRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+        getGetPyUserForCommunicationMethod;
+    if ((getGetPyUserForCommunicationMethod =
+            LoadingPlanServiceGrpc.getGetPyUserForCommunicationMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getGetPyUserForCommunicationMethod =
+                LoadingPlanServiceGrpc.getGetPyUserForCommunicationMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getGetPyUserForCommunicationMethod =
+              getGetPyUserForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingPlanCommunicationRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingPlanCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "getPyUserForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingPlanCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingPlanCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "getPyUserForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getGetPyUserForCommunicationMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+      getSavePyUserForCommunicationMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "savePyUserForCommunication",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest
+              .class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply
+              .class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+      getSavePyUserForCommunicationMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                .LoadingPlanCommunicationRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+        getSavePyUserForCommunicationMethod;
+    if ((getSavePyUserForCommunicationMethod =
+            LoadingPlanServiceGrpc.getSavePyUserForCommunicationMethod)
+        == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getSavePyUserForCommunicationMethod =
+                LoadingPlanServiceGrpc.getSavePyUserForCommunicationMethod)
+            == null) {
+          LoadingPlanServiceGrpc.getSavePyUserForCommunicationMethod =
+              getSavePyUserForCommunicationMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingPlanCommunicationRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingPlanCommunicationReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "savePyUserForCommunication"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingPlanCommunicationRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingPlanCommunicationReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier(
+                              "savePyUserForCommunication"))
+                      .build();
+        }
+      }
+    }
+    return getSavePyUserForCommunicationMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -1108,6 +1228,30 @@ public final class LoadingPlanServiceGrpc {
           getCheckCommunicatedMethod(), responseObserver);
     }
 
+    /** */
+    public void getPyUserForCommunication(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetPyUserForCommunicationMethod(), responseObserver);
+    }
+
+    /** */
+    public void savePyUserForCommunication(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getSavePyUserForCommunicationMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1235,6 +1379,24 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.Common.CommunicationStatusCheckRequest,
                       com.cpdss.common.generated.Common.CommunicationCheckResponse>(
                       this, METHODID_CHECK_COMMUNICATED)))
+          .addMethod(
+              getGetPyUserForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanCommunicationRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanCommunicationReply>(
+                      this, METHODID_GET_PY_USER_FOR_COMMUNICATION)))
+          .addMethod(
+              getSavePyUserForCommunicationMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanCommunicationRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanCommunicationReply>(
+                      this, METHODID_SAVE_PY_USER_FOR_COMMUNICATION)))
           .build();
     }
   }
@@ -1448,6 +1610,34 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getPyUserForCommunication(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetPyUserForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /** */
+    public void savePyUserForCommunication(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationRequest
+            request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSavePyUserForCommunicationMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1600,6 +1790,26 @@ public final class LoadingPlanServiceGrpc {
         com.cpdss.common.generated.Common.CommunicationStatusCheckRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getCheckCommunicatedMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply
+        getPyUserForCommunication(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetPyUserForCommunicationMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply
+        savePyUserForCommunication(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSavePyUserForCommunicationMethod(), getCallOptions(), request);
     }
   }
 
@@ -1777,6 +1987,28 @@ public final class LoadingPlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getCheckCommunicatedMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+        getPyUserForCommunication(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetPyUserForCommunicationMethod(), getCallOptions()), request);
+    }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommunicationReply>
+        savePyUserForCommunication(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                    .LoadingPlanCommunicationRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSavePyUserForCommunicationMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -1795,6 +2027,8 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_GET_CARGO_QUANTITY_LOADING_RATIO = 13;
   private static final int METHODID_CHECK_DEPENDENT_PROCESS = 14;
   private static final int METHODID_CHECK_COMMUNICATED = 15;
+  private static final int METHODID_GET_PY_USER_FOR_COMMUNICATION = 16;
+  private static final int METHODID_SAVE_PY_USER_FOR_COMMUNICATION = 17;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1947,6 +2181,26 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.Common.CommunicationCheckResponse>)
                   responseObserver);
           break;
+        case METHODID_GET_PY_USER_FOR_COMMUNICATION:
+          serviceImpl.getPyUserForCommunication(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingPlanCommunicationRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanCommunicationReply>)
+                  responseObserver);
+          break;
+        case METHODID_SAVE_PY_USER_FOR_COMMUNICATION:
+          serviceImpl.savePyUserForCommunication(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                      .LoadingPlanCommunicationRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                          .LoadingPlanCommunicationReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2027,6 +2281,8 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getGetCargoQuantityLoadingRatioMethod())
                       .addMethod(getCheckDependentProcessMethod())
                       .addMethod(getCheckCommunicatedMethod())
+                      .addMethod(getGetPyUserForCommunicationMethod())
+                      .addMethod(getSavePyUserForCommunicationMethod())
                       .build();
         }
       }

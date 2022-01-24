@@ -673,6 +673,8 @@ public class DischargeInformationBuilderService {
                 .map(ReasonForDelay::getId)
                 .collect(Collectors.toList()));
         Optional.ofNullable(source.getSequenceNo()).ifPresent(builder2::setSequenceNo);
+        Optional.ofNullable(source.getDischargingRate())
+            .ifPresent(dischargingRate -> builder2.setDischargingRate(dischargingRate.toString()));
         builder1.addDelays(builder2.build());
       }
       log.info("Setting Delay Reasons");

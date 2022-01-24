@@ -25,5 +25,6 @@ public class LoadingPlanExcelLoadingPlanDetails {
   private List<CargoTobeLoaded> cargoTobeLoaded;
   private List<CargoTobeLoaded> cargoTobeDischarged;
   private List<BerthInformation> berthInformation;
+  private List<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsList;
   private String itemsAgreedWithTerminal;
 }

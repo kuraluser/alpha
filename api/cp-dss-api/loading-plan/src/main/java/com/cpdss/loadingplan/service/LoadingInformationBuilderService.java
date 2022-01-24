@@ -228,6 +228,8 @@ public class LoadingInformationBuilderService {
       Optional.ofNullable(var.getQuantity())
           .ifPresent(value -> builder1.setQuantity(value.toString()));
       Optional.ofNullable(var.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
+      Optional.ofNullable(var.getLoadingRate())
+          .ifPresent(loadingRate -> builder1.setLoadingRate(loadingRate.toString()));
       builder.addDelays(builder1);
     }
     // Cargo List for drop down, at gate way
@@ -519,6 +521,12 @@ public class LoadingInformationBuilderService {
                 .ifPresent(builder::setCargo1Percentage);
             Optional.ofNullable(commingle.getCargo2Percentage())
                 .ifPresent(builder::setCargo2Percentage);
+            Optional.ofNullable(commingle.getCargo1Abbreviation())
+                .ifPresent(builder::setCargo1Abbreviation);
+            Optional.ofNullable(commingle.getCargo2Abbreviation())
+                .ifPresent(builder::setCargo2Abbreviation);
+            Optional.ofNullable(commingle.getTankName()).ifPresent(builder::setTankName);
+
             portLoadingPlanCommingleDetails.add(builder.build());
           });
     } catch (Exception e) {

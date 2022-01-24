@@ -820,7 +820,7 @@ tr{
   position: relative;
 }
 
-[class^="icon-status-"]{
+[class*="icon-status-"]{
   width: 17px;
   height: 17px;
   display: inline-block;
@@ -1920,7 +1920,7 @@ height: 15px;
   .tank-outer-pattern{
     height: 100%;
     max-height: 350px;
-    min-height: 160px;
+    min-height: 158px;
     .tank-inner-wrapper-pattern .tank-column-pattern > div {
       .tank-name{
       text-align: left;
@@ -3264,4 +3264,11 @@ textarea{
 }
 .column-class.column-loading-port-header {
   width: 80px !important;
+}
+.column-class.column-abbr{
+  width: 80px !important;
+}
+
+.column-class.column-nomination-qty, .column-class.column-ship-figure, .column-class.column-time, .column-class.column-protested{
+  width: 90px !important;
 }

@@ -9,6 +9,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.discharge_plan.DischargeInformationRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
@@ -137,6 +138,9 @@ public class DischargePlanCommunicationService {
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
+
   @Autowired
   PortDischargingPlanStowageTempDetailsRepository portDischargingPlanStowageTempDetailsRepository;
 
@@ -196,6 +200,7 @@ public class DischargePlanCommunicationService {
   List<PortDischargingPlanCommingleTempDetails> portDischargingPlanCommingleTempDetailsList = null;
   String loadablePattern = null;
   String synopticalData = null;
+  String pyUser = null;
 
   // endregion
   // region Communication get data
@@ -416,6 +421,7 @@ public class DischargePlanCommunicationService {
         saveLoadablePattern();
         saveSynopticalTable();
         saveBillOfLadding(dischargeInfo);
+        savePyUser();
       } catch (ResourceAccessException e) {
         log.info("Communication ++++++++++++ Failed to save data for  : " + current_table_name);
         log.info("Communication ++++++++++++ ResourceAccessException : " + e.getMessage());
@@ -1006,6 +1012,12 @@ public class DischargePlanCommunicationService {
           {
             synopticalData = dataTransferString;
             idMap.put(DischargingPlanTables.SYNOPTICAL_TABLE.getTable(), dataTransferStage.getId());
+            break;
+          }
+        case pyuser:
+          {
+            pyUser = dataTransferString;
+            idMap.put(DischargingPlanTables.PYUSER.getTable(), dataTransferStage.getId());
             break;
           }
       }
@@ -1898,6 +1910,31 @@ public class DischargePlanCommunicationService {
       throw new Exception(reply.getResponseStatus().getMessage());
     }
   }
+
+  private void savePyUser() throws Exception {
+    current_table_name = DischargingPlanTables.PYUSER.getTable();
+    if (pyUser == null) {
+      log.info("Communication ++++ PyUser is null");
+      return;
+    }
+    LoadingPlanModels.LoadingPlanCommunicationRequest.Builder builder =
+        LoadingPlanModels.LoadingPlanCommunicationRequest.newBuilder();
+    log.info("pyUser from staging table:{}", pyUser);
+    builder.setDataJson(pyUser);
+    LoadingPlanModels.LoadingPlanCommunicationReply reply =
+        loadingPlanServiceBlockingStub.savePyUserForCommunication(builder.build());
+    if (DischargePlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("PyUser saved in LoadingPlan ");
+    } else if (DischargePlanConstants.FAILED_WITH_RESOURCE_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when PyUser save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (DischargePlanConstants.FAILED_WITH_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when PyUser save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
   // endregion
 
   private DischargeInformation saveDischargeInformation() {
@@ -2082,6 +2119,7 @@ public class DischargePlanCommunicationService {
     portDischargingPlanCommingleTempDetailsList = null;
     billOfLaddingList = null;
     synopticalData = null;
+    pyUser = null;
   }
   // endregion
 }

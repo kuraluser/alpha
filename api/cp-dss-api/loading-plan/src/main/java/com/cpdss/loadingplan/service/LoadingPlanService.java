@@ -163,14 +163,6 @@ public class LoadingPlanService {
                 .getLoadableQuantityCargoDetailsList(),
             savedLoadingInformation);
 
-        // Save loading delays for default populating of cargos in managing sequence in loading
-        // information
-        loadingDelayService.saveDefaultManagingSequence(
-            loadingPlanSyncDetails
-                .getLoadablePlanDetailsReply()
-                .getLoadableQuantityCargoDetailsList(),
-            savedLoadingInformation);
-
         loadablePlanStowageDetailsService.saveLoadablePlanStowageDetailsList(
             loadingPlanSyncDetails
                 .getLoadablePlanDetailsReply()

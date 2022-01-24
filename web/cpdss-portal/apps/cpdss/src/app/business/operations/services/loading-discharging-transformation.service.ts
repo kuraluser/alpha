@@ -698,15 +698,14 @@ export class LoadingDischargingTransformationService {
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_GRADE',
         fieldType: DATATABLE_FIELD_TYPE.BADGE,
         badgeColorField: 'colorCode',
-        fieldHeaderClass: 'column-cargo-discharged-header',
+        fieldHeaderClass: 'column-abbr',
       },
       {
         field: 'estimatedAPIEdit',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_API',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberFormat: quantityNumberFormat,
-        fieldHeaderClass: 'column-cargo-discharged-header',
-        fieldClass: 'column-api-loading-info',
+        fieldHeaderClass: 'column-api',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
           'min': 'CARGO_LOADED_API_MIN_ERROR',
@@ -719,8 +718,7 @@ export class LoadingDischargingTransformationService {
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_TEMP',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberFormat: quantityNumberFormat,
-        fieldHeaderClass: 'column-cargo-discharged-header',
-        fieldClass: 'column-api-loading-info',
+        fieldHeaderClass: 'column-temp',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
           'min': 'CARGO_LOADED_TEMPERATURE_MIN_ERROR',
@@ -731,15 +729,14 @@ export class LoadingDischargingTransformationService {
       {
         field: 'loadingPortsLabels',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_LOADING_PORT',
-        fieldHeaderClass: 'column-loading-port-header'
+        fieldHeaderClass: 'column-loading-port'
       },
       {
         field: 'maxDischargingRateEdit',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberFormat: quantityNumberFormat,
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_MAX_DISCHARGE_RATE',
-        fieldHeaderClass: 'column-rate',
-        fieldClass: 'column-api-loading-info',
+        fieldHeaderClass: 'column-discharge-rate',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
           'maxRate': 'CARGO_DISCHARGED_MAX_RATE_ERROR',
@@ -751,7 +748,7 @@ export class LoadingDischargingTransformationService {
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_BL_FIGURE',
         numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
-        fieldHeaderClass: 'column-nomination-qty-header',
+        fieldHeaderClass: 'column-nomination-qty text-right',
         fieldClass: 'text-right no-ediable-field'
       },
       {
@@ -760,12 +757,12 @@ export class LoadingDischargingTransformationService {
         numberFormat: quantityNumberFormat,
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field',
-        fieldHeaderClass: 'column-nomination-qty-header',
+        fieldHeaderClass: 'column-ship-figure',
       },
       {
         field: 'timeRequiredForDischarging',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_DISCHARGE_TIME',
-        fieldHeaderClass: 'column-nomination-qty-header',
+        fieldHeaderClass: 'column-time',
       },
       {
         field: 'protested',
@@ -775,15 +772,14 @@ export class LoadingDischargingTransformationService {
         filterField: 'protested.value.name',
         fieldPlaceholder: 'DISCHARGING_SELECT_PROTESTED',
         fieldOptionLabel: 'name',
-        fieldHeaderClass: 'column-nomination-qty-header',
+        fieldHeaderClass: 'column-protested',
       },
       {
         field: 'slopQuantity',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberFormat: quantityNumberFormat,
-        fieldClass: 'text-right column-api-loading-info',
-        fieldColumnClass: 'column-api-loading-info',
+        fieldHeaderClass: 'column-api',
         errorMessages: {
           'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
           'min': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MIN_ERROR',
@@ -795,7 +791,10 @@ export class LoadingDischargingTransformationService {
         field: 'isCommingledDischarge',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_COMMINGLED',
         fieldType: DATATABLE_FIELD_TYPE.CHECKBOX,
-        filterField: 'isCommingledDischarge.value'
+        filterField: 'isCommingledDischarge.value',
+        fieldHeaderClass: 'column-commingle',
+        fieldClass: 'text-center',
+        fieldColumnClass: 'text-center',
       },
     ]
   }
@@ -904,20 +903,22 @@ export class LoadingDischargingTransformationService {
    * @memberof LoadingDischargingTransformationService
    */
   setBallastPumpGravity(ballastPumps: IPumpData[], gravity: IPumpData, ballastPumpCategories: IPump[]) {
-    ballastPumpCategories?.forEach(pump => {
-      const data = {
-        "pumpId": pump.id,
-        "start": gravity.start,
-        "end": gravity.end,
-        "quantityM3": gravity.quantityM3 ?? 0,
-        "rate": gravity.rate ?? 0,
-        "rateM3PerHr": gravity.rate ?? 0,
-        "type": DATA_TYPE.BALLAST_GRAVITY,
-        "pointWidth": 0,
-        "id": "gravity-" + pump.pumpName // NB:- id must be unique
-      }
-      ballastPumps?.push(data);
-    });
+    if (gravity?.start && gravity?.end) {
+      ballastPumpCategories?.forEach(pump => {
+        const data: IPumpData = {
+          pumpId: pump.id,
+          start: gravity.start,
+          end: gravity.end,
+          quantityM3: gravity.quantityM3 ?? 0,
+          rate: gravity.rate ?? 0,
+          rateM3PerHr: gravity.rate ?? 0,
+          type: DATA_TYPE.BALLAST_GRAVITY,
+          pointWidth: 0,
+          id: "gravity-" + pump.pumpName // NB:- id must be unique
+        }
+        ballastPumps?.push(data);
+      });
+    }
 
     return ballastPumps;
   }
@@ -1367,7 +1368,9 @@ export class LoadingDischargingTransformationService {
     dischargingInformation.dischargeStages = {
       trackStartEndStage: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
       trackGradeSwitch: dischargingInformationResponse?.dischargeStages?.trackGradeSwitch,
+      isStageDurationUsed: dischargingInformationResponse?.dischargeStages?.isStageDurationUsed,
       stageDuration,
+      isStageOffsetUsed: dischargingInformationResponse?.dischargeStages?.isStageOffsetUsed,
       stageOffset,
       stageDurationList: dischargingInformationResponse?.dischargeStages?.stageDurationList,
       stageOffsetList: dischargingInformationResponse?.dischargeStages?.stageOffsetList

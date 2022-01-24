@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan;
 
+import com.cpdss.common.constants.FileRepoConstants.FileRepoSection;
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
@@ -14,7 +16,6 @@ import com.cpdss.gateway.domain.Vessel;
 import com.cpdss.gateway.domain.VesselResponse;
 import com.cpdss.gateway.domain.VesselTank;
 import com.cpdss.gateway.domain.dischargeplan.CargoPumpDetailsForSequence;
-import com.cpdss.gateway.domain.filerepo.FileRepoReply;
 import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
 import com.cpdss.gateway.domain.loadingplan.BerthDetails;
 import com.cpdss.gateway.domain.loadingplan.BerthInformation;
@@ -223,7 +224,7 @@ public class GenerateLoadingPlanExcelReportService {
                 loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
                 actualFileName.split("/")[actualFileName.split("/").length - 1],
                 SUB_FOLDER_NAME + "/",
-                "Loading",
+                FileRepoSection.LOADING_PLAN,
                 "Process",
                 null,
                 vesselId,
@@ -1449,10 +1450,11 @@ public class GenerateLoadingPlanExcelReportService {
       int end = positions.indexOf(rate.getEndTime());
       for (int i = start; i < end; i++) {
         for (BigDecimal value : rate.getLoadingRates()) {
+          String val = UnitConversionUtility.setPrecision(value.doubleValue(), 0).toString();
           if (loadingRates.get(i).getRate().isEmpty()) {
-            loadingRates.get(i).setRate(value.toString());
-          } else if (!loadingRates.get(i).getRate().contains(value.toString())) {
-            loadingRates.get(i).setRate(loadingRates.get(i).getRate() + "/" + value.toString());
+            loadingRates.get(i).setRate(val);
+          } else if (!loadingRates.get(i).getRate().contains(val)) {
+            loadingRates.get(i).setRate(loadingRates.get(i).getRate() + "/" + val);
           }
         }
       }
@@ -1580,6 +1582,7 @@ public class GenerateLoadingPlanExcelReportService {
     sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
     sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
     sheetOne.setCargoTobeLoaded(getCargoTobeLoadedDetails(requestPayload));
+    sheetOne.setLoadingPlanCommingleDetailsList(requestPayload.getPlanCommingleDetails());
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;
@@ -1764,13 +1767,13 @@ public class GenerateLoadingPlanExcelReportService {
                       if (item.getEstimatedAPI() != null
                           && item.getCargoNominationTemperature() != null) {
                         cargoTobeLoaded.setNomination(
-                            UnitConversionUtility.convertToBBLS(
-                                    UnitTypes.MT,
-                                    Double.parseDouble(cargoTobeLoaded.getApi()),
-                                    Double.parseDouble(cargoTobeLoaded.getTemperature()),
-                                    Double.parseDouble(
-                                        UnitConversionUtility.setPrecision(
-                                            Double.parseDouble(value), 2)))
+                            UnitConversionUtility.setPrecision(
+                                    UnitConversionUtility.convertToBBLS(
+                                        UnitTypes.MT,
+                                        Double.parseDouble(cargoTobeLoaded.getApi()),
+                                        Double.parseDouble(item.getCargoNominationTemperature()),
+                                        Double.parseDouble(value)),
+                                    2)
                                 .toString());
                       }
                     });
@@ -1785,11 +1788,13 @@ public class GenerateLoadingPlanExcelReportService {
                     value -> {
                       if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
                         cargoTobeLoaded.setSlopQuantity(
-                            UnitConversionUtility.convertToBBLS(
-                                    UnitTypes.MT,
-                                    Double.parseDouble(cargoTobeLoaded.getApi()),
-                                    Double.parseDouble(cargoTobeLoaded.getTemperature()),
-                                    Double.parseDouble(value))
+                            UnitConversionUtility.setPrecision(
+                                    UnitConversionUtility.convertToBBLS(
+                                        UnitTypes.MT,
+                                        Double.parseDouble(cargoTobeLoaded.getApi()),
+                                        Double.parseDouble(cargoTobeLoaded.getTemperature()),
+                                        Double.parseDouble(value)),
+                                    2)
                                 .toString());
                       }
                     });

@@ -12,10 +12,12 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.cpdss.common.communication.entity.DataTransferStage;
+import com.cpdss.common.domain.TaskExecutionRequest;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
+import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.common.utils.StagingStatus;
@@ -38,9 +40,13 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
 // endregion
 
@@ -135,6 +141,8 @@ public class LoadableStudyCommunicationService {
   @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
+  @Autowired private RestTemplate restTemplate;
+
   // endregion
 
   // region Declarations
@@ -187,6 +195,10 @@ public class LoadableStudyCommunicationService {
   Long loadableStudyStatusId;
   Long voyageStatusId;
   String currentTableName = "";
+
+  private static final String SERVICE_URL = "http://gateway-service:8080";
+  private static final String FILE_STAGE_DOWNLOAD = "/file-stage";
+  private static final String FILE_COMMUNICATION_UPDATE = "/file-communication";
   // endregion
 
   // region Get Methods
@@ -2132,6 +2144,34 @@ public class LoadableStudyCommunicationService {
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public void callSaveToStageInGateWay(String taskName, Map<String, String> taskReqParams) {
+    // Set the headers
+    final HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    TaskExecutionRequest taskExecutionRequest = new TaskExecutionRequest();
+    taskExecutionRequest.setTaskReqParam(taskReqParams);
+
+    HttpEntity<TaskExecutionRequest> requestEntity =
+        new HttpEntity<>(taskExecutionRequest, headers);
+    // Call API
+    CommonSuccessResponse commonSuccessResponse =
+        restTemplate.postForObject(
+            SERVICE_URL + FILE_STAGE_DOWNLOAD, requestEntity, CommonSuccessResponse.class);
+    log.info("Response from gateway call:{}", commonSuccessResponse.getStatus());
+  }
+
+  public void callSaveToFileRepoInGateWay(String taskName, Map<String, String> taskReqParams) {
+    // Set the headers
+    final HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<TaskExecutionRequest> requestEntity = new HttpEntity<>(headers);
+    // Call API
+    CommonSuccessResponse commonSuccessResponse =
+        restTemplate.postForObject(
+            SERVICE_URL + FILE_COMMUNICATION_UPDATE, requestEntity, CommonSuccessResponse.class);
+    log.info("Response from gateway call:{}", commonSuccessResponse.getStatus());
   }
 
   // endregion

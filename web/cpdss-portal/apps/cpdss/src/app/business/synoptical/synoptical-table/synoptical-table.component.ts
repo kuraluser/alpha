@@ -1701,7 +1701,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'specificGravity':
         const otherControl = this.getControl(otherIndex, field.key);
-        otherControl.setValue(fc.value, { emitEvent: false });
+        otherControl?.setValue(fc.value, { emitEvent: false });
         break;
       case 'calculatedDraftAftPlanned': case 'calculatedDraftAftActual':
         const draftValueAft = fc.value ? fc.value : this.synopticalService.synopticalRecords[colIndex]['calculatedDraftAftPlanned'];

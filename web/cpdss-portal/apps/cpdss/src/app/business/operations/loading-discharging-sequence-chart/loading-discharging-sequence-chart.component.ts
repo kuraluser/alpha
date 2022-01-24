@@ -790,6 +790,7 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
           startingTime = (this?.point?.start - min) / (1000 * 60 * 60);
           endingTime = (this?.point?.end - min) / (1000 * 60 * 60);
           duration = (this?.point?.end - min) / (1000 * 60 * 60);
+          tooltipHeader = [DATA_TYPE.CARGO_TRANSFER, DATA_TYPE.CARGO_FRESH_OIL_DISCHARGE, DATA_TYPE.CARGO_REFILL].includes(this?.point?.type) ? this.point?.tooltipHeader : this?.point?.abbreviation;
 
           if (this?.point?.type === DATA_TYPE.CARGO_COW) {
             isCOW = true;
@@ -808,10 +809,9 @@ export class LoadingDischargingSequenceChartComponent implements OnInit, OnDestr
                   <td>${endingTime.toFixed(2)}</td>
                 </tr>
               </table>`;
-          } else if (this?.point?.type === DATA_TYPE.CARGO_STRIPPING) {
+          } else if (this?.point?.type === DATA_TYPE.CARGO_STRIPPING || !tooltipHeader) {
             return false;
           } else {
-            tooltipHeader = [DATA_TYPE.CARGO_TRANSFER, DATA_TYPE.CARGO_FRESH_OIL_DISCHARGE, DATA_TYPE.CARGO_REFILL].includes(this?.point?.type) ? this.point?.tooltipHeader : this?.point?.abbreviation;
             quantity = this?.point?.quantity;
             ullage = this?.point?.ullage;
 

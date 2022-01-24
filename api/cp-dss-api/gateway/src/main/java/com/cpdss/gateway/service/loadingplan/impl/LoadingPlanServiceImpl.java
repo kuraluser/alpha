@@ -332,20 +332,26 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     // Call No. 2 To synoptic data for loading (same as port rotation in above code)
     // Set missing cargo condition data for commingle cargos.
-    this.loadingInformationService.setCargoTobeLoadedAndCargoGrade(
-        vesselTankDetails,
-        vesselId,
-        activeVoyage.getPatternId(),
-        OPERATION_TYPE,
-        portRotation.get().getId(),
-        portRotation.get().getPortId(),
-        Common.PLANNING_TYPE.LOADABLE_STUDY,
-        false,
-        loadingInfo.getLoadingInfoId());
+    LoadableStudy.LoadingPlanCommonResponse loadingPlanCommonResponse =
+        this.loadingInformationService.setCargoTobeLoadedAndCargoGrade(
+            vesselTankDetails,
+            vesselId,
+            activeVoyage.getPatternId(),
+            OPERATION_TYPE,
+            portRotation.get().getId(),
+            portRotation.get().getPortId(),
+            Common.PLANNING_TYPE.LOADABLE_STUDY,
+            false,
+            loadingInfo.getLoadingInfoId());
 
     // Manage Sequence
     LoadingSequences loadingSequences =
         this.loadingInformationService.getLoadingSequence(loadingInfo.getLoadingDelays());
+
+    addDefaultCargoDetailsForManagingSequence(
+        loadingPlanCommonResponse.getLoadableQuantityCargoDetailsList(),
+        loadingSequences,
+        loadingInfo.getLoadingInfoId());
 
     var1.setLoadingInfoId(loadingInfo.getLoadingInfoId());
     var1.setSynopticTableId(loadingInfo.getSynopticTableId());
@@ -366,6 +372,47 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     var1.setLoadingPlanDepStatusId(loadingInfo.getLoadingPlanDepStatusId());
     var1.setResponseStatus(new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), null));
     return var1;
+  }
+
+  /**
+   * Method to set default cargo details for managing sequence
+   *
+   * @param loadableQuantityCargoDetailsList List of LoadableQuantityCargoDetails objects from
+   *     synoptical table response
+   * @param loadingSequences LoadingSequences object to be set
+   * @param loadingInfoId Loading Info Id
+   */
+  private void addDefaultCargoDetailsForManagingSequence(
+      List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList,
+      LoadingSequences loadingSequences,
+      long loadingInfoId) {
+
+    log.info("Inside addDefaultCargoDetailsForManagingSequence method!");
+
+    if (loadingSequences != null
+        && (loadingSequences.getLoadingDelays() == null
+            || loadingSequences.getLoadingDelays().isEmpty())) {
+
+      // Set default values
+      List<LoadingDelays> loadingDelaysList = new ArrayList<>();
+      loadableQuantityCargoDetailsList.forEach(
+          loadableQuantityCargoDetails -> {
+            LoadingDelays loadingDelays = new LoadingDelays();
+
+            // Set fields
+            loadingDelays.setCargoId(loadableQuantityCargoDetails.getCargoId());
+            loadingDelays.setCargoNominationId(loadableQuantityCargoDetails.getCargoNominationId());
+            loadingDelays.setLoadingInfoId(loadingInfoId);
+            loadingDelays.setQuantity(
+                new BigDecimal(loadableQuantityCargoDetails.getOrderedQuantity()));
+            loadingDelays.setLoadingRate(
+                StringUtils.hasLength(loadableQuantityCargoDetails.getLoadingRateM3Hr())
+                    ? new BigDecimal(loadableQuantityCargoDetails.getLoadingRateM3Hr())
+                    : null);
+            loadingDelaysList.add(loadingDelays);
+          });
+      loadingSequences.setLoadingDelays(loadingDelaysList);
+    }
   }
 
   @Override
@@ -1042,6 +1089,23 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
+      OptionalDouble actualCommingleTotal =
+          response.getLoadablePlanCommingleDetailsList().stream()
+              .filter(
+                  commingle ->
+                      (commingle.getCargoNomination1Id() == cargoNominationId
+                              || commingle.getCargoNomination2Id() == cargoNominationId)
+                          && commingle.getActualPlanned().equalsIgnoreCase(ACTUAL)
+                          && commingle.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
+              .mapToDouble(
+                  commingle ->
+                      commingle.getCargoNomination1Id() == cargoNominationId
+                          ? Double.parseDouble(commingle.getQuantity1MT())
+                          : Double.parseDouble(commingle.getQuantity2MT()))
+              .reduce(Double::sum);
+      if (actualCommingleTotal.isPresent()) {
+        actualQuantityTotal = Double.sum(actualQuantityTotal, actualCommingleTotal.getAsDouble());
+      }
       cargoQuantityDetail.setActualQuantityTotal(actualQuantityTotal);
       Double plannedQuantityTotal =
           response.getPortLoadablePlanStowageDetailsList().stream()
@@ -1052,6 +1116,24 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                           && stowage.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
               .mapToDouble(stowage -> Double.parseDouble(stowage.getQuantity()))
               .reduce(0, (subtotal, element) -> subtotal + element);
+      OptionalDouble plannedCommingleTotal =
+          response.getLoadablePlanCommingleDetailsList().stream()
+              .filter(
+                  commingle ->
+                      (commingle.getCargoNomination1Id() == cargoNominationId
+                              || commingle.getCargoNomination2Id() == cargoNominationId)
+                          && commingle.getActualPlanned().equalsIgnoreCase(PLANNED)
+                          && commingle.getArrivalDeparture().equalsIgnoreCase(arrivalDeparture))
+              .mapToDouble(
+                  commingle ->
+                      commingle.getCargoNomination1Id() == cargoNominationId
+                          ? Double.parseDouble(commingle.getQuantity1MT())
+                          : Double.parseDouble(commingle.getQuantity2MT()))
+              .reduce(Double::sum);
+      if (plannedCommingleTotal.isPresent()) {
+        plannedQuantityTotal =
+            Double.sum(plannedQuantityTotal, plannedCommingleTotal.getAsDouble());
+      }
       cargoQuantityDetail.setPlannedQuantityTotal(plannedQuantityTotal);
       Double blQuantityMtTotal =
           billOfLaddings.stream()

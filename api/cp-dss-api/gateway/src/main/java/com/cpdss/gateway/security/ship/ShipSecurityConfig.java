@@ -40,8 +40,9 @@ public class ShipSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final List<String> permitAllEndpointList =
       Arrays.asList(
-          "/api/ship/authenticate",
           "/actuator/health",
+          "/actuator/prometheus",
+          "/api/ship/authenticate",
           "/api/ship/vessel-details/*",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns",
@@ -51,7 +52,10 @@ public class ShipSecurityConfig extends WebSecurityConfigurerAdapter {
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-patterns",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-study-status",
           "/api/ship/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-plan",
-          "/api/ship/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status");
+          "/api/ship/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status",
+          "/api/ship/file-repo-internal",
+          "/file-stage",
+          "/file-communication");
 
   public static final String AUTHORIZATION_HEADER = "authorization";
 

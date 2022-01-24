@@ -1,6 +1,8 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
+import com.cpdss.common.constants.FileRepoConstants.FileRepoSection;
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyWriter;
 import com.cpdss.common.generated.EnvoyWriterServiceGrpc;
@@ -112,31 +114,44 @@ public class FileRepoService {
     return specification;
   }
 
+  /**
+   * Method to add file to file repo
+   *
+   * @param file file object
+   * @param voyageNo voyage no value
+   * @param fileName fileName value
+   * @param filePath faile path
+   * @param section section name
+   * @param category category value
+   * @param correlationId tracking id
+   * @param vesselId vessel id value
+   * @param isSystemGenerated system generated flag
+   * @return FileRepoReply object
+   * @throws GenericServiceException Exception on failure
+   */
   public FileRepoReply addFileToRepo(
       MultipartFile file,
       String voyageNo,
-      String fileNameX,
+      String fileName,
       String filePath,
-      String section,
+      FileRepoSection section,
       String category,
       String correlationId,
       Long vesselId,
       Boolean isSystemGenerated)
       throws GenericServiceException {
-    FileRepo repo = new FileRepo();
-    FileRepoReply reply =
-        this.validateAndAddFile(
-            file,
-            repo,
-            voyageNo,
-            section,
-            category,
-            filePath,
-            fileNameX,
-            correlationId,
-            vesselId,
-            isSystemGenerated);
-    return reply;
+
+    return this.validateAndAddFile(
+        file,
+        new FileRepo(),
+        voyageNo,
+        section,
+        category,
+        filePath,
+        fileName,
+        correlationId,
+        vesselId,
+        isSystemGenerated);
   }
 
   public FileRepoReply removeFromFileRepo(Long repoId, String correlationId)
@@ -172,15 +187,29 @@ public class FileRepoService {
     }
   }
 
+  /**
+   * Method to edit file repo
+   *
+   * @param repoId repo Id value
+   * @param file file object
+   * @param section section value
+   * @param category category value
+   * @param hasFileChanged file changed flag
+   * @param correlationId tracking id
+   * @param vesselId vessel id value
+   * @return FileRepoReply object
+   * @throws GenericServiceException exception on failure
+   */
   public FileRepoReply editFileRepo(
       Long repoId,
       MultipartFile file,
-      String section,
+      FileRepoSection section,
       String category,
       Boolean hasFileChanged,
       String correlationId,
       Long vesselId)
       throws GenericServiceException {
+
     FileRepoReply reply = new FileRepoReply();
     FileRepo repo = this.getFileRepoDetailsById(repoId);
     if (hasFileChanged) {
@@ -207,7 +236,7 @@ public class FileRepoService {
       }
     } else {
       repo.setCategory(category);
-      repo.setSection(section);
+      repo.setSection(section.getSection());
       repo.setIsTransferred(false);
       repo = this.fileRepoRepository.save(repo);
       reply.setId(repo.getId());
@@ -215,6 +244,47 @@ public class FileRepoService {
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     }
     return reply;
+  }
+
+  /**
+   * Method to validate and add file
+   *
+   * @param file file object
+   * @param repo repo object
+   * @param voyageNo voyage number value
+   * @param section section name
+   * @param category category value
+   * @param filePath filepath value
+   * @param originalFileName actual file name
+   * @param correlationId tracking id
+   * @param vesselId vessel id value
+   * @param isSystemGenerated system generated flag
+   * @return FileRepoReply object
+   * @throws GenericServiceException Exception on failure
+   */
+  private FileRepoReply validateAndAddFile(
+      MultipartFile file,
+      FileRepo repo,
+      String voyageNo,
+      FileRepoSection section,
+      String category,
+      String filePath,
+      String originalFileName,
+      String correlationId,
+      Long vesselId,
+      Boolean isSystemGenerated)
+      throws GenericServiceException {
+    return validateAndAddFile(
+        file,
+        repo,
+        voyageNo,
+        section.getSection(),
+        category,
+        filePath,
+        originalFileName,
+        correlationId,
+        vesselId,
+        isSystemGenerated);
   }
 
   private FileRepoReply validateAndAddFile(
@@ -278,6 +348,7 @@ public class FileRepoService {
       repo.setIsSystemGenerated(isSystemGenerated);
       repo = this.fileRepoRepository.save(repo);
       reply.setId(repo.getId());
+      reply.setFilePath(repo.getFilePath());
       reply.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
       if (enableCommunication) {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output , ViewChild , OnDestroy} from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, ViewChild, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { QUANTITY_UNIT, RATE_UNIT } from '../../../../shared/models/common.model';
@@ -8,8 +8,8 @@ import { MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { ICargo, OPERATIONS , ILoadableQuantityCargo } from '../../../core/models/common.model';
-import { RulesService }from '../../services/rules.service';
+import { ICargo, OPERATIONS, ILoadableQuantityCargo } from '../../../core/models/common.model';
+import { RulesService } from '../../services/rules.service';
 import { LoadingDischargingTransformationService } from '../../services/loading-discharging-transformation.service';
 import { LoadingDischargingManageSequenceComponent } from '../../loading-discharging-manage-sequence/loading-discharging-manage-sequence.component';
 import { LoadingDischargingCargoMachineryComponent } from '../../loading-discharging-cargo-machinery/loading-discharging-cargo-machinery.component';
@@ -28,13 +28,13 @@ import { IPermission } from '../../../../shared/models/user-profile.model';
  * @class LoadingInformationComponent
  * @implements {OnInit}
  */
-export class LoadingInformationComponent implements OnInit , OnDestroy {
+export class LoadingInformationComponent implements OnInit, OnDestroy {
   @ViewChild('manageSequence') manageSequence: LoadingDischargingManageSequenceComponent;
   @ViewChild('dischargeBerth') dischargeBerth;
   @ViewChild('machineryRef') machineryRef: LoadingDischargingCargoMachineryComponent;
   @ViewChild('dischargeDetails') dischargeDetails;
   @ViewChild('loadingRate') loadingRate;
-  @ViewChild('cargoMachinery')cargoMachineryRef;
+  @ViewChild('cargoMachinery') cargoMachineryRef;
   @ViewChild('cargoToBeloaded') cargoToBeloaded;
 
   @Input() voyageId: number;
@@ -71,7 +71,9 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   trackStartEndStage: boolean;
   trackGradeSwitch: boolean;
   stageDuration: IStageDuration;
+  isStageDurationUsed: boolean;
   stageOffset: IStageOffset;
+  isStageOffsetUsed: boolean;
   prevQuantitySelectedUnit: QUANTITY_UNIT;
   hasUnSavedData = false;
   currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit');
@@ -84,8 +86,8 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     private translateService: TranslateService,
     private messageService: MessageService,
     private loadingDischargingTransformationService: LoadingDischargingTransformationService,
-    private rulesService : RulesService,
-    private ngxSpinnerService: NgxSpinnerService) {}
+    private rulesService: RulesService,
+    private ngxSpinnerService: NgxSpinnerService) { }
 
 
   async ngOnInit(): Promise<void> {
@@ -144,7 +146,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);
         this.loadingDischargingTransformationService.inProcessing.next(false);
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(false)
-        if(this.loadingInformationData.loadingInfoStatusId === 6 || this.loadingInformationData.loadingInfoStatusId === 7){
+        if (this.loadingInformationData.loadingInfoStatusId === 6 || this.loadingInformationData.loadingInfoStatusId === 7) {
           this.loadingDischargingTransformationService.disableViewErrorButton.next(false);
         } else {
           this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
@@ -156,7 +158,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
         this.loadingDischargingTransformationService.disableViewErrorButton.next(true);
       }
-      if(this.loadingInformationData.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS){
+      if (this.loadingInformationData.loadingPlanDepStatusId === ULLAGE_STATUS_VALUE.SUCCESS) {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(true);
         this.loadingDischargingTransformationService.inProcessing.next(true);
         this.loadingDischargingTransformationService.generateLoadingPlanButton.next(true)
@@ -193,7 +195,9 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     this.stageOffsetList = this.loadingInformationData?.loadingStages.stageOffsetList;
     this.stageDurationList = this.loadingInformationData?.loadingStages.stageDurationList;
     this.manageSequenceLoadableQuantityCargoDetails = JSON.parse(JSON.stringify(this.loadingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails));
+    this.isStageOffsetUsed = this.loadingInformationData?.loadingStages?.isStageOffsetUsed;
     this.stageDuration = this.stageDurationList?.find(duration => duration.id === this.loadingInformationData?.loadingStages?.stageDuration);
+    this.isStageDurationUsed = this.loadingInformationData?.loadingStages?.isStageDurationUsed;
     this.stageOffset = this.stageOffsetList?.find(offset => offset.id === this.loadingInformationData?.loadingStages?.stageOffset);
   }
 
@@ -227,7 +231,7 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   *
   * @memberof LoadingInformationComponent
   */
-  cargoToBeLoadedChange(event){
+  cargoToBeLoadedChange(event) {
     this.loadingInformationPostData.cargoToBeLoaded = <ILoadableQuantityCargoSave>{};
     this.loadingInformationPostData.cargoToBeLoaded.loadableQuantityCargoDetails = event;
     this.hasUnSavedData = true;
@@ -356,11 +360,10 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
     this.cargoMachineryRef.machineryForm.markAsDirty();
     this.cargoMachineryRef.machineryForm.markAllAsTouched();
 
-
     setTimeout(() => {
       this.saveLoadingInformationData();
-      this.loadingDischargingTransformationService.loadingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status)=>{
-        if(status){
+      this.loadingDischargingTransformationService.loadingInstructionValidity$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((status) => {
+        if (status) {
           this.loadingDischargingTransformationService.inProcessing.next(false);
         }
       })
@@ -378,16 +381,16 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   }
 
   isLoadingInfoValid() {
-    if(this.loadingRate?.loadingRatesFormGroup?.invalid ||
+    if (this.loadingRate?.loadingRatesFormGroup?.invalid ||
       this.manageSequence?.loadingDischargingSequenceForm?.invalid ||
       this.dischargeBerth?.berthForm?.invalid ||
       this.dischargeBerth?.berthDetailsForm?.invalid ||
       this.dischargeDetails?.loadingDischargingDetailsForm?.invalid ||
       this.loadingRate?.loadingRatesFormGroup?.invalid) {
-        return false;
-      } else {
-        return true;
-      }
+      return false;
+    } else {
+      return true;
+    }
   }
 
   /**
@@ -396,34 +399,38 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
   * @memberof LoadingInformationComponent
   */
   async saveLoadingInformationData() {
-    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA','LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADING_INFORMATION_INVALID_DATA', 'LOADING_INFORMATION_SAVE_ERROR', 'LOADING_INFORMATION_SAVE_NO_DATA_ERROR', 'LOADING_INFORMATION_SAVE_SUCCESS', 'LOADING_INFORMATION_SAVED_SUCCESSFULLY', 'LOADING_INFORMATION_NO_MACHINERY', 'LOADING_INFORMATION_NO_BERTHS', 'LOADING_DISCHARGING_INFO_NO_OF_STAGES_ERROR']).toPromise();
     this.checkLoadingRateErrors();
-    if(this.loadingRate?.loadingRatesFormGroup?.invalid || this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
+    if (this.loadingRate?.loadingRatesFormGroup?.invalid || this.manageSequence.loadingDischargingSequenceForm.invalid || this.dischargeBerth.berthForm.invalid || this.dischargeBerth.berthDetailsForm.invalid ||
       this.dischargeDetails.loadingDischargingDetailsForm.invalid || this.loadingRate.loadingRatesFormGroup.invalid || this.cargoMachineryRef.machineryForm.invalid || this.cargoToBeloaded?.form?.invalid) {
 
 
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_INVALID_DATA'] });
-      if(document.querySelector('.error-icon') && !this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
-        document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth"});
+      if (document.querySelector('.error-icon') && !this.dischargeDetails.loadingDischargingDetailsForm.invalid) {
+        document.querySelector('.error-icon').scrollIntoView({ behavior: "smooth" });
       }
       return;
     }
     const isMachineryValid = await this.machineryRef.isMachineryValid(true);
-    if(!isMachineryValid) {
+    if (!isMachineryValid) {
       return;
     }
     const iscargoAdded = await this.manageSequence.checkCargoCount(true);
-    if(!iscargoAdded) {
+    if (!iscargoAdded) {
       return;
     }
-    if(this.hasUnSavedData){
+    if (!this.isStageOffsetUsed && !this.isStageDurationUsed) {
+      this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_DISCHARGING_INFO_NO_OF_STAGES_ERROR'] });
+      return;
+    }
+    if (this.hasUnSavedData) {
       const isLoadingMachinery = this.loadingInformationPostData?.loadingMachineries?.some(machinery => machinery.isUsing) ?? true;
-      if(!isLoadingMachinery){
+      if (!isLoadingMachinery) {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_NO_MACHINERY'] });
       }
-      if((this.loadingInformationPostData?.loadingBerths && this.loadingInformationPostData?.loadingBerths.length === 0) || (!this.loadingInformationPostData?.loadingBerths && this.loadingInformationData.berthDetails.selectedBerths.length === 0)){
+      if ((this.loadingInformationPostData?.loadingBerths && this.loadingInformationPostData?.loadingBerths.length === 0) || (!this.loadingInformationPostData?.loadingBerths && this.loadingInformationData.berthDetails.selectedBerths.length === 0)) {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_NO_BERTHS'] });
-      } else{
+      } else {
         this.ngxSpinnerService.show();
         this.loadingInformationPostData.isLoadingInfoComplete = true
         const result: ILoadingInformationSaveResponse = await this.loadingDischargingInformationApiService.saveLoadingInformation(this.vesselId, this.voyageId, this.loadingInformationPostData).toPromise();
@@ -436,10 +443,21 @@ export class LoadingInformationComponent implements OnInit , OnDestroy {
         this.ngxSpinnerService.hide();
       }
 
-    }else{
+    } else {
       this.messageService.add({ severity: 'error', summary: translationKeys['LOADING_INFORMATION_SAVE_ERROR'], detail: translationKeys['LOADING_INFORMATION_SAVE_NO_DATA_ERROR'] });
     }
   }
 
+  /**
+   * Method to set no. of stages checkbox values
+   *
+   * @memberof LoadingInformationComponent
+   */
+  onChangeNoOfStagesCheck() {
+    this.loadingInformationPostData.loadingStages = <ILoadingDischargingStages>{};
+    this.loadingInformationPostData.loadingStages.isStageOffsetUsed = this.isStageOffsetUsed;
+    this.loadingInformationPostData.loadingStages.isStageDurationUsed = this.isStageDurationUsed;
+    this.hasUnSavedData = true;
+  }
 
 }

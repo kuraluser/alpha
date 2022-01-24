@@ -89,4 +89,8 @@ public interface SynopticalTableRepository extends CommonCrudRepository<Synoptic
 
   public List<SynopticalTable> findByLoadableStudyXIdAndLoadableStudyPortRotation_idInAndIsActive(
       Long id, List<Long> loadableStudyPortRotationIds, boolean isActive);
+
+  public List<SynopticalTable>
+      findByLoadableStudyXIdAndLoadableStudyPortRotation_IdInAndOperationTypeAndIsActiveTrue(
+          Long id, List<Long> portRotationIds, String synopticalTableOpTypeDeparture);
 }

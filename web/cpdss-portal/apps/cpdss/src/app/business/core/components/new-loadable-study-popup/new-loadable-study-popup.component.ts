@@ -402,6 +402,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, event.value?.id).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.newLoadableStudyFormGroup.controls.duplicateExisting.reset(null);
+    this.newLoadableStudyFormGroup.controls.newLoadableStudyName.reset(null);
     this.duplicateLoadableStudy = null;
     this.ngxSpinnerService.hide();
   }

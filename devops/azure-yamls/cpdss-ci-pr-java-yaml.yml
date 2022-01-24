@@ -29,3 +29,4 @@ jobs:
       wrapperScript: api/cp-dss-api/$(SERVICE_NAME)/gradlew
       cwd: api/cp-dss-api/$(SERVICE_NAME)
       options: -PbuildEnv=$(ENV)
+      jdkVersionOption: 1.11

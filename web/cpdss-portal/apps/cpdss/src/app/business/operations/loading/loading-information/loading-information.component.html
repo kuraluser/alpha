@@ -62,13 +62,16 @@
                     <div class="col ml-30 border-bottom row-divider">
 
                         <div class="row">
-                            <label for="min_amount_stages" class="col-3">{{'LOADING_INFORMATION_MIN_AMOUNT_STAGES' |
-                                translate}}</label>
+                            <label class="col-3 checkbox-custom pr-20">
+                                <input type="checkbox" [(ngModel)]="isStageOffsetUsed" (change)="onChangeNoOfStagesCheck()">
+                                <span class="checkmark"></span>
+                                {{'LOADING_INFORMATION_MIN_AMOUNT_STAGES' | translate}}
+                            </label>
                             <div class="col-3">
                                 <p-dropdown id="min_amount_stages" styleClass="form-control" [(ngModel)]="stageOffset"
                                     placeholder="{{'LOADING_INFORMATION_MIN_AMOUNT_STAGES' | translate}}"
                                     [options]="stageOffsetList" optionLabel="stageOffsetVal"
-                                    (onChange)="onStageOffsetValChange($event)"></p-dropdown>
+                                    (onChange)="onStageOffsetValChange($event)" [disabled]="!isStageOffsetUsed"></p-dropdown>
                             </div>
                             <!-- <div class="col error-column">
                                 <cpdss-portal-validation-error [errors]="fieldError('portName')"
@@ -80,13 +83,15 @@
                 <div class="row no-gutters">
                     <div class="col ml-30 border-bottom row-divider">
                         <div class="row">
-                            <label for="duration_stages" class="col-3">{{'LOADING_INFORMATION_DURATION_STAGES' |
-                                translate}}</label>
+                            <label class="col-3 checkbox-custom pr-20">
+                              <input type="checkbox" [(ngModel)]="isStageDurationUsed" (change)="onChangeNoOfStagesCheck()">
+                              <span class="checkmark"></span>
+                              {{'LOADING_INFORMATION_DURATION_STAGES' | translate}}</label>
                             <div class="col-3">
                                 <p-dropdown id="duration_stages" styleClass="form-control" [(ngModel)]="stageDuration"
                                     placeholder="{{'LOADING_INFORMATION_DURATION_STAGES' | translate}}"
                                     [options]="stageDurationList" optionLabel="duration"
-                                    (onChange)="onStageDurationValChange($event)"></p-dropdown>
+                                    (onChange)="onStageDurationValChange($event)" [disabled]="!isStageDurationUsed"></p-dropdown>
                             </div>
                             <!-- <div class="col error-column">
                                 <cpdss-portal-validation-error [errors]="fieldError('portName')"
@@ -96,7 +101,7 @@
                     </div>
                 </div>
                <!-- TODO-Commented based on the user story  - DSS-4090 -->
-                <!-- <div class="row">       
+                <!-- <div class="row">
                     <div class="col ml-30 ">
                         <div class="row no-gutters row-divider border-bottom">
                             <div class="col pl-10 offset-3 mt-10">
@@ -110,7 +115,7 @@
                                 <label class="checkbox-custom pr-20">{{'LOADING_INFORMATION_TRACK_GRADE_SWITCHING_LABEL'
                                     | translate}}
                                     <input type="checkbox" [(ngModel)]="trackGradeSwitch"
-                                        (change)="onUpdateLoadingStages()">         
+                                        (change)="onUpdateLoadingStages()">
                                     <span class="checkmark"></span>
                                 </label>
 

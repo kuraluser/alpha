@@ -56,6 +56,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -326,6 +327,10 @@ public class DischargeInformationBuilderService {
                 if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
               });
       Optional.ofNullable(var2.getSequenceNo()).ifPresent(val1::setSequenceNo);
+      val1.setDischargingRate(
+          StringUtils.hasLength(var2.getDischargingRate())
+              ? new BigDecimal(var2.getDischargingRate())
+              : null);
       BeanUtils.copyProperties(var2, val1);
       val1.setLoadingInfoId(var2.getDischargeInfoId());
       val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
@@ -733,6 +738,8 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(builder::setCargoNominationId);
           Optional.ofNullable(delay.getSequenceNo()).ifPresent(builder::setSequenceNo);
+          Optional.ofNullable(delay.getDischargingRate())
+              .ifPresent(dischargingRate -> builder.setDischargingRate(dischargingRate.toString()));
           delayList.add(builder.build());
         });
     return delayList;

@@ -68,6 +68,7 @@ export class UserRoleListingComponent implements OnInit , OnDestroy {
  * @memberof UserRoleListingComponent
  */
   ngOnInit(): void {
+    this.ngxSpinnerService.show();
     this.first = 0;
     this.currentPage = 0;
     this.columns = this.userRolePermissionTransformationService.getRoleListDatatableColumns();

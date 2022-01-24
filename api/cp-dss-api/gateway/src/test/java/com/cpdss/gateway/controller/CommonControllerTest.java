@@ -1,15 +1,16 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
+import static com.cpdss.common.constants.FileRepoConstants.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.ListOfUllageReportResponse;
 import com.cpdss.gateway.domain.filerepo.FileRepoGetResponse;
-import com.cpdss.gateway.domain.filerepo.FileRepoReply;
 import com.cpdss.gateway.security.ship.*;
 import com.cpdss.gateway.service.FileRepoService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
@@ -251,7 +252,7 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyString(),
-                Mockito.anyString(),
+                Mockito.any(FileRepoSection.class),
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyLong(),
@@ -266,7 +267,7 @@ public class CommonControllerTest {
                 .param("voyageNo", "100000190")
                 .param("fileName", "234")
                 .param("fileType", "200001242")
-                .param("section", "1")
+                .param("section", "LoadableStudy")
                 .param("category", "2123")
                 .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
@@ -284,7 +285,7 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyString(),
-                Mockito.anyString(),
+                Mockito.any(FileRepoSection.class),
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyLong(),
@@ -303,7 +304,7 @@ public class CommonControllerTest {
                 .param("voyageNo", "100000190")
                 .param("fileName", "234")
                 .param("fileType", "200001242")
-                .param("section", "1")
+                .param("section", "LoadableStudy")
                 .param("category", "2123")
                 .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
@@ -321,7 +322,7 @@ public class CommonControllerTest {
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyString(),
-                Mockito.anyString(),
+                Mockito.any(FileRepoSection.class),
                 Mockito.anyString(),
                 Mockito.anyString(),
                 Mockito.anyLong(),
@@ -336,7 +337,7 @@ public class CommonControllerTest {
                 .param("voyageNo", "100000190")
                 .param("fileName", "234")
                 .param("fileType", "200001242")
-                .param("section", "1")
+                .param("section", "LoadableStudy")
                 .param("category", "2123")
                 .param("vesselId", "1")
                 .header(CORRELATION_ID_HEADER, CORRELATION_ID_HEADER_VALUE)
@@ -423,7 +424,7 @@ public class CommonControllerTest {
             fileRepoService.editFileRepo(
                 Mockito.anyLong(),
                 Mockito.any(),
-                Mockito.anyString(),
+                Mockito.any(FileRepoSection.class),
                 Mockito.anyString(),
                 Mockito.anyBoolean(),
                 Mockito.anyString(),
@@ -435,7 +436,7 @@ public class CommonControllerTest {
         .perform(
             MockMvcRequestBuilders.put(url, 1L)
                 .param("repoId", "100000190")
-                .param("section", "234")
+                .param("section", "LoadableStudy")
                 .param("category", "200001242")
                 .param("hasFileChanged", "true")
                 .param("vesselId", "1")
@@ -452,7 +453,7 @@ public class CommonControllerTest {
             fileRepoService.editFileRepo(
                 Mockito.anyLong(),
                 Mockito.any(),
-                Mockito.anyString(),
+                Mockito.any(FileRepoSection.class),
                 Mockito.anyString(),
                 Mockito.anyBoolean(),
                 Mockito.anyString(),
@@ -464,7 +465,7 @@ public class CommonControllerTest {
         .perform(
             MockMvcRequestBuilders.put(url, 1L)
                 .param("repoId", "100000190")
-                .param("section", "234")
+                .param("section", "LoadableStudy")
                 .param("category", "200001242")
                 .param("hasFileChanged", "true")
                 .param("vesselId", "1")

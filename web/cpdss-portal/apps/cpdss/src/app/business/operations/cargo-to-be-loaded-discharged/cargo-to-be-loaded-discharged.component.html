@@ -1,5 +1,5 @@
 <div class="row pt-10" *ngIf="form && cargoTobeLoadedDischargedForm">
-  <div class="col ml-30 table-column-flexible-wrapper" [formGroup]="form">
+  <div class="col ml-30" [formGroup]="form">
       <cpdss-portal-datatable *ngIf="cargoTobeLoadedDischargedColumns && cargoTobeLoadedDischargedForm  && cargoTobeLoadedDischarged"
         [tableId]="'cargo_to_be_loaded_or_discharged'" [form]="cargoTobeLoadedDischargedForm"
         [columns]="cargoTobeLoadedDischargedColumns" [value]="cargoTobeLoadedDischarged" [scrollable]="true"
