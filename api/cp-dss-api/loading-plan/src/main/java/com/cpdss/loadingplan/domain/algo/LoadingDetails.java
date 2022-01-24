@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.domain.algo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDate;
 import lombok.Data;
 
 @Data
@@ -12,5 +13,6 @@ public class LoadingDetails {
   private String timeOfSunset;
   private String startTime;
   private TrimAllowed trimAllowed;
+  private LocalDate commonDate;
   // tide details based on the Exel data.
 }

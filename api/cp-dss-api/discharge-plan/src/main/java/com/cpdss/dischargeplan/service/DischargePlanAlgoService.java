@@ -233,7 +233,9 @@ public class DischargePlanAlgoService {
       trimAllowed.setInitialTrim(entity.getInitialTrim());
       trimAllowed.setMaximumTrim(entity.getMaximumTrim());
       trimAllowed.setFinalTrim(entity.getFinalTrim());
+
       dischargeDetails.setTrimAllowed(trimAllowed);
+      dischargeDetails.setCommonDate(entity.getCommonDate());
       disDto.setDischargeDetails(dischargeDetails);
 
       // discharge rates

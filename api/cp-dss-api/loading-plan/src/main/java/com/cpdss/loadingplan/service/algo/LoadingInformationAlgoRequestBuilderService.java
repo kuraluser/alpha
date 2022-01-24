@@ -54,6 +54,7 @@ import com.cpdss.loadingplan.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -504,21 +505,25 @@ public class LoadingInformationAlgoRequestBuilderService {
     loadingDetails.setStartTime(loadingDetail.getStartTime());
     loadingDetails.setTimeOfSunrise(loadingDetail.getTimeOfSunrise());
     loadingDetails.setTimeOfSunset(loadingDetail.getTimeOfSunset());
+
+    loadingDetails.setCommonDate(
+        loadingDetail.getCommonDate().isBlank()
+            ? null
+            : LocalDate.parse(loadingDetail.getCommonDate()));
+
     TrimAllowed trimAllowed = new TrimAllowed();
-    if (loadingDetail.getTrimAllowed() != null) {
-      trimAllowed.setFinalTrim(
-          StringUtils.isEmpty(loadingDetail.getTrimAllowed().getFinalTrim())
-              ? null
-              : new BigDecimal(loadingDetail.getTrimAllowed().getFinalTrim()));
-      trimAllowed.setInitialTrim(
-          StringUtils.isEmpty(loadingDetail.getTrimAllowed().getInitialTrim())
-              ? null
-              : new BigDecimal(loadingDetail.getTrimAllowed().getInitialTrim()));
-      trimAllowed.setMaximumTrim(
-          StringUtils.isEmpty(loadingDetail.getTrimAllowed().getMaximumTrim())
-              ? null
-              : new BigDecimal(loadingDetail.getTrimAllowed().getMaximumTrim()));
-    }
+    trimAllowed.setFinalTrim(
+        StringUtils.isEmpty(loadingDetail.getTrimAllowed().getFinalTrim())
+            ? null
+            : new BigDecimal(loadingDetail.getTrimAllowed().getFinalTrim()));
+    trimAllowed.setInitialTrim(
+        StringUtils.isEmpty(loadingDetail.getTrimAllowed().getInitialTrim())
+            ? null
+            : new BigDecimal(loadingDetail.getTrimAllowed().getInitialTrim()));
+    trimAllowed.setMaximumTrim(
+        StringUtils.isEmpty(loadingDetail.getTrimAllowed().getMaximumTrim())
+            ? null
+            : new BigDecimal(loadingDetail.getTrimAllowed().getMaximumTrim()));
     loadingDetails.setTrimAllowed(trimAllowed);
 
     LoadableStudy.LoadingPlanCommonResponse response =
@@ -530,7 +535,8 @@ public class LoadingInformationAlgoRequestBuilderService {
                 .build());
 
     if (!response.getResponseStatus().getStatus().equals("SUCCESS")) {
-      log.error("Failed to get Synoptic data from LS ", response.getResponseStatus().getMessage());
+      log.error(
+          "Failed to get Synoptic data from LS : {}", response.getResponseStatus().getMessage());
       throw new GenericServiceException(
           "Failed to get Synoptic Data for Port",
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -546,10 +552,9 @@ public class LoadingInformationAlgoRequestBuilderService {
               .filter(v -> v.getOperationType().equalsIgnoreCase("ARR"))
               .findFirst()
               .get();
-      Optional.ofNullable(synopticalResponse.getTimeOfSunrise())
+      Optional.of(synopticalResponse.getTimeOfSunrise())
           .ifPresent(loadingDetails::setTimeOfSunrise);
-      Optional.ofNullable(synopticalResponse.getTimeOfSunset())
-          .ifPresent(loadingDetails::setTimeOfSunset);
+      Optional.of(synopticalResponse.getTimeOfSunset()).ifPresent(loadingDetails::setTimeOfSunset);
     }
     loadingInfo.setLoadingDetails(loadingDetails);
   }
