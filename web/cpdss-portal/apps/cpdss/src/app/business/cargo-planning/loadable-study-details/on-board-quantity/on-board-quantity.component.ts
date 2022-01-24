@@ -71,6 +71,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   set quantitySelectedUnit(value: QUANTITY_UNIT) {
     this._prevQuantitySelectedUnit = this.quantitySelectedUnit;
     this._quantitySelectedUnit = value;
+    this.cargoTankOptions.weightUnit = value;
     if (this._prevQuantitySelectedUnit) {
       this.convertSelectedPortOBQTankDetails();
       this.updateTankList();
@@ -500,7 +501,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
         return tank;
       });
       return newGroup;
-    })
+    });
   }
 
   /**
