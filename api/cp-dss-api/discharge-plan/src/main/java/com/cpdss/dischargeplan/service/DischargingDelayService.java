@@ -117,6 +117,10 @@ public class DischargingDelayService {
     dischargingDelay.setQuantity(
         StringUtils.isEmpty(delay.getQuantity()) ? null : new BigDecimal(delay.getQuantity()));
     dischargingDelay.setIsActive(true);
+    dischargingDelay.setDischargingRate(
+        StringUtils.hasLength(delay.getDischargingRate())
+            ? new BigDecimal(delay.getDischargingRate())
+            : null);
   }
 
   private void deleteDelayReasons(List<DischargingDelayReason> reasonList) {

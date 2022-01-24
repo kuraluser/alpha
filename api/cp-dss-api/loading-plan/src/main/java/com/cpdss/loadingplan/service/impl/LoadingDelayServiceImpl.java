@@ -117,6 +117,10 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
     Optional.ofNullable(delay.getCargoId()).ifPresent(loadingDelay::setCargoXId);
     loadingDelay.setQuantity(
         StringUtils.isEmpty(delay.getQuantity()) ? null : new BigDecimal(delay.getQuantity()));
+    loadingDelay.setLoadingRate(
+        StringUtils.hasLength(delay.getLoadingRate())
+            ? new BigDecimal(delay.getLoadingRate())
+            : null);
     loadingDelay.setIsActive(true);
   }
 

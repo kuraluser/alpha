@@ -56,6 +56,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -316,7 +317,10 @@ public class DischargeInformationService {
                 .ifPresent(
                     orderedQuantity ->
                         dischargingDelays.setQuantity(new BigDecimal(orderedQuantity)));
-
+            dischargingDelays.setDischargingRate(
+                StringUtils.hasLength(dischargeQuantityCargoDetails.getMaxDischargingRate())
+                    ? new BigDecimal(dischargeQuantityCargoDetails.getMaxDischargingRate())
+                    : null);
             dischargingDelaysList.add(dischargingDelays);
           });
       dischargeSequences.setDischargingDelays(dischargingDelaysList);

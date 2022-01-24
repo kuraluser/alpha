@@ -296,6 +296,8 @@ public class LoadingInformationBuilderService {
               .ifPresent(v -> v.forEach(s -> builder.addReasonForDelayIds(s)));
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(builder::setCargoNominationId);
+          Optional.ofNullable(delay.getLoadingRate())
+              .ifPresent(loadingRate -> builder.setLoadingRate(loadingRate.toString()));
           delayList.add(builder.build());
         });
     return delayList;

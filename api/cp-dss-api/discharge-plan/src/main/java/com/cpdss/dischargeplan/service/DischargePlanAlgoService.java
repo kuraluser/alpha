@@ -514,6 +514,7 @@ public class DischargePlanAlgoService {
           ld.setId(delay.getId());
           ld.setDischargeInfoId(delay.getDischargingInformation().getId());
           ld.setQuantity(delay.getQuantity());
+          ld.setDischargingRate(delay.getDischargingRate());
           List<DischargingDelayReason> reasonForDelayIds =
               dischargingDelayReasonRepository.findAllByDischargingDelayAndIsActive(delay, true);
           if (!CollectionUtils.isEmpty(reasonForDelayIds)) {
