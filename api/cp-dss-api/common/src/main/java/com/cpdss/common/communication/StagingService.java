@@ -820,6 +820,9 @@ public class StagingService {
    * @return String value
    */
   private static String getString(JsonElement jsonElement) {
+    if (null == jsonElement) {
+      return null;
+    }
     return jsonElement.isJsonNull() ? null : jsonElement.getAsString();
   }
 }

@@ -47,7 +47,6 @@ import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStud
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.DishargeStudyPortCargoMapping;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyDetail;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels.UpdateDischargeStudyReply;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetails;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleCargoDetailsReply;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformationSynopticalRequest;
@@ -499,7 +498,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 if (commingleDetails.getFillingRatio() != null
                     && !commingleDetails.getFillingRatio().isBlank()) {
                   commingleDetailsOfFirstDischargePort.setFillingRatio(
-                      Long.parseLong(commingleDetails.getFillingRatio()));
+                      Double.parseDouble(commingleDetails.getFillingRatio()));
                 }
                 //                Optional.ofNullable(commingleDetails.getCorrectedUllage())
                 //                    .ifPresent(
@@ -510,12 +509,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 if (commingleDetails.getRdgUllage() != null
                     && !commingleDetails.getRdgUllage().isBlank()) {
                   commingleDetailsOfFirstDischargePort.setRdgUllage(
-                      Long.parseLong(commingleDetails.getRdgUllage()));
+                      Double.parseDouble(commingleDetails.getRdgUllage()));
                 }
                 if (commingleDetails.getCorrectionFactor() != null
                     && !commingleDetails.getCorrectionFactor().isBlank()) {
                   commingleDetailsOfFirstDischargePort.setCorrectionFactor(
-                      Long.parseLong(commingleDetails.getCorrectionFactor()));
+                      Double.parseDouble(commingleDetails.getCorrectionFactor()));
                 }
                 if (commingleDetails.getSlopQuantity() != null
                     && !commingleDetails.getSlopQuantity().isBlank()) {
@@ -2061,16 +2060,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               }
               request.addPortData(portDataBuilder);
             });
-
-    // Fetching cargo ids from cargo nomination using discharge study for default managing sequence
-    // in discharging information
-    LoadingPlanModels.LoadingPlanSyncDetails.Builder builder =
-        LoadingPlanModels.LoadingPlanSyncDetails.newBuilder();
-    confirmedLoadablePatternOpt.ifPresent(
-        loadablePattern -> {
-          cargoNominationService.fetchCargoDetails(loadablePattern.getLoadableStudy(), builder);
-          request.setLoadingPlanSyncDetails(builder.build());
-        });
 
     dischargePlanServiceBlockingStub.dischargePlanSynchronization(request.build());
   }

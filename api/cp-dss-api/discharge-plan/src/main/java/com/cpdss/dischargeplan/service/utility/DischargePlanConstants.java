@@ -56,7 +56,8 @@ public class DischargePlanConstants {
         "port_discharging_plan_stowage_ballast_details_temp"),
     PORT_DISCHARGE_PLAN_COMMINGLE_DETAILS_TEMP("port_discharge_plan_commingle_details_temp"),
     BILL_OF_LADDING("bill_of_ladding"),
-    SYNOPTICAL_TABLE("synoptical_table");
+    SYNOPTICAL_TABLE("synoptical_table"),
+    PYUSER("pyuser");
 
     public final String table;
   }
@@ -102,7 +103,8 @@ public class DischargePlanConstants {
           "port_discharging_plan_stability_parameters",
           "port_discharging_plan_stowage_details",
           "port_discharge_plan_commingle_details",
-          "json_data");
+          "json_data",
+          "pyuser");
 
   public static List<String> DISCHARGE_PLAN_ALGO_ERRORS_SHORE_TO_SHIP =
       Arrays.asList(
@@ -137,7 +139,8 @@ public class DischargePlanConstants {
           "port_discharging_plan_rob_details",
           "discharging_information_algo_status",
           "json_data",
-          "synoptical_table");
+          "synoptical_table",
+          "pyuser");
 
   public static final List<String> ULLAGE_UPDATE_ALGO_ERRORS =
       Arrays.asList(

@@ -6,6 +6,8 @@ import static com.cpdss.dischargeplan.service.utility.ProcessIdentifiers.port_di
 import com.cpdss.common.communication.StagingService;
 import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.repository.*;
 import com.cpdss.dischargeplan.service.utility.DischargePlanConstants;
@@ -44,9 +46,24 @@ public class DischargePlanStagingService extends StagingService {
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
+
+  /**
+   * Constructor for injecting
+   *
+   * @param dischargePlanStagingRepository staging repo
+   * @param dataTransferOutBoundRepository outbound repo
+   * @param dataTransferInBoundRepository inbound repo
+   */
   public DischargePlanStagingService(
-      @Autowired DischargePlanStagingRepository dischargePlanStagingRepository) {
-    super(dischargePlanStagingRepository);
+      @Autowired DischargePlanStagingRepository dischargePlanStagingRepository,
+      @Autowired DischargePlanDataTransferOutBoundRepository dataTransferOutBoundRepository,
+      @Autowired DischargePlanDataTransferInBoundRepository dataTransferInBoundRepository) {
+    super(
+        dischargePlanStagingRepository,
+        dataTransferOutBoundRepository,
+        dataTransferInBoundRepository);
   }
 
   Long dischargingPatternId = null;
@@ -821,6 +838,31 @@ public class DischargePlanStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       synopticalTableData);
+                }
+              }
+            }
+            break;
+          }
+        case pyuser:
+          {
+            if (pyUserId != null) {
+              LoadingPlanModels.LoadingPlanCommunicationRequest.Builder builder =
+                  LoadingPlanModels.LoadingPlanCommunicationRequest.newBuilder();
+              builder.setId(pyUserId);
+              LoadingPlanModels.LoadingPlanCommunicationReply reply =
+                  this.loadingPlanServiceBlockingStub.getPyUserForCommunication(builder.build());
+              if (DischargePlanConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+                if (reply.getDataJson() != null) {
+                  JsonArray pyUserData =
+                      JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      pyUserData);
                 }
               }
             }

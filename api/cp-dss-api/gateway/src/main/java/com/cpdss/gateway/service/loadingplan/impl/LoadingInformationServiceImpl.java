@@ -628,7 +628,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   }
 
   @Override
-  public void setCargoTobeLoadedAndCargoGrade(
+  public LoadableStudy.LoadingPlanCommonResponse setCargoTobeLoadedAndCargoGrade(
       CargoVesselTankDetails var1,
       Long vesselId,
       Long patternId,
@@ -706,6 +706,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         }
       }
     }
+    return replay;
   }
 
   private List<SynopticalCargoBallastRecord> buildSynopticCargoToDTO(

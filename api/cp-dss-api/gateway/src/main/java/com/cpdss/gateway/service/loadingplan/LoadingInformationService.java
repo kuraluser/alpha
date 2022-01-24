@@ -128,7 +128,7 @@ public interface LoadingInformationService {
   LoadingInformationSynopticalReply getLoadingInfoCargoDetailsByPattern(Long patternId)
       throws GenericServiceException;
 
-  void setCargoTobeLoadedAndCargoGrade(
+  LoadableStudy.LoadingPlanCommonResponse setCargoTobeLoadedAndCargoGrade(
       CargoVesselTankDetails vesselTankDetails,
       Long vesselId,
       Long patternId,

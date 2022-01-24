@@ -78,7 +78,7 @@ public interface PortLoadingPlanStowageDetailsRepository
   List<PortLoadingPlanStowageDetails> findCargoHistoryData(Long infoId);
 
   public List<PortLoadingPlanStowageDetails>
-      findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionType(
+      findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionTypeAndIsActiveTrue(
           Long cargoNominationId,
           long lastLoadingPortId,
           Integer valueTypeActuals,

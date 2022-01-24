@@ -3,7 +3,6 @@ package com.cpdss.dischargeplan.service;
 
 import com.cpdss.common.generated.discharge_plan.DischargeDelay;
 import com.cpdss.common.generated.discharge_plan.DischargeDelays;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingDelay;
 import com.cpdss.dischargeplan.entity.DischargingDelayReason;
@@ -131,33 +130,5 @@ public class DischargingDelayService {
     delay.getDischargingDelayReasons().forEach(v -> v.setIsActive(false));
     dischargingDelayRepository.save(delay);
     log.info("Deleted old delay Id {}", delay.getId());
-  }
-
-  /**
-   * Method to save default managing sequence cargos in discharge information delay
-   *
-   * @param dischargeInformationService DischargeInformation input object
-   * @param managingSequenceRequestList List<LoadingPlanModels.ManagingSequenceRequest> input list
-   */
-  public void saveDefaultManagingSequence(
-      DischargeInformation dischargeInformationService,
-      List<LoadingPlanModels.ManagingSequenceRequest> managingSequenceRequestList) {
-
-    log.info("Inside saveDefaultManagingSequence method!");
-
-    List<DischargingDelay> dischargingDelays = new ArrayList<>();
-    managingSequenceRequestList.forEach(
-        managingSequenceRequest -> {
-          DischargingDelay dischargingDelay = new DischargingDelay();
-
-          // Set fields
-          dischargingDelay.setDischargingInformation(dischargeInformationService);
-          dischargingDelay.setCargoXid(managingSequenceRequest.getCargoId());
-          dischargingDelay.setQuantity(new BigDecimal(managingSequenceRequest.getQuantity()));
-
-          dischargingDelays.add(dischargingDelay);
-        });
-
-    dischargingDelayRepository.saveAll(dischargingDelays);
   }
 }

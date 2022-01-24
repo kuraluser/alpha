@@ -33,28 +33,27 @@ import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
+import com.cpdss.loadingplan.entity.PyUser;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
-import com.cpdss.loadingplan.service.LoadingCargoHistoryService;
-import com.cpdss.loadingplan.service.LoadingInformationBuilderService;
-import com.cpdss.loadingplan.service.LoadingPlanService;
-import com.cpdss.loadingplan.service.LoadingSequenceService;
+import com.cpdss.loadingplan.repository.PyUserRepository;
+import com.cpdss.loadingplan.service.*;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.impl.LoadingPlanRuleServiceImpl;
 import com.cpdss.loadingplan.service.loadicator.LoadicatorService;
 import com.google.common.base.Strings;
+import com.google.gson.*;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.ResourceAccessException;
 
 /** @author pranav.k */
 @Slf4j
@@ -77,6 +76,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired LoadingCargoHistoryService loadingCargoHistoryService;
   @Autowired LoadingInformationBuilderService informationBuilderService;
   @Autowired LoadingPlanStagingService loadingPlanStagingService;
+  @Autowired PyUserRepository pyUserRepository;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
@@ -371,10 +371,10 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                       .mapToDouble(billOfLadding -> billOfLadding.getQuantityMt().doubleValue())
                       .sum();
               maxQuantity.setMaxQuantity(String.valueOf(blFig));
-              // Finding quantity ration Actual/BL
+              // Finding quantity ratio Actual/BL
               List<PortLoadingPlanStowageDetails> actualQuantityList =
                   portLoadingPlanStowageDetailsRepository
-                      .findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionType(
+                      .findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionTypeAndIsActiveTrue(
                           key,
                           request.getLastLoadingPortId(),
                           VALUE_TYPE_ACTUALS,
@@ -793,6 +793,97 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       // Build response
       responseObserver.onNext(responseBuilder.build());
       responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * get pyuser Data for dischargeplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void getPyUserForCommunication(
+      LoadingPlanModels.LoadingPlanCommunicationRequest request,
+      StreamObserver<LoadingPlanModels.LoadingPlanCommunicationReply> responseObserver) {
+    LoadingPlanModels.LoadingPlanCommunicationReply.Builder replyBuilder =
+        LoadingPlanModels.LoadingPlanCommunicationReply.newBuilder();
+    try {
+      log.info("PyUser request:{}", request.getId());
+      String pyUser = pyUserRepository.getPyUserWithId(request.getId());
+      if (pyUser != null) {
+        log.info("PyUser get:{}", pyUser.length());
+        replyBuilder.setDataJson(pyUser);
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+      } else {
+        replyBuilder.setResponseStatus(
+            Common.ResponseStatus.newBuilder().setMessage("No PyUser Found").build());
+      }
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error occurred when get PyUser", e);
+    }
+  }
+
+  /**
+   * save PyUser Data for dischargeplan communication
+   *
+   * @param request
+   * @param responseObserver
+   */
+  public void savePyUserForCommunication(
+      LoadingPlanModels.LoadingPlanCommunicationRequest request,
+      StreamObserver<LoadingPlanModels.LoadingPlanCommunicationReply> responseObserver) {
+    LoadingPlanModels.LoadingPlanCommunicationReply.Builder replyBuilder =
+        LoadingPlanModels.LoadingPlanCommunicationReply.newBuilder();
+    try {
+      this.savePyUser(request.getDataJson());
+      replyBuilder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (ResourceAccessException e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(
+                  com.cpdss.loadingplan.utility.LoadingPlanConstants.FAILED_WITH_RESOURCE_EXC)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          Common.ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(com.cpdss.loadingplan.utility.LoadingPlanConstants.FAILED_WITH_EXC)
+              .build());
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  private void savePyUser(String dataJson) {
+    try {
+      log.info("Inside savePyUser in LoadingPlan");
+      HashMap<String, String> map = loadingPlanStagingService.getAttributeMapping(new PyUser());
+      JsonArray jsonArray =
+          loadingPlanStagingService.getAsEntityJson(
+              map, JsonParser.parseString(dataJson).getAsJsonArray());
+      log.info("PyUser json array:{}", jsonArray);
+      JsonObject jsonObject = jsonArray.get(0).getAsJsonObject();
+      PyUser pyUser = new PyUser();
+      pyUser.setId(jsonObject.get("id").getAsString());
+      pyUser.setLogFile(jsonObject.get("logFile").getAsString());
+      pyUser.setMessage(jsonObject.get("message").getAsJsonObject().toString());
+      pyUser.setStatus(jsonObject.get("status").getAsString());
+      pyUser.setTimeStamp(jsonObject.get("timeStamp").getAsString());
+      if (pyUser != null) {
+        pyUser = pyUserRepository.save(pyUser);
+        log.info("Saved PyUser:{}", pyUser);
+      }
+    } catch (Exception e) {
+      log.error("Error occurred when saving PyUser data part of dischargeplan communication", e);
     }
   }
 }

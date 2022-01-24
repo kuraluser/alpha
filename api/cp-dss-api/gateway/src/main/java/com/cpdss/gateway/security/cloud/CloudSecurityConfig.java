@@ -38,6 +38,7 @@ public class CloudSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
   private static final List<String> permitAllEndpointList =
       Arrays.asList(
           "/actuator/health",
+          "/actuator/prometheus",
           "/api/cloud/vessel-details/*",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudyId}/loadable-study-status",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/loadable-studies/{loadableStudiesId}/loadable-patterns",
@@ -48,7 +49,9 @@ public class CloudSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharge-studies/{dischargeStudyId}/discharge-study-status",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-plan",
           "/api/cloud/vessels/{vesselId}/voyages/{voyageId}/discharging-info/{infoId}/discharging-info-status",
-          "/api/cloud/file-repo-internal");
+          "/api/cloud/file-repo-internal",
+          "/file-stage",
+          "/file-communication");
 
   /** Registers the KeycloakAuthenticationProvider with the authentication manager. */
   @Autowired

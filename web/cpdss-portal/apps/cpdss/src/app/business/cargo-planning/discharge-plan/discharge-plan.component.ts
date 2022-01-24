@@ -234,13 +234,23 @@ export class DischargePlanComponent implements OnInit , OnDestroy {
    * @memberof DischargePlanComponent
   */
   async confirmPlan() {
+    this.ngxSpinnerService.show();
+    const result = await this.dischargePlanApiService.getConfirmStatus(this.vesselId, this.voyageId, this.dischargeStudyId, this.dischargePatternId).toPromise();
+    this.ngxSpinnerService.hide();
+    let detail;
+
+    if (result.confirmed) {
+      detail = "DISCHARGE_PLAN_CONFIRM_DETAILS_NOT_CONFIRM";
+    } else {
+      detail = "DISCHARGE_PLAN_CONFIRM_DETAILS_CONFIRM";
+    }
     const translationKeys = await this.translateService.get(['DISCHARGE_PLAN_CONFIRM_STATUS_ERROR',
       'DISCHARGE_PLAN_CONFIRM_REJECT_LABEL', 'DISCHARGE_PLAN_CONFIRM_CONFIRM_LABEL', 'DISCHARGE_PLAN_CONFIRM_SUMMARY', 'DISCHARGE_PLAN_CONFIRM_ERROR', 'DISCHARGE_PLAN_CONFIRM_DETAILS_NOT_CONFIRM', 'DISCHARGE_PLAN_CONFIRM_DETAILS_CONFIRM']).toPromise();
 
     this.confirmationService.confirm({
       key: 'confirmation-alert',
       header: translationKeys['DISCHARGE_PLAN_CONFIRM_SUMMARY'],
-      message: translationKeys['DISCHARGE_PLAN_CONFIRM_DETAILS_NOT_CONFIRM'],
+      message: translationKeys[detail],
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: translationKeys['DISCHARGE_PLAN_CONFIRM_CONFIRM_LABEL'],
       acceptIcon: 'pi',

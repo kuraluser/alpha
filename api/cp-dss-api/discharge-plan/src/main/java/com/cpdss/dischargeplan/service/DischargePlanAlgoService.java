@@ -956,7 +956,7 @@ public class DischargePlanAlgoService {
         this.loadableStudyService.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
                 .setPatternId(entity.getDischargingPatternXid())
-                .setOperationType("ARR")
+                .setOperationType("DEP")
                 .setPortRotationId(entity.getPortRotationXid())
                 .setPortId(entity.getPortXid())
                 .setCargoNominationFilter(false)
@@ -1964,7 +1964,7 @@ public class DischargePlanAlgoService {
             UUID.randomUUID().toString(),
             MessageTypes.DISCHARGEPLAN_ALGORESULT.getMessageType(),
             dischargeInformation.getId(),
-            null);
+            dischargeInformation.getDischargeStudyProcessId());
     log.info("Json Array in Loading plan service: " + jsonArray.toString());
     EnvoyWriter.WriterReply ewReply =
         dischargePlanCommunicationService.passRequestPayloadToEnvoyWriter(

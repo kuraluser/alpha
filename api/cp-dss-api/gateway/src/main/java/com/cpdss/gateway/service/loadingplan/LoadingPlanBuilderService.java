@@ -176,6 +176,11 @@ public class LoadingPlanBuilderService {
           StringUtils.hasLength(commingle.getCargo2Percentage())
               ? new BigDecimal(commingle.getCargo2Percentage())
               : null);
+
+      commingleDetails.setCargo1Abbreviation(commingle.getCargo1Abbreviation());
+      commingleDetails.setCargo2Abbreviation(commingle.getCargo2Abbreviation());
+      commingleDetails.setTankName(commingle.getTankName());
+
       response.add(commingleDetails);
     }
     return response;

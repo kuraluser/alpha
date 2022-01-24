@@ -117,12 +117,6 @@ public class DischargePlanSynchronizeService {
                 dischargeInformationService, rpcReplay);
             log.info("Discharge Info Id : {}", dischargeInformationService.getId());
 
-            // Save discharging delays for default populating of cargos in managing sequence in
-            // discharging information
-            dischargingDelayService.saveDefaultManagingSequence(
-                dischargeInformationService,
-                request.getLoadingPlanSyncDetails().getManagingSequenceRequestList());
-
           } catch (GenericServiceException e) {
             e.printStackTrace();
           }

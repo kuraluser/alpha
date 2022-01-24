@@ -519,6 +519,12 @@ public class LoadingInformationBuilderService {
                 .ifPresent(builder::setCargo1Percentage);
             Optional.ofNullable(commingle.getCargo2Percentage())
                 .ifPresent(builder::setCargo2Percentage);
+            Optional.ofNullable(commingle.getCargo1Abbreviation())
+                .ifPresent(builder::setCargo1Abbreviation);
+            Optional.ofNullable(commingle.getCargo2Abbreviation())
+                .ifPresent(builder::setCargo2Abbreviation);
+            Optional.ofNullable(commingle.getTankName()).ifPresent(builder::setTankName);
+
             portLoadingPlanCommingleDetails.add(builder.build());
           });
     } catch (Exception e) {

@@ -7,7 +7,6 @@ import com.cpdss.common.logging.Log4j2Config;
 import com.cpdss.common.redis.CacheConfig;
 import com.cpdss.common.redis.RedisConfig;
 import com.cpdss.common.rest.RestConfig;
-import com.cpdss.common.scheduler.ScheduledTaskConfig;
 import com.cpdss.common.springdata.SpringDataConfig;
 import com.cpdss.gateway.service.SyncRedisMasterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,7 @@ import org.springframework.web.client.RestTemplate;
   SpringDataConfig.class,
   GrpcClientConfig.class,
   RedisConfig.class,
-  CacheConfig.class,
-  ScheduledTaskConfig.class
+  CacheConfig.class
 })
 public class AppConfig {
 

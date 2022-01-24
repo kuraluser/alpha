@@ -42,5 +42,6 @@ public enum ProcessIdentifiers {
   loadable_pattern,
   port_discharge_plan_commingle_details_temp,
   bill_of_ladding,
-  synoptical_table;
+  synoptical_table,
+  pyuser;
 }

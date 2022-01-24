@@ -95,4 +95,9 @@ service LoadingPlanService {
   rpc checkDependentProcess(DependentProcessCheckRequestComm) returns (CommunicationCheckResponse) {}
 
   rpc checkCommunicated(CommunicationStatusCheckRequest) returns (CommunicationCheckResponse) {}
+
+  rpc getPyUserForCommunication(LoadingPlanCommunicationRequest) returns (LoadingPlanCommunicationReply) {}
+
+  rpc savePyUserForCommunication(LoadingPlanCommunicationRequest) returns (LoadingPlanCommunicationReply) {}
+
 }

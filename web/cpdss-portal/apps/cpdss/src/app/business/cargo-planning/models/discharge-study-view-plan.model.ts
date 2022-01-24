@@ -1,6 +1,6 @@
 import { IResponse , ValueObject , IMode  , IPercentage } from '../../../shared/models/common.model';
-import { ICargo, IInstruction , ITankDetails , IPort } from '../../core/models/common.model';
-import { IDischargeStudy } from './discharge-study-list.model';
+import { ICargo, IInstruction , ITankDetails , IPort, IPlanStabilityParams } from '../../core/models/common.model';
+
 
 /**
  * Interface for discharge study list data
@@ -24,17 +24,19 @@ import { IDischargeStudy } from './discharge-study-list.model';
  * @export
  * @interface IPortDetailValueObject
  */
- export interface IPortDetailValueObject {
-    portName: string;
-    instruction: IInstruction;
-    draftRestriction: number;
-    cargoDetail: IPortCargo[];
-    cow: IMode;
-    dischargeRate: number,
-    isBackLoadingEnabled: boolean;
-    tank: string[];
-    backLoadingDetails: IBackLoadingDetails[];
+export interface IPortDetailValueObject {
+  portName: string;
+  instruction: IInstruction;
+  draftRestriction: number;
+  cargoDetail: IPortCargo[];
+  cow: IMode;
+  dischargeRate: number,
+  isBackLoadingEnabled: boolean;
+  tank: string[];
+  backLoadingDetails: IBackLoadingDetails[];
+  stabilityParams: IPlanStabilityParams;
 }
+
 /**
  *
  * Interface for back loading details
@@ -113,18 +115,19 @@ export interface IBackLoadingDetails {
  * @export
  * @interface IDischargeStudyPortListDetails
  */
- export interface IDischargeStudyPortListDetails {
-    id: number;
-    portId: number;
-    maxDraft: number;
-    cowId: number;
-    percentage: number;
-    instructionId: number[];
-    isBackLoadingEnabled: boolean;
-    backLoading: IDischargeStudyBackLoadingDetails[];
-    tanks: number[];
-    dischargeRate: number;
-    cargoNominationList: IDischargeStudyCargoNominationList[];
+export interface IDischargeStudyPortListDetails {
+  id: number;
+  portId: number;
+  maxDraft: number;
+  cowId: number;
+  percentage: number;
+  instructionId: number[];
+  isBackLoadingEnabled: boolean;
+  backLoading: IDischargeStudyBackLoadingDetails[];
+  tanks: number[];
+  dischargeRate: number;
+  cargoNominationList: IDischargeStudyCargoNominationList[];
+  stabilityParams: IPlanStabilityParams;
 }
 
 

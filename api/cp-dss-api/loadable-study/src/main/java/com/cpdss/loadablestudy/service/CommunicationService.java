@@ -398,6 +398,50 @@ public class CommunicationService {
   }
 
   /**
+   * Method to send data to envoy writer
+   *
+   * @param payloadJson JSON to be communicated
+   * @param vesselId vessel Id value
+   * @param messageType message type value
+   * @param referenceId referenceId value - LSId, LP Id, etc
+   * @throws GenericServiceException Exception on failure
+   */
+  public String passRequestPayloadToEnvoyWriter(
+      final String payloadJson,
+      final Long vesselId,
+      final String messageType,
+      final Long referenceId)
+      throws GenericServiceException {
+    VesselInfo.VesselDetail vesselReply = this.getVesselDetailsForEnvoy(vesselId);
+
+    // Send data to envoy-writer
+    EnvoyWriter.EnvoyWriterRequest.Builder writerRequest =
+        EnvoyWriter.EnvoyWriterRequest.newBuilder();
+    writerRequest.setJsonPayload(payloadJson);
+    writerRequest.setClientId(vesselReply.getName());
+    writerRequest.setMessageType(messageType);
+    writerRequest.setImoNumber(vesselReply.getImoNumber());
+    EnvoyWriter.WriterReply envoyWriterReply =
+        this.envoyWriterService.getCommunicationServer(writerRequest.build());
+    if (!SUCCESS.equals(envoyWriterReply.getResponseStatus().getStatus())) {
+      log.error(
+          "Invalid response from envoy-writer. Reference Id: {}, MessageType: {}. Response: {}",
+          referenceId,
+          messageType,
+          envoyWriterReply);
+      throw new GenericServiceException(
+          "Invalid response from envoy-writer. Response: " + envoyWriterReply,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+
+    // Update outbound status
+    loadableStudyStagingService.saveDataTransferOutBound(messageType, referenceId, true);
+
+    return envoyWriterReply.getMessageId();
+  }
+
+  /**
    * Method to check message status in envoy service
    *
    * @param messageId messageId value
