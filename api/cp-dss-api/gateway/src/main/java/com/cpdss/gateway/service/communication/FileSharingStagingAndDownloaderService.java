@@ -106,7 +106,7 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
         folderLocation = fileRepo.getFilePath() + "/";
       }
       if (!Files.exists(Path.of(folderLocation + fileRepo.getFileName()))) {
-        Files.createDirectories(Path.of(folderLocation + fileRepo.getFileName()));
+        Files.createDirectories(Path.of(folderLocation));
       }
       Files.writeString(Path.of(folderLocation + fileRepo.getFileName()), data);
       log.info("File data wrote into :{}", folderLocation);

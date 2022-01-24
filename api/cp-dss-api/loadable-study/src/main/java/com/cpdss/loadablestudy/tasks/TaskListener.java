@@ -112,7 +112,7 @@ public class TaskListener implements ExecuteTaskListener {
       } else if (taskName.startsWith(LoadableStudiesConstants.FILE_SHARE_STAGE_DOWNLOAD_TASK)) {
         loadableStudyCommunicationService.callSaveToStageInGateWay(taskName, taskReqParams);
       } else if (taskName.startsWith(LoadableStudiesConstants.FILE_SHARE_DATA_UPDATE_TASK)) {
-        loadableStudyCommunicationService.callSaveToFileRepoInGateWay(taskName, taskReqParams);
+        loadableStudyCommunicationService.callSaveToFileRepoInGateWay(taskName);
       }
       // Task configured in DB but not implemented
       else {

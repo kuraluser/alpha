@@ -2163,6 +2163,7 @@ public class LoadableStudyCommunicationService {
   }
 
   public void callSaveToStageInGateWay(String taskName, Map<String, String> taskReqParams) {
+    log.info("Inside callSaveToStageInGateWay for taskName:{}", taskName);
     // Set the headers
     final HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -2178,7 +2179,8 @@ public class LoadableStudyCommunicationService {
     log.info("Response from gateway call:{}", commonSuccessResponse.getStatus());
   }
 
-  public void callSaveToFileRepoInGateWay(String taskName, Map<String, String> taskReqParams) {
+  public void callSaveToFileRepoInGateWay(String taskName) {
+    log.info("Inside callSaveToFileRepoInGateWay for taskName:{}", taskName);
     // Set the headers
     final HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
