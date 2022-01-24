@@ -87,4 +87,17 @@ public interface DischargeDetailsOrBuilder
    * @return The bytes for commonDate.
    */
   com.google.protobuf.ByteString getCommonDateBytes();
+
+  /**
+   * <code>string slopQuantity = 8;</code>
+   *
+   * @return The slopQuantity.
+   */
+  java.lang.String getSlopQuantity();
+  /**
+   * <code>string slopQuantity = 8;</code>
+   *
+   * @return The bytes for slopQuantity.
+   */
+  com.google.protobuf.ByteString getSlopQuantityBytes();
 }

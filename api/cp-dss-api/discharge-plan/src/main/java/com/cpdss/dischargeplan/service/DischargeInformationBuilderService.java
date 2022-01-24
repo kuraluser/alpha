@@ -480,6 +480,9 @@ public class DischargeInformationBuilderService {
       Optional.ofNullable(disEntity.getCommonDate())
           .ifPresent(commonDate -> builder1.setCommonDate(String.valueOf(commonDate)));
 
+      Optional.ofNullable(disEntity.getSlopQuantity())
+          .ifPresent(slopQuantity -> builder1.setSlopQuantity(slopQuantity.toString()));
+
       builder.setDischargeDetails(builder1.build());
       log.info("Setting Discharge Details");
     } catch (Exception e) {

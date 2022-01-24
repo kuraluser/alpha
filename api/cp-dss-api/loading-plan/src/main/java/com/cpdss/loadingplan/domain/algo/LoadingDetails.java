@@ -2,6 +2,7 @@
 package com.cpdss.loadingplan.domain.algo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.Data;
 
@@ -14,5 +15,6 @@ public class LoadingDetails {
   private String startTime;
   private TrimAllowed trimAllowed;
   private LocalDate commonDate;
+  private BigDecimal slopQuantity;
   // tide details based on the Exel data.
 }

@@ -236,6 +236,7 @@ public class DischargePlanAlgoService {
 
       dischargeDetails.setTrimAllowed(trimAllowed);
       dischargeDetails.setCommonDate(entity.getCommonDate());
+      dischargeDetails.setSlopQuantity(entity.getSlopQuantity());
       disDto.setDischargeDetails(dischargeDetails);
 
       // discharge rates

@@ -172,6 +172,9 @@ public class DischargeInformation extends EntityDoc {
   @Column(name = "is_stage_offset_used")
   private Boolean isStageOffsetUsed;
 
+  @Column(name = "slop_quantity")
+  private BigDecimal slopQuantity;
+
   public DischargeInformation(Long pk) {
     this.setId(pk);
   }

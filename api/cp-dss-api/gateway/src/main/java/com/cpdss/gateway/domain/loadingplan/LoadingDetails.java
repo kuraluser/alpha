@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain.loadingplan;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -24,5 +25,7 @@ public class LoadingDetails {
   private LocalDateTime etd;
 
   private String timezoneOffsetVal;
+
+  private BigDecimal slopQuantity;
   // tide details based on the Exel data.
 }

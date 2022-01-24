@@ -166,6 +166,11 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         var.setCommonDate(LocalDate.parse(var1.getCommonDate()));
       }
 
+      var.setSlopQuantity(
+          StringUtils.hasLength(var1.getSlopQuantity())
+              ? new BigDecimal(var1.getSlopQuantity())
+              : BigDecimal.ZERO);
+
       // If not found in LS, Synoptic Go to Port Master
       if (var.getTimeOfSunrise() == null && var.getTimeOfSunset() == null) {
         PortInfo.PortDetail response2 = this.loadingPlanGrpcService.fetchPortDetailByPortId(portId);

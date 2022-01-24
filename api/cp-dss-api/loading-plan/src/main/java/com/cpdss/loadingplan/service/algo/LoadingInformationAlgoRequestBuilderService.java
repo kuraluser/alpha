@@ -525,7 +525,10 @@ public class LoadingInformationAlgoRequestBuilderService {
             ? null
             : new BigDecimal(loadingDetail.getTrimAllowed().getMaximumTrim()));
     loadingDetails.setTrimAllowed(trimAllowed);
-
+    loadingDetails.setSlopQuantity(
+        StringUtils.hasLength(loadingDetail.getSlopQuantity())
+            ? new BigDecimal(loadingDetail.getSlopQuantity())
+            : BigDecimal.ZERO);
     LoadableStudy.LoadingPlanCommonResponse response =
         this.loadableStudyService.getSynopticDataForLoadingPlan(
             LoadableStudy.LoadingPlanIdRequest.newBuilder()
