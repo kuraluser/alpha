@@ -77,4 +77,6 @@ public interface CommonErrorCodes {
   String E_CPDSS_CARGO_ABBREVIATION_ALREADY_EXISTS = "329";
 
   String E_CPDSS_CARGO_NOMINATIONS_EXIST = "327";
+
+  String E_CPDSS_USER_VESSEL_MAPPING_NOT_EXIST = "391";
 }

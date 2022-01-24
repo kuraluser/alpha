@@ -2178,8 +2178,7 @@ public class LoadableStudyController {
   public LoadableStudyShoreResponse getLoadableStudyShore(@RequestHeader HttpHeaders headers)
       throws CommonRestException {
     try {
-      return this.loadableStudyService.getLoadableStudyShore(
-          headers.getFirst(CORRELATION_ID_HEADER));
+      return this.loadableStudyService.getLoadableStudyShore(headers);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when fetching rules against loadable study", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);

@@ -1685,6 +1685,8 @@ message LoadableStudyShoreResponse{
 
 message LoadableStudyShoreRequest{
 	int64 vesselId = 1;
+	repeated int64 vesselIds = 2;
+	bool isShore = 3;
 }
 
 message	LoadableStudyShore{

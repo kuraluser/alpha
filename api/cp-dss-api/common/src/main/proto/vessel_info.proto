@@ -136,6 +136,8 @@ message VesselRequest {
 	string draftExtreme = 4;
 	repeated int64 tankCategories = 5;
 	string draftForTpc = 6;
+	repeated int64 vesselIds = 7;
+	bool isShore = 8;
 }
 
 message LoadLineDetail {

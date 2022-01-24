@@ -14,6 +14,7 @@ import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.TestUtils;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.security.ship.*;
+import com.cpdss.gateway.service.GroupUserService;
 import com.cpdss.gateway.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -78,6 +79,8 @@ public class UserControllerTest {
   private static final String SAVE_USERS = "/users/{userId}";
   private static final String ROLES = "/roles";
   private static final String SAVE_PERM = "/user/role/permission";
+
+  @MockBean private GroupUserService groupUserService;
 
   @Test
   void getUserAuthorizationsTest() throws Exception {

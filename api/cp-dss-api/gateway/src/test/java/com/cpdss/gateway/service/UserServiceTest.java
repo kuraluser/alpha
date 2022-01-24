@@ -71,6 +71,7 @@ class UserServiceTest {
   @Mock private UserStatusRepository userStatusRepository;
   @Mock private KeycloakDynamicConfigResolver keycloakDynamicConfigResolver;
   @Mock private UserCachingService userCachingService;
+  @Mock private GroupUserService groupUserService;
 
   private AutoCloseable closeable;
 

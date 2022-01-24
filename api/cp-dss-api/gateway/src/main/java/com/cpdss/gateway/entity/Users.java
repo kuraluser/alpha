@@ -5,14 +5,8 @@ import com.cpdss.common.utils.EntityDoc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import java.util.Set;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -117,4 +111,7 @@ public class Users extends EntityDoc {
   @ManyToOne
   @JoinColumn(name = "user_status_xid")
   private UserStatus status;
+
+  @OneToMany(mappedBy = "users", fetch = FetchType.EAGER)
+  private Set<GroupUserMapping> groupUserMappingSet;
 }
