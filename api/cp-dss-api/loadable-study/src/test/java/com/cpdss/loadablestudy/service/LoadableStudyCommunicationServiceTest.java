@@ -307,7 +307,8 @@ public class LoadableStudyCommunicationServiceTest {
         .thenReturn(getJsonArray(ProcessIdentifiers.discharge_cow_details))
         .thenReturn(getJsonArray(ProcessIdentifiers.loadable_plan_stowage_ballast_details))
         .thenReturn(getJsonArray(ProcessIdentifiers.loadable_plan_ballast_details));
-
+    when(loadableStudyStagingService.dependantProcessIsCompleted(anyString(), anyString()))
+        .thenReturn(true);
     // Test and verification
     loadableStudyCommunicationService.processStagingData(transferStageList, "cloud", "1");
     verify(generateDischargeStudyJson)

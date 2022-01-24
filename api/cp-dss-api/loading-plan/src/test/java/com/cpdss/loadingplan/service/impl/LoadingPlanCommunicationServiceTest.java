@@ -10,6 +10,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
 import com.cpdss.loadingplan.repository.*;
+import com.cpdss.loadingplan.repository.communication.LoadingPlanDataTransferInBoundRepository;
 import com.cpdss.loadingplan.service.LoadingPlanCommunicationService;
 import com.cpdss.loadingplan.service.algo.LoadingPlanAlgoService;
 import com.cpdss.loadingplan.service.loadicator.UllageUpdateLoadicatorService;
@@ -109,6 +110,7 @@ public class LoadingPlanCommunicationServiceTest {
 
   @MockBean private LoadingRuleRepository loadingRuleRepository;
   @MockBean private LoadingRuleInputRepository loadingRuleInputRepository;
+  @MockBean private LoadingPlanDataTransferInBoundRepository dataTransferInBoundRepository;
 
   //    @Test
   //     void  testGetDataFromCommunication() {

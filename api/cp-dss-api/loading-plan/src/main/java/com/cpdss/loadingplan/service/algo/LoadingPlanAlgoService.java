@@ -188,61 +188,19 @@ public class LoadingPlanAlgoService {
           HttpStatusCode.BAD_REQUEST);
     }
     String processId = null;
-    Long status = null;
     if (enableCommunication && env.equals("ship")) {
-      status = LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE;
-    } else {
-      status = LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID;
-    }
-    log.info("LoadingInformation status:{}", status);
-    Optional<LoadingInformationStatus> loadingInfoStatusOpt = getLoadingInformationStatus(status);
-    // Set Loading Status
-    loadingInformationRepository.updateLoadingInfoWithInfoStatus(
-        loadingInfoStatusOpt.get(), false, false, loadingInfoOpt.get().getId());
-    //    loadingInfoOpt.get().setLoadingInformationStatus(loadingInfoStatusOpt.get());
-    //    loadingInfoOpt.get().setIsLoadingSequenceGenerated(false);
-    //    loadingInfoOpt.get().setIsLoadingPlanGenerated(false);
-    //    loadingInformationRepository.save(loadingInfoOpt.get());
-    if (enableCommunication && env.equals("ship")) {
-      processId = UUID.randomUUID().toString();
-      JsonArray jsonArray =
-          loadingPlanStagingService.getCommunicationData(
-              com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHIP_TO_SHORE,
-              processId,
-              MessageTypes.LOADINGPLAN.getMessageType(),
-              loadingInfoOpt.get().getId(),
-              null);
-
-      log.info("Json Array in Loading plan service: " + jsonArray.toString());
-      EnvoyWriter.WriterReply ewReply =
-          communicationService.passRequestPayloadToEnvoyWriter(
-              jsonArray.toString(),
-              loadingInfoOpt.get().getVesselXId(),
-              MessageTypes.LOADINGPLAN.getMessageType());
-
-      if (LoadingPlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-        log.info("------- Envoy writer has called successfully : " + ewReply.toString());
-        LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
-            new LoadingPlanCommunicationStatus();
-        if (ewReply.getMessageId() != null) {
-          loadingPlanCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-          loadingPlanCommunicationStatus.setCommunicationStatus(
-              CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-        }
-        loadingPlanCommunicationStatus.setReferenceId(loadingInfoOpt.get().getId());
-        loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
-        loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-        loadingPlanCommunicationStatus.setActive(true);
-        LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
-            this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
-        log.info("Communication table update : " + loadingPlanCommunicationStat.getId());
-      }
+      processId = communicateLoadingPlan(loadingInfoOpt.get().getId(), true);
     } else {
       processId = processAlgoLoading(loadingInfoOpt.get());
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          getLoadingInformationStatus(
+              LoadingPlanConstants.LOADING_INFORMATION_PROCESSING_STARTED_ID);
+      // Set Loading Status
+      loadingInformationRepository.updateLoadingInfoWithInfoStatus(
+          loadingInfoStatusOpt.get(), false, false, loadingInfoOpt.get().getId());
+      createLoadingInformationAlgoStatus(
+          loadingInfoOpt.get(), processId, loadingInfoStatusOpt.get(), null);
     }
-
-    createLoadingInformationAlgoStatus(
-        loadingInfoOpt.get(), processId, loadingInfoStatusOpt.get(), null);
     builder.setLoadingInfoId(loadingInfoOpt.get().getId());
     builder.setProcessId(processId);
   }
@@ -1170,5 +1128,116 @@ public class LoadingPlanAlgoService {
           algoErrors.setIsActive(true);
           algoErrorsRepository.save(algoErrors);
         });
+  }
+
+  /**
+   * Method to communicate loading information
+   *
+   * @param loadingInfoId loadingInfoId value
+   * @return communication id value
+   * @throws GenericServiceException Exception on invalid response from envoy-writer or invalid
+   *     loadingInfoId
+   */
+  public String communicateLoadingPlan(final long loadingInfoId, boolean callRemoteAlgo)
+      throws GenericServiceException {
+
+    LoadingInformation loadingInformation =
+        loadingInformationRepository
+            .findByIdAndIsActiveTrue(loadingInfoId)
+            .orElseThrow(
+                () -> {
+                  log.error("LoadingInformation not found. Id: {}", loadingInfoId);
+                  return new GenericServiceException(
+                      "LoadingInformation not found. Id: " + loadingInfoId,
+                      CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                      HttpStatusCode.INTERNAL_SERVER_ERROR);
+                });
+
+    final String processId = UUID.randomUUID().toString();
+
+    if (callRemoteAlgo) {
+      final String messageId =
+          communicateData(
+              loadingInformation.getId(),
+              processId,
+              com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHIP_TO_SHORE,
+              loadingInformation.getVesselXId(),
+              MessageTypes.LOADINGPLAN);
+      LoadingPlanCommunicationStatus loadingPlanCommunicationStatus =
+          new LoadingPlanCommunicationStatus();
+
+      loadingPlanCommunicationStatus.setMessageUUID(messageId);
+      loadingPlanCommunicationStatus.setCommunicationStatus(
+          CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+
+      loadingPlanCommunicationStatus.setReferenceId(loadingInformation.getId());
+      loadingPlanCommunicationStatus.setMessageType(MessageTypes.LOADINGPLAN.getMessageType());
+      loadingPlanCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+      loadingPlanCommunicationStatus.setActive(true);
+      LoadingPlanCommunicationStatus loadingPlanCommunicationStat =
+          this.loadingPlanCommunicationStatusRepository.save(loadingPlanCommunicationStatus);
+      log.info("Communication table updated : " + loadingPlanCommunicationStat.getId());
+
+      Optional<LoadingInformationStatus> loadingInfoStatusOpt =
+          getLoadingInformationStatus(
+              LoadingPlanConstants.LOADING_INFORMATION_COMMUNICATED_TO_SHORE);
+      // Set Loading Status
+      loadingInformationRepository.updateLoadingInfoWithInfoStatus(
+          loadingInfoStatusOpt.get(), false, false, loadingInformation.getId());
+      createLoadingInformationAlgoStatus(
+          loadingInformation, processId, loadingInfoStatusOpt.get(), null);
+
+    } else {
+      // Sequence communication
+      Set<String> lpSequenceTables =
+          new LinkedHashSet<>(
+              com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHIP_TO_SHORE);
+      lpSequenceTables.addAll(
+          com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHORE_TO_SHIP);
+
+      communicateData(
+          loadingInformation.getId(),
+          processId,
+          new ArrayList<>(lpSequenceTables),
+          loadingInformation.getVesselXId(),
+          MessageTypes.LOADINGPLAN_WITHOUT_ALGO);
+    }
+    return processId;
+  }
+  /**
+   * Method to communicate data
+   *
+   * @param referenceId
+   * @param communicationId
+   * @param communicationTables
+   * @param vesselId
+   * @param messageType
+   * @return
+   * @throws GenericServiceException
+   */
+  private String communicateData(
+      final Long referenceId,
+      final String communicationId,
+      final List<String> communicationTables,
+      final Long vesselId,
+      final MessageTypes messageType)
+      throws GenericServiceException {
+    JsonArray jsonArray =
+        loadingPlanStagingService.getCommunicationData(
+            communicationTables, communicationId, messageType.getMessageType(), referenceId, null);
+    log.debug("Communication Request: {}", jsonArray.toString());
+
+    EnvoyWriter.WriterReply ewReply =
+        communicationService.passRequestPayloadToEnvoyWriter(
+            jsonArray.toString(), vesselId, messageType.getMessageType());
+    if (!LoadingPlanConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+      log.error("Invalid response from envoy-writer. Response: {}", ewReply);
+      throw new GenericServiceException(
+          "Invalid response from envoy-writer. Response: " + ewReply,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+    return ewReply.getMessageId();
   }
 }

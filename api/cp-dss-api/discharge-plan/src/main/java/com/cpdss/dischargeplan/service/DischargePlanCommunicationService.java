@@ -4,6 +4,7 @@ package com.cpdss.dischargeplan.service;
 import static com.cpdss.common.communication.StagingService.setEntityDocFields;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
+import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.communication.entity.DataTransferStage;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
@@ -380,8 +381,19 @@ public class DischargePlanCommunicationService {
           processId,
           LocalDateTime.now());
       String processGroupId = entry.getValue().get(0).getProcessGroupId();
+
+      if (MessageTypes.DISCHARGEPLAN.getMessageType().equals(processGroupId)) {
+        if (!dischargePlanStagingService.dependantProcessIsCompleted(
+            processId, CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName())) {
+          dischargePlanStagingService.updateStatusForProcessId(
+              processId, StagingStatus.READY_TO_PROCESS.getStatus());
+          continue;
+        }
+      }
+
       createEntityObjects(entry);
       DischargeInformation dischargeInfo = null;
+      boolean saved = false;
       try {
         dischargeInfo = saveDischargeInformation();
         CowPlanDetail cowPlanDetailObj = saveCowPlanDetail(dischargeInfo);
@@ -422,6 +434,11 @@ public class DischargePlanCommunicationService {
         saveSynopticalTable();
         saveBillOfLadding(dischargeInfo);
         savePyUser();
+        dischargePlanStagingService.updateStatusCompletedForProcessId(
+            processId, StagingStatus.COMPLETED.getStatus());
+        log.info("updated status to completed for processId:" + processId);
+        saved = true;
+
       } catch (ResourceAccessException e) {
         log.info("Communication ++++++++++++ Failed to save data for  : " + current_table_name);
         log.info("Communication ++++++++++++ ResourceAccessException : " + e.getMessage());
@@ -436,45 +453,57 @@ public class DischargePlanCommunicationService {
             StagingStatus.FAILED.getStatus(),
             e.getMessage());
       }
-      dischargePlanStagingService.updateStatusCompletedForProcessId(
-          processId, StagingStatus.COMPLETED.getStatus());
-      log.info("updated status to completed for processId:" + processId);
-      if (!env.equals("ship") && dischargeInfo != null) {
-        try {
-          if (processGroupId.equals(MessageTypes.DISCHARGEPLAN.getMessageType())) {
-            log.info("Algo call started for DischargePlan");
-            DischargeInformationRequest.Builder builder = DischargeInformationRequest.newBuilder();
-            builder.setDischargeInfoId(dischargeInfo.getId());
-            com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.Builder
-                algoReplyBuilder =
-                    com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.newBuilder();
-            dischargePlanRPCService.generateDischargingPlan(builder.build(), algoReplyBuilder);
-          } else if (processGroupId.equals(
-              MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE.getMessageType())) {
-            log.info("Algo call started for DischargePlan Ullage-Update");
-            Integer arrivalDeparture = null;
-            if (!CollectionUtils.isEmpty(portDischargingPlanCommingleTempDetailsList)) {
-              arrivalDeparture =
-                  portDischargingPlanCommingleTempDetailsList.get(0).getConditionType();
-            } else if (!CollectionUtils.isEmpty(portDischargingPlanStowageDetailsTempList)) {
-              arrivalDeparture = portDischargingPlanStowageDetailsList.get(0).getConditionType();
+      if (saved) {
+        if (!env.equals(DischargePlanConstants.CPDSS_BUILD_ENV_SHIP) && dischargeInfo != null) {
+          try {
+            if (processGroupId.equals(MessageTypes.DISCHARGEPLAN.getMessageType())) {
+              log.info(
+                  "Algo call started for DischargePlan with discharge info:{}",
+                  dischargeInfo.getId());
+              DischargeInformationRequest.Builder builder =
+                  DischargeInformationRequest.newBuilder();
+              builder.setDischargeInfoId(dischargeInfo.getId());
+              com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest.Builder
+                  algoReplyBuilder =
+                      com.cpdss.common.generated.discharge_plan.DischargePlanAlgoRequest
+                          .newBuilder();
+              dischargePlanRPCService.generateDischargingPlan(builder.build(), algoReplyBuilder);
+            } else if (processGroupId.equals(
+                MessageTypes.DISCHARGEPLAN_ULLAGE_UPDATE.getMessageType())) {
+              log.info(
+                  "Algo call started for DischargePlan Ullage-Update with discharge info:{}",
+                  dischargeInfo.getId());
+              Integer arrivalDeparture = null;
+              if (!CollectionUtils.isEmpty(portDischargingPlanCommingleTempDetailsList)) {
+                arrivalDeparture =
+                    portDischargingPlanCommingleTempDetailsList.get(0).getConditionType();
+              } else if (!CollectionUtils.isEmpty(portDischargingPlanStowageDetailsTempList)) {
+                arrivalDeparture = portDischargingPlanStowageDetailsList.get(0).getConditionType();
+              }
+              LoadingPlanModels.UllageBillRequest.Builder builder =
+                  LoadingPlanModels.UllageBillRequest.newBuilder();
+              LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
+                  LoadingPlanModels.UpdateUllage.newBuilder();
+              updateUllageBuilder.setDischargingInfoId(dischargeInfo.getId());
+              updateUllageBuilder.setArrivalDepartutre(arrivalDeparture);
+              builder.addUpdateUllage(updateUllageBuilder.build());
+              ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
             }
-            LoadingPlanModels.UllageBillRequest.Builder builder =
-                LoadingPlanModels.UllageBillRequest.newBuilder();
-            LoadingPlanModels.UpdateUllage.Builder updateUllageBuilder =
-                LoadingPlanModels.UpdateUllage.newBuilder();
-            updateUllageBuilder.setDischargingInfoId(dischargeInfo.getId());
-            updateUllageBuilder.setArrivalDepartutre(arrivalDeparture);
-            builder.addUpdateUllage(updateUllageBuilder.build());
-            ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(builder.build());
+          } catch (InvocationTargetException | IllegalAccessException | JsonProcessingException e) {
+            log.error(
+                "Exception occurred for processGroupId:{} with message{}",
+                processGroupId,
+                e.getMessage());
+            throw new GenericServiceException(
+                e.getMessage(),
+                CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                HttpStatusCode.INTERNAL_SERVER_ERROR,
+                e);
           }
-        } catch (InvocationTargetException | IllegalAccessException | JsonProcessingException e) {
-          log.error("Exception occured:{}", e.getMessage());
-          throw new GenericServiceException(
-              e.getMessage(),
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR,
-              e);
+        } else {
+          // update DataTransferOutBound
+          dischargePlanStagingService.saveDataTransferOutBound(
+              processGroupId, dischargeInfo.getId(), true);
         }
       }
     }

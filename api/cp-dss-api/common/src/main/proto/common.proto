@@ -148,6 +148,7 @@ message CommunicationCheckResponse {
 //	Communication request object for checking isCommunicated
 message CommunicationStatusCheckRequest {
 	int64 referenceId = 1;
+	string reference = 2;
 }
 
 //	Communication request object for triggering communication

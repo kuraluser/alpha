@@ -26,7 +26,9 @@ public enum MessageTypes {
   ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT(
       "Ullage_Update_Loadicator_On_AlgoResult", "Ullage_Update_Loadicator_On_AlgoResult"),
   DISCHARGESTUDY("DischargeStudy", "DischargeStudy"),
+  DISCHARGESTUDY_WITHOUT_ALGO("DischargeStudy_Without_Algo", DISCHARGESTUDY.getMessageType()),
   DISCHARGEPLAN("DischargePlan", "DischargePlan"),
+  DISCHARGEPLAN_WITHOUT_ALGO("DischargePlan_Without_Algo", DISCHARGEPLAN.getMessageType()),
   DISCHARGEPLAN_ALGORESULT("DischargePlan_AlgoResult", "DischargePlan_AlgoResult"),
   DISCHARGEPLAN_ULLAGE_UPDATE("DischargePlan_Ullage_Update", "DischargePlan_Ullage_Update"),
   DISCHARGEPLAN_ULLAGE_UPDATE_ALGORESULT(

@@ -42,7 +42,6 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
 import com.cpdss.loadablestudy.repository.*;
-import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.cpdss.loadablestudy.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -161,45 +160,8 @@ public class GenerateDischargeStudyJson {
         loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     if (loadableStudyOpt.isPresent()) {
       String processId = null;
-      Long status = null;
       if (enableCommunication && env.equals("ship")) {
-        processId = UUID.randomUUID().toString();
-        status = LoadableStudiesConstants.DISCHARGE_STUDY_COMMUNICATED_TO_SHORE;
-        JsonArray jsonArray =
-            loadableStudyStagingService.getCommunicationData(
-                LoadableStudiesConstants.DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
-                processId,
-                MessageTypes.DISCHARGESTUDY.getMessageType(),
-                loadableStudyOpt.get().getId());
-
-        log.info(
-            "Json Array in DischargeStudy service from ship to shore: " + jsonArray.toString());
-        EnvoyWriter.WriterReply ewReply =
-            communicationService.passRequestPayloadToEnvoyWriter(
-                jsonArray.toString(),
-                loadableStudyOpt.get().getVesselXId(),
-                MessageTypes.DISCHARGESTUDY.getMessageType());
-
-        if (LoadableStudiesConstants.SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
-          log.info("------- Envoy writer has called successfully : " + ewReply.toString());
-          LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
-              new LoadableStudyCommunicationStatus();
-          if (ewReply.getMessageId() != null) {
-            loadableStudyCommunicationStatus.setMessageUUID(ewReply.getMessageId());
-            loadableStudyCommunicationStatus.setCommunicationStatus(
-                CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
-          }
-          loadableStudyCommunicationStatus.setReferenceId(loadableStudyOpt.get().getId());
-          loadableStudyCommunicationStatus.setMessageType(
-              MessageTypes.DISCHARGESTUDY.getMessageType());
-          loadableStudyCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
-          LoadableStudyCommunicationStatus loadingPlanCommunication =
-              this.loadableStudyCommunicationStatusRepository.save(
-                  loadableStudyCommunicationStatus);
-          log.info("Communication table update : " + loadingPlanCommunication.getId());
-          loadableStudyRepository.updateLoadableStudyStatus(status, loadableStudyOpt.get().getId());
-          updateProcessIdForDischargeStudy("", loadableStudyOpt.get(), status);
-        }
+        processId = communicateDischargeStudy(loadableStudyOpt.get().getId(), true);
       } else {
         log.info("Before Create algo payload");
         DischargeStudyAlgoJson AlgoJsonPayload =
@@ -220,10 +182,12 @@ public class GenerateDischargeStudyJson {
             restTemplate.postForObject(dischargeStudyUrl, AlgoJsonPayload, AlgoResponse.class);
         processId = algoResponse.getProcessId();
         log.info("Algo response :{}", algoResponse);
-        status = LOADABLE_STUDY_PROCESSING_STARTED_ID;
-        loadableStudyRepository.updateLoadableStudyStatus(status, loadableStudyOpt.get().getId());
-        updateProcessIdForDischargeStudy(processId, loadableStudyOpt.get(), status);
+        loadableStudyRepository.updateLoadableStudyStatus(
+            LOADABLE_STUDY_PROCESSING_STARTED_ID, loadableStudyOpt.get().getId());
+        updateProcessIdForDischargeStudy(
+            processId, loadableStudyOpt.get(), LOADABLE_STUDY_PROCESSING_STARTED_ID);
       }
+
       replyBuilder
           .setProcesssId(processId)
           .setResponseStatus(
@@ -1050,5 +1014,106 @@ public class GenerateDischargeStudyJson {
           instructionList.add(instruction);
         });
     return instructionList;
+  }
+
+  /**
+   * Method to communicate discharge study
+   *
+   * @param dischargeStudyId - dischargeStudy Id value
+   * @return communication id value
+   * @throws GenericServiceException Exception on invalid response from envoy-writer or invalid
+   *     dischargeStudyId
+   */
+  public String communicateDischargeStudy(final long dischargeStudyId, boolean callRemoteAlgo)
+      throws GenericServiceException {
+
+    LoadableStudy loadableStudy =
+        loadableStudyRepository
+            .findById(dischargeStudyId)
+            .orElseThrow(
+                () -> {
+                  log.error("Discharge Study not found. Id: {}", dischargeStudyId);
+                  return new GenericServiceException(
+                      "Discharge Study not found. Id: " + dischargeStudyId,
+                      CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                      HttpStatusCode.INTERNAL_SERVER_ERROR);
+                });
+
+    final String processId = UUID.randomUUID().toString();
+    if (callRemoteAlgo) {
+      final String messageId =
+          communicateData(
+              loadableStudy.getId(),
+              processId,
+              DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE,
+              loadableStudy.getVesselXId(),
+              MessageTypes.DISCHARGESTUDY);
+
+      LoadableStudyCommunicationStatus loadableStudyCommunicationStatus =
+          new LoadableStudyCommunicationStatus();
+
+      loadableStudyCommunicationStatus.setMessageUUID(messageId);
+      loadableStudyCommunicationStatus.setCommunicationStatus(
+          CommunicationStatus.UPLOAD_WITH_HASH_VERIFIED.getId());
+
+      loadableStudyCommunicationStatus.setReferenceId(loadableStudy.getId());
+      loadableStudyCommunicationStatus.setMessageType(MessageTypes.DISCHARGESTUDY.getMessageType());
+      loadableStudyCommunicationStatus.setCommunicationDateTime(LocalDateTime.now());
+      LoadableStudyCommunicationStatus loadingPlanCommunication =
+          this.loadableStudyCommunicationStatusRepository.save(loadableStudyCommunicationStatus);
+      log.info("Communication table update : " + loadingPlanCommunication.getId());
+      updateProcessIdForDischargeStudy("", loadableStudy, DISCHARGE_STUDY_COMMUNICATED_TO_SHORE);
+      loadableStudyRepository.updateLoadableStudyStatus(
+          DISCHARGE_STUDY_COMMUNICATED_TO_SHORE, loadableStudy.getId());
+    } else {
+      // Sequence communication
+      Set<String> dsSequenceTables = new LinkedHashSet<>(DISCHARGE_STUDY_COMM_TABLES_SHIP_TO_SHORE);
+      dsSequenceTables.addAll(LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP);
+
+      communicateData(
+          loadableStudy.getId(),
+          processId,
+          new ArrayList<>(dsSequenceTables),
+          loadableStudy.getVesselXId(),
+          MessageTypes.DISCHARGESTUDY_WITHOUT_ALGO);
+    }
+    return processId;
+  }
+
+  /**
+   * Method to communicate data
+   *
+   * @param dischargeStudyId
+   * @param communicationId
+   * @param communicationTables
+   * @param vesselId
+   * @param messageType
+   * @return
+   * @throws GenericServiceException
+   */
+  private String communicateData(
+      final Long dischargeStudyId,
+      final String communicationId,
+      final List<String> communicationTables,
+      final Long vesselId,
+      final MessageTypes messageType)
+      throws GenericServiceException {
+    JsonArray jsonArray =
+        loadableStudyStagingService.getCommunicationData(
+            communicationTables, communicationId, messageType.getMessageType(), dischargeStudyId);
+    log.debug("Communication Request: {}", jsonArray.toString());
+
+    EnvoyWriter.WriterReply ewReply =
+        communicationService.passRequestPayloadToEnvoyWriter(
+            jsonArray.toString(), vesselId, messageType.getMessageType());
+    if (!SUCCESS.equals(ewReply.getResponseStatus().getStatus())) {
+      log.error("Invalid response from envoy-writer. Response: {}", ewReply);
+      throw new GenericServiceException(
+          "Invalid response from envoy-writer. Response: " + ewReply,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    log.info("------- Envoy writer has called successfully : " + ewReply.toString());
+    return ewReply.getMessageId();
   }
 }

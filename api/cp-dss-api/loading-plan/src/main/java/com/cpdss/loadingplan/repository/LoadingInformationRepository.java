@@ -103,4 +103,6 @@ public interface LoadingInformationRepository
       boolean sequenceGenerated,
       boolean planGenerated,
       Long id);
+
+  List<LoadingInformation> findByLoadablePatternXId(Long patternId);
 }

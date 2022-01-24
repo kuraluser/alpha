@@ -28,13 +28,14 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels.StowageAndBillO
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc.LoadingPlanServiceImplBase;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
 import com.cpdss.loadingplan.communication.LoadingPlanStagingService;
+import com.cpdss.loadingplan.entity.LoadingInformation;
 import com.cpdss.loadingplan.entity.PortLoadingPlanCommingleDetails;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.entity.PyUser;
 import com.cpdss.loadingplan.repository.BillOfLaddingRepository;
+import com.cpdss.loadingplan.repository.LoadingInformationRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanCommingleDetailsRepository;
 import com.cpdss.loadingplan.repository.PortLoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.PyUserRepository;
@@ -77,6 +78,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
   @Autowired LoadingInformationBuilderService informationBuilderService;
   @Autowired LoadingPlanStagingService loadingPlanStagingService;
   @Autowired PyUserRepository pyUserRepository;
+  @Autowired LoadingInformationRepository loadingInformationRepository;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";
@@ -708,10 +710,15 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     Common.CommunicationCheckResponse.Builder responseBuilder =
         Common.CommunicationCheckResponse.newBuilder();
     try {
+      log.debug("checkDependentProcess Request: {}", request);
       final boolean isDependentProcessCompleted =
           loadingPlanStagingService.dependantProcessIsCompleted(
               request.getDependantProcessId(),
-              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+              CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName());
+      log.debug(
+          "checkDependentProcess ::: Dependent Process Id: {}, Completed Status: {}",
+          request.getDependantProcessId(),
+          isDependentProcessCompleted);
       log.info(
           "checkDependentProcess Completed ::: Dependent Process Id: {}, Completed Status: {}",
           request.getDependantProcessId(),
@@ -757,28 +764,90 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
 
     Common.CommunicationCheckResponse.Builder responseBuilder =
         Common.CommunicationCheckResponse.newBuilder();
+    Boolean isCommunicated = true;
     try {
-      final boolean isCommunicated =
-          loadingPlanStagingService.isCommunicated(
-              MessageTypes.LOADABLESTUDY.getMessageType(),
-              request.getReferenceId(),
-              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+      log.debug("checkCommunicated Request: {}", request);
+      // referenceId for loading plan trigger is loadablePatternId from discharge study
+      List<LoadingInformation> loadingInformationList =
+          loadingInformationRepository.findByLoadablePatternXId(request.getReferenceId());
+      if (!CollectionUtils.isEmpty(loadingInformationList)) {
+        List<Boolean> communicatedStatus = new ArrayList();
+        for (LoadingInformation loadingInfo : loadingInformationList) {
+          communicatedStatus.add(
+              loadingPlanStagingService.isCommunicated(
+                  request.getReference(),
+                  loadingInfo.getId(),
+                  CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName()));
+          if (communicatedStatus.contains(false)) {
+            isCommunicated = false;
+          }
+          // Set response status
+          responseBuilder
+              .setIsCompleted(isCommunicated)
+              .setResponseStatus(
+                  ResponseStatus.newBuilder()
+                      .setStatus(SUCCESS)
+                      .setMessage(SUCCESS)
+                      .setCode(String.valueOf(HttpStatusCode.OK.value()))
+                      .setHttpStatusCode(HttpStatusCode.OK.value())
+                      .build())
+              .build();
+        }
+      }
+    } catch (Exception e) {
       log.info(
           "checkCommunicated Completed ::: Reference Id: {}, isCommunicated: {}",
           request.getReferenceId(),
           isCommunicated);
 
       // Set response status
-      responseBuilder
-          .setIsCompleted(isCommunicated)
-          .setResponseStatus(
-              ResponseStatus.newBuilder()
-                  .setStatus(SUCCESS)
-                  .setMessage(SUCCESS)
-                  .setCode(String.valueOf(HttpStatusCode.OK.value()))
-                  .setHttpStatusCode(HttpStatusCode.OK.value())
-                  .build())
-          .build();
+      responseBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setMessage(Strings.nullToEmpty(e.getMessage()))
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setHttpStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR.value())
+              .build());
+    } finally {
+      // Build response
+      responseObserver.onNext(responseBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void triggerCommunication(
+      Common.CommunicationTriggerRequest request,
+      StreamObserver<Common.CommunicationTriggerResponse> responseObserver) {
+    Common.CommunicationTriggerResponse.Builder responseBuilder =
+        Common.CommunicationTriggerResponse.newBuilder();
+    try {
+      List<LoadingInformation> loadingInformationList =
+          loadingInformationRepository.findByLoadablePatternXId(request.getReferenceId());
+      if (!CollectionUtils.isEmpty(loadingInformationList)) {
+        String processId = null;
+        for (LoadingInformation loadingInfo : loadingInformationList) {
+          final boolean isCommunicated =
+              loadingPlanStagingService.isCommunicated(
+                  request.getMessageType(),
+                  loadingInfo.getId(),
+                  CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName());
+          if (!isCommunicated) {
+            processId = loadingPlanAlgoService.communicateLoadingPlan(loadingInfo.getId(), false);
+          }
+        }
+        // Set response status
+        responseBuilder
+            .setProcessId(processId)
+            .setResponseStatus(
+                ResponseStatus.newBuilder()
+                    .setStatus(SUCCESS)
+                    .setMessage(SUCCESS)
+                    .setCode(String.valueOf(HttpStatusCode.OK.value()))
+                    .setHttpStatusCode(HttpStatusCode.OK.value())
+                    .build())
+            .build();
+      }
     } catch (Exception e) {
       log.error("checkCommunicated failed. Reference Id: {}", request.getReferenceId(), e);
       // Set response status

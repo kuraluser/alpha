@@ -18,7 +18,7 @@ import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 
-import com.cpdss.common.communication.CommunicationConstants;
+import com.cpdss.common.communication.CommunicationConstants.CommunicationModule;
 import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
@@ -241,6 +241,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   private LoadablePlanCommingleDetailsPortwiseRepository
       loadablePlanCommingleDetailsPortwiseRepository;
 
+  @Autowired GenerateDischargeStudyJson generateDischargeStudyJson;
   /**
    * method for save voyage
    *
@@ -4006,8 +4007,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       final boolean isDependentProcessCompleted =
           loadableStudyStagingService.dependantProcessIsCompleted(
-              request.getDependantProcessId(),
-              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+              request.getDependantProcessId(), CommunicationModule.LOADABLE_STUDY.getModuleName());
       log.info(
           "checkDependentProcess Completed ::: Dependent Process Id: {}, Completed Status: {}",
           request.getDependantProcessId(),
@@ -4054,14 +4054,15 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     Common.CommunicationCheckResponse.Builder responseBuilder =
         Common.CommunicationCheckResponse.newBuilder();
     try {
-      // referenceId for loadable study trigger is loadablePatternId from loading plan
+      // referenceId for loadable study trigger is loadablePatternId from loading plan or discharge
+      // plan
       final long loadableStudyId =
           loadablePatternRepository.getLoadableStudyId(request.getReferenceId());
       final boolean isCommunicated =
           loadableStudyStagingService.isCommunicated(
-              MessageTypes.LOADABLESTUDY.getMessageType(),
+              request.getReference(),
               loadableStudyId,
-              CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName());
+              CommunicationModule.LOADABLE_STUDY.getModuleName());
       log.info(
           "checkCommunicated Completed ::: LS Id: {}, isCommunicated: {}",
           loadableStudyId,
@@ -4106,13 +4107,21 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         Common.CommunicationTriggerResponse.newBuilder();
     try {
       // referenceId for loadable study trigger is loadablePatternId from loading plan
-      final long loadableStudyId =
+      final long loadableOrDischargeStudyId =
           loadablePatternRepository.getLoadableStudyId(request.getReferenceId());
-      final String communicationId =
-          loadablePatternService.communicateLoadableStudy(loadableStudyId, false);
+      String communicationId = null;
+
+      if (MessageTypes.LOADABLESTUDY.getMessageType().equals(request.getMessageType())) {
+        communicationId =
+            loadablePatternService.communicateLoadableStudy(loadableOrDischargeStudyId, false);
+      } else if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(request.getMessageType())) {
+        communicationId =
+            generateDischargeStudyJson.communicateDischargeStudy(loadableOrDischargeStudyId, false);
+      }
+
       log.info(
           "triggerCommunication Completed ::: LS Id: {}, CommunicationId: {}",
-          loadableStudyId,
+          loadableOrDischargeStudyId,
           communicationId);
       // Set response status
       responseBuilder

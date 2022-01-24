@@ -1991,7 +1991,6 @@ public class DischargePlanAlgoService {
       dischargePlanCommunicationStatus.setActive(true);
       DischargePlanCommunicationStatus dischargePlanCommcationStatus =
           dischargePlanCommunicationStatusRepository.save(dischargePlanCommunicationStatus);
-      log.info("Communication table update : " + dischargePlanCommunicationStatus.getId());
       log.info(
           "DischargePlanCommunicationStatus table updated id : "
               + dischargePlanCommcationStatus.getId());

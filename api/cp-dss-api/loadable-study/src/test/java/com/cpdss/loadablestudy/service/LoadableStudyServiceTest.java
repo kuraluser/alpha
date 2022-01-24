@@ -268,6 +268,7 @@ class LoadableStudyServiceTest {
 
   @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
   @MockBean private FileRepoService fileRepoService;
+  @MockBean GenerateDischargeStudyJson generateDischargeStudyJson;
 
   @Value("${loadablestudy.attachement.rootFolder}")
   private String rootFolder;
