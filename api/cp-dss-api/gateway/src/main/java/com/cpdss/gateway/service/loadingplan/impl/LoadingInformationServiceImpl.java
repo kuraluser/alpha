@@ -343,7 +343,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
                   : new BigDecimal(bd.getSeaDraftLimitation()));
           dto.setAirDraftLimitation(
               bd.getAirDraftLimitation().isEmpty()
-                  ? BigDecimal.ZERO
+                  ? null
                   : new BigDecimal(bd.getAirDraftLimitation()));
           dto.setMaxManifoldHeight(
               bd.getMaxManifoldHeight().isEmpty()
@@ -387,9 +387,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
               ? BigDecimal.ZERO
               : new BigDecimal(lb.getSeaDraftLimitation()));
       var2.setAirDraftLimitation(
-          lb.getAirDraftLimitation().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(lb.getAirDraftLimitation()));
+          lb.getAirDraftLimitation().isEmpty() ? null : new BigDecimal(lb.getAirDraftLimitation()));
       var2.setMaxManifoldHeight(
           lb.getMaxManifoldHeight().isEmpty()
               ? BigDecimal.ZERO
