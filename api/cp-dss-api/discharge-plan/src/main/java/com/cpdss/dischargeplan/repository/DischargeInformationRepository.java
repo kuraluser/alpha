@@ -95,6 +95,11 @@ public interface DischargeInformationRepository
 
   @Transactional
   @Modifying
+  @Query("UPDATE DischargeInformation SET slopQuantity = ?1 WHERE id = ?2")
+  void updateSlopQuantity(BigDecimal slopQuantity, Long id);
+
+  @Transactional
+  @Modifying
   @Query(
       "UPDATE DischargeInformation SET dischargeCommingleCargoSeparately = ?1, dischargeSlopTankFirst=?2 WHERE id = ?3")
   void updateCommingledCargoAndSlopTankFirst(

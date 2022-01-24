@@ -118,6 +118,10 @@ public class DischargeInformationBuilderService {
     if (!var1.getCommonDate().isEmpty()) {
       var2.setCommonDate(LocalDate.parse(var1.getCommonDate()));
     }
+    var2.setSlopQuantity(
+        StringUtils.hasLength(var1.getSlopQuantity())
+            ? new BigDecimal(var1.getSlopQuantity())
+            : BigDecimal.ZERO);
     return var2;
   }
 
@@ -848,6 +852,8 @@ public class DischargeInformationBuilderService {
     }
     builder.setTrimAllowed(trimBuilder.build());
     builder.setCommonDate(String.valueOf(dischargingDetails.getCommonDate()));
+    Optional.ofNullable(dischargingDetails.getSlopQuantity())
+        .ifPresent(slopQuantity -> builder.setSlopQuantity(slopQuantity.toString()));
     return builder.build();
   }
 

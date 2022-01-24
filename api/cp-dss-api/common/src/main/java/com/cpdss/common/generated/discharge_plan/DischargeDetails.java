@@ -17,6 +17,7 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     timeOfSunset_ = "";
     startTime_ = "";
     commonDate_ = "";
+    slopQuantity_ = "";
   }
 
   @java.lang.Override
@@ -103,6 +104,13 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
               java.lang.String s = input.readStringRequireUtf8();
 
               commonDate_ = s;
+              break;
+            }
+          case 66:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              slopQuantity_ = s;
               break;
             }
           default:
@@ -327,6 +335,41 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     }
   }
 
+  public static final int SLOPQUANTITY_FIELD_NUMBER = 8;
+  private volatile java.lang.Object slopQuantity_;
+  /**
+   * <code>string slopQuantity = 8;</code>
+   *
+   * @return The slopQuantity.
+   */
+  public java.lang.String getSlopQuantity() {
+    java.lang.Object ref = slopQuantity_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      slopQuantity_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string slopQuantity = 8;</code>
+   *
+   * @return The bytes for slopQuantity.
+   */
+  public com.google.protobuf.ByteString getSlopQuantityBytes() {
+    java.lang.Object ref = slopQuantity_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      slopQuantity_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -362,6 +405,9 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     if (!getCommonDateBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, commonDate_);
     }
+    if (!getSlopQuantityBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, slopQuantity_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -392,6 +438,9 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     if (!getCommonDateBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, commonDate_);
     }
+    if (!getSlopQuantityBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, slopQuantity_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -418,6 +467,7 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     }
     if (getVoyageId() != other.getVoyageId()) return false;
     if (!getCommonDate().equals(other.getCommonDate())) return false;
+    if (!getSlopQuantity().equals(other.getSlopQuantity())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -445,6 +495,8 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getVoyageId());
     hash = (37 * hash) + COMMONDATE_FIELD_NUMBER;
     hash = (53 * hash) + getCommonDate().hashCode();
+    hash = (37 * hash) + SLOPQUANTITY_FIELD_NUMBER;
+    hash = (53 * hash) + getSlopQuantity().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -601,6 +653,8 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
 
       commonDate_ = "";
 
+      slopQuantity_ = "";
+
       return this;
     }
 
@@ -639,6 +693,7 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
       }
       result.voyageId_ = voyageId_;
       result.commonDate_ = commonDate_;
+      result.slopQuantity_ = slopQuantity_;
       onBuilt();
       return result;
     }
@@ -712,6 +767,10 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
       }
       if (!other.getCommonDate().isEmpty()) {
         commonDate_ = other.commonDate_;
+        onChanged();
+      }
+      if (!other.getSlopQuantity().isEmpty()) {
+        slopQuantity_ = other.slopQuantity_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -1236,6 +1295,82 @@ public final class DischargeDetails extends com.google.protobuf.GeneratedMessage
       checkByteStringIsUtf8(value);
 
       commonDate_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object slopQuantity_ = "";
+    /**
+     * <code>string slopQuantity = 8;</code>
+     *
+     * @return The slopQuantity.
+     */
+    public java.lang.String getSlopQuantity() {
+      java.lang.Object ref = slopQuantity_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        slopQuantity_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string slopQuantity = 8;</code>
+     *
+     * @return The bytes for slopQuantity.
+     */
+    public com.google.protobuf.ByteString getSlopQuantityBytes() {
+      java.lang.Object ref = slopQuantity_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        slopQuantity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string slopQuantity = 8;</code>
+     *
+     * @param value The slopQuantity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSlopQuantity(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      slopQuantity_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string slopQuantity = 8;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearSlopQuantity() {
+
+      slopQuantity_ = getDefaultInstance().getSlopQuantity();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string slopQuantity = 8;</code>
+     *
+     * @param value The bytes for slopQuantity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSlopQuantityBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      slopQuantity_ = value;
       onChanged();
       return this;
     }

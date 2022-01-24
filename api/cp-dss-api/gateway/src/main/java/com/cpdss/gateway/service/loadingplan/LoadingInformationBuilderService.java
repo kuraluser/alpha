@@ -210,6 +210,8 @@ public class LoadingInformationBuilderService {
     builder.setTrimAllowed(trimBuilder.build());
 
     builder.setCommonDate(String.valueOf(loadingDetails.getCommonDate()));
+    Optional.ofNullable(loadingDetails.getSlopQuantity())
+        .ifPresent(slopQuantity -> builder.setSlopQuantity(slopQuantity.toString()));
     return builder.build();
   }
 

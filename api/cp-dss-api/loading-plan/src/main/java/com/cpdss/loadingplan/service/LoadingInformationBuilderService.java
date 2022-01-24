@@ -25,6 +25,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -54,6 +55,9 @@ public class LoadingInformationBuilderService {
 
       Optional.ofNullable(var1.getCommonDate())
           .ifPresent(commonDate -> builder.setCommonDate(String.valueOf(var1.getCommonDate())));
+
+      Optional.ofNullable(var1.getSlopQuantity())
+          .ifPresent(slopQuantity -> builder.setSlopQuantity(slopQuantity.toString()));
     }
     return builder.build();
   }
@@ -288,6 +292,11 @@ public class LoadingInformationBuilderService {
       if (!source.getLoadingDetail().getCommonDate().isEmpty()) {
         target.setCommonDate(LocalDate.parse(source.getLoadingDetail().getCommonDate()));
       }
+
+      target.setSlopQuantity(
+          StringUtils.hasLength(source.getLoadingDetail().getSlopQuantity())
+              ? new BigDecimal(source.getLoadingDetail().getSlopQuantity())
+              : BigDecimal.ZERO);
     }
     return target;
   }

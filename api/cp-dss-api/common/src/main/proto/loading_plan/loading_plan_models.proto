@@ -58,6 +58,7 @@ message LoadingDetails{
   TrimAllowed trimAllowed = 5;
   int64 voyageId = 6;
   string commonDate = 7;
+  string slopQuantity = 8;
 }
 
 message TrimAllowed{

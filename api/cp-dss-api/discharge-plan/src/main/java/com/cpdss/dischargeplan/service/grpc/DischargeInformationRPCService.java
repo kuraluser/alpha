@@ -56,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @GrpcService
@@ -850,6 +851,11 @@ public class DischargeInformationRPCService
       if (!source.getDischargeDetails().getCommonDate().isEmpty()) {
         dischargeInformationRepository.updateCommonDate(target.getCommonDate(), target.getId());
       }
+      dischargeInformationRepository.updateSlopQuantity(
+          StringUtils.hasLength(source.getDischargeDetails().getSlopQuantity())
+              ? new BigDecimal(source.getDischargeDetails().getSlopQuantity())
+              : BigDecimal.ZERO,
+          target.getId());
     }
   }
 

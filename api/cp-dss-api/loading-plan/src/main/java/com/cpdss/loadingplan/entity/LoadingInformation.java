@@ -152,4 +152,7 @@ public class LoadingInformation extends EntityDoc {
 
   @Column(name = "is_stage_duration_used")
   private Boolean isStageDurationUsed;
+
+  @Column(name = "slop_quantity")
+  private BigDecimal slopQuantity;
 }
