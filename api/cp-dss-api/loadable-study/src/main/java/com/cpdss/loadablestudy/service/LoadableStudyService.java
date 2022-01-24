@@ -321,6 +321,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
   public void findLoadableStudiesByVesselAndVoyage(
       LoadableStudyRequest request, StreamObserver<LoadableStudyReply> responseObserver) {
     Builder replyBuilder = LoadableStudyReply.newBuilder();
+
     try {
       log.info("inside loadable study service - findLoadableStudiesByVesselAndVoyage");
       Optional<Voyage> voyageOpt = this.voyageRepository.findById(request.getVoyageId());
@@ -328,9 +329,12 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         throw new GenericServiceException(
             "Voyage does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
       }
+
       List<LoadableStudy> loadableStudyEntityList =
-          this.loadableStudyRepository.findAllLoadableStudy(
-              request.getVesselId(), voyageOpt.get(), request.getPlanningTypeValue());
+          this.loadableStudyRepository
+              .findByVoyageAndVesselXIdAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
+                  voyageOpt.get(), request.getVesselId(), request.getPlanningTypeValue());
+
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
       for (LoadableStudy entity : loadableStudyEntityList) {

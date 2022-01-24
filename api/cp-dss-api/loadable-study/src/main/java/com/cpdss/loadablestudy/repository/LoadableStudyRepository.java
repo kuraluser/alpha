@@ -21,11 +21,25 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
       findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
           final Long vesselXId, final Voyage voyage, Integer typeId);
 
+  List<LoadableStudy>
+      findByVoyageAndVesselXIdAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
+          final Voyage voyage, final Long vesselXId, Integer typeId);
+
   default List<LoadableStudy> findAllLoadableStudy(
       Long vesselXId, Voyage voyage, Integer planningId) {
     return findByVesselXIdAndVoyageAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDesc(
         vesselXId, voyage, planningId);
   }
+
+  @Query(
+      value =
+          "SELECT LS FROM LoadableStudy LS LEFT JOIN FETCH LS.attachments "
+              + "WHERE LS.voyage= ?1 AND  LS.vesselXId = ?2 "
+              + "AND LS.planningTypeXId =?3 AND LS.isActive = true"
+              + " ORDER BY LS.createdDateTime desc")
+  List<LoadableStudy>
+      findByVoyageAndVesselXIdAndPlanningTypeXIdAndIsActiveTrueOrderByCreatedDateTimeDescWithAttachments(
+          final Voyage voyage, final Long vesselXId, Integer typeId);
 
   public List<LoadableStudy> findByVesselXId(final Long vesselXId);
 
