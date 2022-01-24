@@ -363,7 +363,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
         const formControl = this.field(index, key);
         formControl.updateValueAndValidity();
         formControl.markAllAsTouched();
-        if (formControl.invalid) {
+        if (formControl.invalid && this.loadingDischargingDelays[index][key]['isEditable']) {
           this.loadingDischargingDelays[index][key]['isEditMode'] = true;
         } else {
           this.loadingDischargingDelays[index][key]['isEditMode'] = false;
