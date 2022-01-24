@@ -397,7 +397,7 @@ export class LoadableQuantityComponent implements OnInit {
    * Auto calculate (Distance/ Speed)
    */
   getRunningHoursOnLoad() {
-    let runningHours = Number(this.loadableQuantity.distanceFromLastPort) / Number(this.loadableQuantity.vesselAverageSpeed);
+    const runningHours = Number(this.loadableQuantity.distanceFromLastPort) / Number(this.loadableQuantity.vesselAverageSpeed);
     this.loadableQuantityForm.controls['runningHours'].setValue(isNaN(runningHours) ? 0 : runningHours);
   }
 
@@ -426,7 +426,6 @@ export class LoadableQuantityComponent implements OnInit {
   getFoConsumptionInSz() {
     this.loadableQuantityForm.controls['foConsInSz'].setValue(Number(this.loadableQuantityForm.get('foConday').value) * (this.loadableQuantityForm.get('runningDays').value));
     this.getTotalLoadableQuantity();
-
   }
 
   /**
@@ -456,8 +455,7 @@ export class LoadableQuantityComponent implements OnInit {
   getSubTotalOnLoad() {
     if (this.caseNo === 1) {
       this.loadableQuantityForm.controls['subTotal'].setValue(Number(this.loadableQuantity.totalQuantity) + Number(this.loadableQuantityForm.get('foConsInSz').value));
-    }
-    else {
+    } else {
       this.loadableQuantityForm.controls['subTotal'].setValue(Number(this.loadableQuantity.totalQuantity));
     }
   }
@@ -467,31 +465,27 @@ export class LoadableQuantityComponent implements OnInit {
    */
   getTotalLoadableQuantity() {
     if (this.caseNo === 1) {
-      const total = Number(this.loadableQuantityForm.get('subTotal').value) + Number(this.loadableQuantityForm.get('foConsInSz').value);
+      const calculatedTotal = Number(this.loadableQuantityForm.get('subTotal').value) + Number(this.loadableQuantityForm.get('foConsInSz').value);
+      const total = Number(calculatedTotal.toFixed(2));
       if (total < 0) {
         this.isNegative = true;
         this.loadableQuantityForm.controls['totalQuantity'].setValue('');
-      }
-      else {
+      } else {
         this.isNegative = false;
         this.loadableQuantityForm.controls['totalQuantity'].setValue(total);
       }
-
-    }
-    else {
+    } else {
       Number(this.loadableQuantityForm.get('subTotal').value) < 0 ? this.isNegative = true : this.isNegative = false;
       if (this.isNegative) {
         this.isNegative = true;
         this.loadableQuantityForm.controls['totalQuantity'].setValue('');
-      }
-      else {
+      } else {
         this.isNegative = false;
         this.loadableQuantityForm.controls['totalQuantity'].setValue(Number(this.loadableQuantityForm.get('subTotal').value));
       }
-
     }
-
   }
+
   /**
    *
    * @param type
