@@ -105,6 +105,8 @@ public class UserService {
   @Value("${ship.user.password-reminder}")
   private Integer PASSWORD_EXPIRE_REMINDER;
 
+  @Autowired private GroupUserService groupUserService;
+
   /**
    * Retrieves the user information from user database
    *
@@ -151,6 +153,18 @@ public class UserService {
           "Invalid user in request token",
           CommonErrorCodes.E_CPDSS_INVALID_USER,
           HttpStatusCode.BAD_REQUEST);
+    }
+
+    if (!this.isShip()) {
+      List<Long> vesselIds = groupUserService.getVesselIds(usersEntity.getId());
+      if (CollectionUtils.isEmpty(vesselIds)) {
+        user.setVesselStatusCode(
+            Integer.valueOf(CommonErrorCodes.E_CPDSS_USER_VESSEL_MAPPING_NOT_EXIST));
+        user.setVesselStatus("You don't have any vessel mapping");
+      } else {
+        user.setVesselStatusCode(200);
+        user.setVesselStatus(SUCCESS);
+      }
     }
 
     // Set status values
@@ -692,7 +706,6 @@ public class UserService {
   /**
    * * Check if role with same name exists
    *
-   * @param companyId
    * @param roleId
    * @param roleName
    * @throws GenericServiceException
@@ -1096,7 +1109,6 @@ public class UserService {
    * Generic getter for user name, In tables we keep user Id as String.
    *
    * @param id
-   * @param authorizationToken
    * @return
    * @throws GenericServiceException
    */
@@ -1147,5 +1159,36 @@ public class UserService {
 
   public Users getUsersEntity(String keyCloakId) {
     return this.usersRepository.findByKeycloakIdAndIsActive(keyCloakId, true);
+  }
+
+  public Long getUserId(HttpHeaders headers) throws GenericServiceException {
+
+    String authorizationToken = headers.getFirst(HttpHeaders.AUTHORIZATION);
+    Users usersEntity;
+    if (this.isShip()) {
+      Long userId =
+          ((ShipUserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+              .getUserId();
+      usersEntity = this.usersRepository.findByIdAndIsActive(userId, true);
+    } else {
+      try {
+        AccessToken token = parseKeycloakToken(authorizationToken);
+        usersEntity = this.usersRepository.findByKeycloakId(token.getSubject());
+      } catch (VerificationException e) {
+        throw new GenericServiceException(
+            "Token parsing failed",
+            CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
+            HttpStatusCode.FORBIDDEN);
+      }
+    }
+
+    // Reject API if user not found
+    if (null == usersEntity) {
+      throw new GenericServiceException(
+          "Invalid user in request token",
+          CommonErrorCodes.E_CPDSS_INVALID_USER,
+          HttpStatusCode.BAD_REQUEST);
+    }
+    return usersEntity.getId();
   }
 }

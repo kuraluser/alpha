@@ -96,4 +96,6 @@ public interface VesselRepository
       @Param("vesselId") Long vesselId, @Param("sectionId") Long sectionId);
 
   Optional<Vessel> findByIdAndIsActiveTrue(Long id);
+
+  public List<Vessel> findByIdInAndIsActive(List<Long> Ids, boolean isActive);
 }

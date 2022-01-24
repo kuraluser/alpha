@@ -40,4 +40,8 @@ public class User {
   private Integer rejectionCount;
 
   private String keycloakId;
+
+  private Integer vesselStatusCode;
+
+  private String vesselStatus;
 }

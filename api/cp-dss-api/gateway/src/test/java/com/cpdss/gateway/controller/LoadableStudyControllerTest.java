@@ -5,9 +5,7 @@ import static com.cpdss.gateway.TestUtils.createDummyObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -85,6 +83,8 @@ class LoadableStudyControllerTest {
   private RedisMasterSyncService redisPortService;
 
   @MockBean SyncRedisMasterService syncRedisMasterService;
+
+  @MockBean GroupUserService groupUserService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";

@@ -139,7 +139,16 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
     log.info("inside grpc service: getAllVesselsByCompany");
     VesselReply.Builder replyBuilder = VesselReply.newBuilder();
     try {
-      List<Vessel> vesselEntities = this.vesselRepository.findByIsActive(true);
+      List<Vessel> vesselEntities;
+      if (!request.getIsShore()) {
+        vesselEntities = this.vesselRepository.findByIsActive(true);
+      } else if (request.getIsShore() && !CollectionUtils.isEmpty(request.getVesselIdsList())) {
+        vesselEntities =
+            this.vesselRepository.findByIdInAndIsActive(
+                request.getVesselIdsList(), request.getIsShore());
+      } else {
+        vesselEntities = new ArrayList<>();
+      }
       for (Vessel entity : vesselEntities) {
         VesselDetail.Builder builder = VesselDetail.newBuilder();
         builder.setId(entity.getId());

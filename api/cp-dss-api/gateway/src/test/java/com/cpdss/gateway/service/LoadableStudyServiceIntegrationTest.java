@@ -4,17 +4,7 @@ package com.cpdss.gateway.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.gateway.domain.CargoGroup;
-import com.cpdss.gateway.domain.CargoNomination;
-import com.cpdss.gateway.domain.CargoNominationResponse;
-import com.cpdss.gateway.domain.CommingleCargo;
-import com.cpdss.gateway.domain.CommingleCargoResponse;
-import com.cpdss.gateway.domain.LoadingPort;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.PortRotationRequest;
-import com.cpdss.gateway.domain.PortRotationResponse;
-import com.cpdss.gateway.domain.VoyageStatusRequest;
-import com.cpdss.gateway.domain.VoyageStatusResponse;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.repository.UsersRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -57,6 +47,8 @@ class LoadableStudyServiceIntegrationTest {
   @MockBean private UsersRepository usersRepository;
 
   @MockBean private UserCachingService userCachingService;
+
+  @MockBean private GroupUserService groupUserService;
 
   @Test
   void testGetCommingleCargo() throws GenericServiceException {

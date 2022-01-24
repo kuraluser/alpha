@@ -861,7 +861,11 @@ public class LoadableStudyPortRotationService {
       com.cpdss.common.generated.LoadableStudy.LoadableStudyShoreResponse.Builder builder) {
 
     try {
-      VesselInfo.VesselRequest vesselAlgoRequest = VesselInfo.VesselRequest.newBuilder().build();
+      VesselInfo.VesselRequest vesselAlgoRequest =
+          VesselInfo.VesselRequest.newBuilder()
+              .addAllVesselIds(request.getVesselIdsList())
+              .setIsShore(request.getIsShore())
+              .build();
       VesselInfo.VesselReply replyBuilder =
           vesselInfoGrpcService.getAllVesselsByCompany(vesselAlgoRequest);
 
