@@ -471,6 +471,8 @@
   "SYNOPTICAL_ETD_MIN": "Departure time should be greater than Arrival time",
   "SYNOPTICAL_ETA_MAX": "Arrival time should be less than Departure time",
   "SYNOPTICAL_ETD_MAX": "Departure time should be less than next port's Arrival time",
+  "SYNOPTICAL_RUNNING_DAY_HOUR_MIN": "Value must be greter than or equal to 0",
+  "SYNOPTICAL_RUNNING_HOUR_MAX": "Value must be less than or equal to 23",
   "SYNOPTICAL_UPDATE_SUCCESS": "Success",
   "SYNOPTICAL_UPDATE_SUCCESSFULLY": "Synoptical table updated successfully",
   "SYNOPTICAL_UPDATE_FAILED": "Failed",

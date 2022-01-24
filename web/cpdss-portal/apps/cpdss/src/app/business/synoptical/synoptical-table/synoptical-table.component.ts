@@ -68,7 +68,9 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'etaMax': 'SYNOPTICAL_ETA_MAX',
     'etdMax': "SYNOPTICAL_ETD_MAX",
     'invalidNumber': 'SYNOPTICAL_INVALID',
-    'waterDensityError': 'PORT_WATER_DENSITY_RANGE_ERROR'
+    'waterDensityError': 'PORT_WATER_DENSITY_RANGE_ERROR',
+    'minDayHour': 'SYNOPTICAL_RUNNING_DAY_HOUR_MIN',
+    'maxHour': 'SYNOPTICAL_RUNNING_HOUR_MAX'
   };
   expandedRows = [];
   ngUnsubscribe: Subject<void> = new Subject();
@@ -218,7 +220,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         const daysHours = this.timeZoneTransformationService.convertHoursToDaysHours(Number(record.runningHours));
         record.runningDays = daysHours.days;
         record.runningDaysHours = daysHours.hours;
-        record.runningHoursCalculated = Number(record.runningHours);
+        record.runningHoursCalculated = (record.distance === 0 || record.speed === 0) ? 0 : Number(Number(record.distance / record.speed).toFixed(2));
         return record;
       });
       this.synopticalService.synopticalRecords = await this.convertIntoZoneTimeZone(result.synopticalRecords);
@@ -335,18 +337,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       },
       {
         fields: [{
-          key: 'runningHours',
-          type: this.fieldType.NUMBER,
-          validators: ['ddddddd.dd.+'],
-        }],
-        header: 'Running Hours',
-        editable: true,
-        view: false,
-        colSpan: 2,
-        betweenPorts: true,
-      },
-      {
-        fields: [{
           key: 'runningHoursCalculated',
           type: this.fieldType.NUMBER,
           validators: ['ddddddd.dd.+'],
@@ -371,6 +361,18 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
           }
         ],
         editable: true,
+        colSpan: 2,
+        betweenPorts: true,
+      },
+      {
+        fields: [{
+          key: 'runningHours',
+          type: this.fieldType.NUMBER,
+          validators: ['ddddddd.dd.+'],
+        }],
+        header: 'Running Hours',
+        editable: true,
+        view: false,
         colSpan: 2,
         betweenPorts: true,
       },
@@ -1681,6 +1683,12 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         break;
       case 'runningDays': case 'runningDaysHours':
         if (updateValues) {
+          if (typeof fc.value !== 'undefined' && fc.value < 0) {
+            fc.setErrors({ minDayHour: true })
+          }
+          if (field.key === 'runningDaysHours' && typeof fc.value !== 'undefined' && fc.value > 23) {
+            fc.setErrors({ maxHour: true })
+          }
           const runningDaysControl = this.getControl(colIndex, 'runningDays');
           const runningDaysHoursControl = this.getControl(colIndex, 'runningDaysHours');
           let daysAndHours;
