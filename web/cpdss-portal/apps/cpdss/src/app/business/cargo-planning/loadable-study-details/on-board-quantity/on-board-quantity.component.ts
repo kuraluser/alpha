@@ -314,6 +314,9 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     event.data.volume = volume ?? 0;
 
     if (event?.field === 'cargo') {
+      if (event?.data?.cargo?.value?.id === -1) {
+        this.cargoList = [...this.cargoList, { colorCode: event?.data?.cargo?.value?.color, ...event?.data?.cargo?.value}];
+      }
       event.data.colorCode = event?.data?.cargo?.value?.color;
       event.data.abbreviation = event?.data?.cargo?.value?.abbreviation;
       formGroup.controls.api.setValue(0);

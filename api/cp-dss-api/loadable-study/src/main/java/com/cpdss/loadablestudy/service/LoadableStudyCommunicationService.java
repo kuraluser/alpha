@@ -816,7 +816,8 @@ public class LoadableStudyCommunicationService {
                       type,
                       LoadableStudyTables.LOADABLE_STUDY_ATTACHMENTS,
                       data,
-                      dataTransferStage.getId());
+                      dataTransferStage.getId(),
+                      LOADABLE_STUDY_COLUMNS.LOADABLE_STUDY_XID.getColumnName());
               break;
             }
           default:
@@ -1975,6 +1976,8 @@ public class LoadableStudyCommunicationService {
         Optional<LoadableStudyAttachments> loadableStudyAttachmentOpt =
             loadableStudyAttachmentsRepository.findById(loadableStudyAttachment.getId());
         setEntityDocFields(loadableStudyAttachment, loadableStudyAttachmentOpt);
+
+        loadableStudyAttachment.setLoadableStudy(loadableStudyStage);
       }
 
       // Save data
