@@ -1175,6 +1175,7 @@ public class UserService {
         AccessToken token = parseKeycloakToken(authorizationToken);
         usersEntity = this.usersRepository.findByKeycloakId(token.getSubject());
       } catch (VerificationException e) {
+        log.error("Token parsing failed", e);
         throw new GenericServiceException(
             "Token parsing failed",
             CommonErrorCodes.E_HTTP_UNAUTHORIZED_RQST,
