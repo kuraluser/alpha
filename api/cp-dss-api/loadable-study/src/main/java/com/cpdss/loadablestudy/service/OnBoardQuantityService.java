@@ -156,6 +156,11 @@ public class OnBoardQuantityService {
               null != onBoardQuantity.getDensity()
                   ? String.valueOf(onBoardQuantity.getDensity())
                   : "");
+
+          onBoardQuantityDto.setTemperature(
+              null != onBoardQuantity.getTemperature()
+                  ? String.valueOf(onBoardQuantity.getTemperature())
+                  : BigDecimal.ZERO.toString());
           loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
         });
   }
