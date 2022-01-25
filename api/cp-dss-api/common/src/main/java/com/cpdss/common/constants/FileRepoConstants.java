@@ -12,10 +12,14 @@ public class FileRepoConstants {
   @Getter
   @AllArgsConstructor
   public enum FileRepoSection {
-    LOADABLE_STUDY("LoadableStudy"),
-    LOADING_PLAN("LoadingPlan"),
-    DISCHARGE_STUDY("DischargeStudy"),
-    DISCHARGE_PLAN("DischargePlan");
+    LOADABLE_STUDY("Loadable Study"),
+    LOADING_PLAN("Loading Plan"),
+    DISCHARGE_STUDY("Discharge Study"),
+    DISCHARGE_PLAN("Discharge Plan"),
+    ANY("Any"),
+    BUNKERING("Bunkering"),
+    DISCHARGING("Discharging"),
+    LOADING("Loading");
 
     private final String section;
   }
