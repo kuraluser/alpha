@@ -34,6 +34,14 @@ public interface AlgoErrorHeadingRepository
       nativeQuery = true)
   List<Object[]> findByLoadableStudyIdAndIsActive(Long id, Boolean isActive);
 
+  @Query(
+      value =
+          "SELECT aeh.id ,aeh.error_heading, ae.error_message from public.algo_error_heading aeh left join "
+              + "public.algo_errors ae on aeh.id = ae.error_heading_xid "
+              + "where aeh.loadable_pattern_xid = ?1 and aeh.is_active = ?2",
+      nativeQuery = true)
+  List<Object[]> findByLoadablePatternIdAndIsActive(Long id, Boolean isActive);
+
   @Transactional
   @Modifying
   @Query("UPDATE AlgoErrorHeading SET isActive = ?1 WHERE loadablePattern.id = ?2")
