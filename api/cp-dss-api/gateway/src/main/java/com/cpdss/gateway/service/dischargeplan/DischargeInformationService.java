@@ -601,7 +601,9 @@ public class DischargeInformationService {
       }
       log.info("Calling saveDischargingInformation in discharging-plan microservice via GRPC");
       DischargingInfoSaveResponse response = infoBuilderService.saveDataAsync(request);
-      if (request.getDischargeDetails() != null) {
+      if (request.getDischargeDetails() != null
+          && request.getDischargeDetails().getTimeOfSunrise() != null
+          && request.getDischargeDetails().getTimeOfSunset() != null) {
         // Updating synoptic table (time)
         log.info(
             "Saving Loading info Times details at Synoptic Table - id {}",

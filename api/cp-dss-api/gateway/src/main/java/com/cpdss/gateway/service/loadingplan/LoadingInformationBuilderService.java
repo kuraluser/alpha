@@ -208,8 +208,8 @@ public class LoadingInformationBuilderService {
           .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
     }
     builder.setTrimAllowed(trimBuilder.build());
-
-    builder.setCommonDate(String.valueOf(loadingDetails.getCommonDate()));
+    Optional.ofNullable(loadingDetails.getCommonDate())
+        .ifPresent(commonDate -> builder.setCommonDate(String.valueOf(commonDate)));
     Optional.ofNullable(loadingDetails.getSlopQuantity())
         .ifPresent(slopQuantity -> builder.setSlopQuantity(slopQuantity.toString()));
     return builder.build();

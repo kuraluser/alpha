@@ -851,7 +851,8 @@ public class DischargeInformationBuilderService {
           .ifPresent(maxTrim -> trimBuilder.setMaximumTrim(String.valueOf(maxTrim)));
     }
     builder.setTrimAllowed(trimBuilder.build());
-    builder.setCommonDate(String.valueOf(dischargingDetails.getCommonDate()));
+    Optional.ofNullable(dischargingDetails.getCommonDate())
+        .ifPresent(commonDate -> builder.setCommonDate(String.valueOf(commonDate)));
     Optional.ofNullable(dischargingDetails.getSlopQuantity())
         .ifPresent(slopQuantity -> builder.setSlopQuantity(slopQuantity.toString()));
     return builder.build();

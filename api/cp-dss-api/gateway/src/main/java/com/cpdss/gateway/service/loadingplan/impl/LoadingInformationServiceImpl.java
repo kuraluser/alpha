@@ -1001,7 +1001,9 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       log.info("Calling saveLoadingInformation in loading-plan microservice via GRPC");
       LoadingPlanModels.LoadingInfoSaveResponse response =
           loadingInfoBuilderService.saveDataAsync(request);
-      if (request.getLoadingDetails() != null) {
+      if (request.getLoadingDetails() != null
+          && request.getLoadingDetails().getTimeOfSunrise() != null
+          && request.getLoadingDetails().getTimeOfSunset() != null) {
         // Updating synoptic table (time)
         log.info(
             "Saving Loading info Times details at Synoptic Table - id {}",

@@ -25,7 +25,6 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -293,10 +292,9 @@ public class LoadingInformationBuilderService {
         target.setCommonDate(LocalDate.parse(source.getLoadingDetail().getCommonDate()));
       }
 
-      target.setSlopQuantity(
-          StringUtils.hasLength(source.getLoadingDetail().getSlopQuantity())
-              ? new BigDecimal(source.getLoadingDetail().getSlopQuantity())
-              : BigDecimal.ZERO);
+      if (!source.getLoadingDetail().getSlopQuantity().isEmpty()) {
+        target.setSlopQuantity(new BigDecimal(source.getLoadingDetail().getSlopQuantity()));
+      }
     }
     return target;
   }
