@@ -311,12 +311,10 @@ public class DischargeInformationService {
             // Set fields
             dischargingDelays.setCargoId(dischargeQuantityCargoDetails.getCargoId());
             dischargingDelays.setCargoNominationId(
-                dischargeQuantityCargoDetails.getCargoNominationId());
+                dischargeQuantityCargoDetails.getDischargeCargoNominationId());
             dischargingDelays.setDischargeInfoId(dischargeInfoId);
-            Optional.ofNullable(dischargeQuantityCargoDetails.getOrderedQuantity())
-                .ifPresent(
-                    orderedQuantity ->
-                        dischargingDelays.setQuantity(new BigDecimal(orderedQuantity)));
+            Optional.ofNullable(dischargeQuantityCargoDetails.getDischargeMT())
+                .ifPresent(quantity -> dischargingDelays.setQuantity(new BigDecimal(quantity)));
             dischargingDelays.setDischargingRate(
                 StringUtils.hasLength(dischargeQuantityCargoDetails.getMaxDischargingRate())
                     ? new BigDecimal(dischargeQuantityCargoDetails.getMaxDischargingRate())

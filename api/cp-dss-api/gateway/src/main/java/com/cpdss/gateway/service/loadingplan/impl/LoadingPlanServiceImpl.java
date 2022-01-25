@@ -403,8 +403,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             loadingDelays.setCargoId(loadableQuantityCargoDetails.getCargoId());
             loadingDelays.setCargoNominationId(loadableQuantityCargoDetails.getCargoNominationId());
             loadingDelays.setLoadingInfoId(loadingInfoId);
-            loadingDelays.setQuantity(
-                new BigDecimal(loadableQuantityCargoDetails.getOrderedQuantity()));
+            Optional.of(loadableQuantityCargoDetails.getLoadableMT())
+                .ifPresent(quantity -> loadingDelays.setQuantity(new BigDecimal(quantity)));
             loadingDelays.setLoadingRate(
                 StringUtils.hasLength(loadableQuantityCargoDetails.getLoadingRateM3Hr())
                     ? new BigDecimal(loadableQuantityCargoDetails.getLoadingRateM3Hr())
