@@ -81,14 +81,16 @@
               </label>
             </div>
           </div>
-          <cpdss-portal-cargo-to-be-loaded-discharged #cargoToBeDischarged
-            *ngIf="dischargingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails && cargos && listData && dischargingInformationForm && currentQuantitySelectedUnit"
-            [operation]="OPERATIONS.DISCHARGING" [form]="dischargingInformationForm"
-            [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
-            [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-            [cargoVesselTankDetails]="dischargingInformationData?.cargoVesselTankDetails" [listData]="listData"
-            (updateCargoToBeLoaded)="onCargoToBeDischargedChange($event)">
-          </cpdss-portal-cargo-to-be-loaded-discharged>
+          <div class="ml-30">
+            <cpdss-portal-cargo-to-be-loaded-discharged #cargoToBeDischarged
+              *ngIf="dischargingInformationData?.cargoVesselTankDetails.loadableQuantityCargoDetails && cargos && listData && dischargingInformationForm && currentQuantitySelectedUnit"
+              [operation]="OPERATIONS.DISCHARGING" [form]="dischargingInformationForm"
+              [prevQuantitySelectedUnit]="prevQuantitySelectedUnit" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
+              [cargos]="cargos" [slopQuantity]="dischargingInformationData?.dischargeDetails?.slopQuantity"
+              [cargoVesselTankDetails]="dischargingInformationData?.cargoVesselTankDetails" [listData]="listData"
+              (updateCargoToBeLoaded)="onCargoToBeDischargedChange($event)" (updateSlopQuantity)="onSlopQuantityChange($event)">
+            </cpdss-portal-cargo-to-be-loaded-discharged>
+          </div>
         </div>
       </div>
 

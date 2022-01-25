@@ -672,13 +672,6 @@ export class LoadingDischargingTransformationService {
         header: 'LOADING_CARGO_TO_BE_LOADED_TIME_REQUIRED',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
-      },
-      {
-        field: 'convertedSlopQuantity',
-        header: 'LOADING_CARGO_TO_BE_LOADED_SLOP_QTY',
-        numberFormat: quantityNumberFormat,
-        fieldColumnClass: 'text-right',
-        fieldClass: 'text-right no-ediable-field'
       }
     ]
   }
@@ -773,19 +766,6 @@ export class LoadingDischargingTransformationService {
         fieldPlaceholder: 'DISCHARGING_SELECT_PROTESTED',
         fieldOptionLabel: 'name',
         fieldHeaderClass: 'column-protested',
-      },
-      {
-        field: 'slopQuantity',
-        header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY',
-        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: quantityNumberFormat,
-        fieldHeaderClass: 'column-api',
-        errorMessages: {
-          'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
-          'min': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MIN_ERROR',
-          'max': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MAX_ERROR',
-          'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
-        }
       },
       {
         field: 'isCommingledDischarge',
@@ -1407,8 +1387,6 @@ export class LoadingDischargingTransformationService {
             _cargo.protested = listData.protestedOptions.findIndex(item => item.id === cargo[key].value.id) === 0 ? true : false;
           } else if (key === 'isCommingledDischarge') {
             _cargo.isCommingledDischarge = cargo[key].value;
-          } else if (key === 'slopQuantity') {
-            _cargo.slopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform((<ValueObject>cargo[key]).value, currentQuantitySelectedUnit, QUANTITY_UNIT.MT, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
           } else {
             _cargo[key] = cargo[key];
           }
@@ -1439,10 +1417,6 @@ export class LoadingDischargingTransformationService {
           } else if (key === 'isCommingledDischarge') {
             const _isCommingled = cargo.isCommingledDischarge ?? false;
             _cargo.isCommingledDischarge = new ValueObject<boolean>(_isCommingled, true, true, false);
-          } else if (key === 'slopQuantity') {
-            const _slopQuantity = Number(cargo.slopQuantity) ?? 0;
-            _cargo.slopQuantityMT = _slopQuantity.toString();
-            _cargo.slopQuantity = new ValueObject<number>(_slopQuantity, true, true, false);
           } else if (key === 'shipFigure') {
             _cargo.loadableMT = cargo.shipFigure;
           } else if (key === 'loadingPorts') {

@@ -11,7 +11,7 @@
       </div>
 
       <div class="col main-content-loading-and-discharging pt-25">
-        
+
         <cpdss-portal-arrival-condition [permission]="permission" [vesselId]="vesselId"
           [portRotationId]="portRotationId" [loadingDischargingInfoId]="dischargeInfoId" [cargos]="cargos"
           [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
@@ -29,12 +29,13 @@
             <h5 class="text-uppercase  heading-border">
               {{ 'DISCHARGING_INFORMATION_CARGO_TO_BE_DISCHARGED' | translate }}
             </h5>
-            <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
-              [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-              [cargoVesselTankDetails]="dischargingInformation?.cargoVesselTankDetails"
-              [operation]="OPERATIONS.DISCHARGING" [listData]="listData"
-              [isPlanGenerated]="dischargingInformation?.isDischargePlanGenerated">
-            </cpdss-portal-cargo-to-be-loaded-discharged>
+            <div class="ml-30">
+              <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit" [editMode]="false"
+                [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+                [cargoVesselTankDetails]="dischargingInformation?.cargoVesselTankDetails" [operation]="OPERATIONS.DISCHARGING"
+                [listData]="listData" [isPlanGenerated]="dischargingInformation?.isDischargePlanGenerated">
+              </cpdss-portal-cargo-to-be-loaded-discharged>
+            </div>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { QUANTITY_UNIT, ValueObject } from '../../../shared/models/common.model';
 import { QuantityPipe } from '../../../shared/pipes/quantity/quantity.pipe';
@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { QuantityDecimalService } from '../../../shared/services/quantity-decimal/quantity-decimal.service';
 import { numberValidator } from '../../core/directives/number-validator.directive';
+import { IValidationErrorMessagesSet } from '../../../shared/components/validation-error/validation-error.model';
 
 /**
  * Componenet class for cargo to be loaded or discharge section
@@ -35,10 +36,12 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
 
   set operation(value: OPERATIONS) {
     this._operation = value;
-    this.editMode = DATATABLE_EDITMODE.CELL;
   }
 
+  @Input() editMode = DATATABLE_EDITMODE.CELL;
+
   @Input() cargos: ICargo[];
+  @Input() slopQuantity = 0;
   @Input() prevQuantitySelectedUnit: QUANTITY_UNIT;
   @Input() isPlanGenerated: boolean;
   @Input() get currentQuantitySelectedUnit(): QUANTITY_UNIT {
@@ -53,22 +56,14 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   }
   set cargoVesselTankDetails(cargoVesselTankDetails: ICargoVesselTankDetails) {
     this._cargoVesselTankDetails = cargoVesselTankDetails;
+    this.slopTankFullCapacity = 0;
     cargoVesselTankDetails.cargoTanks.forEach(tanksArray => {
       tanksArray.forEach(tank => {
         if (tank.slopTank) {
-          cargoVesselTankDetails.cargoQuantities.forEach(cargo => {
-            if (tank.id === cargo.tankId && this.operation === OPERATIONS.DISCHARGING && cargo.plannedWeight !== 0) {
-              cargoVesselTankDetails.loadableQuantityCargoDetails.map(lqCargo => {
-                if (cargo.dischargeCargoNominationId === lqCargo.cargoNominationId) {
-                  lqCargo.slopTankFullCapacity = this.quantityPipe.transform(cargo?.capacity, QUANTITY_UNIT.OBSKL, QUANTITY_UNIT.BBLS, lqCargo?.estimatedAPI, lqCargo?.estimatedTemp, 0);
-                  return lqCargo;
-                }
-              });
-            }
-          });
+          this.slopTankFullCapacity += Number(tank?.fullCapacityCubm);
         }
       })
-    })
+    });
     if (cargoVesselTankDetails?.loadableQuantityCargoDetails) {
       this.updateCargoTobeLoadedDischargedData();
     }
@@ -78,6 +73,7 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   @Input() listData;
 
   @Output() updateCargoToBeLoaded = new EventEmitter<ILoadedCargo[]>();
+  @Output() updateSlopQuantity = new EventEmitter<number>();
 
   get cargoTobeLoadedDischargedForm() {
     return <FormGroup>this.form?.get('cargoTobeLoadedDischarged');
@@ -89,7 +85,15 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
 
   cargoTobeLoadedDischargedColumns: IDataTableColumn[];
   cargoTobeLoadedDischarged: ILoadedCargo[] = [];
-  editMode: DATATABLE_EDITMODE;
+  slopTankFullCapacity = 0;
+  errorMesages: IValidationErrorMessagesSet = {
+    slopQuantity: {
+      'required': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_REQUIRED',
+      'min': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MIN_ERROR',
+      'max': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_SLOP_QUANTITY_MAX_ERROR',
+      'invalidNumber': 'DISCHARGING_CARGO_TO_BE_DISCHARGED_INVALID'
+    }
+  };
 
   private _currentQuantitySelectedUnit: QUANTITY_UNIT;
   private _operation: OPERATIONS;
@@ -149,8 +153,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         const shipFigure = this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo?.estimatedAPI, cargo?.estimatedTemp, -1);
         cargo.shipFigure = shipFigure?.toString();
 
-        const convertedSlopQuantity = cargo?.slopQuantity ? this.quantityPipe.transform(cargo?.slopQuantity.toString(), QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
-        cargo.convertedSlopQuantity = convertedSlopQuantity?.toString();
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
         cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, true, true, true);
         cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, true, true, true);
@@ -176,12 +178,15 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         maxLoadingRateEdit: this.fb.control(cargo.maxLoadingRateEdit.value, [Validators.required, numberValidator(0, 7, false)]),
       })
     });
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.OBSKL);
     this.cargoTobeLoadedDischargedForm = this.fb.group({
-      dataTable: this.fb.array([...cargoToBeLoaded])
+      dataTable: this.fb.array([...cargoToBeLoaded]),
+      slopQuantity: this.fb.control(this.slopQuantity, [Validators.min(0), Validators.max(this?.slopTankFullCapacity), numberValidator(quantityDecimal, 7, false)]),
     });
     this.form = this.fb.group({
       cargoTobeLoadedDischarged: this.fb.group({
-        dataTable: this.fb.array([...cargoToBeLoaded])
+        dataTable: this.fb.array([...cargoToBeLoaded]),
+        slopQuantity: this.fb.control(this.slopQuantity, [Validators.min(0), Validators.max(this?.slopTankFullCapacity), numberValidator(quantityDecimal, 7, false)]),
       })
     });
   }
@@ -201,10 +206,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         const shipFigure = Number(cargo?.loadableMT) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.shipFigure = shipFigure.toString();
 
-        const slopQuantityObj = (<ValueObject<number>>cargo?.slopQuantity);
-        const slopQuantity = cargo?.slopQuantityMT ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo.slopQuantityMT), QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo?.estimatedAPI, cargo?.estimatedTemp) : 0;
-        slopQuantityObj.value = slopQuantity;
-
         cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, true, true, true);
         cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, true, true, true);
         cargo['maxDischargingRateEdit'] = new ValueObject<number | string>(cargo?.maxDischargingRate, true, true, true, true);
@@ -221,15 +222,12 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
       return cargo;
     });
 
-    const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.BBLS);
-    const min = quantityDecimal ? (1 / Math.pow(10, quantityDecimal)) : 1;
+    const quantityDecimal = this.quantityDecimalService.quantityDecimal(QUANTITY_UNIT.OBSKL);
     const cargoToBeDischarged = this.cargoTobeLoadedDischarged?.map(cargo => {
       return this.fb.group({
         isCommingledCargo: cargo?.isCommingledCargo ?? false,
         protested: this.fb.control(cargo.protested.value),
         isCommingledDischarge: this.fb.control(cargo?.isCommingledDischarge.value),
-        slopQuantityMT: cargo?.slopQuantityMT,
-        slopQuantity: this.fb.control({ value: (<ValueObject<number>>cargo?.slopQuantity)?.value, disabled: !cargo?.slopTankFullCapacity }, [Validators.required, Validators.min(min), Validators.max(cargo?.slopTankFullCapacity), numberValidator(quantityDecimal, 7, false)]),
         estimatedAPIEdit: this.fb.control(cargo.estimatedAPIEdit.value, [Validators.required, Validators.min(8), numberValidator(2, 2, false)]),
         estimatedTempEdit: this.fb.control(cargo.estimatedTempEdit.value, [Validators.required, Validators.min(40), Validators.max(160), numberValidator(2, 3, false)]),
         maxDischargingRateEdit: this.fb.control(cargo.maxDischargingRateEdit.value, [Validators.required, numberValidator(0, 7, false)])
@@ -239,12 +237,14 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
 
     if (this.form) {
       this.cargoTobeLoadedDischargedForm = this.fb.group({
-        dataTable: this.fb.array([...cargoToBeDischarged])
+        dataTable: this.fb.array([...cargoToBeDischarged]),
+        slopQuantity: this.fb.control(this.slopQuantity, [Validators.min(0), Validators.max(this?.slopTankFullCapacity), numberValidator(quantityDecimal, 7, false)]),
       });
     } else {
       this.form = this.fb.group({
         cargoTobeLoadedDischarged: this.fb.group({
-          dataTable: this.fb.array([...cargoToBeDischarged])
+          dataTable: this.fb.array([...cargoToBeDischarged]),
+          slopQuantity: this.fb.control(this.slopQuantity, [Validators.min(0), Validators.max(this?.slopTankFullCapacity), numberValidator(quantityDecimal, 7, false)]),
         })
       });
     }
@@ -289,9 +289,6 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
   onEditComplete(event: IDataTableEvent) {
     if (this.operation === OPERATIONS.DISCHARGING) {
       this.cargoTobeLoadedDischarged[event?.index][event?.field].value = event?.data[event?.field]?.value;
-      if (event?.field === 'slopQuantity') {
-        this.cargoTobeLoadedDischarged[event?.index].slopQuantityMT = this.quantityPipe.transform(event?.data[event?.field]?.value, QUANTITY_UNIT.BBLS, QUANTITY_UNIT.MT, event?.data?.estimatedAPI, event?.data?.estimatedTemp, -1).toString();
-      }
     }
     switch (event?.field) {
       case 'estimatedAPIEdit':
@@ -325,6 +322,38 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.updateCargoToBeLoaded.emit(this.cargoTobeLoadedDischarged);
     });
+  }
+
+  /**
+   * Handler for change event of slop quantity field
+   *
+   * @memberof CargoToBeLoadedDischargedComponent
+   */
+  onChange() {
+    this.updateSlopQuantity.emit(this.cargoTobeLoadedDischargedForm?.value?.slopQuantity);
+  }
+
+  /**
+   * Method to check for field errors
+   *
+   * @param {string} formControlName
+   * @return {ValidationErrors}
+   * @memberof CargoToBeLoadedDischargedComponent
+   */
+  fieldError(formControlName: string): ValidationErrors {
+    const formControl = this.field(formControlName);
+    return formControl?.invalid ? formControl?.errors : null;
+  }
+
+  /**
+   * Method to get formControl
+   * @param {string} formControlName
+   * @return {FormControl}
+   * @memberof CargoToBeLoadedDischargedComponent
+  */
+  field(formControlName: string): FormControl {
+    const formControl = <FormControl>this.cargoTobeLoadedDischargedForm?.get(formControlName);
+    return formControl;
   }
 
 }

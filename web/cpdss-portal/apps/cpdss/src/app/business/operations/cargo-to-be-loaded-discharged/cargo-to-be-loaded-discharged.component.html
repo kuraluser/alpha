@@ -1,9 +1,28 @@
-<div class="row pt-10" *ngIf="form && cargoTobeLoadedDischargedForm">
-  <div class="col ml-30" [formGroup]="form">
-      <cpdss-portal-datatable *ngIf="cargoTobeLoadedDischargedColumns && cargoTobeLoadedDischargedForm  && cargoTobeLoadedDischarged"
-        [tableId]="'cargo_to_be_loaded_or_discharged'" [form]="cargoTobeLoadedDischargedForm"
-        [columns]="cargoTobeLoadedDischargedColumns" [value]="cargoTobeLoadedDischarged" [scrollable]="true"
-        [editMode]="editMode" [listData]="listData" (cellOnBlur)="updateRateValidation($event)" (editComplete)="onEditComplete($event)">
-      </cpdss-portal-datatable>
+<div class="row pt-10" *ngIf="form && cargoTobeLoadedDischargedForm" [formGroup]="form">
+  <div class="col-12">
+    <cpdss-portal-datatable
+      *ngIf="cargoTobeLoadedDischargedColumns && cargoTobeLoadedDischargedForm  && cargoTobeLoadedDischarged"
+      [tableId]="'cargo_to_be_loaded_or_discharged'" [form]="cargoTobeLoadedDischargedForm"
+      [columns]="cargoTobeLoadedDischargedColumns" [value]="cargoTobeLoadedDischarged" [scrollable]="true"
+      [editMode]="editMode" [listData]="listData" (cellOnBlur)="updateRateValidation($event)"
+      (editComplete)="onEditComplete($event)">
+    </cpdss-portal-datatable>
+  </div>
+  <div class="col-12">
+    <div class="row mt-20" [formGroup]="cargoTobeLoadedDischargedForm">
+      <label for="slopQuantity" class="col-3 col-form-label">{{ 'CARGO_TO_BE_LOADED_DISCHARGED_SLOP_QUANTITY' |
+        translate}}</label>
+      <div class="col-3 error-icon-wrapper">
+        <input type="text" cpdssPortalNumberDecimal [negative]="false" class="form-control text-right"
+          *ngIf="editMode;else slopQuantity" id="slopQuantity" formControlName="slopQuantity"
+          (change)="onChange('slopQuantity')">
+        <ng-template #slopQuantity>
+          <label class="col-form-label">{{cargoTobeLoadedDischargedForm?.controls?.slopQuantity?.value}}</label>
+        </ng-template>
+        <cpdss-portal-validation-error [errors]="fieldError('slopQuantity')"
+          [errorMessages]="errorMesages?.slopQuantity">
+        </cpdss-portal-validation-error>
+      </div>
+    </div>
   </div>
 </div>

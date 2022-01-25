@@ -108,7 +108,7 @@
 </div>
 <div class="row" *ngIf="operation === OPERATIONS.LOADING">
     <div class="col ml-30 pt-5 table-column-flexible-wrapper auto-layout">
-        <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
+        <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit" [editMode]="false"
             [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
             [cargoVesselTankDetails]="loadingDischargingPlanInfo?.cargoVesselTankDetails"
             [isPlanGenerated]="loadingDischargingPlanInfo?.isLoadingPlanGenerated"

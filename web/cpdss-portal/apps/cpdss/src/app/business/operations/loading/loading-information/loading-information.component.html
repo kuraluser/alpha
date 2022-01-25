@@ -44,10 +44,14 @@
         <div class="row">
           <div class="col pt-30">
             <h5 class="text-uppercase heading-border">{{ 'CARGO_TO_BE_LOADED' | translate }}</h5>
-            <cpdss-portal-cargo-to-be-loaded-discharged #cargoToBeloaded [operation]="OPERATIONS.LOADING" [prevQuantitySelectedUnit]="prevQuantitySelectedUnit"
-              [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
-              [cargoVesselTankDetails]="cargoVesselTankDetails" (updateCargoToBeLoaded)="cargoToBeLoadedChange($event)">
-            </cpdss-portal-cargo-to-be-loaded-discharged>
+            <div class="ml-30">
+              <cpdss-portal-cargo-to-be-loaded-discharged #cargoToBeloaded [operation]="OPERATIONS.LOADING"
+                [prevQuantitySelectedUnit]="prevQuantitySelectedUnit" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit"
+                [cargos]="cargos" [slopQuantity]="loadingInformationData?.loadingDetails?.slopQuantity"
+                [cargoVesselTankDetails]="cargoVesselTankDetails" (updateCargoToBeLoaded)="cargoToBeLoadedChange($event)"
+                (updateSlopQuantity)="onSlopQuantityChange($event)">
+              </cpdss-portal-cargo-to-be-loaded-discharged>
+            </div>
           </div>
         </div>
         <div class="row">

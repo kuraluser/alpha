@@ -111,13 +111,14 @@ export interface ICargoToBeDischarged {
 */
 export interface ILoadingDischargingDetails {
   commonDate?: string;
-  timeOfSunrise: string;
-  timeOfSunset: string;
-  startTime: string;
-  trimAllowed: ITrimAllowed;
+  timeOfSunrise?: string;
+  timeOfSunset?: string;
+  startTime?: string;
+  trimAllowed?: ITrimAllowed;
   eta?: string;
   etd?: string;
   timezoneOffsetVal?: string;
+  slopQuantity?: number;
 }
 
 /**
@@ -770,7 +771,6 @@ export interface ILoadedCargoResponse extends ILoadableQuantityCargo {
  */
 export interface ILoadedCargo extends ILoadableQuantityCargo {
   shipFigure?: string;
-  convertedSlopQuantity?: string;
   convertedOrderedQuantity?: string;
   protested?: ValueObject<IProtested>;
   isCommingledDischarge?: ValueObject<boolean>;
@@ -778,8 +778,6 @@ export interface ILoadedCargo extends ILoadableQuantityCargo {
   loadingOrder?: number;
   dischargingOrder?: number;
   isAdd?: boolean;
-  slopQuantityMT?: string;
-  slopTankFullCapacity?: number;
 }
 
 /**

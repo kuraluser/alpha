@@ -30,7 +30,7 @@ export class QuantityDecimalService {
         decimal = AppConfigurationService.settings.quantityNumberFormatKL.slice(-1);
         break;
 
-      case QUANTITY_UNIT.OBSBBLS:
+      case QUANTITY_UNIT.OBSKL:
         decimal = AppConfigurationService.settings.quantityNumberFormatKL.slice(-1);
         break;
 

@@ -317,6 +317,17 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Handler for slop quantity changes
+   *
+   * @param {number} event
+   * @memberof DischargingInformationComponent
+   */
+  onSlopQuantityChange(event: number) {
+    this.dischargingInformationPostData.dischargeDetails = this.dischargingInformationPostData?.dischargeDetails ? { ...this.dischargingInformationPostData?.dischargeDetails, slopQuantity: event } : { slopQuantity: event };
+    this.hasUnSavedData = true;
+  }
+
+  /**
   * Method for event track value change
   *
   * @memberof DischargingInformationComponent

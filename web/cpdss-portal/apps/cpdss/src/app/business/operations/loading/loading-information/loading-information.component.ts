@@ -333,6 +333,17 @@ export class LoadingInformationComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Handler for slop quantity changes
+   *
+   * @param {number} event
+   * @memberof LoadingInformationComponent
+   */
+  onSlopQuantityChange(event: number) {
+    this.loadingInformationPostData.loadingDetails = this.loadingInformationPostData?.loadingDetails ? { ...this.loadingInformationPostData?.loadingDetails, slopQuantity: event } : { slopQuantity: event };
+    this.hasUnSavedData = true;
+  }
+
+  /**
 * Method for event loading rate update
 *
 * @memberof LoadingInformationComponent
