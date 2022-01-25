@@ -40,7 +40,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   set loadableStudies(value: LoadableStudy[]) {
     this._loadableStudyList = value.filter(loadable =>
       ![LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED , LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE , LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadable?.statusId));
-  }
+    }
 
   @Input()
   get duplicateLoadableStudy(): LoadableStudy { return this._duplicateLoadableStudy; }
@@ -56,7 +56,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       date.setFullYear(date.getFullYear() - 5);
       return (this.timeZoneTransformationService.convertToDate(voyage?.actualStartDate)?.getTime() > date?.getTime() || this.timeZoneTransformationService.convertToDate(voyage?.startDate)?.getTime() > date?.getTime()) || (!voyage?.actualStartDate && !voyage?.startDate);
     })
-      .sort((a, b) => this.timeZoneTransformationService.convertToDate(b?.actualStartDate)?.getTime() - this.timeZoneTransformationService.convertToDate(a?.actualStartDate)?.getTime());
+    .sort((a, b) => this.timeZoneTransformationService.convertToDate(b?.actualStartDate)?.getTime() - this.timeZoneTransformationService.convertToDate(a?.actualStartDate)?.getTime());
     this._voyages = pastVoyages;
   }
   get voyages(): Voyage[] {
@@ -67,6 +67,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   get voyage(): Voyage { return this._voyage; }
   set voyage(voyage: Voyage) {
     this._voyage = this.voyages?.find(_voyage => voyage?.voyageNo === _voyage?.voyageNo);
+    this.createdFromVoyage = this.voyages?.find(_voyage => voyage?.voyageNo === _voyage?.voyageNo);
     this.getVesselInfo();
   }
 
@@ -81,6 +82,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   private _duplicateLoadableStudy: LoadableStudy;
   private _voyages: Voyage[];
 
+  createdFromVoyage: Voyage;
   newLoadableStudyFormGroup: FormGroup;
   newLoadableStudyPopupModel: ILoadableStudy;
   newLoadableStudyListNames: INewLoadableStudyListNames;
@@ -118,7 +120,13 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.loadlineLists = this.vesselInfoList?.loadlines;
     this.createNewLoadableStudyFormGroup();
     if (this.isEdit) {
-      this.updateLoadableStudyFormGroup(this.selectedLoadableStudy, true)
+      this.createdFromVoyage = this.voyages.find(voyage => voyage.id === this.selectedLoadableStudy?.createdFromVoyageId);
+      this.ngxSpinnerService.show();
+      const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, this.selectedLoadableStudy?.createdFromVoyageId).toPromise();
+      this.loadableStudies = result?.loadableStudies ?? [];
+      this.ngxSpinnerService.hide();
+      this.duplicateLoadableStudy = this.loadableStudies?.find(loadableStudy => loadableStudy?.id === this.selectedLoadableStudy?.createdFromId);
+      this.updateLoadableStudyFormGroup(this.selectedLoadableStudy, true);
     } else {
       let isLoadableStudyAvailable;
       isLoadableStudyAvailable = this.duplicateLoadableStudy && Object.keys(this.duplicateLoadableStudy)?.length === 0 && this.duplicateLoadableStudy.constructor === Object
@@ -147,7 +155,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   // creating form-group for new-loadable-study
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
-      voyage: this.formBuilder.control(this.voyage, [Validators.required]),
+      createdFromVoyage: this.formBuilder.control(this.createdFromVoyage, [Validators.required]),
       duplicateExisting: '',
       newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator , isAlphaCharacterAvaiable]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
@@ -172,7 +180,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       this.newLoadableStudyPopupModel = {
         id: this.isEdit ? this.selectedLoadableStudy.id : 0,
         voyageId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
-          this.newLoadableStudyFormGroup.controls.voyage.value?.id : '',
+          this.newLoadableStudyFormGroup.controls.createdFromVoyage.value?.id : '',
         createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
           this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
         name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
@@ -321,7 +329,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //for edit/duplicate update the values
   updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
     if (isEdit) {
-      this.newLoadableStudyFormGroup.controls['voyage'].disable();
+      this.newLoadableStudyFormGroup.controls['createdFromVoyage'].disable();
       this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
       this.savedloadableDetails = {
         draftMark: loadableStudyObj?.draftMark,
@@ -332,14 +340,16 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         this.loadableStudies?.map((loadableStudy) => {
           if (loadableStudyObj.createdFromId === loadableStudy.id) {
             this.newLoadableStudyFormGroup.patchValue({
-              duplicateExisting: loadableStudy
+              duplicateExisting: loadableStudy,
+              createdFromVoyage: this.createdFromVoyage
             })
           }
         })
       }
     } else {
       this.newLoadableStudyFormGroup.patchValue({
-        duplicateExisting: loadableStudyObj
+        duplicateExisting: loadableStudyObj,
+        createdFromVoyage: this.createdFromVoyage
       })
       this.duplicateLoadableStudy = loadableStudyObj;
     }

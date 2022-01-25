@@ -13,7 +13,7 @@
                       <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_VOYAGE' | translate}}
                       </div>
                       <div class="col dropdowm-medium">
-                        <p-dropdown styleClass="form-control" [options]="voyages" id="voyage" formControlName="voyage" optionLabel="voyageNo" (onChange)="onVoyageChange($event)" [filter]="true" resetFilterOnHide="true" placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [virtualScroll]="true" [itemSize]="30" focusTrap>
+                        <p-dropdown styleClass="form-control" [options]="voyages" id="voyage" formControlName="createdFromVoyage" optionLabel="voyageNo" (onChange)="onVoyageChange($event)" [filter]="true" resetFilterOnHide="true" placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [virtualScroll]="true" [itemSize]="30" focusTrap>
                         </p-dropdown>
                       </div>
                     </div>
