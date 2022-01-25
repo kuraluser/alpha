@@ -978,13 +978,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
 */
   async onGenerateLoadablePattern() {
     this.ngxSpinnerService.show();
-    const translationKeys = await this.translateService.get(['TOTAL_QUANTITY_WARNING', 'TOTAL_QUANTITY_ERROR_DETAILS']).toPromise();
-    if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
-      this.messageService.add({ severity: 'warn', summary: translationKeys['TOTAL_QUANTITY_WARNING'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'],sticky: true });
-      this.ngxSpinnerService.hide();
-      return false;
-    }
-
     const isLQvalueNotChanged = await this.checkLoadableQuntityChangeInPopup();
     if (isLQvalueNotChanged) {
       await this.generateLoadablePattern(this.vesselId, this.voyageId, this.loadableStudyId, this.selectedVoyage.voyageNo, this.selectedLoadableStudy.name);
@@ -1000,13 +993,20 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    */
   async checkLoadableQuntityChangeInPopup(): Promise<boolean> {
     let isEqual = false;
-    const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_WARNING', 'LOADABLE_QUANTITY_WARNING_MISMATCH']).toPromise();
+    const translationKeys = await this.translateService.get(['LOADABLE_QUANTITY_WARNING', 'TOTAL_QUANTITY_ERROR_DETAILS', 'LOADABLE_QUANTITY_WARNING_MISMATCH']).toPromise();
     const portsData = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     const portRotationId = (portsData.portList && portsData?.lastModifiedPortId) ?? portsData?.lastModifiedPortId;
     const loadableQuantityResult = await this.loadableQuantityApiService.getLoadableQuantity(this.vesselId, this.voyageId, this.selectedLoadableStudy.id, portRotationId).toPromise();
     if (loadableQuantityResult.responseStatus.status === "200") {
       let calculatedTotQty = this.sliceToTwoDecimalPoint(this.getSubTotal(loadableQuantityResult), 2);
       const databaseTotQty = this.sliceToTwoDecimalPoint(loadableQuantityResult.loadableQuantity.totalQuantity, 2);
+
+      this.loadableQuantityNew = calculatedTotQty;
+      if (Number(this.totalQuantity) > Number(this.loadableQuantityNew)) {
+        this.messageService.add({ severity: 'warn', summary: translationKeys['TOTAL_QUANTITY_WARNING'], detail: translationKeys['TOTAL_QUANTITY_ERROR_DETAILS'],sticky: true });
+        this.ngxSpinnerService.hide();
+        return false;
+      }
 
       if (loadableQuantityResult.caseNo === 1) {
         calculatedTotQty = loadableQuantityResult.loadableQuantity.foConInSZ === '' ? '0' : calculatedTotQty;
