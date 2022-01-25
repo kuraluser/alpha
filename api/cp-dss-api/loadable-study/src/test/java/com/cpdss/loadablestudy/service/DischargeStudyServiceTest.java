@@ -92,6 +92,7 @@ class DischargeStudyServiceTest {
   @MockBean private CowDetailService cowDetailService;
   @MockBean private PortInstructionService portInstructionService;
   @MockBean private BackLoadingService backLoadingService;
+  @MockBean private DischargePlanCommingleDetailsService dischargePlanCommingleDetailsService;
 
   @MockBean
   private CommingleCargoToDischargePortwiseDetailsRepository

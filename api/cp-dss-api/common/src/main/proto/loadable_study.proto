@@ -284,6 +284,7 @@ service DischargeStudyOperationService {
   //Used to fetch commingle details portwise data against a DS - re using response format from loading plan.
   rpc getCommingleCargoAsSeperateGrade (DischargeCowRequest) returns (LoadingInformationSynopticalReply){}
   rpc GetDischargeStudyRequestJson(JsonRequest) returns (DischargeStudyJsonReply) {}
+	rpc GetDischargeCommingleDetails(DischargeCommingleRequest) returns (DischargeCommingleReply) {}
 }
 
 
@@ -1303,6 +1304,7 @@ message LoadablePatternCommingleDetailsReply {
 	string cargo1Percentage = 11;
 	string cargo2Percentage = 12;
 	ResponseStatus responseStatus = 13;
+	string tankName = 14;
 }
 
 message SynopticalRecord{
@@ -1817,4 +1819,13 @@ message CargoNominationCheckRequest {
 
 message CargoNominationCheckReply {
 	ResponseStatus responseStatus = 1;
+}
+
+message DischargeCommingleRequest {
+	int64 dischargePatternId = 1;
+}
+
+message DischargeCommingleReply {
+	ResponseStatus responseStatus = 1;
+	repeated LoadablePatternCommingleDetailsReply dischargePatternCommingleDetails = 2;
 }

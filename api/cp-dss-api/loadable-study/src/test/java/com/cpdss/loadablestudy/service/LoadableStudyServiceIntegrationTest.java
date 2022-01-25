@@ -159,6 +159,7 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadableStudyCommunicationData loadableStudyCommunicationData;
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
   @MockBean private FileRepoService fileRepoService;
+  @MockBean private DischargePlanCommingleDetailsService dischargePlanCommingleDetailsService;
 
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;

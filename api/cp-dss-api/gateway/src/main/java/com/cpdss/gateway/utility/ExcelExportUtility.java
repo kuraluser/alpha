@@ -38,25 +38,23 @@ public class ExcelExportUtility {
   /**
    * Method to read data from request and Stamp in existing template
    *
-   * @param requestPayload
-   * @param vesselId
-   * @param voyageId
-   * @param infoId
-   * @param portRotationId
-   * @return
-   * @throws GenericServiceException
-   * @throws IOException
+   * @param dataObj Object to be drawn into excel
+   * @param inputFileLocation Input file path
+   * @param outputFileLocation Output file path
+   * @return File output
+   * @throws GenericServiceException In case of failure
+   * @throws IOException In case of I/O issues
    */
   public File generateExcel(Object dataObj, String inputFileLocation, String outputFileLocation)
       throws GenericServiceException, IOException {
+
     log.info(
         "Inside generateExcel utility - Creating "
             + outputFileLocation
             + " file using "
             + inputFileLocation
             + " template.");
-    String outFile = outputFileLocation;
-    OutputStream outStream = new FileOutputStream(outFile);
+    OutputStream outStream = new FileOutputStream(outputFileLocation);
 
     try (InputStream inStream = this.getClass().getResourceAsStream(inputFileLocation)) {
       if (inStream != null) {
@@ -82,7 +80,7 @@ public class ExcelExportUtility {
     } finally {
       closeAndFlushOutput(outStream);
     }
-    return new File(outFile);
+    return new File(outputFileLocation);
   }
 
   /**

@@ -1519,7 +1519,6 @@ public class DischargePlanController {
       // Set file download headers
       HttpHeaders header = new HttpHeaders();
       header.setContentType(new MediaType("application", "force-download"));
-      header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= Discharging_Plan.xlsx");
       header.set(
           HttpHeaders.CONTENT_DISPOSITION,
           "attachment; filename="

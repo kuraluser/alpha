@@ -1,65 +1,20 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.dischargeplan;
 
-import static com.cpdss.common.constants.FileRepoConstants.*;
+import static com.cpdss.common.constants.FileRepoConstants.FileRepoSection;
 
 import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
-import com.cpdss.common.generated.PortInfo;
-import com.cpdss.common.generated.PortInfoServiceGrpc;
-import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
-import com.cpdss.gateway.domain.LoadLine;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.Vessel;
-import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.VesselTank;
-import com.cpdss.gateway.domain.dischargeplan.CargoForCowDetails;
-import com.cpdss.gateway.domain.dischargeplan.CargoPumpDetailsForSequence;
-import com.cpdss.gateway.domain.dischargeplan.CowPlan;
-import com.cpdss.gateway.domain.dischargeplan.CowPlanForExcel;
-import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
-import com.cpdss.gateway.domain.dischargeplan.DischargePlanResponse;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionGroup;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionResponse;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInstructionSubHeader;
-import com.cpdss.gateway.domain.dischargeplan.DischargingInstructions;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanExcelDetails;
-import com.cpdss.gateway.domain.dischargeplan.DischargingPlanExcelDischargingSequenceDetails;
-import com.cpdss.gateway.domain.dischargeplan.TanksWashedWithCargo;
-import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
-import com.cpdss.gateway.domain.loadingplan.BerthDetails;
-import com.cpdss.gateway.domain.loadingplan.BerthInformation;
+import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.dischargeplan.*;
+import com.cpdss.gateway.domain.loadingplan.*;
 import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
-import com.cpdss.gateway.domain.loadingplan.CargoQuantity;
-import com.cpdss.gateway.domain.loadingplan.CargoTobeLoaded;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionForExcel;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingInstructionDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingPlanDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
-import com.cpdss.gateway.domain.loadingplan.TankCargoDetails;
-import com.cpdss.gateway.domain.loadingplan.TankRow;
-import com.cpdss.gateway.domain.loadingplan.VesselParticularsForExcel;
-import com.cpdss.gateway.domain.loadingplan.sequence.Ballast;
-import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
+import com.cpdss.gateway.domain.loadingplan.sequence.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
-import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
-import com.cpdss.gateway.domain.loadingplan.sequence.CleaningTank;
-import com.cpdss.gateway.domain.loadingplan.sequence.CowTankDetail;
-import com.cpdss.gateway.domain.loadingplan.sequence.DriveTank;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingRateForSequence;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
-import com.cpdss.gateway.domain.loadingplan.sequence.QuantityLoadingStatus;
-import com.cpdss.gateway.domain.loadingplan.sequence.ShearingForce;
-import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
-import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParamsOfLoadingSequence;
-import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
-import com.cpdss.gateway.domain.loadingplan.sequence.TankCategoryForSequence;
-import com.cpdss.gateway.domain.loadingplan.sequence.TankWithSequenceDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.FileRepoService;
 import com.cpdss.gateway.service.VesselInfoService;
@@ -67,23 +22,13 @@ import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
 import com.cpdss.gateway.utility.ExcelExportUtility;
 import com.cpdss.gateway.utility.UnitConversionUtility;
 import com.cpdss.gateway.utility.UnitTypes;
-import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.*;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
@@ -94,17 +39,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
-import org.apache.poi.xssf.usermodel.XSSFDrawing;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFPicture;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -119,6 +54,7 @@ public class GenerateDischargingPlanExcelReportService {
   public static final String YES = "Yes";
   public static final String NO = "No";
   public static final String ZERO_VALUE = "0.0";
+  private static final Integer DISCHARGE_PLAN_PLANNED_TYPE_VALUE = 2;
 
   public String SUB_FOLDER_NAME = "/reports/discharging";
   public String TEMPLATES_FILE_LOCATION =
@@ -130,9 +66,9 @@ public class GenerateDischargingPlanExcelReportService {
   public final Integer END_ROW = 69;
   public final Integer END_COLUMN = 25;
   public VesselParticularsForExcel vesselParticular = null;
-  public String SHEET_NAMES[] = {"CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3"};
-  public Long INSTRUCTION_ORDER[] = {1L, 2L, 3L, 4L, 5L};
-  public Long CARGO_PUMP_IDS[] = {1L, 2L, 3L, 6L, 29L};
+  public String[] SHEET_NAMES = {"CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3"};
+  public Long[] INSTRUCTION_ORDER = {1L, 2L, 3L, 4L, 5L};
+  public Long[] CARGO_PUMP_IDS = {1L, 2L, 3L, 6L, 29L};
   public List<TankCargoDetails> cargoTanks = null;
   public List<TankCargoDetails> ballastTanks = null;
   public CargoMachineryInUse cargoMachinery = null;
@@ -149,7 +85,7 @@ public class GenerateDischargingPlanExcelReportService {
   public final Long CARGO_PUMP_ID = 1L;
   public final String CARGO_PUMP_COLOR_CODE = "#ea8343";
   public final String DEFAULT_PUMP_COLOR_CODE = "#7099c2";
-  public Long BALLAST_PUMP_IDS[] = {GS_PUMP_ID, IGS_PUMP_ID, STRIPPING_PUMP_ID};
+  public Long[] BALLAST_PUMP_IDS = {GS_PUMP_ID, IGS_PUMP_ID, STRIPPING_PUMP_ID};
   public final String COW_FULL = "*FULL*";
   public String COW_FULL_ICON = "/reports/discharging/full_wash_icon.png";
   public final String COW_TOP = "*TOP*";
@@ -175,18 +111,22 @@ public class GenerateDischargingPlanExcelReportService {
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
+  @GrpcClient("loadableStudyService")
+  private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
+      dischargeStudyOperationServiceBlockingStub;
+
   /**
    * Method to read data from request and Stamp in existing template
    *
-   * @param requestPayload
-   * @param vesselId
-   * @param voyageId
-   * @param infoId
-   * @param portRotationId
-   * @param downloadRequired
-   * @return
-   * @throws GenericServiceException
-   * @throws IOException
+   * @param requestPayload DischargePlanResponse input
+   * @param vesselId Vessel Id
+   * @param voyageId Voyage Id
+   * @param infoId Discharge Information Id
+   * @param portRotationId Port Rotation Id
+   * @param downloadRequired Boolean flag for download
+   * @return Byte Array of Excel
+   * @throws GenericServiceException In case of failures
+   * @throws IOException In case of I/O issues
    */
   public byte[] generateDischargingPlanExcel(
       DischargePlanResponse requestPayload,
@@ -202,15 +142,15 @@ public class GenerateDischargingPlanExcelReportService {
     TEMPLATES_FILE_LOCATION = getLoadingPlanTemplateForVessel(vesselId);
 
     // Building data required for Loading plan Excel
-    DischargingPlanExcelDetails loadinPlanExcelDetails =
+    DischargingPlanExcelDetails dischargingPlanExcelDetails =
         getDataForExcel(requestPayload, vesselId, voyageId, infoId, portRotationId);
-    log.info("Data model ready for stamping : " + loadinPlanExcelDetails.toString());
+    log.info("Data model ready for stamping : " + dischargingPlanExcelDetails);
 
     String actualFileName =
         getFileName(
             vesselId,
-            loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-            loadinPlanExcelDetails.getSheetOne().getPortName());
+            dischargingPlanExcelDetails.getSheetOne().getVoyageNumber(),
+            dischargingPlanExcelDetails.getSheetOne().getPortName());
 
     File theDir = new File(rootFolder + SUB_FOLDER_NAME);
     if (!theDir.exists()) {
@@ -223,64 +163,62 @@ public class GenerateDischargingPlanExcelReportService {
     FileInputStream resultFileStream =
         new FileInputStream(
             excelExportUtil.generateExcel(
-                loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, TEMP_LOCATION));
+                dischargingPlanExcelDetails, TEMPLATES_FILE_LOCATION, TEMP_LOCATION));
 
-    if (resultFileStream != null) {
-      FileOutputStream outFile = new FileOutputStream(outputLocation.toString());
-      log.info("Excel generated, setting color based on cargo in all sheets");
-      XSSFWorkbook workbook;
-      workbook = new XSSFWorkbook(resultFileStream);
-      try {
-        setCellStyle(workbook, loadinPlanExcelDetails);
-        // Adding password protection
-        workbook.write(outFile);
-        // GenerateProtectedFile.setPasswordToWorkbook(
-        // workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
-        // outFile);
-        // resultFileStream.close();
+    FileOutputStream outFile = new FileOutputStream(outputLocation.toString());
+    log.info("Excel generated, setting color based on cargo in all sheets");
+    XSSFWorkbook workbook;
+    workbook = new XSSFWorkbook(resultFileStream);
+    try {
+      setCellStyle(workbook, dischargingPlanExcelDetails);
+      // Adding password protection
+      workbook.write(outFile);
+      // GenerateProtectedFile.setPasswordToWorkbook(
+      // workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
+      // outFile);
+      // resultFileStream.close();
 
-        // Putting entry in file repo
-        FileRepoReply reply =
-            FileRepoService.addFileToRepo(
-                null,
-                loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-                actualFileName.split("/")[actualFileName.split("/").length - 1],
-                SUB_FOLDER_NAME + "/",
-                FileRepoSection.DISCHARGE_PLAN,
-                "Process",
-                null,
-                vesselId,
-                true);
-        if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
-          log.info("Succesfully added entry in FileRepo : {}", reply.getId());
-        } else {
-          log.info("Data entry in file repo failed");
-        }
-        // Returning Output file as byte array for local download
-        resultFileStream = new FileInputStream(outputLocation.toString());
-        if (downloadRequired && resultFileStream != null) {
-          log.info("Excel created.");
-          return IOUtils.toByteArray(resultFileStream);
-        }
-      } catch (GenericServiceException e) {
-        e.printStackTrace();
-        log.info("Excel export failed.");
-        throw new GenericServiceException(
-            "Generating excel failed. " + e.getMessage(),
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      } catch (Exception e) {
-        e.printStackTrace();
-        log.info("Applying style in excel failed");
-        throw new GenericServiceException(
-            "Generating excel failed ,Styling cells encountereed an exception",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      } finally {
-        outFile.close();
-        workbook.close();
-        resultFileStream.close();
+      // Putting entry in file repo
+      FileRepoReply reply =
+          FileRepoService.addFileToRepo(
+              null,
+              dischargingPlanExcelDetails.getSheetOne().getVoyageNumber(),
+              actualFileName.split("/")[actualFileName.split("/").length - 1],
+              SUB_FOLDER_NAME + "/",
+              FileRepoSection.DISCHARGE_PLAN,
+              "Process",
+              null,
+              vesselId,
+              true);
+      if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
+        log.info("Succesfully added entry in FileRepo : {}", reply.getId());
+      } else {
+        log.info("Data entry in file repo failed");
       }
+      // Returning Output file as byte array for local download
+      resultFileStream = new FileInputStream(outputLocation.toString());
+      if (downloadRequired) {
+        log.info("Excel created.");
+        return IOUtils.toByteArray(resultFileStream);
+      }
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      log.error("Excel export failed!", e);
+      throw new GenericServiceException(
+          "Generating excel failed. " + e.getMessage(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Applying style in excel failed!", e);
+      throw new GenericServiceException(
+          "Generating excel failed ,Styling cells encountereed an exception",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } finally {
+      outFile.close();
+      workbook.close();
+      resultFileStream.close();
     }
     // No need to for local download if file generated from event trigger
     log.info("No local download required so returning null");
@@ -701,10 +639,13 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
-   * @param workbook
-   * @param sheet
-   * @param cell
-   * @param tankFromFile
+   * Method to set tank cells colors
+   *
+   * @param workbook XSSFWorkbook input
+   * @param sheet XSSFSheet input
+   * @param row Row number
+   * @param col Column number
+   * @param tankFromFile TankCargoDetails input
    */
   private void setTankCellsColors(
       XSSFWorkbook workbook, XSSFSheet sheet, int row, int col, TankCargoDetails tankFromFile) {
@@ -788,7 +729,7 @@ public class GenerateDischargingPlanExcelReportService {
       Long voyageId,
       Long infoId,
       Long portRotationId)
-      throws GenericServiceException, InterruptedException, ExecutionException, ParseException {
+      throws GenericServiceException, ParseException {
     log.info("Building details for excel sheetwise ");
     DischargingPlanExcelDetails excelData = new DischargingPlanExcelDetails();
     if (requestPayload == null) {
@@ -827,10 +768,16 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
-   * Preparing sheet 2
+   * Method for preparing sheet 2
    *
-   * @param cowPlan
-   * @param tanks
+   * @param vesselId Vessel Id
+   * @param voyageId Voyage Id
+   * @param infoId Discharge Information Id
+   * @param portRotationId POrt Rotation Id
+   * @param dischargeInformation DischargeInformation object
+   * @param tanks List of VesselTank objects
+   * @return LoadingPlanExcelLoadingInstructionDetails response
+   * @throws GenericServiceException
    */
   private LoadingPlanExcelLoadingInstructionDetails buildSheetTwo(
       Long vesselId,
@@ -974,9 +921,8 @@ public class GenerateDischargingPlanExcelReportService {
   /**
    * Get list of instructions segregated against heading
    *
-   * @param integer
-   * @param loadingSequenceResponse
-   * @return
+   * @param loadingSequenceResponse DischargingInstructionResponse input
+   * @return List of LoadingInstructionForExcel objects
    */
   private List<LoadingInstructionForExcel> getInstructions(
       DischargingInstructionResponse loadingSequenceResponse) {
@@ -1190,11 +1136,12 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
-   * Cargo Pump details
+   * Method to get Cargo Pump details
    *
-   * @param stageTickPositions
-   * @param list
-   * @param cargoPumps
+   * @param stageTickPositions Set of Stage tick positions
+   * @param cargoPumps List of BallastPump objects
+   * @param pumpIds List of pump identifiers
+   * @return List of CargoPumpDetailsForSequence objects
    */
   private List<CargoPumpDetailsForSequence> getCargoPumpDetails(
       Set<Long> stageTickPositions, List<BallastPump> cargoPumps, List<Long> pumpIds) {
@@ -1259,9 +1206,9 @@ public class GenerateDischargingPlanExcelReportService {
   /**
    * Method to set cargo pump data against a tick position
    *
-   * @param cargoMatch
-   * @param ullages
-   * @param quantityStatusList
+   * @param pumpMatch BallastPump optional wrapper
+   * @param rates List of rates
+   * @param pumpStatus QuantityLoadingStatus input
    */
   private void setCargoPumpDetails(
       Optional<BallastPump> pumpMatch, List<String> rates, QuantityLoadingStatus pumpStatus) {
@@ -1292,10 +1239,9 @@ public class GenerateDischargingPlanExcelReportService {
   /**
    * Get sounding of ballast tanks in each tick position
    *
-   * @param stageTickPositions
-   * @param ballasts
-   * @param list
-   * @return
+   * @param stageTickPositions Set of stage tick positions
+   * @param ballasts List of Ballast objects
+   * @param tankList List of TankCategoryForSequence objects
    */
   private void getBallastTankUllageAndQuantity(
       Set<Long> stageTickPositions,
@@ -1357,11 +1303,10 @@ public class GenerateDischargingPlanExcelReportService {
   /**
    * Get ullage of ballast tanks in each tick position
    *
-   * @param tankList
-   * @param cleaningTank
-   * @param loadingSequenceResponse
-   * @param tankCategories
-   * @return
+   * @param stageTickPositions Set of stage tick positions
+   * @param cargos List of Cargo objects
+   * @param tankList List of TankCategoryForSequence objects
+   * @param cleaningTank CleaningTank object
    */
   private void getCargoTankUllageAndQuantity(
       Set<Long> stageTickPositions,
@@ -1490,14 +1435,12 @@ public class GenerateDischargingPlanExcelReportService {
   /**
    * Method to set data against a tick position
    *
-   * @param cargoMatch
-   * @param ullages
-   * @param quantityStatusList
-   * @param cleaningTank
-   * @param position
-   * @param position
-   * @param long1
-   * @param cleaningTank
+   * @param cargoMatch Cargo Optional wrapper
+   * @param ullages List of ullages
+   * @param quantityStatusList List of QuantityLoadingStatus objects
+   * @param start Long value
+   * @param end Long value
+   * @param cleaningTank CleaningTank object
    */
   private void setUllageAndQuantityCargo(
       Optional<Cargo> cargoMatch,
@@ -1536,13 +1479,12 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
-   * Method to check if cow details present or not.
+   * Method to check if cow details are present or not.
    *
-   * @param cowTanks
-   * @param position
-   * @param end
-   * @return
-   * @return
+   * @param cowTanks List of CowTankDetail objects
+   * @param start Long value
+   * @param end Long value
+   * @return Boolean value
    */
   private boolean getCowTankDetailForTank(List<CowTankDetail> cowTanks, Long start, Long end) {
     for (CowTankDetail cowTank : cowTanks) {
@@ -1556,9 +1498,9 @@ public class GenerateDischargingPlanExcelReportService {
   /**
    * Method to set data against a tick position
    *
-   * @param cargoMatch
-   * @param ullages
-   * @param quantityStatusList
+   * @param ballastMatch Ballast Optional wrapper
+   * @param ullages List of ullages
+   * @param ballastStatusList QuantityLoadingStatus input
    */
   private void setUllageAndQuantityBallast(
       Optional<Ballast> ballastMatch,
@@ -1674,11 +1616,11 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
-   * Finding discharging rate
+   * Method for finding discharging rate
    *
-   * @param cargoLoadingRates
-   * @param stageTickPositions
-   * @return
+   * @param cargoDischargingRates List of CargoLoadingRate objects
+   * @param stageTickPositions Set of stage tick positions
+   * @return List of LoadingRateForSequence objects
    */
   private List<LoadingRateForSequence> getDischargingRate(
       List<CargoLoadingRate> cargoDischargingRates, Set<Long> stageTickPositions) {
@@ -1825,8 +1767,8 @@ public class GenerateDischargingPlanExcelReportService {
    * Build data model for Sheet 1
    *
    * @return sheet one
-   * @throws GenericServiceException
-   * @throws ParseException
+   * @throws GenericServiceException In case of failures
+   * @throws ParseException In case of parsing related issues
    */
   private LoadingPlanExcelLoadingPlanDetails buildSheetOne(
       DischargePlanResponse requestPayload,
@@ -1843,22 +1785,109 @@ public class GenerateDischargingPlanExcelReportService {
     sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
     sheetOne.setCargoTobeDischarged(
         getCargoTobeDischarged(requestPayload.getDischargingInformation()));
+    sheetOne.setLoadingPlanCommingleDetailsList(
+        getDischargePlanCommingleDetailsList(requestPayload.getDischargingInformation()));
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;
   }
 
   /**
-   * Fetch basic vessel and Port details
+   * Method to fetch commingle details from discharge study
    *
-   * @param excelData
-   * @param requestPayload
-   * @param vesselId
-   * @param voyageId
-   * @param infoId
-   * @param portRotationId
-   * @throws GenericServiceException
-   * @throws ParseException
+   * @param dischargingInformation DischargeInformation object
+   * @return Filtered List of LoadingPlanCommingleDetails to be returned
+   */
+  private List<LoadingPlanCommingleDetails> getDischargePlanCommingleDetailsList(
+      DischargeInformation dischargingInformation) throws GenericServiceException {
+
+    log.info("Inside getLoadingPlanCommingleDetailsList method!");
+
+    List<LoadingPlanCommingleDetails> dischargePlanCommingleDetailsList = new ArrayList<>();
+
+    if (dischargingInformation != null) {
+
+      LoadableStudy.DischargeCommingleRequest dischargeCommingleRequest =
+          LoadableStudy.DischargeCommingleRequest.newBuilder()
+              .setDischargePatternId(dischargingInformation.getDischargePatternId())
+              .build();
+      LoadableStudy.DischargeCommingleReply dischargeCommingleReply =
+          dischargeStudyOperationServiceBlockingStub.getDischargeCommingleDetails(
+              dischargeCommingleRequest);
+
+      if (!SUCCESS.equals(dischargeCommingleReply.getResponseStatus().getStatus())) {
+        log.debug(
+            "Failure in fetching commingle details from discharge study against pattern id: {}",
+            dischargingInformation.getDischargePatternId());
+        throw new GenericServiceException(
+            "Failure in fetching commingle details from discharge study!",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+
+      dischargeCommingleReply
+          .getDischargePatternCommingleDetailsList()
+          .forEach(
+              dischargePatternCommingleDetailsReply -> {
+                LoadingPlanCommingleDetails dischargePlanCommingleDetails =
+                    new LoadingPlanCommingleDetails();
+
+                dischargePlanCommingleDetails.setAbbreviation(
+                    dischargePatternCommingleDetailsReply.getGrade());
+                dischargePlanCommingleDetails.setTankName(
+                    dischargePatternCommingleDetailsReply.getTankName());
+                Optional.of(dischargePatternCommingleDetailsReply.getQuantity())
+                    .ifPresent(
+                        quantity ->
+                            dischargePlanCommingleDetails.setQuantityMT(new BigDecimal(quantity)));
+                Optional.of(dischargePatternCommingleDetailsReply.getApi())
+                    .ifPresent(api -> dischargePlanCommingleDetails.setApi(new BigDecimal(api)));
+                Optional.of(dischargePatternCommingleDetailsReply.getTemperature())
+                    .ifPresent(
+                        temperature ->
+                            dischargePlanCommingleDetails.setTemperature(
+                                new BigDecimal(temperature)));
+                Optional.of(dischargePatternCommingleDetailsReply.getCargo1Percentage())
+                    .ifPresent(
+                        percentage ->
+                            dischargePlanCommingleDetails.setCargo1Percentage(
+                                new BigDecimal(percentage)));
+                Optional.of(dischargePatternCommingleDetailsReply.getCargo2Percentage())
+                    .ifPresent(
+                        percentage ->
+                            dischargePlanCommingleDetails.setCargo2Percentage(
+                                new BigDecimal(percentage)));
+                Optional.of(dischargePatternCommingleDetailsReply.getCargo1Quantity())
+                    .ifPresent(
+                        quantity ->
+                            dischargePlanCommingleDetails.setQuantity1MT(new BigDecimal(quantity)));
+                Optional.of(dischargePatternCommingleDetailsReply.getCargo2Quantity())
+                    .ifPresent(
+                        quantity ->
+                            dischargePlanCommingleDetails.setQuantity2MT(new BigDecimal(quantity)));
+
+                dischargePlanCommingleDetails.setCargo1Abbreviation(
+                    dischargePatternCommingleDetailsReply.getCargo1Abbrivation());
+                dischargePlanCommingleDetails.setCargo2Abbreviation(
+                    dischargePatternCommingleDetailsReply.getCargo2Abbrivation());
+
+                dischargePlanCommingleDetailsList.add(dischargePlanCommingleDetails);
+              });
+    }
+
+    return dischargePlanCommingleDetailsList;
+  }
+
+  /**
+   * Method to fetch basic vessel and Port details
+   *
+   * @param sheetOne LoadingPlanExcelLoadingPlanDetails object
+   * @param vesselId Vessel Id
+   * @param voyageId Voyage Id
+   * @param infoId Discharge Information Id
+   * @param portRotationId Port Rotation Id
+   * @throws GenericServiceException In case of failures
+   * @throws ParseException In case of Parsing issues
    */
   private void getBasicVesselDetails(
       LoadingPlanExcelLoadingPlanDetails sheetOne,
@@ -2059,12 +2088,12 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /**
-   * Build tank params
+   * Method to build tank params
    *
-   * @param excelData
-   * @param requestPayload
-   * @param
-   * @throws GenericServiceException
+   * @param requestPayload DischargePlanResponse input
+   * @param conditionType Arrival or Departure condition type
+   * @return ArrivalDeparcherCondition response
+   * @throws GenericServiceException In case of error propagation from inner methods
    */
   private ArrivalDeparcherCondition getVesselConditionDetails(
       DischargePlanResponse requestPayload, Integer conditionType) throws GenericServiceException {

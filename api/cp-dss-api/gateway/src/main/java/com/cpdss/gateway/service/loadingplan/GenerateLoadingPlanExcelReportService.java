@@ -9,49 +9,11 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
-import com.cpdss.gateway.domain.LoadLine;
-import com.cpdss.gateway.domain.LoadableQuantityCargoDetails;
-import com.cpdss.gateway.domain.PortRotation;
-import com.cpdss.gateway.domain.Vessel;
-import com.cpdss.gateway.domain.VesselResponse;
-import com.cpdss.gateway.domain.VesselTank;
+import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.domain.dischargeplan.CargoPumpDetailsForSequence;
-import com.cpdss.gateway.domain.loadingplan.ArrivalDeparcherCondition;
-import com.cpdss.gateway.domain.loadingplan.BerthDetails;
-import com.cpdss.gateway.domain.loadingplan.BerthInformation;
-import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
-import com.cpdss.gateway.domain.loadingplan.CargoQuantity;
-import com.cpdss.gateway.domain.loadingplan.CargoTobeLoaded;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionForExcel;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionGroup;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructionSubHeader;
-import com.cpdss.gateway.domain.loadingplan.LoadingInstructions;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanCommingleDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingInstructionDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanExcelLoadingPlanDetails;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanResponse;
-import com.cpdss.gateway.domain.loadingplan.LoadingPlanStabilityParam;
-import com.cpdss.gateway.domain.loadingplan.TankCargoDetails;
-import com.cpdss.gateway.domain.loadingplan.TankRow;
-import com.cpdss.gateway.domain.loadingplan.VesselParticularsForExcel;
-import com.cpdss.gateway.domain.loadingplan.sequence.Ballast;
-import com.cpdss.gateway.domain.loadingplan.sequence.BallastPump;
+import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.loadingplan.sequence.*;
 import com.cpdss.gateway.domain.loadingplan.sequence.Cargo;
-import com.cpdss.gateway.domain.loadingplan.sequence.CargoLoadingRate;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanExcelLoadingSequenceDetails;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingRateForSequence;
-import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
-import com.cpdss.gateway.domain.loadingplan.sequence.QuantityLoadingStatus;
-import com.cpdss.gateway.domain.loadingplan.sequence.ShearingForce;
-import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParam;
-import com.cpdss.gateway.domain.loadingplan.sequence.StabilityParamsOfLoadingSequence;
-import com.cpdss.gateway.domain.loadingplan.sequence.TankCategory;
-import com.cpdss.gateway.domain.loadingplan.sequence.TankCategoryForSequence;
-import com.cpdss.gateway.domain.loadingplan.sequence.TankWithSequenceDetails;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.FileRepoService;
 import com.cpdss.gateway.service.VesselInfoService;
@@ -60,7 +22,7 @@ import com.cpdss.gateway.service.loadingplan.impl.LoadingPlanServiceImpl;
 import com.cpdss.gateway.utility.ExcelExportUtility;
 import com.cpdss.gateway.utility.UnitConversionUtility;
 import com.cpdss.gateway.utility.UnitTypes;
-import java.awt.Color;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -68,14 +30,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -87,13 +43,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -118,8 +68,8 @@ public class GenerateLoadingPlanExcelReportService {
   public final Integer END_ROW = 71;
   public final Integer END_COLUMN = 25;
   public VesselParticularsForExcel vesselParticular = null;
-  public String SHEET_NAMES[] = {"CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3"};
-  public Long INSTRUCTION_ORDER[] = {1L, 17L, 13L, 15L, 2L, 14L, 11L, 4L};
+  public String[] SHEET_NAMES = {"CRUD - 021 pg1", "CRUD - 021 pg2", "CRUD - 021 pg3"};
+  public Long[] INSTRUCTION_ORDER = {1L, 17L, 13L, 15L, 2L, 14L, 11L, 4L};
   public List<TankCargoDetails> cargoTanks = null;
   public List<TankCargoDetails> ballastTanks = null;
   public CargoMachineryInUse cargoMachinery = null;
@@ -133,9 +83,10 @@ public class GenerateLoadingPlanExcelReportService {
   public final Long STRIPPING_PUMP_ID = 5L;
   public final String STRIPPING_PUMP_COLOR_CODE = "#fcc986";
   public final String DEFAULT_PUMP_COLOR_CODE = "#7099c2";
-  public Long BALLAST_PUMP_IDS[] = {GS_PUMP_ID, IGS_PUMP_ID, STRIPPING_PUMP_ID};
+  public Long[] BALLAST_PUMP_IDS = {GS_PUMP_ID, IGS_PUMP_ID, STRIPPING_PUMP_ID};
   public final Long BALLAST_PUMP_ID = 2L;
   public String voyageDate = null;
+  private static final Integer LOADING_PLAN_PLANNED_TYPE_VALUE = 2;
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -156,15 +107,15 @@ public class GenerateLoadingPlanExcelReportService {
   /**
    * Method to read data from request and Stamp in existing template
    *
-   * @param requestPayload
-   * @param vesselId
-   * @param voyageId
-   * @param infoId
-   * @param portRotationId
-   * @param downloadRequired
-   * @return
-   * @throws GenericServiceException
-   * @throws IOException
+   * @param requestPayload LoadingPlanResponse input
+   * @param vesselId Vessel Id
+   * @param voyageId Voyage Id
+   * @param infoId Loading information Id
+   * @param portRotationId Port rotation Id
+   * @param downloadRequired Boolean flag for download
+   * @return Byte Array of Excel
+   * @throws GenericServiceException In case of failure
+   * @throws IOException In case of I/O issues
    */
   public byte[] generateLoadingPlanExcel(
       LoadingPlanResponse requestPayload,
@@ -174,6 +125,7 @@ public class GenerateLoadingPlanExcelReportService {
       Long portRotationId,
       Boolean downloadRequired)
       throws Exception {
+
     log.info("Generating Loading plan excel for Vessel {}", vesselId);
 
     // Setting file name of input file based on vessel type
@@ -202,66 +154,64 @@ public class GenerateLoadingPlanExcelReportService {
             excelExportUtil.generateExcel(
                 loadinPlanExcelDetails, TEMPLATES_FILE_LOCATION, TEMP_LOCATION));
 
-    if (resultFileStream != null) {
-      FileOutputStream outFile = new FileOutputStream(outputLocation.toString());
-      log.info("Excel generated, setting color based on cargo in all sheets");
-      XSSFWorkbook workbook;
-      workbook = new XSSFWorkbook(resultFileStream);
-      try {
+    FileOutputStream outFile = new FileOutputStream(outputLocation.toString());
+    log.info("Excel generated, setting color based on cargo in all sheets");
+    XSSFWorkbook workbook;
+    workbook = new XSSFWorkbook(resultFileStream);
+    try {
 
-        setCellStyle(workbook, loadinPlanExcelDetails);
-        // Adding password protection code commented for temporary
-        // GenerateProtectedFile.setPasswordToWorkbook(
-        // workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
-        // outFile);
-        workbook.write(outFile);
-        resultFileStream.close();
+      setCellStyle(workbook, loadinPlanExcelDetails);
+      // Adding password protection code commented for temporary
+      // GenerateProtectedFile.setPasswordToWorkbook(
+      // workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
+      // outFile);
+      workbook.write(outFile);
+      resultFileStream.close();
 
-        // Putting entry in file repo
-        FileRepoReply reply =
-            FileRepoService.addFileToRepo(
-                null,
-                loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-                actualFileName.split("/")[actualFileName.split("/").length - 1],
-                SUB_FOLDER_NAME + "/",
-                FileRepoSection.LOADING_PLAN,
-                "Process",
-                null,
-                vesselId,
-                true);
-        if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
-          log.info("Succesfully added entry in FileRepo : {}", reply.getId());
-        } else {
-          log.info("Data entry in file repo failed");
-        }
-        // Returning Output file as byte array for local download
-        resultFileStream = new FileInputStream(outputLocation.toString());
-        if (downloadRequired && resultFileStream != null) {
-          log.info("Excel created.");
-          return IOUtils.toByteArray(resultFileStream);
-        }
-      } catch (GenericServiceException e) {
-        e.printStackTrace();
-        log.info("Excel export failed.");
-        throw new GenericServiceException(
-            "Generating excel failed. " + e.getMessage(),
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      } catch (Exception e) {
-        e.printStackTrace();
-        log.info("Applying style in excel failed");
-        throw new GenericServiceException(
-            "Generating excel failed ,Styling cells encountereed an exception",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
-            HttpStatusCode.BAD_REQUEST);
-      } finally {
-        outFile.close();
-        workbook.close();
-        resultFileStream.close();
+      // Putting entry in file repo
+      FileRepoReply reply =
+          FileRepoService.addFileToRepo(
+              null,
+              loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+              actualFileName.split("/")[actualFileName.split("/").length - 1],
+              SUB_FOLDER_NAME + "/",
+              FileRepoSection.LOADING_PLAN,
+              "Process",
+              null,
+              vesselId,
+              true);
+      if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
+        log.info("Succesfully added entry in FileRepo : {}", reply.getId());
+      } else {
+        log.error("Data entry in file repo failed. Response {}", reply);
       }
+      // Returning Output file as byte array for local download
+      resultFileStream = new FileInputStream(outputLocation.toString());
+      if (downloadRequired) {
+        log.info("Excel created.");
+        return IOUtils.toByteArray(resultFileStream);
+      }
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      log.error("Excel export failed!", e);
+      throw new GenericServiceException(
+          "Generating excel failed. " + e.getMessage(),
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.error("Applying style in excel failed!", e);
+      throw new GenericServiceException(
+          "Generating excel failed ,Styling cells encountered an exception",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    } finally {
+      outFile.close();
+      workbook.close();
+      resultFileStream.close();
     }
     // No need to for local download if file generated from event trigger
-    log.info("No local download required so returning null");
+    log.info("No local download required so returning empty byte array");
     return new byte[0];
   }
 
@@ -643,10 +593,13 @@ public class GenerateLoadingPlanExcelReportService {
   }
 
   /**
-   * @param workbook
-   * @param sheet
-   * @param cell
-   * @param tankFromFile
+   * Method to set tank cells colors
+   *
+   * @param workbook XSSFWorkbook input
+   * @param sheet XSSFSheet input sheet
+   * @param row Row number
+   * @param col Column number
+   * @param tankFromFile TankCargoDetails object
    */
   private void setTankCellsColors(
       XSSFWorkbook workbook, XSSFSheet sheet, int row, int col, TankCargoDetails tankFromFile) {
@@ -730,7 +683,7 @@ public class GenerateLoadingPlanExcelReportService {
       Long voyageId,
       Long infoId,
       Long portRotationId)
-      throws GenericServiceException, InterruptedException, ExecutionException, ParseException {
+      throws GenericServiceException, ParseException {
     log.info("Building details for excel sheetwise ");
     LoadingPlanExcelDetails excelData = new LoadingPlanExcelDetails();
     if (requestPayload == null) {
@@ -811,9 +764,8 @@ public class GenerateLoadingPlanExcelReportService {
   /**
    * Get list of instructions segregated against heading
    *
-   * @param integer
-   * @param loadingSequenceResponse
-   * @return
+   * @param loadingSequenceResponse LoadingInstructionResponse object
+   * @return List of LoadingInstructionForExcel objects output
    */
   private List<LoadingInstructionForExcel> getInstructions(
       LoadingInstructionResponse loadingSequenceResponse) {
@@ -1002,11 +954,12 @@ public class GenerateLoadingPlanExcelReportService {
   }
 
   /**
-   * Ballast Pump details
+   * Method to get Ballast Pump details
    *
-   * @param stageTickPositions
-   * @param list
-   * @param ballastPumps
+   * @param stageTickPositions Set of Stage tick positions
+   * @param ballastPumps List of BallastPump objects
+   * @param pumpIds List of Pump Identifiers
+   * @return List of CargoPumpDetailsForSequence objects
    */
   private List<CargoPumpDetailsForSequence> getBallastPumpDetails(
       Set<Long> stageTickPositions, List<BallastPump> ballastPumps, List<Long> pumpIds) {
@@ -1071,9 +1024,9 @@ public class GenerateLoadingPlanExcelReportService {
   /**
    * Method to set cargo pump data against a tick position
    *
-   * @param cargoMatch
-   * @param ullages
-   * @param quantityStatusList
+   * @param pumpMatch BallastPump Optional wrapper
+   * @param rates List of rates
+   * @param pumpStatus QuantityLoadingStatus input
    */
   private void setBallastPumpDetails(
       Optional<BallastPump> pumpMatch, List<String> rates, QuantityLoadingStatus pumpStatus) {
@@ -1104,10 +1057,9 @@ public class GenerateLoadingPlanExcelReportService {
   /**
    * Get sounding of ballast tanks in each tick position
    *
-   * @param stageTickPositions
-   * @param ballasts
-   * @param list
-   * @return
+   * @param stageTickPositions Set of stage tick positions
+   * @param ballasts List of Ballast objects
+   * @param tankList List of TankCategoryForSequence objects
    */
   private void getBallastTankUllageAndQuantity(
       Set<Long> stageTickPositions,
@@ -1169,10 +1121,9 @@ public class GenerateLoadingPlanExcelReportService {
   /**
    * Get ullage of ballast tanks in each tick position
    *
-   * @param tankList
-   * @param loadingSequenceResponse
-   * @param tankCategories
-   * @return
+   * @param stageTickPositions Set of stage tick positions
+   * @param cargos List of Cargo objects
+   * @param tankList List of TankCategoryForSequence objects
    */
   private void getCargoTankUllageAndQuantity(
       Set<Long> stageTickPositions, List<Cargo> cargos, List<TankCategoryForSequence> tankList) {
@@ -1241,9 +1192,9 @@ public class GenerateLoadingPlanExcelReportService {
   /**
    * Method to set data against a tick position
    *
-   * @param cargoMatch
-   * @param ullages
-   * @param quantityStatusList
+   * @param cargoMatchList List of Cargo objects
+   * @param ullages List of ullages
+   * @param quantityStatusList List of QuantityLoadingStatus objects
    */
   private void setUllageAndQuantityCargo(
       List<Cargo> cargoMatchList,
@@ -1282,9 +1233,9 @@ public class GenerateLoadingPlanExcelReportService {
   /**
    * Method to set data against a tick position
    *
-   * @param cargoMatch
-   * @param ullages
-   * @param quantityStatusList
+   * @param ballastMatch Ballast Optional wrapper
+   * @param ullages List of ullages
+   * @param ballastStatusList List of QuantityLoadingStatus objects
    */
   private void setUllageAndQuantityBallast(
       Optional<Ballast> ballastMatch,
@@ -1582,23 +1533,48 @@ public class GenerateLoadingPlanExcelReportService {
     sheetOne.setArrivalCondition(getVesselConditionDetails(requestPayload, 1));
     sheetOne.setDeparcherCondition(getVesselConditionDetails(requestPayload, 2));
     sheetOne.setCargoTobeLoaded(getCargoTobeLoadedDetails(requestPayload));
-    sheetOne.setLoadingPlanCommingleDetailsList(requestPayload.getPlanCommingleDetails());
+    sheetOne.setLoadingPlanCommingleDetailsList(
+        getLoadingPlanCommingleDetailsList(requestPayload.getPlanCommingleDetails()));
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;
   }
 
   /**
+   * Method to filter commingle details to get planned ones.
+   *
+   * @param planCommingleDetails List of LoadingPlanCommingleDetails objects to be filtered
+   * @return Filtered List of LoadingPlanCommingleDetails to be returned
+   */
+  private List<LoadingPlanCommingleDetails> getLoadingPlanCommingleDetailsList(
+      List<LoadingPlanCommingleDetails> planCommingleDetails) {
+
+    log.info("Inside getLoadingPlanCommingleDetailsList method!");
+
+    if (planCommingleDetails != null) {
+
+      // Apply filter to get planned commingle details and return the filtered list
+      return planCommingleDetails.stream()
+          .filter(
+              loadingPlanCommingleDetails ->
+                  LOADING_PLAN_PLANNED_TYPE_VALUE.equals(
+                      loadingPlanCommingleDetails.getValueType()))
+          .collect(Collectors.toList());
+    }
+
+    return null;
+  }
+
+  /**
    * Fetch basic vessel and Port details
    *
-   * @param excelData
-   * @param requestPayload
-   * @param vesselId
-   * @param voyageId
-   * @param infoId
-   * @param portRotationId
-   * @throws GenericServiceException
-   * @throws ParseException
+   * @param sheetOne LoadingPlanExcelLoadingPlanDetails input
+   * @param vesselId Vessel Id
+   * @param voyageId Voyage Id
+   * @param infoId Loading information Id
+   * @param portRotationId Port rotation Id
+   * @throws GenericServiceException In case of failure
+   * @throws ParseException In case of Parsing issues
    */
   private void getBasicVesselDetails(
       LoadingPlanExcelLoadingPlanDetails sheetOne,
@@ -1805,12 +1781,12 @@ public class GenerateLoadingPlanExcelReportService {
   }
 
   /**
-   * Build tank params
+   * Method to Build tank params
    *
-   * @param excelData
-   * @param requestPayload
-   * @param
-   * @throws GenericServiceException
+   * @param requestPayload LoadingPlanResponse input
+   * @param conditionType Arrival or Departure condition type
+   * @return ArrivalDeparcherCondition object response
+   * @throws GenericServiceException In case of error propagation from inner methods
    */
   private ArrivalDeparcherCondition getVesselConditionDetails(
       LoadingPlanResponse requestPayload, Integer conditionType) throws GenericServiceException {

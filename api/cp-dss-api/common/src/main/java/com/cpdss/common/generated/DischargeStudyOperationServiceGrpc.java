@@ -727,6 +727,59 @@ public final class DischargeStudyOperationServiceGrpc {
     return getGetDischargeStudyRequestJsonMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest,
+          com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+      getGetDischargeCommingleDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetDischargeCommingleDetails",
+      requestType = com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest.class,
+      responseType = com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest,
+          com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+      getGetDischargeCommingleDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest,
+            com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+        getGetDischargeCommingleDetailsMethod;
+    if ((getGetDischargeCommingleDetailsMethod =
+            DischargeStudyOperationServiceGrpc.getGetDischargeCommingleDetailsMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getGetDischargeCommingleDetailsMethod =
+                DischargeStudyOperationServiceGrpc.getGetDischargeCommingleDetailsMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getGetDischargeCommingleDetailsMethod =
+              getGetDischargeCommingleDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest,
+                          com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetDischargeCommingleDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "GetDischargeCommingleDetails"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargeCommingleDetailsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -909,6 +962,16 @@ public final class DischargeStudyOperationServiceGrpc {
           getGetDischargeStudyRequestJsonMethod(), responseObserver);
     }
 
+    /** */
+    public void getDischargeCommingleDetails(
+        com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetDischargeCommingleDetailsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1042,6 +1105,13 @@ public final class DischargeStudyOperationServiceGrpc {
                           .LoadableStudyModels
                           .DischargeStudyJsonReply>(
                       this, METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON)))
+          .addMethod(
+              getGetDischargeCommingleDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest,
+                      com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>(
+                      this, METHODID_GET_DISCHARGE_COMMINGLE_DETAILS)))
           .build();
     }
   }
@@ -1219,6 +1289,18 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getDischargeCommingleDetails(
+        com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetDischargeCommingleDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1333,6 +1415,14 @@ public final class DischargeStudyOperationServiceGrpc {
         getDischargeStudyRequestJson(com.cpdss.common.generated.LoadableStudy.JsonRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargeStudyRequestJsonMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply
+        getDischargeCommingleDetails(
+            com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetDischargeCommingleDetailsMethod(), getCallOptions(), request);
     }
   }
 
@@ -1467,6 +1557,15 @@ public final class DischargeStudyOperationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargeStudyRequestJsonMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+        getDischargeCommingleDetails(
+            com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetDischargeCommingleDetailsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
@@ -1481,6 +1580,7 @@ public final class DischargeStudyOperationServiceGrpc {
   private static final int METHODID_GET_DISCHARGE_COW_DETAILS = 9;
   private static final int METHODID_GET_COMMINGLE_CARGO_AS_SEPERATE_GRADE = 10;
   private static final int METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON = 11;
+  private static final int METHODID_GET_DISCHARGE_COMMINGLE_DETAILS = 12;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1617,6 +1717,13 @@ public final class DischargeStudyOperationServiceGrpc {
                           .DischargeStudyJsonReply>)
                   responseObserver);
           break;
+        case METHODID_GET_DISCHARGE_COMMINGLE_DETAILS:
+          serviceImpl.getDischargeCommingleDetails(
+              (com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest) request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1694,6 +1801,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getGetDischargeCowDetailsMethod())
                       .addMethod(getGetCommingleCargoAsSeperateGradeMethod())
                       .addMethod(getGetDischargeStudyRequestJsonMethod())
+                      .addMethod(getGetDischargeCommingleDetailsMethod())
                       .build();
         }
       }

@@ -112,6 +112,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
   @Autowired CowHistoryRepository cowHistoryRepository;
   @Autowired LoadableStudyAlgoStatusRepository loadableStudyAlgoStatusRepository;
   @Autowired CommingleCargoRepository commingleCargoRepository;
+  @Autowired private DischargePlanCommingleDetailsService dischargePlanCommingleDetailsService;
 
   @Autowired
   CommingleCargoToDischargePortwiseDetailsRepository
@@ -2264,6 +2265,59 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
               .setMessage("Exception when getting discharge study input JSON"));
 
+    } finally {
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Method to fetch commingle details for discharging plan
+   *
+   * @param request DischargeCommingleRequest object
+   * @param responseObserver StreamObserver of DischargeCommingleReply response
+   */
+  @Override
+  public void getDischargeCommingleDetails(
+      com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest request,
+      StreamObserver<com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>
+          responseObserver) {
+
+    log.info("Inside getDischargeCommingleDetails method!");
+
+    com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply.Builder replyBuilder =
+        com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply.newBuilder();
+    try {
+
+      // Fetch Commingle details
+      dischargePlanCommingleDetailsService.fetchDischargeCommingleDetails(request, replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS));
+
+    } catch (GenericServiceException e) {
+
+      log.error(
+          "GenericServiceException when getting discharge study commingle details against pattern id {}",
+          request.getDischargePatternId(),
+          e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(FAILED)
+              .setHttpStatusCode(e.getStatus().value())
+              .build());
+    } catch (Exception e) {
+
+      log.error(
+          "Exception when getting discharge study commingle details against pattern id {}",
+          request.getDischargePatternId(),
+          e);
+      e.printStackTrace();
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setStatus(FAILED)
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when getting discharge study commingle details!"));
     } finally {
       responseObserver.onNext(replyBuilder.build());
       responseObserver.onCompleted();
