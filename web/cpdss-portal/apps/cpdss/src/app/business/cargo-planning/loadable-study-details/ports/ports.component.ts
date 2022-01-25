@@ -280,7 +280,7 @@ export class PortsComponent implements OnInit, OnDestroy {
       layCanFrom: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[0]?.trim(), true), disabled: layCanData }, layCanData ? [] : { validators: [] }),
       layCanTo: this.fb.control({ value: this.dateStringToDate(ports.layCan.value?.split('to')[1]?.trim(), true), disabled: layCanData }, layCanData ? [] : { validators: [] }),
       maxDraft: this.fb.control(ports.maxDraft.value, [Validators.required, Validators.min(0), numberValidator(2, 2)]),
-      maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.required, Validators.min(minAirDraft), numberValidator(2, 2)]),
+      maxAirDraft: this.fb.control(ports.maxAirDraft.value, [Validators.min(minAirDraft), numberValidator(2, 2)]),
       eta: this.fb.control({ value: this.dateStringToDate(ports.eta.value), disabled: !required }, this.getValidators('eta', index, false)),
       etd: this.fb.control({ value: this.dateStringToDate(ports.etd.value), disabled: !required }, this.getValidators('etd', index, false))
     });
