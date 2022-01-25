@@ -6,6 +6,7 @@
     "clientId": "frontend",
     "baseUnit": "MT",
     "volumeBaseUnit": "KL",
+    "passwordMinLength": "8",
     "processingTimeout": 7200000,
     "dateFormat": "DD-MMM-YYYY HH:mm",
     "quantityNumberFormatKL": "1.3-3",
