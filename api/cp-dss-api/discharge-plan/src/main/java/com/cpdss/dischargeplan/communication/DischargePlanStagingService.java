@@ -132,6 +132,9 @@ public class DischargePlanStagingService extends StagingService {
                 .setReferenceId(dischargeInformation.getDischargingPatternXid())
                 .setMessageType(MessageTypes.DISCHARGESTUDY.getMessageType())
                 .build();
+        log.info(
+            "Calling DischargeStudy triggerCommunication with request :{}",
+            communicationTriggerRequest);
         final Common.CommunicationTriggerResponse response =
             loadableStudyServiceBlockingStub.triggerCommunication(communicationTriggerRequest);
 

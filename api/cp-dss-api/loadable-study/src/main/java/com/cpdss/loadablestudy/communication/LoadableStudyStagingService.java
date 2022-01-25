@@ -118,15 +118,19 @@ public class LoadableStudyStagingService extends StagingService {
               dischargeStudyGet.getConfirmedLoadableStudyId(), LS_STATUS_CONFIRMED);
       if (!CollectionUtils.isEmpty(loadablePatternGet)) {
         Long patternId = loadablePatternGet.stream().findFirst().get().getId();
+        log.info("patternId get :{}", patternId);
         if (!isCommunicated(
             MessageTypes.LOADINGPLAN.getMessageType(),
             patternId,
             CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName())) {
           Common.CommunicationTriggerRequest communicationTriggerRequest =
               Common.CommunicationTriggerRequest.newBuilder()
-                  .setReferenceId(referenceId)
+                  .setReferenceId(patternId)
                   .setMessageType(MessageTypes.LOADINGPLAN.getMessageType())
                   .build();
+          log.info(
+              "Calling loadingplan triggerCommunication with request :{}",
+              communicationTriggerRequest);
           final Common.CommunicationTriggerResponse response =
               loadingPlanServiceBlockingStub.triggerCommunication(communicationTriggerRequest);
           dependantProcessId = response.getProcessId();

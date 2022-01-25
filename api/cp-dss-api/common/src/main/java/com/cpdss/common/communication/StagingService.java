@@ -522,7 +522,11 @@ public class StagingService {
    */
   public boolean isCommunicated(final String reference, final Long referenceId, final String module)
       throws GenericServiceException {
-
+    log.info(
+        "Communication check with reference: {}, Reference Id: {}, module: {}",
+        reference,
+        referenceId,
+        module);
     CommunicationModule requestModule = getCommunicationModule(module);
 
     if (module.equals(currentModule)) {

@@ -771,6 +771,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       List<LoadingInformation> loadingInformationList =
           loadingInformationRepository.findByLoadablePatternXId(request.getReferenceId());
       if (!CollectionUtils.isEmpty(loadingInformationList)) {
+        log.info("LoadingInformation list to check communicate:{}", loadingInformationList.size());
         List<Boolean> communicatedStatus = new ArrayList();
         for (LoadingInformation loadingInfo : loadingInformationList) {
           communicatedStatus.add(
@@ -781,6 +782,10 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
           if (communicatedStatus.contains(false)) {
             isCommunicated = false;
           }
+          log.info(
+              "checkCommunicated Completed ::: LP Pattern Id: {}, isCommunicated: {}",
+              request.getReferenceId(),
+              isCommunicated);
           // Set response status
           responseBuilder
               .setIsCompleted(isCommunicated)
@@ -822,9 +827,13 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
     Common.CommunicationTriggerResponse.Builder responseBuilder =
         Common.CommunicationTriggerResponse.newBuilder();
     try {
+      log.info("triggerCommunication with request :{}", request);
       List<LoadingInformation> loadingInformationList =
           loadingInformationRepository.findByLoadablePatternXId(request.getReferenceId());
       if (!CollectionUtils.isEmpty(loadingInformationList)) {
+        log.info(
+            "LoadingInformation list size to trigger Communication:{}",
+            loadingInformationList.size());
         String processId = null;
         for (LoadingInformation loadingInfo : loadingInformationList) {
           final boolean isCommunicated =
@@ -833,7 +842,9 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   loadingInfo.getId(),
                   CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName());
           if (!isCommunicated) {
+            log.info("Calling communicateLoadingPlan ::: LP Id:{}", loadingInfo.getId());
             processId = loadingPlanAlgoService.communicateLoadingPlan(loadingInfo.getId(), false);
+            log.info("triggerCommunication Completed ::: LP Id: {}", loadingInfo.getId());
           }
         }
         // Set response status
