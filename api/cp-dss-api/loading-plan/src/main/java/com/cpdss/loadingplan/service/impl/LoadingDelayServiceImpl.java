@@ -41,15 +41,14 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
               loadingInformation.getId(), true);
       List<Long> requestedDelays =
           loadingDelays.getDelaysList().stream()
-              .map(delay -> delay.getId())
+              .map(LoadingDelays::getId)
               .collect(Collectors.toList());
-      existingDelays.stream()
-          .filter(existingDelay -> !requestedDelays.contains(existingDelay.getId()))
-          .forEach(
-              existingDelay -> {
-                this.deleteDelayAndReasons(existingDelay);
-                // loadingDelayRepository.deleteById(existingDelay.getId());
-              });
+
+      List<com.cpdss.loadingplan.entity.LoadingDelay> loadingDelayList =
+          existingDelays.stream()
+              .filter(existingDelay -> !requestedDelays.contains(existingDelay.getId()))
+              .collect(Collectors.toList());
+      deleteDelayAndReasons(loadingDelayList);
     }
     for (LoadingDelays delay : loadingDelays.getDelaysList()) {
       log.info(
@@ -101,20 +100,23 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
 
     // Incoming Delays
     List<LoadingDelayReason> delayReasons = new ArrayList<>();
-    for (Long id : delay.getReasonForDelayIdsList()) {
+    for (Long reasonForDelayId : delay.getReasonForDelayIdsList()) {
       // Master Reason data
-      Optional<ReasonForDelay> var1 = reasonForDelayRepository.findByIdAndIsActiveTrue(id);
-      if (!var1.isEmpty()) {
-        delayReasons.add(new LoadingDelayReason(loadingDelay, var1.get(), true));
+      Optional<ReasonForDelay> reasonForDelayWrapper =
+          reasonForDelayRepository.findByIdAndIsActiveTrue(reasonForDelayId);
+      if (reasonForDelayWrapper.isPresent()) {
+        delayReasons.add(new LoadingDelayReason(loadingDelay, reasonForDelayWrapper.get(), true));
       } else {
-        throw new Exception("Delay Reason master data not found for id - " + id);
+        log.error("Delay Reason master data not found for reasonForDelayId: {}", reasonForDelayId);
+        throw new Exception(
+            "Delay Reason master data not found for reasonForDelayId - " + reasonForDelayId);
       }
     }
     loadingDelay.setLoadingDelayReasons(delayReasons);
     loadingDelay.setCargoNominationId(delay.getCargoNominationId());
     loadingDelay.setDuration(
         StringUtils.isEmpty(delay.getDuration()) ? null : new BigDecimal(delay.getDuration()));
-    Optional.ofNullable(delay.getCargoId()).ifPresent(loadingDelay::setCargoXId);
+    Optional.of(delay.getCargoId()).ifPresent(loadingDelay::setCargoXId);
     loadingDelay.setQuantity(
         StringUtils.isEmpty(delay.getQuantity()) ? null : new BigDecimal(delay.getQuantity()));
     loadingDelay.setLoadingRate(
@@ -130,10 +132,15 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
         .forEach(loadingDelayReasonRepository::deleteLoadingDelayReasonById);
   }
 
-  private void deleteDelayAndReasons(com.cpdss.loadingplan.entity.LoadingDelay delay) {
-    delay.setIsActive(false);
-    delay.getLoadingDelayReasons().forEach(v -> v.setIsActive(false));
-    loadingDelayRepository.save(delay);
-    log.info("Deleted old delay Id {}", delay.getId());
+  private void deleteDelayAndReasons(
+      List<com.cpdss.loadingplan.entity.LoadingDelay> loadingDelayList) {
+
+    loadingDelayList.forEach(
+        loadingDelay -> {
+          log.info("Deleted old delay Id {}", loadingDelay.getId());
+          loadingDelay.setIsActive(false);
+          loadingDelay.getLoadingDelayReasons().forEach(v -> v.setIsActive(false));
+        });
+    loadingDelayRepository.saveAll(loadingDelayList);
   }
 }

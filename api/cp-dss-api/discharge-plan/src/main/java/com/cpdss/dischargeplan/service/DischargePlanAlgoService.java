@@ -235,7 +235,7 @@ public class DischargePlanAlgoService {
       trimAllowed.setFinalTrim(entity.getFinalTrim());
 
       dischargeDetails.setTrimAllowed(trimAllowed);
-      dischargeDetails.setCommonDate(entity.getCommonDate());
+      dischargeDetails.setCommonDate(String.valueOf(entity.getCommonDate()));
       dischargeDetails.setSlopQuantity(entity.getSlopQuantity());
       disDto.setDischargeDetails(dischargeDetails);
 

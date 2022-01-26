@@ -7,12 +7,7 @@ import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
-import com.cpdss.common.generated.LoadableStudy.AlgoErrorReply;
-import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
-import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
-import com.cpdss.common.generated.LoadableStudy.CargoNominationReply;
-import com.cpdss.common.generated.LoadableStudy.JsonRequest;
-import com.cpdss.common.generated.LoadableStudy.StatusReply;
+import com.cpdss.common.generated.LoadableStudy.*;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
@@ -21,6 +16,8 @@ import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.AlgoStatusRequest;
+import com.cpdss.gateway.domain.DischargeQuantityCargoDetails;
 import com.cpdss.gateway.domain.dischargeplan.*;
 import com.cpdss.gateway.domain.dischargeplan.CowPlan;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
@@ -76,6 +73,8 @@ public class DischargeInformationService {
   @Autowired DischargingSequenceService dischargingSequenceService;
   @Autowired VesselInfoService vesselInfoService;
   @Autowired LoadableStudyService loadableStudyService;
+
+  @Autowired private DischargeInformationBuilderService dischargeInformationBuilderService;
 
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceBlockingStub vesselInfoGrpcService;
@@ -294,7 +293,8 @@ public class DischargeInformationService {
   private void addDefaultCargoDetailsForManagingSequence(
       List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetailsList,
       LoadingSequences dischargeSequences,
-      Long dischargeInfoId) {
+      Long dischargeInfoId)
+      throws GenericServiceException {
 
     log.info("Inside addDefaultCargoDetailsForManagingSequence method!");
 
@@ -322,6 +322,32 @@ public class DischargeInformationService {
             dischargingDelaysList.add(dischargingDelays);
           });
       dischargeSequences.setDischargingDelays(dischargingDelaysList);
+
+      // Save default manage sequence discharging delays in database table
+      com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
+          com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
+      builder.setDischargeInfoId(dischargeInfoId);
+      builder.setIsDischargingInfoComplete(IS_DISCHARGE_INFO_COMPLETE_DEFAULT);
+      DischargeDelay.Builder dischargingDelayBuilder = DischargeDelay.newBuilder();
+      dischargingDelayBuilder.addAllDelays(
+          dischargeInformationBuilderService.buildDischargingDelays(
+              dischargingDelaysList, dischargeInfoId));
+      builder.setDischargeDelay(dischargingDelayBuilder.build());
+
+      DischargingInfoSaveResponse dischargingInfoSaveResponse =
+          dischargeInfoServiceStub.saveDischargingInfoDelays(builder.build());
+      if (dischargingInfoSaveResponse == null
+          || !SUCCESS.equals(dischargingInfoSaveResponse.getResponseStatus().getStatus())) {
+
+        log.debug(
+            "Failed to save default manage sequence discharging delays for discharging information id: {}",
+            dischargeInfoId);
+        throw new GenericServiceException(
+            "Failed to save default manage sequence discharging delays for discharging information id: "
+                + dischargeInfoId,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
     }
   }
 

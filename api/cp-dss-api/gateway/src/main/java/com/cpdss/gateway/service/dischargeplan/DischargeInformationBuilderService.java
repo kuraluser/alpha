@@ -724,7 +724,7 @@ public class DischargeInformationBuilderService {
     return builder.build();
   }
 
-  private List<DischargeDelays> buildDischargingDelays(
+  public List<DischargeDelays> buildDischargingDelays(
       List<DischargingDelays> dischargingDelays, Long dischargingInfoId) {
     List<DischargeDelays> delayList = new ArrayList<>();
     dischargingDelays.forEach(

@@ -54,7 +54,6 @@ import com.cpdss.loadingplan.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -507,9 +506,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     loadingDetails.setTimeOfSunset(loadingDetail.getTimeOfSunset());
 
     loadingDetails.setCommonDate(
-        loadingDetail.getCommonDate().isBlank()
-            ? null
-            : LocalDate.parse(loadingDetail.getCommonDate()));
+        loadingDetail.getCommonDate().isBlank() ? null : loadingDetail.getCommonDate());
 
     TrimAllowed trimAllowed = new TrimAllowed();
     trimAllowed.setFinalTrim(

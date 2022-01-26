@@ -80,6 +80,8 @@ public class LoadingPlanServiceImplTest {
 
   @MockBean LoadingPlanBuilderService loadingPlanBuilderService;
 
+  @MockBean private LoadingInformationBuilderService loadingInformationBuilderService;
+
   //  @MockBean LoadingInformationService loadingInformationService;
 
   private static final String SUCCESS = "SUCCESS";

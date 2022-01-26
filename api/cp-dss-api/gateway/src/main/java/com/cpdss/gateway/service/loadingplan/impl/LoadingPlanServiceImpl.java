@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service.loadingplan.impl;
 
-import static com.cpdss.gateway.common.GatewayConstants.LOADING_RULE_MASTER_ID;
+import static com.cpdss.gateway.common.GatewayConstants.*;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -12,32 +12,32 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.LoadableStudy.StatusReply;
 import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingInformationServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanSaveResponse;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceReply;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortLoadablePlanStowageDetail;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PortLoadingPlanRobDetails;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.common.GatewayConstants;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.UllageBillReply;
+import com.cpdss.gateway.domain.UllageBillRequest;
 import com.cpdss.gateway.domain.loadingplan.*;
+import com.cpdss.gateway.domain.loadingplan.LoadablePlanCommingleDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingDelays;
+import com.cpdss.gateway.domain.loadingplan.LoadingDetails;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformation;
+import com.cpdss.gateway.domain.loadingplan.LoadingInformationRequest;
+import com.cpdss.gateway.domain.loadingplan.LoadingRates;
+import com.cpdss.gateway.domain.loadingplan.LoadingStages;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoRequest;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanAlgoResponse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingSequenceResponse;
 import com.cpdss.gateway.domain.voyage.VoyageResponse;
 import com.cpdss.gateway.service.UllageReportFileParsingService;
 import com.cpdss.gateway.service.VesselInfoService;
-import com.cpdss.gateway.service.loadingplan.GenerateLoadingPlanExcelReportService;
-import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
-import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
-import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
-import com.cpdss.gateway.service.loadingplan.LoadingPlanService;
-import com.cpdss.gateway.service.loadingplan.LoadingSequenceService;
+import com.cpdss.gateway.service.loadingplan.*;
 import com.cpdss.gateway.utility.RuleUtility;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -74,6 +74,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @Autowired GenerateLoadingPlanExcelReportService loadingPlanExcelReportService;
 
+  @Autowired private LoadingInformationBuilderService loadingInformationBuilderService;
+
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
@@ -93,6 +95,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
+
+  @GrpcClient("loadingInformationService")
+  private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
+      loadingInfoServiceBlockingStub;
 
   @Autowired LoadingPlanService loadingPlanService;
 
@@ -385,7 +391,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
   private void addDefaultCargoDetailsForManagingSequence(
       List<LoadableStudy.LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList,
       LoadingSequences loadingSequences,
-      long loadingInfoId) {
+      long loadingInfoId)
+      throws GenericServiceException {
 
     log.info("Inside addDefaultCargoDetailsForManagingSequence method!");
 
@@ -412,6 +419,32 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             loadingDelaysList.add(loadingDelays);
           });
       loadingSequences.setLoadingDelays(loadingDelaysList);
+
+      // Save default manage sequence loading delays to database table
+      LoadingPlanModels.LoadingInformation.Builder builder =
+          LoadingPlanModels.LoadingInformation.newBuilder();
+      builder.setLoadingInfoId(loadingInfoId);
+      builder.setIsLoadingInfoComplete(IS_LOADING_INFO_COMPLETE_DEFAULT);
+      LoadingPlanModels.LoadingDelay.Builder loadingDelayBuilder =
+          LoadingPlanModels.LoadingDelay.newBuilder();
+      loadingDelayBuilder.addAllDelays(
+          loadingInformationBuilderService.buildLoadingDelays(loadingDelaysList, loadingInfoId));
+      builder.setLoadingDelays(loadingDelayBuilder.build());
+
+      LoadingPlanModels.LoadingInfoSaveResponse loadingInfoSaveResponse =
+          loadingInfoServiceBlockingStub.saveLoadingInfoDelays(builder.build());
+      if (loadingInfoSaveResponse == null
+          || !SUCCESS.equals(loadingInfoSaveResponse.getResponseStatus().getStatus())) {
+
+        log.error(
+            "Failed to save default manage sequence loading delays for loading information id: {}",
+            loadingInfoId);
+        throw new GenericServiceException(
+            "Failed to save default manage sequence loading delays for loading information id: "
+                + loadingInfoId,
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
     }
   }
 
