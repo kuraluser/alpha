@@ -11,17 +11,17 @@ export const sequenceNumberValidator: ValidatorFn = (control: AbstractControl): 
   if (!control.root || !control.parent || control?.value === '' || control?.value === null) {
     return null;
   }
-  const currSequence = Number(control?.value);
-  const sequences = control.parent.parent as FormArray;
-  const currentIndex = sequences?.controls?.indexOf(control.parent);
-  if(currentIndex === 0) {
-    return currSequence === 1 && currSequence >= 0 ? null : {invalidNumber: true};
-  } else if (currentIndex > 0) {
-    const prevSequence = (<FormControl>sequences.at(currentIndex - 1)).value;
-    const prevSequenceNo  = Number(prevSequence.sequenceNo) ?? 0;
-    return [prevSequenceNo, prevSequenceNo + 1].includes(currSequence) ? null : { invalidSequenceNumber: true };
+
+  const sequences: number[] = [...new Set(<Array<number>>((control.parent.parent as FormArray)?.value?.map(value => Number(value?.sequenceNo))))];
+  const count = Math.max(...sequences);
+  const missingSequence = [];
+
+  for (let i = 1; i <= count; i++) {
+    if (sequences.indexOf(i) === -1) {
+      missingSequence.push(i);
+    }
   }
 
-  return null;
+  return missingSequence?.length ? { invalidSequenceNumber: true } : null;
 };
 

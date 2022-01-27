@@ -261,16 +261,13 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const [totalHours, totalMinutes] = this.totalDuration.toString()?.split('.').map((num, i) => i === 1 ? Number(num ?? 0) * 6 : Number(num));
     const formGroup =  this.fb.group({
       id: loadingDischargingDelay.id,
+      sequenceNo: this.fb.control(loadingDischargingDelay?.sequenceNo?.value, [Validators.required, numberValidator(0, null, false), sequenceNumberValidator]),
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
       duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(totalHours, totalMinutes)]),
       cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator()]),
       quantity: this.fb.control(loadingDischargingDelay.quantity?.value, initialDelay ? [] : this.getQuantityValidators()),
       colorCode: this.fb.control(loadingDischargingDelay.colorCode)
     });
-
-    if (this.operation === OPERATIONS.DISCHARGING) {
-      formGroup.addControl('sequenceNo', this.fb.control(loadingDischargingDelay?.sequenceNo?.value, [Validators.required, numberValidator(0, null, false), sequenceNumberValidator]));
-    }
 
     return formGroup;
   }
@@ -430,10 +427,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     } else {
       this.loadingDischargingDelays.splice(0, 1);
       dataTableControl.removeAt(0);
-      if(this.operation === OPERATIONS.DISCHARGING) {
-        dataTableControl.at(0).get('sequenceNo').setValue(1);
-        this.loadingDischargingDelays[0].sequenceNo.value = 1;
-      }
+      dataTableControl.at(0).get('sequenceNo').setValue(1);
+      this.loadingDischargingDelays[0].sequenceNo.value = 1;
     }
     const loadingDelaysList = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValue(this.loadingDischargingDelays, this.operation === OPERATIONS.LOADING ? this.loadingInfoId : this.dischargeInfoId, this.operation,this.listData);
     this.updateLoadingDischargingDelays.emit(loadingDelaysList);
@@ -486,7 +481,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     this.loadingDischargingSequenceForm.updateValueAndValidity();
     if (event.index === 0) {
       this.addInitialDelay = false;
-      if (this.operation === OPERATIONS.DISCHARGING && this.loadingDischargingDelays?.length) {
+      if (this.loadingDischargingDelays?.length) {
         dataTableControl?.at(0)?.get('sequenceNo')?.setValue(1);
         this.loadingDischargingDelays[0].sequenceNo.value = 1;
       }

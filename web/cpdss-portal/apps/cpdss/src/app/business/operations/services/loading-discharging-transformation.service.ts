@@ -352,6 +352,19 @@ export class LoadingDischargingTransformationService {
         fieldClass: 'sl'
       },
       {
+        field: 'sequenceNo',
+        header: 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'DISCHARGING_MANAGE_SEQUENCE_ENTER_SEQUENCE_NO',
+        numberFormat: '1.0-0',
+        errorMessages: {
+          'required': 'DISCHARGING_MANAGE_SEQUENCE_REQUIRED',
+          'invalidNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID',
+          'invalidSequenceNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID_VALUE'
+        }
+
+      },
+      {
         field: 'cargo',
         header: 'Cargo',
         listName: 'loadableQuantityCargo',
@@ -421,23 +434,6 @@ export class LoadingDischargingTransformationService {
       }
     ];
 
-    if (operation === OPERATIONS.DISCHARGING) {
-      const column: IDataTableColumn = {
-        field: 'sequenceNo',
-        header: 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO',
-        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldPlaceholder: 'DISCHARGING_MANAGE_SEQUENCE_ENTER_SEQUENCE_NO',
-        numberFormat: '1.0-0',
-        errorMessages: {
-          'required': 'DISCHARGING_MANAGE_SEQUENCE_REQUIRED',
-          'invalidNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID',
-          'invalidSequenceNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID_VALUE'
-        }
-
-      };
-      columns.splice(1, 0, column);
-    }
-
     return columns;
   }
 
@@ -476,9 +472,7 @@ export class LoadingDischargingTransformationService {
     _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays[]>(reasonDelayObj, true, isNewValue, false, true);
     _loadingDischargingDelay.isAdd = isNewValue;
 
-    if (operation === OPERATIONS.DISCHARGING) {
-      _loadingDischargingDelay.sequenceNo = new ValueObject<number>(loadingDischargingDelay?.isInitialDelay ? 1 : loadingDischargingDelay?.sequenceNo, true, !loadingDischargingDelay?.isInitialDelay && isNewValue, false, !loadingDischargingDelay?.isInitialDelay);
-    }
+    _loadingDischargingDelay.sequenceNo = new ValueObject<number>(loadingDischargingDelay?.isInitialDelay ? 1 : loadingDischargingDelay?.sequenceNo, true, !loadingDischargingDelay?.isInitialDelay && isNewValue, false, !loadingDischargingDelay?.isInitialDelay);
 
     return _loadingDischargingDelay;
   }
@@ -514,8 +508,8 @@ export class LoadingDischargingTransformationService {
         _loadingDischargingDelays.loadingInfoId = infoId;
       } else {
         _loadingDischargingDelays.dischargeInfoId = infoId;
-        _loadingDischargingDelays.sequenceNo = Number(loadingValueObject?.sequenceNo.value);
       }
+      _loadingDischargingDelays.sequenceNo = Number(loadingValueObject?.sequenceNo.value);
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
       _loadingDischargingDelays.reasonForDelayIds = loadingValueObject?.reasonForDelay?.value?.map(a => a.id) ?? [];
       if (_loadingDischargingDelays.cargoId) {
