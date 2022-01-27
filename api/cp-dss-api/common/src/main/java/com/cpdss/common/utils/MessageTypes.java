@@ -40,7 +40,7 @@ public enum MessageTypes {
       EnumSet.of(LOADABLESTUDY, VALIDATEPLAN, LOADABLESTUDY_WITHOUT_ALGO);
 
   public static EnumSet<MessageTypes> loadingShore =
-      EnumSet.of(LOADINGPLAN_SAVE, LOADINGPLAN, ULLAGE_UPDATE);
+      EnumSet.of(LOADINGPLAN_SAVE, LOADINGPLAN, ULLAGE_UPDATE, LOADINGPLAN_WITHOUT_ALGO);
   public static EnumSet<MessageTypes> loadingShip =
       EnumSet.of(
           LOADINGPLAN_ALGORESULT,
@@ -50,7 +50,8 @@ public enum MessageTypes {
       EnumSet.of(DISCHARGEPLAN, DISCHARGEPLAN_ULLAGE_UPDATE);
   public static EnumSet<MessageTypes> dischargeShip =
       EnumSet.of(DISCHARGEPLAN_ALGORESULT, DISCHARGEPLAN_ULLAGE_UPDATE_ALGORESULT);
-  public static EnumSet<MessageTypes> dischargeStudyShore = EnumSet.of(DISCHARGESTUDY);
+  public static EnumSet<MessageTypes> dischargeStudyShore =
+      EnumSet.of(DISCHARGESTUDY, DISCHARGESTUDY_WITHOUT_ALGO);
 
   private final String messageType;
   private final String sequenceMessageType;

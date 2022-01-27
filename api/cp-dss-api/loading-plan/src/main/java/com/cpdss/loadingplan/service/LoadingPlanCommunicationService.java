@@ -307,7 +307,8 @@ public class LoadingPlanCommunicationService {
                     Arrays.asList(
                             MessageTypes.LOADINGPLAN_SAVE.getMessageType(),
                             MessageTypes.LOADINGPLAN.getMessageType(),
-                            MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType())
+                            MessageTypes.LOADINGPLAN_ALGORESULT.getMessageType(),
+                            MessageTypes.LOADINGPLAN_WITHOUT_ALGO.getMessageType())
                         .contains(dataTransfer.getProcessGroupId()))
             .collect(Collectors.toList());
     log.info("DataTransferStages in LOADING_DATA_UPDATE task:" + dataTransferStages);
@@ -384,7 +385,8 @@ public class LoadingPlanCommunicationService {
           LocalDateTime.now());
       String processGroupId = entry.getValue().get(0).getProcessGroupId();
 
-      if (MessageTypes.LOADINGPLAN.getMessageType().equals(processGroupId)) {
+      if (MessageTypes.LOADINGPLAN.getMessageType().equals(processGroupId)
+          || MessageTypes.LOADINGPLAN_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
         if (!loadingPlanStagingService.dependantProcessIsCompleted(
             processId, CommunicationModule.LOADING_PLAN.getModuleName())) {
           loadingPlanStagingService.updateStatusForProcessId(

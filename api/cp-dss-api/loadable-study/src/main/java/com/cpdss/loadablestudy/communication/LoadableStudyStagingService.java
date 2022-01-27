@@ -98,7 +98,8 @@ public class LoadableStudyStagingService extends StagingService {
     String dependantProcessId = null;
     String dependantProcessModule = null;
 
-    if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(processGroupId)) {
+    if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(processGroupId)
+        || MessageTypes.DISCHARGESTUDY_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
       // Check prev module communicated
       final LoadableStudy dischargeStudyGet =
           loadableStudyRepository

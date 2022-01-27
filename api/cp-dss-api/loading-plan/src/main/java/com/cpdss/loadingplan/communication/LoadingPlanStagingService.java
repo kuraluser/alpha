@@ -111,7 +111,8 @@ public class LoadingPlanStagingService extends StagingService {
 
     // Communication referenceId set as patternId between Loading Plan and Loadable Study to convert
     // to LS Id at LS service
-    if (MessageTypes.LOADINGPLAN.getMessageType().equals(processGroupId)) {
+    if (MessageTypes.LOADINGPLAN.getMessageType().equals(processGroupId)
+        || MessageTypes.LOADINGPLAN_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
 
       // Check prev module communicated
       final LoadingInformation loadingInfo =

@@ -330,7 +330,8 @@ public class LoadableStudyCommunicationService {
           LocalDateTime.now());
       String processGroupId = entry.getValue().get(0).getProcessGroupId();
 
-      if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(processGroupId)) {
+      if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(processGroupId)
+          || MessageTypes.DISCHARGESTUDY_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
         if (!loadableStudyStagingService.dependantProcessIsCompleted(
             processId, CommunicationModule.LOADABLE_STUDY.getModuleName())) {
           loadableStudyStagingService.updateStatusForProcessId(
