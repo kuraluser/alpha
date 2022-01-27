@@ -1729,6 +1729,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     Set<Long> nominationPortIds =
         cargos.stream()
             .flatMap(x -> x.getCargoNominationPortDetails().stream())
+            .filter(item -> item.getIsActive())
             .map(CargoNominationPortDetails::getPortId)
             .distinct()
             .collect(Collectors.toSet());
