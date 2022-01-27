@@ -6,7 +6,7 @@ import { ICargo, OPERATIONS } from '../../core/models/common.model';
 import { ILoadingDischargingDelays, ILoadingSequenceDropdownData, ILoadingDischargingSequences, ILoadingDischargingSequenceValueObject, ILoadedCargo } from '../models/loading-discharging.model';
 import { durationValidator } from '../directives/validator/duration-validator.directive';
 import { cargoQuantityValidator } from '../directives/validator/cargo-quantity-validator.directive';
-import { sequenceNumberValidator } from '../directives/validator/sequence-number-validator.directive';
+import { sequenceNumberValidator } from '../../core/directives/sequence-number-validator.directive';
 import { ConfirmationService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { loadingCargoDuplicateValidator } from '../directives/validator/loading-cargo-duplicate-validator.directive';

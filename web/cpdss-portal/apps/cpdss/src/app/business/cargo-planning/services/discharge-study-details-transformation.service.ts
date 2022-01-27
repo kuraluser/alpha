@@ -36,7 +36,7 @@ export class DischargeStudyDetailsTransformationService {
     private quantityDecimalFormatPipe: QuantityDecimalFormatPipe,
     private timeZoneTransformationService: TimeZoneTransformationService
   ) { }
-  
+
   private quantityPipe: QuantityPipe = new QuantityPipe();
   private _portValiditySource: Subject<boolean> = new Subject();
   private _ohqValiditySource: Subject<boolean> = new Subject();
@@ -44,7 +44,7 @@ export class DischargeStudyDetailsTransformationService {
   private _addPortSource = new Subject();
   private _portUpdate: Subject<any> = new Subject();
   private _loadablePatternBtnDisable: Subject<any> = new Subject();
-  
+
   vesselInfo: IVessel;
   public baseUnit = AppConfigurationService.settings.baseUnit;
   portValidity$ = this._portValiditySource.asObservable();
@@ -205,7 +205,7 @@ export class DischargeStudyDetailsTransformationService {
     loadablePlanCommingleCargoDetails.cargo2Bbls60f = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.BBLS, 'cargo2MT')?.toString();
     loadablePlanCommingleCargoDetails.cargo1Bblsdbs = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.OBSBBLS, 'cargo1MT')?.toString();
     loadablePlanCommingleCargoDetails.cargo2Bblsdbs = this.convertQuantityCommingle(loadablePlanCommingleCargoDetails, QUANTITY_UNIT.OBSBBLS, 'cargo2MT')?.toString();
-    _loadablePlanCommingleCargoDetails.cargoPercentage = 
+    _loadablePlanCommingleCargoDetails.cargoPercentage =
       `${loadablePlanCommingleCargoDetails.cargo1Abbreviation}  -  ${loadablePlanCommingleCargoDetails.cargo1Percentage ? loadablePlanCommingleCargoDetails.cargo1Percentage : 0}  %  <br>  ${loadablePlanCommingleCargoDetails.cargo2Abbreviation} -  ${loadablePlanCommingleCargoDetails.cargo2Percentage ? loadablePlanCommingleCargoDetails.cargo2Percentage : 0} %`;
     _loadablePlanCommingleCargoDetails.cargoBblsdbs =  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo1Bblsdbs, QUANTITY_UNIT.OBSBBLS) + '<br>' +  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo2Bblsdbs, QUANTITY_UNIT.OBSBBLS);
     _loadablePlanCommingleCargoDetails.cargoBbls60f =  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo1Bbls60f, QUANTITY_UNIT.BBLS) + '<br>' +  this.quantityDecimalFormatPipe.transform(loadablePlanCommingleCargoDetails.cargo2Bbls60f, QUANTITY_UNIT.BBLS);
@@ -426,7 +426,7 @@ export class DischargeStudyDetailsTransformationService {
       ]
       columns = [...columns, ...etaEtd];
     }
-   
+
     if (permission && [VOYAGE_STATUS.ACTIVE].includes(voyageStatusId) &&  [DISCHARGE_STUDY_STATUS.PLAN_PENDING, DISCHARGE_STUDY_STATUS.PLAN_NO_SOLUTION, DISCHARGE_STUDY_STATUS.PLAN_ERROR].includes(dischargeStudyStatusId)) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
@@ -781,8 +781,8 @@ export class DischargeStudyDetailsTransformationService {
   }
 
   /**
-   * function to update ohq tab status 
-   * @param status 
+   * function to update ohq tab status
+   * @param status
    */
   updateOhqOnAddEditPorts(status: boolean): void {
     this._ohqValiditySource.next(status);
@@ -818,6 +818,7 @@ getDischargeStudyCargoDatatableColumns(): IDataTableColumn[] {
       fieldType: DATATABLE_FIELD_TYPE.NUMBER,
       errorMessages: {
         'required': 'DISCHARGING_STUDY_SEQUENCE_REQUIRED',
+        'min': 'DISCHARGING_STUDY_SEQUENCE_SEQUENCE_NO_MIN_ERROR',
         'invalidNumber': 'DISCHARGING_STUDY_SEQUENCE_SEQUENCE_NO_INVALID',
         'invalidSequenceNumber': 'DISCHARGING_STUDY_SEQUENCE_SEQUENCE_NO_INVALID_VALUE'
       }
@@ -1039,7 +1040,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
     };
     columns = [...columns, action];
   }
-  
+
   return columns;
 }
 
@@ -1078,7 +1079,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,cargoDetail);
         return this.getCargoDetailsAsValueObject(portDetailsValueAsObject,cargoDetail,listData,storedKey,true);
       }) : [];
-      
+
       _portDetail.enableBackToLoading = portDetail.isBackLoadingEnabled  && !isLastIndex ? true : false;
       _portDetail.backLoadingDetails =  portDetail?.backLoading ? portDetail?.backLoading?.map((backLoadingDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,backLoadingDetail);
@@ -1176,7 +1177,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
           })
         })
       }
-      
+
       const unitConversion = {
         kl: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature),
         bbls: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargoDetail.api, cargoDetail.temperature),
@@ -1186,7 +1187,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _cargoDetailValuObject.sequenceNo = new ValueObject<string>(cargoDetail.sequenceNo?.toString() , true , false);
       _cargoDetailValuObject.emptyMaxNoOfTanks = new ValueObject<boolean>(cargoDetail.emptyMaxNoOfTanks ?? false, true, true),
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
- 
+
       _cargoDetailValuObject.bbls = new ValueObject<string>(mode?.id === 2 || (!isAutoAvailable && mode?.id === 3)? (unitConversion.bbls ? unitConversion.bbls+'' : '0') : '-', true , false , false , isKlEditable);
       _cargoDetailValuObject.cargo = new ValueObject<ICargo>(cargoObj,true , false);
 

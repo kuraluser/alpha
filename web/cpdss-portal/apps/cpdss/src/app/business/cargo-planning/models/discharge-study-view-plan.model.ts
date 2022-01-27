@@ -32,7 +32,7 @@ export interface IPortDetailValueObject {
   cow: IMode;
   dischargeRate: number,
   isBackLoadingEnabled: boolean;
-  tank: string[];
+  tank: string;
   backLoadingDetails: IBackLoadingDetails[];
   stabilityParams: IPlanStabilityParams;
 }
@@ -124,7 +124,7 @@ export interface IDischargeStudyPortListDetails {
   instructionId: number[];
   isBackLoadingEnabled: boolean;
   backLoading: IDischargeStudyBackLoadingDetails[];
-  tanks: number[];
+  tanks: string;
   dischargeRate: number;
   cargoNominationList: IDischargeStudyCargoNominationList[];
   stabilityParams: IPlanStabilityParams;

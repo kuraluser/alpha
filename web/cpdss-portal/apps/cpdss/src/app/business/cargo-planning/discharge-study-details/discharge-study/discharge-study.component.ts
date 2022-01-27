@@ -25,8 +25,8 @@ import { numberValidator } from '../../../core/directives/number-validator.direc
 
 import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
 import { alphaNumericOnlyValidator } from '../../../core/directives/alpha-numeric-only-validator.directive';
-import { sequenceNumberValidator } from '../../directives/validator/sequence-number-validator.directive';
 import { compareTimeValidator } from '../../directives/validator/compare-time-validator';
+import { sequenceNumberValidator } from '../../../core/directives/sequence-number-validator.directive';
 
 /**
  * Component class of discharge study screen
@@ -371,7 +371,7 @@ export class DischargeStudyComponent implements OnInit {
     }
     return this.fb.group({
       emptyMaxNoOfTanks: this.fb.control(cargo.emptyMaxNoOfTanks.value),
-      sequenceNo : this.fb.control(cargo.sequenceNo.value, [Validators.required, numberValidator(0, null, false),sequenceNumberValidator(portIndex)]),
+      sequenceNo : this.fb.control(cargo.sequenceNo.value, [Validators.required, Validators.min(1), numberValidator(0, null, false),sequenceNumberValidator]),
       maxKl: this.fb.control(cargo.maxKl.value, []),
       abbreviation: this.fb.control(cargo.abbreviation.value, []),
       cargo: this.fb.control(cargo.cargo.value),

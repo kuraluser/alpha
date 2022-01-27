@@ -205,7 +205,7 @@ export class DischargeStudyViewPlanTransformationService {
     _portDetail.backLoadingDetails = portDetail.backLoading ? portDetail.backLoading?.map((backLoadingDetail) => {
       return this.getBackLoadingDetailAsValueObject(backLoadingDetail, listData, isNewValue);
     }) : [];
-    _portDetail.tank = listData.tank?.length ? listData.tank?.filter(tankDetails =>  portDetail.tanks?.some(tankId => tankId === tankDetails.id)).map(tank => tank.shortName) : [];
+    _portDetail.tank = portDetail?.tanks;
     _portDetail.stabilityParams = portDetail?.stabilityParams;
     return _portDetail;
   }

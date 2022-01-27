@@ -17,11 +17,11 @@ export const sequenceNumberValidator: ValidatorFn = (control: AbstractControl): 
   const missingSequence = [];
 
   for (let i = 1; i <= count; i++) {
-    if (sequences.indexOf(i) === -1) {
+    if (sequences.indexOf(i) === -1 ) {
       missingSequence.push(i);
     }
   }
 
-  return missingSequence?.length ? { invalidSequenceNumber: true } : null;
+  return (missingSequence?.length) ? { invalidSequenceNumber: true } : null;
 };
 
