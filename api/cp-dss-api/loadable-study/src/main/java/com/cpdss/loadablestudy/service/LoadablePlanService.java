@@ -1854,13 +1854,19 @@ public class LoadablePlanService {
             operationsValueCell.setCellValue(portOperationDetails.getArrDisplacement());
             break;
           case DEP_FWD_DRAFT:
-            operationsValueCell.setCellValue(portOperationDetails.getDepFwdDraft());
+            if (!DISCHARGING_OPERATION.equals(portOperationDetails.getOperation())) {
+              operationsValueCell.setCellValue(portOperationDetails.getDepFwdDraft());
+            }
             break;
           case DEP_AFT_DRAFT:
-            operationsValueCell.setCellValue(portOperationDetails.getDepAftDraft());
+            if (!DISCHARGING_OPERATION.equals(portOperationDetails.getOperation())) {
+              operationsValueCell.setCellValue(portOperationDetails.getDepAftDraft());
+            }
             break;
           case DEP_DISP:
-            operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
+            if (!DISCHARGING_OPERATION.equals(portOperationDetails.getOperation())) {
+              operationsValueCell.setCellValue(portOperationDetails.getDepDisp());
+            }
             break;
         }
 
