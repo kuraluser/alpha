@@ -234,7 +234,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     let uploadFile = [];
     const sizeErrorFiles = [];
     const uploadedFileVar = this.fileUploadVariable.nativeElement.files;
-    const extensions = ["docx", "pdf", "txt", "jpg", "jpeg", "png", "eml", "msg"];
+    const extensions = ['docx','pdf','txt','csv','xlsx'];
     if (this.uploadedFiles.length < 5) {
       for (let i = 0; i < uploadedFileVar.length; i++) {
         const fileExtension = uploadedFileVar[i].name.substr((uploadedFileVar[i].name.lastIndexOf('.') + 1));
