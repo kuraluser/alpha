@@ -261,7 +261,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
     const [totalHours, totalMinutes] = this.totalDuration.toString()?.split('.').map((num, i) => i === 1 ? Number(num ?? 0) * 6 : Number(num));
     const formGroup =  this.fb.group({
       id: loadingDischargingDelay.id,
-      sequenceNo: this.fb.control(loadingDischargingDelay?.sequenceNo?.value, [Validators.required, numberValidator(0, null, false), sequenceNumberValidator]),
+      sequenceNo: this.fb.control(loadingDischargingDelay?.sequenceNo?.value, [Validators.required, Validators.min(1), numberValidator(0, null, false), sequenceNumberValidator]),
       reasonForDelay: this.fb.control(loadingDischargingDelay.reasonForDelay.value, initialDelay ? [Validators.required] : []),
       duration: this.fb.control(loadingDischargingDelay.duration.value, [Validators.required, durationValidator(totalHours, totalMinutes)]),
       cargo: this.fb.control(loadingDischargingDelay.cargo.value, initialDelay ? [] : this.operation === OPERATIONS.DISCHARGING ? [Validators.required] : [Validators.required, loadingCargoDuplicateValidator()]),
@@ -366,6 +366,13 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
           this.loadingDischargingDelays[index][key]['isEditMode'] = false;
         }
       });
+      if (row.valid) {
+        Object.keys(row?.controls).forEach(key => {
+          if (this.loadingDischargingDelays[index][key]['isEditable']) {
+            this.loadingDischargingDelays[index][key]['isEditMode'] = false;
+          }
+        });
+      }
     })
   }
 

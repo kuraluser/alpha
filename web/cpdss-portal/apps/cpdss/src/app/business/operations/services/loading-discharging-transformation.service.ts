@@ -359,6 +359,7 @@ export class LoadingDischargingTransformationService {
         numberFormat: '1.0-0',
         errorMessages: {
           'required': 'DISCHARGING_MANAGE_SEQUENCE_REQUIRED',
+          'min': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_MIN_REQUIRED',
           'invalidNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID',
           'invalidSequenceNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID_VALUE'
         }
