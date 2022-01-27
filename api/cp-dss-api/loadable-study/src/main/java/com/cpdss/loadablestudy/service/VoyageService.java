@@ -164,6 +164,9 @@ public class VoyageService {
           this.buildLoadableStudyForVoyage(lsBuilder, confirmedLs.get());
           builder.setConfirmedLoadableStudy(lsBuilder);
           if (!confirmedLs.get().getPortRotations().isEmpty()) {
+            List<LoadablePattern> patterns =
+                loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+                    confirmedLs.get().getId(), LS_STATUS_CONFIRMED);
             for (LoadableStudyPortRotation lsPr : confirmedLs.get().getPortRotations()) {
               LoadableStudy.PortRotationDetail.Builder grpcPRBuilder =
                   LoadableStudy.PortRotationDetail.newBuilder();
@@ -173,9 +176,7 @@ public class VoyageService {
                   "Get Active voyage, Loadable Study Name {}, Id {}",
                   confirmedLs.get().getName(),
                   confirmedLs.get().getId());
-              List<LoadablePattern> patterns =
-                  loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
-                      confirmedLs.get().getId(), LS_STATUS_CONFIRMED);
+
               if (!patterns.isEmpty()) {
                 Long id = patterns.stream().findFirst().get().getId();
                 builder.setPatternId(patterns.stream().findFirst().get().getId());
