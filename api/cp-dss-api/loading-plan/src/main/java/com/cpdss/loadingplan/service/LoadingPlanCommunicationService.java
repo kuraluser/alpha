@@ -1685,6 +1685,9 @@ public class LoadingPlanCommunicationService {
       log.info("Communication ++++ LoadingInformation or PortLoadingPlanCommingleDetails is empty");
       return;
     }
+    // deleting existing commingle data against loading info
+    portLoadingPlanCommingleDetailsRepository.deleteByLoadingInformationId(loadingInfo.getId());
+    log.info("Deleted existing Commingle data against loading info Id:{}", loadingInfo.getId());
     for (PortLoadingPlanCommingleDetails portLoadingPlanCommingleDetails :
         portLoadingPlanCommingleDetailsList) {
       Optional<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetaObj =
