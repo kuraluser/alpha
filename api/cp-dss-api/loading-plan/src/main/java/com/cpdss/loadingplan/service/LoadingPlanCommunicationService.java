@@ -196,7 +196,6 @@ public class LoadingPlanCommunicationService {
   List<AlgoErrorHeading> algoErrorHeadings = null;
   List<AlgoErrors> algoErrors = null;
   List<LoadingInstruction> loadingInstructions = null;
-  LoadingInformation loadingInfoError = null;
   LoadingInformationAlgoStatus loadingInformationAlgoStatus = null;
   String current_table_name = "";
   List<LoadingRule> loadingRules = null;
@@ -907,7 +906,6 @@ public class LoadingPlanCommunicationService {
             {
               HashMap<String, String> map =
                   loadingPlanStagingService.getAttributeMapping(new AlgoErrorHeading());
-              loadingInfoError = getLoadingInformation(dataTransferString);
               JsonArray jsonArray =
                   removeJsonFields(
                       JsonParser.parseString(dataTransferString).getAsJsonArray(),
@@ -1090,7 +1088,7 @@ public class LoadingPlanCommunicationService {
         saveCargoLoadingRate(loadingSequencesList);
         saveJsonData();
         savePortTideDetail(loadingInfo);
-        algoErrorHeadings = saveAlgoErrorHeading();
+        algoErrorHeadings = saveAlgoErrorHeading(loadingInfo);
         saveAlgoErrors(algoErrorHeadings);
         saveLoadingInstruction(loadingInfo);
         saveSynopticalData();
@@ -1907,7 +1905,7 @@ public class LoadingPlanCommunicationService {
     log.info("Communication ====  Saved PortTideDetail:" + portTideDetailList);
   }
 
-  private List<AlgoErrorHeading> saveAlgoErrorHeading() {
+  private List<AlgoErrorHeading> saveAlgoErrorHeading(LoadingInformation loadingInfo) {
     current_table_name = LoadingPlanTables.ALGO_ERROR_HEADING.getTable();
     if (CollectionUtils.isEmpty(algoErrorHeadings)) {
       log.info("Communication ++++ AlgoErrorHeadingis empty");
@@ -1916,13 +1914,11 @@ public class LoadingPlanCommunicationService {
     Optional<LoadingInformationStatus> loadingInfoErrorStatus =
         loadingInfoStatusRepository.findById(
             LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
-    loadingInfoError.setLoadingInformationStatus(loadingInfoErrorStatus.get());
-    loadingInfoError = loadingInformationRepository.save(loadingInfoError);
     for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
       Optional<AlgoErrorHeading> algoErrorHeadingOptional =
           algoErrorHeadingRepository.findById(algoErrorHeading.getId());
       setEntityDocFields(algoErrorHeading, algoErrorHeadingOptional);
-      algoErrorHeading.setLoadingInformation(loadingInfoError);
+      algoErrorHeading.setLoadingInformation(loadingInfo);
     }
     algoErrorHeadings = algoErrorHeadingRepository.saveAll(algoErrorHeadings);
     log.info("Communication ====  Saved AlgoErrorHeading:" + algoErrorHeadings);
@@ -2554,7 +2550,6 @@ public class LoadingPlanCommunicationService {
     algoErrorHeadings = null;
     algoErrors = null;
     loadingInstructions = null;
-    loadingInfoError = null;
     loadingInformationAlgoStatus = null;
     loadingRules = null;
     loadingRuleInputs = null;
