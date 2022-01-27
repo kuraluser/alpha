@@ -563,6 +563,7 @@ message LoadablePlanPortWiseDetails {
 	LoadablePlanDetailsReply departureCondition = 5;
 	string seaWaterTemperature = 6;
 	string ambientTemperature = 7;
+	repeated string cowTanks = 8;
 }
 
 message LoadablePlanDetailsRequest {
@@ -998,6 +999,7 @@ message CargoNominationDetail {
 	int64 sequenceNo = 23;
 	bool emptyMaxNoOfTanks = 24;
 	bool isCommingled = 25;
+	repeated string cowTanks = 26;
 }
 
 message CargoNominationRequest {

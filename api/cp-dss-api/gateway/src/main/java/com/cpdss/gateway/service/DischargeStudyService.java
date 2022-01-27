@@ -614,6 +614,7 @@ public class DischargeStudyService {
       List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList,
       PortRotation portRotation) {
     List<CargoNomination> cargoNominations = new ArrayList<>();
+    List<String> cowTanks = new ArrayList<>();
     cargoNominationDetailList.stream()
         .forEach(
             cargoNominationDetail -> {
@@ -657,9 +658,20 @@ public class DischargeStudyService {
                       : new BigDecimal(0));
               cargoNomination.setIsCommingled(cargoNominationDetail.getIsCommingled());
               cargoNominations.add(cargoNomination);
+              // DSS 4722
+              cargoNominationDetail.getCowTanksList().stream()
+                  .forEach(
+                      item -> {
+                        if (!cowTanks.contains(item)) {
+                          cowTanks.add(item);
+                        }
+                      });
+              ;
             });
     //    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
     portRotation.setCargoNominationList(cargoNominations);
+    // DSS 4722
+    portRotation.setTanks(cowTanks.stream().collect(Collectors.joining(",")));
   }
 
   public PortWiseCargoResponse getCargosByPorts(Long dischargeStudyId, HttpHeaders headers)

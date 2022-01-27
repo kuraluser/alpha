@@ -1899,6 +1899,13 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                             }
                           }
                           cargo.addLoadingPortDetails(portDetail);
+                          ofNullable(pCargo.getCowDetails())
+                              .ifPresent(
+                                  list ->
+                                      cargo.addAllCowTanks(
+                                          list.stream()
+                                              .map(item -> item.getShortName())
+                                              .collect(Collectors.toList())));
                           replyBuilder.addCargoNominations(cargo);
                         });
                 // Fetch stability params port wise DSS-5429

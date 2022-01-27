@@ -3727,6 +3727,8 @@ public class LoadableStudyService {
                               .ifPresent(portWiseBuilder::setSeaWaterTemperature);
                           Optional.ofNullable(lppwd.getAmbientTemperature())
                               .ifPresent(portWiseBuilder::setAmbientTemperature);
+                          // cow tank details for DS - DSS 4722
+                          portWiseBuilder.addAllCowTanks(lppwd.getCowTanks());
 
                           planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                         });

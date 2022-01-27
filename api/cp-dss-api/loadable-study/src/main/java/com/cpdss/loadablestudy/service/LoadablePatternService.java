@@ -22,7 +22,6 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
-import com.cpdss.loadablestudy.entity.CowTypeMaster;
 import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
 import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
@@ -511,6 +510,7 @@ public class LoadablePatternService {
                           lpcd,
                           lppwd.getPortId(),
                           lppwd.getPortRotationId(),
+                          lppwd.getCowTanksList(),
                           SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL,
                           loadablePattern,
                           loadableStudy);
@@ -524,6 +524,7 @@ public class LoadablePatternService {
                           lpcd,
                           lppwd.getPortId(),
                           lppwd.getPortRotationId(),
+                          lppwd.getCowTanksList(),
                           SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE,
                           loadablePattern,
                           loadableStudy);
@@ -536,6 +537,7 @@ public class LoadablePatternService {
       LoadableQuantityCargoDetails lpcd,
       long portId,
       long portRotationId,
+      List<String> cowTanks,
       String operationType,
       LoadablePattern loadablePattern,
       LoadableStudy loadableStudy) {
@@ -586,22 +588,33 @@ public class LoadablePatternService {
     loadableQuantityCargoDetails.setOperationType(operationType);
 
     List<DischargePlanCowDetailFromAlgo> cowDetailFromAlgoList = new ArrayList<>();
-    Optional.ofNullable(lpcd.getCowDetailsList())
-        .ifPresent(
-            i ->
-                i.forEach(
-                    item -> {
-                      DischargePlanCowDetailFromAlgo cowDetail =
-                          new DischargePlanCowDetailFromAlgo();
-                      Optional<CowTypeMaster> cowTypeOpt =
-                          cowTypeMasterRepository.findByCowTypeAndIsActiveTrue(item.getWashType());
-                      if (cowTypeOpt.isPresent()) {
-                        cowDetail.setCowType(cowTypeOpt.get().getId());
-                      }
-                      Optional.ofNullable(item.getTankId()).ifPresent(cowDetail::setTankIds);
-                      Optional.ofNullable(item.getShortName()).ifPresent(cowDetail::setShortName);
-                      cowDetailFromAlgoList.add(cowDetail);
-                    }));
+    // DSS - 4722 - changing cow details saving logic
+    //    Optional.ofNullable(lpcd.getCowDetailsList())
+    //        .ifPresent(
+    //            i ->
+    //                i.forEach(
+    //                    item -> {
+    //                      DischargePlanCowDetailFromAlgo cowDetail =
+    //                          new DischargePlanCowDetailFromAlgo();
+    //                      Optional<CowTypeMaster> cowTypeOpt =
+    //
+    // cowTypeMasterRepository.findByCowTypeAndIsActiveTrue(item.getWashType());
+    //                      if (cowTypeOpt.isPresent()) {
+    //                        cowDetail.setCowType(cowTypeOpt.get().getId());
+    //                      }
+    //                      Optional.ofNullable(item.getTankId()).ifPresent(cowDetail::setTankIds);
+    //
+    // Optional.ofNullable(item.getShortName()).ifPresent(cowDetail::setShortName);
+    //                      cowDetailFromAlgoList.add(cowDetail);
+    //                    }));
+    if (cowTanks != null && !cowTanks.isEmpty()) {
+      cowTanks.forEach(
+          item -> {
+            DischargePlanCowDetailFromAlgo cowDetail = new DischargePlanCowDetailFromAlgo();
+            Optional.ofNullable(item).ifPresent(cowDetail::setShortName);
+            cowDetailFromAlgoList.add(cowDetail);
+          });
+    }
     loadableQuantityCargoDetails.setCowDetails(cowDetailFromAlgoList);
 
     dischargePatternQuantityCargoPortwiseRepository.save(loadableQuantityCargoDetails);

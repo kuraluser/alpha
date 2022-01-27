@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.Data;
 
 /** @Author jerin.g */
@@ -17,4 +18,5 @@ public class LoadablePlanPortWiseDetails {
   // DS fields
   private String seaWaterTemperature;
   private String ambientTemperature;
+  private List<String> cowTanks;
 }
