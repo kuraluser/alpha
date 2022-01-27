@@ -79,4 +79,6 @@ public interface CommonErrorCodes {
   String E_CPDSS_CARGO_NOMINATIONS_EXIST = "327";
 
   String E_CPDSS_USER_VESSEL_MAPPING_NOT_EXIST = "391";
+
+  String E_CPDSS_DISCHARGING_STARTED = "392";
 }

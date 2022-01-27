@@ -2343,6 +2343,15 @@ public class LoadablePatternService {
               .setMessage(INVALID_LOADABLE_PATTERN_ID)
               .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST));
     } else {
+      if (loadablePatternOpt
+          .get()
+          .getLoadableStudy()
+          .getPlanningTypeXId()
+          .equals(PLANNING_TYPE_LOADING)) {
+        this.voyageService.checkIfDischargingStarted(
+            loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
+            loadablePatternOpt.get().getLoadableStudy().getVoyage().getId());
+      }
       List<LoadablePattern> loadablePatternConfirmedOpt =
           loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningType(
               loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),

@@ -451,6 +451,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
     try {
       log.info("Create Loadable Study payload - {}", Utils.toJson(request));
       this.voyageService.checkIfVoyageClosed(request.getVoyageId());
+      this.voyageService.checkIfDischargingStarted(request.getVesselId(), request.getVoyageId());
       List<LoadableStudyRules> listOfExistingLSRules = null;
       if (request.getId() != 0) {
         Optional<LoadableStudy> loadableStudy =
@@ -1896,7 +1897,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       replyBuilder.setResponseStatus(
           ResponseStatus.newBuilder()
               .setStatus(CommonErrorCodes.E_CPDSS_CONFIRM_PLAN_NOT_ALLOWED)
-              .setCode(CommonErrorCodes.E_HTTP_BAD_REQUEST)
+              .setCode(e.getCode())
               .build());
     } catch (Exception e) {
       log.error("Exception when confirmPlan ", e);

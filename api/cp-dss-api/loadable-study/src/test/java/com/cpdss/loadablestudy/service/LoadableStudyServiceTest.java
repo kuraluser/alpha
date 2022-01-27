@@ -5583,11 +5583,13 @@ class LoadableStudyServiceTest {
     StreamRecorder<ConfirmPlanReply> responseObserver = StreamRecorder.create();
     Mockito.when(loadablePatternService.confirmPlan(Mockito.any(), Mockito.any()))
         .thenCallRealMethod();
+    Mockito.doNothing().when(voyageService).checkIfDischargingStarted(anyLong(), anyLong());
     ReflectionTestUtils.setField(
         loadablePatternService, "loadablePatternRepository", this.loadablePatternRepository);
     ReflectionTestUtils.setField(
         loadablePatternService, "loadableStudyRepository", this.loadableStudyRepository);
     ReflectionTestUtils.setField(loadablePatternService, "loadingPlanService", loadingPlanService);
+    ReflectionTestUtils.setField(loadablePatternService, "voyageService", voyageService);
     loadableStudyService.confirmPlan(this.createConfirmPlan(), responseObserver);
     List<ConfirmPlanReply> results = responseObserver.getValues();
     assertEquals(1, results.size());

@@ -887,6 +887,8 @@ public class LoadablePatternServiceTest {
             any(LoadablePattern.class), anyBoolean()))
         .thenReturn(new ArrayList<>());
 
+    Mockito.doNothing().when(voyageService).checkIfDischargingStarted(anyLong(), anyLong());
+
     ReflectionTestUtils.setField(
         spyService, "loadablePatternRepository", loadablePatternRepository);
     ReflectionTestUtils.setField(spyService, "loadingPlanService", loadingPlanService);
@@ -897,6 +899,7 @@ public class LoadablePatternServiceTest {
         spyService, "loadablePatternCargoDetailsRepository", loadablePatternCargoDetailsRepository);
     ReflectionTestUtils.setField(
         spyService, "toppingOffSequenceRepository", toppingOffSequenceRepository);
+    ReflectionTestUtils.setField(spyService, "voyageService", voyageService);
     var confirmPlanReply = spyService.confirmPlan(request, replyBuilder);
     assertEquals(SUCCESS, confirmPlanReply.getResponseStatus().getStatus());
   }

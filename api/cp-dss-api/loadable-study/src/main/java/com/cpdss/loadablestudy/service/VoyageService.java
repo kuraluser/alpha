@@ -1096,4 +1096,25 @@ public class VoyageService {
     replyBuilder.setVoyageDetail(
         LoadableStudy.VoyageDetail.newBuilder().setVoyageNumber(voyage.getVoyageNo()).build());
   }
+
+  /**
+   * Checks if Discharging has started for the given vessel and voyage.
+   *
+   * @param vesselId
+   * @param voyageId
+   * @throws GenericServiceException
+   */
+  public void checkIfDischargingStarted(Long vesselId, Long voyageId)
+      throws GenericServiceException {
+    List<Long> voyageIds =
+        loadableStudyRepository.getActiveVoyageIdsByVesselIdAndPlanningType(
+            vesselId, PLANNING_TYPE_DISCHARGE);
+    if (voyageIds.contains(voyageId)) {
+      log.error("Discharging has started for the given voyage {}", voyageId);
+      throw new GenericServiceException(
+          "Discharging has started for the given voyage " + voyageId,
+          CommonErrorCodes.E_CPDSS_DISCHARGING_STARTED,
+          HttpStatusCode.BAD_REQUEST);
+    }
+  }
 }
