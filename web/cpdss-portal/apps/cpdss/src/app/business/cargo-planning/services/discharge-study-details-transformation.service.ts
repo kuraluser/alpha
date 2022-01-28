@@ -1386,7 +1386,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
               _cargoDetails.emptyMaxNoOfTanks = cargoDetails.emptyMaxNoOfTanks.value;
               break;
           case 'mt':
-            _cargoDetails.quantity = cargoDetails.mode.value.name === IDISCHARGE_STUDY_MODE.BALANCE  ? 0 : this.quantityPipe.transform(cargoDetails.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, cargoDetails.api.value, cargoDetails.temp.value,-1);
+            _cargoDetails.quantity = cargoDetails.mode.value.name === IDISCHARGE_STUDY_MODE.BALANCE  ? 0 : this.quantityPipe.transform(cargoDetails.quantity, QUANTITY_UNIT.KL, QUANTITY_UNIT.MT, cargoDetails.api.value, cargoDetails.temp.value,-1) ?? 0;
             break;
           case 'mode':
             _cargoDetails.mode = cargoDetails.mode.value.id;
