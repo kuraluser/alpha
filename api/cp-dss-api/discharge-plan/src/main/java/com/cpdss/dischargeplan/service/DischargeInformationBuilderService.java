@@ -1333,4 +1333,40 @@ public class DischargeInformationBuilderService {
     }
     builder.addCowTankDetails(tankDetails.build());
   }
+
+  /**
+   * Builds discharge details message from ALGO JSON
+   *
+   * @param dischargeDetails
+   * @param dischargingInformation
+   */
+  public void buildDischargeDetailsMessageFromJson(
+      com.cpdss.dischargeplan.domain.DischargeDetails dischargeDetails,
+      com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder
+          dischargingInformation) {
+    if (dischargeDetails != null) {
+      DischargeDetails.Builder builder = DischargeDetails.newBuilder();
+      Optional.ofNullable(dischargeDetails.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
+      Optional.ofNullable(dischargeDetails.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
+      Optional.ofNullable(dischargeDetails.getStartTime()).ifPresent(builder::setStartTime);
+
+      if (dischargeDetails.getTrimAllowed() != null) {
+        // Set Trim Values
+        LoadingPlanModels.TrimAllowed.Builder trimAllowed =
+            LoadingPlanModels.TrimAllowed.newBuilder();
+        Optional.ofNullable(dischargeDetails.getTrimAllowed().getInitialTrim())
+            .ifPresent(v -> trimAllowed.setInitialTrim(v.toString()));
+        Optional.ofNullable(dischargeDetails.getTrimAllowed().getMaximumTrim())
+            .ifPresent(v -> trimAllowed.setMaximumTrim(v.toString()));
+        Optional.ofNullable(dischargeDetails.getTrimAllowed().getFinalTrim())
+            .ifPresent(v -> trimAllowed.setFinalTrim(v.toString()));
+        builder.setTrimAllowed(trimAllowed.build());
+      }
+      Optional.ofNullable(dischargeDetails.getCommonDate()).ifPresent(builder::setCommonDate);
+
+      Optional.ofNullable(dischargeDetails.getSlopQuantity())
+          .ifPresent(slopQuantity -> builder.setSlopQuantity(slopQuantity.toString()));
+      dischargingInformation.setDischargeDetails(builder.build());
+    }
+  }
 }

@@ -295,6 +295,10 @@ public class LoadingPlanService {
                   var1.get().getLoadingPlanDetailsFromAlgo(),
                   com.cpdss.loadingplan.domain.algo.LoadingInformation.class);
 
+          LoadingPlanModels.LoadingDetails loadingDetails =
+              LoadingPlanUtility.buildLoadingDetails(loadingInfoFromAlgo.getLoadingDetails());
+          loadingInformation.setLoadingDetail(loadingDetails);
+
           LoadingPlanModels.LoadingRates rates =
               LoadingPlanUtility.buildLoadingRates(loadingInfoFromAlgo.getLoadingRates());
           loadingInformation.setLoadingRate(rates);

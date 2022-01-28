@@ -1,12 +1,14 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.utility;
 
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DelayReasons;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelays;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
 import com.cpdss.loadingplan.domain.algo.BerthDetails;
+import com.cpdss.loadingplan.domain.algo.LoadingDetails;
 import com.cpdss.loadingplan.domain.algo.LoadingSequences;
 import com.cpdss.loadingplan.domain.algo.ReasonForDelay;
 import java.math.BigDecimal;
@@ -139,5 +141,40 @@ public class LoadingPlanUtility {
     } else {
       return BigDecimal.ZERO.toString();
     }
+  }
+
+  /**
+   * Builds Loading Details message
+   *
+   * @param loadingDetails
+   * @return
+   */
+  public static LoadingPlanModels.LoadingDetails buildLoadingDetails(
+      LoadingDetails loadingDetails) {
+    LoadingPlanModels.LoadingDetails.Builder builder =
+        LoadingPlanModels.LoadingDetails.newBuilder();
+    if (loadingDetails != null) {
+      Optional.ofNullable(loadingDetails.getTimeOfSunrise()).ifPresent(builder::setTimeOfSunrise);
+      Optional.ofNullable(loadingDetails.getTimeOfSunset()).ifPresent(builder::setTimeOfSunset);
+      Optional.ofNullable(loadingDetails.getStartTime()).ifPresent(builder::setStartTime);
+
+      if (loadingDetails.getTrimAllowed() != null) {
+        // Set Trim Values
+        LoadingPlanModels.TrimAllowed.Builder trimAllowed =
+            LoadingPlanModels.TrimAllowed.newBuilder();
+        Optional.ofNullable(loadingDetails.getTrimAllowed().getInitialTrim())
+            .ifPresent(v -> trimAllowed.setInitialTrim(v.toString()));
+        Optional.ofNullable(loadingDetails.getTrimAllowed().getMaximumTrim())
+            .ifPresent(v -> trimAllowed.setMaximumTrim(v.toString()));
+        Optional.ofNullable(loadingDetails.getTrimAllowed().getFinalTrim())
+            .ifPresent(v -> trimAllowed.setFinalTrim(v.toString()));
+        builder.setTrimAllowed(trimAllowed.build());
+      }
+      Optional.ofNullable(loadingDetails.getCommonDate()).ifPresent(builder::setCommonDate);
+
+      Optional.ofNullable(loadingDetails.getSlopQuantity())
+          .ifPresent(slopQuantity -> builder.setSlopQuantity(slopQuantity.toString()));
+    }
+    return builder.build();
   }
 }

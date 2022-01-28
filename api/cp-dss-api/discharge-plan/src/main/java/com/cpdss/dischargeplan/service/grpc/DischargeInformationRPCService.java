@@ -221,6 +221,9 @@ public class DischargeInformationRPCService
                         disEntity.getDischargingPlanDetailsFromAlgo(),
                         com.cpdss.dischargeplan.domain.DischargeInformation.class);
 
+            this.informationBuilderService.buildDischargeDetailsMessageFromJson(
+                dischargeInformationFromAlgo.getDischargeDetails(), dischargingInformation);
+
             // Set Discharge Berths
             this.informationBuilderService.buildDischargeBerthDetails(
                 disEntity, dischargeInformationFromAlgo.getBerthDetails(), dischargingInformation);
@@ -264,8 +267,8 @@ public class DischargeInformationRPCService
             disEntity, dischargingInformation);
 
         // Set Discharge Details
-        this.informationBuilderService.buildDischargeDetailsMessageFromEntity(
-            disEntity, dischargingInformation);
+        //        this.informationBuilderService.buildDischargeDetailsMessageFromEntity(
+        //            disEntity, dischargingInformation);
 
         // set Pump and Machine Details
         //        this.informationBuilderService.buildMachineInUseMessageFromEntity(
