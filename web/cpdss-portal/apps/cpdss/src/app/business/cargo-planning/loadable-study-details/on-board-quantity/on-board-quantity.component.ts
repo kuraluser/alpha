@@ -316,7 +316,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
     if (event?.field === 'cargo') {
       if (event?.data?.cargo?.value?.id === -1) {
-        this.cargoList = [...this.cargoList, { colorCode: event?.data?.cargo?.value?.color, ...event?.data?.cargo?.value}];
+        this.cargoList = this.cargoList.findIndex(cargo => cargo?.id === -1) === -1 ? [...this.cargoList, { colorCode: event?.data?.cargo?.value?.color, ...event?.data?.cargo?.value }] : this.cargoList;
       }
       event.data.colorCode = event?.data?.cargo?.value?.color;
       event.data.abbreviation = event?.data?.cargo?.value?.abbreviation;
