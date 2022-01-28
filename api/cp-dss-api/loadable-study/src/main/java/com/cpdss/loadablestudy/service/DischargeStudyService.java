@@ -1701,7 +1701,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       throws GenericServiceException {
     LoadableStudy loadableStudy = loadableStudyRepository.findById(loadableStudyId).get();
     /**
-     * if the loadable study is a discharge study then add cargo nominations of the previous port t
+     * if the loadable study is a discharge study then add cargo nominations of the previous port to
      * the newly created one else return
      */
     if (loadableStudy.getPlanningTypeXId() != 2) {
@@ -1787,7 +1787,19 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               }
             });
 
+    // Delete cargo nomination operation details of ports which are no longer needed.
+    // Bug fix 5511
+    List<Long> presentDischargingPorts =
+        dischargeStudyPortRotations.stream()
+            .map(LoadableStudyPortRotation::getPortXId)
+            .collect(Collectors.toList());
+    cargos.stream()
+        .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
+        .filter(item -> !presentDischargingPorts.contains(item.getPortId()))
+        .forEach(item -> item.setIsActive(false));
+
     cargoNominationService.saveAll(cargos);
+
     List<BackLoading> backLoadings =
         backLoadingService.getBackLoadings(
             loadableStudyId,
