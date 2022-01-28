@@ -352,6 +352,7 @@ public class LoadingPlanAlgoServiceTest {
         .buildPortCommingle(
             any(LoadingInformation.class),
             any(PortLoadingPlanCommingleDetails.class),
+            anyMap(),
             any(LoadingPlanModels.LoadingPlanCommingleDetails.class));
     List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetails =
         new ArrayList<PortLoadingPlanCommingleDetails>();

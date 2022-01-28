@@ -4,6 +4,7 @@ package com.cpdss.loadingplan.service.algo;
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.EnvoyWriter;
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.LoadableStudy.AlgoErrorRequest;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.LoadableStudy.JsonRequest;
@@ -632,7 +633,8 @@ public class LoadingPlanAlgoService {
   }
 
   private void saveLoadingPlan(
-      LoadingPlanSaveRequest request, LoadingInformation loadingInformation) {
+      LoadingPlanSaveRequest request, LoadingInformation loadingInformation)
+      throws GenericServiceException {
     savePortBallastDetails(loadingInformation, request.getPortLoadingPlanBallastDetailsList());
     savePortRobDetails(loadingInformation, request.getPortLoadingPlanRobDetailsList());
     savePortStabilityParams(
@@ -647,21 +649,57 @@ public class LoadingPlanAlgoService {
    */
   private void savePortCommingleDetails(
       LoadingInformation loadingInformation,
-      List<LoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList) {
+      List<LoadingPlanCommingleDetails> portLoadingPlanCommingleDetailsList)
+      throws GenericServiceException {
     log.info(
         "Saving Loading Plan Commingle Details for LoadingInformation {}, PortRotation {}",
         loadingInformation.getId(),
         loadingInformation.getPortRotationXId());
     List<PortLoadingPlanCommingleDetails> portLoadingPlanCommingleDetails =
         new ArrayList<PortLoadingPlanCommingleDetails>();
+    Set<Long> cargoNominationIds = new LinkedHashSet<>();
+    portLoadingPlanCommingleDetailsList.forEach(
+        commingle -> {
+          cargoNominationIds.add(commingle.getCargoNomination1Id());
+          cargoNominationIds.add(commingle.getCargoNomination2Id());
+        });
+    Map<Long, LoadableStudy.CargoNominationDetail> cargoNomMap =
+        getCargoNominationDetails(cargoNominationIds);
     portLoadingPlanCommingleDetailsList.forEach(
         commingle -> {
           PortLoadingPlanCommingleDetails commingleDetails = new PortLoadingPlanCommingleDetails();
           loadingPlanBuilderService.buildPortCommingle(
-              loadingInformation, commingleDetails, commingle);
+              loadingInformation, commingleDetails, cargoNomMap, commingle);
           portLoadingPlanCommingleDetails.add(commingleDetails);
         });
     portLoadingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetails);
+  }
+
+  /**
+   * Fetches cargo nomination details from Loadable Study MS.
+   *
+   * @param cargoNominationIds
+   * @return
+   * @throws GenericServiceException
+   */
+  private Map<Long, LoadableStudy.CargoNominationDetail> getCargoNominationDetails(
+      Set<Long> cargoNominationIds) throws GenericServiceException {
+    Map<Long, LoadableStudy.CargoNominationDetail> details =
+        new HashMap<Long, LoadableStudy.CargoNominationDetail>();
+    cargoNominationIds.forEach(
+        id -> {
+          LoadableStudy.CargoNominationRequest.Builder builder =
+              LoadableStudy.CargoNominationRequest.newBuilder();
+          builder.setCargoNominationId(id);
+          LoadableStudy.CargoNominationDetailReply reply =
+              loadableStudyService.getCargoNominationByCargoNominationId(builder.build());
+          if (reply.getResponseStatus().getStatus().equals(LoadingPlanConstants.SUCCESS)) {
+            log.info("Fetched details of cargo nomination with id {}", id);
+            details.put(id, reply.getCargoNominationdetail());
+          }
+        });
+
+    return details;
   }
 
   private void savePortStowageDetails(

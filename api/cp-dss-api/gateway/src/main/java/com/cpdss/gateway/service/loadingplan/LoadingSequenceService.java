@@ -1345,6 +1345,8 @@ public class LoadingSequenceService {
                     .ifPresent(commingleBuilder::setQuantity2M3);
                 Optional.ofNullable(commingle.getUllage1()).ifPresent(commingleBuilder::setUllage1);
                 Optional.ofNullable(commingle.getUllage2()).ifPresent(commingleBuilder::setUllage2);
+                Optional.ofNullable(commingle.getTankName())
+                    .ifPresent(commingleBuilder::setTankName);
                 commingleBuilder.setConditionType(conditionType);
                 builder.addPortLoadingPlanCommingleDetails(commingleBuilder.build());
               });

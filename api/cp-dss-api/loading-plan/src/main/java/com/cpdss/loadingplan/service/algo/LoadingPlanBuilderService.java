@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.algo;
 
+import com.cpdss.common.generated.LoadableStudy;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
@@ -29,6 +30,8 @@ import com.cpdss.loadingplan.entity.PortLoadingPlanStabilityParameters;
 import com.cpdss.loadingplan.entity.PortLoadingPlanStowageDetails;
 import com.cpdss.loadingplan.utility.LoadingPlanUtility;
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -457,11 +460,13 @@ public class LoadingPlanBuilderService {
   /**
    * @param loadingInformation
    * @param commingleDetails
+   * @param cargoNomMap
    * @param commingle
    */
   public void buildPortCommingle(
       LoadingInformation loadingInformation,
       PortLoadingPlanCommingleDetails commingleDetails,
+      Map<Long, LoadableStudy.CargoNominationDetail> cargoNomMap,
       LoadingPlanModels.LoadingPlanCommingleDetails commingle) {
     commingleDetails.setApi(commingle.getApi());
     commingleDetails.setGrade(commingle.getAbbreviation());
@@ -470,6 +475,7 @@ public class LoadingPlanBuilderService {
     commingleDetails.setLoadablePatternId(loadingInformation.getLoadablePatternXId());
     commingleDetails.setQuantity(commingle.getQuantityMT());
     commingleDetails.setTankId(commingle.getTankId());
+    commingleDetails.setTankName(commingle.getTankName());
     commingleDetails.setTemperature(commingle.getTemperature());
     commingleDetails.setCargoNomination1XId(commingle.getCargoNomination1Id());
     commingleDetails.setCargoNomination2XId(commingle.getCargoNomination2Id());
@@ -490,6 +496,10 @@ public class LoadingPlanBuilderService {
     commingleDetails.setCargo2Percentage(
         LoadingPlanUtility.calculateCommingleCargoPercentage(
             commingle.getQuantity2MT(), commingle.getQuantityMT()));
+    Optional.ofNullable(cargoNomMap.get(commingle.getCargoNomination1Id()))
+        .ifPresent(cargo -> commingleDetails.setCargo1Abbreviation(cargo.getAbbreviation()));
+    Optional.ofNullable(cargoNomMap.get(commingle.getCargoNomination2Id()))
+        .ifPresent(cargo -> commingleDetails.setCargo2Abbreviation(cargo.getAbbreviation()));
     commingleDetails.setConditionType(commingle.getConditionType());
     commingleDetails.setValueType(LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE);
   }

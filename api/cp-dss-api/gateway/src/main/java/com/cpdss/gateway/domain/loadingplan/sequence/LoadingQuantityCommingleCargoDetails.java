@@ -6,7 +6,7 @@ import lombok.Data;
 /** @author pranav.k */
 @Data
 public class LoadingQuantityCommingleCargoDetails {
-
+  private String tankShortName;
   private String tankName;
   private Long tankId;
   private String quantityMT;

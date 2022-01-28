@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.loadingplan.entity.*;
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -218,7 +219,7 @@ public class LoadingPlanBuilderServiceTest {
   void buildPortCommingle() {
     PortLoadingPlanCommingleDetails loadingRate = new PortLoadingPlanCommingleDetails();
     loadingPlanBuilderService.buildPortCommingle(
-        new LoadingInformation(), loadingRate, getCommingleDetails());
+        new LoadingInformation(), loadingRate, new LinkedHashMap<>(), getCommingleDetails());
     assertEquals("1", loadingRate.getApi());
   }
 
