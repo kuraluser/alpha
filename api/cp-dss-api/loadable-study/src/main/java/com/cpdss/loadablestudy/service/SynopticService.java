@@ -1649,6 +1649,11 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       Long dsPatternId = getPatternId(lpRequest);
       if (dsPatternId > 0) {
         patternIds.add(dsPatternId);
+      } else {
+        // No confirmed pattern available
+        if (request.getLoadablePatternId() > 0) {
+          patternIds.add(request.getLoadablePatternId());
+        }
       }
       // Get pattern id for LS
       LoadablePatternRequest.Builder lpLSRequest = LoadablePatternRequest.newBuilder();

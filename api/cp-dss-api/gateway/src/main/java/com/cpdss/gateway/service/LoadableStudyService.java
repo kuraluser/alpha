@@ -3321,7 +3321,7 @@ public class LoadableStudyService {
       throw new GenericServiceException(
           "Failed to confirm plan",
           grpcReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(grpcReply.getResponseStatus().getCode())));
+          HttpStatusCode.BAD_REQUEST);
     }
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
