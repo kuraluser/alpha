@@ -32,4 +32,11 @@ public interface PortLoadingPlanCommingleDetailsRepository
       "Update PortLoadingPlanCommingleDetails set isActive = false WHERE loadingInformation.id = ?1 and conditionType = ?2 and valueType = ?3 and isActive = true")
   public void deleteExistingByLoadingInfoAndConditionTypeAndValueType(
       Long loadingInfoId, Integer conditionType, Integer valueType);
+
+  @Query(
+      value =
+          "select * FROM port_loadable_plan_commingle_details where (cargo_nomination1_xid = ?1 or cargo_nomination2_xid = ?1 ) and actual_planned = ?2 and arrival_departure = ?3 and is_active = true;",
+      nativeQuery = true)
+  List<PortLoadingPlanCommingleDetails> findByCommingleCargoNominationId(
+      Long cargoNominationID, Integer valueType, Integer conditionType);
 }

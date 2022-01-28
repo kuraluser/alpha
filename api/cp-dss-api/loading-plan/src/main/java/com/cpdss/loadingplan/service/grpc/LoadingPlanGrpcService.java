@@ -374,6 +374,7 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                       .sum();
               maxQuantity.setMaxQuantity(String.valueOf(blFig));
               // Finding quantity ratio Actual/BL
+              // getting actuals of deparcher condition from stowage table
               List<PortLoadingPlanStowageDetails> actualQuantityList =
                   portLoadingPlanStowageDetailsRepository
                       .findByCargoNominationXIdAndPortRotationXIdAndValueTypeAndConditionTypeAndIsActiveTrue(
@@ -385,6 +386,21 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   actualQuantityList.stream()
                       .mapToDouble(item -> item.getQuantity().doubleValue())
                       .sum();
+              // getting actuals of cargo if part of a commingle from commingle table
+              List<PortLoadingPlanCommingleDetails> commingleActualList =
+                  portLoadingPlanCommingleDetailsRepository.findByCommingleCargoNominationId(
+                      key, VALUE_TYPE_ACTUALS, CONDITION_TYPE_DEP);
+              if (!CollectionUtils.isEmpty(commingleActualList)) {
+                cargoActual =
+                    cargoActual
+                        + commingleActualList.stream()
+                            .mapToDouble(
+                                item ->
+                                    item.getCargoNomination1XId().equals(key)
+                                        ? Double.parseDouble(item.getQuantity1MT())
+                                        : Double.parseDouble(item.getQuantity2MT()))
+                            .sum();
+              }
               if (blFig > 0) {
                 maxQuantity.setRatio(String.valueOf(cargoActual / blFig));
               }
