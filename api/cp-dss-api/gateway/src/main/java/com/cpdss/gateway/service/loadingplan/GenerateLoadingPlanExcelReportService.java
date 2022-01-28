@@ -1535,6 +1535,10 @@ public class GenerateLoadingPlanExcelReportService {
     sheetOne.setCargoTobeLoaded(getCargoTobeLoadedDetails(requestPayload));
     sheetOne.setLoadingPlanCommingleDetailsList(
         getLoadingPlanCommingleDetailsList(requestPayload.getPlanCommingleDetails()));
+    Optional.ofNullable(
+            requestPayload.getLoadingInformation().getLoadingDetails().getSlopQuantity())
+        .ifPresent(slopQuantity -> sheetOne.setSlopQuantity(String.valueOf(slopQuantity)));
+
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;
@@ -1759,21 +1763,7 @@ public class GenerateLoadingPlanExcelReportService {
                 .ifPresent(cargoTobeLoaded::setDifference);
             Optional.ofNullable(item.getTimeRequiredForLoading())
                 .ifPresent(cargoTobeLoaded::setTimeRequiredForLoading);
-            Optional.ofNullable(item.getSlopQuantity())
-                .ifPresent(
-                    value -> {
-                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
-                        cargoTobeLoaded.setSlopQuantity(
-                            UnitConversionUtility.setPrecision(
-                                    UnitConversionUtility.convertToBBLS(
-                                        UnitTypes.MT,
-                                        Double.parseDouble(cargoTobeLoaded.getApi()),
-                                        Double.parseDouble(cargoTobeLoaded.getTemperature()),
-                                        Double.parseDouble(value)),
-                                    2)
-                                .toString());
-                      }
-                    });
+
             cargoTobeLoadedList.add(cargoTobeLoaded);
           });
     }

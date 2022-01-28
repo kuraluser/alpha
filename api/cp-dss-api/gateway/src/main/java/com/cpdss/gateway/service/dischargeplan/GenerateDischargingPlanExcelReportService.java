@@ -1787,6 +1787,10 @@ public class GenerateDischargingPlanExcelReportService {
         getCargoTobeDischarged(requestPayload.getDischargingInformation()));
     sheetOne.setLoadingPlanCommingleDetailsList(
         getDischargePlanCommingleDetailsList(requestPayload.getDischargingInformation()));
+    Optional.ofNullable(
+            requestPayload.getDischargingInformation().getDischargeDetails().getSlopQuantity())
+        .ifPresent(slopQuantity -> sheetOne.setSlopQuantity(String.valueOf(slopQuantity)));
+
     getBerthInfoDetails(sheetOne, requestPayload);
     log.info("Building sheet 1 : Completed");
     return sheetOne;
@@ -2068,19 +2072,7 @@ public class GenerateDischargingPlanExcelReportService {
                 .ifPresent(cargoTobeDischarged::setDifference);
             Optional.ofNullable(item.getTimeRequiredForDischarging())
                 .ifPresent(cargoTobeDischarged::setTimeRequiredForDischarging);
-            Optional.ofNullable(item.getSlopQuantity())
-                .ifPresent(
-                    value -> {
-                      if (item.getEstimatedAPI() != null && item.getEstimatedTemp() != null) {
-                        cargoTobeDischarged.setSlopQuantity(
-                            UnitConversionUtility.convertToBBLS(
-                                    UnitTypes.MT,
-                                    Double.parseDouble(item.getEstimatedAPI()),
-                                    Double.parseDouble(item.getEstimatedTemp()),
-                                    Double.parseDouble(value))
-                                .toString());
-                      }
-                    });
+
             cargoTobeDischargedList.add(cargoTobeDischarged);
           });
     }
