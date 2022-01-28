@@ -2,12 +2,13 @@
 package com.cpdss.loadablestudy.communication;
 
 import static com.cpdss.common.communication.CommunicationConstants.*;
+import static com.cpdss.common.utils.MessageTypes.getMessageType;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.springframework.util.StringUtils.hasLength;
 
-import com.cpdss.common.communication.CommunicationConstants;
 import com.cpdss.common.communication.StagingService;
+import com.cpdss.common.domain.DependentProcessResponse;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
@@ -29,6 +30,7 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,65 +97,9 @@ public class LoadableStudyStagingService extends StagingService {
         processId,
         processIdentifierList);
 
-    String dependantProcessId = null;
-    String dependantProcessModule = null;
-
-    if (MessageTypes.DISCHARGESTUDY.getMessageType().equals(processGroupId)
-        || MessageTypes.DISCHARGESTUDY_WITHOUT_ALGO.getMessageType().equals(processGroupId)) {
-      // Check prev module communicated
-      final LoadableStudy dischargeStudyGet =
-          loadableStudyRepository
-              .findById(referenceId)
-              .orElseThrow(
-                  () -> {
-                    log.error("DischargeStudy not found. Id: {}", referenceId);
-                    return new GenericServiceException(
-                        "DischargeStudy not found. Id: " + referenceId,
-                        CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                        HttpStatusCode.INTERNAL_SERVER_ERROR);
-                  });
-      // Communication referenceId set as patternId between DischargeStudy and LoadingPlan
-      // at Lp service
-      List<LoadablePattern> loadablePatternGet =
-          loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
-              dischargeStudyGet.getConfirmedLoadableStudyId(), LS_STATUS_CONFIRMED);
-      if (!CollectionUtils.isEmpty(loadablePatternGet)) {
-        Long patternId = loadablePatternGet.stream().findFirst().get().getId();
-        log.info("patternId get :{}", patternId);
-        if (!isCommunicated(
-            MessageTypes.LOADINGPLAN.getMessageType(),
-            patternId,
-            CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName())) {
-          Common.CommunicationTriggerRequest communicationTriggerRequest =
-              Common.CommunicationTriggerRequest.newBuilder()
-                  .setReferenceId(patternId)
-                  .setMessageType(MessageTypes.LOADINGPLAN.getMessageType())
-                  .build();
-          log.info(
-              "Calling loadingplan triggerCommunication with request :{}",
-              communicationTriggerRequest);
-          final Common.CommunicationTriggerResponse response =
-              loadingPlanServiceBlockingStub.triggerCommunication(communicationTriggerRequest);
-          dependantProcessId = response.getProcessId();
-          dependantProcessModule =
-              CommunicationConstants.CommunicationModule.LOADING_PLAN.getModuleName();
-
-          // Communication trigger failure
-          if (!SUCCESS.equals(response.getResponseStatus().getStatus())) {
-            log.error(
-                "Previous module trigger failed. MessageType: {}, ReferenceId: {}, Module: {}, Response: {}",
-                MessageTypes.LOADINGPLAN.getMessageType(),
-                referenceId,
-                CommunicationModule.LOADING_PLAN.getModuleName(),
-                response);
-            throw new GenericServiceException(
-                "Previous module trigger failed. ReferenceId: " + referenceId,
-                CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                HttpStatusCode.INTERNAL_SERVER_ERROR);
-          }
-        }
-      }
-    }
+    // Check previous module communicated
+    DependentProcessResponse dependentProcessResponse =
+        checkPrevModuleCommunicated(processGroupId, referenceId);
 
     JsonArray array = new JsonArray();
     List<String> processedList = new ArrayList<>();
@@ -196,8 +142,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       voyage,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
                 addIntoProcessedList(
                     array,
@@ -207,8 +153,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadableStudy,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -228,8 +174,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     comingleCargo,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -251,8 +197,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     cargoNomination,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -272,8 +218,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadableStudyPortRotation,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -293,8 +239,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     onHandQuantity,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -314,8 +260,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     onBoardQuantity,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -335,8 +281,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadableQuantity,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -354,8 +300,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     jsonData,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -375,8 +321,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadableStudyAlgoStatus,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -395,8 +341,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadablePattern,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -418,8 +364,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     algoErrorHeading,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -439,8 +385,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       algoErrors,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -462,8 +408,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePlanConstraints,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -485,8 +431,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePlanQuantity,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -508,8 +454,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePlanCommingleDetails,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -533,8 +479,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePatternCargoToppingOffSequence,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -556,8 +502,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePlanStowageDetails,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -579,8 +525,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePlanBallastDetails,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -604,8 +550,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePlanComminglePortwiseDetails,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -627,8 +573,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       stabilityParameters,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -650,8 +596,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       loadablePatternCargoDetails,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -671,8 +617,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadablePlan,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               String loadablePlanStowageBallastDetailsJson =
                   loadableStudyStagingRepository.getLoadablePlanStowageBallastDetails(
@@ -688,8 +634,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadablePlanStowageBallastDetails,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -709,8 +655,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     synopticalTable,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -732,8 +678,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     synopticalTableLoadicatorData,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -754,8 +700,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     cargoNominationOperationDetailsData,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -775,8 +721,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     communicationStatusUpdateData,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -795,8 +741,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       cowHistory,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -820,8 +766,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       dischargePatternQuantityCargoPortwiseDetails,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -841,8 +787,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadableStudyRules,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -861,8 +807,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadableStudyRuleInput,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -881,8 +827,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadablePlanComments,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -902,8 +848,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadablePlanStowageDetailsTemp,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -922,8 +868,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadablePatternAlgoStatus,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -943,8 +889,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     dischargeStudyCowDetail,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -964,19 +910,18 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     ruleVesselMapping,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
 
                 // Get rule_vessel_mapping_input data
                 List<Long> ruleVesselMappingIds = new ArrayList<>();
                 ruleVesselMapping.forEach(
-                    jsonElement -> {
-                      ruleVesselMappingIds.add(
-                          jsonElement
-                              .getAsJsonObject()
-                              .get(LOADABLE_STUDY_COLUMNS.ID.getColumnName())
-                              .getAsLong());
-                    });
+                    jsonElement ->
+                        ruleVesselMappingIds.add(
+                            jsonElement
+                                .getAsJsonObject()
+                                .get(LOADABLE_STUDY_COLUMNS.ID.getColumnName())
+                                .getAsLong()));
 
                 // TODO rule_vessel_mapping_input to be fetched in a separate case in switch
                 final String ruleVesselMappingInputJson =
@@ -994,8 +939,8 @@ public class LoadableStudyStagingService extends StagingService {
                       processGroupId,
                       processedList,
                       ruleVesselMappingInput,
-                      dependantProcessId,
-                      dependantProcessModule);
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
                 }
               }
               break;
@@ -1016,8 +961,8 @@ public class LoadableStudyStagingService extends StagingService {
                     processGroupId,
                     processedList,
                     loadableStudyAttachments,
-                    dependantProcessId,
-                    dependantProcessModule);
+                    dependentProcessResponse.getDependantProcessId(),
+                    dependentProcessResponse.getDependantProcessModule());
               }
               break;
             }
@@ -1094,5 +1039,86 @@ public class LoadableStudyStagingService extends StagingService {
       return loadablePatternRepository.getLoadableStudyId(id);
     }
     return id;
+  }
+
+  /**
+   * Method to check if previous module is communicated
+   *
+   * @param processGroupId processGroupId/messageType value
+   * @param referenceId reference Id value
+   * @return DependentProcessResponse object
+   * @throws GenericServiceException Exception on failure
+   */
+  private DependentProcessResponse checkPrevModuleCommunicated(
+      final String processGroupId, final Long referenceId) throws GenericServiceException {
+
+    try {
+      final MessageTypes messageType = getMessageType(processGroupId);
+      Long dependentReferenceId = null;
+      final CommunicationModule dependentProcessModule = getDependantProcessModule(messageType);
+
+      if (MessageTypes.DISCHARGESTUDY.equals(messageType)
+          || MessageTypes.DISCHARGESTUDY_WITHOUT_ALGO.equals(messageType)) {
+        final LoadableStudy dischargeStudy =
+            loadableStudyRepository
+                .findById(referenceId)
+                .orElseThrow(
+                    () -> {
+                      log.error("DischargeStudy not found. Id: {}", referenceId);
+                      return new GenericServiceException(
+                          "DischargeStudy not found. Id: " + referenceId,
+                          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                          HttpStatusCode.INTERNAL_SERVER_ERROR);
+                    });
+        // Communication referenceId set as patternId between DischargeStudy and LoadingPlan
+        // at Lp service
+        List<LoadablePattern> loadablePatterns =
+            loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+                dischargeStudy.getConfirmedLoadableStudyId(), LS_STATUS_CONFIRMED);
+        if (!CollectionUtils.isEmpty(loadablePatterns)) {
+          dependentReferenceId =
+              loadablePatterns.stream()
+                  .findAny()
+                  .orElseThrow(
+                      () -> {
+                        log.error(
+                            "Loadable pattern not found. LS Id: {}",
+                            dischargeStudy.getConfirmedLoadableStudyId());
+                        return new GenericServiceException(
+                            "Loadable pattern not found. LS Id: "
+                                + dischargeStudy.getConfirmedLoadableStudyId(),
+                            CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                            HttpStatusCode.INTERNAL_SERVER_ERROR);
+                      })
+                  .getId();
+        }
+      } else if (MessageTypes.VALIDATEPLAN.equals(messageType)) {
+        // referenceId will be patternId for validate plan / stowage edit
+        dependentReferenceId = referenceId;
+      }
+
+      // Trigger communication based on communication check
+      if (Objects.nonNull(dependentProcessModule)
+          && Objects.nonNull(dependentReferenceId)
+          && !isCommunicated(
+              messageType.getDependentMessageType().getMessageType(),
+              dependentReferenceId,
+              dependentProcessModule.getModuleName())) {
+        final Common.CommunicationTriggerResponse response =
+            triggerCommunication(
+                messageType.getDependentMessageType(),
+                dependentReferenceId,
+                dependentProcessModule);
+        return new DependentProcessResponse(
+            response.getProcessId(), dependentProcessModule.getModuleName());
+      }
+    } catch (IllegalArgumentException e) {
+      log.error(
+          "Invalid argument in processGroupId: {}. Reference Id: {}, Trace: {}",
+          processGroupId,
+          referenceId,
+          e);
+    }
+    return new DependentProcessResponse(null, null);
   }
 }

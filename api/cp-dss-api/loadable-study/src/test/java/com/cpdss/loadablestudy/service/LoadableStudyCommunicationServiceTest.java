@@ -262,6 +262,8 @@ public class LoadableStudyCommunicationServiceTest {
         .thenReturn(getJsonArray(ProcessIdentifiers.loadable_plan_comments));
     when(loadableStudyServiceShore.updateCommunicationStatus(anyString(), anyLong()))
         .thenReturn(new LoadableStudyCommunicationStatus());
+    when(loadableStudyStagingService.dependantProcessIsCompleted(anyString(), anyString()))
+        .thenReturn(true);
 
     // Test and verification
     loadableStudyCommunicationService.processStagingData(transferStageList, "cloud", "1");

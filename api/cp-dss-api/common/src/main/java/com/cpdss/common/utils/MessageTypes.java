@@ -9,31 +9,32 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum MessageTypes {
-  LOADABLESTUDY("LoadableStudy", "LoadableStudy"),
-  LOADABLESTUDY_WITHOUT_ALGO("LoadableStudy_Without_Algo", LOADABLESTUDY.getMessageType()),
-  ALGORESULT("AlgoResult", "AlgoResult"),
+  LOADABLESTUDY("LoadableStudy", "LoadableStudy", null),
+  LOADABLESTUDY_WITHOUT_ALGO("LoadableStudy_Without_Algo", LOADABLESTUDY.getMessageType(), null),
+  ALGORESULT("AlgoResult", "AlgoResult", null),
   // ship to shore stowage
-  VALIDATEPLAN("ValidatePlan", "ValidatePlan"),
+  VALIDATEPLAN("ValidatePlan", "ValidatePlan", LOADABLESTUDY),
   // shore to ship stowage
-  PATTERNDETAIL("PatternDetail", "PatternDetail"),
-  LOADINGPLAN_SAVE("LoadingPlan_Save", "LoadingPlan_Save"),
-  LOADINGPLAN("LoadingPlan", "LoadingPlan"),
-  LOADINGPLAN_WITHOUT_ALGO("LoadingPlan_Without_Algo", LOADINGPLAN.getMessageType()),
-  LOADINGPLAN_ALGORESULT("LoadingPlan_AlgoResult", "LoadingPlan_AlgoResult"),
-  ULLAGE_UPDATE("Ullage_Update", "Ullage_Update"),
+  PATTERNDETAIL("PatternDetail", "PatternDetail", null),
+  LOADINGPLAN_SAVE("LoadingPlan_Save", "LoadingPlan_Save", null),
+  LOADINGPLAN("LoadingPlan", "LoadingPlan", LOADABLESTUDY),
+  LOADINGPLAN_WITHOUT_ALGO("LoadingPlan_Without_Algo", LOADINGPLAN.getMessageType(), LOADABLESTUDY),
+  LOADINGPLAN_ALGORESULT("LoadingPlan_AlgoResult", "LoadingPlan_AlgoResult", null),
+  ULLAGE_UPDATE("Ullage_Update", "Ullage_Update", null),
   ULLAGE_UPDATE_LOADICATOR_OFF_ALGORESULT(
-      "Ullage_Update_Loadicator_Off_AlgoResult", "Ullage_Update_Loadicator_Off_AlgoResult"),
+      "Ullage_Update_Loadicator_Off_AlgoResult", "Ullage_Update_Loadicator_Off_AlgoResult", null),
   ULLAGE_UPDATE_LOADICATOR_ON_ALGORESULT(
-      "Ullage_Update_Loadicator_On_AlgoResult", "Ullage_Update_Loadicator_On_AlgoResult"),
-  DISCHARGESTUDY("DischargeStudy", "DischargeStudy"),
-  DISCHARGESTUDY_WITHOUT_ALGO("DischargeStudy_Without_Algo", DISCHARGESTUDY.getMessageType()),
-  DISCHARGEPLAN("DischargePlan", "DischargePlan"),
-  DISCHARGEPLAN_WITHOUT_ALGO("DischargePlan_Without_Algo", DISCHARGEPLAN.getMessageType()),
-  DISCHARGEPLAN_ALGORESULT("DischargePlan_AlgoResult", "DischargePlan_AlgoResult"),
-  DISCHARGEPLAN_ULLAGE_UPDATE("DischargePlan_Ullage_Update", "DischargePlan_Ullage_Update"),
+      "Ullage_Update_Loadicator_On_AlgoResult", "Ullage_Update_Loadicator_On_AlgoResult", null),
+  DISCHARGESTUDY("DischargeStudy", "DischargeStudy", LOADINGPLAN),
+  DISCHARGESTUDY_WITHOUT_ALGO(
+      "DischargeStudy_Without_Algo", DISCHARGESTUDY.getMessageType(), LOADINGPLAN),
+  DISCHARGEPLAN("DischargePlan", "DischargePlan", null),
+  DISCHARGEPLAN_WITHOUT_ALGO("DischargePlan_Without_Algo", DISCHARGEPLAN.getMessageType(), null),
+  DISCHARGEPLAN_ALGORESULT("DischargePlan_AlgoResult", "DischargePlan_AlgoResult", null),
+  DISCHARGEPLAN_ULLAGE_UPDATE("DischargePlan_Ullage_Update", "DischargePlan_Ullage_Update", null),
   DISCHARGEPLAN_ULLAGE_UPDATE_ALGORESULT(
-      "DischargePlan_Ullage_Update_AlgoResult", "DischargePlan_Ullage_Update_AlgoResult"),
-  FILE_SHAREING("FileSharing", "FileSharing");
+      "DischargePlan_Ullage_Update_AlgoResult", "DischargePlan_Ullage_Update_AlgoResult", null),
+  FILE_SHAREING("FileSharing", "FileSharing", null);
 
   public static EnumSet<MessageTypes> loadableShip = EnumSet.of(ALGORESULT, PATTERNDETAIL);
   public static EnumSet<MessageTypes> loadableShore =
@@ -55,6 +56,7 @@ public enum MessageTypes {
 
   private final String messageType;
   private final String sequenceMessageType;
+  private final MessageTypes dependentMessageType;
 
   /**
    * Method to get CommunicationModule enumfrom moduleName

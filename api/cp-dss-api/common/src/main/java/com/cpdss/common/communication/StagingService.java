@@ -832,4 +832,74 @@ public class StagingService {
     }
     return jsonElement.isJsonNull() ? null : jsonElement.getAsString();
   }
+
+  /**
+   * Method to get dependent process module from message type
+   *
+   * @param messageType MessageTypes enum value
+   * @return dependent process module name (nullable)
+   */
+  public static CommunicationModule getDependantProcessModule(final MessageTypes messageType) {
+    if (MessageTypes.DISCHARGESTUDY.equals(messageType)
+        || MessageTypes.DISCHARGESTUDY_WITHOUT_ALGO.equals(messageType)) {
+      return CommunicationModule.LOADING_PLAN;
+    } else if (MessageTypes.VALIDATEPLAN.equals(messageType)
+        || MessageTypes.LOADINGPLAN.equals(messageType)) {
+      return CommunicationModule.LOADABLE_STUDY;
+    }
+    return null;
+  }
+
+  /**
+   * Method to trigger communication
+   *
+   * @param messageType messageType getting transferred
+   * @param referenceId referenceId value
+   * @param communicationModule communication module to which trigger request is being sent to
+   * @return CommunicationTriggerResponse response object
+   * @throws GenericServiceException Exception on invalid response from communication module
+   */
+  public Common.CommunicationTriggerResponse triggerCommunication(
+      final MessageTypes messageType,
+      final Long referenceId,
+      final CommunicationModule communicationModule)
+      throws GenericServiceException {
+
+    /**
+     * MessageType, ReferenceId - (LOADINGPLAN - loadablePatternId, VALIDATEPLAN -
+     * loadablePatternId)
+     */
+    Common.CommunicationTriggerRequest communicationTriggerRequest =
+        Common.CommunicationTriggerRequest.newBuilder()
+            .setReferenceId(referenceId)
+            .setMessageType(messageType.getMessageType())
+            .build();
+    log.debug(
+        "Trigger communication request received. MessageType: {}, Reference Id: {}, Module Requested: {}",
+        messageType.getMessageType(),
+        referenceId,
+        communicationModule.getModuleName());
+
+    Common.CommunicationTriggerResponse response =
+        Common.CommunicationTriggerResponse.newBuilder().build();
+    if (CommunicationModule.LOADING_PLAN.equals(communicationModule)) {
+      response = loadingPlanGrpcService.triggerCommunication(communicationTriggerRequest);
+    } else if (MessageTypes.LOADABLESTUDY.equals(messageType)) {
+      response = loadableStudyGrpcService.triggerCommunication(communicationTriggerRequest);
+    }
+    // Communication trigger failure
+    if (!SUCCESS.equals(response.getResponseStatus().getStatus())) {
+      log.error(
+          "Previous module trigger failed. MessageType: {}, ReferenceId: {}, Module Requested: {}, Response: {}",
+          messageType.getMessageType(),
+          referenceId,
+          communicationModule.getModuleName(),
+          response);
+      throw new GenericServiceException(
+          "Previous module trigger failed. ReferenceId: " + referenceId,
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          HttpStatusCode.INTERNAL_SERVER_ERROR);
+    }
+    return response;
+  }
 }
