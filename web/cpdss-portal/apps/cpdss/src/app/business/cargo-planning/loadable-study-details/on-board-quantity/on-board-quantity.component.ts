@@ -172,7 +172,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 * @memberof OnBoardQuantityComponent
 */
   checkEditMode() {
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) && !this.voyage?.isDischargeStarted ? DATATABLE_EDITMODE.CELL : null;
   }
 
   /**
@@ -420,7 +420,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
         }
       }
       this.updateTankList();
-      if (event?.data?.status === '400' && event?.data?.errorCode === 'ERR-RICO-110') {
+      if (event?.data?.status === '400' && (event?.data?.errorCode === 'ERR-RICO-110' || event?.data?.errorCode === 'ERR-RICO-392')) {
         this.messageService.add({ severity: 'error', summary: translationKeys['OBQ_UPDATE_ERROR'], detail: translationKeys['OBQ_UPDATE_STATUS_ERROR'], life: 10000, closable: false, sticky: false });
       }
       if (event?.data?.status === '401' && event?.data?.errorCode === '210') {
@@ -595,7 +595,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
         }
       }
       catch (errorResponse) {
-        if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
           this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_ERROR'], detail: translationKeys['LOADABLE_STUDY_LOAD_ON_TOP_SAVE_STATUS_ERROR'], life: 10000 });
         }
       }

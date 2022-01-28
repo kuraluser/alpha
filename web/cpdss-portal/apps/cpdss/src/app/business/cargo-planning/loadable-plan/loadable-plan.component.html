@@ -43,7 +43,7 @@
                 <button class="btn btn-main mr-10" id="confirm_plan"
                     [disabled]="!confirmPlanPermission || confirmButtonStatus || validationPending"
                     [ngClass]="{'confirmed': loadableStudyStatus}"
-                    *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE"
+                    *ngIf="selectedVoyage && selectedVoyage?.statusId !== VOYAGE_STATUS.CLOSE && !selectedVoyage?.isDischargeStarted"
                     (click)="onConfirmPlanClick()">
                     <span class="pi pi-check check-rounded" *ngIf="loadableStudyStatus"></span>
                     {{loadableStudyStatus ? ('LOADABLE_PATTERN_HISTORY_CONFIRMED_PLAN_BUTTON_LABEL' |translate) :

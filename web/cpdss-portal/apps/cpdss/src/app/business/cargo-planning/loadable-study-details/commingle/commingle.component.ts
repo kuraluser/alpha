@@ -47,7 +47,7 @@ export class CommingleComponent implements OnInit {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit || this.permission?.add === undefined || this.permission?.add) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) && !this.voyage?.isDischargeStarted ? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Output() displayPopUp = new EventEmitter<boolean>();
@@ -110,7 +110,7 @@ export class CommingleComponent implements OnInit {
     this.cargoNominationPermissionContext = { key: AppConfigurationService.settings.permissionMapping['CargoCommingle'], actions: [PERMISSION_ACTION.VIEW, PERMISSION_ACTION.ADD, PERMISSION_ACTION.EDIT] };
     this.permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['CargoCommingle'], true);
     this.percentage = [{ id: 10, name: "10%" }, { id: 20, name: "20%" }, { id: 30, name: "30%" }, { id: 40, name: "40%" }, { id: 50, name: "50%" }, { id: 60, name: "60%" }, { id: 70, name: "70%" }, { id: 80, name: "80%" }, { id: 90, name: "90%" }, { id: 100, name: "100%" }];
-    this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
+    this.columns = this.loadableStudyDetailsTransformationService.getManualCommingleDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage);
     this.createVolumeMaximisationFormGroup();
     this.getCommingle();
     this.errorMesages = this.commingleApiService.setValidationErrorMessage();
@@ -265,7 +265,7 @@ export class CommingleComponent implements OnInit {
         }
         this.close();
       } catch (errorResponse) {
-        if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
           this.messageService.add({ severity: 'error', summary: translationKeys['COMMINGLE_SAVE_ERROR'], detail: translationKeys['COMMINGLE_SAVE_STATUS_ERROR'], life: 10000 });
         }
       }
@@ -567,7 +567,7 @@ export class CommingleComponent implements OnInit {
         }
         this.close();
       } catch (errorResponse) {
-        if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
           this.messageService.add({ severity: 'error', summary: translationKeys['COMMINGLE_SAVE_ERROR'], detail: translationKeys['COMMINGLE_SAVE_STATUS_ERROR'], life: 10000 });
         }
       }

@@ -43,7 +43,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? DATATABLE_EDITMODE.CELL : null;
+    this.editMode = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(this.loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) && !this.voyage?.isDischargeStarted ? DATATABLE_EDITMODE.CELL : null;
   }
 
   @Input()
@@ -84,7 +84,7 @@ export class LoadingPortsPopupComponent implements OnInit {
     private quantityDecimalService: QuantityDecimalService) { }
 
   ngOnInit(): void {
-    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage?.statusId);
+    this.columns = this.loadableStudyDetailsTransformationService.getCargoNominationLoadingPortDatatableColumns(this.permission, this.loadableStudy?.statusId, this.voyage);
   }
 
   /**

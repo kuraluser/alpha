@@ -3,7 +3,7 @@ import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_FILTER_MATCHMODE, DAT
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { AppConfigurationService } from '../../../shared/services/app-configuration/app-configuration.service';
 import { TimeZoneTransformationService } from '../../../shared/services/time-zone-conversion/time-zone-transformation.service';
-import { VOYAGE_STATUS } from '../../core/models/common.model';
+import { Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class LoadableStudyListTransformationService {
   /**
 *  loadable study details transformation service
 */
-  getLoadableStudyListDatatableColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  getLoadableStudyListDatatableColumns(permission: IPermission, voyage: Voyage): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -84,7 +84,7 @@ export class LoadableStudyListTransformationService {
         filterFieldMaxvalue: new Date()
       }
     ];
-    if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if(permission && ![VOYAGE_STATUS.CLOSE].includes(voyage?.statusId) && !voyage?.isDischargeStarted) {
       const actions: DATATABLE_ACTION[] = [];
       if(permission?.edit) {
         actions.push(DATATABLE_ACTION.EDIT);

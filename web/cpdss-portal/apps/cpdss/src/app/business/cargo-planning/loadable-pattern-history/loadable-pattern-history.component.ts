@@ -412,7 +412,7 @@ export class LoadablePatternHistoryComponent implements OnInit, OnDestroy {
           this.ngxSpinnerService.hide();
         } catch (errorResponse) {
           this.ngxSpinnerService.hide();
-          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_STATUS_ERROR'], life: 10000 });
           } else if(errorResponse?.error?.errorCode === 'ERR-RICO-152') {
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_PATTERN_CONFIRM_ERROR'], detail: translationKeys['LOADABLE_PATTERN_CONFIRM_VOYAGE_ACTIVE_STATUS_ERROR'] });

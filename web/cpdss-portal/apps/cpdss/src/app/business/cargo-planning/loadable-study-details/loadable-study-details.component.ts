@@ -892,7 +892,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     }
     catch (errorResponse) {
       const translationKeys = await this.translateService.get(['CARGO_NOMINATION_PORT_SELECTION_ERROR_DETAIL', 'CARGO_NOMINATION_PORT_SELECTION_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_ERROR', 'LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR']).toPromise();
-      if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_ERROR'], detail: translationKeys['LOADABLE_STUDY_DISCHARGE_PORT_STATUS_ERROR'], life: 10000 });
       } else {
         if (errorResponse.error.errorCode === 'ERR-RICO-107') {
@@ -1087,7 +1087,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.selectedLoadableStudy.statusId = 11;
       this.selectedLoadableStudy.status = LOADABLE_STUDY_STATUS_TEXT.PLAN_ERROR;
       this.selectedLoadableStudy.isActionsEnabled = true;
-      if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_STATUS_ERROR'], life: 10000 });
       }

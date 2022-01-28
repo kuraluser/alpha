@@ -218,7 +218,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         if (error.error.errorCode === 'ERR-RICO-105') {
           this.newLoadableStudyNameExist = true;
           this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: translationKeys['NEW_LOADABLE_STUDY_POPUP__NAME_EXIST'] });
-        } else if (error.error.errorCode === 'ERR-RICO-110') {
+        } else if (error.error.errorCode === 'ERR-RICO-110' || error.error.errorCode === 'ERR-RICO-392') {
           const messageKey = this.isEdit ? translationKeys['NEW_LOADABLE_STUDY_POPUP_UPDATE_VOYAGE_ACTIVE_CLOSED'] : this.newLoadableStudyPopupModel?.createdFromId ? translationKeys['NEW_LOADABLE_STUDY_POPUP_DUPLICATE_VOYAGE_ACTIVE_CLOSED'] : translationKeys['NEW_LOADABLE_STUDY_POPUP_VOYAGE_ACTIVE_CLOSED'];
           this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_CREATE_ERROR'], detail: messageKey, life: 10000 });
         }

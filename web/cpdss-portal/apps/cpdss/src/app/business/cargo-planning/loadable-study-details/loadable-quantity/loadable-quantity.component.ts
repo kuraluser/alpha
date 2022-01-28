@@ -33,7 +33,7 @@ export class LoadableQuantityComponent implements OnInit {
   }
   set selectedLoadableStudy(value: LoadableStudy) {
     this._selectedLoadableStudy = value;
-    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) ? true : false;
+    this.isEditable = (this.permission?.edit === undefined || this.permission?.edit) && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(value?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) && !this.voyage?.isDischargeStarted ? true : false;
   }
   @Input() vesselId: number;
   @Input() voyage: Voyage;
@@ -330,7 +330,7 @@ export class LoadableQuantityComponent implements OnInit {
           }
         }
       } catch (errorResponse) {
-        if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+        if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
           this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_QUANTITY_SAVE_ERROR'], detail: translationKeys['LOADABLE_QUANTITY_SAVE_STATUS_ERROR'], life: 10000 });
         }
       }

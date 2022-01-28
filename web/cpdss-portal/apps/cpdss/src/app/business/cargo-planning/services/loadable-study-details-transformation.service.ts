@@ -7,7 +7,7 @@ import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNomina
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
-import { IOperations, IPort, IPortList, ITank, LOADABLE_STUDY_STATUS, OPERATIONS, VOYAGE_STATUS } from '../../core/models/common.model';
+import { IOperations, IPort, IPortList, ITank, LOADABLE_STUDY_STATUS, OPERATIONS, Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
 import { ILoadableOHQStatus } from '../models/loadable-study-list.model';
 import * as moment from 'moment';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
@@ -162,7 +162,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  getCargoNominationDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyage: Voyage): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'slNo',
@@ -370,7 +370,7 @@ export class LoadableStudyDetailsTransformationService {
         }
       }
     ];
-    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyage?.statusId) && !voyage?.isDischargeStarted) {
       const actions: DATATABLE_ACTION[] = [];
 
       if (permission?.add) {
@@ -447,7 +447,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns {IDataTableColumn[]}
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getCargoNominationLoadingPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  getCargoNominationLoadingPortDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyage: Voyage): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'name',
@@ -469,7 +469,7 @@ export class LoadableStudyDetailsTransformationService {
       }
     ]
 
-    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyage?.statusId) && !voyage?.isDischargeStarted) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
@@ -622,7 +622,7 @@ export class LoadableStudyDetailsTransformationService {
    * @returns
    * @memberof LoadableStudyDetailsTransformationService
    */
-  getLoadableStudyGridColumns(permission: IPermission, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  getLoadableStudyGridColumns(permission: IPermission, voyage: Voyage): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'name',
@@ -643,7 +643,7 @@ export class LoadableStudyDetailsTransformationService {
         fieldValue: 'status'
       }
     ];
-    if (permission && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && ![VOYAGE_STATUS.CLOSE].includes(voyage?.statusId) && !voyage?.isDischargeStarted) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.delete) {
         actions.push(DATATABLE_ACTION.DELETE);
@@ -727,7 +727,7 @@ export class LoadableStudyDetailsTransformationService {
  * @returns {IDataTableColumn[]}
  * @memberof LoadableStudyDetailsTransformationService
  */
-  async getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): Promise<IDataTableColumn[]> {
+  async getPortDatatableColumns(permission: IPermission, portEtaEtdPermission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyage: Voyage): Promise<IDataTableColumn[]> {
     const minDate = new Date();
     const nextDate = new Date(minDate.getTime() + (24 * 60 * 60 * 1000));
     const translatedMessages = await this.translateService.get(['PORT_MAX_AIR_DRAFT_MIN_ERROR', 'EXAMPLE']).toPromise();
@@ -929,7 +929,7 @@ export class LoadableStudyDetailsTransformationService {
       columns = [...columns, ...etaEtd];
     }
 
-    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyage?.statusId) && !voyage?.isDischargeStarted) {
       const actions: DATATABLE_ACTION[] = [];
       if (permission?.add) {
         actions.push(DATATABLE_ACTION.SAVE);
@@ -1260,7 +1260,7 @@ export class LoadableStudyDetailsTransformationService {
   /**
    * Method to get Manual Commingle grid colums
    */
-  getManualCommingleDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyageStatusId: VOYAGE_STATUS): IDataTableColumn[] {
+  getManualCommingleDatatableColumns(permission: IPermission, loadableStudyStatusId: LOADABLE_STUDY_STATUS, voyage: Voyage): IDataTableColumn[] {
     let columns: IDataTableColumn[] = [
       {
         field: 'cargo1',
@@ -1359,7 +1359,7 @@ export class LoadableStudyDetailsTransformationService {
       }
     ];
 
-    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyageStatusId)) {
+    if (permission && [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudyStatusId) && ![VOYAGE_STATUS.CLOSE].includes(voyage?.statusId) && !voyage?.isDischargeStarted) {
       const actions: DATATABLE_ACTION[] = [];
       actions.push(DATATABLE_ACTION.DELETE);
       const action: IDataTableColumn = {

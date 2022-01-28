@@ -132,7 +132,7 @@ export class LoadableStudyListComponent implements OnInit, OnDestroy {
   /**
    * Get loadable study list
    */
-  async getLoadableStudyInfo(vesselId: number, voyageId: number) {    
+  async getLoadableStudyInfo(vesselId: number, voyageId: number) {
     this.ngxSpinnerService.show();
     if (voyageId !== 0) {
       this.loadableStudyList = null;
@@ -141,10 +141,10 @@ export class LoadableStudyListComponent implements OnInit, OnDestroy {
       const loadableStudyList = result.loadableStudies.map(loadableStudy => {
         loadableStudy.createdDate = this.timeZoneTransformationService.formatDateTime(loadableStudy.createdDate, dateFormatOptions);
         loadableStudy.lastEdited = this.timeZoneTransformationService.formatDateTime(loadableStudy.lastEdited, dateFormatOptions);
-        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) ? true : false;
+        loadableStudy.isActionsEnabled = [LOADABLE_STUDY_STATUS.PLAN_PENDING, LOADABLE_STUDY_STATUS.PLAN_NO_SOLUTION, LOADABLE_STUDY_STATUS.PLAN_ERROR].includes(loadableStudy?.statusId) && ![VOYAGE_STATUS.CLOSE].includes(this.selectedVoyage?.statusId) && !this.selectedVoyage?.isDischargeStarted ? true : false;
         return loadableStudy;
       });
-      loadableStudyList?.length ? this.loadableStudyList = [...loadableStudyList] : this.loadableStudyList = [];      
+      loadableStudyList?.length ? this.loadableStudyList = [...loadableStudyList] : this.loadableStudyList = [];
     }
     this.ngxSpinnerService.hide();
   }
@@ -170,7 +170,7 @@ export class LoadableStudyListComponent implements OnInit, OnDestroy {
    */
   showLoadableStudyList() {
     this.isVoyageIdSelected = true;
-    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission, this.selectedVoyage?.statusId);
+    this.columns = this.loadableStudyListTransformationService.getLoadableStudyListDatatableColumns(this.permission, this.selectedVoyage);
     this.getLoadableStudyInfo(this.vesselDetails?.id, this.selectedVoyage.id);
   }
 

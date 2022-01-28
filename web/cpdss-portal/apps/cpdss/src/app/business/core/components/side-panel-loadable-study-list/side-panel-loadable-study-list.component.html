@@ -1,4 +1,4 @@
-<ng-container *ngIf="voyage && voyage?.statusId !== VOYAGE_STATUS.CLOSE">
+<ng-container *ngIf="voyage && voyage?.statusId !== VOYAGE_STATUS.CLOSE && !voyage?.isDischargeStarted">
     <button class="btn btn-main btn-sm btn-new-loadable-study" (click)="openLoadableStudyPopup()"
     id="btn_new_loadable_study" *cpdssPortalPermission="addLSBtnPermissionContext">{{'LOADABLE_STUDY_DETAILS_LOADABLE_NEW_BUTTON_LABEL' | translate}}</button>
 </ng-container>

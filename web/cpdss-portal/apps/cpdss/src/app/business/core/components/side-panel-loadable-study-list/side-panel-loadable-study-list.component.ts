@@ -92,7 +92,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
    * @memberof SidePanelLoadableStudyListComponent
    */
   getGridColumns() {
-    this.columns = this.loadableStudyDetailsTransformationService.getLoadableStudyGridColumns(this.permission, this.voyage?.statusId);
+    this.columns = this.loadableStudyDetailsTransformationService.getLoadableStudyGridColumns(this.permission, this.voyage);
   }
 
   /**
@@ -137,7 +137,7 @@ export class SidePanelLoadableStudyListComponent implements OnInit {
             this.deleteLoadableStudy.emit(event);
           }
         } catch (errorResponse) {
-          if (errorResponse?.error?.errorCode === 'ERR-RICO-110') {
+          if (errorResponse?.error?.errorCode === 'ERR-RICO-110' || errorResponse?.error?.errorCode === 'ERR-RICO-392') {
             this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_DELETE_ERROR'], detail: translationKeys['LOADABLE_STUDY_DELETE_STATUS_ERROR'], life: 10000 });
           }
         }

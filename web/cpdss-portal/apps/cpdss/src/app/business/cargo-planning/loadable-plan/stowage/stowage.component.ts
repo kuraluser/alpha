@@ -51,7 +51,7 @@ export class StowageComponent implements OnInit, OnDestroy {
   }
   set loadableStudy(value: LoadableStudy) {
     this._loadableStudy = value;
-    this.isEditable = ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId);
+    this.isEditable = ![VOYAGE_STATUS.CLOSE].includes(this.voyage?.statusId) && !this.voyage?.isDischargeStarted;
   }
 
   @Input()
