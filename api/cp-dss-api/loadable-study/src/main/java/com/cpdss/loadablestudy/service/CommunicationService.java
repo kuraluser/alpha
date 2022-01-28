@@ -250,8 +250,7 @@ public class CommunicationService {
     // Get saved request JSON
     JsonData algoRequestJson =
         jsonDataService.getJsonData(
-            loadablePattern.getLoadableStudy().getId(),
-            LoadableStudiesConstants.LOADABLE_PATTERN_EDIT_REQUEST);
+            loadablePattern.getId(), LoadableStudiesConstants.LOADABLE_PATTERN_EDIT_REQUEST);
 
     AlgoResponse algoResponse =
         algoService.callAlgo(

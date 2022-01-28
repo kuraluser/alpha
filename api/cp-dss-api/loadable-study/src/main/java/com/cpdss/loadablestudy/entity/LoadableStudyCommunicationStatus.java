@@ -37,5 +37,5 @@ public class LoadableStudyCommunicationStatus extends EntityDoc {
   private Long referenceId;
 
   @Column(name = "is_active")
-  private boolean isActive;
+  private Boolean isActive;
 }
