@@ -257,7 +257,7 @@ public class CommunicationService {
         algoService.callAlgo(
             loadablePattern.getId(),
             loadableStudyUrl,
-            algoRequestJson,
+            algoRequestJson.getJsonData(),
             AlgoResponse.class,
             true,
             null);
