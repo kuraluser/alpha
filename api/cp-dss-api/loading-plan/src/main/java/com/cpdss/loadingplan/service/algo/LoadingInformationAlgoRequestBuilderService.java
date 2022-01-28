@@ -599,6 +599,7 @@ public class LoadingInformationAlgoRequestBuilderService {
                   StringUtils.hasLength(delay.getLoadingRate())
                       ? new BigDecimal(delay.getLoadingRate())
                       : null);
+              ld.setSequenceNo(delay.getSequenceNo());
               loadingDelaysList.add(ld);
             });
     loadingSequences.setLoadingDelays(loadingDelaysList);

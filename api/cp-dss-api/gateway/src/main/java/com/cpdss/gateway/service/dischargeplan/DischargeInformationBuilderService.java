@@ -312,37 +312,37 @@ public class DischargeInformationBuilderService {
       DischargeDelay dischargeDelay) {
     LoadingSequences loadingSequences = new LoadingSequences();
     List<ReasonForDelay> reasonForDelays = new ArrayList<>();
-    for (LoadingPlanModels.DelayReasons var2 : dischargeDelay.getReasonsList()) {
-      ReasonForDelay val1 = new ReasonForDelay();
-      BeanUtils.copyProperties(var2, val1);
-      reasonForDelays.add(val1);
+    for (LoadingPlanModels.DelayReasons delayReasons : dischargeDelay.getReasonsList()) {
+      ReasonForDelay reasonForDelay = new ReasonForDelay();
+      BeanUtils.copyProperties(delayReasons, reasonForDelay);
+      reasonForDelays.add(reasonForDelay);
     }
-    List<LoadingDelays> loadingDelays = new ArrayList<>();
-    for (DischargeDelays var2 : dischargeDelay.getDelaysList()) {
-      LoadingDelays val1 = new LoadingDelays();
-      Optional.ofNullable(var2.getDuration())
+    List<LoadingDelays> loadingDelaysList = new ArrayList<>();
+    for (DischargeDelays dischargeDelays : dischargeDelay.getDelaysList()) {
+      LoadingDelays loadingDelays = new LoadingDelays();
+      Optional.of(dischargeDelays.getDuration())
           .ifPresent(
               v -> {
-                if (!v.isEmpty()) val1.setDuration(new BigDecimal(v));
+                if (!v.isEmpty()) loadingDelays.setDuration(new BigDecimal(v));
               });
-      Optional.ofNullable(var2.getQuantity())
+      Optional.of(dischargeDelays.getQuantity())
           .ifPresent(
               v -> {
-                if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
+                if (!v.isEmpty()) loadingDelays.setQuantity(new BigDecimal(v));
               });
-      Optional.ofNullable(var2.getSequenceNo()).ifPresent(val1::setSequenceNo);
-      val1.setDischargingRate(
-          StringUtils.hasLength(var2.getDischargingRate())
-              ? new BigDecimal(var2.getDischargingRate())
+      Optional.of(dischargeDelays.getSequenceNo()).ifPresent(loadingDelays::setSequenceNo);
+      loadingDelays.setDischargingRate(
+          StringUtils.hasLength(dischargeDelays.getDischargingRate())
+              ? new BigDecimal(dischargeDelays.getDischargingRate())
               : null);
-      BeanUtils.copyProperties(var2, val1);
-      val1.setLoadingInfoId(var2.getDischargeInfoId());
-      val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
-      loadingDelays.add(val1);
+      BeanUtils.copyProperties(dischargeDelays, loadingDelays);
+      loadingDelays.setLoadingInfoId(dischargeDelays.getDischargeInfoId());
+      loadingDelays.setReasonForDelayIds(dischargeDelays.getReasonForDelayIdsList());
+      loadingDelaysList.add(loadingDelays);
     }
+
     loadingSequences.setReasonForDelays(reasonForDelays);
-    // loadingSequences.setLoadingDelays(loadingDelays);
-    loadingSequences.setDischargingDelays(copy(loadingDelays));
+    loadingSequences.setDischargingDelays(copy(loadingDelaysList));
     log.info(
         "manage sequence data added from  loading plan, Size {}", dischargeDelay.getDelaysCount());
     return loadingSequences;
@@ -350,14 +350,13 @@ public class DischargeInformationBuilderService {
 
   private List<DischargingDelays> copy(List<LoadingDelays> loadingDelays) {
     List<DischargingDelays> delays = new ArrayList<>();
-    loadingDelays.stream()
-        .forEach(
-            delay -> {
-              DischargingDelays dischargeDelay = new DischargingDelays();
-              BeanUtils.copyProperties(delay, dischargeDelay);
-              dischargeDelay.setDischargeInfoId(delay.getLoadingInfoId());
-              delays.add(dischargeDelay);
-            });
+    loadingDelays.forEach(
+        delay -> {
+          DischargingDelays dischargeDelay = new DischargingDelays();
+          BeanUtils.copyProperties(delay, dischargeDelay);
+          dischargeDelay.setDischargeInfoId(delay.getLoadingInfoId());
+          delays.add(dischargeDelay);
+        });
 
     return delays;
   }

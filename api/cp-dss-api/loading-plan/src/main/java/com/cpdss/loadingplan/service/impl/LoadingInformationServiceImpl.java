@@ -300,12 +300,12 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
         this.informationBuilderService.buildLoadingStageMessage(var1.orElse(null), list3, list4);
 
     // Loading Delay
-    List<ReasonForDelay> list5 = this.reasonForDelayRepository.findAll();
-    List<LoadingDelay> list6 =
-        this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrueOrderById(
+    List<ReasonForDelay> reasonForDelays = this.reasonForDelayRepository.findAll();
+    List<LoadingDelay> loadingDelays =
+        this.loadingDelayRepository.findAllByLoadingInformationAndIsActiveTrueOrderBySequenceNo(
             var1.orElse(null));
     LoadingPlanModels.LoadingDelay loadingDelay =
-        this.informationBuilderService.buildLoadingDelayMessage(list5, list6);
+        this.informationBuilderService.buildLoadingDelayMessage(reasonForDelays, loadingDelays);
 
     List<CargoToppingOffSequence> list8 =
         this.cargoToppingOffSequenceRepository.findAllByLoadingInformationAndIsActiveTrue(

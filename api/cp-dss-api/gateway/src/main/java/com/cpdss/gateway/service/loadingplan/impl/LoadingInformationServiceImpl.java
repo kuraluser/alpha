@@ -794,34 +794,34 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
   public LoadingSequences getLoadingSequence(LoadingPlanModels.LoadingDelay loadingDelay) {
     LoadingSequences loadingSequences = new LoadingSequences();
     List<ReasonForDelay> reasonForDelays = new ArrayList<>();
-    for (LoadingPlanModels.DelayReasons var2 : loadingDelay.getReasonsList()) {
-      ReasonForDelay val1 = new ReasonForDelay();
-      BeanUtils.copyProperties(var2, val1);
-      reasonForDelays.add(val1);
+    for (LoadingPlanModels.DelayReasons delayReasons : loadingDelay.getReasonsList()) {
+      ReasonForDelay reasonForDelay = new ReasonForDelay();
+      BeanUtils.copyProperties(delayReasons, reasonForDelay);
+      reasonForDelays.add(reasonForDelay);
     }
-    List<LoadingDelays> loadingDelays = new ArrayList<>();
-    for (LoadingPlanModels.LoadingDelays var2 : loadingDelay.getDelaysList()) {
-      LoadingDelays val1 = new LoadingDelays();
-      Optional.ofNullable(var2.getDuration())
+    List<LoadingDelays> loadingDelaysList = new ArrayList<>();
+    for (LoadingPlanModels.LoadingDelays loadingDelays : loadingDelay.getDelaysList()) {
+      LoadingDelays loadingDelaysDto = new LoadingDelays();
+      Optional.of(loadingDelays.getDuration())
           .ifPresent(
               v -> {
-                if (!v.isEmpty()) val1.setDuration(new BigDecimal(v));
+                if (!v.isEmpty()) loadingDelaysDto.setDuration(new BigDecimal(v));
               });
-      Optional.ofNullable(var2.getQuantity())
+      Optional.of(loadingDelays.getQuantity())
           .ifPresent(
               v -> {
-                if (!v.isEmpty()) val1.setQuantity(new BigDecimal(v));
+                if (!v.isEmpty()) loadingDelaysDto.setQuantity(new BigDecimal(v));
               });
-      val1.setLoadingRate(
-          StringUtils.hasLength(var2.getLoadingRate())
-              ? new BigDecimal(var2.getLoadingRate())
+      loadingDelaysDto.setLoadingRate(
+          StringUtils.hasLength(loadingDelays.getLoadingRate())
+              ? new BigDecimal(loadingDelays.getLoadingRate())
               : null);
-      BeanUtils.copyProperties(var2, val1);
-      val1.setReasonForDelayIds(var2.getReasonForDelayIdsList());
-      loadingDelays.add(val1);
+      BeanUtils.copyProperties(loadingDelays, loadingDelaysDto);
+      loadingDelaysDto.setReasonForDelayIds(loadingDelays.getReasonForDelayIdsList());
+      loadingDelaysList.add(loadingDelaysDto);
     }
     loadingSequences.setReasonForDelays(reasonForDelays);
-    loadingSequences.setLoadingDelays(loadingDelays);
+    loadingSequences.setLoadingDelays(loadingDelaysList);
     log.info(
         "manage sequence data added from  loading plan, Size {}", loadingDelay.getDelaysCount());
     return loadingSequences;

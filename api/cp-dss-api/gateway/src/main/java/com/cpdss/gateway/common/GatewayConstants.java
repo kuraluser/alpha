@@ -88,4 +88,6 @@ public class GatewayConstants {
   public static final String REFERENCE_ID = "Reference ID";
   public static final boolean IS_DISCHARGE_INFO_COMPLETE_DEFAULT = false;
   public static final boolean IS_LOADING_INFO_COMPLETE_DEFAULT = false;
+  public static final Long DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE = 0L;
+  public static final Integer DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE = 1;
 }

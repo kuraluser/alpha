@@ -48,6 +48,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -402,6 +403,8 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
       // Set default values
       List<LoadingDelays> loadingDelaysList = new ArrayList<>();
+      AtomicReference<Long> defaultSequenceNumberCounter =
+          new AtomicReference<>(DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE);
       loadableQuantityCargoDetailsList.forEach(
           loadableQuantityCargoDetails -> {
             LoadingDelays loadingDelays = new LoadingDelays();
@@ -411,6 +414,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             loadingDelays.setCargoNominationId(loadableQuantityCargoDetails.getCargoNominationId());
             loadingDelays.setLoadingInfoId(loadingInfoId);
             loadingDelays.setDuration(BigDecimal.ZERO);
+            loadingDelays.setSequenceNo(
+                defaultSequenceNumberCounter.getAndSet(
+                    defaultSequenceNumberCounter.get()
+                        + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE));
+
             loadingDelays.setQuantity(
                 StringUtils.hasLength(loadableQuantityCargoDetails.getLoadableMT())
                     ? new BigDecimal(loadableQuantityCargoDetails.getLoadableMT())
@@ -419,6 +427,7 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                 StringUtils.hasLength(loadableQuantityCargoDetails.getLoadingRateM3Hr())
                     ? new BigDecimal(loadableQuantityCargoDetails.getLoadingRateM3Hr())
                     : BigDecimal.ZERO);
+
             loadingDelaysList.add(loadingDelays);
           });
       loadingSequences.setLoadingDelays(loadingDelaysList);

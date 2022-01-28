@@ -14,7 +14,14 @@ public interface LoadingDelayRepository extends CommonCrudRepository<LoadingDela
 
   List<LoadingDelay> findAllByLoadingInformationAndIsActiveTrue(LoadingInformation var1);
 
-  List<LoadingDelay> findAllByLoadingInformationAndIsActiveTrueOrderById(LoadingInformation var1);
+  /**
+   * Method to fetch List of LoadingDelay in order of sequence number
+   *
+   * @param loadingInformation LoadingInformation entity
+   * @return List of LoadingDelay entities
+   */
+  List<LoadingDelay> findAllByLoadingInformationAndIsActiveTrueOrderBySequenceNo(
+      LoadingInformation loadingInformation);
 
   public Optional<LoadingDelay> findByIdAndIsActive(Long id, Boolean isActive);
 

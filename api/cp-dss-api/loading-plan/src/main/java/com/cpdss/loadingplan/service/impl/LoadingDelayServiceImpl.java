@@ -112,6 +112,7 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
             "Delay Reason master data not found for reasonForDelayId - " + reasonForDelayId);
       }
     }
+
     loadingDelay.setLoadingDelayReasons(delayReasons);
     loadingDelay.setCargoNominationId(delay.getCargoNominationId());
     loadingDelay.setDuration(
@@ -123,6 +124,7 @@ public class LoadingDelayServiceImpl implements LoadingDelayService {
         StringUtils.hasLength(delay.getLoadingRate())
             ? new BigDecimal(delay.getLoadingRate())
             : null);
+    Optional.of(delay.getSequenceNo()).ifPresent(loadingDelay::setSequenceNo);
     loadingDelay.setIsActive(true);
   }
 

@@ -151,6 +151,7 @@ message LoadingDelays{
   string quantity = 6; // was added in gateway
   int64 cargoNominationId = 7;
   string loadingRate = 8;
+  int64 sequenceNo = 9;
 }
 
 // pure cargo details based on the port rotation

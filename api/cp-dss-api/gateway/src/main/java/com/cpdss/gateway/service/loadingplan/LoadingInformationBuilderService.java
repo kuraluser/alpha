@@ -295,11 +295,12 @@ public class LoadingInformationBuilderService {
           Optional.ofNullable(delay.getQuantity())
               .ifPresent(quantity -> builder.setQuantity(String.valueOf(quantity)));
           Optional.ofNullable(delay.getReasonForDelayIds())
-              .ifPresent(v -> v.forEach(s -> builder.addReasonForDelayIds(s)));
+              .ifPresent(v -> v.forEach(builder::addReasonForDelayIds));
           Optional.ofNullable(delay.getCargoNominationId())
               .ifPresent(builder::setCargoNominationId);
           Optional.ofNullable(delay.getLoadingRate())
               .ifPresent(loadingRate -> builder.setLoadingRate(loadingRate.toString()));
+          Optional.ofNullable(delay.getSequenceNo()).ifPresent(builder::setSequenceNo);
           delayList.add(builder.build());
         });
     return delayList;

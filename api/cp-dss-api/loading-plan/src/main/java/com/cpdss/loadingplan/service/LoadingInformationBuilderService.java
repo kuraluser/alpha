@@ -202,38 +202,46 @@ public class LoadingInformationBuilderService {
   }
 
   public LoadingDelay buildLoadingDelayMessage(
-      List<ReasonForDelay> list, List<com.cpdss.loadingplan.entity.LoadingDelay> list6) {
+      List<ReasonForDelay> reasonForDelays,
+      List<com.cpdss.loadingplan.entity.LoadingDelay> loadingDelays) {
     LoadingDelay.Builder builder = LoadingDelay.newBuilder();
-    for (ReasonForDelay var : list) {
-      DelayReasons.Builder builder1 = DelayReasons.newBuilder();
-      builder1.setId(var.getId());
-      builder1.setReason(var.getReason());
-      builder.addReasons(builder1);
+    for (ReasonForDelay reasonForDelay : reasonForDelays) {
+      DelayReasons.Builder delayReasonsBuilder = DelayReasons.newBuilder();
+      delayReasonsBuilder.setId(reasonForDelay.getId());
+      delayReasonsBuilder.setReason(reasonForDelay.getReason());
+      builder.addReasons(delayReasonsBuilder);
     }
-    for (com.cpdss.loadingplan.entity.LoadingDelay var : list6) {
+    for (com.cpdss.loadingplan.entity.LoadingDelay loadingDelay : loadingDelays) {
       List<LoadingDelayReason> activeReasons =
-          loadingDelayReasonRepository.findAllByLoadingDelayAndIsActiveTrue(var);
-      var.setLoadingDelayReasons(
+          loadingDelayReasonRepository.findAllByLoadingDelayAndIsActiveTrue(loadingDelay);
+      loadingDelay.setLoadingDelayReasons(
           new ArrayList<>()); // always set empty array, as the Lazy fetch not works :(
       if (!activeReasons.isEmpty()) {
-        var.setLoadingDelayReasons(activeReasons);
+        loadingDelay.setLoadingDelayReasons(activeReasons);
       }
-      LoadingDelays.Builder builder1 = LoadingDelays.newBuilder();
-      builder1.setId(var.getId());
-      Optional.ofNullable(var.getLoadingInformation().getId())
-          .ifPresent(builder1::setLoadingInfoId);
-      Optional.ofNullable(var.getLoadingDelayReasons())
+      LoadingDelays.Builder loadingDelaysBuilder = LoadingDelays.newBuilder();
+      loadingDelaysBuilder.setId(loadingDelay.getId());
+      Optional.ofNullable(loadingDelay.getLoadingInformation().getId())
+          .ifPresent(loadingDelaysBuilder::setLoadingInfoId);
+      Optional.ofNullable(loadingDelay.getLoadingDelayReasons())
           .ifPresent(
-              v -> v.forEach(s -> builder1.addReasonForDelayIds(s.getReasonForDelay().getId())));
-      Optional.ofNullable(var.getDuration())
-          .ifPresent(value -> builder1.setDuration(value.toString()));
-      Optional.ofNullable(var.getCargoXId()).ifPresent(builder1::setCargoId);
-      Optional.ofNullable(var.getQuantity())
-          .ifPresent(value -> builder1.setQuantity(value.toString()));
-      Optional.ofNullable(var.getCargoNominationId()).ifPresent(builder1::setCargoNominationId);
-      Optional.ofNullable(var.getLoadingRate())
-          .ifPresent(loadingRate -> builder1.setLoadingRate(loadingRate.toString()));
-      builder.addDelays(builder1);
+              v ->
+                  v.forEach(
+                      s ->
+                          loadingDelaysBuilder.addReasonForDelayIds(
+                              s.getReasonForDelay().getId())));
+      Optional.ofNullable(loadingDelay.getDuration())
+          .ifPresent(value -> loadingDelaysBuilder.setDuration(value.toString()));
+      Optional.ofNullable(loadingDelay.getCargoXId()).ifPresent(loadingDelaysBuilder::setCargoId);
+      Optional.ofNullable(loadingDelay.getQuantity())
+          .ifPresent(value -> loadingDelaysBuilder.setQuantity(value.toString()));
+      Optional.ofNullable(loadingDelay.getCargoNominationId())
+          .ifPresent(loadingDelaysBuilder::setCargoNominationId);
+      Optional.ofNullable(loadingDelay.getLoadingRate())
+          .ifPresent(loadingRate -> loadingDelaysBuilder.setLoadingRate(loadingRate.toString()));
+      Optional.ofNullable(loadingDelay.getSequenceNo())
+          .ifPresent(loadingDelaysBuilder::setSequenceNo);
+      builder.addDelays(loadingDelaysBuilder);
     }
     // Cargo List for drop down, at gate way
     return builder.build();

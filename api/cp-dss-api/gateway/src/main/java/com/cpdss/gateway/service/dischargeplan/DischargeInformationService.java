@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -304,6 +305,8 @@ public class DischargeInformationService {
 
       // Set default values
       List<DischargingDelays> dischargingDelaysList = new ArrayList<>();
+      AtomicReference<Long> defaultSequenceNumberCounter =
+          new AtomicReference<>(DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE);
       dischargeQuantityCargoDetailsList.forEach(
           dischargeQuantityCargoDetails -> {
             DischargingDelays dischargingDelays = new DischargingDelays();
@@ -313,12 +316,21 @@ public class DischargeInformationService {
             dischargingDelays.setCargoNominationId(
                 dischargeQuantityCargoDetails.getDischargeCargoNominationId());
             dischargingDelays.setDischargeInfoId(dischargeInfoId);
-            Optional.ofNullable(dischargeQuantityCargoDetails.getDischargeMT())
-                .ifPresent(quantity -> dischargingDelays.setQuantity(new BigDecimal(quantity)));
+            dischargingDelays.setDuration(BigDecimal.ZERO);
+            dischargingDelays.setSequenceNo(
+                defaultSequenceNumberCounter.getAndSet(
+                    defaultSequenceNumberCounter.get()
+                        + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE));
+
+            dischargingDelays.setQuantity(
+                StringUtils.hasLength(dischargeQuantityCargoDetails.getDischargeMT())
+                    ? new BigDecimal(dischargeQuantityCargoDetails.getDischargeMT())
+                    : BigDecimal.ZERO);
             dischargingDelays.setDischargingRate(
                 StringUtils.hasLength(dischargeQuantityCargoDetails.getMaxDischargingRate())
                     ? new BigDecimal(dischargeQuantityCargoDetails.getMaxDischargingRate())
-                    : null);
+                    : BigDecimal.ZERO);
+
             dischargingDelaysList.add(dischargingDelays);
           });
       dischargeSequences.setDischargingDelays(dischargingDelaysList);

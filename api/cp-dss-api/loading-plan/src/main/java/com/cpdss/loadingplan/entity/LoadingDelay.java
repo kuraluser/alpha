@@ -43,5 +43,8 @@ public class LoadingDelay extends EntityDoc {
   @Column(name = "loading_rate")
   private BigDecimal loadingRate;
 
+  @Column(name = "sequence_number")
+  private Long sequenceNo;
+
   @Transient private Long communicationRelatedEntityId;
 }
