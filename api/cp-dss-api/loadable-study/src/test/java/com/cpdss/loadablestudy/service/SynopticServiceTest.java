@@ -1362,6 +1362,9 @@ public class SynopticServiceTest {
             any(com.cpdss.common.generated.LoadableStudy.LoadablePatternRequest.class),
             any(com.cpdss.common.generated.LoadableStudy.LoadablePatternReply.Builder.class)))
         .thenReturn(lpReply);
+    when(this.loadablePatternRepository.findByLoadableStudyAndIsActive(
+            any(com.cpdss.loadablestudy.entity.LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(getOLS());
     doReturn(getOLS()).when(spyService).checkDischargeStarted(anyLong(), anyLong());
     when(synpoticServiceUtils.getsynopticalTableList(anyLong(), anyLong()))
@@ -1392,7 +1395,8 @@ public class SynopticServiceTest {
     ReflectionTestUtils.setField(spyService, "loadablePatternService", loadablePatternService);
     ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
     ReflectionTestUtils.setField(spyService, "synpoticServiceUtils", synpoticServiceUtils);
-
+    ReflectionTestUtils.setField(
+        spyService, "loadablePatternRepository", loadablePatternRepository);
     spyService.getSynopticalTable(getSynopticalTableRequest(), replyBuilder);
     assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
   }

@@ -1650,9 +1650,12 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       if (dsPatternId > 0) {
         patternIds.add(dsPatternId);
       } else {
-        // No confirmed pattern available
-        if (request.getLoadablePatternId() > 0) {
-          patternIds.add(request.getLoadablePatternId());
+        // If no confirmed pattern available
+        List<LoadablePattern> dischargePatterns =
+            this.loadablePatternRepository.findByLoadableStudyAndIsActive(
+                loadableStudyOpt.get(), true);
+        if (dischargePatterns.size() > 0) {
+          patternIds.add(dischargePatterns.get(0).getId());
         }
       }
       // Get pattern id for LS
