@@ -995,6 +995,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       LoadableStudy entity = entityOpt.get();
 
       this.voyageService.checkIfVoyageClosed(entity.getVoyage().getId());
+      this.voyageService.checkIfDischargingStarted(
+          entity.getVesselXId(), entity.getVoyage().getId());
 
       loadablePatternService.isPatternGeneratedOrConfirmed(entity);
 
@@ -2418,6 +2420,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
       }
       loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      this.voyageService.checkIfDischargingStarted(
+          loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
 
       LoadableStudy entity = loadableStudyOpt.get();
       entity.setLoadOnTop(request.getLoadOnTop());

@@ -1,8 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -448,6 +447,10 @@ public class CargoNominationService {
     }
     com.cpdss.loadablestudy.entity.LoadableStudy loadableStudyRecord = loadableStudy.get();
     this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
+    if (loadableStudy.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+      this.voyageService.checkIfDischargingStarted(
+          loadableStudy.get().getVesselXId(), loadableStudy.get().getVoyage().getId());
+    }
     loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudy.get());
 
     CargoNomination cargoNomination = null;
@@ -1157,6 +1160,10 @@ public class CargoNominationService {
           HttpStatusCode.BAD_REQUEST);
     }
     this.voyageService.checkIfVoyageClosed(entityOpt.get().getVoyage().getId());
+    if (entityOpt.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+      this.voyageService.checkIfDischargingStarted(
+          entityOpt.get().getVesselXId(), entityOpt.get().getVoyage().getId());
+    }
     loadablePatternService.isPatternGeneratedOrConfirmed(entityOpt.get());
   }
 

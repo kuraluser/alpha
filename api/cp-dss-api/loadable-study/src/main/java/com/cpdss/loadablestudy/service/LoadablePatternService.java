@@ -1590,6 +1590,10 @@ public class LoadablePatternService {
         loadableStudyRepository.findByIdAndIsActive(request.getLoadableStudyId(), true);
     if (loadableStudyOpt.isPresent()) {
       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      if (loadableStudyOpt.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+        this.voyageService.checkIfDischargingStarted(
+            loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
+      }
       this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
       cargoNominationService.validateLoadableStudyWithCommingle(loadableStudyOpt.get());
       ModelMapper modelMapper = new ModelMapper();

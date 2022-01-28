@@ -374,6 +374,10 @@ public class CargoService {
           "Loadable study does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
     }
     this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+    if (loadableStudyOpt.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+      this.voyageService.checkIfDischargingStarted(
+          loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
+    }
     loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
 
     if (!CollectionUtils.isEmpty(request.getCommingleCargoList())) {

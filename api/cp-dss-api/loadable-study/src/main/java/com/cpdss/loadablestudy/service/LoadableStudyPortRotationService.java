@@ -445,6 +445,10 @@ public class LoadableStudyPortRotationService {
           HttpStatusCode.BAD_REQUEST);
     }
     voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+    if (loadableStudyOpt.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+      this.voyageService.checkIfDischargingStarted(
+          loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
+    }
     // validates the input port rotation list for valid ids
     List<LoadableStudyPortRotation> existingPortRotationList = new ArrayList<>();
     if (!CollectionUtils.isEmpty(request.getPortRotationDetailsList())) {
@@ -580,6 +584,10 @@ public class LoadableStudyPortRotationService {
     }
     if (!request.getIsLandingPage()) {
       this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+      if (loadableStudyOpt.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+        this.voyageService.checkIfDischargingStarted(
+            loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
+      }
     }
     LoadableStudyPortRotation entity = null;
     boolean portEdited = false;
@@ -791,6 +799,10 @@ public class LoadableStudyPortRotationService {
           HttpStatusCode.BAD_REQUEST);
     }
     this.voyageService.checkIfVoyageClosed(loadableStudyOpt.get().getVoyage().getId());
+    if (loadableStudyOpt.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+      this.voyageService.checkIfDischargingStarted(
+          loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
+    }
     loadablePatternService.isPatternGeneratedOrConfirmed(loadableStudyOpt.get());
     LoadableStudy loadableStudy = loadableStudyOpt.get();
     if (null != loadableStudy.getLoadableStudyStatus()

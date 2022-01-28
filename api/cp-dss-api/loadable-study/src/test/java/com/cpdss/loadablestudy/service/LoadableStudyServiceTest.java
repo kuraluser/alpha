@@ -2,8 +2,7 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.TestUtils.createDummyObject;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_EXC;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED_WITH_RESOURCE_EXC;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.*;
@@ -6884,13 +6883,15 @@ class LoadableStudyServiceTest {
 
   @ParameterizedTest
   @ValueSource(longs = {0L, 1L})
-  void testSaveOnBoardQuantity(Long id) {
+  void testSaveOnBoardQuantity(Long id) throws GenericServiceException {
     if (id.equals(1L)) {
       when(this.onBoardQuantityRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
           .thenReturn(new OnBoardQuantity());
     }
+    LoadableStudy loadableStudy = new LoadableStudy();
+    loadableStudy.setPlanningTypeXId(PLANNING_TYPE_DISCHARGE);
     when(this.loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
-        .thenReturn(Optional.of(new LoadableStudy()));
+        .thenReturn(Optional.of(loadableStudy));
     Voyage voyage = new Voyage();
     voyage.setId(1L);
     LoadableStudy ls = new LoadableStudy();
@@ -6901,6 +6902,7 @@ class LoadableStudyServiceTest {
 
     Mockito.when(this.voyageRepository.findByIdAndIsActive(Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getVoyage());
+    Mockito.doNothing().when(voyageService).checkIfDischargingStarted(anyLong(), anyLong());
     Mockito.when(
             this.onBoardQuantityRepository.findByIdAndIsActive(
                 Mockito.anyLong(), Mockito.anyBoolean()))

@@ -99,6 +99,10 @@ public class OnBoardQuantityService {
       }
     }
     this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
+    if (loadableStudyOpt.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+      this.voyageService.checkIfDischargingStarted(
+          loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
+    }
     loadablePatternService.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
     this.buildOnBoardQuantityEntity(entity, request);

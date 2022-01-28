@@ -425,6 +425,10 @@ public class LoadableQuantityService {
         loadableStudyRepository.findById((Long) loadableQuantityRequest.getLoadableStudyId());
     if (loadableStudy.isPresent()) {
       this.voyageService.checkIfVoyageClosed(loadableStudy.get().getVoyage().getId());
+      if (loadableStudy.get().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+        this.voyageService.checkIfDischargingStarted(
+            loadableStudy.get().getVesselXId(), loadableStudy.get().getVoyage().getId());
+      }
       // One Loadable Quantity Record For One LS
       List<LoadableQuantity> lqs =
           loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(

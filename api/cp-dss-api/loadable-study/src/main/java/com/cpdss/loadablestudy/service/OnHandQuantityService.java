@@ -95,6 +95,10 @@ public class OnHandQuantityService {
       entity.setPortXId(portRotation.getPortXId());
     }
     this.voyageService.checkIfVoyageClosed(entity.getLoadableStudy().getVoyage().getId());
+    if (entity.getLoadableStudy().getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
+      this.voyageService.checkIfDischargingStarted(
+          entity.getLoadableStudy().getVesselXId(), entity.getLoadableStudy().getVoyage().getId());
+    }
     loadablePatternService.isPatternGeneratedOrConfirmed(entity.getLoadableStudy());
 
     entity = this.buildOnHandQuantityEntity(entity, request);
