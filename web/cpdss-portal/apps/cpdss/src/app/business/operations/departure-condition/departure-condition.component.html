@@ -109,7 +109,7 @@
 <div class="row" *ngIf="operation === OPERATIONS.LOADING">
     <div class="col ml-30 pt-5 table-column-flexible-wrapper auto-layout">
         <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit" [editMode]="false"
-            [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+            [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos" [slopQuantity]="loadingDischargingPlanInfo?.loadingDetails?.slopQuantity"
             [cargoVesselTankDetails]="loadingDischargingPlanInfo?.cargoVesselTankDetails"
             [isPlanGenerated]="loadingDischargingPlanInfo?.isLoadingPlanGenerated"
             [operation]="OPERATIONS.LOADING">
