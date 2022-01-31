@@ -592,15 +592,14 @@ export class LoadingDischargingTransformationService {
         field: 'cargoAbbreviation',
         header: 'LOADING_CARGO_TO_BE_LOADED_KIND_OF_CARGO',
         fieldType: DATATABLE_FIELD_TYPE.BADGE,
+        fieldHeaderClass: 'column-abbr',
         badgeColorField: 'colorCode'
       },
       {
         field: 'estimatedAPIEdit',
         header: 'LOADING_CARGO_TO_BE_LOADED_API',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: quantityNumberFormat,
         fieldHeaderClass: 'column-cargo-loaded-header',
-        fieldClass: 'column-api-loading-info',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
           'min': 'CARGO_LOADED_API_MIN_ERROR',
@@ -612,9 +611,7 @@ export class LoadingDischargingTransformationService {
         field: 'estimatedTempEdit',
         header: 'LOADING_CARGO_TO_BE_LOADED_TEMP',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: quantityNumberFormat,
         fieldHeaderClass: 'column-cargo-loaded-header',
-        fieldClass: 'column-api-loading-info',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
           'min': 'CARGO_LOADED_TEMPERATURE_MIN_ERROR',
@@ -627,8 +624,8 @@ export class LoadingDischargingTransformationService {
         header: 'LOADING_CARGO_TO_BE_LOADED_MAX_LOADING_RATE',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         numberFormat: quantityNumberFormat,
-        fieldHeaderClass: 'column-rate',
-        fieldClass: 'text-right column-api-loading-info',
+        fieldHeaderClass: 'column-cargo-loaded-header',
+        fieldColumnClass: 'text-right',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
           'maxRate': 'CARGO_LOADED_MAX_RATE_ERROR',
@@ -639,12 +636,14 @@ export class LoadingDischargingTransformationService {
         field: 'convertedOrderedQuantity',
         header: 'LOADING_CARGO_TO_BE_LOADED_NOMINATION',
         numberFormat: quantityNumberFormat,
+        fieldHeaderClass: 'column-cargo-loaded-header',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'minMaxTolerance',
         header: 'LOADING_CARGO_TO_BE_LOADED_MIN_MAX_TOLERANCE',
+        fieldHeaderClass: 'column-cargo-loaded-header',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
@@ -652,19 +651,21 @@ export class LoadingDischargingTransformationService {
         field: 'shipFigure',
         header: 'LOADING_CARGO_TO_BE_LOADED_SHIP_LOADABLE',
         numberFormat: quantityNumberFormat,
+        fieldHeaderClass: 'column-cargo-loaded-header',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
-
       },
       {
         field: 'differencePercentage',
         header: 'LOADING_CARGO_TO_BE_LOADED_DIFFERENCE',
+        fieldHeaderClass: 'column-cargo-loaded-header',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       },
       {
         field: 'timeRequiredForLoading',
         header: 'LOADING_CARGO_TO_BE_LOADED_TIME_REQUIRED',
+        fieldHeaderClass: 'column-cargo-loaded-header',
         fieldColumnClass: 'text-right',
         fieldClass: 'text-right no-ediable-field'
       }
