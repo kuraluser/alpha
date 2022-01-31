@@ -12,14 +12,20 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
-import com.cpdss.gateway.domain.filerepo.*;
+import com.cpdss.gateway.domain.filerepo.FileRepoGetResponse;
+import com.cpdss.gateway.domain.filerepo.FileRepoResponse;
+import com.cpdss.gateway.domain.filerepo.FileRepoSpecification;
+import com.cpdss.gateway.domain.filerepo.SearchCriteria;
 import com.cpdss.gateway.entity.FileRepo;
 import com.cpdss.gateway.repository.FileRepoRepository;
 import com.cpdss.gateway.service.communication.models.FileData;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -330,7 +336,7 @@ public class FileRepoService {
       if (file != null) {
         Files.createDirectories(Paths.get(this.rootFolder + folderLocation));
         String fileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
-        filePath = folderLocation + fileName + '.' + extension;
+        filePath = folderLocation + fileName + UUID.randomUUID().toString() + '.' + extension;
         path = Paths.get(this.rootFolder + filePath);
         Files.createFile(path);
         Files.write(

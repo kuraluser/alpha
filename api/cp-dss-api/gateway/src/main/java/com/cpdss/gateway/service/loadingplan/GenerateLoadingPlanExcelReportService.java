@@ -47,7 +47,9 @@ import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /** @author sanalkumar.k */
 @Slf4j
@@ -87,6 +89,7 @@ public class GenerateLoadingPlanExcelReportService {
   public final Long BALLAST_PUMP_ID = 2L;
   public String voyageDate = null;
   private static final Integer LOADING_PLAN_PLANNED_TYPE_VALUE = 2;
+  public String SAVE_FILE_LOCATION = "Vessel_{id}_Loading_Plan_{voy}_{port}.xlsx";
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -139,7 +142,8 @@ public class GenerateLoadingPlanExcelReportService {
         getFileName(
             vesselId,
             loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-            loadinPlanExcelDetails.getSheetOne().getPortName());
+            loadinPlanExcelDetails.getSheetOne().getPortName(),
+            OUTPUT_FILE_LOCATION);
 
     File theDir = new File(rootFolder + SUB_FOLDER_NAME);
     if (!theDir.exists()) {
@@ -167,26 +171,39 @@ public class GenerateLoadingPlanExcelReportService {
       // outFile);
       workbook.write(outFile);
       resultFileStream.close();
-
-      // Putting entry in file repo
-      FileRepoReply reply =
-          FileRepoService.addFileToRepo(
-              null,
-              loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
-              actualFileName.split("/")[actualFileName.split("/").length - 1],
-              SUB_FOLDER_NAME + "/",
-              FileRepoSection.LOADING_PLAN,
-              "Process",
-              null,
-              vesselId,
-              true);
-      if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
-        log.info("Succesfully added entry in FileRepo : {}", reply.getId());
-      } else {
-        log.error("Data entry in file repo failed. Response {}", reply);
-      }
       // Returning Output file as byte array for local download
       resultFileStream = new FileInputStream(outputLocation.toString());
+      // Putting entry in file repo
+      if (!downloadRequired) {
+        String fileRepoSaveLocation =
+            getFileName(
+                vesselId,
+                loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+                loadinPlanExcelDetails.getSheetOne().getPortName(),
+                SAVE_FILE_LOCATION);
+        String extension =
+            actualFileName.substring(actualFileName.lastIndexOf(".") + 1).toLowerCase();
+        MultipartFile multipartFile =
+            new MockMultipartFile(
+                actualFileName, fileRepoSaveLocation, extension, resultFileStream);
+        FileRepoReply reply =
+            FileRepoService.addFileToRepo(
+                multipartFile,
+                loadinPlanExcelDetails.getSheetOne().getVoyageNumber(),
+                actualFileName,
+                SUB_FOLDER_NAME + "/",
+                FileRepoSection.LOADING_PLAN,
+                "Process",
+                null,
+                vesselId,
+                true);
+        if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
+          log.info("Succesfully added entry in FileRepo : {}", reply.getId());
+        } else {
+          log.error("Data entry in file repo failed. Response {}", reply);
+        }
+      }
+
       if (downloadRequired) {
         log.info("Excel created.");
         return IOUtils.toByteArray(resultFileStream);
@@ -668,8 +685,8 @@ public class GenerateLoadingPlanExcelReportService {
   }
 
   /** Get fully qualified name of output file */
-  private String getFileName(Long vesselId, String voyNo, String portName) {
-    return OUTPUT_FILE_LOCATION
+  private String getFileName(Long vesselId, String voyNo, String portName, String basePath) {
+    return basePath
         .replace("{id}", vesselId.toString())
         .replace("{voy}", voyNo)
         .replace("{port}", portName)

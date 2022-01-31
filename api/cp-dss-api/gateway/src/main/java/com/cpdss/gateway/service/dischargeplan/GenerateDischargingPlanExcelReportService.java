@@ -43,7 +43,9 @@ import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /** @author sanalkumar.k */
 @Slf4j
@@ -94,6 +96,7 @@ public class GenerateDischargingPlanExcelReportService {
   public String COW_BOTTOM_ICON = "/reports/discharging/bottom_wash_icon.png";
 
   public String voyageDate = null;
+  public String SAVE_FILE_LOCATION = "Vessel_{id}_Discharging_Plan_{voy}_{port}.xlsx";
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
@@ -150,7 +153,8 @@ public class GenerateDischargingPlanExcelReportService {
         getFileName(
             vesselId,
             dischargingPlanExcelDetails.getSheetOne().getVoyageNumber(),
-            dischargingPlanExcelDetails.getSheetOne().getPortName());
+            dischargingPlanExcelDetails.getSheetOne().getPortName(),
+            OUTPUT_FILE_LOCATION);
 
     File theDir = new File(rootFolder + SUB_FOLDER_NAME);
     if (!theDir.exists()) {
@@ -176,27 +180,40 @@ public class GenerateDischargingPlanExcelReportService {
       // GenerateProtectedFile.setPasswordToWorkbook(
       // workbook, loadinPlanExcelDetails.getSheetOne().getVoyageNumber(), voyageDate,
       // outFile);
-      // resultFileStream.close();
+      resultFileStream.close();
 
+      resultFileStream = new FileInputStream(outputLocation.toString());
       // Putting entry in file repo
-      FileRepoReply reply =
-          FileRepoService.addFileToRepo(
-              null,
-              dischargingPlanExcelDetails.getSheetOne().getVoyageNumber(),
-              actualFileName.split("/")[actualFileName.split("/").length - 1],
-              SUB_FOLDER_NAME + "/",
-              FileRepoSection.DISCHARGE_PLAN,
-              "Process",
-              null,
-              vesselId,
-              true);
-      if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
-        log.info("Succesfully added entry in FileRepo : {}", reply.getId());
-      } else {
-        log.info("Data entry in file repo failed");
+      if (!downloadRequired) {
+        String fileRepoSaveLocation =
+            getFileName(
+                vesselId,
+                dischargingPlanExcelDetails.getSheetOne().getVoyageNumber(),
+                dischargingPlanExcelDetails.getSheetOne().getPortName(),
+                SAVE_FILE_LOCATION);
+        String extension =
+            actualFileName.substring(actualFileName.lastIndexOf(".") + 1).toLowerCase();
+        MultipartFile multipartFile =
+            new MockMultipartFile(
+                actualFileName, fileRepoSaveLocation, extension, resultFileStream);
+        FileRepoReply reply =
+            FileRepoService.addFileToRepo(
+                multipartFile,
+                dischargingPlanExcelDetails.getSheetOne().getVoyageNumber(),
+                actualFileName.split("/")[actualFileName.split("/").length - 1],
+                SUB_FOLDER_NAME + "/",
+                FileRepoSection.DISCHARGE_PLAN,
+                "Process",
+                null,
+                vesselId,
+                true);
+        if (reply.getResponseStatus().getStatus().equals(String.valueOf(HttpStatus.OK.value()))) {
+          log.info("Succesfully added entry in FileRepo : {}", reply.getId());
+        } else {
+          log.info("Data entry in file repo failed");
+        }
       }
       // Returning Output file as byte array for local download
-      resultFileStream = new FileInputStream(outputLocation.toString());
       if (downloadRequired) {
         log.info("Excel created.");
         return IOUtils.toByteArray(resultFileStream);
@@ -714,8 +731,8 @@ public class GenerateDischargingPlanExcelReportService {
   }
 
   /** Get fully qualified name of output file */
-  private String getFileName(Long vesselId, String voyNo, String portName) {
-    return OUTPUT_FILE_LOCATION
+  private String getFileName(Long vesselId, String voyNo, String portName, String basePath) {
+    return basePath
         .replace("{id}", vesselId.toString())
         .replace("{voy}", voyNo)
         .replace("{port}", portName)
