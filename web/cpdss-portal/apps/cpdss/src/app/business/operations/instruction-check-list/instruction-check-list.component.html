@@ -49,14 +49,14 @@
                                 <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
                                 <p-treeTableCheckbox [value]="rowNode"></p-treeTableCheckbox>
                             </div>
-                            <div class="col">
+                            <div class="col col-instruction">
                                 <input #editField *ngIf="rowNode.node.data.editable" [maxlength]="textFieldLength"
                                     formControlName="name" type="text" class="form-control">
                                 <cpdss-portal-validation-error [errors]="fieldError('name')"
                                     [errorMessages]="errorMessages">
                                 </cpdss-portal-validation-error>
                             </div>
-                            <div>
+                            <div class="col-auto pl-0">
                                 <button *ngIf="rowNode.node.data.editable" id="saveRowBtn" (click)="saveData(rowNode)"
                                     class="btn-main btn mr-10"
                                     [disabled]="disableSaveButton || ((operation === OPERATIONS.LOADING) && isDischargeStarted) || !permission?.edit">{{
