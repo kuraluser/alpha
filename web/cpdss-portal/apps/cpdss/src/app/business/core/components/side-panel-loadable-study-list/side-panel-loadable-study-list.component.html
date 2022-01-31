@@ -18,6 +18,6 @@
 </div>
 </ng-container>
 <cpdss-portal-new-loadable-study-popup *ngIf="loadableStudies && voyage && vesselInfo && display" [display]="display"  [isEdit]="isEdit" [selectedLoadableStudy]="selectedLoadableStudy"
-    (displayPopup)="closeLoadableStudyPopup($event)" [loadableStudies]="loadableStudies" [vesselInfoList]="vesselInfo" [duplicateLoadableStudy]="duplicateLoadableStudy"
+    (displayPopup)="closeLoadableStudyPopup($event)" [vesselInfoList]="vesselInfo" [duplicateLoadableStudy]="duplicateLoadableStudy"
     [voyages]="voyages" [voyage]="voyage" (addedNewLoadableStudy)="onNewLoadableStudyAdded($event)">
 </cpdss-portal-new-loadable-study-popup>

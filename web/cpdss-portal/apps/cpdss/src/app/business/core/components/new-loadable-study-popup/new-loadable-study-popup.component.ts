@@ -39,8 +39,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   get loadableStudies(): LoadableStudy[] { return this._loadableStudyList; }
   set loadableStudies(value: LoadableStudy[]) {
     this._loadableStudyList = value.filter(loadable =>
-      ![LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED , LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE , LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadable?.statusId));
-    }
+      ![LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING, LOADABLE_STUDY_STATUS.PLAN_ALGO_PROCESSING_COMPETED, LOADABLE_STUDY_STATUS.PLAN_COMMUNICATED_TO_SHORE, LOADABLE_STUDY_STATUS.PLAN_LOADICATOR_CHECKING].includes(loadable?.statusId));
+  }
 
   @Input()
   get duplicateLoadableStudy(): LoadableStudy { return this._duplicateLoadableStudy; }
@@ -116,16 +116,15 @@ export class NewLoadableStudyPopupComponent implements OnInit {
 
   //get loadlines data and create form group
   async getVesselInfo() {
+    this.ngxSpinnerService.show();
     this.uploadedFiles = [];
     this.loadlineLists = this.vesselInfoList?.loadlines;
     this.createNewLoadableStudyFormGroup();
+    const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, this.isEdit ? this.selectedLoadableStudy?.createdFromVoyageId : this.voyage?.id).toPromise();
+    this.loadableStudies = result?.loadableStudies ?? [];
+    this.duplicateLoadableStudy = this.loadableStudies?.find(loadableStudy => this.isEdit ? loadableStudy?.id === this.selectedLoadableStudy?.createdFromId : loadableStudy?.id === this.duplicateLoadableStudy?.id);
     if (this.isEdit) {
       this.createdFromVoyage = this.voyages.find(voyage => voyage.id === this.selectedLoadableStudy?.createdFromVoyageId);
-      this.ngxSpinnerService.show();
-      const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, this.selectedLoadableStudy?.createdFromVoyageId).toPromise();
-      this.loadableStudies = result?.loadableStudies ?? [];
-      this.ngxSpinnerService.hide();
-      this.duplicateLoadableStudy = this.loadableStudies?.find(loadableStudy => loadableStudy?.id === this.selectedLoadableStudy?.createdFromId);
       this.updateLoadableStudyFormGroup(this.selectedLoadableStudy, true);
     } else {
       let isLoadableStudyAvailable;
@@ -136,6 +135,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         this.getLoadlineSummer();
       }
     }
+    this.ngxSpinnerService.hide();
   }
 
   //get summer loadline data
@@ -409,6 +409,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
    */
   async onVoyageChange(event) {
     this.ngxSpinnerService.show();
+    this.createdFromVoyage = event.value;
     const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, event.value?.id).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.newLoadableStudyFormGroup.controls.duplicateExisting.reset(null);
