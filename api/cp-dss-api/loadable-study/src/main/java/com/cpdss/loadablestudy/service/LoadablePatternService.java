@@ -587,6 +587,8 @@ public class LoadablePatternService {
           item -> {
             DischargePlanCowDetailFromAlgo cowDetail = new DischargePlanCowDetailFromAlgo();
             Optional.ofNullable(item).ifPresent(cowDetail::setShortName);
+            cowDetail.setDischargePatternQuantityCargoPortwiseDetails(loadableQuantityCargoDetails);
+            cowDetail.setIsActive(true);
             cowDetailFromAlgoList.add(cowDetail);
           });
     }
