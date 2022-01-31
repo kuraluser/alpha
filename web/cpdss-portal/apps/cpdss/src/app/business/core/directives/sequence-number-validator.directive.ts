@@ -8,11 +8,11 @@ import { AbstractControl, FormArray, FormControl, ValidationErrors, ValidatorFn 
  * @returns {ValidatorFn}
  */
 export const sequenceNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  if (!control.root || !control.parent || control?.value === '' || control?.value === null) {
+  if (!control.root || !control.parent || control?.value === '' || control?.value === null || control?.disabled) {
     return null;
   }
 
-  const sequences: number[] = [...new Set(<Array<number>>((control.parent.parent as FormArray)?.value?.map(value => Number(value?.sequenceNo))))];
+  const sequences: number[] = [...new Set(<Array<number>>((control.parent.parent as FormArray)?.value?.map(value => value?.sequenceNo && Number(value?.sequenceNo)).filter(item => item)))];
   const count = Math.max(...sequences);
   const missingSequence = [];
 

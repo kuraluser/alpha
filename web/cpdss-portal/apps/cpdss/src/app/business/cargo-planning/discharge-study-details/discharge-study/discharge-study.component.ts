@@ -371,7 +371,7 @@ export class DischargeStudyComponent implements OnInit {
     }
     return this.fb.group({
       emptyMaxNoOfTanks: this.fb.control(cargo.emptyMaxNoOfTanks.value),
-      sequenceNo : this.fb.control(cargo.sequenceNo.value, [Validators.required, Validators.min(1), numberValidator(0, null, false),sequenceNumberValidator]),
+      sequenceNo : this.fb.control({value: cargo.sequenceNo.value, disabled: !cargo.quantity}, [Validators.required, Validators.min(1), numberValidator(0, null, false),sequenceNumberValidator]),
       maxKl: this.fb.control(cargo.maxKl.value, []),
       abbreviation: this.fb.control(cargo.abbreviation.value, []),
       cargo: this.fb.control(cargo.cargo.value),
@@ -550,7 +550,6 @@ export class DischargeStudyComponent implements OnInit {
     const formControlKl = this.getFormControl(index, 'cargoDetail' , event.index , 'kl') as FormControl;
     const formControlMt = this.getFormControl(index, 'cargoDetail' , event.index , 'mt') as FormControl;
     const formControlBbls = this.getFormControl(index, 'cargoDetail' , event.index , 'bbls') as FormControl;
-
     if (event.field === 'mode') {
       if (event.data.mode?.value.name === IDISCHARGE_STUDY_MODE.MANUAL) {
         this.setQuantityValidation(formControlKl,event.data.mode?.value.name,'kl');
@@ -584,6 +583,13 @@ export class DischargeStudyComponent implements OnInit {
       }
     } else if (event.field === 'kl' || event.field === 'mt' || event.field === 'bbls') {
       const translationKeys = await this.translateService.get(['MANUAL']).toPromise();
+      if (Number(event.data[event.field].value) === 0) {
+        selectedPortCargo.sequenceNo.value = null;
+        cargoDetailFormArray.at(event.index).get('sequenceNo').setValue(null);
+        cargoDetailFormArray.at(event.index).get('sequenceNo').disable();
+      } else {
+        cargoDetailFormArray.at(event.index).get('sequenceNo').enable();
+      }
       if(selectedPortCargo['mode'].value.name === IDISCHARGE_STUDY_MODE.BALANCE  && !isNaN(event.data[event.field].value)) {
         selectedPortCargo['mode'].value = { name: translationKeys['MANUAL'], id: 2 };
         cargoDetailFormArray.at(event.index).get('mode').setValue(selectedPortCargo['mode'].value);

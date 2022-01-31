@@ -387,7 +387,6 @@ export class DischargeStudyDetailsTransformationService {
           fieldPlaceholder: etaEtdPlaceHolder,
           readonlyInput: false,
           dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
-          minDate: minDate,
           fieldClass: 'eta',
           fieldHeaderTooltipIcon: 'pi-info-circle',
           fieldHeaderTooltipText: 'PORT_TIME_ZONE_NOTIFICATION',
@@ -410,7 +409,6 @@ export class DischargeStudyDetailsTransformationService {
           filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
           filterField: 'etd.value',
           fieldPlaceholder: etaEtdPlaceHolder,
-          minDate: minDate,
           readonlyInput: false,
           dateFormat: this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings?.dateFormat),
           fieldClass: 'etd',
@@ -1185,6 +1183,9 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
         quantity: this.quantityPipe.transform(cargoDetail.quantity, QUANTITY_UNIT.MT, QUANTITY_UNIT.KL, cargoDetail.api, cargoDetail.temperature,-1)
       }
       _cargoDetailValuObject.sequenceNo = new ValueObject<string>(cargoDetail.sequenceNo?.toString() , true , false);
+      if (cargoDetail.sequenceNo === 0) {
+        _cargoDetailValuObject.sequenceNo.value = null;
+      }
       _cargoDetailValuObject.emptyMaxNoOfTanks = new ValueObject<boolean>(cargoDetail.emptyMaxNoOfTanks ?? false, true, true),
       _cargoDetailValuObject.color = new ValueObject<string>(cargoDetail.color , true , false);
 
