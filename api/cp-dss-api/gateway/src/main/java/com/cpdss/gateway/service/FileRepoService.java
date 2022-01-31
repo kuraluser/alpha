@@ -22,6 +22,7 @@ import com.cpdss.gateway.service.communication.models.FileData;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -361,7 +362,9 @@ public class FileRepoService {
         repo.setIsTransferred(false);
         FileData fileData = new FileData();
         fileData.setDetails(getRowAsJsonById(repo.getId()));
-        fileData.setData(Files.readString(path));
+        byte[] bytes = Files.readAllBytes(path);
+        String fileDataToString = new String(bytes, StandardCharsets.UTF_16);
+        fileData.setData(fileDataToString);
         log.info("File Data object :{}", fileData);
         writeToEnvoy(
             new Gson().toJson(fileData),
