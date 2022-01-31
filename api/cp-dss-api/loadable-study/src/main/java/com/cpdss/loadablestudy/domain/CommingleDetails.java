@@ -10,6 +10,7 @@ import lombok.Data;
  *
  * @author sreemanikandan.k
  * @since 03/01/2022
+ * @version 29/01/2022
  */
 @Builder
 @Data
@@ -37,4 +38,6 @@ public class CommingleDetails {
   private String cargo1Mt;
 
   private String cargo2Mt;
+
+  private String commingleColour;
 }

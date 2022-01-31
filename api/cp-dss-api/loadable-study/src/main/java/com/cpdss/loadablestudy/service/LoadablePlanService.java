@@ -972,7 +972,7 @@ public class LoadablePlanService {
                 getCellStyle(
                     spreadsheet,
                     TableCellStyle.CARGO_CARGO_CODE,
-                    Optional.empty(),
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
                     Optional.empty());
 
             commingleValueCell.setCellValue(commingleDetails.getGrade());
@@ -987,7 +987,10 @@ public class LoadablePlanService {
           case TANK:
             cellStyle =
                 getCellStyle(
-                    spreadsheet, TableCellStyle.COMMINGLE_TANK, Optional.empty(), Optional.empty());
+                    spreadsheet,
+                    TableCellStyle.COMMINGLE_TANK,
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
+                    Optional.empty());
 
             commingleValueCell.setCellValue(commingleDetails.getTankName());
 
@@ -1003,7 +1006,7 @@ public class LoadablePlanService {
                 getCellStyle(
                     spreadsheet,
                     TableCellStyle.COMMINGLE_API,
-                    Optional.empty(),
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
                     Optional.of(commingleDetailsTableTitles.getFormat()));
 
             commingleValueCell.setCellValue(commingleDetails.getApi());
@@ -1020,7 +1023,7 @@ public class LoadablePlanService {
                 getCellStyle(
                     spreadsheet,
                     TableCellStyle.COMMINGLE_TEMP,
-                    Optional.empty(),
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
                     Optional.of(commingleDetailsTableTitles.getFormat()));
 
             commingleValueCell.setCellValue(commingleDetails.getTemperature());
@@ -1037,7 +1040,7 @@ public class LoadablePlanService {
                 getCellStyle(
                     spreadsheet,
                     TableCellStyle.COMMINGLE_QUANTITY,
-                    Optional.empty(),
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
                     Optional.of(commingleDetailsTableTitles.getFormat()));
 
             commingleValueCell.setCellValue(commingleDetails.getQuantity());
@@ -1054,7 +1057,7 @@ public class LoadablePlanService {
                 getCellStyle(
                     spreadsheet,
                     TableCellStyle.COMMINGLE_CARGO_CODE,
-                    Optional.empty(),
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
                     Optional.of(commingleDetailsTableTitles.getFormat()));
 
             commingleValueCell.setCellValue(commingleDetails.getCargo1Abbreviation());
@@ -1065,7 +1068,7 @@ public class LoadablePlanService {
                 getCellStyle(
                     spreadsheet,
                     TableCellStyle.COMMINGLE_CARGO_PERCENTAGE,
-                    Optional.empty(),
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
                     Optional.of(commingleDetailsTableTitles.getFormat()));
 
             commingleValueCell.setCellValue(commingleDetails.getCargo1Percentage());
@@ -1076,7 +1079,7 @@ public class LoadablePlanService {
                 getCellStyle(
                     spreadsheet,
                     TableCellStyle.COMMINGLE_CARGO_QUANTITY,
-                    Optional.empty(),
+                    Optional.of(getColour(commingleDetails.getCommingleColour())),
                     Optional.of(commingleDetailsTableTitles.getFormat()));
 
             commingleValueCell.setCellValue(commingleDetails.getCargo1Mt());
@@ -1098,8 +1101,8 @@ public class LoadablePlanService {
   /**
    * Method to build CommingleDetailsTable from entity
    *
-   * @param loadablePatternId
-   * @return CommingleDetailsList
+   * @param loadablePatternId Loadable pattern id
+   * @return List of CommingleDetails objects
    */
   public List<CommingleDetails> buildCommingleDetailsTable(long loadablePatternId) {
 

@@ -304,10 +304,10 @@ public class LoadablePlanServiceTest {
     when(synopticService.buildPortOperationsTable(anyLong(), anyLong()))
         .thenReturn(portOperationTable);
     CommingleDetails details =
-        new CommingleDetails("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1");
+        new CommingleDetails("1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "#0000FF");
     when(loadablePlanCommingleDetailsRepository.findByLoadablePatternIdAndIsActive(
             anyLong(), anyBoolean()))
-        .thenReturn(Arrays.asList(details));
+        .thenReturn(Collections.singletonList(details));
     doReturn(vesselPlanTable).when(spyService).buildVesselPlanTableData(anyLong(), anyLong());
     doReturn(cargoDetailsTableCoordinates)
         .when(spyService)

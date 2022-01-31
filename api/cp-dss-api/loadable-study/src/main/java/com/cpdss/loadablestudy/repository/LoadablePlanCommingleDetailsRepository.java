@@ -28,15 +28,15 @@ public interface LoadablePlanCommingleDetailsRepository
   /**
    * Method to fetch CommingleDetails using loadablePatternId
    *
-   * @param loadablePatternId
-   * @param isActive
-   * @return CommingleDetailsList
+   * @param loadablePatternId Loadable pattern Id
+   * @param isActive isActive boolean
+   * @return List of CommingleDetails objects
    */
   @Query(
       "SELECT new com.cpdss.loadablestudy.domain.CommingleDetails(lpcd.grade, lpcd.tankName, "
           + "lpcd.quantity, lpcd.api, lpcd.temperature, lpcd.cargo1Abbreviation, "
           + "lpcd.cargo2Abbreviation, lpcd.cargo1Percentage, lpcd.cargo2Percentage, "
-          + "lpcd.cargo1Mt, lpcd.cargo2Mt) FROM LoadablePlanCommingleDetails lpcd WHERE "
+          + "lpcd.cargo1Mt, lpcd.cargo2Mt, lpcd.commingleColour) FROM LoadablePlanCommingleDetails lpcd WHERE "
           + "lpcd.loadablePattern.id = :loadablePatternId AND lpcd.isActive = :isActive")
   List<CommingleDetails> findByLoadablePatternIdAndIsActive(
       long loadablePatternId, boolean isActive);
