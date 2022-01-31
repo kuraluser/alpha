@@ -49,6 +49,7 @@ class LoadableStudyServiceIntegrationTest {
   @MockBean private UserCachingService userCachingService;
 
   @MockBean private GroupUserService groupUserService;
+  @MockBean private FileRepoService fileRepoService;
 
   @Test
   void testGetCommingleCargo() throws GenericServiceException {

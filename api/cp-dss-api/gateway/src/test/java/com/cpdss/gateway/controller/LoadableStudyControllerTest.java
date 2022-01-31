@@ -86,6 +86,8 @@ class LoadableStudyControllerTest {
 
   @MockBean GroupUserService groupUserService;
 
+  @MockBean FileRepoService fileRepoService;
+
   private static final String CORRELATION_ID_HEADER = "correlationId";
   private static final String CORRELATION_ID_HEADER_VALUE = "1234";
   private static final Long TEST_VESSEL_ID = 1L;
@@ -1802,7 +1804,8 @@ class LoadableStudyControllerTest {
       strings = {GET_LOADABLE_PLAN_REPORT_COULD_API_URL, GET_LOADABLE_PLAN_REPORT_SHIP_API_URL})
   @ParameterizedTest
   void testGetLoadablePlanReportPositive(String url) throws Exception {
-    when(loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+    when(loadableStudyService.downloadLoadablePlanReport(
+            anyLong(), anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenReturn(new byte[1]);
     this.mockMvc
         .perform(
@@ -1855,7 +1858,8 @@ class LoadableStudyControllerTest {
     Exception ex =
         new GenericServiceException(
             "Failed to generate loadable plan report", "400", HttpStatusCode.BAD_REQUEST);
-    when(loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+    when(loadableStudyService.downloadLoadablePlanReport(
+            anyLong(), anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenThrow(ex);
     this.mockMvc
         .perform(

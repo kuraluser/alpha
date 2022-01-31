@@ -806,6 +806,10 @@ message AlgoRequest {
 message AlgoReply {
 	ResponseStatus responseStatus = 1;
 	string processsId = 2;
+	repeated int64 patternId = 3;
+	int64 vesselId = 4;
+	int64 loadableStudyId = 5;
+	string voyageNo = 6;
 }
 
 message VoyageRequest {

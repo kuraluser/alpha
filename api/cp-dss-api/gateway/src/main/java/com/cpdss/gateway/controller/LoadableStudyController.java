@@ -2062,7 +2062,7 @@ public class LoadableStudyController {
       return new HttpEntity<>(
           new ByteArrayResource(
               loadableStudyService.downloadLoadablePlanReport(
-                  vesselId, loadableStudyId, loadablePatternId)),
+                  vesselId, loadableStudyId, loadablePatternId, "", false)),
           header);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException in getLoadablePlanReport method", e);

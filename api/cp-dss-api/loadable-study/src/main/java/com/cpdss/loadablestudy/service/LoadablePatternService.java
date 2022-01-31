@@ -1,17 +1,14 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
-import static java.util.Optional.ofNullable;
-
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.EnvoyWriter;
-import com.cpdss.common.generated.LoadableStudy.AlgoResponseCommunication;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadablePlanPortWiseDetails;
 import com.cpdss.common.generated.LoadableStudy.LoadableQuantityCargoDetails;
 import com.cpdss.common.generated.LoadableStudy.StabilityParameter;
+import com.cpdss.common.generated.LoadableStudy.*;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
@@ -20,71 +17,23 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
+import com.cpdss.loadablestudy.domain.LoadablePatternAlgoRequest;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.CommingleCargo;
-import com.cpdss.loadablestudy.entity.DischargePatternQuantityCargoPortwiseDetails;
-import com.cpdss.loadablestudy.entity.DischargePlanCowDetailFromAlgo;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
-import com.cpdss.loadablestudy.entity.LoadablePatternAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadablePatternCargoToppingOffSequence;
 import com.cpdss.loadablestudy.entity.LoadablePlanBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanConstraints;
-import com.cpdss.loadablestudy.entity.LoadablePlanQuantity;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
 import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageDetailsTemp;
 import com.cpdss.loadablestudy.entity.LoadableQuantity;
 import com.cpdss.loadablestudy.entity.LoadableStudy;
-import com.cpdss.loadablestudy.entity.LoadableStudyAlgoStatus;
-import com.cpdss.loadablestudy.entity.LoadableStudyCommunicationStatus;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.StabilityParameters;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.repository.AlgoErrorHeadingRepository;
-import com.cpdss.loadablestudy.repository.AlgoErrorsRepository;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.CommingleCargoRepository;
-import com.cpdss.loadablestudy.repository.CowTypeMasterRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.JsonDataRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoToppingOffSequenceRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanConstraintsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsRespository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageDetailsTempRepository;
-import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyAlgoStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyCommunicationStatusRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyStatusRepository;
-import com.cpdss.loadablestudy.repository.StabilityParameterRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
+import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.modelmapper.ModelMapper;
@@ -93,6 +42,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
+import static java.util.Optional.ofNullable;
 
 /**
  * Master Service for Loadable Pattern
@@ -352,6 +313,7 @@ public class LoadablePatternService {
       com.cpdss.common.generated.LoadableStudy.AlgoReply.Builder builder)
       throws GenericServiceException {
     log.info("saveLoadablePatternDetails - loadable study micro service");
+    List<Long> loadablePatternId = new ArrayList<>();
     final String requestType =
         null == request.getRequestType() ? LOADABLE_STUDY : request.getRequestType();
     Optional<LoadableStudy> loadableStudyOpt =
@@ -386,6 +348,11 @@ public class LoadablePatternService {
         loadableStudyAlgoStatusRepository.updateLoadableStudyAlgoStatus(
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, request.getProcesssId(), true);
       }
+      loadablePatternId =
+          loadablePatterns.stream()
+              .filter(ldp -> ldp.getId() != null)
+              .map(LoadablePattern::getId)
+              .collect(Collectors.toList());
     }
     if (request.getAlgoErrorsCount() > 0) {
       algoErrorsRepository.deleteAlgoErrorByLSId(false, request.getLoadableStudyId());
@@ -419,7 +386,15 @@ public class LoadablePatternService {
       loadableStudyCommunicationStatusRepository.updateCommunicationStatus(
           CommunicationStatus.COMPLETED.getId(), false, loadableStudyOpt.get().getId());
     }
-
+    builder.addAllPatternId(loadablePatternId);
+    builder.setLoadableStudyId(
+        loadableStudyOpt.get().getId() != null ? loadableStudyOpt.get().getId() : 0);
+    builder.setVesselId(
+        loadableStudyOpt.get().getVesselXId() != null ? loadableStudyOpt.get().getVesselXId() : 0);
+    if (loadableStudyOpt.get().getVoyage() != null
+        && loadableStudyOpt.get().getVoyage().getVoyageNo() != null) {
+      builder.setVoyageNo(loadableStudyOpt.get().getVoyage().getVoyageNo());
+    }
     builder
         .setResponseStatus(
             Common.ResponseStatus.newBuilder().setStatus(SUCCESS).setMessage(SUCCESS))

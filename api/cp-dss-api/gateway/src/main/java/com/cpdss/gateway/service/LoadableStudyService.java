@@ -7,6 +7,8 @@ import static java.util.stream.Collectors.*;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
+import com.cpdss.common.constants.FileRepoConstants;
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.CargoInfo.CargoReply;
 import com.cpdss.common.generated.CargoInfo.CargoRequest;
@@ -94,6 +96,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -160,6 +163,8 @@ public class LoadableStudyService {
   private static final String VOYAGE_STATUS_URI = "voyage-status";
   private static final String OPERATIONS_URI = "operations";
   private static final String CORRELATION_ID_HEADER = "correlationId";
+  public String SUB_FOLDER_NAME = "/reports/loading";
+  public String OUTPUT_FILE_LOCATION = "Vessel_{id}_LoadableStudy_{load}_plan.xlsx";
 
   @Autowired private UsersRepository usersRepository;
 
@@ -172,6 +177,7 @@ public class LoadableStudyService {
   private String env;
 
   @Autowired private GroupUserService groupUserService;
+  @Autowired private FileRepoService fileRepoService;
 
   /**
    * method for voyage save
@@ -3504,6 +3510,33 @@ public class LoadableStudyService {
 
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
+    // saving loadable study pattern to file repo
+    if (LOADABLE_STUDY_SAVE_REQUEST.equalsIgnoreCase(requestType)
+        && !algoReply.getPatternIdList().isEmpty()) {
+      algoReply
+          .getPatternIdList()
+          .forEach(
+              patternId -> {
+                try {
+                  downloadLoadablePlanReport(
+                      algoReply.getVesselId(),
+                      algoReply.getLoadableStudyId(),
+                      patternId,
+                      algoReply.getVoyageNo(),
+                      true);
+                } catch (Exception e) {
+                  log.info(
+                      "Failed to save loadable study plans to files-> vesselId: "
+                          + algoReply.getVesselId()
+                          + " loadable study id: "
+                          + algoReply.getLoadableStudyId()
+                          + " patternId: "
+                          + patternId
+                          + " -> ",
+                      e);
+                }
+              });
+    }
 
     return algoPatternResponse;
   }
@@ -5956,7 +5989,12 @@ public class LoadableStudyService {
    * @return loadable report byte array
    */
   public byte[] downloadLoadablePlanReport(
-      Long vesselId, Long loadableStudyId, Long loadablePatternId) throws GenericServiceException {
+      Long vesselId,
+      Long loadableStudyId,
+      Long loadablePatternId,
+      String voyageNo,
+      Boolean isSaveExcel)
+      throws GenericServiceException {
 
     com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest loadablePlanReportRequest =
         com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder()
@@ -5976,6 +6014,30 @@ public class LoadableStudyService {
           HttpStatusCode.valueOf(
               Integer.parseInt(loadablePlanReportReply.getResponseStatus().getCode())));
     }
+    if (isSaveExcel) {
+      String actualFileName = getFileName(vesselId, loadableStudyId);
+      String extension =
+          actualFileName.substring(actualFileName.lastIndexOf(".") + 1).toLowerCase();
+      MultipartFile multipartFile =
+          new MockMultipartFile(
+              actualFileName,
+              actualFileName,
+              extension,
+              loadablePlanReportReply.getData().toByteArray());
+
+      FileRepoReply reply =
+          fileRepoService.addFileToRepo(
+              multipartFile,
+              voyageNo,
+              actualFileName.split("/")[actualFileName.split("/").length - 1],
+              SUB_FOLDER_NAME + "/",
+              FileRepoConstants.FileRepoSection.LOADABLE_STUDY,
+              "Process",
+              null,
+              vesselId,
+              true);
+    }
+
     return loadablePlanReportReply.getData().toByteArray();
   }
 
@@ -6489,5 +6551,12 @@ public class LoadableStudyService {
               Integer.parseInt(loadablePlanReportReply.getResponseStatus().getCode())));
     }
     return loadablePlanReportReply.getData().toByteArray();
+  }
+
+  private String getFileName(Long vesselId, Long loadableStudyId) {
+    return OUTPUT_FILE_LOCATION
+        .replace("{id}", vesselId.toString())
+        .replace("{load}", loadableStudyId.toString())
+        .replace(" ", "_");
   }
 }

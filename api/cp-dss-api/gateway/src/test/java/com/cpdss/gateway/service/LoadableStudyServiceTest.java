@@ -123,6 +123,7 @@ class LoadableStudyServiceTest {
 
   @MockBean private UsersRepository usersRepository;
   @MockBean private GroupUserService groupUserService;
+  @MockBean private FileRepoService fileRepoService;
 
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub =
@@ -2454,7 +2455,8 @@ class LoadableStudyServiceTest {
   @Test
   void testDownloadLoadablePlanReport() throws GenericServiceException {
     Mockito.when(
-            this.loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+            this.loadableStudyService.downloadLoadablePlanReport(
+                anyLong(), anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenCallRealMethod();
 
     com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder replyBuilder =
@@ -2469,7 +2471,7 @@ class LoadableStudyServiceTest {
 
     byte[] response =
         this.loadableStudyService.downloadLoadablePlanReport(
-            TEST_VESSEL_ID, TEST_LOADABLE_STUDY_ID, TEST_LOADABLE_PATTERN_ID);
+            TEST_VESSEL_ID, TEST_LOADABLE_STUDY_ID, TEST_LOADABLE_PATTERN_ID, "", false);
     assertAll(() -> assertEquals(response.length, 2), () -> assertNotNull(response));
   }
 
@@ -2481,7 +2483,8 @@ class LoadableStudyServiceTest {
   @Test
   void testDownloadLoadablePlanReportException() throws GenericServiceException {
     Mockito.when(
-            this.loadableStudyService.downloadLoadablePlanReport(anyLong(), anyLong(), anyLong()))
+            this.loadableStudyService.downloadLoadablePlanReport(
+                anyLong(), anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenCallRealMethod();
 
     com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder replyBuilder =
@@ -2502,7 +2505,7 @@ class LoadableStudyServiceTest {
             GenericServiceException.class,
             () ->
                 this.loadableStudyService.downloadLoadablePlanReport(
-                    TEST_VESSEL_ID, TEST_LOADABLE_STUDY_ID, TEST_LOADABLE_PATTERN_ID));
+                    TEST_VESSEL_ID, TEST_LOADABLE_STUDY_ID, TEST_LOADABLE_PATTERN_ID, "", false));
 
     assertEquals(
         CommonErrorCodes.E_HTTP_BAD_REQUEST,
