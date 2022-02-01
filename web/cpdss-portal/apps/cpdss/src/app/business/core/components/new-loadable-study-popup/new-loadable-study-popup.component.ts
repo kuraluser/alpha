@@ -120,7 +120,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.uploadedFiles = [];
     this.loadlineLists = this.vesselInfoList?.loadlines;
     this.createNewLoadableStudyFormGroup();
-    const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, this.isEdit ? this.selectedLoadableStudy?.createdFromVoyageId : this.voyage?.id).toPromise();
+    const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, this.isEdit && this.selectedLoadableStudy?.createdFromVoyageId ? this.selectedLoadableStudy?.createdFromVoyageId : this.voyage?.id).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
     this.duplicateLoadableStudy = this.loadableStudies?.find(loadableStudy => this.isEdit ? loadableStudy?.id === this.selectedLoadableStudy?.createdFromId : loadableStudy?.id === this.duplicateLoadableStudy?.id);
     if (this.isEdit) {
