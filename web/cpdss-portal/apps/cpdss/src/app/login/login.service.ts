@@ -15,6 +15,6 @@ export class LoginService {
    * @memberof LoginService
    */
   getUserDetails(): Observable<IUserAuthorizationResponse> {
-    return this.commonApiService.get<any>(`user-authorizations`);
+    return this.commonApiService.get<IUserAuthorizationResponse>(`user-authorizations`);
   }
 }

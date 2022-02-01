@@ -62,10 +62,10 @@ export class LoginComponent implements OnInit {
           SecurityService.setUserProfile(this.user);
           this.permissionsService.setPermissions(this.user?.rolePermissions?.resources);
           this.setPropertiesDB(token);
-          if(this.user.statusCode === 1){
+          if (this.user.statusCode === 1 && this.user.vesselStatusCode === 200){
             this.router.navigate(['business']);
           } else {
-            const params = { id: this.user.id, status: this.user.statusCode, count: this.user.rejectionCount };
+            const params = { id: this.user.id, status: this.user.statusCode, count: this.user.rejectionCount, vesselStatusCode: this.user.vesselStatusCode };
             this.router.navigate(['access-denied/auth/'+ encodeURIComponent(btoa(JSON.stringify(params)))]);
             localStorage.removeItem('_USER_PERMISSIONS');
           }

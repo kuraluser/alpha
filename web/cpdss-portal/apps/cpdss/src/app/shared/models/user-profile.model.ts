@@ -12,6 +12,8 @@ export interface IUserProfile extends KeycloakProfile {
     rolePermissions?: IRolePermission;
     statusCode?: number;
     rejectionCount?: number;
+    vesselStatusCode?: number;
+    vesselStatus?: number;
 }
 
 /**

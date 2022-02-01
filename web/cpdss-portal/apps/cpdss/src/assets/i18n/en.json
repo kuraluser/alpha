@@ -270,6 +270,7 @@
   "LOADABLE_QUANTITY_ON_HAND_QTY": "On Hand Qty",
   "PAGE_NOT_FOUND": "Page not found",
   "PERMISSION_TO_VIEW_THIS_CONTENT": "You don't have permission to view this content",
+  "NO_VESSEL_MAPPING": "You don't have any vessel mapping.",
   "CONTACT_YOUR_ADMINISTRATOR": "Contact your administrator",
   "BACK_TO_HOME": "Back to home page",
   "CARGONOMINATION_DELETE_SUMMARY": "Do you want to delete?",
