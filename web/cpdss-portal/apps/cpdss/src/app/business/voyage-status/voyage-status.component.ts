@@ -39,7 +39,7 @@ export class VoyageStatusComponent implements OnInit, OnDestroy {
   cargoQuantities: ICargoQuantities[];
   selectedPortDetails: IVoyagePortDetails;
   voyageStatusResponse: IVoyageStatus;
-  currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit') ?? AppConfigurationService.settings.baseUnit;
+  currentQuantitySelectedUnit = <QUANTITY_UNIT>localStorage.getItem('unit') ?? AppConfigurationService.settings.defaultWeightUnit;
   VOYAGE_STATUS = VOYAGE_STATUS;
   newVoyagePermissionContext: IPermissionContext;
   editPortRotationPermissionContext: IPermissionContext;
