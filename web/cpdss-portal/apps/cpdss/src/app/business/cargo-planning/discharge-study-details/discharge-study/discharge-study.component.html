@@ -1,4 +1,4 @@
-<ng-container *ngIf="portDetails?.length else noPortsAvailable">
+<ng-container *ngIf="portDetails && portDetails?.length">
     <form [formGroup]="dischargeStudyForm">
         <div class="row pt-15 pb-10">
             <ng-container>
@@ -13,7 +13,7 @@
                         <div class="pl-15">
                             <p-dropdown id="percentage_dropdown" appendTo="body" styleClass="form-control"
                                 [options]="percentageList" formControlName="percentage" filter="true" optionLabel="name"
-                                resetFilterOnHide="true" 
+                                resetFilterOnHide="true"
                                 [readonly]="!editMode"></p-dropdown>
                         </div>
                     </ng-container>
@@ -27,7 +27,7 @@
                         </div>
                     </ng-container>
             </ng-container>
-           
+
         </div>
         <div formArrayName="portDetails">
             <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last"
@@ -47,7 +47,7 @@
                     <div class="pr-15">
                         {{ 'DISCHARGE_STUDY_DRAFT_RESTRICTION' | translate }}
                     </div>
-                    <div class="error-icon-wrapper pr-15"> 
+                    <div class="error-icon-wrapper pr-15">
                         <input type="text" class="form-control" formControlName="maxDraft"
                             cpdssPortalNumberDecimal id="maxDraft" [readonly]="!editMode"
                             (change)="onChange($event,'maxDraft',portIndex)" cpdssPortalNumberDecimal [negative]="false"/>
@@ -64,7 +64,7 @@
                     </cpdss-portal-datatable>
                 </div>
                 <div class="row align-items-center pt-10">
-                    
+
                     <ng-container *ngIf="!last">
                         <label class="checkbox-custom mb-0 ml-15">{{ 'DISCHARGE_STUDY_ENABLE_BACK_LOADING' | translate
                             }}
@@ -121,7 +121,7 @@
                         </cpdss-portal-validation-error>
                     </div>
                 </ng-container>
-                
+
                 </div>
 
                 <div *ngIf="getFeild(portIndex,'enableBackToLoading').value">
@@ -155,6 +155,6 @@
         </div>
     </form>
 </ng-container>
-<ng-template #noPortsAvailable>
+<ng-container *ngIf="portDetails && !portDetails?.length">
     <p class="text-uppercase text-center text-danger">{{'DISCHARGE_STUDY_NO_PORTS_AVAILABLE' | translate}}</p>
-</ng-template>
+</ng-container>
