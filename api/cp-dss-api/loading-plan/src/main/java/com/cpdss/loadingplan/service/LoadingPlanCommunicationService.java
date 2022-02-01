@@ -1694,6 +1694,10 @@ public class LoadingPlanCommunicationService {
           portLoadingPlanCommingleDetailsRepository.findById(
               portLoadingPlanCommingleDetails.getId());
       setEntityDocFields(portLoadingPlanCommingleDetails, portLoadingPlanCommingleDetaObj);
+      log.info("isActive value:{}", portLoadingPlanCommingleDetails.getIsActive());
+      if (portLoadingPlanCommingleDetails.getIsActive() == null) {
+        portLoadingPlanCommingleDetails.setIsActive(false);
+      }
       portLoadingPlanCommingleDetails.setLoadingInformation(loadingInfo);
     }
     portLoadingPlanCommingleDetailsRepository.saveAll(portLoadingPlanCommingleDetailsList);

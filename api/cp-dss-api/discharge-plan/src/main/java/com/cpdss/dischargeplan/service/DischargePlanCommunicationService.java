@@ -384,7 +384,7 @@ public class DischargePlanCommunicationService {
 
       if (MessageTypes.DISCHARGEPLAN.getMessageType().equals(processGroupId)) {
         if (!dischargePlanStagingService.dependantProcessIsCompleted(
-            processId, CommunicationConstants.CommunicationModule.LOADABLE_STUDY.getModuleName())) {
+            processId, CommunicationConstants.CommunicationModule.DISCHARGE_PLAN.getModuleName())) {
           dischargePlanStagingService.updateStatusForProcessId(
               processId, StagingStatus.READY_TO_PROCESS.getStatus());
           continue;
