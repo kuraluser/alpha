@@ -19,4 +19,9 @@ public interface DischargingTankTransferRepository
 
   List<DischargingTankTransfer> findByDischargingSequenceAndIsActiveTrue(
       DischargingSequence dischargeSequence);
+
+  @Query(
+      "from DischargingTankTransfer dr where dr.dischargingSequence.id in ?1 and dr.isActive = true")
+  List<DischargingTankTransfer> findByDischargingSequenceInAndIsActiveTrue(
+      List<Long> dischargeSequencesIds);
 }

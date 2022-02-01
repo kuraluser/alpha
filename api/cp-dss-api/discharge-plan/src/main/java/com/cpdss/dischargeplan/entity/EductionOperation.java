@@ -27,6 +27,9 @@ public class EductionOperation extends EntityDoc {
   @JoinColumn(name = "discharging_sequences_xid", referencedColumnName = "id", nullable = true)
   private DischargingSequence dischargingSequence;
 
+  @Column(name = "discharging_sequences_xid", insertable = false, updatable = false)
+  private Long dischargingSequenceId;
+
   @Column(name = "time_start")
   private Integer startTime;
 

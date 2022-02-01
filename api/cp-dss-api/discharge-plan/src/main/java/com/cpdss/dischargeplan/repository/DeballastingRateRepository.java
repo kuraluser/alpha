@@ -17,6 +17,11 @@ public interface DeballastingRateRepository extends CommonCrudRepository<Deballa
   List<DeballastingRate> findByDischargingSequenceAndIsActiveTrueOrderById(
       DischargingSequence dischargingSequence);
 
+  @Query(
+      "from DeballastingRate dr where dr.dischargingSequence.id in ?1 and dr.isActive = true order by dr.id")
+  List<DeballastingRate> findByDischargingSequenceInAndIsActiveTrueOrderById(
+      List<Long> dischargeSequencesIds);
+
   List<DeballastingRate> findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
       DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails);
 

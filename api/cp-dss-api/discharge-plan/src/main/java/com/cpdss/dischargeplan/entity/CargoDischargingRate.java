@@ -23,6 +23,9 @@ public class CargoDischargingRate extends EntityDoc {
   @JoinColumn(name = "discharging_sequences_xid", referencedColumnName = "id")
   private DischargingSequence dischargingSequence;
 
+  @Column(name = "discharging_sequences_xid", insertable = false, updatable = false)
+  private Long dischargingSequenceId;
+
   @Column(name = "tank_xid")
   private Long tankXId;
 

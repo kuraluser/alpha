@@ -43,6 +43,9 @@ public class DischargingTankTransfer extends EntityDoc {
   @JoinColumn(name = "discharging_sequence_xid", referencedColumnName = "id", nullable = true)
   private DischargingSequence dischargingSequence;
 
+  @Column(name = "discharging_sequence_xid", insertable = false, updatable = false)
+  private Long dischargingSequenceId;
+
   @OneToMany(mappedBy = "dischargingTankTransfer", fetch = FetchType.LAZY)
   private List<DischargingTankTransferDetails> dischargingTankTransferDetails;
 }

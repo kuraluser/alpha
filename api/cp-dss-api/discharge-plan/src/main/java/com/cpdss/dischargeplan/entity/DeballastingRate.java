@@ -23,6 +23,9 @@ public class DeballastingRate extends EntityDoc {
   @JoinColumn(name = "discharging_sequences_xid", referencedColumnName = "id", nullable = true)
   private DischargingSequence dischargingSequence;
 
+  @Column(name = "discharging_sequences_xid", insertable = false, updatable = false)
+  private Long dischargingSequenceId;
+
   @ManyToOne
   @JoinColumn(
       name = "discharging_plan_portwise_details_xid",

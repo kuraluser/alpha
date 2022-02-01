@@ -17,6 +17,11 @@ public interface CargoDischargingRateRepository
   List<CargoDischargingRate> findByDischargingSequenceAndIsActiveTrueOrderById(
       DischargingSequence dischargingSequence);
 
+  @Query(
+      "from CargoDischargingRate dr where dr.dischargingSequence.id in ?1 and dr.isActive = true order by dr.id")
+  List<CargoDischargingRate> findByDischargingSequenceInAndIsActiveTrueOrderById(
+      List<Long> dischargeSequencesIds);
+
   @Modifying
   @Transactional
   @Query("UPDATE CargoDischargingRate SET isActive = false WHERE dischargingSequence = ?1")

@@ -21,4 +21,8 @@ public interface EductionOperationRepository extends CommonCrudRepository<Educti
 
   public List<EductionOperation> findByDischargingSequenceAndIsActiveTrue(
       DischargingSequence loadingSequence);
+
+  @Query("from EductionOperation dr where dr.dischargingSequence.id in ?1 and dr.isActive = true")
+  List<EductionOperation> findByDischargingSequenceInAndIsActiveTrue(
+      List<Long> dischargeSequencesIds);
 }

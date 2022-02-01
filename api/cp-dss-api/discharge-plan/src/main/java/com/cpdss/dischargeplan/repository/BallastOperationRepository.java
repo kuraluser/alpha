@@ -16,6 +16,11 @@ public interface BallastOperationRepository extends CommonCrudRepository<Ballast
   List<BallastOperation> findByDischargingSequenceAndIsActiveTrueOrderById(
       DischargingSequence dischargingSequence);
 
+  @Query(
+      "from BallastOperation dr where dr.dischargingSequence.id in ?1 and dr.isActive = true order by dr.id")
+  List<BallastOperation> findByDischargingSequenceInAndIsActiveTrueOrderById(
+      List<Long> dischargeSequencesIds);
+
   @Modifying
   @Transactional
   @Query("UPDATE BallastOperation SET isActive = false WHERE dischargingSequence = ?1")

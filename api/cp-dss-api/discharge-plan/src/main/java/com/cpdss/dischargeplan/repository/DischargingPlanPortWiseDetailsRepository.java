@@ -17,6 +17,11 @@ public interface DischargingPlanPortWiseDetailsRepository
   List<DischargingPlanPortWiseDetails> findByDischargingSequenceAndIsActiveTrueOrderById(
       DischargingSequence dischargingSequence);
 
+  @Query(
+      "from DischargingPlanPortWiseDetails dr where dr.dischargingSequence.id in ?1 and dr.isActive = true order by dr.id")
+  List<DischargingPlanPortWiseDetails> findByDischargingSequenceInAndIsActiveTrueOrderById(
+      List<Long> dischargeSequencesIds);
+
   @Modifying
   @Transactional
   @Query("UPDATE DischargingPlanPortWiseDetails SET isActive = false WHERE id = ?1")

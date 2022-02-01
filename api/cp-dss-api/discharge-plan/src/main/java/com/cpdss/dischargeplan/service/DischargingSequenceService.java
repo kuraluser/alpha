@@ -222,6 +222,31 @@ public class DischargingSequenceService {
   private void buildDischargingSequences(
       List<com.cpdss.dischargeplan.entity.DischargingSequence> dischargeSequences,
       DischargeSequenceReply.Builder builder) {
+
+    List<Long> dischargeSequencesIds =
+        dischargeSequences.stream()
+            .map(com.cpdss.dischargeplan.entity.DischargingSequence::getId)
+            .collect(Collectors.toList());
+
+    List<DeballastingRate> deBallastingRates =
+        deBallastingRateRepository.findByDischargingSequenceInAndIsActiveTrueOrderById(
+            dischargeSequencesIds);
+    List<CargoDischargingRate> cargoDischargeRates =
+        cargoLoadingRateRepository.findByDischargingSequenceInAndIsActiveTrueOrderById(
+            dischargeSequencesIds);
+    List<BallastOperation> ballastOperations =
+        ballastOperationRepository.findByDischargingSequenceInAndIsActiveTrueOrderById(
+            dischargeSequencesIds);
+    List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails =
+        portWiseDetailsRepository.findByDischargingSequenceInAndIsActiveTrueOrderById(
+            dischargeSequencesIds);
+    List<EductionOperation> eductionOperations =
+        eductionOperationRepository.findByDischargingSequenceInAndIsActiveTrue(
+            dischargeSequencesIds);
+    List<DischargingTankTransfer> dischargingTankTransfers =
+        dischargingTankTransferRepository.findByDischargingSequenceInAndIsActiveTrue(
+            dischargeSequencesIds);
+
     dischargeSequences.forEach(
         dischargeSequence -> {
           com.cpdss.common.generated.discharge_plan.DischargingSequence.Builder sequenceBuilder =
@@ -244,35 +269,54 @@ public class DischargingSequenceService {
           Optional.ofNullable(dischargeSequence.getToLoadicator())
               .ifPresent(sequenceBuilder::setToLoadicator);
 
-          List<DeballastingRate> deBallastingRates =
-              deBallastingRateRepository.findByDischargingSequenceAndIsActiveTrueOrderById(
-                  dischargeSequence);
-          buildDeBallastingRates(sequenceBuilder, deBallastingRates);
+          List<DeballastingRate> ballastingRates = new ArrayList<>();
+          deBallastingRates.forEach(
+              rate -> {
+                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                  ballastingRates.add(rate);
+              });
+          buildDeBallastingRates(sequenceBuilder, ballastingRates);
 
-          List<CargoDischargingRate> cargoDischargeRates =
-              cargoLoadingRateRepository.findByDischargingSequenceAndIsActiveTrueOrderById(
-                  dischargeSequence);
-          buildCargoLoadingRates(sequenceBuilder, cargoDischargeRates);
+          List<CargoDischargingRate> dischargeRates = new ArrayList<>();
+          cargoDischargeRates.forEach(
+              rate -> {
+                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                  dischargeRates.add(rate);
+              });
+          buildCargoLoadingRates(sequenceBuilder, dischargeRates);
 
           // Includes both ballast and cargo pump details here
-          List<BallastOperation> ballastOperations =
-              ballastOperationRepository.findByDischargingSequenceAndIsActiveTrueOrderById(
-                  dischargeSequence);
-          buildBallastOperations(sequenceBuilder, ballastOperations);
+          List<BallastOperation> operations = new ArrayList<>();
+          ballastOperations.forEach(
+              rate -> {
+                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                  operations.add(rate);
+              });
+          buildBallastOperations(sequenceBuilder, operations);
 
-          List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails =
-              portWiseDetailsRepository.findByDischargingSequenceAndIsActiveTrueOrderById(
-                  dischargeSequence);
-          buildDischargingPlanPortWiseDetails(sequenceBuilder, dischargingPlanPortWiseDetails);
-          List<EductionOperation> eductionOperations =
-              eductionOperationRepository.findByDischargingSequenceAndIsActiveTrue(
-                  dischargeSequence);
-          buildEductionOperations(sequenceBuilder, eductionOperations);
+          List<DischargingPlanPortWiseDetails> planPortWiseDetails = new ArrayList<>();
+          dischargingPlanPortWiseDetails.forEach(
+              rate -> {
+                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                  planPortWiseDetails.add(rate);
+              });
+          buildDischargingPlanPortWiseDetails(sequenceBuilder, planPortWiseDetails);
 
-          List<DischargingTankTransfer> dischargingTankTransfers =
-              dischargingTankTransferRepository.findByDischargingSequenceAndIsActiveTrue(
-                  dischargeSequence);
-          buildTankTransfers(sequenceBuilder, dischargingTankTransfers);
+          List<EductionOperation> operationList = new ArrayList<>();
+          eductionOperations.forEach(
+              rate -> {
+                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                  operationList.add(rate);
+              });
+          buildEductionOperations(sequenceBuilder, operationList);
+
+          List<DischargingTankTransfer> tankTransfers = new ArrayList<>();
+          dischargingTankTransfers.forEach(
+              rate -> {
+                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                  tankTransfers.add(rate);
+              });
+          buildTankTransfers(sequenceBuilder, tankTransfers);
           builder.addDischargeSequences(sequenceBuilder.build());
         });
   }
