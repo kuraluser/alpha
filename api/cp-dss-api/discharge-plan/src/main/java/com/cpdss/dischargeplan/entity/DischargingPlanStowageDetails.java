@@ -26,6 +26,9 @@ public class DischargingPlanStowageDetails extends EntityDoc {
       nullable = true)
   private DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails;
 
+  @Column(name = "discharging_plan_portwise_details_xid", insertable = false, updatable = false)
+  private Long dischargingPlanPortWiseDetailsId;
+
   @Column(name = "tank_xid")
   private Long tankXId;
 

@@ -26,6 +26,9 @@ public class DischargingPlanStabilityParameters extends EntityDoc {
       nullable = true)
   private DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails;
 
+  @Column(name = "discharging_plan_portwise_details_xid", insertable = false, updatable = false)
+  private Long dischargingPlanPortWiseDetailsId;
+
   @Column(name = "trim")
   private BigDecimal trim;
 

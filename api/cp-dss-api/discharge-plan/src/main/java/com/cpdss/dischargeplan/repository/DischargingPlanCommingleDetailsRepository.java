@@ -30,4 +30,9 @@ public interface DischargingPlanCommingleDetailsRepository
   public List<DischargingPlanCommingleDetails>
       findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
           DischargingPlanPortWiseDetails portWiseDetails);
+
+  @Query(
+      "from DischargingPlanCommingleDetails dr where dr.dischargingPlanPortWiseDetails.id in ?1 and dr.isActive = true order by dr.id")
+  public List<DischargingPlanCommingleDetails>
+      findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(List<Long> ids);
 }

@@ -17,6 +17,11 @@ public interface DischargingPlanRobDetailsRepository
   List<DischargingPlanRobDetails> findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
       DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails);
 
+  @Query(
+      "from DischargingPlanRobDetails dr where dr.dischargingPlanPortWiseDetails.id in ?1 and dr.isActive = true order by dr.id")
+  List<DischargingPlanRobDetails> findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(
+      List<Long> ids);
+
   @Modifying
   @Transactional
   @Query(

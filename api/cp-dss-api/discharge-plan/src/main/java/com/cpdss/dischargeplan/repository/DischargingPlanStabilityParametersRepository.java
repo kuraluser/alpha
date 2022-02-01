@@ -4,6 +4,7 @@ package com.cpdss.dischargeplan.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.dischargeplan.entity.DischargingPlanPortWiseDetails;
 import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,11 @@ public interface DischargingPlanStabilityParametersRepository
 
   Optional<DischargingPlanStabilityParameters> findByDischargingPlanPortWiseDetailsAndIsActiveTrue(
       DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails);
+
+  @Query(
+      "from DischargingPlanStabilityParameters dr where dr.dischargingPlanPortWiseDetails.id in ?1 and dr.isActive = true")
+  List<DischargingPlanStabilityParameters> findByDischargingPlanPortWiseDetailsInAndIsActiveTrue(
+      List<Long> ids);
 
   @Modifying
   @Transactional

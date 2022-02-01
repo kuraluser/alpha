@@ -25,6 +25,11 @@ public interface DeballastingRateRepository extends CommonCrudRepository<Deballa
   List<DeballastingRate> findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
       DischargingPlanPortWiseDetails dischargingPlanPortWiseDetails);
 
+  @Query(
+      "from DeballastingRate dr where dr.dischargingPlanPortWiseDetails.id in ?1 and dr.isActive = true order by dr.id")
+  List<DeballastingRate> findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(
+      List<Long> ids);
+
   @Modifying
   @Transactional
   @Query("UPDATE DeballastingRate SET isActive = false WHERE dischargingSequence = ?1")

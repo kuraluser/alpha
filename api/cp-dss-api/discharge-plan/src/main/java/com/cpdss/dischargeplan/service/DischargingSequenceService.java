@@ -424,42 +424,86 @@ public class DischargingSequenceService {
       DischargingSequence.Builder sequenceBuilder,
       List<DischargingPlanPortWiseDetails> dischargingPlanPortWiseDetails) {
     log.info("Populating Portwise details");
+    List<Long> dischargingPlanPortWiseDetailsIds =
+        dischargingPlanPortWiseDetails.stream()
+            .map(DischargingPlanPortWiseDetails::getId)
+            .collect(Collectors.toList());
+
+    List<DeballastingRate> deBallastingRates =
+        deBallastingRateRepository.findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(
+            dischargingPlanPortWiseDetailsIds);
+    List<DischargingPlanBallastDetails> ballastDetails =
+        ballastDetailsRepository.findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(
+            dischargingPlanPortWiseDetailsIds);
+    List<DischargingPlanRobDetails> robDetails =
+        robDetailsRepository.findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(
+            dischargingPlanPortWiseDetailsIds);
+    List<DischargingPlanStabilityParameters> stabilityParameters =
+        stabilityParametersRepository.findByDischargingPlanPortWiseDetailsInAndIsActiveTrue(
+            dischargingPlanPortWiseDetailsIds);
+    List<DischargingPlanCommingleDetails> commingleDetails =
+        commingleDetailsRepository.findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(
+            dischargingPlanPortWiseDetailsIds);
+    List<DischargingPlanStowageDetails> stowageDetails =
+        stowageDetailsRepository.findByDischargingPlanPortWiseDetailsInAndIsActiveTrueOrderById(
+            dischargingPlanPortWiseDetailsIds);
+
     dischargingPlanPortWiseDetails.forEach(
         portWiseDetails -> {
           DischargePlanPortWiseDetails.Builder portWiseDetailsBuilder =
               DischargePlanPortWiseDetails.newBuilder();
           Optional.ofNullable(portWiseDetails.getTime()).ifPresent(portWiseDetailsBuilder::setTime);
 
-          List<DeballastingRate> deBallastingRates =
-              deBallastingRateRepository
-                  .findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(portWiseDetails);
-          buildDeBallastingRates(portWiseDetailsBuilder, deBallastingRates);
+          List<DeballastingRate> deBallastingRates1 = new ArrayList<>();
+          deBallastingRates.forEach(
+              rate -> {
+                if (rate.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                  deBallastingRates1.add(rate);
+              });
+          buildDeBallastingRates(portWiseDetailsBuilder, deBallastingRates1);
 
-          List<DischargingPlanBallastDetails> ballastDetails =
-              ballastDetailsRepository.findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
-                  portWiseDetails);
-          buildBallastDetails(portWiseDetailsBuilder, ballastDetails);
+          List<DischargingPlanBallastDetails> ballastDetails1 = new ArrayList<>();
+          ballastDetails.forEach(
+              ballast -> {
+                if (ballast.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                  ballastDetails1.add(ballast);
+              });
+          buildBallastDetails(portWiseDetailsBuilder, ballastDetails1);
 
-          List<DischargingPlanRobDetails> robDetails =
-              robDetailsRepository.findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
-                  portWiseDetails);
-          buildRobDetails(portWiseDetailsBuilder, robDetails);
+          List<DischargingPlanRobDetails> robDetails1 = new ArrayList<>();
+          robDetails.forEach(
+              rob -> {
+                if (rob.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                  robDetails1.add(rob);
+              });
+          buildRobDetails(portWiseDetailsBuilder, robDetails1);
 
-          Optional<DischargingPlanStabilityParameters> stabilityParametersOpt =
-              stabilityParametersRepository.findByDischargingPlanPortWiseDetailsAndIsActiveTrue(
-                  portWiseDetails);
+          Optional<DischargingPlanStabilityParameters> stabilityParametersOpt = Optional.empty();
+          stabilityParametersOpt =
+              stabilityParameters.stream()
+                  .filter(
+                      stabilityparam ->
+                          stabilityparam
+                              .getDischargingPlanPortWiseDetailsId()
+                              .equals(portWiseDetails.getId()))
+                  .findAny();
           buildStabilityParams(portWiseDetailsBuilder, stabilityParametersOpt);
 
-          List<DischargingPlanCommingleDetails> commingleDetails =
-              commingleDetailsRepository
-                  .findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(portWiseDetails);
-          buildCommingleDetails(portWiseDetailsBuilder, commingleDetails);
+          List<DischargingPlanCommingleDetails> commingleDetails1 = new ArrayList<>();
+          commingleDetails.forEach(
+              commingle -> {
+                if (commingle.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                  commingleDetails1.add(commingle);
+              });
+          buildCommingleDetails(portWiseDetailsBuilder, commingleDetails1);
 
-          List<DischargingPlanStowageDetails> stowageDetails =
-              stowageDetailsRepository.findByDischargingPlanPortWiseDetailsAndIsActiveTrueOrderById(
-                  portWiseDetails);
-          buildStowageDetails(portWiseDetailsBuilder, stowageDetails);
-
+          List<DischargingPlanStowageDetails> stowageDetails1 = new ArrayList<>();
+          stowageDetails.forEach(
+              stowage -> {
+                if (stowage.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                  stowageDetails1.add(stowage);
+              });
+          buildStowageDetails(portWiseDetailsBuilder, stowageDetails1);
           sequenceBuilder.addDischargePlanPortWiseDetails(portWiseDetailsBuilder.build());
         });
   }
