@@ -762,7 +762,7 @@ public class VoyageService {
     List<LoadableStudyPortRotation> ports =
         loadableStudyPortRotationRepository
             .findByLoadableStudyAndIsActive(loadableStudy.getId(), true).stream()
-            .filter(p -> p.getOperation().getId().equals(LOADING_OPERATION_ID))
+            .filter(p -> p.getOperation().getId().equals(DISCHARGING_OPERATION_ID))
             .sorted(Comparator.comparing(LoadableStudyPortRotation::getPortOrder))
             .collect(Collectors.toList());
     LoadingPlanModels.StowageAndBillOfLaddingValidationRequest.Builder request =
@@ -788,8 +788,9 @@ public class VoyageService {
     Common.ResponseStatus response =
         this.dischargePlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
     if (!SUCCESS.equalsIgnoreCase(response.getStatus())) {
+      log.error("No Actual BL Values found!");
       throw new GenericServiceException(
-          "No Atcuals",
+          "No Actual BL Values found!",
           CommonErrorCodes.E_CPDSS_NO_ACUTALS_OR_BL_VALUES_FOUND,
           HttpStatusCode.BAD_REQUEST);
     }
