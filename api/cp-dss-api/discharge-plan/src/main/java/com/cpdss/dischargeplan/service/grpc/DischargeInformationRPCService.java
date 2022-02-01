@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.stub.StreamObserver;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
@@ -851,7 +852,8 @@ public class DischargeInformationRPCService
           target.getInitialTrim(), target.getMaximumTrim(), target.getId());
 
       if (!source.getDischargeDetails().getCommonDate().isEmpty()) {
-        dischargeInformationRepository.updateCommonDate(target.getCommonDate(), target.getId());
+        dischargeInformationRepository.updateCommonDate(
+            LocalDate.parse(source.getDischargeDetails().getCommonDate()), target.getId());
       }
 
       if (!source.getDischargeDetails().getSlopQuantity().isEmpty()) {
