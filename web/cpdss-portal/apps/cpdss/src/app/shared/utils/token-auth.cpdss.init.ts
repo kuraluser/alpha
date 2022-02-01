@@ -61,9 +61,9 @@ export function tokenAuthCPDSSInitializer(http: HttpClient, appConfig: AppConfig
                     } else if (localStorage.getItem('docsUrl') !== undefined && localStorage.getItem('docsUrl') !== 'undefined' && localStorage.getItem('docsUrl') !== '' && localStorage.getItem('docsUrl') !== null) {
                       docsUri = localStorage.getItem('docsUrl');
                     }
-
-                    if (arr[4]) {
-                        let daysRemain = window.location.search.indexOf('daysRemain=') >= 0 ? arr[4].split('=')[1] : null;
+                    let daysRemainArr = window.location.search.split("&daysRemain=");
+                    if (daysRemainArr) {
+                        let daysRemain = daysRemainArr[1] ? daysRemainArr[1] : null;
                         if (daysRemain) {
                             localStorage.setItem('daysRemain', daysRemain);
                         } else if (localStorage.getItem('daysRemain') !== undefined && localStorage.getItem('daysRemain') !== 'undefined' && localStorage.getItem('daysRemain') !== '' && localStorage.getItem('daysRemain') !== null) {
