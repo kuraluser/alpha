@@ -217,6 +217,9 @@ public class VoyageService {
           }
 
           if (!confirmedDs.get().getPortRotations().isEmpty()) {
+            List<LoadablePattern> patterns =
+                loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
+                    confirmedDs.get().getId(), LS_STATUS_CONFIRMED);
             for (LoadableStudyPortRotation dsPr : confirmedDs.get().getPortRotations()) {
               LoadableStudy.PortRotationDetail.Builder grpcPRBuilder =
                   LoadableStudy.PortRotationDetail.newBuilder();
@@ -226,9 +229,6 @@ public class VoyageService {
                   "Get Active voyage, Discharge Study Name {}, Id {}",
                   confirmedDs.get().getName(),
                   confirmedDs.get().getId());
-              List<LoadablePattern> patterns =
-                  loadablePatternRepository.findConfirmedPatternByLoadableStudyId(
-                      confirmedDs.get().getId(), LS_STATUS_CONFIRMED);
               if (!patterns.isEmpty()) {
                 Long id = patterns.stream().findFirst().get().getId();
                 builder.setDischargePatternId(patterns.stream().findFirst().get().getId());
