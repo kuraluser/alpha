@@ -323,8 +323,8 @@ public class DischargeInformationService {
                         + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE));
 
             dischargingDelays.setQuantity(
-                StringUtils.hasLength(dischargeQuantityCargoDetails.getDischargeMT())
-                    ? new BigDecimal(dischargeQuantityCargoDetails.getDischargeMT())
+                StringUtils.hasLength(dischargeQuantityCargoDetails.getCargoNominationQuantity())
+                    ? new BigDecimal(dischargeQuantityCargoDetails.getCargoNominationQuantity())
                     : BigDecimal.ZERO);
             dischargingDelays.setDischargingRate(
                 StringUtils.hasLength(dischargeQuantityCargoDetails.getMaxDischargingRate())
