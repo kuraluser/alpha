@@ -269,6 +269,12 @@ export class LoadingDischargingManageSequenceComponent implements OnInit {
       colorCode: this.fb.control(loadingDischargingDelay.colorCode)
     });
 
+    if (this.operation === OPERATIONS.DISCHARGING) {
+      formGroup.addControl('dischargingRate', this.fb.control(loadingDischargingDelay?.dischargingRate?.value, [Validators.required]));
+    } else if (this.operation === OPERATIONS.LOADING) {
+      formGroup.addControl('loadingRate', this.fb.control(loadingDischargingDelay?.loadingRate?.value, [Validators.required]));
+    }
+
     return formGroup;
   }
 

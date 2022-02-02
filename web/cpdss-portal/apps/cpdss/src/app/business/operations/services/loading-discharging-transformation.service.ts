@@ -363,7 +363,6 @@ export class LoadingDischargingTransformationService {
           'invalidNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID',
           'invalidSequenceNumber': 'DISCHARGING_MANAGE_SEQUENCE_SEQUENCE_NO_INVALID_VALUE'
         }
-
       },
       {
         field: 'cargo',
@@ -384,7 +383,6 @@ export class LoadingDischargingTransformationService {
         fieldHeaderClass: 'column-cargo-sequence-color',
         fieldClass: 'manage-sequence-cargo-color',
         fieldType: DATATABLE_FIELD_TYPE.COLOR,
-
       },
       {
         field: 'quantity',
@@ -435,6 +433,32 @@ export class LoadingDischargingTransformationService {
       }
     ];
 
+    if (operation === OPERATIONS.DISCHARGING) {
+      const dRate: IDataTableColumn = {
+        field: 'dischargingRate',
+        header: 'DISCHARGING_MANAGE_SEQUENCE_DISCHARGING_RATE',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'DISCHARGING_MANAGE_SEQUENCE_DISCHARGING_RATE_PLACEHOLDER',
+        errorMessages: {
+          'required': 'DISCHARGING_MANAGE_SEQUENCE_DISCHARGING_RATE_REQUIRED',
+        }
+      };
+      columns.splice(4, 0, dRate);
+    }
+
+    if (operation === OPERATIONS.LOADING) {
+      const lRate: IDataTableColumn = {
+        field: 'loadingRate',
+        header: 'LOADING_MANAGE_SEQUENCE_LOADING_RATE',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_LOADING_RATE_PLACEHOLDER',
+        errorMessages: {
+          'required': 'LOADING_MANAGE_SEQUENCE_LOADING_RATE_REQUIRED',
+        }
+      };
+      columns.splice(4, 0, lRate);
+    }
+
     return columns;
   }
 
@@ -475,6 +499,12 @@ export class LoadingDischargingTransformationService {
 
     _loadingDischargingDelay.sequenceNo = new ValueObject<number>(loadingDischargingDelay?.isInitialDelay ? 1 : loadingDischargingDelay?.sequenceNo, true, !loadingDischargingDelay?.isInitialDelay && isNewValue, false, !loadingDischargingDelay?.isInitialDelay);
 
+    if (operation === OPERATIONS.DISCHARGING) {
+      _loadingDischargingDelay.dischargingRate = new ValueObject<number>(loadingDischargingDelay?.dischargingRate, true, isNewValue, false, true);
+    } else if (operation === OPERATIONS.LOADING) {
+      _loadingDischargingDelay.loadingRate = new ValueObject<number>(loadingDischargingDelay?.loadingRate, true, isNewValue, false, true);
+    }
+
     return _loadingDischargingDelay;
   }
 
@@ -507,8 +537,10 @@ export class LoadingDischargingTransformationService {
       _loadingDischargingDelays.id = loadingValueObject?.id;
       if (operation === OPERATIONS.LOADING) {
         _loadingDischargingDelays.loadingInfoId = infoId;
+        _loadingDischargingDelays.loadingRate = Number(loadingValueObject?.loadingRate?.value);
       } else {
         _loadingDischargingDelays.dischargeInfoId = infoId;
+        _loadingDischargingDelays.dischargingRate = Number(loadingValueObject?.dischargingRate?.value);
       }
       _loadingDischargingDelays.sequenceNo = Number(loadingValueObject?.sequenceNo.value);
       _loadingDischargingDelays.cargoId = loadingValueObject?.cargo?.value?.cargoId;
@@ -519,7 +551,7 @@ export class LoadingDischargingTransformationService {
       } else {
         _loadingDischargingDelays.quantity = loadingValueObject?.quantity?.value;
       }
-      if(operation === OPERATIONS.DISCHARGING) {
+      if (operation === OPERATIONS.DISCHARGING) {
         _loadingDischargingDelays.quantity = Number(loadingValueObject?.quantityMT);
       }
       const minuteDuration = loadingValueObject?.duration?.value.split(':');
@@ -860,7 +892,7 @@ export class LoadingDischargingTransformationService {
           ullage: 0,
           type: type,
           pointWidth: 0,
-          id: `${type === DATA_TYPE.CARGO_STRIPPING ? 'cargo': 'ballast'}-stripping-${_tank.tankName}` // NB:- id must be unique
+          id: `${type === DATA_TYPE.CARGO_STRIPPING ? 'cargo' : 'ballast'}-stripping-${_tank.tankName}` // NB:- id must be unique
         }
         tankData?.push(data);
       });
@@ -928,19 +960,19 @@ export class LoadingDischargingTransformationService {
           default:
             break;
         }
-        if(className) {
+        if (className) {
           tanks?.forEach(tank => {
             const data = {
-                "tankId": tank?.tankId,
-                "start": tank?.start,
-                "end": tank?.end,
-                "className": className,
-                "color": 'transparent',
-                "type": DATA_TYPE.CARGO_COW,
-                "pointWidth": 6,
-                "id": "cow-" + tank?.tankName // NB:- id must be unique
-              }
-              cargos?.push(data);
+              "tankId": tank?.tankId,
+              "start": tank?.start,
+              "end": tank?.end,
+              "className": className,
+              "color": 'transparent',
+              "type": DATA_TYPE.CARGO_COW,
+              "pointWidth": 6,
+              "id": "cow-" + tank?.tankName // NB:- id must be unique
+            }
+            cargos?.push(data);
           });
         }
 
@@ -1060,7 +1092,7 @@ export class LoadingDischargingTransformationService {
       const rate = new Set<number>();
       cargoRates?.forEach(element => {
         if ((element.startTime >= start && element.endTime <= end) || (start >= element.startTime && start < element.endTime) || (end > element.startTime && end <= element.endTime)) {
-          if(type === OPERATIONS.LOADING){
+          if (type === OPERATIONS.LOADING) {
             element.loadingRates.forEach(rate.add, rate);
           } else {
             element.dischargingRates.forEach(rate.add, rate);
@@ -1078,7 +1110,7 @@ export class LoadingDischargingTransformationService {
       }
 
     }
-    return type === OPERATIONS.LOADING ? _cargoLoadingRates: _cargoDischargingRates;
+    return type === OPERATIONS.LOADING ? _cargoLoadingRates : _cargoDischargingRates;
   }
 
   /**
@@ -1486,7 +1518,7 @@ export class LoadingDischargingTransformationService {
       }
     });
 
-    if(emptyTanks?.length) {
+    if (emptyTanks?.length) {
       tanksWashingWithDifferentCargo.push({
         cargo: { id: 0, abbreviation: 'NIL', cargoNominationId: 0 },
         washingCargo: null,
@@ -1647,46 +1679,46 @@ export class LoadingDischargingTransformationService {
 * @returns {IDataTableColumn[]}
 * @memberof LoadingDischargingTransformationService
 */
-getCommingleDetailsDatatableColumns(): IDataTableColumn[] {
-  return [
-    {
-      field: 'abbreviation',
-      header: 'LOADABLE_PATTERN_GRADE'
-    },
-    {
-      field: 'tankName',
-      header: 'LOADABLE_PATTERN_TANK'
-    },
-    {
-      field: 'quantity',
-      header: 'LOADABLE_PATTERN_TOTAL_QUANTITY'
-    },
-    {
-      field: 'api',
-      header: 'LOADABLE_PATTERN_API'
-    },
-    {
-      field: 'temperature',
-      header: 'LOADABLE_PATTERN_TEMP'
-    },
-    {
-      field: '',
-      header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
-      fieldColumnClass: 'commingle-composition colspan-header',
-      columns: [
-        {
-          field: 'cargoPercentage',
-          header: 'LOADABLE_PATTERN_PERCENTAGE',
-          fieldClass: 'commingle-composition-percentage'
-        },
-        {
-          field: 'cargoQuantity',
-          header: 'LOADABLE_PATTERN_QUANTITY',
-          fieldClass: 'commingle-composition-quantity'
-        }
-      ]
-    }
-  ]
-}
+  getCommingleDetailsDatatableColumns(): IDataTableColumn[] {
+    return [
+      {
+        field: 'abbreviation',
+        header: 'LOADABLE_PATTERN_GRADE'
+      },
+      {
+        field: 'tankName',
+        header: 'LOADABLE_PATTERN_TANK'
+      },
+      {
+        field: 'quantity',
+        header: 'LOADABLE_PATTERN_TOTAL_QUANTITY'
+      },
+      {
+        field: 'api',
+        header: 'LOADABLE_PATTERN_API'
+      },
+      {
+        field: 'temperature',
+        header: 'LOADABLE_PATTERN_TEMP'
+      },
+      {
+        field: '',
+        header: 'LOADABLE_PATTERN_COMPOSITION_BREAKDOWN',
+        fieldColumnClass: 'commingle-composition colspan-header',
+        columns: [
+          {
+            field: 'cargoPercentage',
+            header: 'LOADABLE_PATTERN_PERCENTAGE',
+            fieldClass: 'commingle-composition-percentage'
+          },
+          {
+            field: 'cargoQuantity',
+            header: 'LOADABLE_PATTERN_QUANTITY',
+            fieldClass: 'commingle-composition-quantity'
+          }
+        ]
+      }
+    ]
+  }
 
 }

@@ -467,6 +467,8 @@ export interface ILoadingDischargingDelays {
   quantity: number;
   cargoNominationId?: number;
   sequenceNo?: number;
+  loadingRate?: number;
+  dischargingRate?: number;
   isInitialDelay?: boolean;
 }
 
@@ -632,6 +634,8 @@ export interface ILoadingDischargingSequenceValueObject {
   isAdd: boolean;
   colorCode: string;
   sequenceNo?: ValueObject<number>;
+  loadingRate?: ValueObject<number>;
+  dischargingRate?: ValueObject<number>;
   isInitialDelay?: boolean;
 }
 
