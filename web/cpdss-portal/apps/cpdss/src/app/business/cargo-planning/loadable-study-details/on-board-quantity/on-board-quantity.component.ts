@@ -122,7 +122,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
   tanks: ITank[][] = [];
   dataTableLoading: boolean;
   obqCheckUpdatesTimer;
-  cargoTankOptions: ITankOptions = { showTooltip: true, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
+  cargoTankOptions: ITankOptions = { showTooltip: true, showUllage: false, ullageField: 'correctedUllage', ullageUnit: AppConfigurationService.settings?.ullageUnit, densityField: 'api', weightField: 'quantity', commodityNameField: 'abbreviation' };
   progress = true;
 
   private _selectedTank: IPortOBQTankDetailValueObject;
