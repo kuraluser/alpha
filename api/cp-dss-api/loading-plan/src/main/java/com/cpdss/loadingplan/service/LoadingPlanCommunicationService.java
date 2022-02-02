@@ -785,7 +785,7 @@ public class LoadingPlanCommunicationService {
             {
               HashMap<String, String> map =
                   loadingPlanStagingService.getAttributeMapping(
-                      new PortLoadingPlanCommingleDetails());
+                      new PortLoadingPlanCommingleEntityDoc());
               JsonArray jsonArray =
                   removeJsonFields(
                       JsonParser.parseString(dataTransferString).getAsJsonArray(),
