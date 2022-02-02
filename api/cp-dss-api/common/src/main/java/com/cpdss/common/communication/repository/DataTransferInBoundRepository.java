@@ -18,4 +18,6 @@ public interface DataTransferInBoundRepository
   @Query(
       "UPDATE DataTransferInBound dataTransferInbound SET dataTransferInbound.status = ?2 where dataTransferInbound.processId = ?1")
   public void updateStatus(String processId, String status);
+
+  public Optional<DataTransferInBound> findByDependantProcessId(String dependantProcessId);
 }

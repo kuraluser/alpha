@@ -696,6 +696,10 @@ public class StagingService {
         if (SUCCESS.equals(response.getResponseStatus().getStatus())) {
           return response.getIsCompleted();
         }
+      } else {
+        DataTransferInBound dataTransferInBoundObj =
+            getInBoundProcessByDependantProcessId(dataTransferInBound.getDependantProcessId());
+        return StagingStatus.COMPLETED.getStatus().equals(dataTransferInBoundObj.getStatus());
       }
     } else {
       return StagingStatus.COMPLETED.getStatus().equals(dataTransferInBound.getStatus());
@@ -901,5 +905,30 @@ public class StagingService {
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return response;
+  }
+
+  /**
+   * method for getting DataTransferInBound entity
+   *
+   * @param dependantProcessId dependantProcessId value
+   * @return Entity of DataTransferInBound
+   */
+  private DataTransferInBound getInBoundProcessByDependantProcessId(String dependantProcessId)
+      throws GenericServiceException {
+
+    return dataTransferInBoundRepository
+        .findByDependantProcessId(dependantProcessId)
+        .orElseThrow(
+            () -> {
+              log.error(
+                  "Data not found in DataTransferInBound. DependantProcess Id: {}. Current Module: {}",
+                  dependantProcessId,
+                  currentModule);
+              return new GenericServiceException(
+                  "Data not found in DataTransferInBound. DependantProcessId: "
+                      + dependantProcessId,
+                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
+                  HttpStatusCode.INTERNAL_SERVER_ERROR);
+            });
   }
 }
