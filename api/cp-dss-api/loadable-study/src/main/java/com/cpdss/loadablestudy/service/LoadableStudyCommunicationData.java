@@ -2,6 +2,8 @@
 package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.common.communication.StagingService.setEntityDocFields;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
 
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.entity.*;
@@ -112,6 +114,18 @@ public class LoadableStudyCommunicationData {
     if (loadableStudyOpt.isPresent()) {
       try {
         LoadableStudy loadableStudy = loadableStudyOpt.get();
+        // Changing confirmed to plan generated status
+        List<LoadablePattern> loadablePatternConfirmed =
+            loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
+                loadableStudy.getVoyage().getId(), CONFIRMED_STATUS_ID, true);
+        if (!CollectionUtils.isEmpty(loadablePatternConfirmed)) {
+          log.info("changing status of other confirmed plan to plan generated");
+          loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmed.get(0).getId());
+          loadablePatternRepository.updateLoadableStudyStatusToPlanGenerated(
+              LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
+              loadablePatternConfirmed.get(0).getLoadableStudy().getId());
+        }
         Optional<LoadableStudyStatus> loadableStudyStatus =
             loadableStudyStatusRepository.findById(2L);
         if (loadableStudyStatus.isPresent()) {
