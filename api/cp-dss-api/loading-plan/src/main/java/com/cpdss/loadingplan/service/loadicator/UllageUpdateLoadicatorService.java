@@ -477,6 +477,10 @@ public class UllageUpdateLoadicatorService {
             processId,
             conditionType);
         loadingPlanService.saveUpdatedLoadingPlanDetails(loadingInformation, conditionType);
+        if (env.equals("ship")) {
+          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.COMPLETED.getId(), false, loadingInformation.getId());
+        }
         log.info("Ullage update with loadicator off after algo call for communication tables");
         ullageUpdateSaveForCommunication(
             com.cpdss.loadingplan.utility.LoadingPlanConstants
@@ -841,6 +845,10 @@ public class UllageUpdateLoadicatorService {
             LoadingPlanConstants.UPDATE_ULLAGE_VALIDATION_SUCCESS_ID,
             request.getProcessId(),
             request.getConditionType());
+        if (env.equals("ship")) {
+          loadingPlanCommunicationStatusRepository.updateCommunicationStatus(
+              CommunicationStatus.COMPLETED.getId(), false, loadingInfoOpt.get().getId());
+        }
         log.info("Ullage update with loadicator on after algo call for communication tables");
         ullageUpdateSaveForCommunication(
             com.cpdss.loadingplan.utility.LoadingPlanConstants
