@@ -13,6 +13,7 @@ import { PermissionsService } from '../../../../shared/services/permissions/perm
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { UserTransformationService } from '../../services/user-transformation.service';
 import { UserApiService } from '../../services/user-api.service';
+import { environment } from 'apps/cpdss/src/environments/environment';
 
 /**
  * Component class of add user
@@ -95,7 +96,7 @@ export class UserListingComponent implements OnInit {
   getPagePermission() {
     const permission = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserListingComponent']);
     const permissionResetPassword = this.permissionsService.getPermission(AppConfigurationService.settings.permissionMapping['UserResetPassword'], false);
-    if (permissionResetPassword?.view) {
+    if (permissionResetPassword?.view && environment.name !== 'shore') {
       this.columns.push({
         field: 'buttons',
         header: 'RESET_PASSWORD_HEADING',

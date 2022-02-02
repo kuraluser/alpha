@@ -7,6 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { UserTransformationService } from '../../services/user-transformation.service';
 import { UserApiService } from '../../services/user-api.service';
 import { IRoleDetails  , USER_POPUP_SELECTIONMODE ,  IUserDetails , IUserModel , ISaveUserResponse } from '../../models/user.model';
+import { environment } from 'apps/cpdss/src/environments/environment';
 
 /**
  * Component class of add user
@@ -33,6 +34,7 @@ export class AddUserComponent implements OnInit {
   public errorMessages: any;
   public isExisting: boolean;
   public popUpHeader: string;
+  private isShore: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -50,10 +52,16 @@ export class AddUserComponent implements OnInit {
  * @memberof AddUserComponent
  */
   ngOnInit(): void {
+    let userNameValidation = Validators.pattern('^[a-zA-Z0-9]+');
+    if(environment.name === 'shore') {
+      this.isShore = true;
+      userNameValidation = Validators.email;
+      console.log("validation ",userNameValidation);
+    }
     this.visible = true;
     this.errorMessages = this.userTransformationService.setValidationErrorMessage();
     this.addUserForm = this.fb.group({
-      'userName': ['', [Validators.required , Validators.maxLength(50) , Validators.pattern('^[a-zA-Z0-9]+') ]],
+      'userName': ['', [Validators.required , Validators.maxLength(50) , userNameValidation ]],
       'userDesignation': ['', [Validators.required , Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9 ]+')]],
       'userRole': ['', [Validators.required]],
     });

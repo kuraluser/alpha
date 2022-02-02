@@ -9,7 +9,7 @@
           <div class="form-group row">
             <label for="new_user_role" class="col-md-6 col-form-label text-secondary">{{'ADD_USER_NAME_LABEL' | translate}}</label>
             <div class="col-md-6">
-              <input type="text" *ngIf="popupStatus !== 'VIEW';else viewUserNameRef" class="form-control" id="new_user" formControlName="userName"
+              <input type="text" *ngIf="popupStatus !== 'VIEW';else viewUserNameRef" class="form-control" id="new_user" formControlName="userName" [readOnly]=isShore
                (change)="trimFormControl('userName')" (input)="isExisting = false" maxlength="50" [placeholder]="'ADD_USER_NAME_PLACEHOLDER' | translate" focusTrap />
                <ng-template #viewUserNameRef><span  class="form-control">{{formContolValue('userName')}}</span> </ng-template>
             </div>
