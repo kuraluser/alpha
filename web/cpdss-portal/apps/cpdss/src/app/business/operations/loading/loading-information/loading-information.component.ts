@@ -135,12 +135,20 @@ export class LoadingInformationComponent implements OnInit, OnDestroy {
       this.hasUnSavedData = false;
       this.loadingInformationPostData = <ILoadingInformation>{};
       this.loadingInformationData = await this.loadingDischargingInformationApiService.getLoadingInformation(this.vesselId, this.voyageId, this.portRotationId).toPromise();
+
+      const rateMin = this.loadingInformationData?.loadingRates?.minLoadingRate;
+      const rateMax = (this.loadingInformationData?.loadingRates?.shoreLoadingRate && this.loadingInformationData?.loadingRates?.maxLoadingRate > this.loadingInformationData?.loadingRates?.shoreLoadingRate) ? this.loadingInformationData?.loadingRates?.shoreLoadingRate : this.loadingInformationData?.loadingRates?.maxLoadingRate;
+      this.loadingInformationData?.loadingSequences?.loadingDelays.map(item => {
+        item.rateMin = rateMin;
+        item.rateMax = rateMax;
+        return item;
+      });
+
       this.loadingDischargingTransformationService._loadingInformationSource.next(this.loadingInformationData?.isLoadingInfoComplete)
       this.loadingDischargingTransformationService._loadingInstructionSource.next(this.loadingInformationData?.isLoadingInstructionsComplete)
 
       this.loadingDischargingTransformationService.isLoadingSequenceGenerated.next(this.loadingInformationData?.isLoadingSequenceGenerated)
       this.loadingDischargingTransformationService.isLoadingPlanGenerated.next(this.loadingInformationData?.isLoadingPlanGenerated);
-
 
       if (this.loadingInformationData.loadingInfoStatusId === 5 || this.loadingInformationData.loadingInfoStatusId === 6 || this.loadingInformationData.loadingInfoStatusId === 7 || this.loadingInformationData.loadingInfoStatusId === 2 || this.loadingInformationData.loadingInfoStatusId === 0 || this.loadingInformationData.loadingInfoStatusId === 1) {
         this.loadingDischargingTransformationService.disableInfoInstructionRuleSave.next(false);

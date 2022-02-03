@@ -46,6 +46,7 @@ export class LoadingDischargingTransformationService {
   public inProcessing: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public generateLoadingPlanButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public disableViewErrorButton: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private _loadingDishcargingRateSource: Subject<any> = new Subject();
 
 
   loadingInformationValidity$ = this._loadingInformationSource.asObservable();
@@ -65,6 +66,7 @@ export class LoadingDischargingTransformationService {
   setUllageDepartureBtnStatus$ = this._setUllageDepartureBtnStatus.asObservable();
   showUllageErrorPopup$ = this._showUllageErrorPopup.asObservable();
   isDischargeStarted$ = this._isDischargeStarted.asObservable();
+  loadingDischargingRateValidity$ = this._loadingDishcargingRateSource.asObservable();
 
   portRotationId: number;
   isMachineryValid: boolean;
@@ -188,6 +190,14 @@ export class LoadingDischargingTransformationService {
   /** Set loading instruction complete status */
   setLoadingInstructionValidity(value: boolean) {
     this._loadingInstructionSource.next(value);
+  }
+
+  /**
+   * Set loading / discharging rate validation data for manage sequence
+   * @param value
+   */
+  setLoadingDischargingRateValidity(value: any) {
+    this._loadingDishcargingRateSource.next(value);
   }
 
   /**
@@ -441,6 +451,8 @@ export class LoadingDischargingTransformationService {
         fieldPlaceholder: 'DISCHARGING_MANAGE_SEQUENCE_DISCHARGING_RATE_PLACEHOLDER',
         errorMessages: {
           'required': 'DISCHARGING_MANAGE_SEQUENCE_DISCHARGING_RATE_REQUIRED',
+          'min': 'DISCHARGING_MANAGE_SEQUENCE_DISCHARGING_RATE_MIN_ERROR',
+          'max': 'DISCHARGING_MANAGE_SEQUENCE_DISCHARGING_RATE_MAX_ERROR'
         }
       };
       columns.splice(4, 0, dRate);
@@ -454,6 +466,8 @@ export class LoadingDischargingTransformationService {
         fieldPlaceholder: 'LOADING_MANAGE_SEQUENCE_LOADING_RATE_PLACEHOLDER',
         errorMessages: {
           'required': 'LOADING_MANAGE_SEQUENCE_LOADING_RATE_REQUIRED',
+          'min': 'LOADING_MANAGE_SEQUENCE_LOADING_RATE_MIN_ERROR',
+          'max': 'LOADING_MANAGE_SEQUENCE_LOADING_RATE_MAX_ERROR'
         }
       };
       columns.splice(4, 0, lRate);
@@ -496,13 +510,15 @@ export class LoadingDischargingTransformationService {
     _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable && !loadingDischargingDelay?.isInitialDelay && isNewValue, false, isEditable && !loadingDischargingDelay?.isInitialDelay);
     _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays[]>(reasonDelayObj, true, isNewValue, false, true);
     _loadingDischargingDelay.isAdd = isNewValue;
+    _loadingDischargingDelay.rateMin = loadingDischargingDelay?.rateMin;
+    _loadingDischargingDelay.rateMax = loadingDischargingDelay?.rateMax;
 
     _loadingDischargingDelay.sequenceNo = new ValueObject<number>(loadingDischargingDelay?.isInitialDelay ? 1 : loadingDischargingDelay?.sequenceNo, true, !loadingDischargingDelay?.isInitialDelay && isNewValue, false, !loadingDischargingDelay?.isInitialDelay);
 
     if (operation === OPERATIONS.DISCHARGING) {
-      _loadingDischargingDelay.dischargingRate = new ValueObject<number>(loadingDischargingDelay?.dischargingRate, true, isNewValue, false, true);
+      _loadingDischargingDelay.dischargingRate = new ValueObject<number>(loadingDischargingDelay?.dischargingRate, true, true, false, isEditable);
     } else if (operation === OPERATIONS.LOADING) {
-      _loadingDischargingDelay.loadingRate = new ValueObject<number>(loadingDischargingDelay?.loadingRate, true, isNewValue, false, true);
+      _loadingDischargingDelay.loadingRate = new ValueObject<number>(loadingDischargingDelay?.loadingRate, true, true, false, isEditable);
     }
 
     return _loadingDischargingDelay;
@@ -1318,12 +1334,18 @@ export class LoadingDischargingTransformationService {
     dischargingInformation.synopticalTableId = dischargingInformationResponse?.synopticTableId;
     dischargingInformation.dischargeRates = dischargingInformationResponse?.dischargeRates;
     dischargingInformation.berthDetails = dischargingInformationResponse?.berthDetails;
-    dischargingInformation.dischargeSequences = dischargingInformationResponse?.dischargeSequences;
     dischargingInformation.isDischargeInfoComplete = dischargingInformationResponse?.isDischargeInfoComplete;
     dischargingInformation.isDischargeInstructionsComplete = dischargingInformationResponse?.isDischargeInstructionsComplete;
     dischargingInformation.isDischargeSequenceGenerated = dischargingInformationResponse?.isDischargeSequenceGenerated;
     dischargingInformation.isDischargePlanGenerated = dischargingInformationResponse?.isDischargePlanGenerated;
-    dischargingInformation.dischargeSequences.loadingDischargingDelays = dischargingInformationResponse.dischargeSequences.dischargingDelays;
+
+    dischargingInformationResponse?.dischargeSequences?.dischargingDelays.map(item => {
+      item.rateMin = dischargingInformationResponse?.dischargeRates?.initialDischargingRate;
+      item.rateMax = dischargingInformationResponse?.dischargeRates?.maxDischargingRate;
+      return item;
+    });
+    dischargingInformation.dischargeSequences = dischargingInformationResponse?.dischargeSequences;
+    dischargingInformation.dischargeSequences.loadingDischargingDelays = dischargingInformationResponse?.dischargeSequences?.dischargingDelays;
 
     // Updating post discharge time
     dischargingInformation.postDischargeStageTime = {

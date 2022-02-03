@@ -141,10 +141,12 @@ export class DischargingRatesComponent implements OnInit {
       const convertionFactor = 6.28981;
       dischargeRates[field] = Number(dischargeRates[field]) / convertionFactor;
       this.dischargeRates[field] = Number(dischargeRates[field]);
-      this.dischargingRateChange.emit(dischargeRates)
+      this.loadingDischargingTransformationService.setLoadingDischargingRateValidity(dischargeRates);
+      this.dischargingRateChange.emit(dischargeRates);
     } else {
       this.dischargeRates[field] = Number(dischargeRates[field]);
-      this.dischargingRateChange.emit(this.dischargingRatesFormGroup?.value)
+      this.loadingDischargingTransformationService.setLoadingDischargingRateValidity(this.dischargingRatesFormGroup?.value);
+      this.dischargingRateChange.emit(this.dischargingRatesFormGroup?.value);
     }
   }
 

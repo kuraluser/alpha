@@ -7,7 +7,7 @@
                 </div>
             </div>
         </div>
-        
+
 
         <div class="col main-content-loading-and-discharging pt-25">
             <cpdss-portal-arrival-condition [permission]="permission" [operation]="OPERATIONS.LOADING" [vesselId]="vesselId" [portRotationId]="portRotationId" [loadingDischargingInfoId]="loadingInfoId" [cargos]="cargos" [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [loadingDischargingPlanData]="loadingPlanDetails"></cpdss-portal-arrival-condition>
@@ -15,8 +15,8 @@
             <div class="row">
                 <div class="col-md-12 pt-5 table-column-flexible-wrapper auto-layout">
 
-                    <cpdss-portal-loading-discharging-manage-sequence [editable]="false" [cargos]="cargos"
-                        [loadableQuantityCargo]="loadableQuantityCargoDetails" [loadingDischargingSequences]="loadingSequences" 
+                    <cpdss-portal-loading-discharging-manage-sequence [editable]="false" [cargos]="cargos" [operation]="OPERATIONS.LOADING"
+                        [loadableQuantityCargo]="loadableQuantityCargoDetails" [loadingDischargingSequences]="loadingSequences"
                         [currentQuantitySelectedUnit]="currentQuantitySelectedUnit">
                     </cpdss-portal-loading-discharging-manage-sequence>
 

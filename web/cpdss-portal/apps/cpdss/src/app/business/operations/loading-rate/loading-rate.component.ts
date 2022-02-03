@@ -26,7 +26,7 @@ export class LoadingRateComponent implements OnInit {
   set loadingRates(loadingRates: ILoadingRates) {
     this._loadingRates = loadingRates;
     this.initLoadingRatesForm();
-    
+
     if (this.selectedConversion.id === 2) {
      this.onConversionChange();
     }
@@ -109,7 +109,7 @@ export class LoadingRateComponent implements OnInit {
   /**
    *
    * Method for initialise loading rate array
-   * @return {*} 
+   * @return {*}
    * @memberof LoadingRateComponent
    */
   initLoadingRatesForm(){
@@ -124,16 +124,16 @@ export class LoadingRateComponent implements OnInit {
       noticeTimeRateReduction: this.fb.control(this.loadingRates.noticeTimeRateReduction, [Validators.required, numberValidator(0, 3), Validators.min(30), Validators.max(60)]),
       noticeTimeStopLoading: this.fb.control(this.loadingRates.noticeTimeStopLoading, [Validators.required, numberValidator(0, 3), Validators.min(30), Validators.max(60)])
     })
- 
-    
+
+
     for (let key in this.actualValues) {
       this.actualValues[key].defaultValue = this.loadingRates[key];
       if(this.loadingRates[key] !== "" && this.loadingRates[key] !== null)
       this.actualValues[key].BblsValue = this.loadingRates[key] * this.conversionFactor;
       this.actualValues[key].lastEditedUnit = 'M3';
       this.loadingRatesFormGroup.value[key] =   this.loadingRates[key];
-    }   
-   
+    }
+
     this.loadingRatesFormGroup.markAllAsTouched();
     this.loadingRatesFormGroup.markAsTouched();
 }
@@ -175,16 +175,16 @@ export class LoadingRateComponent implements OnInit {
   /**
    *
    * Method for change fied value
-   * @return {*} 
+   * @return {*}
    * @memberof LoadingRateComponent
    */
   onChange(field) {
-   
+
     const loadingRates = {...this.loadingRatesFormGroup.value};
     const keys = Object.keys(this.actualValues);
-    
+
     this.loadingRates [field]  = this.loadingRatesFormGroup?.value[field];
-    
+
     if (keys.includes(field)) {
       this.actualValues[field].defaultValue = this.loadingRatesFormGroup?.value[field];
       if (this.selectedConversion.id == 2) {
@@ -193,8 +193,8 @@ export class LoadingRateComponent implements OnInit {
         this.actualValues[field].lastEditedUnit = 'M3';
       }
     }
-  
-    for (let key in this.actualValues) {     
+
+    for (let key in this.actualValues) {
       if (this.actualValues[key].lastEditedUnit == 'BBLS') {
         if(this.actualValues[key]?.defaultValue !== "" && this.actualValues[key]?.defaultValue !== null)
         loadingRates[key] = this.actualValues[key]?.defaultValue / this.conversionFactor;
@@ -203,20 +203,21 @@ export class LoadingRateComponent implements OnInit {
         loadingRates[key] = this.actualValues[key]?.defaultValue;
       }
     }
-   
+
+    this.loadingDischargingTransformationService.setLoadingDischargingRateValidity(loadingRates);
     this.loadingRateChange.emit(loadingRates);
   }
-  
+
 
 
   /**
  *
  * Method to set conversion of loading rate
- * @return {*} 
+ * @return {*}
  * @memberof LoadingRateComponent
  */
   onConversionChange() {
-   
+
     this.loadingRatesFormGroup?.controls['maxLoadingRate'].clearValidators();
     this.loadingRatesFormGroup?.controls['shoreLoadingRate'].clearValidators();
     this.loadingRatesFormGroup?.controls['minLoadingRate'].clearValidators();
@@ -241,8 +242,8 @@ export class LoadingRateComponent implements OnInit {
       this.loadingRatesFormGroup?.controls['minDeBallastingRate'].updateValueAndValidity();
       this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].setValidators([numberValidator(0, 5),Validators.required, Validators.min(Math.round(6000 * this.conversionFactor)), Validators.max(Math.round(7500 * this.conversionFactor))]);
       this.loadingRatesFormGroup?.controls['maxDeBallastingRate'].updateValueAndValidity();
-     
-    } else {     
+
+    } else {
       for (let key in this.actualValues) {
         if (this.loadingRatesFormGroup?.value[key] !== "" && this.loadingRatesFormGroup?.value[key] != null) {
           this.loadingRatesFormGroup?.patchValue({
@@ -265,7 +266,7 @@ export class LoadingRateComponent implements OnInit {
     this.errorMesages = this.loadingDischargingTransformationService.setValidationMessageForLoadingRate(this.selectedConversion.unit);
     this.loadingRatesFormGroup.markAllAsTouched();
     this.loadingRatesFormGroup.markAsTouched();
-  
+
   }
 
 }

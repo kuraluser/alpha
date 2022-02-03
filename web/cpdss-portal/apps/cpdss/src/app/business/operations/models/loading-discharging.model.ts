@@ -469,6 +469,8 @@ export interface ILoadingDischargingDelays {
   sequenceNo?: number;
   loadingRate?: number;
   dischargingRate?: number;
+  rateMin?: number;
+  rateMax?: number;
   isInitialDelay?: boolean;
 }
 
@@ -636,6 +638,8 @@ export interface ILoadingDischargingSequenceValueObject {
   sequenceNo?: ValueObject<number>;
   loadingRate?: ValueObject<number>;
   dischargingRate?: ValueObject<number>;
+  rateMin?: number;
+  rateMax?: number;
   isInitialDelay?: boolean;
 }
 
