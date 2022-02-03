@@ -635,7 +635,6 @@ public class LoadableStudyPortRotationService {
               loadableStudy.getId(), true);
       for (LoadableStudyPortRotation portRotation : portRotations) {
         if ((portRotation.getAirDraftRestriction() == null)
-            || (portRotation.getMaxDraft() == null)
             || (portRotation.getOperation() == null)
             || (portRotation.getPortXId() == null)
             || (portRotation.getSeaWaterDensity() == null)) {
