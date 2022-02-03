@@ -83,7 +83,8 @@ export class DepartureConditionComponent implements OnInit, OnDestroy {
   loadingDischargingPlanInfo: any;
   private ngUnsubscribe: Subject<any> = new Subject();
   commingleDetails: any[];
-
+  conditionList = [ULLAGE_STATUS_VALUE.IN_PROGRESS,
+  ULLAGE_STATUS_VALUE.LOADICATOR_IN_PROGRESS,ULLAGE_STATUS_VALUE.COMMUNICATED_TO_SHORE];
 
   readonly tankType = TANKTYPE;
   selectedTab = TANKTYPE.CARGO;
