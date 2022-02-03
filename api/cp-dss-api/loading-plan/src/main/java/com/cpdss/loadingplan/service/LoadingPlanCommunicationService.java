@@ -1089,7 +1089,7 @@ public class LoadingPlanCommunicationService {
         saveJsonData();
         savePortTideDetail(loadingInfo);
         algoErrorHeadings = saveAlgoErrorHeading(loadingInfo);
-        saveAlgoErrors(algoErrorHeadings);
+        saveAlgoErrors(algoErrorHeadings, loadingInfo);
         saveLoadingInstruction(loadingInfo);
         saveSynopticalData();
         saveLoadableStudyPortRotationData();
@@ -1918,6 +1918,8 @@ public class LoadingPlanCommunicationService {
       log.info("Communication ++++ AlgoErrorHeadingis empty");
       return null;
     }
+    // deleting existing active algo error headings
+    algoErrorHeadingRepository.deleteByLoadingInformation(loadingInformation);
     Optional<LoadingInformationStatus> loadingInfoErrorStatus =
         loadingInfoStatusRepository.findById(
             LoadingPlanConstants.LOADING_INFORMATION_ERROR_OCCURRED_ID);
@@ -1932,12 +1934,15 @@ public class LoadingPlanCommunicationService {
     return algoErrorHeadings;
   }
 
-  private void saveAlgoErrors(List<AlgoErrorHeading> algoErrorHeadings) {
+  private void saveAlgoErrors(
+      List<AlgoErrorHeading> algoErrorHeadings, LoadingInformation loadingInfo) {
     current_table_name = LoadingPlanTables.ALGO_ERRORS.getTable();
     if (CollectionUtils.isEmpty(algoErrorHeadings) || CollectionUtils.isEmpty(algoErrors)) {
       log.info("Communication ++++ AlgoErrorHeading or AlgoErrors is empty");
       return;
     }
+    // deleting existing active algo errors
+    algoErrorsRepository.deleteByLoadingInformation(loadingInformation);
     for (AlgoErrorHeading algoErrorHeading : algoErrorHeadings) {
       for (AlgoErrors algoError : algoErrors) {
         if (algoErrorHeading
