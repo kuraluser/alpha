@@ -9,7 +9,10 @@ import lombok.Data;
 public class LoadablePlanBallastDetails {
   private Long id;
   private Long tankId;
+
+  @JsonInclude(JsonInclude.Include.ALWAYS)
   private String quantityMT; // for saving result
+
   private String rdgLevel;
   private String correctionFactor;
   private String correctedUllage;
