@@ -414,10 +414,10 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
             loadingDelays.setCargoNominationId(loadableQuantityCargoDetails.getCargoNominationId());
             loadingDelays.setLoadingInfoId(loadingInfoId);
             loadingDelays.setDuration(BigDecimal.ZERO);
-            loadingDelays.setSequenceNo(
-                defaultSequenceNumberCounter.getAndSet(
-                    defaultSequenceNumberCounter.get()
-                        + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE));
+            defaultSequenceNumberCounter.set(
+                defaultSequenceNumberCounter.get()
+                    + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
+            loadingDelays.setSequenceNo(defaultSequenceNumberCounter.get());
 
             loadingDelays.setQuantity(
                 StringUtils.hasLength(loadableQuantityCargoDetails.getLoadableMT())

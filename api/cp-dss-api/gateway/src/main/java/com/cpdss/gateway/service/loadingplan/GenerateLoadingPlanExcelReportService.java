@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /** @author sanalkumar.k */
@@ -59,6 +60,7 @@ public class GenerateLoadingPlanExcelReportService {
   public static final String FAILED = "FAILED";
   public static final String YES = "Yes";
   public static final String NO = "No";
+  private static final Integer INDEX_ZERO_OF_GENERIC_LIST = 0;
 
   public String SUB_FOLDER_NAME = "/reports/loading";
   public String TEMPLATES_FILE_LOCATION =
@@ -250,13 +252,13 @@ public class GenerateLoadingPlanExcelReportService {
     for (row = 6; row <= 39; row++) {
       col = 1;
       cell = sheet.getRow(row).getCell(col);
-      setCargoColor(workbook, sheet, cell, null, null, data.getCargoTanks());
+      setCargoColor(workbook, cell, data.getCargoTanks());
     }
     // Sequence diagram color cargo
     for (row = 6; row <= 74; row++) {
       for (col = 4; col <= 4 + (data.getTickPoints().size() * 2); col++) {
         cell = sheet.getRow(row).getCell(col);
-        setCargoColor(workbook, sheet, cell, null, null, null);
+        setCargoColor(workbook, cell, null);
       }
     }
   }
@@ -313,24 +315,16 @@ public class GenerateLoadingPlanExcelReportService {
             continue;
           }
           // APT FPT
-          if (setAPTFPTTankColor(
-              workbook, sheet, cell, data.getArrivalCondition().getApt(), null, null, null)) {
+          if (setAPTFPTTankColor(workbook, sheet, cell, data.getArrivalCondition().getApt())) {
             continue;
           }
           if (data.getArrivalCondition().getFpt() != null) {
-            if (setAPTFPTTankColor(
-                workbook, sheet, cell, null, data.getArrivalCondition().getFpt(), null, null)) {
-              continue;
-            }
+            setAPTFPTTankColor(workbook, sheet, cell, data.getArrivalCondition().getFpt());
           } else {
-            if (setAPTFPTTankColor(
-                workbook, sheet, cell, null, null, data.getArrivalCondition().getLfpt(), null)) {
+            if (setAPTFPTTankColor(workbook, sheet, cell, data.getArrivalCondition().getLfpt())) {
               continue;
             }
-            if (setAPTFPTTankColor(
-                workbook, sheet, cell, null, null, null, data.getArrivalCondition().getUfpt())) {
-              continue;
-            }
+            setAPTFPTTankColor(workbook, sheet, cell, data.getArrivalCondition().getUfpt());
           }
 
         } else if (row >= 32 && row < 46) {
@@ -375,24 +369,16 @@ public class GenerateLoadingPlanExcelReportService {
             continue;
           }
           // APT FPT
-          if (setAPTFPTTankColor(
-              workbook, sheet, cell, data.getDeparcherCondition().getApt(), null, null, null)) {
+          if (setAPTFPTTankColor(workbook, sheet, cell, data.getDeparcherCondition().getApt())) {
             continue;
           }
           if (data.getDeparcherCondition().getFpt() != null) {
-            if (setAPTFPTTankColor(
-                workbook, sheet, cell, null, data.getDeparcherCondition().getFpt(), null, null)) {
-              continue;
-            }
+            setAPTFPTTankColor(workbook, sheet, cell, data.getDeparcherCondition().getFpt());
           } else {
-            if (setAPTFPTTankColor(
-                workbook, sheet, cell, null, null, data.getDeparcherCondition().getLfpt(), null)) {
+            if (setAPTFPTTankColor(workbook, sheet, cell, data.getDeparcherCondition().getLfpt())) {
               continue;
             }
-            if (setAPTFPTTankColor(
-                workbook, sheet, cell, null, null, null, data.getDeparcherCondition().getUfpt())) {
-              continue;
-            }
+            setAPTFPTTankColor(workbook, sheet, cell, data.getDeparcherCondition().getUfpt());
           }
         }
       }
@@ -402,76 +388,122 @@ public class GenerateLoadingPlanExcelReportService {
       col = 19;
       cell = sheet.getRow(row).getCell(col);
       if (row <= 22) {
-        setCargoColor(
-            workbook, sheet, cell, data.getArrivalCondition().getCargoDetails(), null, null);
-      } else if (row <= 39) {
-        setCargoColor(
-            workbook, sheet, cell, data.getDeparcherCondition().getCargoDetails(), null, null);
+        setCargoColor(workbook, cell, data.getArrivalCondition().getCargoDetails());
+      } else {
+        setCargoColor(workbook, cell, data.getDeparcherCondition().getCargoDetails());
       }
     }
+
     // Cargo to be loaded area color
     for (col = 5; col <= 5 + (data.getCargoTobeLoaded().size() * 5); col += 5) {
       row = 61;
       cell = sheet.getRow(row).getCell(col);
-      setCargoColor(workbook, sheet, cell, null, data.getCargoTobeLoaded(), null);
+      setCargoColor(workbook, cell, data.getCargoTobeLoaded());
+    }
+
+    // Commingle cargo area color
+    for (col = 5; col <= 5 + (data.getLoadingPlanCommingleDetailsList().size() * 6); col += 6) {
+      row = 73;
+      cell = sheet.getRow(row).getCell(col);
+      setCargoColor(workbook, cell, data.getLoadingPlanCommingleDetailsList());
     }
   }
 
-  /** Color cargo name cells */
-  private void setCargoColor(
-      XSSFWorkbook workbook,
-      XSSFSheet sheet1,
-      XSSFCell cell,
-      List<CargoQuantity> cargoDetails,
-      List<CargoTobeLoaded> cargoTobeLoaded,
-      List<TankCategoryForSequence> cargoListSequence) {
+  /**
+   * Sets color to a given cell based on the color code provided in the objects that are contained
+   * in the inputDetails List. Method is written as a Type Specific Generic since inputDetails can
+   * be received as List of different Type objects. The appropriate action is taken on the basis of
+   * Type of that object.
+   *
+   * @param workbook workbook in which cell is contained
+   * @param cell cell that needs to be colored
+   * @param inputDetails generic list that contains the objects having color code attribute
+   * @param <T> generic Type representation
+   * @see #setTankColor(XSSFWorkbook, XSSFSheet, XSSFCell, List, List)
+   * @see #setAPTFPTTankColor(XSSFWorkbook, XSSFSheet, XSSFCell, TankCargoDetails)
+   */
+  private <T> void setCargoColor(XSSFWorkbook workbook, XSSFCell cell, List<T> inputDetails) {
+
     String cellValue = getCellValue(cell);
     if (cellValue != null && !cellValue.isBlank()) {
-      if (cargoDetails != null) {
-        Optional<CargoQuantity> opt =
-            cargoDetails.stream().filter(item -> cellValue.equals(item.getCargoName())).findFirst();
-        if (opt.isPresent()) {
-          fillColor(workbook, cell, opt.get().getColorCode());
-        }
-      } else if (cargoTobeLoaded != null) {
-        Optional<CargoTobeLoaded> opt =
-            cargoTobeLoaded.stream()
-                .filter(item -> cellValue.equals(item.getCargoName()))
-                .findFirst();
-        if (opt.isPresent()) {
-          fillColor(workbook, cell, opt.get().getColorCode());
-        }
-      } else if (cargoListSequence != null) {
-        // Commingle tanks color
-        Optional<TankCategoryForSequence> opt = Optional.empty();
-        Supplier<Stream<TankCategoryForSequence>> streamSupplier =
-            () -> cargoListSequence.stream().filter(item -> (item.isCommingled()));
-        if (!streamSupplier.get().equals(Stream.empty())) {
-          opt =
-              streamSupplier
-                  .get()
-                  .filter(item -> item.getCommingleCargoName1().equals(cellValue))
-                  .findFirst();
-          if (opt.isPresent()) {
-            fillColor(workbook, cell, opt.get().getCommingleCargoColor1());
-          } else {
-            opt =
-                streamSupplier
-                    .get()
-                    .filter(item -> item.getCommingleCargoName2().equals(cellValue))
-                    .findFirst();
-            if (opt.isPresent()) {
-              fillColor(workbook, cell, opt.get().getCommingleCargoColor2());
-            }
-          }
-        }
-        if (opt.isEmpty()) {
-          opt =
-              cargoListSequence.stream()
+      if (!CollectionUtils.isEmpty(inputDetails)) {
+
+        if (inputDetails.get(INDEX_ZERO_OF_GENERIC_LIST) instanceof CargoQuantity) {
+
+          Optional<CargoQuantity> cargoQuantityWrapper =
+              inputDetails.stream()
+                  .map(input -> (CargoQuantity) input)
                   .filter(item -> cellValue.equals(item.getCargoName()))
                   .findFirst();
-          if (opt.isPresent()) {
-            fillColor(workbook, cell, opt.get().getColorCode());
+          cargoQuantityWrapper.ifPresent(
+              cargoQuantity -> fillColor(workbook, cell, cargoQuantity.getColorCode()));
+
+        } else if (inputDetails.get(INDEX_ZERO_OF_GENERIC_LIST) instanceof CargoTobeLoaded) {
+
+          // Cargo to be loaded grid
+          Optional<CargoTobeLoaded> cargoTobeLoadedWrapper =
+              inputDetails.stream()
+                  .map(input -> (CargoTobeLoaded) input)
+                  .filter(item -> cellValue.equals(item.getCargoName()))
+                  .findFirst();
+          cargoTobeLoadedWrapper.ifPresent(
+              cargoTobeLoaded -> fillColor(workbook, cell, cargoTobeLoaded.getColorCode()));
+
+        } else if (inputDetails.get(INDEX_ZERO_OF_GENERIC_LIST)
+            instanceof LoadingPlanCommingleDetails) {
+
+          // Loading plan commingle details grid
+          Optional<LoadingPlanCommingleDetails> loadingPlanCommingleDetailsWrapper =
+              inputDetails.stream()
+                  .map(input -> (LoadingPlanCommingleDetails) input)
+                  .filter(item -> cellValue.equals(item.getAbbreviation()))
+                  .findFirst();
+          loadingPlanCommingleDetailsWrapper.ifPresent(
+              loadingPlanCommingleDetails ->
+                  fillColor(workbook, cell, loadingPlanCommingleDetails.getColorCode()));
+
+        } else if (inputDetails.get(INDEX_ZERO_OF_GENERIC_LIST)
+            instanceof TankCategoryForSequence) {
+
+          // Commingle tanks color
+          Optional<TankCategoryForSequence> tankCategoryForSequenceWrapper = Optional.empty();
+          Supplier<Stream<TankCategoryForSequence>> streamSupplier =
+              () ->
+                  inputDetails.stream()
+                      .map(input -> (TankCategoryForSequence) input)
+                      .filter(TankCategoryForSequence::isCommingled);
+
+          if (!streamSupplier.get().equals(Stream.empty())) {
+            tankCategoryForSequenceWrapper =
+                streamSupplier
+                    .get()
+                    .filter(item -> item.getCommingleCargoName1().equals(cellValue))
+                    .findFirst();
+
+            if (tankCategoryForSequenceWrapper.isPresent()) {
+              fillColor(
+                  workbook, cell, tankCategoryForSequenceWrapper.get().getCommingleCargoColor1());
+            } else {
+              tankCategoryForSequenceWrapper =
+                  streamSupplier
+                      .get()
+                      .filter(item -> item.getCommingleCargoName2().equals(cellValue))
+                      .findFirst();
+              tankCategoryForSequenceWrapper.ifPresent(
+                  tankCategoryForSequence ->
+                      fillColor(workbook, cell, tankCategoryForSequence.getCommingleCargoColor2()));
+            }
+          }
+
+          if (tankCategoryForSequenceWrapper.isEmpty()) {
+            tankCategoryForSequenceWrapper =
+                inputDetails.stream()
+                    .map(input -> (TankCategoryForSequence) input)
+                    .filter(item -> cellValue.equals(item.getCargoName()))
+                    .findFirst();
+            tankCategoryForSequenceWrapper.ifPresent(
+                tankCategoryForSequence ->
+                    fillColor(workbook, cell, tankCategoryForSequence.getColorCode()));
           }
         }
       } else {
@@ -483,7 +515,13 @@ public class GenerateLoadingPlanExcelReportService {
     }
   }
 
-  /** Fills color in provided cell using color code */
+  /**
+   * Fills color in provided cell using color code
+   *
+   * @param workbook workbook object of excel
+   * @param cell current cell
+   * @param colorCode hex color code
+   */
   private void fillColor(XSSFWorkbook workbook, XSSFCell cell, String colorCode) {
     XSSFCellStyle newCellStyle = workbook.createCellStyle();
     XSSFCellStyle cellStyle = cell.getCellStyle();
@@ -518,28 +556,26 @@ public class GenerateLoadingPlanExcelReportService {
     cell.setCellStyle(newCellStyle);
   }
 
-  /** Dynamically add colours in ballast end tanks */
+  /**
+   * Dynamically adds colours in ballast end tanks
+   *
+   * @param workbook workbook object of excel
+   * @param sheet current sheet of workbook
+   * @param cell current cell
+   * @param tankCargoDetails tank details having color code
+   * @return boolean showing success or failure
+   * @see #setTankColor(XSSFWorkbook, XSSFSheet, XSSFCell, List, List)
+   * @see #setCargoColor(XSSFWorkbook, XSSFCell, List)
+   */
   private boolean setAPTFPTTankColor(
-      XSSFWorkbook workbook,
-      XSSFSheet sheet,
-      XSSFCell cell,
-      TankCargoDetails apt,
-      TankCargoDetails fpt,
-      TankCargoDetails lfpt,
-      TankCargoDetails ufpt) {
+      XSSFWorkbook workbook, XSSFSheet sheet, XSSFCell cell, TankCargoDetails tankCargoDetails) {
     int row = 0;
     int col = 0;
     String cellValue = getCellValue(cell);
     if (cellValue != null && !cellValue.isBlank()) {
       TankCargoDetails tankFromFile = null;
-      if (apt != null) {
-        tankFromFile = getTank(cellValue, Arrays.asList(apt));
-      } else if (fpt != null) {
-        tankFromFile = getTank(cellValue, Arrays.asList(fpt));
-      } else if (ufpt != null) {
-        tankFromFile = getTank(cellValue, Arrays.asList(ufpt));
-      } else if (lfpt != null) {
-        tankFromFile = getTank(cellValue, Arrays.asList(lfpt));
+      if (tankCargoDetails != null) {
+        tankFromFile = getTank(cellValue, Collections.singletonList(tankCargoDetails));
       }
       if (tankFromFile != null) {
         if (tankFromFile.getColorCode() != null
@@ -558,7 +594,18 @@ public class GenerateLoadingPlanExcelReportService {
     return false;
   }
 
-  /** Dynamically add colours in tank layout */
+  /**
+   * Dynamically adds colours in tank layout
+   *
+   * @param workbook workbook object of excel
+   * @param sheet current sheet of workbook
+   * @param cell current cell
+   * @param cargoTanks cargo tank details
+   * @param ballastTanks ballast tank details
+   * @return boolean showing success or failure
+   * @see #setAPTFPTTankColor(XSSFWorkbook, XSSFSheet, XSSFCell, TankCargoDetails)
+   * @see #setCargoColor(XSSFWorkbook, XSSFCell, List)
+   */
   private Boolean setTankColor(
       XSSFWorkbook workbook,
       XSSFSheet sheet,

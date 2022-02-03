@@ -317,10 +317,10 @@ public class DischargeInformationService {
                 dischargeQuantityCargoDetails.getDischargeCargoNominationId());
             dischargingDelays.setDischargeInfoId(dischargeInfoId);
             dischargingDelays.setDuration(BigDecimal.ZERO);
-            dischargingDelays.setSequenceNo(
-                defaultSequenceNumberCounter.getAndSet(
-                    defaultSequenceNumberCounter.get()
-                        + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE));
+            defaultSequenceNumberCounter.set(
+                defaultSequenceNumberCounter.get()
+                    + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
+            dischargingDelays.setSequenceNo(defaultSequenceNumberCounter.get());
 
             dischargingDelays.setQuantity(
                 StringUtils.hasLength(dischargeQuantityCargoDetails.getCargoNominationQuantity())
