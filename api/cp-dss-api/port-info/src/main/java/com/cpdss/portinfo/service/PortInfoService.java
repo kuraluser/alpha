@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -109,15 +110,21 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
-  /** Retrieves portInfo for a list of port ids */
+  /**
+   * Retrieves portInfo for a list of port ids
+   *
+   * @param request grpc request of list of port ids
+   * @param responseObserver grpc response of port info
+   */
   @Override
   public void getPortInfoByPortIds(
       GetPortInfoByPortIdsRequest request, StreamObserver<PortReply> responseObserver) {
     PortReply.Builder portReply = PortReply.newBuilder();
     try {
       if (request != null && CollectionUtils.isEmpty(request.getIdList())) {
+        log.error("No port id found!");
         throw new GenericServiceException(
-            INVALID_PORTID, CommonErrorCodes.E_HTTP_BAD_REQUEST, null);
+            INVALID_PORTID, CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
       }
       if (request != null) {
         List<PortInfo> portList = portRepository.findByIdInAndIsActive(request.getIdList(), true);
@@ -137,6 +144,13 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
+  /**
+   * Assigns port details to reply builder
+   *
+   * @param portReply port reply builder
+   * @param portList list of port details
+   * @param berthDataNotNeed boolean flag to check if berth data are not needed
+   */
   private void getPorts(
       PortReply.Builder portReply, List<PortInfo> portList, Boolean berthDataNotNeed) {
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -202,20 +216,17 @@ public class PortInfoService extends PortInfoServiceImplBase {
           if (!berthInfoSet.isEmpty()) {
             Optional<BigDecimal> minDraftOfBerths =
                 berthInfoSet.stream()
-                    .filter(v -> v.getMaximumDraft() != null)
                     .map(BerthInfo::getMaximumDraft)
+                    .filter(Objects::nonNull)
                     .min(BigDecimal::compareTo);
-            if (minDraftOfBerths.isPresent()) {
-              portDetail.setMaxDraft(minDraftOfBerths.get().toString());
-            }
+            minDraftOfBerths.ifPresent(bigDecimal -> portDetail.setMaxDraft(bigDecimal.toString()));
             Optional<BigDecimal> minAirDraftOfBerths =
                 berthInfoSet.stream()
-                    .filter(v -> v.getAirDraft() != null)
                     .map(BerthInfo::getAirDraft)
+                    .filter(Objects::nonNull)
                     .min(BigDecimal::compareTo);
-            if (minAirDraftOfBerths.isPresent()) {
-              portDetail.setMaxAirDraft(minAirDraftOfBerths.get().toString());
-            }
+            minAirDraftOfBerths.ifPresent(
+                bigDecimal -> portDetail.setMaxAirDraft(bigDecimal.toString()));
           }
 
           Optional.ofNullable(port.getLattitude())
@@ -233,12 +244,10 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
           if (berthDataNotNeed == null || !berthDataNotNeed) {
             List<BerthInfo> berthList =
-                berthInfoSet.stream()
-                    .filter(item -> item.getIsActive().equals(true))
-                    .collect(Collectors.toList());
+                berthInfoSet.stream().filter(BerthInfo::getIsActive).collect(Collectors.toList());
             buildBerthInfoResponse(berthList, portDetail);
           }
-          // ##
+
           portReply.addPorts(portDetail);
         });
   }
@@ -281,10 +290,10 @@ public class PortInfoService extends PortInfoServiceImplBase {
   }
 
   /**
-   * Request object have Page Number and Offset Value
+   * Fetches port info by paging. Request object has Page Number and Offset Value
    *
-   * @param request
-   * @param responseObserver
+   * @param request grpc request
+   * @param responseObserver grpc reply of port details
    */
   @Override
   public void getPortInfoByPaging(
@@ -395,12 +404,14 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
   private BigDecimal getMaxManifoldHeight(BerthInfo berth) {
     try {
-      List<BerthManifold> var1 =
+      List<BerthManifold> berthManifolds =
           berthManifoldRepository.findByBerthInfoAndIsActiveTrue(berth.getId());
-      if (!var1.isEmpty()) {
-        BerthManifold va =
-            var1.stream().max(Comparator.comparing(BerthManifold::getManifoldHeight)).get();
-        if (va.getManifoldHeight() != null) return va.getManifoldHeight();
+      if (!berthManifolds.isEmpty()) {
+        BerthManifold berthManifold =
+            berthManifolds.stream()
+                .max(Comparator.comparing(BerthManifold::getManifoldHeight))
+                .get();
+        if (berthManifold.getManifoldHeight() != null) return berthManifold.getManifoldHeight();
       }
     } catch (Exception e) {
       log.error("Failed to get manifold data for berth Id {}, {}", berth.getId(), e.getMessage());
@@ -492,34 +503,80 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
-  private void buildBerthInfoResponse(List<BerthInfo> list, PortDetail.Builder portDetail) {
-    for (BerthInfo bi : list) {
-      com.cpdss.common.generated.PortInfo.BerthDetail.Builder builder2 =
+  /**
+   * Builds berth info response
+   *
+   * @param berthInfos list of berth details
+   * @param portDetail port details builder object
+   */
+  private void buildBerthInfoResponse(List<BerthInfo> berthInfos, PortDetail.Builder portDetail) {
+
+    for (BerthInfo berthInfo : berthInfos) {
+
+      com.cpdss.common.generated.PortInfo.BerthDetail.Builder builder =
           com.cpdss.common.generated.PortInfo.BerthDetail.newBuilder();
-      Optional.ofNullable(bi.getId()).ifPresent(builder2::setId);
-      Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
-      Optional.ofNullable(bi.getMaxShipChannel())
-          .ifPresent(v -> builder2.setMaxShipChannel(String.valueOf(v)));
-      Optional.ofNullable(bi.getBerthName()).ifPresent(v -> builder2.setBerthName(v));
-      Optional.ofNullable(bi.getMaxShipDepth())
-          .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
-      builder2.setMaxManifoldHeight(this.getMaxManifoldHeight(bi).toString());
 
-      Optional.ofNullable(bi.getAirDraft())
-          .ifPresent(v -> builder2.setAirDraftLimitation(String.valueOf(v)));
-      Optional.ofNullable(bi.getMaximumLoa()).ifPresent(v -> builder2.setMaxLoa(String.valueOf(v)));
-      Optional.ofNullable(bi.getMaximumDwt()).ifPresent(v -> builder2.setMaxDwt(String.valueOf(v)));
-      Optional.ofNullable(bi.getMaximumDraft())
-          .ifPresent(v -> builder2.setMaxDraft(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(berthInfo.getPortInfo().getId()).ifPresent(builder::setPortId);
+      Optional.ofNullable(berthInfo.getMaxShipChannel())
+          .ifPresent(v -> builder.setMaxShipChannel(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getBerthName()).ifPresent(builder::setBerthName);
+      Optional.ofNullable(berthInfo.getMaxShipDepth())
+          .ifPresent(v -> builder.setMaxShipDepth(String.valueOf(v)));
+      builder.setMaxManifoldHeight(this.getMaxManifoldHeight(berthInfo).toString());
 
-      Optional.ofNullable(bi.getLineDisplacement())
-          .ifPresent(v -> builder2.setLineDisplacement(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getAirDraft())
+          .ifPresent(v -> builder.setAirDraftLimitation(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getMaximumLoa())
+          .ifPresent(v -> builder.setMaxLoa(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getMaximumDwt())
+          .ifPresent(v -> builder.setMaxDwt(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getMaximumDraft())
+          .ifPresent(v -> builder.setMaxDraft(String.valueOf(v)));
 
-      Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
-      Optional.ofNullable(bi.getUnderKeelClearance()).ifPresent(builder2::setUkc);
-      Optional.ofNullable(bi.getBerthDatumDepth())
-          .ifPresent(v -> builder2.setBerthDatumDepth(String.valueOf(v)));
-      portDetail.addBerthDetails(builder2);
+      Optional.ofNullable(berthInfo.getLineDisplacement())
+          .ifPresent(v -> builder.setLineDisplacement(String.valueOf(v)));
+
+      Optional.ofNullable(berthInfo.getHoseConnection()).ifPresent(builder::setHoseConnection);
+      Optional.ofNullable(berthInfo.getUnderKeelClearance()).ifPresent(builder::setUkc);
+      Optional.ofNullable(berthInfo.getBerthDatumDepth())
+          .ifPresent(v -> builder.setBerthDatumDepth(String.valueOf(v)));
+
+      buildManifoldDetails(berthInfo.getBerthManifolds(), builder);
+
+      portDetail.addBerthDetails(builder);
+    }
+  }
+
+  /**
+   * Builds manifold details from entity
+   *
+   * @param berthManifolds set of berth manifold details
+   * @param builder berth detail builder object
+   * @see #buildManifoldDetails(List, BerthInfo)
+   */
+  private void buildManifoldDetails(
+      Set<BerthManifold> berthManifolds, BerthDetail.Builder builder) {
+
+    log.info("Inside buildManifoldDetails method!");
+
+    if (!CollectionUtils.isEmpty(berthManifolds)) {
+      berthManifolds.forEach(
+          berthManifold -> {
+            ManifoldDetail.Builder manifoldDetailBuilder = ManifoldDetail.newBuilder();
+
+            // Set fields
+            BeanUtils.copyProperties(berthManifold, manifoldDetailBuilder);
+            manifoldDetailBuilder.setManifoldHeight(
+                berthManifold.getManifoldHeight() != null
+                    ? String.valueOf(berthManifold.getManifoldHeight())
+                    : String.valueOf(BigDecimal.ZERO));
+            manifoldDetailBuilder.setMaxPressure(
+                berthManifold.getMaxPressure() != null
+                    ? String.valueOf(berthManifold.getMaxPressure())
+                    : String.valueOf(BigDecimal.ZERO));
+            builder.addManifoldDetails(manifoldDetailBuilder.build());
+          });
     }
   }
 
@@ -854,6 +911,12 @@ public class PortInfoService extends PortInfoServiceImplBase {
         .ifPresent(item -> portDetail.setCountryId(portInfo.getCountry().getId()));
   }
 
+  /**
+   * Saves a new port info or edits existing one
+   *
+   * @param request grpc port detail request
+   * @param responseObserver saved port detail response
+   */
   @Override
   public void savePortInfo(
       PortDetail request,
@@ -869,17 +932,16 @@ public class PortInfoService extends PortInfoServiceImplBase {
         portInfo = this.portRepository.getById(request.getId());
       }
       buildPortEntity(request, portInfo);
-      PortInfo savePortInfo = this.portRepository.save(portInfo);
-      List<PortInfo> portInfoList = new ArrayList<>();
-      portInfoList.add(savePortInfo);
-      getPort(portReply, savePortInfo);
+      PortInfo savedPortInfo = this.portRepository.save(portInfo);
+
+      getPort(portReply, savedPortInfo);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus("SUCCESS");
       portReply.setResponseStatus(responseStatus);
     } catch (Exception e) {
       log.error("Error in savePort method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
-      responseStatus.setStatus("FAILURE");
+      responseStatus.setStatus("FAILED");
       portReply.setResponseStatus(responseStatus);
     } finally {
       responseObserver.onNext(portReply.build());
@@ -888,12 +950,13 @@ public class PortInfoService extends PortInfoServiceImplBase {
   }
 
   /**
-   * Single Port Response
+   * Fetches single Port Response
    *
-   * @param portReply
-   * @param portInfo
+   * @param portReply port reply builder
+   * @param portInfo port info details
    */
   private void getPort(PortInfoReply.Builder portReply, PortInfo portInfo) {
+
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     PortDetail.Builder portDetail = PortDetail.newBuilder();
     Optional.ofNullable(portInfo.getId()).ifPresent(portDetail::setId);
@@ -951,20 +1014,16 @@ public class PortInfoService extends PortInfoServiceImplBase {
     if (!portInfo.getBerthInfoSet().isEmpty()) {
       Optional<BigDecimal> minDraftOfBerths =
           portInfo.getBerthInfoSet().stream()
-              .filter(v -> v.getMaximumDraft() != null)
               .map(BerthInfo::getMaximumDraft)
+              .filter(Objects::nonNull)
               .min(BigDecimal::compareTo);
-      if (minDraftOfBerths.isPresent()) {
-        portDetail.setMaxDraft(minDraftOfBerths.get().toString());
-      }
+      minDraftOfBerths.ifPresent(bigDecimal -> portDetail.setMaxDraft(bigDecimal.toString()));
       Optional<BigDecimal> minAirDraftOfBerths =
           portInfo.getBerthInfoSet().stream()
-              .filter(v -> v.getAirDraft() != null)
               .map(BerthInfo::getAirDraft)
+              .filter(Objects::nonNull)
               .min(BigDecimal::compareTo);
-      if (minAirDraftOfBerths.isPresent()) {
-        portDetail.setMaxAirDraft(minAirDraftOfBerths.get().toString());
-      }
+      minAirDraftOfBerths.ifPresent(bigDecimal -> portDetail.setMaxAirDraft(bigDecimal.toString()));
     }
 
     Optional.ofNullable(portInfo.getLattitude())
@@ -998,7 +1057,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
         || (portInfo.getCountry() != null
             && portInfo.getCountry().getId() != request.getCountryId())) {
       Country country = this.countryRepository.getById(request.getCountryId());
-      if (country != null) portInfo.setCountry(country);
+      portInfo.setCountry(country);
     }
 
     portInfo.setDensitySeaWater(
@@ -1015,7 +1074,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
         || (portInfo.getTimezone() != null
             && portInfo.getTimezone().getId() != request.getTimezoneId())) {
       Timezone timezone = this.timezoneRepository.getById(request.getTimezoneId());
-      if (timezone != null) portInfo.setTimezone(timezone);
+      portInfo.setTimezone(timezone);
     }
 
     portInfo.setTideHeightTo(
@@ -1039,11 +1098,11 @@ public class PortInfoService extends PortInfoServiceImplBase {
   }
 
   /**
-   * set BerthInformation for Ports
+   * Sets BerthInformation for Ports
    *
-   * @param berthDetailsList
-   * @param portInfo
-   * @return
+   * @param berthDetailsList list of berth details
+   * @param portInfo port info details
+   * @return set of berth info details
    */
   private Set<BerthInfo> setBerthInformationForThePorts(
       List<BerthDetail> berthDetailsList, PortInfo portInfo) throws GenericServiceException {
@@ -1058,10 +1117,9 @@ public class PortInfoService extends PortInfoServiceImplBase {
             this.berthInfoRepository.findByIdAndIsActiveTrue(berth.getId());
         if (berthOptResponse.isEmpty()) {
           log.error(
-              "Error in Save Port -> Berth Detail get -> portId: "
-                  + portInfo.getId()
-                  + " berth id: "
-                  + berth.getId());
+              "Error in Save Port -> Berth Detail get -> portId: {}, berth id: {}",
+              portInfo.getId(),
+              berth.getId());
           throw new GenericServiceException(
               "Invalid Berth Id",
               CommonErrorCodes.E_HTTP_BAD_REQUEST,
@@ -1085,9 +1143,54 @@ public class PortInfoService extends PortInfoServiceImplBase {
       berthResponse.setUnderKeelClearance(berth.getUkc());
       berthResponse.setIsActive(true);
       berthResponse.setPortInfo(portInfo);
+
+      buildManifoldDetails(berth.getManifoldDetailsList(), berthResponse);
+
       berthList.add(berthResponse);
     }
     return berthList;
+  }
+
+  /**
+   * Builds manifold details entity from grpc
+   *
+   * @param manifoldDetailsList list of manifold details from grpc request
+   * @param berthResponse berth info entity
+   * @see #buildManifoldDetails(Set, BerthDetail.Builder)
+   */
+  private void buildManifoldDetails(
+      List<ManifoldDetail> manifoldDetailsList, BerthInfo berthResponse) {
+
+    log.info("Inside buildManifoldDetails method!");
+
+    Set<BerthManifold> berthManifolds = new HashSet<>();
+    if (!CollectionUtils.isEmpty(manifoldDetailsList)) {
+
+      manifoldDetailsList.forEach(
+          manifoldDetail -> {
+            BerthManifold berthManifold = new BerthManifold();
+
+            // Set fields
+            BeanUtils.copyProperties(manifoldDetail, berthManifold);
+            berthManifold.setManifoldHeight(returnZeroIfBlank(manifoldDetail.getManifoldHeight()));
+            berthManifold.setMaxPressure(returnZeroIfBlank(manifoldDetail.getMaxPressure()));
+            berthManifold.setBerthInfo(berthResponse);
+            berthManifold.setIsActive(true);
+            berthManifolds.add(berthManifold);
+          });
+    }
+    berthResponse.setBerthManifolds(berthManifolds);
+  }
+
+  /**
+   * Returns big decimal value of provided string else returns big decimal zero
+   *
+   * @param string input string
+   * @return big decimal value
+   */
+  private BigDecimal returnZeroIfBlank(String string) {
+
+    return StringUtils.isBlank(string) ? BigDecimal.ZERO : new BigDecimal(string);
   }
 
   /**

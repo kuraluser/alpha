@@ -191,6 +191,18 @@ message BerthDetail{
 	string berthDatumDepth = 17;
 	string portMaxPermissibleDraft = 18;
 	string displacement = 19;
+	repeated ManifoldDetail manifoldDetails = 20;
+
+}
+
+message ManifoldDetail {
+	string manifoldName = 1;
+	int32 connectionNumber = 2;
+	int64 manifoldSize = 3;
+	string manifoldHeight = 4;
+	string maxPressure = 5;
+	int64 maxLoadingRate = 6;
+	int64 maxDischargeRate = 7;
 }
 
 message Country{

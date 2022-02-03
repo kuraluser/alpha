@@ -18059,6 +18059,19 @@ public final class PortInfo {
      * @return The bytes for displacement.
      */
     com.google.protobuf.ByteString getDisplacementBytes();
+
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    java.util.List<com.cpdss.common.generated.PortInfo.ManifoldDetail> getManifoldDetailsList();
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    com.cpdss.common.generated.PortInfo.ManifoldDetail getManifoldDetails(int index);
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    int getManifoldDetailsCount();
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    java.util.List<? extends com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder>
+        getManifoldDetailsOrBuilderList();
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder getManifoldDetailsOrBuilder(
+        int index);
   }
   /** Protobuf type {@code BerthDetail} */
   public static final class BerthDetail extends com.google.protobuf.GeneratedMessageV3
@@ -18088,6 +18101,7 @@ public final class PortInfo {
       berthDatumDepth_ = "";
       portMaxPermissibleDraft_ = "";
       displacement_ = "";
+      manifoldDetails_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -18109,6 +18123,7 @@ public final class PortInfo {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -18246,6 +18261,19 @@ public final class PortInfo {
                 displacement_ = s;
                 break;
               }
+            case 162:
+              {
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  manifoldDetails_ =
+                      new java.util.ArrayList<com.cpdss.common.generated.PortInfo.ManifoldDetail>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                manifoldDetails_.add(
+                    input.readMessage(
+                        com.cpdss.common.generated.PortInfo.ManifoldDetail.parser(),
+                        extensionRegistry));
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -18260,6 +18288,9 @@ public final class PortInfo {
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          manifoldDetails_ = java.util.Collections.unmodifiableList(manifoldDetails_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -18871,6 +18902,32 @@ public final class PortInfo {
       }
     }
 
+    public static final int MANIFOLDDETAILS_FIELD_NUMBER = 20;
+    private java.util.List<com.cpdss.common.generated.PortInfo.ManifoldDetail> manifoldDetails_;
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    public java.util.List<com.cpdss.common.generated.PortInfo.ManifoldDetail>
+        getManifoldDetailsList() {
+      return manifoldDetails_;
+    }
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    public java.util.List<? extends com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder>
+        getManifoldDetailsOrBuilderList() {
+      return manifoldDetails_;
+    }
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    public int getManifoldDetailsCount() {
+      return manifoldDetails_.size();
+    }
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    public com.cpdss.common.generated.PortInfo.ManifoldDetail getManifoldDetails(int index) {
+      return manifoldDetails_.get(index);
+    }
+    /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+    public com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder getManifoldDetailsOrBuilder(
+        int index) {
+      return manifoldDetails_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -18942,6 +18999,9 @@ public final class PortInfo {
       if (!getDisplacementBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 19, displacement_);
       }
+      for (int i = 0; i < manifoldDetails_.size(); i++) {
+        output.writeMessage(20, manifoldDetails_.get(i));
+      }
       unknownFields.writeTo(output);
     }
 
@@ -19010,6 +19070,10 @@ public final class PortInfo {
       if (!getDisplacementBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, displacement_);
       }
+      for (int i = 0; i < manifoldDetails_.size(); i++) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(20, manifoldDetails_.get(i));
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -19045,6 +19109,7 @@ public final class PortInfo {
       if (!getBerthDatumDepth().equals(other.getBerthDatumDepth())) return false;
       if (!getPortMaxPermissibleDraft().equals(other.getPortMaxPermissibleDraft())) return false;
       if (!getDisplacement().equals(other.getDisplacement())) return false;
+      if (!getManifoldDetailsList().equals(other.getManifoldDetailsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -19094,6 +19159,10 @@ public final class PortInfo {
       hash = (53 * hash) + getPortMaxPermissibleDraft().hashCode();
       hash = (37 * hash) + DISPLACEMENT_FIELD_NUMBER;
       hash = (53 * hash) + getDisplacement().hashCode();
+      if (getManifoldDetailsCount() > 0) {
+        hash = (37 * hash) + MANIFOLDDETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getManifoldDetailsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -19225,7 +19294,9 @@ public final class PortInfo {
       }
 
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getManifoldDetailsFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -19269,6 +19340,12 @@ public final class PortInfo {
 
         displacement_ = "";
 
+        if (manifoldDetailsBuilder_ == null) {
+          manifoldDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          manifoldDetailsBuilder_.clear();
+        }
         return this;
       }
 
@@ -19295,6 +19372,7 @@ public final class PortInfo {
       public com.cpdss.common.generated.PortInfo.BerthDetail buildPartial() {
         com.cpdss.common.generated.PortInfo.BerthDetail result =
             new com.cpdss.common.generated.PortInfo.BerthDetail(this);
+        int from_bitField0_ = bitField0_;
         result.id_ = id_;
         result.portId_ = portId_;
         result.loadingInfoId_ = loadingInfoId_;
@@ -19314,6 +19392,15 @@ public final class PortInfo {
         result.berthDatumDepth_ = berthDatumDepth_;
         result.portMaxPermissibleDraft_ = portMaxPermissibleDraft_;
         result.displacement_ = displacement_;
+        if (manifoldDetailsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            manifoldDetails_ = java.util.Collections.unmodifiableList(manifoldDetails_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.manifoldDetails_ = manifoldDetails_;
+        } else {
+          result.manifoldDetails_ = manifoldDetailsBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -19439,6 +19526,33 @@ public final class PortInfo {
           displacement_ = other.displacement_;
           onChanged();
         }
+        if (manifoldDetailsBuilder_ == null) {
+          if (!other.manifoldDetails_.isEmpty()) {
+            if (manifoldDetails_.isEmpty()) {
+              manifoldDetails_ = other.manifoldDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureManifoldDetailsIsMutable();
+              manifoldDetails_.addAll(other.manifoldDetails_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.manifoldDetails_.isEmpty()) {
+            if (manifoldDetailsBuilder_.isEmpty()) {
+              manifoldDetailsBuilder_.dispose();
+              manifoldDetailsBuilder_ = null;
+              manifoldDetails_ = other.manifoldDetails_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              manifoldDetailsBuilder_ =
+                  com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders
+                      ? getManifoldDetailsFieldBuilder()
+                      : null;
+            } else {
+              manifoldDetailsBuilder_.addAllMessages(other.manifoldDetails_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -19468,6 +19582,8 @@ public final class PortInfo {
         }
         return this;
       }
+
+      private int bitField0_;
 
       private long id_;
       /**
@@ -20784,6 +20900,225 @@ public final class PortInfo {
         return this;
       }
 
+      private java.util.List<com.cpdss.common.generated.PortInfo.ManifoldDetail> manifoldDetails_ =
+          java.util.Collections.emptyList();
+
+      private void ensureManifoldDetailsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          manifoldDetails_ =
+              new java.util.ArrayList<com.cpdss.common.generated.PortInfo.ManifoldDetail>(
+                  manifoldDetails_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.ManifoldDetail,
+              com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder,
+              com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder>
+          manifoldDetailsBuilder_;
+
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.ManifoldDetail>
+          getManifoldDetailsList() {
+        if (manifoldDetailsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(manifoldDetails_);
+        } else {
+          return manifoldDetailsBuilder_.getMessageList();
+        }
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public int getManifoldDetailsCount() {
+        if (manifoldDetailsBuilder_ == null) {
+          return manifoldDetails_.size();
+        } else {
+          return manifoldDetailsBuilder_.getCount();
+        }
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public com.cpdss.common.generated.PortInfo.ManifoldDetail getManifoldDetails(int index) {
+        if (manifoldDetailsBuilder_ == null) {
+          return manifoldDetails_.get(index);
+        } else {
+          return manifoldDetailsBuilder_.getMessage(index);
+        }
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder setManifoldDetails(
+          int index, com.cpdss.common.generated.PortInfo.ManifoldDetail value) {
+        if (manifoldDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureManifoldDetailsIsMutable();
+          manifoldDetails_.set(index, value);
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder setManifoldDetails(
+          int index, com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder builderForValue) {
+        if (manifoldDetailsBuilder_ == null) {
+          ensureManifoldDetailsIsMutable();
+          manifoldDetails_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder addManifoldDetails(com.cpdss.common.generated.PortInfo.ManifoldDetail value) {
+        if (manifoldDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureManifoldDetailsIsMutable();
+          manifoldDetails_.add(value);
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder addManifoldDetails(
+          int index, com.cpdss.common.generated.PortInfo.ManifoldDetail value) {
+        if (manifoldDetailsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureManifoldDetailsIsMutable();
+          manifoldDetails_.add(index, value);
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder addManifoldDetails(
+          com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder builderForValue) {
+        if (manifoldDetailsBuilder_ == null) {
+          ensureManifoldDetailsIsMutable();
+          manifoldDetails_.add(builderForValue.build());
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder addManifoldDetails(
+          int index, com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder builderForValue) {
+        if (manifoldDetailsBuilder_ == null) {
+          ensureManifoldDetailsIsMutable();
+          manifoldDetails_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder addAllManifoldDetails(
+          java.lang.Iterable<? extends com.cpdss.common.generated.PortInfo.ManifoldDetail> values) {
+        if (manifoldDetailsBuilder_ == null) {
+          ensureManifoldDetailsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(values, manifoldDetails_);
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder clearManifoldDetails() {
+        if (manifoldDetailsBuilder_ == null) {
+          manifoldDetails_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.clear();
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public Builder removeManifoldDetails(int index) {
+        if (manifoldDetailsBuilder_ == null) {
+          ensureManifoldDetailsIsMutable();
+          manifoldDetails_.remove(index);
+          onChanged();
+        } else {
+          manifoldDetailsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder getManifoldDetailsBuilder(
+          int index) {
+        return getManifoldDetailsFieldBuilder().getBuilder(index);
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder
+          getManifoldDetailsOrBuilder(int index) {
+        if (manifoldDetailsBuilder_ == null) {
+          return manifoldDetails_.get(index);
+        } else {
+          return manifoldDetailsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public java.util.List<? extends com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder>
+          getManifoldDetailsOrBuilderList() {
+        if (manifoldDetailsBuilder_ != null) {
+          return manifoldDetailsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(manifoldDetails_);
+        }
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder
+          addManifoldDetailsBuilder() {
+        return getManifoldDetailsFieldBuilder()
+            .addBuilder(com.cpdss.common.generated.PortInfo.ManifoldDetail.getDefaultInstance());
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder addManifoldDetailsBuilder(
+          int index) {
+        return getManifoldDetailsFieldBuilder()
+            .addBuilder(
+                index, com.cpdss.common.generated.PortInfo.ManifoldDetail.getDefaultInstance());
+      }
+      /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
+      public java.util.List<com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder>
+          getManifoldDetailsBuilderList() {
+        return getManifoldDetailsFieldBuilder().getBuilderList();
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.ManifoldDetail,
+              com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder,
+              com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder>
+          getManifoldDetailsFieldBuilder() {
+        if (manifoldDetailsBuilder_ == null) {
+          manifoldDetailsBuilder_ =
+              new com.google.protobuf.RepeatedFieldBuilderV3<
+                  com.cpdss.common.generated.PortInfo.ManifoldDetail,
+                  com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder,
+                  com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder>(
+                  manifoldDetails_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          manifoldDetails_ = null;
+        }
+        return manifoldDetailsBuilder_;
+      }
+
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -20832,6 +21167,1161 @@ public final class PortInfo {
 
     @java.lang.Override
     public com.cpdss.common.generated.PortInfo.BerthDetail getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
+  public interface ManifoldDetailOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:ManifoldDetail)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string manifoldName = 1;</code>
+     *
+     * @return The manifoldName.
+     */
+    java.lang.String getManifoldName();
+    /**
+     * <code>string manifoldName = 1;</code>
+     *
+     * @return The bytes for manifoldName.
+     */
+    com.google.protobuf.ByteString getManifoldNameBytes();
+
+    /**
+     * <code>int32 connectionNumber = 2;</code>
+     *
+     * @return The connectionNumber.
+     */
+    int getConnectionNumber();
+
+    /**
+     * <code>int64 manifoldSize = 3;</code>
+     *
+     * @return The manifoldSize.
+     */
+    long getManifoldSize();
+
+    /**
+     * <code>string manifoldHeight = 4;</code>
+     *
+     * @return The manifoldHeight.
+     */
+    java.lang.String getManifoldHeight();
+    /**
+     * <code>string manifoldHeight = 4;</code>
+     *
+     * @return The bytes for manifoldHeight.
+     */
+    com.google.protobuf.ByteString getManifoldHeightBytes();
+
+    /**
+     * <code>string maxPressure = 5;</code>
+     *
+     * @return The maxPressure.
+     */
+    java.lang.String getMaxPressure();
+    /**
+     * <code>string maxPressure = 5;</code>
+     *
+     * @return The bytes for maxPressure.
+     */
+    com.google.protobuf.ByteString getMaxPressureBytes();
+
+    /**
+     * <code>int64 maxLoadingRate = 6;</code>
+     *
+     * @return The maxLoadingRate.
+     */
+    long getMaxLoadingRate();
+
+    /**
+     * <code>int64 maxDischargeRate = 7;</code>
+     *
+     * @return The maxDischargeRate.
+     */
+    long getMaxDischargeRate();
+  }
+  /** Protobuf type {@code ManifoldDetail} */
+  public static final class ManifoldDetail extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:ManifoldDetail)
+      ManifoldDetailOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use ManifoldDetail.newBuilder() to construct.
+    private ManifoldDetail(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private ManifoldDetail() {
+      manifoldName_ = "";
+      manifoldHeight_ = "";
+      maxPressure_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new ManifoldDetail();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private ManifoldDetail(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                manifoldName_ = s;
+                break;
+              }
+            case 16:
+              {
+                connectionNumber_ = input.readInt32();
+                break;
+              }
+            case 24:
+              {
+                manifoldSize_ = input.readInt64();
+                break;
+              }
+            case 34:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                manifoldHeight_ = s;
+                break;
+              }
+            case 42:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxPressure_ = s;
+                break;
+              }
+            case 48:
+              {
+                maxLoadingRate_ = input.readInt64();
+                break;
+              }
+            case 56:
+              {
+                maxDischargeRate_ = input.readInt64();
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_ManifoldDetail_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo.internal_static_ManifoldDetail_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.ManifoldDetail.class,
+              com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder.class);
+    }
+
+    public static final int MANIFOLDNAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object manifoldName_;
+    /**
+     * <code>string manifoldName = 1;</code>
+     *
+     * @return The manifoldName.
+     */
+    public java.lang.String getManifoldName() {
+      java.lang.Object ref = manifoldName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        manifoldName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string manifoldName = 1;</code>
+     *
+     * @return The bytes for manifoldName.
+     */
+    public com.google.protobuf.ByteString getManifoldNameBytes() {
+      java.lang.Object ref = manifoldName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        manifoldName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CONNECTIONNUMBER_FIELD_NUMBER = 2;
+    private int connectionNumber_;
+    /**
+     * <code>int32 connectionNumber = 2;</code>
+     *
+     * @return The connectionNumber.
+     */
+    public int getConnectionNumber() {
+      return connectionNumber_;
+    }
+
+    public static final int MANIFOLDSIZE_FIELD_NUMBER = 3;
+    private long manifoldSize_;
+    /**
+     * <code>int64 manifoldSize = 3;</code>
+     *
+     * @return The manifoldSize.
+     */
+    public long getManifoldSize() {
+      return manifoldSize_;
+    }
+
+    public static final int MANIFOLDHEIGHT_FIELD_NUMBER = 4;
+    private volatile java.lang.Object manifoldHeight_;
+    /**
+     * <code>string manifoldHeight = 4;</code>
+     *
+     * @return The manifoldHeight.
+     */
+    public java.lang.String getManifoldHeight() {
+      java.lang.Object ref = manifoldHeight_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        manifoldHeight_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string manifoldHeight = 4;</code>
+     *
+     * @return The bytes for manifoldHeight.
+     */
+    public com.google.protobuf.ByteString getManifoldHeightBytes() {
+      java.lang.Object ref = manifoldHeight_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        manifoldHeight_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXPRESSURE_FIELD_NUMBER = 5;
+    private volatile java.lang.Object maxPressure_;
+    /**
+     * <code>string maxPressure = 5;</code>
+     *
+     * @return The maxPressure.
+     */
+    public java.lang.String getMaxPressure() {
+      java.lang.Object ref = maxPressure_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxPressure_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxPressure = 5;</code>
+     *
+     * @return The bytes for maxPressure.
+     */
+    public com.google.protobuf.ByteString getMaxPressureBytes() {
+      java.lang.Object ref = maxPressure_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxPressure_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MAXLOADINGRATE_FIELD_NUMBER = 6;
+    private long maxLoadingRate_;
+    /**
+     * <code>int64 maxLoadingRate = 6;</code>
+     *
+     * @return The maxLoadingRate.
+     */
+    public long getMaxLoadingRate() {
+      return maxLoadingRate_;
+    }
+
+    public static final int MAXDISCHARGERATE_FIELD_NUMBER = 7;
+    private long maxDischargeRate_;
+    /**
+     * <code>int64 maxDischargeRate = 7;</code>
+     *
+     * @return The maxDischargeRate.
+     */
+    public long getMaxDischargeRate() {
+      return maxDischargeRate_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (!getManifoldNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, manifoldName_);
+      }
+      if (connectionNumber_ != 0) {
+        output.writeInt32(2, connectionNumber_);
+      }
+      if (manifoldSize_ != 0L) {
+        output.writeInt64(3, manifoldSize_);
+      }
+      if (!getManifoldHeightBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, manifoldHeight_);
+      }
+      if (!getMaxPressureBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, maxPressure_);
+      }
+      if (maxLoadingRate_ != 0L) {
+        output.writeInt64(6, maxLoadingRate_);
+      }
+      if (maxDischargeRate_ != 0L) {
+        output.writeInt64(7, maxDischargeRate_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getManifoldNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, manifoldName_);
+      }
+      if (connectionNumber_ != 0) {
+        size += com.google.protobuf.CodedOutputStream.computeInt32Size(2, connectionNumber_);
+      }
+      if (manifoldSize_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, manifoldSize_);
+      }
+      if (!getManifoldHeightBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, manifoldHeight_);
+      }
+      if (!getMaxPressureBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, maxPressure_);
+      }
+      if (maxLoadingRate_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, maxLoadingRate_);
+      }
+      if (maxDischargeRate_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, maxDischargeRate_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.ManifoldDetail)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.ManifoldDetail other =
+          (com.cpdss.common.generated.PortInfo.ManifoldDetail) obj;
+
+      if (!getManifoldName().equals(other.getManifoldName())) return false;
+      if (getConnectionNumber() != other.getConnectionNumber()) return false;
+      if (getManifoldSize() != other.getManifoldSize()) return false;
+      if (!getManifoldHeight().equals(other.getManifoldHeight())) return false;
+      if (!getMaxPressure().equals(other.getMaxPressure())) return false;
+      if (getMaxLoadingRate() != other.getMaxLoadingRate()) return false;
+      if (getMaxDischargeRate() != other.getMaxDischargeRate()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + MANIFOLDNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getManifoldName().hashCode();
+      hash = (37 * hash) + CONNECTIONNUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getConnectionNumber();
+      hash = (37 * hash) + MANIFOLDSIZE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getManifoldSize());
+      hash = (37 * hash) + MANIFOLDHEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getManifoldHeight().hashCode();
+      hash = (37 * hash) + MAXPRESSURE_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxPressure().hashCode();
+      hash = (37 * hash) + MAXLOADINGRATE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getMaxLoadingRate());
+      hash = (37 * hash) + MAXDISCHARGERATE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getMaxDischargeRate());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.cpdss.common.generated.PortInfo.ManifoldDetail prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code ManifoldDetail} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:ManifoldDetail)
+        com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo.internal_static_ManifoldDetail_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo.internal_static_ManifoldDetail_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.ManifoldDetail.class,
+                com.cpdss.common.generated.PortInfo.ManifoldDetail.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.ManifoldDetail.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        manifoldName_ = "";
+
+        connectionNumber_ = 0;
+
+        manifoldSize_ = 0L;
+
+        manifoldHeight_ = "";
+
+        maxPressure_ = "";
+
+        maxLoadingRate_ = 0L;
+
+        maxDischargeRate_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo.internal_static_ManifoldDetail_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.ManifoldDetail getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.ManifoldDetail.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.ManifoldDetail build() {
+        com.cpdss.common.generated.PortInfo.ManifoldDetail result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.ManifoldDetail buildPartial() {
+        com.cpdss.common.generated.PortInfo.ManifoldDetail result =
+            new com.cpdss.common.generated.PortInfo.ManifoldDetail(this);
+        result.manifoldName_ = manifoldName_;
+        result.connectionNumber_ = connectionNumber_;
+        result.manifoldSize_ = manifoldSize_;
+        result.manifoldHeight_ = manifoldHeight_;
+        result.maxPressure_ = maxPressure_;
+        result.maxLoadingRate_ = maxLoadingRate_;
+        result.maxDischargeRate_ = maxDischargeRate_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.ManifoldDetail) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.ManifoldDetail) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.ManifoldDetail other) {
+        if (other == com.cpdss.common.generated.PortInfo.ManifoldDetail.getDefaultInstance())
+          return this;
+        if (!other.getManifoldName().isEmpty()) {
+          manifoldName_ = other.manifoldName_;
+          onChanged();
+        }
+        if (other.getConnectionNumber() != 0) {
+          setConnectionNumber(other.getConnectionNumber());
+        }
+        if (other.getManifoldSize() != 0L) {
+          setManifoldSize(other.getManifoldSize());
+        }
+        if (!other.getManifoldHeight().isEmpty()) {
+          manifoldHeight_ = other.manifoldHeight_;
+          onChanged();
+        }
+        if (!other.getMaxPressure().isEmpty()) {
+          maxPressure_ = other.maxPressure_;
+          onChanged();
+        }
+        if (other.getMaxLoadingRate() != 0L) {
+          setMaxLoadingRate(other.getMaxLoadingRate());
+        }
+        if (other.getMaxDischargeRate() != 0L) {
+          setMaxDischargeRate(other.getMaxDischargeRate());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.ManifoldDetail parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.ManifoldDetail) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object manifoldName_ = "";
+      /**
+       * <code>string manifoldName = 1;</code>
+       *
+       * @return The manifoldName.
+       */
+      public java.lang.String getManifoldName() {
+        java.lang.Object ref = manifoldName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          manifoldName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string manifoldName = 1;</code>
+       *
+       * @return The bytes for manifoldName.
+       */
+      public com.google.protobuf.ByteString getManifoldNameBytes() {
+        java.lang.Object ref = manifoldName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          manifoldName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string manifoldName = 1;</code>
+       *
+       * @param value The manifoldName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifoldName(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        manifoldName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string manifoldName = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearManifoldName() {
+
+        manifoldName_ = getDefaultInstance().getManifoldName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string manifoldName = 1;</code>
+       *
+       * @param value The bytes for manifoldName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifoldNameBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        manifoldName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int connectionNumber_;
+      /**
+       * <code>int32 connectionNumber = 2;</code>
+       *
+       * @return The connectionNumber.
+       */
+      public int getConnectionNumber() {
+        return connectionNumber_;
+      }
+      /**
+       * <code>int32 connectionNumber = 2;</code>
+       *
+       * @param value The connectionNumber to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConnectionNumber(int value) {
+
+        connectionNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 connectionNumber = 2;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearConnectionNumber() {
+
+        connectionNumber_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long manifoldSize_;
+      /**
+       * <code>int64 manifoldSize = 3;</code>
+       *
+       * @return The manifoldSize.
+       */
+      public long getManifoldSize() {
+        return manifoldSize_;
+      }
+      /**
+       * <code>int64 manifoldSize = 3;</code>
+       *
+       * @param value The manifoldSize to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifoldSize(long value) {
+
+        manifoldSize_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 manifoldSize = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearManifoldSize() {
+
+        manifoldSize_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object manifoldHeight_ = "";
+      /**
+       * <code>string manifoldHeight = 4;</code>
+       *
+       * @return The manifoldHeight.
+       */
+      public java.lang.String getManifoldHeight() {
+        java.lang.Object ref = manifoldHeight_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          manifoldHeight_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string manifoldHeight = 4;</code>
+       *
+       * @return The bytes for manifoldHeight.
+       */
+      public com.google.protobuf.ByteString getManifoldHeightBytes() {
+        java.lang.Object ref = manifoldHeight_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          manifoldHeight_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string manifoldHeight = 4;</code>
+       *
+       * @param value The manifoldHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifoldHeight(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        manifoldHeight_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string manifoldHeight = 4;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearManifoldHeight() {
+
+        manifoldHeight_ = getDefaultInstance().getManifoldHeight();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string manifoldHeight = 4;</code>
+       *
+       * @param value The bytes for manifoldHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setManifoldHeightBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        manifoldHeight_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object maxPressure_ = "";
+      /**
+       * <code>string maxPressure = 5;</code>
+       *
+       * @return The maxPressure.
+       */
+      public java.lang.String getMaxPressure() {
+        java.lang.Object ref = maxPressure_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxPressure_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxPressure = 5;</code>
+       *
+       * @return The bytes for maxPressure.
+       */
+      public com.google.protobuf.ByteString getMaxPressureBytes() {
+        java.lang.Object ref = maxPressure_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxPressure_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxPressure = 5;</code>
+       *
+       * @param value The maxPressure to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxPressure(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxPressure_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxPressure = 5;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxPressure() {
+
+        maxPressure_ = getDefaultInstance().getMaxPressure();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxPressure = 5;</code>
+       *
+       * @param value The bytes for maxPressure to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxPressureBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxPressure_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long maxLoadingRate_;
+      /**
+       * <code>int64 maxLoadingRate = 6;</code>
+       *
+       * @return The maxLoadingRate.
+       */
+      public long getMaxLoadingRate() {
+        return maxLoadingRate_;
+      }
+      /**
+       * <code>int64 maxLoadingRate = 6;</code>
+       *
+       * @param value The maxLoadingRate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxLoadingRate(long value) {
+
+        maxLoadingRate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 maxLoadingRate = 6;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxLoadingRate() {
+
+        maxLoadingRate_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long maxDischargeRate_;
+      /**
+       * <code>int64 maxDischargeRate = 7;</code>
+       *
+       * @return The maxDischargeRate.
+       */
+      public long getMaxDischargeRate() {
+        return maxDischargeRate_;
+      }
+      /**
+       * <code>int64 maxDischargeRate = 7;</code>
+       *
+       * @param value The maxDischargeRate to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxDischargeRate(long value) {
+
+        maxDischargeRate_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 maxDischargeRate = 7;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxDischargeRate() {
+
+        maxDischargeRate_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:ManifoldDetail)
+    }
+
+    // @@protoc_insertion_point(class_scope:ManifoldDetail)
+    private static final com.cpdss.common.generated.PortInfo.ManifoldDetail DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.ManifoldDetail();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.ManifoldDetail getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ManifoldDetail> PARSER =
+        new com.google.protobuf.AbstractParser<ManifoldDetail>() {
+          @java.lang.Override
+          public ManifoldDetail parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new ManifoldDetail(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<ManifoldDetail> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ManifoldDetail> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.ManifoldDetail getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
   }
@@ -27470,6 +28960,10 @@ public final class PortInfo {
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_BerthDetail_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_ManifoldDetail_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ManifoldDetail_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_Country_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_Country_fieldAccessorTable;
@@ -27557,7 +29051,7 @@ public final class PortInfo {
           + "\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006po"
           + "rtId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022\'\n\016respo"
           + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006bert"
-          + "hs\030\002 \003(\0132\014.BerthDetail\"\267\003\n\013BerthDetail\022\n"
+          + "hs\030\002 \003(\0132\014.BerthDetail\"\341\003\n\013BerthDetail\022\n"
           + "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingInf"
           + "oId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tber"
           + "thName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022se"
@@ -27568,51 +29062,57 @@ public final class PortInfo {
           + "ement\030\r \001(\t\022\026\n\016hoseConnection\030\016 \001(\t\022\016\n\006m"
           + "axDwt\030\017 \001(\t\022\013\n\003ukc\030\020 \001(\t\022\027\n\017berthDatumDe"
           + "pth\030\021 \001(\t\022\037\n\027portMaxPermissibleDraft\030\022 \001"
-          + "(\t\022\024\n\014displacement\030\023 \001(\t\"*\n\007Country\022\n\n\002i"
-          + "d\030\001 \001(\003\022\023\n\013countryName\030\002 \001(\t\"T\n\014CountryR"
-          + "eply\022\033\n\tcountries\030\001 \003(\0132\010.Country\022\'\n\016res"
-          + "ponseStatus\030\002 \001(\0132\017.ResponseStatus\"H\n\020Ca"
-          + "rgoPortRequest\022\021\n\tcompanyId\030\001 \001(\003\022\017\n\007car"
-          + "goId\030\002 \001(\003\022\020\n\010portName\030\003 \001(\t\"a\n\016CargoPor"
-          + "tReply\022\'\n\016responseStatus\030\001 \001(\0132\017.Respons"
-          + "eStatus\022&\n\005ports\030\002 \003(\0132\027.CargoPortMappin"
-          + "gDetail\"\341\001\n\026CargoPortMappingDetail\022\n\n\002id"
-          + "\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003\022\017\n\007cargoId\030\003 \001"
-          + "(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010portName\030\005 \001(\t\022\020\n\010"
-          + "portCode\030\006 \001(\t\022\023\n\013maxAirDraft\030\007 \001(\t\022\020\n\010m"
-          + "axDraft\030\010 \001(\t\022\024\n\014waterDensity\030\t \001(\t\022\021\n\tc"
-          + "ountryId\030\n \001(\003\022\023\n\013countryName\030\013 \001(\t\"F\n\027C"
-          + "argoPortMappingRequest\022+\n\020cargoPortMappi"
-          + "ng\030\001 \003(\0132\021.CargoPortMapping\"S\n\rPortInfoR"
-          + "eply\022\'\n\016responseStatus\030\001 \001(\0132\017.ResponseS"
-          + "tatus\022\031\n\004port\030\002 \001(\0132\013.PortDetail2\210\010\n\017Por"
-          + "tInfoService\022)\n\013GetPortInfo\022\014.PortReques"
-          + "t\032\n.PortReply\"\000\022R\n\024GetPortInfoByCargoId\022"
-          + "\034.GetPortInfoByCargoIdRequest\032\032.GetPortI"
-          + "nfoByCargoIdReply\"\000\022B\n\024GetPortInfoByPort"
-          + "Ids\022\034.GetPortInfoByPortIdsRequest\032\n.Port"
-          + "Reply\"\000\022G\n\031GetPortInfoDetailsForAlgo\022\034.G"
-          + "etPortInfoByPortIdsRequest\032\n.PortReply\"\000"
-          + "\0225\n\013GetTimezone\022\021.PortEmptyRequest\032\021.Tim"
-          + "ezoneResponse\"\000\022;\n\023GetPortInfoByPaging\022\026"
-          + ".PortRequestWithPaging\032\n.PortReply\"\000\022?\n\027"
-          + "GetBerthDetailsByPortId\022\016.PortIdRequest\032"
-          + "\022.BerthInfoResponse\"\000\022D\n\025GetCargoInfoByP"
-          + "ortIds\022\034.GetPortInfoByPortIdsRequest\032\013.C"
-          + "argoInfos\"\000\022B\n\027GetLoadingPlanBerthData\022\020"
-          + ".BerthIdsRequest\032\025.LoadingAlgoBerthData\022"
-          + ":\n\017GetAllCountries\022\026.google.protobuf.Emp"
-          + "ty\032\r.CountryReply\"\000\022>\n\026GetAllCargoPortMa"
-          + "pping\022\021.CargoPortRequest\032\017.CargoPortRepl"
-          + "y\"\000\022B\n\032GetAllCargoPortMappingById\022\021.Carg"
-          + "oPortRequest\032\017.CargoPortReply\"\000\022G\n\030SaveA"
-          + "llCargoPortMappings\022\030.CargoPortMappingRe"
-          + "quest\032\017.CargoPortReply\"\000\0221\n\023GetPortInfoD"
-          + "etailed\022\014.PortRequest\032\n.PortReply\"\000\022-\n\014S"
-          + "avePortInfo\022\013.PortDetail\032\016.PortInfoReply"
-          + "\"\000\022?\n\027DeleteCargoPortMappings\022\021.CargoPor"
-          + "tRequest\032\017.CargoPortReply\"\000B\036\n\032com.cpdss"
-          + ".common.generatedP\000b\006proto3"
+          + "(\t\022\024\n\014displacement\030\023 \001(\t\022(\n\017manifoldDeta"
+          + "ils\030\024 \003(\0132\017.ManifoldDetail\"\265\001\n\016ManifoldD"
+          + "etail\022\024\n\014manifoldName\030\001 \001(\t\022\030\n\020connectio"
+          + "nNumber\030\002 \001(\005\022\024\n\014manifoldSize\030\003 \001(\003\022\026\n\016m"
+          + "anifoldHeight\030\004 \001(\t\022\023\n\013maxPressure\030\005 \001(\t"
+          + "\022\026\n\016maxLoadingRate\030\006 \001(\003\022\030\n\020maxDischarge"
+          + "Rate\030\007 \001(\003\"*\n\007Country\022\n\n\002id\030\001 \001(\003\022\023\n\013cou"
+          + "ntryName\030\002 \001(\t\"T\n\014CountryReply\022\033\n\tcountr"
+          + "ies\030\001 \003(\0132\010.Country\022\'\n\016responseStatus\030\002 "
+          + "\001(\0132\017.ResponseStatus\"H\n\020CargoPortRequest"
+          + "\022\021\n\tcompanyId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\020\n\010"
+          + "portName\030\003 \001(\t\"a\n\016CargoPortReply\022\'\n\016resp"
+          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022&\n\005por"
+          + "ts\030\002 \003(\0132\027.CargoPortMappingDetail\"\341\001\n\026Ca"
+          + "rgoPortMappingDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcomp"
+          + "anyId\030\002 \001(\003\022\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004"
+          + " \001(\003\022\020\n\010portName\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t"
+          + "\022\023\n\013maxAirDraft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022"
+          + "\024\n\014waterDensity\030\t \001(\t\022\021\n\tcountryId\030\n \001(\003"
+          + "\022\023\n\013countryName\030\013 \001(\t\"F\n\027CargoPortMappin"
+          + "gRequest\022+\n\020cargoPortMapping\030\001 \003(\0132\021.Car"
+          + "goPortMapping\"S\n\rPortInfoReply\022\'\n\016respon"
+          + "seStatus\030\001 \001(\0132\017.ResponseStatus\022\031\n\004port\030"
+          + "\002 \001(\0132\013.PortDetail2\210\010\n\017PortInfoService\022)"
+          + "\n\013GetPortInfo\022\014.PortRequest\032\n.PortReply\""
+          + "\000\022R\n\024GetPortInfoByCargoId\022\034.GetPortInfoB"
+          + "yCargoIdRequest\032\032.GetPortInfoByCargoIdRe"
+          + "ply\"\000\022B\n\024GetPortInfoByPortIds\022\034.GetPortI"
+          + "nfoByPortIdsRequest\032\n.PortReply\"\000\022G\n\031Get"
+          + "PortInfoDetailsForAlgo\022\034.GetPortInfoByPo"
+          + "rtIdsRequest\032\n.PortReply\"\000\0225\n\013GetTimezon"
+          + "e\022\021.PortEmptyRequest\032\021.TimezoneResponse\""
+          + "\000\022;\n\023GetPortInfoByPaging\022\026.PortRequestWi"
+          + "thPaging\032\n.PortReply\"\000\022?\n\027GetBerthDetail"
+          + "sByPortId\022\016.PortIdRequest\032\022.BerthInfoRes"
+          + "ponse\"\000\022D\n\025GetCargoInfoByPortIds\022\034.GetPo"
+          + "rtInfoByPortIdsRequest\032\013.CargoInfos\"\000\022B\n"
+          + "\027GetLoadingPlanBerthData\022\020.BerthIdsReque"
+          + "st\032\025.LoadingAlgoBerthData\022:\n\017GetAllCount"
+          + "ries\022\026.google.protobuf.Empty\032\r.CountryRe"
+          + "ply\"\000\022>\n\026GetAllCargoPortMapping\022\021.CargoP"
+          + "ortRequest\032\017.CargoPortReply\"\000\022B\n\032GetAllC"
+          + "argoPortMappingById\022\021.CargoPortRequest\032\017"
+          + ".CargoPortReply\"\000\022G\n\030SaveAllCargoPortMap"
+          + "pings\022\030.CargoPortMappingRequest\032\017.CargoP"
+          + "ortReply\"\000\0221\n\023GetPortInfoDetailed\022\014.Port"
+          + "Request\032\n.PortReply\"\000\022-\n\014SavePortInfo\022\013."
+          + "PortDetail\032\016.PortInfoReply\"\000\022?\n\027DeleteCa"
+          + "rgoPortMappings\022\021.CargoPortRequest\032\017.Car"
+          + "goPortReply\"\000B\036\n\032com.cpdss.common.genera"
+          + "tedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -27805,36 +29305,50 @@ public final class PortInfo {
               "BerthDatumDepth",
               "PortMaxPermissibleDraft",
               "Displacement",
+              "ManifoldDetails",
             });
-    internal_static_Country_descriptor = getDescriptor().getMessageTypes().get(17);
+    internal_static_ManifoldDetail_descriptor = getDescriptor().getMessageTypes().get(17);
+    internal_static_ManifoldDetail_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_ManifoldDetail_descriptor,
+            new java.lang.String[] {
+              "ManifoldName",
+              "ConnectionNumber",
+              "ManifoldSize",
+              "ManifoldHeight",
+              "MaxPressure",
+              "MaxLoadingRate",
+              "MaxDischargeRate",
+            });
+    internal_static_Country_descriptor = getDescriptor().getMessageTypes().get(18);
     internal_static_Country_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_Country_descriptor,
             new java.lang.String[] {
               "Id", "CountryName",
             });
-    internal_static_CountryReply_descriptor = getDescriptor().getMessageTypes().get(18);
+    internal_static_CountryReply_descriptor = getDescriptor().getMessageTypes().get(19);
     internal_static_CountryReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CountryReply_descriptor,
             new java.lang.String[] {
               "Countries", "ResponseStatus",
             });
-    internal_static_CargoPortRequest_descriptor = getDescriptor().getMessageTypes().get(19);
+    internal_static_CargoPortRequest_descriptor = getDescriptor().getMessageTypes().get(20);
     internal_static_CargoPortRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoPortRequest_descriptor,
             new java.lang.String[] {
               "CompanyId", "CargoId", "PortName",
             });
-    internal_static_CargoPortReply_descriptor = getDescriptor().getMessageTypes().get(20);
+    internal_static_CargoPortReply_descriptor = getDescriptor().getMessageTypes().get(21);
     internal_static_CargoPortReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoPortReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Ports",
             });
-    internal_static_CargoPortMappingDetail_descriptor = getDescriptor().getMessageTypes().get(21);
+    internal_static_CargoPortMappingDetail_descriptor = getDescriptor().getMessageTypes().get(22);
     internal_static_CargoPortMappingDetail_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoPortMappingDetail_descriptor,
@@ -27851,14 +29365,14 @@ public final class PortInfo {
               "CountryId",
               "CountryName",
             });
-    internal_static_CargoPortMappingRequest_descriptor = getDescriptor().getMessageTypes().get(22);
+    internal_static_CargoPortMappingRequest_descriptor = getDescriptor().getMessageTypes().get(23);
     internal_static_CargoPortMappingRequest_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_CargoPortMappingRequest_descriptor,
             new java.lang.String[] {
               "CargoPortMapping",
             });
-    internal_static_PortInfoReply_descriptor = getDescriptor().getMessageTypes().get(23);
+    internal_static_PortInfoReply_descriptor = getDescriptor().getMessageTypes().get(24);
     internal_static_PortInfoReply_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_PortInfoReply_descriptor,

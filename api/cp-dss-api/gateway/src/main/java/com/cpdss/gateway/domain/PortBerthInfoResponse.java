@@ -2,6 +2,7 @@
 package com.cpdss.gateway.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -14,8 +15,9 @@ public class PortBerthInfoResponse {
   private BigDecimal depthInDatum;
   private BigDecimal maxDwt;
   private BigDecimal maxLoa;
-  private BigDecimal maxManifoldHeight;
+  private List<ManifoldDetail> manifoldDetails;
   private String minUKC;
   private String regulationAndRestriction;
   private BigDecimal maxDraft;
+  private BigDecimal maxManifoldHeight;
 }

@@ -10,6 +10,7 @@ import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.ManifoldDetail;
 import com.google.protobuf.Empty;
 import io.micrometer.core.instrument.util.StringUtils;
 import java.math.BigDecimal;
@@ -17,8 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Slf4j
 @Service
@@ -42,11 +45,11 @@ public class PortInfoService {
   /**
    * Get port master details with berth information for the requested port id.
    *
-   * @param portId
-   * @param correlationId
+   * @param portId port id
+   * @param correlationId correlation id
    * @return PortDetailResponse
-   * @throws NumberFormatException
-   * @throws GenericServiceException
+   * @throws NumberFormatException In case of format mismatch
+   * @throws GenericServiceException In case of failures
    */
   public PortDetailResponse getPortInformationByPortId(Long portId, String correlationId)
       throws GenericServiceException {
@@ -55,10 +58,11 @@ public class PortInfoService {
     builder.addId(portId);
     PortReply portReply = portInfoServiceBlockingStub.getPortInfoByPortIds(builder.build());
     if (!SUCCESS.equals(portReply.getResponseStatus().getStatus())) {
+      log.error("Failed to get port details for port id {}", portId);
       throw new GenericServiceException(
-          "failed to get vessel detailed information ",
+          "Failed to get port details for port id " + portId,
           portReply.getResponseStatus().getCode(),
-          HttpStatusCode.valueOf(Integer.valueOf(portReply.getResponseStatus().getCode())));
+          HttpStatusCode.valueOf(portReply.getResponseStatus().getHttpStatusCode()));
     }
     PortDetailResponse response = new PortDetailResponse();
     PortDetails portDetails = new PortDetails();
@@ -106,9 +110,9 @@ public class PortInfoService {
   }
 
   /**
-   * Set berth information in the response for the ports.
+   * Sets berth information in the response for the ports.
    *
-   * @param berthDetailsList
+   * @param berthDetailsList list of berth details
    * @return List of PortBerthInfoResponse.
    */
   private List<PortBerthInfoResponse> setBerthInformationForThePorts(
@@ -136,9 +140,53 @@ public class PortInfoService {
       berthResponse.setMaxLoa(
           berth.getMaxLoa().isEmpty() ? null : new BigDecimal(berth.getMaxLoa()));
       berthResponse.setMinUKC(berth.getUkc().isEmpty() ? null : berth.getUkc());
+
+      buildManifoldDetails(berth.getManifoldDetailsList(), berthResponse);
       berthList.add(berthResponse);
     }
     return berthList;
+  }
+
+  /**
+   * Builds manifold details from grpc response
+   *
+   * @param manifoldDetailsList list of manifold details from grpc response
+   * @param berthResponse berth response output
+   * @see #buildManifoldDetails(List, BerthDetail.Builder)
+   */
+  private void buildManifoldDetails(
+      List<PortInfo.ManifoldDetail> manifoldDetailsList, PortBerthInfoResponse berthResponse) {
+
+    log.info("Inside buildManifoldDetails method!");
+    List<ManifoldDetail> manifoldDetails = new ArrayList<>();
+
+    if (!CollectionUtils.isEmpty(manifoldDetailsList)) {
+      manifoldDetailsList.forEach(
+          manifoldDetailGenerated -> {
+            ManifoldDetail manifoldDetail = new ManifoldDetail();
+
+            // Set fields
+            BeanUtils.copyProperties(manifoldDetailGenerated, manifoldDetail);
+            manifoldDetail.setManifoldHeight(
+                returnZeroIfBlank(manifoldDetailGenerated.getManifoldHeight()));
+            manifoldDetail.setMaxPressure(
+                returnZeroIfBlank(manifoldDetailGenerated.getMaxPressure()));
+
+            manifoldDetails.add(manifoldDetail);
+          });
+    }
+    berthResponse.setManifoldDetails(manifoldDetails);
+  }
+
+  /**
+   * Returns big decimal value of provided string else returns big decimal zero
+   *
+   * @param string input string
+   * @return big decimal value
+   */
+  private BigDecimal returnZeroIfBlank(String string) {
+
+    return StringUtils.isBlank(string) ? BigDecimal.ZERO : new BigDecimal(string);
   }
 
   /**
@@ -194,7 +242,7 @@ public class PortInfoService {
     if (portInfoReply == null
         || !SUCCESS.equalsIgnoreCase(portInfoReply.getResponseStatus().getStatus()))
       throw new GenericServiceException(
-          "Error in calling cargo service",
+          "Error in calling cargo service!",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
 
@@ -251,17 +299,18 @@ public class PortInfoService {
         portDetailed.getAmbientTemperature() == null
             ? ""
             : portDetailed.getAmbientTemperature().toString());
-    buildBirthInfoForPort(portDetailed.getBerthInfo(), portDetailRequest);
+    buildBerthInfoForPort(portDetailed.getBerthInfo(), portDetailRequest);
   }
 
   /**
    * Building BerthDetail builder
    *
-   * @param portBerthInfoResponseList
-   * @param portDetailRequest
+   * @param portBerthInfoResponseList berth details from payload
+   * @param portDetailRequest grpc request builder of port details
    */
-  public void buildBirthInfoForPort(
+  public void buildBerthInfoForPort(
       List<PortBerthInfoResponse> portBerthInfoResponseList, PortDetail.Builder portDetailRequest) {
+
     if (portBerthInfoResponseList == null) return;
     portBerthInfoResponseList.forEach(
         portBerthInfoResponse -> {
@@ -298,12 +347,42 @@ public class PortInfoService {
                   : portBerthInfoResponse.getMaxLoa().toString());
           berthDetail.setUkc(
               portBerthInfoResponse.getMinUKC() == null ? "" : portBerthInfoResponse.getMinUKC());
+
           berthDetail.setMaxDraft(
               portBerthInfoResponse.getMaxDraft() == null
                   ? ""
                   : portBerthInfoResponse.getMaxDraft().toString());
+          buildManifoldDetails(portBerthInfoResponse.getManifoldDetails(), berthDetail);
           portDetailRequest.addBerthDetails(berthDetail);
         });
+  }
+
+  /**
+   * Builds manifold details from payload
+   *
+   * @param manifoldDetails list of manifold details from payload
+   * @param berthDetail berth details builder for grpc
+   * @see #buildManifoldDetails(List, PortBerthInfoResponse)
+   */
+  private void buildManifoldDetails(
+      List<ManifoldDetail> manifoldDetails, BerthDetail.Builder berthDetail) {
+
+    log.info("Inside buildManifoldDetails method!");
+    if (!CollectionUtils.isEmpty(manifoldDetails)) {
+
+      manifoldDetails.forEach(
+          manifoldDetail -> {
+            PortInfo.ManifoldDetail.Builder manifoldDetailBuilder =
+                PortInfo.ManifoldDetail.newBuilder();
+
+            // Set fields
+            BeanUtils.copyProperties(manifoldDetail, manifoldDetailBuilder);
+            manifoldDetailBuilder.setManifoldHeight(
+                String.valueOf(manifoldDetail.getManifoldHeight()));
+            manifoldDetailBuilder.setMaxPressure(String.valueOf(manifoldDetail.getMaxPressure()));
+            berthDetail.addManifoldDetails(manifoldDetailBuilder.build());
+          });
+    }
   }
 
   /**

@@ -24,7 +24,7 @@ public class BerthManifold extends EntityDoc implements Serializable {
   private BigDecimal loadingRateLimit;
 
   @Column(name = "manifold_connection_number")
-  private Integer manifoldConnectionNumber;
+  private Integer connectionNumber;
 
   @Column(name = "manifold_height")
   private BigDecimal manifoldHeight;
@@ -33,7 +33,7 @@ public class BerthManifold extends EntityDoc implements Serializable {
   private String manifoldName;
 
   @Column(name = "max_loading_rate")
-  private BigDecimal maxLoadingRate;
+  private Long maxLoadingRate;
 
   @Column(name = "max_pressure")
   private BigDecimal maxPressure;
@@ -42,4 +42,10 @@ public class BerthManifold extends EntityDoc implements Serializable {
   @ManyToOne
   @JoinColumn(name = "berth_xid")
   private BerthInfo berthInfo;
+
+  @Column(name = "manifold_size")
+  private Long manifoldSize;
+
+  @Column(name = "max_discharge_rate")
+  private Long maxDischargeRate;
 }

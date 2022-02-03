@@ -138,7 +138,8 @@ public class PortInfoServiceTest {
   private PortInfo.PortReply getPRNS() {
     PortInfo.PortReply reply =
         PortInfo.PortReply.newBuilder()
-            .setResponseStatus(Common.ResponseStatus.newBuilder().setCode("200").build())
+            .setResponseStatus(
+                Common.ResponseStatus.newBuilder().setCode("200").setHttpStatusCode(400).build())
             .build();
     return reply;
   }
