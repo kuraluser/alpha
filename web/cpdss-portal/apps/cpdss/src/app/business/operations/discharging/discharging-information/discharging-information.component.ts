@@ -279,7 +279,7 @@ export class DischargingInformationComponent implements OnInit, OnDestroy {
       this.dischargingInformationData.dischargeStages.isStageOffsetUsed = formControlChecked;
       formControlChecked ? stageDetailsForm.get('stageOffset').enable() : stageDetailsForm.get('stageOffset').disable();
     } else {
-      this.dischargingInformationData.dischargeStages.isStageOffsetUsed = formControlChecked;
+      this.dischargingInformationData.dischargeStages.isStageDurationUsed = formControlChecked;
       formControlChecked ? stageDetailsForm.get('stageDuration').enable() : stageDetailsForm.get('stageDuration').disable();
     }
     this.onUpdateDischargingStages();
