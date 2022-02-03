@@ -3449,10 +3449,11 @@ public class LoadableStudyService {
       jsonTypeID = DISCHARGE_STUDY_RESULT_JSON_ID;
     }
     try {
-      String requestJsonString = objectMapper.writeValueAsString(requestJson);
       objectMapper.writeValue(
-          new File(this.rootFolder + fileName + loadableStudiesId + ".json"), requestJsonString);
-      StatusReply reply = this.saveJson(loadableStudiesId, jsonTypeID, requestJsonString);
+          new File(this.rootFolder + fileName + loadableStudiesId + ".json"), requestJson);
+      StatusReply reply =
+          this.saveJson(
+              loadableStudiesId, jsonTypeID, objectMapper.writeValueAsString(requestJson));
       if (!SUCCESS.equals(reply.getStatus())) {
         log.error("Error occured  in gateway while writing JSON to database.");
       }
