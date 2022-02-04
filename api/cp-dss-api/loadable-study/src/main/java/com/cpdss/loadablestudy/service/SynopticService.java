@@ -333,12 +333,20 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
           this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
               loadableStudy, firstPortId, true);
       // populating ohq data if its empty
+      List<Long> portRotationIds =
+          portRotations.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList());
+      List<Object[]> objects =
+          this.onHandQuantityRepository.findByLoadableStudyIdAndPortRotationIdInAndIsActive(
+              loadableStudy.getId(), portRotationIds, true);
       portRotations.forEach(
           portRotation -> {
-            List<OnHandQuantity> ohqPortEntities =
-                this.onHandQuantityRepository.findByLoadableStudyAndPortRotationAndIsActive(
-                    loadableStudy, portRotation, true);
-            if (ohqPortEntities.isEmpty()) {
+            List<Long> ohqIds = new ArrayList<>();
+            objects.forEach(
+                obj -> {
+                  if (Long.parseLong(String.valueOf(obj[1])) == portRotation.getId())
+                    ohqIds.add(Long.parseLong(String.valueOf(obj[0])));
+                });
+            if (ohqIds.isEmpty()) {
               try {
                 this.populateOnHandQuantityData(Optional.of(loadableStudy), portRotation);
               } catch (GenericServiceException e) {
@@ -359,18 +367,15 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       // ballast data of
       // all ports
       if (patternIds != null && !patternIds.isEmpty()) {
-        patternIds.forEach(
-            patternId -> {
-              cargoDetails.addAll(
-                  this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
-                      patternId, true));
-              ballastDetails.addAll(
-                  this.loadablePlanStowageBallastDetailsRepository
-                      .findByLoadablePatternIdAndIsActive(patternId, true));
-              commingleDetails.addAll(
-                  this.loadablePlanCommingleDetailsPortwiseRepository
-                      .findByLoadablePatternIdAndIsActive(patternId, true));
-            });
+        cargoDetails.addAll(
+            this.loadablePatternCargoDetailsRepository.findByLoadablePatternIdInAndIsActive(
+                patternIds, true));
+        ballastDetails.addAll(
+            this.loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdInAndIsActive(
+                patternIds, true));
+        commingleDetails.addAll(
+            this.loadablePlanCommingleDetailsPortwiseRepository
+                .findByLoadablePatternIdInAndIsActive(patternIds, true));
       }
       for (SynopticalTable synopticalEntity : synopticalTableList) {
         LoadableStudy.SynopticalRecord.Builder builder =
