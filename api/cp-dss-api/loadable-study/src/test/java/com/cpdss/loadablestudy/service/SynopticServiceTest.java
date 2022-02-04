@@ -1536,6 +1536,14 @@ public class SynopticServiceTest {
     when(synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
             anyLong(), anyLong(), anyString(), anyBoolean()))
         .thenReturn(getOST());
+    Mockito.when(
+            synopticalTableRepository.findByLoadableStudyXIdAndOperationTypeAndIsActive(
+                Mockito.anyLong(), Mockito.any(), Mockito.anyBoolean()))
+        .thenReturn(getST());
+    Mockito.when(
+            synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+                Mockito.anyLong(), Mockito.anyBoolean()))
+        .thenReturn(getLSTLD());
     when(this.synopticalTableLoadicatorDataRepository
             .findBySynopticalTableAndLoadablePatternIdAndIsActive(any(), anyLong(), anyBoolean()))
         .thenReturn(getSTLD());
@@ -1595,6 +1603,20 @@ public class SynopticServiceTest {
 
     var result = spyService.buildPortOperationsTable(1l, 1l);
     assertTrue(!(result.getOperationsTableList().isEmpty()));
+  }
+
+  private List<SynopticalTableLoadicatorData> getLSTLD() {
+    List<SynopticalTableLoadicatorData> list = new ArrayList<>();
+    SynopticalTableLoadicatorData data = new SynopticalTableLoadicatorData();
+    data.setSynopticalTable(getSST());
+    list.add(data);
+    return list;
+  }
+
+  private SynopticalTable getSST() {
+    SynopticalTable synopticalTable = new SynopticalTable();
+    synopticalTable.setId(1L);
+    return synopticalTable;
   }
 
   private VesselInfo.VesselReply getVesselReply() {

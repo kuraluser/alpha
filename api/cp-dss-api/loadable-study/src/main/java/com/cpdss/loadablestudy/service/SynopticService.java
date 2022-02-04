@@ -1322,10 +1322,10 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
    * Method to build port operations table
    *
    * @param loadableStudyId loadable study id value
-   * @param loadablePatterId loadable pattern id value
+   * @param loadablePatternId loadable pattern id value
    * @return PortOperationTable object
    */
-  public PortOperationTable buildPortOperationsTable(long loadableStudyId, long loadablePatterId)
+  public PortOperationTable buildPortOperationsTable(long loadableStudyId, long loadablePatternId)
       throws GenericServiceException {
 
     // Get loadable study port rotation details
@@ -1366,16 +1366,30 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     // Get cargo details
     List<LoadablePatternCargoDetails> cargoes =
         loadablePatternCargoDetailsRepository.findByLoadablePatternIdAndIsActive(
-            loadablePatterId, true);
+            loadablePatternId, true);
     // Get on hand quantities
     List<OnHandQuantity> onHandQuantities =
         onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudyDetails, true);
     // Get ballast details
     List<LoadablePlanStowageBallastDetails> ballastDetails =
         loadablePlanStowageBallastDetailsRepository.findByLoadablePatternIdAndIsActive(
-            loadablePatterId, true);
+            loadablePatternId, true);
     // Set OperationsTable details
     List<OperationsTable> operationsTableList = new ArrayList<>();
+
+    List<SynopticalTable> arrSynopticRecords =
+        this.synopticalTableRepository.findByLoadableStudyXIdAndOperationTypeAndIsActive(
+            loadableStudyId, OPERATION_TYPE_ARR, true);
+    List<SynopticalTableLoadicatorData> arrSynopticalTableLoadicatorDataList =
+        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+            loadablePatternId, true);
+    List<SynopticalTable> depSynopticRecords =
+        this.synopticalTableRepository.findByLoadableStudyXIdAndOperationTypeAndIsActive(
+            loadableStudyId, OPERATION_TYPE_DEP, true);
+    List<SynopticalTableLoadicatorData> depSynopticalTableLoadicatorDataList =
+        this.synopticalTableLoadicatorDataRepository.findByLoadablePatternIdAndIsActive(
+            loadablePatternId, true);
+
     for (com.cpdss.loadablestudy.domain.LoadableStudyPortRotation portDetails :
         loadableStudy.getLoadableStudyPortRotation()) {
 
@@ -1394,22 +1408,35 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               .filter(port -> port.getId().longValue() == portDetails.getPortId().longValue())
               .findFirst();
       System.out.println(portMasterDetails.get().getOffset());
+
       Optional<SynopticalTable> arrSynopticRecord =
-          this.synopticalTableRepository
-              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
-                  loadableStudyId, loadableStudyPortRotation.getId(), OPERATION_TYPE_ARR, true);
+          arrSynopticRecords.stream()
+              .filter(
+                  arrSynopticRec ->
+                      arrSynopticRec.getLoadableStudyPortRotation().getId()
+                          == loadableStudyPortRotation.getId())
+              .findFirst();
       SynopticalTableLoadicatorData arrSynopticalTableLoadicatorData =
-          this.synopticalTableLoadicatorDataRepository
-              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
-                  arrSynopticRecord.get(), loadablePatterId, true);
+          arrSynopticalTableLoadicatorDataList.stream()
+              .filter(
+                  arrsynoptic ->
+                      arrsynoptic.getSynopticalTable().getId() == arrSynopticRecord.get().getId())
+              .findFirst()
+              .get();
       Optional<SynopticalTable> depSynopticRecord =
-          this.synopticalTableRepository
-              .findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
-                  loadableStudyId, loadableStudyPortRotation.getId(), OPERATION_TYPE_DEP, true);
+          depSynopticRecords.stream()
+              .filter(
+                  depSynopticRec ->
+                      depSynopticRec.getLoadableStudyPortRotation().getId()
+                          == loadableStudyPortRotation.getId())
+              .findFirst();
       SynopticalTableLoadicatorData depSynopticalTableLoadicatorData =
-          this.synopticalTableLoadicatorDataRepository
-              .findBySynopticalTableAndLoadablePatternIdAndIsActive(
-                  depSynopticRecord.get(), loadablePatterId, true);
+          depSynopticalTableLoadicatorDataList.stream()
+              .filter(
+                  depsynoptic ->
+                      depsynoptic.getSynopticalTable().getId() == depSynopticRecord.get().getId())
+              .findFirst()
+              .get();
       // Calculating displacement
       // Get the port-wise cargo total
       double cargoArrTotal =
