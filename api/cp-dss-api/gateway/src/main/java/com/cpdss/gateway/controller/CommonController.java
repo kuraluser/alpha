@@ -1,7 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.controller;
 
-import static com.cpdss.common.constants.FileRepoConstants.*;
+import static com.cpdss.common.constants.FileRepoConstants.getFileRepoSection;
 
 import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.CommonRestException;
@@ -162,7 +162,8 @@ public class CommonController {
       @RequestParam(name = "fileType", required = true) String fileType,
       @RequestParam(name = "section", required = true) String section,
       @RequestParam(name = "category", required = true) String category,
-      @RequestParam(name = "vesselId", required = true) Long vesselId)
+      @RequestParam(name = "vesselId", required = true) Long vesselId,
+      @RequestParam(name = "isSystem", required = false) Boolean isSystem)
       throws CommonRestException {
     try {
       log.info(
@@ -171,6 +172,7 @@ public class CommonController {
           fileName,
           fileType,
           section);
+      if (isSystem == null) isSystem = false;
       return fileRepoService.addFileToRepo(
           file,
           voyageNo,
@@ -180,7 +182,7 @@ public class CommonController {
           category,
           headers.getFirst(CORRELATION_ID_HEADER),
           vesselId,
-          false);
+          isSystem);
 
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving file repo details", e);

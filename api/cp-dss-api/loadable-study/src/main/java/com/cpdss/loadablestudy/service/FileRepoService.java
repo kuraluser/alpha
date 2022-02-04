@@ -35,7 +35,7 @@ public class FileRepoService {
    * @param fileRepoAddRequest request object
    * @return response from file repo API
    */
-  public FileRepoReply addFileToFileRepo(FileRepoAddRequest fileRepoAddRequest) {
+  public FileRepoReply addFileToFileRepo(FileRepoAddRequest fileRepoAddRequest, Boolean isSystem) {
 
     // Set the headers
     final HttpHeaders headers = new HttpHeaders();
@@ -58,6 +58,7 @@ public class FileRepoService {
     requestBody.add("section", fileRepoAddRequest.getSection().getSection());
     requestBody.add("category", fileRepoAddRequest.getCategory());
     requestBody.add("vesselId", fileRepoAddRequest.getVesselId());
+    requestBody.add("isSystem", isSystem);
 
     HttpEntity<MultiValueMap<String, Object>> requestEntity =
         new HttpEntity<>(requestBody, headers);

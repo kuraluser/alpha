@@ -6,6 +6,8 @@ import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
+import com.cpdss.common.constants.FileRepoConstants;
+import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
@@ -16,7 +18,6 @@ import com.cpdss.common.utils.MessageTypes;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.domain.*;
 import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import com.cpdss.loadablestudy.entity.OnHandQuantity;
 import com.cpdss.loadablestudy.entity.SynopticalTable;
@@ -39,6 +40,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -130,6 +132,10 @@ public class LoadicatorService {
   @Autowired AlgoErrorHeadingRepository algoErrorHeadingRepository;
 
   @Autowired AlgoErrorsRepository algoErrorsRepository;
+  @Autowired private LoadablePlanService loadablePlanService;
+  @Autowired private FileRepoService fileRepoService;
+  public String OUTPUT_FILE_LOCATION = "Vessel_{id}_Voyage_{voyg}_LoadablePattern_{load}_plan.xlsx";
+  public String SUB_FOLDER_NAME = "/reports/loading";
 
   public void saveLodicatorDataForSynoptical(
       com.cpdss.loadablestudy.entity.LoadablePattern loadablePattern,
@@ -1426,6 +1432,7 @@ public class LoadicatorService {
         judgementEnabled ? "enabled" : "disabled");
     List<SynopticalTableLoadicatorData> entities = new ArrayList<>();
     List<String> judgements = new ArrayList<String>();
+    List<LoadablePattern> loadablePatterns = new ArrayList<>();
     if (isPattern) {
       Boolean isValid = true;
       for (LoadicatorResultDetails result :
@@ -1530,9 +1537,9 @@ public class LoadicatorService {
           loadablePatternRepository.save(loadablePattern);
         }
       }
-      List<LoadablePattern> loadablePatterns =
+      loadablePatterns =
           loadablePatternRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
-      if (loadablePatterns.isEmpty()) {
+      if (loadablePatterns == null || loadablePatterns.isEmpty()) {
         log.error("Judgement check failed for loadable study {}", loadableStudy.getId());
         saveJudgements(loadableStudy.getId(), judgements, false);
         this.updateFeedbackLoopParameters(
@@ -1554,9 +1561,57 @@ public class LoadicatorService {
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
       }
     }
-
+    log.error("************COMING*********");
     List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
         synopticalTableLoadicatorDataRepository.saveAll(entities);
+    // loadable study pattern save
+    if (loadablePatterns != null && !loadablePatterns.isEmpty()) {
+      try {
+        for (LoadablePattern loadablePattern : loadablePatterns) {
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request =
+              com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder()
+                  .setVesselId(loadableStudy.getVesselXId())
+                  .setLoadableStudyId(loadableStudy.getId())
+                  .setLoadablePatternId(loadablePattern.getId())
+                  .build();
+          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder
+              dataChunkBuilder =
+                  com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.newBuilder();
+          try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            loadablePlanService.getLoadablePlanReport(workbook, request, dataChunkBuilder);
+            String actualFileName =
+                getFileName(
+                    loadableStudy.getVesselXId(),
+                    loadablePattern.getId(),
+                    loadableStudy.getVoyage().getVoyageNo());
+            FileRepoAddRequest fileRepoAddRequest = new FileRepoAddRequest();
+            fileRepoAddRequest.setVoyageNo(loadableStudy.getVoyage().getVoyageNo());
+            fileRepoAddRequest.setFileName(
+                actualFileName.split("/")[actualFileName.split("/").length - 1]);
+            fileRepoAddRequest.setVesselId(loadableStudy.getVesselXId());
+            fileRepoAddRequest.setSection(FileRepoConstants.FileRepoSection.LOADABLE_STUDY);
+            fileRepoAddRequest.setCategory(FILE_REPO_CATEGORY);
+            fileRepoAddRequest.setFileType(SUB_FOLDER_NAME + "/");
+            fileRepoAddRequest.setFile(dataChunkBuilder.getData().toByteArray());
+            FileRepoReply fileRepoReply =
+                fileRepoService.addFileToFileRepo(fileRepoAddRequest, true);
+          } catch (Exception e) {
+            log.error(
+                "Error in loadable study excel save : vesselId -> "
+                    + loadableStudy.getVesselXId()
+                    + " loadable study id -> "
+                    + loadableStudy.getId()
+                    + " patternId ->"
+                    + loadablePattern.getId(),
+                e);
+          }
+        }
+      } catch (Exception e) {
+        log.error(
+            "Error in loadable study excel save -> loadable study id -> " + loadableStudy.getId(),
+            e);
+      }
+    }
     return synopticalTableLoadicatorDataList;
   }
 
@@ -1815,5 +1870,13 @@ public class LoadicatorService {
         log.info("Communication table update : " + loadableStudyCommunicationStatus.getId());
       }
     }
+  }
+
+  private String getFileName(Long vesselId, Long loadablePatternId, String voyageNo) {
+    return OUTPUT_FILE_LOCATION
+        .replace("{id}", vesselId.toString())
+        .replace("{load}", loadablePatternId.toString())
+        .replace("{voyg}", voyageNo)
+        .replace(" ", "_");
   }
 }

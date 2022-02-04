@@ -23,6 +23,7 @@ import com.cpdss.gateway.service.DischargeStudyService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
 import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
 import com.cpdss.gateway.service.dischargeplan.DischargingInstructionService;
+import com.cpdss.gateway.service.dischargeplan.GenerateDischargingPlanExcelReportService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class DischargePlanControllerTest {
   @MockBean DischargePlanController dischargePlanController;
   @MockBean DischargingInstructionService dischargingInstructionService;
   @MockBean private DischargeStudyService dischargeStudyService;
+  @MockBean GenerateDischargingPlanExcelReportService dischargingPlanExcelReportService;
 
   // Common for discharge plan controller
   private static final String CORRELATION_ID_HEADER = "correlationId";

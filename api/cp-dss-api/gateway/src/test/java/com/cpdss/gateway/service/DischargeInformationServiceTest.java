@@ -5,10 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.gateway.domain.dischargeplan.DischargeInformation;
-import com.cpdss.gateway.service.dischargeplan.DischargeInformationBuilderService;
-import com.cpdss.gateway.service.dischargeplan.DischargeInformationGrpcService;
-import com.cpdss.gateway.service.dischargeplan.DischargeInformationService;
-import com.cpdss.gateway.service.dischargeplan.DischargingSequenceService;
+import com.cpdss.gateway.service.dischargeplan.*;
 import com.cpdss.gateway.service.loadingplan.LoadingInformationService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanBuilderService;
 import com.cpdss.gateway.service.loadingplan.LoadingPlanGrpcService;
@@ -42,6 +39,7 @@ public class DischargeInformationServiceTest {
   @MockBean VesselInfoService vesselInfoService;
   @MockBean DischargingSequenceService dischargingSequenceService;
   @MockBean LoadableStudyService loadableStudyService;
+  @MockBean GenerateDischargingPlanExcelReportService dischargingPlanExcelReportService;
 
   @BeforeEach
   public void init() {

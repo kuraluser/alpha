@@ -547,7 +547,8 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           fileRepoAddRequest.setFileType(path.toString());
           fileRepoAddRequest.setFile(attachment.getByteString().toByteArray());
 
-          FileRepoReply fileRepoReply = fileRepoService.addFileToFileRepo(fileRepoAddRequest);
+          FileRepoReply fileRepoReply =
+              fileRepoService.addFileToFileRepo(fileRepoAddRequest, false);
           log.debug("Added to file repo. Response: {}", fileRepoReply);
         }
         this.loadableStudyAttachmentsRepository.saveAll(attachmentCollection);

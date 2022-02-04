@@ -164,7 +164,7 @@ public class LoadableStudyService {
   private static final String OPERATIONS_URI = "operations";
   private static final String CORRELATION_ID_HEADER = "correlationId";
   public String SUB_FOLDER_NAME = "/reports/loading";
-  public String OUTPUT_FILE_LOCATION = "Vessel_{id}_LoadableStudy_{load}_plan.xlsx";
+  public String OUTPUT_FILE_LOCATION = "Vessel_{id}_Voyage_{voyg}_LoadablePattern_{load}_plan.xlsx";
 
   @Autowired private UsersRepository usersRepository;
 
@@ -3513,6 +3513,8 @@ public class LoadableStudyService {
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     // saving loadable study pattern to file repo
     if (LOADABLE_STUDY_SAVE_REQUEST.equalsIgnoreCase(requestType)
+        && (loadablePlanRequest.getHasLoadicator() == null
+            || !loadablePlanRequest.getHasLoadicator())
         && !algoReply.getPatternIdList().isEmpty()) {
       algoReply
           .getPatternIdList()
@@ -6016,7 +6018,7 @@ public class LoadableStudyService {
               Integer.parseInt(loadablePlanReportReply.getResponseStatus().getCode())));
     }
     if (isSaveExcel) {
-      String actualFileName = getFileName(vesselId, loadableStudyId);
+      String actualFileName = getFileName(vesselId, loadablePatternId, voyageNo);
       String extension =
           actualFileName.substring(actualFileName.lastIndexOf(".") + 1).toLowerCase();
       MultipartFile multipartFile =
@@ -6554,10 +6556,11 @@ public class LoadableStudyService {
     return loadablePlanReportReply.getData().toByteArray();
   }
 
-  private String getFileName(Long vesselId, Long loadableStudyId) {
+  private String getFileName(Long vesselId, Long loadablePatternId, String voyageNo) {
     return OUTPUT_FILE_LOCATION
         .replace("{id}", vesselId.toString())
-        .replace("{load}", loadableStudyId.toString())
+        .replace("{load}", loadablePatternId.toString())
+        .replace("{voyg}", voyageNo)
         .replace(" ", "_");
   }
 }

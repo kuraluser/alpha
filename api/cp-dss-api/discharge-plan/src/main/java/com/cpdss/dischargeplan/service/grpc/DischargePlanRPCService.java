@@ -13,12 +13,8 @@ import com.cpdss.common.generated.LoadableStudy.AlgoStatusReply;
 import com.cpdss.common.generated.LoadableStudy.AlgoStatusRequest;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadablePlanCommingleDetails.Builder;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingSequenceRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillReply;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UllageBillRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsRequest;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.UpdateUllageDetailsResponse;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
@@ -881,7 +877,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
     log.info("Inside save Discharging Plan");
     DischargingPlanSaveResponse.Builder builder = DischargingPlanSaveResponse.newBuilder();
     try {
-      dischargePlanAlgoService.saveDischargingSequenceAndPlan(request);
+      dischargePlanAlgoService.saveDischargingSequenceAndPlan(request, builder);
       builder.setResponseStatus(
           ResponseStatus.newBuilder().setStatus(DischargePlanConstants.SUCCESS).build());
     } catch (Exception e) {

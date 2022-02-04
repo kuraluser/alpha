@@ -59,6 +59,11 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
 
               break;
             }
+          case 16:
+            {
+              portRotationId_ = input.readInt64();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -118,6 +123,17 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
     return getResponseStatus();
   }
 
+  public static final int PORTROTATIONID_FIELD_NUMBER = 2;
+  private long portRotationId_;
+  /**
+   * <code>int64 portRotationId = 2;</code>
+   *
+   * @return The portRotationId.
+   */
+  public long getPortRotationId() {
+    return portRotationId_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -135,6 +151,9 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
     if (responseStatus_ != null) {
       output.writeMessage(1, getResponseStatus());
     }
+    if (portRotationId_ != 0L) {
+      output.writeInt64(2, portRotationId_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -146,6 +165,9 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
     size = 0;
     if (responseStatus_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getResponseStatus());
+    }
+    if (portRotationId_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(2, portRotationId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -167,6 +189,7 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
     if (hasResponseStatus()) {
       if (!getResponseStatus().equals(other.getResponseStatus())) return false;
     }
+    if (getPortRotationId() != other.getPortRotationId()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -182,6 +205,8 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
       hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
       hash = (53 * hash) + getResponseStatus().hashCode();
     }
+    hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -328,6 +353,8 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
         responseStatus_ = null;
         responseStatusBuilder_ = null;
       }
+      portRotationId_ = 0L;
+
       return this;
     }
 
@@ -362,6 +389,7 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
       } else {
         result.responseStatus_ = responseStatusBuilder_.build();
       }
+      result.portRotationId_ = portRotationId_;
       onBuilt();
       return result;
     }
@@ -417,6 +445,9 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
               .getDefaultInstance()) return this;
       if (other.hasResponseStatus()) {
         mergeResponseStatus(other.getResponseStatus());
+      }
+      if (other.getPortRotationId() != 0L) {
+        setPortRotationId(other.getPortRotationId());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -565,6 +596,39 @@ public final class DischargingPlanSaveResponse extends com.google.protobuf.Gener
         responseStatus_ = null;
       }
       return responseStatusBuilder_;
+    }
+
+    private long portRotationId_;
+    /**
+     * <code>int64 portRotationId = 2;</code>
+     *
+     * @return The portRotationId.
+     */
+    public long getPortRotationId() {
+      return portRotationId_;
+    }
+    /**
+     * <code>int64 portRotationId = 2;</code>
+     *
+     * @param value The portRotationId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPortRotationId(long value) {
+
+      portRotationId_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 portRotationId = 2;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearPortRotationId() {
+
+      portRotationId_ = 0L;
+      onChanged();
+      return this;
     }
 
     @java.lang.Override

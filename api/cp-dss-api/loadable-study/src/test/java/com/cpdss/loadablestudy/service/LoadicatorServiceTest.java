@@ -81,6 +81,8 @@ public class LoadicatorServiceTest {
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
   @MockBean AlgoErrorHeadingRepository algoErrorHeadingRepository;
   @MockBean AlgoErrorsRepository algoErrorsRepository;
+  @MockBean private LoadablePlanService loadablePlanService;
+  @MockBean private FileRepoService fileRepoService;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";

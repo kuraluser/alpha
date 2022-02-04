@@ -14,13 +14,7 @@ import com.cpdss.common.generated.LoadableStudy.JsonRequest;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.loadableStudy.LoadableStudyModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanCommingleDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanPortWiseDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanStabilityParameters;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.PumpOperation;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.Valve;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.MessageTypes;
@@ -28,22 +22,13 @@ import com.cpdss.dischargeplan.common.CommunicationStatus;
 import com.cpdss.dischargeplan.common.DischargePlanConstants;
 import com.cpdss.dischargeplan.common.RuleUtility;
 import com.cpdss.dischargeplan.communication.DischargePlanStagingService;
-import com.cpdss.dischargeplan.domain.BerthDetails;
-import com.cpdss.dischargeplan.domain.CargoForCowDetails;
-import com.cpdss.dischargeplan.domain.CargoMachineryInUse;
-import com.cpdss.dischargeplan.domain.CowHistory;
+import com.cpdss.dischargeplan.domain.*;
 import com.cpdss.dischargeplan.domain.CowPlan;
-import com.cpdss.dischargeplan.domain.DischargeBerthDetails;
 import com.cpdss.dischargeplan.domain.DischargeDelays;
 import com.cpdss.dischargeplan.domain.DischargeDetails;
-import com.cpdss.dischargeplan.domain.DischargeInformationAlgoRequest;
 import com.cpdss.dischargeplan.domain.DischargeMachinesInUse;
-import com.cpdss.dischargeplan.domain.DischargePatternDetails;
 import com.cpdss.dischargeplan.domain.DischargePlanPortWiseDetails;
 import com.cpdss.dischargeplan.domain.DischargeRates;
-import com.cpdss.dischargeplan.domain.DischargeSequences;
-import com.cpdss.dischargeplan.domain.DischargeStages;
-import com.cpdss.dischargeplan.domain.PostDischargeRates;
 import com.cpdss.dischargeplan.domain.ReasonForDelay;
 import com.cpdss.dischargeplan.domain.TrimAllowed;
 import com.cpdss.dischargeplan.domain.cargo.DischargeQuantityCargoDetails;
@@ -1077,7 +1062,8 @@ public class DischargePlanAlgoService {
     }
   }
 
-  public void saveDischargingSequenceAndPlan(DischargingPlanSaveRequest request)
+  public void saveDischargingSequenceAndPlan(
+      DischargingPlanSaveRequest request, DischargingPlanSaveResponse.Builder builder)
       throws GenericServiceException {
     log.info(
         "Saving Loading plan and sequence of loading information {}",
@@ -1091,7 +1077,8 @@ public class DischargePlanAlgoService {
           CommonErrorCodes.E_HTTP_BAD_REQUEST,
           HttpStatusCode.BAD_REQUEST);
     }
-
+    // for excel
+    builder.setPortRotationId(dischargingInfo.getPortRotationXid());
     dischargeInformationService.updateDischargingPlanDetailsFromAlgo(
         dischargingInfo.getId(), request.getDischargingPlanDetailsFromAlgo());
 

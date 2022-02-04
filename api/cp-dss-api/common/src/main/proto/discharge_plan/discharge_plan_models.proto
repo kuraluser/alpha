@@ -362,6 +362,7 @@ message DischargingPlanSaveRequest {
 }
 message DischargingPlanSaveResponse {
   ResponseStatus responseStatus = 1;
+  int64 portRotationId =2;
 }
 
 message DischargeInfoStatusRequest {

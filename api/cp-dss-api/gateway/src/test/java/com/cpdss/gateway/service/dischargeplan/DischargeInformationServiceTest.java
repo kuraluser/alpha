@@ -10,13 +10,13 @@ import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.LoadableStudy.LoadingInformationSynopticalReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.generated.discharge_plan.*;
-import com.cpdss.common.generated.discharge_plan.CowPlan;
-import com.cpdss.common.generated.discharge_plan.DischargeInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.gateway.domain.*;
-import com.cpdss.gateway.domain.dischargeplan.*;
+import com.cpdss.gateway.domain.dischargeplan.DischargingInformationRequest;
+import com.cpdss.gateway.domain.dischargeplan.DischargingPlanAlgoRequest;
+import com.cpdss.gateway.domain.dischargeplan.PlannedCargo;
+import com.cpdss.gateway.domain.dischargeplan.PostDischargeStage;
 import com.cpdss.gateway.domain.loadingplan.*;
-import com.cpdss.gateway.domain.loadingplan.CargoMachineryInUse;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanBallastDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanRobDetails;
 import com.cpdss.gateway.domain.loadingplan.sequence.LoadingPlanStowageDetails;
@@ -67,6 +67,8 @@ public class DischargeInformationServiceTest {
 
   @MockBean
   DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargePlanServiceBlockingStub;
+
+  @MockBean GenerateDischargingPlanExcelReportService dischargingPlanExcelReportService;
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;

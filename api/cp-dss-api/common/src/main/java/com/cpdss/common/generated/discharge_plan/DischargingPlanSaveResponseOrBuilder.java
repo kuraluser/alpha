@@ -20,4 +20,11 @@ public interface DischargingPlanSaveResponseOrBuilder
   com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
   /** <code>.ResponseStatus responseStatus = 1;</code> */
   com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+
+  /**
+   * <code>int64 portRotationId = 2;</code>
+   *
+   * @return The portRotationId.
+   */
+  long getPortRotationId();
 }
