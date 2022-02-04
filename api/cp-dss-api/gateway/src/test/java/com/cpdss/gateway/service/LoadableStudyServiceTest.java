@@ -323,7 +323,11 @@ class LoadableStudyServiceTest {
                     CORRELATION_ID_HEADER_VALUE,
                     new MultipartFile[] {file}));
     assertAll(
-        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () ->
+            assertEquals(
+                CommonErrorCodes.E_CPDSS_UNSUPPORTED_ATTACHMENT_FILE_TYPE,
+                ex.getCode(),
+                "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 

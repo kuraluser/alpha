@@ -512,9 +512,11 @@ public class LoadableStudyService {
           file.getOriginalFilename() == null ? "" : file.getOriginalFilename();
       if (!ATTACHMENT_ALLOWED_EXTENSIONS.contains(
           originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase())) {
+        log.error(
+            "File type of the attachment is not supported for file name : {}", originalFileName);
         throw new GenericServiceException(
-            "unsupported file type",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            "File type of the attachment is not supported" + originalFileName,
+            CommonErrorCodes.E_CPDSS_UNSUPPORTED_ATTACHMENT_FILE_TYPE,
             HttpStatusCode.BAD_REQUEST);
       }
     }
