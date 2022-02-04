@@ -22,11 +22,11 @@ import { isAlphaCharacterAvaiable } from '../../directives/alpha-validator.direc
 export class NewDischargeStudyPopUpComponent implements OnInit {
 
 
-  
+
   @Input() display;
   @Input() vesselInfoList;
   @Input() selectedVoyage;
-  @Output() displayPopup = new EventEmitter();  
+  @Output() displayPopup = new EventEmitter();
   @Output() addedNewDischargeStudy = new EventEmitter<Object>();
   popUpHeader :any;
   @Input() isEdit;
@@ -85,10 +85,10 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
       this.dischargeStudyForm.controls.enquiryDetails.setValue(this.selectedDischargeStudy.detail);
     }
     else{
-      this.dischargeStudyForm.reset();
+      this.dischargeStudyForm?.reset();
     }
   }
-  
+
   /**
    * Method to set up the header and save label in pop up.
    *
@@ -119,7 +119,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
    *
    * @memberof NewDischargeStudyPopUpComponent
    */
-  
+
   getErrorMessages(){
     this.errorMessages= this.dischargeStudyListTransformationApiService.setValidationErrorMessage();
   }
@@ -130,7 +130,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
    * @return {*}  {ValidationErrors}
    * @memberof NewDischargeStudyPopUpComponent
    */
-  fieldError(formControlName: string): ValidationErrors { 
+  fieldError(formControlName: string): ValidationErrors {
     const formControl = this.field(formControlName);
     return formControl.invalid && (formControl.dirty || formControl.touched) ? formControl.errors : null;
   }
@@ -163,7 +163,7 @@ export class NewDischargeStudyPopUpComponent implements OnInit {
   /**Method to save/update discharge study */
 
 
-  public async saveOrUpdateDischargeStudy() {  
+  public async saveOrUpdateDischargeStudy() {
     this.dischargeStudyForm.markAllAsTouched();
     this.ngxSpinnerService.show();
     let result;

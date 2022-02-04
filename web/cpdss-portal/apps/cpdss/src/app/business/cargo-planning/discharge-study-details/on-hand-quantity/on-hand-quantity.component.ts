@@ -202,6 +202,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
         }, 500);
       }
 
+    } else {
+      this.ohqPorts = [];
     }
     this.ngxSpinnerService.hide();
   }

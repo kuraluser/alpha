@@ -315,6 +315,8 @@ export class LoadingInformationComponent implements OnInit, OnDestroy {
     this.loadingInformationPostData.loadingStages = <ILoadingDischargingStages>{};
     this.loadingInformationPostData.loadingStages.stageOffset = this.stageOffset;
     this.loadingInformationPostData.loadingStages.stageDuration = this.stageDuration;
+    this.loadingInformationPostData.loadingStages.isStageOffsetUsed = this.isStageOffsetUsed;
+    this.loadingInformationPostData.loadingStages.isStageDurationUsed = this.isStageDurationUsed;
     // this.loadingInformationPostData.loadingStages.trackStartEndStage = this.trackStartEndStage;  //may require in future
     // this.loadingInformationPostData.loadingStages.trackGradeSwitch = this.trackGradeSwitch;
     this.hasUnSavedData = true;
@@ -473,10 +475,7 @@ export class LoadingInformationComponent implements OnInit, OnDestroy {
    * @memberof LoadingInformationComponent
    */
   onChangeNoOfStagesCheck() {
-    this.loadingInformationPostData.loadingStages = <ILoadingDischargingStages>{};
-    this.loadingInformationPostData.loadingStages.isStageOffsetUsed = this.isStageOffsetUsed;
-    this.loadingInformationPostData.loadingStages.isStageDurationUsed = this.isStageDurationUsed;
-    this.hasUnSavedData = true;
+    this.onUpdateLoadingStages();
   }
 
 }

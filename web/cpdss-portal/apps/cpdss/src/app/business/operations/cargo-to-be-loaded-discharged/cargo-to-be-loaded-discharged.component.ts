@@ -154,9 +154,9 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         cargo.shipFigure = shipFigure?.toString();
 
         cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
-        cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, true, true, true);
-        cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, true, true, true);
-        cargo['maxLoadingRateEdit'] = new ValueObject<number | string>(cargo?.maxLoadingRate, true, true, true, true);
+        cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, false, true, false);
+        cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, false, true, false);
+        cargo['maxLoadingRateEdit'] = new ValueObject<number | string>(cargo?.maxLoadingRate, true, false, true, false);
 
         if (this.isPlanGenerated) {
           for (const key in cargo) {
@@ -206,9 +206,9 @@ export class CargoToBeLoadedDischargedComponent implements OnInit, OnDestroy {
         const shipFigure = Number(cargo?.loadableMT) ? this.quantityPipe.transform(this.loadingDischargingTransformationService.convertToNumber(cargo?.loadableMT), QUANTITY_UNIT.MT, QUANTITY_UNIT.BBLS, cargo?.estimatedAPI, cargo?.estimatedTemp, -1) : 0;
         cargo.shipFigure = shipFigure.toString();
 
-        cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, true, true, true);
-        cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, true, true, true);
-        cargo['maxDischargingRateEdit'] = new ValueObject<number | string>(cargo?.maxDischargingRate, true, true, true, true);
+        cargo['estimatedAPIEdit'] = new ValueObject<number | string>(cargo?.estimatedAPI, true, false, true, false);
+        cargo['estimatedTempEdit'] = new ValueObject<number | string>(cargo?.estimatedTemp, true, false, true, false);
+        cargo['maxDischargingRateEdit'] = new ValueObject<number | string>(cargo?.maxDischargingRate, true, false, true, false);
         if (this.isPlanGenerated) {
           for (const key in cargo) {
             if (cargo[key]?.hasOwnProperty('_isEditMode') && cargo[key]?.hasOwnProperty('_isEditable')) {
