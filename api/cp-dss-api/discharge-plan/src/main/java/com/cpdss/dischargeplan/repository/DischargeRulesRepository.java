@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface DischargeRulesRepository extends CommonCrudRepository<DischargePlanRules, Long> {
 
   @Query(
-      "FROM DischargePlanRules DPR WHERE DPR.dischargeInformation.id = ?1 AND DPR.isActive = ?2 AND DPR.parentRuleXId = ?3")
+      "FROM DischargePlanRules DPR WHERE DPR.dischargeInformation.id = ?1 AND DPR.parentRuleXId = ?3 AND DPR.isActive = ?2")
   Optional<DischargePlanRules> checkIsRuleTemplateExist(
       Long dischargeStudyId, Boolean isActive, Long ruleTemplateId);
 

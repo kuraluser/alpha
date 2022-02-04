@@ -39,7 +39,8 @@ public interface PortLoadingPlanStowageDetailsRepository
   @Modifying
   @Query(
       "Update PortLoadingPlanStowageDetails set quantity = ?1, ullage = ?2, quantityM3 = ?3, api = ?4, temperature = ?5"
-          + " where tankXId = ?4 and isActive = ?5 and portXId= ?6 and loading_information_xid =?7 and arrival_departutre =?8")
+          + " where tankXId = ?4 and portXId= ?6 and loading_information_xid =?7"
+          + " and arrival_departutre =?8 and isActive = ?5")
   public void updatePortLoadingPlanStowageDetailsRepository(
       @Param("quantity") BigDecimal quantity,
       @Param("ullage") BigDecimal ullage,

@@ -17,8 +17,8 @@ public interface CargoHistoryRepository extends CommonCrudRepository<CargoHistor
       "select new com.cpdss.loadablestudy.domain.CargoHistory(ch.tankId, cn.id, cn.cargoXId, cn.color, cn.abbreviation, ch.quantity, ch.api) "
           + "from CargoHistory ch "
           + "join CargoNomination cn on ch.cargoNomination = cn "
-          + "where ch.isActive = true and ch.voyage.id = ?1 "
-          + "and ch.loadingPortId = ?2")
+          + "where ch.voyage.id = ?1 "
+          + "and ch.loadingPortId = ?2 and ch.isActive = true")
   public List<com.cpdss.loadablestudy.domain.CargoHistory> findCargoHistory(
       Long previousVoyage, Long lastPortId);
 }

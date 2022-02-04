@@ -35,7 +35,7 @@ public interface LoadableStudyRuleRepository
       @Param("vesselRuleXId") Set<Long> vesselRuleXId);
 
   @Query(
-      "FROM LoadableStudyRules LSR WHERE LSR.loadableStudy.id = ?1 AND LSR.isActive = ?2 AND LSR.parentRuleXId = ?3")
+      "FROM LoadableStudyRules LSR WHERE LSR.loadableStudy.id = ?1 AND LSR.parentRuleXId = ?3 AND LSR.isActive = ?2")
   Optional<LoadableStudyRules> checkIsRuleTemplateExist(
       Long loadableStudyId, Boolean isActive, Long ruleTemplateId);
 }

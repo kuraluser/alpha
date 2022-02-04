@@ -14,7 +14,7 @@ public interface RuleVesselMappingRepository extends CommonCrudRepository<RuleVe
   public List<RuleVesselMapping> findLoadingInfoRulesByVesselId(Long vesselId);
 
   @Query(
-      "FROM RuleVesselMapping RVM WHERE RVM.vessel.id = ?1 AND RVM.isActive = ?2 AND RVM.ruleTemplate.id = ?3")
+      "FROM RuleVesselMapping RVM WHERE RVM.vessel.id = ?1  AND RVM.ruleTemplate.id = ?3 AND RVM.isActive = ?2")
   Optional<RuleVesselMapping> checkIsRuleTemplateMapped(
       Long id, Boolean isActive, Long ruleTemplateId);
 

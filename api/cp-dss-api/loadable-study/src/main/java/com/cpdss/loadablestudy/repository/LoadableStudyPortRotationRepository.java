@@ -94,7 +94,7 @@ public interface LoadableStudyPortRotationRepository
       final LoadableStudy loadableStudy, final boolean isActive);
 
   @Query(
-      "SELECT portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.isActive = ?2 AND LSPR.portOrder =?3")
+      "SELECT portXId FROM LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 AND LSPR.portOrder =?3 AND LSPR.isActive = ?2")
   public Long findByLoadableStudyAndIsActiveAndPortOrder(
       final LoadableStudy loadableStudy, final boolean isActive, final Long portOrder);
 
@@ -160,7 +160,7 @@ public interface LoadableStudyPortRotationRepository
 
   @Query(
       "select min(portOrder) from LoadableStudyPortRotation LSPR WHERE LSPR.loadableStudy = ?1 "
-          + "AND LSPR.isActive = true AND LSPR.portXId in ?2 and operation.id=1")
+          + "AND LSPR.portXId in ?2 and operation.id=1 AND LSPR.isActive = true")
   public Long findSmallestOrderForPorts(LoadableStudy loadableStudy, List<Long> portIds);
 
   public List<LoadableStudyPortRotation> findByLoadableStudyAndPortXIdAndIsActiveAndOperation(

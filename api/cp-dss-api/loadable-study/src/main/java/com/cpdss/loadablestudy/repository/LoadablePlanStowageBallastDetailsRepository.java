@@ -17,7 +17,7 @@ public interface LoadablePlanStowageBallastDetailsRepository
   @Query(
       "select b from LoadablePlanStowageBallastDetails b where b.loadablePlan.id="
           + "(select p.id from LoadablePlan p "
-          + "where p.loadableStudyXId=?1 and p.isActive=true and p.loadablePlanStatus=?2)")
+          + "where p.loadableStudyXId=?1 and p.loadablePlanStatus=?2 and p.isActive=true)")
   public List<LoadablePlanStowageBallastDetails> findBallastDetailsForLoadableStudy(
       Long loadableStudyId, Long loadablePatternId);
 

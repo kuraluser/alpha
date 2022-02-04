@@ -21,6 +21,6 @@ public interface LoadingRuleRepository extends CommonCrudRepository<LoadingRule,
       @Param("var1") Boolean var1, @Param("var2") Set<Long> var2);
 
   @Query(
-      "FROM LoadingRule LR WHERE LR.loadingXid = ?1 AND LR.isActive = ?2 AND LR.parentRuleXid = ?3")
+      "FROM LoadingRule LR WHERE LR.loadingXid = ?1 AND LR.parentRuleXid = ?3 AND LR.isActive = ?2")
   Optional<LoadingRule> checkIsLoadingRuleExist(Long id, boolean isActive, Long parentRuleId);
 }

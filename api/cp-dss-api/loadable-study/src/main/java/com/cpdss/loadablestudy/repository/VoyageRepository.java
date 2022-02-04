@@ -40,7 +40,7 @@ public interface VoyageRepository
       Long vesselId, boolean isActive, VoyageStatus voyageStatus);
 
   @Query(
-      "select V from Voyage V WHERE V.isActive = :isActive AND V.vesselXId= :vesselId AND "
+      "select V from Voyage V WHERE V.vesselXId= :vesselId AND V.isActive = :isActive AND"
           + " Date(V.actualStartDate) >= :from and Date(V.actualStartDate) <= :to ORDER BY V.lastModifiedDate DESC")
   public List<Voyage> findByIsActiveAndVesselXIdAndActualStartDateBetween(
       @Param("isActive") boolean isActive,
@@ -53,18 +53,18 @@ public interface VoyageRepository
 
   @Query(
       value =
-          "with list1 as (\n"
-              + "select * from voyage v \n"
-              + "where v.is_active = :isActive \n"
-              + "and v.vessel_xid = :vesselXId \n"
-              + "and v.voyage_status = 3 \n"
-              + "order by v.voyage_status desc, v.created_date_time desc),\n"
-              + "list2 as (\n"
-              + "select * from voyage v \n"
-              + "where v.is_active = :isActive \n"
-              + "and v.vessel_xid = :vesselXId\n"
-              + "and v.voyage_status notnull\n"
-              + "order by v.created_date_time desc)\n"
+          "with list1 as ("
+              + "select * from voyage v "
+              + "where v.voyage_status = 3 "
+              + "and v.vessel_xid = :vesselXId "
+              + "and v.is_active = :isActive "
+              + "order by v.voyage_status desc, v.created_date_time desc),"
+              + "list2 as ("
+              + "select * from voyage v "
+              + "where v.voyage_status notnull "
+              + "and v.vessel_xid = :vesselXId"
+              + "and v.is_active = :isActive"
+              + "order by v.created_date_time desc)"
               + "select * from list1 union all select * from list2;",
       nativeQuery = true)
   public List<Voyage> findByIsActiveAndVesselXIdOrderByVoyageStatusDescAndLastModifiedDateTimeDesc(
