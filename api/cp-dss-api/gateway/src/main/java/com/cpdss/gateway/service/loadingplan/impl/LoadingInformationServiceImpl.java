@@ -321,50 +321,43 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return loadingRates;
   }
 
+  /**
+   * Gets master berth details using port id
+   *
+   * @param portId - Long port id value
+   * @return list of berth details
+   */
   @Override
   public List<BerthDetails> getMasterBerthDetailsByPortId(Long portId) {
+
+    log.info("Inside getMasterBerthDetailsByPortId method!");
+
     PortInfo.BerthInfoResponse response = this.portInfoService.getBerthInfoByPortId(portId);
     List<BerthDetails> berthDetails = new ArrayList<>();
+
     if (response != null && !response.getBerthsList().isEmpty()) {
       try {
-        for (PortInfo.BerthDetail bd : response.getBerthsList()) {
+        for (PortInfo.BerthDetail berthDetail : response.getBerthsList()) {
           BerthDetails dto = new BerthDetails();
 
-          Optional.ofNullable(bd.getId()).ifPresent(dto::setBerthId);
-          Optional.ofNullable(bd.getPortId()).ifPresent(dto::setPortId);
-          dto.setMaxShpChannel(
-              bd.getMaxShipChannel().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getMaxShipChannel()));
+          // Set fields
+          Optional.of(berthDetail.getId()).ifPresent(dto::setBerthId);
+          Optional.of(berthDetail.getPortId()).ifPresent(dto::setPortId);
+          dto.setMaxShpChannel(returnZeroIfBlank(berthDetail.getMaxShipChannel()));
 
-          Optional.ofNullable(bd.getBerthName()).ifPresent(dto::setBerthName);
-          dto.setMaxShipDepth(
-              bd.getMaxShipDepth().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getMaxShipDepth()));
-          dto.setSeaDraftLimitation(
-              bd.getSeaDraftLimitation().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getSeaDraftLimitation()));
-          dto.setAirDraftLimitation(
-              bd.getAirDraftLimitation().isEmpty()
-                  ? null
-                  : new BigDecimal(bd.getAirDraftLimitation()));
-          dto.setMaxManifoldHeight(
-              bd.getMaxManifoldHeight().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getMaxManifoldHeight()));
+          Optional.of(berthDetail.getBerthName()).ifPresent(dto::setBerthName);
+          dto.setMaxShipDepth(returnZeroIfBlank(berthDetail.getMaxShipDepth()));
+          dto.setSeaDraftLimitation(returnZeroIfBlank(berthDetail.getSeaDraftLimitation()));
+          dto.setAirDraftLimitation(returnZeroIfBlank(berthDetail.getAirDraftLimitation()));
+          dto.setMaxManifoldHeight(returnZeroIfBlank(berthDetail.getMaxManifoldHeight()));
 
-          Optional.ofNullable(bd.getRegulationAndRestriction())
+          Optional.of(berthDetail.getRegulationAndRestriction())
               .ifPresent(dto::setRegulationAndRestriction);
-          dto.setMaxLoa(
-              bd.getMaxLoa().isEmpty() ? BigDecimal.ZERO : new BigDecimal(bd.getMaxLoa()));
-          dto.setLineDisplacement(bd.getLineDisplacement());
-          dto.setHoseConnections(bd.getHoseConnection());
-          dto.setDisplacement(
-              bd.getDisplacement().isEmpty()
-                  ? BigDecimal.ZERO
-                  : new BigDecimal(bd.getDisplacement()));
+          dto.setMaxLoa(returnZeroIfBlank(berthDetail.getMaxLoa()));
+          dto.setLineDisplacement(berthDetail.getLineDisplacement());
+          dto.setHoseConnections(berthDetail.getHoseConnection());
+          dto.setDisplacement(returnZeroIfBlank(berthDetail.getDisplacement()));
+
           berthDetails.add(dto);
         }
       } catch (Exception e) {
@@ -376,37 +369,55 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return berthDetails;
   }
 
+  /**
+   * Returns big decimal value of provided string else returns big decimal zero
+   *
+   * @param string input string
+   * @return big decimal value
+   */
+  private BigDecimal returnZeroIfBlank(String string) {
+
+    return io.micrometer.core.instrument.util.StringUtils.isBlank(string)
+        ? BigDecimal.ZERO
+        : new BigDecimal(string);
+  }
+
+  /**
+   * Builds loading plan selected berth details
+   *
+   * @param loadingBerthsList list of loading berths from grpc
+   * @return list of berth details dto
+   */
   @Override
   public List<BerthDetails> buildLoadingPlanBerthDetails(
-      List<LoadingPlanModels.LoadingBerths> var1) {
-    List<BerthDetails> list = new ArrayList<>();
-    for (LoadingPlanModels.LoadingBerths lb : var1) {
-      BerthDetails var2 = new BerthDetails();
-      var2.setLoadingBerthId(lb.getId());
-      var2.setLoadingInfoId(lb.getLoadingInfoId());
-      var2.setBerthId(lb.getBerthId());
-      var2.setMaxShipDepth(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
-      var2.setSeaDraftLimitation(
-          lb.getSeaDraftLimitation().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(lb.getSeaDraftLimitation()));
-      var2.setAirDraftLimitation(
-          lb.getAirDraftLimitation().isEmpty() ? null : new BigDecimal(lb.getAirDraftLimitation()));
-      var2.setMaxManifoldHeight(
-          lb.getMaxManifoldHeight().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(lb.getMaxManifoldHeight()));
-      var2.setRegulationAndRestriction(lb.getSpecialRegulationRestriction());
-      var2.setItemsToBeAgreedWith(lb.getItemsToBeAgreedWith());
-      var2.setHoseConnections(lb.getHoseConnections());
-      var2.setLineDisplacement(lb.getLineDisplacement());
-      var2.setDisplacement(
-          lb.getDisplacement().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDisplacement()));
-      list.add(var2);
+      List<LoadingPlanModels.LoadingBerths> loadingBerthsList) {
+
+    log.info("Inside buildLoadingPlanBerthDetails method!");
+
+    List<BerthDetails> berthDetailsList = new ArrayList<>();
+    for (LoadingPlanModels.LoadingBerths loadingBerths : loadingBerthsList) {
+
+      BerthDetails berthDetails = new BerthDetails();
+
+      // Set fields
+      berthDetails.setLoadingBerthId(loadingBerths.getId());
+      berthDetails.setLoadingInfoId(loadingBerths.getLoadingInfoId());
+      berthDetails.setBerthId(loadingBerths.getBerthId());
+      berthDetails.setMaxShipDepth(returnZeroIfBlank(loadingBerths.getDepth()));
+      berthDetails.setSeaDraftLimitation(returnZeroIfBlank(loadingBerths.getSeaDraftLimitation()));
+      berthDetails.setAirDraftLimitation(returnZeroIfBlank(loadingBerths.getAirDraftLimitation()));
+
+      berthDetails.setMaxManifoldHeight(returnZeroIfBlank(loadingBerths.getMaxManifoldHeight()));
+      berthDetails.setRegulationAndRestriction(loadingBerths.getSpecialRegulationRestriction());
+      berthDetails.setItemsToBeAgreedWith(loadingBerths.getItemsToBeAgreedWith());
+      berthDetails.setHoseConnections(loadingBerths.getHoseConnections());
+      berthDetails.setLineDisplacement(loadingBerths.getLineDisplacement());
+      berthDetails.setDisplacement(returnZeroIfBlank(loadingBerths.getDisplacement()));
+
+      berthDetailsList.add(berthDetails);
     }
-    log.info("Loading Plan Berth data added Size {}", var1.size());
-    return list;
+
+    return berthDetailsList;
   }
 
   @Override

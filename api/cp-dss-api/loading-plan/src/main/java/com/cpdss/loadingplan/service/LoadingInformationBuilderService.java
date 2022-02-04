@@ -89,30 +89,46 @@ public class LoadingInformationBuilderService {
     return builder.build();
   }
 
-  public List<LoadingBerths> buildLoadingBerthsMessage(List<LoadingBerthDetail> list) {
+  /**
+   * Builds loading berth details
+   *
+   * @param loadingBerthDetails list of loading berth details
+   * @return list of loading berths of grpc
+   */
+  public List<LoadingBerths> buildLoadingBerthsMessage(
+      List<LoadingBerthDetail> loadingBerthDetails) {
+
+    log.info("Inside buildLoadingBerthsMessage method!");
     List<LoadingBerths> berths = new ArrayList<>();
-    for (LoadingBerthDetail var1 : list) {
+
+    for (LoadingBerthDetail loadingBerthDetail : loadingBerthDetails) {
+
       LoadingBerths.Builder builder = LoadingBerths.newBuilder();
-      Optional.ofNullable(var1.getId()).ifPresent(builder::setId);
-      Optional.ofNullable(var1.getLoadingInformation().getId())
+
+      // Set fields
+      Optional.ofNullable(loadingBerthDetail.getId()).ifPresent(builder::setId);
+      Optional.ofNullable(loadingBerthDetail.getLoadingInformation().getId())
           .ifPresent(builder::setLoadingInfoId);
-      Optional.ofNullable(var1.getBerthXId()).ifPresent(builder::setBerthId);
-      Optional.ofNullable(var1.getDepth()).ifPresent(v -> builder.setDepth(v.toString()));
-      Optional.ofNullable(var1.getSeaDraftLimitation())
-          .ifPresent(v -> builder.setSeaDraftLimitation(v.toString()));
-      Optional.ofNullable(var1.getAirDraftLimitation())
-          .ifPresent(v -> builder.setAirDraftLimitation(v.toString()));
-      Optional.ofNullable(var1.getMaxManifoldHeight())
-          .ifPresent(v -> builder.setMaxManifoldHeight(v.toString()));
-      Optional.ofNullable(var1.getSpecialRegulationRestriction())
-          .ifPresent(v -> builder.setSpecialRegulationRestriction(v.toString()));
-      Optional.ofNullable(var1.getItemToBeAgreedWith())
-          .ifPresent(v -> builder.setItemsToBeAgreedWith(v));
-      Optional.ofNullable(var1.getHoseConnections()).ifPresent(v -> builder.setHoseConnections(v));
-      Optional.ofNullable(var1.getLineDisplacement())
-          .ifPresent(v -> builder.setLineDisplacement(v.toString()));
-      Optional.ofNullable(var1.getDisplacement())
-          .ifPresent(v -> builder.setDisplacement(v.toString()));
+      Optional.ofNullable(loadingBerthDetail.getBerthXId()).ifPresent(builder::setBerthId);
+      Optional.ofNullable(loadingBerthDetail.getDepth())
+          .ifPresent(depth -> builder.setDepth(depth.toString()));
+      Optional.ofNullable(loadingBerthDetail.getSeaDraftLimitation())
+          .ifPresent(draft -> builder.setSeaDraftLimitation(draft.toString()));
+      Optional.ofNullable(loadingBerthDetail.getAirDraftLimitation())
+          .ifPresent(draft -> builder.setAirDraftLimitation(draft.toString()));
+
+      Optional.ofNullable(loadingBerthDetail.getMaxManifoldHeight())
+          .ifPresent(height -> builder.setMaxManifoldHeight(height.toString()));
+      Optional.ofNullable(loadingBerthDetail.getSpecialRegulationRestriction())
+          .ifPresent(builder::setSpecialRegulationRestriction);
+      Optional.ofNullable(loadingBerthDetail.getItemToBeAgreedWith())
+          .ifPresent(builder::setItemsToBeAgreedWith);
+      Optional.ofNullable(loadingBerthDetail.getHoseConnections())
+          .ifPresent(builder::setHoseConnections);
+      Optional.ofNullable(loadingBerthDetail.getLineDisplacement())
+          .ifPresent(displacement -> builder.setLineDisplacement(displacement.toString()));
+      Optional.ofNullable(loadingBerthDetail.getDisplacement())
+          .ifPresent(displacement -> builder.setDisplacement(displacement.toString()));
       berths.add(builder.build());
     }
     return berths;

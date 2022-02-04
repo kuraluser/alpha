@@ -328,24 +328,32 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
+  /**
+   * Gets berth details using port id
+   *
+   * @param request port id request from grpc
+   * @param responseObserver response output of berth info details
+   */
   @Override
   public void getBerthDetailsByPortId(
       com.cpdss.common.generated.PortInfo.PortIdRequest request,
       StreamObserver<com.cpdss.common.generated.PortInfo.BerthInfoResponse> responseObserver) {
     com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder builder =
         com.cpdss.common.generated.PortInfo.BerthInfoResponse.newBuilder();
-    ResponseStatus.Builder builder1 = ResponseStatus.newBuilder().setStatus("FAILED");
+    ResponseStatus.Builder responseStatusBuilder = ResponseStatus.newBuilder().setStatus("FAILED");
     try {
       Optional<PortInfo> portInfo = portRepository.findByIdAndIsActiveTrue(request.getPortId());
       if (portInfo.isPresent()) {
         List<BerthInfo> berthInfoList =
-            berthInfoRepository.findAllByPortInfoAndIsActiveTrue(portInfo.get().getId());
+            portInfo.get().getBerthInfoSet().stream()
+                .filter(BerthInfo::getIsActive)
+                .collect(Collectors.toList());
         this.buildBerthInfoToGrpcResponse(berthInfoList, builder);
         log.info(
             "Berth Info size {}, for Port Id {}", berthInfoList.size(), portInfo.get().getId());
-        builder1.setStatus("SUCCESS");
+        responseStatusBuilder.setStatus("SUCCESS");
       }
-      builder.setResponseStatus(builder1);
+      builder.setResponseStatus(responseStatusBuilder);
     } catch (Exception e) {
       e.printStackTrace();
       log.error("Failed to get berth info for Port {}", request.getPortId());
@@ -361,49 +369,77 @@ public class PortInfoService extends PortInfoServiceImplBase {
     }
   }
 
+  /**
+   * Builds berth info details to grpc builder
+   *
+   * @param berthInfos list of berth info details
+   * @param builder berth info response builder object
+   */
   private void buildBerthInfoToGrpcResponse(
-      List<BerthInfo> list, com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder builder) {
-    for (BerthInfo bi : list) {
-      com.cpdss.common.generated.PortInfo.BerthDetail.Builder builder2 =
+      List<BerthInfo> berthInfos,
+      com.cpdss.common.generated.PortInfo.BerthInfoResponse.Builder builder) {
+
+    log.info("Inside buildBerthInfoToGrpcResponse method!");
+
+    for (BerthInfo berthInfo : berthInfos) {
+
+      com.cpdss.common.generated.PortInfo.BerthDetail.Builder berthDetailBuilder =
           com.cpdss.common.generated.PortInfo.BerthDetail.newBuilder();
-      Optional.ofNullable(bi.getId()).ifPresent(builder2::setId);
-      Optional.ofNullable(bi.getPortInfo().getId()).ifPresent(builder2::setPortId);
-      Optional.ofNullable(bi.getMaxShipChannel())
-          .ifPresent(v -> builder2.setMaxShipChannel(String.valueOf(v)));
-      Optional.ofNullable(bi.getBerthName()).ifPresent(v -> builder2.setBerthName(v));
-      Optional.ofNullable(bi.getMaxShipDepth())
-          .ifPresent(v -> builder2.setMaxShipDepth(String.valueOf(v)));
 
-      Optional.ofNullable(bi.getMaximumDraft())
-          .ifPresent(v -> builder2.setSeaDraftLimitation(String.valueOf(v)));
-      builder2.setMaxManifoldHeight(this.getMaxManifoldHeight(bi).toString());
+      // Set fields
+      Optional.ofNullable(berthInfo.getId()).ifPresent(berthDetailBuilder::setId);
+      Optional.ofNullable(berthInfo.getPortInfo().getId()).ifPresent(berthDetailBuilder::setPortId);
+      Optional.ofNullable(berthInfo.getMaxShipChannel())
+          .ifPresent(channel -> berthDetailBuilder.setMaxShipChannel(String.valueOf(channel)));
+      Optional.ofNullable(berthInfo.getBerthName()).ifPresent(berthDetailBuilder::setBerthName);
+      Optional.ofNullable(berthInfo.getMaxShipDepth())
+          .ifPresent(depth -> berthDetailBuilder.setMaxShipDepth(String.valueOf(depth)));
 
-      Optional.ofNullable(bi.getAirDraft())
-          .ifPresent(v -> builder2.setAirDraftLimitation(String.valueOf(v)));
-      Optional.ofNullable(bi.getMaximumLoa()).ifPresent(v -> builder2.setMaxLoa(String.valueOf(v)));
-      Optional.ofNullable(bi.getMaximumDraft())
-          .ifPresent(v -> builder2.setMaxDraft(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getMaximumDraft())
+          .ifPresent(draft -> berthDetailBuilder.setSeaDraftLimitation(String.valueOf(draft)));
+      berthDetailBuilder.setMaxManifoldHeight(this.getMaxManifoldHeight(berthInfo).toString());
 
-      Optional.ofNullable(bi.getLineDisplacement())
-          .ifPresent(v -> builder2.setLineDisplacement(String.valueOf(v)));
+      Optional.ofNullable(berthInfo.getAirDraft())
+          .ifPresent(draft -> berthDetailBuilder.setAirDraftLimitation(String.valueOf(draft)));
+      Optional.ofNullable(berthInfo.getMaximumLoa())
+          .ifPresent(loa -> berthDetailBuilder.setMaxLoa(String.valueOf(loa)));
+      Optional.ofNullable(berthInfo.getMaximumDraft())
+          .ifPresent(draft -> berthDetailBuilder.setMaxDraft(String.valueOf(draft)));
 
-      Optional.ofNullable(bi.getHoseConnection()).ifPresent(builder2::setHoseConnection);
+      Optional.ofNullable(berthInfo.getLineDisplacement())
+          .ifPresent(
+              displacement -> berthDetailBuilder.setLineDisplacement(String.valueOf(displacement)));
 
-      Optional.ofNullable(bi.getUnderKeelClearance()).ifPresent(builder2::setUkc);
-      if (bi.getPortInfo() != null) {
-        Optional.ofNullable(bi.getPortInfo().getMaxPermissibleDraft())
-            .ifPresent(t -> builder2.setPortMaxPermissibleDraft(t.toString()));
+      Optional.ofNullable(berthInfo.getHoseConnection())
+          .ifPresent(berthDetailBuilder::setHoseConnection);
+      Optional.ofNullable(berthInfo.getUnderKeelClearance()).ifPresent(berthDetailBuilder::setUkc);
+
+      if (berthInfo.getPortInfo() != null) {
+        Optional.ofNullable(berthInfo.getPortInfo().getMaxPermissibleDraft())
+            .ifPresent(draft -> berthDetailBuilder.setPortMaxPermissibleDraft(draft.toString()));
       }
-      Optional.ofNullable(bi.getDisplacement())
-          .ifPresent(displacement -> builder2.setDisplacement(displacement.toString()));
-      builder.addBerths(builder2);
+      Optional.ofNullable(berthInfo.getDisplacement())
+          .ifPresent(displacement -> berthDetailBuilder.setDisplacement(displacement.toString()));
+      builder.addBerths(berthDetailBuilder);
     }
   }
 
+  /**
+   * Gets maximum of all manifold height entries against a berth
+   *
+   * @param berth berth info details
+   * @return big decimal value of max manifold height
+   */
   private BigDecimal getMaxManifoldHeight(BerthInfo berth) {
+
+    log.info("Inside getMaxManifoldHeight method!");
+
     try {
+
       List<BerthManifold> berthManifolds =
-          berthManifoldRepository.findByBerthInfoAndIsActiveTrue(berth.getId());
+          berth.getBerthManifolds().stream()
+              .filter(BerthManifold::getIsActive)
+              .collect(Collectors.toList());
       if (!berthManifolds.isEmpty()) {
         BerthManifold berthManifold =
             berthManifolds.stream()
