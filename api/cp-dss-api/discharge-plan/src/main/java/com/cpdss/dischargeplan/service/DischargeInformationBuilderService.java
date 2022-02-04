@@ -514,43 +514,66 @@ public class DischargeInformationBuilderService {
     }
   }
 
+  /**
+   * Builds discharge berth details from entity to grpc builder
+   *
+   * @param disEntity discharge information entity
+   * @param dischargingBerthDetails list of discharging berth details entity
+   * @param builder discharge information proto builder
+   */
   public void buildDischargeBerthMessageFromEntity(
       DischargeInformation disEntity,
-      List<DischargingBerthDetail> listVarB,
+      List<DischargingBerthDetail> dischargingBerthDetails,
       com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder) {
-    if (!listVarB.isEmpty()) {
+
+    log.info("Inside buildDischargeBerthMessageFromEntity method!");
+
+    if (!dischargingBerthDetails.isEmpty()) {
       try {
-        for (DischargingBerthDetail source : listVarB) {
-          DischargeBerths.Builder builder1 = DischargeBerths.newBuilder();
-          Optional.ofNullable(disEntity.getId()).ifPresent(builder1::setDischargeInfoId);
+        for (DischargingBerthDetail dischargingBerthDetail : dischargingBerthDetails) {
 
-          Optional.ofNullable(source.getId()).ifPresent(builder1::setId);
-          Optional.ofNullable(source.getBerthXid()).ifPresent(builder1::setBerthId);
-          Optional.ofNullable(source.getDepth()).ifPresent(v -> builder1.setDepth(v.toString()));
-          Optional.ofNullable(source.getMaxManifoldHeight())
-              .ifPresent(v -> builder1.setMaxManifoldHeight(v.toString()));
-          Optional.ofNullable(source.getMaxManifoldPressure())
-              .ifPresent(v -> builder1.setMaxManifoldPressure(v.toString()));
-          Optional.ofNullable(source.getHoseConnections()).ifPresent(builder1::setHoseConnections);
-          Optional.ofNullable(source.getSeaDraftLimitation())
-              .ifPresent(v -> builder1.setSeaDraftLimitation(v.toString()));
+          DischargeBerths.Builder dischargeBerthsBuilder = DischargeBerths.newBuilder();
 
-          Optional.ofNullable(source.getSeaDraftLimitation())
-              .ifPresent(v -> builder1.setSeaDraftLimitation(v.toString()));
-          Optional.ofNullable(source.getAirDraftLimitation())
-              .ifPresent(v -> builder1.setAirDraftLimitation(v.toString()));
-          Optional.ofNullable(source.getIsAirPurge()).ifPresent(builder1::setAirPurge);
-          Optional.ofNullable(source.getIsCargoCirculation())
-              .ifPresent(builder1::setCargoCirculation);
-          Optional.ofNullable(source.getLineContentDisplacement())
-              .ifPresent(v -> builder1.setLineDisplacement(v.toString()));
-          Optional.ofNullable(source.getSpecialRegulationRestriction())
-              .ifPresent(builder1::setSpecialRegulationRestriction);
-          Optional.ofNullable(source.getItemToBeAgreed())
-              .ifPresent(builder1::setItemsToBeAgreedWith);
-          Optional.ofNullable(source.getDisplacement())
-              .ifPresent(v -> builder1.setDisplacement(v.toString()));
-          builder.addBerthDetails(builder1.build());
+          // Set fields
+          Optional.ofNullable(disEntity.getId())
+              .ifPresent(dischargeBerthsBuilder::setDischargeInfoId);
+          Optional.ofNullable(dischargingBerthDetail.getId())
+              .ifPresent(dischargeBerthsBuilder::setId);
+          Optional.ofNullable(dischargingBerthDetail.getBerthXid())
+              .ifPresent(dischargeBerthsBuilder::setBerthId);
+          Optional.ofNullable(dischargingBerthDetail.getDepth())
+              .ifPresent(depth -> dischargeBerthsBuilder.setDepth(depth.toString()));
+          Optional.ofNullable(dischargingBerthDetail.getMaxManifoldHeight())
+              .ifPresent(height -> dischargeBerthsBuilder.setMaxManifoldHeight(height.toString()));
+          Optional.ofNullable(dischargingBerthDetail.getMaxManifoldPressure())
+              .ifPresent(
+                  pressure -> dischargeBerthsBuilder.setMaxManifoldPressure(pressure.toString()));
+          Optional.ofNullable(dischargingBerthDetail.getHoseConnections())
+              .ifPresent(dischargeBerthsBuilder::setHoseConnections);
+          Optional.ofNullable(dischargingBerthDetail.getSeaDraftLimitation())
+              .ifPresent(draft -> dischargeBerthsBuilder.setSeaDraftLimitation(draft.toString()));
+
+          Optional.ofNullable(dischargingBerthDetail.getSeaDraftLimitation())
+              .ifPresent(draft -> dischargeBerthsBuilder.setSeaDraftLimitation(draft.toString()));
+          Optional.ofNullable(dischargingBerthDetail.getAirDraftLimitation())
+              .ifPresent(draft -> dischargeBerthsBuilder.setAirDraftLimitation(draft.toString()));
+          Optional.ofNullable(dischargingBerthDetail.getIsAirPurge())
+              .ifPresent(dischargeBerthsBuilder::setAirPurge);
+          Optional.ofNullable(dischargingBerthDetail.getIsCargoCirculation())
+              .ifPresent(dischargeBerthsBuilder::setCargoCirculation);
+          Optional.ofNullable(dischargingBerthDetail.getLineContentDisplacement())
+              .ifPresent(
+                  displacement ->
+                      dischargeBerthsBuilder.setLineDisplacement(displacement.toString()));
+          Optional.ofNullable(dischargingBerthDetail.getSpecialRegulationRestriction())
+              .ifPresent(dischargeBerthsBuilder::setSpecialRegulationRestriction);
+          Optional.ofNullable(dischargingBerthDetail.getItemToBeAgreed())
+              .ifPresent(dischargeBerthsBuilder::setItemsToBeAgreedWith);
+          Optional.ofNullable(dischargingBerthDetail.getDisplacement())
+              .ifPresent(
+                  displacement -> dischargeBerthsBuilder.setDisplacement(displacement.toString()));
+
+          builder.addBerthDetails(dischargeBerthsBuilder.build());
         }
         log.info("Setting Discharge berths");
       } catch (Exception e) {

@@ -350,6 +350,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
           dto.setSeaDraftLimitation(returnZeroIfBlank(berthDetail.getSeaDraftLimitation()));
           dto.setAirDraftLimitation(returnZeroIfBlank(berthDetail.getAirDraftLimitation()));
           dto.setMaxManifoldHeight(returnZeroIfBlank(berthDetail.getMaxManifoldHeight()));
+          Optional.of(berthDetail.getMaxManifoldPressure()).ifPresent(dto::setMaxManifoldPressure);
 
           Optional.of(berthDetail.getRegulationAndRestriction())
               .ifPresent(dto::setRegulationAndRestriction);

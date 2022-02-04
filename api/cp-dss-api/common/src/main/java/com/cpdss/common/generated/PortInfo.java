@@ -18072,6 +18072,19 @@ public final class PortInfo {
     /** <code>repeated .ManifoldDetail manifoldDetails = 20;</code> */
     com.cpdss.common.generated.PortInfo.ManifoldDetailOrBuilder getManifoldDetailsOrBuilder(
         int index);
+
+    /**
+     * <code>string maxManifoldPressure = 21;</code>
+     *
+     * @return The maxManifoldPressure.
+     */
+    java.lang.String getMaxManifoldPressure();
+    /**
+     * <code>string maxManifoldPressure = 21;</code>
+     *
+     * @return The bytes for maxManifoldPressure.
+     */
+    com.google.protobuf.ByteString getMaxManifoldPressureBytes();
   }
   /** Protobuf type {@code BerthDetail} */
   public static final class BerthDetail extends com.google.protobuf.GeneratedMessageV3
@@ -18102,6 +18115,7 @@ public final class PortInfo {
       portMaxPermissibleDraft_ = "";
       displacement_ = "";
       manifoldDetails_ = java.util.Collections.emptyList();
+      maxManifoldPressure_ = "";
     }
 
     @java.lang.Override
@@ -18272,6 +18286,13 @@ public final class PortInfo {
                     input.readMessage(
                         com.cpdss.common.generated.PortInfo.ManifoldDetail.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 170:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                maxManifoldPressure_ = s;
                 break;
               }
             default:
@@ -18928,6 +18949,41 @@ public final class PortInfo {
       return manifoldDetails_.get(index);
     }
 
+    public static final int MAXMANIFOLDPRESSURE_FIELD_NUMBER = 21;
+    private volatile java.lang.Object maxManifoldPressure_;
+    /**
+     * <code>string maxManifoldPressure = 21;</code>
+     *
+     * @return The maxManifoldPressure.
+     */
+    public java.lang.String getMaxManifoldPressure() {
+      java.lang.Object ref = maxManifoldPressure_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        maxManifoldPressure_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string maxManifoldPressure = 21;</code>
+     *
+     * @return The bytes for maxManifoldPressure.
+     */
+    public com.google.protobuf.ByteString getMaxManifoldPressureBytes() {
+      java.lang.Object ref = maxManifoldPressure_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        maxManifoldPressure_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -19002,6 +19058,9 @@ public final class PortInfo {
       for (int i = 0; i < manifoldDetails_.size(); i++) {
         output.writeMessage(20, manifoldDetails_.get(i));
       }
+      if (!getMaxManifoldPressureBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 21, maxManifoldPressure_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -19074,6 +19133,9 @@ public final class PortInfo {
         size +=
             com.google.protobuf.CodedOutputStream.computeMessageSize(20, manifoldDetails_.get(i));
       }
+      if (!getMaxManifoldPressureBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(21, maxManifoldPressure_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -19110,6 +19172,7 @@ public final class PortInfo {
       if (!getPortMaxPermissibleDraft().equals(other.getPortMaxPermissibleDraft())) return false;
       if (!getDisplacement().equals(other.getDisplacement())) return false;
       if (!getManifoldDetailsList().equals(other.getManifoldDetailsList())) return false;
+      if (!getMaxManifoldPressure().equals(other.getMaxManifoldPressure())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -19163,6 +19226,8 @@ public final class PortInfo {
         hash = (37 * hash) + MANIFOLDDETAILS_FIELD_NUMBER;
         hash = (53 * hash) + getManifoldDetailsList().hashCode();
       }
+      hash = (37 * hash) + MAXMANIFOLDPRESSURE_FIELD_NUMBER;
+      hash = (53 * hash) + getMaxManifoldPressure().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -19346,6 +19411,8 @@ public final class PortInfo {
         } else {
           manifoldDetailsBuilder_.clear();
         }
+        maxManifoldPressure_ = "";
+
         return this;
       }
 
@@ -19401,6 +19468,7 @@ public final class PortInfo {
         } else {
           result.manifoldDetails_ = manifoldDetailsBuilder_.build();
         }
+        result.maxManifoldPressure_ = maxManifoldPressure_;
         onBuilt();
         return result;
       }
@@ -19552,6 +19620,10 @@ public final class PortInfo {
               manifoldDetailsBuilder_.addAllMessages(other.manifoldDetails_);
             }
           }
+        }
+        if (!other.getMaxManifoldPressure().isEmpty()) {
+          maxManifoldPressure_ = other.maxManifoldPressure_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -21117,6 +21189,82 @@ public final class PortInfo {
           manifoldDetails_ = null;
         }
         return manifoldDetailsBuilder_;
+      }
+
+      private java.lang.Object maxManifoldPressure_ = "";
+      /**
+       * <code>string maxManifoldPressure = 21;</code>
+       *
+       * @return The maxManifoldPressure.
+       */
+      public java.lang.String getMaxManifoldPressure() {
+        java.lang.Object ref = maxManifoldPressure_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          maxManifoldPressure_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string maxManifoldPressure = 21;</code>
+       *
+       * @return The bytes for maxManifoldPressure.
+       */
+      public com.google.protobuf.ByteString getMaxManifoldPressureBytes() {
+        java.lang.Object ref = maxManifoldPressure_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          maxManifoldPressure_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string maxManifoldPressure = 21;</code>
+       *
+       * @param value The maxManifoldPressure to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxManifoldPressure(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        maxManifoldPressure_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxManifoldPressure = 21;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearMaxManifoldPressure() {
+
+        maxManifoldPressure_ = getDefaultInstance().getMaxManifoldPressure();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string maxManifoldPressure = 21;</code>
+       *
+       * @param value The bytes for maxManifoldPressure to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMaxManifoldPressureBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        maxManifoldPressure_ = value;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -29051,7 +29199,7 @@ public final class PortInfo {
           + "\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006po"
           + "rtId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022\'\n\016respo"
           + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006bert"
-          + "hs\030\002 \003(\0132\014.BerthDetail\"\341\003\n\013BerthDetail\022\n"
+          + "hs\030\002 \003(\0132\014.BerthDetail\"\376\003\n\013BerthDetail\022\n"
           + "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingInf"
           + "oId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tber"
           + "thName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022se"
@@ -29063,56 +29211,57 @@ public final class PortInfo {
           + "axDwt\030\017 \001(\t\022\013\n\003ukc\030\020 \001(\t\022\027\n\017berthDatumDe"
           + "pth\030\021 \001(\t\022\037\n\027portMaxPermissibleDraft\030\022 \001"
           + "(\t\022\024\n\014displacement\030\023 \001(\t\022(\n\017manifoldDeta"
-          + "ils\030\024 \003(\0132\017.ManifoldDetail\"\265\001\n\016ManifoldD"
-          + "etail\022\024\n\014manifoldName\030\001 \001(\t\022\030\n\020connectio"
-          + "nNumber\030\002 \001(\005\022\024\n\014manifoldSize\030\003 \001(\003\022\026\n\016m"
-          + "anifoldHeight\030\004 \001(\t\022\023\n\013maxPressure\030\005 \001(\t"
-          + "\022\026\n\016maxLoadingRate\030\006 \001(\003\022\030\n\020maxDischarge"
-          + "Rate\030\007 \001(\003\"*\n\007Country\022\n\n\002id\030\001 \001(\003\022\023\n\013cou"
-          + "ntryName\030\002 \001(\t\"T\n\014CountryReply\022\033\n\tcountr"
-          + "ies\030\001 \003(\0132\010.Country\022\'\n\016responseStatus\030\002 "
-          + "\001(\0132\017.ResponseStatus\"H\n\020CargoPortRequest"
-          + "\022\021\n\tcompanyId\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\020\n\010"
-          + "portName\030\003 \001(\t\"a\n\016CargoPortReply\022\'\n\016resp"
-          + "onseStatus\030\001 \001(\0132\017.ResponseStatus\022&\n\005por"
-          + "ts\030\002 \003(\0132\027.CargoPortMappingDetail\"\341\001\n\026Ca"
-          + "rgoPortMappingDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcomp"
-          + "anyId\030\002 \001(\003\022\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004"
-          + " \001(\003\022\020\n\010portName\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t"
-          + "\022\023\n\013maxAirDraft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022"
-          + "\024\n\014waterDensity\030\t \001(\t\022\021\n\tcountryId\030\n \001(\003"
-          + "\022\023\n\013countryName\030\013 \001(\t\"F\n\027CargoPortMappin"
-          + "gRequest\022+\n\020cargoPortMapping\030\001 \003(\0132\021.Car"
-          + "goPortMapping\"S\n\rPortInfoReply\022\'\n\016respon"
-          + "seStatus\030\001 \001(\0132\017.ResponseStatus\022\031\n\004port\030"
-          + "\002 \001(\0132\013.PortDetail2\210\010\n\017PortInfoService\022)"
-          + "\n\013GetPortInfo\022\014.PortRequest\032\n.PortReply\""
-          + "\000\022R\n\024GetPortInfoByCargoId\022\034.GetPortInfoB"
-          + "yCargoIdRequest\032\032.GetPortInfoByCargoIdRe"
-          + "ply\"\000\022B\n\024GetPortInfoByPortIds\022\034.GetPortI"
-          + "nfoByPortIdsRequest\032\n.PortReply\"\000\022G\n\031Get"
-          + "PortInfoDetailsForAlgo\022\034.GetPortInfoByPo"
-          + "rtIdsRequest\032\n.PortReply\"\000\0225\n\013GetTimezon"
-          + "e\022\021.PortEmptyRequest\032\021.TimezoneResponse\""
-          + "\000\022;\n\023GetPortInfoByPaging\022\026.PortRequestWi"
-          + "thPaging\032\n.PortReply\"\000\022?\n\027GetBerthDetail"
-          + "sByPortId\022\016.PortIdRequest\032\022.BerthInfoRes"
-          + "ponse\"\000\022D\n\025GetCargoInfoByPortIds\022\034.GetPo"
-          + "rtInfoByPortIdsRequest\032\013.CargoInfos\"\000\022B\n"
-          + "\027GetLoadingPlanBerthData\022\020.BerthIdsReque"
-          + "st\032\025.LoadingAlgoBerthData\022:\n\017GetAllCount"
-          + "ries\022\026.google.protobuf.Empty\032\r.CountryRe"
-          + "ply\"\000\022>\n\026GetAllCargoPortMapping\022\021.CargoP"
-          + "ortRequest\032\017.CargoPortReply\"\000\022B\n\032GetAllC"
-          + "argoPortMappingById\022\021.CargoPortRequest\032\017"
-          + ".CargoPortReply\"\000\022G\n\030SaveAllCargoPortMap"
-          + "pings\022\030.CargoPortMappingRequest\032\017.CargoP"
-          + "ortReply\"\000\0221\n\023GetPortInfoDetailed\022\014.Port"
-          + "Request\032\n.PortReply\"\000\022-\n\014SavePortInfo\022\013."
-          + "PortDetail\032\016.PortInfoReply\"\000\022?\n\027DeleteCa"
-          + "rgoPortMappings\022\021.CargoPortRequest\032\017.Car"
-          + "goPortReply\"\000B\036\n\032com.cpdss.common.genera"
-          + "tedP\000b\006proto3"
+          + "ils\030\024 \003(\0132\017.ManifoldDetail\022\033\n\023maxManifol"
+          + "dPressure\030\025 \001(\t\"\265\001\n\016ManifoldDetail\022\024\n\014ma"
+          + "nifoldName\030\001 \001(\t\022\030\n\020connectionNumber\030\002 \001"
+          + "(\005\022\024\n\014manifoldSize\030\003 \001(\003\022\026\n\016manifoldHeig"
+          + "ht\030\004 \001(\t\022\023\n\013maxPressure\030\005 \001(\t\022\026\n\016maxLoad"
+          + "ingRate\030\006 \001(\003\022\030\n\020maxDischargeRate\030\007 \001(\003\""
+          + "*\n\007Country\022\n\n\002id\030\001 \001(\003\022\023\n\013countryName\030\002 "
+          + "\001(\t\"T\n\014CountryReply\022\033\n\tcountries\030\001 \003(\0132\010"
+          + ".Country\022\'\n\016responseStatus\030\002 \001(\0132\017.Respo"
+          + "nseStatus\"H\n\020CargoPortRequest\022\021\n\tcompany"
+          + "Id\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\020\n\010portName\030\003 "
+          + "\001(\t\"a\n\016CargoPortReply\022\'\n\016responseStatus\030"
+          + "\001 \001(\0132\017.ResponseStatus\022&\n\005ports\030\002 \003(\0132\027."
+          + "CargoPortMappingDetail\"\341\001\n\026CargoPortMapp"
+          + "ingDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003"
+          + "\022\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010por"
+          + "tName\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t\022\023\n\013maxAirD"
+          + "raft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\024\n\014waterDen"
+          + "sity\030\t \001(\t\022\021\n\tcountryId\030\n \001(\003\022\023\n\013country"
+          + "Name\030\013 \001(\t\"F\n\027CargoPortMappingRequest\022+\n"
+          + "\020cargoPortMapping\030\001 \003(\0132\021.CargoPortMappi"
+          + "ng\"S\n\rPortInfoReply\022\'\n\016responseStatus\030\001 "
+          + "\001(\0132\017.ResponseStatus\022\031\n\004port\030\002 \001(\0132\013.Por"
+          + "tDetail2\210\010\n\017PortInfoService\022)\n\013GetPortIn"
+          + "fo\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024GetPor"
+          + "tInfoByCargoId\022\034.GetPortInfoByCargoIdReq"
+          + "uest\032\032.GetPortInfoByCargoIdReply\"\000\022B\n\024Ge"
+          + "tPortInfoByPortIds\022\034.GetPortInfoByPortId"
+          + "sRequest\032\n.PortReply\"\000\022G\n\031GetPortInfoDet"
+          + "ailsForAlgo\022\034.GetPortInfoByPortIdsReques"
+          + "t\032\n.PortReply\"\000\0225\n\013GetTimezone\022\021.PortEmp"
+          + "tyRequest\032\021.TimezoneResponse\"\000\022;\n\023GetPor"
+          + "tInfoByPaging\022\026.PortRequestWithPaging\032\n."
+          + "PortReply\"\000\022?\n\027GetBerthDetailsByPortId\022\016"
+          + ".PortIdRequest\032\022.BerthInfoResponse\"\000\022D\n\025"
+          + "GetCargoInfoByPortIds\022\034.GetPortInfoByPor"
+          + "tIdsRequest\032\013.CargoInfos\"\000\022B\n\027GetLoading"
+          + "PlanBerthData\022\020.BerthIdsRequest\032\025.Loadin"
+          + "gAlgoBerthData\022:\n\017GetAllCountries\022\026.goog"
+          + "le.protobuf.Empty\032\r.CountryReply\"\000\022>\n\026Ge"
+          + "tAllCargoPortMapping\022\021.CargoPortRequest\032"
+          + "\017.CargoPortReply\"\000\022B\n\032GetAllCargoPortMap"
+          + "pingById\022\021.CargoPortRequest\032\017.CargoPortR"
+          + "eply\"\000\022G\n\030SaveAllCargoPortMappings\022\030.Car"
+          + "goPortMappingRequest\032\017.CargoPortReply\"\000\022"
+          + "1\n\023GetPortInfoDetailed\022\014.PortRequest\032\n.P"
+          + "ortReply\"\000\022-\n\014SavePortInfo\022\013.PortDetail\032"
+          + "\016.PortInfoReply\"\000\022?\n\027DeleteCargoPortMapp"
+          + "ings\022\021.CargoPortRequest\032\017.CargoPortReply"
+          + "\"\000B\036\n\032com.cpdss.common.generatedP\000b\006prot"
+          + "o3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -29306,6 +29455,7 @@ public final class PortInfo {
               "PortMaxPermissibleDraft",
               "Displacement",
               "ManifoldDetails",
+              "MaxManifoldPressure",
             });
     internal_static_ManifoldDetail_descriptor = getDescriptor().getMessageTypes().get(17);
     internal_static_ManifoldDetail_fieldAccessorTable =

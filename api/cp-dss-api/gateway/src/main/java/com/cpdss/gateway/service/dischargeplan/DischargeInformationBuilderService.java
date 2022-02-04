@@ -161,41 +161,59 @@ public class DischargeInformationBuilderService {
     return var2;
   }
 
-  public List<BerthDetails> buildDischargeBerthsFromMessage(List<DischargeBerths> var1) {
-    List<BerthDetails> list = new ArrayList<>();
-    for (DischargeBerths lb : var1) {
-      BerthDetails var2 = new BerthDetails();
-      var2.setLoadingBerthId(lb.getId());
-      var2.setLoadingInfoId(lb.getDischargeInfoId());
-      var2.setBerthId(lb.getBerthId());
-      var2.setMaxShipDepth(
-          lb.getDepth().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDepth()));
+  /**
+   * Builds discharge berth details from grpc
+   *
+   * @param dischargeBerthsList list of discharge berth details from grpc
+   * @return list of berth details dto
+   */
+  public List<BerthDetails> buildDischargeBerthsFromMessage(
+      List<DischargeBerths> dischargeBerthsList) {
 
-      var2.setSeaDraftLimitation(
-          lb.getSeaDraftLimitation().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(lb.getSeaDraftLimitation()));
-      var2.setAirDraftLimitation(
-          lb.getAirDraftLimitation().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(lb.getAirDraftLimitation()));
-      var2.setMaxManifoldHeight(
-          lb.getMaxManifoldHeight().isEmpty()
-              ? BigDecimal.ZERO
-              : new BigDecimal(lb.getMaxManifoldHeight()));
-      var2.setRegulationAndRestriction(lb.getSpecialRegulationRestriction());
-      var2.setItemsToBeAgreedWith(lb.getItemsToBeAgreedWith());
-      var2.setHoseConnections(lb.getHoseConnections());
-      var2.setLineDisplacement(lb.getLineDisplacement());
-      var2.setAirPurge(lb.getAirPurge());
-      var2.setCargoCirculation(lb.getCargoCirculation());
-      var2.setMaxManifoldPressure(lb.getMaxManifoldPressure());
-      var2.setDisplacement(
-          lb.getDisplacement().isEmpty() ? BigDecimal.ZERO : new BigDecimal(lb.getDisplacement()));
-      list.add(var2);
+    log.info("Inside buildDischargeBerthsFromMessage method!");
+    List<BerthDetails> berthDetailsList = new ArrayList<>();
+
+    for (DischargeBerths dischargeBerths : dischargeBerthsList) {
+
+      BerthDetails berthDetails = new BerthDetails();
+
+      // Set fields
+      berthDetails.setLoadingBerthId(dischargeBerths.getId());
+      berthDetails.setLoadingInfoId(dischargeBerths.getDischargeInfoId());
+      berthDetails.setBerthId(dischargeBerths.getBerthId());
+      berthDetails.setMaxShipDepth(returnZeroIfBlank(dischargeBerths.getDepth()));
+      berthDetails.setSeaDraftLimitation(
+          returnZeroIfBlank(dischargeBerths.getSeaDraftLimitation()));
+      berthDetails.setAirDraftLimitation(
+          returnZeroIfBlank(dischargeBerths.getAirDraftLimitation()));
+      berthDetails.setMaxManifoldHeight(returnZeroIfBlank(dischargeBerths.getMaxManifoldHeight()));
+
+      berthDetails.setRegulationAndRestriction(dischargeBerths.getSpecialRegulationRestriction());
+      berthDetails.setItemsToBeAgreedWith(dischargeBerths.getItemsToBeAgreedWith());
+      berthDetails.setHoseConnections(dischargeBerths.getHoseConnections());
+      berthDetails.setLineDisplacement(dischargeBerths.getLineDisplacement());
+      berthDetails.setAirPurge(dischargeBerths.getAirPurge());
+      berthDetails.setCargoCirculation(dischargeBerths.getCargoCirculation());
+      berthDetails.setMaxManifoldPressure(dischargeBerths.getMaxManifoldPressure());
+      berthDetails.setDisplacement(returnZeroIfBlank(dischargeBerths.getDisplacement()));
+
+      berthDetailsList.add(berthDetails);
     }
-    log.info("Loading Plan Berth data added Size {}", var1.size());
-    return list;
+
+    return berthDetailsList;
+  }
+
+  /**
+   * Returns big decimal value of provided string else returns big decimal zero
+   *
+   * @param string input string
+   * @return big decimal value
+   */
+  private BigDecimal returnZeroIfBlank(String string) {
+
+    return io.micrometer.core.instrument.util.StringUtils.isBlank(string)
+        ? BigDecimal.ZERO
+        : new BigDecimal(string);
   }
 
   public CargoMachineryInUse buildDischargeMachinesFromMessage(

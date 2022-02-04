@@ -192,6 +192,7 @@ message BerthDetail{
 	string portMaxPermissibleDraft = 18;
 	string displacement = 19;
 	repeated ManifoldDetail manifoldDetails = 20;
+	string maxManifoldPressure = 21;
 
 }
 

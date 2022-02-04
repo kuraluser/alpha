@@ -397,7 +397,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
 
       Optional.ofNullable(berthInfo.getMaximumDraft())
           .ifPresent(draft -> berthDetailBuilder.setSeaDraftLimitation(String.valueOf(draft)));
-      berthDetailBuilder.setMaxManifoldHeight(this.getMaxManifoldHeight(berthInfo).toString());
+      berthDetailBuilder.setMaxManifoldHeight(getMaxManifoldHeight(berthInfo).toString());
+      berthDetailBuilder.setMaxManifoldPressure(getMaxManifoldPressure(berthInfo).toString());
 
       Optional.ofNullable(berthInfo.getAirDraft())
           .ifPresent(draft -> berthDetailBuilder.setAirDraftLimitation(String.valueOf(draft)));
@@ -420,8 +421,36 @@ public class PortInfoService extends PortInfoServiceImplBase {
       }
       Optional.ofNullable(berthInfo.getDisplacement())
           .ifPresent(displacement -> berthDetailBuilder.setDisplacement(displacement.toString()));
+
       builder.addBerths(berthDetailBuilder);
     }
+  }
+
+  /**
+   * Gets maximum of all manifold pressure entries against a berth
+   *
+   * @param berth berth info details
+   * @return big decimal value of max manifold pressure
+   */
+  private BigDecimal getMaxManifoldPressure(BerthInfo berth) {
+
+    log.info("Inside getMaxManifoldPressure method!");
+
+    try {
+
+      List<BerthManifold> berthManifolds =
+          berth.getBerthManifolds().stream()
+              .filter(BerthManifold::getIsActive)
+              .collect(Collectors.toList());
+      if (!berthManifolds.isEmpty()) {
+        BerthManifold berthManifold =
+            berthManifolds.stream().max(Comparator.comparing(BerthManifold::getMaxPressure)).get();
+        if (berthManifold.getMaxPressure() != null) return berthManifold.getMaxPressure();
+      }
+    } catch (Exception e) {
+      log.error("Failed to get manifold data for berth Id {}, {}", berth.getId(), e.getMessage());
+    }
+    return BigDecimal.ZERO;
   }
 
   /**
