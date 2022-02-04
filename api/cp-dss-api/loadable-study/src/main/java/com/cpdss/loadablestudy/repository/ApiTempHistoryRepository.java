@@ -24,6 +24,17 @@ public interface ApiTempHistoryRepository
   public List<ApiTempHistory> findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
       Long loadingPortId, Long cargoId, Boolean isActive);
 
+  @Query(
+      value =
+          "select cn.id, ah.api, ah.temperature, ah.cargo_xid, ah.load_port_xid from "
+              + "public.cargo_nomination cn inner join public.cargo_nomination_operation_details cnod on "
+              + "cn.id = cnod.cargo_nomination_xid inner join public.api_history ah on "
+              + "cnod.port_xid = ah.load_port_xid and ah.cargo_xid = cn.cargo_xid "
+              + "where cn.id in ?1 and ah.is_active = ?2 order by ah.created_date_time desc",
+      nativeQuery = true)
+  public List<Object[]> findByCargoNominationIdInAndIsActiveOrderByCreatedDateTimeDesc(
+      List<Long> cargoNominationIds, Boolean b);
+
   Page<ApiTempHistory> findAllByLoadedDateBetween(
       Pageable pageable, LocalDateTime fromDate, LocalDateTime toDate);
 
