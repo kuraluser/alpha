@@ -11,4 +11,7 @@ public interface LoadablePlanConstraintsRespository
     extends CommonCrudRepository<LoadablePlanConstraints, Long> {
   public List<LoadablePlanConstraints> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
+
+  public List<LoadablePlanConstraints> findByLoadablePattern_IdInAndIsActive(
+      List<Long> patternsIds, Boolean isActive);
 }

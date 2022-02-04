@@ -84,6 +84,9 @@ public class LoadablePlanStowageDetails extends EntityDoc {
   @JsonIgnore
   private LoadablePattern loadablePattern;
 
+  @Column(name = "loadable_pattern_xid", insertable = false, updatable = false)
+  private Long loadablePatternId;
+
   @Column(name = "cargo_nomination_temperature")
   private BigDecimal cargoNominationTemperature;
 

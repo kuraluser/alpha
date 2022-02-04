@@ -57,4 +57,13 @@ public interface LoadablePlanStowageDetailsTempRepository
 
   public List<LoadablePlanStowageDetailsTemp> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, boolean isActive);
+
+  @Query(
+      "SELECT LPSD.id, LPSD.loadablePatternId FROM LoadablePlanStowageDetailsTemp LPSD where "
+          + "LPSD.loadablePattern.id IN ?1 and LPSD.isActive = ?2")
+  public List<Object[]> findByLoadablePatternIdInAndIsActive(
+      List<Long> patternsIds, boolean isActive);
+
+  public List<LoadablePlanStowageDetailsTemp> findByLoadablePlanBallastDetails_IdInAndIsActive(
+      List<Long> ballastDetailsIds, boolean isActive);
 }

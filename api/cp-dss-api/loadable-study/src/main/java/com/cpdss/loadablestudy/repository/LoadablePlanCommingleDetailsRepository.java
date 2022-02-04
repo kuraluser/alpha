@@ -40,4 +40,7 @@ public interface LoadablePlanCommingleDetailsRepository
           + "lpcd.loadablePattern.id = :loadablePatternId AND lpcd.isActive = :isActive")
   List<CommingleDetails> findByLoadablePatternIdAndIsActive(
       long loadablePatternId, boolean isActive);
+
+  public List<LoadablePlanCommingleDetails> findByLoadablePattern_IdInAndIsActive(
+      List<Long> patternsIds, boolean isActive);
 }

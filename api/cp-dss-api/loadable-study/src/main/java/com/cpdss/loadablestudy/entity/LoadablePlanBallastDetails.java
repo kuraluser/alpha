@@ -68,5 +68,8 @@ public class LoadablePlanBallastDetails extends EntityDoc {
   @ManyToOne
   private LoadablePattern loadablePattern;
 
+  @Column(name = "loadable_pattern_xid", insertable = false, updatable = false)
+  private Long loadablePatternId;
+
   @Transient private Long communicationRelatedEntityId;
 }

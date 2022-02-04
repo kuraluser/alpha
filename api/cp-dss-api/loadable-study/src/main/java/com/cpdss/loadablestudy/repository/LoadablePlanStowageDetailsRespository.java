@@ -16,8 +16,8 @@ public interface LoadablePlanStowageDetailsRespository
   public List<LoadablePlanStowageDetails> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
 
-  public List<LoadablePlanStowageDetails> findByLoadablePatternIdInAndIsActive(
-      List<Long> loadablePatternIds, boolean b);
+  public List<LoadablePlanStowageDetails> findByLoadablePattern_IdInAndIsActive(
+      List<Long> loadablePatternIds, Boolean isActive);
 
   @Transactional
   @Modifying

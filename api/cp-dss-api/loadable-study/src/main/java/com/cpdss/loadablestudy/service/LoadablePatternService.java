@@ -1839,6 +1839,36 @@ public class LoadablePatternService {
           loadablePatterns.size(),
           loadableStudy.get().getName(),
           loadableStudy.get().getId());
+      List<Long> patternsIds =
+          loadablePatterns.stream().map(LoadablePattern::getId).collect(Collectors.toList());
+      List<LoadablePatternAlgoStatus> algoStatuses =
+          loadablePatternAlgoStatusRepository.findByLoadablePattern_IdInAndIsActive(
+              patternsIds, true);
+      List<Long> id =
+          algoStatuses.stream().map(LoadablePatternAlgoStatus::getId).collect(Collectors.toList());
+      List<Object[]> stowageDetailsTemps =
+          stowageDetailsTempRepository.findByLoadablePatternIdInAndIsActive(patternsIds, true);
+      List<LoadablePlanConstraints> planConstraints =
+          loadablePlanConstraintsRespository.findByLoadablePattern_IdInAndIsActive(
+              patternsIds, true);
+      List<LoadablePlanStowageDetails> stowageDetails =
+          loadablePlanStowageDetailsRespository.findByLoadablePattern_IdInAndIsActive(
+              patternsIds, true);
+      List<LoadablePlanQuantity> planQuantities =
+          loadablePlanQuantityRepository.findByLoadablePattern_IdInAndIsActive(patternsIds, true);
+      List<LoadablePlanCommingleDetails> commingleDetails =
+          loadablePlanCommingleDetailsRepository.findByLoadablePattern_IdInAndIsActive(
+              patternsIds, true);
+      List<LoadablePlanBallastDetails> ballastDetails =
+          loadablePlanBallastDetailsRepository.findByLoadablePattern_IdInAndIsActive(
+              patternsIds, true);
+      List<Long> ballastDetailsIds =
+          ballastDetails.stream()
+              .map(LoadablePlanBallastDetails::getId)
+              .collect(Collectors.toList());
+      List<LoadablePlanStowageDetailsTemp> loadablePlanStowageDetailsTemp =
+          this.stowageDetailsTempRepository.findByLoadablePlanBallastDetails_IdInAndIsActive(
+              ballastDetailsIds, true);
       loadablePatterns.forEach(
           loadablePattern -> {
             com.cpdss.common.generated.LoadableStudy.LoadablePattern.Builder
@@ -1856,43 +1886,57 @@ public class LoadablePatternService {
             // .isEmpty()) loadablePatternBuilder.setValidated(true);
             ofNullable(loadablePattern.getCaseNumber())
                 .ifPresent(loadablePatternBuilder::setCaseNumber);
-            List<LoadablePatternAlgoStatus> patternStatus =
-                loadablePatternAlgoStatusRepository.findByLoadablePatternAndIsActive(
-                    loadablePattern, true);
+
+            List<LoadablePatternAlgoStatus> patternStatus = new ArrayList<>();
+            algoStatuses.forEach(
+                algoStatus -> {
+                  if (algoStatus.getLoadablePatternId().equals(loadablePattern.getId()))
+                    patternStatus.add(algoStatus);
+                });
+
             if (!patternStatus.isEmpty()) {
               loadablePatternBuilder.setLoadablePatternStatusId(
                   patternStatus.get(patternStatus.size() - 1).getLoadableStudyStatus().getId());
             }
 
+            List<Long> stowageDetailsIds = new ArrayList<>();
+            stowageDetailsTemps.forEach(
+                objects -> {
+                  if (Long.parseLong(String.valueOf(objects[1])) == loadablePattern.getId())
+                    stowageDetailsIds.add(Long.parseLong(String.valueOf(objects[0])));
+                });
+
             if (!patternStatus.isEmpty()) {
-              if (stowageDetailsTempRepository
-                      .findByLoadablePatternAndIsActive(loadablePattern, true)
-                      .isEmpty()
+              if (stowageDetailsIds.isEmpty()
                   || VALIDATED_CONDITIONS.contains(
                       loadablePatternBuilder.getLoadablePatternStatusId())) {
                 loadablePatternBuilder.setValidated(true);
               }
             } else {
-              if (stowageDetailsTempRepository
-                  .findByLoadablePatternAndIsActive(loadablePattern, true)
-                  .isEmpty()) {
+              if (stowageDetailsIds.isEmpty()) {
                 loadablePatternBuilder.setValidated(true);
               }
             }
 
             loadablePatternBuilder.setStabilityParameters(buildStabilityParamter(loadablePattern));
 
-            List<LoadablePlanConstraints> loadablePlanConstraints =
-                loadablePlanConstraintsRespository.findByLoadablePatternAndIsActive(
-                    loadablePattern, true);
+            List<LoadablePlanConstraints> loadablePlanConstraints = new ArrayList<>();
+            planConstraints.forEach(
+                constraints -> {
+                  if (constraints.getLoadablePatternId().equals(loadablePattern.getId()))
+                    loadablePlanConstraints.add(constraints);
+                });
             loadablePatternBuilder.clearConstraints();
             buildLoadablePatternConstraints(loadablePlanConstraints, loadablePatternBuilder);
 
             loadablePatternBuilder.clearLoadablePatternCargoDetails();
             buildLoadablePatternCargoAndCommingleDetails(loadablePattern, loadablePatternBuilder);
-            List<LoadablePlanStowageDetails> loadablePlanStowageDetails =
-                loadablePlanStowageDetailsRespository.findByLoadablePatternAndIsActive(
-                    loadablePattern, true);
+            List<LoadablePlanStowageDetails> loadablePlanStowageDetails = new ArrayList<>();
+            stowageDetails.forEach(
+                details -> {
+                  if (details.getLoadablePatternId().equals(loadablePattern.getId()))
+                    loadablePlanStowageDetails.add(details);
+                });
             com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.Builder replyBuilder =
                 com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsReply.newBuilder();
             List<Long> tankIds =
@@ -1916,24 +1960,40 @@ public class LoadablePatternService {
 
             // <--DSS-2016-->
             // loadableQuantityCargoDetails in json response
-            List<LoadablePlanQuantity> loadablePlanQuantities =
-                loadablePlanQuantityRepository.findByLoadablePatternAndIsActive(
-                    loadablePattern, true);
+            List<LoadablePlanQuantity> loadablePlanQuantities = new ArrayList<>();
+            planQuantities.forEach(
+                quantity -> {
+                  if (quantity.getLoadablePatternId().equals(loadablePattern.getId()))
+                    loadablePlanQuantities.add(quantity);
+                });
             log.info(
                 "Loadable Patters, Loadable Plan Quantity Size {}", loadablePlanQuantities.size());
             loadablePlanService.buildLoadablePlanQuantity(
                 loadablePlanQuantities, loadablePatternBuilder);
-            List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails =
-                loadablePlanCommingleDetailsRepository.findByLoadablePatternAndIsActive(
-                    loadablePattern, true);
+            List<LoadablePlanCommingleDetails> loadablePlanCommingleDetails = new ArrayList<>();
+            commingleDetails.forEach(
+                details -> {
+                  if (details.getLoadablePatternId().equals(loadablePattern.getId()))
+                    loadablePlanCommingleDetails.add(details);
+                });
             loadablePlanService.buildLoadablePlanCommingleDetails(
                 loadablePlanCommingleDetails, loadablePatternBuilder);
-            List<LoadablePlanBallastDetails> loadablePlanBallastDetails =
-                loadablePlanBallastDetailsRepository.findByLoadablePatternAndIsActive(
-                    loadablePattern, true);
-            List<LoadablePlanStowageDetailsTemp> ballstTempList =
-                this.stowageDetailsTempRepository.findByLoadablePlanBallastDetailsInAndIsActive(
-                    loadablePlanBallastDetails, true);
+            List<LoadablePlanBallastDetails> loadablePlanBallastDetails = new ArrayList<>();
+            ballastDetails.forEach(
+                details -> {
+                  if (details.getLoadablePatternId().equals(loadablePattern.getId()))
+                    loadablePlanBallastDetails.add(details);
+                });
+            List<Long> planBallastDetailsIds =
+                loadablePlanBallastDetails.stream()
+                    .map(LoadablePlanBallastDetails::getId)
+                    .collect(Collectors.toList());
+            List<LoadablePlanStowageDetailsTemp> ballstTempList = new ArrayList<>();
+            loadablePlanStowageDetailsTemp.forEach(
+                temps -> {
+                  if (planBallastDetailsIds.contains(temps.getLoadablePlanBallastDetailsId()))
+                    ballstTempList.add(temps);
+                });
             loadablePlanService.buildBallastGridDetails(
                 loadablePlanBallastDetails, ballstTempList, loadablePatternBuilder);
             // <--DSS-2016!-->

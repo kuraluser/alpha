@@ -27,6 +27,9 @@ public class LoadablePlanConstraints extends EntityDoc {
   @ManyToOne
   private LoadablePattern loadablePattern;
 
+  @Column(name = "loadable_pattern_xid", insertable = false, updatable = false)
+  private Long loadablePatternId;
+
   @Column(name = "constraints_data")
   private String constraintsData;
 

@@ -23,6 +23,9 @@ public interface LoadablePlanQuantityRepository
   public List<LoadablePlanQuantity> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
 
+  public List<LoadablePlanQuantity> findByLoadablePattern_IdInAndIsActive(
+      List<Long> patternsIds, Boolean isActive);
+
   @Transactional
   @Modifying
   @Query("UPDATE LoadablePlanQuantity SET isActive = ?1 WHERE loadablePattern.id = ?2")

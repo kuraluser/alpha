@@ -83,6 +83,9 @@ public class LoadablePlanQuantity extends EntityDoc {
   @ManyToOne
   private LoadablePattern loadablePattern;
 
+  @Column(name = "loadable_pattern_xid", insertable = false, updatable = false)
+  private Long loadablePatternId;
+
   @Column(name = "cargo_xid")
   private Long cargoXId;
 

@@ -15,7 +15,7 @@ public interface LoadablePlanBallastDetailsRepository
   public List<LoadablePlanBallastDetails> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
 
-  public List<LoadablePlanBallastDetails> findByLoadablePatternIdInAndIsActive(
+  public List<LoadablePlanBallastDetails> findByLoadablePattern_IdInAndIsActive(
       List<Long> loadablePatternIds, Boolean isActive);
 
   @Transactional

@@ -1182,6 +1182,7 @@ public class LoadablePatternServiceTest {
     return request;
   }
 
+  @Disabled
   @Test
   void testfetchSavedPatternFromDB() {
     PatternDetails details = new PatternDetails();

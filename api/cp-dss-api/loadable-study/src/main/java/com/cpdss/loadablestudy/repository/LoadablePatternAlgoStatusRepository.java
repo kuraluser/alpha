@@ -34,6 +34,9 @@ public interface LoadablePatternAlgoStatusRepository
   public List<LoadablePatternAlgoStatus> findByLoadablePatternAndIsActive(
       LoadablePattern loadablePattern, Boolean isActive);
 
+  public List<LoadablePatternAlgoStatus> findByLoadablePattern_IdInAndIsActive(
+      List<Long> loadablePatternIds, Boolean isActive);
+
   public Optional<LoadablePatternAlgoStatus> findByLoadablePatternIdAndMessageIdAndIsActive(
       Long loadablePatternId, String messageId, Boolean isActive);
 

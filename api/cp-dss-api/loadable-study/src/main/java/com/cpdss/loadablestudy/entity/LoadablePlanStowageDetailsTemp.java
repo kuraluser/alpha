@@ -56,9 +56,15 @@ public class LoadablePlanStowageDetailsTemp extends EntityDoc {
   @ManyToOne
   private LoadablePlanBallastDetails loadablePlanBallastDetails;
 
+  @Column(name = "ballast_details_xid", insertable = false, updatable = false)
+  private Long loadablePlanBallastDetailsId;
+
   @JoinColumn(name = "loadable_pattern_xid", referencedColumnName = "id")
   @ManyToOne
   private LoadablePattern loadablePattern;
+
+  @Column(name = "loadable_pattern_xid", insertable = false, updatable = false)
+  private Long loadablePatternId;
 
   @JoinColumn(name = "loadable_plan_commingle_details_xid", referencedColumnName = "id")
   @ManyToOne

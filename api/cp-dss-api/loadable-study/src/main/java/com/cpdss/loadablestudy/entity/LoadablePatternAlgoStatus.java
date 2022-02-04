@@ -36,6 +36,9 @@ public class LoadablePatternAlgoStatus extends EntityDoc {
   @ManyToOne
   private LoadablePattern loadablePattern;
 
+  @Column(name = "loadabale_pattern_xid", insertable = false, updatable = false)
+  private Long loadablePatternId;
+
   @JoinColumn(name = "loadable_study_status", referencedColumnName = "id")
   @ManyToOne
   private LoadableStudyStatus loadableStudyStatus;
