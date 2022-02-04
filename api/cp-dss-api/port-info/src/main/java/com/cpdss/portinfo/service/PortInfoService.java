@@ -229,10 +229,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
                 bigDecimal -> portDetail.setMaxAirDraft(bigDecimal.toString()));
           }
 
-          Optional.ofNullable(port.getLattitude())
-              .ifPresent(item -> portDetail.setLat(String.valueOf(item)));
-          Optional.ofNullable(port.getLongitude())
-              .ifPresent(item -> portDetail.setLon(String.valueOf(item)));
+          Optional.ofNullable(port.getLattitude()).ifPresent(portDetail::setLat);
+          Optional.ofNullable(port.getLongitude()).ifPresent(portDetail::setLon);
           // To set berth details for each port in the response
           Optional.ofNullable(port.getTideHeightFrom())
               .ifPresent(
@@ -1026,10 +1024,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
       minAirDraftOfBerths.ifPresent(bigDecimal -> portDetail.setMaxAirDraft(bigDecimal.toString()));
     }
 
-    Optional.ofNullable(portInfo.getLattitude())
-        .ifPresent(item -> portDetail.setLat(String.valueOf(item)));
-    Optional.ofNullable(portInfo.getLongitude())
-        .ifPresent(item -> portDetail.setLon(String.valueOf(item)));
+    Optional.ofNullable(portInfo.getLattitude()).ifPresent(portDetail::setLat);
+    Optional.ofNullable(portInfo.getLongitude()).ifPresent(portDetail::setLon);
     // To set berth details for each portInfo in the response
     Optional.ofNullable(portInfo.getTideHeightFrom())
         .ifPresent(tideHeightFrom -> portDetail.setTideHeightFrom(String.valueOf(tideHeightFrom)));
@@ -1060,14 +1056,8 @@ public class PortInfoService extends PortInfoServiceImplBase {
       portInfo.setCountry(country);
     }
 
-    portInfo.setDensitySeaWater(
-        isNullOrEmpty(request.getWaterDensity())
-            ? null
-            : new BigDecimal(request.getWaterDensity()));
-    portInfo.setMaxPermissibleDraft(
-        isNullOrEmpty(request.getMaxPermissibleDraft())
-            ? null
-            : new BigDecimal(request.getMaxPermissibleDraft()));
+    portInfo.setDensitySeaWater(returnZeroIfBlank(request.getWaterDensity()));
+    portInfo.setMaxPermissibleDraft(returnZeroIfBlank(request.getMaxPermissibleDraft()));
     portInfo.setCode(request.getCode());
     portInfo.setName(request.getName());
     if (request.getId() == 0
@@ -1077,20 +1067,11 @@ public class PortInfoService extends PortInfoServiceImplBase {
       portInfo.setTimezone(timezone);
     }
 
-    portInfo.setTideHeightTo(
-        isNullOrEmpty(request.getTideHeightTo())
-            ? null
-            : new BigDecimal(request.getTideHeightTo()));
-    portInfo.setTideHeightFrom(
-        isNullOrEmpty(request.getTideHeightFrom())
-            ? null
-            : new BigDecimal(request.getTideHeightFrom()));
-    portInfo.setLattitude(isNullOrEmpty(request.getLat()) ? null : request.getLat());
-    portInfo.setLongitude(isNullOrEmpty(request.getLon()) ? null : request.getLon());
-    portInfo.setAmbientTemperature(
-        isNullOrEmpty(request.getAmbientTemperature())
-            ? null
-            : new BigDecimal(request.getAmbientTemperature()));
+    portInfo.setTideHeightTo(returnZeroIfBlank(request.getTideHeightTo()));
+    portInfo.setTideHeightFrom(returnZeroIfBlank(request.getTideHeightFrom()));
+    portInfo.setLattitude(request.getLat());
+    portInfo.setLongitude(request.getLon());
+    portInfo.setAmbientTemperature(returnZeroIfBlank(request.getAmbientTemperature()));
     portInfo.setIsActive(true);
     Set<BerthInfo> berthInfoList =
         setBerthInformationForThePorts(request.getBerthDetailsList(), portInfo);
@@ -1128,18 +1109,11 @@ public class PortInfoService extends PortInfoServiceImplBase {
         berthResponse = berthOptResponse.get();
       }
       berthResponse.setBerthName(berth.getBerthName());
-      berthResponse.setBerthDatumDepth(
-          isNullOrEmpty(berth.getBerthDatumDepth())
-              ? null
-              : new BigDecimal(berth.getBerthDatumDepth()));
-      berthResponse.setMaximumDraft(
-          isNullOrEmpty(berth.getMaxDraft()) ? null : new BigDecimal(berth.getMaxDraft()));
-      berthResponse.setMaxShipDepth(
-          isNullOrEmpty(berth.getMaxShipDepth()) ? null : new BigDecimal(berth.getMaxShipDepth()));
-      berthResponse.setMaximumDwt(
-          isNullOrEmpty(berth.getMaxDwt()) ? null : new BigDecimal(berth.getMaxDwt()));
-      berthResponse.setMaximumLoa(
-          isNullOrEmpty(berth.getMaxLoa()) ? null : new BigDecimal(berth.getMaxLoa()));
+      berthResponse.setBerthDatumDepth(returnZeroIfBlank(berth.getBerthDatumDepth()));
+      berthResponse.setMaximumDraft(returnZeroIfBlank(berth.getMaxDraft()));
+      berthResponse.setMaxShipDepth(returnZeroIfBlank(berth.getMaxShipDepth()));
+      berthResponse.setMaximumDwt(returnZeroIfBlank(berth.getMaxDwt()));
+      berthResponse.setMaximumLoa(returnZeroIfBlank(berth.getMaxLoa()));
       berthResponse.setUnderKeelClearance(berth.getUkc());
       berthResponse.setIsActive(true);
       berthResponse.setPortInfo(portInfo);
@@ -1191,17 +1165,6 @@ public class PortInfoService extends PortInfoServiceImplBase {
   private BigDecimal returnZeroIfBlank(String string) {
 
     return StringUtils.isBlank(string) ? BigDecimal.ZERO : new BigDecimal(string);
-  }
-
-  /**
-   * to check strting is null or empty
-   *
-   * @param value
-   * @return
-   */
-  public Boolean isNullOrEmpty(String value) {
-    if (value == null || value.trim().isEmpty()) return true;
-    return false;
   }
 
   /**

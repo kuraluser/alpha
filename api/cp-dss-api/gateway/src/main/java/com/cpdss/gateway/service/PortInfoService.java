@@ -69,14 +69,9 @@ public class PortInfoService {
     List<PortDetail> portsList = portReply.getPortsList();
     portDetails.setCountryName(portsList.get(0).getCountryName());
     portDetails.setCountryId(portsList.get(0).getCountryId());
-    portDetails.setDensityOfWater(
-        portsList.get(0).getWaterDensity().isEmpty()
-            ? null
-            : new BigDecimal(portsList.get(0).getWaterDensity()));
+    portDetails.setDensityOfWater(returnZeroIfBlank(portsList.get(0).getWaterDensity()));
     portDetails.setMaxPermissibleDraft(
-        portsList.get(0).getMaxPermissibleDraft().isEmpty()
-            ? null
-            : new BigDecimal(portsList.get(0).getMaxPermissibleDraft()));
+        returnZeroIfBlank(portsList.get(0).getMaxPermissibleDraft()));
     portDetails.setPortCode(portsList.get(0).getCode());
     portDetails.setPortId(portsList.get(0).getId());
     portDetails.setPortName(portsList.get(0).getName());
@@ -84,21 +79,11 @@ public class PortInfoService {
     portDetails.setTimezone(portsList.get(0).getTimezone());
     portDetails.setTimezoneAbbreviation(portsList.get(0).getTimezoneAbbreviation());
     portDetails.setTimezoneOffsetVal(portsList.get(0).getTimezoneOffsetVal());
-    portDetails.setTideHeightHigh(
-        portsList.get(0).getTideHeightTo().isEmpty()
-            ? null
-            : new BigDecimal(portsList.get(0).getTideHeightTo()));
-    portDetails.setTideHeightLow(
-        portsList.get(0).getTideHeightFrom().isEmpty()
-            ? null
-            : new BigDecimal(portsList.get(0).getTideHeightFrom()));
-    portDetails.setLatitude(portsList.get(0).getLat().isEmpty() ? null : portsList.get(0).getLat());
-    portDetails.setLongitude(
-        portsList.get(0).getLon().isEmpty() ? null : portsList.get(0).getLon());
-    portDetails.setAmbientTemperature(
-        StringUtils.isEmpty(portsList.get(0).getAmbientTemperature())
-            ? null
-            : new BigDecimal(portsList.get(0).getAmbientTemperature()));
+    portDetails.setTideHeightHigh(returnZeroIfBlank(portsList.get(0).getTideHeightTo()));
+    portDetails.setTideHeightLow(returnZeroIfBlank(portsList.get(0).getTideHeightFrom()));
+    portDetails.setLatitude(portsList.get(0).getLat());
+    portDetails.setLongitude(portsList.get(0).getLon());
+    portDetails.setAmbientTemperature(returnZeroIfBlank(portsList.get(0).getAmbientTemperature()));
 
     List<BerthDetail> berthDetailsList = portsList.get(0).getBerthDetailsList();
     List<PortBerthInfoResponse> berthList = setBerthInformationForThePorts(berthDetailsList);
@@ -123,23 +108,15 @@ public class PortInfoService {
       PortBerthInfoResponse berthResponse = new PortBerthInfoResponse();
       berthResponse.setBerthId(berth.getId());
       berthResponse.setBerthName(berth.getBerthName());
-      berthResponse.setDepthInDatum(
-          berth.getBerthDatumDepth().isEmpty() ? null : new BigDecimal(berth.getBerthDatumDepth()));
-      berthResponse.setMaxDwt(
-          berth.getMaxDwt().isEmpty() ? null : new BigDecimal(berth.getMaxDwt()));
-      berthResponse.setMaxManifoldHeight(
-          berth.getMaxManifoldHeight().isEmpty()
-              ? null
-              : new BigDecimal(berth.getMaxManifoldHeight()));
-      berthResponse.setMaxDraft(
-          StringUtils.isEmpty(berth.getMaxDraft()) ? null : new BigDecimal(berth.getMaxDraft()));
-      berthResponse.setMaxShipDepth(
-          berth.getMaxShipDepth().isEmpty() ? null : new BigDecimal(berth.getMaxShipDepth()));
+      berthResponse.setDepthInDatum(returnZeroIfBlank(berth.getBerthDatumDepth()));
+      berthResponse.setMaxDwt(returnZeroIfBlank(berth.getMaxDwt()));
+      berthResponse.setMaxManifoldHeight(returnZeroIfBlank(berth.getMaxManifoldHeight()));
+      berthResponse.setMaxDraft(returnZeroIfBlank(berth.getMaxDraft()));
+      berthResponse.setMaxShipDepth(returnZeroIfBlank(berth.getMaxShipDepth()));
       berthResponse.setPortId(berth.getPortId());
       berthResponse.setRegulationAndRestriction(berth.getRegulationAndRestriction());
-      berthResponse.setMaxLoa(
-          berth.getMaxLoa().isEmpty() ? null : new BigDecimal(berth.getMaxLoa()));
-      berthResponse.setMinUKC(berth.getUkc().isEmpty() ? null : berth.getUkc());
+      berthResponse.setMaxLoa(returnZeroIfBlank(berth.getMaxLoa()));
+      berthResponse.setMinUKC(berth.getUkc());
 
       buildManifoldDetails(berth.getManifoldDetailsList(), berthResponse);
       berthList.add(berthResponse);
@@ -392,39 +369,28 @@ public class PortInfoService {
    * @param portInfoReply
    */
   public void buildPortInfoResponse(PortDetailResponse response, PortInfoReply portInfoReply) {
+
     PortDetails portDetails = new PortDetails();
+
     PortDetail portDetail = portInfoReply.getPort();
     portDetails.setCountryName(portDetail.getCountryName());
     portDetails.setCountryId(portDetail.getCountryId());
-    portDetails.setDensityOfWater(
-        StringUtils.isEmpty(portDetail.getWaterDensity())
-            ? null
-            : new BigDecimal(portDetail.getWaterDensity()));
-    portDetails.setMaxPermissibleDraft(
-        StringUtils.isEmpty(portDetail.getMaxPermissibleDraft())
-            ? null
-            : new BigDecimal(portDetail.getMaxPermissibleDraft()));
+    portDetails.setDensityOfWater(returnZeroIfBlank(portDetail.getWaterDensity()));
+    portDetails.setMaxPermissibleDraft(returnZeroIfBlank(portDetail.getMaxPermissibleDraft()));
     portDetails.setPortCode(portDetail.getCode());
     portDetails.setPortId(portDetail.getId());
     portDetails.setPortName(portDetail.getName());
+
     portDetails.setTimezoneId(portDetail.getTimezoneId());
     portDetails.setTimezone(portDetail.getTimezone());
     portDetails.setTimezoneAbbreviation(portDetail.getTimezoneAbbreviation());
     portDetails.setTimezoneOffsetVal(portDetail.getTimezoneOffsetVal());
-    portDetails.setTideHeightHigh(
-        StringUtils.isEmpty(portDetail.getTideHeightTo())
-            ? null
-            : new BigDecimal(portDetail.getTideHeightTo()));
-    portDetails.setTideHeightLow(
-        StringUtils.isEmpty(portDetail.getTideHeightFrom())
-            ? null
-            : new BigDecimal(portDetail.getTideHeightFrom()));
-    portDetails.setLatitude(StringUtils.isEmpty(portDetail.getLat()) ? null : portDetail.getLat());
-    portDetails.setLongitude(StringUtils.isEmpty(portDetail.getLon()) ? null : portDetail.getLon());
-    portDetails.setAmbientTemperature(
-        StringUtils.isEmpty(portDetail.getAmbientTemperature())
-            ? null
-            : new BigDecimal(portDetail.getAmbientTemperature()));
+    portDetails.setTideHeightHigh(returnZeroIfBlank(portDetail.getTideHeightTo()));
+    portDetails.setTideHeightLow(returnZeroIfBlank(portDetail.getTideHeightFrom()));
+    portDetails.setLatitude(portDetail.getLat());
+    portDetails.setLongitude(portDetail.getLon());
+    portDetails.setAmbientTemperature(returnZeroIfBlank(portDetail.getAmbientTemperature()));
+
     List<PortBerthInfoResponse> berthList =
         setBerthInformationForThePorts(portDetail.getBerthDetailsList());
     portDetails.setBerthInfo(berthList);
