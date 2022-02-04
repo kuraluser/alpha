@@ -371,7 +371,7 @@ export class DischargeStudyComponent implements OnInit {
     }
     return this.fb.group({
       emptyMaxNoOfTanks: this.fb.control(cargo.emptyMaxNoOfTanks.value),
-      sequenceNo : this.fb.control({value: cargo.sequenceNo.value, disabled: !cargo.quantity}, [Validators.required, Validators.min(1), numberValidator(0, null, false),sequenceNumberValidator]),
+      sequenceNo : this.fb.control({value: cargo.sequenceNo.value, disabled: !cargo.quantity}, [Validators.required, Validators.min(1), numberValidator(0, 4, false),sequenceNumberValidator]),
       maxKl: this.fb.control(cargo.maxKl.value, []),
       abbreviation: this.fb.control(cargo.abbreviation.value, []),
       cargo: this.fb.control(cargo.cargo.value),
