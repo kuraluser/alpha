@@ -62,8 +62,8 @@ public interface VoyageRepository
               + "list2 as ("
               + "select * from voyage v "
               + "where v.voyage_status notnull "
-              + "and v.vessel_xid = :vesselXId"
-              + "and v.is_active = :isActive"
+              + "and v.vessel_xid = :vesselXId "
+              + "and v.is_active = :isActive "
               + "order by v.created_date_time desc)"
               + "select * from list1 union all select * from list2;",
       nativeQuery = true)
