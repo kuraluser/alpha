@@ -698,7 +698,11 @@ public class StagingService {
         }
       } else {
         DataTransferInBound dataTransferInBoundObj =
-            getInBoundProcessByDependantProcessId(dataTransferInBound.getDependantProcessId());
+            getInBoundProcess(dataTransferInBound.getDependantProcessId());
+        log.info(
+            "DataTransferInBound get with ProcessId:{} and status:{}",
+            dataTransferInBound.getDependantProcessId(),
+            dataTransferInBoundObj.getStatus());
         return StagingStatus.COMPLETED.getStatus().equals(dataTransferInBoundObj.getStatus());
       }
     } else {
@@ -905,30 +909,5 @@ public class StagingService {
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return response;
-  }
-
-  /**
-   * method for getting DataTransferInBound entity
-   *
-   * @param dependantProcessId dependantProcessId value
-   * @return Entity of DataTransferInBound
-   */
-  private DataTransferInBound getInBoundProcessByDependantProcessId(String dependantProcessId)
-      throws GenericServiceException {
-
-    return dataTransferInBoundRepository
-        .findByDependantProcessId(dependantProcessId)
-        .orElseThrow(
-            () -> {
-              log.error(
-                  "Data not found in DataTransferInBound. DependantProcess Id: {}. Current Module: {}",
-                  dependantProcessId,
-                  currentModule);
-              return new GenericServiceException(
-                  "Data not found in DataTransferInBound. DependantProcessId: "
-                      + dependantProcessId,
-                  CommonErrorCodes.E_GEN_INTERNAL_ERR,
-                  HttpStatusCode.INTERNAL_SERVER_ERROR);
-            });
   }
 }

@@ -1439,6 +1439,9 @@ public class LoadingPlanCommunicationService {
       log.info("Communication ++++ LoadingInformation or PortLoadingPlanRobDetails is empty");
       return;
     }
+    // deleting existing PortLoadingPlanRobDetails
+    portLoadingPlanRobDetailsRepository.deleteByLoadingInformationId(loadingInfo.getId());
+
     for (PortLoadingPlanRobDetails portLoadingPlanRobDetails : portLoadingPlanRobDetailsList) {
       Optional<PortLoadingPlanRobDetails> portLoadingPlanRobDetaObj =
           portLoadingPlanRobDetailsRepository.findById(portLoadingPlanRobDetails.getId());
@@ -1506,6 +1509,8 @@ public class LoadingPlanCommunicationService {
       log.info("Communication ++++ LoadingInformation or PortLoadingPlanBallastDetails is empty");
       return;
     }
+    // deleting existing PortLoadingPlanBallastDetails
+    portLoadingPlanBallastDetailsRepository.deleteByLoadingInformationId(loadingInfo.getId());
     for (PortLoadingPlanBallastDetails portLoadingPlanBallastDetails :
         portLoadingPlanBallastDetailsList) {
       Optional<PortLoadingPlanBallastDetails> portLoadingPlanBallastDetaObj =
@@ -1527,6 +1532,9 @@ public class LoadingPlanCommunicationService {
           "Communication ++++ LoadingInformation or PortLoadingPlanBallastTempDetails is empty");
       return;
     }
+    // deleting existing PortLoadingPlanBallastTempDetails
+    portLoadingPlanBallastTempDetailsRepository.deleteByLoadingInformationId(loadingInfo.getId());
+
     for (PortLoadingPlanBallastTempDetails portLoadingPlanBallastTempDetails :
         portLoadingPlanBallastTempDetailsList) {
       Optional<PortLoadingPlanBallastTempDetails> portLoadingPlanBallastTempDetaObj =
@@ -1547,6 +1555,9 @@ public class LoadingPlanCommunicationService {
       log.info("Communication ++++ LoadingInformation or PortLoadingPlanStowageDetails is empty");
       return;
     }
+    // deleting existing active PortLoadingPlanStowageDetails
+    portLoadingPlanStowageDetailsRepository.deleteByLoadingInformationId(loadingInfo.getId());
+
     for (PortLoadingPlanStowageDetails portLoadingPlanStowageDetails :
         portLoadingPlanStowageDetailsList) {
       Optional<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetaObj =
@@ -1567,6 +1578,9 @@ public class LoadingPlanCommunicationService {
           "Communication ++++ LoadingInformation or PortLoadingPlanStowageTempDetails is empty");
       return;
     }
+    // deleting existing PortLoadingPlanStowageTempDetails
+    portLoadingPlanStowageTempDetailsRepository.deleteByLoadingInformationId(loadingInfo.getId());
+
     for (PortLoadingPlanStowageTempDetails portLoadingPlanStowageTempDetails :
         portLoadingPlanStowageTempDetailsList) {
       Optional<PortLoadingPlanStowageTempDetails> portLoadingPlanStowageTempDetaObj =
