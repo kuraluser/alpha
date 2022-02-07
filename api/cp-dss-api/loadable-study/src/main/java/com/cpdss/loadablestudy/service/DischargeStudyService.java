@@ -1963,7 +1963,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           .ifPresent(i -> stabilityParamBuilder.setAfterDraft(i.toPlainString()));
                       Optional.ofNullable(stabilityParam.getCalculatedDraftMidPlanned())
                           .ifPresent(i -> stabilityParamBuilder.setMeanDraft(i.toPlainString()));
-                      Optional.ofNullable(stabilityParam.getCalculatedDraftAftPlanned())
+                      Optional.ofNullable(stabilityParam.getCalculatedDraftFwdPlanned())
                           .ifPresent(i -> stabilityParamBuilder.setForwardDraft(i.toPlainString()));
                       Optional.ofNullable(stabilityParam.getCalculatedTrimPlanned())
                           .ifPresent(i -> stabilityParamBuilder.setTrim(i.toPlainString()));

@@ -954,6 +954,7 @@ class DischargeStudyServiceTest {
     request.setDischargeStudyId(1L);
     request.setPortList(getLPR());
     request.setCowId(1L);
+    request.setTank(new ArrayList<Long>(List.of(1L, 2L)));
     String correlationId = "1";
     Mockito.when(
             this.dischargeStudyOperationServiceBlockingStub.saveDischargeStudyBackLoading(

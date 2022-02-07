@@ -494,7 +494,7 @@ public class DischargeStudyService {
         dischargeStudyCowDetails.getPercentage().isEmpty()
             ? null
             : new BigDecimal(dischargeStudyCowDetails.getPercentage()));
-    response.setTanks(dischargeStudyCowDetails.getTanksList());
+    response.setTank(dischargeStudyCowDetails.getTanksList());
     response.setPortList(new ArrayList<>());
 
     LoadableStudy.PortRotationRequest portRotationRequest =
@@ -723,7 +723,7 @@ public class DischargeStudyService {
     builder.setCowId(request.getCowId());
     builder.setPercentage(
         request.getPercentage() == null ? Long.valueOf(0) : request.getPercentage().longValue());
-    builder.addAllTanks(request.getTanks());
+    Optional.ofNullable(request.getTank()).ifPresent(builder::addAllTanks);
     request
         .getPortList()
         .forEach(
