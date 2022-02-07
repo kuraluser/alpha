@@ -1653,7 +1653,9 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             cargo -> {
               // Bug fix - DSS - 4493 - Checking for duplicate entry in Cargo nomination
               // operation table
-              if (checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId()) == null) {
+              CargoNominationPortDetails existingCargo =
+                  checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId());
+              if (existingCargo == null) {
                 Set<CargoNominationPortDetails> newPortDetails = new HashSet<>();
                 if (firstDischargingPort.isPresent()
                     && firstDischargingPort.get().getPortXId().equals(newPort.getPortXId())) {
@@ -1685,7 +1687,15 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 // Logic to remove cargo nomination operation details of ports that changed its
                 // mode.
                 // ex: discharging port becomes bunkering and vice versa
-                cargo.getCargoNominationPortDetails().forEach(item -> item.setIsActive(false));
+
+                cargo
+                    .getCargoNominationPortDetails()
+                    .forEach(
+                        item -> {
+                          if (item.getId().equals(existingCargo.getId())) {
+                            item.setIsActive(false);
+                          }
+                        });
               }
             });
     return cargos;

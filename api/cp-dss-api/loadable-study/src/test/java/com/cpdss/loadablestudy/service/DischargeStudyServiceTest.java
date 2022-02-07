@@ -283,6 +283,7 @@ class DischargeStudyServiceTest {
     portDetails.setIsActive(true);
     portDetails.setQuantity(new BigDecimal(1));
     portDetails.setMode(1l);
+    portDetails.setId(1l);
     portDetailsSet.add(portDetails);
     cargo.setCargoNominationPortDetails(portDetailsSet);
     cargo.setId(1l);
@@ -1068,7 +1069,7 @@ class DischargeStudyServiceTest {
     loadableStudyPortRotation.setPortOrder(1L);
     loadableStudyPortRotation.setPortXId(1l);
     CargoOperation operation = new CargoOperation();
-    operation.setId(1l);
+    operation.setId(2l);
     loadableStudyPortRotation.setOperation(operation);
     loadableStudyPortRotation.setSynopticalTable(createLoadableSynopticalTableList());
     portRotationList.add(loadableStudyPortRotation);
