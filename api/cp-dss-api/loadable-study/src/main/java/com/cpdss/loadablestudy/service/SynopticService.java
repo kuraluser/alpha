@@ -857,7 +857,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     if (confirmedLs.isPresent()) {
       // Skipping the status check of LS/DS, because we have already done this earlier
       isCallForLoadableStudy =
-          Common.PLANNING_TYPE.LOADABLE_STUDY.equals(confirmedLs.get().getPlanningTypeXId())
+          Common.PLANNING_TYPE.LOADABLE_STUDY.getNumber() == confirmedLs.get().getPlanningTypeXId()
               ? true
               : false;
       if (isCallForLoadableStudy)
