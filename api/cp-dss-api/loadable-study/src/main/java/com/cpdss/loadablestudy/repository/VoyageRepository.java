@@ -102,4 +102,7 @@ public interface VoyageRepository
 
   public List<Voyage> findByVesselXIdAndIsActiveAndVoyageStatus_IdOrderByCreatedDateTimeDesc(
       long vesselId, boolean b, long l);
+
+  public Voyage findFirstByVesselXIdAndIsActiveAndVoyageStatusInOrderByLastModifiedDateTimeDesc(
+      Long vesselXId, boolean b, List<VoyageStatus> voyageStatus);
 }

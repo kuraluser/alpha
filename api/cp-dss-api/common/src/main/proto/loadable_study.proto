@@ -1195,6 +1195,8 @@ message OnBoardQuantityDetail{
 	bool loadOnTop = 15;
     bool isObqComplete=17;
 	string temperature = 18;
+	bool isSlopTank = 19;
+	string slopQuantity = 20;
 }
 
 message OnBoardQuantityReply{

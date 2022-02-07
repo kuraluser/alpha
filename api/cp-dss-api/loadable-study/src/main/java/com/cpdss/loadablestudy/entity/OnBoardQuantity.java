@@ -71,4 +71,10 @@ public class OnBoardQuantity extends EntityDoc {
 
   @Column(name = "temperature")
   private BigDecimal temperature;
+
+  @Column(name = "is_slop_tank")
+  private Boolean isSlopTank;
+
+  @Column(name = "slop_quantity")
+  private BigDecimal slopQuantity;
 }

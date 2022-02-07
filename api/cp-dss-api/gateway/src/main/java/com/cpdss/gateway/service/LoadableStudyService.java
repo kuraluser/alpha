@@ -2654,6 +2654,10 @@ public class LoadableStudyService {
       if (detail.getTemperature() != null && detail.getTemperature().length() > 0) {
         dto.setTemperature(new BigDecimal(detail.getTemperature()));
       }
+      dto.setIsSlopTank(detail.getIsSlopTank());
+      if (detail.getSlopQuantity() != null && detail.getSlopQuantity().length() > 0) {
+        dto.setSlopQuantity(new BigDecimal(detail.getSlopQuantity()));
+      }
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
@@ -2717,6 +2721,7 @@ public class LoadableStudyService {
     builder.setTankId(request.getTankId());
     builder.setWeight(valueOf(request.getQuantity()));
     builder.setDensity(valueOf(request.getApi()));
+    builder.setTemperature(valueOf(request.getTemperature()));
     Optional.ofNullable(request.getVolume()).ifPresent(item -> builder.setVolume(valueOf(item)));
     Optional.ofNullable(request.getSounding())
         .ifPresent(sounding -> builder.setSounding(valueOf(request.getSounding())));
@@ -2725,6 +2730,10 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getLoadOnTop()).ifPresent(item -> builder.setLoadOnTop(item));
     Optional.ofNullable(request.getIsObqComplete())
         .ifPresent(item -> builder.setIsObqComplete(item));
+    // DSS 5450
+    Optional.ofNullable(request.getIsSlopTank()).ifPresent(item -> builder.setIsSlopTank(item));
+    Optional.ofNullable(request.getSlopQuantity())
+        .ifPresent(item -> builder.setSlopQuantity(item.toString()));
     return builder.build();
   }
 

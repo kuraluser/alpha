@@ -54,5 +54,9 @@ public class OnBoardQuantity {
 
   private Boolean isObqComplete;
 
-  private BigDecimal temperature = BigDecimal.ZERO;
+  private BigDecimal temperature;
+
+  private Boolean isSlopTank;
+
+  private BigDecimal slopQuantity;
 }

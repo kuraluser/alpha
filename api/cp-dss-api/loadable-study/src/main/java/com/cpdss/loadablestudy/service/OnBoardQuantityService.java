@@ -135,6 +135,16 @@ public class OnBoardQuantityService {
     entity.setAbbreviation(isEmpty(request.getAbbreviation()) ? null : request.getAbbreviation());
     entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     entity.setIsActive(true);
+    // DSS 5450
+    entity.setTemperature(
+        isEmpty(request.getTemperature()) ? null : new BigDecimal(request.getTemperature()));
+    if (request.getIsSlopTank()) {
+      entity.setIsSlopTank(true);
+      entity.setSlopQuantity(
+          isEmpty(request.getSlopQuantity()) ? null : new BigDecimal(request.getSlopQuantity()));
+    } else {
+      entity.setIsSlopTank(false);
+    }
   }
 
   /**
@@ -248,7 +258,6 @@ public class OnBoardQuantityService {
     // List<CargoHistory> cargoHistories = null;
     List<LoadableStudy.OnBoardQuantityDetail> obqDetailList = new ArrayList<>();
     List<VesselInfo.VesselTankDetail> modifieableList = new ArrayList<>(vesselTanksList);
-    List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetailsList = null;
     List<LoadingPlanModels.LoadingPlanTankDetails> dischargingPlanStowageDetails =
         this.findPortDischargingPlanStowageDetailsForPrevVoyage(voyage);
     Collections.sort(
@@ -353,6 +362,10 @@ public class OnBoardQuantityService {
         ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
         ofNullable(entity.getTemperature())
             .ifPresent(item -> builder.setTemperature(item.toString()));
+        // DSS 5450
+        ofNullable(entity.getIsSlopTank()).ifPresent(builder::setIsSlopTank);
+        ofNullable(entity.getSlopQuantity())
+            .ifPresent(item -> builder.setSlopQuantity(item.toString()));
         obqDetailList.add(builder.build());
       }
     }
@@ -431,13 +444,16 @@ public class OnBoardQuantityService {
       findPortDischargingPlanStowageDetailsForPrevVoyage(Voyage currentVoyage)
           throws GenericServiceException {
     if (currentVoyage.getVoyageStartDate() != null && currentVoyage.getVoyageEndDate() != null) {
-      VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
+      // getting previous voyage - closed or active DSS 5450
+      List<VoyageStatus> voyageStatus =
+          this.voyageStatusRepository.findAllById(
+              Arrays.asList(ACTIVE_VOYAGE_STATUS, CLOSE_VOYAGE_STATUS));
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusInOrderByLastModifiedDateTimeDesc(
                   currentVoyage.getVesselXId(), true, voyageStatus);
       if (previousVoyage != null) {
-        log.info("Last closed voyage: {}", previousVoyage.getVoyageNo());
+        log.info("Last closed/Active voyage: {}", previousVoyage.getVoyageNo());
         Optional<LoadableStudyStatus> confirmedDSStatus =
             loadableStudyStatusRepository.findById(LoadableStudiesConstants.LS_STATUS_CONFIRMED);
 
