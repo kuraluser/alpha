@@ -862,23 +862,6 @@ public class CargoNominationService {
       com.cpdss.common.generated.LoadableStudy.CargoNominationReply.Builder
           cargoNominationReplyBuilder) {
     if (!CollectionUtils.isEmpty(cargoNominationList)) {
-      List<Long> cargoIds =
-          cargoNominationList.stream().map(CargoNomination::getId).collect(Collectors.toList());
-      List<Object[]> apiTempHistories = new ArrayList<>();
-      if (!cargoIds.isEmpty()) {
-        apiTempHistories =
-            apiTempHistoryRepository.findByCargoNominationIdInAndIsActiveOrderByCreatedDateTimeDesc(
-                cargoIds, true);
-      }
-      List<Long> loadableStudyXIds =
-          cargoNominationList.stream()
-              .map(CargoNomination::getLoadableStudyXId)
-              .collect(Collectors.toList());
-      List<CommingleCargoToDischargePortwiseDetails> portwiseDetails =
-          commingleCargoToDischargePortwiseDetailsRepository
-              .findByDischargeStudyIdInAndIsActiveTrue(loadableStudyXIds);
-      List<Object[]> finalApiTempHistories = apiTempHistories;
-
       cargoNominationList.forEach(
           cargoNomination -> {
             LoadableStudy.CargoNominationDetail.Builder builder =
@@ -942,25 +925,19 @@ public class CargoNominationService {
               if (cargoNomination.getCargoXId() != null
                   && cargoNominationPortDetail.getPortId() != null) {
 
-                if (!finalApiTempHistories.isEmpty()) {
-                  Optional<Object[]> tempHistoryOpt =
-                      finalApiTempHistories.stream()
-                          .filter(
-                              tempHistory ->
-                                  Long.parseLong(String.valueOf(tempHistory[0]))
-                                          == cargoNomination.getId()
-                                      && Long.parseLong(String.valueOf(tempHistory[3]))
-                                          == cargoNomination.getCargoXId()
-                                      && Long.parseLong(String.valueOf(tempHistory[4]))
-                                          == cargoNominationPortDetail.getPortId())
-                          .findFirst();
-
-                  Optional.ofNullable(returnStringIfNotBlank(tempHistoryOpt.get()[1]))
-                      .ifPresent(api -> builder.setApiEst(api));
-                  Optional.ofNullable(returnStringIfNotBlank(tempHistoryOpt.get()[2]))
-                      .ifPresent(temperature -> builder.setApiEst(temperature));
+                List<ApiTempHistory> apiTempHistories =
+                    apiTempHistoryRepository
+                        .findByLoadingPortIdAndCargoIdAndIsActiveOrderByCreatedDateTimeDesc(
+                            cargoNominationPortDetail.getPortId(),
+                            cargoNomination.getCargoXId(),
+                            true);
+                if (!CollectionUtils.isEmpty(apiTempHistories)) {
+                  ApiTempHistory apiTempHistory = apiTempHistories.get(0);
+                  Optional.ofNullable(apiTempHistory.getApi())
+                      .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
+                  Optional.ofNullable(apiTempHistory.getTemp())
+                      .ifPresent(temperature -> builder.setTempEst(String.valueOf(temperature)));
                 }
-
                 Optional.ofNullable(cargoNomination.getApi())
                     .ifPresent(api -> builder.setApiEst(String.valueOf(api)));
                 Optional.ofNullable(cargoNomination.getTemperature())
@@ -974,12 +951,9 @@ public class CargoNominationService {
             ofNullable(cargoNomination.getSegregationXId()).ifPresent(builder::setSegregationId);
             //        	getting max quantity of commingled cargo from cargo to be discharge
             // table with BL fig calculated at time of DS creation
-            List<CommingleCargoToDischargePortwiseDetails> commingeToDischarge = new ArrayList<>();
-            portwiseDetails.forEach(
-                details -> {
-                  if (details.getDischargeStudyId() == cargoNomination.getLoadableStudyXId())
-                    commingeToDischarge.add(details);
-                });
+            List<CommingleCargoToDischargePortwiseDetails> commingeToDischarge =
+                commingleCargoToDischargePortwiseDetailsRepository
+                    .findByDischargeStudyIdAndIsActiveTrue(cargoNomination.getLoadableStudyXId());
             if (cargoNomination.getIsCommingled()) {
               if (!commingeToDischarge.isEmpty()) {
                 Optional<CommingleCargoToDischargePortwiseDetails> opt =
@@ -1057,23 +1031,6 @@ public class CargoNominationService {
             }
           });
     }
-  }
-
-  /**
-   * Returns string value if not null and blank else returns null
-   *
-   * @param input input string
-   * @return output string value
-   */
-  private String returnStringIfNotBlank(Object input) {
-
-    log.info("Inside returnStringIfNotBlank method!");
-
-    if (input != null
-        && !io.micrometer.core.instrument.util.StringUtils.isBlank(String.valueOf(input))) {
-      return String.valueOf(input);
-    }
-    return null;
   }
 
   // Get max Quantity in a Cargo Nomination

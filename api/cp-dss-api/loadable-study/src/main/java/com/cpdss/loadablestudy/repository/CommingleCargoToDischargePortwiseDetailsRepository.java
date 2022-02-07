@@ -10,7 +10,4 @@ public interface CommingleCargoToDischargePortwiseDetailsRepository
 
   List<CommingleCargoToDischargePortwiseDetails> findByDischargeStudyIdAndIsActiveTrue(
       long dischargeStudyId);
-
-  List<CommingleCargoToDischargePortwiseDetails> findByDischargeStudyIdInAndIsActiveTrue(
-      List<Long> dischargeStudyIds);
 }
