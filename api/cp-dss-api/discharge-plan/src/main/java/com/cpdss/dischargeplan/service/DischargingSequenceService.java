@@ -272,7 +272,7 @@ public class DischargingSequenceService {
           List<DeballastingRate> ballastingRates = new ArrayList<>();
           deBallastingRates.forEach(
               rate -> {
-                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                if (rate.getDischargingSequenceId().equals(dischargeSequence.getId()))
                   ballastingRates.add(rate);
               });
           buildDeBallastingRates(sequenceBuilder, ballastingRates);
@@ -280,7 +280,7 @@ public class DischargingSequenceService {
           List<CargoDischargingRate> dischargeRates = new ArrayList<>();
           cargoDischargeRates.forEach(
               rate -> {
-                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                if (rate.getDischargingSequenceId().equals(dischargeSequence.getId()))
                   dischargeRates.add(rate);
               });
           buildCargoLoadingRates(sequenceBuilder, dischargeRates);
@@ -289,23 +289,23 @@ public class DischargingSequenceService {
           List<BallastOperation> operations = new ArrayList<>();
           ballastOperations.forEach(
               rate -> {
-                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                if (rate.getDischargingSequenceId().equals(dischargeSequence.getId()))
                   operations.add(rate);
               });
           buildBallastOperations(sequenceBuilder, operations);
 
           List<DischargingPlanPortWiseDetails> planPortWiseDetails = new ArrayList<>();
           dischargingPlanPortWiseDetails.forEach(
-              rate -> {
-                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
-                  planPortWiseDetails.add(rate);
+              portDetails -> {
+                if (portDetails.getDischargingSequenceId().equals(dischargeSequence.getId()))
+                  planPortWiseDetails.add(portDetails);
               });
           buildDischargingPlanPortWiseDetails(sequenceBuilder, planPortWiseDetails);
 
           List<EductionOperation> operationList = new ArrayList<>();
           eductionOperations.forEach(
               rate -> {
-                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                if (rate.getDischargingSequenceId().equals(dischargeSequence.getId()))
                   operationList.add(rate);
               });
           buildEductionOperations(sequenceBuilder, operationList);
@@ -313,7 +313,7 @@ public class DischargingSequenceService {
           List<DischargingTankTransfer> tankTransfers = new ArrayList<>();
           dischargingTankTransfers.forEach(
               rate -> {
-                if (rate.getDischargingSequenceId() == dischargeSequence.getId())
+                if (rate.getDischargingSequenceId().equals(dischargeSequence.getId()))
                   tankTransfers.add(rate);
               });
           buildTankTransfers(sequenceBuilder, tankTransfers);
@@ -457,7 +457,7 @@ public class DischargingSequenceService {
           List<DeballastingRate> deBallastingRates1 = new ArrayList<>();
           deBallastingRates.forEach(
               rate -> {
-                if (rate.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                if (rate.getDischargingPlanPortWiseDetailsId().equals(portWiseDetails.getId()))
                   deBallastingRates1.add(rate);
               });
           buildDeBallastingRates(portWiseDetailsBuilder, deBallastingRates1);
@@ -465,7 +465,7 @@ public class DischargingSequenceService {
           List<DischargingPlanBallastDetails> ballastDetails1 = new ArrayList<>();
           ballastDetails.forEach(
               ballast -> {
-                if (ballast.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                if (ballast.getDischargingPlanPortWiseDetailsId().equals(portWiseDetails.getId()))
                   ballastDetails1.add(ballast);
               });
           buildBallastDetails(portWiseDetailsBuilder, ballastDetails1);
@@ -473,7 +473,7 @@ public class DischargingSequenceService {
           List<DischargingPlanRobDetails> robDetails1 = new ArrayList<>();
           robDetails.forEach(
               rob -> {
-                if (rob.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                if (rob.getDischargingPlanPortWiseDetailsId().equals(portWiseDetails.getId()))
                   robDetails1.add(rob);
               });
           buildRobDetails(portWiseDetailsBuilder, robDetails1);
@@ -492,7 +492,7 @@ public class DischargingSequenceService {
           List<DischargingPlanCommingleDetails> commingleDetails1 = new ArrayList<>();
           commingleDetails.forEach(
               commingle -> {
-                if (commingle.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                if (commingle.getDischargingPlanPortWiseDetailsId().equals(portWiseDetails.getId()))
                   commingleDetails1.add(commingle);
               });
           buildCommingleDetails(portWiseDetailsBuilder, commingleDetails1);
@@ -500,7 +500,7 @@ public class DischargingSequenceService {
           List<DischargingPlanStowageDetails> stowageDetails1 = new ArrayList<>();
           stowageDetails.forEach(
               stowage -> {
-                if (stowage.getDischargingPlanPortWiseDetailsId() == portWiseDetails.getId())
+                if (stowage.getDischargingPlanPortWiseDetailsId().equals(portWiseDetails.getId()))
                   stowageDetails1.add(stowage);
               });
           buildStowageDetails(portWiseDetailsBuilder, stowageDetails1);
