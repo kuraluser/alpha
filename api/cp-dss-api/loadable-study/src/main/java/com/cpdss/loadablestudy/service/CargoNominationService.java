@@ -968,7 +968,7 @@ public class CargoNominationService {
               // Getting total BL of cargo from Loading plan
               Double cargoBL =
                   getMaxQuantityFromBillOfLadding(cargoNomination.getLsCargoNominationId());
-              builder.setMaxQuantity(String.valueOf(cargoBL));
+              builder.setMaxQuantity(cargoBL != null ? String.valueOf(cargoBL) : String.valueOf(0));
               // Subtract commingle BL form normal cargo BL
               if (!commingeToDischarge.isEmpty()) {
                 Double comBL = 0.0;

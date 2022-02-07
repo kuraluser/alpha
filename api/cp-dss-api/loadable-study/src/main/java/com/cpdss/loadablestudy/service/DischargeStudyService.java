@@ -1653,7 +1653,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             cargo -> {
               // Bug fix - DSS - 4493 - Checking for duplicate entry in Cargo nomination
               // operation table
-              if (!checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId())) {
+              if (checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId()) == null) {
                 Set<CargoNominationPortDetails> newPortDetails = new HashSet<>();
                 if (firstDischargingPort.isPresent()
                     && firstDischargingPort.get().getPortXId().equals(newPort.getPortXId())) {
@@ -1680,6 +1680,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 } else {
                   cargo.setCargoNominationPortDetails(newPortDetails);
                 }
+              } else {
+                // DSS : 5658
+                // Logic to remove cargo nomination operation details of ports that changed its
+                // mode.
+                // ex: discharging port becomes bunkering and vice versa
+                cargo.getCargoNominationPortDetails().forEach(item -> item.setIsActive(false));
               }
             });
     return cargos;
@@ -1690,11 +1696,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
    * needed to avoid duplication when user delete/rename a discharge port and later add the same
    * port. Bug fix - DSS - 4493 - Checking if for duplicate entry in Cargo nomination
    */
-  private Boolean checkIfCargoNominationAlreadyPresent(CargoNomination cargo, Long portXId) {
+  private CargoNominationPortDetails checkIfCargoNominationAlreadyPresent(
+      CargoNomination cargo, Long portXId) {
     CargoNominationPortDetails cargoNominationOperation =
         cargoNominationOperationRepository.findByCargoNominationAndPortIdAndIsActiveTrue(
             cargo, portXId);
-    return cargoNominationOperation != null ? true : false;
+    return cargoNominationOperation;
   }
 
   private List<LoadableStudyPortRotation> getDischargeStudyPortRotations(Long loadableStudyId)
@@ -1743,6 +1750,20 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     if (!dischargingPorts.isEmpty()) {
       cargoNominationService.saveAll(
           createNewPortCargoNominations(loadableStudyId, dischargingPorts.get(0)));
+    }
+    List<LoadableStudyPortRotation> modeChangedPorts =
+        dischargeStudyPortRotations.stream()
+            .filter(
+                port ->
+                    !port.getOperation().getId().equals(DISCHARGING_OPERATION_ID)
+                        && nominationPortIds.contains(port.getPortXId()))
+            .collect(Collectors.toList());
+    if (!CollectionUtils.isEmpty(modeChangedPorts)) {
+      // DSS : 5658
+      // Logic to remove cargo nomination operation details of ports that changed its mode.
+      // ex: discharging port becomes bunkering and vice versa
+      cargoNominationService.saveAll(
+          createNewPortCargoNominations(loadableStudyId, modeChangedPorts.get(0)));
     }
     Set<CargoNomination> firstPortCargos =
         cargos.stream()
