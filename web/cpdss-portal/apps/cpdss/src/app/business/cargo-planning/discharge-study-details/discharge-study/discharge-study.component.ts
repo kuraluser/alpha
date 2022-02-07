@@ -369,9 +369,10 @@ export class DischargeStudyComponent implements OnInit {
       mtValidation = [Validators.required, dischargeStudyCargoQuantityValidator];
       bblsValidation = [Validators.required, dischargeStudyCargoQuantityValidator];
     }
+    const isSequenceDisable = (cargo.mode?.value === 2 && !cargo.quantity);
     return this.fb.group({
       emptyMaxNoOfTanks: this.fb.control(cargo.emptyMaxNoOfTanks.value),
-      sequenceNo : this.fb.control({value: cargo.sequenceNo.value, disabled: !cargo.quantity}, [Validators.required, Validators.min(1), numberValidator(0, 4, false),sequenceNumberValidator]),
+      sequenceNo : this.fb.control({value: cargo.sequenceNo.value, disabled: isSequenceDisable}, [Validators.required, Validators.min(1), numberValidator(0, 4, false),sequenceNumberValidator]),
       maxKl: this.fb.control(cargo.maxKl.value, []),
       abbreviation: this.fb.control(cargo.abbreviation.value, []),
       cargo: this.fb.control(cargo.cargo.value),
@@ -550,11 +551,21 @@ export class DischargeStudyComponent implements OnInit {
     const formControlKl = this.getFormControl(index, 'cargoDetail' , event.index , 'kl') as FormControl;
     const formControlMt = this.getFormControl(index, 'cargoDetail' , event.index , 'mt') as FormControl;
     const formControlBbls = this.getFormControl(index, 'cargoDetail' , event.index , 'bbls') as FormControl;
+
     if (event.field === 'mode') {
+      const selectedPortCargoSequneceFormControl = cargoDetailFormArray.at(event.index).get('sequenceNo');
+      selectedPortCargoSequneceFormControl.enable();
+
       if (event.data.mode?.value.name === IDISCHARGE_STUDY_MODE.MANUAL) {
         this.setQuantityValidation(formControlKl,event.data.mode?.value.name,'kl');
         this.setQuantityValidation(formControlMt,event.data.mode?.value.name,'mt');
         this.setQuantityValidation(formControlBbls,event.data.mode?.value.name,'bbls');
+
+        if (Number(event.data[event.field].value) === 0) {
+          selectedPortCargo.sequenceNo.value = null;
+          selectedPortCargoSequneceFormControl.setValue(null);
+          selectedPortCargoSequneceFormControl.disable();
+        }
 
         const kl = isNaN(formControlKl.value) ? 0 : formControlKl.value;
         this.setFeildValueOptionsOnMode('cargoDetail',event.index,'kl',true,kl, index, event.data.api.value, event.data.temp.value);
@@ -583,13 +594,16 @@ export class DischargeStudyComponent implements OnInit {
       }
     } else if (event.field === 'kl' || event.field === 'mt' || event.field === 'bbls') {
       const translationKeys = await this.translateService.get(['MANUAL']).toPromise();
-      if (Number(event.data[event.field].value) === 0) {
+
+      const selectedPortCargoSequneceFormControl = cargoDetailFormArray.at(event.index).get('sequenceNo');
+      if (Number(event.data[event.field].value) === 0 && event.data.mode?.value.name === IDISCHARGE_STUDY_MODE.MANUAL) {
         selectedPortCargo.sequenceNo.value = null;
-        cargoDetailFormArray.at(event.index).get('sequenceNo').setValue(null);
-        cargoDetailFormArray.at(event.index).get('sequenceNo').disable();
+        selectedPortCargoSequneceFormControl.setValue(null);
+        selectedPortCargoSequneceFormControl.disable();
       } else {
-        cargoDetailFormArray.at(event.index).get('sequenceNo').enable();
+        selectedPortCargoSequneceFormControl.enable();
       }
+
       if(selectedPortCargo['mode'].value.name === IDISCHARGE_STUDY_MODE.BALANCE  && !isNaN(event.data[event.field].value)) {
         selectedPortCargo['mode'].value = { name: translationKeys['MANUAL'], id: 2 };
         cargoDetailFormArray.at(event.index).get('mode').setValue(selectedPortCargo['mode'].value);
