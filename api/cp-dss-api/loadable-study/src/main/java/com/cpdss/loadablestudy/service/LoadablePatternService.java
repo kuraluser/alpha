@@ -373,7 +373,8 @@ public class LoadablePatternService {
               LOADABLE_STUDY_COMM_TABLES_SHORE_TO_SHIP,
               UUID.randomUUID().toString(),
               MessageTypes.ALGORESULT.getMessageType(),
-              loadableStudyOpt.get().getId());
+              loadableStudyOpt.get().getId(),
+              request.getProcesssId());
       log.info("Json Array in Loadable study service: " + jsonArray.toString());
 
       communicationService.passRequestPayloadToEnvoyWriter(
@@ -905,7 +906,8 @@ public class LoadablePatternService {
                 LOADABLE_STUDY_STOWAGE_EDIT_SHORE_TO_SHIP,
                 UUID.randomUUID().toString(),
                 MessageTypes.PATTERNDETAIL.getMessageType(),
-                loadablePatternOpt.get().getId());
+                loadablePatternOpt.get().getId(),
+                null);
         log.info("Json Array in Stowage Edit Algocall back service: " + jsonArray.toString());
         EnvoyWriter.WriterReply ewReply =
             communicationService.passRequestPayloadToEnvoyWriter(
@@ -1727,7 +1729,7 @@ public class LoadablePatternService {
     // Get JSON to be communicated
     JsonArray jsonArray =
         loadableStudyStagingService.getCommunicationData(
-            communicationTables, communicationId, messageType.getMessageType(), referenceId);
+            communicationTables, communicationId, messageType.getMessageType(), referenceId, null);
     log.debug("Communication Request: {}", jsonArray.toString());
 
     // Communicate data

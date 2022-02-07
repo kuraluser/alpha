@@ -41,5 +41,6 @@ public enum ProcessIdentifiers {
   loadable_plan_stowage_details_temp,
   loadable_pattern_algo_status,
   discharge_cow_details,
-  loadable_study_attachments
+  loadable_study_attachments,
+  pyuser
 }

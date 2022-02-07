@@ -253,7 +253,8 @@ public class LoadableStudiesConstants {
           LoadableStudyTables.SYNOPTICAL_TABLE.getTable(),
           LoadableStudyTables.LOADICATOR_DATA_FOR_SYNOPTICAL_TABLE.getTable(),
           LoadableStudyTables.DISCHARGE_QUANTITY_CARGO_DETAILS.getTable(),
-          LoadableStudyTables.LOADABLE_STUDY_ALGO_STATUS.getTable());
+          LoadableStudyTables.LOADABLE_STUDY_ALGO_STATUS.getTable(),
+          LoadableStudyTables.PYUSER.getTable());
 
   public static final List<String> LOADABLE_STUDY_STOWAGE_EDIT_SHIP_TO_SHORE =
       Arrays.asList(
@@ -330,7 +331,8 @@ public class LoadableStudiesConstants {
     LOADABLE_PLAN_STOWAGE_DETAILS_TEMP("loadable_plan_stowage_details_temp"),
     LOADABLE_PATTERN_ALGO_STATUS("loadable_pattern_algo_status"),
     DISCHARGE_COW_DETAILS("discharge_cow_details"),
-    LOADABLE_STUDY_ATTACHMENTS("loadable_study_attachments");
+    LOADABLE_STUDY_ATTACHMENTS("loadable_study_attachments"),
+    PYUSER("pyuser");
 
     public final String table;
   }

@@ -17,6 +17,8 @@ import com.cpdss.common.domain.TaskExecutionRequest;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -27,6 +29,7 @@ import com.cpdss.loadablestudy.domain.CommunicationStatus;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferInBoundRepository;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COLUMNS;
 import com.cpdss.loadablestudy.utility.ProcessIdentifiers;
 import com.google.common.reflect.TypeToken;
@@ -64,6 +67,9 @@ public class LoadableStudyCommunicationService {
   // region Autowired
   @GrpcClient("vesselInfoService")
   private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
+
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanServiceBlockingStub;
 
   @Autowired private LoadableStudyStagingService loadableStudyStagingService;
   @Autowired private LoadableStudyRepository loadableStudyRepository;
@@ -190,6 +196,7 @@ public class LoadableStudyCommunicationService {
   private String ruleVesselMappingStage = null;
   private String ruleVesselMappingInputStage = null;
   private List<LoadableStudyAttachments> loadableStudyAttachmentsStage = null;
+  String pyUser = null;
 
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
@@ -822,6 +829,12 @@ public class LoadableStudyCommunicationService {
                       LOADABLE_STUDY_COLUMNS.LOADABLE_STUDY_XID.getColumnName());
               break;
             }
+          case pyuser:
+            {
+              pyUser = data;
+              idMap.put(LoadableStudyTables.PYUSER.getTable(), dataTransferStage.getId());
+              break;
+            }
           default:
             log.warn(
                 "Process Identifier Not Configured: {}", dataTransferStage.getProcessIdentifier());
@@ -869,6 +882,7 @@ public class LoadableStudyCommunicationService {
         saveRuleVesselMappingInput();
         saveCommunicationStatusUpdate(processGroupId);
         saveLoadableStudyAttachments();
+        savePyUser();
         loadableStudyStagingService.updateStatusCompletedForProcessId(
             processId, StagingStatus.COMPLETED.getStatus());
         log.info("updated status to completed for processId:" + processId);
@@ -1988,6 +2002,31 @@ public class LoadableStudyCommunicationService {
     }
   }
 
+  private void savePyUser() throws Exception {
+    currentTableName = LoadableStudyTables.PYUSER.getTable();
+    if (pyUser == null) {
+      log.info("Communication ++++ PyUser is null");
+      return;
+    }
+    LoadingPlanModels.LoadingPlanCommunicationRequest.Builder builder =
+        LoadingPlanModels.LoadingPlanCommunicationRequest.newBuilder();
+    log.info("pyUser from staging table:{}", pyUser);
+    builder.setDataJson(pyUser);
+    LoadingPlanModels.LoadingPlanCommunicationReply reply =
+        loadingPlanServiceBlockingStub.savePyUserForCommunication(builder.build());
+    if (LoadableStudiesConstants.SUCCESS.equals(reply.getResponseStatus().getStatus())) {
+      log.info("PyUser saved in LoadingPlan ");
+    } else if (LoadableStudiesConstants.FAILED_WITH_RESOURCE_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("ResourceAccessException occurred when PyUser save");
+      throw new ResourceAccessException(reply.getResponseStatus().getMessage());
+    } else if (LoadableStudiesConstants.FAILED_WITH_EXC.equals(
+        reply.getResponseStatus().getStatus())) {
+      log.error("Exception occurred when PyUser save");
+      throw new Exception(reply.getResponseStatus().getMessage());
+    }
+  }
+
   // endregion
 
   // region Data Binding
@@ -2130,6 +2169,7 @@ public class LoadableStudyCommunicationService {
     ruleVesselMappingStage = null;
     ruleVesselMappingInputStage = null;
     loadableStudyAttachmentsStage = null;
+    pyUser = null;
   }
 
   /**

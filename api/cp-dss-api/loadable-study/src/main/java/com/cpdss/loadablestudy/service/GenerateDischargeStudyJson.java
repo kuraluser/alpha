@@ -1100,7 +1100,11 @@ public class GenerateDischargeStudyJson {
       throws GenericServiceException {
     JsonArray jsonArray =
         loadableStudyStagingService.getCommunicationData(
-            communicationTables, communicationId, messageType.getMessageType(), dischargeStudyId);
+            communicationTables,
+            communicationId,
+            messageType.getMessageType(),
+            dischargeStudyId,
+            null);
     log.debug("Communication Request: {}", jsonArray.toString());
 
     EnvoyWriter.WriterReply ewReply =

@@ -12,6 +12,7 @@ import com.cpdss.common.domain.DependentProcessResponse;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -21,6 +22,7 @@ import com.cpdss.loadablestudy.entity.LoadableStudy;
 import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferInBoundRepository;
 import com.cpdss.loadablestudy.repository.communication.LoadableStudyDataTransferOutBoundRepository;
+import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_COLUMNS;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants.VESSEL_INFO_TABLES;
 import com.cpdss.loadablestudy.utility.ProcessIdentifiers;
@@ -82,20 +84,26 @@ public class LoadableStudyStagingService extends StagingService {
    * @param processIdentifierList - list of processIdentifier
    * @param processId - processId
    * @param processGroupId - processGroupId
-   * @param referenceId- referenceId can be loadableStudyId or patternId
+   * @param referenceId - referenceId can be loadableStudyId or patternId
+   * @param pyUserId - pyUserId
    * @return JsonArray
    * @throws GenericServiceException Exception if module not configured
    */
   public JsonArray getCommunicationData(
-      List<String> processIdentifierList, String processId, String processGroupId, Long referenceId)
+      List<String> processIdentifierList,
+      String processId,
+      String processGroupId,
+      Long referenceId,
+      String pyUserId)
       throws GenericServiceException {
 
     log.debug(
-        "Converting Tables -> JSON ::: MessageType: {}, Reference Id: {}, ProcessId: {}, Tables: {}",
+        "Converting Tables -> JSON ::: MessageType: {}, Reference Id: {}, ProcessId: {}, Tables: {}, PyUserId:{}",
         processGroupId,
         referenceId,
         processId,
-        processIdentifierList);
+        processIdentifierList,
+        pyUserId);
 
     // Check previous module communicated
     DependentProcessResponse dependentProcessResponse =
@@ -963,6 +971,34 @@ public class LoadableStudyStagingService extends StagingService {
                     loadableStudyAttachments,
                     dependentProcessResponse.getDependantProcessId(),
                     dependentProcessResponse.getDependantProcessModule());
+              }
+              break;
+            }
+          case pyuser:
+            {
+              if (pyUserId != null) {
+                LoadingPlanModels.LoadingPlanCommunicationRequest.Builder builder =
+                    LoadingPlanModels.LoadingPlanCommunicationRequest.newBuilder();
+                builder.setId(pyUserId);
+                LoadingPlanModels.LoadingPlanCommunicationReply reply =
+                    this.loadingPlanServiceBlockingStub.getPyUserForCommunication(builder.build());
+                if (LoadableStudiesConstants.SUCCESS.equals(
+                    reply.getResponseStatus().getStatus())) {
+                  if (reply.getDataJson() != null) {
+                    JsonArray pyUserData =
+                        JsonParser.parseString(reply.getDataJson()).getAsJsonArray();
+                    addIntoProcessedList(
+                        array,
+                        object,
+                        processIdentifier,
+                        processId,
+                        processGroupId,
+                        processedList,
+                        pyUserData,
+                        dependentProcessResponse.getDependantProcessId(),
+                        dependentProcessResponse.getDependantProcessModule());
+                  }
+                }
               }
               break;
             }

@@ -1232,7 +1232,8 @@ public class LoadingPlanAlgoService {
               com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHIP_TO_SHORE);
       lpSequenceTables.addAll(
           com.cpdss.loadingplan.utility.LoadingPlanConstants.LOADING_PLAN_SHORE_TO_SHIP);
-
+      lpSequenceTables.remove("algo_error_heading");
+      lpSequenceTables.remove("algo_errors");
       communicateData(
           loadingInformation.getId(),
           processId,

@@ -1,7 +1,6 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -272,7 +271,7 @@ public class LoadablePatternServiceTest {
             .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(anyLong(), anyString()))
         .thenReturn(getLSCS());
     when(loadableStudyStagingService.getCommunicationData(
-            anyList(), anyString(), anyString(), anyLong()))
+            anyList(), anyString(), anyString(), anyLong(), anyString()))
         .thenReturn(new JsonArray());
     when(communicationService.passRequestPayloadToEnvoyWriter(anyString(), anyLong(), anyString()))
         .thenReturn(EnvoyWriter.WriterReply.newBuilder().build());
@@ -352,7 +351,7 @@ public class LoadablePatternServiceTest {
             .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(anyLong(), anyString()))
         .thenReturn(getLSCS());
     when(loadableStudyStagingService.getCommunicationData(
-            anyList(), anyString(), anyString(), anyLong()))
+            anyList(), anyString(), anyString(), anyLong(), anyString()))
         .thenReturn(new JsonArray());
     when(communicationService.passRequestPayloadToEnvoyWriter(anyString(), anyLong(), anyString()))
         .thenReturn(EnvoyWriter.WriterReply.newBuilder().build());
@@ -463,7 +462,7 @@ public class LoadablePatternServiceTest {
             .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(anyLong(), anyString()))
         .thenReturn(getLSCS());
     when(loadableStudyStagingService.getCommunicationData(
-            anyList(), anyString(), anyString(), anyLong()))
+            anyList(), anyString(), anyString(), anyLong(), any()))
         .thenReturn(new JsonArray());
     when(communicationService.passRequestPayloadToEnvoyWriter(anyString(), anyLong(), anyString()))
         .thenReturn(
@@ -545,7 +544,7 @@ public class LoadablePatternServiceTest {
             .findFirstByReferenceIdAndMessageTypeOrderByCreatedDateTimeDesc(anyLong(), anyString()))
         .thenReturn(getLSCS());
     when(loadableStudyStagingService.getCommunicationData(
-            anyList(), anyString(), anyString(), anyLong()))
+            anyList(), anyString(), anyString(), anyLong(), anyString()))
         .thenReturn(new JsonArray());
     when(communicationService.passRequestPayloadToEnvoyWriter(anyString(), anyLong(), anyString()))
         .thenReturn(EnvoyWriter.WriterReply.newBuilder().build());
