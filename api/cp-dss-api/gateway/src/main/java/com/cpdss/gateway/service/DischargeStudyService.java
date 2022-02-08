@@ -768,8 +768,10 @@ public class DischargeStudyService {
     //    }
     portDetails.addAllInstructionId(portCargo.getInstructionId());
     portDetails.setFreshCrudeOil(portCargo.getFreshCrudeOil());
-    Optional.ofNullable(portCargo.getFreshCrudeOilQuantity())
-        .ifPresent(item -> portDetails.setFreshCrudeOilQuantity(item.toString()));
+    if (portCargo.getFreshCrudeOil() == true) {
+      Optional.ofNullable(portCargo.getFreshCrudeOilQuantity())
+          .ifPresent(item -> portDetails.setFreshCrudeOilQuantity(item.toString()));
+    }
     Optional.ofNullable(portCargo.getFreshCrudeOilTime())
         .ifPresent(item -> portDetails.setFreshCrudeOilTime(item.toString()));
     portDetails.setCow(portCargo.getCow());

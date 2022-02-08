@@ -1076,6 +1076,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                         && !portRequestDetail.getFreshCrudeOilQuantity().isBlank()) {
                       portRotation.setFreshCrudeOilQuantity(
                           new BigDecimal(portRequestDetail.getFreshCrudeOilQuantity()));
+                    } else {
+                      portRotation.setFreshCrudeOilQuantity(null);
                     }
                     if (portRequestDetail.getFreshCrudeOilTime() != null
                         && !portRequestDetail.getFreshCrudeOilTime().isBlank()) {
