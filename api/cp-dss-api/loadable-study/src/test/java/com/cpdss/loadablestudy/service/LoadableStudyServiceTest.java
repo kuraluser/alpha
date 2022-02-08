@@ -6232,6 +6232,7 @@ class LoadableStudyServiceTest {
     loadableStudyPortRotation.setPortXId(1l);
     loadableStudyPortRotation.setPortOrder(1l);
     loadableStudyPortRotationList.add(loadableStudyPortRotation);
+    entity.setPortRotations(new HashSet<>(loadableStudyPortRotationList));
 
     onHandQuantity.setLoadableStudy(entity);
     onHandQuantity.setPortRotation(loadableStudyPortRotation);
@@ -6352,6 +6353,7 @@ class LoadableStudyServiceTest {
     loadableStudyPortRotation.setPortXId(1l);
     loadableStudyPortRotation.setPortOrder(1l);
     loadableStudyPortRotationList.add(loadableStudyPortRotation);
+    entity.setPortRotations(new HashSet<>(loadableStudyPortRotationList));
 
     onHandQuantity.setLoadableStudy(entity);
     onHandQuantity.setPortRotation(loadableStudyPortRotation);

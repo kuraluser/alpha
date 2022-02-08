@@ -2121,6 +2121,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         entity.setIsObqComplete(loadableStudyOpt.get().getIsObqComplete());
         entity.setIsOhqComplete(loadableStudyOpt.get().getIsOhqComplete());
         entity.setIsPortsComplete(loadableStudyOpt.get().getIsPortsComplete());
+        entity.setPortRotations(new HashSet<>(loadableStudyOpt.get().getPortRotations()));
 
         List<OnHandQuantity> onHandQuantityList =
             this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
