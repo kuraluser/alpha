@@ -848,6 +848,11 @@ public class SynopticServiceUtils {
             cargo1.setCargoId(lpQ.get().getCargoXId());
             cargo1.setColorCode(lpQ.get().getCargoColor());
             builder.addCommingleCargo(cargo1.build());
+            if (list.stream()
+                .noneMatch(
+                    v -> v.getId().equals(lpQ.get().getId()))) { // Check if already in this list
+              list.add(lpQ.get());
+            }
           }
 
           List<LoadablePlanQuantity> lpQList2 =
@@ -861,8 +866,8 @@ public class SynopticServiceUtils {
             cargo2.setCargoId(lpQ.get().getCargoXId());
             cargo2.setColorCode(lpQ.get().getCargoColor());
             builder.addCommingleCargo(cargo2.build());
-            if (!list.stream()
-                .anyMatch(
+            if (list.stream()
+                .noneMatch(
                     v -> v.getId().equals(lpQ.get().getId()))) { // Check if already in this list
               list.add(lpQ.get());
             }
