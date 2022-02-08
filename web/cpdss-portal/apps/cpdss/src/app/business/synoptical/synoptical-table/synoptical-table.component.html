@@ -87,7 +87,7 @@
         <ng-template #cell let-rowData="rowData" let-column="column" let-colIndex="colIndex">
             <td *ngIf="rowData.betweenPorts && colIndex == 0"></td>
             <td *ngIf="!rowData.colSpan || (colIndex%2 == 1 && (!rowData.betweenPorts || colIndex < synopticalService.synopticalRecords.length - 1))" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1"
-                [class.text-right]="true">
+                [class.text-right]="true" [ngClass]="{'port-center' : rowData.colSpan}">
                 <ng-container *ngFor="let field of rowData.fields;let i = index">
                     <div class="pr-0" *ngIf="i > 0" [class.pr-0]="rowData.editable && synopticalService.editMode && checkEditableCondition(field.key,colIndex,rowData)">
                         &nbsp;-&nbsp;

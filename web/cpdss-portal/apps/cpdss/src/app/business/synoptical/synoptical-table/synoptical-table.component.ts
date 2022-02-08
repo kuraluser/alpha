@@ -373,7 +373,6 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         header: 'Running Hours',
         editable: true,
         view: false,
-        colSpan: 2,
         betweenPorts: true,
       },
       {
