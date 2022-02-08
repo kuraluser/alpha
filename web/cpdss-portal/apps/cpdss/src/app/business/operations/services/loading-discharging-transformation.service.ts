@@ -741,7 +741,6 @@ export class LoadingDischargingTransformationService {
         field: 'estimatedAPIEdit',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_API',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: quantityNumberFormat,
         fieldHeaderClass: 'column-api',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
@@ -754,7 +753,6 @@ export class LoadingDischargingTransformationService {
         field: 'estimatedTempEdit',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_TEMP',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        numberFormat: quantityNumberFormat,
         fieldHeaderClass: 'column-temp',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',

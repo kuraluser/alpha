@@ -152,7 +152,7 @@ export class DischargeStudyComponent implements OnInit {
           const cargoList = this.portCargoList.find((portcargo) => {
             return portcargo.portId === portDetail.portId;
           })
-          const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(this.portDetails,portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList,cargoList);
+          const portDetailAsValueObject = this.dischargeStudyDetailsTransformationService.getPortDetailAsValueObject(portList, portDetail, this.listData, isLastIndex, false, portUniqueColorAbbrList, cargoList);
           portDetails.push(this.initDischargeStudyFormGroup(portDetailAsValueObject, index));
           return portDetailAsValueObject;
         })
@@ -984,6 +984,19 @@ export class DischargeStudyComponent implements OnInit {
       this.updatebackLoadingDetails(feildIndex, index, 'temp', selectedPortCargo['temp'].value, 'backLoadingDetails');
       this.quantityFieldEnableDisable(formGroup,selectedPortCargo);
     } else if(event.field === 'api' || event.field === 'temp') {
+      for (let i = index; i < portDetails.length; i++) {
+        if (portDetails[i+1]) {
+          const getCargoDetails = this.getFeild(i + 1, 'cargoDetail').get('dataTable') as FormArray;
+          portDetails[i+1].cargoDetail.map( (cargo, cargoIndex) => {
+            if (cargo.storedKey.value === selectedPortCargo.storedKey.value) {
+              getCargoDetails.at(cargoIndex).get(event.field).setValue(Number(selectedPortCargo[event.field].value))
+              cargo[event.field].value = Number(selectedPortCargo[event.field].value);
+              return cargo;
+            }
+          });
+        }
+      }
+
       this.setFeildValueOptionsOnMode('backLoadingDetails',event.index,'kl',true,'0', index, event.data.api.value, event.data.temp.value);
       this.quantityFieldEnableDisable(formGroup,selectedPortCargo);
     }

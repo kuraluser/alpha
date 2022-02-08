@@ -1052,7 +1052,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getPortDetailAsValueObject(portDetailsValueAsObject:IPortDetailValueObject[], portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any,cargoDetails:IPortCargoDetails): IPortDetailValueObject {
+    getPortDetailAsValueObject(portDetailsValueAsObject:IDischargeStudyPortListDetails[], portDetail: IDischargeStudyPortListDetails, listData:IDischargeStudyDropdownData , isLastIndex : boolean, isNewValue = true,portUniqueColorAbbrList: any,cargoDetails:IPortCargoDetails): IPortDetailValueObject {
       const _portDetail = <IPortDetailValueObject>{};
       _portDetail.id = portDetail.id;
       _portDetail.portTimezoneId = portDetail.portTimezoneId;
@@ -1075,7 +1075,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _portDetail.maxDraft = portDetail.maxDraft;
       _portDetail.cargoDetail  = portDetail.cargoNominationList ? portDetail.cargoNominationList?.map((cargoDetail) => {
         const storedKey = this.getStoreKey(portUniqueColorAbbrList,cargoDetail);
-        return this.getCargoDetailsAsValueObject(portDetailsValueAsObject,cargoDetail,listData,storedKey,true);
+        return this.getCargoDetailsAsValueObject(portDetailsValueAsObject, cargoDetail,listData, storedKey, true, portDetail);
       }) : [];
 
       _portDetail.enableBackToLoading = portDetail.isBackLoadingEnabled  && !isLastIndex ? true : false;
@@ -1161,17 +1161,17 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {IPortDetailValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getCargoDetailsAsValueObject(portDetailsValueAsObject:IPortDetailValueObject[] ,cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData,storedKey: string,isNewValue = true) {
+    getCargoDetailsAsValueObject(portDetailsValueAsObject:IDischargeStudyPortListDetails[] ,cargoDetail: IDischargeStudyCargoNominationList, listData:IDischargeStudyDropdownData, storedKey: string, isNewValue = true, portDetail: IDischargeStudyPortListDetails) {
       const _cargoDetailValuObject = <IPortCargo>{};
       const mode = listData.modes.find(modeDetails => modeDetails.id === cargoDetail.mode);
       const cargoObj = listData.cargoList.find(cargo => cargo.id === cargoDetail.cargoId);
       const isKlEditable = mode?.id === 2 || mode?.id === 1 ? true : false;
-      //Note: - mode 3 need to be confirmed
+
       let isAutoAvailable;
       if(mode?.id === 3) {
         isAutoAvailable = portDetailsValueAsObject?.find((portDetailValueAsObject) => {
-          return portDetailValueAsObject.cargoDetail?.some((cargo) =>{
-            return cargo.storedKey?.value === storedKey && cargo.mode.value?.id === 1;
+          return portDetailValueAsObject.portId !== portDetail.portId && portDetailValueAsObject.cargoNominationList?.some((cargo) =>{
+            return cargo.cargoId === cargoDetail.cargoId && cargo.color === cargoDetail.color && cargo.mode === 1;
           })
         })
       }
