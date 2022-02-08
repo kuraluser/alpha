@@ -553,6 +553,7 @@ message StabilityParameter {
 	string airDraft = 8; //DS field
 	string freeboard = 9;
 	string manifoldHeight = 10;
+	int64 portRotationId = 11;
 }
 
 message LoadablePlanPortWiseDetails {
@@ -1020,7 +1021,7 @@ message CargoNominationReply {
 	repeated CargoNominationDetail cargoNominations = 3;
 	repeated CargoHistoryDetail cargoHistory = 4;
 	int64 patternId = 5;
-	StabilityParameter stabilityParams = 6;
+	repeated StabilityParameter stabilityParams = 6;
 }
 
 

@@ -1971,6 +1971,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                     if (stabilityParam != null) {
                       StabilityParameter.Builder stabilityParamBuilder =
                           StabilityParameter.newBuilder();
+                      stabilityParamBuilder.setPortRotationId(port.getId());
                       Optional.ofNullable(stabilityParam.getCalculatedDraftAftPlanned())
                           .ifPresent(i -> stabilityParamBuilder.setAfterDraft(i.toPlainString()));
                       Optional.ofNullable(stabilityParam.getCalculatedDraftMidPlanned())
@@ -1979,7 +1980,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           .ifPresent(i -> stabilityParamBuilder.setForwardDraft(i.toPlainString()));
                       Optional.ofNullable(stabilityParam.getCalculatedTrimPlanned())
                           .ifPresent(i -> stabilityParamBuilder.setTrim(i.toPlainString()));
-                      replyBuilder.setStabilityParams(stabilityParamBuilder.build());
+                      replyBuilder.addStabilityParams(stabilityParamBuilder.build());
                     }
                   }
                 }

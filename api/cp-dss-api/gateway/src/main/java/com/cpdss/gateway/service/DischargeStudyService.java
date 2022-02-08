@@ -61,6 +61,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.apache.commons.collections.CollectionUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -578,12 +579,18 @@ public class DischargeStudyService {
             portRotation.setCargoNominationList(new ArrayList<>());
           }
           // adding stability params to response DSS - 5429
-          if (grpcReply.getStabilityParams() != null) {
+          if (!CollectionUtils.isEmpty(grpcReply.getStabilityParamsList())) {
+            Optional<com.cpdss.common.generated.LoadableStudy.StabilityParameter> stabilityOpt =
+                grpcReply.getStabilityParamsList().stream()
+                    .filter(item -> item.getPortRotationId() == port.getId())
+                    .findFirst();
             StabilityParameter stabilityParam = new StabilityParameter();
-            stabilityParam.setAfterDraft(grpcReply.getStabilityParams().getAfterDraft());
-            stabilityParam.setMeanDraft(grpcReply.getStabilityParams().getMeanDraft());
-            stabilityParam.setForwardDraft(grpcReply.getStabilityParams().getForwardDraft());
-            stabilityParam.setTrim(grpcReply.getStabilityParams().getTrim());
+            if (stabilityOpt.isPresent()) {
+              stabilityParam.setAfterDraft(stabilityOpt.get().getAfterDraft());
+              stabilityParam.setMeanDraft(stabilityOpt.get().getMeanDraft());
+              stabilityParam.setForwardDraft(stabilityOpt.get().getForwardDraft());
+              stabilityParam.setTrim(stabilityOpt.get().getTrim());
+            }
             portRotation.setStabilityParams(stabilityParam);
           }
           response.getPortList().add(portRotation);
