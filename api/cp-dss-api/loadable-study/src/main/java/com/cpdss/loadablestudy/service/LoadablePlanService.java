@@ -1433,9 +1433,9 @@ public class LoadablePlanService {
                 // TODO ullage for commingle is empty check and set value
                 .ullage(
                     Double.parseDouble(
-                        stowageDetails.getRdgUllage().isEmpty()
+                        stowageDetails.getRdgUllageOrginal().isEmpty()
                             ? "0.0"
-                            : stowageDetails.getRdgUllage()))
+                            : stowageDetails.getRdgUllageOrginal()))
                 .loadedPercentage((Math.round(fillingPercentage * 100.0) / 100.0))
                 .shipsNBbls(Double.parseDouble(Float.toString(obsBbsValue)))
                 .shipsMt(Double.parseDouble(stowageDetails.getWeight()))
