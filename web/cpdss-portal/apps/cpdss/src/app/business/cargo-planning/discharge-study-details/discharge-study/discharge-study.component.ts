@@ -143,7 +143,7 @@ export class DischargeStudyComponent implements OnInit {
         const portDetails = this.dischargeStudyForm.get('portDetails') as FormArray;
         const portList = result.portList ? result.portList : [];
         const portUniqueColorAbbrList = [];
-        const cowDetails = this.dischargeStudyDetailsTransformationService.getDischargeStudyCowDetails(result.cowId,result.percentage,result.tanks, this.listData);
+        const cowDetails = this.dischargeStudyDetailsTransformationService.getDischargeStudyCowDetails(result?.cowId, result?.percentage, result?.tank, this.listData);
         this.getFormFeildValue('cow').setValue(cowDetails.cow);
         this.getFormFeildValue('tank').setValue(cowDetails.tank);
         this.getFormFeildValue('percentage').setValue(cowDetails.percentage);

@@ -1098,14 +1098,14 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
    * @returns {ICowDetailsValueObject}
    * @memberof DischargeStudyDetailsTransformationService
    */
-    getDischargeStudyCowDetails(cowId:number,percentage: number,tanks:number[],listData:IDischargeStudyDropdownData): ICowDetailsValueObject{
+    getDischargeStudyCowDetails(cowId:number, percentage: number, tanks:number[], listData:IDischargeStudyDropdownData): ICowDetailsValueObject{
       const _cowDetails = <ICowDetailsValueObject>{};
       _cowDetails.cow = listData.modes.find(modeDetails => modeDetails.id === cowId);
       if(!_cowDetails.cow) {
         _cowDetails.cow = listData.modes[0];
         _cowDetails.percentage = { value: 100, name: '100%' };
       } else if(cowId === 1) {
-        _cowDetails.percentage = listData.percentageList.find((item) => {
+        _cowDetails.percentage = listData?.percentageList?.find((item) => {
           return item.value === percentage;
         })
         _cowDetails.tank = [];

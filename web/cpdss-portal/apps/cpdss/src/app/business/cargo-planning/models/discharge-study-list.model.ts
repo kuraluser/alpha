@@ -338,8 +338,8 @@ export interface IDischargeStudiesResponse {
     dischargeStudyId: number;
     loadableQuantity: number;
     cowId: number;
-    percentage: number;
-    tanks: number[];
+    percentage?: number;
+    tank: number[];
     portList: IDischargeStudyPortListDetails[];
 }
 
@@ -439,7 +439,7 @@ export interface ICargoHistoryDetails {
 }
 
  /**
- * ENUM for mode 
+ * ENUM for mode
  *
  * @export
  * @enum {number}
