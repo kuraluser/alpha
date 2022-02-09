@@ -1,19 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_CATEGORY_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGE_PORT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_PORT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPERATION_TYPE_ARR;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.TIME_FORMATTER;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -200,7 +188,8 @@ public class SynopticServiceUtils {
     }
     Long firstPortId = portIds.get(0);
     if (entity.getPortXid().equals(firstPortId)
-        && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())) {
+        && SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL.equals(entity.getOperationType())
+        && loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_LOADING)) {
       this.saveSynopticalObqData(loadableStudy, record, isUpdate);
     } else if (request.getLoadablePatternId() > 0) {
       this.saveSynopticalCargoByLoadablePattern(request, entity, record);

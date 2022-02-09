@@ -2098,6 +2098,8 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
               true);
       // checking whether the port rotation is part of discharge study
       if (synopticalData.isEmpty()) {
+        loadableStudy =
+            loadableStudyRepository.findById(builder.getConfirmedDischargeStudy().getId());
         synopticalData =
             synopticalTableRepository.findByLoadableStudyAndPortRotationAndOperationTypeAndIsActive(
                 builder.getConfirmedDischargeStudy().getId(),
