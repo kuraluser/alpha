@@ -147,8 +147,10 @@ public class DischargeInformationServiceTest {
             this.dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(
                 Mockito.anyLong()))
         .thenReturn(getLDBD());
-    Mockito.when(dischargeStageDurationRepository.findAllByIsActiveTrue()).thenReturn(getLDSD());
-    Mockito.when(dischargeStageMinAmountRepository.findAllByIsActiveTrue()).thenReturn(getLDSMA());
+    Mockito.when(dischargeStageDurationRepository.findAllByIsActiveTrueOrderByDuration())
+        .thenReturn(getLDSD());
+    Mockito.when(dischargeStageMinAmountRepository.findAllByIsActiveTrueOrderByMinAmount())
+        .thenReturn(getLDSMA());
     Mockito.when(this.reasonForDelayRepository.findAllByIsActiveTrue()).thenReturn(getLRD());
     Mockito.when(
             this.dischargingDelayRepository.findAllByDischargingInformation_IdAndIsActiveOrderById(

@@ -617,12 +617,12 @@ public class DischargeInformationBuilderService {
 
       // Master data Offset
       List<DischargingStagesDuration> var1 =
-          dischargeStageDurationRepository.findAllByIsActiveTrue();
+          dischargeStageDurationRepository.findAllByIsActiveTrueOrderByDuration();
       this.buildStageDurationMasterDataToMessage(var1, builder1);
 
       // Master data duration
       List<DischargingStagesMinAmount> var2 =
-          dischargeStageMinAmountRepository.findAllByIsActiveTrue();
+          dischargeStageMinAmountRepository.findAllByIsActiveTrueOrderByMinAmount();
       this.buildStageMinAmountMasterDataToMessage(var2, builder1);
 
       builder.setDischargeStage(builder1.build());

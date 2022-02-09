@@ -370,8 +370,10 @@ public class DischargeInformationBuilderServiceTest {
     disEntity.setIsTrackGradeSwitching(true);
     com.cpdss.common.generated.discharge_plan.DischargeInformation.Builder builder =
         com.cpdss.common.generated.discharge_plan.DischargeInformation.newBuilder();
-    Mockito.when(dischargeStageDurationRepository.findAllByIsActiveTrue()).thenReturn(getLDSD());
-    Mockito.when(dischargeStageMinAmountRepository.findAllByIsActiveTrue()).thenReturn(getLDSMA());
+    Mockito.when(dischargeStageDurationRepository.findAllByIsActiveTrueOrderByDuration())
+        .thenReturn(getLDSD());
+    Mockito.when(dischargeStageMinAmountRepository.findAllByIsActiveTrueOrderByMinAmount())
+        .thenReturn(getLDSMA());
     this.dischargeInformationBuilderService.buildDischargeStageMessageFromEntity(
         disEntity, builder);
     assertEquals(1L, builder.getDischargeStage().getId());

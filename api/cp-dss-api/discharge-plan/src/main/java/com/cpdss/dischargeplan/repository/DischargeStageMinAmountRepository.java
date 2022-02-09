@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface DischargeStageMinAmountRepository
     extends CommonCrudRepository<DischargingStagesMinAmount, Long> {
 
-  List<DischargingStagesMinAmount> findAllByIsActiveTrue();
+  List<DischargingStagesMinAmount> findAllByIsActiveTrueOrderByMinAmount();
 
   Optional<DischargingStagesMinAmount> findByIdAndIsActiveTrue(long id);
 }

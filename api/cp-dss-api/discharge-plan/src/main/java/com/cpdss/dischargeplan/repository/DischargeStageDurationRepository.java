@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface DischargeStageDurationRepository
     extends CommonCrudRepository<DischargingStagesDuration, Long> {
 
-  List<DischargingStagesDuration> findAllByIsActiveTrue();
+  List<DischargingStagesDuration> findAllByIsActiveTrueOrderByDuration();
 
   Optional<DischargingStagesDuration> findByIdAndIsActiveTrue(long id);
 }
