@@ -136,7 +136,7 @@ public class LoadableStudyService {
   private static final String SUCCESS = "SUCCESS";
   private static final int LOADABLE_STUDY_ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
-      Arrays.asList("docx", "pdf", "txt", "jpg", "png", "msg", "eml");
+      Arrays.asList("docx", "doc", "pdf", "txt", "jpg", "png", "msg", "eml", "xlsx", "xls", "csv");
   private static final String ARR = "ARR";
   private static final String DEP = "DEP";
   private static final String SHIP = "ship";

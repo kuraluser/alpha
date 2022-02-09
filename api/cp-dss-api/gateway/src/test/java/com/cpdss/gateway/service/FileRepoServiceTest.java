@@ -48,7 +48,7 @@ public class FileRepoServiceTest {
     String sortBy = "1";
     String orderBy = "1";
     Map<String, String> filterParams = new HashMap<>();
-    filterParams.put("createdDate", "10-Dec-1999");
+    filterParams.put("createdDate", "10-02-1999");
     String correlationId = "1";
     List<String> filterKeys = new ArrayList<>();
     filterKeys.add("createdDate");

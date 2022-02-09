@@ -55,8 +55,8 @@ public class FileRepoService {
 
   private static final int ATTACHEMENT_MAX_SIZE = 1 * 1024 * 1024;
   private static final List<String> ATTACHMENT_ALLOWED_EXTENSIONS =
-      Arrays.asList("docx", "pdf", "txt", "csv", "xlsx");
-  public static final String DATE_FORMAT = "dd-MMM-yyyy";
+      Arrays.asList("docx", "doc", "pdf", "txt", "jpg", "png", "msg", "eml", "xlsx", "xls", "csv");
+  public static final String DATE_FORMAT = "dd-MM-yyyy";
 
   public static final String SUCCESS = "SUCCESS";
 

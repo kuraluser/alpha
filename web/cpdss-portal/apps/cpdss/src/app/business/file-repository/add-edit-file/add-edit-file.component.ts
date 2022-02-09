@@ -33,13 +33,7 @@ export class AddEditFileComponent implements OnInit {
   sectionList: any;
   categoryList: any;
   errorMessages: any;
-  allowedFiles = [
-    'docx',
-    'pdf',
-    'txt',
-    'csv',
-    'xlsx'
-  ];
+  allowedFiles = ["docx","doc","pdf", "txt", "jpg", "png", "msg","eml","xlsx","xls","csv"];
   fileFormGroup: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -73,7 +67,8 @@ export class AddEditFileComponent implements OnInit {
   async fileChange(event) {
     if (event.target?.files?.length) {
       const translationKeys = await this.translateService.get(['FILE_REPOSITORY_ERROR_LABEL', 'FILE_REPOSITORY_INVALID_FILE', 'FILE_REPOSITORY_FILE_SIZE_ERROR']).toPromise();
-      if (this.allowedFiles.indexOf(event.target?.files[0].name.split('.')[1]) < 0) {
+      let extSplitArr = event.target?.files[0].name.split('.');
+      if (this.allowedFiles.indexOf(extSplitArr[(extSplitArr.length -1)]) < 0) {
         this.messageService.add({ severity: 'error', summary: translationKeys['FILE_REPOSITORY_ERROR_LABEL'], detail: translationKeys['FILE_REPOSITORY_INVALID_FILE'] });
         this.fileUpload.nativeElement.value = '';
         return;
@@ -84,7 +79,7 @@ export class AddEditFileComponent implements OnInit {
         return;
       }
       this.fileFormGroup.controls.fileName.setValue(event.target?.files[0].name);
-      this.fileFormGroup.controls.fileType.setValue(event.target?.files[0].name.split('.')[1]);
+      this.fileFormGroup.controls.fileType.setValue(extSplitArr[(extSplitArr.length -1)]);
     }
   }
 
