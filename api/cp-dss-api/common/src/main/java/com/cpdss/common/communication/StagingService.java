@@ -272,7 +272,8 @@ public class StagingService {
 
       Annotation[] annotations = fields[i].getDeclaredAnnotations();
       for (Annotation ann : annotations) {
-        if (ann.annotationType().getName().equals("javax.persistence.Column")) {
+        if (ann.annotationType().getName().equals("javax.persistence.Column")
+            && ann.toString().contains("insertable=true")) {
           dbField =
               Arrays.asList(ann.toString().split(","))
                   .get(3)

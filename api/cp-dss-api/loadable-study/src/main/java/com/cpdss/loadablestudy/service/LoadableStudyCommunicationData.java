@@ -107,37 +107,33 @@ public class LoadableStudyCommunicationData {
   }
 
   private LoadableStudy updateLoadableStudyStatus(Long communicationRelatedEntityId) {
-    LoadableStudy ls = null;
+    LoadableStudy loadableStudy = null;
     Optional<LoadableStudy> loadableStudyOpt =
         loadableStudyRepository.findById(communicationRelatedEntityId);
     log.info("loadableStudy get:{}", loadableStudyOpt);
     if (loadableStudyOpt.isPresent()) {
       try {
-        LoadableStudy loadableStudy = loadableStudyOpt.get();
+        loadableStudy = loadableStudyOpt.get();
         // Changing confirmed to plan generated status
         List<LoadablePattern> loadablePatternConfirmed =
             loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
                 loadableStudy.getVoyage().getId(), CONFIRMED_STATUS_ID, true);
         if (!CollectionUtils.isEmpty(loadablePatternConfirmed)) {
           log.info("changing status of other confirmed plan to plan generated");
-          loadablePatternRepository.updateLoadablePatternStatusToPlanGenerated(
+          loadablePatternRepository.updateLoadablePatternStatusToPlanGeneratedStatus(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, loadablePatternConfirmed.get(0).getId());
-          loadablePatternRepository.updateLoadableStudyStatusToPlanGenerated(
+          loadableStudyRepository.updateLoadableStudyStatusWithId(
               LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID,
               loadablePatternConfirmed.get(0).getLoadableStudy().getId());
         }
-        Optional<LoadableStudyStatus> loadableStudyStatus =
-            loadableStudyStatusRepository.findById(2L);
-        if (loadableStudyStatus.isPresent()) {
-          log.info("LoadableStudyStatus get:{}", loadableStudyStatus.get());
-          loadableStudy.setLoadableStudyStatus(loadableStudyStatus.get());
-          ls = loadableStudyRepository.save(loadableStudy);
-        }
+        log.info("changing status to plan confirmed for LS id:{}", loadableStudy.getId());
+        loadableStudyRepository.updateLoadableStudyStatusWithId(
+            CONFIRMED_STATUS_ID, loadableStudy.getId());
       } catch (Exception e) {
         log.error("error when updating LoadableStudy statys:{}", e);
       }
     }
-    return ls;
+    return loadableStudy;
   }
 
   public void saveSynopticalTableLoadicatorData(String dataJson)

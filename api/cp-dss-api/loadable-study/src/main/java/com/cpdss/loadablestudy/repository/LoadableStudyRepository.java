@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -123,4 +124,9 @@ public interface LoadableStudyRepository extends CommonCrudRepository<LoadableSt
   List<LoadableStudy>
       findByVesselXIdAndVoyageAndIsActiveAndLoadableStudyStatus_idAndPlanningTypeXId(
           long vesselId, Voyage voyage, boolean b, Long confirmedStatusId, int i);
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Modifying
+  @Query("UPDATE LoadableStudy SET loadableStudyStatus.id = ?1 WHERE id = ?2")
+  public void updateLoadableStudyStatusWithId(Long loadableStudyStatusId, Long loadableStudyId);
 }

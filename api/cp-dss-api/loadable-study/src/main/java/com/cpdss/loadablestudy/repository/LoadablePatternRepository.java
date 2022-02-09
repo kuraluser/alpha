@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /** @Author jerin.g */
@@ -90,4 +91,10 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
       value = "SELECT LP.loadablestudy_xid FROM loadable_pattern LP WHERE LP.id = ?1",
       nativeQuery = true)
   Long getLoadableStudyId(Long loadablePatternId);
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Modifying
+  @Query("UPDATE LoadablePattern SET loadableStudyStatus = ?1 WHERE id = ?2")
+  public void updateLoadablePatternStatusToPlanGeneratedStatus(
+      Long loadableStudyStatusId, Long loadablePatternId);
 }
