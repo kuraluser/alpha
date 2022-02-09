@@ -16,7 +16,7 @@
         <ng-template pTemplate="body">
           <tr [formGroup]="postDischargeStageTimeForm">
             <td class="error-icon-wrapper">
-              <p-inputMask *ngIf="editMode;else dryCheckTime" type="text" styleClass="form-control"
+              <p-inputMask id="dryCheckTime" *ngIf="editMode;else dryCheckTime" type="text" styleClass="form-control"
                 formControlName="dryCheckTime" mask="99:99" (onComplete)="onChange($event)" (onBlur)="onChange($event)">
               </p-inputMask>
               <ng-template #dryCheckTime>
@@ -28,7 +28,7 @@
             </td>
 
             <td class="error-icon-wrapper">
-              <p-inputMask *ngIf="editMode;else slopDischargingTime" type="text" styleClass="form-control"
+              <p-inputMask id="slopDischargingTime" *ngIf="editMode;else slopDischargingTime" type="text" styleClass="form-control"
                 formControlName="slopDischargingTime" mask="99:99" (onComplete)="onChange($event)" (onBlur)="onChange($event)">
               </p-inputMask>
               <ng-template #slopDischargingTime>
@@ -40,7 +40,7 @@
             </td>
 
             <td class="error-icon-wrapper">
-              <p-inputMask *ngIf="editMode;else finalStrippingTime" type="text" styleClass="form-control"
+              <p-inputMask id="finalStrippingTime" *ngIf="editMode;else finalStrippingTime" type="text" styleClass="form-control"
                 formControlName="finalStrippingTime" mask="99:99" (onComplete)="onChange($event)" (onBlur)="onChange($event)">
               </p-inputMask>
               <ng-template #finalStrippingTime>
@@ -52,7 +52,7 @@
             </td>
 
             <td class="error-icon-wrapper">
-              <p-inputMask *ngIf="editMode;else freshOilWashingTime" type="text" styleClass="form-control"
+              <p-inputMask id="freshOilWashingTime" *ngIf="editMode;else freshOilWashingTime" type="text" styleClass="form-control"
                 formControlName="freshOilWashingTime" mask="99:99" (onComplete)="onChange($event)" (onBlur)="onChange($event)">
               </p-inputMask>
               <ng-template #freshOilWashingTime>

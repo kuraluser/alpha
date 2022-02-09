@@ -7,7 +7,7 @@
       <div class="row">
         <label for="cow_option" class="col-6 col-form-label">{{ 'DISCHARGING_SELECT_COW_OPTION' | translate}}</label>
         <div class="col-4 error-icon-wrapper pt-5">
-          <p-dropdown [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_OPTION'| translate }}"
+          <p-dropdown id="cowOptions" [options]="listData?.cowOptions" formControlName="cowOption" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_OPTION'| translate }}"
             styleClass="form-control" (onChange)="onCowOptionChange($event)"></p-dropdown>
             <cpdss-portal-validation-error [errors]="fieldError('cowOption')" [errorMessages]="errorMesages?.cowOption">
             </cpdss-portal-validation-error>
@@ -17,7 +17,7 @@
       <div class="row">
         <label for="cow_option" class="col-6 col-form-label">{{ 'DISCHARGING_NO_OF_TANKS' | translate}}</label>
         <div class="col-4 error-icon-wrapper pt-5">
-          <p-dropdown [options]="listData?.cowPercentages" formControlName="cowPercentage" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_PERCENTAGE'| translate }}"
+          <p-dropdown id="cowPercentages" [options]="listData?.cowPercentages" formControlName="cowPercentage" optionLabel="name" placeholder="{{ 'DISCHARGING_SELECT_COW_PERCENTAGE'| translate }}"
             styleClass="form-control" (onChange)="onChange($event)"></p-dropdown>
             <cpdss-portal-validation-error [errors]="fieldError('cowPercentage')" [errorMessages]="errorMesages?.cowPercentage">
             </cpdss-portal-validation-error>
@@ -28,7 +28,7 @@
       <div class="row">
         <div class="col-auto mt-10">
           <label class="checkbox-custom pr-20">{{'DISCHARGING_CONSIDER_DAY_LIGHT_RESTRICTION' | translate}}
-            <input type="checkbox" formControlName="enableDayLightRestriction" (change)="onChange($event)">
+            <input type="checkbox" id="enableDayLightRestriction" formControlName="enableDayLightRestriction" (change)="onChange($event)">
             <span class="checkmark"></span>
           </label>
         </div>
@@ -110,7 +110,7 @@
           </h5>
         </div>
         <div class="pr-15" *ngIf="editMode">
-          <p-inputSwitch formControlName="washTanksWithDifferentCargo"
+          <p-inputSwitch id="washTanksWithDifferentCargo" formControlName="washTanksWithDifferentCargo"
             (onChange)="onWashWithDifferentCargoChange($event)"></p-inputSwitch>
         </div>
       </div>
@@ -144,7 +144,7 @@
               </div>
 
               <div class="col-4 mb-5 error-icon-wrapper">
-                <p-dropdown *ngIf="editMode;else washingCargo" [options]="loadedCargos" optionLabel="abbreviation" placeholder="{{ 'DISCHARGING_COW_SELECT_CARGO'| translate }}"
+                <p-dropdown id="washingCargo_{{index}}" *ngIf="editMode;else washingCargo" [options]="loadedCargos" optionLabel="abbreviation" placeholder="{{ 'DISCHARGING_COW_SELECT_CARGO'| translate }}"
                   formControlName="washingCargo" styleClass="form-control dropdown-closable" [showClear]="true" (onChange)="onWashingCargoChange($event, index)">
                   <ng-template pTemplate="selectedItem">
                     <span *ngIf="cargoDetails?.washingCargo">
@@ -184,7 +184,7 @@
             <label for="cow_option"
               class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_START_TIME' | translate}}</label>
             <div class="col-3 pt-5 error-icon-wrapper">
-              <p-inputMask *ngIf="editMode;else cowStart" type="text" styleClass="form-control"
+              <p-inputMask id="cowStart" *ngIf="editMode;else cowStart" type="text" styleClass="form-control"
                 formControlName="cowStart" mask="99:99" (onComplete)="onCowStartEndChange()" (onBlur)="onCowStartEndChange()">
               </p-inputMask>
               <ng-template #cowStart>
@@ -202,7 +202,7 @@
             <label for="cow_option"
               class="col-3 pr-0 col-form-label">{{ 'DISCHARGING_COW_END_TIME' | translate}}</label>
             <div class="col-3 pt-5 error-icon-wrapper">
-              <p-inputMask *ngIf="editMode;else cowEnd" type="text" styleClass="form-control" formControlName="cowEnd"
+              <p-inputMask id="cowEnd" *ngIf="editMode;else cowEnd" type="text" styleClass="form-control" formControlName="cowEnd"
                 mask="99:99" (onComplete)="onCowStartEndChange()" (onBlur)="onCowStartEndChange()">
               </p-inputMask>
               <ng-template #cowEnd>
@@ -219,7 +219,7 @@
           <div class="row">
             <label for="cow_option" class="col-3 col-form-label">{{ 'DISCHARGING_EST_COW_DURATION' | translate}}</label>
             <div class="col-3 pt-5">
-              <p-inputMask *ngIf="editMode;else cowDuration" type="text" styleClass="form-control"
+              <p-inputMask id="cowDuration" *ngIf="editMode;else cowDuration" type="text" styleClass="form-control"
                 formControlName="cowDuration" mask="99:99" readonly (onComplete)="updateCowDetails()">
               </p-inputMask>
               <ng-template #cowDuration>
@@ -246,7 +246,7 @@
             <div class="col-auto ">
               <label for="cow_option">{{ 'DISCHARGING_TRIM_MIN' | translate}}</label>
               <div class="error-icon-wrapper pr-20">
-              <input *ngIf="editMode;else cowTrimMin" type="text" cpdssPortalNumberDecimal formControlName="cowTrimMin"
+              <input id="cowTrimMin" *ngIf="editMode;else cowTrimMin" type="text" cpdssPortalNumberDecimal formControlName="cowTrimMin"
                 class="form-control" (change)="onChange($event)" />
                 <cpdss-portal-validation-error [errors]="fieldError('cowTrimMin')"
                 [errorMessages]="errorMesages?.cowTrimMin">
@@ -261,7 +261,7 @@
             <div class="col-auto">
               <label for="cow_option">{{ 'DISCHARGING_TRIM_MAX' | translate}}</label>
               <div class="error-icon-wrapper pr-20">
-              <input *ngIf="editMode;else cowTrimMax" type="text" cpdssPortalNumberDecimal formControlName="cowTrimMax"
+              <input id="cowTrimMax" *ngIf="editMode;else cowTrimMax" type="text" cpdssPortalNumberDecimal formControlName="cowTrimMax"
                 class="form-control" (change)="onChange($event)" />
                 <cpdss-portal-validation-error [errors]="fieldError('cowTrimMax')"
                 [errorMessages]="errorMesages?.cowTrimMax">
@@ -292,7 +292,7 @@
           <div class="form-row align-items-center">
             <div class="col-auto">
               <label class="checkbox-custom pr-20">{{'DISCHARGING_ADDITIONAL_REQUIREMENT_CRUDE_STORAGE_FLUSHING_OIL' | translate}}
-                <input type="checkbox" formControlName="needFlushingOilAndCrudeStorage" (change)="onChange($event)">
+                <input id="needFlushingOilAndCrudeStorage" type="checkbox" formControlName="needFlushingOilAndCrudeStorage" (change)="onChange($event)">
                 <span class="checkmark"></span>
               </label>
             </div>
