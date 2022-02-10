@@ -2394,6 +2394,12 @@ public class LoadablePatternService {
             loadablePatternOpt.get().getLoadableStudy().getVesselXId(),
             loadablePatternOpt.get().getLoadableStudy().getVoyage().getId());
       }
+      // LoadableStudyId and voyageNo is using for confirmed plan save
+      replyBuilder.setLoadableStudyId(loadablePatternOpt.get().getLoadableStudy().getId());
+      replyBuilder.setVoyageNo(
+          loadablePatternOpt.get().getLoadableStudy().getVoyage().getVoyageNo() != null
+              ? loadablePatternOpt.get().getLoadableStudy().getVoyage().getVoyageNo()
+              : "");
       List<LoadablePattern> loadablePatternConfirmedOpt =
           loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningType(
               loadablePatternOpt.get().getLoadableStudy().getVoyage().getId(),

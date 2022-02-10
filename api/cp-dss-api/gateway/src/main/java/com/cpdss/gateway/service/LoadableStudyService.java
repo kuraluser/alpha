@@ -3325,7 +3325,8 @@ public class LoadableStudyService {
    * @param first
    * @return CommonResponse
    */
-  public CommonResponse confirmPlan(Long voyageId, Long loadablePatternId, String correlationId)
+  public CommonResponse confirmPlan(
+      Long voyageId, Long loadablePatternId, String correlationId, Long vesselId)
       throws GenericServiceException {
     log.info("Inside confirmPlan gateway service with correlationId : " + correlationId);
 
@@ -3340,6 +3341,24 @@ public class LoadableStudyService {
           grpcReply.getResponseStatus().getCode(),
           HttpStatusCode.BAD_REQUEST);
     }
+    // saving confimed plan to file repo
+    try {
+      fileRepoService.deleteConfirmedPlan(vesselId, grpcReply.getVoyageNo());
+      downloadLoadablePlanReport(
+          vesselId,
+          grpcReply.getLoadableStudyId(),
+          loadablePatternId,
+          grpcReply.getVoyageNo(),
+          true);
+    } catch (Exception e) {
+      log.error(
+          "Error in Loadable study confirmed plan save -> VesselId -> {} loadableStudyId-> {} "
+              + "PatternId -> {}",
+          vesselId,
+          grpcReply.getLoadableStudyId(),
+          loadablePatternId);
+    }
+
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
@@ -3522,36 +3541,6 @@ public class LoadableStudyService {
 
     algoPatternResponse.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
-    // saving loadable study pattern to file repo
-    if (LOADABLE_STUDY_SAVE_REQUEST.equalsIgnoreCase(requestType)
-        && (loadablePlanRequest.getHasLoadicator() == null
-            || !loadablePlanRequest.getHasLoadicator())
-        && !algoReply.getPatternIdList().isEmpty()) {
-      algoReply
-          .getPatternIdList()
-          .forEach(
-              patternId -> {
-                try {
-                  downloadLoadablePlanReport(
-                      algoReply.getVesselId(),
-                      algoReply.getLoadableStudyId(),
-                      patternId,
-                      algoReply.getVoyageNo(),
-                      true);
-                } catch (Exception e) {
-                  log.info(
-                      "Failed to save loadable study plans to files-> vesselId: "
-                          + algoReply.getVesselId()
-                          + " loadable study id: "
-                          + algoReply.getLoadableStudyId()
-                          + " patternId: "
-                          + patternId
-                          + " -> ",
-                      e);
-                }
-              });
-    }
-
     return algoPatternResponse;
   }
 

@@ -40,4 +40,6 @@ public class FileRepoConstants {
               return new IllegalArgumentException("Invalid section: " + section);
             });
   }
+
+  public static final String FILE_REPO_CATEGORY = "Process";
 }

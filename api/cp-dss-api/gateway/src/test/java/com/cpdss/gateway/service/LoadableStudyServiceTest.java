@@ -1587,7 +1587,8 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testConfirmPlan() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.confirmPlan(anyLong(), anyLong(), anyString()))
+    Mockito.when(
+            this.loadableStudyService.confirmPlan(anyLong(), anyLong(), anyString(), anyLong()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.confirmPlan(
@@ -1597,7 +1598,7 @@ class LoadableStudyServiceTest {
                 .setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build())
                 .build());
     CommonResponse response =
-        this.loadableStudyService.confirmPlan(1L, 1L, CORRELATION_ID_HEADER_VALUE);
+        this.loadableStudyService.confirmPlan(1L, 1L, CORRELATION_ID_HEADER_VALUE, 1L);
     assertAll(
         () ->
             assertEquals(
@@ -1609,7 +1610,8 @@ class LoadableStudyServiceTest {
   /** @throws GenericServiceException void */
   @Test
   void testConfirmPlanGrpcFailure() throws GenericServiceException {
-    Mockito.when(this.loadableStudyService.confirmPlan(anyLong(), anyLong(), anyString()))
+    Mockito.when(
+            this.loadableStudyService.confirmPlan(anyLong(), anyLong(), anyString(), anyLong()))
         .thenCallRealMethod();
     Mockito.when(
             this.loadableStudyService.confirmPlan(
@@ -1626,7 +1628,7 @@ class LoadableStudyServiceTest {
     final GenericServiceException ex =
         assertThrows(
             GenericServiceException.class,
-            () -> this.loadableStudyService.confirmPlan(1L, 1L, CORRELATION_ID_HEADER_VALUE));
+            () -> this.loadableStudyService.confirmPlan(1L, 1L, CORRELATION_ID_HEADER_VALUE, 1L));
   }
 
   //  @Test

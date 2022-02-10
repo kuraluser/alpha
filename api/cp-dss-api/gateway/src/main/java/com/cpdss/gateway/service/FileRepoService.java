@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.service;
 
+import com.cpdss.common.constants.FileRepoConstants;
 import com.cpdss.common.constants.FileRepoConstants.FileRepoSection;
 import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
@@ -452,6 +453,21 @@ public class FileRepoService {
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }
     return vesselResponse.getVesselDetail();
+  }
+
+  /**
+   * Confirmed loadable study plan can be changed , so deleting previous confirmed plan from file
+   * repo
+   *
+   * @param vesselId
+   * @param voyageNo
+   */
+  public void deleteConfirmedPlan(Long vesselId, String voyageNo) {
+    fileRepoRepository.deleteConfirmedLoadableStudyFile(
+        vesselId,
+        voyageNo,
+        FileRepoConstants.FileRepoSection.LOADABLE_STUDY.getSection(),
+        FileRepoConstants.FILE_REPO_CATEGORY);
   }
   // endregion
 }

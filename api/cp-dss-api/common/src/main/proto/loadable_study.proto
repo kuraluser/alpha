@@ -777,6 +777,8 @@ message ConfirmPlanReply {
 	bool confirmed = 2;
 	int64 loadablePatternStatusId = 3;
 	bool validated = 4;
+	string voyageNo = 5;
+	int64 loadableStudyId =6;
 }
 
 message LoadableStudyStatusRequest {

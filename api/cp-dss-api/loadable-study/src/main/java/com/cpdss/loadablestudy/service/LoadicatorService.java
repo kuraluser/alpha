@@ -6,8 +6,6 @@ import static java.lang.String.valueOf;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
-import com.cpdss.common.constants.FileRepoConstants;
-import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.LoadableStudy;
@@ -40,7 +38,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -1564,57 +1561,8 @@ public class LoadicatorService {
             LOADABLE_STUDY_STATUS_PLAN_GENERATED_ID, algoResponse.getProcessId(), true);
       }
     }
-    log.error("************COMING*********");
     List<SynopticalTableLoadicatorData> synopticalTableLoadicatorDataList =
         synopticalTableLoadicatorDataRepository.saveAll(entities);
-    // loadable study pattern save
-    if (loadablePatterns != null && !loadablePatterns.isEmpty()) {
-      try {
-        for (LoadablePattern loadablePattern : loadablePatterns) {
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest request =
-              com.cpdss.common.generated.LoadableStudy.LoadablePlanReportRequest.newBuilder()
-                  .setVesselId(loadableStudy.getVesselXId())
-                  .setLoadableStudyId(loadableStudy.getId())
-                  .setLoadablePatternId(loadablePattern.getId())
-                  .build();
-          com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.Builder
-              dataChunkBuilder =
-                  com.cpdss.common.generated.LoadableStudy.LoadablePlanReportReply.newBuilder();
-          try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            loadablePlanService.getLoadablePlanReport(workbook, request, dataChunkBuilder);
-            String actualFileName =
-                getFileName(
-                    loadableStudy.getVesselXId(),
-                    loadablePattern.getId(),
-                    loadableStudy.getVoyage().getVoyageNo());
-            FileRepoAddRequest fileRepoAddRequest = new FileRepoAddRequest();
-            fileRepoAddRequest.setVoyageNo(loadableStudy.getVoyage().getVoyageNo());
-            fileRepoAddRequest.setFileName(
-                actualFileName.split("/")[actualFileName.split("/").length - 1]);
-            fileRepoAddRequest.setVesselId(loadableStudy.getVesselXId());
-            fileRepoAddRequest.setSection(FileRepoConstants.FileRepoSection.LOADABLE_STUDY);
-            fileRepoAddRequest.setCategory(FILE_REPO_CATEGORY);
-            fileRepoAddRequest.setFileType(SUB_FOLDER_NAME + "/");
-            fileRepoAddRequest.setFile(dataChunkBuilder.getData().toByteArray());
-            FileRepoReply fileRepoReply =
-                fileRepoService.addFileToFileRepo(fileRepoAddRequest, true);
-          } catch (Exception e) {
-            log.error(
-                "Error in loadable study excel save : vesselId -> "
-                    + loadableStudy.getVesselXId()
-                    + " loadable study id -> "
-                    + loadableStudy.getId()
-                    + " patternId ->"
-                    + loadablePattern.getId(),
-                e);
-          }
-        }
-      } catch (Exception e) {
-        log.error(
-            "Error in loadable study excel save -> loadable study id -> " + loadableStudy.getId(),
-            e);
-      }
-    }
     return synopticalTableLoadicatorDataList;
   }
 

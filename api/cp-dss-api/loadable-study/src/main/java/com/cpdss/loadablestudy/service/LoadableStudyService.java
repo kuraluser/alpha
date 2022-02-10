@@ -543,12 +543,11 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           fileRepoAddRequest.setFileName(fileName);
           fileRepoAddRequest.setVesselId(entity.getVesselXId());
           fileRepoAddRequest.setSection(FileRepoSection.LOADABLE_STUDY);
-          fileRepoAddRequest.setCategory(FILE_REPO_CATEGORY);
+          fileRepoAddRequest.setCategory(ATTACHMENT_CATEGORY);
           fileRepoAddRequest.setFileType(path.toString());
           fileRepoAddRequest.setFile(attachment.getByteString().toByteArray());
 
-          FileRepoReply fileRepoReply =
-              fileRepoService.addFileToFileRepo(fileRepoAddRequest, false);
+          FileRepoReply fileRepoReply = fileRepoService.addFileToFileRepo(fileRepoAddRequest, true);
           log.debug("Added to file repo. Response: {}", fileRepoReply);
         }
         this.loadableStudyAttachmentsRepository.saveAll(attachmentCollection);
