@@ -78,7 +78,9 @@ public class FileRepoService {
       List<String> filterKeys)
       throws GenericServiceException {
     FileRepoGetResponse response = new FileRepoGetResponse();
-    Pageable pageRequest = PageRequest.of(pageNo, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+    Pageable pageRequest =
+        PageRequest.of(
+            pageNo, pageSize, Sort.by(Sort.Direction.valueOf(orderBy.toUpperCase()), sortBy));
     Specification<FileRepo> specification = this.getFileRepoSpecification(filterParams, filterKeys);
     Page<FileRepo> fileRepoPage = this.fileRepoRepository.findAll(specification, pageRequest);
     log.info("Retrieved file repos : {}", fileRepoPage.toList().size());

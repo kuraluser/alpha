@@ -45,8 +45,8 @@ public class FileRepoServiceTest {
   void testGetFileRepoDetails() {
     int pageSize = 1;
     int pageNo = 1;
-    String sortBy = "1";
-    String orderBy = "1";
+    String sortBy = "id";
+    String orderBy = "ASC";
     Map<String, String> filterParams = new HashMap<>();
     filterParams.put("createdDate", "10-02-1999");
     String correlationId = "1";
@@ -87,8 +87,8 @@ public class FileRepoServiceTest {
   void testGetFileRepoDetails1() {
     int pageSize = 1;
     int pageNo = 1;
-    String sortBy = "1";
-    String orderBy = "1";
+    String sortBy = "id";
+    String orderBy = "ASC";
     Map<String, String> filterParams = new HashMap<>();
     filterParams.put("heloo", "10-Dec-1999");
     String correlationId = "1";

@@ -47,7 +47,9 @@ export class FileRepositoryTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'voyageNumber',
-        filterByServer: true
+        filterByServer: true,
+        sortable: true,
+        sortField: 'voyageNumber'
       },
       {
         field: 'fileName',
@@ -58,7 +60,9 @@ export class FileRepositoryTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'fileName',
-        filterByServer: true
+        filterByServer: true,
+        sortable: true,
+        sortField: 'fileName'
       },
       {
         field: 'fileType',
@@ -72,7 +76,9 @@ export class FileRepositoryTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'fileType',
-        filterByServer: true
+        filterByServer: true,
+        sortable: true,
+        sortField: 'fileType'
       },
       {
         field: 'section',
@@ -82,7 +88,9 @@ export class FileRepositoryTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'section',
-        filterByServer: true
+        filterByServer: true,
+        sortable: true,
+        sortField: 'section'
       },
       {
         field: 'category',
@@ -92,11 +100,15 @@ export class FileRepositoryTransformationService {
         filterType: DATATABLE_FILTER_TYPE.TEXT,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'category',
-        filterByServer: true
+        filterByServer: true,
+        sortable: true,
+        sortField: 'category'
       },
       {
         field: 'uploadType',
-        header: 'FILE_REPOSITORY_UPLOAD_TYPE'
+        header: 'FILE_REPOSITORY_UPLOAD_TYPE',
+        sortable: true,
+        sortField: 'isSystemGenerated'
       },
       {
         field: 'createdDate',
@@ -106,7 +118,9 @@ export class FileRepositoryTransformationService {
         filterType: DATATABLE_FILTER_TYPE.DATE,
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.CONTAINS,
         filterField: 'createdDate',
-        filterByServer: true
+        filterByServer: true,
+        sortable: true,
+        sortField: 'createdDate'
       }
     ];
     if (permission) {

@@ -171,17 +171,12 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
    * @memberof FileRepositoryComponent
    */
   onDataStateChange(event) {
-    if (event.action === 'paginator') {
-      this.pageState.pageNo = event.paginator.currentPage;
-      this.pageState.pageSize = event.paginator.rows;
-      this.getFiles();
-    }
-    if (event.action === 'filter') {
-      this.pageState = { ...this.pageState, ...event.filter };
-      this.pageState.pageNo = 0;
-      this.pageState.pageSize = event.paginator.rows;
-      this.getFiles$.next();
-    }
+    this.pageState.pageNo = event.paginator.currentPage;
+    this.pageState.pageSize = event.paginator.rows;
+    this.pageState = { ...this.pageState, ...event.filter };
+    this.pageState.sortBy = event.sort?.sortField;
+    this.pageState.orderBy =  event.sort?.sortOrder;
+    this.getFiles$.next();    
   }
 
   /**
