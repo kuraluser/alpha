@@ -387,8 +387,11 @@ public class CargoService {
       List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleEntities = new ArrayList<>();
       // for id = 0 save as new commingle cargo
       AtomicInteger counter = new AtomicInteger(0);
-      request
-          .getCommingleCargoList()
+      request.getCommingleCargoList().stream()
+          .filter(
+              commingleCargo ->
+                  commingleCargo.getCargoNomination1Id() != 0
+                      && commingleCargo.getCargoNomination2Id() != 0)
           .forEach(
               commingleCargo -> {
                 try {
