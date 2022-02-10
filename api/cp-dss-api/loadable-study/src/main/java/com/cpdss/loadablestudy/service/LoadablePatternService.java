@@ -2355,8 +2355,8 @@ public class LoadablePatternService {
         }
       }
       List<LoadablePattern> loadablePatternConfirmedOpt =
-          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndIsActive(
-              request.getVoyageId(), CONFIRMED_STATUS_ID, true);
+          loadablePatternRepository.findByVoyageAndLoadableStudyStatusAndPlanningTypeXIdAndIsActive(
+              request.getVoyageId(), CONFIRMED_STATUS_ID, request.getRequestType(), true);
       if (!loadablePatternConfirmedOpt.isEmpty()) {
         // set confirm status to false since some other plan is already confirmed
         log.info("other plan is in confirmed status or verification pending");

@@ -22,6 +22,11 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
       Long voyageId, Long loadableStudyStatus, Boolean isActive);
 
   @Query(
+      "SELECT LP FROM LoadablePattern LP INNER JOIN LoadableStudy LS ON LS.id = LP.loadableStudy.id INNER JOIN Voyage V ON LS.voyage.id = V.id AND V.id = ?1 AND LP.loadableStudyStatus = ?2 AND LS.planningTypeXId = ?3 AND LP.isActive = ?4 AND LS.isActive = ?4 AND V.isActive = ?4")
+  public List<LoadablePattern> findByVoyageAndLoadableStudyStatusAndPlanningTypeXIdAndIsActive(
+      Long voyageId, Long loadableStudyStatus, Integer planningType, Boolean isActive);
+
+  @Query(
       "SELECT LP FROM LoadablePattern LP INNER JOIN LoadableStudy LS ON LS.id = LP.loadableStudy.id INNER JOIN Voyage V ON LS.voyage.id = V.id AND V.id = ?1 AND LP.loadableStudyStatus = ?2 AND LP.isActive = ?3 AND LS.isActive = ?3 AND V.isActive = ?3 AND LS.planningTypeXId=?4")
   public List<LoadablePattern> findByVoyageAndLoadableStudyStatusAndIsActiveAndPlanningType(
       Long voyageId, Long loadableStudyStatus, Boolean isActive, Integer planningType);
