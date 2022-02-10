@@ -15,7 +15,9 @@ import com.cpdss.gateway.repository.FileRepoRepository;
 import com.cpdss.gateway.service.communication.models.FileData;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -106,7 +108,13 @@ public class FileSharingStagingAndDownloaderService extends StagingService {
         folderLocation = fileRepo.getFilePath() + "/";
       }
       Files.createDirectories(Path.of(folderLocation));
-      Files.writeString(Path.of(folderLocation + fileRepo.getFileName()), data);
+      try {
+        OutputStream os = new FileOutputStream(folderLocation + fileRepo.getFileName());
+        os.write(Base64.getDecoder().decode(data));
+        os.close();
+      } catch (Exception e) {
+        log.error("failed to write file ", e);
+      }
       log.info("File data wrote into :{}", folderLocation);
     } catch (IOException e) {
       log.error("failed to write file ", e);
