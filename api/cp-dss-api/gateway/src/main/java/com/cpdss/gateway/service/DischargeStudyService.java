@@ -666,6 +666,8 @@ public class DischargeStudyService {
               cargoNomination.setIsCommingled(cargoNominationDetail.getIsCommingled());
               cargoNominations.add(cargoNomination);
               // DSS 4722
+              // DSS 5782
+              cowTanks.clear();
               cargoNominationDetail.getCowTanksList().stream()
                   .forEach(
                       item -> {
@@ -673,7 +675,6 @@ public class DischargeStudyService {
                           cowTanks.add(item);
                         }
                       });
-              ;
             });
     //    cargoNominations.sort(Comparator.comparing(CargoNomination::getAbbreviation));
     portRotation.setCargoNominationList(cargoNominations);
