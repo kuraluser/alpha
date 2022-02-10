@@ -197,7 +197,7 @@ public class DischargePlanService {
                   com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails details =
                       new com.cpdss.loadablestudy.domain.LoadablePlanBallastDetails();
                   details.setId(0L);
-                  details.setQuantityMT(BigDecimal.ZERO.toString());
+                  details.setQuantityMT(null);
                   details.setTankId(vesselTankDetail.getTankId());
                   details.setColorCode(BALLAST_TANK_COLOR_CODE);
                   details.setSg(BigDecimal.ZERO.toString());

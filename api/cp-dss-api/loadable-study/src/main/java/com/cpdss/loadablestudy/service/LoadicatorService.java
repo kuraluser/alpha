@@ -1457,17 +1457,18 @@ public class LoadicatorService {
                   .equals(DISCHARGING_OPERATION_ID)
               && synopticalTable.getOperationType().equals(SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE)) {
             isValid = true;
+          } else {
+            judgements.addAll(
+                result.getJudgement().stream()
+                    .map(
+                        err ->
+                            String.format(
+                                "Port %d (%s) : %s",
+                                synopticalTable.getPortXid(),
+                                synopticalTable.getOperationType(),
+                                err))
+                    .collect(Collectors.toList()));
           }
-          judgements.addAll(
-              result.getJudgement().stream()
-                  .map(
-                      err ->
-                          String.format(
-                              "Port %d (%s) : %s",
-                              synopticalTable.getPortXid(),
-                              synopticalTable.getOperationType(),
-                              err))
-                  .collect(Collectors.toList()));
         }
       }
       if (!isValid) {
