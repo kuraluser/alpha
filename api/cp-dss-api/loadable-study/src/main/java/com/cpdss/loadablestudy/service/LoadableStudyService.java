@@ -2266,9 +2266,18 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           this.synopticalTableRepository.saveAll(synopticalTables);
         }
 
-        List<LoadableStudyAttachments> loadableStudyAttachmentsList =
+        List<LoadableStudyAttachments> attachmentsList =
             this.loadableStudyAttachmentsRepository.findByLoadableStudyXIdAndIsActive(
                 request.getDuplicatedFromId(), true);
+
+        List<LoadableStudyAttachments> loadableStudyAttachmentsList =
+            attachmentsList.stream()
+                .filter(
+                    loadableStudyAttachments ->
+                        !request
+                            .getDeletedAttachmentsList()
+                            .contains(loadableStudyAttachments.getId()))
+                .collect(Collectors.toList());
 
         if (!loadableStudyAttachmentsList.isEmpty()) {
           List<LoadableStudyAttachments> loadableStudyAttachments =
