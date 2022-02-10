@@ -561,7 +561,7 @@ export class DischargeStudyComponent implements OnInit {
         this.setQuantityValidation(formControlMt,event.data.mode?.value.name,'mt');
         this.setQuantityValidation(formControlBbls,event.data.mode?.value.name,'bbls');
 
-        if (Number(event.data[event.field].value) === 0) {
+        if (Number(event.data.quantity) === 0) {
           selectedPortCargo.sequenceNo.value = null;
           selectedPortCargoSequneceFormControl.setValue(null);
           selectedPortCargoSequneceFormControl.disable();

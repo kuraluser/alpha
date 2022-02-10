@@ -283,9 +283,9 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
     });
 
     if (this.operation === OPERATIONS.DISCHARGING) {
-      formGroup.addControl('dischargingRate', this.fb.control(loadingDischargingDelay?.dischargingRate?.value, [numberValidator(0, 6), Validators.required, Validators.min(loadingDischargingDelay?.rateMin), Validators.max(loadingDischargingDelay?.rateMax)]));
+      formGroup.addControl('dischargingRate', this.fb.control(loadingDischargingDelay?.dischargingRate?.value, initialDelay ? [] : [numberValidator(0, 6), Validators.required, Validators.min(loadingDischargingDelay?.rateMin), Validators.max(loadingDischargingDelay?.rateMax)]));
     } else if (this.operation === OPERATIONS.LOADING) {
-      formGroup.addControl('loadingRate', this.fb.control(loadingDischargingDelay?.loadingRate?.value, [numberValidator(0, 6), Validators.required, Validators.min(loadingDischargingDelay?.rateMin), Validators.max(loadingDischargingDelay?.rateMax)]));
+      formGroup.addControl('loadingRate', this.fb.control(loadingDischargingDelay?.loadingRate?.value, initialDelay ? [] : [numberValidator(0, 6), Validators.required, Validators.min(loadingDischargingDelay?.rateMin), Validators.max(loadingDischargingDelay?.rateMax)]));
     }
 
     return formGroup;
@@ -597,7 +597,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
     if (this.operation === OPERATIONS.LOADING) {
       field = 'loadingRate';
       rateMin = rateChanged.minLoadingRate;
-      rateMax = (rateChanged.maxLoadingRate > rateChanged.shoreLoadingRate && rateChanged.shoreLoadingRate > 1000) ? rateChanged.shoreLoadingRate : rateChanged.maxLoadingRate;
+      rateMax = (rateChanged.maxLoadingRate > rateChanged.shoreLoadingRate) ? rateChanged.shoreLoadingRate : rateChanged.maxLoadingRate;
     } else if (this.operation === OPERATIONS.DISCHARGING) {
       field = 'dischargingRate';
       rateMin = rateChanged.initialDischargingRate;

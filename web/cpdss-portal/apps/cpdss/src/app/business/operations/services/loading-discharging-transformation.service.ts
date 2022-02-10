@@ -516,9 +516,9 @@ export class LoadingDischargingTransformationService {
     _loadingDischargingDelay.sequenceNo = new ValueObject<number>(loadingDischargingDelay?.isInitialDelay ? 1 : loadingDischargingDelay?.sequenceNo, true, !loadingDischargingDelay?.isInitialDelay && isNewValue, false, !loadingDischargingDelay?.isInitialDelay);
 
     if (operation === OPERATIONS.DISCHARGING) {
-      _loadingDischargingDelay.dischargingRate = new ValueObject<number>(loadingDischargingDelay?.dischargingRate, true, true, false, isEditable);
+      _loadingDischargingDelay.dischargingRate = new ValueObject<number>(loadingDischargingDelay?.dischargingRate, true, !loadingDischargingDelay?.isInitialDelay, false, isEditable && !loadingDischargingDelay?.isInitialDelay);
     } else if (operation === OPERATIONS.LOADING) {
-      _loadingDischargingDelay.loadingRate = new ValueObject<number>(loadingDischargingDelay?.loadingRate, true, true, false, isEditable);
+      _loadingDischargingDelay.loadingRate = new ValueObject<number>(loadingDischargingDelay?.loadingRate, true, !loadingDischargingDelay?.isInitialDelay, false, isEditable && !loadingDischargingDelay?.isInitialDelay);
     }
 
     return _loadingDischargingDelay;
