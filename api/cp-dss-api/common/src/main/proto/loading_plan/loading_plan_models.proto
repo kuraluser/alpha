@@ -1038,6 +1038,7 @@ message DownloadTideDetailStatusReply {
 
 message StowageAndBillOfLaddingValidationRequest {
 	repeated PortWiseCargo portWiseCargos = 1;
+	int64 patternId =2;
 }
 message PortWiseCargo {
 	int64 portRotationId = 1;

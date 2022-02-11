@@ -593,6 +593,19 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
           portBuilder.addAllCargoIds(cargoIds);
           request.addPortWiseCargos(portBuilder);
         });
+    // Bug fix : 5806 case when multiple cases of same LS is confirmed one after another.
+    Optional<com.cpdss.loadablestudy.entity.LoadablePattern> confirmedLoadablePatternOpt =
+        this.loadablePatternRepository.findByLoadableStudyAndLoadableStudyStatusAndIsActive(
+            loadableStudy, CONFIRMED_STATUS_ID, true);
+    if (confirmedLoadablePatternOpt.isPresent()) {
+      request.setPatternId(confirmedLoadablePatternOpt.get().getId());
+    } else {
+      log.error("No Confirmed Loadable Pattern Present");
+      throw new GenericServiceException(
+          "No Confirmed Loadable Pattern Found",
+          CommonErrorCodes.E_CPDSS_CONFIRMED_LS_DOES_NOT_EXIST,
+          HttpStatusCode.BAD_REQUEST);
+    }
     ResponseStatus response =
         loadingPlanServiceBlockingStub.validateStowageAndBillOfLadding(request.build());
     if (!SUCCESS.equalsIgnoreCase(response.getStatus())) {

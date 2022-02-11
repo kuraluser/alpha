@@ -497,7 +497,9 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
                   CONDITION_TYPE_DEP,
                   VALUE_TYPE_ACTUALS);
       List<com.cpdss.loadingplan.entity.BillOfLadding> blList =
-          billOfLaddingRepository.findByCargoNominationIdInAndIsActive(cargoIds, true);
+          billOfLaddingRepository
+              .findByCargoNominationIdInAndLoadingInformation_LoadablePatternXIdAndIsActive(
+                  cargoIds, request.getPatternId(), true);
       Map<Long, List<com.cpdss.loadingplan.entity.BillOfLadding>> portWiseBL =
           blList.stream()
               .collect(

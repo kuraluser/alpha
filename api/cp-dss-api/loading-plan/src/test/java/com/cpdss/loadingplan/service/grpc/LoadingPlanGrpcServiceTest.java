@@ -436,6 +436,7 @@ public class LoadingPlanGrpcServiceTest {
     LoadingPlanModels.StowageAndBillOfLaddingValidationRequest request =
         LoadingPlanModels.StowageAndBillOfLaddingValidationRequest.newBuilder()
             .addAllPortWiseCargos(cargoList)
+            .setPatternId(1L)
             .build();
     StreamRecorder<Common.ResponseStatus> responseObserver = StreamRecorder.create();
 
@@ -443,7 +444,9 @@ public class LoadingPlanGrpcServiceTest {
             .findByPortRotationXIdAndIsActiveAndConditionTypeAndValueType(
                 anyLong(), anyBoolean(), anyInt(), anyInt()))
         .thenReturn(getStowageDetailsList());
-    when(billOfLaddingRepository.findByCargoNominationIdInAndIsActive(anyList(), anyBoolean()))
+    when(billOfLaddingRepository
+            .findByCargoNominationIdInAndLoadingInformation_LoadablePatternXIdAndIsActive(
+                anyList(), anyLong(), anyBoolean()))
         .thenReturn(getLaddingList());
 
     loadingPlanGrpcService.validateStowageAndBillOfLadding(request, responseObserver);
