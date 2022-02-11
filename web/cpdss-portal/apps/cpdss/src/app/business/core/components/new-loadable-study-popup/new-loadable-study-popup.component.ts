@@ -155,8 +155,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   // creating form-group for new-loadable-study
   async createNewLoadableStudyFormGroup() {
     this.newLoadableStudyFormGroup = this.formBuilder.group({
-      createdFromVoyage: this.formBuilder.control(this.createdFromVoyage, [Validators.required]),
-      duplicateExisting: '',
+      duplicateExisting: this.formBuilder.control(false),
+      createdFromVoyage: this.formBuilder.control(null),
+      createdFromLS: '',
       newLoadableStudyName: this.formBuilder.control('', [Validators.required, Validators.maxLength(100), whiteSpaceValidator , isAlphaCharacterAvaiable]),
       enquiryDetails: this.formBuilder.control('', [Validators.maxLength(1000)]),
       attachMail: null,
@@ -182,7 +183,7 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         voyageId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
           this.newLoadableStudyFormGroup.controls.createdFromVoyage.value?.id : '',
         createdFromId: (!isLoadableStudyAvailable && this.duplicateLoadableStudy && !this.isEdit) ?
-          this.newLoadableStudyFormGroup.controls.duplicateExisting.value?.id : '',
+          this.newLoadableStudyFormGroup.controls.createdFromLS.value?.id : '',
         name: this.newLoadableStudyFormGroup.controls.newLoadableStudyName.value.trim(),
         detail: this.newLoadableStudyFormGroup.controls.enquiryDetails.value,
         attachMail: this.uploadedFiles,
@@ -329,8 +330,9 @@ export class NewLoadableStudyPopupComponent implements OnInit {
   //for edit/duplicate update the values
   updateLoadableStudyFormGroup(loadableStudyObj: LoadableStudy, isEdit: boolean) {
     if (isEdit) {
-      this.newLoadableStudyFormGroup.controls['createdFromVoyage'].disable();
       this.newLoadableStudyFormGroup.controls['duplicateExisting'].disable();
+      this.newLoadableStudyFormGroup.controls['createdFromVoyage'].disable();
+      this.newLoadableStudyFormGroup.controls['createdFromLS'].disable();
       this.savedloadableDetails = {
         draftMark: loadableStudyObj?.draftMark,
         loadLineXId: loadableStudyObj?.loadLineXId,
@@ -340,7 +342,8 @@ export class NewLoadableStudyPopupComponent implements OnInit {
         this.loadableStudies?.map((loadableStudy) => {
           if (loadableStudyObj.createdFromId === loadableStudy.id) {
             this.newLoadableStudyFormGroup.patchValue({
-              duplicateExisting: loadableStudy,
+              duplicateExisting: true,
+              createdFromLS: loadableStudy,
               createdFromVoyage: this.createdFromVoyage
             })
           }
@@ -348,10 +351,13 @@ export class NewLoadableStudyPopupComponent implements OnInit {
       }
     } else {
       this.newLoadableStudyFormGroup.patchValue({
-        duplicateExisting: loadableStudyObj,
+        duplicateExisting: true,
+        createdFromLS: loadableStudyObj,
         createdFromVoyage: this.createdFromVoyage
       })
       this.duplicateLoadableStudy = loadableStudyObj;
+      this.newLoadableStudyFormGroup.controls.createdFromVoyage.setValidators([Validators.required]);
+      this.newLoadableStudyFormGroup.controls.createdFromLS.setValidators([Validators.required]);
     }
     this.newLoadableStudyFormGroup.patchValue({
       newLoadableStudyName: loadableStudyObj.name,
@@ -412,10 +418,31 @@ export class NewLoadableStudyPopupComponent implements OnInit {
     this.createdFromVoyage = event.value;
     const result = await this.loadableStudyListApiService.getLoadableStudies(this.vesselInfoList?.id, event.value?.id).toPromise();
     this.loadableStudies = result?.loadableStudies ?? [];
-    this.newLoadableStudyFormGroup.controls.duplicateExisting.reset(null);
+    this.newLoadableStudyFormGroup.controls.createdFromLS.reset(null);
     this.newLoadableStudyFormGroup.controls.newLoadableStudyName.reset(null);
     this.duplicateLoadableStudy = null;
     this.ngxSpinnerService.hide();
+  }
+
+  /**
+   * Handler for change event of duplicate existing checkbox
+   *
+   * @param {*} event
+   * @memberof NewLoadableStudyPopupComponent
+   */
+  onDuplicateExistingToggle(event: Event) {
+    if ((<HTMLInputElement>event?.target)?.checked) {
+      this.newLoadableStudyFormGroup.controls.createdFromVoyage.setValidators([Validators.required]);
+      this.newLoadableStudyFormGroup.controls.createdFromLS.setValidators([Validators.required]);
+    } else {
+      this.newLoadableStudyFormGroup.controls.createdFromVoyage.reset(null);
+      this.newLoadableStudyFormGroup.controls.createdFromVoyage.clearValidators();
+      this.newLoadableStudyFormGroup.controls.createdFromVoyage.updateValueAndValidity();
+      this.newLoadableStudyFormGroup.controls.createdFromLS.reset(null);
+      this.newLoadableStudyFormGroup.controls.createdFromLS.clearValidators();
+      this.newLoadableStudyFormGroup.controls.createdFromLS.updateValueAndValidity();
+    }
+
   }
 
 }

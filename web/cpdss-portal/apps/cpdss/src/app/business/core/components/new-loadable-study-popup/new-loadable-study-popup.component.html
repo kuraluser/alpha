@@ -1,232 +1,262 @@
-<p-dialog id="dialog_newLoadableStudyPopup" header="{{popUpHeader | translate}}"
-    [(visible)]="display" [modal]="true" styleClass="new-loadable-study-pop-up" [draggable]="false" [responsive]="true"
-    [minY]="70" [closable]="false">
-    <form *ngIf="newLoadableStudyFormGroup" [formGroup]="newLoadableStudyFormGroup" id="fg_newLoadableStudy" (submit)="saveLoadableStudy()">
-        <div class="container-fluid">
-            <div class="row" *ngIf="savedloadableDetails && isLoadlineChanged()">
-                <div class="col"> <p class="text-danger" >{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p></div>
-            </div>
-            <div class="row">
-
-                <div class="col-sm-6">
-                    <div class="row form-group">
-                      <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_VOYAGE' | translate}}
-                      </div>
-                      <div class="col dropdowm-medium">
-                        <p-dropdown styleClass="form-control" [options]="voyages" id="voyage" formControlName="createdFromVoyage" optionLabel="voyageNo" (onChange)="onVoyageChange($event)" [filter]="true" resetFilterOnHide="true" placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [virtualScroll]="true" [itemSize]="30" focusTrap>
-                        </p-dropdown>
-                      </div>
-                    </div>
-                    <div class="row form-group">
-                      <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
-                      </div>
-                      <div class="col dropdowm-medium">
-                        <p-dropdown styleClass="form-control" [options]="loadableStudies" [tooltipPosition]="'top'"
-                          [tooltip]="getControlLabel('duplicateExisting')?.name?.length > 13 ? getControlLabel('duplicateExisting')?.name: ''"
-                          id="ddl_duplicateExisting" formControlName="duplicateExisting" optionLabel="name"
-                          (onChange)="onDuplicateExisting($event)" resetFilterOnHide="true" [filter]="true"
-                          placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
-                          <ng-template let-loadableStudy pTemplate="selectedItem">
-                            <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status" tooltipPosition="right">
-                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}} pull-right"></i></span>
-                          </ng-template>
-                          <ng-template let-loadableStudy pTemplate="item">
-                            <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status"
-                              tooltipPosition="right">
-                              <span>{{loadableStudy?.label}}</span><i class="icon-status-{{loadableStudy?.value?.statusId}} pull-right"></i></span>
-                          </ng-template>
-                        </p-dropdown>
-                      </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_NAME' | translate}}</div>
-                        <div class="col">
-                            <input class="form-control" type="text" id="txt_newLoadableStudyName"
-                                formControlName="newLoadableStudyName" focusTrap>
-                            <span
-                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.required || form.newLoadableStudyName.errors?.whitespace)"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
-                            </span>
-                            <span
-                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.patternMatch)"
-                                class="text-danger">
-                                {{'DISCHARGE_NAME_INVALID_PATTERN' | translate}}!
-                            </span>
-
-                            <span
-                                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.maxlength && !form.newLoadableStudyName.errors?.whitespace"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_NAME_POPUP_MAX_LENGTH' | translate}}!
-                            </span>
-                            <span *ngIf="newLoadableStudyNameExist && !form.newLoadableStudyName.errors?.required"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP__NAME_EXIST' | translate}}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_ENQUIRY_DETAILS' | translate}}</div>
-                        <div class="col">
-                            <textarea class="form-control" type="text" id="txt_enquiryDetails"
-                                formControlName="enquiryDetails" focusTrap></textarea>
-                            <span
-                                *ngIf="form.enquiryDetails.invalid && form.enquiryDetails.touched && form.enquiryDetails.errors?.maxlength"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_ENQUIRY_DETAIL_ERROR_MAXIMUM_LENGTH' | translate}}!
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_ATTACH_MAIL' | translate}}</div>
-                        <div class="col">
-
-                            <div class="upload-file">
-                                {{'NEW_LOADABLE_STUDY_POPUP_ATTACH_BUTTON' | translate}}
-                                <input type="file" name="fl_attachMail" #fileUpload
-                                    accept =".docx,.pdf,.txt,.csv,.xlsx"
-                                    formControlName="attachMail" (change)="selectFilesToUpload()"
-                                    title="No file selected" multiple focusTrap/>
-
-                            </div>
-                            <div *ngIf="showError" class="text-danger">
-                                {{uploadError | translate}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" *ngIf="uploadedFiles?.length > 0">
-                        <div class="col col-form-label"></div>
-                        <div class="col">
-                            <ol class="pl-10">
-                                <li *ngFor="let file of uploadedFiles; let i = index" >
-                                    <a (click)="openFile(i, file?.id , file)" class="file-name" [pTooltip]="file?.name ? file?.name : file?.fileName">{{file?.name ? file?.name : file.fileName}}</a>
-                                    <span class="pi pi-times text-secondary font-x-small ml-5 pointer" (click)="removeFile(i, file?.id)"></span>
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_CHARTERER' | translate}}</div>
-                        <div class="col">
-                            <input class="form-control" type="text" id="txt_charterer" formControlName="charterer"
-                                readonly focusTrap>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_SUB_CHARTERER' | translate}}</div>
-                        <div class="col">
-                            <input class="form-control" type="text" id="txt_subCharterer"
-                                formControlName="subCharterer" focusTrap>
-                            <span
-                                *ngIf="form.subCharterer.invalid && form.subCharterer.touched && form.subCharterer.errors?.maxlength"
-                                class="text-danger">
-                                {{'NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH' | translate}}!
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_LOADLINE' | translate}}</div>
-                        <div class="col">
-                            <p-dropdown styleClass="form-control" [options]="loadlineLists" id="ddl_loadLine"
-                                formControlName="loadLine" optionLabel="name" (onChange)="onloadLineChange()" resetFilterOnHide="true"
-                                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
-                            </p-dropdown>
-                        </div>
-                    </div>
-
-                    <div class="row form-group" *ngIf="draftMarkList?.length > 0">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_MARK' | translate}}</div>
-                        <div class="col">
-                            <p-dropdown styleClass="form-control" [options]="draftMarkList" id="ddl_draftMark"
-                                formControlName="draftMark" optionLabel="name" resetFilterOnHide="true"
-                                focusTrap>
-                            </p-dropdown>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_RESTRICTION' | translate}}
-                        </div>
-                        <div class="col">
-                            <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_draftRestriction"
-                                formControlName="draftRestriction" focusTrap>
-                                <span
-                                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && form.draftRestriction.errors?.min"
-                                class="text-danger">
-                                {{'DRAFT_RESTRICTION_MIN' | translate}}
-                            </span>
-                            <span *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && form.draftRestriction.errors?.invalidNumber"
-                              class="text-danger">
-                              {{'DRAFT_RESTRICTION_INVALID' | translate}}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="row form-group">
-                        <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_MAX_AIR_TEMP_EXPECTED' | translate}}
-                        </div>
-                        <div class="col">
-                            <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxAirTempExceeded"
-                                formControlName="maxAirTempExpected" focusTrap>
-                                <span
-                                    *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.min"
-                                    class="text-danger">
-                                    {{'MAX_AIR_TEMP_MIN' | translate}}
-                                </span>
-                                <span
-                                    *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.max"
-                                    class="text-danger">
-                                    {{'MAX_AIR_TEMP_MAX' | translate}}
-                                </span>
-                                <span *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.invalidNumber"
-                                  class="text-danger">
-                                  {{'MAX_AIR_TEMP_INVALID' | translate}}
-                                </span>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col col-form-label">
-                            {{'NEW_LOADABLE_STUDY_POPUP_MAX_WATER_TEMP_EXPECTED' | translate}}</div>
-                        <div class="col">
-                            <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxWaterTempExceeded"
-                                formControlName="maxWaterTempExpected" focusTrap>
-                                <span
-                                    *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.min"
-                                    class="text-danger">
-                                    {{'MAX_WATER_TEMP_MIN' | translate}}
-                                </span>
-                                <span
-                                    *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.max"
-                                    class="text-danger">
-                                    {{'MAX_WATER_TEMP_MAX' | translate}}
-                                </span>
-                                <span
-                                  *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.invalidNumber"
-                                  class="text-danger">
-                                  {{'MAX_WATER_TEMP_INVALID' | translate}}
-                                </span>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+<p-dialog id="dialog_newLoadableStudyPopup" header="{{popUpHeader | translate}}" [(visible)]="display" [modal]="true"
+  styleClass="new-loadable-study-pop-up" [draggable]="false" [responsive]="true" [minY]="70" [closable]="false">
+  <form *ngIf="newLoadableStudyFormGroup" [formGroup]="newLoadableStudyFormGroup" id="fg_newLoadableStudy"
+    (submit)="saveLoadableStudy()">
+    <div class="container-fluid">
+      <div class="row" *ngIf="savedloadableDetails && isLoadlineChanged()">
+        <div class="col">
+          <p class="text-danger">{{'LOADABLE_STUDY_EDIT_UPDATING_LOADLING/DRAFT' | translate}}</p>
         </div>
+      </div>
+      <div class="row">
 
-
-    </form>
-    <p-footer>
-        <div class="row">
-            <div class="col-sm-12 text-right">
-                <button type="button" class="btn btn-main" (click)="closeDialog()"
-                    id="new-loadable-study-popup-cancel" focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
-                <button type="submit" class="btn btn-main" id="new-loadable-study-popup-save"
-                    form="fg_newLoadableStudy" autofocus focusTrap>{{saveButtonLabel | translate}}</button>
+        <div class="col-sm-6">
+          <div class="row form-group" *ngIf="!isEdit">
+            <label class="col col-form-label" for="duplicateExisting">
+              {{'NEW_LOADABLE_STUDY_POPUP_DUPLICATE_EXISTING' | translate}}
+            </label>
+            <div class="col">
+              <label class="checkbox-custom">
+                <input type="checkbox" id="duplicateExisting" formControlName="duplicateExisting" (change)="onDuplicateExistingToggle($event)">
+                <span class="checkmark"></span>
+              </label>
             </div>
+          </div>
+          <div class="row form-group" *ngIf="form?.duplicateExisting?.value">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_VOYAGE' | translate}}
+            </div>
+            <div class="col dropdowm-medium">
+              <p-dropdown styleClass="form-control" [options]="voyages" id="voyage" formControlName="createdFromVoyage"
+                optionLabel="voyageNo" (onChange)="onVoyageChange($event)" [filter]="true" resetFilterOnHide="true"
+                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" [virtualScroll]="true" [itemSize]="30"
+                focusTrap>
+              </p-dropdown>
+              <span
+                *ngIf="form.createdFromVoyage.invalid && form.createdFromVoyage.touched && form.createdFromVoyage.errors?.required"
+                class="text-danger">
+                {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
+              </span>
+            </div>
+          </div>
+          <div class="row form-group" *ngIf="form?.duplicateExisting?.value && form?.createdFromVoyage?.value">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_LS_NAME' | translate}}
+            </div>
+            <div class="col dropdowm-medium">
+              <p-dropdown styleClass="form-control" [options]="loadableStudies" [tooltipPosition]="'top'"
+                [tooltip]="getControlLabel('createdFromLS')?.name?.length > 13 ? getControlLabel('createdFromLS')?.name: ''"
+                id="ddl_duplicateExisting" formControlName="createdFromLS" optionLabel="name"
+                (onChange)="onDuplicateExisting($event)" resetFilterOnHide="true" [filter]="true"
+                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
+                <ng-template let-loadableStudy pTemplate="selectedItem">
+                  <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status"
+                    tooltipPosition="right">
+                    <span>{{loadableStudy?.label}}</span><i
+                      class="icon-status-{{loadableStudy?.value?.statusId}} pull-right"></i></span>
+                </ng-template>
+                <ng-template let-loadableStudy pTemplate="item">
+                  <span class="dropdown-item-wrapper" *ngIf="loadableStudy" [pTooltip]="loadableStudy?.value?.status"
+                    tooltipPosition="right">
+                    <span>{{loadableStudy?.label}}</span><i
+                      class="icon-status-{{loadableStudy?.value?.statusId}} pull-right"></i></span>
+                </ng-template>
+              </p-dropdown>
+              <span
+                *ngIf="form.createdFromLS.invalid && form.createdFromLS.touched && form.createdFromLS.errors?.required"
+                class="text-danger">
+                {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
+              </span>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_NAME' | translate}}</div>
+            <div class="col">
+              <input class="form-control" type="text" id="txt_newLoadableStudyName"
+                formControlName="newLoadableStudyName" focusTrap>
+              <span
+                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.required || form.newLoadableStudyName.errors?.whitespace)"
+                class="text-danger">
+                {{'NEW_LOADABLE_STUDY_POPUP__NAME_REQUIRED' | translate}}!
+              </span>
+              <span
+                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && (form.newLoadableStudyName.errors?.patternMatch)"
+                class="text-danger">
+                {{'DISCHARGE_NAME_INVALID_PATTERN' | translate}}!
+              </span>
+
+              <span
+                *ngIf="form.newLoadableStudyName.invalid && form.newLoadableStudyName.touched && form.newLoadableStudyName.errors?.maxlength && !form.newLoadableStudyName.errors?.whitespace"
+                class="text-danger">
+                {{'NEW_LOADABLE_STUDY_NAME_POPUP_MAX_LENGTH' | translate}}!
+              </span>
+              <span *ngIf="newLoadableStudyNameExist && !form.newLoadableStudyName.errors?.required"
+                class="text-danger">
+                {{'NEW_LOADABLE_STUDY_POPUP__NAME_EXIST' | translate}}
+              </span>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_ENQUIRY_DETAILS' | translate}}</div>
+            <div class="col">
+              <textarea class="form-control" type="text" id="txt_enquiryDetails" formControlName="enquiryDetails"
+                focusTrap></textarea>
+              <span
+                *ngIf="form.enquiryDetails.invalid && form.enquiryDetails.touched && form.enquiryDetails.errors?.maxlength"
+                class="text-danger">
+                {{'NEW_LOADABLE_STUDY_POPUP_ENQUIRY_DETAIL_ERROR_MAXIMUM_LENGTH' | translate}}!
+              </span>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_ATTACH_MAIL' | translate}}</div>
+            <div class="col">
+
+              <div class="upload-file">
+                {{'NEW_LOADABLE_STUDY_POPUP_ATTACH_BUTTON' | translate}}
+                <input type="file" name="fl_attachMail" #fileUpload accept=".docx,.pdf,.txt,.csv,.xlsx"
+                  formControlName="attachMail" (change)="selectFilesToUpload()" title="No file selected" multiple
+                  focusTrap />
+
+              </div>
+              <div *ngIf="showError" class="text-danger">
+                {{uploadError | translate}}
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="uploadedFiles?.length > 0">
+            <div class="col col-form-label"></div>
+            <div class="col">
+              <ol class="pl-10">
+                <li *ngFor="let file of uploadedFiles; let i = index">
+                  <a (click)="openFile(i, file?.id , file)" class="file-name"
+                    [pTooltip]="file?.name ? file?.name : file?.fileName">{{file?.name ? file?.name :
+                    file.fileName}}</a>
+                  <span class="pi pi-times text-secondary font-x-small ml-5 pointer"
+                    (click)="removeFile(i, file?.id)"></span>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_CHARTERER' | translate}}</div>
+            <div class="col">
+              <input class="form-control" type="text" id="txt_charterer" formControlName="charterer" readonly focusTrap>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_SUB_CHARTERER' | translate}}</div>
+            <div class="col">
+              <input class="form-control" type="text" id="txt_subCharterer" formControlName="subCharterer" focusTrap>
+              <span
+                *ngIf="form.subCharterer.invalid && form.subCharterer.touched && form.subCharterer.errors?.maxlength"
+                class="text-danger">
+                {{'NEW_LOADABLE_STUDY_POPUP_MAX_LENGTH' | translate}}!
+              </span>
+            </div>
+          </div>
         </div>
-    </p-footer>
+        <div class="col-sm-6">
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_LOADLINE' | translate}}</div>
+            <div class="col">
+              <p-dropdown styleClass="form-control" [options]="loadlineLists" id="ddl_loadLine"
+                formControlName="loadLine" optionLabel="name" (onChange)="onloadLineChange()" resetFilterOnHide="true"
+                placeholder="{{'NEW_LOADABLE_STUDY_POPUP_SELECT' | translate}}" focusTrap>
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="row form-group" *ngIf="draftMarkList?.length > 0">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_MARK' | translate}}</div>
+            <div class="col">
+              <p-dropdown styleClass="form-control" [options]="draftMarkList" id="ddl_draftMark"
+                formControlName="draftMark" optionLabel="name" resetFilterOnHide="true" focusTrap>
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_DRAFT_RESTRICTION' | translate}}
+            </div>
+            <div class="col">
+              <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_draftRestriction"
+                formControlName="draftRestriction" focusTrap>
+              <span
+                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && form.draftRestriction.errors?.min"
+                class="text-danger">
+                {{'DRAFT_RESTRICTION_MIN' | translate}}
+              </span>
+              <span
+                *ngIf="form.draftRestriction.invalid && form.draftRestriction.touched && form.draftRestriction.errors?.invalidNumber"
+                class="text-danger">
+                {{'DRAFT_RESTRICTION_INVALID' | translate}}
+              </span>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col col-form-label">{{'NEW_LOADABLE_STUDY_POPUP_MAX_AIR_TEMP_EXPECTED' | translate}}
+            </div>
+            <div class="col">
+              <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxAirTempExceeded"
+                formControlName="maxAirTempExpected" focusTrap>
+              <span
+                *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.min"
+                class="text-danger">
+                {{'MAX_AIR_TEMP_MIN' | translate}}
+              </span>
+              <span
+                *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.max"
+                class="text-danger">
+                {{'MAX_AIR_TEMP_MAX' | translate}}
+              </span>
+              <span
+                *ngIf="form.maxAirTempExpected.invalid && form.maxAirTempExpected.touched && form.maxAirTempExpected.errors?.invalidNumber"
+                class="text-danger">
+                {{'MAX_AIR_TEMP_INVALID' | translate}}
+              </span>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col col-form-label">
+              {{'NEW_LOADABLE_STUDY_POPUP_MAX_WATER_TEMP_EXPECTED' | translate}}</div>
+            <div class="col">
+              <input class="form-control" type="text" cpdssPortalNumberDecimal id="txt_maxWaterTempExceeded"
+                formControlName="maxWaterTempExpected" focusTrap>
+              <span
+                *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.min"
+                class="text-danger">
+                {{'MAX_WATER_TEMP_MIN' | translate}}
+              </span>
+              <span
+                *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.max"
+                class="text-danger">
+                {{'MAX_WATER_TEMP_MAX' | translate}}
+              </span>
+              <span
+                *ngIf="form.maxWaterTempExpected.invalid && form.maxWaterTempExpected.touched && form.maxWaterTempExpected.errors?.invalidNumber"
+                class="text-danger">
+                {{'MAX_WATER_TEMP_INVALID' | translate}}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  </form>
+  <p-footer>
+    <div class="row">
+      <div class="col-sm-12 text-right">
+        <button type="button" class="btn btn-main" (click)="closeDialog()" id="new-loadable-study-popup-cancel"
+          focusTrap>{{'NEW_LOADABLE_STUDY_POPUP_CANCEL_BUTTON' | translate}}</button>
+        <button type="submit" class="btn btn-main" id="new-loadable-study-popup-save" form="fg_newLoadableStudy"
+          autofocus focusTrap>{{saveButtonLabel | translate}}</button>
+      </div>
+    </div>
+  </p-footer>
 </p-dialog>
