@@ -423,7 +423,7 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
     if (loadingStage != null) {
 
-      loadingInformation.setTrackStartEndStage(loadingStage.getTrackStartEndStage());
+      loadingInformation.setTrackStartEndStage(true);
       loadingInformation.setTrackGradeSwitch(loadingStage.getTrackGradeSwitch());
       loadingInformation.setIsStageDurationUsed(loadingStage.getIsStageDurationUsed());
       loadingInformation.setIsStageOffsetUsed(loadingStage.getIsStageOffsetUsed());
