@@ -11,4 +11,5 @@ public class DischargingPlanLoadicatorDetails {
   List<LoadicatorStowageDetails> stowageDetails;
   List<LoadicatorBallastDetails> ballastDetails;
   List<LoadicatorRobDetails> robDetails;
+  private boolean isUllageAltered;
 }

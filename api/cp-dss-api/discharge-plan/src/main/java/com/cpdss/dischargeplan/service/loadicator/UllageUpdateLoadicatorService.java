@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.dischargeplan.service.loadicator;
 
+import static com.cpdss.dischargeplan.common.DischargePlanConstants.DISCHARGING_PLAN_PLANNED_TYPE_VALUE;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
@@ -40,6 +41,7 @@ import com.google.gson.JsonArray;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -342,7 +344,13 @@ public class UllageUpdateLoadicatorService {
           loadicatorService.getPortInfoForLoadicator(dischargingInfoOpt.get());
 
       loadicatorRequestBuilder.setTypeId(DischargePlanConstants.LOADICATOR_TYPE_ID);
-      loadicatorRequestBuilder.setIsUllageUpdate(true);
+
+      // Set if ullage is changed
+      loadicatorRequestBuilder.setIsUllageUpdate(
+          checkAndSetIsUllageAltered(
+              tempStowageDetails,
+              request.getUpdateUllage(0).getArrivalDepartutre(),
+              dischargingInfoOpt.get()));
       loadicatorRequestBuilder.setConditionType(request.getUpdateUllage(0).getArrivalDepartutre());
       StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
       loadicatorService.buildStowagePlan(
@@ -1050,7 +1058,51 @@ public class UllageUpdateLoadicatorService {
           loadicatorRobDetails.add(robDetail);
         });
     loadingPlanLoadicatorDetails.setRobDetails(loadicatorRobDetails);
+
+    // Set if ullage is changed
+    loadingPlanLoadicatorDetails.setUllageAltered(
+        checkAndSetIsUllageAltered(
+            tempStowageDetails, request.getConditionType(), dischargeInformation));
     algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
+  }
+
+  /**
+   * Sets boolean flag to check if ullage is changed
+   *
+   * @param tempStowageDetails list of actual stowage details
+   * @param conditionType input condition type
+   * @param dischargeInformation discharge information
+   * @throws IllegalStateException when tankXId is duplicate in stowage details
+   * @return boolean flag
+   */
+  private boolean checkAndSetIsUllageAltered(
+      List<PortDischargingPlanStowageTempDetails> tempStowageDetails,
+      int conditionType,
+      DischargeInformation dischargeInformation) {
+
+    log.info("Inside checkAndSetIsUllageAltered method!");
+
+    // Retrieve planned ullage details
+    List<PortDischargingPlanStowageDetails> portDischargingPlanStowageDetailsList =
+        portDischargingPlanStowageDetailsRepository
+            .findByDischargingInformationAndConditionTypeAndValueTypeAndIsActiveTrue(
+                dischargeInformation, conditionType, DISCHARGING_PLAN_PLANNED_TYPE_VALUE);
+
+    Map<Long, BigDecimal> tankIdsWithUllageValuesPlanned =
+        portDischargingPlanStowageDetailsList.stream()
+            .collect(
+                Collectors.toMap(
+                    PortDischargingPlanStowageDetails::getTankXId,
+                    PortDischargingPlanStowageDetails::getUllage));
+    Map<Long, BigDecimal> tankIdsWithUllageValuesActual =
+        tempStowageDetails.stream()
+            .collect(
+                Collectors.toMap(
+                    PortDischargingPlanStowageTempDetails::getTankXId,
+                    PortDischargingPlanStowageTempDetails::getUllage));
+
+    // Compare and set flag if ullage is changed
+    return !tankIdsWithUllageValuesPlanned.equals(tankIdsWithUllageValuesActual);
   }
 
   /**

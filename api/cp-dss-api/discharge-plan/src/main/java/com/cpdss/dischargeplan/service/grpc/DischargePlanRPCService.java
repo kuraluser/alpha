@@ -834,7 +834,7 @@ public class DischargePlanRPCService extends DischargePlanServiceGrpc.DischargeP
         portDischargingPlanCommingleTempDetailsRepository.saveAll(updatedCommingle);
       }
 
-      if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
+      if (request.getIsValidate().equals("true")) {
         processId = validateAndSaveData(request);
       } else {
         DischargeInformation dischargeInformation =

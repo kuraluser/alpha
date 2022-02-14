@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.loadicator;
 
+import static com.cpdss.loadingplan.common.LoadingPlanConstants.LOADING_PLAN_PLANNED_TYPE_VALUE;
 import static java.lang.String.valueOf;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
@@ -326,7 +327,14 @@ public class UllageUpdateLoadicatorService {
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
-    loadicatorRequestBuilder.setIsUllageUpdate(true);
+
+    // Check and set flag if ullage is changed
+    loadicatorRequestBuilder.setIsUllageUpdate(
+        checkAndSetIsUllageAltered(
+            tempStowageDetails,
+            ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre(),
+            loadingInfo));
+
     loadicatorRequestBuilder.setConditionType(
         ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre());
     StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
@@ -1146,8 +1154,49 @@ public class UllageUpdateLoadicatorService {
           loadicatorCommingleDetails.add(commingleDetail);
         });
     loadingPlanLoadicatorDetails.setCommingleDetails(loadicatorCommingleDetails);
-
+    loadingPlanLoadicatorDetails.setIsUllageAltered(
+        checkAndSetIsUllageAltered(
+            tempStowageDetails, request.getConditionType(), loadingInformation));
     algoRequest.setPlanDetails(loadingPlanLoadicatorDetails);
+  }
+
+  /**
+   * Sets boolean flag to check if ullage is changed
+   *
+   * @param tempStowageDetails list of actual stowage details
+   * @param conditionType input condition type
+   * @param loadingInformation loading information entity
+   * @throws IllegalStateException when tankXId is duplicate in stowage details
+   * @return boolean flag
+   */
+  private boolean checkAndSetIsUllageAltered(
+      List<PortLoadingPlanStowageTempDetails> tempStowageDetails,
+      int conditionType,
+      LoadingInformation loadingInformation) {
+
+    log.info("Inside checkAndSetIsUllageAltered method!");
+
+    // Retrieve planned ullage details
+    List<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetailsList =
+        portLoadingPlanStowageDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActiveTrue(
+                loadingInformation, conditionType, LOADING_PLAN_PLANNED_TYPE_VALUE);
+
+    Map<Long, BigDecimal> tankIdsWithUllageValuesPlanned =
+        portLoadingPlanStowageDetailsList.stream()
+            .collect(
+                Collectors.toMap(
+                    PortLoadingPlanStowageDetails::getTankXId,
+                    PortLoadingPlanStowageDetails::getUllage));
+    Map<Long, BigDecimal> tankIdsWithUllageValuesActual =
+        tempStowageDetails.stream()
+            .collect(
+                Collectors.toMap(
+                    PortLoadingPlanStowageTempDetails::getTankXId,
+                    PortLoadingPlanStowageTempDetails::getUllage));
+
+    // Compare and set flag if ullage is changed
+    return !tankIdsWithUllageValuesPlanned.equals(tankIdsWithUllageValuesActual);
   }
 
   /**

@@ -12,4 +12,5 @@ public class LoadingPlanLoadicatorDetails {
   List<LoadicatorBallastDetails> ballastDetails;
   List<LoadicatorRobDetails> robDetails;
   List<LoadicatorCommingleDetails> commingleDetails;
+  private Boolean isUllageAltered;
 }

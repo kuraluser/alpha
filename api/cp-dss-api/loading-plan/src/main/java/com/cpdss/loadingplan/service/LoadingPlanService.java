@@ -936,7 +936,7 @@ public class LoadingPlanService {
                   portLoadingPlanCommingleTempDetailsRepository.save(tempData);
                 }
               });
-      if (request.getIsValidate() != null && request.getIsValidate().equals("true")) {
+      if (request.getIsValidate().equals("true")) {
         processId = validateAndSaveData(request);
       } else {
         updateLoadingPlanStatusForUllageUpdate(

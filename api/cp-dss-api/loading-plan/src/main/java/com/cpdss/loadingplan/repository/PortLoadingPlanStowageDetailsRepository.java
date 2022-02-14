@@ -84,4 +84,16 @@ public interface PortLoadingPlanStowageDetailsRepository
           long lastLoadingPortId,
           Integer valueTypeActuals,
           Integer conditionTypeDep);
+
+  /**
+   * Fetches list of PortLoadingPlanStowageDetails entities
+   *
+   * @param loadingInformation loading information entity
+   * @param conditionType arrival or departure condition
+   * @param valueType actual or planned value
+   * @return list of PortLoadingPlanStowageDetails entities
+   */
+  List<PortLoadingPlanStowageDetails>
+      findByLoadingInformationAndConditionTypeAndValueTypeAndIsActiveTrue(
+          LoadingInformation loadingInformation, int conditionType, Integer valueType);
 }

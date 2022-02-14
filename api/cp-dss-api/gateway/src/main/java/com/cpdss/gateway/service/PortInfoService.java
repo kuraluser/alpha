@@ -16,9 +16,10 @@ import io.micrometer.core.instrument.util.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -143,7 +144,17 @@ public class PortInfoService {
             ManifoldDetail manifoldDetail = new ManifoldDetail();
 
             // Set fields
-            BeanUtils.copyProperties(manifoldDetailGenerated, manifoldDetail);
+            Optional.of(manifoldDetailGenerated.getManifoldName())
+                .ifPresent(manifoldDetail::setManifoldName);
+            Optional.of(manifoldDetailGenerated.getConnectionNumber())
+                .ifPresent(manifoldDetail::setConnectionNumber);
+            Optional.of(manifoldDetailGenerated.getManifoldSize())
+                .ifPresent(manifoldDetail::setManifoldSize);
+            Optional.of(manifoldDetailGenerated.getMaxLoadingRate())
+                .ifPresent(manifoldDetail::setMaxLoadingRate);
+            Optional.of(manifoldDetailGenerated.getMaxDischargeRate())
+                .ifPresent(manifoldDetail::setMaxDischargeRate);
+
             manifoldDetail.setManifoldHeight(
                 returnZeroIfBlank(manifoldDetailGenerated.getManifoldHeight()));
             manifoldDetail.setMaxPressure(
@@ -164,6 +175,18 @@ public class PortInfoService {
   private BigDecimal returnZeroIfBlank(String string) {
 
     return StringUtils.isBlank(string) ? BigDecimal.ZERO : new BigDecimal(string);
+  }
+
+  /**
+   * Returns string value of BigDecimal input if not null. Else returns string value of BigDecimal
+   * zero
+   *
+   * @param bigDecimalInputValue input value of BigDecimal
+   * @return output string value of BigDecimal input
+   */
+  private String returnZeroIfNull(BigDecimal bigDecimalInputValue) {
+
+    return String.valueOf(Objects.requireNonNullElse(bigDecimalInputValue, BigDecimal.ZERO));
   }
 
   /**
@@ -353,10 +376,21 @@ public class PortInfoService {
                 PortInfo.ManifoldDetail.newBuilder();
 
             // Set fields
-            BeanUtils.copyProperties(manifoldDetail, manifoldDetailBuilder);
+            Optional.ofNullable(manifoldDetail.getManifoldName())
+                .ifPresent(manifoldDetailBuilder::setManifoldName);
+            Optional.ofNullable(manifoldDetail.getConnectionNumber())
+                .ifPresent(manifoldDetailBuilder::setConnectionNumber);
+            Optional.ofNullable(manifoldDetail.getManifoldSize())
+                .ifPresent(manifoldDetailBuilder::setManifoldSize);
+            Optional.ofNullable(manifoldDetail.getMaxLoadingRate())
+                .ifPresent(manifoldDetailBuilder::setMaxLoadingRate);
+            Optional.ofNullable(manifoldDetail.getMaxDischargeRate())
+                .ifPresent(manifoldDetailBuilder::setMaxDischargeRate);
+
             manifoldDetailBuilder.setManifoldHeight(
-                String.valueOf(manifoldDetail.getManifoldHeight()));
-            manifoldDetailBuilder.setMaxPressure(String.valueOf(manifoldDetail.getMaxPressure()));
+                returnZeroIfNull(manifoldDetail.getManifoldHeight()));
+            manifoldDetailBuilder.setMaxPressure(returnZeroIfNull(manifoldDetail.getMaxPressure()));
+
             berthDetail.addManifoldDetails(manifoldDetailBuilder.build());
           });
     }

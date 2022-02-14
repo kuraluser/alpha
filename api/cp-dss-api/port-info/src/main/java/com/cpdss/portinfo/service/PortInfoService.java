@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -630,18 +629,36 @@ public class PortInfoService extends PortInfoServiceImplBase {
             ManifoldDetail.Builder manifoldDetailBuilder = ManifoldDetail.newBuilder();
 
             // Set fields
-            BeanUtils.copyProperties(berthManifold, manifoldDetailBuilder);
+            Optional.ofNullable(berthManifold.getManifoldName())
+                .ifPresent(manifoldDetailBuilder::setManifoldName);
+            Optional.ofNullable(berthManifold.getConnectionNumber())
+                .ifPresent(manifoldDetailBuilder::setConnectionNumber);
+            Optional.ofNullable(berthManifold.getManifoldSize())
+                .ifPresent(manifoldDetailBuilder::setManifoldSize);
+            Optional.ofNullable(berthManifold.getMaxLoadingRate())
+                .ifPresent(manifoldDetailBuilder::setMaxLoadingRate);
+            Optional.ofNullable(berthManifold.getMaxDischargeRate())
+                .ifPresent(manifoldDetailBuilder::setMaxDischargeRate);
+
             manifoldDetailBuilder.setManifoldHeight(
-                berthManifold.getManifoldHeight() != null
-                    ? String.valueOf(berthManifold.getManifoldHeight())
-                    : String.valueOf(BigDecimal.ZERO));
-            manifoldDetailBuilder.setMaxPressure(
-                berthManifold.getMaxPressure() != null
-                    ? String.valueOf(berthManifold.getMaxPressure())
-                    : String.valueOf(BigDecimal.ZERO));
+                returnZeroIfNull(berthManifold.getManifoldHeight()));
+            manifoldDetailBuilder.setMaxPressure(returnZeroIfNull(berthManifold.getMaxPressure()));
+
             builder.addManifoldDetails(manifoldDetailBuilder.build());
           });
     }
+  }
+
+  /**
+   * Returns string value of BigDecimal input if not null. Else returns string value of BigDecimal
+   * zero
+   *
+   * @param bigDecimalInputValue input value of BigDecimal
+   * @return output string value of BigDecimal input
+   */
+  private String returnZeroIfNull(BigDecimal bigDecimalInputValue) {
+
+    return String.valueOf(Objects.requireNonNullElse(bigDecimalInputValue, BigDecimal.ZERO));
   }
 
   /** Get all country details */
@@ -1211,7 +1228,15 @@ public class PortInfoService extends PortInfoServiceImplBase {
             BerthManifold berthManifold = new BerthManifold();
 
             // Set fields
-            BeanUtils.copyProperties(manifoldDetail, berthManifold);
+            Optional.of(manifoldDetail.getManifoldName()).ifPresent(berthManifold::setManifoldName);
+            Optional.of(manifoldDetail.getConnectionNumber())
+                .ifPresent(berthManifold::setConnectionNumber);
+            Optional.of(manifoldDetail.getManifoldSize()).ifPresent(berthManifold::setManifoldSize);
+            Optional.of(manifoldDetail.getMaxLoadingRate())
+                .ifPresent(berthManifold::setMaxLoadingRate);
+            Optional.of(manifoldDetail.getMaxDischargeRate())
+                .ifPresent(berthManifold::setMaxDischargeRate);
+
             berthManifold.setManifoldHeight(returnZeroIfBlank(manifoldDetail.getManifoldHeight()));
             berthManifold.setMaxPressure(returnZeroIfBlank(manifoldDetail.getMaxPressure()));
             berthManifold.setBerthInfo(berthResponse);

@@ -644,7 +644,7 @@ public class LoadicatorService {
     PortInfo.PortReply portReply = this.GetPortInfo(portRequest);
     if (!LoadingPlanConstants.SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
-          "Error in calling cargo service",
+          "Error in calling port service",
           CommonErrorCodes.E_GEN_INTERNAL_ERR,
           HttpStatusCode.INTERNAL_SERVER_ERROR);
     }

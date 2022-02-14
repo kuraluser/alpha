@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadingplan.service.loadicator;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -124,7 +125,7 @@ public class UllageUpdateLoadicatorServiceTest {
             .addUpdateUllage(
                 LoadingPlanModels.UpdateUllage.newBuilder()
                     .setArrivalDepartutre(1)
-                    .setLoadingInformationId(1l)
+                    .setLoadingInformationId(1L)
                     .build())
             .build();
     List<VesselInfo.VesselDetail> vesselDetailList = new ArrayList<>();
@@ -136,7 +137,7 @@ public class UllageUpdateLoadicatorServiceTest {
         VesselInfo.VesselTankDetail.newBuilder()
             .setTankName("1")
             .setShortName("1")
-            .setTankId(1l)
+            .setTankId(1L)
             .build();
     tankDetailList.add(tankDetail);
     VesselInfo.VesselReply vesselReply =
@@ -175,6 +176,10 @@ public class UllageUpdateLoadicatorServiceTest {
     when(portLoadingPlanCommingleDetailsTempRepository
             .findByLoadingInformationAndConditionTypeAndIsActive(anyLong(), anyInt(), anyBoolean()))
         .thenReturn(getCommingleTempDetails());
+    when(portLoadingPlanStowageDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActiveTrue(
+                any(LoadingInformation.class), anyInt(), anyInt()))
+        .thenReturn(getStowageDetails());
     when(loadicatorService.getCargoNominationDetails(anySet())).thenReturn(getDetailsMap());
     when(loadicatorService.getCargoInfoForLoadicator(any(LoadingInformation.class)))
         .thenReturn(getCargoReply());
@@ -204,7 +209,7 @@ public class UllageUpdateLoadicatorServiceTest {
     ReflectionTestUtils.setField(ullageUpdateLoadicatorService, "env", "ship");
 
     var result = ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(request);
-    assertTrue(result != null);
+    assertNotNull(result);
   }
 
   private Loadicator.LoadicatorReply getLoadicatorReply() {
@@ -230,12 +235,28 @@ public class UllageUpdateLoadicatorServiceTest {
   private List<PortLoadingPlanStowageTempDetails> getStowageTempDetails() {
     List<PortLoadingPlanStowageTempDetails> tempStowageDetails = new ArrayList<>();
     PortLoadingPlanStowageTempDetails stowageTempDetails = new PortLoadingPlanStowageTempDetails();
-    stowageTempDetails.setCargoNominationXId(1l);
-    stowageTempDetails.setCargoXId(1l);
+    stowageTempDetails.setCargoNominationXId(1L);
+    stowageTempDetails.setCargoXId(1L);
     stowageTempDetails.setApi(new BigDecimal(1));
     stowageTempDetails.setTemperature(new BigDecimal(1));
+    stowageTempDetails.setTankXId(1L);
+    stowageTempDetails.setUllage(new BigDecimal(1));
     tempStowageDetails.add(stowageTempDetails);
     return tempStowageDetails;
+  }
+
+  private List<PortLoadingPlanStowageDetails> getStowageDetails() {
+    List<PortLoadingPlanStowageDetails> portLoadingPlanStowageDetailsList = new ArrayList<>();
+    PortLoadingPlanStowageDetails portLoadingPlanStowageDetails =
+        new PortLoadingPlanStowageDetails();
+    portLoadingPlanStowageDetails.setCargoNominationXId(1L);
+    portLoadingPlanStowageDetails.setCargoXId(1L);
+    portLoadingPlanStowageDetails.setApi(new BigDecimal(1));
+    portLoadingPlanStowageDetails.setTemperature(new BigDecimal(1));
+    portLoadingPlanStowageDetails.setTankXId(1L);
+    portLoadingPlanStowageDetails.setUllage(new BigDecimal(1));
+    portLoadingPlanStowageDetailsList.add(portLoadingPlanStowageDetails);
+    return portLoadingPlanStowageDetailsList;
   }
 
   private List<PortLoadingPlanBallastTempDetails> getBallastTempDetails() {
