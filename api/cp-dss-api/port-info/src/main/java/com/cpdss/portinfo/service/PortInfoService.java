@@ -348,6 +348,7 @@ public class PortInfoService extends PortInfoServiceImplBase {
             portInfo.get().getBerthInfoSet().stream()
                 .filter(BerthInfo::getIsActive)
                 .collect(Collectors.toList());
+        Optional.ofNullable(portInfo.get().getCode()).ifPresent(builder::setPortCode);
         this.buildBerthInfoToGrpcResponse(berthInfoList, builder);
         log.info(
             "Berth Info size {}, for Port Id {}", berthInfoList.size(), portInfo.get().getId());

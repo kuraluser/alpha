@@ -16,6 +16,7 @@ public class DischargeInformationAlgoRequest {
   private Long vesselId;
   private Long voyageId;
   private Long portId;
+  private String portCode;
   private Long portRotationId;
   private Object dischargeStudy;
   private DischargeInformation dischargeInformation;

@@ -230,7 +230,7 @@ public class DischargePlanAlgoService {
       disDto.setDischargeRates(dischargeRates);
 
       // discharge berths
-      disDto.setBerthDetails(this.buildDischargeBerthDto(entity.getId()));
+      disDto.setBerthDetails(this.buildDischargeBerthDto(entity.getId(), algoRequest));
 
       // discharge machines
       disDto.setMachineryInUses(this.buildDischargeMachines(entity));
@@ -722,7 +722,8 @@ public class DischargePlanAlgoService {
     buildOnBoardQuantities(algoRequest, entity, response.getLoadableStudyId());
   }
 
-  private DischargeBerthDetails buildDischargeBerthDto(Long id) {
+  private DischargeBerthDetails buildDischargeBerthDto(
+      Long id, DischargeInformationAlgoRequest algoRequest) {
     DischargeBerthDetails berthDetails = new DischargeBerthDetails();
     List<DischargingBerthDetail> list =
         dischargeBerthDetailRepository.findAllByDischargingInformationIdAndIsActiveTrue(id);
@@ -756,7 +757,10 @@ public class DischargePlanAlgoService {
                     // Call 1 to Port info, set value from berth table
                     // Setting berth name
                     this.getBerthDetailsByPortIdAndBerthId(
-                        var.getDischargingInformation().getPortXid(), var.getBerthXid(), dto);
+                        var.getDischargingInformation().getPortXid(),
+                        var.getBerthXid(),
+                        dto,
+                        algoRequest);
 
                     // Call 2 to Port info, set value from port table
                     this.getPortInfoIntoBerthData(var.getBerthXid(), dto);
@@ -767,7 +771,8 @@ public class DischargePlanAlgoService {
     return berthDetails;
   }
 
-  private void getBerthDetailsByPortIdAndBerthId(Long portXid, Long berthXid, BerthDetails bd) {
+  private void getBerthDetailsByPortIdAndBerthId(
+      Long portXid, Long berthXid, BerthDetails bd, DischargeInformationAlgoRequest algoRequest) {
     try {
       PortInfo.PortIdRequest.Builder idRequest = PortInfo.PortIdRequest.newBuilder();
       PortInfo.BerthInfoResponse response =
@@ -779,6 +784,7 @@ public class DischargePlanAlgoService {
       if (!DischargePlanConstants.SUCCESS.equals(response.getResponseStatus().getStatus())) {
         log.error("Failed to get berth details by Port id - {}", response);
       }
+      algoRequest.setPortCode(response.getPortCode());
       var berthData =
           response.getBerthsList().stream().filter(v -> v.getId() == berthXid).findFirst();
       if (berthData.isPresent()) {

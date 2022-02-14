@@ -169,6 +169,7 @@ message PortIdRequest{
 message BerthInfoResponse{
 	ResponseStatus responseStatus = 1;
 	repeated BerthDetail berths = 2;
+	string portCode = 3;
 }
 
 message BerthDetail{
@@ -193,7 +194,6 @@ message BerthDetail{
 	string displacement = 19;
 	repeated ManifoldDetail manifoldDetails = 20;
 	string maxManifoldPressure = 21;
-
 }
 
 message ManifoldDetail {

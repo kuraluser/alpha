@@ -200,7 +200,8 @@ public class LoadingInformationAlgoRequestBuilderService {
     log.info("Populating Loading Information {}", entity.getId());
     com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo =
         new com.cpdss.loadingplan.domain.algo.LoadingInformation();
-    buildLoadingBerths(loadingInfo, entity.getPortXId(), loadingInformation.getLoadingBerthsList());
+    buildLoadingBerths(
+        loadingInfo, entity.getPortXId(), loadingInformation.getLoadingBerthsList(), algoRequest);
     buildLoadingDelays(loadingInfo, loadingInformation.getLoadingDelays());
     buildLoadingDetail(loadingInfo, loadingInformation.getLoadingDetail(), entity);
     loadingInfo.setLoadingInfoId(loadingInformation.getLoadingInfoId());
@@ -610,9 +611,11 @@ public class LoadingInformationAlgoRequestBuilderService {
   private void buildLoadingBerths(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       Long portId,
-      List<LoadingBerths> loadingBerthsList) {
+      List<LoadingBerths> loadingBerthsList,
+      LoadingInformationAlgoRequest algoRequest) {
     log.info("Populating loading berths");
     PortInfo.BerthInfoResponse masterBerths = this.getBerthInfoByPortId(portId);
+    algoRequest.setPortCode(masterBerths.getPortCode());
     List<BerthDetails> berthDetails = new ArrayList<BerthDetails>();
     loadingBerthsList.forEach(
         berth -> {

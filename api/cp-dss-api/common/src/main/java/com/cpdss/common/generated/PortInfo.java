@@ -16902,6 +16902,19 @@ public final class PortInfo {
         getBerthsOrBuilderList();
     /** <code>repeated .BerthDetail berths = 2;</code> */
     com.cpdss.common.generated.PortInfo.BerthDetailOrBuilder getBerthsOrBuilder(int index);
+
+    /**
+     * <code>string portCode = 3;</code>
+     *
+     * @return The portCode.
+     */
+    java.lang.String getPortCode();
+    /**
+     * <code>string portCode = 3;</code>
+     *
+     * @return The bytes for portCode.
+     */
+    com.google.protobuf.ByteString getPortCodeBytes();
   }
   /** Protobuf type {@code BerthInfoResponse} */
   public static final class BerthInfoResponse extends com.google.protobuf.GeneratedMessageV3
@@ -16916,6 +16929,7 @@ public final class PortInfo {
 
     private BerthInfoResponse() {
       berths_ = java.util.Collections.emptyList();
+      portCode_ = "";
     }
 
     @java.lang.Override
@@ -16976,6 +16990,13 @@ public final class PortInfo {
                     input.readMessage(
                         com.cpdss.common.generated.PortInfo.BerthDetail.parser(),
                         extensionRegistry));
+                break;
+              }
+            case 26:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                portCode_ = s;
                 break;
               }
             default:
@@ -17063,6 +17084,41 @@ public final class PortInfo {
       return berths_.get(index);
     }
 
+    public static final int PORTCODE_FIELD_NUMBER = 3;
+    private volatile java.lang.Object portCode_;
+    /**
+     * <code>string portCode = 3;</code>
+     *
+     * @return The portCode.
+     */
+    public java.lang.String getPortCode() {
+      java.lang.Object ref = portCode_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        portCode_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string portCode = 3;</code>
+     *
+     * @return The bytes for portCode.
+     */
+    public com.google.protobuf.ByteString getPortCodeBytes() {
+      java.lang.Object ref = portCode_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        portCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -17083,6 +17139,9 @@ public final class PortInfo {
       for (int i = 0; i < berths_.size(); i++) {
         output.writeMessage(2, berths_.get(i));
       }
+      if (!getPortCodeBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, portCode_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -17097,6 +17156,9 @@ public final class PortInfo {
       }
       for (int i = 0; i < berths_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, berths_.get(i));
+      }
+      if (!getPortCodeBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, portCode_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -17119,6 +17181,7 @@ public final class PortInfo {
         if (!getResponseStatus().equals(other.getResponseStatus())) return false;
       }
       if (!getBerthsList().equals(other.getBerthsList())) return false;
+      if (!getPortCode().equals(other.getPortCode())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -17138,6 +17201,8 @@ public final class PortInfo {
         hash = (37 * hash) + BERTHS_FIELD_NUMBER;
         hash = (53 * hash) + getBerthsList().hashCode();
       }
+      hash = (37 * hash) + PORTCODE_FIELD_NUMBER;
+      hash = (53 * hash) + getPortCode().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -17291,6 +17356,8 @@ public final class PortInfo {
         } else {
           berthsBuilder_.clear();
         }
+        portCode_ = "";
+
         return this;
       }
 
@@ -17332,6 +17399,7 @@ public final class PortInfo {
         } else {
           result.berths_ = berthsBuilder_.build();
         }
+        result.portCode_ = portCode_;
         onBuilt();
         return result;
       }
@@ -17413,6 +17481,10 @@ public final class PortInfo {
               berthsBuilder_.addAllMessages(other.berths_);
             }
           }
+        }
+        if (!other.getPortCode().isEmpty()) {
+          portCode_ = other.portCode_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -17772,6 +17844,82 @@ public final class PortInfo {
           berths_ = null;
         }
         return berthsBuilder_;
+      }
+
+      private java.lang.Object portCode_ = "";
+      /**
+       * <code>string portCode = 3;</code>
+       *
+       * @return The portCode.
+       */
+      public java.lang.String getPortCode() {
+        java.lang.Object ref = portCode_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          portCode_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string portCode = 3;</code>
+       *
+       * @return The bytes for portCode.
+       */
+      public com.google.protobuf.ByteString getPortCodeBytes() {
+        java.lang.Object ref = portCode_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          portCode_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string portCode = 3;</code>
+       *
+       * @param value The portCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortCode(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+
+        portCode_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string portCode = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortCode() {
+
+        portCode_ = getDefaultInstance().getPortCode();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string portCode = 3;</code>
+       *
+       * @param value The bytes for portCode to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortCodeBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+
+        portCode_ = value;
+        onChanged();
+        return this;
       }
 
       @java.lang.Override
@@ -29197,71 +29345,71 @@ public final class PortInfo {
           + "\030\004 \001(\t\"Y\n\020TimezoneResponse\022\'\n\016responseSt"
           + "atus\030\001 \001(\0132\017.ResponseStatus\022\034\n\ttimezones"
           + "\030\002 \003(\0132\t.Timezone\"\037\n\rPortIdRequest\022\016\n\006po"
-          + "rtId\030\001 \001(\003\"Z\n\021BerthInfoResponse\022\'\n\016respo"
+          + "rtId\030\001 \001(\003\"l\n\021BerthInfoResponse\022\'\n\016respo"
           + "nseStatus\030\001 \001(\0132\017.ResponseStatus\022\034\n\006bert"
-          + "hs\030\002 \003(\0132\014.BerthDetail\"\376\003\n\013BerthDetail\022\n"
-          + "\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\025\n\rloadingInf"
-          + "oId\030\014 \001(\003\022\026\n\016maxShipChannel\030\003 \001(\t\022\021\n\tber"
-          + "thName\030\004 \001(\t\022\024\n\014maxShipDepth\030\005 \001(\t\022\032\n\022se"
-          + "aDraftLimitation\030\006 \001(\t\022\032\n\022airDraftLimita"
-          + "tion\030\007 \001(\t\022\031\n\021maxManifoldHeight\030\010 \001(\t\022 \n"
-          + "\030regulationAndRestriction\030\t \001(\t\022\016\n\006maxLo"
-          + "a\030\n \001(\t\022\020\n\010maxDraft\030\013 \001(\t\022\030\n\020lineDisplac"
-          + "ement\030\r \001(\t\022\026\n\016hoseConnection\030\016 \001(\t\022\016\n\006m"
-          + "axDwt\030\017 \001(\t\022\013\n\003ukc\030\020 \001(\t\022\027\n\017berthDatumDe"
-          + "pth\030\021 \001(\t\022\037\n\027portMaxPermissibleDraft\030\022 \001"
-          + "(\t\022\024\n\014displacement\030\023 \001(\t\022(\n\017manifoldDeta"
-          + "ils\030\024 \003(\0132\017.ManifoldDetail\022\033\n\023maxManifol"
-          + "dPressure\030\025 \001(\t\"\265\001\n\016ManifoldDetail\022\024\n\014ma"
-          + "nifoldName\030\001 \001(\t\022\030\n\020connectionNumber\030\002 \001"
-          + "(\005\022\024\n\014manifoldSize\030\003 \001(\003\022\026\n\016manifoldHeig"
-          + "ht\030\004 \001(\t\022\023\n\013maxPressure\030\005 \001(\t\022\026\n\016maxLoad"
-          + "ingRate\030\006 \001(\003\022\030\n\020maxDischargeRate\030\007 \001(\003\""
-          + "*\n\007Country\022\n\n\002id\030\001 \001(\003\022\023\n\013countryName\030\002 "
-          + "\001(\t\"T\n\014CountryReply\022\033\n\tcountries\030\001 \003(\0132\010"
-          + ".Country\022\'\n\016responseStatus\030\002 \001(\0132\017.Respo"
-          + "nseStatus\"H\n\020CargoPortRequest\022\021\n\tcompany"
-          + "Id\030\001 \001(\003\022\017\n\007cargoId\030\002 \001(\003\022\020\n\010portName\030\003 "
-          + "\001(\t\"a\n\016CargoPortReply\022\'\n\016responseStatus\030"
-          + "\001 \001(\0132\017.ResponseStatus\022&\n\005ports\030\002 \003(\0132\027."
-          + "CargoPortMappingDetail\"\341\001\n\026CargoPortMapp"
-          + "ingDetail\022\n\n\002id\030\001 \001(\003\022\021\n\tcompanyId\030\002 \001(\003"
-          + "\022\017\n\007cargoId\030\003 \001(\003\022\016\n\006portId\030\004 \001(\003\022\020\n\010por"
-          + "tName\030\005 \001(\t\022\020\n\010portCode\030\006 \001(\t\022\023\n\013maxAirD"
-          + "raft\030\007 \001(\t\022\020\n\010maxDraft\030\010 \001(\t\022\024\n\014waterDen"
-          + "sity\030\t \001(\t\022\021\n\tcountryId\030\n \001(\003\022\023\n\013country"
-          + "Name\030\013 \001(\t\"F\n\027CargoPortMappingRequest\022+\n"
-          + "\020cargoPortMapping\030\001 \003(\0132\021.CargoPortMappi"
-          + "ng\"S\n\rPortInfoReply\022\'\n\016responseStatus\030\001 "
-          + "\001(\0132\017.ResponseStatus\022\031\n\004port\030\002 \001(\0132\013.Por"
-          + "tDetail2\210\010\n\017PortInfoService\022)\n\013GetPortIn"
-          + "fo\022\014.PortRequest\032\n.PortReply\"\000\022R\n\024GetPor"
-          + "tInfoByCargoId\022\034.GetPortInfoByCargoIdReq"
-          + "uest\032\032.GetPortInfoByCargoIdReply\"\000\022B\n\024Ge"
-          + "tPortInfoByPortIds\022\034.GetPortInfoByPortId"
-          + "sRequest\032\n.PortReply\"\000\022G\n\031GetPortInfoDet"
-          + "ailsForAlgo\022\034.GetPortInfoByPortIdsReques"
-          + "t\032\n.PortReply\"\000\0225\n\013GetTimezone\022\021.PortEmp"
-          + "tyRequest\032\021.TimezoneResponse\"\000\022;\n\023GetPor"
-          + "tInfoByPaging\022\026.PortRequestWithPaging\032\n."
-          + "PortReply\"\000\022?\n\027GetBerthDetailsByPortId\022\016"
-          + ".PortIdRequest\032\022.BerthInfoResponse\"\000\022D\n\025"
-          + "GetCargoInfoByPortIds\022\034.GetPortInfoByPor"
-          + "tIdsRequest\032\013.CargoInfos\"\000\022B\n\027GetLoading"
-          + "PlanBerthData\022\020.BerthIdsRequest\032\025.Loadin"
-          + "gAlgoBerthData\022:\n\017GetAllCountries\022\026.goog"
-          + "le.protobuf.Empty\032\r.CountryReply\"\000\022>\n\026Ge"
-          + "tAllCargoPortMapping\022\021.CargoPortRequest\032"
-          + "\017.CargoPortReply\"\000\022B\n\032GetAllCargoPortMap"
-          + "pingById\022\021.CargoPortRequest\032\017.CargoPortR"
-          + "eply\"\000\022G\n\030SaveAllCargoPortMappings\022\030.Car"
-          + "goPortMappingRequest\032\017.CargoPortReply\"\000\022"
-          + "1\n\023GetPortInfoDetailed\022\014.PortRequest\032\n.P"
-          + "ortReply\"\000\022-\n\014SavePortInfo\022\013.PortDetail\032"
-          + "\016.PortInfoReply\"\000\022?\n\027DeleteCargoPortMapp"
-          + "ings\022\021.CargoPortRequest\032\017.CargoPortReply"
-          + "\"\000B\036\n\032com.cpdss.common.generatedP\000b\006prot"
-          + "o3"
+          + "hs\030\002 \003(\0132\014.BerthDetail\022\020\n\010portCode\030\003 \001(\t"
+          + "\"\376\003\n\013BerthDetail\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002"
+          + " \001(\003\022\025\n\rloadingInfoId\030\014 \001(\003\022\026\n\016maxShipCh"
+          + "annel\030\003 \001(\t\022\021\n\tberthName\030\004 \001(\t\022\024\n\014maxShi"
+          + "pDepth\030\005 \001(\t\022\032\n\022seaDraftLimitation\030\006 \001(\t"
+          + "\022\032\n\022airDraftLimitation\030\007 \001(\t\022\031\n\021maxManif"
+          + "oldHeight\030\010 \001(\t\022 \n\030regulationAndRestrict"
+          + "ion\030\t \001(\t\022\016\n\006maxLoa\030\n \001(\t\022\020\n\010maxDraft\030\013 "
+          + "\001(\t\022\030\n\020lineDisplacement\030\r \001(\t\022\026\n\016hoseCon"
+          + "nection\030\016 \001(\t\022\016\n\006maxDwt\030\017 \001(\t\022\013\n\003ukc\030\020 \001"
+          + "(\t\022\027\n\017berthDatumDepth\030\021 \001(\t\022\037\n\027portMaxPe"
+          + "rmissibleDraft\030\022 \001(\t\022\024\n\014displacement\030\023 \001"
+          + "(\t\022(\n\017manifoldDetails\030\024 \003(\0132\017.ManifoldDe"
+          + "tail\022\033\n\023maxManifoldPressure\030\025 \001(\t\"\265\001\n\016Ma"
+          + "nifoldDetail\022\024\n\014manifoldName\030\001 \001(\t\022\030\n\020co"
+          + "nnectionNumber\030\002 \001(\005\022\024\n\014manifoldSize\030\003 \001"
+          + "(\003\022\026\n\016manifoldHeight\030\004 \001(\t\022\023\n\013maxPressur"
+          + "e\030\005 \001(\t\022\026\n\016maxLoadingRate\030\006 \001(\003\022\030\n\020maxDi"
+          + "schargeRate\030\007 \001(\003\"*\n\007Country\022\n\n\002id\030\001 \001(\003"
+          + "\022\023\n\013countryName\030\002 \001(\t\"T\n\014CountryReply\022\033\n"
+          + "\tcountries\030\001 \003(\0132\010.Country\022\'\n\016responseSt"
+          + "atus\030\002 \001(\0132\017.ResponseStatus\"H\n\020CargoPort"
+          + "Request\022\021\n\tcompanyId\030\001 \001(\003\022\017\n\007cargoId\030\002 "
+          + "\001(\003\022\020\n\010portName\030\003 \001(\t\"a\n\016CargoPortReply\022"
+          + "\'\n\016responseStatus\030\001 \001(\0132\017.ResponseStatus"
+          + "\022&\n\005ports\030\002 \003(\0132\027.CargoPortMappingDetail"
+          + "\"\341\001\n\026CargoPortMappingDetail\022\n\n\002id\030\001 \001(\003\022"
+          + "\021\n\tcompanyId\030\002 \001(\003\022\017\n\007cargoId\030\003 \001(\003\022\016\n\006p"
+          + "ortId\030\004 \001(\003\022\020\n\010portName\030\005 \001(\t\022\020\n\010portCod"
+          + "e\030\006 \001(\t\022\023\n\013maxAirDraft\030\007 \001(\t\022\020\n\010maxDraft"
+          + "\030\010 \001(\t\022\024\n\014waterDensity\030\t \001(\t\022\021\n\tcountryI"
+          + "d\030\n \001(\003\022\023\n\013countryName\030\013 \001(\t\"F\n\027CargoPor"
+          + "tMappingRequest\022+\n\020cargoPortMapping\030\001 \003("
+          + "\0132\021.CargoPortMapping\"S\n\rPortInfoReply\022\'\n"
+          + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022\031"
+          + "\n\004port\030\002 \001(\0132\013.PortDetail2\210\010\n\017PortInfoSe"
+          + "rvice\022)\n\013GetPortInfo\022\014.PortRequest\032\n.Por"
+          + "tReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.GetPo"
+          + "rtInfoByCargoIdRequest\032\032.GetPortInfoByCa"
+          + "rgoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034.G"
+          + "etPortInfoByPortIdsRequest\032\n.PortReply\"\000"
+          + "\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPortI"
+          + "nfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013Get"
+          + "Timezone\022\021.PortEmptyRequest\032\021.TimezoneRe"
+          + "sponse\"\000\022;\n\023GetPortInfoByPaging\022\026.PortRe"
+          + "questWithPaging\032\n.PortReply\"\000\022?\n\027GetBert"
+          + "hDetailsByPortId\022\016.PortIdRequest\032\022.Berth"
+          + "InfoResponse\"\000\022D\n\025GetCargoInfoByPortIds\022"
+          + "\034.GetPortInfoByPortIdsRequest\032\013.CargoInf"
+          + "os\"\000\022B\n\027GetLoadingPlanBerthData\022\020.BerthI"
+          + "dsRequest\032\025.LoadingAlgoBerthData\022:\n\017GetA"
+          + "llCountries\022\026.google.protobuf.Empty\032\r.Co"
+          + "untryReply\"\000\022>\n\026GetAllCargoPortMapping\022\021"
+          + ".CargoPortRequest\032\017.CargoPortReply\"\000\022B\n\032"
+          + "GetAllCargoPortMappingById\022\021.CargoPortRe"
+          + "quest\032\017.CargoPortReply\"\000\022G\n\030SaveAllCargo"
+          + "PortMappings\022\030.CargoPortMappingRequest\032\017"
+          + ".CargoPortReply\"\000\0221\n\023GetPortInfoDetailed"
+          + "\022\014.PortRequest\032\n.PortReply\"\000\022-\n\014SavePort"
+          + "Info\022\013.PortDetail\032\016.PortInfoReply\"\000\022?\n\027D"
+          + "eleteCargoPortMappings\022\021.CargoPortReques"
+          + "t\032\017.CargoPortReply\"\000B\036\n\032com.cpdss.common"
+          + ".generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -29428,7 +29576,7 @@ public final class PortInfo {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_BerthInfoResponse_descriptor,
             new java.lang.String[] {
-              "ResponseStatus", "Berths",
+              "ResponseStatus", "Berths", "PortCode",
             });
     internal_static_BerthDetail_descriptor = getDescriptor().getMessageTypes().get(16);
     internal_static_BerthDetail_fieldAccessorTable =
