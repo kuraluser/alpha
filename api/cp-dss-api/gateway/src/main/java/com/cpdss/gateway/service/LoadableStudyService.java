@@ -3672,11 +3672,12 @@ public class LoadableStudyService {
               lpd -> {
                 planBuilder.clearLoadablePlanPortWiseDetails();
                 planBuilder.clearConstraints();
-                LoadablePlanPortWiseDetails.Builder portWiseBuilder =
-                    LoadablePlanPortWiseDetails.newBuilder();
+
                 lpd.getDischargePlanPortWiseDetails()
                     .forEach(
                         lppwd -> {
+                          LoadablePlanPortWiseDetails.Builder portWiseBuilder =
+                              LoadablePlanPortWiseDetails.newBuilder();
                           LoadablePlanDetailsReply.Builder detailsBuilderDeparture =
                               LoadablePlanDetailsReply.newBuilder();
                           lppwd
