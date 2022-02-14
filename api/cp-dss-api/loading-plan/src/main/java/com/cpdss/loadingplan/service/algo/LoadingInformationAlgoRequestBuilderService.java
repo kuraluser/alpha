@@ -6,42 +6,25 @@ import static org.springframework.util.StringUtils.isEmpty;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
 import com.cpdss.common.generated.Common.RulesInputs;
-import com.cpdss.common.generated.LoadableStudy.LoadablePatternPortWiseDetailsJson;
-import com.cpdss.common.generated.LoadableStudy.LoadablePlanDetailsRequest;
-import com.cpdss.common.generated.LoadableStudy.LoadingSynopticResponse;
-import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityReply;
-import com.cpdss.common.generated.LoadableStudy.OnBoardQuantityRequest;
-import com.cpdss.common.generated.LoadableStudy.OnHandQuantityReply;
-import com.cpdss.common.generated.LoadableStudy.OnHandQuantityRequest;
+import com.cpdss.common.generated.LoadableStudy.*;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesReply;
 import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingBerths;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDelay;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingDetails;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInfoAlgoRequest;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingInformation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingMachinesInUse;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingRates;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingStages;
-import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingToppingOff;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadingplan.common.LoadingPlanConstants;
-import com.cpdss.loadingplan.domain.algo.BerthDetails;
-import com.cpdss.loadingplan.domain.algo.CargoMachineryInUse;
+import com.cpdss.loadingplan.domain.algo.*;
 import com.cpdss.loadingplan.domain.algo.LoadablePlanPortWiseDetails;
 import com.cpdss.loadingplan.domain.algo.LoadableQuantityCargoDetails;
 import com.cpdss.loadingplan.domain.algo.LoadingDelays;
-import com.cpdss.loadingplan.domain.algo.LoadingInformationAlgoRequest;
-import com.cpdss.loadingplan.domain.algo.LoadingRule;
-import com.cpdss.loadingplan.domain.algo.LoadingSequences;
-import com.cpdss.loadingplan.domain.algo.OnBoardQuantity;
-import com.cpdss.loadingplan.domain.algo.OnHandQuantity;
-import com.cpdss.loadingplan.domain.algo.ReasonForDelay;
-import com.cpdss.loadingplan.domain.algo.ToppingOffSequence;
 import com.cpdss.loadingplan.domain.algo.TrimAllowed;
 import com.cpdss.loadingplan.domain.rules.RulePlans;
 import com.cpdss.loadingplan.domain.rules.RuleResponse;
@@ -55,6 +38,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +49,9 @@ import org.springframework.util.StringUtils;
 @Slf4j
 @Service
 public class LoadingInformationAlgoRequestBuilderService {
+
+  private static final Long DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE = 0L;
+  private static final Integer DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE = 1;
 
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceBlockingStub loadableStudyService;
@@ -197,18 +185,22 @@ public class LoadingInformationAlgoRequestBuilderService {
       LoadingInformation loadingInformation,
       com.cpdss.loadingplan.entity.LoadingInformation entity)
       throws NumberFormatException, GenericServiceException {
+
     log.info("Populating Loading Information {}", entity.getId());
     com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo =
         new com.cpdss.loadingplan.domain.algo.LoadingInformation();
+
+    List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList =
+        buildCargoVesselTankDetails(loadingInfo, entity);
+    buildLoadingDelays(
+        loadingInfo, loadingInformation.getLoadingDelays(), loadableQuantityCargoDetailsList);
     buildLoadingBerths(
         loadingInfo, entity.getPortXId(), loadingInformation.getLoadingBerthsList(), algoRequest);
-    buildLoadingDelays(loadingInfo, loadingInformation.getLoadingDelays());
     buildLoadingDetail(loadingInfo, loadingInformation.getLoadingDetail(), entity);
     loadingInfo.setLoadingInfoId(loadingInformation.getLoadingInfoId());
     buildLoadingMachines(loadingInfo, loadingInformation.getLoadingMachinesList(), entity);
     buildLoadingRate(loadingInfo, loadingInformation.getLoadingRate());
     buildLoadingStage(loadingInfo, loadingInformation.getLoadingStage());
-    buildCargoVesselTankDetails(loadingInfo, entity);
     buildToppingOffSequence(loadingInfo, loadingInformation.getToppingOffSequenceList());
     algoRequest.setLoadingInformation(loadingInfo);
   }
@@ -252,7 +244,7 @@ public class LoadingInformationAlgoRequestBuilderService {
     loadingInfo.setToppingOffSequence(toppingOffSequences);
   }
 
-  private void buildCargoVesselTankDetails(
+  private List<LoadableQuantityCargoDetails> buildCargoVesselTankDetails(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
       com.cpdss.loadingplan.entity.LoadingInformation entity)
       throws NumberFormatException, GenericServiceException {
@@ -330,6 +322,7 @@ public class LoadingInformationAlgoRequestBuilderService {
               loadableQuantityCargoDetails.add(loadableQuantity);
             });
     loadingInfo.setLoadableQuantityCargoDetails(loadableQuantityCargoDetails);
+    return loadableQuantityCargoDetails;
   }
 
   private void buildLoadingStage(
@@ -562,10 +555,12 @@ public class LoadingInformationAlgoRequestBuilderService {
 
   private void buildLoadingDelays(
       com.cpdss.loadingplan.domain.algo.LoadingInformation loadingInfo,
-      LoadingDelay loadingDelays) {
+      LoadingDelay loadingDelays,
+      List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList) {
+
     log.info("Populating loading delays");
     LoadingSequences loadingSequences = new LoadingSequences();
-    List<ReasonForDelay> reasonsForDelay = new ArrayList<ReasonForDelay>();
+    List<ReasonForDelay> reasonsForDelay = new ArrayList<>();
     loadingDelays
         .getReasonsList()
         .forEach(
@@ -577,7 +572,7 @@ public class LoadingInformationAlgoRequestBuilderService {
             });
     loadingSequences.setReasonForDelays(reasonsForDelay);
 
-    List<LoadingDelays> loadingDelaysList = new ArrayList<LoadingDelays>();
+    List<LoadingDelays> loadingDelaysList = new ArrayList<>();
     loadingDelays
         .getDelaysList()
         .forEach(
@@ -605,7 +600,51 @@ public class LoadingInformationAlgoRequestBuilderService {
             });
     loadingSequences.setLoadingDelays(loadingDelaysList);
 
+    checkAndSetIsSequenceAltered(
+        loadableQuantityCargoDetailsList, loadingDelaysList, loadingSequences);
+
     loadingInfo.setLoadingSequences(loadingSequences);
+  }
+
+  /**
+   * Checks and sets sequence flag
+   *
+   * @param loadableQuantityCargoDetailsList list of cargo details
+   * @param loadingDelaysList list of loading delays
+   * @param loadingSequences loading sequence object
+   */
+  private void checkAndSetIsSequenceAltered(
+      List<LoadableQuantityCargoDetails> loadableQuantityCargoDetailsList,
+      List<LoadingDelays> loadingDelaysList,
+      LoadingSequences loadingSequences) {
+
+    log.info("Inside checkAndSetIsSequenceAltered method!");
+
+    // Get all default manage sequence values
+    Map<Long, List<Long>> defaultSequenceNumberWithCargo = new HashMap<>();
+
+    AtomicReference<Long> defaultSequenceNumberCounter =
+        new AtomicReference<>(DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE);
+    loadableQuantityCargoDetailsList.forEach(
+        loadableQuantityCargoDetails -> {
+          defaultSequenceNumberCounter.set(
+              defaultSequenceNumberCounter.get() + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
+          defaultSequenceNumberWithCargo.put(
+              defaultSequenceNumberCounter.get(),
+              Collections.singletonList(loadableQuantityCargoDetails.getCargoNominationId()));
+        });
+
+    // Get all saved manage sequence values
+    Map<Long, List<Long>> sequenceNumberWithCargo =
+        loadingDelaysList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    LoadingDelays::getSequenceNo,
+                    Collectors.mapping(LoadingDelays::getCargoNominationId, Collectors.toList())));
+
+    // Compare and set flag if sequence is altered
+    loadingSequences.setIsSequenceAltered(
+        !defaultSequenceNumberWithCargo.equals(sequenceNumberWithCargo));
   }
 
   private void buildLoadingBerths(

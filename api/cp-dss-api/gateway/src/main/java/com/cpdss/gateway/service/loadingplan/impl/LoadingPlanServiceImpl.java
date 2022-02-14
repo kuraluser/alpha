@@ -405,31 +405,35 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
       List<LoadingDelays> loadingDelaysList = new ArrayList<>();
       AtomicReference<Long> defaultSequenceNumberCounter =
           new AtomicReference<>(DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE);
-      loadableQuantityCargoDetailsList.forEach(
-          loadableQuantityCargoDetails -> {
-            LoadingDelays loadingDelays = new LoadingDelays();
+      loadableQuantityCargoDetailsList.stream()
+          .sorted(
+              Comparator.comparingInt(LoadableStudy.LoadableQuantityCargoDetails::getLoadingOrder))
+          .forEach(
+              loadableQuantityCargoDetails -> {
+                LoadingDelays loadingDelays = new LoadingDelays();
 
-            // Set fields
-            loadingDelays.setCargoId(loadableQuantityCargoDetails.getCargoId());
-            loadingDelays.setCargoNominationId(loadableQuantityCargoDetails.getCargoNominationId());
-            loadingDelays.setLoadingInfoId(loadingInfoId);
-            loadingDelays.setDuration(BigDecimal.ZERO);
-            defaultSequenceNumberCounter.set(
-                defaultSequenceNumberCounter.get()
-                    + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
-            loadingDelays.setSequenceNo(defaultSequenceNumberCounter.get());
+                // Set fields
+                loadingDelays.setCargoId(loadableQuantityCargoDetails.getCargoId());
+                loadingDelays.setCargoNominationId(
+                    loadableQuantityCargoDetails.getCargoNominationId());
+                loadingDelays.setLoadingInfoId(loadingInfoId);
+                loadingDelays.setDuration(BigDecimal.ZERO);
+                defaultSequenceNumberCounter.set(
+                    defaultSequenceNumberCounter.get()
+                        + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
+                loadingDelays.setSequenceNo(defaultSequenceNumberCounter.get());
 
-            loadingDelays.setQuantity(
-                StringUtils.hasLength(loadableQuantityCargoDetails.getLoadableMT())
-                    ? new BigDecimal(loadableQuantityCargoDetails.getLoadableMT())
-                    : BigDecimal.ZERO);
-            loadingDelays.setLoadingRate(
-                StringUtils.hasLength(loadableQuantityCargoDetails.getLoadingRateM3Hr())
-                    ? new BigDecimal(loadableQuantityCargoDetails.getLoadingRateM3Hr())
-                    : BigDecimal.ZERO);
+                loadingDelays.setQuantity(
+                    StringUtils.hasLength(loadableQuantityCargoDetails.getLoadableMT())
+                        ? new BigDecimal(loadableQuantityCargoDetails.getLoadableMT())
+                        : BigDecimal.ZERO);
+                loadingDelays.setLoadingRate(
+                    StringUtils.hasLength(loadableQuantityCargoDetails.getLoadingRateM3Hr())
+                        ? new BigDecimal(loadableQuantityCargoDetails.getLoadingRateM3Hr())
+                        : BigDecimal.ZERO);
 
-            loadingDelaysList.add(loadingDelays);
-          });
+                loadingDelaysList.add(loadingDelays);
+              });
       loadingSequences.setLoadingDelays(loadingDelaysList);
 
       // Save default manage sequence loading delays to database table
