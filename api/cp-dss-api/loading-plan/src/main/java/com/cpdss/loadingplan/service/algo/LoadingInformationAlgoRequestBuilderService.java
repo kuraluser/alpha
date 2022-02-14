@@ -625,14 +625,17 @@ public class LoadingInformationAlgoRequestBuilderService {
 
     AtomicReference<Long> defaultSequenceNumberCounter =
         new AtomicReference<>(DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE);
-    loadableQuantityCargoDetailsList.forEach(
-        loadableQuantityCargoDetails -> {
-          defaultSequenceNumberCounter.set(
-              defaultSequenceNumberCounter.get() + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
-          defaultSequenceNumberWithCargo.put(
-              defaultSequenceNumberCounter.get(),
-              Collections.singletonList(loadableQuantityCargoDetails.getCargoNominationId()));
-        });
+    loadableQuantityCargoDetailsList.stream()
+        .sorted(Comparator.comparingInt(LoadableQuantityCargoDetails::getLoadingOrder))
+        .forEach(
+            loadableQuantityCargoDetails -> {
+              defaultSequenceNumberCounter.set(
+                  defaultSequenceNumberCounter.get()
+                      + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
+              defaultSequenceNumberWithCargo.put(
+                  defaultSequenceNumberCounter.get(),
+                  Collections.singletonList(loadableQuantityCargoDetails.getCargoNominationId()));
+            });
 
     // Get all saved manage sequence values
     Map<Long, List<Long>> sequenceNumberWithCargo =
