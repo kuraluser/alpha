@@ -136,7 +136,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
           { 'name': 'PORT_MASTER', 'subMenuLink': '/business/admin/port-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['PortListingComponent'], 'isVisible': false },
           { 'name': 'ADMIN_RULES', 'subMenuLink': '/business/admin/rules', 'permissionMapping': AppConfigurationService.settings.permissionMapping['AdminRuleComponent'], 'isVisible': true },
           { 'name': 'CARGO_MASTER', 'subMenuLink': '/business/admin/cargo-master', 'permissionMapping': AppConfigurationService.settings.permissionMapping['CargoMasterComponent'], 'isVisible': false },
-
+          { 'name': 'CREW_MASTER', 'subMenuLink': '/business/admin/crew-listing', 'permissionMapping': AppConfigurationService.settings.permissionMapping['CrewListingComponent'], 'isVisible': false },
         ],
         'isShoreActive': true
       },

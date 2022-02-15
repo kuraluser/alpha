@@ -2312,6 +2312,15 @@
   "CARGO_LOADED_MAX_RATE_ERROR": "Max loading rate should be less than Vessel Max Loading Rate",
   "CARGO_LOADED_MIN_RATE_ERROR": "Min loading rate should be greater than the Min Loading Rates specified in Loading Rates section",
   "CARGO_DISCHARGED_MAX_RATE_ERROR": "Max Discharging rate should be less than Max Discharging rate specified in Discharging Rates section",
-  "CARGO_DISCHARGED_MIN_RATE_ERROR": "Min Discharging rate should be greater than the Initial Discharging Rate"
+  "CARGO_DISCHARGED_MIN_RATE_ERROR": "Min Discharging rate should be greater than the Initial Discharging Rate",
+  "CREW_MASTER": "Crew Master",
+  "CREW_DETAILS_LISTING": "CREW LISTING",
+  "ADD_CREW": "Add Crew",
+  "SEARCH_CREW_NAME": "Search Crew Name",
+  "CREW_LIST_NAME": "Crew Name",
+  "CREW_LIST_RANK": "Crew Rank",
+  "SEARCH_CREW_RANK": "Search Crew Rank",
+  "CREW_LIST_VESSEL": "Vessel",
+  "SEARCH_CREW_VESSEL": "Search Vessel"
 }
 

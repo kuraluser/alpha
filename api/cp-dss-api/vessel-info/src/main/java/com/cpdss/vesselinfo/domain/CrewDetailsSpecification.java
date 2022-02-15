@@ -42,14 +42,11 @@ public class CrewDetailsSpecification implements Specification<CrewDetails> {
     } else if ("in".equalsIgnoreCase(criteria.getOperation())) {
       return builder.in(root.get(criteria.getKey())).value(criteria.getValue());
     } else if ("like-with-join".equalsIgnoreCase(criteria.getOperation())) {
-      if (criteria.getValue() instanceof String) {
-        String val = (String) criteria.getValue();
-        return builder.like(
-            root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
-            "%" + val.toUpperCase() + "%");
-      }
       return builder.like(
-          root.join(criteria.getAttributeName()).<String>get(criteria.getKey()),
+          builder.lower(
+              root.join(criteria.getAttributeName())
+                  .<String>get(criteria.getKey())
+                  .as(String.class)),
           "%" + criteria.getValue() + "%");
     } else if ("join-with-equals".equalsIgnoreCase(criteria.getOperation())) {
       return builder.equal(

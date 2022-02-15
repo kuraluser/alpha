@@ -1,0 +1,21 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h5 class="main-head inline-block">{{'CREW_DETAILS_LISTING' | translate}}</h5>
+    </div>
+    <div class="col text-right">
+      <a id="portMasterAddPort" class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addCrew()"
+        *cpdssPortalPermission="addCrewBtnPermissionContext">{{'ADD_CREW' | translate}}</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 crew-listing-wrapper">
+      <cpdss-portal-datatable *ngIf="crews" [tableId]="'crewMasterList'" [columns]="columns" [value]="crews"
+        [filterable]="true" [paginator]="true" [rows]="10"
+        [totalRecords]="totalRecords" [lazy]="true" (dataStateChange)="onDataStateChange($event)" [loading]="loading"
+        [(currentPage)]="currentPage" [(first)]="first">
+      </cpdss-portal-datatable>
+    </div>
+  </div>
+</div>
+

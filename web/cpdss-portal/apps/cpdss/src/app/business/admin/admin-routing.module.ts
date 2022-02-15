@@ -31,6 +31,10 @@ const routes: Routes = [
             {
               path: 'vessel-information',
               loadChildren: () => import('./vessel-information/vessel-information.module').then(m => m.VesselInformationModule)
+            },
+            {
+              path: 'crew-listing',
+              loadChildren: () => import('./crew-details/crew-details.module').then(m => m.CrewDetailsModule)
             }
         ]
     },

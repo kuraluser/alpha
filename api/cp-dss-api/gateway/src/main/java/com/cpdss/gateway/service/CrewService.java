@@ -83,7 +83,6 @@ public class CrewService {
     VesselInfo.VesselsInfoRequest.Builder crewDetailsBuilder =
         VesselInfo.VesselsInfoRequest.newBuilder();
     String vesselName = "";
-    if ("crewRank".equalsIgnoreCase(sortBy)) sortBy = "rankName";
     crewDetailsBuilder.setPageNo(page);
     crewDetailsBuilder.setPageSize(pageSize);
     crewDetailsBuilder.setSortBy(sortBy);
