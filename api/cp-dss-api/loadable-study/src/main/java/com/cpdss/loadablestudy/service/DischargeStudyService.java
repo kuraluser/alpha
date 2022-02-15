@@ -1225,7 +1225,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargoNomination.setTemperature(new BigDecimal(cargoRequest.getTemperature()));
     Optional<CargoNominationPortDetails> cargoOperation =
         cargoNomination.getCargoNominationPortDetails().stream()
-            .filter(cp -> cp.getIsActive() && cp.getPortId().equals(portId))
+            .filter(cp -> cp.getPortId().equals(portId))
             .findFirst();
     if (cargoOperation.isPresent()) {
       cargoOperation.get().setQuantity(new BigDecimal(cargoRequest.getQuantity()));
