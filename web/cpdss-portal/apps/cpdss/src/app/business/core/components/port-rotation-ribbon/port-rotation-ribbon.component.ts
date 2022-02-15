@@ -282,7 +282,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     const portTimezoneData = this.getTimezoneData(newPortList?.portTimezoneId);
     return this.fb.group({
       port: this.fb.control(newPortList?.name, [Validators.required]),
-      portTimezoneOffset: this.fb.control(portTimezoneData.offsetValue, []),
+      portTimezoneOffset: this.fb.control(portTimezoneData?.offsetValue, []),
       date: this.fb.control(dateActual ? dateActual : date, [Validators.required, portEtaEtdValidator(index)]),
       time: this.fb.control(dateActual ? dateActual : date, [Validators.required, portTimeValidator(index)]),
       distance: this.fb.control(newPortList?.distanceBetweenPorts ? newPortList?.distanceBetweenPorts : 0, [Validators.required])

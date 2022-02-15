@@ -83,6 +83,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
   totalDuration: number;
   totalMinutes: number;
   prevQuantitySelectedUnit: QUANTITY_UNIT = AppConfigurationService.settings.baseUnit;
+  minRateValue: number;
+  maxRateValue: number;
 
   private _loadingDischargingSequences: ILoadingDischargingSequences;
   private _editable = true;
@@ -107,6 +109,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+    this.minRateValue = null;
+    this.maxRateValue = null;
   }
 
   /**
@@ -146,6 +150,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
       this.loadingDischargingSequences.loadingDischargingDelays.unshift(initialDelay)
     }
     const _loadingDischargingDelays = this.loadingDischargingSequences.loadingDischargingDelays?.map((loadingDischargingDelay) => {
+      this.minRateValue = loadingDischargingDelay?.rateMin;
+      this.maxRateValue = loadingDischargingDelay?.rateMax;
       const loadingSequenceData = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValueObject(loadingDischargingDelay, false, this.editable, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.operation);
 
       if (!loadingDischargingDelay.cargoId && !loadingDischargingDelay.quantity) {
@@ -283,9 +289,9 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
     });
 
     if (this.operation === OPERATIONS.DISCHARGING) {
-      formGroup.addControl('dischargingRate', this.fb.control(loadingDischargingDelay?.dischargingRate?.value, initialDelay ? [] : [numberValidator(0, 6), Validators.required, Validators.min(loadingDischargingDelay?.rateMin), Validators.max(loadingDischargingDelay?.rateMax)]));
+      formGroup.addControl('dischargingRate', this.fb.control(loadingDischargingDelay?.dischargingRate?.value, initialDelay ? [] : [numberValidator(0, 6), Validators.required, Validators.min(this.minRateValue), Validators.max(this.maxRateValue)]));
     } else if (this.operation === OPERATIONS.LOADING) {
-      formGroup.addControl('loadingRate', this.fb.control(loadingDischargingDelay?.loadingRate?.value, initialDelay ? [] : [numberValidator(0, 6), Validators.required, Validators.min(loadingDischargingDelay?.rateMin), Validators.max(loadingDischargingDelay?.rateMax)]));
+      formGroup.addControl('loadingRate', this.fb.control(loadingDischargingDelay?.loadingRate?.value, initialDelay ? [] : [numberValidator(0, 6), Validators.required, Validators.min(this.minRateValue), Validators.max(this.maxRateValue)]));
     }
 
     return formGroup;
@@ -311,7 +317,7 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
    * @memberof LoadingDischargingManageSequenceComponent
    */
   addLoadingDischargingSequence(loadingDischargingDelay: ILoadingDischargingDelays = null) {
-    loadingDischargingDelay = loadingDischargingDelay ?? <ILoadingDischargingDelays>{ id: 0, loadingInfoId: null, dischargeInfoId: null, reasonForDelayIds: null, duration: null, cargoId: null, quantity: null };
+    loadingDischargingDelay = loadingDischargingDelay ?? <ILoadingDischargingDelays>{ id: 0, loadingInfoId: null, dischargeInfoId: null, reasonForDelayIds: null, duration: null, cargoId: null, loadingRate: null, dischargingRate: null, quantity: null, rateMin: this.minRateValue, rateMax: this.maxRateValue };
     const _loadingDischargingDelays = this.loadingDischargingTransformationService.getLoadingDischargingDelayAsValueObject(loadingDischargingDelay, true, true, this.listData, this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, this.operation);
     const dataTableControl = <FormArray>this.loadingDischargingSequenceForm.get('dataTable');
     const loadableQuantityCargoCount = this.listData.loadableQuantityCargo.length;
@@ -603,6 +609,8 @@ export class LoadingDischargingManageSequenceComponent implements OnInit, OnDest
       rateMin = rateChanged.initialDischargingRate;
       rateMax = rateChanged.maxDischargingRate;
     }
+    this.minRateValue = rateMin;
+    this.maxRateValue = rateMax;
 
     this.loadingDischargingDelays.forEach((delay, index) => {
       const formControl = this.field(index, field);

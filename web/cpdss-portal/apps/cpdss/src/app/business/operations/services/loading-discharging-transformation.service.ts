@@ -510,8 +510,6 @@ export class LoadingDischargingTransformationService {
     _loadingDischargingDelay.cargo = new ValueObject<ILoadableQuantityCargo>(cargoObj, true, isEditable && !loadingDischargingDelay?.isInitialDelay && isNewValue, false, isEditable && !loadingDischargingDelay?.isInitialDelay);
     _loadingDischargingDelay.reasonForDelay = new ValueObject<IReasonForDelays[]>(reasonDelayObj, true, isNewValue, false, true);
     _loadingDischargingDelay.isAdd = isNewValue;
-    _loadingDischargingDelay.rateMin = loadingDischargingDelay?.rateMin;
-    _loadingDischargingDelay.rateMax = loadingDischargingDelay?.rateMax;
 
     _loadingDischargingDelay.sequenceNo = new ValueObject<number>(loadingDischargingDelay?.isInitialDelay ? 1 : loadingDischargingDelay?.sequenceNo, true, !loadingDischargingDelay?.isInitialDelay && isNewValue, false, !loadingDischargingDelay?.isInitialDelay);
 
