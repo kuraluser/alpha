@@ -571,7 +571,7 @@ public class DischargeInformationService {
     List<LoadableStudy.LoadableQuantityCargoDetails> portCargos =
         this.loadingPlanGrpcService.fetchLoadablePlanCargoDetails(
             activeVoyage.getDischargePatternId(),
-            GatewayConstants.OPERATION_TYPE_ARR,
+            OPERATION_TYPE_DEP,
             portRotationId,
             portRotation.get().getPortId(),
             false,
