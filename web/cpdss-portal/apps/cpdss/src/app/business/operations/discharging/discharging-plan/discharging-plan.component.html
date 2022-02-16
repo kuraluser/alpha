@@ -31,7 +31,7 @@
             </h5>
             <div class="ml-30">
               <cpdss-portal-cargo-to-be-loaded-discharged [prevQuantitySelectedUnit]="prevQuantitySelectedUnit" [editMode]="false"
-                [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [cargos]="cargos"
+                [currentQuantitySelectedUnit]="currentQuantitySelectedUnit" [slopQuantity]="dischargingInformation?.dischargeDetails?.slopQuantity" [cargos]="cargos"
                 [cargoVesselTankDetails]="dischargingInformation?.cargoVesselTankDetails" [operation]="OPERATIONS.DISCHARGING"
                 [listData]="listData" [isPlanGenerated]="dischargingInformation?.isDischargePlanGenerated">
               </cpdss-portal-cargo-to-be-loaded-discharged>
