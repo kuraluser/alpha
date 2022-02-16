@@ -2390,4 +2390,74 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       responseObserver.onCompleted();
     }
   }
+
+  /**
+   * Fetches cargo nomination operation details based on cargo nomination identifiers
+   *
+   * @param request grpc request containing list of cargo nomination identifiers
+   * @param responseObserver response having sequence numbers
+   */
+  @Override
+  public void getCargoNominationOperationDetails(
+      com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest request,
+      StreamObserver<
+              com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse>
+          responseObserver) {
+
+    log.info("Inside getCargoNominationOperationDetails method!");
+
+    com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse.Builder
+        replyBuilder =
+            com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse
+                .newBuilder();
+    try {
+
+      // Fetching cargo nomination operation details
+      List<CargoNominationPortDetails> cargoNominationPortDetailsList =
+          cargoNominationOperationRepository.findByCargoNomination_IdInAndIsActiveTrue(
+              request.getCargoNominationIdsList());
+      buildCargoNominationOperationDetailsResponse(cargoNominationPortDetailsList, replyBuilder);
+      replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+
+    } catch (Exception e) {
+
+      log.error("Exception when fetching cargo nomination operation details!", e);
+      replyBuilder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage("Exception when fetching cargo nomination operation details")
+              .setStatus(FAILED)
+              .setHttpStatusCode(Integer.parseInt(CommonErrorCodes.E_GEN_INTERNAL_ERR))
+              .build());
+    } finally {
+
+      responseObserver.onNext(replyBuilder.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  /**
+   * Builds cargo nomination operation details response
+   *
+   * @param cargoNominationPortDetailsList list of cargo nomination port details entity
+   * @param replyBuilder response builder object
+   */
+  private void buildCargoNominationOperationDetailsResponse(
+      List<CargoNominationPortDetails> cargoNominationPortDetailsList,
+      com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse.Builder
+          replyBuilder) {
+
+    log.info("Inside buildCargoNominationOperationDetailsResponse method!");
+    replyBuilder.addAllCargoNominationOperationDetails(
+        cargoNominationPortDetailsList.stream()
+            .map(
+                cargoNominationPortDetails ->
+                    com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetails
+                        .newBuilder()
+                        .setCargoNominationId(
+                            cargoNominationPortDetails.getCargoNomination().getId())
+                        .setSequenceNo(cargoNominationPortDetails.getSequenceNo())
+                        .build())
+            .collect(Collectors.toList()));
+  }
 }

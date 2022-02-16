@@ -41,11 +41,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.BeanUtils;
@@ -91,6 +88,10 @@ public class DischargeInformationService {
   @GrpcClient("loadableStudyService")
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
+
+  @GrpcClient("loadableStudyService")
+  private DischargeStudyOperationServiceGrpc.DischargeStudyOperationServiceBlockingStub
+      dischargeStudyOperationServiceBlockingStub;
 
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
@@ -300,14 +301,43 @@ public class DischargeInformationService {
 
     log.info("Inside addDefaultCargoDetailsForManagingSequence method!");
 
+    List<Long> dischargeCargoNominationIdentifiers =
+        dischargeQuantityCargoDetailsList.stream()
+            .map(DischargeQuantityCargoDetails::getDischargeCargoNominationId)
+            .collect(Collectors.toList());
+
+    CargoNominationOperationDetailsRequest.Builder cargoNominationRequestBuilder =
+        CargoNominationOperationDetailsRequest.newBuilder()
+            .addAllCargoNominationIds(dischargeCargoNominationIdentifiers);
+
+    // Fetch default sequence numbers from discharge study cargo nomination operation details
+    CargoNominationOperationDetailsResponse cargoNominationOperationResponse =
+        dischargeStudyOperationServiceBlockingStub.getCargoNominationOperationDetails(
+            cargoNominationRequestBuilder.build());
+    if (cargoNominationOperationResponse == null
+        || !SUCCESS.equals(cargoNominationOperationResponse.getResponseStatus().getStatus())) {
+
+      log.debug("Failed to fetch cargo nomination operation details!");
+      throw new GenericServiceException(
+          "Failed to fetch cargo nomination operation details!",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    Map<Long, Long> cargoNominationIdsWithSequenceNumbers =
+        cargoNominationOperationResponse.getCargoNominationOperationDetailsList().stream()
+            .collect(
+                Collectors.toMap(
+                    CargoNominationOperationDetails::getCargoNominationId,
+                    CargoNominationOperationDetails::getSequenceNo));
+
     if (dischargeSequences != null
         && (dischargeSequences.getDischargingDelays() == null
             || dischargeSequences.getDischargingDelays().isEmpty())) {
 
       // Set default values
       List<DischargingDelays> dischargingDelaysList = new ArrayList<>();
-      AtomicReference<Long> defaultSequenceNumberCounter =
-          new AtomicReference<>(DEFAULT_SEQUENCE_NUMBER_COUNTER_START_VALUE);
+
       dischargeQuantityCargoDetailsList.forEach(
           dischargeQuantityCargoDetails -> {
             DischargingDelays dischargingDelays = new DischargingDelays();
@@ -318,10 +348,10 @@ public class DischargeInformationService {
                 dischargeQuantityCargoDetails.getDischargeCargoNominationId());
             dischargingDelays.setDischargeInfoId(dischargeInfoId);
             dischargingDelays.setDuration(BigDecimal.ZERO);
-            defaultSequenceNumberCounter.set(
-                defaultSequenceNumberCounter.get()
-                    + DEFAULT_SEQUENCE_NUMBER_COUNTER_INCREMENT_VALUE);
-            dischargingDelays.setSequenceNo(defaultSequenceNumberCounter.get());
+
+            dischargingDelays.setSequenceNo(
+                cargoNominationIdsWithSequenceNumbers.get(
+                    dischargeQuantityCargoDetails.getDischargeCargoNominationId()));
 
             dischargingDelays.setQuantity(
                 StringUtils.hasLength(dischargeQuantityCargoDetails.getCargoNominationQuantity())

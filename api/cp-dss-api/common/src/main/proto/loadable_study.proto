@@ -285,6 +285,7 @@ service DischargeStudyOperationService {
   rpc getCommingleCargoAsSeperateGrade (DischargeCowRequest) returns (LoadingInformationSynopticalReply){}
   rpc GetDischargeStudyRequestJson(JsonRequest) returns (DischargeStudyJsonReply) {}
 	rpc GetDischargeCommingleDetails(DischargeCommingleRequest) returns (DischargeCommingleReply) {}
+	rpc GetCargoNominationOperationDetails(CargoNominationOperationDetailsRequest) returns (CargoNominationOperationDetailsResponse) {}
 }
 
 
@@ -1844,4 +1845,18 @@ message DischargeCommingleRequest {
 message DischargeCommingleReply {
 	ResponseStatus responseStatus = 1;
 	repeated LoadablePatternCommingleDetailsReply dischargePatternCommingleDetails = 2;
+}
+
+message CargoNominationOperationDetailsRequest {
+	repeated int64 cargoNominationIds = 2;
+}
+
+message CargoNominationOperationDetailsResponse {
+	ResponseStatus responseStatus = 1;
+	repeated CargoNominationOperationDetails cargoNominationOperationDetails = 2;
+}
+
+message CargoNominationOperationDetails {
+	int64 cargoNominationId = 1;
+	int64 sequenceNo = 2;
 }

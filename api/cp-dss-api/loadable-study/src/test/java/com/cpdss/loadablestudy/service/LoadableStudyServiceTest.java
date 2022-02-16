@@ -5021,8 +5021,8 @@ class LoadableStudyServiceTest {
     LoadableStudyDetail studyDetail =
         LoadableStudyDetail.newBuilder().setDuplicatedFromId(1l).build();
 
-    when(this.cargoNominationOperationDetailsRepository.findByCargoNominationnAndIsActive(
-            any(CargoNomination.class), anyBoolean()))
+    when(this.cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActiveTrue(
+            any(CargoNomination.class)))
         .thenReturn(prepareCargoNominationOperationDetails());
     when(this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
             anyLong(), anyBoolean()))

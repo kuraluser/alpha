@@ -2055,7 +2055,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
                 CargoNomination crgoNomination = new CargoNomination();
                 List<CargoNominationPortDetails> oldCargoNominationPortDetails =
                     this.cargoNominationOperationDetailsRepository
-                        .findByCargoNominationnAndIsActive(cargoNomination, true);
+                        .findByCargoNominationAndIsActiveTrue(cargoNomination);
 
                 BeanUtils.copyProperties(cargoNomination, crgoNomination);
                 crgoNomination.setLoadableStudyXId(entity.getId());

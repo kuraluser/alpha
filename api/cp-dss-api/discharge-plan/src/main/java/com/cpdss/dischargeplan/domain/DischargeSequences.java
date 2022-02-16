@@ -9,4 +9,5 @@ public class DischargeSequences {
 
   private List<ReasonForDelay> reasonForDelays;
   private List<DischargeDelays> dischargeDelays;
+  private Boolean isSequenceAltered;
 }

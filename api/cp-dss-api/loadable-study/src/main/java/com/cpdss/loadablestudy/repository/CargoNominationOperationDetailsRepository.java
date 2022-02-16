@@ -16,28 +16,23 @@ public interface CargoNominationOperationDetailsRepository
   @Transactional
   @Modifying
   @Query("Update CargoNominationPortDetails set isActive = false where cargoNomination.id = ?1 ")
-  public void deleteCargoNominationPortDetails(Long cargoNominationId);
+  void deleteCargoNominationPortDetails(Long cargoNominationId);
 
-  @Query(
-      "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination in ?1 AND LSPR.isActive = ?2")
-  public List<CargoNominationPortDetails> findByCargoNominationAndIsActive(
-      List<CargoNomination> cargoNominations, Boolean isActive);
+  List<CargoNominationPortDetails> findByCargoNominationInAndIsActiveTrue(
+      List<CargoNomination> cargoNominations);
 
-  @Query(
-      "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination = ?1 AND LSPR.isActive = ?2")
-  public CargoNominationPortDetails findByCargoNominationAndIsActive(
-      CargoNomination cargoNominations, Boolean isActive);
+  List<CargoNominationPortDetails> findByCargoNominationAndIsActiveTrue(
+      CargoNomination cargoNomination);
 
-  @Query(
-      "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination = ?1 AND LSPR.isActive = ?2")
-  public List<CargoNominationPortDetails> findByCargoNominationnAndIsActive(
-      CargoNomination cargoNominations, Boolean isActive);
-
-  @Query(
-      "FROM CargoNominationPortDetails LSPR WHERE LSPR.cargoNomination = ?1 AND LSPR.isActive = ?2")
-  public List<CargoNominationPortDetails> findByPortAndCargoIdAndIsActive(
-      CargoNomination cargo, Boolean isActive);
-
-  public CargoNominationPortDetails findByCargoNominationAndPortIdAndIsActiveTrue(
+  CargoNominationPortDetails findByCargoNominationAndPortIdAndIsActiveTrue(
       CargoNomination cargo, Long portXId);
+
+  /**
+   * Fetches cargo nomination operation details based on list of cargo nomination identifiers
+   *
+   * @param cargoNominationIds list of cargo nomination identifiers
+   * @return list of cargo nomination operation details entities
+   */
+  List<CargoNominationPortDetails> findByCargoNomination_IdInAndIsActiveTrue(
+      List<Long> cargoNominationIds);
 }

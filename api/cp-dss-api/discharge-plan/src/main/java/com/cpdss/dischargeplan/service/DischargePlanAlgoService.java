@@ -75,6 +75,7 @@ public class DischargePlanAlgoService {
 
   @Autowired private DischargeBerthDetailRepository dischargeBerthDetailRepository;
 
+  @Autowired DischargingMachineryInUseRepository dischargingMachineryInUseRepository;
   @Autowired private ReasonForDelayRepository reasonForDelayRepository;
 
   @Autowired private CowPlanDetailRepository cowPlanDetailRepository;
@@ -472,7 +473,8 @@ public class DischargePlanAlgoService {
   }
 
   private DischargeSequences buildDischargeDelays(
-      com.cpdss.dischargeplan.entity.DischargeInformation entity) {
+      com.cpdss.dischargeplan.entity.DischargeInformation entity) throws GenericServiceException {
+
     DischargeSequences dischargeSequences = new DischargeSequences();
 
     // Set Master data of Reasons
@@ -520,10 +522,67 @@ public class DischargePlanAlgoService {
           dischargeDelays.add(ld);
         });
     dischargeSequences.setDischargeDelays(dischargeDelays);
+
+    checkAndSetIsSequenceAltered(dischargeDelays, dischargeSequences);
     return dischargeSequences;
   }
 
-  @Autowired DischargingMachineryInUseRepository dischargingMachineryInUseRepository;
+  /**
+   * Checks and sets sequence flag
+   *
+   * @param dischargeDelaysList list of discharge delays
+   * @param dischargeSequences discharge sequence object
+   */
+  private void checkAndSetIsSequenceAltered(
+      List<DischargeDelays> dischargeDelaysList, DischargeSequences dischargeSequences)
+      throws GenericServiceException {
+
+    log.info("Inside checkAndSetIsSequenceAltered method!");
+
+    // Get all default manage sequence values
+    LoadableStudy.CargoNominationOperationDetailsRequest.Builder cargoNominationRequestBuilder =
+        LoadableStudy.CargoNominationOperationDetailsRequest.newBuilder()
+            .addAllCargoNominationIds(
+                dischargeDelaysList.stream()
+                    .map(DischargeDelays::getDsCargoNominationId)
+                    .collect(Collectors.toList()));
+
+    // Fetch default sequence numbers from discharge study cargo nomination operation details
+    LoadableStudy.CargoNominationOperationDetailsResponse cargoNominationOperationResponse =
+        dischargeStudyOperationServiceBlockingStub.getCargoNominationOperationDetails(
+            cargoNominationRequestBuilder.build());
+    if (cargoNominationOperationResponse == null
+        || !SUCCESS.equals(cargoNominationOperationResponse.getResponseStatus().getStatus())) {
+
+      log.debug("Failed to fetch cargo nomination operation details!");
+      throw new GenericServiceException(
+          "Failed to fetch cargo nomination operation details!",
+          CommonErrorCodes.E_HTTP_BAD_REQUEST,
+          HttpStatusCode.BAD_REQUEST);
+    }
+
+    Map<Long, List<Long>> defaultSequenceNumberWithCargo =
+        cargoNominationOperationResponse.getCargoNominationOperationDetailsList().stream()
+            .collect(
+                Collectors.groupingBy(
+                    LoadableStudy.CargoNominationOperationDetails::getSequenceNo,
+                    Collectors.mapping(
+                        LoadableStudy.CargoNominationOperationDetails::getCargoNominationId,
+                        Collectors.toList())));
+
+    // Get all saved manage sequence values
+    Map<Long, List<Long>> sequenceNumberWithCargo =
+        dischargeDelaysList.stream()
+            .collect(
+                Collectors.groupingBy(
+                    DischargeDelays::getSequenceNumber,
+                    Collectors.mapping(
+                        DischargeDelays::getDsCargoNominationId, Collectors.toList())));
+
+    // Compare and set flag if sequence is altered
+    dischargeSequences.setIsSequenceAltered(
+        !defaultSequenceNumberWithCargo.equals(sequenceNumberWithCargo));
+  }
 
   private CargoMachineryInUse buildDischargeMachines(
       com.cpdss.dischargeplan.entity.DischargeInformation entity) throws GenericServiceException {

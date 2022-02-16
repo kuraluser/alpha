@@ -822,8 +822,8 @@ public class GenerateDischargeStudyJson {
       cargoNominationReply.forEach(
           item -> {
             List<CargoNominationPortDetails> cargoNominationPortDetails =
-                cargoNominationOperationDetailsRepository.findByCargoNominationnAndIsActive(
-                    item, true);
+                cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActiveTrue(
+                    item);
             if (!CollectionUtils.isEmpty(cargoNominationPortDetails)) {
               log.info("CargoNominationPortDetails get:{}", cargoNominationPortDetails.size());
               Iterator<CargoNominationPortDetails> iterator = cargoNominationPortDetails.iterator();

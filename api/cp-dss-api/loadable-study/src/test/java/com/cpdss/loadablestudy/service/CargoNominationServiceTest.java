@@ -456,8 +456,8 @@ public class CargoNominationServiceTest {
                 Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getListCargoNomination());
     Mockito.when(
-            this.cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
-                (List<CargoNomination>) Mockito.any(), Mockito.anyBoolean()))
+            this.cargoNominationOperationDetailsRepository.findByCargoNominationInAndIsActiveTrue(
+                (List<CargoNomination>) Mockito.any()))
         .thenReturn(getLCNPDetails());
     this.cargoNominationService.buildCargoNominationPortDetails(loadableStudyId, loadableStudy);
     assertEquals(

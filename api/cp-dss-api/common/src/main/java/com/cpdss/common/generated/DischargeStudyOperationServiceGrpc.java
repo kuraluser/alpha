@@ -780,6 +780,64 @@ public final class DischargeStudyOperationServiceGrpc {
     return getGetDischargeCommingleDetailsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse>
+      getGetCargoNominationOperationDetailsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetCargoNominationOperationDetails",
+      requestType =
+          com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest.class,
+      responseType =
+          com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest,
+          com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse>
+      getGetCargoNominationOperationDetailsMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest,
+            com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse>
+        getGetCargoNominationOperationDetailsMethod;
+    if ((getGetCargoNominationOperationDetailsMethod =
+            DischargeStudyOperationServiceGrpc.getGetCargoNominationOperationDetailsMethod)
+        == null) {
+      synchronized (DischargeStudyOperationServiceGrpc.class) {
+        if ((getGetCargoNominationOperationDetailsMethod =
+                DischargeStudyOperationServiceGrpc.getGetCargoNominationOperationDetailsMethod)
+            == null) {
+          DischargeStudyOperationServiceGrpc.getGetCargoNominationOperationDetailsMethod =
+              getGetCargoNominationOperationDetailsMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.LoadableStudy
+                              .CargoNominationOperationDetailsRequest,
+                          com.cpdss.common.generated.LoadableStudy
+                              .CargoNominationOperationDetailsResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(
+                              SERVICE_NAME, "GetCargoNominationOperationDetails"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .CargoNominationOperationDetailsRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.LoadableStudy
+                                  .CargoNominationOperationDetailsResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargeStudyOperationServiceMethodDescriptorSupplier(
+                              "GetCargoNominationOperationDetails"))
+                      .build();
+        }
+      }
+    }
+    return getGetCargoNominationOperationDetailsMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargeStudyOperationServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargeStudyOperationServiceStub> factory =
@@ -972,6 +1030,16 @@ public final class DischargeStudyOperationServiceGrpc {
           getGetDischargeCommingleDetailsMethod(), responseObserver);
     }
 
+    /** */
+    public void getCargoNominationOperationDetails(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetCargoNominationOperationDetailsMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1112,6 +1180,15 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest,
                       com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>(
                       this, METHODID_GET_DISCHARGE_COMMINGLE_DETAILS)))
+          .addMethod(
+              getGetCargoNominationOperationDetailsMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.LoadableStudy
+                          .CargoNominationOperationDetailsRequest,
+                      com.cpdss.common.generated.LoadableStudy
+                          .CargoNominationOperationDetailsResponse>(
+                      this, METHODID_GET_CARGO_NOMINATION_OPERATION_DETAILS)))
           .build();
     }
   }
@@ -1301,6 +1378,18 @@ public final class DischargeStudyOperationServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getCargoNominationOperationDetails(
+        com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetCargoNominationOperationDetailsMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1423,6 +1512,15 @@ public final class DischargeStudyOperationServiceGrpc {
             com.cpdss.common.generated.LoadableStudy.DischargeCommingleRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetDischargeCommingleDetailsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse
+        getCargoNominationOperationDetails(
+            com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest
+                request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetCargoNominationOperationDetailsMethod(), getCallOptions(), request);
     }
   }
 
@@ -1566,6 +1664,17 @@ public final class DischargeStudyOperationServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetDischargeCommingleDetailsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsResponse>
+        getCargoNominationOperationDetails(
+            com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest
+                request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetCargoNominationOperationDetailsMethod(), getCallOptions()),
+          request);
+    }
   }
 
   private static final int METHODID_DELETE_DISCHARGE_STUDY = 0;
@@ -1581,6 +1690,7 @@ public final class DischargeStudyOperationServiceGrpc {
   private static final int METHODID_GET_COMMINGLE_CARGO_AS_SEPERATE_GRADE = 10;
   private static final int METHODID_GET_DISCHARGE_STUDY_REQUEST_JSON = 11;
   private static final int METHODID_GET_DISCHARGE_COMMINGLE_DETAILS = 12;
+  private static final int METHODID_GET_CARGO_NOMINATION_OPERATION_DETAILS = 13;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1724,6 +1834,15 @@ public final class DischargeStudyOperationServiceGrpc {
                       com.cpdss.common.generated.LoadableStudy.DischargeCommingleReply>)
                   responseObserver);
           break;
+        case METHODID_GET_CARGO_NOMINATION_OPERATION_DETAILS:
+          serviceImpl.getCargoNominationOperationDetails(
+              (com.cpdss.common.generated.LoadableStudy.CargoNominationOperationDetailsRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.LoadableStudy
+                          .CargoNominationOperationDetailsResponse>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1802,6 +1921,7 @@ public final class DischargeStudyOperationServiceGrpc {
                       .addMethod(getGetCommingleCargoAsSeperateGradeMethod())
                       .addMethod(getGetDischargeStudyRequestJsonMethod())
                       .addMethod(getGetDischargeCommingleDetailsMethod())
+                      .addMethod(getGetCargoNominationOperationDetailsMethod())
                       .build();
         }
       }

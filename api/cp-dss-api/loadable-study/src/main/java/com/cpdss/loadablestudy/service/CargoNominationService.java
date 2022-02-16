@@ -1270,8 +1270,8 @@ public class CargoNominationService {
         cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudyId, true);
     loadableStudy.setCargoNominationOperationDetails(new ArrayList<>());
     List<CargoNominationPortDetails> cargoNominationOperationDetails =
-        cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActive(
-            cargoNominations, true);
+        cargoNominationOperationDetailsRepository.findByCargoNominationInAndIsActiveTrue(
+            cargoNominations);
     cargoNominationOperationDetails.forEach(
         cargoNominationOperationDetail -> {
           com.cpdss.loadablestudy.domain.CargoNominationOperationDetails
