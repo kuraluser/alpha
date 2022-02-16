@@ -289,8 +289,9 @@ public class LoadableStudyService {
     Optional.ofNullable(loadableQuantity.getSubTotal()).ifPresent(builder::setSubTotal);
     Optional.ofNullable(loadableQuantity.getFoConsumptionPerDay())
         .ifPresent(builder::setFoConsumptionPerDay);
-    builder.setLoadableStudyId(loadableStudiesId).build();
-
+    builder.setLoadableStudyId(loadableStudiesId);
+    // DSS 5450 save OBQ/slop quantity
+    builder.setObqSlopQuantity(loadableQuantity.getObqSlops());
     LoadableQuantityReply loadableQuantityReply = this.saveLoadableQuantity(builder.build());
     if (!SUCCESS.equalsIgnoreCase(loadableQuantityReply.getResponseStatus().getStatus())) {
       throw new GenericServiceException(
@@ -1220,6 +1221,9 @@ public class LoadableStudyService {
     loadableQuantity.setDwt(loadableQuantityResponse.getLoadableQuantityRequest().getDwt());
     loadableQuantity.setLastUpdatedTime(
         loadableQuantityResponse.getLoadableQuantityRequest().getLastUpdatedTime());
+    // DSS 5450 obq slop quantity
+    loadableQuantity.setObqSlops(
+        loadableQuantityResponse.getLoadableQuantityRequest().getObqSlopQuantity());
     loadableQuantityResponseDto.setLoadableQuantityId(
         loadableQuantityResponse.getLoadableQuantityRequest().getId());
     loadableQuantityResponseDto.setLoadableQuantity(loadableQuantity);

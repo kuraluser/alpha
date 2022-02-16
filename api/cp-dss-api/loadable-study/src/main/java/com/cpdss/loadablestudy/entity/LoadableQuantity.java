@@ -110,4 +110,7 @@ public class LoadableQuantity extends EntityDoc {
   private LoadableStudyPortRotation loadableStudyPortRotation;
 
   @Transient private Long communicationRelatedEntityId;
+
+  @Column(name = "obq_slop_quantity")
+  private BigDecimal obqSlopQuantity;
 }

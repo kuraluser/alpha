@@ -20,6 +20,7 @@ import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableQuantityRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
 import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
+import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.projections.PortRotationIdAndPortId;
 import java.math.BigDecimal;
@@ -44,6 +45,7 @@ class LoadableQuantityServiceTest {
   @MockBean LoadableQuantityRepository loadableQuantityRepository;
   @MockBean LoadableStudyRepository loadableStudyRepository;
   @MockBean OnHandQuantityRepository onHandQuantityRepository;
+  @MockBean OnBoardQuantityRepository onBoardQuantityRepository;
   @MockBean PortRotationService portRotationService;
   @MockBean VoyageService voyageService;
   @MockBean LoadablePatternService loadablePatternService;
@@ -373,6 +375,9 @@ class LoadableQuantityServiceTest {
     when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
             any(LoadableStudy.class), anyBoolean()))
         .thenReturn(Arrays.asList(ohq));
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
     when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(list);
     when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -383,6 +388,8 @@ class LoadableQuantityServiceTest {
     ReflectionTestUtils.setField(
         spyService, "loadableQuantityRepository", loadableQuantityRepository);
     ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
     ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
     ReflectionTestUtils.setField(spyService, "portRotationService", portRotationService);
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);
@@ -433,6 +440,9 @@ class LoadableQuantityServiceTest {
     when(this.onHandQuantityRepository.findByLoadableStudyAndIsActive(
             any(LoadableStudy.class), anyBoolean()))
         .thenReturn(Arrays.asList(ohq));
+    when(this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(
+            any(LoadableStudy.class), anyBoolean()))
+        .thenReturn(new ArrayList<>());
     when(loadableQuantityRepository.findByLoadableStudyXIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(list);
     when(loadableStudyRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
@@ -443,6 +453,8 @@ class LoadableQuantityServiceTest {
     ReflectionTestUtils.setField(
         spyService, "loadableQuantityRepository", loadableQuantityRepository);
     ReflectionTestUtils.setField(spyService, "onHandQuantityRepository", onHandQuantityRepository);
+    ReflectionTestUtils.setField(
+        spyService, "onBoardQuantityRepository", onBoardQuantityRepository);
     ReflectionTestUtils.setField(spyService, "loadableStudyRepository", loadableStudyRepository);
     ReflectionTestUtils.setField(spyService, "portRotationService", portRotationService);
     ReflectionTestUtils.setField(spyService, "vesselInfoGrpcService", vesselInfoGrpcService);

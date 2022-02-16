@@ -452,6 +452,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       builder.setTankName(tank.getTankName());
       builder.setShortName(tank.getShortName());
       builder.setTankCategoryId(tank.getTankCategory().getId());
+      builder.setTankOrder(tank.getTankOrder());
+      builder.setTankDisplayOrder(tank.getTankDisplayOrder());
       // builder.setTankCategoryName(tank.getTankCategory().getName());
       // builder.setFrameNumberFrom(tank.getFrameNumberFrom());
       // builder.setFrameNumberTo(tank.getFrameNumberTo());

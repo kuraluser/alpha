@@ -902,6 +902,7 @@ message LoadableQuantityRequest {
 	int64 id = 29;
 	string lastUpdatedTime = 30;
 	int64 portRotationId = 31;
+	string obqSlopQuantity = 32;
 }
 
 message LoadableQuantityReply {

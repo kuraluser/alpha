@@ -667,6 +667,7 @@ class LoadableStudyServiceTest {
     loadableQuantity.setRunningHours(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setRunningDays(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setObqSlops(LOADABLE_QUANTITY_DUMMY);
 
     LoadableQuantityResponse loadableQuantityResponse =
         loadableStudyService.saveLoadableQuantity(
@@ -730,6 +731,7 @@ class LoadableStudyServiceTest {
     loadableQuantity.setRunningHours(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setRunningDays(LOADABLE_QUANTITY_DUMMY);
     loadableQuantity.setFoConsumptionPerDay(LOADABLE_QUANTITY_DUMMY);
+    loadableQuantity.setObqSlops(LOADABLE_QUANTITY_DUMMY);
 
     final GenericServiceException ex =
         assertThrows(

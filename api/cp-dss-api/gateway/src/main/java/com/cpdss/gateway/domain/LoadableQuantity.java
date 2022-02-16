@@ -68,4 +68,7 @@ public class LoadableQuantity {
   private String lastUpdatedTime;
 
   private Long portRotationId;
+
+  // DSS 5450 calculate Obq/Slop quantity
+  private String obqSlops;
 }

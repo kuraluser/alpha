@@ -39,6 +39,8 @@ public class LoadableQuantityService {
 
   @Autowired OnHandQuantityRepository onHandQuantityRepository;
 
+  @Autowired OnBoardQuantityRepository onBoardQuantityRepository;
+
   @Autowired PortRotationService portRotationService;
 
   @Autowired private VoyageService voyageService;
@@ -106,6 +108,7 @@ public class LoadableQuantityService {
     String draftRestriction1 = "";
     String seaWaterDensity = "";
     String dwtValue = "";
+    BigDecimal obqSlopQuantity = BigDecimal.ZERO;
 
     List<BigDecimal> minDraftValue = new ArrayList<>();
 
@@ -156,6 +159,13 @@ public class LoadableQuantityService {
                 this.getDWTByVesselId(
                     loadableStudy.get().getVesselXId(),
                     minVal.isPresent() ? minVal.get() : BigDecimal.ZERO));
+      }
+      // DSS 5450 obqSlop quantity
+      List<OnBoardQuantity> obqList =
+          this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
+      for (OnBoardQuantity obq : obqList) {
+        obqSlopQuantity.add(
+            obq.getIsSlopTank() ? obq.getActualDepartureWeight() : obq.getSlopQuantity());
       }
 
       List<OnHandQuantity> onHandQuantityList =
@@ -222,11 +232,12 @@ public class LoadableQuantityService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         log.info(
-            "Loadable Quantity, values of FO/DO/FW/BW - {}/{}/{}/{}",
+            "Loadable Quantity, values of FO/DO/FW/BW/OBQSLOP - {}/{}/{}/{}/{}",
             foOnboard,
             doOnboard,
             freshWaterOnBoard,
-            boileWaterOnBoard);
+            boileWaterOnBoard,
+            obqSlopQuantity);
       }
     }
 
@@ -282,6 +293,7 @@ public class LoadableQuantityService {
               .setBoilerWaterOnBoard(String.valueOf(boileWaterOnBoard))
               .setLastUpdatedTime(lastUpdatedTime)
               .setPortRotationId(portRotationId)
+              .setObqSlopQuantity(String.valueOf(obqSlopQuantity))
               .build();
       builder.setLoadableQuantityRequest(loadableQuantityRequest);
       log.info(
@@ -305,6 +317,7 @@ public class LoadableQuantityService {
       loadableQuantityRequest.setEstDOOnBoard(String.valueOf(doOnboard));
       loadableQuantityRequest.setEstFreshWaterOnBoard(String.valueOf(freshWaterOnBoard));
       loadableQuantityRequest.setBoilerWaterOnBoard(String.valueOf(boileWaterOnBoard));
+      loadableQuantityRequest.setObqSlopQuantity(String.valueOf(obqSlopQuantity));
 
       Optional.ofNullable(loadableQuantity.get().getEstimatedSagging())
           .ifPresent(estSagging -> loadableQuantityRequest.setEstSagging(estSagging.toString()));
@@ -581,6 +594,11 @@ public class LoadableQuantityService {
         StringUtils.isEmpty(loadableQuantityRequest.getFoConsumptionPerDay())
             ? null
             : new BigDecimal(loadableQuantityRequest.getFoConsumptionPerDay()));
+    // DSS 5450
+    loadableQuantity.setObqSlopQuantity(
+        StringUtils.isEmpty(loadableQuantityRequest.getObqSlopQuantity())
+            ? null
+            : new BigDecimal(loadableQuantityRequest.getObqSlopQuantity()));
     loadableQuantity.setIsActive(true);
 
     if (loadableQuantityRequest.getPortRotationId() > 0) {

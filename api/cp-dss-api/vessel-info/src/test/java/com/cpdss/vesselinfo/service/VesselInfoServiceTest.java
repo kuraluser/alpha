@@ -938,6 +938,7 @@ class VesselInfoServiceTest {
     vs.setTankType(getTT());
     vs.setShortName("1");
     vs.setTankOrder(1);
+    vs.setTankDisplayOrder(1);
     vs.setDensity(new BigDecimal(1));
     vs.setTankCategory(gettc());
     vs.setCoatingTypeXid(1);
