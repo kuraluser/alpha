@@ -2076,6 +2076,8 @@ public class LoadableStudyService {
         tank.setOrder(detail.getTankOrder());
         tank.setHeightFrom(detail.getHeightFrom());
         tank.setHeightTo(detail.getHeightTo());
+        // DSS 5450
+        tank.setSlopWaterTank(detail.getIsSlopWaterTank());
         tankGroup.add(tank);
       }
       tanks.add(tankGroup);
@@ -2654,10 +2656,23 @@ public class LoadableStudyService {
       if (detail.getTemperature() != null && detail.getTemperature().length() > 0) {
         dto.setTemperature(new BigDecimal(detail.getTemperature()));
       }
+      // DSS 5450
       dto.setIsSlopTank(detail.getIsSlopTank());
       if (detail.getSlopQuantity() != null && detail.getSlopQuantity().length() > 0) {
         dto.setSlopQuantity(new BigDecimal(detail.getSlopQuantity()));
       }
+      dto.setSlopCargoId(0 == detail.getSlopCargoId() ? null : detail.getSlopCargoId());
+      dto.setSlopApi(
+          isEmpty(detail.getSlopDensity())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getSlopDensity()));
+      if (detail.getSlopTemperature() != null && detail.getSlopTemperature().length() > 0) {
+        dto.setSlopTemperature(new BigDecimal(detail.getSlopTemperature()));
+      }
+      dto.setSlopVolume(
+          isEmpty(detail.getSlopVolume())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getSlopVolume()));
       response.getOnBoardQuantities().add(dto);
     }
     response.setTanks(this.createGroupWiseTankList(grpcReply.getTanksList()));
@@ -2734,6 +2749,13 @@ public class LoadableStudyService {
     Optional.ofNullable(request.getIsSlopTank()).ifPresent(item -> builder.setIsSlopTank(item));
     Optional.ofNullable(request.getSlopQuantity())
         .ifPresent(item -> builder.setSlopQuantity(item.toString()));
+    Optional.ofNullable(request.getSlopApi())
+        .ifPresent(item -> builder.setSlopDensity(item.toString()));
+    Optional.ofNullable(request.getSlopCargoId()).ifPresent(builder::setSlopCargoId);
+    Optional.ofNullable(request.getSlopTemperature())
+        .ifPresent(item -> builder.setSlopTemperature(item.toString()));
+    Optional.ofNullable(request.getSlopVolume())
+        .ifPresent(item -> builder.setSlopVolume(item.toString()));
     return builder.build();
   }
 

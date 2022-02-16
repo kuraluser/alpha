@@ -199,6 +199,7 @@ public class OnBoardQuantityServiceTest {
     onBoardQuantity.setColorCode("1");
     onBoardQuantity.setAbbreviation("1");
     onBoardQuantity.setDensity(new BigDecimal(1));
+    onBoardQuantity.setIsSlopTank(false);
     return onBoardQuantity;
   }
 }

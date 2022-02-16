@@ -77,4 +77,16 @@ public class OnBoardQuantity extends EntityDoc {
 
   @Column(name = "slop_quantity")
   private BigDecimal slopQuantity;
+
+  @Column(name = "slop_cargo_xid")
+  private Long slopCargoId;
+
+  @Column(name = "slop_density")
+  private BigDecimal slopDensity;
+
+  @Column(name = "slop_volume")
+  private BigDecimal slopVolume;
+
+  @Column(name = "slop_temperature")
+  private BigDecimal slopTemperature;
 }

@@ -59,4 +59,12 @@ public class OnBoardQuantity {
   private Boolean isSlopTank;
 
   private BigDecimal slopQuantity;
+
+  private Long slopCargoId;
+
+  private BigDecimal slopApi;
+
+  private BigDecimal slopTemperature;
+
+  private BigDecimal slopVolume;
 }

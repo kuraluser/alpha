@@ -19,4 +19,5 @@ public class OnBoardQuantity {
   private String colorCode;
   private String temperature;
   private String abbreviation;
+  private Boolean isSlopTank;
 }

@@ -414,6 +414,7 @@ public class OnHandQuantityService {
     builder.setTankDisplayOrder(detail.getTankDisplayOrder());
     builder.setTankGroup(detail.getTankGroup());
     builder.setFullCapacityCubm(detail.getFullCapacityCubm());
+    builder.setIsSlopWaterTank(detail.getIsSlopWaterTank());
     return builder.build();
   }
 

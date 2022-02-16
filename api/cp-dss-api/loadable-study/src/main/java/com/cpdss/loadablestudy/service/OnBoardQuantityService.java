@@ -3,6 +3,7 @@ package com.cpdss.loadablestudy.service;
 
 import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.util.Optional.ofNullable;
+import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -141,7 +142,16 @@ public class OnBoardQuantityService {
     if (request.getIsSlopTank()) {
       entity.setIsSlopTank(true);
       entity.setSlopQuantity(
-          isEmpty(request.getSlopQuantity()) ? null : new BigDecimal(request.getSlopQuantity()));
+          hasLength(request.getSlopQuantity()) ? null : new BigDecimal(request.getSlopQuantity()));
+      entity.setSlopCargoId(request.getSlopCargoId());
+      entity.setSlopDensity(
+          hasLength(request.getSlopDensity()) ? null : new BigDecimal(request.getSlopDensity()));
+      entity.setSlopTemperature(
+          hasLength(request.getSlopTemperature())
+              ? null
+              : new BigDecimal(request.getSlopTemperature()));
+      entity.setSlopVolume(
+          hasLength(request.getSlopVolume()) ? null : new BigDecimal(request.getSlopVolume()));
     } else {
       entity.setIsSlopTank(false);
     }
@@ -170,11 +180,30 @@ public class OnBoardQuantityService {
               null != onBoardQuantity.getDensity()
                   ? String.valueOf(onBoardQuantity.getDensity())
                   : "");
-
           onBoardQuantityDto.setTemperature(
               null != onBoardQuantity.getTemperature()
                   ? String.valueOf(onBoardQuantity.getTemperature())
                   : BigDecimal.ZERO.toString());
+          // DSS-5450
+          if (onBoardQuantity.getIsSlopTank()) {
+            onBoardQuantityDto.setApi(
+                null != onBoardQuantity.getSlopDensity()
+                    ? String.valueOf(onBoardQuantity.getSlopDensity())
+                    : "");
+            onBoardQuantityDto.setTemperature(
+                null != onBoardQuantity.getSlopTemperature()
+                    ? String.valueOf(onBoardQuantity.getSlopTemperature())
+                    : BigDecimal.ZERO.toString());
+            onBoardQuantityDto.setVolume(
+                null != onBoardQuantity.getSlopVolume()
+                    ? String.valueOf(onBoardQuantity.getSlopVolume())
+                    : BigDecimal.ZERO.toString());
+            onBoardQuantityDto.setCargoId(onBoardQuantity.getSlopCargoId());
+            onBoardQuantityDto.setPlannedArrivalWeight(
+                null != onBoardQuantity.getSlopQuantity()
+                    ? String.valueOf(onBoardQuantity.getSlopQuantity())
+                    : BigDecimal.ZERO.toString());
+          }
           loadableStudy.getOnBoardQuantity().add(onBoardQuantityDto);
         });
   }
@@ -305,6 +334,11 @@ public class OnBoardQuantityService {
               StringUtils.hasLength(dsCargo.get().getQuantity())
                   ? new BigDecimal(dsCargo.get().getQuantity())
                   : BigDecimal.ZERO);
+          // DSS 5450 getting volume of cargo
+          onBoardQuantityEntity.setVolume(
+              StringUtils.hasLength(dsCargo.get().getQuantityM3())
+                  ? new BigDecimal(dsCargo.get().getQuantityM3())
+                  : BigDecimal.ZERO);
           CargoNomination cargoNominationEntity =
               cargoNominationMap.get(dsCargo.get().getCargoNominationId());
           if (cargoNominationEntity != null) {
@@ -362,10 +396,19 @@ public class OnBoardQuantityService {
         ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
         ofNullable(entity.getTemperature())
             .ifPresent(item -> builder.setTemperature(item.toString()));
-        // DSS 5450
+        // DSS 5450 getting volume of cargo
+        ofNullable(entity.getVolume()).ifPresent(item -> builder.setVolume(item.toString()));
+        // DSS 5450 additional fields for tanks which can be changed to SLOP tank
         ofNullable(entity.getIsSlopTank()).ifPresent(builder::setIsSlopTank);
         ofNullable(entity.getSlopQuantity())
             .ifPresent(item -> builder.setSlopQuantity(item.toString()));
+        ofNullable(entity.getSlopCargoId()).ifPresent(builder::setSlopCargoId);
+        ofNullable(entity.getSlopDensity())
+            .ifPresent(item -> builder.setSlopDensity(item.toString()));
+        ofNullable(entity.getSlopTemperature())
+            .ifPresent(item -> builder.setSlopTemperature(item.toString()));
+        ofNullable(entity.getSlopVolume())
+            .ifPresent(item -> builder.setSlopVolume(item.toString()));
         obqDetailList.add(builder.build());
       }
     }

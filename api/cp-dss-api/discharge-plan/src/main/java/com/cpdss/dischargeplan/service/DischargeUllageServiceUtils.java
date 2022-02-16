@@ -220,7 +220,8 @@ public class DischargeUllageServiceUtils {
                         .orElse(null);
                 dbData.setQuantity(new BigDecimal(stowageRequest.getQuantity()));
                 dbData.setUllage(new BigDecimal(stowageRequest.getUllage()));
-                dbData.setQuantityM3(new BigDecimal(stowageRequest.getQuantity()));
+                // DSS 5450 saving volume of cargo for next voyage OBQ
+                dbData.setQuantityM3(new BigDecimal(stowageRequest.getObservedM3()));
                 dbData.setApi(new BigDecimal(stowageRequest.getApi()));
                 dbData.setTemperature(new BigDecimal(stowageRequest.getTemperature()));
                 stowageToSave.add(dbData);
@@ -244,6 +245,8 @@ public class DischargeUllageServiceUtils {
             ? null
             : new BigDecimal(stowageRequest.getCorrectedUllage()));
     tempData.setQuantity(new BigDecimal(stowageRequest.getQuantity()));
+    // DSS 5450 saving volume of cargo for next voyage OBQ
+    tempData.setQuantityM3(new BigDecimal(stowageRequest.getObservedM3()));
     tempData.setFillingPercentage(
         StringUtils.isEmpty(stowageRequest.getFillingPercentage())
             ? null

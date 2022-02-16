@@ -139,6 +139,7 @@ public class DischargeUllageServiceUtilsTest {
             .setIsUpdate(true)
             .setDischargingInfoId(1L)
             .setTankId(1L)
+            .setObservedM3("1")
             .build();
     list.add(updateUllage);
     LoadingPlanModels.UllageBillRequest request =
@@ -177,6 +178,7 @@ public class DischargeUllageServiceUtilsTest {
             .setUllage("1")
             .setColorCode("1")
             .setAbbreviation("1")
+            .setObservedM3("1")
             .setCargoId(1L)
             .build();
     list.add(updateUllage);

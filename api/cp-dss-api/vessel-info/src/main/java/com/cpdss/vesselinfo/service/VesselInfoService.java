@@ -380,6 +380,8 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       Optional.ofNullable(tank.getShowInOhqObq()).ifPresent(builder::setShowInOhqObq);
       Optional.ofNullable(tank.getTankPositionCategory())
           .ifPresent(builder::setTankPositionCategory);
+      // DSS 5450 flag to identify tanks that are SLOP tanks or act as a slop tank.
+      Optional.ofNullable(tank.getIsSlopWaterTank()).ifPresent(builder::setIsSlopWaterTank);
       tankDetailsList.add(builder.build());
     }
     return tankDetailsList;

@@ -151,4 +151,7 @@ public class VesselTank extends EntityDoc {
 
   @Column(name = "is_loadicator_using")
   private Boolean isLoadicatorUsing;
+
+  @Column(name = "is_slop_water_tank")
+  private Boolean isSlopWaterTank;
 }

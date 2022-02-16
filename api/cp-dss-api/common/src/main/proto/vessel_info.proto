@@ -234,6 +234,7 @@ message VesselTankDetail{
 	int32 tankDisplayOrder = 24;
 	string tankPositionCategory = 25;
 	bool isLoadicatorUsing = 26;
+	bool isSlopWaterTank = 27;
 }
 
 message VesselReply {

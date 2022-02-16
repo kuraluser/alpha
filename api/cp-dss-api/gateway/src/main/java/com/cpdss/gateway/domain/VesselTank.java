@@ -53,4 +53,6 @@ public class VesselTank {
   private BigDecimal fullCapcityCubm;
 
   private Boolean isLoadicatorUsing;
+
+  private boolean isSlopWaterTank;
 }

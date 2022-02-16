@@ -1791,6 +1791,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
                         ullageList.getQuantity() == null
                             ? ""
                             : String.valueOf(ullageList.getQuantity()))
+                    // DSS 5450 saving volume of cargo for next voyage OBQ
+                    .setObservedM3(
+                        ullageList.getObservedM3() == null
+                            ? ""
+                            : String.valueOf(ullageList.getObservedM3()))
                     .setFillingPercentage(
                         ullageList.getFillingPercentage() == null
                             ? "0"

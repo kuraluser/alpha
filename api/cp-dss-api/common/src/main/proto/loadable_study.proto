@@ -1156,6 +1156,7 @@ message TankDetail{
 	int32 tankDisplayOrder = 14;
 	int32 tankGroup = 15;
 	string fullCapacityCubm = 16;
+	bool isSlopWaterTank = 17;
 }
 
 message TankList{
@@ -1200,6 +1201,10 @@ message OnBoardQuantityDetail{
 	string temperature = 18;
 	bool isSlopTank = 19;
 	string slopQuantity = 20;
+	int64 slopCargoId = 21;
+	string slopDensity = 22;
+	string slopVolume = 23;
+	string slopTemperature = 24;
 }
 
 message OnBoardQuantityReply{
