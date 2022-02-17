@@ -31,4 +31,7 @@ public interface BillOfLaddingRepository extends CommonCrudRepository<BillOfLadd
   public List<BillOfLadding>
       findByCargoNominationIdInAndLoadingInformation_LoadablePatternXIdAndIsActive(
           List<Long> cargoIds, long patternId, boolean b);
+
+  public List<BillOfLadding> findByLoadingInformation_IdAndPortIdAndIsActiveTrueOrderById(
+      Long loadingInformationId, Long portId);
 }

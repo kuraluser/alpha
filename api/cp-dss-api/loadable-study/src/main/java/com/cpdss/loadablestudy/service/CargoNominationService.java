@@ -697,9 +697,7 @@ public class CargoNominationService {
           this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
               loadableStudy.getId(), true)) {
         portRotation.setIsPortRotationOhqComplete(false);
-        if ((portRotation.getSeaWaterDensity() == null)
-            || (portRotation.getMaxDraft() == null)
-            || (portRotation.getAirDraftRestriction() == null)) {
+        if ((portRotation.getSeaWaterDensity() == null) || (portRotation.getMaxDraft() == null)) {
           isPortRotationComplete = false;
         }
       }

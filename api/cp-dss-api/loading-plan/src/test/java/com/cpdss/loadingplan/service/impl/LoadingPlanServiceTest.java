@@ -2,6 +2,8 @@
 package com.cpdss.loadingplan.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
@@ -138,8 +140,7 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.LoadingPlanSyncReply.Builder builder =
         LoadingPlanModels.LoadingPlanSyncReply.newBuilder();
-    Mockito.when(
-            loadingInformationService.saveLoadingInformationDetail(Mockito.any(), Mockito.any()))
+    when(loadingInformationService.saveLoadingInformationDetail(Mockito.any(), Mockito.any()))
         .thenReturn(getLI());
     this.loadingPlanService.loadingPlanSynchronization(request, builder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
@@ -166,8 +167,7 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.LoadingPlanSyncReply.Builder builder =
         LoadingPlanModels.LoadingPlanSyncReply.newBuilder();
-    Mockito.when(
-            loadingInformationService.saveLoadingInformationDetail(Mockito.any(), Mockito.any()))
+    when(loadingInformationService.saveLoadingInformationDetail(Mockito.any(), Mockito.any()))
         .thenThrow(new RuntimeException("internal error"));
     this.loadingPlanService.loadingPlanSynchronization(request, builder);
     assertEquals(
@@ -421,10 +421,15 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
-    Mockito.when(
-            this.billOfLaddingRepo.findByLoadablePatternXIdAndPortIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+    when(this.billOfLaddingRepo.findByLoadablePatternXIdAndPortIdAndIsActive(
+            Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLBL());
+    when(loadingInformationRepository.findByPortRotationXIdAndIsActiveTrue(anyLong()))
+        .thenReturn(1l);
+    when(this.billOfLaddingRepo.findByLoadingInformation_IdAndPortIdAndIsActiveTrueOrderById(
+            anyLong(), anyLong()))
+        .thenReturn(getLBL());
+
     this.loadingPlanService.getBillOfLaddingDetails(request, builder);
     assertEquals("1", builder.getBillOfLadding(0).getApi());
   }
@@ -455,9 +460,8 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
-    Mockito.when(
-            portLoadingPlanStowageDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+    when(portLoadingPlanStowageDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLPL());
     this.loadingPlanService.getPortWiseStowageDetails(request, builder);
     assertEquals("1", builder.getPortLoadablePlanStowageDetails(0).getApi());
@@ -495,9 +499,8 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
-    Mockito.when(
-            portLoadingPlanBallastDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+    when(portLoadingPlanBallastDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLPLPBD());
     this.loadingPlanService.getPortWiseBallastDetails(request, builder);
     assertEquals("1", builder.getPortLoadingPlanBallastDetails(0).getColorCode());
@@ -512,9 +515,8 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
-    Mockito.when(
-            portLoadingPlanRobDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+    when(portLoadingPlanRobDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLPLPRD());
     this.loadingPlanService.getPortWiseRobDetails(request, builder);
     assertEquals("1", builder.getPortLoadingPlanRobDetails(0).getActualPlanned());
@@ -618,29 +620,25 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UllageBillReply.Builder builder =
         LoadingPlanModels.UllageBillReply.newBuilder();
-    Mockito.when(
-            portLoadingPlanBallastTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanBallastTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPBT());
-    Mockito.when(
-            portLoadingPlanStowageTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanStowageTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLSTD());
-    Mockito.when(
-            portLoadingPlanRobDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPRD());
-    Mockito.when(
-            portLoadingPlanCommingleTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanCommingleTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPPCTD());
-    Mockito.when(ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(Mockito.any()))
+    when(ullageUpdateLoadicatorService.saveLoadicatorInfoForUllageUpdate(Mockito.any()))
         .thenReturn("1");
-    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+    when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
         .thenReturn(Optional.of(getLI()));
     this.loadingPlanService.getLoadableStudyShoreTwo(request, builder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
@@ -827,31 +825,27 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UllageBillReply.Builder builder =
         LoadingPlanModels.UllageBillReply.newBuilder();
-    Mockito.when(
-            portLoadingPlanBallastTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanBallastTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPBT1());
-    Mockito.when(
-            portLoadingPlanStowageTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanStowageTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLSTD1());
-    Mockito.when(
-            portLoadingPlanRobDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPRD1());
-    Mockito.when(
-            portLoadingPlanCommingleTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanCommingleTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPPCTD1());
-    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+    when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
         .thenReturn(getOLI());
-    Mockito.when(loadingPlanAlgoService.getLoadingInformationStatus(Mockito.anyLong()))
+    when(loadingPlanAlgoService.getLoadingInformationStatus(Mockito.anyLong()))
         .thenReturn(getOLIS());
-    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+    when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
         .thenReturn(Optional.of(getLI()));
     this.loadingPlanService.getLoadableStudyShoreTwo(request, builder);
     assertEquals(SUCCESS, builder.getResponseStatus().getStatus());
@@ -939,12 +933,11 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UllageBillReply.Builder builder =
         LoadingPlanModels.UllageBillReply.newBuilder();
-    Mockito.when(
-            portLoadingPlanBallastTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanBallastTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenThrow(new RuntimeException("error"));
-    Mockito.when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
+    when(loadingInformationRepository.findByIdAndIsActiveTrue(Mockito.anyLong()))
         .thenReturn(Optional.of(getLI()));
     this.loadingPlanService.getLoadableStudyShoreTwo(request, builder);
     assertEquals(FAILED, builder.getResponseStatus().getStatus());
@@ -970,27 +963,23 @@ class LoadingPlanServiceTest {
     loadingInformation.setPortRotationXId(1L);
     loadingInformation.setLoadablePatternXId(1L);
     Integer conditionType = 1;
-    Mockito.when(
-            portLoadingPlanStowageTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanStowageTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLSTD());
-    Mockito.when(
-            portLoadingPlanBallastTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanBallastTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPBT());
-    Mockito.when(
-            portLoadingPlanCommingleTempDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanCommingleTempDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPPCTD());
-    Mockito.when(
-            portLoadingPlanRobDetailsRepository
-                .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
-                    Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
+    when(portLoadingPlanRobDetailsRepository
+            .findByLoadingInformationAndConditionTypeAndValueTypeAndIsActive(
+                Mockito.anyLong(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyBoolean()))
         .thenReturn(getLPLPRD());
-    Mockito.when(synopticalOperationServiceBlockingStub.updateSynopticalTable(Mockito.any()))
+    when(synopticalOperationServiceBlockingStub.updateSynopticalTable(Mockito.any()))
         .thenReturn(getResponse());
     ReflectionTestUtils.setField(
         loadingPlanService,
@@ -1015,9 +1004,8 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
-    Mockito.when(
-            portLoadingPlanStowageTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+    when(portLoadingPlanStowageTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLSTD());
     this.loadingPlanService.getPortWiseStowageTempDetails(request, builder);
     assertEquals("1", builder.getPortLoadablePlanStowageTempDetails(0).getApi());
@@ -1032,9 +1020,8 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
-    Mockito.when(
-            portLoadingPlanBallastTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
-                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
+    when(portLoadingPlanBallastTempDetailsRepository.findByPatternIdAndPortRotationIdAndIsActive(
+            Mockito.anyLong(), Mockito.anyLong(), Mockito.anyBoolean()))
         .thenReturn(getLPBT());
     this.loadingPlanService.getPortWiseBallastTempDetails(request, builder);
     assertEquals("1", builder.getPortLoadingPlanBallastTempDetails(0).getSg());
@@ -1050,14 +1037,12 @@ class LoadingPlanServiceTest {
             .build();
     LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder =
         LoadingPlanModels.UpdateUllageDetailsResponse.newBuilder();
-    Mockito.when(
-            this.loadingInformationRepository
-                .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
-                    Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
+    when(this.loadingInformationRepository
+            .findByVesselXIdAndLoadablePatternXIdAndPortRotationXIdAndIsActiveTrue(
+                Mockito.anyLong(), Mockito.anyLong(), Mockito.anyLong()))
         .thenReturn(getOLI());
-    Mockito.when(
-            this.portLoadingPlanCommingleDetailsRepository.findByLoadingInformationAndIsActive(
-                Mockito.any(), Mockito.anyBoolean()))
+    when(this.portLoadingPlanCommingleDetailsRepository.findByLoadingInformationAndIsActive(
+            Mockito.any(), Mockito.anyBoolean()))
         .thenReturn(getLPLPCD());
     this.loadingPlanService.getPortWiseCommingleDetails(request, builder);
     assertEquals("1", builder.getLoadablePlanCommingleDetails(0).getCargo1Kl());

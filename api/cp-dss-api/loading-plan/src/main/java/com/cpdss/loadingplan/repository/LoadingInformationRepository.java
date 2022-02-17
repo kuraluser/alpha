@@ -105,4 +105,10 @@ public interface LoadingInformationRepository
       Long id);
 
   List<LoadingInformation> findByLoadablePatternXId(Long patternId);
+
+  @Query(
+      value =
+          "SELECT LI.id FROM loading_information LI WHERE LI.port_rotation_xid = ?1 and LI.is_active = true",
+      nativeQuery = true)
+  public Long findByPortRotationXIdAndIsActiveTrue(long portRotationId);
 }

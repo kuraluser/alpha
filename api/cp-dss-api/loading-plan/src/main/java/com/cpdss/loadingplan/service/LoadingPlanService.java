@@ -408,9 +408,13 @@ public class LoadingPlanService {
       LoadingPlanModels.UpdateUllageDetailsRequest request,
       LoadingPlanModels.UpdateUllageDetailsResponse.Builder builder) {
 
+    Long loadingInformationId =
+        loadingInformationRepository.findByPortRotationXIdAndIsActiveTrue(
+            request.getPortRotationId());
+
     List<BillOfLadding> billOfLaddingDetails =
-        this.billOfLaddingRepo.findByLoadablePatternXIdAndPortIdAndIsActive(
-            request.getPatternId(), request.getPortId(), true);
+        this.billOfLaddingRepo.findByLoadingInformation_IdAndPortIdAndIsActiveTrueOrderById(
+            loadingInformationId, request.getPortId());
     billOfLaddingDetails.stream()
         .forEach(
             bill -> {
