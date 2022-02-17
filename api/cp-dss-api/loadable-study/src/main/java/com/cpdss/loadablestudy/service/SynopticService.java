@@ -487,7 +487,7 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     VoyageStatus voyageStatus = this.voyageStatusRepository.getOne(CLOSE_VOYAGE_STATUS);
     Voyage previousVoyage =
         this.voyageRepository
-            .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
+            .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateTimeDesc(
                 loadableStudyOpt.get().getVoyage().getVesselXId(), true, voyageStatus);
 
     Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedLoadableStudyOpt =

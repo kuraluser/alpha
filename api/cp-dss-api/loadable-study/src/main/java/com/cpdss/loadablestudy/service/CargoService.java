@@ -17,6 +17,7 @@ import com.cpdss.loadablestudy.domain.VoyageHistoryDto;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -580,8 +581,7 @@ public class CargoService {
           "Save Cargo History data for Loading Plan Success, Size - {}",
           loading.getCargoHistoryCount());
       // Save to Api Temp table for Cargo-History Window
-      this.saveApiHistoryOnVoyageClose(
-          loading.getCargoHistoryList().stream().findAny().get(), vesselId);
+      this.saveApiHistoryOnVoyageClose(loading.getCargoHistoryList(), vesselId);
     }
     // Call 2 for discharge
     if (!discharge.getCargoHistoryList().isEmpty()) {
@@ -589,9 +589,6 @@ public class CargoService {
       log.info(
           "Save Cargo History data for Discharge Plan Success, Size - {}",
           discharge.getCargoHistoryCount());
-      // Save to Api Temp table for Cargo-History Window
-      this.saveApiHistoryOnVoyageClose(
-          discharge.getCargoHistoryList().stream().findAny().get(), vesselId);
     }
   }
 
@@ -600,33 +597,88 @@ public class CargoService {
    * In api_history table, each row keep api/temp for each cargo in LS/DS nominations So, taking
    * api/temp from one of the stowage details and save.
    */
-  private void saveApiHistoryOnVoyageClose(Common.CargoHistoryOps var1, Long vesselId) {
-    ApiTempHistory apiTempHistory = new ApiTempHistory();
-    apiTempHistory.setVesselId(vesselId);
-    if (var1.getCargoNominationId() > 0) {
-      var cn =
-          cargoNominationRepository.findByIdAndIsActive(var1.getCargoNominationId(), true).get();
-      apiTempHistory.setCargoId(cn.getCargoXId());
-    }
-    apiTempHistory.setApi(var1.getApi().isEmpty() ? null : new BigDecimal(var1.getApi()));
-    apiTempHistory.setTemp(
-        var1.getTemperature().isEmpty() ? null : new BigDecimal(var1.getTemperature()));
-    apiTempHistory.setLoadingPortId(var1.getPortId());
-    apiTempHistory.setIsActive(true);
-    Optional<SynopticalTable> synopticalTableOpt =
-        this.synopticalTableRepository.findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
-            var1.getPortRotationId(), SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL, true);
-    synopticalTableOpt
-        .flatMap(synopticalTable -> Optional.ofNullable(synopticalTable.getEtaActual()))
-        .ifPresent(
-            etaActual -> {
-              apiTempHistory.setLoadedDate(etaActual);
-              apiTempHistory.setDate(etaActual.getDayOfMonth());
-              apiTempHistory.setMonth(etaActual.getMonthValue());
-              apiTempHistory.setYear(etaActual.getYear());
+  private void saveApiHistoryOnVoyageClose(
+      List<Common.CargoHistoryOps> stowageList, Long vesselId) {
+    Map<Long, List<Common.CargoHistoryOps>> portWiseStowageMap =
+        stowageList.stream()
+            .filter(
+                stowage -> stowage.getPortRotationId() != 0 && stowage.getCargoNominationId() != 0)
+            .collect(Collectors.groupingBy(Common.CargoHistoryOps::getPortRotationId));
+    List<ApiTempHistory> apiTempHistories = new ArrayList<>();
+    portWiseStowageMap
+        .keySet()
+        .forEach(
+            portRotationId -> {
+              Map<Long, List<Common.CargoHistoryOps>> portWiseCargoNomMap =
+                  portWiseStowageMap.get(portRotationId).stream()
+                      .collect(Collectors.groupingBy(Common.CargoHistoryOps::getCargoNominationId));
+              portWiseCargoNomMap
+                  .keySet()
+                  .forEach(
+                      cargoNominationId -> {
+                        ApiTempHistory apiTempHistory = new ApiTempHistory();
+                        apiTempHistory.setVesselId(vesselId);
+                        Optional<CargoNomination> cargoNominationOpt =
+                            this.cargoNominationRepository.findByIdAndIsActive(
+                                cargoNominationId, true);
+                        cargoNominationOpt.ifPresent(
+                            cargoNomination ->
+                                apiTempHistory.setCargoId(cargoNomination.getCargoXId()));
+                        BigDecimal totalApi = new BigDecimal(0);
+                        BigDecimal totalTemp = new BigDecimal(0);
+                        int apiCount = 0;
+                        int tempCount = 0;
+                        for (Common.CargoHistoryOps stowage :
+                            portWiseCargoNomMap.get(cargoNominationId)) {
+                          if (StringUtils.hasLength(stowage.getApi())) {
+                            totalApi = totalApi.add(new BigDecimal(stowage.getApi()));
+                            apiCount++;
+                          }
+                          if (StringUtils.hasLength(stowage.getTemperature())) {
+                            totalTemp = totalTemp.add(new BigDecimal(stowage.getTemperature()));
+                            tempCount++;
+                          }
+                        }
+                        apiTempHistory.setApi(
+                            apiCount != 0
+                                ? totalApi.divide(
+                                    new BigDecimal(apiCount), 4, RoundingMode.HALF_EVEN)
+                                : new BigDecimal(0));
+                        apiTempHistory.setTemp(
+                            tempCount != 0
+                                ? totalTemp.divide(
+                                    new BigDecimal(tempCount), 4, RoundingMode.HALF_EVEN)
+                                : new BigDecimal(0));
+                        apiTempHistory.setIsActive(true);
+                        Optional<SynopticalTable> synopticalTableOpt =
+                            this.synopticalTableRepository
+                                .findByLoadableStudyPortRotationAndOperationTypeAndIsActive(
+                                    portRotationId, SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL, true);
+                        synopticalTableOpt.ifPresent(
+                            synopticalTable -> {
+                              apiTempHistory.setLoadingPortId(synopticalTable.getPortXid());
+                              LocalDateTime loadedDate = null;
+                              if (synopticalTable.getEtdActual() != null) {
+                                loadedDate = synopticalTable.getEtaActual();
+                              } else if (synopticalTable.getLoadableStudyPortRotation() != null) {
+                                loadedDate =
+                                    synopticalTable.getLoadableStudyPortRotation().getEta();
+                              }
+                              if (loadedDate != null) {
+                                apiTempHistory.setLoadedDate(loadedDate);
+                                apiTempHistory.setDate(loadedDate.getDayOfMonth());
+                                apiTempHistory.setMonth(loadedDate.getMonthValue());
+                                apiTempHistory.setYear(loadedDate.getYear());
+                              }
+                            });
+                        apiTempHistories.add(apiTempHistory);
+                        log.info(
+                            "Save API History for port - {}, cargo - {}",
+                            apiTempHistory.getLoadingPortId(),
+                            apiTempHistory.getCargoId());
+                      });
             });
-    apiTempHistoryRepository.save(apiTempHistory);
-    log.info("Save API History for cargo - {}", apiTempHistory.getCargoId());
+    apiTempHistoryRepository.saveAll(apiTempHistories);
   }
 
   private List<CargoHistory> buildCargoHistoryData(

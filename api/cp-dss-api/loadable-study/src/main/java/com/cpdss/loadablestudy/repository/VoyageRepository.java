@@ -39,6 +39,9 @@ public interface VoyageRepository
   public Voyage findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateDesc(
       Long vesselId, boolean isActive, VoyageStatus voyageStatus);
 
+  public Voyage findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateTimeDesc(
+      Long vesselId, boolean isActive, VoyageStatus voyageStatus);
+
   @Query(
       "select V from Voyage V WHERE V.vesselXId= :vesselId AND V.isActive = :isActive AND"
           + " Date(V.actualStartDate) >= :from and Date(V.actualStartDate) <= :to ORDER BY V.lastModifiedDate DESC")

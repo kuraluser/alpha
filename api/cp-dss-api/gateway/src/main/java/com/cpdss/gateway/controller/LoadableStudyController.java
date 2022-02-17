@@ -1875,9 +1875,9 @@ public class LoadableStudyController {
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
-      @RequestParam(required = false, defaultValue = "loadedYear")
+      @RequestParam(required = false, defaultValue = "loadedDate")
           @Pattern(
-              regexp = "vesselName|loadingPortName|grade|loadedYear",
+              regexp = "vesselName|loadingPortName|grade|loadedYear|loadedDate",
               message = CommonErrorCodes.E_HTTP_BAD_REQUEST)
           String sortBy,
       @RequestParam(required = false, defaultValue = "desc") String orderBy,

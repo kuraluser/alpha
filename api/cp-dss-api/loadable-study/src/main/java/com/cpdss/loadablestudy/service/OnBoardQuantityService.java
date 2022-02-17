@@ -489,12 +489,10 @@ public class OnBoardQuantityService {
           throws GenericServiceException {
     if (currentVoyage.getVoyageStartDate() != null && currentVoyage.getVoyageEndDate() != null) {
       // getting previous voyage - closed or active DSS 5450
-      List<VoyageStatus> voyageStatus =
-          this.voyageStatusRepository.findAllById(
-              Arrays.asList(ACTIVE_VOYAGE_STATUS, CLOSE_VOYAGE_STATUS));
+      VoyageStatus voyageStatus = this.voyageStatusRepository.getById(CLOSE_VOYAGE_STATUS);
       Voyage previousVoyage =
           this.voyageRepository
-              .findFirstByVesselXIdAndIsActiveAndVoyageStatusInOrderByLastModifiedDateTimeDesc(
+              .findFirstByVesselXIdAndIsActiveAndVoyageStatusOrderByLastModifiedDateTimeDesc(
                   currentVoyage.getVesselXId(), true, voyageStatus);
       if (previousVoyage != null) {
         log.info("Last closed/Active voyage: {}", previousVoyage.getVoyageNo());
