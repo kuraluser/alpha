@@ -1701,7 +1701,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
           color_code: item.colorCode,
           abbreviation: item.abbreviation,
           cargoId: item.cargoId,
-          ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+          ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString(), observedM3: this.quantityPipe.transform(item.quantity?.toString(), this.currentQuantitySelectedUnit, QUANTITY_UNIT.OBSKL, item.api?.toString(), item.temperature?.toString(), -1) }),
         });
       } else {
         if (duplicate.indexOf(item.tankId) === -1) {
@@ -1725,7 +1725,7 @@ export class UllageUpdatePopupComponent implements OnInit, OnDestroy {
             color_code: '',
             abbreviation: '',
             cargoId: 0,
-            ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString() })
+            ...(this.operation === OPERATIONS.LOADING ? { loadingInformationId: this.infoId?.toString() } : { dischargingInformationId: this.infoId?.toString(), observedM3: 0 }),
           });
         }
       }

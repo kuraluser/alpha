@@ -1083,6 +1083,7 @@ export interface IUllageUpdList {
   temperature: number | string;
   correctedUllage: number | string;
   quantity: number | string;
+  observedM3?: number | string;
   fillingPercentage: number | string;
   cargoNominationId: number | string;
   arrival_departutre: number | string;
