@@ -251,6 +251,16 @@ export class LoadingDischargingTransformationService {
         'required': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MIN',
         'min': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MIN',
         'max': 'LOADING_DISCHARGING_BERTH_LINE_DIPLACEMENT_MAX'
+      },
+      freshCrudeOilQuantity: {
+        'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
+        'min': 'DISCHARGE_INFO_FRESH_CRUDE_OIL_QUANTITY_MIN',
+        'max': 'DISCHARGE_INFO_FRESH_CRUDE_OIL_QUANTITY_MAX',
+        'invalidNumber': 'DISCHARGE_INFO_INVALID_ERROR'
+      },
+      freshCrudeOilTime: {
+        'required': 'LOADING_DISCHARGING_BERTH_REQUIRED',
+        'maxTimeLimitExceed': 'DISCHARGE_INFO_CRUDE_OIL_TIME_ERROR'
       }
     }
   }

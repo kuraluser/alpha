@@ -348,6 +348,10 @@ export interface IBerth {
   cargoCirculation: boolean;
   airPurge: boolean;
   maxManifoldPressure: number;
+  needFlushingOilAndCrudeStorage?: boolean;
+  freshCrudeOilQuantity?: number;
+  freshCrudeOilTime?: string;
+  enableDayLightRestriction?: boolean;
 }
 
 /**

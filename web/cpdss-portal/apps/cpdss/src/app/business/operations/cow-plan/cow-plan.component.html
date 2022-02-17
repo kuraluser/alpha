@@ -25,14 +25,15 @@
       </div>
     </div>
     <div class="col">
-      <div class="row">
+      <!-- TODO: Can be removed if not needed in future -->
+      <!-- <div class="row">
         <div class="col-auto mt-10">
           <label class="checkbox-custom pr-20">{{'DISCHARGING_CONSIDER_DAY_LIGHT_RESTRICTION' | translate}}
             <input type="checkbox" id="enableDayLightRestriction" formControlName="enableDayLightRestriction" (change)="onChange($event)">
             <span class="checkmark"></span>
           </label>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 
@@ -277,8 +278,8 @@
       </div>
     </div>
   </div>
-
-  <div class="row mb-20" *ngIf="editMode">
+  <!-- TODO: Can be removed if not needed in the future -->
+  <!-- <div class="row mb-20" *ngIf="editMode">
     <div class="col">
       <div class="row">
         <div class="col ml-15 pt-25">
@@ -300,5 +301,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>

@@ -8,6 +8,7 @@ import { LoadingDischargingTransformationService } from '../services/loading-dis
 import { LoadingBerthDuplicateValidator } from '../directives/validator/loading-berth-duplicate-validator.directive';
 import { alphaNumericSpecialCharacterValidator } from '../../core/directives/alpha-numeric-special-character-validator.directive.ts';
 import { OPERATIONS } from '../../core/models/common.model';
+import { compareTimeValidator } from '../../core/directives/compare-time-validator';
 
 /**
  * Component class for loading discharging berth component
@@ -94,6 +95,10 @@ export class LoadingDischargingBerthComponent implements OnInit {
       this.berthDetailsForm.addControl('maxManifoldPressure', this.fb.control('', [Validators.required, Validators.min(0.1), Validators.max(99.99), numberValidator(4, 2)]))
       this.berthDetailsForm.addControl('cargoCirculation', this.fb.control(false));
       this.berthDetailsForm.addControl('airPurge', this.fb.control(false));
+      this.berthDetailsForm.addControl('needFlushingOilAndCrudeStorage', this.fb.control(false));
+      this.berthDetailsForm.addControl('freshCrudeOilQuantity', this.fb.control({ value: null, disabled: true }, [Validators.required, Validators.min(10), numberValidator(2, 4), Validators.max(1000)]));
+      this.berthDetailsForm.addControl('freshCrudeOilTime', this.fb.control({ value: null, disabled: true }, [Validators.required, compareTimeValidator('10:00')]));
+      this.berthDetailsForm.addControl('enableDayLightRestriction', this.fb.control(false));
     }
     this.berthDetailsForm.disable();
     this.initFormArray();
@@ -167,7 +172,7 @@ export class LoadingDischargingBerthComponent implements OnInit {
     } else {
       this.selectedBerths.map((berth) => {
         if(berth.berthId === this.berthDetailsForm.value.berthId) {
-          if (!(field === 'lineDisplacement' ||  field === 'hoseConnections' || 
+          if (!(field === 'lineDisplacement' ||  field === 'hoseConnections' ||
           field === 'airDraftLimitation')) {
             berth[field] = 0;
           } else {
@@ -177,6 +182,15 @@ export class LoadingDischargingBerthComponent implements OnInit {
 
         return berth;
       })
+    }
+    if (field === 'needFlushingOilAndCrudeStorage') {
+      if (this.berthDetailsForm.value[field]) {
+        this.berthDetailsFormControl?.freshCrudeOilQuantity.enable();
+        this.berthDetailsFormControl?.freshCrudeOilTime.enable();
+      } else {
+        this.berthDetailsFormControl?.freshCrudeOilQuantity.disable();
+        this.berthDetailsFormControl?.freshCrudeOilTime.disable();
+      }
     }
     this.checkFormValidity();
     this.berthChange.emit(this.selectedBerths);
@@ -324,9 +338,21 @@ export class LoadingDischargingBerthComponent implements OnInit {
       const additionalDetails = {
         maxManifoldPressure: Number(berthInfo?.maxManifoldPressure),
         cargoCirculation: berthInfo?.cargoCirculation,
-        airPurge: berthInfo?.airPurge
+        airPurge: berthInfo?.airPurge,
+        needFlushingOilAndCrudeStorage: berthInfo?.needFlushingOilAndCrudeStorage,
+        freshCrudeOilQuantity: berthInfo?.needFlushingOilAndCrudeStorage ? berthInfo?.freshCrudeOilQuantity : null,
+        freshCrudeOilTime: berthInfo?.needFlushingOilAndCrudeStorage ? berthInfo?.freshCrudeOilTime : null,
+        enableDayLightRestriction: berthInfo?.enableDayLightRestriction
       }
       berthDetailsForm = { ...berthDetailsForm, ...additionalDetails };
+
+      if (berthInfo?.needFlushingOilAndCrudeStorage) {
+        this.berthDetailsFormControl?.freshCrudeOilQuantity.enable();
+        this.berthDetailsFormControl?.freshCrudeOilTime.enable();
+      } else {
+        this.berthDetailsFormControl?.freshCrudeOilQuantity?.disable();
+        this.berthDetailsFormControl?.freshCrudeOilTime?.disable();
+      }
     }
     this.berthDetailsForm.patchValue(berthDetailsForm);
     this.berthDetailsForm.updateValueAndValidity();

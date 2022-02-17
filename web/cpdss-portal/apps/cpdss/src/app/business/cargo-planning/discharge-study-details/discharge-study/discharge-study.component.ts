@@ -25,7 +25,7 @@ import { numberValidator } from '../../../core/directives/number-validator.direc
 
 import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
 import { alphaNumericOnlyValidator } from '../../../core/directives/alpha-numeric-only-validator.directive';
-import { compareTimeValidator } from '../../directives/validator/compare-time-validator';
+import { compareTimeValidator } from '../../../core/directives/compare-time-validator';
 import { sequenceNumberValidator } from '../../../core/directives/sequence-number-validator.directive';
 
 /**
