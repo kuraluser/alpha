@@ -270,7 +270,8 @@ public class DischargeInformationService {
     addDefaultCargoDetailsForManagingSequence(
         dischargeQuantityCargoDetailsList,
         dischargeSequences,
-        dischargeInformation.getDischargeInfoId());
+        dischargeInformation.getDischargeInfoId(),
+        portRotation.get().getPortId());
 
     dischargeInformation.setDischargeDetails(dischargeDetails);
     dischargeInformation.setDischargeRates(dischargeRates);
@@ -292,11 +293,13 @@ public class DischargeInformationService {
    *     synoptical table
    * @param dischargeSequences LoadingSequences object
    * @param dischargeInfoId Discharge Information id
+   * @param portId
    */
   private void addDefaultCargoDetailsForManagingSequence(
       List<DischargeQuantityCargoDetails> dischargeQuantityCargoDetailsList,
       LoadingSequences dischargeSequences,
-      Long dischargeInfoId)
+      Long dischargeInfoId,
+      Long portId)
       throws GenericServiceException {
 
     log.info("Inside addDefaultCargoDetailsForManagingSequence method!");
@@ -308,7 +311,8 @@ public class DischargeInformationService {
 
     CargoNominationOperationDetailsRequest.Builder cargoNominationRequestBuilder =
         CargoNominationOperationDetailsRequest.newBuilder()
-            .addAllCargoNominationIds(dischargeCargoNominationIdentifiers);
+            .addAllCargoNominationIds(dischargeCargoNominationIdentifiers)
+            .setPortId(portId);
 
     // Fetch default sequence numbers from discharge study cargo nomination operation details
     CargoNominationOperationDetailsResponse cargoNominationOperationResponse =

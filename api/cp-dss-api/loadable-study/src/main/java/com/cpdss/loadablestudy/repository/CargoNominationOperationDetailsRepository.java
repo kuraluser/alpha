@@ -33,6 +33,6 @@ public interface CargoNominationOperationDetailsRepository
    * @param cargoNominationIds list of cargo nomination identifiers
    * @return list of cargo nomination operation details entities
    */
-  List<CargoNominationPortDetails> findByCargoNomination_IdInAndIsActiveTrue(
+  List<CargoNominationPortDetails> findByCargoNomination_IdInAndPortIdAndIsActiveTrue(
       List<Long> cargoNominationIds);
 }

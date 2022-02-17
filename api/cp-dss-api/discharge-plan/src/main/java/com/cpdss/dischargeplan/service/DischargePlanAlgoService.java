@@ -523,7 +523,7 @@ public class DischargePlanAlgoService {
         });
     dischargeSequences.setDischargeDelays(dischargeDelays);
 
-    checkAndSetIsSequenceAltered(dischargeDelays, dischargeSequences);
+    checkAndSetIsSequenceAltered(dischargeDelays, dischargeSequences, entity.getPortXid());
     return dischargeSequences;
   }
 
@@ -532,9 +532,12 @@ public class DischargePlanAlgoService {
    *
    * @param dischargeDelaysList list of discharge delays
    * @param dischargeSequences discharge sequence object
+   * @param portXid
    */
   private void checkAndSetIsSequenceAltered(
-      List<DischargeDelays> dischargeDelaysList, DischargeSequences dischargeSequences)
+      List<DischargeDelays> dischargeDelaysList,
+      DischargeSequences dischargeSequences,
+      Long portXid)
       throws GenericServiceException {
 
     log.info("Inside checkAndSetIsSequenceAltered method!");
@@ -545,7 +548,8 @@ public class DischargePlanAlgoService {
             .addAllCargoNominationIds(
                 dischargeDelaysList.stream()
                     .map(DischargeDelays::getDsCargoNominationId)
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toList()))
+            .setPortId(portXid);
 
     // Fetch default sequence numbers from discharge study cargo nomination operation details
     LoadableStudy.CargoNominationOperationDetailsResponse cargoNominationOperationResponse =

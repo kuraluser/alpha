@@ -1850,6 +1850,7 @@ message DischargeCommingleReply {
 
 message CargoNominationOperationDetailsRequest {
 	repeated int64 cargoNominationIds = 2;
+	int64 portId = 3;
 }
 
 message CargoNominationOperationDetailsResponse {
