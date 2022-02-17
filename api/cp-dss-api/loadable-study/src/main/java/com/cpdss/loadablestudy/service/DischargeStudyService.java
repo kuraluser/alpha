@@ -2415,7 +2415,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       // Fetching cargo nomination operation details
       List<CargoNominationPortDetails> cargoNominationPortDetailsList =
           cargoNominationOperationRepository.findByCargoNomination_IdInAndPortIdAndIsActiveTrue(
-              request.getCargoNominationIdsList());
+              request.getCargoNominationIdsList(), request.getPortId());
       buildCargoNominationOperationDetailsResponse(cargoNominationPortDetailsList, replyBuilder);
       replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
 

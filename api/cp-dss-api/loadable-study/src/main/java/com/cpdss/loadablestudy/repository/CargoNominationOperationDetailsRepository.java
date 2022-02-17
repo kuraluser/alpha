@@ -31,8 +31,9 @@ public interface CargoNominationOperationDetailsRepository
    * Fetches cargo nomination operation details based on list of cargo nomination identifiers
    *
    * @param cargoNominationIds list of cargo nomination identifiers
+   * @param portId
    * @return list of cargo nomination operation details entities
    */
   List<CargoNominationPortDetails> findByCargoNomination_IdInAndPortIdAndIsActiveTrue(
-      List<Long> cargoNominationIds);
+      List<Long> cargoNominationIds, Long portId);
 }
