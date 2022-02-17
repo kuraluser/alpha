@@ -658,7 +658,7 @@ public class CargoService {
                             synopticalTable -> {
                               apiTempHistory.setLoadingPortId(synopticalTable.getPortXid());
                               LocalDateTime loadedDate = null;
-                              if (synopticalTable.getEtdActual() != null) {
+                              if (synopticalTable.getEtaActual() != null) {
                                 loadedDate = synopticalTable.getEtaActual();
                               } else if (synopticalTable.getLoadableStudyPortRotation() != null) {
                                 loadedDate =

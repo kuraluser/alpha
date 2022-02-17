@@ -143,7 +143,7 @@ public class LoadableStudyCargoService {
               ? "year"
               : sortBy.equals("loadedMonth")
                   ? "month"
-                  : sortBy.equals("loadedDay") ? "date" : "year";
+                  : sortBy.equals("loadedDay") ? "date" : "loadedDate";
     }
     builder.setSortBy(SORT_BY); // Required at LS
     builder.setOrderBy(orderBy); // Required at LS
