@@ -3150,6 +3150,15 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
       responseStatus.setStatus("SUCCESS");
       crewDetailsReply.setResponseStatus(responseStatus);
+    } catch (GenericServiceException e) {
+      log.error("Error in saveCrewDetails method ", e);
+      crewDetailsReply.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setHttpStatusCode(e.getStatus().value())
+              .setStatus(FAILED)
+              .build());
     } catch (Exception e) {
       log.error("Error in saveCrewDetails method ", e);
       ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();

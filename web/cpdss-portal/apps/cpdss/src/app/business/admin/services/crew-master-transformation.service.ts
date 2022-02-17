@@ -18,25 +18,22 @@ export class CrewMasterTransformationService {
   constructor() { }
 
   /**
-   * Method to set validation message for columns
-   * @return {*}
-   * @memberof CrewMasterTransformationService
-   */
-  setValidationErrorMessage() {
+  * Set validation Error to form control
+  * @memberof CrewMasterTransformationService
+  */
+   setValidationErrorMessage() {
     return {
-      portName: {
-        'required': 'PORT_MASTER_PORT_NAME_REQUIRED',
-        'maxlength': 'PORT_MASTER_PORT_NAME_MAX_LENGTH'
+      crewName: {
+        'required': 'ADD_CREW_POPUP_CREW_REQUIRED_ERROR',
+        'pattern': 'ADD_CREW_POPUP_VALIDATION_ERROR',
+        'maxlength': 'ROLE_NAME_MAX_LENGTH'
       },
-      portCode: {
-        'required': "PORT_MASTER_PORT_CODE_REQUIRED",
-        'maxlength': 'PORT_MASTER_PORT_CODE_MAX_LENGTH'
+      crewRankId: {
+        'required': 'ADD_CREW_POPUP_RANK_REQUIRED_ERROR'
       },
-      ambientTemperature: {
-        'required': "PORT_MASTER_AMBIENT_TEMPERATURE_REQUIRED",
-        'invalidNumber': "PORT_MASTER_AMBIENT_TEMPERATURE_INVALID"
-      },
-
+      vesselInformation: {
+        'required': 'ADD_CREW_POPUP_VESSEL_REQUIRED_ERROR'
+      }
     }
   }
   /**

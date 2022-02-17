@@ -83,4 +83,5 @@ public interface CommonErrorCodes {
   String E_CPDSS_DISCHARGING_STARTED = "392";
 
   String E_CPDSS_UNSUPPORTED_ATTACHMENT_FILE_TYPE = "333";
+  String E_CPDSS_CREW_NAME_EXISTS = "356";
 }

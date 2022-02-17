@@ -11,10 +11,16 @@ import { PermissionDirectiveModule } from '../../../shared/directives/permission
 import { TableModule } from 'primeng/table';
 import { CrewDetailsRoutingModule } from './crew-details-routing.module';
 import { CrewListingComponent } from './crew-listing/crew-listing.component';
+import { AddCrewComponent } from './add-crew/add-crew.component';
+import { MultiSelectModule } from 'primeng/multiselect';
 
-
+/**
+ * Module class for  CrewDetails
+ * @export
+ * @class CrewDetailsModule
+ */
 @NgModule({
-  declarations: [CrewListingComponent],
+  declarations: [CrewListingComponent, AddCrewComponent],
   imports: [
     CommonModule,
     DialogModule,
@@ -25,6 +31,7 @@ import { CrewListingComponent } from './crew-listing/crew-listing.component';
     PermissionDirectiveModule,
     TranslateModule,
     TableModule,
+    MultiSelectModule,
     DropdownModule,
     NumberDirectiveModule,
     CrewDetailsRoutingModule

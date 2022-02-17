@@ -12,7 +12,10 @@ import com.cpdss.vesselinfo.entity.CrewDetails;
 import com.cpdss.vesselinfo.entity.CrewRank;
 import com.cpdss.vesselinfo.entity.CrewVesselMapping;
 import com.cpdss.vesselinfo.entity.Vessel;
-import com.cpdss.vesselinfo.repository.*;
+import com.cpdss.vesselinfo.repository.CrewDetailsRepository;
+import com.cpdss.vesselinfo.repository.CrewRankRepository;
+import com.cpdss.vesselinfo.repository.CrewVesselMappingRepository;
+import com.cpdss.vesselinfo.repository.VesselRepository;
 import io.micrometer.core.instrument.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -155,10 +158,29 @@ public class CrewService {
       VesselInfo.CrewDetailed request, VesselInfo.CrewDetailsReply.Builder crewDetailsReply)
       throws GenericServiceException {
     CrewDetails crewDetails;
+    Specification<CrewDetails> specification =
+        Specification.where(
+            new CrewDetailsSpecification(new FilterCriteria("isActive", ":", true, "")));
+    specification =
+        specification.and(
+            new CrewDetailsSpecification(
+                new FilterCriteria("crewName", ":", request.getCrewName(), "")));
     if (request.getId() == 0) {
       crewDetails = new CrewDetails();
     } else {
       crewDetails = this.crewDetailsRepository.getById(request.getId());
+      specification =
+          specification.and(
+              new CrewDetailsSpecification(
+                  new FilterCriteria("id", "not-equal", request.getId(), "")));
+    }
+    Optional<CrewDetails> crewDetailsOptional = this.crewDetailsRepository.findOne(specification);
+    if (crewDetailsOptional.isPresent()) {
+      log.info("Crew Name already exist");
+      throw new GenericServiceException(
+          "Error in retrieving CrewRank",
+          CommonErrorCodes.E_CPDSS_CREW_NAME_EXISTS,
+          HttpStatusCode.BAD_REQUEST);
     }
     crewDetails.setIsActive(true);
     if (request.getId() == 0

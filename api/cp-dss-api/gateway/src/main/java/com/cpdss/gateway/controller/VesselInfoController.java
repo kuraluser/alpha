@@ -349,9 +349,8 @@ public class VesselInfoController {
       @RequestHeader HttpHeaders headers,
       @RequestBody CrewDetailed crewDetailed)
       throws CommonRestException {
-    CrewDetailedResponse response;
     try {
-      response = crewService.saveCrewDetails(CORRELATION_ID_HEADER, crewId, crewDetailed);
+      return crewService.saveCrewDetails(CORRELATION_ID_HEADER, crewId, crewDetailed);
     } catch (GenericServiceException e) {
       log.error("GenericServiceException when saving crew!", e);
       throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
@@ -364,7 +363,6 @@ public class VesselInfoController {
           e.getMessage(),
           e);
     }
-    return response;
   }
 
   /**

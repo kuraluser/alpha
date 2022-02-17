@@ -2321,6 +2321,24 @@
   "CREW_LIST_RANK": "Crew Rank",
   "SEARCH_CREW_RANK": "Search Crew Rank",
   "CREW_LIST_VESSEL": "Vessel",
-  "SEARCH_CREW_VESSEL": "Search Vessel"
+  "SEARCH_CREW_VESSEL": "Search Vessel",
+  "ADD_CREW_DETAILS": "Add Crew Details",
+  "ADD_CREW_NAME_PLACEHOLDER": "Add crew name",
+  "ADD_CREW_NAME_LABEL": "Crew Name",
+  "ADD_CREW_POPUP_CREW_REQUIRED_ERROR": "Crew name is required",
+  "ADD_CREW_POPUP_VALIDATION_ERROR": "Please enter valid crew name",
+  "CREW_NAME_MAX_LENGTH": "Maximum allowed character length is 30",
+  "ADD_CREW_POPUP_RANK_REQUIRED_ERROR": "Rank is required",
+  "ADD_CREW_POPUP_VESSEL_REQUIRED_ERROR": "Vessel is required",
+  "CREW_RANK": "Rank",
+  "CREW_RANK_PLACEHOLDER": "Add rank",
+  "CREW_NAME_ALREADY_EXIST": "This crew name already exist",
+  "CREW_VESSEL": "Vessel",
+  "CREW_VESSEL_PLACEHOLDER": "Add vessel",
+  "CREW_CANCEL_BUTTON": "Cancel",
+  "CREW_SAVE_BUTTON": "Save",
+  "NEW_CREW_CREATE_SUCCESS": "Success",
+  "NEW_CREW_CREATED_SUCCESSFULLY": "Crew created successfully",
+  "CREW_CREATE_ERROR": "Error"
 }
 

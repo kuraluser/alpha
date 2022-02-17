@@ -1,5 +1,4 @@
 import { ICountry, IResponseStatus, ITimeZone, ValueObject } from '../../../shared/models/common.model';
-import {IVessel} from '../../core/models/vessel-details.model';
 
 /**
  * Interface for crew details
@@ -62,4 +61,53 @@ export interface ICrewMasterListStateChange {
 export interface ICrewVesselMapping {
   id: number;
   vessel: IVessel
+}
+
+/**
+ * enum for crew pop operation
+ */
+export enum CREW_POPUP_SELECTIONMODE {
+  ADD = 'ADD',
+  EDIT = 'EDIT',
+  VIEW = 'VIEW'
+}
+
+/**
+ * Interface for crew details
+ *
+ * @export
+ * @interface CrewRank
+ */
+ export interface ICrewRank {
+  id: number;
+  rankName: string;
+  rankShortName: string;
+}
+
+/**
+ * interface for crew rank API response
+ */
+ export interface ICrewrankListResponse {
+  crewRankList: ICrewRank[];
+  responseStatus: IResponseStatus;
+}
+
+/**
+ * interface for crew save post body data
+ */
+export interface IPostCrewDetails {
+  id: number;
+  crewName: string;
+  crewRank: string;
+  crewRankId: number;
+  vesselInformation: ICrewVesselMapping[],
+}
+
+/**
+ * vessel interface
+ * useing for crew details
+ */
+export interface IVessel {
+  id: number,
+  name: string
 }

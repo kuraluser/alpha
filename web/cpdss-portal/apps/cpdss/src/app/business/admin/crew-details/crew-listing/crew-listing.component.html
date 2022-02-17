@@ -4,7 +4,7 @@
       <h5 class="main-head inline-block">{{'CREW_DETAILS_LISTING' | translate}}</h5>
     </div>
     <div class="col text-right">
-      <a id="portMasterAddPort" class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addCrew()"
+      <a id="portMasterAddCrew" class="btn btn-link icon-btn plus-icon-rounded float-right" (click)="addCrew(true,'ADD')"
         *cpdssPortalPermission="addCrewBtnPermissionContext">{{'ADD_CREW' | translate}}</a>
     </div>
   </div>
@@ -15,6 +15,8 @@
         [totalRecords]="totalRecords" [lazy]="true" (dataStateChange)="onDataStateChange($event)" [loading]="loading"
         [(currentPage)]="currentPage" [(first)]="first">
       </cpdss-portal-datatable>
+      <cpdss-portal-add-crew *ngIf="isAddCrew" (displayPopUp)="isAddCrew = $event" [vesselList]="vesselList"
+      [popupStatus] ="popupStatus" (crewSaved)="getCrewDetails()"></cpdss-portal-add-crew>
     </div>
   </div>
 </div>
