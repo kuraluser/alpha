@@ -165,7 +165,11 @@ public class LoadableQuantityService {
           this.onBoardQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy.get(), true);
       for (OnBoardQuantity obq : obqList) {
         obqSlopQuantity.add(
-            obq.getIsSlopTank() ? obq.getActualDepartureWeight() : obq.getSlopQuantity());
+            obq.getIsSlopTank()
+                ? (obq.getActualDepartureWeight() != null
+                    ? obq.getActualDepartureWeight()
+                    : BigDecimal.ZERO)
+                : (obq.getSlopQuantity() != null ? obq.getSlopQuantity() : BigDecimal.ZERO));
       }
 
       List<OnHandQuantity> onHandQuantityList =
