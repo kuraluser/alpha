@@ -327,17 +327,33 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       List<Long> patternIds,
       LoadableStudy.SynopticalTableReply.Builder replyBuilder) {
     if (!CollectionUtils.isEmpty(synopticalTableList) && !CollectionUtils.isEmpty(portRotations)) {
+      Optional<com.cpdss.loadablestudy.entity.LoadableStudy> confirmedLSOpt = Optional.empty();
+      if (loadableStudy.getPlanningTypeXId().equals(PLANNING_TYPE_DISCHARGE)) {
+        confirmedLSOpt =
+            this.loadableStudyRepository.findByIdAndIsActive(
+                loadableStudy.getConfirmedLoadableStudyId(), true);
+      }
       Long firstPortId = portRotations.get(0).getPortXId();
       // first port arrival condition data will be same as the data in obq
       List<OnBoardQuantity> obqEntities =
           this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
               loadableStudy, firstPortId, true);
+      confirmedLSOpt.ifPresent(
+          confirmedLS -> {
+            List<LoadableStudyPortRotation> portRotationList =
+                this.getSynopticalTablePortRotations(confirmedLS);
+            obqEntities.clear();
+            obqEntities.addAll(
+                this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
+                    confirmedLS, portRotationList.get(0).getPortXId(), true));
+          });
       // populating ohq data if its empty
       List<Long> portRotationIds =
           portRotations.stream().map(LoadableStudyPortRotation::getId).collect(Collectors.toList());
       List<Object[]> objects =
           this.onHandQuantityRepository.findByLoadableStudyIdAndPortRotationIdInAndIsActive(
               loadableStudy.getId(), portRotationIds, true);
+
       portRotations.forEach(
           portRotation -> {
             List<Long> ohqIds = new ArrayList<>();
@@ -358,6 +374,11 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       // fething entire ohq entities based on loadable study
       List<OnHandQuantity> ohqEntities =
           this.onHandQuantityRepository.findByLoadableStudyAndIsActive(loadableStudy, true);
+      confirmedLSOpt.ifPresent(
+          confirmedLS -> {
+            ohqEntities.addAll(
+                this.onHandQuantityRepository.findByLoadableStudyAndIsActive(confirmedLS, true));
+          });
       List<LoadableStudy.SynopticalRecord> records = new ArrayList<>();
       List<com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails> cargoDetails =
           new ArrayList<>();
