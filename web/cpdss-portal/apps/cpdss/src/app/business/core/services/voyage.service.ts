@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonApiService } from '../../../shared/services/common/common-api.service';
+import { ICrewMasterListResponse } from '../../admin/models/crew.model';
 import { IVoyageResponse, NewVoyageModel, NewVoyageResponseModel, Voyage } from '../models/common.model';
 
 @Injectable()
@@ -52,7 +53,23 @@ export class VoyageService {
       },
       selectEndDateTimeZone: {
         'required': 'VOYAGE_POPUP_END_DATE_TIME_ZONE_REQUIRED_ERROR'
+      },
+      captain: {
+        'required': 'VOYAGE_POPUP_CAPTIAN_REQUIRED_ERROR'
+      },
+      chiefOfficer: {
+        'required': 'VOYAGE_POPUP_CHIEF_OFFICER_REQUIRED_ERROR'
       }
     }
   }
+
+  /**
+   *
+   * @param vesselId to get crewdetails
+   * @returns
+   */
+  getCrewDetails(vesselId:number){
+    return  this.commonApiService.get<ICrewMasterListResponse>(`/master/crewdetails?vesselId=${vesselId}`);
+  }
+
 }

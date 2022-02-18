@@ -2346,6 +2346,10 @@
   "CREW_SAVE_BUTTON": "Save",
   "NEW_CREW_CREATE_SUCCESS": "Success",
   "NEW_CREW_CREATED_SUCCESSFULLY": "Crew created successfully",
-  "CREW_CREATE_ERROR": "Error"
+  "CREW_CREATE_ERROR": "Error",
+  "VESSEL_CAPTIAN_PLACEHOLDER": "Add captian",
+  "VESSEL_CHIEF_OFFICER_PLACEHOLDER": "Add chief officer",
+  "VOYAGE_POPUP_CAPTIAN_REQUIRED_ERROR": "Captian is required",
+  "VOYAGE_POPUP_CHIEF_OFFICER_REQUIRED_ERROR": "Chief officer is required"
 }
 

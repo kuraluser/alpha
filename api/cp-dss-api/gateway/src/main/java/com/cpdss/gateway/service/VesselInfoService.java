@@ -6,36 +6,43 @@ import static org.springframework.util.StringUtils.isEmpty;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.Common;
 import com.cpdss.common.generated.VesselInfo;
-import com.cpdss.common.generated.VesselInfo.LoadLineDetail;
-import com.cpdss.common.generated.VesselInfo.LoadingInfoRulesRequest;
-import com.cpdss.common.generated.VesselInfo.ParameterValue;
-import com.cpdss.common.generated.VesselInfo.VesselAlgoReply;
-import com.cpdss.common.generated.VesselInfo.VesselAlgoRequest;
-import com.cpdss.common.generated.VesselInfo.VesselDetail;
-import com.cpdss.common.generated.VesselInfo.VesselDetaildInfoReply;
-import com.cpdss.common.generated.VesselInfo.VesselIdRequest;
-import com.cpdss.common.generated.VesselInfo.VesselParticulars;
-import com.cpdss.common.generated.VesselInfo.VesselReply;
-import com.cpdss.common.generated.VesselInfo.VesselRequest;
-import com.cpdss.common.generated.VesselInfo.VesselRuleReply;
+import com.cpdss.common.generated.VesselInfo.*;
 import com.cpdss.common.generated.VesselInfo.VesselRuleRequest;
-import com.cpdss.common.generated.VesselInfo.VesselTankDetail;
-import com.cpdss.common.generated.VesselInfo.VesselTankInfo;
-import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest;
 import com.cpdss.common.generated.VesselInfo.VesselsInfoRequest.Builder;
-import com.cpdss.common.generated.VesselInfo.VesselsInformation;
-import com.cpdss.common.generated.VesselInfo.VesselsInformationReply;
 import com.cpdss.common.generated.VesselInfoServiceGrpc.VesselInfoServiceBlockingStub;
 import com.cpdss.common.redis.CommonKeyValueStore;
-import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.rest.CommonSuccessResponse;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.BMAndSF;
+import com.cpdss.gateway.domain.BendingMomentShearingForceType3;
+import com.cpdss.gateway.domain.BendingMomentType1;
+import com.cpdss.gateway.domain.BendingMomentType2;
+import com.cpdss.gateway.domain.BendingMomentType4;
+import com.cpdss.gateway.domain.CalculationSheet;
+import com.cpdss.gateway.domain.CalculationSheetTankGroup;
+import com.cpdss.gateway.domain.HydrostaticData;
+import com.cpdss.gateway.domain.MinMaxValuesForBMAndSf;
+import com.cpdss.gateway.domain.SelectableParameter;
+import com.cpdss.gateway.domain.ShearingForceType1;
+import com.cpdss.gateway.domain.ShearingForceType2;
+import com.cpdss.gateway.domain.ShearingForceType4;
+import com.cpdss.gateway.domain.StationValues;
+import com.cpdss.gateway.domain.UllageDetails;
+import com.cpdss.gateway.domain.UllageTrimCorrection;
+import com.cpdss.gateway.domain.VesselDraftCondition;
+import com.cpdss.gateway.domain.VesselTankResponse;
+import com.cpdss.gateway.domain.VesselTankTCG;
 import com.cpdss.gateway.domain.keycloak.KeycloakUser;
 import com.cpdss.gateway.domain.loadingplan.VesselParticularsForExcel;
 import com.cpdss.gateway.domain.user.UserStatusValue;
 import com.cpdss.gateway.domain.user.UserType;
 import com.cpdss.gateway.domain.vessel.*;
+import com.cpdss.gateway.domain.vessel.PumpType;
+import com.cpdss.gateway.domain.vessel.TankType;
+import com.cpdss.gateway.domain.vessel.VesselCowParameters;
+import com.cpdss.gateway.domain.vessel.VesselPump;
+import com.cpdss.gateway.domain.vessel.VesselPumpTankMapping;
 import com.cpdss.gateway.entity.RoleUserMapping;
 import com.cpdss.gateway.entity.UserStatus;
 import com.cpdss.gateway.entity.Users;
@@ -172,28 +179,19 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
         reply.getVesselsList().stream()
             .map(VesselDetail::getCaptainId)
             .collect(Collectors.toSet()));
-    List<Users> userList = new ArrayList<Users>();
-    userIdList.forEach(
-        userId -> {
-          Users user = new Users();
-          KeycloakUser kuser = this.getData(userId.toString());
-          log.debug("User data from cache: {}", kuser);
+    VesselInfo.VesselsInfoRequest.Builder crewDetailsBuilder =
+        VesselInfo.VesselsInfoRequest.newBuilder();
+    crewDetailsBuilder.addAllCrewXIds(userIdList);
+    VesselInfo.CrewDetailedReply crewReply =
+        vesselInfoGrpcService.getAllCrewDetailsByRank(crewDetailsBuilder.build());
+    Map<Long, String> idNameMap = new HashMap<>();
+    crewReply
+        .getCrewDetailsList()
+        .forEach(
+            crewDetailed -> {
+              idNameMap.put(crewDetailed.getId(), crewDetailed.getCrewName());
+            });
 
-          if (null == kuser) {
-            //    Get user data from repository
-            user = this.usersRepository.findByIdAndIsActive(userId, true);
-          } else {
-            user.setId(kuser.getUserId());
-            user.setFirstName(kuser.getFirstName());
-            user.setLastName(kuser.getLastName());
-            user.setUsername(kuser.getUsername());
-            user.setEmail(kuser.getEmail());
-            user.setActive(true);
-          }
-          if (user != null) {
-            userList.add(user);
-          }
-        });
     //    List<Users> userList = this.usersRepository.findByIdIn(new ArrayList<>(userIdList));
     for (VesselDetail grpcReply : reply.getVesselsList()) {
       Vessel vessel = new Vessel();
@@ -206,59 +204,8 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
       vessel.setCharterer(grpcReply.getCharterer());
       vessel.setHasLoadicator(grpcReply.getHasLoadicator());
       vessel.setKeelToMastHeight(grpcReply.getKeelToMastHeight());
-
-      if (this.isShip()) {
-        Optional<Users> userOpt =
-            userList.stream().filter(item -> item.getId().equals(vessel.getCaptainId())).findAny();
-        if (!userOpt.isPresent()) {
-          throw new GenericServiceException(
-              "Captain info not found in database",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
-        }
-        vessel.setCaptainName(userOpt.get().getFirstName() + " " + userOpt.get().getLastName());
-        userOpt =
-            userList.stream()
-                .filter(item -> item.getId().equals(vessel.getChiefOfficerId()))
-                .findAny();
-        if (!userOpt.isPresent()) {
-          throw new GenericServiceException(
-              "Chief officer info not found in database",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
-        }
-        vessel.setChiefOfficerName(
-            userOpt.get().getFirstName() + " " + userOpt.get().getLastName());
-      } else {
-        List<User> shoreUsers = this.findUsers(UserType.CLOUD);
-        Optional<User> userOptCaptain =
-            shoreUsers.stream()
-                .filter(item -> item.getId().equals(vessel.getCaptainId()))
-                .findAny();
-        if (!userOptCaptain.isPresent()) {
-          throw new GenericServiceException(
-              "Captain info not found in database",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
-        }
-        vessel.setCaptainName(
-            userOptCaptain.get().getFirstName() + " " + userOptCaptain.get().getLastName());
-        Optional<Users> userOptChiefOfficer =
-            userList.stream()
-                .filter(item -> item.getId().equals(vessel.getChiefOfficerId()))
-                .findAny();
-        if (!userOptChiefOfficer.isPresent()) {
-          throw new GenericServiceException(
-              "Chief officer info not found in database",
-              CommonErrorCodes.E_GEN_INTERNAL_ERR,
-              HttpStatusCode.INTERNAL_SERVER_ERROR);
-        }
-        vessel.setChiefOfficerName(
-            userOptChiefOfficer.get().getFirstName()
-                + " "
-                + userOptChiefOfficer.get().getLastName());
-      }
-
+      vessel.setCaptainName(idNameMap.get(grpcReply.getCaptainId()));
+      vessel.setChiefOfficerName(idNameMap.get(grpcReply.getCheifOfficerId()));
       vessel.setLoadlines(new ArrayList<>());
       for (LoadLineDetail detail : grpcReply.getLoadLinesList()) {
         LoadLine loadLine = new LoadLine();

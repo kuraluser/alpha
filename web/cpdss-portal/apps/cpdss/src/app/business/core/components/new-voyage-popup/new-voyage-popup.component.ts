@@ -1,6 +1,6 @@
 import { Input, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IVessel } from '../../models/vessel-details.model';
@@ -14,6 +14,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { dateCompareValidator } from '../../directives/date-compare-validator.directive';
 import { specialCharacterValidator } from '../../directives/special-character-validator.directive';
 import { IDateTimeFormatOptions, ITimeZone } from '../../../../shared/models/common.model';
+import { ICrewMasterList, ICrewMasterListResponse } from '../../../admin/models/crew.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Component for new voyage popup
@@ -23,7 +26,7 @@ import { IDateTimeFormatOptions, ITimeZone } from '../../../../shared/models/com
   templateUrl: './new-voyage-popup.component.html',
   styleUrls: ['./new-voyage-popup.component.scss']
 })
-export class NewVoyagePopupComponent implements OnInit {
+export class NewVoyagePopupComponent implements OnInit, OnDestroy {
   @Input() vesselDetails: IVessel;
   @Output() displayPopUp = new EventEmitter<boolean>();
 
@@ -39,6 +42,9 @@ export class NewVoyagePopupComponent implements OnInit {
   endDateTimeZone: ITimeZone;
   createVoyageDateFormat: string;
   datePlaceHolder: string;
+  chiefOfficerList:ICrewMasterList[];
+  captianList:ICrewMasterList[];
+  private onDestroy$: Subject<void> = new Subject<void>();
 
   constructor(private fb: FormBuilder, private router: Router,
     private voyageApiService: VoyageService,
@@ -48,6 +54,7 @@ export class NewVoyagePopupComponent implements OnInit {
     private ngxSpinnerService: NgxSpinnerService) { }
 
   async ngOnInit(): Promise<void> {
+    this.getCrewDetailsList();
     this.date = new Date();
     this.errorMessages = this.voyageApiService.setValidationErrorMessage();
     this.createVoyageDateFormat = this.timeZoneTransformationService.getMappedConfigurationDateFormat(AppConfigurationService.settings.dateFormat);
@@ -57,6 +64,7 @@ export class NewVoyagePopupComponent implements OnInit {
 
     this.getVesselInfo();
     this.getTimeZoneList();
+    console.log("captain",this.captianList,"chief",this.chiefOfficerList);
   }
 
   /**
@@ -75,8 +83,8 @@ export class NewVoyagePopupComponent implements OnInit {
     this.isLoading = true;
     const dtFormatOpts: IDateTimeFormatOptions = { customFormat: 'DD-MM-YYYY HH:mm' };
     this.newVoyageModel = new NewVoyageModel();
-    this.newVoyageModel.captainId = this.vesselDetails?.captainId;
-    this.newVoyageModel.chiefOfficerId = this.vesselDetails?.chiefOfficerId;
+    this.newVoyageModel.captainId =  this.newVoyageForm.value.captain.id;
+    this.newVoyageModel.chiefOfficerId =  this.newVoyageForm.value.chiefOfficer.id;
     this.newVoyageModel.voyageNo = this.newVoyageForm.value.voyageNo;
     this.newVoyageModel.startDate = this.newVoyageForm.value.start_date ? this.convertToTimeZoneDT(this.newVoyageForm.value.start_date, this.startDateTimeZone.id) : '';
     this.newVoyageModel.endDate = this.newVoyageForm.value.end_date ? this.convertToTimeZoneDT(this.newVoyageForm.value.end_date, this.endDateTimeZone.id) : '';
@@ -123,8 +131,8 @@ export class NewVoyagePopupComponent implements OnInit {
    */
   async getVesselInfo() {
     this.newVoyageForm = this.fb.group({
-      'captain': [this.vesselDetails?.captainName],
-      'chiefOfficer': [this.vesselDetails?.chiefOfficerName],
+      'captain': [null, [Validators.required]],
+      'chiefOfficer': [null,[Validators.required]],
       'voyageNo': this.fb.control(null, [Validators.required, specialCharacterValidator, Validators.maxLength(10)]),
       'start_date': this.fb.control(null, [dateCompareValidator('end_date', '<')]),
       'end_date': this.fb.control(null, [dateCompareValidator('start_date', '>')]),
@@ -211,4 +219,29 @@ export class NewVoyagePopupComponent implements OnInit {
       return this.timeZoneTransformationService.revertZoneTimetoUTC(dateTime, selectedTimeZone?.offsetValue);
     }
   }
+
+  /**
+   * To get crew details
+   */
+  async getCrewDetailsList() {
+      const response = await this.voyageApiService.getCrewDetails(this.vesselDetails?.id).toPromise();
+      if(response.responseStatus.status === '200'){
+        this.captianList =  response.crewDetails.filter((element :ICrewMasterList) =>
+             element.crewRank === 'Captain'
+          );
+          this.chiefOfficerList =  response.crewDetails.filter((element :ICrewMasterList) =>
+           element.crewRank === 'Chief Officer'
+          );
+      }
+  }
+
+  /**
+   * To destroy the component
+   */
+   ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+    this.onDestroy$.unsubscribe();
+  }
+
 }

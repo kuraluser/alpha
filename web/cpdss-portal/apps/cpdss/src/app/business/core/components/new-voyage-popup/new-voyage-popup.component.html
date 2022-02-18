@@ -9,15 +9,28 @@
           <div class="form-group row">
             <label for="captain_name" class="col-md-3 col-form-label text-secondary">{{'CAPTAIN' | translate}}</label>
             <div class="col-md-6">
-              <input type="text" readonly class="form-control-plaintext" formControlName="captain" id="captain_name">
+              <p-dropdown  styleClass="form-control" [options]="captianList" appendTo="body" id="captain_id"
+                formControlName="captain" optionLabel="crewName"
+                placeholder="{{'VESSEL_CAPTIAN_PLACEHOLDER' | translate}}" focusTrap resetFilterOnHide="true"
+                [filter]="true">
+              </p-dropdown>
             </div>
+            <cpdss-portal-validation-error [errors]="fieldError('captain')" [errorMessages]="errorMessages.captain">
+            </cpdss-portal-validation-error>
           </div>
           <div class="form-group row">
             <label for="chief_name" class="col-md-3 col-form-label text-secondary">{{'CHIEF_OFFICER' |
               translate}}</label>
-            <div class="col-md-3">
-              <input type="text" readonly class="form-control-plaintext" formControlName="chiefOfficer" id="chief_name">
+            <div class="col-md-6">
+              <p-dropdown styleClass="form-control" [options]="chiefOfficerList" appendTo="body" id="chief_id"
+                formControlName="chiefOfficer" optionLabel="crewName"
+                placeholder="{{'VESSEL_CHIEF_OFFICER_PLACEHOLDER' | translate}}" focusTrap resetFilterOnHide="true"
+                [filter]="true">
+              </p-dropdown>
             </div>
+            <cpdss-portal-validation-error [errors]="fieldError('chiefOfficer')"
+              [errorMessages]="errorMessages.chiefOfficer">
+            </cpdss-portal-validation-error>
           </div>
           <div class="form-group row">
             <label for="voyage_no_label" class="col-md-3 col-form-label text-secondary">{{'VOYAGE_NO' |
@@ -37,7 +50,8 @@
             </div>
           </div>
           <div class="form-group row">
-            <label for="start_date_label" class="col-md-3 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
+            <label for="start_date_label"
+              class="col-md-3 col-form-label text-secondary">{{'VOYAGE_POP_UP_START_DATE_LABEL' |
               translate}}</label>
             <div class="col-9">
               <div class="row">
@@ -51,7 +65,8 @@
                         <p-footer>
                           <div class="row">
                             <div class="col text-center">
-                              <button class="btn btn-main" (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                              <button class="btn btn-main"
+                                (click)="onDateSelect(startDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
                                 | translate}}</button>
                             </div>
                           </div>
@@ -105,8 +120,9 @@
                         <p-footer>
                           <div class="row">
                             <div class="col text-center">
-                              <button class="btn btn-main" (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
-                            | translate}}</button>
+                              <button class="btn btn-main"
+                                (click)="onDateSelect(endDateTime)">{{'DATA_TABLE_OK_BUTTON_LABEL'
+                                | translate}}</button>
                             </div>
                           </div>
                         </p-footer>
