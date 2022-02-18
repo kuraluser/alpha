@@ -279,6 +279,7 @@ export interface ISubTotal {
   ballast: string;
   constant: string;
   others: string;
+  obqSlops?: string;
 }
 
 /**

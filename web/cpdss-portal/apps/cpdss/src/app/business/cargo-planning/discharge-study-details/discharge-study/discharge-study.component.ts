@@ -369,7 +369,7 @@ export class DischargeStudyComponent implements OnInit {
       mtValidation = [Validators.required, dischargeStudyCargoQuantityValidator];
       bblsValidation = [Validators.required, dischargeStudyCargoQuantityValidator];
     }
-    const isSequenceDisable = (cargo.mode?.value === 2 && !cargo.quantity);
+    const isSequenceDisable = (cargo.mode?.value?.id === 2 && !cargo.quantity);
     return this.fb.group({
       emptyMaxNoOfTanks: this.fb.control(cargo.emptyMaxNoOfTanks.value),
       sequenceNo : this.fb.control({value: cargo.sequenceNo.value, disabled: isSequenceDisable}, [Validators.required, Validators.min(1), numberValidator(0, 4, false),sequenceNumberValidator]),

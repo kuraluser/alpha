@@ -77,7 +77,7 @@
                             <div class="col error-column text-center"></div>
                     </div>
 
-                    
+
 
                     <div class="row form-group">
                         <label for="loadable_quantity_fo_onboard"
@@ -152,6 +152,17 @@
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
                         <div class="col error-column text-center"></div>
+                    </div>
+
+                    <div class="row form-group">
+                        <label for="loadable_quantity_slops_obq" class="col col-form-label">{{'LOADABLE_QUANTITY_OBQ_SLOPS' |
+                            translate}}</label>
+                        <div class="col pt-5">
+                          <label id="loadable_quantity_slops_obq">{{getControlLabel('obqSlops')?.toString() | number :
+                            '1.2-2'}}</label>
+                        </div>
+                        <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_MT' | translate }}</div>
+                        <div class="col error-column"></div>
                     </div>
 
                     <div class="row form-group">
@@ -303,9 +314,9 @@
                         <label for="loadable_quantity_running_hours"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_HOURS' | translate}}</label>
                         <div class="col">
-                            <input type="text" 
-                                id="loadable_quantity_running_hours" class="form-control" [value]="getControlLabel('runningHours')| number :'1.2-2'" 
-                               
+                            <input type="text"
+                                id="loadable_quantity_running_hours" class="form-control" [value]="getControlLabel('runningHours')| number :'1.2-2'"
+
                                 (change)="getRunningDays()" readonly>
                         </div>
                         <div class="col unit-column">{{'LOADABLE_QUANTITY_UNIT_HOURS' | translate }}</div>
@@ -319,7 +330,7 @@
                         <label for="loadable_quantity_running_days"
                             class="col col-form-label">{{'LOADABLE_QUANTITY_RUNNING_DAYS' | translate}}</label>
                         <div class="col">
-                            <input type="text" 
+                            <input type="text"
                                 id="loadable_quantity_running_days" class="form-control" formControlName="runningDays"
                                 (change)="getFoConsumptionInSz()" readonly>
                         </div>

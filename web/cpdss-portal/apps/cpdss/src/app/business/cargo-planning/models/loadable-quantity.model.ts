@@ -29,6 +29,7 @@ export class LodadableQuantity {
     public estDOOnBoard: string;
     public estFreshWaterOnBoard?: string;
     public otherIfAny: string;
+    public obqSlops?: string;
     public distanceFromLastPort?: string;
     public vesselAverageSpeed?: string;
     public runningHours?: string;

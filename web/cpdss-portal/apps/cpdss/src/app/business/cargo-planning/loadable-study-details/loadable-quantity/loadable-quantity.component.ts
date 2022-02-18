@@ -139,6 +139,7 @@ export class LoadableQuantityComponent implements OnInit {
         freshWaterOnboard: [{ value: '', disabled: true }, [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         ballast: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         constant: ['', [Validators.required, numberValidator(2)]],
+        obqSlops: ['', [Validators.required, numberValidator(2)]],
         others: ['', [Validators.required, numberValidator(2, 7), Validators.min(0)]],
         subTotal: ['', numberValidator(2, 7)],
         totalQuantity: ['', numberValidator(2, 7)],
@@ -199,6 +200,7 @@ export class LoadableQuantityComponent implements OnInit {
     this.loadableQuantityForm.controls.freshWaterOnboard.setValue(Number(this.loadableQuantity.estFreshWaterOnBoard));
     this.loadableQuantityForm.controls.ballast.setValue(this.loadableQuantity.ballast);
     this.loadableQuantityForm.controls.constant.setValue(this.loadableQuantity.constant);
+    this.loadableQuantityForm.controls.obqSlops.setValue(this.loadableQuantity.obqSlops === '' ? 0 : this.loadableQuantity.obqSlops);
     this.loadableQuantityForm.controls.others.setValue(this.loadableQuantity.otherIfAny === '' ? 0 : this.loadableQuantity.otherIfAny);
     this.loadableQuantityForm.controls.subTotal.setValue(this.loadableQuantity.subTotal);
     this.loadableQuantityForm.controls.totalQuantity.setValue(this.loadableQuantity.totalQuantity);
@@ -259,6 +261,7 @@ export class LoadableQuantityComponent implements OnInit {
           estFreshWaterOnBoard: this.loadableQuantityForm.controls.freshWaterOnboard.value,
           ballast: this.loadableQuantityForm.controls.ballast.value,
           constant: this.loadableQuantityForm.controls.constant.value,
+          obqSlops: this.loadableQuantityForm.controls.obqSlops.value,
           otherIfAny: this.loadableQuantityForm.controls.others.value,
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value,
 
@@ -290,6 +293,7 @@ export class LoadableQuantityComponent implements OnInit {
           estFreshWaterOnBoard: this.loadableQuantityForm.controls.freshWaterOnboard.value,
           ballast: this.loadableQuantityForm.controls.ballast.value,
           constant: this.loadableQuantityForm.controls.constant.value,
+          obqSlops: this.loadableQuantityForm.controls.obqSlops.value,
           otherIfAny: this.loadableQuantityForm.controls.others.value,
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value
         }
@@ -313,6 +317,7 @@ export class LoadableQuantityComponent implements OnInit {
           estFreshWaterOnBoard: this.loadableQuantityForm.controls.freshWaterOnboard.value,
           ballast: this.loadableQuantityForm.controls.ballast.value,
           constant: this.loadableQuantityForm.controls.constant.value,
+          obqSlops: this.loadableQuantityForm.controls.obqSlops.value,
           otherIfAny: this.loadableQuantityForm.controls.others.value,
           totalQuantity: this.loadableQuantityForm.controls.totalQuantity.value,
         }
@@ -442,6 +447,7 @@ export class LoadableQuantityComponent implements OnInit {
       freshWaterOnboard: this.loadableQuantityForm.get('freshWaterOnboard').value,
       ballast: this.loadableQuantityForm.get('ballast').value,
       constant: this.loadableQuantityForm.get('constant').value,
+      obqSlops: this.loadableQuantityForm.get('obqSlops').value,
       others: this.loadableQuantityForm.get('others').value
     }
     subTotal = Number(this.loadableStudyDetailsTransformationService.getSubTotal(data));
@@ -551,6 +557,7 @@ export class LoadableQuantityComponent implements OnInit {
       (this.loadableQuantityForm.controls.freshWaterOnboard.value ? Number(this.loadableQuantityForm.controls.freshWaterOnboard.value) : 0) +
       (this.loadableQuantityForm.controls.ballast.value ? Number(this.loadableQuantityForm.controls.ballast.value) : 0) +
       (this.loadableQuantityForm.controls.constant.value ? Number(this.loadableQuantityForm.controls.constant.value) : 0) +
+      (this.loadableQuantityForm.controls.obqSlops.value ? Number(this.loadableQuantityForm.controls.obqSlops.value) : 0) +
       (this.loadableQuantityForm.controls.others.value ? Number(this.loadableQuantityForm.controls.others.value) : 0);
   }
   /**

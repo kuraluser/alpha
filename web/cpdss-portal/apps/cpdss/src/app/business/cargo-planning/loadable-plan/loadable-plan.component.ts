@@ -513,6 +513,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
         ballast: loadableQuantity.ballast,
         constant: loadableQuantity.constant,
+        obqSlops: loadableQuantity.obqSlops === '' ? 0 : loadableQuantity.obqSlops,
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
       }
       subTotal = Number(this.loadablePlanTransformationService.getSubTotal(data));
@@ -529,6 +530,7 @@ export class LoadablePlanComponent implements OnInit, OnDestroy {
         freshWaterOnboard: loadableQuantity.estFreshWaterOnBoard,
         ballast: loadableQuantity.ballast,
         constant: loadableQuantity.constant,
+        obqSlops: loadableQuantity.obqSlops === '' ? 0 : loadableQuantity.obqSlops,
         others: loadableQuantity.otherIfAny === '' ? 0 : loadableQuantity.otherIfAny
       }
       subTotal = Number(this.loadablePlanTransformationService.getSubTotal(data));
