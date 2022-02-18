@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -173,9 +174,16 @@ public class DischargeInformationService {
         portRotationDetailReply.getPortRotationDetail();
     dischargeDetails.setEta(LocalDateTime.parse(portRotationDetail.getEta()));
     dischargeDetails.setEtd(LocalDateTime.parse(portRotationDetail.getEtd()));
+
+    // Setting default common date with date from eta
     if (dischargeDetails.getCommonDate() == null
         || String.valueOf(dischargeDetails.getCommonDate()).isEmpty()) {
       dischargeDetails.setCommonDate(LocalDate.from(dischargeDetails.getEta()));
+    }
+
+    // Setting default start time with time from eta
+    if (dischargeDetails.getStartTime() == null || dischargeDetails.getStartTime().isEmpty()) {
+      dischargeDetails.setStartTime(String.valueOf(LocalTime.from(dischargeDetails.getEta())));
     }
 
     PortInfo.PortReply portReply =

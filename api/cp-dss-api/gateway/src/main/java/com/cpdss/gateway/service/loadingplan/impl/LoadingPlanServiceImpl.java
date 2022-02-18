@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -285,9 +286,16 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
         portRotationDetailReply.getPortRotationDetail();
     loadingDetails.setEta(LocalDateTime.parse(portRotationDetail.getEta()));
     loadingDetails.setEtd(LocalDateTime.parse(portRotationDetail.getEtd()));
+
+    // Setting default common date with date from eta
     if (loadingDetails.getCommonDate() == null
         || String.valueOf(loadingDetails.getCommonDate()).isEmpty()) {
       loadingDetails.setCommonDate(LocalDate.from(loadingDetails.getEta()));
+    }
+
+    // Setting default start time with time from eta
+    if (loadingDetails.getStartTime() == null || loadingDetails.getStartTime().isEmpty()) {
+      loadingDetails.setStartTime(String.valueOf(LocalTime.from(loadingDetails.getEta())));
     }
 
     PortInfo.PortReply portReply =
