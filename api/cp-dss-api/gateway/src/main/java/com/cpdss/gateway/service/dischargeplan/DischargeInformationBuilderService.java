@@ -800,7 +800,10 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(berth.getMaxShipDepth())
               .ifPresent(depth -> builder.setDepth(String.valueOf(depth)));
           Optional.ofNullable(berth.getLineDisplacement()).ifPresent(builder::setLineDisplacement);
-          Optional.ofNullable(berth.getAirPurge()).ifPresent(builder::setAirPurge);
+
+          // Regarding DSS-5899 : cargo circulation and air purge check boxes combined to a single
+          // field in UI. But algo needs both flags.
+          Optional.ofNullable(berth.getAirPurge()).ifPresent(builder::setCargoCirculation);
           Optional.ofNullable(berth.getCargoCirculation()).ifPresent(builder::setCargoCirculation);
           Optional.ofNullable(berth.getDisplacement())
               .ifPresent(displacement -> builder.setDisplacement(displacement.toString()));
