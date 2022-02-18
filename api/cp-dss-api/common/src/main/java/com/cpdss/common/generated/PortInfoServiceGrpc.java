@@ -795,6 +795,52 @@ public final class PortInfoServiceGrpc {
     return getDeleteCargoPortMappingsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.Country,
+          com.cpdss.common.generated.PortInfo.CountryDetailReply>
+      getGetACountryMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetACountry",
+      requestType = com.cpdss.common.generated.PortInfo.Country.class,
+      responseType = com.cpdss.common.generated.PortInfo.CountryDetailReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.PortInfo.Country,
+          com.cpdss.common.generated.PortInfo.CountryDetailReply>
+      getGetACountryMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.PortInfo.Country,
+            com.cpdss.common.generated.PortInfo.CountryDetailReply>
+        getGetACountryMethod;
+    if ((getGetACountryMethod = PortInfoServiceGrpc.getGetACountryMethod) == null) {
+      synchronized (PortInfoServiceGrpc.class) {
+        if ((getGetACountryMethod = PortInfoServiceGrpc.getGetACountryMethod) == null) {
+          PortInfoServiceGrpc.getGetACountryMethod =
+              getGetACountryMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.PortInfo.Country,
+                          com.cpdss.common.generated.PortInfo.CountryDetailReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetACountry"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.Country.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.PortInfo.CountryDetailReply
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new PortInfoServiceMethodDescriptorSupplier("GetACountry"))
+                      .build();
+        }
+      }
+    }
+    return getGetACountryMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static PortInfoServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<PortInfoServiceStub> factory =
@@ -983,6 +1029,15 @@ public final class PortInfoServiceGrpc {
           getDeleteCargoPortMappingsMethod(), responseObserver);
     }
 
+    /** */
+    public void getACountry(
+        com.cpdss.common.generated.PortInfo.Country request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CountryDetailReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetACountryMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1096,6 +1151,13 @@ public final class PortInfoServiceGrpc {
                       com.cpdss.common.generated.PortInfo.CargoPortRequest,
                       com.cpdss.common.generated.PortInfo.CargoPortReply>(
                       this, METHODID_DELETE_CARGO_PORT_MAPPINGS)))
+          .addMethod(
+              getGetACountryMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.PortInfo.Country,
+                      com.cpdss.common.generated.PortInfo.CountryDetailReply>(
+                      this, METHODID_GET_ACOUNTRY)))
           .build();
     }
   }
@@ -1287,6 +1349,17 @@ public final class PortInfoServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getACountry(
+        com.cpdss.common.generated.PortInfo.Country request,
+        io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CountryDetailReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetACountryMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1412,6 +1485,13 @@ public final class PortInfoServiceGrpc {
         com.cpdss.common.generated.PortInfo.CargoPortRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteCargoPortMappingsMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.PortInfo.CountryDetailReply getACountry(
+        com.cpdss.common.generated.PortInfo.Country request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetACountryMethod(), getCallOptions(), request);
     }
   }
 
@@ -1560,6 +1640,14 @@ public final class PortInfoServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteCargoPortMappingsMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.PortInfo.CountryDetailReply>
+        getACountry(com.cpdss.common.generated.PortInfo.Country request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetACountryMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_PORT_INFO = 0;
@@ -1578,6 +1666,7 @@ public final class PortInfoServiceGrpc {
   private static final int METHODID_GET_PORT_INFO_DETAILED = 13;
   private static final int METHODID_SAVE_PORT_INFO = 14;
   private static final int METHODID_DELETE_CARGO_PORT_MAPPINGS = 15;
+  private static final int METHODID_GET_ACOUNTRY = 16;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1694,6 +1783,12 @@ public final class PortInfoServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CargoPortReply>)
                   responseObserver);
           break;
+        case METHODID_GET_ACOUNTRY:
+          serviceImpl.getACountry(
+              (com.cpdss.common.generated.PortInfo.Country) request,
+              (io.grpc.stub.StreamObserver<com.cpdss.common.generated.PortInfo.CountryDetailReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1774,6 +1869,7 @@ public final class PortInfoServiceGrpc {
                       .addMethod(getGetPortInfoDetailedMethod())
                       .addMethod(getSavePortInfoMethod())
                       .addMethod(getDeleteCargoPortMappingsMethod())
+                      .addMethod(getGetACountryMethod())
                       .build();
         }
       }

@@ -47,6 +47,8 @@ service PortInfoService {
 
 	rpc DeleteCargoPortMappings (CargoPortRequest) returns (CargoPortReply) {}
 
+	rpc GetACountry(Country) returns (CountryDetailReply) {}
+
 }
 
 message BerthIdsRequest {
@@ -248,4 +250,9 @@ message CargoPortMappingRequest {
 message PortInfoReply {
 	ResponseStatus responseStatus = 1;
 	PortDetail port = 2;
+}
+
+message CountryDetailReply{
+	Country country = 1;
+	ResponseStatus responseStatus = 2;
 }

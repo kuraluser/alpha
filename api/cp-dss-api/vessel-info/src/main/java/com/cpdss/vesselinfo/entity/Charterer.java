@@ -2,12 +2,8 @@
 package com.cpdss.vesselinfo.entity;
 
 import com.cpdss.common.utils.EntityDoc;
-import java.math.BigInteger;
 import java.util.Collection;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,9 +26,17 @@ public class Charterer extends EntityDoc {
   @Column(name = "is_active")
   private Boolean isActive;
 
-  @Column(name = "company_xid")
-  private BigInteger companyId;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "charter_type_xid")
+  private ChartererType charterType;
+
+  @ManyToOne
+  @JoinColumn(name = "charterer_company_xid") // company_xid
+  private ChartererCompany charterCompany;
+
+  @Column(name = "country_xid")
+  private Long charterCountry;
 
   @OneToMany(mappedBy = "charterer")
-  private Collection<VesselChartererMapping> vesselcharterermappingCollection;
+  private Collection<VesselChartererMapping> vesselChartererMappingCollection;
 }

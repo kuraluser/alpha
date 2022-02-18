@@ -11,10 +11,7 @@ import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.GatewayTestConfiguration;
 import com.cpdss.gateway.domain.*;
 import com.cpdss.gateway.security.ship.*;
-import com.cpdss.gateway.service.CrewService;
-import com.cpdss.gateway.service.SyncRedisMasterService;
-import com.cpdss.gateway.service.VesselInfoService;
-import com.cpdss.gateway.service.VesselInfoServiceTest;
+import com.cpdss.gateway.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -51,6 +48,9 @@ public class VesselInfoControllerTest {
   @MockBean private ShipUserDetailService shipUserDetailService;
   @MockBean private ShipTokenExtractor shipTokenExtractor;
   @MockBean private AuthenticationFailureHandler authenticationFailureHandler;
+
+  @MockBean private CharterService charterService;
+
   // @MockBean private
   //  @MockBean private
 

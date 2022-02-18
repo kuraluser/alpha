@@ -6,9 +6,13 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.gateway.domain.*;
+import com.cpdss.gateway.domain.chartermaster.CharterDetailed;
+import com.cpdss.gateway.domain.chartermaster.CharterDetailedResponse;
+import com.cpdss.gateway.domain.chartermaster.ChartersDetailedResponse;
 import com.cpdss.gateway.domain.crewmaster.CrewDetailed;
 import com.cpdss.gateway.domain.crewmaster.CrewDetailedResponse;
 import com.cpdss.gateway.domain.crewmaster.CrewsDetailedResponse;
+import com.cpdss.gateway.service.CharterService;
 import com.cpdss.gateway.service.CrewService;
 import com.cpdss.gateway.service.VesselInfoService;
 import java.util.Map;
@@ -35,6 +39,7 @@ public class VesselInfoController {
 
   @Autowired private VesselInfoService vesselInfoService;
   @Autowired private CrewService crewService;
+  @Autowired private CharterService charterService;
 
   private static final String CORRELATION_ID_HEADER = "correlationId";
 
@@ -395,5 +400,80 @@ public class VesselInfoController {
           e);
     }
     return response;
+  }
+
+  /**
+   * To get all Charter Details listing
+   *
+   * @param headers
+   * @param pageSize
+   * @param pageNo
+   * @param sortBy
+   * @param orderBy
+   * @param params
+   * @return response
+   * @throws CommonRestException
+   */
+  @GetMapping("/master/charterlisting")
+  public ChartersDetailedResponse getCharterDetails(
+      @RequestHeader HttpHeaders headers,
+      @RequestParam(required = false, defaultValue = "10") int pageSize,
+      @RequestParam(required = false, defaultValue = "0") int pageNo,
+      @RequestParam(required = false, defaultValue = "name") String sortBy, // charterName
+      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam Map<String, String> params)
+      throws CommonRestException {
+
+    ChartersDetailedResponse response;
+    try {
+      response =
+          charterService.getCharterDetails(
+              pageNo, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+    } catch (Exception e) {
+      log.error("Error in listing charters", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return response;
+  }
+
+  /**
+   * API for saving a new charter
+   *
+   * @param charterId
+   * @param headers
+   * @param charterDetailed
+   * @return response
+   * @throws CommonRestException
+   */
+  @PostMapping("/master/charter/{charterId}")
+  public CharterDetailedResponse saveCharterDetails( // CrewDetailedResponse
+      @PathVariable Long charterId,
+      @RequestHeader HttpHeaders headers,
+      // @RequestBody CrewDetailed crewDetailed)
+      @RequestBody CharterDetailed charterDetailed)
+      throws CommonRestException {
+
+    CharterDetailedResponse charterDetailedResponse;
+    try {
+      charterDetailedResponse =
+          charterService.saveCharterDetails(CORRELATION_ID_HEADER, charterId, charterDetailed);
+    } catch (GenericServiceException e) {
+      log.error("GenericServiceException when saving charter!", e);
+      throw new CommonRestException(e.getCode(), headers, e.getStatus(), e.getMessage(), e);
+    } catch (Exception e) {
+      log.error("Error in save charter ", e);
+      throw new CommonRestException(
+          CommonErrorCodes.E_GEN_INTERNAL_ERR,
+          headers,
+          HttpStatusCode.INTERNAL_SERVER_ERROR,
+          e.getMessage(),
+          e);
+    }
+    return charterDetailedResponse;
   }
 }

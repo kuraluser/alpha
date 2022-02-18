@@ -103,6 +103,7 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
   @Autowired VesselCowService vesselCowService;
   @Autowired VesselInfoCommunicationService vesselInfoCommunicationService;
   @Autowired CrewService crewService;
+  @Autowired CharterService charterService;
 
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
@@ -3210,6 +3211,74 @@ public class VesselInfoService extends VesselInfoServiceImplBase {
       crewDetailReply.setResponseStatus(responseStatus);
     } finally {
       responseObserver.onNext(crewDetailReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void getAllCharterDetails(
+      com.cpdss.common.generated.VesselInfo.CharterInfoRequest request,
+      io.grpc.stub.StreamObserver<com.cpdss.common.generated.VesselInfo.CharterDetailedReply>
+          responseObserver) {
+
+    com.cpdss.common.generated.VesselInfo.CharterDetailedReply.Builder charterDetailReply =
+        com.cpdss.common.generated.VesselInfo.CharterDetailedReply.newBuilder();
+
+    try {
+      this.charterService.getAllCharterDetails(charterDetailReply, request); // here
+
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      charterDetailReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in getAllCrewDetails method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      charterDetailReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(charterDetailReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveCharterDetails(
+      CharterDetailed request, StreamObserver<CharterDetailReply> responseObserver) {
+
+    CharterDetailReply.Builder charterDetailsReply = CharterDetailReply.newBuilder();
+    try {
+      charterService.saveCharterDetails(request, charterDetailsReply);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("SUCCESS");
+      charterDetailsReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in saveCharterDetails method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      charterDetailsReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(charterDetailsReply.build());
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Override
+  public void saveCharterVesselMappings(
+      CharterVesselMappingRequest request, StreamObserver<CharterVesselReply> responseObserver) {
+
+    CharterVesselReply.Builder charterVesselReply = CharterVesselReply.newBuilder();
+    try {
+      charterService.saveCharterVesselMappings(request);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      charterVesselReply.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Error in saveCharterVesselMappings method ", e);
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus("FAILURE");
+      charterVesselReply.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(charterVesselReply.build());
       responseObserver.onCompleted();
     }
   }

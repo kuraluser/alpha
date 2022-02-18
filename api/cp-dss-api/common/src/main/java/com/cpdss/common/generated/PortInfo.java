@@ -29187,6 +29187,841 @@ public final class PortInfo {
     }
   }
 
+  public interface CountryDetailReplyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:CountryDetailReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>.Country country = 1;</code>
+     *
+     * @return Whether the country field is set.
+     */
+    boolean hasCountry();
+    /**
+     * <code>.Country country = 1;</code>
+     *
+     * @return The country.
+     */
+    com.cpdss.common.generated.PortInfo.Country getCountry();
+    /** <code>.Country country = 1;</code> */
+    com.cpdss.common.generated.PortInfo.CountryOrBuilder getCountryOrBuilder();
+
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    boolean hasResponseStatus();
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    com.cpdss.common.generated.Common.ResponseStatus getResponseStatus();
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder();
+  }
+  /** Protobuf type {@code CountryDetailReply} */
+  public static final class CountryDetailReply extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:CountryDetailReply)
+      CountryDetailReplyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use CountryDetailReply.newBuilder() to construct.
+    private CountryDetailReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private CountryDetailReply() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new CountryDetailReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private CountryDetailReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                com.cpdss.common.generated.PortInfo.Country.Builder subBuilder = null;
+                if (country_ != null) {
+                  subBuilder = country_.toBuilder();
+                }
+                country_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.PortInfo.Country.parser(), extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(country_);
+                  country_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            case 18:
+              {
+                com.cpdss.common.generated.Common.ResponseStatus.Builder subBuilder = null;
+                if (responseStatus_ != null) {
+                  subBuilder = responseStatus_.toBuilder();
+                }
+                responseStatus_ =
+                    input.readMessage(
+                        com.cpdss.common.generated.Common.ResponseStatus.parser(),
+                        extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(responseStatus_);
+                  responseStatus_ = subBuilder.buildPartial();
+                }
+
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.cpdss.common.generated.PortInfo.internal_static_CountryDetailReply_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.cpdss.common.generated.PortInfo
+          .internal_static_CountryDetailReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.cpdss.common.generated.PortInfo.CountryDetailReply.class,
+              com.cpdss.common.generated.PortInfo.CountryDetailReply.Builder.class);
+    }
+
+    public static final int COUNTRY_FIELD_NUMBER = 1;
+    private com.cpdss.common.generated.PortInfo.Country country_;
+    /**
+     * <code>.Country country = 1;</code>
+     *
+     * @return Whether the country field is set.
+     */
+    public boolean hasCountry() {
+      return country_ != null;
+    }
+    /**
+     * <code>.Country country = 1;</code>
+     *
+     * @return The country.
+     */
+    public com.cpdss.common.generated.PortInfo.Country getCountry() {
+      return country_ == null
+          ? com.cpdss.common.generated.PortInfo.Country.getDefaultInstance()
+          : country_;
+    }
+    /** <code>.Country country = 1;</code> */
+    public com.cpdss.common.generated.PortInfo.CountryOrBuilder getCountryOrBuilder() {
+      return getCountry();
+    }
+
+    public static final int RESPONSESTATUS_FIELD_NUMBER = 2;
+    private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return Whether the responseStatus field is set.
+     */
+    public boolean hasResponseStatus() {
+      return responseStatus_ != null;
+    }
+    /**
+     * <code>.ResponseStatus responseStatus = 2;</code>
+     *
+     * @return The responseStatus.
+     */
+    public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+      return responseStatus_ == null
+          ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+          : responseStatus_;
+    }
+    /** <code>.ResponseStatus responseStatus = 2;</code> */
+    public com.cpdss.common.generated.Common.ResponseStatusOrBuilder getResponseStatusOrBuilder() {
+      return getResponseStatus();
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (country_ != null) {
+        output.writeMessage(1, getCountry());
+      }
+      if (responseStatus_ != null) {
+        output.writeMessage(2, getResponseStatus());
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (country_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getCountry());
+      }
+      if (responseStatus_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getResponseStatus());
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.cpdss.common.generated.PortInfo.CountryDetailReply)) {
+        return super.equals(obj);
+      }
+      com.cpdss.common.generated.PortInfo.CountryDetailReply other =
+          (com.cpdss.common.generated.PortInfo.CountryDetailReply) obj;
+
+      if (hasCountry() != other.hasCountry()) return false;
+      if (hasCountry()) {
+        if (!getCountry().equals(other.getCountry())) return false;
+      }
+      if (hasResponseStatus() != other.hasResponseStatus()) return false;
+      if (hasResponseStatus()) {
+        if (!getResponseStatus().equals(other.getResponseStatus())) return false;
+      }
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasCountry()) {
+        hash = (37 * hash) + COUNTRY_FIELD_NUMBER;
+        hash = (53 * hash) + getCountry().hashCode();
+      }
+      if (hasResponseStatus()) {
+        hash = (37 * hash) + RESPONSESTATUS_FIELD_NUMBER;
+        hash = (53 * hash) + getResponseStatus().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(
+        com.cpdss.common.generated.PortInfo.CountryDetailReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /** Protobuf type {@code CountryDetailReply} */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:CountryDetailReply)
+        com.cpdss.common.generated.PortInfo.CountryDetailReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.cpdss.common.generated.PortInfo.internal_static_CountryDetailReply_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.cpdss.common.generated.PortInfo
+            .internal_static_CountryDetailReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.cpdss.common.generated.PortInfo.CountryDetailReply.class,
+                com.cpdss.common.generated.PortInfo.CountryDetailReply.Builder.class);
+      }
+
+      // Construct using com.cpdss.common.generated.PortInfo.CountryDetailReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        if (countryBuilder_ == null) {
+          country_ = null;
+        } else {
+          country_ = null;
+          countryBuilder_ = null;
+        }
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.cpdss.common.generated.PortInfo.internal_static_CountryDetailReply_descriptor;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.CountryDetailReply getDefaultInstanceForType() {
+        return com.cpdss.common.generated.PortInfo.CountryDetailReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.CountryDetailReply build() {
+        com.cpdss.common.generated.PortInfo.CountryDetailReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.cpdss.common.generated.PortInfo.CountryDetailReply buildPartial() {
+        com.cpdss.common.generated.PortInfo.CountryDetailReply result =
+            new com.cpdss.common.generated.PortInfo.CountryDetailReply(this);
+        if (countryBuilder_ == null) {
+          result.country_ = country_;
+        } else {
+          result.country_ = countryBuilder_.build();
+        }
+        if (responseStatusBuilder_ == null) {
+          result.responseStatus_ = responseStatus_;
+        } else {
+          result.responseStatus_ = responseStatusBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.cpdss.common.generated.PortInfo.CountryDetailReply) {
+          return mergeFrom((com.cpdss.common.generated.PortInfo.CountryDetailReply) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.cpdss.common.generated.PortInfo.CountryDetailReply other) {
+        if (other == com.cpdss.common.generated.PortInfo.CountryDetailReply.getDefaultInstance())
+          return this;
+        if (other.hasCountry()) {
+          mergeCountry(other.getCountry());
+        }
+        if (other.hasResponseStatus()) {
+          mergeResponseStatus(other.getResponseStatus());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.cpdss.common.generated.PortInfo.CountryDetailReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.cpdss.common.generated.PortInfo.CountryDetailReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.cpdss.common.generated.PortInfo.Country country_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.Country,
+              com.cpdss.common.generated.PortInfo.Country.Builder,
+              com.cpdss.common.generated.PortInfo.CountryOrBuilder>
+          countryBuilder_;
+      /**
+       * <code>.Country country = 1;</code>
+       *
+       * @return Whether the country field is set.
+       */
+      public boolean hasCountry() {
+        return countryBuilder_ != null || country_ != null;
+      }
+      /**
+       * <code>.Country country = 1;</code>
+       *
+       * @return The country.
+       */
+      public com.cpdss.common.generated.PortInfo.Country getCountry() {
+        if (countryBuilder_ == null) {
+          return country_ == null
+              ? com.cpdss.common.generated.PortInfo.Country.getDefaultInstance()
+              : country_;
+        } else {
+          return countryBuilder_.getMessage();
+        }
+      }
+      /** <code>.Country country = 1;</code> */
+      public Builder setCountry(com.cpdss.common.generated.PortInfo.Country value) {
+        if (countryBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          country_ = value;
+          onChanged();
+        } else {
+          countryBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.Country country = 1;</code> */
+      public Builder setCountry(
+          com.cpdss.common.generated.PortInfo.Country.Builder builderForValue) {
+        if (countryBuilder_ == null) {
+          country_ = builderForValue.build();
+          onChanged();
+        } else {
+          countryBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.Country country = 1;</code> */
+      public Builder mergeCountry(com.cpdss.common.generated.PortInfo.Country value) {
+        if (countryBuilder_ == null) {
+          if (country_ != null) {
+            country_ =
+                com.cpdss.common.generated.PortInfo.Country.newBuilder(country_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            country_ = value;
+          }
+          onChanged();
+        } else {
+          countryBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.Country country = 1;</code> */
+      public Builder clearCountry() {
+        if (countryBuilder_ == null) {
+          country_ = null;
+          onChanged();
+        } else {
+          country_ = null;
+          countryBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.Country country = 1;</code> */
+      public com.cpdss.common.generated.PortInfo.Country.Builder getCountryBuilder() {
+
+        onChanged();
+        return getCountryFieldBuilder().getBuilder();
+      }
+      /** <code>.Country country = 1;</code> */
+      public com.cpdss.common.generated.PortInfo.CountryOrBuilder getCountryOrBuilder() {
+        if (countryBuilder_ != null) {
+          return countryBuilder_.getMessageOrBuilder();
+        } else {
+          return country_ == null
+              ? com.cpdss.common.generated.PortInfo.Country.getDefaultInstance()
+              : country_;
+        }
+      }
+      /** <code>.Country country = 1;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.PortInfo.Country,
+              com.cpdss.common.generated.PortInfo.Country.Builder,
+              com.cpdss.common.generated.PortInfo.CountryOrBuilder>
+          getCountryFieldBuilder() {
+        if (countryBuilder_ == null) {
+          countryBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.PortInfo.Country,
+                  com.cpdss.common.generated.PortInfo.Country.Builder,
+                  com.cpdss.common.generated.PortInfo.CountryOrBuilder>(
+                  getCountry(), getParentForChildren(), isClean());
+          country_ = null;
+        }
+        return countryBuilder_;
+      }
+
+      private com.cpdss.common.generated.Common.ResponseStatus responseStatus_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          responseStatusBuilder_;
+      /**
+       * <code>.ResponseStatus responseStatus = 2;</code>
+       *
+       * @return Whether the responseStatus field is set.
+       */
+      public boolean hasResponseStatus() {
+        return responseStatusBuilder_ != null || responseStatus_ != null;
+      }
+      /**
+       * <code>.ResponseStatus responseStatus = 2;</code>
+       *
+       * @return The responseStatus.
+       */
+      public com.cpdss.common.generated.Common.ResponseStatus getResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        } else {
+          return responseStatusBuilder_.getMessage();
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder setResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          responseStatus_ = value;
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder setResponseStatus(
+          com.cpdss.common.generated.Common.ResponseStatus.Builder builderForValue) {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseStatusBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder mergeResponseStatus(com.cpdss.common.generated.Common.ResponseStatus value) {
+        if (responseStatusBuilder_ == null) {
+          if (responseStatus_ != null) {
+            responseStatus_ =
+                com.cpdss.common.generated.Common.ResponseStatus.newBuilder(responseStatus_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            responseStatus_ = value;
+          }
+          onChanged();
+        } else {
+          responseStatusBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public Builder clearResponseStatus() {
+        if (responseStatusBuilder_ == null) {
+          responseStatus_ = null;
+          onChanged();
+        } else {
+          responseStatus_ = null;
+          responseStatusBuilder_ = null;
+        }
+
+        return this;
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatus.Builder getResponseStatusBuilder() {
+
+        onChanged();
+        return getResponseStatusFieldBuilder().getBuilder();
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      public com.cpdss.common.generated.Common.ResponseStatusOrBuilder
+          getResponseStatusOrBuilder() {
+        if (responseStatusBuilder_ != null) {
+          return responseStatusBuilder_.getMessageOrBuilder();
+        } else {
+          return responseStatus_ == null
+              ? com.cpdss.common.generated.Common.ResponseStatus.getDefaultInstance()
+              : responseStatus_;
+        }
+      }
+      /** <code>.ResponseStatus responseStatus = 2;</code> */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.cpdss.common.generated.Common.ResponseStatus,
+              com.cpdss.common.generated.Common.ResponseStatus.Builder,
+              com.cpdss.common.generated.Common.ResponseStatusOrBuilder>
+          getResponseStatusFieldBuilder() {
+        if (responseStatusBuilder_ == null) {
+          responseStatusBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.cpdss.common.generated.Common.ResponseStatus,
+                  com.cpdss.common.generated.Common.ResponseStatus.Builder,
+                  com.cpdss.common.generated.Common.ResponseStatusOrBuilder>(
+                  getResponseStatus(), getParentForChildren(), isClean());
+          responseStatus_ = null;
+        }
+        return responseStatusBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:CountryDetailReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:CountryDetailReply)
+    private static final com.cpdss.common.generated.PortInfo.CountryDetailReply DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.cpdss.common.generated.PortInfo.CountryDetailReply();
+    }
+
+    public static com.cpdss.common.generated.PortInfo.CountryDetailReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CountryDetailReply> PARSER =
+        new com.google.protobuf.AbstractParser<CountryDetailReply>() {
+          @java.lang.Override
+          public CountryDetailReply parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CountryDetailReply(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<CountryDetailReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CountryDetailReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.cpdss.common.generated.PortInfo.CountryDetailReply getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
       internal_static_BerthIdsRequest_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -29287,6 +30122,10 @@ public final class PortInfo {
       internal_static_PortInfoReply_descriptor;
   private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_PortInfoReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+      internal_static_CountryDetailReply_descriptor;
+  private static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CountryDetailReply_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor getDescriptor() {
     return descriptor;
@@ -29382,34 +30221,37 @@ public final class PortInfo {
           + "tMappingRequest\022+\n\020cargoPortMapping\030\001 \003("
           + "\0132\021.CargoPortMapping\"S\n\rPortInfoReply\022\'\n"
           + "\016responseStatus\030\001 \001(\0132\017.ResponseStatus\022\031"
-          + "\n\004port\030\002 \001(\0132\013.PortDetail2\210\010\n\017PortInfoSe"
-          + "rvice\022)\n\013GetPortInfo\022\014.PortRequest\032\n.Por"
-          + "tReply\"\000\022R\n\024GetPortInfoByCargoId\022\034.GetPo"
-          + "rtInfoByCargoIdRequest\032\032.GetPortInfoByCa"
-          + "rgoIdReply\"\000\022B\n\024GetPortInfoByPortIds\022\034.G"
-          + "etPortInfoByPortIdsRequest\032\n.PortReply\"\000"
-          + "\022G\n\031GetPortInfoDetailsForAlgo\022\034.GetPortI"
-          + "nfoByPortIdsRequest\032\n.PortReply\"\000\0225\n\013Get"
-          + "Timezone\022\021.PortEmptyRequest\032\021.TimezoneRe"
-          + "sponse\"\000\022;\n\023GetPortInfoByPaging\022\026.PortRe"
-          + "questWithPaging\032\n.PortReply\"\000\022?\n\027GetBert"
-          + "hDetailsByPortId\022\016.PortIdRequest\032\022.Berth"
-          + "InfoResponse\"\000\022D\n\025GetCargoInfoByPortIds\022"
-          + "\034.GetPortInfoByPortIdsRequest\032\013.CargoInf"
-          + "os\"\000\022B\n\027GetLoadingPlanBerthData\022\020.BerthI"
-          + "dsRequest\032\025.LoadingAlgoBerthData\022:\n\017GetA"
-          + "llCountries\022\026.google.protobuf.Empty\032\r.Co"
-          + "untryReply\"\000\022>\n\026GetAllCargoPortMapping\022\021"
-          + ".CargoPortRequest\032\017.CargoPortReply\"\000\022B\n\032"
-          + "GetAllCargoPortMappingById\022\021.CargoPortRe"
-          + "quest\032\017.CargoPortReply\"\000\022G\n\030SaveAllCargo"
-          + "PortMappings\022\030.CargoPortMappingRequest\032\017"
-          + ".CargoPortReply\"\000\0221\n\023GetPortInfoDetailed"
-          + "\022\014.PortRequest\032\n.PortReply\"\000\022-\n\014SavePort"
-          + "Info\022\013.PortDetail\032\016.PortInfoReply\"\000\022?\n\027D"
-          + "eleteCargoPortMappings\022\021.CargoPortReques"
-          + "t\032\017.CargoPortReply\"\000B\036\n\032com.cpdss.common"
-          + ".generatedP\000b\006proto3"
+          + "\n\004port\030\002 \001(\0132\013.PortDetail\"X\n\022CountryDeta"
+          + "ilReply\022\031\n\007country\030\001 \001(\0132\010.Country\022\'\n\016re"
+          + "sponseStatus\030\002 \001(\0132\017.ResponseStatus2\270\010\n\017"
+          + "PortInfoService\022)\n\013GetPortInfo\022\014.PortReq"
+          + "uest\032\n.PortReply\"\000\022R\n\024GetPortInfoByCargo"
+          + "Id\022\034.GetPortInfoByCargoIdRequest\032\032.GetPo"
+          + "rtInfoByCargoIdReply\"\000\022B\n\024GetPortInfoByP"
+          + "ortIds\022\034.GetPortInfoByPortIdsRequest\032\n.P"
+          + "ortReply\"\000\022G\n\031GetPortInfoDetailsForAlgo\022"
+          + "\034.GetPortInfoByPortIdsRequest\032\n.PortRepl"
+          + "y\"\000\0225\n\013GetTimezone\022\021.PortEmptyRequest\032\021."
+          + "TimezoneResponse\"\000\022;\n\023GetPortInfoByPagin"
+          + "g\022\026.PortRequestWithPaging\032\n.PortReply\"\000\022"
+          + "?\n\027GetBerthDetailsByPortId\022\016.PortIdReque"
+          + "st\032\022.BerthInfoResponse\"\000\022D\n\025GetCargoInfo"
+          + "ByPortIds\022\034.GetPortInfoByPortIdsRequest\032"
+          + "\013.CargoInfos\"\000\022B\n\027GetLoadingPlanBerthDat"
+          + "a\022\020.BerthIdsRequest\032\025.LoadingAlgoBerthDa"
+          + "ta\022:\n\017GetAllCountries\022\026.google.protobuf."
+          + "Empty\032\r.CountryReply\"\000\022>\n\026GetAllCargoPor"
+          + "tMapping\022\021.CargoPortRequest\032\017.CargoPortR"
+          + "eply\"\000\022B\n\032GetAllCargoPortMappingById\022\021.C"
+          + "argoPortRequest\032\017.CargoPortReply\"\000\022G\n\030Sa"
+          + "veAllCargoPortMappings\022\030.CargoPortMappin"
+          + "gRequest\032\017.CargoPortReply\"\000\0221\n\023GetPortIn"
+          + "foDetailed\022\014.PortRequest\032\n.PortReply\"\000\022-"
+          + "\n\014SavePortInfo\022\013.PortDetail\032\016.PortInfoRe"
+          + "ply\"\000\022?\n\027DeleteCargoPortMappings\022\021.Cargo"
+          + "PortRequest\032\017.CargoPortReply\"\000\022.\n\013GetACo"
+          + "untry\022\010.Country\032\023.CountryDetailReply\"\000B\036"
+          + "\n\032com.cpdss.common.generatedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -29676,6 +30518,13 @@ public final class PortInfo {
             internal_static_PortInfoReply_descriptor,
             new java.lang.String[] {
               "ResponseStatus", "Port",
+            });
+    internal_static_CountryDetailReply_descriptor = getDescriptor().getMessageTypes().get(25);
+    internal_static_CountryDetailReply_fieldAccessorTable =
+        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+            internal_static_CountryDetailReply_descriptor,
+            new java.lang.String[] {
+              "Country", "ResponseStatus",
             });
     com.cpdss.common.generated.Common.getDescriptor();
     com.cpdss.common.generated.CargoInfo.getDescriptor();

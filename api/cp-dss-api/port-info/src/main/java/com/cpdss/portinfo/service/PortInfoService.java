@@ -1290,4 +1290,41 @@ public class PortInfoService extends PortInfoServiceImplBase {
       responseObserver.onCompleted();
     }
   }
+
+  @Override
+  public void getACountry(
+      com.cpdss.common.generated.PortInfo.Country countryRequest,
+      StreamObserver<CountryDetailReply> responseObserver) {
+
+    CountryDetailReply.Builder builder = CountryDetailReply.newBuilder();
+    try {
+
+      Optional<Country> countryEntity = countryRepository.findById(countryRequest.getId());
+
+      log.info("Fetch a country with id {}", countryRequest.getId());
+
+      com.cpdss.common.generated.PortInfo.Country.Builder country =
+          com.cpdss.common.generated.PortInfo.Country.newBuilder();
+
+      countryEntity.ifPresent(
+          c -> {
+            country.setCountryName(c.getName());
+            country.setId(c.getId());
+          });
+
+      builder.setCountry(country);
+
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(SUCCESS);
+      builder.setResponseStatus(responseStatus);
+    } catch (Exception e) {
+      log.error("Fetch country failed, e - {}", e.getMessage());
+      ResponseStatus.Builder responseStatus = ResponseStatus.newBuilder();
+      responseStatus.setStatus(FAILED);
+      builder.setResponseStatus(responseStatus);
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }
