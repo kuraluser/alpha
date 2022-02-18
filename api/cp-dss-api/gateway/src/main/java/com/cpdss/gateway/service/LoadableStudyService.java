@@ -2664,6 +2664,8 @@ public class LoadableStudyService {
       dto.setIsSlopTank(detail.getIsSlopTank());
       if (detail.getSlopQuantity() != null && detail.getSlopQuantity().length() > 0) {
         dto.setSlopQuantity(new BigDecimal(detail.getSlopQuantity()));
+      } else {
+        dto.setSlopQuantity(BigDecimal.ZERO);
       }
       dto.setSlopCargoId(0 == detail.getSlopCargoId() ? null : detail.getSlopCargoId());
       dto.setSlopApi(
@@ -2672,6 +2674,8 @@ public class LoadableStudyService {
               : new BigDecimal(detail.getSlopDensity()));
       if (detail.getSlopTemperature() != null && detail.getSlopTemperature().length() > 0) {
         dto.setSlopTemperature(new BigDecimal(detail.getSlopTemperature()));
+      } else {
+        dto.setSlopTemperature(BigDecimal.ZERO);
       }
       dto.setSlopVolume(
           isEmpty(detail.getSlopVolume())

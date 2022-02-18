@@ -124,22 +124,27 @@ public class OnBoardQuantityService {
    */
   private void buildOnBoardQuantityEntity(
       OnBoardQuantity entity, LoadableStudy.OnBoardQuantityDetail request) {
-    entity.setCargoId(0 == request.getCargoId() ? null : request.getCargoId());
     entity.setTankId(request.getTankId());
     entity.setPortId(request.getPortId());
     entity.setSounding(
         isEmpty(request.getSounding()) ? null : new BigDecimal(request.getSounding()));
-    entity.setPlannedArrivalWeight(
-        isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
-    entity.setVolumeInM3(request.getVolume());
     entity.setColorCode(isEmpty(request.getColorCode()) ? null : request.getColorCode());
     entity.setAbbreviation(isEmpty(request.getAbbreviation()) ? null : request.getAbbreviation());
-    entity.setDensity(isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
     entity.setIsActive(true);
-    // DSS 5450
-    entity.setTemperature(
-        isEmpty(request.getTemperature()) ? null : new BigDecimal(request.getTemperature()));
-    if (request.getIsSlopTank()) {
+    if (!request.getIsSlopTank()) {
+      entity.setCargoId(0 == request.getCargoId() ? null : request.getCargoId());
+      entity.setTankId(request.getTankId());
+      entity.setPortId(request.getPortId());
+      entity.setPlannedArrivalWeight(
+          isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
+      entity.setVolumeInM3(request.getVolume());
+      entity.setDensity(
+          isEmpty(request.getDensity()) ? null : new BigDecimal(request.getDensity()));
+      // DSS 5450
+      entity.setTemperature(
+          isEmpty(request.getTemperature()) ? null : new BigDecimal(request.getTemperature()));
+      entity.setIsSlopTank(false);
+    } else {
       entity.setIsSlopTank(true);
       entity.setSlopQuantity(
           hasLength(request.getSlopQuantity()) ? null : new BigDecimal(request.getSlopQuantity()));
@@ -152,8 +157,6 @@ public class OnBoardQuantityService {
               : new BigDecimal(request.getSlopTemperature()));
       entity.setSlopVolume(
           hasLength(request.getSlopVolume()) ? null : new BigDecimal(request.getSlopVolume()));
-    } else {
-      entity.setIsSlopTank(false);
     }
   }
 
@@ -391,14 +394,12 @@ public class OnBoardQuantityService {
             .ifPresent(item -> builder.setWeight(item.toString()));
         ofNullable(entity.getActualArrivalWeight())
             .ifPresent(item -> builder.setActualWeight(item.toString()));
-        ofNullable(entity.getVolume()).ifPresent(item -> builder.setVolume(item.toString()));
+        ofNullable(entity.getVolumeInM3()).ifPresent(item -> builder.setVolume(item.toString()));
         ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
         ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
         ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
         ofNullable(entity.getTemperature())
             .ifPresent(item -> builder.setTemperature(item.toString()));
-        // DSS 5450 getting volume of cargo
-        ofNullable(entity.getVolume()).ifPresent(item -> builder.setVolume(item.toString()));
         // DSS 5450 additional fields for tanks which can be changed to SLOP tank
         ofNullable(entity.getIsSlopTank()).ifPresent(builder::setIsSlopTank);
         ofNullable(entity.getSlopQuantity())
