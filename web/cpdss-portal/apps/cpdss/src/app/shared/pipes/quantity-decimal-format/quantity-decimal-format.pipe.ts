@@ -18,7 +18,7 @@ import { AppConfigurationService } from '../../services/app-configuration/app-co
 export class QuantityDecimalFormatPipe implements PipeTransform {
   constructor(private decimalPipe: DecimalPipe){}
   /**
-   * Method for transforming quantity decimal 
+   * Method for transforming quantity decimal
    *
    * @param {string} value
    * @param {string} unit
@@ -30,6 +30,10 @@ export class QuantityDecimalFormatPipe implements PipeTransform {
     const qunatityUnit = unit ? unit : <QUANTITY_UNIT>localStorage.getItem('unit');
     switch (qunatityUnit) {
       case QUANTITY_UNIT.KL:
+        decimal = AppConfigurationService.settings.quantityNumberFormatKL;
+        break;
+
+      case QUANTITY_UNIT.OBSKL:
         decimal = AppConfigurationService.settings.quantityNumberFormatKL;
         break;
 

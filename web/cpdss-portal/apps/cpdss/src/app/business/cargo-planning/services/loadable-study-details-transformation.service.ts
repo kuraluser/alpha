@@ -1431,7 +1431,7 @@ export class LoadableStudyDetailsTransformationService {
   * @returns {IDataTableColumn[]}
   * @memberof LoadableStudyDetailsTransformationService
   */
-  getOBQDatatableColumns(): IDataTableColumn[] {
+  getOBQDatatableColumns(unit: QUANTITY_UNIT): IDataTableColumn[] {
     return [
       {
         field: 'slNo',
@@ -1444,6 +1444,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'tankName',
         header: 'OBQ_TANK',
+        fieldHeaderClass: 'column-cargo-loaded-header',
         editable: false,
         filter: true,
         filterField: 'tankName',
@@ -1471,6 +1472,7 @@ export class LoadableStudyDetailsTransformationService {
       {
         field: 'api',
         header: 'OBQ_API',
+        fieldHeaderClass: 'column-cargo-loaded-header',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'OBQ_PLACEHOLDER_API',
         filter: true,
@@ -1487,8 +1489,48 @@ export class LoadableStudyDetailsTransformationService {
 
       },
       {
+        field: 'temperature',
+        header: 'OBQ_TEMPERATURE',
+        fieldHeaderClass: 'column-cargo-loaded-header',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OBQ_PLACEHOLDER_TEMPERATURE',
+        filter: true,
+        filterField: 'temperature.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterPlaceholder: 'OBQ_SEARCH_TEMPERATURE',
+        errorMessages: {
+          'required': 'OBQ_VALUE_REQUIRED',
+          'min': 'OBQ_MIN_VALUE',
+          'groupTotal': 'OBQ_GROUP_TOTAL',
+          'invalidNumber': 'OBQ_VALUE_INVALID'
+        }
+      },
+      {
+        field: 'volume',
+        header: 'OBQ_VOLUME',
+        fieldHeaderClass: 'column-cargo-loaded-header',
+        fieldType: DATATABLE_FIELD_TYPE.NUMBER,
+        fieldPlaceholder: 'OBQ_PLACEHOLDER_VOLUME',
+        filter: true,
+        filterField: 'volume.value',
+        filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
+        filterType: DATATABLE_FILTER_TYPE.NUMBER,
+        filterPlaceholder: 'OBQ_SEARCH_VOLUME',
+        numberType: 'quantity',
+        unit: unit,
+        errorMessages: {
+          'required': 'OBQ_VALUE_REQUIRED',
+          'min': 'OBQ_MIN_VALUE',
+          'groupTotal': 'OBQ_GROUP_TOTAL',
+          'max': "OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
+          'invalidNumber': 'OBQ_VALUE_INVALID'
+        }
+      },
+      {
         field: 'quantity',
         header: 'OBQ_QUANTITY',
+        fieldHeaderClass: 'column-cargo-loaded-header',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
         fieldPlaceholder: 'OBQ_PLACEHOLDER_QUANTITY',
         filter: true,
@@ -1496,14 +1538,13 @@ export class LoadableStudyDetailsTransformationService {
         filterMatchMode: DATATABLE_FILTER_MATCHMODE.STARTSWITH,
         filterType: DATATABLE_FILTER_TYPE.NUMBER,
         filterPlaceholder: 'OBQ_SEARCH_QUANTITY',
+        numberFormat: AppConfigurationService?.settings?.quantityNumberFormatMT,
         errorMessages: {
           'required': 'OBQ_VALUE_REQUIRED',
           'min': 'OBQ_MIN_VALUE',
           'groupTotal': 'OBQ_GROUP_TOTAL',
-          'max': "OBQ_VOLUME_LOADED_EXCEED_FULLCAPACITY",
           'invalidNumber': 'OBQ_VALUE_INVALID'
-        },
-        numberType: 'quantity'
+        }
       }
     ]
   }
@@ -1521,14 +1562,16 @@ export class LoadableStudyDetailsTransformationService {
    */
   getOBQTankDetailsAsValueObject(obqTankDetail: IPortOBQTankDetail, isNewValue = true, listData: IPortOBQListData, isEditable = true, tanks: ITank[][]): IPortOBQTankDetailValueObject {
     const _obqTankDetail = <IPortOBQTankDetailValueObject>{};
-    const isSlopeTank = tanks.some(group => group.some(tank => obqTankDetail.tankId === tank.id && tank.slopTank));
-    _obqTankDetail.id = obqTankDetail.id;
-    _obqTankDetail.portId = obqTankDetail.portId;
-    _obqTankDetail.tankId = obqTankDetail.tankId;
-    _obqTankDetail.tankName = obqTankDetail.tankName;
-    _obqTankDetail.colorCode = obqTankDetail.colorCode;
-    _obqTankDetail.abbreviation = obqTankDetail.abbreviation;
-    let cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
+    // ** Used 'slopWaterTank' instead of 'slopTank' to map tank 5C as slop tank
+    const isSlopeTank = tanks.some(group => group.some(tank => obqTankDetail.tankId === tank.id && tank.slopWaterTank));
+    _obqTankDetail.id = obqTankDetail?.id;
+    _obqTankDetail.portId = obqTankDetail?.portId;
+    _obqTankDetail.tankId = obqTankDetail?.tankId;
+    _obqTankDetail.tankName = obqTankDetail?.tankName;
+    _obqTankDetail.colorCode = obqTankDetail?.colorCode;
+    _obqTankDetail.abbreviation = obqTankDetail?.abbreviation;
+    _obqTankDetail.isSlopTank = obqTankDetail?.isSlopTank;
+    let cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail?.cargoId);
     if (cargoObj) {
       cargoObj.abbreviation = obqTankDetail?.abbreviation;
       cargoObj.color = obqTankDetail?.colorCode;
@@ -1536,16 +1579,20 @@ export class LoadableStudyDetailsTransformationService {
     const slops: ICargo = <ICargo>{ id: -1, name: 'Slops', abbreviation: 'SLOPS', color: '#a52a2a' };
     if (isSlopeTank) {
       _obqTankDetail.cargoList = cargoObj ? [cargoObj, slops] : [slops];
-      cargoObj = _obqTankDetail.cargoList.find(cargo => cargo.id === obqTankDetail.cargoId);
+      cargoObj = _obqTankDetail.cargoList.find(cargo => _obqTankDetail.isSlopTank ? (cargo.id === obqTankDetail.slopCargoId) : (cargo.id === obqTankDetail.cargoId));
       _obqTankDetail.colorCode = cargoObj?.color;
       _obqTankDetail.abbreviation = cargoObj?.abbreviation;
     }
     _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false, isEditable && isSlopeTank);
     _obqTankDetail.fullCapacityCubm = obqTankDetail?.fullCapacityCubm;
-    _obqTankDetail.api = new ValueObject<number>(obqTankDetail.api, true, isNewValue, isEditable);
-    _obqTankDetail.quantity = new ValueObject<number>(obqTankDetail.quantity, true, isNewValue, isEditable);
-    _obqTankDetail.volume = obqTankDetail.volume;
-    _obqTankDetail.temperature = obqTankDetail.temperature;
+    _obqTankDetail.api = new ValueObject<number>(_obqTankDetail.isSlopTank ? obqTankDetail?.slopApi : obqTankDetail?.api, true, isNewValue, isEditable);
+    _obqTankDetail.slopApi = obqTankDetail?.slopApi;
+    _obqTankDetail.temperature = new ValueObject<number>(_obqTankDetail.isSlopTank ? obqTankDetail?.slopTemperature : obqTankDetail?.temperature, true, isNewValue, isEditable);
+    _obqTankDetail.slopTemperature = obqTankDetail?.slopTemperature;
+    _obqTankDetail.quantity = new ValueObject<number>(_obqTankDetail.isSlopTank ? obqTankDetail?.slopQuantity : obqTankDetail?.quantity, true, isNewValue, isEditable);
+    _obqTankDetail.slopQuantity = obqTankDetail?.slopQuantity;
+    _obqTankDetail.volume = new ValueObject<number>(_obqTankDetail.isSlopTank ? obqTankDetail?.slopVolume : obqTankDetail?.volume, true, isNewValue, isEditable);
+    _obqTankDetail.slopVolume = obqTankDetail?.slopVolume;
 
     return _obqTankDetail;
   }

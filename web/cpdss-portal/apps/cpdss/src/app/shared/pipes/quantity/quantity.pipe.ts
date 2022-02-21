@@ -33,29 +33,33 @@ export class QuantityPipe implements PipeTransform {
     const _temperature = Number(temperature);
     const quantityInBBLS = this.convertToBBLS(_value, unitFrom, _api, _temperature);
     let convertedQuantity = this.convertFromBBLS(quantityInBBLS, unitTo, _api, _temperature);
-    
+
     if(decimalPoint !== -1) {
       switch (unitTo) {
         case QUANTITY_UNIT.MT:
           convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 2));
           break;
-  
+
         case QUANTITY_UNIT.KL:
           convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 3));
           break;
-  
+
+        case QUANTITY_UNIT.OBSKL:
+          convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 3));
+          break;
+
         case QUANTITY_UNIT.OBSBBLS:
           convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 0));
           break;
-  
+
         case QUANTITY_UNIT.BBLS:
           convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 0));
           break;
-  
+
         case QUANTITY_UNIT.LT:
           convertedQuantity = Number((convertedQuantity).toFixed(decimalPoint ? decimalPoint : 2));
           break;
-  
+
         default:
           convertedQuantity = convertedQuantity;
           break;
@@ -117,7 +121,7 @@ export class QuantityPipe implements PipeTransform {
       case QUANTITY_UNIT.KL:
         conversionConstant = 0.15899;
         break;
-       
+
       case QUANTITY_UNIT.OBSKL:
         conversionConstant = 6.28981 * (Math.exp(-(341.0957 / Math.pow((141360.198 / (api + 131.5)), 2)) * (temperature - 60) * (1 + (0.8 * (341.0957 / Math.pow((141360.198 / (api + 131.5)), 2)) * (temperature - 60)))));
         break;

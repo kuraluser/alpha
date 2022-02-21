@@ -89,6 +89,7 @@ export interface ITank {
     group: number;
     order: number;
     slopTank: boolean;
+    slopWaterTank?: boolean;
     commodity?: any;
     gridColumn?: string;
     percentageFilled?: string;

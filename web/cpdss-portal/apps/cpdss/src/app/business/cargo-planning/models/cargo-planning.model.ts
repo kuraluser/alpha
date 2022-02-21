@@ -697,11 +697,18 @@ export interface IPortOBQTankDetail {
     loadableStudyId: number;
     fullCapacityCubm: number;
     fullCapacity: number;
+    fullCapacityMT: number;
     abbreviation: string;
     loadOnTop: boolean;
     volume: number;
     isObqComplete?: boolean;
-    temperature?: number;
+    temperature: number;
+    isSlopTank: boolean;
+    slopCargoId?: number;
+    slopApi?: number;
+    slopTemperature?: number;
+    slopQuantity?: number;
+    slopVolume?: number;
 }
 
 /**
@@ -718,18 +725,25 @@ export interface IPortOBQTankDetailValueObject {
     tankName: string;
     cargo: ValueObject<ICargo>;
     api: ValueObject<number>;
+    temperature: ValueObject<number>;
     quantity: ValueObject<number>;
-    volume: number;
+    volume: ValueObject<number>;
     colorCode: string;
     portId: number;
     percentageFilled: string;
     fullCapacityCubm: number;
     fullCapacity: number;
+    fullCapacityMT: number;
     abbreviation: string;
     loadOnTop: boolean;
     processing?: boolean;
-    temperature?: number;
     cargoList: ICargo[];
+    isSlopTank: boolean;
+    slopCargoId?: number;
+    slopApi?: number;
+    slopTemperature?: number;
+    slopQuantity?: number;
+    slopVolume?: number;
 }
 
 /**

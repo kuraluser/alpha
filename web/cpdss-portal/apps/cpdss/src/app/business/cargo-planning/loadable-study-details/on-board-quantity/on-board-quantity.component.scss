@@ -103,8 +103,8 @@
         //     border-right: 0;
         // }
         }
-        
-    } 
+
+    }
 }
 .rear-tank-wrapper-obq{
     position: absolute;
@@ -150,4 +150,11 @@
         width: 100%;
         max-width: 100%;
     }
+}
+
+.col-tl {
+  display: flex;
+  input {
+    margin-right: 3px;
+  }
 }

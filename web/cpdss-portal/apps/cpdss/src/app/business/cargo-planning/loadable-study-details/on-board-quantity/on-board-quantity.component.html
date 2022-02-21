@@ -1,110 +1,146 @@
 <div class="content-outer-obq" *ngIf="obqForm" [formGroup]="obqForm">
-    <div class="">
-        <div class="container-fluid">
-            <div class="row h-100 no-wrap">
-                <div class="col">
-                    <div class="row">
-                        <div class="col" style="max-width: 120px;">
-                            <span class="text-secondary text-uppercase">{{'OBQ_SELECTED_PORT'| translate}}</span>
-                        </div>
-                        <div class="col pl-0">
-                            <ul class="list-unstyled list-inline port-list mb-0">
-                                <li class="list-inline-item active">
-                                    {{selectedPort?.name}}</li>
-                            </ul>
-                        </div>
-                        <div class="col text-right">
-                            <label class="checkbox-custom">{{'OBQ_SLOP_TANK_LOAD_ON_TOP' | translate}}
-                                <input type="checkbox" formControlName="loadOnTop" (change)="toggleLoadOnTop($event)" [attr.disabled]="!editMode ? true : null">
-                                <span class="checkmark"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col" *ngIf="obqForm">
-                            <form [formGroup]="obqForm">
-                                <div class="form-group row">
-                                    <div class="col table-responsive-custom cargo-nomination-table obq" [ngClass]="{'datatable-loading': dataTableLoading }" #obqDatatable>
+  <div class="">
+    <div class="container-fluid">
+      <div class="row h-100 no-wrap">
+        <div class="col">
 
-                                            <cpdss-portal-datatable [tableId]="'obq'" [form]="obqForm"
-                                                [columns]="columns" [value]="selectedPortOBQTankDetails"
-                                                [editMode]="editMode" [filterable]="true" [listData]="listData"
-                                                [selectionMode]="selectionMode" [loading]="dataTableLoading" [progress]="progress" (editComplete)="onEditComplete($event)"
-                                                (rowSelection)="onRowSelection($event)" [selection]="selectedTank" (filter)="onFilter($event)" (sort)="onSort($event)">
-                                            </cpdss-portal-datatable>
-
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+          <div class="row">
+            <div class="col" style="max-width: 120px;">
+              <span class="text-secondary text-uppercase">{{'OBQ_SELECTED_PORT'| translate}}</span>
             </div>
+            <div class="col pl-0">
+              <ul class="list-unstyled list-inline port-list mb-0">
+                <li class="list-inline-item active"> {{selectedPort?.name}} </li>
+              </ul>
+            </div>
+            <div class="col text-right">
+              <label class="checkbox-custom">{{'OBQ_SLOP_TANK_LOAD_ON_TOP' | translate}}
+                <input type="checkbox" formControlName="loadOnTop" (change)="toggleLoadOnTop($event)"
+                  [attr.disabled]="!editMode ? true : null">
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col" *ngIf="obqForm">
+              <form [formGroup]="obqForm">
+                <div class="form-group row">
+                  <div class="col table-responsive-custom cargo-nomination-table obq"
+                    [ngClass]="{'datatable-loading': dataTableLoading }" #obqDatatable>
+
+                    <cpdss-portal-datatable [tableId]="'obq'" [form]="obqForm" [columns]="columns"
+                      [value]="selectedPortOBQTankDetails" [editMode]="editMode" [filterable]="true"
+                      [listData]="listData" [selectionMode]="selectionMode" [loading]="dataTableLoading"
+                      [progress]="progress" (editComplete)="onEditComplete($event)"
+                      (rowSelection)="onRowSelection($event)" [selection]="selectedTank" (filter)="onFilter($event)"
+                      (sort)="onSort($event)">
+                    </cpdss-portal-datatable>
+
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <div class="pr-15">
-        <div class=" tank-wrapper-obq">
-            <div class="row">
-                <div class="col">
-                    <p class="text-uppercase text-center text-secondary">{{'OBQ_TANK_FILLS' | translate}}</p>
-                </div>
-            </div>
-            <div class="row mb-10">
-                <div class="col text-center">
-                    <span class="mr-10 text-uppercase text-secondary">{{'OBQ_GRADE'| translate}}</span>
-                    <ng-container *ngFor="let cargo of cargoList">
-                        <span class="badge-custom mr-5" *ngIf="cargo?.id"
-                            [ngStyle]="{'background-color': cargo?.colorCode}">{{cargo?.abbreviation}}</span>
-                    </ng-container>
-
-                </div>
-                <div class="col" *ngIf="selectedTankId">{{selectedTank?.percentageFilled}}%
-                    {{'OHQ_FILLED'| translate}}</div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <cpdss-portal-cargo-tank-layout [tanks]="tanks" [(selectedTankId)]="selectedTankId" [options]="cargoTankOptions">
-                    </cpdss-portal-cargo-tank-layout>
-                </div>
-            </div>
-            <form *ngIf="obqForm && selectedIndex >= 0" [formGroup]="obqForm">
-                <div class="row text-uppercase text-secondary mt-10">
-                    <div class="col-4">
-                        <div class="row mb-15">
-                            <label for="" class="col-12 text-center">{{'OBQ_CARGO'| translate}}</label>
-                            <div class="col">
-                                <input type="text" readonly class="form-control" formControlName="cargo">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="row mb-15">
-                            <label for="" class="col-12 text-center">{{'OBQ_API'| translate}}</label>
-                            <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="api"
-                                    (change)="onChange($event,'api')" [readonly]="!editMode">
-                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'api')"
-                                    [errorMessages]="getErrorMessages('api')">
-                                </cpdss-portal-validation-error>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="row mb-15">
-                            <label for="" class="col-12 text-center">{{'OBQ_QUANTITY'| translate}}</label>
-                            <div class="col">
-                                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="quantity"
-                                    (change)="onChange($event,'quantity')" [readonly]="!editMode">
-                                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'quantity')"
-                                    [errorMessages]="getErrorMessages('quantity')">
-                                </cpdss-portal-validation-error>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
+  <div class="pr-15">
+    <div class="tank-wrapper-obq">
+      <div class="row">
+        <div class="col">
+          <p class="text-uppercase text-center text-secondary">{{'OBQ_TANK_FILLS' | translate}}</p>
         </div>
+      </div>
+
+      <div class="row mb-10">
+        <div class="col text-center">
+          <span class="mr-10 text-uppercase text-secondary">{{'OBQ_GRADE'| translate}}</span>
+          <ng-container *ngFor="let cargo of cargoList">
+            <span class="badge-custom mr-5" *ngIf="cargo?.id"
+              [ngStyle]="{'background-color': cargo?.colorCode}">{{cargo?.abbreviation}}</span>
+          </ng-container>
+        </div>
+        <div class="col" *ngIf="selectedTankId">{{selectedTank?.percentageFilled}}%
+          {{'OHQ_FILLED'| translate}}</div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <cpdss-portal-cargo-tank-layout [tanks]="tanks" [(selectedTankId)]="selectedTankId"
+            [options]="cargoTankOptions">
+          </cpdss-portal-cargo-tank-layout>
+        </div>
+      </div>
+
+      <form *ngIf="obqForm && selectedIndex >= 0" [formGroup]="obqForm">
+        <div class="row text-uppercase text-secondary mt-10">
+          <div class="col-4">
+            <div class="row mb-15">
+              <label for="" class="col-12 text-center">{{'OBQ_CARGO'| translate}}</label>
+              <div class="col">
+                <input type="text" readonly class="form-control" formControlName="cargo">
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="row mb-15">
+              <label for="" class="col-12 text-center">{{'OBQ_API'| translate}}</label>
+              <div class="col col-tl">
+                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="api"
+                  (change)="onChange($event,'api')" [readonly]="!editMode">
+                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'api')"
+                  [errorMessages]="getErrorMessages('api')">
+                </cpdss-portal-validation-error>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="row mb-15">
+              <label for="" class="col-12 text-center">{{'OBQ_TEMPERATURE'| translate}}</label>
+              <div class="col col-tl">
+                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="temperature"
+                  (change)="onChange($event,'temperature')" [readonly]="!editMode">
+                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'temperature')"
+                  [errorMessages]="getErrorMessages('temperature')">
+                </cpdss-portal-validation-error>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row text-uppercase text-secondary mt-10">
+          <div class="col-2"></div>
+          <div class="col-4">
+            <div class="row mb-15">
+              <label for="" class="col-12 text-center">{{'OBQ_VOLUME'| translate}}</label>
+              <div class="col col-tl">
+                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="volume"
+                  (change)="onChange($event,'volume')" [readonly]="!editMode">
+                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'volume')"
+                  [errorMessages]="getErrorMessages('volume')">
+                </cpdss-portal-validation-error>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="row mb-15">
+              <label for="" class="col-12 text-center">{{'OBQ_QUANTITY'| translate}}</label>
+              <div class="col col-tl">
+                <input type="text" cpdssPortalNumberDecimal class="form-control" formControlName="quantity"
+                  (change)="onChange($event,'quantity')" [readonly]="!editMode">
+                <cpdss-portal-validation-error [errors]="fieldError(selectedIndex, 'quantity')"
+                  [errorMessages]="getErrorMessages('quantity')">
+                </cpdss-portal-validation-error>
+              </div>
+            </div>
+          </div>
+          <div class="col-2"></div>
+        </div>
+      </form>
     </div>
+  </div>
 
 </div>
