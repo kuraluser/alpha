@@ -2657,9 +2657,14 @@ public class LoadableStudyService {
       dto.setTankName(detail.getTankName());
       dto.setApi(
           isEmpty(detail.getDensity()) ? BigDecimal.ZERO : new BigDecimal(detail.getDensity()));
-      if (detail.getTemperature() != null && detail.getTemperature().length() > 0) {
-        dto.setTemperature(new BigDecimal(detail.getTemperature()));
-      }
+      // commenting temporarly
+      //      if (detail.getTemperature() != null && detail.getTemperature().length() > 0) {
+      //        dto.setTemperature(new BigDecimal(detail.getTemperature()));
+      //      }
+      dto.setTemperature(
+          isEmpty(detail.getTemperature())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getTemperature()));
       // DSS 5450
       dto.setIsSlopTank(detail.getIsSlopTank());
       if (detail.getSlopQuantity() != null && detail.getSlopQuantity().length() > 0) {
