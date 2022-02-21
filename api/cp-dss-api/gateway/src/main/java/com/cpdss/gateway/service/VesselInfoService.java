@@ -153,9 +153,12 @@ public class VesselInfoService extends CommonKeyValueStore<KeycloakUser> {
               vesselTank.setDisplayOrder(tankDetail.getTankDisplayOrder());
               vesselTankList.add(vesselTank);
             });
-
+    List<VesselTank> finalVesselTankList =
+        vesselTankList.stream()
+            .sorted(Comparator.comparing(VesselTank::getDisplayOrder))
+            .collect(Collectors.toList());
     VesselTankResponse response = new VesselTankResponse();
-    response.setCargoVesselTanks(vesselTankList);
+    response.setCargoVesselTanks(finalVesselTankList);
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
