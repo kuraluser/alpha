@@ -814,8 +814,10 @@ public class DischargeInformationService {
     algoResponse.setProcessId(dischargingPlanAlgoRequest.getProcessId());
     algoResponse.setResponseStatus(new CommonSuccessResponse(SUCCESS, ""));
     try {
-      dischargingPlanExcelReportService.generateDischargingPlanExcel(
-          null, vesselId, voyageId, infoId, response.getPortRotationId(), false);
+      if (dischargingPlanAlgoRequest.getErrors().isEmpty()) {
+        dischargingPlanExcelReportService.generateDischargingPlanExcel(
+            null, vesselId, voyageId, infoId, response.getPortRotationId(), false);
+      }
     } catch (Exception e) {
       log.error("Discharging plan excel save fialed -> ", e);
     }
