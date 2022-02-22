@@ -147,16 +147,16 @@ public class OnBoardQuantityService {
     } else {
       entity.setIsSlopTank(true);
       entity.setSlopQuantity(
-          hasLength(request.getSlopQuantity()) ? null : new BigDecimal(request.getSlopQuantity()));
+          !hasLength(request.getSlopQuantity()) ? null : new BigDecimal(request.getSlopQuantity()));
       entity.setSlopCargoId(request.getSlopCargoId());
       entity.setSlopDensity(
-          hasLength(request.getSlopDensity()) ? null : new BigDecimal(request.getSlopDensity()));
+          !hasLength(request.getSlopDensity()) ? null : new BigDecimal(request.getSlopDensity()));
       entity.setSlopTemperature(
-          hasLength(request.getSlopTemperature())
+          !hasLength(request.getSlopTemperature())
               ? null
               : new BigDecimal(request.getSlopTemperature()));
       entity.setSlopVolume(
-          hasLength(request.getSlopVolume()) ? null : new BigDecimal(request.getSlopVolume()));
+          !hasLength(request.getSlopVolume()) ? null : new BigDecimal(request.getSlopVolume()));
     }
   }
 
