@@ -837,74 +837,71 @@ public class UserService {
   public UserResponse saveUser(User request, String correlationId, Long companyId)
       throws GenericServiceException {
     UserResponse response = new UserResponse();
-    if (this.isShip()) {
-      Users entity = null;
-      boolean roleEdited = false;
-      List<RoleUserMapping> roleUserMappings = null;
-      if (0 != request.getId()) {
-        entity = this.usersRepository.findByIdAndIsActive(request.getId(), true);
-        if (null == entity) {
-          throw new GenericServiceException(
-              "User does not exist",
-              CommonErrorCodes.E_HTTP_BAD_REQUEST,
-              HttpStatusCode.BAD_REQUEST);
-        }
-        roleUserMappings = this.roleUserMappingRepository.findByUsersAndIsActive(entity, true);
-        if ((roleUserMappings.isEmpty() && request.getRoleId() != 0L)
-            || !roleUserMappings.get(0).getRoles().getId().equals(request.getRoleId())) {
-          roleEdited = true;
-        }
-      } else {
-        this.validateShipMaxUserCount();
-        entity = new Users();
-        entity.setActive(true);
-        entity.setLoginSuspended(false);
-        entity.setIsShipUser(false);
+    Users entity = null;
+    boolean roleEdited = false;
+    List<RoleUserMapping> roleUserMappings = null;
+    if (0 != request.getId()) {
+      entity = this.usersRepository.findByIdAndIsActive(request.getId(), true);
+      if (null == entity) {
+        throw new GenericServiceException(
+            "User does not exist", CommonErrorCodes.E_HTTP_BAD_REQUEST, HttpStatusCode.BAD_REQUEST);
       }
-      this.checkUsernameDuplicate(request);
-      entity.setCompanyXId(companyId);
-      entity.setUsername(request.getUsername());
-      entity.setFirstName(request.getFirstName());
-      entity.setLastName(request.getLastName());
-      entity.setDesignation(request.getDesignation());
-
-      // Update user status
-      UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
-      entity.setStatus(userStatus);
-
-      if (null != request.getIsLoginSuspended()) {
-        entity.setLoginSuspended(request.getIsLoginSuspended());
+      roleUserMappings = this.roleUserMappingRepository.findByUsersAndIsActive(entity, true);
+      if ((roleUserMappings.isEmpty() && request.getRoleId() != 0L)
+          || !roleUserMappings.get(0).getRoles().getId().equals(request.getRoleId())) {
+        roleEdited = true;
       }
-      entity = this.usersRepository.save(entity);
-
-      // insert roles either if role edited or new row
-      if (request.getId() == 0 || roleEdited && roleUserMappings.isEmpty()) {
-        RoleUserMapping mapping = new RoleUserMapping();
-        mapping.setUsers(entity);
-        mapping.setRoles(this.rolesRepository.getOne(request.getRoleId()));
-        mapping.setIsActive(true);
-        this.roleUserMappingRepository.save(mapping);
-      } else if (roleEdited) {
-        RoleUserMapping mapping = roleUserMappings.get(0);
-        mapping.setRoles(this.rolesRepository.getOne(request.getRoleId()));
-        this.roleUserMappingRepository.save(mapping);
-      }
-
-      // Update notification
-      NotificationStatus notificationStatus =
-          notificationStatusRepository.getOne(NotificationStatusValue.CLOSED.getId());
-      List<Notifications> notificationsList =
-          this.notificationRepository.findByRequestedByAndIsActive(entity.getId(), true);
-      notificationsList.forEach(
-          notification -> {
-            notification.setNotificationStatus(notificationStatus);
-            notification.setNotificationType(NotificationStatusValue.CLOSED.getNotificationType());
-            notification.setIsActive(false);
-          });
-      this.notificationRepository.saveAll(notificationsList);
-
-      response.setId(entity.getId());
+    } else {
+      this.validateShipMaxUserCount();
+      entity = new Users();
+      entity.setActive(true);
+      entity.setLoginSuspended(false);
+      entity.setIsShipUser(false);
     }
+    this.checkUsernameDuplicate(request);
+    entity.setCompanyXId(companyId);
+    entity.setUsername(request.getUsername());
+    entity.setFirstName(request.getFirstName());
+    entity.setLastName(request.getLastName());
+    entity.setDesignation(request.getDesignation());
+
+    // Update user status
+    UserStatus userStatus = userStatusRepository.getOne(UserStatusValue.APPROVED.getId());
+    entity.setStatus(userStatus);
+
+    if (null != request.getIsLoginSuspended()) {
+      entity.setLoginSuspended(request.getIsLoginSuspended());
+    }
+    entity = this.usersRepository.save(entity);
+
+    // insert roles either if role edited or new row
+    if (request.getId() == 0 || roleEdited && roleUserMappings.isEmpty()) {
+      RoleUserMapping mapping = new RoleUserMapping();
+      mapping.setUsers(entity);
+      mapping.setRoles(this.rolesRepository.getOne(request.getRoleId()));
+      mapping.setIsActive(true);
+      this.roleUserMappingRepository.save(mapping);
+    } else if (roleEdited) {
+      RoleUserMapping mapping = roleUserMappings.get(0);
+      mapping.setRoles(this.rolesRepository.getOne(request.getRoleId()));
+      this.roleUserMappingRepository.save(mapping);
+    }
+
+    // Update notification
+    NotificationStatus notificationStatus =
+        notificationStatusRepository.getOne(NotificationStatusValue.CLOSED.getId());
+    List<Notifications> notificationsList =
+        this.notificationRepository.findByRequestedByAndIsActive(entity.getId(), true);
+    notificationsList.forEach(
+        notification -> {
+          notification.setNotificationStatus(notificationStatus);
+          notification.setNotificationType(NotificationStatusValue.CLOSED.getNotificationType());
+          notification.setIsActive(false);
+        });
+    this.notificationRepository.saveAll(notificationsList);
+
+    response.setId(entity.getId());
+
     response.setResponseStatus(
         new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
     return response;
