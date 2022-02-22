@@ -93,7 +93,7 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
 
   @Query(
       value =
-          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM algo_errors u where error_heading_xid IN ?1",
+          "SELECT  CAST(json_agg(u order by id) as VARCHAR) json_out FROM algo_errors u where error_heading_xid IN ?1",
       nativeQuery = true)
   String getAlgoErrorsWithAlgoErrorHeadingIds(List<Long> algoErrorHeadingsIds);
 
