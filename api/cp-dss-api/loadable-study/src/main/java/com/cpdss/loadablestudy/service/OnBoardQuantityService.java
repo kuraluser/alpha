@@ -594,11 +594,11 @@ public class OnBoardQuantityService {
             StringUtils.hasLength(dsCargo.get().getTemperature())
                 ? new BigDecimal(dsCargo.get().getTemperature())
                 : BigDecimal.ZERO);
-        onBoardQuantityEntity.setPlannedArrivalWeight(
+        onBoardQuantityEntity.setActualArrivalWeight(
             StringUtils.hasLength(dsCargo.get().getQuantity())
                 ? new BigDecimal(dsCargo.get().getQuantity())
                 : BigDecimal.ZERO);
-        onBoardQuantityEntity.setPlannedDepartureWeight(
+        onBoardQuantityEntity.setActualDepartureWeight(
             StringUtils.hasLength(dsCargo.get().getQuantity())
                 ? new BigDecimal(dsCargo.get().getQuantity())
                 : BigDecimal.ZERO);
@@ -610,6 +610,7 @@ public class OnBoardQuantityService {
         }
       }
       onBoardQuantityEntity.setIsActive(true);
+      onBoardQuantityEntity.setIsSlopTank(false);
       onBoardQuantityEntity.setLoadableStudy(loadableStudy);
       if (loadableStudy.getPortRotations() != null) {
         Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
