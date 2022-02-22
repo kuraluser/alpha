@@ -898,6 +898,11 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
               isDischarging);
     }
 
+    cargoNominationIds =
+        loadedCargoDetails.stream()
+            .map(LoadableQuantityCargoDetails::getCargoNominationId)
+            .collect(Collectors.toList());
+
     // Getting ballast tanks
     VesselInfo.VesselRequest.Builder vesselGrpcRequest = VesselInfo.VesselRequest.newBuilder();
     vesselGrpcRequest.setVesselId(vesselId);
