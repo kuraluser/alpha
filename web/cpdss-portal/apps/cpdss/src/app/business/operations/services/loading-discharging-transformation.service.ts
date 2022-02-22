@@ -749,7 +749,7 @@ export class LoadingDischargingTransformationService {
         field: 'estimatedAPIEdit',
         header: 'DISCHARGING_CARGO_TO_BE_DISCHARGED_API',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
-        fieldHeaderClass: 'column-api',
+        fieldHeaderClass: 'column-api-small',
         errorMessages: {
           'required': 'CARGO_LOADED_REQUIRED',
           'min': 'CARGO_LOADED_API_MIN_ERROR',
