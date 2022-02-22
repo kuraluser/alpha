@@ -30,4 +30,8 @@ public class BerthDetails {
   private Boolean airPurge;
   private Boolean cargoCirculation;
   private BigDecimal displacement;
+  private Boolean needFlushingOilAndCrudeStorage;
+  private Boolean enableDayLightRestriction;
+  private BigDecimal freshCrudeOilQuantity;
+  private BigDecimal freshCrudeOilTime;
 }

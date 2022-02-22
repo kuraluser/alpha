@@ -572,6 +572,16 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(dischargingBerthDetail.getDisplacement())
               .ifPresent(
                   displacement -> dischargeBerthsBuilder.setDisplacement(displacement.toString()));
+          Optional.ofNullable(dischargingBerthDetail.getEnableDayLightRestriction())
+              .ifPresent(dischargeBerthsBuilder::setEnableDayLightRestriction);
+          Optional.ofNullable(dischargingBerthDetail.getNeedFlushingOilAndCrudeStorage())
+              .ifPresent(dischargeBerthsBuilder::setNeedFlushingOilAndCrudeStorage);
+          Optional.ofNullable(dischargingBerthDetail.getFreshCrudeOilQuantity())
+              .ifPresent(
+                  quantity ->
+                      dischargeBerthsBuilder.setFreshCrudeOilQuantity(String.valueOf(quantity)));
+          Optional.ofNullable(dischargingBerthDetail.getFreshCrudeOilTime())
+              .ifPresent(time -> dischargeBerthsBuilder.setFreshCrudeOilTime(String.valueOf(time)));
 
           builder.addBerthDetails(dischargeBerthsBuilder.build());
         }

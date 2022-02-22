@@ -150,6 +150,10 @@ message DischargeBerths {
   string specialRegulationRestriction = 13;
   string itemsToBeAgreedWith = 14;
   string displacement = 15;
+  bool needFlushingOilAndCrudeStorage = 16;
+  bool enableDayLightRestriction = 17;
+  string freshCrudeOilQuantity = 18;
+  string freshCrudeOilTime = 19;
 }
 
 message DischargeMachinesInUse{

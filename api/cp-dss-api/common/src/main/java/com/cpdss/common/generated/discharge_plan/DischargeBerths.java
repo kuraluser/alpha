@@ -23,6 +23,8 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     specialRegulationRestriction_ = "";
     itemsToBeAgreedWith_ = "";
     displacement_ = "";
+    freshCrudeOilQuantity_ = "";
+    freshCrudeOilTime_ = "";
   }
 
   @java.lang.Override
@@ -147,6 +149,30 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
               java.lang.String s = input.readStringRequireUtf8();
 
               displacement_ = s;
+              break;
+            }
+          case 128:
+            {
+              needFlushingOilAndCrudeStorage_ = input.readBool();
+              break;
+            }
+          case 136:
+            {
+              enableDayLightRestriction_ = input.readBool();
+              break;
+            }
+          case 146:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              freshCrudeOilQuantity_ = s;
+              break;
+            }
+          case 154:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              freshCrudeOilTime_ = s;
               break;
             }
           default:
@@ -594,6 +620,98 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     }
   }
 
+  public static final int NEEDFLUSHINGOILANDCRUDESTORAGE_FIELD_NUMBER = 16;
+  private boolean needFlushingOilAndCrudeStorage_;
+  /**
+   * <code>bool needFlushingOilAndCrudeStorage = 16;</code>
+   *
+   * @return The needFlushingOilAndCrudeStorage.
+   */
+  public boolean getNeedFlushingOilAndCrudeStorage() {
+    return needFlushingOilAndCrudeStorage_;
+  }
+
+  public static final int ENABLEDAYLIGHTRESTRICTION_FIELD_NUMBER = 17;
+  private boolean enableDayLightRestriction_;
+  /**
+   * <code>bool enableDayLightRestriction = 17;</code>
+   *
+   * @return The enableDayLightRestriction.
+   */
+  public boolean getEnableDayLightRestriction() {
+    return enableDayLightRestriction_;
+  }
+
+  public static final int FRESHCRUDEOILQUANTITY_FIELD_NUMBER = 18;
+  private volatile java.lang.Object freshCrudeOilQuantity_;
+  /**
+   * <code>string freshCrudeOilQuantity = 18;</code>
+   *
+   * @return The freshCrudeOilQuantity.
+   */
+  public java.lang.String getFreshCrudeOilQuantity() {
+    java.lang.Object ref = freshCrudeOilQuantity_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      freshCrudeOilQuantity_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string freshCrudeOilQuantity = 18;</code>
+   *
+   * @return The bytes for freshCrudeOilQuantity.
+   */
+  public com.google.protobuf.ByteString getFreshCrudeOilQuantityBytes() {
+    java.lang.Object ref = freshCrudeOilQuantity_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      freshCrudeOilQuantity_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int FRESHCRUDEOILTIME_FIELD_NUMBER = 19;
+  private volatile java.lang.Object freshCrudeOilTime_;
+  /**
+   * <code>string freshCrudeOilTime = 19;</code>
+   *
+   * @return The freshCrudeOilTime.
+   */
+  public java.lang.String getFreshCrudeOilTime() {
+    java.lang.Object ref = freshCrudeOilTime_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      freshCrudeOilTime_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string freshCrudeOilTime = 19;</code>
+   *
+   * @return The bytes for freshCrudeOilTime.
+   */
+  public com.google.protobuf.ByteString getFreshCrudeOilTimeBytes() {
+    java.lang.Object ref = freshCrudeOilTime_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      freshCrudeOilTime_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -653,6 +771,18 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     if (!getDisplacementBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 15, displacement_);
     }
+    if (needFlushingOilAndCrudeStorage_ != false) {
+      output.writeBool(16, needFlushingOilAndCrudeStorage_);
+    }
+    if (enableDayLightRestriction_ != false) {
+      output.writeBool(17, enableDayLightRestriction_);
+    }
+    if (!getFreshCrudeOilQuantityBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 18, freshCrudeOilQuantity_);
+    }
+    if (!getFreshCrudeOilTimeBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 19, freshCrudeOilTime_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -709,6 +839,20 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     if (!getDisplacementBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, displacement_);
     }
+    if (needFlushingOilAndCrudeStorage_ != false) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeBoolSize(
+              16, needFlushingOilAndCrudeStorage_);
+    }
+    if (enableDayLightRestriction_ != false) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(17, enableDayLightRestriction_);
+    }
+    if (!getFreshCrudeOilQuantityBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, freshCrudeOilQuantity_);
+    }
+    if (!getFreshCrudeOilTimeBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(19, freshCrudeOilTime_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -741,6 +885,11 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
       return false;
     if (!getItemsToBeAgreedWith().equals(other.getItemsToBeAgreedWith())) return false;
     if (!getDisplacement().equals(other.getDisplacement())) return false;
+    if (getNeedFlushingOilAndCrudeStorage() != other.getNeedFlushingOilAndCrudeStorage())
+      return false;
+    if (getEnableDayLightRestriction() != other.getEnableDayLightRestriction()) return false;
+    if (!getFreshCrudeOilQuantity().equals(other.getFreshCrudeOilQuantity())) return false;
+    if (!getFreshCrudeOilTime().equals(other.getFreshCrudeOilTime())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -782,6 +931,15 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
     hash = (53 * hash) + getItemsToBeAgreedWith().hashCode();
     hash = (37 * hash) + DISPLACEMENT_FIELD_NUMBER;
     hash = (53 * hash) + getDisplacement().hashCode();
+    hash = (37 * hash) + NEEDFLUSHINGOILANDCRUDESTORAGE_FIELD_NUMBER;
+    hash =
+        (53 * hash) + com.google.protobuf.Internal.hashBoolean(getNeedFlushingOilAndCrudeStorage());
+    hash = (37 * hash) + ENABLEDAYLIGHTRESTRICTION_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getEnableDayLightRestriction());
+    hash = (37 * hash) + FRESHCRUDEOILQUANTITY_FIELD_NUMBER;
+    hash = (53 * hash) + getFreshCrudeOilQuantity().hashCode();
+    hash = (37 * hash) + FRESHCRUDEOILTIME_FIELD_NUMBER;
+    hash = (53 * hash) + getFreshCrudeOilTime().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -950,6 +1108,14 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
 
       displacement_ = "";
 
+      needFlushingOilAndCrudeStorage_ = false;
+
+      enableDayLightRestriction_ = false;
+
+      freshCrudeOilQuantity_ = "";
+
+      freshCrudeOilTime_ = "";
+
       return this;
     }
 
@@ -992,6 +1158,10 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
       result.specialRegulationRestriction_ = specialRegulationRestriction_;
       result.itemsToBeAgreedWith_ = itemsToBeAgreedWith_;
       result.displacement_ = displacement_;
+      result.needFlushingOilAndCrudeStorage_ = needFlushingOilAndCrudeStorage_;
+      result.enableDayLightRestriction_ = enableDayLightRestriction_;
+      result.freshCrudeOilQuantity_ = freshCrudeOilQuantity_;
+      result.freshCrudeOilTime_ = freshCrudeOilTime_;
       onBuilt();
       return result;
     }
@@ -1095,6 +1265,20 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
       }
       if (!other.getDisplacement().isEmpty()) {
         displacement_ = other.displacement_;
+        onChanged();
+      }
+      if (other.getNeedFlushingOilAndCrudeStorage() != false) {
+        setNeedFlushingOilAndCrudeStorage(other.getNeedFlushingOilAndCrudeStorage());
+      }
+      if (other.getEnableDayLightRestriction() != false) {
+        setEnableDayLightRestriction(other.getEnableDayLightRestriction());
+      }
+      if (!other.getFreshCrudeOilQuantity().isEmpty()) {
+        freshCrudeOilQuantity_ = other.freshCrudeOilQuantity_;
+        onChanged();
+      }
+      if (!other.getFreshCrudeOilTime().isEmpty()) {
+        freshCrudeOilTime_ = other.freshCrudeOilTime_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -2066,6 +2250,224 @@ public final class DischargeBerths extends com.google.protobuf.GeneratedMessageV
       checkByteStringIsUtf8(value);
 
       displacement_ = value;
+      onChanged();
+      return this;
+    }
+
+    private boolean needFlushingOilAndCrudeStorage_;
+    /**
+     * <code>bool needFlushingOilAndCrudeStorage = 16;</code>
+     *
+     * @return The needFlushingOilAndCrudeStorage.
+     */
+    public boolean getNeedFlushingOilAndCrudeStorage() {
+      return needFlushingOilAndCrudeStorage_;
+    }
+    /**
+     * <code>bool needFlushingOilAndCrudeStorage = 16;</code>
+     *
+     * @param value The needFlushingOilAndCrudeStorage to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNeedFlushingOilAndCrudeStorage(boolean value) {
+
+      needFlushingOilAndCrudeStorage_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool needFlushingOilAndCrudeStorage = 16;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearNeedFlushingOilAndCrudeStorage() {
+
+      needFlushingOilAndCrudeStorage_ = false;
+      onChanged();
+      return this;
+    }
+
+    private boolean enableDayLightRestriction_;
+    /**
+     * <code>bool enableDayLightRestriction = 17;</code>
+     *
+     * @return The enableDayLightRestriction.
+     */
+    public boolean getEnableDayLightRestriction() {
+      return enableDayLightRestriction_;
+    }
+    /**
+     * <code>bool enableDayLightRestriction = 17;</code>
+     *
+     * @param value The enableDayLightRestriction to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEnableDayLightRestriction(boolean value) {
+
+      enableDayLightRestriction_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>bool enableDayLightRestriction = 17;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearEnableDayLightRestriction() {
+
+      enableDayLightRestriction_ = false;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object freshCrudeOilQuantity_ = "";
+    /**
+     * <code>string freshCrudeOilQuantity = 18;</code>
+     *
+     * @return The freshCrudeOilQuantity.
+     */
+    public java.lang.String getFreshCrudeOilQuantity() {
+      java.lang.Object ref = freshCrudeOilQuantity_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        freshCrudeOilQuantity_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string freshCrudeOilQuantity = 18;</code>
+     *
+     * @return The bytes for freshCrudeOilQuantity.
+     */
+    public com.google.protobuf.ByteString getFreshCrudeOilQuantityBytes() {
+      java.lang.Object ref = freshCrudeOilQuantity_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        freshCrudeOilQuantity_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string freshCrudeOilQuantity = 18;</code>
+     *
+     * @param value The freshCrudeOilQuantity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFreshCrudeOilQuantity(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      freshCrudeOilQuantity_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string freshCrudeOilQuantity = 18;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearFreshCrudeOilQuantity() {
+
+      freshCrudeOilQuantity_ = getDefaultInstance().getFreshCrudeOilQuantity();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string freshCrudeOilQuantity = 18;</code>
+     *
+     * @param value The bytes for freshCrudeOilQuantity to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFreshCrudeOilQuantityBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      freshCrudeOilQuantity_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object freshCrudeOilTime_ = "";
+    /**
+     * <code>string freshCrudeOilTime = 19;</code>
+     *
+     * @return The freshCrudeOilTime.
+     */
+    public java.lang.String getFreshCrudeOilTime() {
+      java.lang.Object ref = freshCrudeOilTime_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        freshCrudeOilTime_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string freshCrudeOilTime = 19;</code>
+     *
+     * @return The bytes for freshCrudeOilTime.
+     */
+    public com.google.protobuf.ByteString getFreshCrudeOilTimeBytes() {
+      java.lang.Object ref = freshCrudeOilTime_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        freshCrudeOilTime_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string freshCrudeOilTime = 19;</code>
+     *
+     * @param value The freshCrudeOilTime to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFreshCrudeOilTime(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      freshCrudeOilTime_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string freshCrudeOilTime = 19;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearFreshCrudeOilTime() {
+
+      freshCrudeOilTime_ = getDefaultInstance().getFreshCrudeOilTime();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string freshCrudeOilTime = 19;</code>
+     *
+     * @param value The bytes for freshCrudeOilTime to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFreshCrudeOilTimeBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      freshCrudeOilTime_ = value;
       onChanged();
       return this;
     }

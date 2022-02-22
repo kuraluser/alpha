@@ -63,4 +63,16 @@ public class DischargingBerthDetail extends EntityDoc {
 
   @Column(name = "displacement")
   private BigDecimal displacement;
+
+  @Column(name = "need_flushing_oil_and_crude_storage")
+  private Boolean needFlushingOilAndCrudeStorage;
+
+  @Column(name = "enable_day_light_restriction")
+  private Boolean enableDayLightRestriction;
+
+  @Column(name = "fresh_crude_oil_quantity")
+  private BigDecimal freshCrudeOilQuantity;
+
+  @Column(name = "fresh_crude_oil_time")
+  private BigDecimal freshCrudeOilTime;
 }

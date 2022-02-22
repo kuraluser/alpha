@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -40,7 +39,7 @@ public class DischargingBerthService {
           "Saving berth {} for DischargingInformation {}",
           berth.getBerthId(),
           berth.getDischargeInfoId());
-      DischargingBerthDetail dischargingBerthDetail = null;
+      DischargingBerthDetail dischargingBerthDetail;
       if (berth.getId() == 0) {
         dischargingBerthDetail = new DischargingBerthDetail();
       } else {
@@ -59,8 +58,17 @@ public class DischargingBerthService {
     }
   }
 
+  /**
+   * Builds discharging berth entity from grpc builder request
+   *
+   * @param berth berth input grpc object
+   * @param dischargingBerthDetail discharging berth entity
+   * @throws Exception in case of failures
+   */
   private void buildDischargingBerthDetail(
       DischargeBerths berth, DischargingBerthDetail dischargingBerthDetail) throws Exception {
+
+    log.info("Inside buildDischargingBerthDetail method!");
     Optional<DischargeInformation> dischargingInformationOpt =
         dischargingInformationRepository.findByIdAndIsActiveTrue(berth.getDischargeInfoId());
     if (dischargingInformationOpt.isPresent()) {
@@ -69,42 +77,46 @@ public class DischargingBerthService {
       throw new Exception(
           "Cannot find the discharge study for berth detail with id " + berth.getDischargeInfoId());
     }
-    dischargingBerthDetail.setAirDraftLimitation(
-        StringUtils.isEmpty(berth.getAirDraftLimitation())
-            ? null
-            : new BigDecimal(berth.getAirDraftLimitation()));
-    Optional.ofNullable(berth.getBerthId()).ifPresent(dischargingBerthDetail::setBerthXid);
-    dischargingBerthDetail.setDepth(
-        StringUtils.isEmpty(berth.getDepth()) ? null : new BigDecimal(berth.getDepth()));
-    dischargingBerthDetail.setMaxManifoldHeight(
-        StringUtils.isEmpty(berth.getMaxManifoldHeight())
-            ? null
-            : new BigDecimal(berth.getMaxManifoldHeight()));
+
+    // Set fields
+    dischargingBerthDetail.setAirDraftLimitation(returnZeroIfBlank(berth.getAirDraftLimitation()));
+    Optional.of(berth.getBerthId()).ifPresent(dischargingBerthDetail::setBerthXid);
+    dischargingBerthDetail.setDepth(returnZeroIfBlank(berth.getDepth()));
+    dischargingBerthDetail.setMaxManifoldHeight(returnZeroIfBlank(berth.getMaxManifoldHeight()));
     dischargingBerthDetail.setMaxManifoldPressure(
-        StringUtils.isEmpty(berth.getMaxManifoldPressure())
-            ? null
-            : new BigDecimal(berth.getMaxManifoldPressure()));
-    dischargingBerthDetail.setSeaDraftLimitation(
-        StringUtils.isEmpty(berth.getSeaDraftLimitation())
-            ? null
-            : new BigDecimal(berth.getSeaDraftLimitation()));
-    Optional.ofNullable(berth.getSpecialRegulationRestriction())
+        returnZeroIfBlank(berth.getMaxManifoldPressure()));
+    dischargingBerthDetail.setSeaDraftLimitation(returnZeroIfBlank(berth.getSeaDraftLimitation()));
+    Optional.of(berth.getSpecialRegulationRestriction())
         .ifPresent(dischargingBerthDetail::setSpecialRegulationRestriction);
-    Optional.ofNullable(berth.getHoseConnections())
-        .ifPresent(dischargingBerthDetail::setHoseConnections);
-    Optional.ofNullable(berth.getItemsToBeAgreedWith())
+    Optional.of(berth.getHoseConnections()).ifPresent(dischargingBerthDetail::setHoseConnections);
+    Optional.of(berth.getItemsToBeAgreedWith())
         .ifPresent(dischargingBerthDetail::setItemToBeAgreed);
+
     dischargingBerthDetail.setLineContentDisplacement(
-        berth.getLineDisplacement().isEmpty()
-            ? BigDecimal.ZERO
-            : new BigDecimal(berth.getLineDisplacement()));
-    Optional.ofNullable(berth.getAirPurge()).ifPresent(dischargingBerthDetail::setIsAirPurge);
-    Optional.ofNullable(berth.getCargoCirculation())
+        returnZeroIfBlank(berth.getLineDisplacement()));
+    Optional.of(berth.getAirPurge()).ifPresent(dischargingBerthDetail::setIsAirPurge);
+    Optional.of(berth.getCargoCirculation())
         .ifPresent(dischargingBerthDetail::setIsCargoCirculation);
-    dischargingBerthDetail.setDisplacement(
-        berth.getDisplacement().isEmpty()
-            ? BigDecimal.ZERO
-            : new BigDecimal(berth.getDisplacement()));
+    dischargingBerthDetail.setDisplacement(returnZeroIfBlank(berth.getDisplacement()));
+    dischargingBerthDetail.setEnableDayLightRestriction(berth.getEnableDayLightRestriction());
+    dischargingBerthDetail.setNeedFlushingOilAndCrudeStorage(
+        berth.getNeedFlushingOilAndCrudeStorage());
+    dischargingBerthDetail.setFreshCrudeOilQuantity(
+        returnZeroIfBlank(berth.getFreshCrudeOilQuantity()));
+    dischargingBerthDetail.setFreshCrudeOilTime(returnZeroIfBlank(berth.getFreshCrudeOilTime()));
     dischargingBerthDetail.setIsActive(true);
+  }
+
+  /**
+   * Returns big decimal value of provided string else returns big decimal zero
+   *
+   * @param string input string
+   * @return big decimal value
+   */
+  private BigDecimal returnZeroIfBlank(String string) {
+
+    return io.micrometer.core.instrument.util.StringUtils.isBlank(string)
+        ? BigDecimal.ZERO
+        : new BigDecimal(string);
   }
 }

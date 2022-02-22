@@ -196,6 +196,12 @@ public class DischargeInformationBuilderService {
       berthDetails.setCargoCirculation(dischargeBerths.getCargoCirculation());
       berthDetails.setMaxManifoldPressure(dischargeBerths.getMaxManifoldPressure());
       berthDetails.setDisplacement(returnZeroIfBlank(dischargeBerths.getDisplacement()));
+      berthDetails.setEnableDayLightRestriction(dischargeBerths.getEnableDayLightRestriction());
+      berthDetails.setNeedFlushingOilAndCrudeStorage(
+          dischargeBerths.getNeedFlushingOilAndCrudeStorage());
+      berthDetails.setFreshCrudeOilQuantity(
+          returnZeroIfBlank(dischargeBerths.getFreshCrudeOilQuantity()));
+      berthDetails.setFreshCrudeOilTime(returnZeroIfBlank(dischargeBerths.getFreshCrudeOilTime()));
 
       berthDetailsList.add(berthDetails);
     }
@@ -807,6 +813,15 @@ public class DischargeInformationBuilderService {
           Optional.ofNullable(berth.getCargoCirculation()).ifPresent(builder::setCargoCirculation);
           Optional.ofNullable(berth.getDisplacement())
               .ifPresent(displacement -> builder.setDisplacement(displacement.toString()));
+          Optional.ofNullable(berth.getEnableDayLightRestriction())
+              .ifPresent(builder::setEnableDayLightRestriction);
+          Optional.ofNullable(berth.getNeedFlushingOilAndCrudeStorage())
+              .ifPresent(builder::setNeedFlushingOilAndCrudeStorage);
+          Optional.ofNullable(berth.getFreshCrudeOilTime())
+              .ifPresent(time -> builder.setFreshCrudeOilTime(String.valueOf(time)));
+          Optional.ofNullable(berth.getFreshCrudeOilQuantity())
+              .ifPresent(quantity -> builder.setFreshCrudeOilQuantity(String.valueOf(quantity)));
+
           berthList.add(builder.build());
         });
     return berthList;
@@ -928,40 +943,48 @@ public class DischargeInformationBuilderService {
   }
 
   public void buildPostDischargeRates(
-      PostDischargeStageTime var1Rpc,
+      PostDischargeStageTime postDischargeStageTime,
       AdminRuleValueExtract extract,
-      com.cpdss.gateway.domain.dischargeplan.DischargeInformation var2Entity) {
+      com.cpdss.gateway.domain.dischargeplan.DischargeInformation dischargeInformation) {
 
     // All 4 fields need to get From Admin Rule
-    PostDischargeStage ds = new PostDischargeStage();
-    if (var1Rpc.getTimeForDryCheck().isEmpty()) {
-      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_TIME_FOR_DRY_CHECK);
-      ds.setDryCheckTime(new BigDecimal(val));
+    PostDischargeStage postDischargeStage = new PostDischargeStage();
+    if (postDischargeStageTime.getTimeForDryCheck().isEmpty()) {
+      var defaultValueForKey =
+          extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_TIME_FOR_DRY_CHECK);
+      postDischargeStage.setDryCheckTime(returnZeroIfBlank(defaultValueForKey));
     } else {
-      ds.setDryCheckTime(new BigDecimal(var1Rpc.getTimeForDryCheck()));
+      postDischargeStage.setDryCheckTime(
+          returnZeroIfBlank(postDischargeStageTime.getTimeForDryCheck()));
     }
 
-    if (var1Rpc.getSlopDischarging().isEmpty()) {
-      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_SLOP_DISCHARGE);
-      ds.setSlopDischargingTime(new BigDecimal(val));
+    if (postDischargeStageTime.getSlopDischarging().isEmpty()) {
+      var defaultValueForKey =
+          extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_SLOP_DISCHARGE);
+      postDischargeStage.setSlopDischargingTime(returnZeroIfBlank(defaultValueForKey));
     } else {
-      ds.setSlopDischargingTime(new BigDecimal(var1Rpc.getSlopDischarging()));
+      postDischargeStage.setSlopDischargingTime(
+          returnZeroIfBlank(postDischargeStageTime.getSlopDischarging()));
     }
 
-    if (var1Rpc.getFinalStripping().isEmpty()) {
-      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FINAL_STRIPPING);
-      ds.setFinalStrippingTime(new BigDecimal(val));
+    if (postDischargeStageTime.getFinalStripping().isEmpty()) {
+      var defaultValueForKey =
+          extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FINAL_STRIPPING);
+      postDischargeStage.setFinalStrippingTime(returnZeroIfBlank(defaultValueForKey));
     } else {
-      ds.setFinalStrippingTime(new BigDecimal(var1Rpc.getFinalStripping()));
+      postDischargeStage.setFinalStrippingTime(
+          returnZeroIfBlank(postDischargeStageTime.getFinalStripping()));
     }
 
-    if (var1Rpc.getFreshOilWashing().isEmpty()) {
-      var val = extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FRESH_OIL_WASHING);
-      ds.setFreshOilWashingTime(new BigDecimal(val));
+    if (postDischargeStageTime.getFreshOilWashing().isEmpty()) {
+      var defaultValueForKey =
+          extract.getDefaultValueForKey(AdminRuleTemplate.DISCHARGE_FRESH_OIL_WASHING);
+      postDischargeStage.setFreshOilWashingTime(returnZeroIfBlank(defaultValueForKey));
     } else {
-      ds.setFreshOilWashingTime(new BigDecimal(var1Rpc.getFreshOilWashing()));
+      postDischargeStage.setFreshOilWashingTime(
+          returnZeroIfBlank(postDischargeStageTime.getFreshOilWashing()));
     }
 
-    var2Entity.setPostDischargeStageTime(ds);
+    dischargeInformation.setPostDischargeStageTime(postDischargeStage);
   }
 }

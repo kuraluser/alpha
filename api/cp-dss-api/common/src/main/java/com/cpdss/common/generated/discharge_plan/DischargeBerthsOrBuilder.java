@@ -176,4 +176,44 @@ public interface DischargeBerthsOrBuilder
    * @return The bytes for displacement.
    */
   com.google.protobuf.ByteString getDisplacementBytes();
+
+  /**
+   * <code>bool needFlushingOilAndCrudeStorage = 16;</code>
+   *
+   * @return The needFlushingOilAndCrudeStorage.
+   */
+  boolean getNeedFlushingOilAndCrudeStorage();
+
+  /**
+   * <code>bool enableDayLightRestriction = 17;</code>
+   *
+   * @return The enableDayLightRestriction.
+   */
+  boolean getEnableDayLightRestriction();
+
+  /**
+   * <code>string freshCrudeOilQuantity = 18;</code>
+   *
+   * @return The freshCrudeOilQuantity.
+   */
+  java.lang.String getFreshCrudeOilQuantity();
+  /**
+   * <code>string freshCrudeOilQuantity = 18;</code>
+   *
+   * @return The bytes for freshCrudeOilQuantity.
+   */
+  com.google.protobuf.ByteString getFreshCrudeOilQuantityBytes();
+
+  /**
+   * <code>string freshCrudeOilTime = 19;</code>
+   *
+   * @return The freshCrudeOilTime.
+   */
+  java.lang.String getFreshCrudeOilTime();
+  /**
+   * <code>string freshCrudeOilTime = 19;</code>
+   *
+   * @return The bytes for freshCrudeOilTime.
+   */
+  com.google.protobuf.ByteString getFreshCrudeOilTimeBytes();
 }
