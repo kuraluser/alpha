@@ -10,6 +10,7 @@ import { CrewMasterTransformationService } from './../../services/crew-master-tr
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IVessel } from '../../../core/models/vessel-details.model';
+import { specialCharacterValidator } from '../../../core/directives/special-character-validator.directive';
 
 /**
  * Component class of add crew
@@ -48,7 +49,7 @@ export class AddCrewComponent implements OnInit, OnDestroy {
     this.errorMessages = this.crewTransformationService.setValidationErrorMessage();
     this.getRanks();
     this.addCrewForm = this.fb.group({
-      'crewName': ['', [Validators.required, Validators.maxLength(30), Validators.pattern('^[a-zA-Z]+')]],
+      'crewName': ['', [Validators.required, Validators.maxLength(30), specialCharacterValidator]],
       'crewRank': ['', [Validators.required]],
       'vesselInformation': [[], [Validators.required]]
     });

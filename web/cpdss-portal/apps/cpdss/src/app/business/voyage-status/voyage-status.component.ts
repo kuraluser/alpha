@@ -202,12 +202,19 @@ export class VoyageStatusComponent implements OnInit, OnDestroy {
   async getVoyageStatus(vesselId: number, voyageId: number,portData: IVoyagePortDetails) {
     this.ngxSpinnerService.show();
     const id = this.selectedVoyage?.confirmedDischargeStudyId && portData.portType === 'DISCHARGE'? this.selectedVoyage?.confirmedDischargeStudyId : this.selectedVoyage?.confirmedLoadableStudyId;
-    this.voyageStatusResponse = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, id, this.selectedPortDetails).toPromise();
-    if (this.voyageStatusResponse?.responseStatus?.status === '200') {
-      this.bunkerConditions = this.voyageStatusResponse?.bunkerConditions;
-      this.cargoConditions = this.voyageStatusResponse?.cargoConditions?.length > 0 ? this.voyageStatusResponse?.cargoConditions : [];
-      this.cargoQuantities = this.voyageStatusResponse?.cargoQuantities?.length > 0 ? this.voyageStatusResponse?.cargoQuantities : [];
-      this.showPlannedValues = !this.checkActualValues();
+    try{
+      this.voyageStatusResponse = await this.voyageApiService.getVoyageDetails(vesselId, voyageId, id, this.selectedPortDetails).toPromise();
+      if (this.voyageStatusResponse?.responseStatus?.status === '200') {
+        this.bunkerConditions = this.voyageStatusResponse?.bunkerConditions;
+        this.cargoConditions = this.voyageStatusResponse?.cargoConditions?.length > 0 ? this.voyageStatusResponse?.cargoConditions : [];
+        this.cargoQuantities = this.voyageStatusResponse?.cargoQuantities?.length > 0 ? this.voyageStatusResponse?.cargoQuantities : [];
+        this.showPlannedValues = !this.checkActualValues();
+      }
+    } catch (error){
+      const translationKeys = await this.translateService.get(['TYPE_MISMATCH_ERROR', 'TYPE_MISMATCH']).toPromise();
+      if (error.error?.errorCode === 'ERR-RICO-205') {
+        this.messageService.add({ severity: 'error', summary: translationKeys['TYPE_MISMATCH_ERROR'], detail: translationKeys['TYPE_MISMATCH'] });
+      }
     }
     this.ngxSpinnerService.hide();
   }

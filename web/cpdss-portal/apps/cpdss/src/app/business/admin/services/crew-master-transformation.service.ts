@@ -26,6 +26,7 @@ export class CrewMasterTransformationService {
       crewName: {
         'required': 'ADD_CREW_POPUP_CREW_REQUIRED_ERROR',
         'pattern': 'ADD_CREW_POPUP_VALIDATION_ERROR',
+        'specialCharacter': 'NEW_CREW_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED',
         'maxlength': 'ROLE_NAME_MAX_LENGTH'
       },
       crewRankId: {
