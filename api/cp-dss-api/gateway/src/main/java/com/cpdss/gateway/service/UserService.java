@@ -560,7 +560,7 @@ public class UserService {
       HttpServletRequest request =
           ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
       if (null != request.getRequestURI()) {
-        return true;
+        return request.getRequestURI().indexOf(SHIP_URL_PREFIX) != -1;
       }
     }
     return false;
