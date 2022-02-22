@@ -924,6 +924,7 @@ message LoadableStudyAttachment{
 	bytes byteString = 1;
 	string fileName = 2;
 	int64 id = 3;
+	string filecontent = 4;
 }
 
 message LoadableStudyDetail{

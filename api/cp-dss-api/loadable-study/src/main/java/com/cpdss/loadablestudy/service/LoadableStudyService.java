@@ -529,7 +529,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           String filePath = folderLocation + fileName;
           Path path = Paths.get(this.rootFolder + filePath);
           Files.createFile(path);
-          Files.write(path, attachment.getByteString().toByteArray());
+          Files.write(path, Base64.getDecoder().decode(attachment.getFilecontent()));
           LoadableStudyAttachments attachmentEntity = new LoadableStudyAttachments();
           attachmentEntity.setUploadedFileName(attachment.getFileName());
           attachmentEntity.setFilePath(filePath);
@@ -545,7 +545,7 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
           fileRepoAddRequest.setSection(FileRepoSection.LOADABLE_STUDY);
           fileRepoAddRequest.setCategory(ATTACHMENT_CATEGORY);
           fileRepoAddRequest.setFileType(path.toString());
-          fileRepoAddRequest.setFile(attachment.getByteString().toByteArray());
+          fileRepoAddRequest.setFile(Base64.getDecoder().decode(attachment.getFilecontent()));
 
           FileRepoReply fileRepoReply = fileRepoService.addFileToFileRepo(fileRepoAddRequest, true);
           log.debug("Added to file repo. Response: {}", fileRepoReply);
