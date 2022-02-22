@@ -193,7 +193,11 @@ export class LoadingDischargingBerthComponent implements OnInit {
       }
     }
     this.checkFormValidity();
-    this.berthChange.emit(this.selectedBerths);
+    const selectedBerths = this.selectedBerths?.map(berth => {
+      berth.freshCrudeOilTime = berth?.freshCrudeOilTime ? this.loadingDischargingTransformationService.convertTimeStringToMinutes(berth?.freshCrudeOilTime).toString() : null;
+      return berth;
+    });
+    this.berthChange.emit(selectedBerths);
   }
   clearFilter(data) {
 

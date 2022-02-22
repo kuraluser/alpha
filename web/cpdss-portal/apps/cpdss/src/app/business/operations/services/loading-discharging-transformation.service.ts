@@ -1345,6 +1345,11 @@ export class LoadingDischargingTransformationService {
     dischargingInformation.isDischargeSequenceGenerated = dischargingInformationResponse?.isDischargeSequenceGenerated;
     dischargingInformation.isDischargePlanGenerated = dischargingInformationResponse?.isDischargePlanGenerated;
 
+    dischargingInformation.berthDetails.selectedBerths = dischargingInformation?.berthDetails?.selectedBerths?.map(berth => {
+      berth.freshCrudeOilTime = berth?.freshCrudeOilTime ? this.convertMinutesToHHMM(Number(berth?.freshCrudeOilTime)) : null;
+      return berth;
+    })
+
     dischargingInformationResponse?.dischargeSequences?.dischargingDelays.map(item => {
       item.rateMin = dischargingInformationResponse?.dischargeRates?.initialDischargingRate;
       item.rateMax = dischargingInformationResponse?.dischargeRates?.maxDischargingRate;
