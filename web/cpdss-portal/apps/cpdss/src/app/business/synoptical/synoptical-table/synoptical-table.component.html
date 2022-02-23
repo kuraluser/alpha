@@ -19,14 +19,8 @@
                 <th></th>
                 <th></th>
                 <ng-container *ngFor="let col of columns; let i= index">
-                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" [ngClass]="{'text-right': headerColumn.fields[0].key === 'operationType'}">
-                      <ng-container *ngIf="headerColumn.fields[0].key === 'portName'">
-                        <div class="row pr-20">
-                          <div class="col-6 "></div>
-                          <div class="col-6  text-center">{{col[headerColumn.fields[0].key]}}</div>
-                        </div>
-                      </ng-container>
-                      <ng-container *ngIf="headerColumn.fields[0].key !== 'portName'">
+                    <th *ngIf="headerIndex > 0 || i%2 == 0" [attr.colSpan]="headerIndex ? 1 : 2" [ngClass]="{'text-center': headerColumn.fields[0].key === 'operationType' || headerColumn.fields[0].key === 'portName'}">
+                      <ng-container>
                         {{col[headerColumn.fields[0].key]}}
                       </ng-container>
                     </th>
@@ -87,9 +81,9 @@
         <ng-template #cell let-rowData="rowData" let-column="column" let-colIndex="colIndex">
             <td *ngIf="rowData.betweenPorts && colIndex == 0"></td>
             <td *ngIf="!rowData.colSpan || (colIndex%2 == 1 && (!rowData.betweenPorts || colIndex < synopticalService.synopticalRecords.length - 1))" [attr.colSpan]="rowData.colSpan ? rowData.colSpan : 1"
-                [class.text-right]="true" [ngClass]="{'port-center' : rowData.colSpan}">
+                [class.text-center]="true" [class.port-center]="(rowData.fields.length === 2 && rowData.editable && synopticalService.editMode)">
                 <ng-container *ngFor="let field of rowData.fields;let i = index">
-                    <div class="pr-0" *ngIf="i > 0" [class.pr-0]="rowData.editable && synopticalService.editMode && checkEditableCondition(field.key,colIndex,rowData)">
+                    <div *ngIf="i > 0" [ngClass]="rowData.editable && synopticalService.editMode && checkEditableCondition(field.key,colIndex,rowData) ? 'pr-0' : 'pr-10 pl-10'">
                         &nbsp;-&nbsp;
                     </div>
                     <ng-container
