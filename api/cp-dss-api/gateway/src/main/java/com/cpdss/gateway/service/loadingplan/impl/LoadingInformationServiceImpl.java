@@ -1306,30 +1306,28 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
     return statusReply.getData().toByteArray();
   }
 
+  /**
+   * Gets PostDischargeStage from grpc
+   *
+   * @param postDischargeStageTime input object
+   * @return post discharge stage output
+   */
   @Override
   public PostDischargeStage getPostDischargeStage(PostDischargeStageTime postDischargeStageTime) {
-    PostDischargeStage pdStage = new PostDischargeStage();
-    Optional.ofNullable(postDischargeStageTime.getFinalStripping())
-        .ifPresent(
-            value -> {
-              pdStage.setFinalStrippingTime(new BigDecimal(value));
-            });
-    Optional.ofNullable(postDischargeStageTime.getFreshOilWashing())
-        .ifPresent(
-            value -> {
-              pdStage.setFreshOilWashingTime(new BigDecimal(value));
-            });
-    Optional.ofNullable(postDischargeStageTime.getSlopDischarging())
-        .ifPresent(
-            value -> {
-              pdStage.setSlopDischargingTime(new BigDecimal(value));
-            });
-    Optional.ofNullable(postDischargeStageTime.getTimeForDryCheck())
-        .ifPresent(
-            value -> {
-              pdStage.setDryCheckTime(new BigDecimal(value));
-            });
+    PostDischargeStage postDischargeStage = new PostDischargeStage();
 
-    return pdStage;
+    log.info("Inside getPostDischargeStage method!");
+
+    // Set fields
+    postDischargeStage.setFinalStrippingTime(
+        returnZeroIfBlank(postDischargeStageTime.getFinalStripping()));
+    postDischargeStage.setFreshOilWashingTime(
+        returnZeroIfBlank(postDischargeStageTime.getFreshOilWashing()));
+    postDischargeStage.setSlopDischargingTime(
+        returnZeroIfBlank(postDischargeStageTime.getSlopDischarging()));
+    postDischargeStage.setDryCheckTime(
+        returnZeroIfBlank(postDischargeStageTime.getTimeForDryCheck()));
+
+    return postDischargeStage;
   }
 }
