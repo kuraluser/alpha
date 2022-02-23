@@ -1,0 +1,15 @@
+route:
+    receiver: 'slack'
+
+receivers:
+  - name: 'slack'
+    slack_configs:
+        - send_resolved: true
+          channel: '#CHANNEL_SLACK'
+          api_url: 'URL_SLACK'
+          icon_url: https://avatars3.githubusercontent.com/u/3380462
+          title: '{{ template "custom_title" . }}'
+          text: '{{ template "custom_slack_message" . }}'
+
+templates:
+- /opt/bitnami/alertmanager/notifications.tmpl

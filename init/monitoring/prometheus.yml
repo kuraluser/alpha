@@ -1,0 +1,125 @@
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: "gateway-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["gateway-service:8080"]
+  
+  - job_name: "comapany-info-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["company-info-service:8080"]
+  
+  - job_name: "vessel-info-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["vessel-info-service:8080"]
+  
+  - job_name: "cargo-info-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["cargo-info-service:8080"]
+  
+  - job_name: "port-info-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["port-info-service:8080"]
+  
+  - job_name: "loading-plan-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["loading-plan-service:8080"]
+  
+  - job_name: "discharge-plan-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["discharge-plan-service:8080"]
+  
+  - job_name: "envoy-reader-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["envoy-reader-service:8080"]
+  
+  - job_name: "envoy-writer-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["envoy-writer-service:8080"]
+  
+  - job_name: "loadable-study-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["loadable-study-service:8080"]
+  
+  - job_name: "loadicator-integration-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["loadicator-integration-service:8080"]
+  
+  - job_name: "task-manager-actuator"
+    metrics_path: "/actuator/prometheus"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["task-manager-service:8080"]
+  
+  - job_name: 'node_exporter'
+    static_configs:
+    - targets: ['node-exporter:9100']
+  
+  - job_name: 'login_nginx'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['login-nginx-exporter:9113']
+  
+  - job_name: 'cpdss_nginx'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['cpdss-nginx-exporter:9113']
+
+  - job_name: 'communication_nginx'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['comm-nginx-exporter:9113']
+  
+  - job_name: 'windows_node'
+    scrape_interval: 15s
+    static_configs:
+      - targets: [ "WIN_TARGET_URL" ]
