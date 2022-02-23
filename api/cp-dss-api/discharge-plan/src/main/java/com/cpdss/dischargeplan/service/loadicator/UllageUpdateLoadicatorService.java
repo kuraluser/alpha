@@ -344,9 +344,10 @@ public class UllageUpdateLoadicatorService {
           loadicatorService.getPortInfoForLoadicator(dischargingInfoOpt.get());
 
       loadicatorRequestBuilder.setTypeId(DischargePlanConstants.LOADICATOR_TYPE_ID);
+      loadicatorRequestBuilder.setIsUllageUpdate(true);
 
       // Set if ullage is changed
-      loadicatorRequestBuilder.setIsUllageUpdate(
+      loadicatorRequestBuilder.setIsUllageAltered(
           checkAndSetIsUllageAltered(
               tempStowageDetails,
               request.getUpdateUllage(0).getArrivalDepartutre(),

@@ -327,9 +327,10 @@ public class UllageUpdateLoadicatorService {
     Loadicator.LoadicatorRequest.Builder loadicatorRequestBuilder =
         Loadicator.LoadicatorRequest.newBuilder();
     loadicatorRequestBuilder.setTypeId(LoadingPlanConstants.LOADING_INFORMATION_LOADICATOR_TYPE_ID);
+    loadicatorRequestBuilder.setIsUllageUpdate(true);
 
     // Check and set flag if ullage is changed
-    loadicatorRequestBuilder.setIsUllageUpdate(
+    loadicatorRequestBuilder.setIsUllageAltered(
         checkAndSetIsUllageAltered(
             tempStowageDetails,
             ullageUpdateReq.getUpdateUllage(0).getArrivalDepartutre(),
