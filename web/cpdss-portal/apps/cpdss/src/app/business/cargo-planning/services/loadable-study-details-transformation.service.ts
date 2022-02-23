@@ -1579,7 +1579,7 @@ export class LoadableStudyDetailsTransformationService {
     const slops: ICargo = <ICargo>{ id: -1, name: 'Slops', abbreviation: 'SLOPS', color: '#a52a2a' };
     if (isSlopeTank) {
       _obqTankDetail.cargoList = cargoObj ? [cargoObj, slops] : [slops];
-      cargoObj = _obqTankDetail.cargoList.find(cargo => _obqTankDetail.isSlopTank ? (cargo.id === obqTankDetail.slopCargoId) : (cargo.id === obqTankDetail.cargoId));
+      cargoObj = _obqTankDetail.cargoList.find(cargo => _obqTankDetail.isSlopTank ? (cargo.id === -1) : (cargo.id === obqTankDetail.cargoId));
       _obqTankDetail.colorCode = cargoObj?.color;
       _obqTankDetail.abbreviation = cargoObj?.abbreviation;
     }
