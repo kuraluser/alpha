@@ -15,6 +15,7 @@ import { saveAs } from 'file-saver';
 import { MessageService } from 'primeng/api';
 import { PermissionsService } from '../../shared/services/permissions/permissions.service';
 import { AppConfigurationService } from '../../shared/services/app-configuration/app-configuration.service';
+import * as moment from 'moment';
 
 /**
  * Component class for file repositiry
@@ -97,12 +98,19 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     this.getFiles$.pipe(
       debounceTime(1000),
       switchMap(() => {
+        if(this.pageState?.createdDate){
+        let createdDate = moment(this.pageState?.createdDate,"dd-MM-yyyy");
+        if(!createdDate.isValid()){
+          this.pageState["createdDate"] = null;
+        }
+        }
         this.ngxSpinnerService.show();
         return this.fileRepositoryApiService.getFiles(this.pageState, this.vessel?.id);
       })
     ).subscribe((result: any) => {
       this.ngxSpinnerService.hide();
       this.fileRepoDetails = result.fileRepos;
+      this.actionSetting(result);
       this.totalRecords = result.totalElements;
     });
   }
@@ -138,10 +146,7 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
       this.ngxSpinnerService.hide();
     }
     if (result.responseStatus.status === '200') {
-      result.fileRepos?.map(item => {
-        item.isDeletable = !item.isSystemGenerated && this.permission.delete ? true : false;
-        item.isEditable = !item.isSystemGenerated && this.permission.edit ? true : false;
-      });
+      await this.actionSetting(result);
       this.fileRepoDetails = result.fileRepos;
       this.totalRecords = result.totalElements;
     }
@@ -176,7 +181,7 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     this.pageState = { ...this.pageState, ...event.filter };
     this.pageState.sortBy = event.sort?.sortField;
     this.pageState.orderBy =  event.sort?.sortOrder;
-    this.getFiles$.next();    
+    this.getFiles$.next();
   }
 
   /**
@@ -264,6 +269,14 @@ export class FileRepositoryComponent implements OnInit, OnDestroy {
     this.showAddEdit = null;
     this.editMode = false;
     this.showAddEdit = true;
+  }
+
+  // to set actions on each row
+  async actionSetting(result: any) {
+    result.fileRepos?.map(item => {
+      item.isDeletable = !item.isSystemGenerated && this.permission.delete ? true : false;
+      item.isEditable = !item.isSystemGenerated && this.permission.edit ? true : false;
+    });
   }
 
 

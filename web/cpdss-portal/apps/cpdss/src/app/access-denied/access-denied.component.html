@@ -5,7 +5,7 @@
             <h3>{{'CONTACT_YOUR_ADMINISTRATOR'| translate}}</h3>
             <button id="backtoHome" class="btn btn-primary" (click)="goBackToHome()">{{'BACK_TO_HOME'| translate}}</button>
         </div>
-        <div *ngIf="enableUserAuth && !(userStatus == 2 && userInfo.count >= 3)" class="col-md-12 text-center">
+        <div *ngIf="enableUserAuth && !(userStatus == 2 && userInfo.count > 3)" class="col-md-12 text-center">
           <ng-container *ngIf="userInfo?.vesselStatusCode === 391 else noRoleMapping">
             <h4>{{'NO_VESSEL_MAPPING'|translate}}</h4>
             <h3>{{'CONTACT_YOUR_ADMINISTRATOR'| translate}}</h3>
@@ -29,7 +29,7 @@
             </div>
           </div>
         </div>
-        <div *ngIf="enableUserAuth && userStatus == 2 && userInfo.count >= 3" class="col-md-12 text-center">
+        <div *ngIf="enableUserAuth && userStatus == 2 && userInfo.count > 3" class="col-md-12 text-center">
             <h4>{{'PERMISSION_TO_VIEW_THIS_CONTENT'|translate}}</h4>
             <h3>{{'USER_AUTHORIZATION_LIMIT_REACHED'| translate}}</h3>
             <button id="backToLoginDenied" class="btn btn-primary" (click)="gobackToLogin()">{{'USER_AUTHORIZATION_BACK_TO_LOGIN'| translate}}</button>

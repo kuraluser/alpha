@@ -101,9 +101,15 @@ public class FileRepoService {
         new FileRepoSpecification(new SearchCriteria("isActive", "EQUALS", Boolean.TRUE));
     for (int i = 0; i < filterKeys.size(); i++) {
       String key = filterKeys.get(i);
-      if (key.equalsIgnoreCase("createdDate") && null != filterParams.get(key)) {
-        LocalDate date =
-            LocalDate.parse(filterParams.get(key), DateTimeFormatter.ofPattern(DATE_FORMAT));
+      if (key.equalsIgnoreCase("createdDate")) {
+        LocalDate date = null;
+        try {
+          if (null != filterParams.get(key))
+            date = LocalDate.parse(filterParams.get(key), DateTimeFormatter.ofPattern(DATE_FORMAT));
+        } catch (Exception e) {
+          log.error("failed to parse date", e);
+        }
+
         specification =
             specification.and(new FileRepoSpecification(new SearchCriteria(key, "EQUALS", date)));
       } else if (key.equalsIgnoreCase("vesselId") && null != filterParams.get(key)) {

@@ -23,7 +23,7 @@ export class FileRepositoryApiService {
    * @memberof FileRepositoryApiService
    */
   getFiles(data: IFileRepoStateChange, vesselId: number) {
-    const params: any = `vesselId=${vesselId}${data.pageSize ? '&pageSize=' + data.pageSize : ''}${data.pageNo ? '&pageNo=' + data.pageNo : ''}${data.sortBy ? '&sortBy=' + data.sortBy : ''}${data.orderBy ? '&orderBy=' + data.orderBy : ''}${data.voyageNumber ? '&voyageNumber=' + data.voyageNumber : ''}${data.fileName ? '&fileName=' + data.fileName : ''}${data.fileType ? '&fileType=' + data.fileType : ''}${data.section ? '&section=' + data.section : ''}${data.category ? '&category=' + data.category : ''}${data.createdDate ? '&createdDate=' + data.createdDate : ''}${data.createdBy ? '&createdBy=' + data.createdBy : ''}`;
+    const params: any = `vesselId=${vesselId}${data.pageSize ? '&pageSize=' + data.pageSize : ''}${data.pageNo ? '&pageNo=' + data.pageNo : ''}${data.sortBy ? '&sortBy=' + data.sortBy : ''}${data.orderBy ? '&orderBy=' + data.orderBy : ''}${data.voyageNumber ? '&voyageNumber=' + data.voyageNumber : ''}${data.fileName ? '&fileName=' + data.fileName : ''}${data.fileType ? '&fileType=' + data.fileType : ''}${data.section ? '&section=' + data.section : ''}${data.category ? '&category=' + data.category : ''}${data.createdDate !== ''? '&createdDate=' + data.createdDate : ''}${data.createdBy ? '&createdBy=' + data.createdBy : ''}`;
     return this.commonApiService.get<IFileRepoResponse>(`file-repo?${params}`);
   }
 

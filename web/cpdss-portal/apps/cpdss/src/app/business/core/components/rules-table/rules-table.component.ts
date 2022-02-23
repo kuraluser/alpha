@@ -100,7 +100,7 @@ export class RulesTableComponent implements OnInit, OnDestroy, OnChanges {
    */
   showHideDisplaySetttingsColumn() {
     if (this.displaySettings) {
-      this.columns.unshift({ header: "Display in Settings" });
+      this.columns.unshift({ header: "Display in Rules" });
     }
   }
 
