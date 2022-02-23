@@ -135,7 +135,7 @@ public class OnBoardQuantityService {
       entity.setCargoId(0 == request.getCargoId() ? null : request.getCargoId());
       entity.setTankId(request.getTankId());
       entity.setPortId(request.getPortId());
-      entity.setPlannedArrivalWeight(
+      entity.setActualDepartureWeight(
           isEmpty(request.getWeight()) ? null : new BigDecimal(request.getWeight()));
       entity.setVolumeInM3(request.getVolume());
       entity.setDensity(
