@@ -594,7 +594,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
       const formGroup = this.row(this.selectedIndex);
       formGroup.controls[field]?.setValue(event?.target.value);
     }
-    if (this.obqForm.valid || (controls.api.valid && controls.temperature.valid && controls.quantity.valid && controls.volume.valid)) {
+    if (controls.api.valid && controls.temperature.valid && ((controls.quantity.enabled && controls.quantity.valid) || controls.quantity.disabled) && controls.volume.valid) {
       this.onEditComplete({ originalEvent: event, data: this.selectedTank, field: field, index: this.selectedIndex });
     } else {
       controls.api.markAsTouched();
