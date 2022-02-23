@@ -20,7 +20,6 @@ message LoadicatorRequest{
 	int64 typeId = 3;
 	bool isUllageUpdate = 4;
 	int32 conditionType = 5;
-	bool isUllageAltered = 6;
 }
 
 message StowagePlan{

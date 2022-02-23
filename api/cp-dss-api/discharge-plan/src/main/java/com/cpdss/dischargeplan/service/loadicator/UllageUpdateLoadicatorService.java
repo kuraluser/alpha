@@ -346,12 +346,6 @@ public class UllageUpdateLoadicatorService {
       loadicatorRequestBuilder.setTypeId(DischargePlanConstants.LOADICATOR_TYPE_ID);
       loadicatorRequestBuilder.setIsUllageUpdate(true);
 
-      // Set if ullage is changed
-      loadicatorRequestBuilder.setIsUllageAltered(
-          checkAndSetIsUllageAltered(
-              tempStowageDetails,
-              request.getUpdateUllage(0).getArrivalDepartutre(),
-              dischargingInfoOpt.get()));
       loadicatorRequestBuilder.setConditionType(request.getUpdateUllage(0).getArrivalDepartutre());
       StowagePlan.Builder stowagePlanBuilder = StowagePlan.newBuilder();
       loadicatorService.buildStowagePlan(
