@@ -107,12 +107,12 @@ export class SynopticalService {
     if (this.selectedVoyage?.id !== 0) {
       const result = await this.dischargeStudyListApiService.getDischargeStudies(vesselId, voyageId).toPromise();
       const dischargeStudy = result.dischargeStudies.find(ds => ds.status === "Confirmed")
-      if (dischargeStudy?.id) {
+      if (dischargeStudy && dischargeStudy?.id) {
         this.dischargeStudyList = [dischargeStudy];
         this.loadableOrDischargeStudyId = dischargeStudy.id;
       } else {
         this.dischargeStudyList = result.dischargeStudies;
-        if (this.route?.snapshot?.children[0]?.params?.loadableStudyId) {
+        if (this.route?.snapshot?.children[0]?.params?.loadableStudyId && this.dischargeStudyList.find(_dischargeStudy => _dischargeStudy.id === this.route?.snapshot?.children[0]?.params?.loadableStudyId)) {
           this.loadableOrDischargeStudyId = Number(this.route?.snapshot?.children[0]?.params?.loadableStudyId);
         } else {
           this.loadableOrDischargeStudyId = this.dischargeStudyList[0].id;
