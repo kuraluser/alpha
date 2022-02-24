@@ -6,6 +6,7 @@ import com.cpdss.common.domain.FileRepoReply;
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.PortInfo;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
+import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -1668,9 +1669,29 @@ public class GenerateLoadingPlanExcelReportService {
                         CommonErrorCodes.E_HTTP_BAD_REQUEST,
                         HttpStatusCode.BAD_REQUEST));
     if (vessel != null) {
+      VesselInfo.VesselsInfoRequest.Builder crewDetailsBuilder =
+          VesselInfo.VesselsInfoRequest.newBuilder();
+      if (vesselId != null) crewDetailsBuilder.setVesselId(vesselId);
+      VesselInfo.CrewDetailedReply crewReply =
+          this.vesselInfoGrpcService.getAllCrewDetailsByRank(crewDetailsBuilder.build());
+      if (crewReply != null
+          && SUCCESS.equalsIgnoreCase(crewReply.getResponseStatus().getStatus())) {
+        Optional<VesselInfo.CrewDetailed> crewDetailedOptional =
+            crewReply.getCrewDetailsList().stream()
+                .filter(crewDetailed -> crewDetailed.getId() == activeVoyage.getCaptainId())
+                .findFirst();
+        sheetOne.setMaster(
+            crewDetailedOptional.isPresent() ? crewDetailedOptional.get().getCrewName() : null);
+        Optional<VesselInfo.CrewDetailed> crewDetailedOptionalChief =
+            crewReply.getCrewDetailsList().stream()
+                .filter(crewDetailed -> crewDetailed.getId() == activeVoyage.getChiefOfficerId())
+                .findFirst();
+        sheetOne.setCo(
+            crewDetailedOptionalChief.isPresent()
+                ? crewDetailedOptionalChief.get().getCrewName()
+                : null);
+      }
       sheetOne.setVesselName(vessel.getName());
-      sheetOne.setMaster(String.valueOf(vessel.getCaptainName()));
-      sheetOne.setCo(String.valueOf(vessel.getChiefOfficerName()));
       sheetOne.setVoyageNumber(activeVoyage.getVoyageNumber());
     }
     if (portRotation.isPresent()) {

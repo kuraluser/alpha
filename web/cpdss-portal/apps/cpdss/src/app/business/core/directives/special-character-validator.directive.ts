@@ -13,3 +13,4 @@ export function specialCharacterValidator(control: FormControl): { specialCharac
     return isContainSpecialChar ? null : { 'specialCharacter' : true };
   }
 }
+

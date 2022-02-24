@@ -126,6 +126,10 @@ public class VoyageService {
       builder.setStatus(voyage.getVoyageStatus() != null ? voyage.getVoyageStatus().getName() : "");
       Optional.ofNullable(voyage.getVoyageStatus())
           .ifPresent(status -> builder.setStatusId(status.getId()));
+      Optional.ofNullable(voyage.getCaptainXId())
+          .ifPresent(captainId -> builder.setCaptainId(captainId));
+      Optional.ofNullable(voyage.getChiefOfficerXId())
+          .ifPresent(chiefId -> builder.setChiefOfficerId(chiefId));
 
       log.info(
           "Get Active voyage, for vessel {}, Voyage No {}, Id {}",

@@ -54,6 +54,10 @@ public class CrewDetailsSpecification implements Specification<CrewDetails> {
           criteria.getValue());
     } else if (criteria.getOperation().equalsIgnoreCase("not-equal")) {
       return builder.notEqual(root.get(criteria.getKey()), criteria.getValue());
+    } else if (criteria.getOperation().equalsIgnoreCase("case-insensitive-equal")) {
+      return builder.equal(
+          builder.lower(root.get(criteria.getKey()).as(String.class)),
+          criteria.getValue().toString().toLowerCase());
     }
     return null;
   }

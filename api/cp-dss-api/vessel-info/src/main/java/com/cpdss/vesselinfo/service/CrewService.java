@@ -164,7 +164,8 @@ public class CrewService {
     specification =
         specification.and(
             new CrewDetailsSpecification(
-                new FilterCriteria("crewName", ":", request.getCrewName(), "")));
+                new FilterCriteria(
+                    "crewName", "case-insensitive-equal", request.getCrewName(), "")));
     if (request.getId() == 0) {
       crewDetails = new CrewDetails();
     } else {

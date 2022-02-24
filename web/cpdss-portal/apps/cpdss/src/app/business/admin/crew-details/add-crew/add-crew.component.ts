@@ -10,7 +10,8 @@ import { CrewMasterTransformationService } from './../../services/crew-master-tr
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IVessel } from '../../../core/models/vessel-details.model';
-import { specialCharacterValidator } from '../../../core/directives/special-character-validator.directive';
+import { numberSpecialCharacterValidator } from '../../../core/directives/number-special-character-validator.directive';
+import { environment } from 'apps/cpdss/src/environments/environment';
 
 /**
  * Component class of add crew
@@ -37,6 +38,7 @@ export class AddCrewComponent implements OnInit, OnDestroy {
   public isExisting: boolean;
   public ranks: ICrewRank[];
   private onDestroy$: Subject<void> = new Subject<void>();
+  private isVesselDisable: boolean = false;
 
   constructor(private fb: FormBuilder,
     private translateService: TranslateService,
@@ -49,10 +51,11 @@ export class AddCrewComponent implements OnInit, OnDestroy {
     this.errorMessages = this.crewTransformationService.setValidationErrorMessage();
     this.getRanks();
     this.addCrewForm = this.fb.group({
-      'crewName': ['', [Validators.required, Validators.maxLength(30), specialCharacterValidator]],
+      'crewName': ['', [Validators.required, Validators.maxLength(30), numberSpecialCharacterValidator]],
       'crewRank': ['', [Validators.required]],
       'vesselInformation': [[], [Validators.required]]
     });
+    this.vesselChange();
   }
 
   /**
@@ -75,7 +78,6 @@ export class AddCrewComponent implements OnInit, OnDestroy {
       crewRankId: this.addCrewForm.value.crewRank.id,
       vesselInformation: []
     };
-
     let vesselInformationArr:ICrewVesselMapping[] = [];
     this.addCrewForm.value.vesselInformation.forEach(element => {
       let mapping: ICrewVesselMapping ={
@@ -175,6 +177,14 @@ export class AddCrewComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this.onDestroy$.unsubscribe();
+  }
+
+// ship there will be one vessel, no need of drop down: DSS-5970
+  async vesselChange() {
+    if(environment.name === 'ship') {
+      this.isVesselDisable = true;
+      this.addCrewForm.get("vesselInformation").setValue(this.vesselList ?this.vesselList:[]);
+    }
   }
 
 }

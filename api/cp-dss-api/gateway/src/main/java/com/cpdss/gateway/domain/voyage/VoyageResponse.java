@@ -34,4 +34,6 @@ public class VoyageResponse {
   private Long dischargePatternId;
   private Long dischargePatternCaseNo;
   private Long dischargePatternStatus;
+  private Long chiefOfficerId;
+  private Long captainId;
 }

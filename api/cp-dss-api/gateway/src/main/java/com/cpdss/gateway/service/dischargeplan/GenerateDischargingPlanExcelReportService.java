@@ -1934,9 +1934,29 @@ public class GenerateDischargingPlanExcelReportService {
                         CommonErrorCodes.E_HTTP_BAD_REQUEST,
                         HttpStatusCode.BAD_REQUEST));
     if (vessel != null) {
+      VesselInfo.VesselsInfoRequest.Builder crewDetailsBuilder =
+          VesselInfo.VesselsInfoRequest.newBuilder();
+      if (vesselId != null) crewDetailsBuilder.setVesselId(vesselId);
+      VesselInfo.CrewDetailedReply crewReply =
+          this.vesselInfoGrpcService.getAllCrewDetailsByRank(crewDetailsBuilder.build());
+      if (crewReply != null
+          && SUCCESS.equalsIgnoreCase(crewReply.getResponseStatus().getStatus())) {
+        Optional<VesselInfo.CrewDetailed> crewDetailedOptional =
+            crewReply.getCrewDetailsList().stream()
+                .filter(crewDetailed -> crewDetailed.getId() == activeVoyage.getCaptainId())
+                .findFirst();
+        sheetOne.setMaster(
+            crewDetailedOptional.isPresent() ? crewDetailedOptional.get().getCrewName() : null);
+        Optional<VesselInfo.CrewDetailed> crewDetailedOptionalChief =
+            crewReply.getCrewDetailsList().stream()
+                .filter(crewDetailed -> crewDetailed.getId() == activeVoyage.getChiefOfficerId())
+                .findFirst();
+        sheetOne.setCo(
+            crewDetailedOptionalChief.isPresent()
+                ? crewDetailedOptionalChief.get().getCrewName()
+                : null);
+      }
       sheetOne.setVesselName(vessel.getName());
-      sheetOne.setMaster(String.valueOf(vessel.getCaptainName()));
-      sheetOne.setCo(String.valueOf(vessel.getChiefOfficerName()));
       sheetOne.setVoyageNumber(activeVoyage.getVoyageNumber());
     }
     if (portRotation.isPresent()) {

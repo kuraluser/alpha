@@ -2330,8 +2330,8 @@
   "CREW_DETAILS_LISTING": "CREW LISTING",
   "ADD_CREW": "Add Crew",
   "SEARCH_CREW_NAME": "Search Crew Name",
-  "CREW_LIST_NAME": "Crew Name",
-  "CREW_LIST_RANK": "Crew Rank",
+  "CREW_LIST_NAME": "Name",
+  "CREW_LIST_RANK": "Rank",
   "SEARCH_CREW_RANK": "Search Crew Rank",
   "CREW_LIST_VESSEL": "Vessel",
   "SEARCH_CREW_VESSEL": "Search Vessel",
@@ -2353,12 +2353,12 @@
   "NEW_CREW_CREATE_SUCCESS": "Success",
   "NEW_CREW_CREATED_SUCCESSFULLY": "Crew created successfully",
   "CREW_CREATE_ERROR": "Error",
-  "VESSEL_CAPTIAN_PLACEHOLDER": "Add captian",
+  "VESSEL_CAPTIAN_PLACEHOLDER": "Add captain",
   "VESSEL_CHIEF_OFFICER_PLACEHOLDER": "Add chief officer",
   "VOYAGE_POPUP_CAPTIAN_REQUIRED_ERROR": "Captian is required",
   "VOYAGE_POPUP_CHIEF_OFFICER_REQUIRED_ERROR": "Chief officer is required",
   "TYPE_MISMATCH_ERROR": "Error",
   "TYPE_MISMATCH": "Type mismatch",
-  "NEW_CREW_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED": "Special characters are not allowed"
+  "NEW_CREW_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED": "Special characters and numbers are not allowed"
 }
 

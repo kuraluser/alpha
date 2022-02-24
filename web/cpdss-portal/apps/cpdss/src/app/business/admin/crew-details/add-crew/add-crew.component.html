@@ -35,7 +35,7 @@
           <div class="form-group row">
             <label for="vessel_description" class="col-md-4 col-form-label text-secondary">{{'CREW_VESSEL' | translate}}</label>
             <div class="col-md-8">
-              <p-multiSelect  [options]="vesselList" appendTo="body"
+              <p-multiSelect  [options]="vesselList" appendTo="body" [disabled] ="isVesselDisable"
                   optionLabel="name" styleClass="form-control" formControlName="vesselInformation"
                    id="crew_vessel_id"  resetFilterOnHide="true" defaultLabel="{{'CREW_VESSEL_PLACEHOLDER' | translate}}">
                 </p-multiSelect>

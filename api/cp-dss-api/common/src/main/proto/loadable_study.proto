@@ -1635,7 +1635,8 @@ message ActiveVoyage{
 	int64 dischargePatternCaseNo = 19;
 	int64 dischargePatternStatus = 20;
 	repeated CargoNominationDetail dischargeCargoNomination = 22;
-	
+	int64 captainId = 23;
+	int64 chiefOfficerId = 24;
 }
 
 // Generic Request message

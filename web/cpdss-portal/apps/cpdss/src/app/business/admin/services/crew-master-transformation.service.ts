@@ -29,7 +29,7 @@ export class CrewMasterTransformationService {
         'specialCharacter': 'NEW_CREW_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED',
         'maxlength': 'ROLE_NAME_MAX_LENGTH'
       },
-      crewRankId: {
+      crewRank: {
         'required': 'ADD_CREW_POPUP_RANK_REQUIRED_ERROR'
       },
       vesselInformation: {

@@ -317,16 +317,16 @@ public class VesselInfoController {
   public CrewsDetailedResponse getCrewDetails(
       @RequestHeader HttpHeaders headers,
       @RequestParam(required = false, defaultValue = "10") int pageSize,
-      @RequestParam(required = false, defaultValue = "0") int pageNo,
-      @RequestParam(required = false, defaultValue = "crewName") String sortBy,
-      @RequestParam(required = false, defaultValue = "asc") String orderBy,
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @RequestParam(required = false, defaultValue = "desc") String orderBy,
       @RequestParam Map<String, String> params)
       throws CommonRestException {
     CrewsDetailedResponse response;
     try {
       response =
           crewService.getCrewDetails(
-              pageNo, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
+              page, pageSize, sortBy, orderBy, params, CORRELATION_ID_HEADER);
     } catch (Exception e) {
       log.error("Error in listing crews", e);
       throw new CommonRestException(
