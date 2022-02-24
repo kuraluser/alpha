@@ -514,11 +514,21 @@ public class LoadingSequenceService {
                 LoadingPlanModels.LoadingHours.newBuilder();
             hoursBuilder.setPortRotationId(portRotationId);
             hoursBuilder.setLoadingHours(
-                ((new BigDecimal(loadingSequence.getEndTime()))
+                (returnZeroIfNull(loadingSequence.getEndTime())
                         .divide(new BigDecimal(60), 4, RoundingMode.HALF_EVEN))
                     .toString());
             builder.addLoadingHours(hoursBuilder.build());
           });
     }
+  }
+
+  /**
+   * Returns BigDecimal value of Integer input if not null. Else returns BigDecimal zero.
+   *
+   * @param integerValue input value of BigDecimal
+   * @return BigDecimal value
+   */
+  private BigDecimal returnZeroIfNull(Integer integerValue) {
+    return integerValue != null ? new BigDecimal(integerValue) : BigDecimal.ZERO;
   }
 }

@@ -331,6 +331,9 @@ public class SynopticServiceTest {
     loadableStudyPortRotation.setId(1L);
     loadableStudyPortRotation.setPortOrder(1L);
     loadableStudyPortRotation.setActive(true);
+    CargoOperation operation = new CargoOperation();
+    operation.setId(1L);
+    loadableStudyPortRotation.setOperation(operation);
     loadableStudyPortRotations.add(loadableStudyPortRotation);
     return loadableStudyPortRotations;
   }
@@ -1407,7 +1410,6 @@ public class SynopticServiceTest {
     assertEquals(SUCCESS, replyBuilder.getResponseStatus().getStatus());
   }
 
-  @Disabled
   @Test
   void buildSynopticalTableReply() throws GenericServiceException {
     SynopticService spyService = spy(SynopticService.class);

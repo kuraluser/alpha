@@ -148,6 +148,10 @@ public class LoadableStudyCommunicationService {
   @Autowired private LoadablePatternAlgoStatusRepository loadablePatternAlgoStatusRepository;
   @Autowired private DischargeStudyCowDetailRepository dischargeStudyCowDetailRepository;
   @Autowired private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
+
+  @Autowired
+  private PortWiseTimeRequiredForLoadingRepository portWiseTimeRequiredForLoadingRepository;
+
   @Autowired private RestTemplate restTemplate;
 
   // endregion
@@ -197,6 +201,7 @@ public class LoadableStudyCommunicationService {
   private String ruleVesselMappingInputStage = null;
   private List<LoadableStudyAttachments> loadableStudyAttachmentsStage = null;
   String pyUser = null;
+  private List<PortWiseTimeRequiredForLoading> portWiseTimeRequiredForLoadingStage = null;
 
   HashMap<String, Long> idMap = new HashMap<>();
   Long voyageId;
@@ -835,6 +840,19 @@ public class LoadableStudyCommunicationService {
               idMap.put(LoadableStudyTables.PYUSER.getTable(), dataTransferStage.getId());
               break;
             }
+          case port_wise_time_required_for_loading:
+            {
+              Type type = new TypeToken<ArrayList<PortWiseTimeRequiredForLoading>>() {}.getType();
+              portWiseTimeRequiredForLoadingStage =
+                  bindDataToEntity(
+                      new PortWiseTimeRequiredForLoading(),
+                      type,
+                      LoadableStudyTables.PORT_WISE_TIME_REQUIRED_FOR_LOADING,
+                      data,
+                      dataTransferStage.getId(),
+                      LOADABLE_STUDY_COLUMNS.PORT_ROTATION_XID.getColumnName());
+              break;
+            }
           default:
             log.warn(
                 "Process Identifier Not Configured: {}", dataTransferStage.getProcessIdentifier());
@@ -883,6 +901,7 @@ public class LoadableStudyCommunicationService {
         saveCommunicationStatusUpdate(processGroupId);
         saveLoadableStudyAttachments();
         savePyUser();
+        savePortWiseTimeRequiredForLoading();
         loadableStudyStagingService.updateStatusCompletedForProcessId(
             processId, StagingStatus.COMPLETED.getStatus());
         log.info("updated status to completed for processId:" + processId);
@@ -2027,6 +2046,28 @@ public class LoadableStudyCommunicationService {
     }
   }
 
+  /** Method to save port_wise_time_required_for_loading table */
+  private void savePortWiseTimeRequiredForLoading() {
+    currentTableName = LoadableStudyTables.PORT_WISE_TIME_REQUIRED_FOR_LOADING.getTable();
+
+    if (isValidStageEntity(portWiseTimeRequiredForLoadingStage, currentTableName)) {
+      for (PortWiseTimeRequiredForLoading portWiseStage : portWiseTimeRequiredForLoadingStage) {
+        Optional<PortWiseTimeRequiredForLoading> portWiseTimeRequiredForLoadingOpt =
+            portWiseTimeRequiredForLoadingRepository.findById(portWiseStage.getId());
+        setEntityDocFields(portWiseStage, portWiseTimeRequiredForLoadingOpt);
+
+        Optional<LoadableStudyPortRotation> loadableStudyPortRotationOpt =
+            loadableStudyPortRotationRepository.findById(
+                portWiseStage.getCommunicationRelatedEntityId());
+        loadableStudyPortRotationOpt.ifPresent(portWiseStage::setPortRotation);
+      }
+
+      portWiseTimeRequiredForLoadingStage =
+          portWiseTimeRequiredForLoadingRepository.saveAll(portWiseTimeRequiredForLoadingStage);
+      logSavedEntity(portWiseTimeRequiredForLoadingStage);
+    }
+  }
+
   // endregion
 
   // region Data Binding
@@ -2170,6 +2211,7 @@ public class LoadableStudyCommunicationService {
     ruleVesselMappingInputStage = null;
     loadableStudyAttachmentsStage = null;
     pyUser = null;
+    portWiseTimeRequiredForLoadingStage = null;
   }
 
   /**

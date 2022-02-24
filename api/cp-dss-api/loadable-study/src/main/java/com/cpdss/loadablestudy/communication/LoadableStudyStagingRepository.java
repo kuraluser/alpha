@@ -243,4 +243,10 @@ public interface LoadableStudyStagingRepository extends StagingRepository {
           "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM loadable_study_attachments u where loadable_study_xid=?1",
       nativeQuery = true)
   String getLoadableStudyAttachments(Long loadableStudyId);
+
+  @Query(
+      value =
+          "SELECT  CAST(json_agg(u) as VARCHAR) json_out FROM port_wise_time_required_for_loading u where loadable_pattern_xid IN ?1",
+      nativeQuery = true)
+  String getPortWiseTimeRequiredForLoadingWithLoadablePatternIds(List<Long> loadablePatternIds);
 }

@@ -42,5 +42,6 @@ public enum ProcessIdentifiers {
   loadable_pattern_algo_status,
   discharge_cow_details,
   loadable_study_attachments,
-  pyuser
+  pyuser,
+  port_wise_time_required_for_loading
 }

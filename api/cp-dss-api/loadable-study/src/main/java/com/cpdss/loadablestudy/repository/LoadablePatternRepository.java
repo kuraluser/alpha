@@ -103,5 +103,5 @@ public interface LoadablePatternRepository extends CommonCrudRepository<Loadable
   public void updateLoadablePatternStatusToPlanGeneratedStatus(
       Long loadableStudyStatusId, Long loadablePatternId);
 
-  public List<LoadablePattern> findByIdIn(List<Long> ids);
+  List<LoadablePattern> findByIdIn(List<Long> ids);
 }

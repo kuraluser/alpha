@@ -661,8 +661,8 @@ public class DischargingSequenceService {
   public void getDischargingHours(LoadingHoursRequest request, LoadingHoursReply.Builder builder)
       throws GenericServiceException {
     List<DischargeInformation> dischargeInformationList =
-        dischargingInformationRepository.findByVesselXidAndDischargingPatternXidAndIsActive(
-            request.getVesselId(), request.getLoadingPatternId(), true);
+        dischargingInformationRepository.findByVesselXidAndDischargingPatternXidAndIsActiveTrue(
+            request.getVesselId(), request.getLoadingPatternId());
     for (Long portRotationId : request.getPortRotationIdsList()) {
       log.info(
           "Fetching Discharging Hours for discharge pattern {}, port rotation {}",
@@ -703,11 +703,21 @@ public class DischargingSequenceService {
                 LoadingPlanModels.LoadingHours.newBuilder();
             hoursBuilder.setPortRotationId(portRotationId);
             hoursBuilder.setLoadingHours(
-                ((new BigDecimal(dischargingSequence.getEndTime()))
+                (returnZeroIfNull(dischargingSequence.getEndTime())
                         .divide(new BigDecimal(60), 4, RoundingMode.HALF_EVEN))
                     .toString());
             builder.addDischargingHours(hoursBuilder.build());
           });
     }
+  }
+
+  /**
+   * Returns BigDecimal value of Integer input if not null. Else returns BigDecimal zero.
+   *
+   * @param integerValue input value of BigDecimal
+   * @return BigDecimal value
+   */
+  private BigDecimal returnZeroIfNull(Integer integerValue) {
+    return integerValue != null ? new BigDecimal(integerValue) : BigDecimal.ZERO;
   }
 }

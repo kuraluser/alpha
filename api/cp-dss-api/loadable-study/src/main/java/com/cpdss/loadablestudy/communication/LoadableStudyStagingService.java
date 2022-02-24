@@ -1002,6 +1002,30 @@ public class LoadableStudyStagingService extends StagingService {
               }
               break;
             }
+          case port_wise_time_required_for_loading:
+            {
+              if (loadablePatternIds != null && !loadablePatternIds.isEmpty()) {
+                String portWiseTimeRequiredForLoadingJson =
+                    loadableStudyStagingRepository
+                        .getPortWiseTimeRequiredForLoadingWithLoadablePatternIds(
+                            loadablePatternIds);
+                if (portWiseTimeRequiredForLoadingJson != null) {
+                  JsonArray portWiseTimeRequiredForLoading =
+                      JsonParser.parseString(portWiseTimeRequiredForLoadingJson).getAsJsonArray();
+                  addIntoProcessedList(
+                      array,
+                      object,
+                      processIdentifier,
+                      processId,
+                      processGroupId,
+                      processedList,
+                      portWiseTimeRequiredForLoading,
+                      dependentProcessResponse.getDependantProcessId(),
+                      dependentProcessResponse.getDependantProcessModule());
+                }
+              }
+              break;
+            }
           default:
             log.warn("Process Identifier Not Configured: {}", processIdentifier);
             break;

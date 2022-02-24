@@ -113,6 +113,9 @@ public class LoadableStudyCommunicationServiceTest {
   @MockBean private LoadableStudyAttachmentsRepository loadableStudyAttachmentsRepository;
   @MockBean private RestTemplate restTemplate;
 
+  @MockBean
+  private PortWiseTimeRequiredForLoadingRepository portWiseTimeRequiredForLoadingRepository;
+
   @Test
   void testGetLoadableStudyStagingDataWithRetryStatus() throws GenericServiceException {
     LoadableStudyCommunicationService spyService = spy(LoadableStudyCommunicationService.class);

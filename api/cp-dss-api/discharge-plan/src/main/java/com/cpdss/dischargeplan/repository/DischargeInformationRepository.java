@@ -153,6 +153,6 @@ public interface DischargeInformationRepository
       boolean planGenerated,
       Long id);
 
-  List<DischargeInformation> findByVesselXidAndDischargingPatternXidAndIsActive(
-      Long vesselId, Long loadingPatternId, Boolean isActive);
+  List<DischargeInformation> findByVesselXidAndDischargingPatternXidAndIsActiveTrue(
+      Long vesselId, Long loadingPatternId);
 }

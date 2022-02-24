@@ -36,4 +36,6 @@ public class PortWiseTimeRequiredForLoading extends EntityDoc {
 
   @Column(name = "is_active")
   private Boolean isActive;
+
+  @Transient private Long communicationRelatedEntityId;
 }
