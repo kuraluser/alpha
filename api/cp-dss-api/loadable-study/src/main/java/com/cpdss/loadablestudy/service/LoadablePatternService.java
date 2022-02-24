@@ -501,6 +501,7 @@ public class LoadablePatternService {
       portWiseTimeRequiredForLoading.setPortXId(portWiseDetails.getPortId());
       portWiseTimeRequiredForLoading.setPortRotation(
           portRotationMap.get(portWiseDetails.getPortRotationId()));
+      portWiseTimeRequiredForLoading.setIsActive(true);
       portWiseTimeRequiredForLoadingList.add(portWiseTimeRequiredForLoading);
     }
     this.timeRequiredForLoadingRepository.saveAll(portWiseTimeRequiredForLoadingList);
