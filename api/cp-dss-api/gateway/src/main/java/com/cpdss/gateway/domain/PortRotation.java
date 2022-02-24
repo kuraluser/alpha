@@ -87,4 +87,9 @@ public class PortRotation {
   private BigDecimal freshCrudeOilTime;
 
   private String tanks;
+
+  @JsonInclude(Include.ALWAYS)
+  private Integer sequenceNumber;
+
+  private String name;
 }

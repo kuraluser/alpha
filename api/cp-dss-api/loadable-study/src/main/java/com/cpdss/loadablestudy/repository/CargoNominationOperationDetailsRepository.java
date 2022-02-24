@@ -4,6 +4,7 @@ package com.cpdss.loadablestudy.repository;
 import com.cpdss.common.springdata.CommonCrudRepository;
 import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
+import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import java.util.List;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,11 @@ public interface CargoNominationOperationDetailsRepository
    */
   List<CargoNominationPortDetails> findByCargoNomination_IdInAndPortIdAndIsActiveTrue(
       List<Long> cargoNominationIds, Long portId);
+
+  public CargoNominationPortDetails findByCargoNominationAndPortRotationAndIsActiveTrue(
+      CargoNomination cargo, LoadableStudyPortRotation portRotation);
+
+  @Query(
+      "SELECT CASE WHEN COUNT(CNPD) > 0 THEN true ELSE false END FROM CargoNominationPortDetails CNPD WHERE CNPD.portRotation = ?1")
+  public Boolean findIfPortRotationIsUsedForOperations(LoadableStudyPortRotation portRotation);
 }

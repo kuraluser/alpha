@@ -1,5 +1,5 @@
 import { IResponse } from '../../../shared/models/common.model';
-import { ICargo, IPort } from '../../core/models/common.model';
+import { ICargo, IPort, IPortList } from '../../core/models/common.model';
 
 /**
  *  model for new-loadable-study-list-names
@@ -22,8 +22,8 @@ export interface IVoyageList {
     actualEndDate?: string;
     status?: string;
     confirmedLoadableStudyId?: number;
-    loadingPorts?: ILoadingPort[];
-    dischargingPorts?: IPort[];
+    loadingPorts?: IPortList[];
+    dischargingPorts?: IPortList[];
     cargos?: ICargo[];
     charterer?: string;
     loading?: string;
@@ -31,14 +31,6 @@ export interface IVoyageList {
     cargo?: string;
     isStart?: boolean;
     isStop?: boolean;
-}
-
-/**
- *  model for loading port
- */
-export interface ILoadingPort {
-    id: number;
-    name: string;
 }
 
 /**

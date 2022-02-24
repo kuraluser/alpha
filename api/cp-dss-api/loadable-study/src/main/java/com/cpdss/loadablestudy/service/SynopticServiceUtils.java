@@ -990,7 +990,8 @@ public class SynopticServiceUtils {
           for (CargoNominationPortDetails var1 : cnPD) {
             if (var1.getPortId() != null) {
               LoadableStudy.LoadingPortDetail.Builder a =
-                  loadablePlanService.fetchPortNameFromPortService(var1.getPortId());
+                  loadablePlanService.fetchPortNameFromPortService(
+                      var1.getPortId(), var1.getPortRotation());
               builder.addLoadingPorts(a);
             }
           }

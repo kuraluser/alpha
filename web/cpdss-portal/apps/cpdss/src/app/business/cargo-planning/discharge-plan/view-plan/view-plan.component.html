@@ -4,7 +4,7 @@
         <div *ngFor="let portDetail of portDetails;let portIndex = index;let last = last" formGroupName="{{portIndex}}">
             <div class="row mb-10">
                 <div class="col">
-                    {{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}  <span class="sub-head-color"> {{portDetail.portName}}</span>
+                    {{ 'DISCHARGE_STUDY_PORT_NAME' | translate }}{{portIndex+1}}  <span class="sub-head-color"> {{portDetail.portName}} {{portDetail?.sequenceNumber}}</span>
                 </div>
             </div>
             <div class="row mb-15">

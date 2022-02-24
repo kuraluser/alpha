@@ -154,7 +154,7 @@ public class CargoNominationServiceTest {
     Long operationId = 1L;
     var cargonomination =
         this.cargoNominationService.createDsCargoNomination(
-            dischargeStudyId, cargo, portId, operationId, 1);
+            dischargeStudyId, cargo, getPortRotation(), 1);
     assertEquals(cargonomination.getCargoXId(), cargo.getCargoXId());
   }
 
@@ -188,7 +188,7 @@ public class CargoNominationServiceTest {
     Long operationId = 1L;
     var cargonomination =
         this.cargoNominationService.createCargoNominationPortDetails(
-            dischargeStudyCargo, cargo, portId, operationId, 1);
+            dischargeStudyCargo, cargo, getPortRotation(), 1);
     assertEquals(cargonomination.contains(1L), getCargoNPDetails().contains(1L));
   }
 
@@ -199,7 +199,7 @@ public class CargoNominationServiceTest {
     Long operationId = 1L;
     var cargonomination =
         this.cargoNominationService.createCargoNominationPortDetails(
-            dischargeStudyCargo, dischargeStudyCargo, null, portId, 1);
+            dischargeStudyCargo, dischargeStudyCargo, getPortRotation(), 1);
     assertEquals(cargonomination.contains(1L), getCargoNPDetails().contains(1L));
   }
 
@@ -512,8 +512,19 @@ public class CargoNominationServiceTest {
     ReflectionTestUtils.setField(spyService, "loadingPlanGrpcService", loadingPlanGrpcService);
     ReflectionTestUtils.setField(
         spyService, "cargoNominationRepository", cargoNominationRepository);
-    var result = spyService.saveDsichargeStudyCargoNominations(1l, 1l, 1l, 1l);
+    var result = spyService.saveDsichargeStudyCargoNominations(1l, 1l, getPortRotation());
     assertEquals(1l, result.get(0).getId());
+  }
+
+  private LoadableStudyPortRotation getPortRotation() {
+    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    loadableStudyPortRotation.setId(1l);
+    loadableStudyPortRotation.setPortOrder(1L);
+    loadableStudyPortRotation.setPortXId(1l);
+    CargoOperation operation = new CargoOperation();
+    operation.setId(2l);
+    loadableStudyPortRotation.setOperation(operation);
+    return loadableStudyPortRotation;
   }
 
   @Test
@@ -547,7 +558,7 @@ public class CargoNominationServiceTest {
     final GenericServiceException ex =
         assertThrows(
             GenericServiceException.class,
-            () -> spyService.saveDsichargeStudyCargoNominations(1l, 1l, 1l, 1l));
+            () -> spyService.saveDsichargeStudyCargoNominations(1l, 1l, getPortRotation()));
 
     assertAll(
         () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),

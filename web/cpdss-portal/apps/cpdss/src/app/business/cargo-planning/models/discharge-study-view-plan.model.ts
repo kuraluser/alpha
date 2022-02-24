@@ -26,6 +26,7 @@ import { ICargo, IInstruction , ITankDetails , IPort, IPlanStabilityParams } fro
  */
 export interface IPortDetailValueObject {
   portName: string;
+  sequenceNumber: number;
   instruction: IInstruction;
   draftRestriction: number;
   cargoDetail: IPortCargo[];
@@ -118,6 +119,7 @@ export interface IBackLoadingDetails {
 export interface IDischargeStudyPortListDetails {
   id: number;
   portId: number;
+  sequenceNumber: number;
   maxDraft: number;
   cowId: number;
   percentage: number;

@@ -81,4 +81,7 @@ public class SynopticalRecord {
   private Boolean hasLoadicator;
   private String portRotationType;
   private BigDecimal operationHours;
+
+  @JsonInclude(Include.ALWAYS)
+  private Integer sequenceNumber;
 }

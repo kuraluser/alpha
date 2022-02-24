@@ -45,5 +45,9 @@ public class CargoNominationPortDetails extends EntityDoc {
   @Column(name = "empty_max_no_of_tanks")
   private Boolean emptyMaxNoOfTanks;
 
+  @OneToOne
+  @JoinColumn(name = "port_rotation_xid", referencedColumnName = "id")
+  private LoadableStudyPortRotation portRotation;
+
   @Transient private Long communicationRelatedEntityId;
 }

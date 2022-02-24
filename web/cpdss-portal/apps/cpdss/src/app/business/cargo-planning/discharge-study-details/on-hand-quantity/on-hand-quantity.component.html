@@ -14,7 +14,7 @@
                                     <ul class="list-unstyled list-inline port-list pb-10 mb-0">
                                         <li class="list-inline-item" [ngClass]="{'active': selectedPort.id === port.id}"
                                             *ngFor="let port of ohqPorts" (click)="onPortSelection(port)">
-                                            {{port?.name}}
+                                            {{port?.name}} {{port?.sequenceNumber}}
                                             <span *ngIf="!dischargeStudyDetailsTransformationService.getOHQPortValidity(port.id)"
                                             class="error-icon" pTooltip="{{'INCOMPLETE'|translate}}">!</span>
                                         </li>

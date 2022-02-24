@@ -162,7 +162,7 @@ public class LoadablePlanServiceTest {
     when(portInfoGrpcService.getPortInfoByPortIds(any(PortInfo.GetPortInfoByPortIdsRequest.class)))
         .thenReturn(getPortReply());
     ReflectionTestUtils.setField(spyService, "portInfoGrpcService", portInfoGrpcService);
-    var result = spyService.fetchPortNameFromPortService(1l);
+    var result = spyService.fetchPortNameFromPortService(1l, getPortRotation());
     assertEquals("1", result.getName());
   }
 

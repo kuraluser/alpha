@@ -8,7 +8,6 @@ import { IBallastStowageDetails, IBallastTank, ICargo, ICargoTank, ILoadableQuan
 import { ILoadablePattern } from '../../models/loadable-pattern.model';
 import { LoadableStudyPatternTransformationService } from '../../services/loadable-study-pattern-transformation.service'
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
-import { QuantityDecimalFormatPipe } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe'
 
 /**
  * Component class of pattern view more popup
@@ -55,7 +54,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   cargoTableCol: IDataTableColumn[];
   cargoTanks: ICargoTank[][];
   cargoTobeLoadedColumns: IDataTableColumn[];
-  cargoTobeLoaded: ILoadableQuantityCargo[];
+  cargoTobeLoaded: ILoadableQuantityCargo[] = [];
   totalBallast = 0;
   readonly tankType = TANKTYPE;
   selectedTab = TANKTYPE.CARGO;
@@ -72,8 +71,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
   constructor(private router: Router,
     private loadableStudyPatternTransformationService: LoadableStudyPatternTransformationService,
     private _decimalPipe: DecimalPipe,
-    private quantityPipe: QuantityPipe,
-    private quantityDecimalFormatPipe: QuantityDecimalFormatPipe) { }
+    private quantityPipe: QuantityPipe) { }
 
   /**
   * Component lifecycle ngOnit
@@ -190,7 +188,7 @@ export class PatternViewMorePopUpComponent implements OnInit {
         const slopQuantity = loadable?.slopQuantity ? this.quantityPipe.transform(this.loadableStudyPatternTransformationService.convertToNumber(loadable?.slopQuantity.toString()), this.prevQuantitySelectedUnit, this.currentQuantitySelectedUnit, loadable?.estimatedAPI, loadable?.estimatedTemp, -1) : 0;
         loadable.slopQuantity = slopQuantity;
 
-          loadable.loadingPortsLabels = loadable?.loadingPorts?.join(',');
+        loadable.loadingPortsLabels = loadable?.loadingPorts?.map(lsPort => lsPort?.sequenceNumber ? lsPort?.name + ' ' + lsPort?.sequenceNumber : lsPort?.name).join(',');
       }
       return loadable;
     })

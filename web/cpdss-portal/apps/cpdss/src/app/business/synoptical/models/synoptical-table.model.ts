@@ -6,7 +6,8 @@ import { IResponse, ValueObject } from "../../../shared/models/common.model";
  */
 export interface ISynopticalRecords {
     cargos: any[];
-    portName: string
+    portName: string;
+    sequenceNumber: number;
     id: number,
     operationType: string,
     distance: number,

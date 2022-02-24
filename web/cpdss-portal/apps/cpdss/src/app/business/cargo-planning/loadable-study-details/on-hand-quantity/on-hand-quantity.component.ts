@@ -9,7 +9,7 @@ import { numberValidator } from '../../../core/directives/number-validator.direc
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IPort, IPortList, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { Observable, of } from 'rxjs';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
@@ -121,8 +121,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   readonly OHQ_MODE = OHQ_MODE;
   readonly selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
   editMode: DATATABLE_EDITMODE | boolean;
-  ohqPorts: IPort[];
-  selectedPort: IPort;
+  ohqPorts: IPortList[];
+  selectedPort: IPortList;
   ports: IPort[];
   columns: IDataTableColumn[];
   listData = <IPortOHQListData>{};
@@ -180,7 +180,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     const result = await this.loadableStudyDetailsApiService.getOHQPortRotation(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
     if (result?.portList) {
       this.ohqPorts = result?.portList?.map((ohqPort) => {
-        return { ...this.ports?.find((port) => port.id === ohqPort.portId), id: ohqPort?.id, portId: ohqPort?.portId };
+        return { name: this.ports?.find((port) => port.id === ohqPort.portId)?.name, ...ohqPort};
       });
       this.loadableStudyDetailsTransformationService.addMissingOhqPorts(this.ohqPorts)
       this.selectedPort = this.ohqPorts[0];
@@ -280,10 +280,10 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   /**
    * Method for hadling the port selection
    *
-   * @param {IPort} port
+   * @param {IPortList} port
    * @memberof OnHandQuantityComponent
    */
-  async onPortSelection(port: IPort) {
+  async onPortSelection(port: IPortList) {
     this.ngxSpinnerService.show();
     this.selectedPort = port;
     await this.getPortOHQDetails(this.selectedPort?.id);

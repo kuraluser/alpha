@@ -1,6 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.gateway.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,4 +26,9 @@ public class BillOfLadding {
   private String cargoAbbrevation;
   private String blRefNo;
   private List<Long> loadingPort;
+
+  @JsonIgnore private Long portRotationId;
+
+  @JsonIgnore private List<Long> portRotationIds;
+  private List<PortRotation> loadingPorts;
 }

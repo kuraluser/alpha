@@ -591,7 +591,7 @@ export class LoadablePlanTransformationService {
     _synopticalRecord.id = synopticalRecord.id;
     _synopticalRecord.operationType = synopticalRecord.operationType;
     _synopticalRecord.portId = synopticalRecord.portId;
-    _synopticalRecord.portName = synopticalRecord.portName;
+    _synopticalRecord.portName = synopticalRecord?.sequenceNumber ? synopticalRecord.portName + ' ' + synopticalRecord?.sequenceNumber : synopticalRecord.portName;
     _synopticalRecord.etaEtdPlanned = synopticalRecord.etaEtdPlanned;
     _synopticalRecord.plannedFOTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedFOTotal,QUANTITY_UNIT.MT);
     _synopticalRecord.plannedDOTotal = this.quantityDecimalFormatPipe.transform(synopticalRecord?.plannedDOTotal,QUANTITY_UNIT.MT);

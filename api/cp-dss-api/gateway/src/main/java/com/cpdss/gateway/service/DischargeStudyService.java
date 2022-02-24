@@ -155,6 +155,13 @@ public class DischargeStudyService {
       if (!reply.getBillOfLaddingList().isEmpty()) {
         buildDischargeStudyResponse(reply.getBillOfLaddingList(), dischargeStudyResponse);
       }
+      LoadableStudy.PortRotationRequest.Builder portRotationReqBuilder =
+          LoadableStudy.PortRotationRequest.newBuilder();
+      portRotationReqBuilder.setLoadableStudyId(patternReply.getLoadableStudyId());
+      LoadableStudy.PortRotationReply portRotationReply =
+          loadableStudyServiceBlockingStub.getLoadableStudyPortRotation(
+              portRotationReqBuilder.build());
+      this.addPortRotationDetailsToResponse(portRotationReply, dischargeStudyResponse);
       dischargeStudyResponse.setResponseStatus(
           new CommonSuccessResponse(String.valueOf(HttpStatus.OK.value()), correlationId));
       return dischargeStudyResponse;
@@ -165,6 +172,44 @@ public class DischargeStudyService {
           patternReply.getResponseStatus().getCode(),
           HttpStatusCode.BAD_REQUEST);
     }
+  }
+
+  /**
+   * Adds the loading port rotation details to the response.
+   *
+   * @param portRotationReply
+   * @param dischargeStudyResponse
+   */
+  private void addPortRotationDetailsToResponse(
+      LoadableStudy.PortRotationReply portRotationReply,
+      DischargeStudyResponse dischargeStudyResponse) {
+    List<PortRotation> portRotations = new ArrayList<>();
+    dischargeStudyResponse
+        .getBillOfLaddings()
+        .forEach(
+            billOfLadding -> {
+              billOfLadding
+                  .getPortRotationIds()
+                  .forEach(
+                      portRotationId -> {
+                        Optional<PortRotationDetail> loadingPort =
+                            portRotationReply.getPortsList().stream()
+                                .filter(
+                                    portRotationDetail ->
+                                        portRotationDetail.getId() == portRotationId)
+                                .findFirst();
+                        loadingPort.ifPresent(
+                            port -> {
+                              PortRotation portRotation = new PortRotation();
+                              portRotation.setId(port.getId());
+                              portRotation.setPortId(port.getPortId());
+                              portRotation.setSequenceNumber(
+                                  0 == port.getSequenceNumber() ? null : port.getSequenceNumber());
+                              portRotations.add(portRotation);
+                            });
+                      });
+              billOfLadding.setLoadingPorts(portRotations);
+            });
   }
 
   /**
@@ -530,7 +575,7 @@ public class DischargeStudyService {
       DischargeStudyCargoResponse response,
       LoadableStudy.PortRotationReply portRotationReply,
       LoadableStudy.CargoNominationReply grpcReply) {
-    Map<Long, List<LoadableStudy.CargoNominationDetail>> portIdsToCargoNominationMap =
+    Map<Long, List<LoadableStudy.CargoNominationDetail>> portRotationIdsToCargoNominationMap =
         grpcReply.getCargoNominationsList().stream()
             .flatMap(
                 cargoNomination ->
@@ -541,7 +586,7 @@ public class DischargeStudyService {
                             }))
             .collect(
                 Collectors.groupingBy(
-                    cargoNomination -> cargoNomination.getValue().getPortId(),
+                    cargoNomination -> cargoNomination.getValue().getPortRotationId(),
                     Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
     List<PortRotationDetail> discharginPorts =
         portRotationReply.getPortsList().stream()
@@ -552,6 +597,8 @@ public class DischargeStudyService {
           PortRotation portRotation = new PortRotation();
           portRotation.setPortId(port.getPortId());
           portRotation.setId(port.getId());
+          portRotation.setSequenceNumber(
+              0 == port.getSequenceNumber() ? null : port.getSequenceNumber());
           portRotation.setMaxDraft(
               (isEmpty(port.getMaxDraft()) || port.getMaxDraft().equals("null"))
                   ? null
@@ -571,9 +618,9 @@ public class DischargeStudyService {
                   : new BigDecimal(port.getFreshCrudeOilTime()));
           portRotation.setCow(port.getCow());
 
-          if (portIdsToCargoNominationMap.containsKey(port.getPortId())) {
+          if (portRotationIdsToCargoNominationMap.containsKey(port.getId())) {
             List<LoadableStudy.CargoNominationDetail> cargoNominationDetailList =
-                portIdsToCargoNominationMap.get(port.getPortId());
+                portRotationIdsToCargoNominationMap.get(port.getId());
             buildCargoNomination(cargoNominationDetailList, portRotation);
           } else {
             portRotation.setCargoNominationList(new ArrayList<>());

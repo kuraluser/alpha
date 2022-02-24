@@ -9,7 +9,7 @@ import { numberValidator } from '../../../core/directives/number-validator.direc
 import { groupTotalValidator } from '../../directives/validator/group-total.directive';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPort, ITankOptions, DISCHARGE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IPort, ITankOptions, DISCHARGE_STUDY_STATUS, Voyage, VOYAGE_STATUS, IDischargeStudyPortList } from '../../../core/models/common.model';
 import { Observable, of } from 'rxjs';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
 import { IDischargeStudy } from '../../models/discharge-study-list.model';
@@ -125,8 +125,8 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
   readonly OHQ_MODE = OHQ_MODE;
   readonly selectionMode = DATATABLE_SELECTIONMODE.SINGLE;
   editMode: DATATABLE_EDITMODE | boolean;
-  ohqPorts: IPort[];
-  selectedPort: IPort;
+  ohqPorts: IDischargeStudyPortList[];
+  selectedPort: IDischargeStudyPortList;
   ports: IPort[];
   columns: IDataTableColumn[];
   listData = <IPortOHQListData>{};
@@ -184,7 +184,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
     const result = await this.dischargeStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.dischargeStudyId).toPromise();
     if (result?.portList) {
       this.ohqPorts = result?.portList?.map((ohqPort) => {
-        return { ...this.ports?.find((port) => port.id === ohqPort.portId), id: ohqPort?.id, portId: ohqPort?.portId };
+        return { name: this.ports?.find((port) => port.id === ohqPort.portId)?.name, ...ohqPort };
       });
       this.dischargeStudyDetailsTransformationService.addMissingOhqPorts(this.ohqPorts)
       this.selectedPort = this.ohqPorts[0];
@@ -289,7 +289,7 @@ export class OnHandQuantityComponent implements OnInit, OnDestroy {
    * @param {IPort} port
    * @memberof OnHandQuantityComponent
    */
-  async onPortSelection(port: IPort) {
+  async onPortSelection(port: IDischargeStudyPortList) {
     this.ngxSpinnerService.show();
     this.selectedPort = port;
     await this.getPortOHQDetails(this.selectedPort?.id);

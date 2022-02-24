@@ -61,7 +61,7 @@ public class LoadableQuantityCargoDetails {
   private String timeRequiredForLoading;
 
   @JsonInclude(Include.NON_NULL)
-  private List<String> loadingPorts;
+  private List<PortRotation> loadingPorts;
 
   private List<CargoToppingOffSequence> toppingSequence;
   private String cargoNominationTemperature;

@@ -483,7 +483,8 @@ public class SynopticServiceUtilsTest {
         LoadableStudy.LoadableQuantityCargoDetails.newBuilder();
     when(cargoNominationRepository.findByIdAndIsActive(anyLong(), anyBoolean()))
         .thenReturn(Optional.of(getCargoNominations().get(0)));
-    when(loadablePlanService.fetchPortNameFromPortService(anyLong()))
+    when(loadablePlanService.fetchPortNameFromPortService(
+            anyLong(), any(LoadableStudyPortRotation.class)))
         .thenReturn(LoadableStudy.LoadingPortDetail.newBuilder());
 
     var result = synopticServiceUtils.setLoadingPortNameFromCargoOperation(1l, 1l, builder);
@@ -776,10 +777,29 @@ public class SynopticServiceUtilsTest {
     CargoNominationPortDetails portDetails = new CargoNominationPortDetails();
     portDetails.setPortId(1l);
     portDetails.setCargoNomination(cargo);
+    portDetails.setPortRotation(getPortRotation());
     portDetailsSet.add(portDetails);
     cargo.setCargoNominationPortDetails(portDetailsSet);
     cargoNominations.add(cargo);
     return cargoNominations;
+  }
+
+  private LoadableStudyPortRotation getPortRotation() {
+    LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
+    loadableStudyPortRotation.setId(2L);
+    loadableStudyPortRotation.setOperation(getCargoOp());
+    loadableStudyPortRotation.setEta(LocalDateTime.now());
+    loadableStudyPortRotation.setEtd(LocalDateTime.now());
+    loadableStudyPortRotation.setLayCanTo(LocalDate.now());
+    loadableStudyPortRotation.setLayCanFrom(LocalDate.now());
+    loadableStudyPortRotation.setPortXId(1l);
+    return loadableStudyPortRotation;
+  }
+
+  private CargoOperation getCargoOp() {
+    CargoOperation cargoOperation = new CargoOperation();
+    cargoOperation.setId(1L);
+    return cargoOperation;
   }
 
   private com.cpdss.loadablestudy.entity.LoadableStudy getLoadableStudyEntity() {

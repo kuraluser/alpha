@@ -885,10 +885,21 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
       cargoDetails.setMaxLoadingRate(lqcd.getLoadingRateM3Hr());
       // Set Loading port Names in Cargo To Be Discharge
       if (!lqcd.getLoadingPortsList().isEmpty()) {
-        cargoDetails.setLoadingPorts(
-            lqcd.getLoadingPortsList().stream()
-                .map(LoadableStudy.LoadingPortDetail::getName)
-                .collect(Collectors.toList()));
+        List<PortRotation> loadingPorts = new ArrayList<>();
+        lqcd.getLoadingPortsList()
+            .forEach(
+                loadingPort -> {
+                  PortRotation port = new PortRotation();
+                  port.setId(loadingPort.getPortRotationId());
+                  port.setName(loadingPort.getName());
+                  port.setPortId(loadingPort.getPortId());
+                  port.setSequenceNumber(
+                      0 == loadingPort.getSequenceNumber()
+                          ? null
+                          : loadingPort.getSequenceNumber());
+                  loadingPorts.add(port);
+                });
+        cargoDetails.setLoadingPorts(loadingPorts);
         log.info("Loading Port names are - {}", cargoDetails.getLoadingPorts());
       }
 
@@ -919,10 +930,21 @@ public class LoadingInformationServiceImpl implements LoadingInformationService 
 
       // Set Loading port Names in Cargo To Be Discharge
       if (!lqcd.getLoadingPortsList().isEmpty()) {
-        cargoDetails.setLoadingPorts(
-            lqcd.getLoadingPortsList().stream()
-                .map(LoadableStudy.LoadingPortDetail::getName)
-                .collect(Collectors.toList()));
+        List<PortRotation> loadingPorts = new ArrayList<>();
+        lqcd.getLoadingPortsList()
+            .forEach(
+                loadingPort -> {
+                  PortRotation port = new PortRotation();
+                  port.setId(loadingPort.getPortRotationId());
+                  port.setName(loadingPort.getName());
+                  port.setPortId(loadingPort.getPortId());
+                  port.setSequenceNumber(
+                      0 == loadingPort.getSequenceNumber()
+                          ? null
+                          : loadingPort.getSequenceNumber());
+                  loadingPorts.add(port);
+                });
+        cargoDetails.setLoadingPorts(loadingPorts);
         log.info("Loading Port names are - {}", cargoDetails.getLoadingPorts());
       }
 

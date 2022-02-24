@@ -26,6 +26,7 @@ export interface IDataTableColumn {
     arrayFilterField?: string;
     fieldValueIcon?: string;
     fieldSuffix?: string;
+    fieldSuffixField?: string;
     fieldPlaceholder?: string;
     fieldOptionLabel?: string;
     errorMessages?: IValidationErrorMessages;
@@ -179,6 +180,7 @@ export interface IDataTableEvent {
     field: string;
     index: number;
     originalEvent: MouseEvent;
+    previousValue?: any;
 }
 
 /**

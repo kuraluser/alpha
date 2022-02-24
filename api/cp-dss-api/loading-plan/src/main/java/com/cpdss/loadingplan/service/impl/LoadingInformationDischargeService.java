@@ -69,6 +69,11 @@ public class LoadingInformationDischargeService {
                         .map(Common.BillOfLadding::getPortId)
                         .distinct()
                         .collect(Collectors.toList()));
+                bolBuilder.addAllLoadingPortRotationIds(
+                    billOfLaddings1.stream()
+                        .map(Common.BillOfLadding::getPortRotationId)
+                        .distinct()
+                        .collect(Collectors.toList()));
                 Double qtyBbls =
                     billOfLaddings1.stream()
                         .mapToDouble(o -> Double.parseDouble(o.getQuantityBbls()))
@@ -139,7 +144,8 @@ public class LoadingInformationDischargeService {
           ofNullable(billOfLadding.getCargoNominationId())
               .ifPresent(cargoId -> bolBuilder.setCargoNominationId(cargoId));
           ofNullable(billOfLadding.getPortId()).ifPresent(portId -> bolBuilder.setPortId(portId));
-
+          ofNullable(billOfLadding.getLoadingInformation().getPortRotationXId())
+              .ifPresent(bolBuilder::setPortRotationId);
           buildCargoDetails(bolBuilder.getCargoNominationId(), bolBuilder);
 
           ofNullable(billOfLadding.getId()).ifPresent(id -> bolBuilder.setId(id));

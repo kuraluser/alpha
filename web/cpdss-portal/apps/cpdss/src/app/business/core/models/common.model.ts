@@ -314,10 +314,12 @@ export interface IDischargePortsDetailsResponse {
  * @export
  * @interface IPortList
  */
-export interface IPortList {
+export interface IPortList extends IPort {
     id: number;
     slNo?: any;
+    name: string;
     portOrder: number;
+    sequenceNumber: number;
     loadableStudyId: number;
     portId: number;
     portTimezoneId?: number;
@@ -350,6 +352,8 @@ export interface IPortList {
 export interface IDischargeStudyPortList {
     id: number;
     portOrder: number;
+    sequenceNumber: number;
+    name: string;
     dischargeStudyId: number;
     portId: number;
     portTimezoneId?: number;
@@ -490,6 +494,7 @@ export interface IEditPortRotation {
     portOrder: number;
     portTimezoneId?: number;
     loadableStudyId: number;
+    sequenceNumber: number;
     portId: number;
     operationId: number;
     seaWaterDensity: number;
@@ -538,6 +543,7 @@ export class IVoyagePortDetails {
     name?: string;
     portType?: string;
     version?: number;
+    sequenceNumber: number;
 }
 
 /**
@@ -675,7 +681,7 @@ export interface ILoadableQuantityCargo {
     minMaxTolerance?: string;
     slopQuantity?: number | ValueObject<number>;
     timeRequiredForLoading?: string;
-    loadingPorts?: string[];
+    loadingPorts?: IPortList[];
     loadingPortsLabels?: string;
     cargoAbbreviation?: string;
     cargoNominationId?: number;

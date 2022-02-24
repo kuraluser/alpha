@@ -284,6 +284,7 @@ class DischargeStudyServiceTest {
     portDetails.setQuantity(new BigDecimal(1));
     portDetails.setMode(1l);
     portDetails.setId(1l);
+    portDetails.setPortRotation(getPortRotation());
     portDetailsSet.add(portDetails);
     cargo.setCargoNominationPortDetails(portDetailsSet);
     cargo.setId(1l);
@@ -291,6 +292,12 @@ class DischargeStudyServiceTest {
     cargo.setLsCargoNominationId(1l);
     cargoNominationList.add(cargo);
     return cargoNominationList;
+  }
+
+  private LoadableStudyPortRotation getPortRotation() {
+    LoadableStudyPortRotation portRotation = new LoadableStudyPortRotation();
+    portRotation.setId(1L);
+    return portRotation;
   }
 
   @Test
@@ -453,7 +460,10 @@ class DischargeStudyServiceTest {
     when(cargoNominationService.getCargoNominations(anyLong()))
         .thenReturn(getCargoNominationList());
     when(cargoNominationService.createCargoNominationPortDetails(
-            any(CargoNomination.class), any(CargoNomination.class), any(), anyLong(), anyInt()))
+            any(CargoNomination.class),
+            any(CargoNomination.class),
+            any(LoadableStudyPortRotation.class),
+            anyInt()))
         .thenReturn(portDetails);
 
     when(loadableStudyRepository.findById(anyLong()))
@@ -634,7 +644,10 @@ class DischargeStudyServiceTest {
     when(backLoadingService.getBackloadingDataByportIds(anyLong(), anyList()))
         .thenReturn(backloadingData);
     when(cargoNominationService.createCargoNominationPortDetails(
-            any(CargoNomination.class), any(CargoNomination.class), anyLong(), anyLong(), anyInt()))
+            any(CargoNomination.class),
+            any(CargoNomination.class),
+            any(LoadableStudyPortRotation.class),
+            anyInt()))
         .thenReturn(getCargoNominationList().get(0).getCargoNominationPortDetails());
     when(cargoNominationOperationDetailsRepository.findByCargoNominationAndPortIdAndIsActiveTrue(
             any(CargoNomination.class), anyLong()))
@@ -654,7 +667,10 @@ class DischargeStudyServiceTest {
     when(cargoNominationService.getCargoNominations(anyLong()))
         .thenReturn(getCargoNominationList());
     when(cargoNominationService.createCargoNominationPortDetails(
-            any(CargoNomination.class), any(CargoNomination.class), anyLong(), anyLong(), anyInt()))
+            any(CargoNomination.class),
+            any(CargoNomination.class),
+            any(LoadableStudyPortRotation.class),
+            anyInt()))
         .thenReturn(getCargoNominationList().get(0).getCargoNominationPortDetails());
     when(cargoNominationOperationDetailsRepository.findByCargoNominationAndPortIdAndIsActiveTrue(
             any(CargoNomination.class), anyLong()))

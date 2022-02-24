@@ -13,5 +13,7 @@ public class LoadingPort {
 
   private Long id;
 
+  private Long portId;
+
   private BigDecimal quantity;
 }

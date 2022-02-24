@@ -1610,6 +1610,8 @@ public class LoadablePatternService {
         this.voyageService.checkIfDischargingStarted(
             loadableStudyOpt.get().getVesselXId(), loadableStudyOpt.get().getVoyage().getId());
       }
+      this.cargoNominationService.validatePortRotations(
+          loadableStudyOpt.get(), LOADING_OPERATION_ID);
       this.validateLoadableStudyWithLQ(loadableStudyOpt.get());
       cargoNominationService.validateLoadableStudyWithCommingle(loadableStudyOpt.get());
       ModelMapper modelMapper = new ModelMapper();

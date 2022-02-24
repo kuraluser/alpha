@@ -230,40 +230,37 @@
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.SELECT">
-                                    <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
-                                        <p-dropdown #dropDown2 [inputId]="col.field+'_'+ rowIndex + 'input'" [options]="rowData[col.listName]? rowData[col.listName] : listData[col.listName]"
-                                            styleClass="form-control" appendTo="body"
-                                            [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
-                                            [formControlName]="col.field" [filter]="col.listFilter"
-                                            optionLabel="{{col.fieldOptionLabel}}"
-                                            [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
-                                            (onChange)="onChange($event, rowData, rowIndex, col)"
-                                            resetFilterOnHide="true" (onFocus)="setDropDownFocus(dropDown2)"
-                                            id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
-                                            itemSize="30" [showClear]="col?.showClear">
-                                            <ng-template *ngIf="col?.showTemplate" let-item pTemplate="item">
-                                                <span>
-                                                    <i class="color-rounded align-top mr-5"
-                                                        [ngStyle]="{'background' : item.value.color}"></i>
-                                                    <span>{{item.label}}</span>
-                                                </span>
-                                            </ng-template>
-                                        </p-dropdown>
-                                        <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)"
-                                            [errorMessages]="col.errorMessages">
-                                        </cpdss-portal-validation-error>
-                                    </ng-container>
-                                    <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
-                                            <span *ngIf="rowData[col.field]?.value && rowData[col.field]?.value[col.fieldOptionLabel]; else elseBlock">
-                                                {{
-                                                    rowData[col.field]?.value[col.fieldOptionLabel] }}
-                                            </span>
-                                            <ng-template #elseBlock>
-                                                <span>{{
-                                                rowData[col.field]?.value}}</span>
-                                            </ng-template>
-
-                                    </ng-container>
+                                  <ng-container *ngIf="editMode && rowData[col.field]?.isEditMode">
+                                    <p-dropdown #dropDown2 [inputId]="col.field+'_'+ rowIndex + 'input'"
+                                      [options]="rowData[col.listName]? rowData[col.listName] : listData[col.listName]" styleClass="form-control"
+                                      appendTo="body" [panelStyleClass]="col.fieldComponentClass ? col.fieldComponentClass : 'index-1'"
+                                      [formControlName]="col.field" [filter]="col.listFilter" optionLabel="{{col.fieldOptionLabel}}"
+                                      [placeholder]="(col?.fieldPlaceholder ? col?.fieldPlaceholder :  '')| translate"
+                                      (onChange)="onChange($event, rowData, rowIndex, col)" resetFilterOnHide="true"
+                                      (onFocus)="setDropDownFocus(dropDown2)" id="{{col.field+'_'+rowIndex}}" [virtualScroll]="col.virtualScroll"
+                                      itemSize="30" [showClear]="col?.showClear">
+                                      <ng-template *ngIf="col?.showTemplate" let-item pTemplate="item">
+                                        <span>
+                                          <i class="color-rounded align-top mr-5" [ngStyle]="{'background' : item.value.color}"></i>
+                                          <span>{{item.label}}</span>
+                                        </span>
+                                      </ng-template>
+                                    </p-dropdown>
+                                    <cpdss-portal-validation-error [errors]="fieldError(rowIndex, col.field)" [errorMessages]="col.errorMessages">
+                                    </cpdss-portal-validation-error>
+                                    <span class="field-suffix edit">{{rowData[col?.fieldSuffixField]?.value ? rowData[col?.fieldSuffixField]?.value :
+                                      rowData[col?.fieldSuffixField] ? rowData[col?.fieldSuffixField] : col?.fieldSuffix}}</span>
+                                  </ng-container>
+                                  <ng-container *ngIf="!editMode || !rowData[col.field]?.isEditMode">
+                                    <span *ngIf="rowData[col.field]?.value && rowData[col.field]?.value[col.fieldOptionLabel]; else elseBlock">
+                                      {{ rowData[col.field]?.value[col.fieldOptionLabel] }}
+                                      <span class="field-suffix">{{rowData[col?.fieldSuffixField]?.value ? rowData[col?.fieldSuffixField]?.value : rowData[col?.fieldSuffixField] ? rowData[col?.fieldSuffixField] : col?.fieldSuffix}}</span>
+                                    </span>
+                                    <ng-template #elseBlock>
+                                      <span>{{
+                                        rowData[col.field]?.value}}</span>
+                                    </ng-template>
+                                  </ng-container>
                                 </ng-container>
 
                                 <ng-container *ngSwitchCase="fieldType.MULTISELECT">

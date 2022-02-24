@@ -4,7 +4,7 @@ import { LoadableQuantityApiService } from '../../services/loadable-quantity-api
 import { LodadableQuantity } from '../../models/loadable-quantity.model';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
-import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, IPortList } from '../../../core/models/common.model';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MessageService } from 'primeng/api';
@@ -43,10 +43,10 @@ export class LoadableQuantityComponent implements OnInit {
   display = true;
   loadableQuantityForm: FormGroup;
   portData: any[];
-  selectedPort: IPort;
+  selectedPort: IPortList;
   isSummerZone: boolean;
   loadableQuantity: LodadableQuantity;
-  ports: IPort[];
+  ports: IPortList[];
   lastUpdatedDateAndTime: string;
   totalLoadableQuantity: number;
   isNegative = false;
@@ -95,8 +95,8 @@ export class LoadableQuantityComponent implements OnInit {
     const portList = portsData?.portList;
     if (portList) {
       const ports = await this.getPorts();
-      this.ports = portList?.map((portlist) => {
-        return { ...ports?.find((port) => port.id === portlist.portId), id: portlist?.id, portId: portlist?.portId, portOrder: portlist?.portOrder };
+      this.ports = portList?.map((port) => {
+        return { name: ports?.find((_port) => _port.id === port.portId)?.name, ...port };
       });
       this.ports.sort((a, b) => {
         return a.portOrder - b.portOrder;

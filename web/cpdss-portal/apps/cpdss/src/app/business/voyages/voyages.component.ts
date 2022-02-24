@@ -131,10 +131,10 @@ export class VoyagesComponent implements OnInit, OnDestroy {
       if (voyageList?.length) {
         this.voyageList = voyageList?.map(voyage => {
           if (voyage?.loadingPorts?.length) {
-            voyage.loading = voyage.loadingPorts.map(e => e.name).join(", ");
+            voyage.loading = voyage.loadingPorts.map(e => e.sequenceNumber ? e.name + ' ' + e.sequenceNumber : e.name).join(", ");
           }
           if (voyage?.dischargingPorts?.length) {
-            voyage.discharging = voyage.dischargingPorts.map(e => e.name).join(", ");
+            voyage.discharging = voyage.dischargingPorts.map(e => e.sequenceNumber ? e.name + ' ' + e.sequenceNumber : e.name).join(", ");
           }
           if (voyage?.cargos?.length) {
             voyage.cargo = voyage.cargos.map(e => e.name).join(", ");

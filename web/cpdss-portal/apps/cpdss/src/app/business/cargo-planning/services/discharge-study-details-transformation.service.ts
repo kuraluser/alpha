@@ -92,13 +92,9 @@ export class DischargeStudyDetailsTransformationService {
   getFormatedBillingDetails(billingFigDetail: IBillingOfLaddings , listData: any , isEditMode = true , isAdd = true) {
     const _cargoDetail = <IBillingFigValueObject>{};
     const selectedPort = [];
-    billingFigDetail.loadingPort.map((portId) => {
-      const port = listData.portsList.find((portDetails) => {
-        if(portDetails.id === portId) {
-         return portDetails;
-        }
-      })
-      selectedPort.push(port.name);
+    billingFigDetail.loadingPorts.map((portDetails) => {
+      const port = listData.portsList.find((_portDetails) => _portDetails.id === portDetails?.portId);
+      selectedPort.push(portDetails?.sequenceNumber ? port.name + ' ' + portDetails?.sequenceNumber : port.name );
     })
     _cargoDetail.port = selectedPort.toString();
     _cargoDetail.quantityBbls = new ValueObject<number>(billingFigDetail.quantityBbls , true , isEditMode);
@@ -279,6 +275,9 @@ export class DischargeStudyDetailsTransformationService {
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'SELECT_PORT',
         virtualScroll: true,
+        fieldSuffixField: 'sequenceNumber',
+        fieldClass: 'column-port-field',
+        fieldHeaderClass: 'column-port-tab',
         errorMessages: {
           'required': 'PORT_FIELD_REQUIRED_ERROR',
           'duplicate': 'PORT_FIELD_DUPLICATE_ERROR',
@@ -469,6 +468,7 @@ export class DischargeStudyDetailsTransformationService {
       if (Object.prototype.hasOwnProperty.call(port, key)) {
         if (key === 'port') {
           _ports.portId = port[key].value?.id;
+          _ports.name = port[key].value?.name;
         } else if (key === 'operation') {
           _ports.operationId = port[key].value?.id;
         }  else if (key === 'eta') {
@@ -524,6 +524,7 @@ export class DischargeStudyDetailsTransformationService {
       const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING || operationObj.id === OPERATIONS.DISCHARGING) : true;
       _port.id = port.id;
       _port.portOrder = port.portOrder;
+      _port.sequenceNumber = port?.sequenceNumber;
       _port.portTimezoneId = port.portTimezoneId;
       _port.portcode = new ValueObject<string>(portObj?.code, true, false, false, false);
       _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEditable);
@@ -792,7 +793,7 @@ export class DischargeStudyDetailsTransformationService {
   * @param {boolean} isValid
   * @memberof LoadableStudyDetailsTransformationService
   */
-  addMissingOhqPorts(ohqPorts: IPort[]) {
+  addMissingOhqPorts(ohqPorts: IDischargeStudyPortList[]) {
     ohqPorts.forEach(ohqPort => {
       const i = this.ohqPortsValidity.findIndex(port => port.id === ohqPort.id);
       if (i < 0) {
@@ -1058,11 +1059,7 @@ getDischargeStudyBackLoadingDatatableColumns(permission: IPermission, dischargeS
       _portDetail.portTimezoneId = portDetail.portTimezoneId;
       _portDetail.operationId  = portDetail.operationId;
       _portDetail.cow  = portDetail.cow ?? false;
-      _portDetail.port = listData.portList.find((port) =>{
-        if(port.id === portDetail.portId) {
-          return port;
-        }
-      })
+      _portDetail.port = { name : listData.portList.find((port) =>port.id === portDetail.portId)?.name, ...portDetail}
       if(portDetail.instructionId?.length) {
         _portDetail.instruction = listData.instructions.find((instruction) => {
           return portDetail.instructionId.some((instructionId) => {

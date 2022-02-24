@@ -14,4 +14,5 @@ public class CargoNominationOperationDetails {
   private Long sequenceNo;
   private Boolean emptyMaxNoOfTanks;
   private Long dischargingMode;
+  private Long portRotationId;
 }

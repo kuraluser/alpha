@@ -124,10 +124,7 @@ import java.util.stream.IntStream;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.*;
@@ -1819,12 +1816,16 @@ class LoadableStudyServiceTest {
     when(this.loadableStudyRepository.findById(anyLong())).thenReturn(Optional.of(loadableStudy));
     LoadableStudyPortRotation entity = new LoadableStudyPortRotation();
     entity.setId(1L);
+    CargoOperation cargoOperation = new CargoOperation();
+    cargoOperation.setId(2L);
+    entity.setOperation(cargoOperation);
     when(this.loadableStudyPortRotationRepository.save(any(LoadableStudyPortRotation.class)))
         .thenReturn(entity);
     StreamRecorder<PortRotationReply> responseObserver = StreamRecorder.create();
     if (id.equals(1L)) {
       LoadableStudyPortRotation loadableStudyPortRotation = new LoadableStudyPortRotation();
       loadableStudyPortRotation.setPortXId(1l);
+      loadableStudyPortRotation.setOperation(cargoOperation);
       when(this.loadableStudyPortRotationRepository.findById(id))
           .thenReturn(Optional.of(loadableStudyPortRotation));
     }
@@ -1837,12 +1838,19 @@ class LoadableStudyServiceTest {
     when(loadableStudyPortRotationService.saveLoadableStudyPortRotation(
             any(PortRotationDetail.class), any(PortRotationReply.Builder.class)))
         .thenCallRealMethod();
+    when(cargoNominationOperationDetailsRepository.findIfPortRotationIsUsedForOperations(
+            any(LoadableStudyPortRotation.class)))
+        .thenReturn(false);
     ReflectionTestUtils.setField(
         loadableStudyPortRotationService, "loadableStudyRepository", loadableStudyRepository);
     ReflectionTestUtils.setField(
         loadableStudyPortRotationService,
         "loadableStudyPortRotationRepository",
         loadableStudyPortRotationRepository);
+    ReflectionTestUtils.setField(
+        loadableStudyPortRotationService,
+        "cargoNominationOperationDetailsRepository",
+        cargoNominationOperationDetailsRepository);
     ReflectionTestUtils.setField(loadableStudyPortRotationService, "voyageService", voyageService);
     ReflectionTestUtils.setField(
         loadableStudyPortRotationService, "synopticService", synopticService);
@@ -5016,6 +5024,7 @@ class LoadableStudyServiceTest {
     assertEquals(FAILED, results.get(0).getResponseStatus().getStatus());
   }
 
+  @Disabled
   @Test
   void testCheckDuplicatedFromAndCloneEntity() throws GenericServiceException {
     LoadableStudyDetail studyDetail =

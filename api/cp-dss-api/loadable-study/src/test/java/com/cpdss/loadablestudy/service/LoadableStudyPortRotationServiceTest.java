@@ -55,6 +55,9 @@ public class LoadableStudyPortRotationServiceTest {
   @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
 
   @MockBean
+  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
+  @MockBean
   private LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub
       loadableStudyServiceBlockingStub;
 
@@ -485,12 +488,15 @@ public class LoadableStudyPortRotationServiceTest {
     Optional<LoadableStudy> loadableStudyOpt = Optional.of(getLoadableStudy());
     LoadableStudyPortRotation portRotation = getLoadableStudyPortRotation();
     CargoOperation operation = new CargoOperation();
-    operation.setId(l);
+    operation.setId(1l);
     portRotation.setOperation(operation);
 
     when(this.loadableStudyRepository.findById(Mockito.anyLong())).thenReturn(loadableStudyOpt);
     when(this.loadableStudyPortRotationRepository.findById(Mockito.anyLong()))
         .thenReturn(Optional.of(portRotation));
+    when(cargoNominationOperationDetailsRepository.findIfPortRotationIsUsedForOperations(
+            any(LoadableStudyPortRotation.class)))
+        .thenReturn(true);
 
     final GenericServiceException ex =
         assertThrows(
@@ -500,7 +506,9 @@ public class LoadableStudyPortRotationServiceTest {
                     request, portRotationReplyBuilder));
 
     assertAll(
-        () -> assertEquals(CommonErrorCodes.E_HTTP_BAD_REQUEST, ex.getCode(), "Invalid error code"),
+        () ->
+            assertEquals(
+                CommonErrorCodes.E_CPDSS_PORT_ROTATION_IS_USED, ex.getCode(), "Invalid error code"),
         () -> assertEquals(HttpStatusCode.BAD_REQUEST, ex.getStatus(), "Invalid http status"));
   }
 
@@ -530,6 +538,7 @@ public class LoadableStudyPortRotationServiceTest {
     Set<CargoNominationPortDetails> portDetailsSet = new HashSet<>();
     CargoNominationPortDetails portDetails = new CargoNominationPortDetails();
     portDetails.setPortId(1l);
+    portDetails.setPortRotation(getLoadableStudyPortRotation());
     portDetailsSet.add(portDetails);
     nomination.setCargoNominationPortDetails(portDetailsSet);
 

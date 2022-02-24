@@ -5,7 +5,7 @@ import { DATATABLE_EDITMODE, IDataTableColumn } from '../../../../shared/compone
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { numberValidator } from '../../../core/directives/number-validator.directive';
-import { ICargo, ICargoNomination } from '../../models/cargo-planning.model';
+import { ICargoNomination } from '../../models/cargo-planning.model';
 import { ICargoGroup, ICommingleCargo, ICommingleManual, ICommingleManualEvent, ICommingleResponseModel, ICommingleValueObject, IPercentage, IPurpose, IVesselCargoTank } from '../../models/commingle.model';
 import { CommingleApiService } from '../../services/commingle-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
@@ -18,7 +18,7 @@ import { commingleQuantityValidator } from '../../directives/validator/commingle
 import { PercentageValidator } from '../../directives/validator/percentage-validator.directive';
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
-import { LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { ICargo, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { QuantityDecimalService } from '../../../../shared/services/quantity-decimal/quantity-decimal.service';
 import { QuantityPipe } from '../../../../shared/pipes/quantity/quantity.pipe';
 

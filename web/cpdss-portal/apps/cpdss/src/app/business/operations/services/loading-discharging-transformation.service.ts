@@ -1481,7 +1481,7 @@ export class LoadingDischargingTransformationService {
           } else if (key === 'shipFigure') {
             _cargo.loadableMT = cargo.shipFigure;
           } else if (key === 'loadingPorts') {
-            _cargo.loadingPortsLabels = cargo?.loadingPorts?.join(',');
+            _cargo.loadingPortsLabels = cargo?.loadingPorts?.map(lsPort => lsPort?.sequenceNumber ? lsPort?.name + ' ' + lsPort?.sequenceNumber : lsPort?.name).join(',');
           } else if (key === 'dischargeCargoNominationId') {
             _cargo.cargoNominationId = cargo?.dischargeCargoNominationId;
           } else {

@@ -1597,6 +1597,33 @@ public final class Common {
      * @return The bytes for quantityLT.
      */
     com.google.protobuf.ByteString getQuantityLTBytes();
+
+    /**
+     * <code>int64 portRotationId = 16;</code>
+     *
+     * @return The portRotationId.
+     */
+    long getPortRotationId();
+
+    /**
+     * <code>repeated int64 loadingPortRotationIds = 17;</code>
+     *
+     * @return A list containing the loadingPortRotationIds.
+     */
+    java.util.List<java.lang.Long> getLoadingPortRotationIdsList();
+    /**
+     * <code>repeated int64 loadingPortRotationIds = 17;</code>
+     *
+     * @return The count of loadingPortRotationIds.
+     */
+    int getLoadingPortRotationIdsCount();
+    /**
+     * <code>repeated int64 loadingPortRotationIds = 17;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The loadingPortRotationIds at the given index.
+     */
+    long getLoadingPortRotationIds(int index);
   }
   /** Protobuf type {@code BillOfLadding} */
   public static final class BillOfLadding extends com.google.protobuf.GeneratedMessageV3
@@ -1621,6 +1648,7 @@ public final class Common {
       loadingPort_ = emptyLongList();
       blRefNo_ = "";
       quantityLT_ = "";
+      loadingPortRotationIds_ = emptyLongList();
     }
 
     @java.lang.Override
@@ -1766,6 +1794,34 @@ public final class Common {
                 quantityLT_ = s;
                 break;
               }
+            case 128:
+              {
+                portRotationId_ = input.readInt64();
+                break;
+              }
+            case 136:
+              {
+                if (!((mutable_bitField0_ & 0x00000002) != 0)) {
+                  loadingPortRotationIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                loadingPortRotationIds_.addLong(input.readInt64());
+                break;
+              }
+            case 138:
+              {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                if (!((mutable_bitField0_ & 0x00000002) != 0) && input.getBytesUntilLimit() > 0) {
+                  loadingPortRotationIds_ = newLongList();
+                  mutable_bitField0_ |= 0x00000002;
+                }
+                while (input.getBytesUntilLimit() > 0) {
+                  loadingPortRotationIds_.addLong(input.readInt64());
+                }
+                input.popLimit(limit);
+                break;
+              }
             default:
               {
                 if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -1782,6 +1838,9 @@ public final class Common {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
           loadingPort_.makeImmutable(); // C
+        }
+        if (((mutable_bitField0_ & 0x00000002) != 0)) {
+          loadingPortRotationIds_.makeImmutable(); // C
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -2225,6 +2284,47 @@ public final class Common {
       }
     }
 
+    public static final int PORTROTATIONID_FIELD_NUMBER = 16;
+    private long portRotationId_;
+    /**
+     * <code>int64 portRotationId = 16;</code>
+     *
+     * @return The portRotationId.
+     */
+    public long getPortRotationId() {
+      return portRotationId_;
+    }
+
+    public static final int LOADINGPORTROTATIONIDS_FIELD_NUMBER = 17;
+    private com.google.protobuf.Internal.LongList loadingPortRotationIds_;
+    /**
+     * <code>repeated int64 loadingPortRotationIds = 17;</code>
+     *
+     * @return A list containing the loadingPortRotationIds.
+     */
+    public java.util.List<java.lang.Long> getLoadingPortRotationIdsList() {
+      return loadingPortRotationIds_;
+    }
+    /**
+     * <code>repeated int64 loadingPortRotationIds = 17;</code>
+     *
+     * @return The count of loadingPortRotationIds.
+     */
+    public int getLoadingPortRotationIdsCount() {
+      return loadingPortRotationIds_.size();
+    }
+    /**
+     * <code>repeated int64 loadingPortRotationIds = 17;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The loadingPortRotationIds at the given index.
+     */
+    public long getLoadingPortRotationIds(int index) {
+      return loadingPortRotationIds_.getLong(index);
+    }
+
+    private int loadingPortRotationIdsMemoizedSerializedSize = -1;
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -2288,6 +2388,16 @@ public final class Common {
       }
       if (!getQuantityLTBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 15, quantityLT_);
+      }
+      if (portRotationId_ != 0L) {
+        output.writeInt64(16, portRotationId_);
+      }
+      if (getLoadingPortRotationIdsList().size() > 0) {
+        output.writeUInt32NoTag(138);
+        output.writeUInt32NoTag(loadingPortRotationIdsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < loadingPortRotationIds_.size(); i++) {
+        output.writeInt64NoTag(loadingPortRotationIds_.getLong(i));
       }
       unknownFields.writeTo(output);
     }
@@ -2353,6 +2463,23 @@ public final class Common {
       if (!getQuantityLTBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(15, quantityLT_);
       }
+      if (portRotationId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream.computeInt64Size(16, portRotationId_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < loadingPortRotationIds_.size(); i++) {
+          dataSize +=
+              com.google.protobuf.CodedOutputStream.computeInt64SizeNoTag(
+                  loadingPortRotationIds_.getLong(i));
+        }
+        size += dataSize;
+        if (!getLoadingPortRotationIdsList().isEmpty()) {
+          size += 2;
+          size += com.google.protobuf.CodedOutputStream.computeInt32SizeNoTag(dataSize);
+        }
+        loadingPortRotationIdsMemoizedSerializedSize = dataSize;
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2384,6 +2511,9 @@ public final class Common {
       if (getCargoId() != other.getCargoId()) return false;
       if (!getBlRefNo().equals(other.getBlRefNo())) return false;
       if (!getQuantityLT().equals(other.getQuantityLT())) return false;
+      if (getPortRotationId() != other.getPortRotationId()) return false;
+      if (!getLoadingPortRotationIdsList().equals(other.getLoadingPortRotationIdsList()))
+        return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -2427,6 +2557,12 @@ public final class Common {
       hash = (53 * hash) + getBlRefNo().hashCode();
       hash = (37 * hash) + QUANTITYLT_FIELD_NUMBER;
       hash = (53 * hash) + getQuantityLT().hashCode();
+      hash = (37 * hash) + PORTROTATIONID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPortRotationId());
+      if (getLoadingPortRotationIdsCount() > 0) {
+        hash = (37 * hash) + LOADINGPORTROTATIONIDS_FIELD_NUMBER;
+        hash = (53 * hash) + getLoadingPortRotationIdsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2594,6 +2730,10 @@ public final class Common {
 
         quantityLT_ = "";
 
+        portRotationId_ = 0L;
+
+        loadingPortRotationIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -2640,6 +2780,12 @@ public final class Common {
         result.cargoId_ = cargoId_;
         result.blRefNo_ = blRefNo_;
         result.quantityLT_ = quantityLT_;
+        result.portRotationId_ = portRotationId_;
+        if (((bitField0_ & 0x00000002) != 0)) {
+          loadingPortRotationIds_.makeImmutable();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.loadingPortRotationIds_ = loadingPortRotationIds_;
         onBuilt();
         return result;
       }
@@ -2752,6 +2898,19 @@ public final class Common {
         }
         if (!other.getQuantityLT().isEmpty()) {
           quantityLT_ = other.quantityLT_;
+          onChanged();
+        }
+        if (other.getPortRotationId() != 0L) {
+          setPortRotationId(other.getPortRotationId());
+        }
+        if (!other.loadingPortRotationIds_.isEmpty()) {
+          if (loadingPortRotationIds_.isEmpty()) {
+            loadingPortRotationIds_ = other.loadingPortRotationIds_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureLoadingPortRotationIdsIsMutable();
+            loadingPortRotationIds_.addAll(other.loadingPortRotationIds_);
+          }
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -3758,6 +3917,124 @@ public final class Common {
         checkByteStringIsUtf8(value);
 
         quantityLT_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long portRotationId_;
+      /**
+       * <code>int64 portRotationId = 16;</code>
+       *
+       * @return The portRotationId.
+       */
+      public long getPortRotationId() {
+        return portRotationId_;
+      }
+      /**
+       * <code>int64 portRotationId = 16;</code>
+       *
+       * @param value The portRotationId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPortRotationId(long value) {
+
+        portRotationId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 portRotationId = 16;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearPortRotationId() {
+
+        portRotationId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.Internal.LongList loadingPortRotationIds_ = emptyLongList();
+
+      private void ensureLoadingPortRotationIdsIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          loadingPortRotationIds_ = mutableCopy(loadingPortRotationIds_);
+          bitField0_ |= 0x00000002;
+        }
+      }
+      /**
+       * <code>repeated int64 loadingPortRotationIds = 17;</code>
+       *
+       * @return A list containing the loadingPortRotationIds.
+       */
+      public java.util.List<java.lang.Long> getLoadingPortRotationIdsList() {
+        return ((bitField0_ & 0x00000002) != 0)
+            ? java.util.Collections.unmodifiableList(loadingPortRotationIds_)
+            : loadingPortRotationIds_;
+      }
+      /**
+       * <code>repeated int64 loadingPortRotationIds = 17;</code>
+       *
+       * @return The count of loadingPortRotationIds.
+       */
+      public int getLoadingPortRotationIdsCount() {
+        return loadingPortRotationIds_.size();
+      }
+      /**
+       * <code>repeated int64 loadingPortRotationIds = 17;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The loadingPortRotationIds at the given index.
+       */
+      public long getLoadingPortRotationIds(int index) {
+        return loadingPortRotationIds_.getLong(index);
+      }
+      /**
+       * <code>repeated int64 loadingPortRotationIds = 17;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The loadingPortRotationIds to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLoadingPortRotationIds(int index, long value) {
+        ensureLoadingPortRotationIdsIsMutable();
+        loadingPortRotationIds_.setLong(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 loadingPortRotationIds = 17;</code>
+       *
+       * @param value The loadingPortRotationIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addLoadingPortRotationIds(long value) {
+        ensureLoadingPortRotationIdsIsMutable();
+        loadingPortRotationIds_.addLong(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 loadingPortRotationIds = 17;</code>
+       *
+       * @param values The loadingPortRotationIds to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllLoadingPortRotationIds(
+          java.lang.Iterable<? extends java.lang.Long> values) {
+        ensureLoadingPortRotationIdsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, loadingPortRotationIds_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int64 loadingPortRotationIds = 17;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearLoadingPortRotationIds() {
+        loadingPortRotationIds_ = emptyLongList();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -18044,7 +18321,7 @@ public final class Common {
     java.lang.String[] descriptorData = {
       "\n\014common.proto\"W\n\016ResponseStatus\022\016\n\006stat"
           + "us\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\022\014\n\004code\030\003 \001(\t\022"
-          + "\026\n\016httpStatusCode\030\004 \001(\005\"\262\002\n\rBillOfLaddin"
+          + "\026\n\016httpStatusCode\030\004 \001(\005\"\352\002\n\rBillOfLaddin"
           + "g\022\n\n\002id\030\001 \001(\003\022\016\n\006portId\030\002 \001(\003\022\031\n\021cargoNo"
           + "minationId\030\003 \001(\003\022\024\n\014quantityBbls\030\004 \001(\t\022\022"
           + "\n\nquantityMt\030\005 \001(\t\022\022\n\nquantityKl\030\006 \001(\t\022\013"
@@ -18052,53 +18329,55 @@ public final class Common {
           + "oColor\030\t \001(\t\022\021\n\tcargoName\030\n \001(\t\022\030\n\020cargo"
           + "Abbrevation\030\013 \001(\t\022\023\n\013loadingPort\030\014 \003(\003\022\017"
           + "\n\007cargoId\030\r \001(\003\022\017\n\007blRefNo\030\016 \001(\t\022\022\n\nquan"
-          + "tityLT\030\017 \001(\t\"2\n\tRulePlans\022\016\n\006header\030\001 \001("
-          + "\t\022\025\n\005rules\030\002 \003(\0132\006.Rules\"\362\001\n\005Rules\022\n\n\002id"
-          + "\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017\n\007disable\030\003 \001(\010\022"
-          + "\031\n\021displayInSettings\030\004 \001(\010\022\020\n\010ruleType\030\005"
-          + " \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.RulesInputs\022\026\n\016ru"
-          + "leTemplateId\030\007 \001(\t\022\025\n\rvesselRuleXId\030\010 \001("
-          + "\t\022\022\n\nisHardRule\030\t \001(\010\022\030\n\020numericPrecisio"
-          + "n\030\n \001(\003\022\024\n\014numericScale\030\013 \001(\003\"\314\001\n\013RulesI"
-          + "nputs\022\016\n\006prefix\030\001 \001(\t\022\024\n\014defaultValue\030\002 "
-          + "\001(\t\022\014\n\004type\030\003 \001(\t\022\013\n\003max\030\004 \001(\t\022\013\n\003min\030\005 "
-          + "\001(\t\022\r\n\005value\030\006 \001(\t\022\016\n\006suffix\030\007 \001(\t\022\n\n\002id"
-          + "\030\010 \001(\t\022/\n\022ruleDropDownMaster\030\t \003(\0132\023.Rul"
-          + "eDropDownMaster\022\023\n\013isMandatory\030\n \001(\010\"/\n\022"
-          + "RuleDropDownMaster\022\n\n\002id\030\001 \001(\003\022\r\n\005value\030"
-          + "\002 \001(\t\"<\n\026CargoHistoryOpsRequest\022\020\n\010voyag"
-          + "eId\030\001 \001(\003\022\020\n\010vesselId\030\002 \001(\003\"g\n\024CargoHist"
-          + "oryResponse\022\'\n\016responseStatus\030\001 \001(\0132\017.Re"
-          + "sponseStatus\022&\n\014cargoHistory\030\002 \003(\0132\020.Car"
-          + "goHistoryOps\"\275\001\n\017CargoHistoryOps\022\016\n\006tank"
-          + "Id\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\023\n\013temperature\030\003 \001"
-          + "(\t\022\031\n\021cargoNominationId\030\004 \001(\003\022\017\n\007cargoId"
-          + "\030\005 \001(\003\022\016\n\006portId\030\006 \001(\003\022\020\n\010quantity\030\007 \001(\t"
-          + "\022\022\n\nupdateDate\030\010 \001(\t\022\026\n\016portRotationId\030\t"
-          + " \001(\003\"<\n\033CommunicationDataGetRequest\022\n\n\002i"
-          + "d\030\001 \003(\003\022\021\n\ttableName\030\002 \001(\t\"E\n\036Communicat"
-          + "ionDataUpdateRequest\022\020\n\010dataJson\030\001 \001(\t\022\021"
-          + "\n\ttableName\030\002 \001(\t\"V\n\031CommunicationDataRe"
-          + "sponse\022\020\n\010dataJson\030\001 \001(\t\022\'\n\016responseStat"
-          + "us\030\002 \001(\0132\017.ResponseStatus\">\n DependentPr"
-          + "ocessCheckRequestComm\022\032\n\022dependantProces"
-          + "sId\030\003 \001(\t\"Z\n\032CommunicationCheckResponse\022"
-          + "\023\n\013isCompleted\030\001 \001(\010\022\'\n\016responseStatus\030\002"
-          + " \001(\0132\017.ResponseStatus\"I\n\037CommunicationSt"
-          + "atusCheckRequest\022\023\n\013referenceId\030\001 \001(\003\022\021\n"
-          + "\treference\030\002 \001(\t\"G\n\033CommunicationTrigger"
-          + "Request\022\023\n\013referenceId\030\001 \001(\003\022\023\n\013messageT"
-          + "ype\030\002 \001(\t\"Z\n\034CommunicationTriggerRespons"
-          + "e\022\021\n\tprocessId\030\003 \001(\t\022\'\n\016responseStatus\030\002"
-          + " \001(\0132\017.ResponseStatus*E\n\rPLANNING_TYPE\022\013"
-          + "\n\007VALUE_A\020\000\022\022\n\016LOADABLE_STUDY\020\001\022\023\n\017DISCH"
-          + "ARGE_STUDY\020\002*H\n\013MachineType\022\t\n\005EMPTY\020\000\022\017"
-          + "\n\013VESSEL_PUMP\020\001\022\014\n\010MANIFOLD\020\002\022\017\n\013BOTTOM_"
-          + "LINE\020\003*S\n\010COW_TYPE\022\022\n\016EMPTY_COW_TYPE\020\000\022\013"
-          + "\n\007ALL_COW\020\001\022\016\n\nBOTTOM_COW\020\002\022\013\n\007TOP_COW\020\003"
-          + "\022\t\n\005CARGO\020\004*B\n\017COW_OPTION_TYPE\022\031\n\025EMPTY_"
-          + "COW_OPTION_TYPE\020\000\022\010\n\004AUTO\020\001\022\n\n\006MANUAL\020\002B"
-          + "\036\n\032com.cpdss.common.generatedP\000b\006proto3"
+          + "tityLT\030\017 \001(\t\022\026\n\016portRotationId\030\020 \001(\003\022\036\n\026"
+          + "loadingPortRotationIds\030\021 \003(\003\"2\n\tRulePlan"
+          + "s\022\016\n\006header\030\001 \001(\t\022\025\n\005rules\030\002 \003(\0132\006.Rules"
+          + "\"\362\001\n\005Rules\022\n\n\002id\030\001 \001(\t\022\016\n\006enable\030\002 \001(\010\022\017"
+          + "\n\007disable\030\003 \001(\010\022\031\n\021displayInSettings\030\004 \001"
+          + "(\010\022\020\n\010ruleType\030\005 \001(\t\022\034\n\006inputs\030\006 \003(\0132\014.R"
+          + "ulesInputs\022\026\n\016ruleTemplateId\030\007 \001(\t\022\025\n\rve"
+          + "sselRuleXId\030\010 \001(\t\022\022\n\nisHardRule\030\t \001(\010\022\030\n"
+          + "\020numericPrecision\030\n \001(\003\022\024\n\014numericScale\030"
+          + "\013 \001(\003\"\314\001\n\013RulesInputs\022\016\n\006prefix\030\001 \001(\t\022\024\n"
+          + "\014defaultValue\030\002 \001(\t\022\014\n\004type\030\003 \001(\t\022\013\n\003max"
+          + "\030\004 \001(\t\022\013\n\003min\030\005 \001(\t\022\r\n\005value\030\006 \001(\t\022\016\n\006su"
+          + "ffix\030\007 \001(\t\022\n\n\002id\030\010 \001(\t\022/\n\022ruleDropDownMa"
+          + "ster\030\t \003(\0132\023.RuleDropDownMaster\022\023\n\013isMan"
+          + "datory\030\n \001(\010\"/\n\022RuleDropDownMaster\022\n\n\002id"
+          + "\030\001 \001(\003\022\r\n\005value\030\002 \001(\t\"<\n\026CargoHistoryOps"
+          + "Request\022\020\n\010voyageId\030\001 \001(\003\022\020\n\010vesselId\030\002 "
+          + "\001(\003\"g\n\024CargoHistoryResponse\022\'\n\016responseS"
+          + "tatus\030\001 \001(\0132\017.ResponseStatus\022&\n\014cargoHis"
+          + "tory\030\002 \003(\0132\020.CargoHistoryOps\"\275\001\n\017CargoHi"
+          + "storyOps\022\016\n\006tankId\030\001 \001(\003\022\013\n\003api\030\002 \001(\t\022\023\n"
+          + "\013temperature\030\003 \001(\t\022\031\n\021cargoNominationId\030"
+          + "\004 \001(\003\022\017\n\007cargoId\030\005 \001(\003\022\016\n\006portId\030\006 \001(\003\022\020"
+          + "\n\010quantity\030\007 \001(\t\022\022\n\nupdateDate\030\010 \001(\t\022\026\n\016"
+          + "portRotationId\030\t \001(\003\"<\n\033CommunicationDat"
+          + "aGetRequest\022\n\n\002id\030\001 \003(\003\022\021\n\ttableName\030\002 \001"
+          + "(\t\"E\n\036CommunicationDataUpdateRequest\022\020\n\010"
+          + "dataJson\030\001 \001(\t\022\021\n\ttableName\030\002 \001(\t\"V\n\031Com"
+          + "municationDataResponse\022\020\n\010dataJson\030\001 \001(\t"
+          + "\022\'\n\016responseStatus\030\002 \001(\0132\017.ResponseStatu"
+          + "s\">\n DependentProcessCheckRequestComm\022\032\n"
+          + "\022dependantProcessId\030\003 \001(\t\"Z\n\032Communicati"
+          + "onCheckResponse\022\023\n\013isCompleted\030\001 \001(\010\022\'\n\016"
+          + "responseStatus\030\002 \001(\0132\017.ResponseStatus\"I\n"
+          + "\037CommunicationStatusCheckRequest\022\023\n\013refe"
+          + "renceId\030\001 \001(\003\022\021\n\treference\030\002 \001(\t\"G\n\033Comm"
+          + "unicationTriggerRequest\022\023\n\013referenceId\030\001"
+          + " \001(\003\022\023\n\013messageType\030\002 \001(\t\"Z\n\034Communicati"
+          + "onTriggerResponse\022\021\n\tprocessId\030\003 \001(\t\022\'\n\016"
+          + "responseStatus\030\002 \001(\0132\017.ResponseStatus*E\n"
+          + "\rPLANNING_TYPE\022\013\n\007VALUE_A\020\000\022\022\n\016LOADABLE_"
+          + "STUDY\020\001\022\023\n\017DISCHARGE_STUDY\020\002*H\n\013MachineT"
+          + "ype\022\t\n\005EMPTY\020\000\022\017\n\013VESSEL_PUMP\020\001\022\014\n\010MANIF"
+          + "OLD\020\002\022\017\n\013BOTTOM_LINE\020\003*S\n\010COW_TYPE\022\022\n\016EM"
+          + "PTY_COW_TYPE\020\000\022\013\n\007ALL_COW\020\001\022\016\n\nBOTTOM_CO"
+          + "W\020\002\022\013\n\007TOP_COW\020\003\022\t\n\005CARGO\020\004*B\n\017COW_OPTIO"
+          + "N_TYPE\022\031\n\025EMPTY_COW_OPTION_TYPE\020\000\022\010\n\004AUT"
+          + "O\020\001\022\n\n\006MANUAL\020\002B\036\n\032com.cpdss.common.gene"
+          + "ratedP\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -18130,6 +18409,8 @@ public final class Common {
               "CargoId",
               "BlRefNo",
               "QuantityLT",
+              "PortRotationId",
+              "LoadingPortRotationIds",
             });
     internal_static_RulePlans_descriptor = getDescriptor().getMessageTypes().get(2);
     internal_static_RulePlans_fieldAccessorTable =

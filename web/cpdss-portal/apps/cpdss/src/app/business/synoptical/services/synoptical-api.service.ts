@@ -20,7 +20,7 @@ export class SynopticalApiService {
      * @param loadableStudyId 
      * @param loadablePatternId 
      */
-    getSynopticalTable(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<any> {
+  getSynopticalTable(vesselId: number, voyageId: number, loadableStudyId: number, loadablePatternId: number): Observable<ISynopticalResponse> {
         if (!loadablePatternId) {
             loadablePatternId = 0;
         }

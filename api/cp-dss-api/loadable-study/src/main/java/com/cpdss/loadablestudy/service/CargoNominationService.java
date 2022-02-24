@@ -39,14 +39,9 @@ import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
 import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
 import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -135,7 +130,9 @@ public class CargoNominationService {
   }
 
   public List<CargoNomination> saveDsichargeStudyCargoNominations(
-      Long dischargeStudyId, Long loadableStudyId, Long portId, Long operationId)
+      Long dischargeStudyId,
+      Long loadableStudyId,
+      LoadableStudyPortRotation loadableStudyPortRotation)
       throws GenericServiceException {
     log.info("ds save API LS id :: " + loadableStudyId);
     List<CargoNomination> cargos = getCargoNominationByLoadableStudyId(loadableStudyId);
@@ -153,8 +150,7 @@ public class CargoNominationService {
                   createDsCargoNomination(
                       dischargeStudyId,
                       cargo,
-                      portId,
-                      operationId,
+                      loadableStudyPortRotation,
                       dischargeStudycargos.size() + 1);
               log.info(
                   "ds save API DS cargo... cargo id ::  "
@@ -346,7 +342,10 @@ public class CargoNominationService {
   }
 
   public CargoNomination createDsCargoNomination(
-      Long dischargeStudyId, CargoNomination cargo, Long portId, Long operationId, int seqNo) {
+      Long dischargeStudyId,
+      CargoNomination cargo,
+      LoadableStudyPortRotation loadableStudyPortRotation,
+      int seqNo) {
     CargoNomination dischargeStudyCargo = new CargoNomination();
     dischargeStudyCargo.setAbbreviation(cargo.getAbbreviation());
     dischargeStudyCargo.setApi(cargo.getApi());
@@ -366,7 +365,8 @@ public class CargoNominationService {
     //    dischargeStudyCargo.setSequenceNo(Long.valueOf(seqNo));
     //    dischargeStudyCargo.setEmptyMaxNoOfTanks(false);
     dischargeStudyCargo.setCargoNominationPortDetails(
-        createCargoNominationPortDetails(dischargeStudyCargo, cargo, portId, operationId, seqNo));
+        createCargoNominationPortDetails(
+            dischargeStudyCargo, cargo, loadableStudyPortRotation, seqNo));
     return dischargeStudyCargo;
   }
 
@@ -410,12 +410,12 @@ public class CargoNominationService {
   public Set<CargoNominationPortDetails> createCargoNominationPortDetails(
       CargoNomination dischargeStudyCargo,
       CargoNomination cargo,
-      Long portId,
-      Long operationId,
+      LoadableStudyPortRotation loadableStudyPortRotation,
       Integer seqNo) {
     CargoNominationPortDetails portDetail = new CargoNominationPortDetails();
-    portDetail.setPortId(portId);
-    portDetail.setOperationId(operationId);
+    portDetail.setPortId(loadableStudyPortRotation.getPortXId());
+    portDetail.setOperationId(loadableStudyPortRotation.getOperation().getId());
+    portDetail.setPortRotation(loadableStudyPortRotation);
     portDetail.setIsActive(true);
     portDetail.setEmptyMaxNoOfTanks(false);
     if (seqNo != null) {
@@ -505,8 +505,8 @@ public class CargoNominationService {
     }
 
     this.cargoNominationRepository.save(cargoNomination);
-    this.updatePortRotationWithLoadingPorts(
-        loadableStudyRecord, cargoNomination, existingCargoPortIds);
+    //    this.updatePortRotationWithLoadingPorts(
+    //        loadableStudyRecord, cargoNomination, existingCargoPortIds);
     cargoNominationReplyBuilder
         .setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS))
         .setCargoNominationId((cargoNomination.getId() != null) ? cargoNomination.getId() : 0);
@@ -518,6 +518,13 @@ public class CargoNominationService {
       LoadableStudy.CargoNominationRequest request,
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy)
       throws GenericServiceException {
+    Set<Long> portRotationIds =
+        request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
+            .map(LoadableStudy.LoadingPortDetail::getPortRotationId)
+            .collect(Collectors.toSet());
+    Map<Long, LoadableStudyPortRotation> portRotationMap =
+        loadableStudyPortRotationRepository.findByIdInAndIsActiveTrue(portRotationIds).stream()
+            .collect(Collectors.toMap(LoadableStudyPortRotation::getId, Function.identity()));
     if (!request.getCargoNominationDetail().getLoadingPortDetailsList().isEmpty()) {
       List<Long> requestedPortIds =
           request.getCargoNominationDetail().getLoadingPortDetailsList().stream()
@@ -573,11 +580,16 @@ public class CargoNominationService {
                     CargoNominationPortDetails cargoNominationPortDetails =
                         new CargoNominationPortDetails();
                     cargoNominationPortDetails.setCargoNomination(cargoNomination);
-                    cargoNominationPortDetails.setPortId(loadingPortDetail.getPortId());
                     cargoNominationPortDetails.setQuantity(
                         !loadingPortDetail.getQuantity().isEmpty()
                             ? new BigDecimal(loadingPortDetail.getQuantity())
                             : null);
+                    Optional.ofNullable(portRotationMap.get(loadingPortDetail.getPortRotationId()))
+                        .ifPresent(
+                            portRotation -> {
+                              cargoNominationPortDetails.setPortRotation(portRotation);
+                              cargoNominationPortDetails.setPortId(portRotation.getPortXId());
+                            });
                     cargoNominationPortDetails.setIsActive(true);
                     return cargoNominationPortDetails;
                   })
@@ -912,6 +924,11 @@ public class CargoNominationService {
                               .ifPresent(loadingPortDetailBuilder::setEmptyMaxNoOfTanks);
                           ofNullable(loadingPort.getSequenceNo())
                               .ifPresent(loadingPortDetailBuilder::setSequenceNo);
+                          ofNullable(loadingPort.getPortRotation())
+                              .ifPresent(
+                                  portRotation ->
+                                      loadingPortDetailBuilder.setPortRotationId(
+                                          portRotation.getId()));
                           builder.addLoadingPortDetails(loadingPortDetailBuilder);
                         }
                       });
@@ -1105,41 +1122,6 @@ public class CargoNominationService {
     }
     this.cargoNominationOperationDetailsRepository.deleteCargoNominationPortDetails(
         request.getCargoNominationId());
-    /*
-     * delete respective loading ports from port rotation table if ports not
-     * associated with any other cargo nomination belonging to the same loadable
-     * study
-     */
-    if (!existingCargoNomination.get().getCargoNominationPortDetails().isEmpty()) {
-      List<Long> requestedPortIds =
-          existingCargoNomination.get().getCargoNominationPortDetails().stream()
-              .map(CargoNominationPortDetails::getPortId)
-              .collect(Collectors.toList());
-      if (!CollectionUtils.isEmpty(requestedPortIds)) {
-        requestedPortIds.forEach(
-            requestPortId -> {
-              Long otherCargoRefExistCount =
-                  this.cargoNominationRepository.getCountCargoNominationWithPortIds(
-                      existingCargoNomination.get().getLoadableStudyXId(),
-                      existingCargoNomination.get(),
-                      requestPortId);
-              if (Objects.equals(otherCargoRefExistCount, Long.valueOf("0"))
-                  && loadableStudyOpt.isPresent()) {
-                loadableStudyPortRotationRepository.deleteLoadingPortRotationByPort(
-                    loadableStudyOpt.get(), requestPortId);
-                synopticalTableRepository.deleteSynopticalPorts(
-                    loadableStudyOpt.get().getId(), requestPortId);
-                onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
-                    loadableStudyOpt.get(), requestPortId);
-              }
-            });
-      }
-    }
-
-    // Setting port order after deletion
-    if (loadableStudyOpt.isPresent()) {
-      loadableStudyPortRotationService.setPortOrdering(loadableStudyOpt.get());
-    }
 
     this.cargoNominationRepository.deleteCargoNomination(request.getCargoNominationId());
     cargoNominationReplyBuilder.setResponseStatus(
@@ -1200,6 +1182,7 @@ public class CargoNominationService {
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) throws GenericServiceException {
     List<CargoNomination> cargoNominations =
         cargoNominationRepository.findByLoadableStudyXIdAndIsActive(loadableStudy.getId(), true);
+
     List<com.cpdss.loadablestudy.entity.CommingleCargo> commingleCargos =
         commingleCargoRepository.findByLoadableStudyXIdAndPurposeXidAndIsActive(
             loadableStudy.getId(), 2L, true);
@@ -1281,6 +1264,10 @@ public class CargoNominationService {
           cargoNominationOperationDetailDto.setPortId(cargoNominationOperationDetail.getPortId());
           cargoNominationOperationDetailDto.setQuantity(
               String.valueOf(cargoNominationOperationDetail.getQuantity()));
+          Optional.ofNullable(cargoNominationOperationDetail.getPortRotation())
+              .ifPresent(
+                  portRotation ->
+                      cargoNominationOperationDetailDto.setPortRotationId(portRotation.getId()));
           loadableStudy.getCargoNominationOperationDetails().add(cargoNominationOperationDetailDto);
         });
   }
@@ -1321,5 +1308,33 @@ public class CargoNominationService {
               }
             });
     return new ArrayList<CargoNomination>(firstPortCargos);
+  }
+
+  /**
+   * Validates whether all loading/discharging ports have cargo nomination mapping.
+   *
+   * @param loadableStudy loadableStudy/discharge study entity
+   * @param operationId loading/discharging operation id
+   * @throws GenericServiceException generic service exception thrown when there is a port rotation
+   */
+  public void validatePortRotations(
+      com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy, Long operationId)
+      throws GenericServiceException {
+    List<LoadableStudyPortRotation> portRotations =
+        this.loadableStudyPortRotationRepository
+            .findByLoadableStudyAndIsActiveOrderByPortOrder(loadableStudy, true).stream()
+            .filter(portRotation -> portRotation.getOperation().getId().equals(operationId))
+            .collect(Collectors.toList());
+    for (LoadableStudyPortRotation portRotation : portRotations) {
+      if (!cargoNominationOperationDetailsRepository.findIfPortRotationIsUsedForOperations(
+          portRotation)) {
+        throw new GenericServiceException(
+            String.format(
+                "No Cargo nominations added for Port Rotation - %d in LS - %d",
+                portRotation.getId(), loadableStudy.getId()),
+            CommonErrorCodes.E_CPDSS_NO_CARGONOMINATION_FOR_PORT_ROTATION,
+            HttpStatusCode.INTERNAL_SERVER_ERROR);
+      }
+    }
   }
 }

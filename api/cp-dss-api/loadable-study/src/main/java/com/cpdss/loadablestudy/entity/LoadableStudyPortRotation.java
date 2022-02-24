@@ -117,4 +117,7 @@ public class LoadableStudyPortRotation extends EntityDoc {
 
   @Column(name = "cow_required")
   private Boolean cowRequired;
+
+  @Column(name = "sequence_number")
+  private Integer sequenceNumber;
 }

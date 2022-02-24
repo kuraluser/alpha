@@ -1048,6 +1048,13 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
     } else if (null != synopticalEntity.getEtdActual()) {
       builder.setEtaEtdActual(formatter.format(synopticalEntity.getEtdActual()));
     }
+    ofNullable(synopticalEntity.getLoadableStudyPortRotation())
+        .ifPresent(
+            portRotation ->
+                builder.setSequenceNumber(
+                    portRotation.getSequenceNumber() != null
+                        ? portRotation.getSequenceNumber()
+                        : 0));
   }
 
   /**

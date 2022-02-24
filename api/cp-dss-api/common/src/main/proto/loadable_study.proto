@@ -978,6 +978,8 @@ message LoadingPortDetail{
 	int64 operationId = 5;
 	int64 sequenceNo =6;
 	bool emptyMaxNoOfTanks=7;
+	int32 sequenceNumber = 8;
+	int64 portRotationId = 9;
 }
 
 message segregationDetail{
@@ -1075,7 +1077,7 @@ message PortRotationDetail{
 	bool freshCrudeOil = 28;
 	string freshCrudeOilQuantity = 29;
 	string freshCrudeOilTime = 30;
-	
+	int32 sequenceNumber = 31;
 }
 
 message Operation{
@@ -1373,6 +1375,7 @@ message SynopticalRecord{
 	repeated SynopticalCommingleRecord commingle = 43;
 	int64 cargoOperationTypeId = 44;
 	string operationHours = 45;
+	int32 sequenceNumber = 46;
 }
 
 message SynopticalCommingleRecord{
@@ -1522,6 +1525,7 @@ message DischargingPortDetail{
 	int64 portId = 1;
 	string quantity = 2;
 	string name=3;
+	int32 sequenceNumber = 4;
 }
 
 message CargoDetails{

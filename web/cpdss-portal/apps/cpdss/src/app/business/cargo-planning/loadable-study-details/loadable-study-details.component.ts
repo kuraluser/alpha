@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ICargo, LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
+import { LOADABLE_STUDY_DETAILS_TABS } from '../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../services/loadable-study-details-transformation.service';
 import { LoadableStudyDetailsApiService } from '../services/loadable-study-details-api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT, IAlgoResponse, IAlgoError } from '../../core/models/common.model';
+import { Voyage, IPort, LOADABLE_STUDY_STATUS, VOYAGE_STATUS, LOADABLE_STUDY_STATUS_TEXT, IAlgoResponse, IAlgoError, IPortList, OPERATIONS, ICargo } from '../../core/models/common.model';
 import { VoyageService } from '../../core/services/voyage.service';
 import { IDischargingPortIds, LoadableStudy } from '../models/loadable-study-list.model';
 import { LoadableStudyListApiService } from '../services/loadable-study-list-api.service';
@@ -51,14 +51,25 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.getLoadableStudyDetails(this.vesselId, this.voyageId, selectedLoadableStudy?.id);
   }
 
+  get ports(): IPortList[] {
+    return this._ports;
+  }
+
+  set ports(value: IPortList[]) {
+    this._ports = value;
+    this.dischargingPorts = value?.filter(port => port?.operationId === OPERATIONS?.DISCHARGING);
+    this.loadingPorts = value?.filter(port => port?.operationId === OPERATIONS?.LOADING);
+  }
+
   private _selectedLoadableStudy: LoadableStudy;
+  private _ports: IPortList[] = [];
   private ngUnsubscribe: Subject<any> = new Subject();
 
   LOADABLE_STUDY_DETAILS_TABS = LOADABLE_STUDY_DETAILS_TABS;
-  dischargingPorts: IPort[] = [];//TODO to be populated form loadable study details
+  dischargingPorts: IPortList[] = [];//TODO to be populated form loadable study details
+  loadingPorts: IPortList[] = [];
   dischargingPortsNames: string;//TODO to be populated form loadable study details
   totalQuantity: number;
-  ports: IPort[];
   voyageId: number;
   loadableStudyId: number;
   vesselId: number;
@@ -201,16 +212,16 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
    * @memberof LoadableStudyDetailsComponent
    */
   tabPermission() {
-    if (this.cargoNominationTabPermission === undefined || this.cargoNominationTabPermission?.view) {
-      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
-    } else if (this.portsTabPermission?.view) {
+    if (this.portsTabPermission === undefined || this.portsTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
+    } else if (this.cargoNominationTabPermission?.view) {
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
     } else if (this.ohqTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OHQ;
     } else if (this.obqTabPermission?.view) {
       this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.OBQ;
     } else {
-      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+      this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
     }
   }
 
@@ -242,7 +253,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.vesselInfo = res[0] ?? <IVessel>{};
     this.loadableStudyDetailsTransformationService.vesselInfo = this.vesselInfo
     this.voyages = await this.getVoyages(this.vesselId, this.voyageId);
-    this.ports = await this.getPorts();
     const result = await this.loadableStudyListApiService.getLoadableStudies(vesselId, voyageId).toPromise();
     const loadableStudies = result?.loadableStudies ?? [];
     this.displayLoadableQuantity = this.loadLineChange;
@@ -288,7 +298,6 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     if (this.selectedDischargeCargo && this.dischargeCargos?.length) {
       this.selectedDischargeCargo = this.dischargeCargos.find(cargo => cargo.id === this.selectedDischargeCargo.id)
     }
-    this.dischargingPorts = this.selectedLoadableStudy?.dischargingPortIds?.map(portId => this.ports.find(port => port?.id === portId));
     if (!this.dischargingPorts) {
       this.dischargingPorts = [];
       this.dischargingPortData = null;
@@ -664,7 +673,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
         this.loadableQuantityNew = '0';
         this.loadableStudyDetailsTransformationService.setTotalQuantityCargoNomination(0);
         this.loadableStudyDetailsTransformationService.setCargoNominationValidity(false);
-        this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION;
+        this.selectedTab = LOADABLE_STUDY_DETAILS_TABS.PORTS;
         this.selectedLoadableStudy = null;
         this.router.navigate([`business/cargo-planning/loadable-study-details/${this.vesselId}/${this.voyageId}/0`]);
       }
@@ -682,18 +691,17 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       this.selectedTab = selectedTab;
       return;
     }
-    const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS']).toPromise();
-    if (selectedTab !== LOADABLE_STUDY_DETAILS_TABS.CARGONOMINATION) {
-      if (this.dischargingPorts?.length > 0) {
+    const translationKeys = await this.translateService.get(['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY', 'CARGONOMINATION_LOADING_DISCHARGING_PORT_ERROR_DETAILS']).toPromise();
+    if (selectedTab !== LOADABLE_STUDY_DETAILS_TABS.PORTS) {
+      if (this.dischargingPorts?.length && this.loadingPorts?.length) {
         this.selectedTab = selectedTab;
         this.isSelectedDischargePort = true;
       }
       else {
         this.isSelectedDischargePort = false;
-        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_DETAILS'] });
+        this.messageService.add({ severity: 'error', summary: translationKeys['CARGONOMINATION_DISCHARGE_PORT_ERROR_SUMMARY'], detail: translationKeys['CARGONOMINATION_LOADING_DISCHARGING_PORT_ERROR_DETAILS'] });
       }
-    }
-    else {
+    } else {
       this.selectedTab = selectedTab;
     }
     if (this.selectedTab !== 'PORTS') {
@@ -849,7 +857,7 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
     this.dischargeCargos = []
     this.loadableStudyDetailsApiService.cargoNominations.forEach(cargoNomination => {
       if (!cargoNomination.isAdd && !this.dischargeCargos.some(cargo => cargo?.id === cargoNomination?.id)) {
-        const _cargo = <ICargo>{ id: cargoNomination.id, name: cargoNomination.cargo.value.name, color: cargoNomination.color.value, abbreviation: cargoNomination.abbreviation.value };
+        const _cargo: ICargo = { id: cargoNomination.id, name: cargoNomination.cargo.value.name, colorCode: cargoNomination.color.value, abbreviation: cargoNomination.abbreviation.value };
         this.dischargeCargos.push(_cargo);
       }
     });
@@ -1100,6 +1108,10 @@ export class LoadableStudyDetailsComponent implements OnInit, OnDestroy {
       if (errorResponse?.error?.errorCode === 'ERR-RICO-114') {
         const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR', 'LOADABLE_STUDY_COMMINGLE_LOADABLE_QTY_ERROR']).toPromise();
         this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_QUANTITY_ERROR'], detail: translationKeys['LOADABLE_STUDY_COMMINGLE_LOADABLE_QTY_ERROR'], life: 10000 });
+      }
+      if (errorResponse?.error?.errorCode === 'ERR-RICO-395') {
+        const translationKeys = await this.translateService.get(['LOADABLE_STUDY_GENERATE_PATTERN_ERROR', 'LOADABLE_STUDY_COMMINGLE_LOADING_PORT_ERROR']).toPromise();
+        this.messageService.add({ severity: 'error', summary: translationKeys['LOADABLE_STUDY_GENERATE_PATTERN_ERROR'], detail: translationKeys['LOADABLE_STUDY_COMMINGLE_LOADING_PORT_ERROR'], life: 10000 });
       }
     }
     this.ngxSpinnerService.hide();

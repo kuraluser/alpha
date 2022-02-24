@@ -2087,7 +2087,9 @@ public class GenerateDischargingPlanExcelReportService {
                 .ifPresent(
                     ports ->
                         cargoTobeDischarged.setLoadingPort(
-                            ports.stream().collect(Collectors.joining(","))));
+                            ports.stream()
+                                .map(PortRotation::getName)
+                                .collect(Collectors.joining(","))));
             Optional.ofNullable(item.getCargoNominationQuantity())
                 .ifPresent(
                     value -> {

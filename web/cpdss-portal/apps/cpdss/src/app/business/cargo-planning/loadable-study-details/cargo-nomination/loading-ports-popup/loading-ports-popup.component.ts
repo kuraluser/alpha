@@ -6,7 +6,7 @@ import { DATATABLE_EDITMODE, IDataTableColumn, IDataTableEvent } from '../../../
 import { numberValidator } from '../../../../core/directives/number-validator.directive';
 import { ILoadingPort, ILoadingPortValueObject, ILoadingPopupData } from '../../../models/cargo-planning.model';
 import { LoadableStudyDetailsTransformationService } from '../../../services/loadable-study-details-transformation.service';
-import { IPort, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../../core/models/common.model';
+import { IPortList, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../../core/models/common.model';
 import { IPermission } from '../../../../../shared/models/user-profile.model';
 import { LoadableStudy } from '../../../models/loadable-study-list.model';
 import { QuantityDecimalService } from '../../../../../shared/services/quantity-decimal/quantity-decimal.service';
@@ -69,7 +69,7 @@ export class LoadingPortsPopupComponent implements OnInit {
   loadingPortsFrom: FormGroup;
   columns: IDataTableColumn[];
   loadingPort: ILoadingPortValueObject[];
-  ports: IPort[];
+  ports: IPortList[];
   editMode: DATATABLE_EDITMODE;
 
   private _popupData: ILoadingPopupData;
@@ -204,6 +204,7 @@ export class LoadingPortsPopupComponent implements OnInit {
     const min = quantityDecimal ? (1/Math.pow(10, quantityDecimal)) : 1;
     return this.fb.group({
       name: this.fb.control(loadingPort.name.value, Validators.required),
+      sequenceNumber: this.fb.control(loadingPort?.sequenceNumber),
       quantity: this.fb.control(loadingPort.quantity.value, [Validators.required, Validators.min(min), numberValidator(quantityDecimal, 7, false)])
     });
   }

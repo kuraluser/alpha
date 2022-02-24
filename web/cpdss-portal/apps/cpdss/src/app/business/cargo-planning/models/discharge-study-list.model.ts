@@ -164,7 +164,7 @@ export interface IDischargeStudyAttachment {
  */
  export interface IBillingOfLaddings {
     id: number,
-    loadingPort: number[],
+    loadingPorts: IPortList[],
     cargoNominationId: number,
     quantityBbls: number,
     quantityMt: number,
@@ -196,7 +196,7 @@ export interface IDischargeStudyAttachment {
  */
 export interface IPortDetailValueObject {
     id: number;
-    port: IPort;
+    port: IDischargeStudyPortListDetails;
     instruction: IInstruction;
     portTimezoneId: number;
     operationId: number;
@@ -352,6 +352,8 @@ export interface IDischargeStudiesResponse {
 export interface IDischargeStudyPortListDetails {
     id: number;
     portId: number;
+    sequenceNumber: number;
+    name: string;
     maxDraft: number;
     portTimezoneId: number;
     instructionId: number[];

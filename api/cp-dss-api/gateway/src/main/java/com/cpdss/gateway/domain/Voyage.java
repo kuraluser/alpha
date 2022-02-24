@@ -38,9 +38,9 @@ public class Voyage {
 
   private Boolean isDischargeStarted;
 
-  private List<Port> loadingPorts;
+  private List<PortRotation> loadingPorts;
 
-  private List<Port> dischargingPorts;
+  private List<PortRotation> dischargingPorts;
 
   private List<Cargo> cargos;
 

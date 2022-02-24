@@ -148,6 +148,8 @@ public class GenerateDischargeStudyJson {
 
   @Autowired SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
+  @Autowired CargoNominationService cargoNominationService;
+
   @Autowired
   private CommingleCargoToDischargePortwiseDetailsRepository
       commingleCargoToDischargePortwiseDetailsRepository;
@@ -847,6 +849,11 @@ public class GenerateDischargeStudyJson {
                       .ifPresent(cargoNominationOperation::setEmptyMaxNoOfTanks);
                   ofNullable(iteratorItem.getMode())
                       .ifPresent(cargoNominationOperation::setDischargingMode);
+                  ofNullable(iteratorItem.getPortRotation())
+                      .ifPresent(
+                          loadableStudyPortRotation ->
+                              cargoNominationOperation.setPortRotationId(
+                                  loadableStudyPortRotation.getId()));
                   cargoNominationOperationDetailsList.add(cargoNominationOperation);
                 }
               }

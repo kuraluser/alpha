@@ -626,11 +626,12 @@ public class LoadableStudyService {
                       .forEach(
                           port -> {
                             LoadingPort loadingPort = new LoadingPort();
-                            loadingPort.setId(port.getPortId());
+                            loadingPort.setId(port.getPortRotationId());
                             loadingPort.setQuantity(
                                 port.getQuantity() != null
                                     ? new BigDecimal(port.getQuantity())
                                     : new BigDecimal("0"));
+                            loadingPort.setPortId(port.getPortId());
                             loadingPortList.add(loadingPort);
                           });
                   cargoNomination.setLoadingPorts(loadingPortList);
@@ -767,6 +768,8 @@ public class LoadableStudyService {
               loadingPort -> {
                 LoadingPortDetail.Builder loadingPortDetailBuilder = LoadingPortDetail.newBuilder();
                 Optional.ofNullable(loadingPort.getId())
+                    .ifPresent(loadingPortDetailBuilder::setPortRotationId);
+                Optional.ofNullable(loadingPort.getPortId())
                     .ifPresent(loadingPortDetailBuilder::setPortId);
                 Optional.ofNullable(loadingPort.getQuantity())
                     .ifPresent(
@@ -892,6 +895,8 @@ public class LoadableStudyService {
       port.setEtd(portDetail.getEtd());
       port.setLayCanFrom(portDetail.getLayCanFrom());
       port.setLayCanTo(portDetail.getLayCanTo());
+      port.setSequenceNumber(
+          portDetail.getSequenceNumber() == 0 ? null : portDetail.getSequenceNumber());
       // Fetch distance, eta/etd actual values from synoptical table
       SynopticalTableRequest synopticalRequest =
           SynopticalTableRequest.newBuilder()
@@ -1056,6 +1061,8 @@ public class LoadableStudyService {
                     .ifPresent(item -> builder.setEtaActual(valueOf(requestPort.getEtaActual())));
                 Optional.ofNullable(requestPort.getEtdActual())
                     .ifPresent(item -> builder.setEtdActual(valueOf(requestPort.getEtdActual())));
+                Optional.ofNullable(requestPort.getSequenceNumber())
+                    .ifPresent(builder::setSequenceNumber);
                 portListBuilder.addPortRotationDetails(builder);
               });
     }
@@ -1119,6 +1126,7 @@ public class LoadableStudyService {
             || referer.get(0).contains(OPERATIONS_URI))) {
       builder.setIsLandingPage(true);
     }
+    Optional.ofNullable(request.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
     return builder.build();
   }
 
@@ -1459,6 +1467,8 @@ public class LoadableStudyService {
               PortRotation portRotation = new PortRotation();
               portRotation.setPortId(port.getPortId());
               portRotation.setId(port.getId());
+              portRotation.setSequenceNumber(
+                  0 == port.getSequenceNumber() ? null : port.getSequenceNumber());
               response.getPortList().add(portRotation);
             });
     response.setResponseStatus(
@@ -1733,10 +1743,18 @@ public class LoadableStudyService {
               cargoDetails.setSlopQuantity(lqcd.getSlopQuantity());
               cargoDetails.setTimeRequiredForLoading(lqcd.getTimeRequiredForLoading());
               if (!lqcd.getLoadingPortsList().isEmpty()) {
-                List<String> ports =
-                    lqcd.getLoadingPortsList().stream()
-                        .map(var -> var.getName())
-                        .collect(Collectors.toList());
+                List<PortRotation> ports = new ArrayList<>();
+                lqcd.getLoadingPortsList()
+                    .forEach(
+                        port -> {
+                          PortRotation loadingPort = new PortRotation();
+                          loadingPort.setId(port.getPortRotationId());
+                          loadingPort.setPortId(port.getPortId());
+                          loadingPort.setName(port.getName());
+                          loadingPort.setSequenceNumber(
+                              0 == port.getSequenceNumber() ? null : port.getSequenceNumber());
+                          ports.add(loadingPort);
+                        });
                 cargoDetails.setLoadingPorts(ports);
               }
               response.getLoadableQuantityCargoDetails().add(cargoDetails);
@@ -1858,6 +1876,7 @@ public class LoadableStudyService {
 
                 synopticalRecord.setCargoPlannedTotal(str.getCargoPlannedTotal());
                 synopticalRecord.setBallastPlanned(str.getBallastPlannedTotal());
+                synopticalRecord.setSequenceNumber(str.getSequenceNumber());
                 response.setLoadablePlanSynopticRecord(synopticalRecord);
               });
     }
@@ -2314,11 +2333,12 @@ public class LoadableStudyService {
                   .forEach(
                       port -> {
                         LoadingPort loadingPort = new LoadingPort();
-                        loadingPort.setId(port.getPortId());
+                        loadingPort.setId(port.getPortRotationId());
                         loadingPort.setQuantity(
                             port.getQuantity() != null
                                 ? new BigDecimal(port.getQuantity())
                                 : new BigDecimal("0"));
+                        loadingPort.setPortId(port.getPortId());
                         loadingPortList.add(loadingPort);
                       });
               cargoNomination.setLoadingPorts(loadingPortList);
@@ -2563,6 +2583,18 @@ public class LoadableStudyService {
                 ? HttpStatusCode.BAD_REQUEST
                 : HttpStatusCode.valueOf(
                     Integer.valueOf(reply.getResponseStatus().getHttpStatusCode())));
+      }
+
+      if (reply
+          .getResponseStatus()
+          .getCode()
+          .equals(CommonErrorCodes.E_CPDSS_NO_CARGONOMINATION_FOR_PORT_ROTATION)) {
+        log.info(
+            "Generate Pattern Failed on Cargo Nomination Validation, No Cargonominations found for LS");
+        throw new GenericServiceException(
+            "Generate Pattern Failed on Cargo Nomination Validation, No Cargonominations found for LS",
+            reply.getResponseStatus().getCode(),
+            HttpStatusCode.BAD_REQUEST);
       }
 
       throw new GenericServiceException(
@@ -3112,6 +3144,10 @@ public class LoadableStudyService {
         StringUtils.hasLength(synopticalProtoRecord.getOperationHours())
             ? new BigDecimal(synopticalProtoRecord.getOperationHours())
             : BigDecimal.ZERO);
+    synopticalRecord.setSequenceNumber(
+        synopticalProtoRecord.getSequenceNumber() == 0
+            ? null
+            : synopticalProtoRecord.getSequenceNumber());
   }
 
   /**
@@ -4345,6 +4381,7 @@ public class LoadableStudyService {
               synopticalRecord.setList(str.getList());
               synopticalRecord.setConstantPlanned(str.getConstantPlanned());
               synopticalRecord.setConstantActual(str.getConstantActual());
+              synopticalRecord.setSequenceNumber(str.getSequenceNumber());
               response.getLoadablePlanSynopticalRecords().add(synopticalRecord);
             });
   }
@@ -5625,27 +5662,30 @@ public class LoadableStudyService {
       voyage.setConfirmedLoadableStudyId(
           detail.getConfirmedLoadableStudyId() != 0 ? detail.getConfirmedLoadableStudyId() : null);
 
-      List<Port> loadingPorts = new ArrayList<>();
+      List<PortRotation> loadingPorts = new ArrayList<>();
       if (detail.getLoadingPortsList() != null) {
         detail
             .getLoadingPortsList()
             .forEach(
                 port -> {
-                  Port loadingPort = new Port();
-                  loadingPort.setId(port.getPortId());
+                  PortRotation loadingPort = new PortRotation();
+                  loadingPort.setId(port.getPortRotationId());
                   loadingPort.setName(port.getName());
+                  loadingPort.setSequenceNumber(
+                      0 == port.getSequenceNumber() ? null : port.getSequenceNumber());
+                  loadingPort.setPortId(port.getPortId());
                   loadingPorts.add(loadingPort);
                 });
       }
       voyage.setLoadingPorts(loadingPorts);
 
-      List<Port> dischargingPorts = new ArrayList<>();
+      List<PortRotation> dischargingPorts = new ArrayList<>();
       if (detail.getDischargingPortsList() != null) {
         detail
             .getDischargingPortsList()
             .forEach(
                 port -> {
-                  Port dischargingPort = new Port();
+                  PortRotation dischargingPort = new PortRotation();
                   dischargingPort.setId(port.getPortId());
                   dischargingPort.setName(port.getName());
                   dischargingPorts.add(dischargingPort);

@@ -46,7 +46,7 @@
                             </div>
                             <div class="row"> <label class="carousel-card-label">{{'PORT_ROTATION_RIBBON_PORT' |
                                     translate}}</label>
-                                <div class="col text-secondary content-ellipsis">{{port.name}} {{showOperationType && port?.operation ? '(' + port?.operation + ')' : ''}}</div>
+                                <div class="col text-secondary content-ellipsis">{{port.name}} {{port?.sequenceNumber}} {{showOperationType && port?.operation ? '(' + port?.operation + ')' : ''}}</div>
 
                             </div>
                             <div class="row" *ngIf=" port.type === 'Arrival'" (click)="editPort($event, port, 'date')">

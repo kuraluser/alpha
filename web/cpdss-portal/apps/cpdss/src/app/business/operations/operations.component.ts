@@ -181,7 +181,7 @@ export class OperationsComponent implements OnInit, OnDestroy {
    */
   async onPortSelection(port: IVoyagePortDetails) {
     this.selectedPort = port;
-    await localStorage.setItem('selectedPortName', port?.name);
+    await localStorage.setItem('selectedPortName', port?.sequenceNumber ? port?.name + ' ' + port?.sequenceNumber : port?.name);
     localStorage.setItem('selectedPortId', port?.portId?.toString());
     localStorage.setItem('portVersion', port?.version ? port?.version?.toString() : '');
     this.loadingDischargingTransformationService.isDischargeStarted(false);

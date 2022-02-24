@@ -273,10 +273,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
 
       List<CargoNomination> savedCargos =
           this.cargoNominationService.saveDsichargeStudyCargoNominations(
-              savedDischargeStudy.getId(),
-              loadableStudy.getId(),
-              savedDischargeport.getPortXId(),
-              savedDischargeport.getOperation().getId());
+              savedDischargeStudy.getId(), loadableStudy.getId(), savedDischargeport);
 
       // Getting quantity ratio Actual/BL figure
       MaxQuantityRequest.Builder lRequest = MaxQuantityRequest.newBuilder();
@@ -787,6 +784,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     portRotation.setFreshCrudeOil(loadableStudyPortRotation.getFreshCrudeOil());
     portRotation.setFreshCrudeOilQuantity(loadableStudyPortRotation.getFreshCrudeOilQuantity());
     portRotation.setFreshCrudeOilTime(loadableStudyPortRotation.getFreshCrudeOilTime());
+    portRotation.setSequenceNumber(loadableStudyPortRotation.getSequenceNumber());
     portRotation.setCowRequired(true);
     return portRotation;
   }
@@ -905,71 +903,6 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     loadableStudy.setDischargeCargoNominationId(request.getCargoNominationId());
     loadableStudy.setIsDischargePortsComplete(request.getIsDischargingPortsComplete());
     this.loadableStudyRepository.save(loadableStudy);
-
-    CargoOperation discharging = this.cargoOperationRepository.getOne(DISCHARGING_OPERATION_ID);
-    List<LoadableStudyPortRotation> dischargingPorts =
-        this.loadableStudyPortRotationRepository.findByLoadableStudyAndOperationAndIsActive(
-            loadableStudyOpt.get(), discharging, true);
-    List<Long> portIds = new ArrayList<>(request.getDischargingPortIdsList());
-    for (LoadableStudyPortRotation portRotation : dischargingPorts) {
-      if (!request.getDischargingPortIdsList().contains(portRotation.getPortXId())) {
-        portRotation.setActive(false);
-        onHandQuantityRepository.deleteByLoadableStudyAndPortXId(
-            loadableStudy, portRotation.getPortXId());
-        List<SynopticalTable> synopticalEntities = portRotation.getSynopticalTable();
-        if (null != synopticalEntities && !synopticalEntities.isEmpty()) {
-          synopticalEntities.forEach(entity -> entity.setIsActive(false));
-        }
-        portIds.remove(portRotation.getPortXId());
-      } else {
-        portIds.remove(portRotation.getPortXId());
-      }
-    }
-    if (!CollectionUtils.isEmpty(portIds)) {
-      // ports already added as transit cannot be again added as discharge ports
-      loadableStudyPortRotationService.validateTransitPorts(loadableStudyOpt.get(), portIds);
-      PortInfo.GetPortInfoByPortIdsRequest.Builder reqBuilder =
-          PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
-      portIds.forEach(
-          port -> {
-            reqBuilder.addId(port);
-          });
-      PortInfo.PortReply portReply = portInfoGrpcService.getPortInfoByPortIds(reqBuilder.build());
-      if (!SUCCESS.equalsIgnoreCase(portReply.getResponseStatus().getStatus())) {
-        throw new GenericServiceException(
-            "Error in calling port service",
-            CommonErrorCodes.E_GEN_INTERNAL_ERR,
-            HttpStatusCode.INTERNAL_SERVER_ERROR);
-      }
-
-      if (!CollectionUtils.isEmpty(portIds) && !CollectionUtils.isEmpty(portReply.getPortsList())) {
-        dischargingPorts =
-            this.buildDischargingPorts(portReply, loadableStudy, dischargingPorts, portIds);
-        loadableStudy.setIsPortsComplete(false);
-
-        // Port complete status becomes false even when all the mandatory fields are
-        // available for
-        // all ports, need to set the port complete status properly on save.
-        Boolean isPortRotationComplete = true;
-        for (LoadableStudyPortRotation portRotation :
-            this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
-                loadableStudy.getId(), true)) {
-          // portRotation.setIsPortRotationOhqComplete(false);
-          if ((portRotation.getSeaWaterDensity() == null)
-              || (portRotation.getMaxDraft() == null)
-              || (portRotation.getAirDraftRestriction() == null)) {
-            isPortRotationComplete = false;
-          }
-        }
-        loadableStudy.setIsPortsComplete(isPortRotationComplete);
-        this.loadableStudyRepository.save(loadableStudy);
-        this.loadableStudyPortRotationRepository.saveAll(dischargingPorts);
-      }
-    }
-
-    // Set port ordering after updation
-    loadableStudyPortRotationService.setPortOrdering(loadableStudy);
-
     replyBuilder.setResponseStatus(ResponseStatus.newBuilder().setStatus(SUCCESS).build());
     return replyBuilder;
   }
@@ -1139,7 +1072,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 //                    .get()
                 //                    .setEmptyMaxNoOfTanks(cargoRequest.getEmptyMaxNoOfTanks());
                 updateCargoNominationToSave(
-                    cargoRequest, optionalCargoNomination.get(), cargoNominationsToSave, portId);
+                    cargoRequest,
+                    optionalCargoNomination.get(),
+                    cargoNominationsToSave,
+                    dbPortRoation);
               } else {
                 CargoNomination cargoNomination = new CargoNomination();
                 cargoNomination.setLoadableStudyXId(dischargestudyId);
@@ -1147,12 +1083,12 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 cargoNomination.setIsActive(true);
                 cargoNomination.setCargoNominationPortDetails(
                     cargoNominationService.createCargoNominationPortDetails(
-                        cargoNomination, null, portId, dbPortRoation.getOperation().getId(), i));
+                        cargoNomination, null, dbPortRoation, i));
                 cargoNomination.setIsBackloading(true);
                 //                cargoNomination.setSequenceNo(Long.valueOf(i));
                 //                cargoNomination.setEmptyMaxNoOfTanks(false);
                 updateCargoNominationToSave(
-                    cargoRequest, cargoNomination, cargoNominationsToSave, portId);
+                    cargoRequest, cargoNomination, cargoNominationsToSave, dbPortRoation);
               }
             }
             List<Long> requestIds =
@@ -1163,7 +1099,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             List<CargoNomination> cargosForPort =
                 dbCargos.stream()
                     .flatMap(x -> x.getCargoNominationPortDetails().stream())
-                    .filter(port -> port.getPortId().equals(dbPortRoation.getPortXId()))
+                    .filter(port -> port.getPortRotation().getId().equals(dbPortRoation.getId()))
                     .map(CargoNominationPortDetails::getCargoNomination)
                     .collect(Collectors.toList());
             List<CargoNomination> cargosToDisable =
@@ -1175,7 +1111,8 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 cargoToDisable -> {
                   Optional<CargoNominationPortDetails> operationDetail =
                       cargoToDisable.getCargoNominationPortDetails().stream()
-                          .filter(port -> port.getPortId().equals(dbPortRoation.getPortXId()))
+                          .filter(
+                              port -> port.getPortRotation().getId().equals(dbPortRoation.getId()))
                           .findFirst();
                   if (operationDetail.isPresent()) {
                     operationDetail.get().setIsActive(false);
@@ -1217,7 +1154,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
       CargoNominationDetail cargoRequest,
       CargoNomination cargoNomination,
       List<CargoNomination> cargoNominationsToSave,
-      Long portId) {
+      LoadableStudyPortRotation portRotation) {
     cargoNomination.setCargoXId(cargoRequest.getCargoId());
     cargoNomination.setAbbreviation(cargoRequest.getAbbreviation());
     cargoNomination.setColor(cargoRequest.getColor());
@@ -1225,7 +1162,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     cargoNomination.setTemperature(new BigDecimal(cargoRequest.getTemperature()));
     Optional<CargoNominationPortDetails> cargoOperation =
         cargoNomination.getCargoNominationPortDetails().stream()
-            .filter(cp -> cp.getPortId().equals(portId))
+            .filter(cp -> cp.getPortRotation().getId().equals(portRotation.getId()))
             .findFirst();
     if (cargoOperation.isPresent()) {
       cargoOperation.get().setQuantity(new BigDecimal(cargoRequest.getQuantity()));
@@ -1628,11 +1565,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                 cargoBackloading.setIsBackloading(true);
                 cargoBackloading.setCargoNominationPortDetails(
                     cargoNominationService.createCargoNominationPortDetails(
-                        cargoBackloading,
-                        null,
-                        portRotations.get(portRotations.size() - 1).getPortXId(),
-                        portRotations.get(portRotations.size() - 1).getOperation().getId(),
-                        null));
+                        cargoBackloading, null, portRotations.get(portRotations.size() - 1), null));
                 cargoBackloading.setPriority(1L);
                 cargos.add(cargoBackloading);
               });
@@ -1669,26 +1602,18 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
               // Bug fix - DSS - 4493 - Checking for duplicate entry in Cargo nomination
               // operation table
               CargoNominationPortDetails existingCargo =
-                  checkIfCargoNominationAlreadyPresent(cargo, newPort.getPortXId());
+                  checkIfCargoNominationAlreadyPresent(cargo, newPort);
               if (existingCargo == null) {
                 Set<CargoNominationPortDetails> newPortDetails = new HashSet<>();
                 if (firstDischargingPort.isPresent()
                     && firstDischargingPort.get().getPortXId().equals(newPort.getPortXId())) {
                   newPortDetails =
                       cargoNominationService.createCargoNominationPortDetails(
-                          cargo,
-                          cargo,
-                          newPort.getPortXId(),
-                          newPort.getOperation().getId(),
-                          seqNo.intValue());
+                          cargo, cargo, newPort, seqNo.intValue());
                 } else {
                   newPortDetails =
                       cargoNominationService.createCargoNominationPortDetails(
-                          cargo,
-                          null,
-                          newPort.getPortXId(),
-                          newPort.getOperation().getId(),
-                          seqNo.intValue());
+                          cargo, null, newPort, seqNo.intValue());
                 }
                 seqNo.incrementAndGet();
                 if (cargo.getCargoNominationPortDetails() != null
@@ -1722,10 +1647,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
    * port. Bug fix - DSS - 4493 - Checking if for duplicate entry in Cargo nomination
    */
   private CargoNominationPortDetails checkIfCargoNominationAlreadyPresent(
-      CargoNomination cargo, Long portXId) {
+      CargoNomination cargo, LoadableStudyPortRotation portRotation) {
     CargoNominationPortDetails cargoNominationOperation =
-        cargoNominationOperationRepository.findByCargoNominationAndPortIdAndIsActiveTrue(
-            cargo, portXId);
+        cargoNominationOperationRepository.findByCargoNominationAndPortRotationAndIsActiveTrue(
+            cargo, portRotation);
     return cargoNominationOperation;
   }
 
@@ -1758,11 +1683,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     // ID.
     // These ports will be missing the cargo nomination records so adding cargo
     // nominations.
-    Set<Long> nominationPortIds =
+    Set<Long> nominationPortRotationIds =
         cargos.stream()
             .flatMap(x -> x.getCargoNominationPortDetails().stream())
             .filter(item -> item.getIsActive())
-            .map(CargoNominationPortDetails::getPortId)
+            .map(portCargo -> portCargo.getPortRotation().getId())
             .distinct()
             .collect(Collectors.toSet());
     List<LoadableStudyPortRotation> dischargingPorts =
@@ -1770,7 +1695,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .filter(
                 port ->
                     port.getOperation().getId().equals(DISCHARGING_OPERATION_ID)
-                        && !nominationPortIds.contains(port.getPortXId()))
+                        && !nominationPortRotationIds.contains(port.getId()))
             .collect(Collectors.toList());
     if (!dischargingPorts.isEmpty()) {
       cargoNominationService.saveAll(
@@ -1781,7 +1706,7 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
             .filter(
                 port ->
                     !port.getOperation().getId().equals(DISCHARGING_OPERATION_ID)
-                        && nominationPortIds.contains(port.getPortXId()))
+                        && nominationPortRotationIds.contains(port.getId()))
             .collect(Collectors.toList());
     if (!CollectionUtils.isEmpty(modeChangedPorts)) {
       // DSS : 5658
@@ -1814,7 +1739,10 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
         .forEach(
             operation -> {
               if (!dischargeStudyPortRotation.isEmpty()
-                  && !operation.getPortId().equals(dischargeStudyPortRotation.get().getPortXId())) {
+                  && !operation
+                      .getPortRotation()
+                      .getId()
+                      .equals(dischargeStudyPortRotation.get().getId())) {
                 operation.setQuantity(new BigDecimal(0));
                 operation.setMode(1L);
 
@@ -1837,11 +1765,11 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
     // Bug fix 5511
     List<Long> presentDischargingPorts =
         dischargeStudyPortRotations.stream()
-            .map(LoadableStudyPortRotation::getPortXId)
+            .map(LoadableStudyPortRotation::getId)
             .collect(Collectors.toList());
     cargos.stream()
         .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
-        .filter(item -> !presentDischargingPorts.contains(item.getPortId()))
+        .filter(item -> !presentDischargingPorts.contains(item.getPortRotation().getId()))
         .forEach(item -> item.setIsActive(false));
 
     cargoNominationService.saveAll(cargos);
@@ -1949,12 +1877,15 @@ public class DischargeStudyService extends DischargeStudyOperationServiceImplBas
                           if (cargoOpt.isPresent()) {
                             Optional<CargoNominationPortDetails> cargoOperationOpt =
                                 cargoOpt.get().getCargoNominationPortDetails().stream()
-                                    .filter(item -> item.getPortId().equals(port.getPortXId()))
+                                    .filter(
+                                        item -> item.getPortRotation().getId().equals(port.getId()))
                                     .findAny();
                             if (cargoOperationOpt.isPresent()) {
                               portDetail.setSequenceNo(cargoOperationOpt.get().getSequenceNo());
                               portDetail.setEmptyMaxNoOfTanks(
                                   cargoOperationOpt.get().getEmptyMaxNoOfTanks());
+                              portDetail.setPortRotationId(
+                                  cargoOperationOpt.get().getPortRotation().getId());
                             }
                           }
                           cargo.addLoadingPortDetails(portDetail);

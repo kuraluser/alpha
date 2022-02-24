@@ -41,6 +41,8 @@ message BillOfLadding{
   int64 cargoId = 13;
   string blRefNo = 14;
   string quantityLT = 15;
+	int64 portRotationId = 16;
+	repeated int64 loadingPortRotationIds = 17;
 }
 
 message RulePlans{

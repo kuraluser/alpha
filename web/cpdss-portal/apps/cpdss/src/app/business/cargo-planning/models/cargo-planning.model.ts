@@ -1,7 +1,7 @@
 import { SelectItem } from 'primeng/api';
 import { IDataTableEvent } from '../../../shared/components/datatable/datatable.model';
 import { CPDSSDB, IResponse, IResponseStatus, ValueObject } from '../../../shared/models/common.model';
-import { IFuelType, ITank } from '../../core/models/common.model';
+import { ICargo, IFuelType, ITank } from '../../core/models/common.model';
 import { IPort, IPortList , IDischargeStudyPortList } from '../../core/models/common.model';
 
 /**
@@ -87,30 +87,17 @@ export interface ICargoPortsResponse {
 }
 
 /**
- * Interface for cargo
- *
- * @export
- * @interface ICargo
- */
-export interface ICargo {
-    id: number;
-    name?: string;
-    abbreviation?: string;
-    api?: number;
-    ports?: IPort[];
-    color?: string;
-}
-
-/**
  * Interface for loading port
  *
  * @export
  * @interface ILoadingPort
  */
 export interface ILoadingPort {
-    id: number;
-    name: string;
-    quantity: number;
+  id: number;
+  name: string;
+  quantity: number;
+  sequenceNumber: number;
+  portId: number;
 }
 
 
@@ -121,11 +108,13 @@ export interface ILoadingPort {
  * @interface ILoadingPortValueObject
  */
 export interface ILoadingPortValueObject {
-    id: number;
-    name: ValueObject<string>;
-    quantity: ValueObject<number>;
-    isAdd: boolean;
-    isDelete?: boolean;
+  id: number;
+  name: ValueObject<string>;
+  quantity: ValueObject<number>;
+  isAdd: boolean;
+  isDelete?: boolean;
+  sequenceNumber: number;
+  portId: number;
 }
 
 /**
@@ -138,7 +127,7 @@ export interface ICargoNominationAllDropdownData {
     priorityList: SelectItem[];
     cargoList: ICargo[];
     segregationList: ISegregation[];
-    ports: IPort[];
+    ports: IPortList[];
 }
 
 /**
@@ -162,7 +151,7 @@ export interface ILoadingPopupData {
     originalEvent: MouseEvent;
     rowData: ICargoNominationValueObject;
     rowIndex: number;
-    ports: IPort[];
+    ports: IPortList[];
     isUpdate?: boolean;
     loadableStudyPorts?: number[];
 }
@@ -247,6 +236,7 @@ export interface IPortsValueObject {
     slNo: number;
     port: ValueObject<IPort>;
     portcode: ValueObject<string>;
+    sequenceNumber: number;
     operation: ValueObject<IOperations>;
     seaWaterDensity: ValueObject<number>;
     layCan: ValueObject<string>;
@@ -269,9 +259,10 @@ export interface IPortsValueObject {
  * @export
  * @interface IDischargeStudyPortsValueObject
  */
- export interface IDischargeStudyPortsValueObject {
+export interface IDischargeStudyPortsValueObject extends IPortsValueObject {
     id: number;
     portOrder: number;
+    sequenceNumber: number;
     portTimezoneId?: number;
     slNo: number;
     port: ValueObject<IPort>;
@@ -297,11 +288,11 @@ export interface IPortsValueObject {
  * @interface IPortsEvent
  */
 export interface IPortsEvent {
-    data: IPortsValueObject;
+  data: IPortsValueObject | IDischargeStudyPortsValueObject;
     field: string;
     index: number;
     originalEvent: MouseEvent;
-
+    previousValue?: IPort;
 }
 
 /**
@@ -331,17 +322,6 @@ export enum LOADABLE_STUDY_DETAILS_TABS {
 }
 
 /**
- * Interface for ohq ports
- *
- * @export
- * @interface IOHQPort
- */
-export interface IOHQPort {
-    id: number; // port rotation id
-    portId: number; // port master id
-}
-
-/**
  * Interface for ohq ports api
  *
  * @export
@@ -349,7 +329,7 @@ export interface IOHQPort {
  */
 export interface IOHQPortRotationResponse {
     responseStatus: IResponse;
-    portList: IOHQPort[];
+    portList: IPortList[];
 }
 
 /**
@@ -933,6 +913,7 @@ export interface ICargoHistoryDetails {
     operationType: string;
     portId: number;
     portName: string;
+    sequenceNumber: number;
     portTimezoneId: number;
     etaEtdPlanned: string;
     plannedFOTotal: number;

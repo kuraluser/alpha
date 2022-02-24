@@ -57,10 +57,10 @@ public class DischargeQuantityCargoDetails {
   private String timeRequiredForDischarging;
 
   @JsonInclude(Include.NON_NULL)
-  private List<String> dischargingPorts;
+  private List<PortRotation> dischargingPorts;
 
   @JsonInclude(Include.NON_NULL)
-  private List<String> loadingPorts;
+  private List<PortRotation> loadingPorts;
 
   private List<CargoToppingOffSequence> toppingSequence;
   private String cargoNominationTemperature;

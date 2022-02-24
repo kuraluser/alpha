@@ -168,7 +168,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "operationId": port?.operationId,
       'name': port?.name,
       'portType': port.portType,
-      'version': port.version
+      'version': port.version,
+      'sequenceNumber': port?.sequenceNumber
     }
     const index = this.portList.indexOf(port);
     this.resetPreviousPort(index);
@@ -423,7 +424,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
    */
   async getPortRotationRibbonData() {
     this.ngxSpinnerService.show();
-    const result = await this.editPortRotationApiService.getPorts().toPromise();
+    const ports = await this.editPortRotationApiService.getPorts().toPromise();
     const id = this.dischargeStudyId ? this.dischargeStudyId : this.loadableStudyId;
     const portsFormData: IPortsDetailsResponse = await this.editPortRotationApiService.getPortsDetails(this.vesselDetails.id, this.voyageId, id).toPromise();
     this.portCarousel = [];
@@ -433,7 +434,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
     }
     this.editPortRotationApiService.updateVoyageDistance(voyageDistance);
     const portData: IEditPortRotation[] = portsFormData?.portList?.map(itm => ({
-      ...result.find((item) => (item.id === itm.portId) && item),
+      name : ports.find((item) => (item.id === itm.portId) && item)?.name,
       ...itm
     }));
     this.operations = portsFormData?.operations;
@@ -476,7 +477,7 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       this.portCarousel = [...this.transformCarouselData(this.portList)];
       this.setPortSelection(this.portCarousel[0]);
     }, 50);
-    if (result && portsFormData) {
+    if (ports && portsFormData) {
       this.ngxSpinnerService.hide();
     }
   }
@@ -533,7 +534,8 @@ export class PortRotationRibbonComponent implements OnInit, OnDestroy {
       "operationId": this.portList[0].operationId,
       'name': this.portList[0].name,
       'portType': this.portList[0].portType,
-      'version': this.portList[0].version
+      'version': this.portList[0].version,
+      'sequenceNumber': this.portList[0]?.sequenceNumber
     }
     this.portList[0].isFocused = true;
     this.portList[0].isSelected = true;

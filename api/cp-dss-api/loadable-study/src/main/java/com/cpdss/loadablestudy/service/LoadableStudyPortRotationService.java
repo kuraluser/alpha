@@ -63,6 +63,9 @@ public class LoadableStudyPortRotationService {
 
   @Autowired private SynopticalTableRepository synopticalTableRepository;
 
+  @Autowired
+  private CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
   @Autowired private BackLoadingService backLoadingService;
 
   @Autowired private PortInstructionService portInstructionService;
@@ -315,6 +318,7 @@ public class LoadableStudyPortRotationService {
     if (entity.getPortXId() != null && entity.getPortXId() > 0) {
       this.setPortTimezoneId(entity.getPortXId(), builder);
     }
+    ofNullable(entity.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
     return builder.build();
   }
 
@@ -567,6 +571,7 @@ public class LoadableStudyPortRotationService {
                 }
               });
     }
+    entity.setSequenceNumber(0 == request.getSequenceNumber() ? null : request.getSequenceNumber());
   }
 
   public com.cpdss.common.generated.LoadableStudy.PortRotationReply.Builder
@@ -609,6 +614,17 @@ public class LoadableStudyPortRotationService {
       entity = portRoationOpt.get();
       if (!entity.getPortXId().equals(request.getPortId())) {
         portEdited = true;
+      }
+
+      if (entity.getOperation().getId().equals(LOADING_OPERATION_ID)) {
+        if ((portEdited || !entity.getOperation().getId().equals(request.getOperationId()))
+            && cargoNominationOperationDetailsRepository.findIfPortRotationIsUsedForOperations(
+                entity)) {
+          throw new GenericServiceException(
+              "Cannot edit ports that is already used for loading/discharging.",
+              CommonErrorCodes.E_CPDSS_PORT_ROTATION_IS_USED,
+              HttpStatusCode.BAD_REQUEST);
+        }
       }
     }
     if (!request.getIsLandingPage()) {
@@ -755,7 +771,7 @@ public class LoadableStudyPortRotationService {
                         .map(DischargeStudyPortInstruction::getPortInstructionId)
                         .collect(Collectors.toList()));
               }
-
+              Optional.ofNullable(port.getSequenceNumber()).ifPresent(builder::setSequenceNumber);
               portRotationReplyBuilder.addPorts(builder);
             });
 
@@ -821,17 +837,16 @@ public class LoadableStudyPortRotationService {
           HttpStatusCode.BAD_REQUEST);
     }
     LoadableStudyPortRotation entity = entityOpt.get();
-    if (loadableStudy.getPlanningTypeXId() != null
-        && loadableStudy.getPlanningTypeXId().equals(Common.PLANNING_TYPE.LOADABLE_STUDY_VALUE)) {
-      if (null != entity.getOperation()
-          && (LOADING_OPERATION_ID.equals(entity.getOperation().getId())
-              || DISCHARGING_OPERATION_ID.equals(entity.getOperation().getId()))) {
+    if (null != entity.getOperation()
+        && (LOADING_OPERATION_ID.equals(entity.getOperation().getId()))) {
+      if (cargoNominationOperationDetailsRepository.findIfPortRotationIsUsedForOperations(entity)) {
         throw new GenericServiceException(
-            "Cannot delete loading/discharging ports",
-            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            "Cannot delete ports that are already used for loading/discharging.",
+            CommonErrorCodes.E_CPDSS_PORT_ROTATION_IS_USED,
             HttpStatusCode.BAD_REQUEST);
       }
     }
+
     entity.setActive(false);
     // delete ports from synoptical table
     if (!CollectionUtils.isEmpty(entity.getSynopticalTable())) {
@@ -851,7 +866,7 @@ public class LoadableStudyPortRotationService {
           .flatMap(cargo -> cargo.getCargoNominationPortDetails().stream())
           .forEach(
               operation -> {
-                if (operation.getPortId().equals(entity.getPortXId())) {
+                if (operation.getPortRotation().getId().equals(entity.getId())) {
                   operation.setIsActive(false);
                 }
               });

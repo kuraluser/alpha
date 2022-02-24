@@ -3,11 +3,11 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { DATATABLE_ACTION, DATATABLE_FIELD_TYPE, DATATABLE_BUTTON, DATATABLE_FILTER_MATCHMODE, DATATABLE_FILTER_TYPE, IDataTableColumn } from '../../../shared/components/datatable/datatable.model';
 import { ValueObject, ISubTotal, IMonth, IDateTimeFormatOptions } from '../../../shared/models/common.model';
 import { CargoPlanningModule } from '../cargo-planning.module';
-import { ICargo, ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IOHQPort, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation } from '../models/cargo-planning.model';
+import { ICargoNomination, ICargoNominationAllDropdownData, ICargoNominationValueObject, ILoadingPort, ILoadingPortValueObject, IPortAllDropdownData, IPortOBQListData, IPortOBQTankDetail, IPortOBQTankDetailValueObject, IPortOHQTankDetail, IPortOHQTankDetailValueObject, IPortsValueObject, ISegregation } from '../models/cargo-planning.model';
 import { v4 as uuid4 } from 'uuid';
 import { IPermission } from '../../../shared/models/user-profile.model';
 import { ICargoGroup, ICommingleManual, ICommingleResponseModel, ICommingleValueObject, IPercentage } from '../models/commingle.model';
-import { IOperations, IPort, IPortList, ITank, LOADABLE_STUDY_STATUS, OPERATIONS, Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
+import { ICargo, IOperations, IPort, IPortList, ITank, LOADABLE_STUDY_STATUS, OPERATIONS, Voyage, VOYAGE_STATUS } from '../../core/models/common.model';
 import { ILoadableOHQStatus } from '../models/loadable-study-list.model';
 import * as moment from 'moment';
 import { QUANTITY_UNIT } from '../../../shared/models/common.model';
@@ -79,12 +79,12 @@ export class LoadableStudyDetailsTransformationService {
         cargoNomination.quantity.value += Number(port.quantity);
       });
       cargoNomination.quantity.value = Number(cargoNomination.quantity.value);
-      cargoNomination.loadingPortsNameArray = cargoNomination.loadingPorts.value.map(lport => lport.name);
+      cargoNomination.loadingPortsNameArray = cargoNomination.loadingPorts.value.map(lport => `${lport.name} ${lport?.sequenceNumber ?? ''}`);
       const portLength = cargoNomination.loadingPorts.value.length;
       if (portLength > 1) {
-        cargoNomination.loadingPortsLabel = cargoNomination.loadingPorts.value[0].name + ' + ' + (cargoNomination.loadingPorts.value.length - 1);
+        cargoNomination.loadingPortsLabel = `${cargoNomination.loadingPorts.value[0].name} ${cargoNomination.loadingPorts.value[0].sequenceNumber ?? ''} + ${(cargoNomination.loadingPorts.value.length - 1)}`;
       } else {
-        cargoNomination.loadingPortsLabel = cargoNomination.loadingPorts.value[0].name;
+        cargoNomination.loadingPortsLabel = `${cargoNomination.loadingPorts.value[0].name} ${cargoNomination.loadingPorts.value[0].sequenceNumber ?? ''}`;
       }
     } else {
       cargoNomination.loadingPortsLabel = "";
@@ -108,7 +108,7 @@ export class LoadableStudyDetailsTransformationService {
     const segregationObj: ISegregation = listData.segregationList.find(segregation => segregation.id === cargoNomination.segregationId);
     const loadingPort: ILoadingPort[] = cargoNomination?.loadingPorts?.map(lport => {
       const portObj = listData.ports.find(port => port.id === lport.id);
-      return { ...lport, name: portObj.name };
+      return { ...lport, ...portObj };
     });
     cargoNomination.quantity = 0;
     cargoNomination?.loadingPorts?.map(port => {
@@ -456,6 +456,12 @@ export class LoadableStudyDetailsTransformationService {
         editable: false
       },
       {
+        field: 'sequenceNumber',
+        header: '',
+        fieldHeaderClass: 'column-port-sequence-no',
+        fieldClass: 'port-sequence-no'
+      },
+      {
         field: 'quantity',
         header: 'QUANTITY',
         fieldType: DATATABLE_FIELD_TYPE.NUMBER,
@@ -585,7 +591,9 @@ export class LoadableStudyDetailsTransformationService {
   getCargoNominationLoadingPortAsValueObject(loadingPort: ILoadingPort, isNewValue = true): ILoadingPortValueObject {
     const _loadingPort = <ILoadingPortValueObject>{};
     _loadingPort.id = loadingPort?.id;
+    _loadingPort.portId = loadingPort?.portId;
     _loadingPort.name = new ValueObject<string>(loadingPort.name, true, false, false);
+    _loadingPort.sequenceNumber = loadingPort?.sequenceNumber;
     _loadingPort.quantity = new ValueObject<number>(loadingPort.quantity, true, isNewValue, false);
     _loadingPort.isAdd = isNewValue;
 
@@ -683,10 +691,11 @@ export class LoadableStudyDetailsTransformationService {
     const isEtaEtadEdtitable = this.isEtaEtdViewable(portEtaEtdPermission, isNewValue);
     const portObj: IPort = listData.portList.find(portData => portData.id === port.portId);
     const operationObj: IOperations = listData.operationListComplete.find(operation => operation.id === port.operationId);
-    const isEdit = operationObj ? !(operationObj.id === OPERATIONS.LOADING || operationObj.id === OPERATIONS.DISCHARGING) : true;
+    const isEdit = true;
     const layCan = (port.layCanFrom && port.layCanTo) ? (port.layCanFrom + ' to ' + port.layCanTo) : '';
     _port.id = port.id;
     _port.portOrder = port.portOrder;
+    _port.sequenceNumber = port?.sequenceNumber;
     _port.portTimezoneId = port.portTimezoneId;
     _port.portcode = new ValueObject<string>(portObj?.code, true, false, false, false);
     _port.port = new ValueObject<IPort>(portObj, true, isNewValue, false, isEdit && isEditable);
@@ -762,10 +771,14 @@ export class LoadableStudyDetailsTransformationService {
         fieldOptionLabel: 'name',
         fieldPlaceholder: 'SELECT_PORT',
         virtualScroll: true,
+        fieldSuffixField: 'sequenceNumber',
+        fieldClass: 'column-port-field',
+        fieldHeaderClass: 'column-port-tab',
         errorMessages: {
           'required': 'PORT_FIELD_REQUIRED_ERROR',
           'duplicate': 'PORT_FIELD_DUPLICATE_ERROR',
-          'transitDuplicate': 'PORT_TRANSIT_DUPLICATE_ERROR'
+          'transitDuplicate': 'PORT_TRANSIT_DUPLICATE_ERROR',
+          'singleDischargePort': 'PORT_SINGLE_DISCHARGE_PORT_ERROR',
         }
       },
       {
@@ -797,7 +810,8 @@ export class LoadableStudyDetailsTransformationService {
         errorMessages: {
           'required': 'PORT_OPERATIONS_REQUIRED_ERROR',
           'duplicate': 'PORT_FIELD_DUPLICATE_ERROR',
-          'transitDuplicate': 'PORT_TRANSIT_DUPLICATE_ERROR'
+          'transitDuplicate': 'PORT_TRANSIT_DUPLICATE_ERROR',
+          'singleDischargePort': 'PORT_SINGLE_DISCHARGE_PORT_ERROR',
         }
       },
       {
@@ -982,6 +996,7 @@ export class LoadableStudyDetailsTransformationService {
       if (Object.prototype.hasOwnProperty.call(port, key)) {
         if (key === 'port') {
           _ports.portId = port[key].value?.id;
+          _ports.name = port[key].value?.name;
         } else if (key === 'operation') {
           _ports.operationId = port[key].value?.id;
         } else if (key === 'layCan') {
@@ -1544,7 +1559,7 @@ export class LoadableStudyDetailsTransformationService {
           'min': 'OBQ_MIN_VALUE',
           'groupTotal': 'OBQ_GROUP_TOTAL',
           'invalidNumber': 'OBQ_VALUE_INVALID'
-        }
+      }
       }
     ]
   }
@@ -1574,13 +1589,13 @@ export class LoadableStudyDetailsTransformationService {
     let cargoObj: ICargo = listData.cargoList.find(cargo => cargo.id === obqTankDetail?.cargoId);
     if (cargoObj) {
       cargoObj.abbreviation = obqTankDetail?.abbreviation;
-      cargoObj.color = obqTankDetail?.colorCode;
+      cargoObj.colorCode = obqTankDetail?.colorCode;
     }
     const slops: ICargo = <ICargo>{ id: -1, name: 'Slops', abbreviation: 'SLOPS', color: '#a52a2a' };
     if (isSlopeTank) {
       _obqTankDetail.cargoList = cargoObj ? [cargoObj, slops] : [slops];
-      cargoObj = _obqTankDetail.cargoList.find(cargo => _obqTankDetail.isSlopTank ? (cargo.id === -1) : (cargo.id === obqTankDetail.cargoId));
-      _obqTankDetail.colorCode = cargoObj?.color;
+      cargoObj = _obqTankDetail.cargoList.find(cargo => _obqTankDetail.isSlopTank ? (cargo.id === obqTankDetail.slopCargoId) : (cargo.id === obqTankDetail.cargoId));
+      _obqTankDetail.colorCode = cargoObj?.colorCode;
       _obqTankDetail.abbreviation = cargoObj?.abbreviation;
     }
     _obqTankDetail.cargo = new ValueObject<ICargo>(cargoObj, true, isNewValue, false, isEditable && isSlopeTank);

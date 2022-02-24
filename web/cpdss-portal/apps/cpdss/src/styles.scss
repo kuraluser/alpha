@@ -589,6 +589,28 @@ a {
 }
 }
 
+.column-port-field {
+  & > div {
+    padding-right: 45px !important;
+  }
+  .field-suffix:not(:empty) {
+    &::before {
+      content: '(';
+    }
+    &::after {
+      content: ')';
+    }
+  }
+  .field-suffix {
+    &.edit {
+      display: inline-block;
+      position: absolute;
+      top: 3px;
+      padding: 0px 4px;
+    }
+  }
+}
+
 .inline-block{
   display: inline-block;
 }
@@ -1755,6 +1777,9 @@ th .p-calendar .p-inputtext{
 }
 .column-class.column-etd, .column-class.column-eta{
   width: 255px!important;
+}
+.column-port-sequence-no {
+  width: 20px !important;
 }
 .edit-port-rotation{
   .p-orderlist-controls{
@@ -3160,6 +3185,9 @@ textarea{
 }
 .column-class.column-port{
   min-width: 165px!important;
+}
+.column-class.column-port-tab{
+  min-width: 190px!important;
 }
 
 

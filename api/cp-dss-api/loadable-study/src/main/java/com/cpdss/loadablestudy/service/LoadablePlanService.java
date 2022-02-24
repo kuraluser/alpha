@@ -314,7 +314,7 @@ public class LoadablePlanService {
           for (CargoNominationPortDetails var1 : cnPD) {
             if (var1.getPortId() != null) {
               LoadableStudy.LoadingPortDetail.Builder a =
-                  this.fetchPortNameFromPortService(var1.getPortId());
+                  this.fetchPortNameFromPortService(var1.getPortId(), var1.getPortRotation());
               builder.addLoadingPorts(a);
             }
           }
@@ -354,7 +354,7 @@ public class LoadablePlanService {
         if (lsPR != null) {
           if (lsPR.getOperation().getId().equals(LOADING_OPERATION_ID)) {
             LoadableStudy.LoadingPortDetail.Builder a =
-                this.fetchPortNameFromPortService(lsPR.getPortXId());
+                this.fetchPortNameFromPortService(lsPR.getPortXId(), lsPR);
             builder.addLoadingPorts(a);
           }
         }
@@ -363,7 +363,8 @@ public class LoadablePlanService {
     return false;
   }
 
-  public LoadableStudy.LoadingPortDetail.Builder fetchPortNameFromPortService(Long portId) {
+  public LoadableStudy.LoadingPortDetail.Builder fetchPortNameFromPortService(
+      Long portId, LoadableStudyPortRotation portRotation) {
     PortInfo.GetPortInfoByPortIdsRequest.Builder builder =
         PortInfo.GetPortInfoByPortIdsRequest.newBuilder();
     builder.addAllId(Arrays.asList(portId));
@@ -374,7 +375,15 @@ public class LoadablePlanService {
         LoadableStudy.LoadingPortDetail.Builder portsBuilder =
             LoadableStudy.LoadingPortDetail.newBuilder();
         log.info("Port Info Service, port id {} and name {}", portId, portInfo.get().getName());
-        portsBuilder.setName(portInfo.get().getName()).setPortId(portInfo.get().getId()).build();
+        portsBuilder
+            .setName(portInfo.get().getName())
+            .setPortId(portInfo.get().getId())
+            .setPortRotationId(portRotation != null ? portRotation.getId() : 0)
+            .setSequenceNumber(
+                (portRotation != null) && (portRotation.getSequenceNumber() != null)
+                    ? portRotation.getSequenceNumber()
+                    : 0)
+            .build();
         return portsBuilder;
       }
     }

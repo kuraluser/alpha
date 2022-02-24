@@ -181,12 +181,9 @@ export class DischargeStudyViewPlanTransformationService {
  */
   getPortDetailAsValueObject(portDetail: IDischargeStudyPortListDetails, listData: IDischargeStudyDropdownData, isLastIndex: boolean, isNewValue = true): IPortDetailValueObject {
     const _portDetail = <IPortDetailValueObject>{};
-    const port = listData.portList.find((portItem) =>{
-      if(portItem.id === portDetail.portId) {
-        return portItem;
-      }
-    })
+    const port = { name: listData.portList.find((portItem) => portItem.id === portDetail.portId)?.name, ...portDetail }
     _portDetail.portName = port.name;
+    _portDetail.sequenceNumber = port?.sequenceNumber;
     _portDetail.isBackLoadingEnabled = portDetail.isBackLoadingEnabled;
     if(portDetail.instructionId?.length) {
       _portDetail.instruction = listData.instructions.find((instruction) => {

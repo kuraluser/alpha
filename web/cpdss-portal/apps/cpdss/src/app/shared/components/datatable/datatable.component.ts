@@ -336,8 +336,9 @@ export class DatatableComponent implements OnInit {
    * @memberof DatatableComponent
    */
   onChange(event, rowData: any, rowIndex: number, col: IDataTableColumn) {
+    const previousValue = { ...rowData[col.field].value };
     rowData[col.field].value = this.field(rowIndex, col.field).value;
-    this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field });
+    this.editComplete.emit({ originalEvent: event, data: rowData, index: rowIndex, field: col.field, previousValue });
   }
 
   /**

@@ -218,6 +218,7 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
       .toPromise();
     if (result.responseStatus.status === "200") {
       result.synopticalRecords?.map(record => {
+        record.portName = record?.sequenceNumber ? record?.portName + ' ' + record?.sequenceNumber : record?.portName;
         const daysHours = this.timeZoneTransformationService.convertHoursToDaysHours(Number(record.runningHours));
         record.runningDays = daysHours.days;
         record.runningDaysHours = daysHours.hours;

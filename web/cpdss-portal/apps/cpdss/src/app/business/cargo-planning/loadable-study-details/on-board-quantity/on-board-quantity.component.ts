@@ -7,7 +7,7 @@ import { IPortOBQListData, IPortOBQResponse, IPortOBQTankDetail, IPortOBQTankDet
 import { LoadableStudyDetailsApiService } from '../../services/loadable-study-details-api.service';
 import { LoadableStudyDetailsTransformationService } from '../../services/loadable-study-details-transformation.service';
 import { CommingleApiService } from '../../services/commingle-api.service';
-import { ITank, IPort, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { ITank, ITankOptions, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS, IPortList } from '../../../core/models/common.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
 import { maximumVolumeValidator } from '../../directives/validator/maximum-volumn.directive';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
@@ -116,7 +116,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
 
   editMode: DATATABLE_EDITMODE;
   cargoList = [];
-  selectedPort: IPort;
+  selectedPort: IPortList;
   obqForm: FormGroup;
   columns: IDataTableColumn[];
   listData = <IPortOBQListData>{};
@@ -189,9 +189,11 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
     const result = await this.loadableStudyDetailsApiService.getOHQPortRotation(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
 
     if (result?.portList) {
-      const obqPorts = result?.portList?.map((obqPort) => ports?.find((port) => port.id === obqPort.portId));
+      const obqPorts = result?.portList?.map((obqPort) => {
+        return { name: ports?.find((port) => port.id === obqPort.portId)?.name, ...obqPort };
+      });
       this.selectedPort = obqPorts[0];
-      await this.getPortOBQDetails(this.selectedPort?.id);
+      await this.getPortOBQDetails(this.selectedPort?.portId);
       this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
 
       const hasPendingUpdates = await this.checkForPendingUpdates();
@@ -200,7 +202,7 @@ export class OnBoardQuantityComponent implements OnInit, OnDestroy {
         this.obqCheckUpdatesTimer = setInterval(async () => {
           const _hasPendingUpdates = await this.checkForPendingUpdates();
           if (!_hasPendingUpdates) {
-            await this.getPortOBQDetails(this.selectedPort?.id);
+            await this.getPortOBQDetails(this.selectedPort?.portId);
             this.loadableStudyDetailsTransformationService.setObqValidity(this.obqForm.controls.dataTable.valid);
             this.dataTableLoading = false;
             clearInterval(this.obqCheckUpdatesTimer);

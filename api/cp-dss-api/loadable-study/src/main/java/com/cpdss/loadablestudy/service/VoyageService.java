@@ -16,6 +16,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.domain.CargoHistory;
+import com.cpdss.loadablestudy.domain.Port;
 import com.cpdss.loadablestudy.domain.VoyageDto;
 import com.cpdss.loadablestudy.entity.*;
 import com.cpdss.loadablestudy.repository.*;
@@ -930,8 +931,8 @@ public class VoyageService {
         });
     log.info("Confirmed LS Size - {}", loadableStudyMap.size());
     log.info("Confirmed DS Size - {}", dischargeStudyMap.size());
-    Map<Long, List<Long>> loadingPortHashMap = new HashMap<>();
-    Map<Long, List<Long>> dischargingPortHashMap = new HashMap<>();
+    Map<Long, List<Port>> loadingPortHashMap = new HashMap<>();
+    Map<Long, List<Port>> dischargingPortHashMap = new HashMap<>();
     Map<Long, List<Long>> cargoHashMap = new HashMap<>();
     // To fetch distinct loading portIds for the requested loadableStudyIds
     List<Object[]> distinctLoadingPorts =
@@ -946,7 +947,7 @@ public class VoyageService {
     // To fetch distinct cargoIds for the requested loadableStudyIds
     List<Object[]> distinctCargos =
         this.cargoNominationRepository.findByLoadableStudyIdIn(lsIdList);
-    setLoadingAndDischargingPortMap(distinctCargos, cargoHashMap);
+    setLoadingAndDischargingCargoMap(distinctCargos, cargoHashMap);
     List<PortDetail> portsList = portReply.getPortsList();
 
     for (Voyage entity : entityList) {
@@ -1010,21 +1011,22 @@ public class VoyageService {
   }
 
   private void addDischargingPorts(
-      Map<Long, List<Long>> dischargingPortHashMap,
+      Map<Long, List<Port>> dischargingPortHashMap,
       List<PortDetail> portsList,
       LoadableStudy.VoyageDetail.Builder detailbuilder,
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) {
     if (loadableStudy != null) {
-      List<Long> dischargePorts = dischargingPortHashMap.get(loadableStudy.getId());
+      List<Port> dischargePorts = dischargingPortHashMap.get(loadableStudy.getId());
       if (dischargePorts != null && !dischargePorts.isEmpty()) {
-        for (Long id : dischargePorts) {
+        for (Port port : dischargePorts) {
           Optional<PortDetail> portDetail =
-              portsList.stream().filter(item -> item.getId() == id).findAny();
+              portsList.stream().filter(item -> item.getId() == port.getPortId()).findAny();
           if (portDetail.isPresent()) {
             LoadableStudy.DischargingPortDetail.Builder dischargingPortDetail =
                 LoadableStudy.DischargingPortDetail.newBuilder();
             dischargingPortDetail.setName(portDetail.get().getName());
             dischargingPortDetail.setPortId(portDetail.get().getId());
+            dischargingPortDetail.setSequenceNumber(port.getSequenceNumber());
             detailbuilder.addDischargingPorts(dischargingPortDetail);
           }
         }
@@ -1033,22 +1035,47 @@ public class VoyageService {
   }
 
   private void addLoadingPorts(
-      Map<Long, List<Long>> loadingPortHashMap,
+      Map<Long, List<Port>> loadingPortHashMap,
       List<PortDetail> portsList,
       LoadableStudy.VoyageDetail.Builder detailbuilder,
       com.cpdss.loadablestudy.entity.LoadableStudy loadableStudy) {
-    List<Long> ports = loadingPortHashMap.get(loadableStudy.getId());
+    List<Port> ports = loadingPortHashMap.get(loadableStudy.getId());
     if (ports != null && !ports.isEmpty()) {
-      for (Long id : ports) {
+      for (Port port : ports) {
         Optional<PortDetail> portDetail =
-            portsList.stream().filter(item -> item.getId() == id).findAny();
+            portsList.stream().filter(item -> item.getId() == port.getPortId()).findAny();
         if (portDetail.isPresent()) {
           LoadableStudy.LoadingPortDetail.Builder loadingPortDetail =
               LoadableStudy.LoadingPortDetail.newBuilder();
           loadingPortDetail.setName(portDetail.get().getName());
           loadingPortDetail.setPortId(portDetail.get().getId());
+          loadingPortDetail.setSequenceNumber(port.getSequenceNumber());
+          loadingPortDetail.setPortRotationId(port.getPortRotationId());
           detailbuilder.addLoadingPorts(loadingPortDetail);
         }
+      }
+    }
+  }
+
+  /**
+   * To create HasMap with loadbaleStudyId as key and its corresponding list of cargoIds as value
+   *
+   * @param cargosObj
+   * @param cargoHashMap
+   */
+  private void setLoadingAndDischargingCargoMap(
+      List<Object[]> cargosObj, Map<Long, List<Long>> cargoHashMap) {
+    for (Object[] obj : cargosObj) {
+      long cargoId = (long) obj[0];
+      long loadingId = (long) obj[1];
+      List<Long> cargos = new ArrayList<>();
+      if (cargoHashMap.containsKey(loadingId)) {
+        List<Long> list = cargoHashMap.get(loadingId);
+        list.add(cargoId);
+        cargoHashMap.put(loadingId, list);
+      } else {
+        cargos.add(cargoId);
+        cargoHashMap.put(loadingId, cargos);
       }
     }
   }
@@ -1061,17 +1088,32 @@ public class VoyageService {
    * @param portHashMap
    */
   private void setLoadingAndDischargingPortMap(
-      List<Object[]> portsObj, Map<Long, List<Long>> portHashMap) {
+      List<Object[]> portsObj, Map<Long, List<Port>> portHashMap) {
     for (Object[] obj : portsObj) {
       long portId = (long) obj[0];
       long loadingId = (long) obj[1];
-      List<Long> ports = new ArrayList<>();
+      long portOrder = (long) obj[2];
+
+      int sequenceNumber = 0;
+      if (obj[3] != null) {
+        sequenceNumber = (int) obj[3];
+      }
+      long portRotationId = (long) obj[4];
+
+      List<Port> ports = new ArrayList<>();
+      Port port = new Port();
+      port.setPortId(portId);
+      port.setPortOrder(portOrder);
+      port.setLoadableStudyId(loadingId);
+      port.setSequenceNumber(sequenceNumber);
+      port.setPortRotationId(portRotationId);
+
       if (portHashMap.containsKey(loadingId)) {
-        List<Long> list = portHashMap.get(loadingId);
-        list.add(portId);
+        List<Port> list = portHashMap.get(loadingId);
+        list.add(port);
         portHashMap.put(loadingId, list);
       } else {
-        ports.add(portId);
+        ports.add(port);
         portHashMap.put(loadingId, ports);
       }
     }

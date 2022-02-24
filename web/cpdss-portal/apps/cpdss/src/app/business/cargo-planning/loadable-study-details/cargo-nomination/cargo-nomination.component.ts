@@ -17,7 +17,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadableStudy } from '../../models/loadable-study-list.model';
 import { IPermission } from '../../../../shared/models/user-profile.model';
-import { IPortsDetailsResponse, LOADABLE_STUDY_STATUS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
+import { IPortList, LOADABLE_STUDY_STATUS, OPERATIONS, Voyage, VOYAGE_STATUS } from '../../../core/models/common.model';
 import { GlobalErrorHandler } from '../../../../shared/services/error-handlers/global-error-handler';
 import { QuantityDecimalFormatPipe } from '../../../../shared/pipes/quantity-decimal-format/quantity-decimal-format.pipe';
 import { AppConfigurationService } from '../../../../shared/services/app-configuration/app-configuration.service';
@@ -63,6 +63,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   }
 
   @Input() vesselId: number;
+
+  @Input() ports: IPortList[];
 
   @Output() cargoNominationUpdate = new EventEmitter<any>();
   @Output() portOhqStatusUpdate = new EventEmitter<boolean>();
@@ -181,7 +183,7 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
    */
   async getCargoNominationDetails() {
     this.ngxSpinnerService.show();
-    this.listData = await this.getDropdownData();
+    this.listData.ports = this.ports;
     await this.getCargoNominations();
     const hasPendingUpdates = await this.checkForPendingUpdates();
     if (hasPendingUpdates) {
@@ -241,8 +243,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
   async getDropdownData(): Promise<ICargoNominationAllDropdownData> {
     const result = await this.loadableStudyDetailsApiService.getPorts().toPromise();
     this.listData = <ICargoNominationAllDropdownData>{};
-    this.listData.ports = result;
-
     return this.listData;
   }
 
@@ -257,10 +257,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     const valueIndex = this.cargoNominations.findIndex(cargoNomination => cargoNomination?.storeKey === event?.data?.storeKey);
     if (event.field === 'loadingPorts' || event.field === 'quantity') {
       if (event.data?.cargo?.value) {
-        const portsResponse: IPortsDetailsResponse = await this.loadableStudyDetailsApiService.getPortsDetails(this.vesselId, this.voyageId, this.loadableStudyId).toPromise();
-        const loadableStudyPorts: number[] = portsResponse?.portList ? portsResponse.portList.map(port => (port.portId)) : [];
-        const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
-        event.data.cargo.value.ports = result?.ports;
+        const loadableStudyPorts = this.ports.filter(port => port?.operationId === OPERATIONS.LOADING);
+        const loadableStudyPortIds: number[] = loadableStudyPorts ? loadableStudyPorts?.map(port => port.id) : [];
         this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
         this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
         this.cargoNominations = [...this.cargoNominations];
@@ -268,8 +266,8 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
           originalEvent: event.originalEvent,
           rowData: event.data,
           rowIndex: event.index,
-          ports: event.data?.cargo?.value?.ports,
-          loadableStudyPorts: loadableStudyPorts
+          ports: loadableStudyPorts,
+          loadableStudyPorts: loadableStudyPortIds
         }
         this.openLoadingPopup = true;
       }
@@ -360,14 +358,12 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.updateField(event.index, 'temperature', null);
       this.updateField(event.index, 'loadingPorts', null);
       this.updateField(event.index, 'quantity', null);
-      const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(event.data?.cargo?.value?.id).toPromise();
-      event.data.cargo.value.ports = result?.ports;
       this.cargoNominations[valueIndex]['cargo'].value = event?.data?.cargo?.value;
       this.updateField(event.index, 'cargo', event?.data?.cargo?.value);
     } else if (event.field === 'loadingPorts') {
       const cargoId = event.data.cargo.value.id;
       const ports = event.data.loadingPorts.value;
-      const portId = ports[ports.length - 1].id;
+      const portId = ports[ports.length - 1].portId;
       const result = await this.loadableStudyDetailsApiService.getApiFromCargoPorts(this.vesselId, portId, cargoId).toPromise();
       this.updateField(event.index, 'api', result.api);
       this.updateField(event.index, 'temperature', result.temperature);
@@ -513,7 +509,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       const res = await this.loadableStudyDetailsApiService.setCargoNomination(this.loadableStudyDetailsTransformationService.getCargoNominationAsValue(this.cargoNominations[valueIndex]), this.vesselId, this.voyageId, this.loadableStudyId, this.cargoNominationForm.valid);
       this.updateRowByUnit(this.cargoNominations[valueIndex], this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit);
       this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
-      this.loadableStudyDetailsTransformationService.setPortValidity(false);
       if (res) {
         this.loadableStudyDetailsTransformationService.portUpdated();
         this.cargoNominations[valueIndex].isAdd = false;
@@ -611,8 +606,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
       this.updateRowByUnit(cargoData, this.loadableStudyDetailsApiService.baseUnit, this.loadableStudyDetailsApiService.currentUnit)
       return cargoData;
     });
-    //TODO: need to remove this. Instead of calling api for each cargo for cargo specific ports must be coming from cargo nomination api
-    // _cargoNominations = await this.getCargoPortMapping(_cargoNominations);
     const cargoNominationArray = _cargoNominations.map(cargoNomination => this.initCargoNominationFormGroup(cargoNomination));
     this.cargoNominationForm = this.fb.group({
       dataTable: this.fb.array([...cargoNominationArray])
@@ -622,23 +615,6 @@ export class CargoNominationComponent implements OnInit, OnDestroy {
     this.updateCommingleButton(false);
     this.loadableStudyDetailsTransformationService.setCargoNominationValidity(this.cargoNominationForm.valid && this.cargoNominations?.filter(item => !item?.isAdd).length > 0);
     this.ngxSpinnerService.hide();
-  }
-
-
-  /**
-   * Method to mapp cargo and port
-   *
-   * @param {ICargoNominationValueObject[]} cargoNominations
-   * @returns {Promise<ICargoNominationValueObject[]>}
-   * @memberof CargoNominationComponent
-   */
-  async getCargoPortMapping(cargoNominations: ICargoNominationValueObject[]): Promise<ICargoNominationValueObject[]> {
-    const _cargoNominations = await Promise.all(cargoNominations.map(async (item) => {
-      const result = await this.loadableStudyDetailsApiService.getAllCargoPorts(item?.cargo?.value?.id).toPromise();
-      item.cargo.value.ports = result?.ports;
-      return item;
-    }));
-    return [..._cargoNominations];
   }
 
   /**

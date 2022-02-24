@@ -2043,41 +2043,6 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
 
     if (0 != request.getDuplicatedFromId()) {
       try {
-
-        List<CargoNomination> cargoNominationList =
-            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
-                request.getDuplicatedFromId(), true);
-        Map<Long, Long> cargoNominationIdMap = new HashMap<>();
-        if (!cargoNominationList.isEmpty()) {
-          cargoNominationList.forEach(
-              cargoNomination -> {
-                Long id = cargoNomination.getId();
-                CargoNomination crgoNomination = new CargoNomination();
-                List<CargoNominationPortDetails> oldCargoNominationPortDetails =
-                    this.cargoNominationOperationDetailsRepository
-                        .findByCargoNominationAndIsActiveTrue(cargoNomination);
-
-                BeanUtils.copyProperties(cargoNomination, crgoNomination);
-                crgoNomination.setLoadableStudyXId(entity.getId());
-                crgoNomination.setId(null);
-                crgoNomination.setCargoNominationPortDetails(
-                    new HashSet<CargoNominationPortDetails>());
-                oldCargoNominationPortDetails.forEach(
-                    oldCargo -> {
-                      CargoNominationPortDetails cargoNominationPortDetails =
-                          new CargoNominationPortDetails();
-                      BeanUtils.copyProperties(oldCargo, cargoNominationPortDetails);
-                      cargoNominationPortDetails.setId(null);
-                      cargoNominationPortDetails.setCargoNomination(crgoNomination);
-                      crgoNomination
-                          .getCargoNominationPortDetails()
-                          .add(cargoNominationPortDetails);
-                    });
-                CargoNomination ent = this.cargoNominationRepository.save(crgoNomination);
-                cargoNominationIdMap.put(id, ent.getId());
-              });
-        }
-
         List<LoadableStudyPortRotation> loadableStudyPortRotationParentList =
             this.loadableStudyPortRotationRepository.findByLoadableStudyAndIsActive(
                 request.getDuplicatedFromId(), true);
@@ -2103,6 +2068,46 @@ public class LoadableStudyService extends LoadableStudyServiceImplBase {
         log.info(
             "duplicate LS, Duplicated Port Rotation Child Size - {}",
             loadableStudyDuplicatedPorts.size());
+
+        List<CargoNomination> cargoNominationList =
+            this.cargoNominationRepository.findByLoadableStudyXIdAndIsActiveOrderById(
+                request.getDuplicatedFromId(), true);
+        Map<Long, Long> cargoNominationIdMap = new HashMap<>();
+        if (!cargoNominationList.isEmpty()) {
+          for (CargoNomination cargoNomination : cargoNominationList) {
+            Long id = cargoNomination.getId();
+            CargoNomination crgoNomination = new CargoNomination();
+            List<CargoNominationPortDetails> oldCargoNominationPortDetails =
+                this.cargoNominationOperationDetailsRepository.findByCargoNominationAndIsActiveTrue(
+                    cargoNomination);
+
+            BeanUtils.copyProperties(cargoNomination, crgoNomination);
+            crgoNomination.setLoadableStudyXId(entity.getId());
+            crgoNomination.setId(null);
+            crgoNomination.setCargoNominationPortDetails(new HashSet<CargoNominationPortDetails>());
+            for (CargoNominationPortDetails oldCargo : oldCargoNominationPortDetails) {
+              CargoNominationPortDetails cargoNominationPortDetails =
+                  new CargoNominationPortDetails();
+              BeanUtils.copyProperties(oldCargo, cargoNominationPortDetails);
+              cargoNominationPortDetails.setId(null);
+              cargoNominationPortDetails.setCargoNomination(crgoNomination);
+              Optional<LoadableStudyPortRotation> portRotationOpt =
+                  loadableStudyDuplicatedPorts.stream()
+                      .filter(
+                          portRotation ->
+                              portRotation
+                                  .getPortOrder()
+                                  .equals(oldCargo.getPortRotation().getPortOrder()))
+                      .findFirst();
+              portRotationOpt.ifPresentOrElse(
+                  cargoNominationPortDetails::setPortRotation,
+                  () -> cargoNominationPortDetails.setPortRotation(null));
+              crgoNomination.getCargoNominationPortDetails().add(cargoNominationPortDetails);
+            }
+            CargoNomination ent = this.cargoNominationRepository.save(crgoNomination);
+            cargoNominationIdMap.put(id, ent.getId());
+          }
+        }
 
         Optional<LoadableStudy> loadableStudyOpt =
             this.loadableStudyRepository.findByIdAndIsActive(request.getDuplicatedFromId(), true);

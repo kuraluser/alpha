@@ -23,6 +23,12 @@
                                 (click)="clearFilter(dd)" (onChange)="onPortChange($event)"
                                 placeholder="{{ 'LOADABLE_QUANTITY_SELECT_PORT_NAME'  | translate }}"
                                  resetFilterOnHide="true"  focusTrap>
+                                <ng-template let-port pTemplate="selectedItem">
+                                  <span class="dropdown-item-wrapper" *ngIf="port">{{port?.label}} {{port?.value?.sequenceNumber}}</span>
+                                </ng-template>
+                                <ng-template let-port pTemplate="item">
+                                  <span class="dropdown-item-wrapper" *ngIf="port">{{port?.label}} {{port?.value?.sequenceNumber}}</span>
+                                </ng-template>
                             </p-dropdown>
                         </div>
                         <div class="col error-column">
