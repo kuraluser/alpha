@@ -6,6 +6,7 @@ import com.cpdss.loadablestudy.entity.CargoNomination;
 import com.cpdss.loadablestudy.entity.CargoNominationPortDetails;
 import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,4 +45,7 @@ public interface CargoNominationOperationDetailsRepository
   @Query(
       "SELECT CASE WHEN COUNT(CNPD) > 0 THEN true ELSE false END FROM CargoNominationPortDetails CNPD WHERE CNPD.portRotation = ?1")
   public Boolean findIfPortRotationIsUsedForOperations(LoadableStudyPortRotation portRotation);
+
+  Optional<CargoNominationPortDetails> findByCargoNomination_IdAndPortIdAndIsActiveTrue(
+      Long dischargeCargoNominationId, Long portId);
 }

@@ -72,6 +72,8 @@ public class SynopticServiceUtilsTest {
   private LoadingInformationServiceGrpc.LoadingInformationServiceBlockingStub
       loadingInfoServiceBlockingStub;
 
+  @MockBean CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
+
   private static final String SUCCESS = "SUCCESS";
   private static final String FAILED = "FAILED";
 

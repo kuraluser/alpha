@@ -26,20 +26,7 @@ import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.loadablestudy.entity.*;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
+import com.cpdss.loadablestudy.repository.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,6 +55,8 @@ public class SynopticServiceUtils {
   @Autowired LoadablePlanQuantityRepository loadablePlanQuantityRepository;
 
   @Autowired CargoNominationRepository cargoNominationRepository;
+
+  @Autowired CargoNominationOperationDetailsRepository cargoNominationOperationDetailsRepository;
 
   @Autowired LoadableStudyRepository loadableStudyRepository;
 
@@ -713,10 +702,13 @@ public class SynopticServiceUtils {
                   v -> {
                     builder1.setOrderedQuantity(v.toString());
                   });
-          Optional.ofNullable(this.getCargoNominationQuantity(var1.getDischargeCargoNominationId()))
+          cargoNominationOperationDetailsRepository
+              .findByCargoNomination_IdAndPortIdAndIsActiveTrue(
+                  var1.getDischargeCargoNominationId(), var1.getPortId())
               .ifPresent(
-                  v -> {
-                    builder1.setCargoNominationQuantity(v.toString());
+                  cargoNominationPortDetails -> {
+                    builder1.setCargoNominationQuantity(
+                        String.valueOf(cargoNominationPortDetails.getQuantity()));
                   });
           Optional.ofNullable(var1.getCargoNominationId())
               .ifPresent(builder1::setCargoNominationId);
