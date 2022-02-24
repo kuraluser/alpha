@@ -1833,6 +1833,7 @@
   "DISCHARGE_STUDY_SAVE_WARNING_SUMMERY": "Please save cargo in backloading in port",
   "DISCHARGE_STUDY_SAVE_WARNING_MULTIPLE_PORT": "Please check port",
   "DISCHARGE_STUDY_SAVE_WARNING_MULTIPLE_PORT_SUMMERY": "multiple cargo have mode balance",
+  "DISCHARGE_STUDY_SAVE_NO_MANUAL_COW_TANKS": "Atleast 1 COW tank required",
   "LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL": "Simulator",
   "LOADABLE_PLAN_SIMULATOR_BUTTON_LABEL_OPERATION": "View In Simulator",
   "VESSEL_MASTER_LIST": "Vessel List",
