@@ -1,0 +1,52 @@
+# Ansible playbook CPDSS Ship Installation - ALGO
+---
+- name: "CPDSS - Setup ALGO"
+  hosts: all
+  tasks:
+    - name: Install Python 3.8
+      win_chocolatey:
+        name: python
+        version: 3.6.8
+        state: present
+    
+    - name: Copy Files
+      ansible.windows.win_copy:
+        src: ../ALGO-Essentials/
+        dest: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials'
+    
+    # Copy AMPL zip to the src folder before execution
+    - name: Unzip AMPL.zip
+      community.windows.win_unzip:
+        src: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\ampl.CPDSS.win.zip'
+        dest: 'C:\Users\{{ ansible_user }}\Desktop\ampl'
+    
+    # Copy nssm zip to the src folder before execution
+    - name: Unzip nssm-2.24.zip
+      community.windows.win_unzip:
+        src: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\nssm-2.24.zip'
+        dest: 'C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials'
+
+    - name: Add AMPL path to Env Var
+      win_path:
+        name: PATH
+        elements: 'C:\Users\{{ ansible_user }}\Desktop\ampl\ampl.mswin64\'
+        scope: machine
+        state: present
+      
+    - name: Install algo-run service
+      win_command: 'powershell.exe -ExecutionPolicy ByPass -File C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\algo-run-setup.ps1'
+    
+    - name: Create ALGO out file
+      ansible.windows.win_file:
+        path: C:\Users\{{ ansible_user }}\Desktop\ALGO\essentials\algo.out.txt
+        state: touch
+    
+    - name: Firewall rule to allow ALGO Call on TCP port 8080
+      community.windows.win_firewall_rule:
+        name: ALGO
+        localport: 8080
+        action: allow
+        direction: in
+        protocol: tcp
+        state: present
+        enabled: yes

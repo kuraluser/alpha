@@ -1,0 +1,52 @@
+# Ansible playbook CPDSS Ship Installation - Loadicator
+---
+- name: "CPDSS - Setup Loadicator"
+  hosts: all
+  tasks:
+    - name: Install Psql ODBC
+      win_chocolatey:
+        name: psqlodbc
+        version: 13.00.0000
+        state: present
+    
+    - name: Install PsTools
+      win_chocolatey:
+        name: pstools
+        state: present
+
+    - name: Run basic PowerShell script
+      ansible.windows.win_powershell:
+        script: |
+          Add-OdbcDsn -Name "PostgreSQL30" -DriverName "PostgreSQL ANSI" -DsnType "System" -Platform "32-bit" -SetPropertyValue @("Database={{ DB_NAME }}", "Server={{ DB_HOST }}", "UserName={{ DB_USER }}", "Port=5432", "Password={{ DB_PASS }}")
+
+    # - name: Copy Files
+    #   ansible.windows.win_copy:
+    #     src: ../Loadicator-Essentials/
+    #     dest: 'C:\Users\{{ ansible_user }}\Desktop\Loadicator\essentials'
+    
+    # Copy Loadicator zip to the src folder before execution
+    - name: Unzip Loadicator zip
+      community.windows.win_unzip:
+        src: 'C:\Users\{{ ansible_user }}\Desktop\Loadicator\essentials\LoadcomCpDSS_runfiles.zip'
+        dest: 'C:\Users\{{ ansible_user }}\Desktop\'
+    
+    - name: Remove connect.dat
+      ansible.windows.win_file:
+        path: 'C:\Users\{{ ansible_user }}\Desktop\LoadcomCpDSS_runfiles\connect.dat'
+        state: absent
+
+    - name: Created connect.dat
+      ansible.windows.win_file:
+        path: 'C:\Users\{{ ansible_user }}\Desktop\LoadcomCpDSS_runfiles\connect.dat'
+        state: touch
+    
+    - name: Write content to connect.dat
+      community.windows.win_lineinfile:
+        path: 'C:\Users\{{ ansible_user }}\Desktop\LoadcomCpDSS_runfiles\connect.dat'
+        line: 'Provider=MSDASQL.1;Persist Security Info=False;User ID={{ DB_USER }};Data Source=PostgreSQL30;Initial Catalog={{ DB_NAME }}'
+      
+    - name: Copy latest exe File
+      ansible.windows.win_copy:
+        src: 'C:\Users\{{ ansible_user }}\Desktop\Loadicator\essentials\LoadcomCpDSS.exe'
+        dest: 'C:\Users\{{ ansible_user }}\Desktop\LoadcomCpDSS_runfiles'
+        remote_src: yes
