@@ -141,6 +141,10 @@ public class DischargeInformationService {
       builder.setSynopticTableId(disEntity.getSynopticTableXid());
       Optional.ofNullable(disEntity.getDischargingInformationStatus())
           .ifPresent(status -> builder.setDischargingInfoStatusId(status.getId()));
+      Optional.ofNullable(disEntity.getArrivalStatusId())
+          .ifPresent(builder::setDischargingPlanArrStatusId);
+      Optional.ofNullable(disEntity.getDepartureStatusId())
+          .ifPresent(builder::setDischargingPlanDepStatusId);
       log.info("Setting Discharge PK and Synoptic Id");
     } catch (Exception e) {
       log.error("Failed to set PK, Synoptic Id in response - {}", e.getMessage());
