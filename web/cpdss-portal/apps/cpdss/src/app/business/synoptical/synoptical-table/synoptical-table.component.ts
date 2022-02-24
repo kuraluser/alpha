@@ -70,7 +70,8 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
     'invalidNumber': 'SYNOPTICAL_INVALID',
     'waterDensityError': 'PORT_WATER_DENSITY_RANGE_ERROR',
     'minDayHour': 'SYNOPTICAL_RUNNING_DAY_HOUR_MIN',
-    'maxHour': 'SYNOPTICAL_RUNNING_HOUR_MAX'
+    'maxHour': 'SYNOPTICAL_RUNNING_HOUR_MAX',
+    'portHour': 'SYNOPTICAL_PORT_HOUR_VALIDATION'
   };
   expandedRows = [];
   ngUnsubscribe: Subject<void> = new Subject();
@@ -374,6 +375,16 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         editable: true,
         view: false,
         betweenPorts: true,
+      },
+      {
+        header: 'Operation Hours',
+        fields: [{
+          key: 'operationHours',
+          type: this.fieldType.NUMBER,
+          validators: []
+        }],
+        editable: false,
+        colSpan: 2
       },
       {
         header: 'In Port Hours',
@@ -1722,7 +1733,15 @@ export class SynopticalTableComponent implements OnInit, OnDestroy {
         const draftValueMid = fc.value ? fc.value : this.synopticalService.synopticalRecords[colIndex]['calculatedDraftMidPlanned'];
         this.synopticalService.synopticalRecords[colIndex]['finalDraftMid'] = Number((draftValueMid + (this.synopticalService.synopticalRecords[colIndex]['deflection'] && this.synopticalService.synopticalRecords[colIndex]['deflection'] > 0 ? (this.synopticalService.synopticalRecords[colIndex]['deflection'] / 100) : 0)).toFixed(2));
         break;
-
+        case 'inPortHours':
+          const operationHour = this.synopticalService.synopticalRecords[colIndex]?.operationHours;
+          if( operationHour && fc.value && Number(operationHour) > Number(fc.value)
+            ){
+              fc.setErrors({portHour: true})
+          } else{
+            fc.setErrors(null);
+          }
+          break;
       default:
         const planIndex = field.key.includes('plan') ? 0 : 1;
         const dynamicCols = this.cols.filter(col => col.dynamicKey);

@@ -2359,6 +2359,7 @@
   "VOYAGE_POPUP_CHIEF_OFFICER_REQUIRED_ERROR": "Chief officer is required",
   "TYPE_MISMATCH_ERROR": "Error",
   "TYPE_MISMATCH": "Type mismatch",
-  "NEW_CREW_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED": "Special characters and numbers are not allowed"
+  "NEW_CREW_POPUP_SPECIAL_CHARACTER_NOT_ALLOWED": "Special characters and numbers are not allowed",
+  "SYNOPTICAL_PORT_HOUR_VALIDATION" : "Port hours should not be less than the operation hours"
 }
 
