@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.dischargeplan;
 
 import static com.cpdss.gateway.common.GatewayConstants.*;
+import static com.cpdss.gateway.utility.TimeUtility.getTimezoneConvertedDate;
 
 import com.cpdss.common.constants.AlgoErrorHeaderConstants;
 import com.cpdss.common.exception.GenericServiceException;
@@ -99,6 +100,7 @@ public class DischargeInformationService {
 
   @Value("${gateway.attachement.rootFolder}")
   private String rootFolder;
+
   /**
    * Get Discharge Information from discharge-plan and master tables
    *
@@ -175,6 +177,15 @@ public class DischargeInformationService {
     dischargeDetails.setEta(LocalDateTime.parse(portRotationDetail.getEta()));
     dischargeDetails.setEtd(LocalDateTime.parse(portRotationDetail.getEtd()));
 
+    PortInfo.PortReply portReply =
+        this.portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                .addId(portRotation.get().getPortId())
+                .build());
+    if (!portReply.getPortsList().isEmpty()) {
+      dischargeDetails.setTimezoneOffsetVal(portReply.getPorts(0).getTimezoneOffsetVal());
+    }
+
     // Setting default common date with date from eta
     if (dischargeDetails.getCommonDate() == null
         || String.valueOf(dischargeDetails.getCommonDate()).isEmpty()) {
@@ -183,16 +194,12 @@ public class DischargeInformationService {
 
     // Setting default start time with time from eta
     if (dischargeDetails.getStartTime() == null || dischargeDetails.getStartTime().isEmpty()) {
-      dischargeDetails.setStartTime(String.valueOf(LocalTime.from(dischargeDetails.getEta())));
-    }
-
-    PortInfo.PortReply portReply =
-        this.portInfoGrpcService.getPortInfoByPortIds(
-            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
-                .addId(portRotation.get().getPortId())
-                .build());
-    if (!portReply.getPortsList().isEmpty()) {
-      dischargeDetails.setTimezoneOffsetVal(portReply.getPorts(0).getTimezoneOffsetVal());
+      dischargeDetails.setStartTime(
+          String.valueOf(
+              LocalTime.from(
+                  getTimezoneConvertedDate(
+                      dischargeDetails.getEta(),
+                      Double.parseDouble(dischargeDetails.getTimezoneOffsetVal())))));
     }
 
     // discharge rates

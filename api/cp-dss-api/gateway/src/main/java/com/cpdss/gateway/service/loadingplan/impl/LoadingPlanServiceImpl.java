@@ -2,6 +2,7 @@
 package com.cpdss.gateway.service.loadingplan.impl;
 
 import static com.cpdss.gateway.common.GatewayConstants.*;
+import static com.cpdss.gateway.utility.TimeUtility.getTimezoneConvertedDate;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import com.cpdss.common.exception.GenericServiceException;
@@ -287,6 +288,15 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
     loadingDetails.setEta(LocalDateTime.parse(portRotationDetail.getEta()));
     loadingDetails.setEtd(LocalDateTime.parse(portRotationDetail.getEtd()));
 
+    PortInfo.PortReply portReply =
+        this.portInfoGrpcService.getPortInfoByPortIds(
+            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
+                .addId(portRotation.get().getPortId())
+                .build());
+    if (!portReply.getPortsList().isEmpty()) {
+      loadingDetails.setTimezoneOffsetVal(portReply.getPorts(0).getTimezoneOffsetVal());
+    }
+
     // Setting default common date with date from eta
     if (loadingDetails.getCommonDate() == null
         || String.valueOf(loadingDetails.getCommonDate()).isEmpty()) {
@@ -295,16 +305,12 @@ public class LoadingPlanServiceImpl implements LoadingPlanService {
 
     // Setting default start time with time from eta
     if (loadingDetails.getStartTime() == null || loadingDetails.getStartTime().isEmpty()) {
-      loadingDetails.setStartTime(String.valueOf(LocalTime.from(loadingDetails.getEta())));
-    }
-
-    PortInfo.PortReply portReply =
-        this.portInfoGrpcService.getPortInfoByPortIds(
-            PortInfo.GetPortInfoByPortIdsRequest.newBuilder()
-                .addId(portRotation.get().getPortId())
-                .build());
-    if (!portReply.getPortsList().isEmpty()) {
-      loadingDetails.setTimezoneOffsetVal(portReply.getPorts(0).getTimezoneOffsetVal());
+      loadingDetails.setStartTime(
+          String.valueOf(
+              LocalTime.from(
+                  getTimezoneConvertedDate(
+                      loadingDetails.getEta(),
+                      Double.parseDouble(loadingDetails.getTimezoneOffsetVal())))));
     }
 
     // from loading info table, loading plan service
