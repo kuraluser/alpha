@@ -101,7 +101,7 @@ public class FileRepoService {
         new FileRepoSpecification(new SearchCriteria("isActive", "EQUALS", Boolean.TRUE));
     for (int i = 0; i < filterKeys.size(); i++) {
       String key = filterKeys.get(i);
-      if (key.equalsIgnoreCase("createdDate")) {
+      if (key.equalsIgnoreCase("createdDate") && filterParams.containsKey("createdDate")) {
         LocalDate date = null;
         try {
           if (null != filterParams.get(key))
