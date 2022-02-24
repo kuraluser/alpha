@@ -1108,3 +1108,22 @@ message LoadablePlanCommingleCargoDetails {
     ResponseStatus responseStatus = 1;
     string dataJson=2;
   }
+
+  message LoadingHoursRequest {
+    int64 companyId = 1;
+    int64 vesselId = 2;
+    int64 voyageId = 3;
+    int64 loadingPatternId = 4;
+    repeated int64 portRotationIds = 5;
+  }
+
+  message LoadingHoursReply {
+    ResponseStatus responseStatus = 1;
+    repeated LoadingHours loadingHours = 2;
+    repeated LoadingHours dischargingHours = 3;
+  }
+
+  message LoadingHours {
+    int64 portRotationId = 1;
+    string loadingHours = 2;
+  }

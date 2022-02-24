@@ -1069,6 +1069,57 @@ public final class LoadingPlanServiceGrpc {
     return getGetCargoQuantityLoadingRatioMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+      getGetLoadingHoursMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetLoadingHours",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+      getGetLoadingHoursMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+        getGetLoadingHoursMethod;
+    if ((getGetLoadingHoursMethod = LoadingPlanServiceGrpc.getGetLoadingHoursMethod) == null) {
+      synchronized (LoadingPlanServiceGrpc.class) {
+        if ((getGetLoadingHoursMethod = LoadingPlanServiceGrpc.getGetLoadingHoursMethod) == null) {
+          LoadingPlanServiceGrpc.getGetLoadingHoursMethod =
+              getGetLoadingHoursMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingHoursRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingHoursReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetLoadingHours"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingHoursRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingHoursReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new LoadingPlanServiceMethodDescriptorSupplier("GetLoadingHours"))
+                      .build();
+        }
+      }
+    }
+    return getGetLoadingHoursMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static LoadingPlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<LoadingPlanServiceStub> factory =
@@ -1311,6 +1362,16 @@ public final class LoadingPlanServiceGrpc {
           getGetCargoQuantityLoadingRatioMethod(), responseObserver);
     }
 
+    /** */
+    public void getLoadingHours(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetLoadingHoursMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -1463,6 +1524,13 @@ public final class LoadingPlanServiceGrpc {
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest,
                       com.cpdss.common.generated.loading_plan.LoadingPlanModels
                           .MaxQuantityResponse>(this, METHODID_GET_CARGO_QUANTITY_LOADING_RATIO)))
+          .addMethod(
+              getGetLoadingHoursMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>(
+                      this, METHODID_GET_LOADING_HOURS)))
           .build();
     }
   }
@@ -1715,6 +1783,18 @@ public final class LoadingPlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getLoadingHours(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetLoadingHoursMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1894,6 +1974,14 @@ public final class LoadingPlanServiceGrpc {
             com.cpdss.common.generated.loading_plan.LoadingPlanModels.MaxQuantityRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCargoQuantityLoadingRatioMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply
+        getLoadingHours(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetLoadingHoursMethod(), getCallOptions(), request);
     }
   }
 
@@ -2102,6 +2190,15 @@ public final class LoadingPlanServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCargoQuantityLoadingRatioMethod(), getCallOptions()), request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+        getLoadingHours(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetLoadingHoursMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_LOADING_PLAN_SYNCHRONIZATION = 0;
@@ -2123,6 +2220,7 @@ public final class LoadingPlanServiceGrpc {
   private static final int METHODID_SAVE_PY_USER_FOR_COMMUNICATION = 16;
   private static final int METHODID_TRIGGER_COMMUNICATION = 17;
   private static final int METHODID_GET_CARGO_QUANTITY_LOADING_RATIO = 18;
+  private static final int METHODID_GET_LOADING_HOURS = 19;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -2302,6 +2400,14 @@ public final class LoadingPlanServiceGrpc {
                           .MaxQuantityResponse>)
                   responseObserver);
           break;
+        case METHODID_GET_LOADING_HOURS:
+          serviceImpl.getLoadingHours(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -2385,6 +2491,7 @@ public final class LoadingPlanServiceGrpc {
                       .addMethod(getSavePyUserForCommunicationMethod())
                       .addMethod(getTriggerCommunicationMethod())
                       .addMethod(getGetCargoQuantityLoadingRatioMethod())
+                      .addMethod(getGetLoadingHoursMethod())
                       .build();
         }
       }

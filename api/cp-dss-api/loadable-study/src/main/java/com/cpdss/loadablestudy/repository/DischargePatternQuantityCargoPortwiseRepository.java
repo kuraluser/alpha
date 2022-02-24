@@ -21,4 +21,8 @@ public interface DischargePatternQuantityCargoPortwiseRepository
 
   List<DischargePatternQuantityCargoPortwiseDetails> findAllByLoadablePatternIdAndIsActiveTrue(
       Long patternId);
+
+  List<DischargePatternQuantityCargoPortwiseDetails>
+      findAllByLoadablePatternIdAndPortRotationIdAndIsActiveTrue(
+          Long patternId, Long portRotationId);
 }

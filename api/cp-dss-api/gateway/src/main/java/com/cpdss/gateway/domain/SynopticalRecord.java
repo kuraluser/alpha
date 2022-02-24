@@ -80,4 +80,5 @@ public class SynopticalRecord {
   private BigDecimal sf;
   private Boolean hasLoadicator;
   private String portRotationType;
+  private BigDecimal operationHours;
 }

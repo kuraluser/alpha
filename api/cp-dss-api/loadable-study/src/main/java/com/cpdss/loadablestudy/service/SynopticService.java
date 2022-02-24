@@ -1,32 +1,7 @@
 /* Licensed at AlphaOri Technologies */
 package com.cpdss.loadablestudy.service;
 
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_CENTER_TANK;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_FRONT_TANK;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_REAR_TANK;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.BALLAST_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_OPERATION_ARR_DEP_SYNOPTICAL;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CARGO_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CLOSE_VOYAGE_STATUS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.CONFIRMED_STATUS_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DATE_FORMAT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DIESEL_OIL_TANK_CATEGORY_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.DISCHARGING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.ETA_ETD_FORMAT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FAILED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FRESH_WATER_TANK_CATEGORY_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.FUEL_OIL_TANK_CATEGORY_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LAY_CAN_FORMAT;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LOADING_OPERATION_ID;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.LS_STATUS_CONFIRMED;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OHQ_TANK_CATEGORIES;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPERATION_TYPE_ARR;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.OPERATION_TYPE_DEP;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.PLANNING_TYPE_DISCHARGE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SUCCESS;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_ARRIVAL;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_OP_TYPE_DEPARTURE;
-import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.SYNOPTICAL_TABLE_TANK_CATEGORIES;
+import static com.cpdss.loadablestudy.utility.LoadableStudiesConstants.*;
 import static java.lang.String.valueOf;
 import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -45,46 +20,17 @@ import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.SynopticalOperationServiceGrpc.SynopticalOperationServiceImplBase;
 import com.cpdss.common.generated.VesselInfo;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.DischargeInformationServiceGrpc;
-import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetails;
-import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsReply;
-import com.cpdss.common.generated.discharge_plan.PortDischargingPlanRobDetailsRequest;
+import com.cpdss.common.generated.discharge_plan.*;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
 import com.cpdss.common.utils.Utils;
 import com.cpdss.loadablestudy.domain.OperationsTable;
 import com.cpdss.loadablestudy.domain.PortDetails;
 import com.cpdss.loadablestudy.domain.PortOperationTable;
-import com.cpdss.loadablestudy.entity.CargoOperation;
-import com.cpdss.loadablestudy.entity.LoadablePattern;
-import com.cpdss.loadablestudy.entity.LoadablePatternCargoDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanCommingleDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanComminglePortwiseDetails;
-import com.cpdss.loadablestudy.entity.LoadablePlanStowageBallastDetails;
-import com.cpdss.loadablestudy.entity.LoadableStudyPortRotation;
-import com.cpdss.loadablestudy.entity.OnBoardQuantity;
-import com.cpdss.loadablestudy.entity.OnHandQuantity;
-import com.cpdss.loadablestudy.entity.SynopticalTable;
-import com.cpdss.loadablestudy.entity.SynopticalTableLoadicatorData;
-import com.cpdss.loadablestudy.entity.Voyage;
-import com.cpdss.loadablestudy.entity.VoyageStatus;
-import com.cpdss.loadablestudy.repository.CargoNominationRepository;
-import com.cpdss.loadablestudy.repository.CargoOperationRepository;
-import com.cpdss.loadablestudy.repository.DischargePatternQuantityCargoPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternCargoDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePatternRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsPortwiseRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanCommingleDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanQuantityRepository;
-import com.cpdss.loadablestudy.repository.LoadablePlanStowageBallastDetailsRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyPortRotationRepository;
-import com.cpdss.loadablestudy.repository.LoadableStudyRepository;
-import com.cpdss.loadablestudy.repository.OnBoardQuantityRepository;
-import com.cpdss.loadablestudy.repository.OnHandQuantityRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableLoadicatorDataRepository;
-import com.cpdss.loadablestudy.repository.SynopticalTableRepository;
-import com.cpdss.loadablestudy.repository.VoyageRepository;
-import com.cpdss.loadablestudy.repository.VoyageStatusRepository;
+import com.cpdss.loadablestudy.entity.*;
+import com.cpdss.loadablestudy.repository.*;
 import com.cpdss.loadablestudy.repository.projections.LoadingPlanQtyAndOrder;
 import com.cpdss.loadablestudy.utility.LoadableStudiesConstants;
 import io.grpc.stub.StreamObserver;
@@ -164,6 +110,10 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
 
   @Autowired private LoadableStudyPortRotationService loadableStudyPortRotationService;
 
+  @Autowired
+  private DischargePatternQuantityCargoPortwiseRepository
+      dischargePatternQuantityCargoPortwiseRepository;
+
   @GrpcClient("portInfoService")
   private PortInfoServiceGrpc.PortInfoServiceBlockingStub portInfoGrpcService;
 
@@ -174,9 +124,18 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
   private DischargeInformationServiceGrpc.DischargeInformationServiceBlockingStub
       dischargeInformationGrpcService;
 
+  @GrpcClient("loadingPlanService")
+  private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanGrpcService;
+
+  @GrpcClient("dischargeInformationService")
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargingPlanGrpcService;
+
   @Autowired SynopticalTableLoadicatorDataRepository synopticalTableLoadicatorDataRepository;
 
   @Autowired DischargePatternQuantityCargoPortwiseRepository disCargoQuantityRepository;
+
+  @Autowired PortWiseTimeRequiredForLoadingRepository portWiseTimeRequiredForLoadingRepository;
+
   @Autowired SynopticServiceUtils synpoticServiceUtils;
 
   public void fetchLoadingInformationSynopticDetails(
@@ -338,14 +297,14 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       List<OnBoardQuantity> obqEntities =
           this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
               loadableStudy, firstPortId, true);
+      List<LoadableStudyPortRotation> lsPortRotationList = new ArrayList<>();
       confirmedLSOpt.ifPresent(
           confirmedLS -> {
-            List<LoadableStudyPortRotation> portRotationList =
-                this.getSynopticalTablePortRotations(confirmedLS);
+            lsPortRotationList.addAll(this.getSynopticalTablePortRotations(confirmedLS));
             obqEntities.clear();
             obqEntities.addAll(
                 this.onBoardQuantityRepository.findByLoadableStudyAndPortIdAndIsActive(
-                    confirmedLS, portRotationList.get(0).getPortXId(), true));
+                    confirmedLS, lsPortRotationList.get(0).getPortXId(), true));
           });
       // populating ohq data if its empty
       List<Long> portRotationIds =
@@ -398,12 +357,22 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
             this.loadablePlanCommingleDetailsPortwiseRepository
                 .findByLoadablePatternIdInAndIsActive(patternIds, true));
       }
+
+      List<LoadablePattern> loadablePatterns =
+          this.loadablePatternRepository.findByIdIn(patternIds);
+      List<LoadableStudyPortRotation> allPortRotations = new ArrayList<>(portRotations);
+      allPortRotations.addAll(lsPortRotationList);
+      Map<Long, BigDecimal> portRotationOperationHourMap =
+          this.getLoadingOrDischargingHours(loadablePatterns, allPortRotations);
+
       for (SynopticalTable synopticalEntity : synopticalTableList) {
         LoadableStudy.SynopticalRecord.Builder builder =
             LoadableStudy.SynopticalRecord.newBuilder();
         this.buildSynopticalRecord(synopticalEntity, builder, portReply);
         // set eta/etd estamted values from port rotation table
         this.setSynopticalEtaEtdEstimated(synopticalEntity, builder, portRotations);
+        this.setSynopticalTableLoadingHours(
+            synopticalEntity, portRotationOperationHourMap, builder);
         this.setSynopticalCargoDetails(
             request,
             cargoDetails,
@@ -433,6 +402,309 @@ public class SynopticService extends SynopticalOperationServiceImplBase {
       }
       replyBuilder.addAllSynopticalRecords(records);
     }
+  }
+
+  private Map<Long, BigDecimal> getLoadingOrDischargingHours(
+      List<LoadablePattern> loadablePatterns, List<LoadableStudyPortRotation> portRotations) {
+    Map<Long, BigDecimal> portRotationOperationHourMap = new LinkedHashMap<>();
+    Map<Long, List<LoadableStudyPortRotation>> operationMap =
+        portRotations.stream()
+            .collect(Collectors.groupingBy(portRotation -> portRotation.getOperation().getId()));
+
+    operationMap
+        .keySet()
+        .forEach(
+            operationId -> {
+              if (operationId.equals(LOADING_OPERATION_ID)) {
+                Optional<LoadablePattern> loadablePatternOpt =
+                    loadablePatterns.stream()
+                        .filter(
+                            loadablePattern ->
+                                loadablePattern
+                                    .getLoadableStudy()
+                                    .getPlanningTypeXId()
+                                    .equals(PLANNING_TYPE_LOADING))
+                        .findFirst();
+                if (loadablePatternOpt.isPresent()) {
+                  List<PortWiseTimeRequiredForLoading> portWiseTimeRequiredForLoadings =
+                      this.portWiseTimeRequiredForLoadingRepository
+                          .findByLoadablePatternXIdAndIsActiveTrue(
+                              loadablePatternOpt.get().getId());
+                  if (loadablePatternOpt
+                      .get()
+                      .getLoadableStudy()
+                      .getLoadableStudyStatus()
+                      .getId()
+                      .equals(CONFIRMED_STATUS_ID)) {
+                    this.setLoadingHoursFromLoadingPlan(
+                        operationMap.get(operationId),
+                        loadablePatternOpt.get(),
+                        portWiseTimeRequiredForLoadings,
+                        portRotationOperationHourMap);
+                  } else {
+                    this.setLoadingHoursFromLoadableStudy(
+                        operationMap.get(operationId),
+                        loadablePatternOpt.get(),
+                        portWiseTimeRequiredForLoadings,
+                        portRotationOperationHourMap);
+                  }
+                }
+              } else if (operationId.equals(DISCHARGING_OPERATION_ID)) {
+                operationMap
+                    .get(operationId)
+                    .removeIf(
+                        portRotation ->
+                            portRotation
+                                .getLoadableStudy()
+                                .getPlanningTypeXId()
+                                .equals(PLANNING_TYPE_LOADING));
+                Optional<LoadablePattern> dischargePatternOpt =
+                    loadablePatterns.stream()
+                        .filter(
+                            loadablePattern ->
+                                loadablePattern
+                                    .getLoadableStudy()
+                                    .getPlanningTypeXId()
+                                    .equals(PLANNING_TYPE_DISCHARGE))
+                        .findFirst();
+                if (dischargePatternOpt.isPresent()) {
+                  List<DischargePatternQuantityCargoPortwiseDetails>
+                      dischargePatternQuantityCargoPortwiseDetails =
+                          this.dischargePatternQuantityCargoPortwiseRepository
+                              .findAllByLoadablePatternIdAndIsActiveTrue(
+                                  dischargePatternOpt.get().getId());
+                  if (dischargePatternOpt
+                      .get()
+                      .getLoadableStudy()
+                      .getLoadableStudyStatus()
+                      .getId()
+                      .equals(CONFIRMED_STATUS_ID)) {
+                    this.setDischargingHoursFromDischargingPlan(
+                        operationMap.get(operationId),
+                        dischargePatternOpt.get(),
+                        dischargePatternQuantityCargoPortwiseDetails,
+                        portRotationOperationHourMap);
+                  } else {
+                    this.setDischargingHoursFromDischargeStudy(
+                        operationMap.get(operationId),
+                        dischargePatternOpt.get(),
+                        dischargePatternQuantityCargoPortwiseDetails,
+                        portRotationOperationHourMap);
+                  }
+                }
+              }
+            });
+    return portRotationOperationHourMap;
+  }
+
+  private void setSynopticalTableLoadingHours(
+      SynopticalTable synopticalEntity,
+      Map<Long, BigDecimal> portRotationOperationHourMap,
+      SynopticalRecord.Builder builder) {
+    BigDecimal operationHours =
+        portRotationOperationHourMap.get(synopticalEntity.getLoadableStudyPortRotation().getId());
+    Optional.ofNullable(operationHours)
+        .ifPresent(time -> builder.setOperationHours(time.toString()));
+  }
+
+  /**
+   * Sets discharging hours from discharging plan.
+   *
+   * @param loadableStudyPortRotations list of LoadableStudyPortRotation entities
+   * @param dischargePattern LoadablePattern entity
+   * @param dischargePatternQuantityCargoPortwiseDetails discharge pattern quantity details
+   * @param portRotationOperationHourMap map of port rotation id and discharging hours
+   */
+  private void setDischargingHoursFromDischargingPlan(
+      List<LoadableStudyPortRotation> loadableStudyPortRotations,
+      LoadablePattern dischargePattern,
+      List<DischargePatternQuantityCargoPortwiseDetails>
+          dischargePatternQuantityCargoPortwiseDetails,
+      Map<Long, BigDecimal> portRotationOperationHourMap) {
+    LoadingPlanModels.LoadingHoursRequest.Builder reqBuilder =
+        LoadingPlanModels.LoadingHoursRequest.newBuilder();
+    reqBuilder
+        .setVesselId(dischargePattern.getLoadableStudy().getVesselXId())
+        .setLoadingPatternId(dischargePattern.getId())
+        .addAllPortRotationIds(
+            loadableStudyPortRotations.stream()
+                .map(LoadableStudyPortRotation::getId)
+                .collect(Collectors.toList()));
+    LoadingPlanModels.LoadingHoursReply reply =
+        this.dischargingPlanGrpcService.getDischargingHours(reqBuilder.build());
+    if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      loadableStudyPortRotations.forEach(
+          portRotation -> {
+            Optional<LoadingPlanModels.LoadingHours> dischargingHoursOpt =
+                reply.getDischargingHoursList().stream()
+                    .filter(
+                        loadingHours -> portRotation.getId() == loadingHours.getPortRotationId())
+                    .findFirst();
+            if (dischargingHoursOpt.isPresent()) {
+              portRotationOperationHourMap.put(
+                  portRotation.getId(),
+                  StringUtils.hasLength(dischargingHoursOpt.get().getLoadingHours())
+                      ? new BigDecimal(dischargingHoursOpt.get().getLoadingHours())
+                      : null);
+            } else {
+              portRotationOperationHourMap.put(
+                  portRotation.getId(),
+                  this.getLoadingHoursFromDischargeStudy(
+                      portRotation, dischargePatternQuantityCargoPortwiseDetails));
+            }
+          });
+    } else {
+      this.setDischargingHoursFromDischargeStudy(
+          loadableStudyPortRotations,
+          dischargePattern,
+          dischargePatternQuantityCargoPortwiseDetails,
+          portRotationOperationHourMap);
+    }
+  }
+
+  /**
+   * Fetches loading hours from loadable study.
+   *
+   * @param portRotation LoadableStudyPortRotation entity
+   * @param dischargePatternQuantityCargoPortwiseDetails list of loadable pattern quantities
+   */
+  private BigDecimal getLoadingHoursFromDischargeStudy(
+      LoadableStudyPortRotation portRotation,
+      List<DischargePatternQuantityCargoPortwiseDetails>
+          dischargePatternQuantityCargoPortwiseDetails) {
+    Optional<BigDecimal> timeOpt =
+        dischargePatternQuantityCargoPortwiseDetails.stream()
+            .filter(details -> details.getPortRotationId().equals(portRotation.getId()))
+            .map(DischargePatternQuantityCargoPortwiseDetails::getTimeRequiredForDischarging)
+            .filter(Objects::nonNull)
+            .reduce(BigDecimal::add);
+    return timeOpt.orElse(null);
+  }
+
+  /**
+   * Sets discharging hours from discharge study.
+   *
+   * @param loadableStudyPortRotations List of LoadableStudyPortRotation entity
+   * @param dischargePattern list of loadable pattern
+   * @param dischargePatternQuantityCargoPortwiseDetails port wise list of discharge pattern
+   *     quantities
+   * @param portRotationOperationHourMap map of port rotation id and operation hours
+   */
+  private void setDischargingHoursFromDischargeStudy(
+      List<LoadableStudyPortRotation> loadableStudyPortRotations,
+      LoadablePattern dischargePattern,
+      List<DischargePatternQuantityCargoPortwiseDetails>
+          dischargePatternQuantityCargoPortwiseDetails,
+      Map<Long, BigDecimal> portRotationOperationHourMap) {
+    loadableStudyPortRotations.forEach(
+        portRotation -> {
+          Optional<BigDecimal> timeOpt =
+              dischargePatternQuantityCargoPortwiseDetails.stream()
+                  .filter(details -> details.getPortRotationId().equals(portRotation.getId()))
+                  .map(DischargePatternQuantityCargoPortwiseDetails::getTimeRequiredForDischarging)
+                  .filter(Objects::nonNull)
+                  .reduce(BigDecimal::add);
+          portRotationOperationHourMap.put(portRotation.getId(), timeOpt.orElse(null));
+        });
+  }
+
+  /**
+   * Sets loading hours from loading plan.
+   *
+   * @param loadableStudyPortRotations list of LoadableStudyPortRotation entities
+   * @param loadablePattern loadable pattern
+   * @param portWiseTimeRequiredForLoadings port wise list of time required for loading
+   * @param portRotationOperationHourMap map of port rotation id and operation hours
+   */
+  private void setLoadingHoursFromLoadingPlan(
+      List<LoadableStudyPortRotation> loadableStudyPortRotations,
+      LoadablePattern loadablePattern,
+      List<PortWiseTimeRequiredForLoading> portWiseTimeRequiredForLoadings,
+      Map<Long, BigDecimal> portRotationOperationHourMap) {
+    LoadingPlanModels.LoadingHoursRequest.Builder reqBuilder =
+        LoadingPlanModels.LoadingHoursRequest.newBuilder();
+    reqBuilder
+        .setVesselId(loadablePattern.getLoadableStudy().getVesselXId())
+        .setLoadingPatternId(loadablePattern.getId())
+        .addAllPortRotationIds(
+            loadableStudyPortRotations.stream()
+                .map(LoadableStudyPortRotation::getId)
+                .collect(Collectors.toList()));
+    LoadingPlanModels.LoadingHoursReply reply =
+        this.loadingPlanGrpcService.getLoadingHours(reqBuilder.build());
+    if (reply.getResponseStatus().getStatus().equals(SUCCESS)) {
+      loadableStudyPortRotations.forEach(
+          portRotation -> {
+            Optional<LoadingPlanModels.LoadingHours> loadingHoursOpt =
+                reply.getLoadingHoursList().stream()
+                    .filter(
+                        loadingHours -> portRotation.getId() == loadingHours.getPortRotationId())
+                    .findFirst();
+            if (loadingHoursOpt.isPresent()) {
+              portRotationOperationHourMap.put(
+                  portRotation.getId(),
+                  StringUtils.hasLength(loadingHoursOpt.get().getLoadingHours())
+                      ? new BigDecimal(loadingHoursOpt.get().getLoadingHours())
+                      : null);
+            } else {
+              portRotationOperationHourMap.put(
+                  portRotation.getId(),
+                  this.getLoadingHoursFromLoadableStudy(
+                      portRotation, portWiseTimeRequiredForLoadings));
+            }
+          });
+    } else {
+      this.setLoadingHoursFromLoadableStudy(
+          loadableStudyPortRotations,
+          loadablePattern,
+          portWiseTimeRequiredForLoadings,
+          portRotationOperationHourMap);
+    }
+  }
+
+  /**
+   * Fetches loading hours from loadable study.
+   *
+   * @param loadableStudyPortRotation LoadableStudyPortRotation entity
+   * @param portWiseTimeRequiredForLoadings list of port wise loading hours
+   */
+  private BigDecimal getLoadingHoursFromLoadableStudy(
+      LoadableStudyPortRotation loadableStudyPortRotation,
+      List<PortWiseTimeRequiredForLoading> portWiseTimeRequiredForLoadings) {
+    Optional<PortWiseTimeRequiredForLoading> timeRequiredForLoadingOpt =
+        portWiseTimeRequiredForLoadings.stream()
+            .filter(
+                time -> time.getPortRotation().getId().equals(loadableStudyPortRotation.getId()))
+            .findFirst();
+    Optional<BigDecimal> timeOpt =
+        timeRequiredForLoadingOpt.flatMap(
+            timeRequiredForLoading ->
+                Optional.ofNullable(timeRequiredForLoading.getTimeRequiredForLoading()));
+    return timeOpt.orElse(null);
+  }
+
+  /**
+   * Sets loading hours from loadable study.
+   *
+   * @param loadableStudyPortRotations List of LoadableStudyPortRotation entity
+   * @param loadablePattern list of loadable pattern
+   * @param portWiseTimeRequiredForLoadings port wise list of time required for loading operation
+   * @param portRotationOperationHourMap map of port rotation id and operation hours
+   */
+  private void setLoadingHoursFromLoadableStudy(
+      List<LoadableStudyPortRotation> loadableStudyPortRotations,
+      LoadablePattern loadablePattern,
+      List<PortWiseTimeRequiredForLoading> portWiseTimeRequiredForLoadings,
+      Map<Long, BigDecimal> portRotationOperationHourMap) {
+    loadableStudyPortRotations.forEach(
+        portRotation -> {
+          Optional<BigDecimal> timeOpt =
+              portWiseTimeRequiredForLoadings.stream()
+                  .filter(time -> time.getPortRotation().getId().equals(portRotation.getId()))
+                  .map(PortWiseTimeRequiredForLoading::getTimeRequiredForLoading)
+                  .findFirst();
+          portRotationOperationHourMap.put(portRotation.getId(), timeOpt.orElse(null));
+        });
   }
 
   /**

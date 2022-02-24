@@ -101,4 +101,5 @@ service LoadingPlanService {
   rpc triggerCommunication(CommunicationTriggerRequest) returns (CommunicationTriggerResponse) {}
   rpc getCargoQuantityLoadingRatio(MaxQuantityRequest) returns (MaxQuantityResponse) {}
 
+  rpc GetLoadingHours(LoadingHoursRequest) returns (LoadingHoursReply) {}
 }

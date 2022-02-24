@@ -720,6 +720,60 @@ public final class DischargePlanServiceGrpc {
     return getValidateStowageAndBillOfLaddingMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+      getGetDischargingHoursMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetDischargingHours",
+      requestType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest.class,
+      responseType =
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+          com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+      getGetDischargingHoursMethod() {
+    io.grpc.MethodDescriptor<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+        getGetDischargingHoursMethod;
+    if ((getGetDischargingHoursMethod = DischargePlanServiceGrpc.getGetDischargingHoursMethod)
+        == null) {
+      synchronized (DischargePlanServiceGrpc.class) {
+        if ((getGetDischargingHoursMethod = DischargePlanServiceGrpc.getGetDischargingHoursMethod)
+            == null) {
+          DischargePlanServiceGrpc.getGetDischargingHoursMethod =
+              getGetDischargingHoursMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingHoursRequest,
+                          com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                              .LoadingHoursReply>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "GetDischargingHours"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingHoursRequest.getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.cpdss.common.generated.loading_plan.LoadingPlanModels
+                                  .LoadingHoursReply.getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new DischargePlanServiceMethodDescriptorSupplier("GetDischargingHours"))
+                      .build();
+        }
+      }
+    }
+    return getGetDischargingHoursMethod;
+  }
+
   /** Creates a new async stub that supports all call types for the service */
   public static DischargePlanServiceStub newStub(io.grpc.Channel channel) {
     io.grpc.stub.AbstractStub.StubFactory<DischargePlanServiceStub> factory =
@@ -893,6 +947,16 @@ public final class DischargePlanServiceGrpc {
           getValidateStowageAndBillOfLaddingMethod(), responseObserver);
     }
 
+    /** */
+    public void getDischargingHours(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getGetDischargingHoursMethod(), responseObserver);
+    }
+
     @java.lang.Override
     public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
@@ -993,6 +1057,13 @@ public final class DischargePlanServiceGrpc {
                           .StowageAndBillOfLaddingValidationRequest,
                       com.cpdss.common.generated.Common.ResponseStatus>(
                       this, METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING)))
+          .addMethod(
+              getGetDischargingHoursMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest,
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>(
+                      this, METHODID_GET_DISCHARGING_HOURS)))
           .build();
     }
   }
@@ -1164,6 +1235,18 @@ public final class DischargePlanServiceGrpc {
           request,
           responseObserver);
     }
+
+    /** */
+    public void getDischargingHours(
+        com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request,
+        io.grpc.stub.StreamObserver<
+                com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetDischargingHoursMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
   }
 
   /** */
@@ -1279,6 +1362,14 @@ public final class DischargePlanServiceGrpc {
             request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getValidateStowageAndBillOfLaddingMethod(), getCallOptions(), request);
+    }
+
+    /** */
+    public com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply
+        getDischargingHours(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetDischargingHoursMethod(), getCallOptions(), request);
     }
   }
 
@@ -1420,6 +1511,15 @@ public final class DischargePlanServiceGrpc {
           getChannel().newCall(getValidateStowageAndBillOfLaddingMethod(), getCallOptions()),
           request);
     }
+
+    /** */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>
+        getDischargingHours(
+            com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetDischargingHoursMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_DISCHARGE_PLAN_SYNCHRONIZATION = 0;
@@ -1435,6 +1535,7 @@ public final class DischargePlanServiceGrpc {
   private static final int METHODID_GET_DISCHARGING_INFO_ALGO_ERRORS = 10;
   private static final int METHODID_GET_DISCHARGE_PLAN_CARGO_HISTORY = 11;
   private static final int METHODID_VALIDATE_STOWAGE_AND_BILL_OF_LADDING = 12;
+  private static final int METHODID_GET_DISCHARGING_HOURS = 13;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1548,6 +1649,14 @@ public final class DischargePlanServiceGrpc {
               (io.grpc.stub.StreamObserver<com.cpdss.common.generated.Common.ResponseStatus>)
                   responseObserver);
           break;
+        case METHODID_GET_DISCHARGING_HOURS:
+          serviceImpl.getDischargingHours(
+              (com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursRequest)
+                  request,
+              (io.grpc.stub.StreamObserver<
+                      com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingHoursReply>)
+                  responseObserver);
+          break;
         default:
           throw new AssertionError();
       }
@@ -1626,6 +1735,7 @@ public final class DischargePlanServiceGrpc {
                       .addMethod(getGetDischargingInfoAlgoErrorsMethod())
                       .addMethod(getGetDischargePlanCargoHistoryMethod())
                       .addMethod(getValidateStowageAndBillOfLaddingMethod())
+                      .addMethod(getGetDischargingHoursMethod())
                       .build();
         }
       }

@@ -10,6 +10,7 @@ import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
 import com.cpdss.common.generated.discharge_plan.*;
 import com.cpdss.common.generated.discharge_plan.DischargingSequence;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.*;
 import com.cpdss.common.rest.CommonErrorCodes;
 import com.cpdss.common.utils.HttpStatusCode;
@@ -18,10 +19,9 @@ import com.cpdss.dischargeplan.entity.*;
 import com.cpdss.dischargeplan.entity.DischargeInformation;
 import com.cpdss.dischargeplan.entity.DischargingPlanStabilityParameters;
 import com.cpdss.dischargeplan.repository.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -650,5 +650,64 @@ public class DischargingSequenceService {
           Optional.ofNullable(rate.getTime()).ifPresent(builder::setTime);
           sequenceBuilder.addDeBallastingRates(builder.build());
         });
+  }
+
+  /**
+   * Fetches the discharging hours of the given discharge pattern id and port rotation id
+   *
+   * @param request request
+   * @param builder message builder
+   */
+  public void getDischargingHours(LoadingHoursRequest request, LoadingHoursReply.Builder builder)
+      throws GenericServiceException {
+    List<DischargeInformation> dischargeInformationList =
+        dischargingInformationRepository.findByVesselXidAndDischargingPatternXidAndIsActive(
+            request.getVesselId(), request.getLoadingPatternId(), true);
+    for (Long portRotationId : request.getPortRotationIdsList()) {
+      log.info(
+          "Fetching Discharging Hours for discharge pattern {}, port rotation {}",
+          request.getLoadingPatternId(),
+          portRotationId);
+      Optional<DischargeInformation> dischargeInfoOpt =
+          dischargeInformationList.stream()
+              .filter(
+                  loadingInformation ->
+                      loadingInformation.getPortRotationXid().equals(portRotationId))
+              .findFirst();
+      if (dischargeInfoOpt.isEmpty()) {
+        log.error(
+            "Cannot find discharging information with discharge pattern id {}, port rotation id {}",
+            request.getLoadingPatternId(),
+            portRotationId);
+        throw new GenericServiceException(
+            "Could not find discharging information.",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      List<com.cpdss.dischargeplan.entity.DischargingSequence> dischargingSequences =
+          dischargingSequenceRepository.findByDischargeInformationAndIsActiveOrderBySequenceNumber(
+              dischargeInfoOpt.get(), true);
+      if (dischargingSequences.isEmpty()) {
+        log.error(
+            "Discharging Sequence is not generated for discharging information {}",
+            dischargeInfoOpt.get().getId());
+      }
+      Optional<com.cpdss.dischargeplan.entity.DischargingSequence> lastStageOpt =
+          dischargingSequences.stream()
+              .max(
+                  Comparator.comparing(
+                      com.cpdss.dischargeplan.entity.DischargingSequence::getSequenceNumber));
+      lastStageOpt.ifPresent(
+          dischargingSequence -> {
+            LoadingPlanModels.LoadingHours.Builder hoursBuilder =
+                LoadingPlanModels.LoadingHours.newBuilder();
+            hoursBuilder.setPortRotationId(portRotationId);
+            hoursBuilder.setLoadingHours(
+                ((new BigDecimal(dischargingSequence.getEndTime()))
+                        .divide(new BigDecimal(60), 4, RoundingMode.HALF_EVEN))
+                    .toString());
+            builder.addDischargingHours(hoursBuilder.build());
+          });
+    }
   }
 }

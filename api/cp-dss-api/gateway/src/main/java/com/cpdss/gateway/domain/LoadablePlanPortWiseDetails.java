@@ -19,4 +19,5 @@ public class LoadablePlanPortWiseDetails {
   private String seaWaterTemperature;
   private String ambientTemperature;
   private List<String> cowTanks;
+  private String timeRequiredForLoading;
 }

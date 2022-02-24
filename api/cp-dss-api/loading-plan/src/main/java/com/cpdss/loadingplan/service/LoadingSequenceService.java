@@ -5,6 +5,7 @@ import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.LoadableStudy.PortRotationDetailReply;
 import com.cpdss.common.generated.LoadableStudy.PortRotationRequest;
 import com.cpdss.common.generated.LoadableStudyServiceGrpc.LoadableStudyServiceBlockingStub;
+import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.DeBallastingRate;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.EductorOperation;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels.LoadingPlanTankDetails;
@@ -41,6 +42,9 @@ import com.cpdss.loadingplan.repository.LoadingPlanStabilityParametersRepository
 import com.cpdss.loadingplan.repository.LoadingPlanStowageDetailsRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceRepository;
 import com.cpdss.loadingplan.repository.LoadingSequenceStabiltyParametersRepository;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -458,5 +462,63 @@ public class LoadingSequenceService {
           Optional.ofNullable(rate.getTime()).ifPresent(builder::setTime);
           sequenceBuilder.addDeBallastingRates(builder.build());
         });
+  }
+
+  /**
+   * Fetches the loading hours of the given loadable pattern id and port rotation.
+   *
+   * @param request loading info request
+   * @param builder loading hours response
+   */
+  public void getLoadingHours(
+      LoadingPlanModels.LoadingHoursRequest request,
+      LoadingPlanModels.LoadingHoursReply.Builder builder)
+      throws GenericServiceException {
+    List<LoadingInformation> loadingInformationList =
+        loadingInformationRepository.findByVesselXIdAndLoadablePatternXIdAndIsActive(
+            request.getVesselId(), request.getLoadingPatternId(), true);
+    for (Long portRotationId : request.getPortRotationIdsList()) {
+      log.info(
+          "Fetching Loading Hours for loadable pattern {}, port rotation {}",
+          request.getLoadingPatternId(),
+          portRotationId);
+      Optional<LoadingInformation> loadingInfoOpt =
+          loadingInformationList.stream()
+              .filter(
+                  loadingInformation ->
+                      loadingInformation.getPortRotationXId().equals(portRotationId))
+              .findFirst();
+      if (loadingInfoOpt.isEmpty()) {
+        log.error(
+            "Cannot find loading information with loadable pattern id {}, port rotation id {}",
+            request.getLoadingPatternId(),
+            portRotationId);
+        throw new GenericServiceException(
+            "Could not find loading information.",
+            CommonErrorCodes.E_HTTP_BAD_REQUEST,
+            HttpStatusCode.BAD_REQUEST);
+      }
+      List<LoadingSequence> loadingSequences =
+          loadingSequenceRepository.findByLoadingInformationAndIsActiveOrderBySequenceNumber(
+              loadingInfoOpt.get(), true);
+      if (loadingSequences.isEmpty()) {
+        log.error(
+            "Loading Sequence is not generated for loading information {}",
+            loadingInfoOpt.get().getId());
+      }
+      Optional<LoadingSequence> lastStageOpt =
+          loadingSequences.stream().max(Comparator.comparing(LoadingSequence::getSequenceNumber));
+      lastStageOpt.ifPresent(
+          loadingSequence -> {
+            LoadingPlanModels.LoadingHours.Builder hoursBuilder =
+                LoadingPlanModels.LoadingHours.newBuilder();
+            hoursBuilder.setPortRotationId(portRotationId);
+            hoursBuilder.setLoadingHours(
+                ((new BigDecimal(loadingSequence.getEndTime()))
+                        .divide(new BigDecimal(60), 4, RoundingMode.HALF_EVEN))
+                    .toString());
+            builder.addLoadingHours(hoursBuilder.build());
+          });
+    }
   }
 }

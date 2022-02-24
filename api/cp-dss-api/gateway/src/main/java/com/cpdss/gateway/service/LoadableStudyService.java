@@ -3106,6 +3106,10 @@ public class LoadableStudyService {
         isEmpty(synopticalProtoRecord.getPortTimezoneId())
             ? null
             : synopticalProtoRecord.getPortTimezoneId());
+    synopticalRecord.setOperationHours(
+        StringUtils.hasLength(synopticalProtoRecord.getOperationHours())
+            ? new BigDecimal(synopticalProtoRecord.getOperationHours())
+            : BigDecimal.ZERO);
   }
 
   /**
@@ -3682,7 +3686,8 @@ public class LoadableStudyService {
                             .ifPresent(portWiseBuilder::setSeaWaterTemperature);
                         Optional.ofNullable(lppwd.getAmbientTemperature())
                             .ifPresent(portWiseBuilder::setAmbientTemperature);
-
+                        Optional.ofNullable(lppwd.getTimeRequiredForLoading())
+                            .ifPresent(portWiseBuilder::setTimeRequiredForLoading);
                         planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                       });
               Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);
@@ -3800,7 +3805,6 @@ public class LoadableStudyService {
                               .ifPresent(portWiseBuilder::setAmbientTemperature);
                           // cow tank details for DS - DSS 4722
                           portWiseBuilder.addAllCowTanks(lppwd.getCowTanks());
-
                           planBuilder.addLoadablePlanPortWiseDetails(portWiseBuilder);
                         });
                 Optional.ofNullable(lpd.getCaseNumber()).ifPresent(planBuilder::setCaseNumber);

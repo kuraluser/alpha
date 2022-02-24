@@ -984,4 +984,35 @@ public class LoadingPlanGrpcService extends LoadingPlanServiceImplBase {
       log.error("Error occurred when saving PyUser data part of dischargeplan communication", e);
     }
   }
+
+  @Override
+  public void getLoadingHours(
+      LoadingPlanModels.LoadingHoursRequest request,
+      StreamObserver<LoadingPlanModels.LoadingHoursReply> responseObserver) {
+    LoadingPlanModels.LoadingHoursReply.Builder builder =
+        LoadingPlanModels.LoadingHoursReply.newBuilder();
+    try {
+      loadingSequenceService.getLoadingHours(request, builder);
+      builder.setResponseStatus(Common.ResponseStatus.newBuilder().setStatus(SUCCESS).build());
+    } catch (GenericServiceException e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(e.getCode())
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } catch (Exception e) {
+      e.printStackTrace();
+      builder.setResponseStatus(
+          ResponseStatus.newBuilder()
+              .setCode(CommonErrorCodes.E_GEN_INTERNAL_ERR)
+              .setMessage(e.getMessage())
+              .setStatus(LoadingPlanConstants.FAILED)
+              .build());
+    } finally {
+      responseObserver.onNext(builder.build());
+      responseObserver.onCompleted();
+    }
+  }
 }

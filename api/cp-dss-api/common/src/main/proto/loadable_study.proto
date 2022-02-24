@@ -566,6 +566,7 @@ message LoadablePlanPortWiseDetails {
 	string seaWaterTemperature = 6;
 	string ambientTemperature = 7;
 	repeated string cowTanks = 8;
+	string timeRequiredForLoading = 9;
 }
 
 message LoadablePlanDetailsRequest {
@@ -1371,6 +1372,7 @@ message SynopticalRecord{
 	string portRotationType = 42;
 	repeated SynopticalCommingleRecord commingle = 43;
 	int64 cargoOperationTypeId = 44;
+	string operationHours = 45;
 }
 
 message SynopticalCommingleRecord{

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 
 import com.cpdss.common.exception.GenericServiceException;
 import com.cpdss.common.generated.*;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
 import com.cpdss.common.generated.loading_plan.LoadingPlanModels;
 import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
@@ -106,6 +107,12 @@ public class LoadablePatternServiceTest {
   @MockBean private VesselInfoServiceGrpc.VesselInfoServiceBlockingStub vesselInfoGrpcService;
   @MockBean CargoService cargoService;
   @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanService;
+
+  @MockBean
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargingPlanGrpcService;
+
+  @MockBean
+  private PortWiseTimeRequiredForLoadingRepository portWiseTimeRequiredForLoadingRepository;
 
   public static final String SUCCESS = "SUCCESS";
   public static final String FAILED = "FAILED";

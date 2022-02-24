@@ -15,6 +15,8 @@ import com.cpdss.common.generated.LoadableStudy.SynopticalTableReply;
 import com.cpdss.common.generated.LoadableStudy.SynopticalTableRequest;
 import com.cpdss.common.generated.PortInfoServiceGrpc;
 import com.cpdss.common.generated.VesselInfoServiceGrpc;
+import com.cpdss.common.generated.discharge_plan.DischargePlanServiceGrpc;
+import com.cpdss.common.generated.loading_plan.LoadingPlanServiceGrpc;
 import com.cpdss.loadablestudy.communication.LoadableStudyStagingService;
 import com.cpdss.loadablestudy.entity.CargoOperation;
 import com.cpdss.loadablestudy.entity.LoadablePattern;
@@ -160,6 +162,13 @@ public class LoadableStudyServiceIntegrationTest {
   @MockBean private LoadableStudyStagingService loadableStudyStagingService;
   @MockBean private FileRepoService fileRepoService;
   @MockBean private DischargePlanCommingleDetailsService dischargePlanCommingleDetailsService;
+  @MockBean private LoadingPlanServiceGrpc.LoadingPlanServiceBlockingStub loadingPlanGrpcService;
+
+  @MockBean
+  private DischargePlanServiceGrpc.DischargePlanServiceBlockingStub dischargingPlanGrpcService;
+
+  @MockBean
+  private PortWiseTimeRequiredForLoadingRepository portWiseTimeRequiredForLoadingRepository;
 
   private static final Long CARGO_TANK_CATEGORY_ID = 1L;
   private static final Long CARGO_SLOP_TANK_CATEGORY_ID = 9L;

@@ -64,7 +64,7 @@ public final class LoadingPlanServiceOuterClass {
           + "eleteLoadingInstructions\022\031.LoadingInstru"
           + "ctionStatus\032\017.ResponseStatus\"\000\022@\n\020EditIn"
           + "structions\022\031.LoadingInstructionStatus\032\017."
-          + "ResponseStatus\"\0002\342\014\n\022LoadingPlanService\022"
+          + "ResponseStatus\"\0002\241\r\n\022LoadingPlanService\022"
           + "N\n\032LoadingPlanSynchronization\022\027.LoadingP"
           + "lanSyncRequest\032\025.LoadingPlanSyncReply\"\000\022"
           + "F\n\017SaveLoadingPlan\022\027.LoadingPlanSaveRequ"
@@ -105,8 +105,10 @@ public final class LoadingPlanServiceOuterClass {
           + "unicationTriggerRequest\032\035.CommunicationT"
           + "riggerResponse\"\000\022K\n\034getCargoQuantityLoad"
           + "ingRatio\022\023.MaxQuantityRequest\032\024.MaxQuant"
-          + "ityResponse\"\000B+\n\'com.cpdss.common.genera"
-          + "ted.loading_planP\000b\006proto3"
+          + "ityResponse\"\000\022=\n\017GetLoadingHours\022\024.Loadi"
+          + "ngHoursRequest\032\022.LoadingHoursReply\"\000B+\n\'"
+          + "com.cpdss.common.generated.loading_planP"
+          + "\000b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(

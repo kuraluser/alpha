@@ -44,6 +44,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -153,6 +154,8 @@ public class LoadablePatternService {
 
   @Autowired
   private LoadablePatternCargoToppingOffSequenceRepository cargoToppingOffSequenceRepository;
+
+  @Autowired private PortWiseTimeRequiredForLoadingRepository timeRequiredForLoadingRepository;
 
   @Autowired CargoService cargoService;
 
@@ -453,6 +456,7 @@ public class LoadablePatternService {
       if (requestType.equals(LOADABLE_STUDY)) {
         // Saving stability for fully loaded condition at LS
         saveStabilityParameters(loadablePattern, lpd, lastLoadingPort);
+        saveTimeRequiredForLoading(loadablePattern, lpd.getLoadablePlanPortWiseDetailsList());
       }
 
       saveLoadablePlanStowageDetails(loadablePattern, lpd, displayOrder);
@@ -467,6 +471,39 @@ public class LoadablePatternService {
       }
     }
     return loadablePatterns;
+  }
+
+  /**
+   * Saves time required for loading cargo at each port.
+   *
+   * @param loadablePattern
+   * @param loadablePlanPortWiseDetailsList
+   */
+  private void saveTimeRequiredForLoading(
+      LoadablePattern loadablePattern,
+      List<LoadablePlanPortWiseDetails> loadablePlanPortWiseDetailsList) {
+    Map<Long, LoadableStudyPortRotation> portRotationMap =
+        this.loadableStudyPortRotationRepository
+            .findByLoadableStudyAndIsActiveOrderByPortOrder(
+                loadablePattern.getLoadableStudy(), true)
+            .stream()
+            .collect(Collectors.toMap(LoadableStudyPortRotation::getId, Function.identity()));
+    List<PortWiseTimeRequiredForLoading> portWiseTimeRequiredForLoadingList = new ArrayList<>();
+    for (LoadablePlanPortWiseDetails portWiseDetails : loadablePlanPortWiseDetailsList) {
+      PortWiseTimeRequiredForLoading portWiseTimeRequiredForLoading =
+          new PortWiseTimeRequiredForLoading();
+      portWiseTimeRequiredForLoading.setTimeRequiredForLoading(
+          StringUtils.hasLength(portWiseDetails.getTimeRequiredForLoading())
+              ? new BigDecimal(portWiseDetails.getTimeRequiredForLoading())
+              : null);
+      portWiseTimeRequiredForLoading.setLoadablePatternXId(loadablePattern.getId());
+      portWiseTimeRequiredForLoading.setPortCode(portWiseDetails.getPortCode());
+      portWiseTimeRequiredForLoading.setPortXId(portWiseDetails.getPortId());
+      portWiseTimeRequiredForLoading.setPortRotation(
+          portRotationMap.get(portWiseDetails.getPortRotationId()));
+      portWiseTimeRequiredForLoadingList.add(portWiseTimeRequiredForLoading);
+    }
+    this.timeRequiredForLoadingRepository.saveAll(portWiseTimeRequiredForLoadingList);
   }
 
   private void saveLoadableQuantityCargoDetails(

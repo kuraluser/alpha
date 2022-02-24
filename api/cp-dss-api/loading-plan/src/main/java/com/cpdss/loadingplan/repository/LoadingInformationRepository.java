@@ -111,4 +111,7 @@ public interface LoadingInformationRepository
           "SELECT LI.id FROM loading_information LI WHERE LI.port_rotation_xid = ?1 and LI.is_active = true",
       nativeQuery = true)
   public Long findByPortRotationXIdAndIsActiveTrue(long portRotationId);
+
+  public List<LoadingInformation> findByVesselXIdAndLoadablePatternXIdAndIsActive(
+      Long vesselId, Long loadablePatternId, Boolean isActive);
 }
