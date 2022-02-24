@@ -2645,7 +2645,9 @@ public class LoadableStudyService {
       dto.setSounding(
           isEmpty(detail.getSounding()) ? BigDecimal.ZERO : new BigDecimal(detail.getSounding()));
       dto.setQuantity(
-          isEmpty(detail.getWeight()) ? BigDecimal.ZERO : new BigDecimal(detail.getWeight()));
+          isEmpty(detail.getActualWeight())
+              ? BigDecimal.ZERO
+              : new BigDecimal(detail.getActualWeight()));
       dto.setActualWeight(
           isEmpty(detail.getActualWeight())
               ? BigDecimal.ZERO

@@ -392,9 +392,9 @@ public class OnBoardQuantityService {
         ofNullable(entity.getSounding()).ifPresent(item -> builder.setSounding(item.toString()));
         ofNullable(entity.getPlannedArrivalWeight())
             .ifPresent(item -> builder.setWeight(item.toString()));
-        ofNullable(entity.getActualArrivalWeight())
+        ofNullable(entity.getActualDepartureWeight())
             .ifPresent(item -> builder.setActualWeight(item.toString()));
-        ofNullable(entity.getVolumeInM3()).ifPresent(item -> builder.setVolume(item.toString()));
+        ofNullable(entity.getVolume()).ifPresent(item -> builder.setVolume(item.toString()));
         ofNullable(entity.getColorCode()).ifPresent(builder::setColorCode);
         ofNullable(entity.getAbbreviation()).ifPresent(builder::setAbbreviation);
         ofNullable(entity.getDensity()).ifPresent(item -> builder.setDensity(item.toString()));
@@ -601,6 +601,11 @@ public class OnBoardQuantityService {
         onBoardQuantityEntity.setActualDepartureWeight(
             StringUtils.hasLength(dsCargo.get().getQuantity())
                 ? new BigDecimal(dsCargo.get().getQuantity())
+                : BigDecimal.ZERO);
+        // DSS 5450
+        onBoardQuantityEntity.setVolume(
+            StringUtils.hasLength(dsCargo.get().getQuantityM3())
+                ? new BigDecimal(dsCargo.get().getQuantityM3())
                 : BigDecimal.ZERO);
         CargoNomination cargoNominationEntity =
             cargoNominationMap.get(dsCargo.get().getCargoNominationId());
