@@ -14,7 +14,7 @@
   <title>Loadable Plan</title>
   <meta name="topic-status" content="Draft"/>
   <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
-<meta name="brsnext" value="view-plan.htm"/><meta name="brsprev" value="loadable-pattern.htm"/></head>
+<meta name="brsnext" value="view-loadable-plan.htm"/><meta name="brsprev" value="loadable-pattern.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -36,16 +36,16 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Loadable Plan</h1>
-  <p class="textbody">A loadable plan is the output generated from the loadable study. Once the user generates multiple loadable patterns for a loadable study and select one option based on the ranking, loading order, and the quantity achievable, the user can proceed to loadable plan. </p>
+  <h3 id="h">Loadable Plan</h3>
+  <p class="textbody">A loadable plan is an output generated from the loadable study. Once the user generates multiple loadable patterns for a loadable study and selects one option based on the ranking, loading order, and the quantity achievable, the user can proceed to the loadable plan. </p>
   <p class="note">The user can select and confirm a Loadable plan only for the loadable study for which the status is <span style="font-weight:bold;">Plan Generated</span>. </p>
-  <p class="textbody">To view the loadable plan for a loadable study, go to the required Loadable Study page and click <span style="font-weight:bold;">View Pattern</span>. </p>
+  <p class="textbody">To view the loadable plan for a loadable study, from the <strong>Loadable Study</strong> page, click <span style="font-weight:bold;">View Pattern</span>. </p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/view pattern option.png"/></p>
-  <p class="textbody">The Loadable Pattern page corresponding to the selected loadable study appears:</p>
+  <p class="textbody">The <strong>Loadable Pattern </strong>page corresponding to the selected loadable study appears.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/view pattern page.png"/></p>
   <p class="textbody">The loadable pattern page displays all the loadable patterns generated against the selected loadable study. Click <span style="font-weight:bold;">View Plan</span> to review each plan and select the optimal loadable plan that meets all the cargo allocation requirements in the best way possible. </p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/view plan.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">LOADABLE PLAN</span> page appears:</p>
+  <p class="textbody">The <span style="font-weight:bold;">Loadable Plan </span>page appears.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/loadable plan page.png"/></p>
   <p class="textbody">The loadable plan is the stowage plan generated before the loading operation and displays the loadable quantity, cargo allocation, and arrival and departure condition details. All these details are explained in three sections:</p>
   <ul class="bullets">
@@ -53,36 +53,38 @@
     <li class="textbody">Stowage pattern</li>
     <li class="textbody">Arrival and Departure condition at each port</li>
   </ul>
-  <h2 class="textbody">Loadable Quantity</h2>
+  <h5 class="h5Topic">Loadable Quantity</h5>
   <p class="textbody">The loadable quantity section populates the maximum quantity of cargo that can be loaded at each loading port during the voyage.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/loadable quantity section.png"/></p>
   <p class="textbody">The application auto-calculates the loadable quantity value considering the following factors:</p>
   <ul class="bullets">
-    <li class="textbody">The difference between the deadweight and on board quantities at each port.</li>
+    <li class="textbody">The onboard quantities at each port should not exceed the deadweight.</li>
     <li class="textbody">The feasibility of cargo allocation in the tanks.</li>
     <li class="textbody">The tolerance limit.</li>
-    <li class="textbody">Volume maximization to reduce the loading and discharging time.</li>
-    <li class="textbody">Usage of minimal number of tanks for loading operations to load new cargoes in the vacant tanks when required. </li>
+    <li class="textbody">Volume maximization.</li>
+    <li class="textbody">Reduce the loading and discharging time.</li>
+    <li class="textbody">Usage of the minimal number of tanks for loading operations.</li>
+    <li class="textbody">To load new cargoes in the empty tanks when required. </li>
   </ul>
   <p class="textbody">The Loadable Quantity section on the Loadable Plan page displays the following details:</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
-        <td>Description</td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Grade </p>
         </td>
         <td>
-          <p class="textbody">This field displays the name of the cargo selected in the loadable study.</p>
+          <p class="textbody">Displays the name of the cargo selected in the loadable study.</p>
         </td>
       </tr>
       <tr>
@@ -90,7 +92,7 @@
           <p class="textbody">Estimated API</p>
         </td>
         <td>
-          <p class="textbody">This field displays the estimated value of the API used for the calculation of loadable study. </p>
+          <p class="textbody">Displays the estimated value of the API used for the calculation of loadable study. </p>
         </td>
       </tr>
       <tr>
@@ -98,7 +100,7 @@
           <p class="textbody">Estimated Temp</p>
         </td>
         <td>
-          <p class="textbody">This field displays the estimated value of temperature used for the calculation of loadable study.</p>
+          <p class="textbody">Displays the estimated value of temperature used for the calculation of loadable study.</p>
         </td>
       </tr>
       <tr>
@@ -106,7 +108,7 @@
           <p class="textbody">Order Quantity</p>
         </td>
         <td>
-          <p class="textbody">This field displays the actual volume of each cargo based on the enquiry received against the voyage.<br/>
+          <p class="textbody">Displays the actual volume of each cargo based on the enquiry received against the voyage.<br/>
             The Order Quantity of each cargo is displayed in both BBLS and MT units. </p>
         </td>
       </tr>
@@ -115,7 +117,7 @@
           <p class="textbody">Tolerance</p>
         </td>
         <td>
-          <p class="textbody">This field displays the minimum and maximum tolerance value of each cargo. </p>
+          <p class="textbody">Displays the minimum and maximum tolerance value of each cargo. </p>
         </td>
       </tr>
       <tr>
@@ -123,8 +125,8 @@
           <p class="textbody">Loadable Quantity</p>
         </td>
         <td>
-          <p class="textbody">This field displays the volume or weight of each cargo that is feasible with the selected loadable pattern. </p>
-          <p class="textbody">The Loadable Quantity is displayed in multiple units including BBLS, MT, KL, and LT.</p>
+          <p class="textbody">Displays the volume or weight of each cargo that is feasible with the selected loadable pattern. </p>
+          <p class="textbody">The Loadable Quantity is displayed in multiple units, including BBLS, MT, KL, and LT.</p>
         </td>
       </tr>
       <tr>
@@ -132,33 +134,33 @@
           <p class="textbody">% Diff</p>
         </td>
         <td>
-          <p class="textbody">This field displays the percentage difference between the order quantity and the loadable quantity. </p>
-          <p class="textbody">The % Diff value can either be positive or negative. </p>
+          <p class="textbody">Displays the percentage difference between the order quantity and the loadable quantity. </p>
+          <p class="textbody">The % Diff value can be either positive or negative. </p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">The details of the commingled cargoes if any are displayed under the <span style="font-weight:bold;">Loadable Quantity </span>section. </p>
+  <p class="textbody"><span data-preserver-spaces="true">The details of the commingled cargoes appears under the </span><strong><span data-preserver-spaces="true">Loadable Quantity </span></strong><span data-preserver-spaces="true">section if any.</span></p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/Commingled cargo details.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">COMMINGLE CARGO DETAILS</span> section displays the following details:</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <p class="textbody">The <span style="font-weight:bold;">Commingle Cargo Details </span>section displays the following details:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
-        <td>Description</td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Grade </p>
         </td>
         <td>
-          <p class="textbody">This field displays the name of the commingled cargo selected in the loadable study.</p>
+          <p class="textbody">Displays the name of the commingled cargo selected in the loadable study.</p>
         </td>
       </tr>
       <tr>
@@ -166,7 +168,7 @@
           <p class="textbody">Tank</p>
         </td>
         <td>
-          <p class="textbody"><span style="background-color:rgba(0, 255, 255, 0.40);">This field displays the tank allocation of commingled cargoes.</span></p>
+          <p class="textbody">Displays the tank allocation of commingled cargoes.</p>
         </td>
       </tr>
       <tr>
@@ -174,7 +176,7 @@
           <p class="textbody">Quantity</p>
         </td>
         <td>
-          <p class="textbody">This field displays the volume or weight of the commingled cargoes loaded in the respective tank. </p>
+          <p class="textbody">Displays the volume or weight of the commingled cargoes loaded in the respective tank. </p>
         </td>
       </tr>
       <tr>
@@ -182,7 +184,7 @@
           <p class="textbody">API</p>
         </td>
         <td>
-          <p class="textbody">This field displays the API of commingled cargoes.</p>
+          <p class="textbody">Displays the API of commingled cargoes.</p>
         </td>
       </tr>
       <tr>
@@ -190,7 +192,7 @@
           <p class="textbody">Temp</p>
         </td>
         <td>
-          <p class="textbody">This field displays the temperature of commingled cargoes.</p>
+          <p class="textbody">Displays the temperature of commingled cargoes.</p>
         </td>
       </tr>
       <tr>
@@ -198,7 +200,7 @@
           <p class="textbody">Composition Breakdown</p>
         </td>
         <td>
-          <p class="textbody">This field displays the commingled cargo breakdown into different grades, percentage of commingle, and units. </p>
+          <p class="textbody">Displays the commingled cargo breakdown into different grades, percentage of commingle, and units. </p>
           <p class="textbody">The commingled cargo quantity is displayed in the following units:</p>
           <ul class="bullets">
             <li class="textbody">BBLS at observed temperature</li>
@@ -211,30 +213,30 @@
       </tr>
     </tbody>
   </table>
-  <h2 class="textbody">Stowage Pattern</h2>
+  <h5 class="h5Topic">Stowage Pattern</h5>
   <p class="textbody">The stowage pattern section displays the cargo and ballast allocation details. </p>
   <p class="textbody"><img class="image-full" height="657" src="Images/loadable-plan/stowage section.png" style="border-width: 1px; border-color: rgb(128, 128, 128); border-style: solid; cursor: nwse-resize;" width="1366"/></p>
   <p class="textbody">The CP-DSS application displays the cargo allocation details of the selected loadable study by default. To view the ballast allocation details, click <span style="font-weight:bold;">Ballast</span>. </p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/stowage ballast.png"/></p>
   <p class="textbody">The stowage layout of cargo and ballast tanks displays the following details of each cargo when the user mouse hovers the respective tank name.</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
-        <td>Description</td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Tank Name</p>
         </td>
         <td>
-          <p class="textbody">The name of the selected tank.</p>
+          <p class="textbody">Displays the name of the selected tank.</p>
         </td>
       </tr>
       <tr>
@@ -242,8 +244,7 @@
           <p class="textbody">Cargo ABV</p>
         </td>
         <td>
-          <p class="textbody">The cargo allocated in the selected tank as per the loadable plan.</p>
-          <p class="textbody">Different cargoes in the tanks are represented with unique colors. </p>
+          <p class="textbody">Displays the cargo allocated in the selected tank as per the loadable plan. Different cargoes in the tanks are represented with unique colors. </p>
         </td>
       </tr>
       <tr>
@@ -251,7 +252,7 @@
           <p class="textbody">Volume</p>
         </td>
         <td>
-          <p class="textbody">The calculated volume of cargo that can be loaded in each tank as per the loadable plan. </p>
+          <p class="textbody">Displays the calculated volume of cargo that can be loaded in each tank as per the loadable plan. </p>
         </td>
       </tr>
       <tr>
@@ -259,7 +260,7 @@
           <p class="textbody">Weight</p>
         </td>
         <td>
-          <p class="textbody">The expected weight of the cargo in each tank as per the selected loadable plan.</p>
+          <p class="textbody">Displays the expected weight of the cargo in each tank as per the selected loadable plan.</p>
         </td>
       </tr>
       <tr>
@@ -267,7 +268,7 @@
           <p class="textbody">Ullage</p>
         </td>
         <td>
-          <p class="textbody">The ullage level in each tank. This value is calculated based on the volume of cargo in each tank.</p>
+          <p class="textbody">Displays the ullage level in each tank. This value is calculated based on the volume of cargo in each tank.</p>
         </td>
       </tr>
       <tr>
@@ -275,7 +276,7 @@
           <p class="textbody">Filling percentage</p>
         </td>
         <td>
-          <p class="textbody">The percentage of filling in each tank. </p>
+          <p class="textbody">Displays the percentage of filling in each tank. </p>
         </td>
       </tr>
     </tbody>
@@ -286,24 +287,24 @@
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/stowage more view.png"/></p>
   <p class="textbody">The stowage data table displays the quantity and volume of each cargo is in different units.</p>
   <p class="textbody">The stowage data table displays the following tank allocation details based on the selected loadable plan:</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
-        <td>Description</td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Tank Name</p>
         </td>
         <td>
-          <p class="textbody">This field populates the name of the tanks in the vessel.</p>
+          <p class="textbody">Displays the name of the tanks in the vessel.</p>
         </td>
       </tr>
       <tr>
@@ -311,7 +312,7 @@
           <p class="textbody">Cargo Abbreviation</p>
         </td>
         <td>
-          <p class="textbody">This field populates the abbreviation of the cargoes loaded in the tanks.</p>
+          <p class="textbody">Displays the abbreviation of the cargoes loaded in the tanks.</p>
         </td>
       </tr>
       <tr>
@@ -319,8 +320,7 @@
           <p class="textbody">Ullage</p>
         </td>
         <td>
-          <p class="textbody">This field populates the observed ullage value updated by the user. </p>
-          <p class="textbody">The ullage value is displayed in centimeters. </p>
+          <p class="textbody">Displays the observed ullage value updated by the user. The ullage value is displayed in centimeters. </p>
         </td>
       </tr>
       <tr>
@@ -328,7 +328,7 @@
           <p class="textbody">Correction Factor</p>
         </td>
         <td>
-          <p class="textbody">This field populates the correction factor value. The data is updated from the Loadicator. </p>
+          <p class="textbody">Displays the correction factor value. The data is updated from the Loadicator. </p>
         </td>
       </tr>
       <tr>
@@ -336,7 +336,7 @@
           <p class="textbody">Corrected Ullage</p>
         </td>
         <td>
-          <p class="textbody">This field populates the corrected ullage value based on the correction factor.</p>
+          <p class="textbody">Displays the corrected ullage value based on the correction factor.</p>
         </td>
       </tr>
       <tr>
@@ -344,7 +344,7 @@
           <p class="textbody">Observed Volume</p>
         </td>
         <td>
-          <p class="textbody">This field populates the quantity of cargo at observed temperature. The value is updated from the Loadicator. </p>
+          <p class="textbody">Displays the quantity of cargo at observed temperature. The value is updated from the Loadicator. </p>
         </td>
       </tr>
       <tr>
@@ -352,8 +352,7 @@
           <p class="textbody">Weight</p>
         </td>
         <td>
-          <p class="textbody">This field populates the weight of cargo in each tank. </p>
-          <p class="textbody">The default unit is MT.</p>
+          <p class="textbody">Displays the weight of cargo in each tank. The default unit is MT.</p>
         </td>
       </tr>
       <tr>
@@ -361,7 +360,7 @@
           <p class="textbody">Percentage Filling</p>
         </td>
         <td>
-          <p class="textbody">This field populates the percentage of filling in each tank.</p>
+          <p class="textbody">Displays the percentage of filling in each tank.</p>
         </td>
       </tr>
       <tr>
@@ -369,7 +368,7 @@
           <p class="textbody">API</p>
         </td>
         <td>
-          <p class="textbody">This field populates the API of the cargo loaded in each tank.</p>
+          <p class="textbody">Displays the API of the cargo loaded in each tank.</p>
         </td>
       </tr>
       <tr>
@@ -377,48 +376,48 @@
           <p class="textbody">Temperature</p>
         </td>
         <td>
-          <p class="textbody">This field populates the temperature of cargo loaded in each tank. </p>
+          <p class="textbody">Displays the temperature of cargo loaded in each tank. </p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">To hide the stowage data, click <span style="font-weight:bold;">Hide</span>. <br/>
+  <p class="textbody">Click <span style="font-weight:bold;">Hide </span>to hide the stowage data.<br/>
     <img class="image-full" src="Images/loadable-plan/hide stowage view.png"/>
   </p>
-  <p class="textbody">To edit the stowage data, click<span style="font-weight:bold;"> Edit Stowage</span>. </p>
+  <p class="textbody">Click <strong>Edit Stowage</strong> to edit the stowage data.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-plan/edit stowage.png"/></p>
   <p class="textbody">The <span style="font-weight:bold;">RDG Ullage</span> field becomes editable.</p>
   <p class="textbody"><img class="image-full" height="659" src="Images/loadable-plan/edit stowage list.png" style="cursor: nwse-resize;" width="1368"/></p>
   <p class="textbody">Edit the RDG Ullage value against the required tanks. The other stowage values are auto-updated based on the RDG Ullage value. </p>
-  <p class="textbody"><img class="image-full" src="Images/loadable-plan/update ullage.png"/></p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-plan/update ullage.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
   <p class="note">The RDG Ullage value for each tank must be positive. The updated total cargo quantity must stay within the tolerance limit and must not exceed the loadable quantity calculated in the respective loadable study.</p>
   <p class="textbody">Click<span style="font-weight:bold;"> Validate and Save </span>to update the changes. </p>
-  <p class="textbody"><img class="image-full" src="Images/loadable-plan/validate and save.png"/></p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-plan/validate and save.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
   <p class="textbody">A success message appears on the screen indicating that the ullage value is updated successfully. </p>
-  <p class="textbody"><img class="image-full" height="659" src="Images/loadable-plan/success message.png" width="1368"/></p>
+  <p class="textbody"><img class="image-full" height="659" src="Images/loadable-plan/success message.png" style="cursor: nesw-resize;" width="1368"/></p>
   <p class="note">The Loadicator validates the new loadable plan for stability parameters. The CP-DSS application saves the updated loadable plan only if the plan satisfies all the stability parameters. </p>
-  <h2 class="textbody">Arrival/Departure Condition at Each Port</h2>
-  <p class="textbody">The <span style="font-weight:bold;">ETA/ETD CONDITION AT EACH PORT </span>section displays the arrival and departure condition of the vessel at each port in a table format. </p>
+  <h5 class="h5Topic">Arrival/Departure Condition at Each Port</h5>
+  <p class="textbody">The <span style="font-weight:bold;">ETA/ETD Condition at Each Port </span>section displays the arrival and departure data of the vessel at each port in a table format. </p>
   <p class="textbody"><img src="Images/loadable-plan/ETA ETD section.png" style="cursor: nwse-resize;"/></p>
-  <p class="textbody">The arrival and departure condition data is updated from the <span style="font-weight:bold;">Synoptical Table</span>. The table displays the following ETA/ETD values of the vessel. </p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <p class="textbody">The arrival and departure data is updated from the <span style="font-weight:bold;">Synoptical Table</span>. The table displays the following ETA/ETD values of the vessel. </p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
-        <td>Description</td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Port Name</p>
         </td>
         <td>
-          <p class="textbody">This field populates the names of the ports selected in the respective loadable study. </p>
+          <p class="textbody">Displays the names of the ports selected in the respective loadable study. </p>
         </td>
       </tr>
       <tr>
@@ -426,7 +425,7 @@
           <p class="textbody">ETA/ETD Date</p>
         </td>
         <td>
-          <p class="textbody">This field populates the estimated date of arrival and departure of the vessel at each port. </p>
+          <p class="textbody">Displays the estimated date of arrival and departure of the vessel at each port. </p>
         </td>
       </tr>
       <tr>
@@ -434,7 +433,7 @@
           <p class="textbody">ETA/ETD Time</p>
         </td>
         <td>
-          <p class="textbody"> This field populates the estimated time of arrival and departure of the vessel at each port.</p>
+          <p class="textbody">Displays the estimated time of arrival and departure of the vessel at each port.</p>
         </td>
       </tr>
       <tr>
@@ -442,8 +441,7 @@
           <p class="textbody">Draft</p>
         </td>
         <td>
-          <p class="textbody">This field populates the Fore Draft, After Draft, and Mid Ship Draft values of the vessel at each port. </p>
-          <p class="textbody">The draft values are updated from the Loadicator. </p>
+          <p class="textbody">Displays the Fore Draft, After Draft, and Mid Ship Draft values of the vessel at each port. The draft values are updated from the Loadicator. </p>
         </td>
       </tr>
       <tr>
@@ -451,8 +449,7 @@
           <p class="textbody">Trim</p>
         </td>
         <td>
-          <p class="textbody">This field populates the trim condition of the vessel at each port. </p>
-          <p class="textbody">The trim values are updated from the Loadicator. </p>
+          <p class="textbody">Displays the trim condition of the vessel at each port. The trim values are updated from the Loadicator. </p>
         </td>
       </tr>
       <tr>
@@ -460,8 +457,7 @@
           <p class="textbody">Bending Moment</p>
         </td>
         <td>
-          <p class="textbody">This field populates the bending moment of the vessel at each port. </p>
-          <p class="textbody">The data is updated from the Loadicator. </p>
+          <p class="textbody">Displays the bending moment of the vessel at each port. The data is updated from the Loadicator. </p>
         </td>
       </tr>
       <tr>
@@ -469,8 +465,7 @@
           <p class="textbody">Shearing Force</p>
         </td>
         <td>
-          <p class="textbody">This field populates the shearing force on the vessel at each port. </p>
-          <p class="textbody">The data is updated from the Loadicator. </p>
+          <p class="textbody">Displays the shearing force on the vessel at each port. The data is updated from the Loadicator. </p>
         </td>
       </tr>
       <tr>
@@ -478,8 +473,7 @@
           <p class="textbody">List<strong></strong></p>
         </td>
         <td>
-          <p class="textbody">This field populates the list condition of the vessel at each port. </p>
-          <p class="textbody">The data is updated from the Loadicator. </p>
+          <p class="textbody">Displays the list condition of the vessel at each port. The data is updated from the Loadicator. </p>
           <p class="textbody"><strong></strong></p>
         </td>
       </tr>
@@ -488,7 +482,7 @@
           <p class="textbody">Cargo MT</p>
         </td>
         <td>
-          <p class="textbody">This field populates the amount of cargo on board at each port during the arrival and departure condition. </p>
+          <p class="textbody">Displays the cargo on board at each port during the arrival and departure. </p>
         </td>
       </tr>
       <tr>
@@ -496,7 +490,7 @@
           <p class="textbody">Fuel Oil</p>
         </td>
         <td>
-          <p class="textbody">This field populates the the amount of fuel oil on board at each port during the arrival and departure condition. </p>
+          <p class="textbody">Displays the amount of fuel oil on board at each port during the arrival and departure. </p>
         </td>
       </tr>
       <tr>
@@ -504,7 +498,7 @@
           <p class="textbody">Diesel Oil</p>
         </td>
         <td>
-          <p class="textbody">This field populates the amount of diesel oil on board at each port during the arrival and departure condition. </p>
+          <p class="textbody">Displays the amount of diesel oil on board at each port during the arrival and departure. </p>
         </td>
       </tr>
       <tr>
@@ -512,7 +506,7 @@
           <p class="textbody">Ballast</p>
         </td>
         <td>
-          <p class="textbody">This field populates the quantity of water ballast on board at each port during the arrival and departure condition. </p>
+          <p class="textbody">Displays the quantity of water ballast on board at each port during the arrival and departure. </p>
         </td>
       </tr>
       <tr>
@@ -520,7 +514,7 @@
           <p class="textbody">Fresh Water</p>
         </td>
         <td>
-          <p class="textbody">This field populates the amount of fresh water on board at each port during the arrival and departure condition. </p>
+          <p class="textbody">Displays the amount of fresh water on board at each port during the arrival and departure. </p>
         </td>
       </tr>
       <tr>
@@ -528,7 +522,7 @@
           <p class="textbody">Others</p>
         </td>
         <td>
-          <p class="textbody">This field populates the amount of other remains on board at each port during the arrival and departure condition. </p>
+          <p class="textbody">Displays the number of other residues on board at each port during arrival and departure. </p>
         </td>
       </tr>
       <tr>
@@ -536,7 +530,7 @@
           <p class="textbody">Total DWT</p>
         </td>
         <td>
-          <p class="textbody">This field populates the total weight the vessel can carry.</p>
+          <p class="textbody">Displays the total weight the vessel can carry.</p>
         </td>
       </tr>
       <tr>
@@ -544,7 +538,7 @@
           <p class="textbody">Displacement</p>
         </td>
         <td>
-          <p class="textbody">This field populates the total weight of the vessel.</p>
+          <p class="textbody">Displays the total weight of the vessel.</p>
         </td>
       </tr>
       <tr>
@@ -552,17 +546,22 @@
           <p class="textbody">SP Gravity</p>
         </td>
         <td>
-          <p class="textbody">This field populates the specific gravity of sea water at each port. The default value is 1.025.</p>
+          <p class="textbody">Displays the specific gravity of seawater at each port. The default value is 1.025.</p>
         </td>
       </tr>
     </tbody>
   </table>
-  <h2>User Comments</h2>
-  <p class="textbody">The user can make changes to the loadable plan by updating the ullage value in the stowage section. The CP-DSS application regenerates an updated loadable plan based on the changes in the stowage quantities.</p>
-  <p class="textbody">The user must enter the reason for updating the current loadable plan in the <span style="font-weight:bold;">COMMENTS </span>field once the Loadicator validates the updated plan. </p>
-  <p class="textbody"><img class="image-full" src="Images/loadable-plan/comments section.png"/></p>
-  <p class="textbody"> </p>
-  <p class="textbody"> </p>
+  <h5 class="h5Topic">User Comments</h5>
+  <p class="textbody">The user can change the loadable plan by updating the ullage value in the stowage section. The CP-DSS application regenerates an updated loadable plan based on the changes in the stowage quantities.</p>
+  <p class="textbody">The user must enter the reason for updating the current loadable plan in the <span style="font-weight:bold;">Comments </span>field once the Loadicator validates the updated plan. </p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-plan/comments section.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
+  <p class="textbody"><strong>Related Topics</strong> </p>
+  <ul class="bullets">
+    <li class="textbody"><a href="view-loadable-plan.htm">View Loadable Plan</a></li>
+    <li class="textbody"><a href="confirm-plan.htm">Confirm Loadable Plan</a></li>
+    <li class="textbody"><a href="export-loadable-plan.htm">Export Loadable Plan</a></li>
+  </ul>
+  <p> </p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
@@ -576,7 +575,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "3.1.4"
+    gTopicId = "4.1.3"
   
 //]]></script>
 

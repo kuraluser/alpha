@@ -1,1 +1,1 @@
-(function() {    var toc =  [{"name":"Edit Synoptical Table","type":"item","tilePath":"","description":"","url":"edit-synoptical-table.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();
+(function() {    var toc =  [{"name":"Loading","type":"book","tilePath":"","description":"","url":"loading.htm","key":"toc21"},{"name":"Discharging","type":"book","tilePath":"","description":"","url":"discharging.htm","key":"toc26"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();

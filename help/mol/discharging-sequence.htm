@@ -36,19 +36,21 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1 id="h">Discharging Sequence</h1>
+  <h3 id="h">Discharging Sequence</h3>
   <p class="textbody"><strong>Discharging Sequence</strong> displays the sequence of discharging of each cargo. The algorithm provides the estimated discharging sequence according to the details provided in the <strong>Discharging Information</strong> tab<strong>.</strong> The various Gantt charts available under <strong>Discharging Sequence</strong> helps the user to monitor the progress of the discharging operation. It displays the following details: </p>
   <ul class="bullets">
     <li class="textbody">Cargo sequence chart</li>
+    <li class="textbody">Cargo pump chart</li>
     <li class="textbody">Ballast sequence chart</li>
     <li class="textbody">Ballast pump chart</li>
     <li class="textbody">Flow rate chart  </li>
     <li class="textbody">Stability parameters</li>
   </ul>
-  <h2>Cargo Sequence Chart</h2>
-  <p class="textbody">The Cargo sequence chart displays the <span style="color:#ff0000;">cargo loading rate</span> of the active voyage. The <span style="color:#ff0000;">X-axis represents the time in hours, and Y-axis represents the cargo name</span>.<br/>
-    (img)<br/>
-    The available details are:</p>
+  <h4 class="h4Topic">Cargo Sequence Chart</h4>
+  <p class="textbody">The cargo sequence chart displays the <span style="color:#000000;">cargo discharging rate</span> of the active voyage. The <span style="color:#000000;">X-axis represents the time in hours, and Y-axis represents the cargo name.</span><br/>
+    <img class="image-full" src="Images/discharging-sequence/cargo-sequence.png"/><br/>
+    The available details are:
+  </p>
   <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
@@ -64,7 +66,7 @@
           <p class="textbody">Tank No</p>
         </td>
         <td>
-          <p class="textbody">Displays the tank number</p>
+          <p class="textbody">Displays the tank number.</p>
         </td>
       </tr>
       <tr>
@@ -72,7 +74,7 @@
           <p class="textbody">Cargo Grade</p>
         </td>
         <td>
-          <p class="textbody">Displays the cargo name</p>
+          <p class="textbody">Displays the cargo name.</p>
         </td>
       </tr>
       <tr>
@@ -88,34 +90,42 @@
           <p class="textbody">Qty</p>
         </td>
         <td>
-          <p class="textbody">Displays the cargo quantity in BBLS</p>
+          <p class="textbody">Displays the cargo quantity in BBLS.</p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">The vertical lines on the graph display each stage. <span style="color:#ff0000;">Mouse hover anywhere on the ullage line to view the <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Ullage value</strong></span>. The graph also displays the total cargo quantity and loading rate of each stage at the bottom.<br/>
-    <img class="image-full" src="Images/Loading Sequence/cargo-loading-total.jpg"/>
+  <p class="textbody">The vertical lines on the graph display each stage. <span style="color:#000000;">Mouse hover on the ullage line to view the <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Ullage value</strong>. </span></p>
+  <p class="textbody"><span style="color:#000000;">The COW details are displayed on the graph.</span> Mouse hover on the COW icon to view the  <strong>COW Angle</strong>, <strong>Starting Time</strong> and <strong>Ending Time</strong>.</p>
+  <p class="textbody">The legends used to indicate different statuses of cargo sequence chart are:</p>
+  <p class="textbody"><img height="16" src="Images/discharging-sequence/full-wash.png" width="16"/> - Full wash COW</p>
+  <p class="textbody"><img height="16" src="Images/discharging-sequence/top-wash.png" width="16"/> - Top wash COW</p>
+  <p class="textbody"><img height="16" src="Images/discharging-sequence/bottom-wash.png" width="16"/> - Bottom wash COW</p>
+  <p class="textbody"><span style="color:#000000;"><img height="34" src="Images/discharging-sequence/stripping.png" width="15"/> - Stripping by Educter</span></p>
+  <p class="textbody">The graph also displays the total cargo quantity and loading rate of each stage at the bottom.</p>
+  <h4 class="h4Topic">Cargo Pump Chart</h4>
+  <p class="textbody">The cargo pump chart displays the various cargo pumps and their corresponding pumping rate. The X-axis represents the time in hours, and Y-axis represents the pump name.  Various color lines marked on the graph represent the pumping rate of different cargo pumps.<br/>
+    The vertical lines on the graph display each stage. Mouse hover on the color lines to view the pumping rate. <br/>
+    <img class="image-full" src="Images/discharging-sequence/cargo-pump.png"/>
   </p>
-  <h2>Ballast Sequence Chart</h2>
-  <p class="textbody">The Ballast sequence chart displays the <span style="color:#ff0000;">ballast loading rate </span>of the active voyage. The<span style="color:#ff0000;"> X-axis represents the time in hours, and Y-axis represents the tank</span>. The blue lines marked on the graph represent sounding.<br/>
-    <img class="image-full" src="Images/Loading Sequence/ballst.jpg"/>
+  <h4 class="h4Topic">Ballast Sequence Chart</h4>
+  <p class="textbody">The ballast sequence chart displays the<span style="color:#000000;"> </span><span style="color:#ff0000;"><span style="color:#000000;">ballast discharging rate</span> </span>of the active voyage. The<span style="color:#000000;"> X-axis represents the time in hours, and Y-axis represents the tank. </span>The blue lines marked on the graph represent sounding.<br/>
+    <img class="image-full" src="Images/discharging-sequence/ballast-sequence.png"/>
   </p>
   <p class="note">Sounding is the measured height of fluid from the surface of the fluid to the bottom of the tank. </p>
-  <p class="textbody">The vertical lines on the graph display each stage. <span style="color:#ff0000;">Mouse hover anywhere on the ullage line to view <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Sounding</strong>.</span><br/>
-    <strong>Stripping by Eductor- </strong>After ballasting, the remaining sediments (fuel residue) are sucked using eductor. The graph displays the stripping process against time. The graph also displays the total ballast quantity of each stage at the bottom.
-  </p>
-  <h2>Ballast Pump Chart</h2>
-  <p class="textbody">Ballast pump chart displays the various pumps and their corresponding pumping rate. The X-axis represents the time in hours, and Y-axis represents the pump name.  Various color lines marked on the graph represent the pumping rate of different ballast pumps.<br/>
-    The vertical lines on the graph display each stage. Mouse hover anywhere on the color lines to view the pumping rate. <br/>
+  <p class="textbody">The vertical lines on the graph display each stage. <span style="color:#000000;">Mouse hover on the ullage line to view <strong>Hours</strong>, <strong>Starting </strong><strong>Time</strong>, <strong>Ending </strong><strong>Time</strong>, <strong>Quantity</strong>, and <strong>Sounding</strong>.</span></p>
+  <h4 class="h4Topic">Ballast Pump Chart</h4>
+  <p class="textbody">The ballast pump chart displays the various ballast pumps and their corresponding pumping rate. The X-axis represents the time in hours, and Y-axis represents the pump name.  Various color lines marked on the graph represent the pumping rate of different ballast pumps.<br/>
+    The vertical lines on the graph display each stage. Mouse hover on the color lines to view the pumping rate. <br/>
     <img class="image-full" src="Images/Loading Sequence/deballasting.jpg"/>
   </p>
-  <h2>Flow Rate Chart</h2>
-  <p class="textbody">The Flow rate chart displays the flow rate of cargo.<br/>
-    The X-axis displays the flow rate in bbls, and the y-axis displays the time in hours. Mouse hover anywhere on the graph to view the aggregate values.<br/>
-    <img class="image-full" src="Images/Loading Sequence/flow-rate.jpg"/>
+  <h4 class="h4Topic">Flow Rate Chart</h4>
+  <p class="textbody">The flow rate chart displays the flow rate of cargo.<br/>
+    The X-axis displays the flow rate in bbls, and the y-axis displays the time in hours. Mouse hover on the graph to view the aggregate values.<br/>
+    <img class="image-full" src="Images/discharging-sequence/flow-rate.png"/>
   </p>
-  <h2>Stability Parameters</h2>
-  <p class="textbody">Stability parameters display the stability parameter values against time for different stages. They are:</p>
+  <h4 class="h4Topic">Stability Parameters</h4>
+  <p class="textbody">The stability parameters display the stability parameter values against time for different stages. They are:</p>
   <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
@@ -131,7 +141,7 @@
           <p class="textbody">Fore Draft</p>
         </td>
         <td>
-          <p class="textbody">Displays the fore draft value against time</p>
+          <p class="textbody">Displays the fore draft value against time.</p>
         </td>
       </tr>
       <tr>
@@ -139,7 +149,7 @@
           <p class="textbody">Aft draft</p>
         </td>
         <td>
-          <p class="textbody">Displays the after draft value against time</p>
+          <p class="textbody">Displays the after draft value against time.</p>
         </td>
       </tr>
       <tr>
@@ -147,7 +157,7 @@
           <p class="textbody">Trim</p>
         </td>
         <td>
-          <p class="textbody">Displays the trim value against time</p>
+          <p class="textbody">Displays the trim value against time.</p>
         </td>
       </tr>
       <tr>
@@ -171,7 +181,7 @@
           <p class="textbody">Max Shearing Force</p>
         </td>
         <td>
-          <p class="textbody">Displays the maximum shearing force against time</p>
+          <p class="textbody">Displays the maximum shearing force against time.</p>
         </td>
       </tr>
       <tr>
@@ -179,14 +189,22 @@
           <p class="textbody"> Max Bending Force</p>
         </td>
         <td>
-          <p class="textbody">Displays the max bending force against time.</p>
+          <p class="textbody">Displays the maximum bending force against time.</p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">Mouse hover anywhere on the table to view the stability parameters at that point.<br/>
-    <img class="image-full" src="Images/Loading Sequence/stability-parameters.jpg"/>
+  <p class="textbody">Mouse hover on the table to view the stability parameters at that point.<br/>
+    <img class="image-full" src="Images/discharging-sequence/stability-parameters.png"/>
   </p>
+  <p class="textbody"><strong>Related Topics </strong></p>
+  <ul class="bullets">
+    <li class="textbody"><a href="discharging-information.htm">Discharging Information</a></li>
+    <li class="textbody"><strong></strong><a href="discharging-instructions.htm">Discharging Instructions</a></li>
+    <li class="textbody"><a href="generate-discharging-plan.htm">Generate Sequence and Plan</a></li>
+    <li class="textbody"><a href="discharging-plan.htm">Discharging Plan</a></li>
+  </ul>
+  <p class="textbody"> </p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>

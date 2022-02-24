@@ -36,28 +36,28 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Cargo Nomination</h1>
-  <p class="textbody">The <span style="font-weight:bold;">CARGO NOMINATION </span>tab displays the planned quantity of the cargoes to be loaded at each port during the voyage. The overall loadable quantity of the cargoes must be within the tolerance limit. </p>
+  <h4 id="h">Cargo Nomination</h4>
+  <p class="textbody">The <span style="font-weight:bold;">Cargo Nomination </span>tab displays the planned quantity of the cargo to be loaded at each port during the voyage. The overall loadable quantity of the cargo must be within the tolerance limit. </p>
   <p class="textbody"><img class="image-full" src="Images/cargo-nomination/cargo nomination tab.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">CARGO NOMINATION</span> tab includes the following fields to capture the cargo details during the loadable study stage:</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <p class="textbody">The <span style="font-weight:bold;">Cargo Nomination</span> tab includes the following fields to capture the cargo details during the loadable study stage:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
+    </thead>
+    <tbody>
+      <tr>
         <td>Field</td>
         <td>Description</td>
       </tr>
-    </thead>
-    <tbody>
       <tr>
         <td>
           <p class="textbody">Loadable Quantity</p>
         </td>
         <td>
-          <p class="textbody"> The maximum quantity of cargo that can be loaded to the vessel</p>
+          <p class="textbody">Displays the maximum quantity of cargo that can be loaded into the vessel.</p>
         </td>
       </tr>
       <tr>
@@ -65,7 +65,18 @@
           <p class="textbody">Unit</p>
         </td>
         <td>
-          <p class="textbody">The Unit drop-down list allows the user to change the unit of the cargoes.</p>
+          <p class="textbody"><span>From the <strong>Unit</strong> drop-down, select the required unit. The available options are:</span></p>
+          <ul class="bullets">
+            <li class="textbody"><span>BBLS </span></li>
+            <li class="textbody"><span>MT</span></li>
+            <li class="textbody"><span>KL</span></li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>Add Cargo</td>
+        <td>
+          <p class="textbody">Click <span style="font-weight:bold;">Add Cargo</span> to add up to seven cargoes for the loading operation. For more information, see <a href="add-cargo.htm">Add Cargo</a>.</p>
         </td>
       </tr>
       <tr>
@@ -73,15 +84,7 @@
           <p class="textbody">Commingle</p>
         </td>
         <td>
-          <p class="textbody">Click <span style="font-weight:bold;">Commingle </span>to enter the details of commingle cargoes. For more information, see <a href="commingle.htm">Commingle</a>.</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p class="textbody">Add Cargo</p>
-        </td>
-        <td>
-          <p class="textbody">Click <span style="font-weight:bold;">Add Cargo</span> to add up to seven cargoes for the loading operation. For more information, see <a href="add-cargo.htm">Add Cargo</a>.</p>
+          <p class="textbody">Click <span style="font-weight:bold;">Commingle </span>to enter the details of commingling cargoes. For more information, see <a href="commingle.htm">Commingle</a>.</p>
         </td>
       </tr>
       <tr>
@@ -89,8 +92,7 @@
           <p class="textbody">Rules</p>
         </td>
         <td>
-          <p class="textbody">This field allows the user to enable or disable the applicable rules listed against the selected loadable study. The user can also edit specific values against different rules. </p>
-          <p class="textbody">The rules are updated from the <span style="font-weight:bold;">Manage Rules</span> section under the <span style="font-weight:bold;">Admin </span>menu. </p>
+          <p class="textbody">Click <strong>Rules</strong> to enable or disable the applicable rules listed against the selected loadable study. The user can also edit specific values against different rules. The rules are updated from the <span style="font-weight:bold;">Manage Rules </span>section  under <span style="font-weight:bold;">Admin</span>. </p>
         </td>
       </tr>
       <tr>
@@ -98,25 +100,24 @@
           <p class="textbody">First Discharge Port</p>
         </td>
         <td>
-          <p class="textbody">This drop-down allows the user to select the first port to discharge the cargo.</p>
-          <p class="textbody">This data is used to auto-calculate the cargo allocation in slop tanks while generating an optimal loadable plan. </p>
+          <p class="textbody">From the drop-down, select the first port to discharge the cargo. This data is used to auto-calculate the cargo allocation in slop tanks while generating an optimal loadable plan. </p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">To complete the cargo nomination stage, perform the following steps:</p>
+  <p class="textbody">Perform the following steps to complete the cargo nomination stage:</p>
   <ol class="numberlist">
-    <li class="textbody">From the <span style="font-weight:bold;">Loadable Study</span> page, select the required loadable study and navigate to the respective <span style="font-weight:bold;">CARGO NOMINATION </span>tab. <br/>
-      <img class="image-full" src="Images/cargo-nomination/cargo nomination tab.png"/>
+    <li class="textbody">From the <span style="font-weight:bold;">Loadable Study</span> page, select the required loadable study and navigate to the respective <span style="font-weight:bold;">Cargo Nomination</span><span style="font-weight:bold;"> </span>tab. <br/>
+      <img class="image-full" height="659" src="Images/cargo-nomination/cargo nomination tab.png" width="1368"/>
     </li>
-    <li class="textbody">Click <span style="font-weight:bold;">Add Cargo</span> to add the cargo details. It is possible to add up to seven cargoes. For more details, see <a href="add-cargo.htm">Add Cargo</a>.<br/>
-      <img class="image-full" src="Images/cargo-nomination/add cargo fields.png"/>
+    <li class="textbody">Click <span style="font-weight:bold;">Add Cargo</span> to add the cargo details. It is possible to add up to seven cargoes. For more information, see <a href="add-cargo.htm">Add Cargo</a>.<br/>
+      <img class="image-full" src="Images/cargo-nomination/add cargo fields.png" style="border-width: 0px; border-style: solid; border-color: rgb(128, 128, 128);"/>
     </li>
     <li class="textbody">Click <span style="font-weight:bold;">Commingle </span>to add the commingle cargo details, if applicable. <br/>
-      <img class="image-full" height="659" src="Images/cargo-nomination/commingle.png" width="1368"/><br/>
-      The <span style="font-weight:bold;">COMMINGLE CARGO</span> pop-up appears. Enter the details in the corresponding fields and click <span style="font-weight:bold;">Save </span>to save the commingle cargo details. <br/>
+      <img class="image-full" height="659" src="Images/cargo-nomination/commingle.png" style="border-width: 1px; border-color: rgb(128, 128, 128);" width="1368"/><br/>
+      The <span style="font-weight:bold;">Commingle Cargo</span> pop-up appears. Enter the details in the corresponding fields and click <span style="font-weight:bold;">Save </span>to save the commingle cargo details. <br/>
       <img class="medium-400" src="Images/cargo-nomination/commingle cargo popup.png"/><br/>
-      For more details, see <a href="commingle.htm">Commingle</a>.
+      For more information, see <a href="commingle.htm">Commingle</a>.
     </li>
     <li class="textbody">From the <span style="font-weight:bold;">First Discharge Port</span> drop-down, select the first discharge port. <br/>
       <img class="image-full" src="Images/cargo-nomination/first discharge port.png"/><br/>
@@ -124,11 +125,18 @@
     </li>
     <li class="textbody">From the <span style="font-weight:bold;">Cargo to discharge first</span> drop-down, select the first cargo to discharge at the selected port if required. <br/>
       <img class="image-full" src="Images/cargo-nomination/cargo to discharge first.png"/><br/>
-      Once the user enters all the required details, the status of <span style="font-weight:bold;">CARGO NOMINATION </span>becomes <span style="font-weight:bold;">COMPLETE.</span><br/>
-      <img class="image-full" height="659" src="Images/cargo-nomination/status change to complete.png" width="1368"/>
-      <p class="note">The user can proceed to the <span style="font-weight:bold;">PORT </span>tab only when the status of <span style="font-weight:bold;">CARGO NOMINATION</span> becomes <span style="font-weight:bold;">COMPLETE</span>. </p>
+      The status of <span style="font-weight:bold;"><span style="font-weight:bold;">Cargo Nomination</span> </span>displays <span style="font-weight:bold;">COMPLETE.</span><br/>
+      <img class="image-full" height="659" src="Images/cargo-nomination/status change to complete.png" style="cursor: nesw-resize;" width="1368"/>
+      <p class="note">The user can proceed to the <span style="font-weight:bold;">Port </span>tab only when the status of <span style="font-weight:bold;">Cargo Nomination</span> displays <span style="font-weight:bold;">COMPLETE</span>. </p>
     </li>
   </ol>
+  <p class="textbody"><strong>Related Topics</strong> </p>
+  <ul class="bullets">
+    <li class="textbody"><a href="port.htm">Port Rotation</a></li>
+    <li class="textbody"><a href="on-hand-quantities.htm">On Hand Quantities (OHQ)</a></li>
+    <li class="textbody"><a href="on-board-quantities.htm">On Board Quantities (OBQ)</a></li>
+  </ul>
+  <p> </p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
@@ -142,7 +150,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "3.1.2.1"
+    gTopicId = "4.1.2.1"
   
 //]]></script>
 

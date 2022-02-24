@@ -1,1 +1,1 @@
-(function() {    var toc =  [{"name":"Delete Port","type":"item","tilePath":"","description":"","url":"delete-port.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();
+(function() {    var toc =  [{"name":"Add Port","type":"item","tilePath":"","description":"","url":"add-port.htm"},{"name":"Delete Port","type":"item","tilePath":"","description":"","url":"delete-port.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();

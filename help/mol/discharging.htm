@@ -36,12 +36,13 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1 id="h">Discharging</h1>
-  <p class="textbody">Discharging provides a set of operations for every active voyage while discharging the cargo. Separate discharging plans are generated for each discharge port in a voyage as soon as the discharge details are confirmed. The Discharging Plan is finalized based on a mutual agreement with the terminal authorities. This mutual agreement allows the terminal authorities to receive the cargo by making the tanks available for discharging operation to avoid unnecessary delay and waiting time.<span style="color:#ff0000;"></span><br/>
-    To access <strong>Discharging</strong>, from the menu bar, click <strong>Operations </strong>&gt; <strong>Discharging</strong>.<br/>
+  <h2 id="h">Discharging</h2>
+  <p class="textbody">Discharging provides a set of operations for every active voyage while discharging the cargo. Separate discharging plans are generated for each discharge port in a voyage as soon as the discharge details are confirmed. The Discharging Plan is finalized based on a mutual agreement with the terminal authorities. This mutual agreement allows the terminal authorities to receive the cargo by making the tanks available for discharging operation to avoid unnecessary delay and waiting time.<span style="color:#ff0000;"></span></p>
+  <p class="textbody">To access <strong>Discharging</strong>, from the menu bar, click <strong>Operations</strong>. Select the specific discharging port from the port ribbon. The discharging ports are indicated with the letter &#39;D&#39;.<br/>
     The following page appears:<br/>
-    (img)<br/>
-    The page displays the following details about the active voyage:</p>
+    <img class="image-full" src="Images/discharging/home-page.png"/><br/>
+    The page displays the following details about the active voyage:
+  </p>
   <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse">
     <colgroup>
       <col/>
@@ -59,7 +60,7 @@
           <p class="textbody"><span>Vessel Name</span></p>
         </td>
         <td>
-          <p class="textbody"><span>Displays the name of the vessel involved in the current voyage.</span></p>
+          <p class="textbody"><span>Displays the name of the vessel involved in the active voyage.</span></p>
         </td>
       </tr>
       <tr>
@@ -67,12 +68,12 @@
           <p class="textbody"><span>Voyage Number</span></p>
         </td>
         <td>
-          <p class="textbody"><span>Displays the unique voyage number corresponding to the current voyage. To view the details of another voyage on the dashboard, select the respective voyage number from the <strong>Voyage </strong>drop-down. </span></p>
+          <p class="textbody"><span>Displays the unique voyage number corresponding to the active voyage. To view the details of another voyage on the dashboard, select the respective voyage number from the <strong>Voyage </strong>drop-down. </span></p>
         </td>
       </tr>
       <tr>
         <td>
-          <p class="textbody"><span style="color:#ff0000;">Unit</span></p>
+          <p class="textbody"><span style="color:#000000;">Unit</span></p>
         </td>
         <td>
           <p class="textbody"><span>From the drop-down, select the required unit. The available options are:</span></p>
@@ -88,28 +89,29 @@
           <p class="textbody"><span>Port Ribbon</span></p>
         </td>
         <td>
-          <p class="textbody"><span>Displays the loading and discharging ports involved in the current voyage. </span></p>
+          <p class="textbody"><span>Displays the loading and discharging ports involved in the active voyage. <span>The loading ports are indicated with the letter &#39;L&#39;, and the discharge ports are indicated with &#39;D&#39;.</span></span></p>
         </td>
       </tr>
       <tr>
         <td>
-          <p class="textbody"><span style="color:#ff0000;">Rules</span></p>
+          <p class="textbody"><span style="color:#000000;">Rules</span></p>
         </td>
         <td>
-          <p class="textbody"><span><span style="color:#000000;">Click <strong>Rules </strong>to view and edit the pop-up. The<span> pop-up displays a set of value limitations followed for the stability parameters like draft, trim, lift, and so on. </span><span>The values are configured in <strong>Admin</strong>.<span style="color:#000000;"> For more information, see <span style="color:#ff0000;">Admin</span>.</span></span></span></span></p>
+          <p class="textbody">Click <strong>Rules </strong>to view and edit the pop-up. The pop-up displays a set of rules for the stability parameters like draft, trim, lift, shearing force, and bending force. The user can edit the rules for a specific voyage to reflect them on the plan. The predefined values appearing on the pop-up are configured in <strong>Admin</strong><strong>.</strong> </p>
         </td>
       </tr>
     </tbody>
   </table>
-  <h1 id="h">Tabs in Discharging Operation</h1>
+  <h2 class="h2Topic" id="h">Manage Discharging Operation</h2>
   <p class="textbody">The Discharging Operation phase has five tabs:</p>
   <ul class="bullets">
-    <li class="textbody"><strong>Discharging Information</strong> – Displays the various vessel parameters and cargo details of the active voyage, specific to the discharge process. For more information, see <span style="color:#ff0000;"><a href="discharging-information.htm#h">Discharging Information</a></span>.</li>
-    <li class="textbody"><strong>Discharging Instructions</strong> – Displays a set of discharging instructions on the generated discharging plan so that while executing the plan, the operators can consider these instructions for safe and efficient operation. For more information, see <span style="color:#ff0000;"><a href="discharging-instructions.htm#h">Discharging Instructions</a></span>.</li>
-    <li class="textbody"><strong>Discharging Plan </strong>– Generates the discharging plan. For more information, see <span style="color:#ff0000;"><a href="generate-discharge-plan.htm#h">Generate Discharge Plan</a></span>.</li>
-    <li class="textbody"><strong>Discharging Sequence</strong> – Displays the sequence of discharging of each cargo. For more information, see <span style="color:#ff0000;"><a href="discharging-sequence.htm#h">Discharging Sequence</a></span>.</li>
-    <li class="textbody"><strong>Discharging Plan </strong>– Displays the vessel parameters and cargo details that the user specified in the <strong>Discharging Information</strong> tab. For more information, see <span style="color:#ff0000;"><a href="discharging-plan.htm#h">Discharging Plan</a></span>.</li>
+    <li class="textbody"><strong>Discharging Information</strong> – Displays the various vessel parameters and cargo details of the active voyage, specific to the discharging process. For more information, see <span style="color:#ff0000;"><a href="discharging-information.htm">Discharging Information</a></span>.</li>
+    <li class="textbody"><strong>Discharging Instructions</strong> – Displays a set of discharging instructions on the generated discharging plan so that while executing the plan, the operators can consider these instructions for safe and efficient operation. For more information, see <span style="color:#ff0000;"><a href="discharging-instructions.htm">Discharging Instructions</a></span>.</li>
+    <li class="textbody"><strong>Discharging Plan </strong>– Generates the discharging plan. For more information, see <span style="color:#ff0000;"><a href="generate-discharging-plan.htm">Generate Sequence and Plan</a></span>.</li>
+    <li class="textbody"><strong>Discharging Sequence</strong> – Displays the sequence of discharging of each cargo. For more information, see <span style="color:#ff0000;"><a href="discharging-sequence.htm">Discharging Sequence</a></span>.</li>
+    <li class="textbody"><strong>Discharging Plan </strong>– Displays the vessel parameters and cargo details that the user specified in the <strong>Discharging Information</strong> tab. For more information, see <span style="color:#ff0000;"><a href="discharging-plan.htm">Discharging Plan</a></span>.</li>
   </ul>
+  <p class="textbody"> </p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>

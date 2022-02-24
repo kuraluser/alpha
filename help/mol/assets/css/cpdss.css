@@ -17,6 +17,16 @@
 }
 .RH-LAYOUT-CENTERPANEL-topic-box h2, .RH-LAYOUT-FOOTER-container h2 {
   font-weight: bold;
+  font-size: 32px;
+  font-family: Lato;
+  color: #005199;
+  margin-top: 0px;
+  margin-bottom: 13px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+.RH-LAYOUT-CENTERPANEL-topic-box h2.h2Topic, .RH-LAYOUT-FOOTER-container h2.h2Topic {
+  font-weight: bold;
   font-size: 30px;
   font-family: Lato;
   color: #0c5a9a;
@@ -27,36 +37,83 @@
 }
 .RH-LAYOUT-CENTERPANEL-topic-box h3, .RH-LAYOUT-FOOTER-container h3 {
   font-weight: bold;
-  font-size: 28px;
+  font-size: 32px;
   font-family: Lato;
-  color: #0058A9;
-  padding-bottom: 0px;
-  margin-top: 12px;
-  margin-bottom: 10px;
+  color: #005199;
+  margin-top: 0px;
+  margin-bottom: 13px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+.RH-LAYOUT-CENTERPANEL-topic-box h3.h3Topic, .RH-LAYOUT-FOOTER-container h3.h3Topic {
+  font-weight: bold;
+  font-size: 30px;
+  font-family: Lato;
+  color: #0c5a9a;
+  padding-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 15px;
 }
 .RH-LAYOUT-CENTERPANEL-topic-box h4, .RH-LAYOUT-FOOTER-container h4 {
   font-weight: bold;
-  font-size: 26px;
+  font-size: 32px;
   font-family: Lato;
-  color: #095697;
+  color: #005199;
   padding-top: 15px;
   padding-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 13px;
+}
+.RH-LAYOUT-CENTERPANEL-topic-box h4.h4Topic, .RH-LAYOUT-FOOTER-container h4.h4Topic {
+  font-weight: bold;
+  font-size: 30px;
+  font-family: Lato;
+  color: #0c5a9a;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 .RH-LAYOUT-CENTERPANEL-topic-box h5, .RH-LAYOUT-FOOTER-container h5 {
   font-weight: bold;
-  font-size: 24px;
+  font-size: 32px;
   font-family: Lato;
-  color: #003580;
+  color: #005199;
   padding-top: 15px;
   padding-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 13px;
+}
+.RH-LAYOUT-CENTERPANEL-topic-box h5.h5Topic, .RH-LAYOUT-FOOTER-container h5.h5Topic {
+  font-weight: bold;
+  font-size: 30px;
+  font-family: Lato;
+  color: #0c5a9a;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 .RH-LAYOUT-CENTERPANEL-topic-box h6, .RH-LAYOUT-FOOTER-container h6 {
   font-weight: bold;
-  font-size: 22px;
-  color: #006BFF;
+  font-size: 32px;
+  color: #005199;
   font-family: Lato;
   padding-top: 15px;
   padding-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 13px;
+}
+.RH-LAYOUT-CENTERPANEL-topic-box h6.h6Topic, .RH-LAYOUT-FOOTER-container h6.h6Topic {
+  font-weight: bold;
+  font-size: 30px;
+  color: #0c5a9a;
+  font-family: Lato;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 .RH-LAYOUT-CENTERPANEL-topic-box p, .RH-LAYOUT-FOOTER-container p {
   margin-top: 5px;
@@ -508,4 +565,24 @@
 }
 .RH-LAYOUT-CENTERPANEL-topic-box ol.LowerRoman, .RH-LAYOUT-FOOTER-container ol.LowerRoman {
   list-style: lower-roman;
+}
+.RH-LAYOUT-CENTERPANEL-topic-box p.GloTerm, .RH-LAYOUT-FOOTER-container p.GloTerm {
+  font-family: Lato;
+  font-size: 22px;
+  font-weight: bold;
+  color: #005199;
+  letter-spacing: 0.5px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  line-height: 1.25;
+}
+.RH-LAYOUT-CENTERPANEL-topic-box p.Glodes, .RH-LAYOUT-FOOTER-container p.Glodes {
+  font-family: Lato;
+  font-size: 15px;
+  color: #000000;
+  margin-left: 23px;
+  line-height: 1.75;
+  letter-spacing: 0.75PX;
 }

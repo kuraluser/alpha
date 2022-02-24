@@ -14,51 +14,15 @@
     </topic>
     
     <topic>
-      features-and-benefits.htm
-    </topic>
-    
-    <topic>
       getting-started.htm
     </topic>
     
     <topic>
-      understanding-menus-and-icons.htm
+      ship-employee-signin.htm
     </topic>
     
     <topic>
-      admin.htm
-    </topic>
-    
-    <topic>
-      vessel-informations.htm
-    </topic>
-    
-    <topic>
-      cargo-master.htm
-    </topic>
-    
-    <topic>
-      port-master.htm
-    </topic>
-    
-    <topic>
-      user-role-permission.htm
-    </topic>
-    
-    <topic>
-      user.htm
-    </topic>
-    
-    <topic>
-      charter.htm
-    </topic>
-    
-    <topic>
-      manage-instructions.htm
-    </topic>
-    
-    <topic>
-      manage-rule.htm
+      shore-employee-signin.htm
     </topic>
     
     <topic>
@@ -70,7 +34,19 @@
     </topic>
     
     <topic>
+      voyages.htm
+    </topic>
+    
+    <topic>
       new-voyage.htm
+    </topic>
+    
+    <topic>
+      start-stop-a-voyage.htm
+    </topic>
+    
+    <topic>
+      stop-voyage.htm
     </topic>
     
     <topic>
@@ -270,18 +246,6 @@
     </topic>
     
     <topic>
-      voyages.htm
-    </topic>
-    
-    <topic>
-      start-stop-a-voyage.htm
-    </topic>
-    
-    <topic>
-      stop-voyage.htm
-    </topic>
-    
-    <topic>
       synoptical.htm
     </topic>
     
@@ -414,7 +378,7 @@
     </topic>
     
     <topic>
-      planned-cargo.htm
+      cargo-to-discharged.htm
     </topic>
     
     <topic>
@@ -458,6 +422,14 @@
     </topic>
     
     <topic>
+      arrival-departure-discharging.htm
+    </topic>
+    
+    <topic>
+      update-ullage-discharging.htm
+    </topic>
+    
+    <topic>
       files-repository.htm
     </topic>
     
@@ -475,6 +447,26 @@
     
     <topic>
       delete-file.htm
+    </topic>
+    
+    <topic>
+      features-and-benefits.htm
+    </topic>
+    
+    <topic>
+      understanding-menus-and-icons.htm
+    </topic>
+    
+    <topic>
+      online-help.htm
+    </topic>
+    
+    <topic>
+      browser-zoom.htm
+    </topic>
+    
+    <topic>
+      glossary.htm
     </topic>
     
   </topiclist>

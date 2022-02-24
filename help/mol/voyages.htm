@@ -14,7 +14,7 @@
   <title>Voyages</title>
   <meta name="topic-status" content="Draft"/>
   <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
-<meta name="brsnext" value="start-stop-a-voyage.htm"/><meta name="brsprev" value="confirm-discharge-plan.htm"/></head>
+<meta name="brsnext" value="new-voyage.htm"/><meta name="brsprev" value="dashboard-new.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -36,10 +36,10 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Voyages</h1>
-  <p class="textbody">The <b>VOYAGES </b>page displays the details of all the open, closed, and active voyages based on the data mapped against each voyage. The new voyages created are automatically updated on the <b>VOYAGE LIST </b>table. </p>
+  <h1 id="h">Voyages</h1>
+  <p class="textbody">The <b>Voyages </b>page displays the details of all the open, closed, and active voyages based on the data mapped against each voyage. The new voyages created are automatically updated on the <strong>Voyage List</strong><b> </b>table. </p>
   <p class="textbody"><img class="image-full" height="556" src="Images/Voyages/Voyages Page.png" style="cursor: nwse-resize;" width="1413"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">VOYAGE LIST</span> table displays the following details of each voyage:</p>
+  <p class="textbody">The <span style="font-weight:bold;"><strong>Voyage List</strong></span> table displays the following details of each voyage:</p>
   <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
@@ -57,7 +57,7 @@
           <p class="textbody">Voyage No</p>
         </td>
         <td>
-          <p class="textbody">The unique voyage number corresponding to each voyage.</p>
+          <p class="textbody">Displays the unique voyage number corresponding to each voyage.</p>
         </td>
       </tr>
       <tr>
@@ -65,7 +65,7 @@
           <p class="textbody">Charterer</p>
         </td>
         <td>
-          <p class="textbody">The name of the charterer.</p>
+          <p class="textbody">Displays the name of the charterer.</p>
         </td>
       </tr>
       <tr>
@@ -73,7 +73,7 @@
           <p class="textbody">Planned Start Date</p>
         </td>
         <td>
-          <p class="textbody">The planned start date of the voyage.</p>
+          <p class="textbody">Displays the planned start date of the voyage.</p>
         </td>
       </tr>
       <tr>
@@ -81,7 +81,7 @@
           <p class="textbody">Planned End Date</p>
         </td>
         <td>
-          <p class="textbody">The planned end date of the voyage.</p>
+          <p class="textbody">Displays the planned end date of the voyage.</p>
         </td>
       </tr>
       <tr>
@@ -89,7 +89,7 @@
           <p class="textbody">Actual Start Date</p>
         </td>
         <td>
-          <p class="textbody">The actual start date of the voyage. This is the arrival date of the vessel at the first port.</p>
+          <p class="textbody">Displays the departure date from the last port of the previous voyage.</p>
         </td>
       </tr>
       <tr>
@@ -97,7 +97,7 @@
           <p class="textbody">Actual End Date</p>
         </td>
         <td>
-          <p class="textbody">The actual end date of the voyage. This is the departure date of the vessel from the last port.</p>
+          <p class="textbody">Displays the actual end date of the voyage. </p>
         </td>
       </tr>
       <tr>
@@ -105,7 +105,7 @@
           <p class="textbody">Loading Ports</p>
         </td>
         <td>
-          <p class="textbody">The loading ports mapped against the voyage in the respective confirmed loadable study.</p>
+          <p class="textbody">Displays the loading ports mapped against the voyage in the respective confirmed loadable study.</p>
         </td>
       </tr>
       <tr>
@@ -113,7 +113,7 @@
           <p class="textbody">Discharging Ports</p>
         </td>
         <td>
-          <p class="textbody">The discharging ports mapped against the voyage in the respective confirmed discharge study.</p>
+          <p class="textbody">Displays the discharging ports mapped against the voyage in the respective confirmed discharge study.</p>
         </td>
       </tr>
       <tr>
@@ -121,7 +121,7 @@
           <p class="textbody">Cargo Loaded</p>
         </td>
         <td>
-          <p class="textbody">The cargoes included in the confirmed loadable study of the voyage.</p>
+          <p class="textbody">Displays the cargoes included in the confirmed loadable study of the voyage.</p>
         </td>
       </tr>
       <tr>
@@ -129,8 +129,7 @@
           <p class="textbody">Status</p>
         </td>
         <td>
-          <p class="textbody">The current status of the voyage. The status options include Active, Open, and Closed.</p>
-          <p class="textbody">There must be only one active voyage at a time.</p>
+          <p class="textbody">Displays the status of the voyage. The status options include <strong>Active</strong>, <strong>Open</strong>, and <strong>Closed</strong>. There must be only one active voyage at a time.</p>
         </td>
       </tr>
       <tr>
@@ -138,25 +137,22 @@
           <p class="textbody">Actions</p>
         </td>
         <td>
-          <p class="textbody">The <span style="font-weight:bold;">Actions </span>column allows the user start or end a voyage manually.</p>
-          <p class="textbody">For more information, see <a href="start-stop-a-voyage.htm">Start Voyage</a> and <a href="stop-voyage.htm">Stop Voyage</a>.</p>
+          <p class="textbody">Displays the <span style="font-weight:bold;">Actions </span>column allows the user to start or end a voyage manually. For more information, see <a href="start-stop-a-voyage.htm">Start Voyage</a> and <a href="stop-voyage.htm">Stop Voyage</a>.</p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">The sort and search options on each column allows the user to customize the <span style="font-weight:bold;"><span style="font-weight:bold;">VOYAGE LIST</span> </span>table data view.<br/>
+  <p class="textbody">Each column&#39;s sort and search options allow the user to narrow down the search result based on the selected criteria in the <strong>Voyage List</strong> table.<br/>
     <img class="image-full" src="Images/Voyages/Search and Filter Voyage List.png"/>
   </p>
-  <p class="textbody">To search the table based on the actual start date, select the date filter on the top of the <span style="font-weight:bold;"><span style="font-weight:bold;">VOYAGE LIST</span> </span>table.</p>
+  <p class="textbody">To search the table based on the actual start date, select the date filter on the top of the <span style="font-weight:bold;"><span style="font-weight:bold;"><span style="font-weight:bold;"><strong>Voyage List</strong></span></span> </span>table.</p>
   <p class="textbody"><img class="image-full" src="Images/Voyages/filter.png"/></p>
-  <p class="textbody">Pagination functionality is available for the user to navigate to the next and previous pages. </p>
-  <p class="textbody"><img class="image-full" src="Images/Voyages/PAGINATION precise view.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
-  <p class="textbody">The user can configure the number of voyages to be displayed on the page by selecting the required option from the drop-down list.</p>
-  <p class="textbody"><img class="image-full" src="Images/Voyages/page number configure.png"/></p>
-  <p class="textbody">The user can only manually start or stop a voyage from the <b>VOYAGE LIST </b>table. The current status of the voyages is updated based on the selected action. For more information, see <a href="start-stop-a-voyage.htm">Start Voyage</a> and <a href="stop-voyage.htm">Stop Voyage</a>.<img class="image-full" src="Images/Voyages/Start Stop Voyage.png" style="cursor: nwse-resize;"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">Create New Voyage</span> option allows the user to create a new voyage from the <span style="font-weight:bold;">VOYAGES </span>page. </p>
-  <p class="textbody"><img class="image-full" src="Images/Voyages/create new voyage.png"/></p>
-  <p class="textbody">For more information, see <a href="new-voyage.htm">New Voyage</a>.</p>
+  <p class="textbody">The application allows the user to set the number of entries displayed on the page. It also displays the total number of entries on the page. Pagination functionality is available to navigate to the next and previous pages.</p>
+  <p class="textbody"><img src="Images/Voyages/PAGINATION.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
+  <p class="textbody">The user can manually start or stop a voyage from the <b><span style="font-weight:bold;"><strong>Voyage List</strong></span> </b>table. The status of the voyages is updated based on the selected action. For more information, see <a href="start-stop-a-voyage.htm">Start Voyage</a> and <a href="stop-voyage.htm">Stop Voyage</a>.<img class="image-full" src="Images/Voyages/Start Stop Voyage.png" style="cursor: nwse-resize;"/></p>
+  <p class="textbody">The <span style="font-weight:bold;">Create New Voyage</span> option allows the user to create a voyage from the <span style="font-weight:bold;"><span style="font-weight:bold;"><strong>Voyages </strong></span></span>page. </p>
+  <p class="textbody"><img class="image-full" src="Images/Voyages/create new voyage.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
+  <p class="textbody">For more information, see <a href="new-voyage.htm">Create New Voyage</a>.</p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
@@ -170,7 +166,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "4"
+    gTopicId = "3"
   
 //]]></script>
 

@@ -11,9 +11,10 @@
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <meta name="generator" content="Adobe RoboHelp 2020"/>
-  <title>Generate Discharge Plan</title>
+  <title>Generate Discharge Study Plan</title>
   <meta name="topic-status" content="Draft"/>
-<link rel="stylesheet" type="text/css" href="assets/css/default.css"/><meta name="brsnext" value="view-discharge-plan.htm"/><meta name="brsprev" value="back-loading-discharge-study.htm"/></head>
+  <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
+<meta name="brsnext" value="view-discharge-plan.htm"/><meta name="brsprev" value="delete-back-loading.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -35,8 +36,23 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Generate Discharge Plan</h1>
-  <p></p>
+  <h3 id="h">Generate Discharge Study Plan</h3>
+  <p class="textbody">The CP-DSS application generates the discharge study plan suggested by the algorithm satisfying all the given constraints for the active voyage. The application uses the following details to generate the discharge study plan:</p>
+  <ul class="bullets">
+    <li class="textbody">Cargo Nomination</li>
+    <li class="textbody">Port Rotation</li>
+    <li class="textbody">OHQ</li>
+    <li class="textbody">Discharge Study</li>
+  </ul>
+  <p class="textbody">For more information, see <a href="discharge-study-stages.htm">Discharge Study Details</a>.</p>
+  <p class="note">The user can only create a discharge study plan for the active voyage. The cargo details are fetched from the confirmed loadable study of the respective voyage. </p>
+  <p class="textbody">Click <span style="font-weight:bold;">Generate Plan </span>to generate the discharge study plan. <img class="image-full" src="Images/discharge-study/generate discharge plan.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128); cursor: nesw-resize;"/><br/>
+    The application displays the following message:<br/>
+    <img class="image-pop-up" src="Images/generate-loading-plan/message.jpg"/><br/>
+    The status of the Discharge Study displays <span style="font-weight:bold;">Algo Processing Started </span>from <span style="font-weight:bold;">Pending</span>. <img class="image-full" src="Images/discharge-study/status - algo processing started.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/>
+  </p>
+  <p class="textbody">The status of the Discharge Study displays <span style="font-weight:bold;">Plan Generated</span><span style="font-weight:bold;"> </span>when the discharge study plan is generated. For more information, see <a href="discharge-study-status.htm">Discharge Study Status</a>.</p>
+  <p class="textbody"><img class="image-full" src="Images/discharge-study/status-plan-generated.png"/></p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
@@ -50,7 +66,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "3.2.3"
+    gTopicId = "4.2.2_1"
   
 //]]></script>
 

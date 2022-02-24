@@ -36,37 +36,44 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Loadable Study Status</h1>
-  <p class="textbody">There are five different options to indicate the current status of a loadable study. The current status of the loadable study determines the operations the user can perfom against the repsective loadable study. The available loadable operations are:</p>
+  <h3 id="h">Loadable Study Status</h3>
+  <p class="textbody">There are five different options to indicate the status of a loadable study. The loadable study status options are:</p>
   <ul class="bullets">
-    <li class="textbody">Edit loadable study</li>
-    <li class="textbody">Duplicate loadable study</li>
-    <li class="textbody">Delete loadable study</li>
+    <li class="textbody">Pending</li>
+    <li class="textbody">ALGO Processing Started</li>
+    <li class="textbody">Error Occurred</li>
+    <li class="textbody">Plan Generated</li>
+    <li class="textbody">Confirmed</li>
   </ul>
-  <p class="textbody">Each loadable study status is indicated by its respective symbol. The loadable study status options and the respective symbols are:</p>
-  <p class="textbody"><img src="assets/images/image3.png" style="cursor: nesw-resize;"/> - Pending</p>
-  <p class="textbody"><img src="assets/images/image9.png"/> - ALGO Processing Started</p>
-  <p class="textbody"><img src="assets/images/image5.png" style="cursor: nwse-resize;"/> - Error Occured</p>
-  <p class="textbody"><img src="assets/images/image4.png"/> - Plan Generated</p>
-  <p class="textbody"><img src="assets/images/image10.png"/> - Confirmed</p>
-  <p class="textbody"><span style="font-weight:bold;">Pending </span>- This status appears against the loadable studies for which the user has not completed all or any of the four loadable study stages including cargo nomination, port rotation, on hand quantities, and on board quantities.</p>
-  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/pending.png"/></p>
-  <p class="textbody">The user is allowed to initiate the loadable pattern generation only when all the four loadable study stages are completed. The loadable operations allowed in this case are edit, delete, and duplicate.</p>
-  <p class="textbody"><span style="font-weight:bold;">ALGO Processing Started</span> - This status appears against the loadable studies for which the user has completed all four cargo planning stages and initiated the loadable pattern generation process.</p>
+  <p class="textbody">The  status of the loadable study determines the operations the user can perform against the respective loadable study. The available loadable operations are:</p>
+  <ul class="bullets">
+    <li class="textbody">Edit loadable study - This option allows the user to edit an existing loadable study. For more information, see <a href="edit-loadable-study.htm">Edit Loadable Study</a>.</li>
+    <li class="textbody">Duplicate loadable study - This option allows the user to duplicate an existing loadable study. For more information, see <a href="duplicate-loadable-study.htm">Duplicate Loadable Study</a>.</li>
+    <li class="textbody">Delete loadable study - This option allows the user to delete an existing loadable study. For more information, see <a href="delete-loadable-study.htm">Delete Loadable Study</a>.</li>
+  </ul>
+  <p class="textbody">Each loadable study status is indicated by its respective symbol. The legends used to indicate different statuses of loadable study and its description are:</p>
+  <p class="textbody"><img src="assets/images/image3.png" style="cursor: nesw-resize; border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/> - <strong>Pending</strong></p>
+  <p class="textbody">This status appears against the loadable studies for which the user has not completed all or any of the four loadable study stages, including cargo nomination, port rotation, on hand quantities, and on board quantities.</p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/pending.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
+  <p class="textbody">The user can initiate the loadable pattern generation only when all the four loadable study stages are completed. The loadable operations allowed in this case are edit, delete, and duplicate.</p>
+  <p class="textbody"><img height="20" src="assets/images/image9.png" style="border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080" width="23"/> - <strong>ALGO Processing Started</strong></p>
+  <p class="textbody">This status appears against the loadable studies for which the user has completed all four cargo planning stages and initiated the loadable pattern generation process.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-study-status/algo processing started.png"/></p>
-  <p class="textbody">No loadable operations are allowed in this stage. </p>
-  <p class="textbody"><span style="font-weight:bold;">Error Occured</span> - This status appears against the loadable studies for which Loadicator confronts errors during the algo processing stage.</p>
-  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/error occured.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">View Error </span>option on the loadable study page allows the user to view the errors occured during the algo processing and edit the loadable study accordingly.</p>
+  <p class="textbody">No loadable operations are allowed in the loadable pattern generation stage. </p>
+  <p class="textbody"><img src="assets/images/image5.png" style="cursor: nwse-resize;border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080"/> - <strong>Error Occurred</strong></p>
+  <p class="textbody">This status appears against the loadable studies for which Loadicator confronts errors during the algorithm processing stage.</p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/error occured.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
+  <p class="textbody">The <span style="font-weight:bold;">View Error </span>option on the loadable study page allows the user to view the errors that occurred during the algorithm processing and edit the loadable study accordingly.</p>
   <p class="textbody"><img class="medium-400" src="Images/loadable-study-status/error popup.png"/></p>
-  <p class="textbody">The loadable operations allowed in this stage are Edit, Delete, and Duplicate. </p>
-  <p class="textbody"><span style="font-weight:bold;">Plan Generated</span> - This status appears against the loadable studies for which the loadable patterns are generated.</p>
-  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/plan generated.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">View Pattern</span> option allows the user to view the loadable patterns generated against the loadable study, The only loadable operation allowed in this stage is Duplicate. </p>
-  <p class="textbody"><span style="font-weight:bold;">Confirmed </span>- This status appears against the loadable studies for which a loadable plan is confirmed. </p>
-  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/confirmed.png"/></p>
+  <p class="textbody">The loadable operations allowed in this stage are <strong>Edit</strong>, <strong>Delete</strong>, and <strong>Duplicate</strong>. </p>
+  <p class="textbody"><img src="assets/images/image4.png" style="border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080"/> - <strong>Plan Generated</strong></p>
+  <p class="textbody">This status appears against the loadable studies for which the loadable patterns are generated.</p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/plan generated.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
+  <p class="textbody">The <span style="font-weight:bold;">View Pattern</span> option allows the user to view the loadable patterns generated against the loadable study. The only loadable operation allowed in this stage is <strong>Duplicate</strong>. </p>
+  <p class="textbody"><img src="assets/images/image10.png" style="border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080"/> - <strong>Confirmed</strong></p>
+  <p class="textbody">This status appears against the loadable studies for which a loadable plan is confirmed. </p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-study-status/confirmed.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
   <p class="textbody">The <span style="font-weight:bold;">View Pattern</span> option allows the user to view the loadable patterns generated against the loadable study. No loadable operations are allowed in this stage. </p>
-  <p class="textbody">For more information, see <a href="loadable-operations.htm">Loadable Operations</a>.</p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
@@ -80,7 +87,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "3.1.1_1"
+    gTopicId = "4.1.1_1"
   
 //]]></script>
 

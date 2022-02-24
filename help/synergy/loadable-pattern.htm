@@ -11,10 +11,10 @@
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <meta name="generator" content="Adobe RoboHelp 2020"/>
-  <title>Loadable Pattern</title>
+  <title>Loadable Pattern Details</title>
   <meta name="topic-status" content="Draft"/>
   <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
-<meta name="brsnext" value="loadable-plan.htm"/><meta name="brsprev" value="view-pattern.htm"/></head>
+<meta name="brsnext" value="loadable-plan.htm"/><meta name="brsprev" value="view-loadable-pattern.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -36,36 +36,37 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Loadable Pattern</h1>
+  <h3 id="h">Loadable Pattern Details</h3>
   <p class="textbody">The <span style="font-weight:bold;">LOADABLE PATTERN</span> page displays the multiple loadable patterns generated against a loadable study based on the following factors:</p>
   <ul class="bullets">
     <li class="textbody">Maximization of cargo weight or volume</li>
     <li class="textbody">Known constraints</li>
     <li class="textbody">Algorithm preferences</li>
   </ul>
-  <p class="textbody"><img class="image-full" src="Images/loadable-pattern/loadable patterns.png"/></p>
+  <p class="textbody"><img class="image-full" src="Images/loadable-pattern/loadable patterns.png" style="cursor: nwse-resize;"/></p>
+  <p class="note">The loadable patterns display the fully loaded condition of the vessel.<span style="font-weight:bold;"> </span> </p>
   <p class="textbody" style="border-width: 1px;border-color: #808080;border-left-width: 1px;border-left-color: #808080;border-top-width: 1px;border-top-color: #808080;border-right-width: 1px;border-right-color: #808080;border-bottom-width: 1px;border-bottom-color: #808080">Each loadable pattern displays the loadable cargo quantity and the details on loading order, feasible quantity, and known constraints. Evaluate all the details to select a pattern and generate an optimal loading plan. </p>
   <p class="textbody" style="border-width: 1px;border-color: #808080;border-left-width: 1px;border-left-color: #808080;border-top-width: 1px;border-top-color: #808080;border-right-width: 1px;border-right-color: #808080;border-bottom-width: 1px;border-bottom-color: #808080">Mouse hover the tank name to see the cargo allocation details of a particular tank.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-pattern/allocation details.png"/></p>
   <p class="textbody">Each loadable pattern displays the following fields:</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
-        <td>Description</td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Case</p>
         </td>
         <td>
-          <p class="textbody">The CP-DSS application displays the loadable patterns based on the case number. The case number for each loadable pattern depends on different parameters including:</p>
+          <p class="textbody">The CP-DSS application displays the loadable patterns based on the case number. The case number for each loadable pattern depends on different parameters, including:</p>
           <ul class="bullets">
             <li class="textbody">Maximum loadable quantity</li>
             <li class="textbody">Tolerance and cargo priority</li>
@@ -79,7 +80,7 @@
           <p class="textbody">Constraints</p>
         </td>
         <td>
-          <p class="textbody">This field displays the constraints related to each loadable pattern if any. If there are multiple constraints associated with a loadable pattern, it is displayed under the <span style="font-weight:bold;">More</span> section.  </p>
+          <p class="textbody">Displays the constraints related to each loadable pattern, if any. If multiple constraints are associated with a loadable pattern, it is displayed under the <span style="font-weight:bold;">More</span> section.  </p>
         </td>
       </tr>
       <tr>
@@ -87,7 +88,7 @@
           <p class="textbody">Cargo Priority</p>
         </td>
         <td>
-          <p class="textbody">This field displays the priority of cargoes based on the inputs given during the cargo nomination stage. </p>
+          <p class="textbody">Displays the priority of cargoes based on the inputs given during the<strong> Cargo Nomination</strong> stage. </p>
         </td>
       </tr>
       <tr>
@@ -95,9 +96,9 @@
           <p class="textbody">Quantity</p>
         </td>
         <td>
-          <p class="textbody">This field displays the volume of each cargo that is feasible with the respective loadable pattern. </p>
-          <p class="textbody">For commingle cargoes, the quantity is broke down into different grades and the respective quantities based on the entries given in the <span style="font-weight:bold;">COMMINGLE CARGO</span> pop-up during the cargo nomination stage. This data is displayed in the <span style="font-weight:bold;">COMMINGLED CARGO DETAILS</span> pop-up. </p>
-          <p class="textbody">The user can switch the unit of the cargo quantity by choosing the required option from the <span style="font-weight:bold;">Unit </span>drop-down list.  </p>
+          <p class="textbody">Displays the volume of each cargo that is feasible with the respective loadable pattern. </p>
+          <p class="textbody">The quantity is broken down into different grades for commingle cargo and the respective quantities based on the entries given in <strong>Commingle Cargo</strong> during the <strong>Cargo Nomination</strong> stage. This data is displayed in <span style="font-weight:bold;">Commingled Cargo Details</span>. </p>
+          <p class="textbody">The user can switch the unit of the cargo quantity by choosing the required option from the <span style="font-weight:bold;">Unit </span>drop-down.  </p>
         </td>
       </tr>
       <tr>
@@ -105,7 +106,7 @@
           <p class="textbody">Grade</p>
         </td>
         <td>
-          <p class="textbody">This field displays the name of the cargo.</p>
+          <p class="textbody">Displays the name of the cargo.</p>
         </td>
       </tr>
       <tr>
@@ -113,39 +114,38 @@
           <p class="textbody">% Difference</p>
         </td>
         <td>
-          <p class="textbody">This field displays the difference of quantity (in percentage) from the planned figure. </p>
-          <p class="textbody">The value can either be positive or negative. </p>
+          <p class="textbody">Displays the difference of quantity (in percentage) from the planned figure. The value can be either positive or negative. </p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">Click <span style="font-weight:bold;">More</span> to view the <span style="font-weight:bold;">PATTERN DETAILS</span> pop-up.</p>
+  <p class="textbody">Click <span style="font-weight:bold;">More</span> to view the <span style="font-weight:bold;">Pattern Details</span> pop-up.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-pattern/more.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">PATTERN DETAILS</span> pop-up displays the cargo and ballast allocation details, cargo quantity, and stability parameters. </p>
+  <p class="textbody">The <span style="font-weight:bold;"></span><span style="font-weight:bold;">Pattern Details </span>pop-up displays the cargo and ballast allocation details, cargo quantity, and stability parameters. </p>
   <p class="textbody"><img class="image-full" src="Images/loadable-pattern/more popup.png" style="cursor: nesw-resize;"/></p>
   <p class="textbody">The pop-up also displays the details of the cargoes to be loaded in a table format. </p>
   <p class="textbody"><img class="image-full" src="Images/loadable-pattern/cargo to be loaded.png" style="border-width: 1px; border-color: rgb(128, 128, 128); border-style: solid;"/></p>
-  <p class="textbody">By default, the <span style="font-weight:bold;">PATTERN DETAILS</span> pop-up displays the cargo allocation details. Click <span style="font-weight:bold;">Ballast </span>to view the ballast allocation details. </p>
+  <p class="textbody">By default, the <span style="font-weight:bold;"><span style="font-weight:bold;">Pattern Details</span></span> pop-up displays the cargo allocation details. Click <span style="font-weight:bold;">Ballast </span>to view the ballast allocation details. </p>
   <p class="textbody"><img class="image-full" src="Images/loadable-pattern/ballast allocation.png"/></p>
-  <p class="textbody">The <span style="font-weight:bold;"></span><span style="font-weight:bold;">PATTERN DETAILS</span> pop-up explains the following cargo and ballast allocation details of the selected loadable pattern:</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <p class="textbody">The <span style="font-weight:bold;"></span><span style="font-weight:bold;"><span style="font-weight:bold;">Pattern Details</span></span> pop-up explains the following cargo and ballast allocation details of the selected loadable pattern:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-        <td>Field Name</td>
-        <td>Description</td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Case</p>
         </td>
         <td>
-          <p class="textbody">The CP-DSS application displays the loadable patterns based on the case number. The case number for each loadable pattern depends on different parameters including:</p>
+          <p class="textbody">The CP-DSS application displays the loadable patterns based on the case number. The case number for each loadable pattern depends on different parameters, including:</p>
           <ul class="bullets">
             <li class="textbody">Maximum loadable quantity</li>
             <li class="textbody">Tolerance and cargo priority</li>
@@ -159,7 +159,7 @@
           <p class="textbody">Constraints</p>
         </td>
         <td>
-          <p class="textbody">This field displays the constraints related to each loadable pattern if any. If there are multiple constraints associated with a loadable pattern, it is displayed under the <span style="font-weight:bold;">View More</span> section.  </p>
+          <p class="textbody">Displays the constraints related to each loadable pattern, if any. If  multiple constraints are associated with a loadable pattern, it appears under the <span style="font-weight:bold;">View More</span> section.  </p>
         </td>
       </tr>
       <tr>
@@ -167,7 +167,7 @@
           <p class="textbody">Stowage</p>
         </td>
         <td>
-          <p class="textbody">The stowage pattern displays the cargo and ballast allocation for the selected loadable pattern. Different cargoes are represented by different colors based on the inputs provided while adding cargoes during the cargo nomination stage. The stowage pattern also displays the details including the tank name, cargo quantity, ullage, API, filling percentage, and cargo grade. </p>
+          <p class="textbody">Displays the cargo and ballast allocation for the selected loadable pattern. Different colors represent different cargoes based on the inputs provided while adding cargoes during the cargo nomination stage. The stowage pattern also displays the details, including the tank name, cargo quantity, ullage, API, filling percentage, and cargo grade. </p>
         </td>
       </tr>
       <tr>
@@ -175,7 +175,7 @@
           <p class="textbody">Cargo to be loaded</p>
         </td>
         <td>
-          <p class="textbody">This field displays the following details of each cargo:</p>
+          <p class="textbody">Displays the following details of each cargo:</p>
           <ul class="bullets">
             <li class="textbody">Cargo name</li>
             <li class="textbody">API</li>
@@ -188,7 +188,7 @@
             <li class="textbody">Time required for loading</li>
             <li class="textbody">Slop quantity</li>
           </ul>
-          <p class="textbody">The user can switch the unit of the cargo quantity by choosing the required option from the <span style="font-weight:bold;">Unit </span>drop-down list.  </p>
+          <p class="textbody">The user can switch the unit of the cargo quantity by choosing the required option from the <span style="font-weight:bold;">Unit </span>drop-down.  </p>
         </td>
       </tr>
       <tr>
@@ -196,14 +196,14 @@
           <p class="textbody">Ballast Quantity</p>
         </td>
         <td>
-          <p class="textbody">This field displays quantity of ballast based on the selected loadable pattern. </p>
+          <p class="textbody">Displays quantity of ballast based on the selected loadable pattern. </p>
         </td>
       </tr>
     </tbody>
   </table>
   <p class="textbody">Click <span style="font-weight:bold;">View Plan </span>to view the detailed output of the loadable study based on the selected loadable pattern. For more information, see <a href="loadable-plan.htm">Loadable Plan</a>.</p>
   <p class="textbody"><img class="image-full" src="Images/loadable-pattern/view plan.png"/></p>
-  <p class="textbody">Click <span style="font-weight:bold;">Close </span>to go back to the <span style="font-weight:bold;">LOADABLE PATTERN</span> page. </p>
+  <p class="textbody">Click <span style="font-weight:bold;">Close </span>to go back to the <span style="font-weight:bold;">Loadable <span style="font-weight:bold;">Pattern </span></span>page. </p>
   <p class="textbody"><img class="image-full" src="Images/loadable-pattern/close.png"/></p>
   <p class="textbody"> </p>
 
@@ -219,7 +219,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "3.1.3_2"
+    gTopicId = "4.1.2_3"
   
 //]]></script>
 

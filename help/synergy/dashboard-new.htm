@@ -11,10 +11,10 @@
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <meta name="generator" content="Adobe RoboHelp 2020"/>
-  <title>Ship Dashboard </title>
+  <title>Ship Dashboard</title>
   <meta name="topic-status" content="Draft"/>
   <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
-<meta name="brsnext" value="new-voyage.htm"/><meta name="brsprev" value="fleet.htm"/></head>
+<meta name="brsnext" value="voyages.htm"/><meta name="brsprev" value="fleet.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -36,28 +36,28 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Dashboard</h1>
+  <h1 id="h">Ship Dashboard</h1>
   <p class="textbody">The Dashboard is the default home page for all the vessel employees irrespective of the role, group, or designation. Access to different functions on this page is based on the permissions assigned to the user.</p>
   <p class="textbody"><img class="image-full" src="Images/dashboard/dashboard.png" style="cursor: nesw-resize;"/></p>
-  <p class="textbody">The dashboard displays the following details about the current active voyage:</p>
-  <table border="1" cellpadding="1" cellspacing="1" class="cpdss" style="border-collapse: collapse;">
+  <p class="textbody">The dashboard displays the following details about the active voyage:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color: #005B87;color: #FFFFFF;font-weight: bold;text-align: center;font-family: Lato;font-size: 15px">
-        <td style="font-family: Lato">Dashboard</td>
-        <td><span style="font-family:Lato;font-size:15px">Description</span></td>
-      </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>Field</td>
+        <td>Description</td>
+      </tr>
       <tr>
         <td>
           <p class="textbody">Vessel Name</p>
         </td>
         <td>
-          <p class="textbody">Displays the name of the vessel involved in the current voyage.</p>
+          <p class="textbody">Displays the name of the vessel involved in the active voyage.</p>
         </td>
       </tr>
       <tr>
@@ -65,7 +65,7 @@
           <p class="textbody">Voyage Number</p>
         </td>
         <td>
-          <p class="textbody">Displays the unique voyage number corresponding to the current voyage. To view the details of another voyage on the dashboard, select the respective voyage number from the <span style="font-weight:bold;">Voyage </span>drop-down list. </p>
+          <p class="textbody">Displays the unique voyage number corresponding to the active voyage. To view the details of another voyage, from the <span style="font-weight:bold;">Voyage </span>drop-down, select the respective voyage number. </p>
         </td>
       </tr>
       <tr>
@@ -79,6 +79,7 @@
             <li class="textbody">MT</li>
             <li class="textbody">KL</li>
           </ul>
+          <p class="textbody">The unit selection reflects changes in the cargo quantity value in the cargo tank layout and planned and actual values.</p>
         </td>
       </tr>
       <tr>
@@ -86,7 +87,7 @@
           <p class="textbody">Voyage Distance</p>
         </td>
         <td>
-          <p class="textbody">Displays the distance from the starting port to the end port.</p>
+          <p class="textbody">Displays the distance from the start port to the end port.</p>
         </td>
       </tr>
       <tr>
@@ -94,8 +95,8 @@
           <p class="textbody">Port Ribbon</p>
         </td>
         <td>
-          <p class="textbody">Displays the loading and discharging ports involved in the current voyage. <span style="background-color:rgba(0, 255, 255, 0.34);">The loading ports are indicated with letter &#39;L&#39; and the discharge ports are indicated with letter &#39;D&#39;.</span></p>
-          <p class="textbody">The user can edit the ETA of each port on the respective port card and save it. This provision is available only once.</p>
+          <p class="textbody">Displays the loading and discharging ports involved in the active voyage. The loading ports are indicated with the letter &#39;L&#39;, and the discharge ports are indicated with &#39;D&#39;.</p>
+          <p class="textbody">The user can edit the ETA of each port on the respective port card and save it. Editing ETA updates the actual values of cargo quantity. User can edit the ETA only once.</p>
         </td>
       </tr>
       <tr>
@@ -103,7 +104,7 @@
           <p class="textbody">New Voyage</p>
         </td>
         <td>
-          <p class="textbody">Allows the user to plan a new voyage for the future. For more information, see <a href="new-voyage.htm">New Voyage.</a></p>
+          <p class="textbody">Allows the user to plan a new voyage for the future. For more information, see <a href="new-voyage.htm">Create New Voyage</a>.</p>
         </td>
       </tr>
       <tr>
@@ -111,8 +112,7 @@
           <p class="textbody">Planned and Actual Data</p>
         </td>
         <td>
-          <p class="textbody">Displays the planned and actual data and the difference between these values.</p>
-          <p class="textbody">These values are updated from the <span style="font-weight:bold;">Synoptical Table</span>.</p>
+          <p class="textbody">Displays the planned and actual data and the difference between these values. These values are updated from the <span style="font-weight:bold;">Synoptical Table</span>.</p>
         </td>
       </tr>
       <tr>
@@ -120,8 +120,7 @@
           <p class="textbody">Draft</p>
         </td>
         <td>
-          <p class="textbody">Displays the actual calculated and corrected values of fore-draft, mid-ship draft, and after-draft parameters. </p>
-          <p class="textbody">These values are updated from the <span style="font-weight:bold;">Synoptical Table</span>. </p>
+          <p class="textbody">Displays the calculated and corrected values of fore-draft, mid-ship draft, and after-draft parameters. These values are updated from the <span style="font-weight:bold;">Synoptical Table</span>. </p>
         </td>
       </tr>
       <tr>
@@ -129,8 +128,7 @@
           <p class="textbody">Sag and Trim</p>
         </td>
         <td>
-          <p class="textbody">Displays the actual sag and trim values. </p>
-          <p class="textbody">These values are updated from the <span style="font-weight:bold;">Synoptical Table</span>.</p>
+          <p class="textbody">Displays the actual sag and trim values. These values are updated from the <span style="font-weight:bold;">Synoptical Table</span>.</p>
         </td>
       </tr>
       <tr>
@@ -144,10 +142,11 @@
       </tr>
     </tbody>
   </table>
-  <p class="textbody">The allocation of cargo and ballast at each port are diagrammatically represented on the dashboard. The section also displays bunker quantity at different ports.</p>
-  <p class="textbody"><img src="Images/dashboard/cargo, ballast, and bunker.png"/></p>
+  <p class="note">If actual values are not updated, the application displays the planned values on the dashboard as per the latest changes.</p>
+  <p class="textbody">The allocation of cargo and ballast at each port are diagrammatically represented on the dashboard. The section also displays bunker quantities at different ports.</p>
+  <p class="textbody"><img class="image-full" src="Images/dashboard/cargo, ballast, and bunker.png" style="border-width: 1px; border-color: rgb(128, 128, 128); border-style: solid;"/></p>
   <p class="textbody">Select <span style="font-weight:bold;">View All </span>to switch the cargo and ballast allocation view to table format. <br/>
-    <img class="image-full" src="Images/dashboard/view all.png"/>
+    <img class="image-full" src="Images/dashboard/view all.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/>
   </p>
 
 </div>

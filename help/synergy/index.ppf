@@ -14,51 +14,15 @@
     </topic>
     
     <topic>
-      features-and-benefits.htm
+      getting-started.htm
     </topic>
     
     <topic>
-      getting_started.htm
+      ship-employee-signin.htm
     </topic>
     
     <topic>
-      understanding-menus-and-icons.htm
-    </topic>
-    
-    <topic>
-      admin.htm
-    </topic>
-    
-    <topic>
-      vessel-informations.htm
-    </topic>
-    
-    <topic>
-      cargo-master.htm
-    </topic>
-    
-    <topic>
-      port-master.htm
-    </topic>
-    
-    <topic>
-      user-role-permission.htm
-    </topic>
-    
-    <topic>
-      user.htm
-    </topic>
-    
-    <topic>
-      charter.htm
-    </topic>
-    
-    <topic>
-      manage-instructions.htm
-    </topic>
-    
-    <topic>
-      manage-rule.htm
+      shore-employee-signin.htm
     </topic>
     
     <topic>
@@ -70,7 +34,19 @@
     </topic>
     
     <topic>
+      voyages.htm
+    </topic>
+    
+    <topic>
       new-voyage.htm
+    </topic>
+    
+    <topic>
+      start-stop-a-voyage.htm
+    </topic>
+    
+    <topic>
+      stop-voyage.htm
     </topic>
     
     <topic>
@@ -118,7 +94,7 @@
     </topic>
     
     <topic>
-      select_port-loadable_study.htm
+      select-port-loadable-study.htm
     </topic>
     
     <topic>
@@ -162,7 +138,7 @@
     </topic>
     
     <topic>
-      view-pattern.htm
+      view-loadable-pattern.htm
     </topic>
     
     <topic>
@@ -174,7 +150,7 @@
     </topic>
     
     <topic>
-      view-plan.htm
+      view-loadable-plan.htm
     </topic>
     
     <topic>
@@ -226,6 +202,14 @@
     </topic>
     
     <topic>
+      add-port-discharge-study.htm
+    </topic>
+    
+    <topic>
+      delete-port-discharge-study.htm
+    </topic>
+    
+    <topic>
       on-hand-quantities-discharge.htm
     </topic>
     
@@ -242,6 +226,10 @@
     </topic>
     
     <topic>
+      delete-back-loading.htm
+    </topic>
+    
+    <topic>
       generate-discharge-plan.htm
     </topic>
     
@@ -250,19 +238,11 @@
     </topic>
     
     <topic>
+      discharge-plan.htm
+    </topic>
+    
+    <topic>
       confirm-discharge-plan.htm
-    </topic>
-    
-    <topic>
-      voyages.htm
-    </topic>
-    
-    <topic>
-      start-stop-a-voyage.htm
-    </topic>
-    
-    <topic>
-      stop-voyage.htm
     </topic>
     
     <topic>
@@ -279,10 +259,6 @@
     
     <topic>
       loading.htm
-    </topic>
-    
-    <topic>
-      loading-operation-stages.htm
     </topic>
     
     <topic>
@@ -322,6 +298,10 @@
     </topic>
     
     <topic>
+      add-cargo-managesequence.htm
+    </topic>
+    
+    <topic>
       add-initial-delay.htm
     </topic>
     
@@ -350,11 +330,19 @@
     </topic>
     
     <topic>
-      discharging.htm
+      arrival-departure-condition.htm
     </topic>
     
     <topic>
-      discharging-operation-stages.htm
+      cargotype-toppingff-sequence.htm
+    </topic>
+    
+    <topic>
+      update-ullage.htm
+    </topic>
+    
+    <topic>
+      discharging.htm
     </topic>
     
     <topic>
@@ -362,7 +350,67 @@
     </topic>
     
     <topic>
+      discharging-details.htm
+    </topic>
+    
+    <topic>
+      add-tide-details-discharging.htm
+    </topic>
+    
+    <topic>
+      discharging-rates.htm
+    </topic>
+    
+    <topic>
+      berth-details-discharging.htm
+    </topic>
+    
+    <topic>
+      cargo-machinery-discharging.htm
+    </topic>
+    
+    <topic>
+      pump-use-discharging.htm
+    </topic>
+    
+    <topic>
+      cargo-details-discharging.htm
+    </topic>
+    
+    <topic>
+      cargo-to-discharged.htm
+    </topic>
+    
+    <topic>
+      No-stages-discharging.htm
+    </topic>
+    
+    <topic>
+      manage-sequence-discharging.htm
+    </topic>
+    
+    <topic>
+      add-cargo-discharging.htm
+    </topic>
+    
+    <topic>
+      add-initialdelay-discharging.htm
+    </topic>
+    
+    <topic>
+      cow-plan-options.htm
+    </topic>
+    
+    <topic>
+      time-post-discharge.htm
+    </topic>
+    
+    <topic>
       discharging-instructions.htm
+    </topic>
+    
+    <topic>
+      generate-discharging-plan.htm
     </topic>
     
     <topic>
@@ -374,7 +422,51 @@
     </topic>
     
     <topic>
-      files.htm
+      arrival-departure-discharging.htm
+    </topic>
+    
+    <topic>
+      update-ullage-discharging.htm
+    </topic>
+    
+    <topic>
+      files-repository.htm
+    </topic>
+    
+    <topic>
+      add-new-file.htm
+    </topic>
+    
+    <topic>
+      view-file.htm
+    </topic>
+    
+    <topic>
+      edit-file.htm
+    </topic>
+    
+    <topic>
+      delete-file.htm
+    </topic>
+    
+    <topic>
+      features-and-benefits.htm
+    </topic>
+    
+    <topic>
+      understanding-menus-and-icons.htm
+    </topic>
+    
+    <topic>
+      online-help.htm
+    </topic>
+    
+    <topic>
+      browser-zoom.htm
+    </topic>
+    
+    <topic>
+      glossary.htm
     </topic>
     
   </topiclist>

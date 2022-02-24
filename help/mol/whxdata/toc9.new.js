@@ -1,1 +1,1 @@
-(function() {    var toc =  [{"name":"Add Port","type":"book","tilePath":"","description":"","url":"add-port.htm","key":"toc10"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();
+(function() {    var toc =  [{"name":"Select Port","type":"item","tilePath":"","description":"","url":"select-port-loadable-study.htm"},{"name":"API and Temperature History","type":"item","tilePath":"","description":"","url":"api-and-temperature-history-loadable-study.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();

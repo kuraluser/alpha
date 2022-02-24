@@ -740,8 +740,11 @@ label {
 .RH-LAYOUT-HEADER-container {
   height: 5rem;
   color: #005199;
-  background-color: rgba(10, 87, 154, 0.30);
   font-family: Lato;
+  background-color: #4ba3c7;
+}
+
+.sticky-header {
 }
 
 .RH-LAYOUT-HEADER-logo-box {
@@ -1220,6 +1223,9 @@ background-image: url('print.svg');;;
   background-color: #FFFFFF;
 }
 
+.rh-layout-SEARCHRESULTS-results-outer-box-static-header {
+}
+
 .RH-LAYOUT-SEARCHRESULTS-results-close {
   background-image: url('close.svg');;;
   width: 1rem;
@@ -1444,11 +1450,15 @@ background-image: url('print.svg');;;
 }
 .RH-LAYOUT-FOOTER-container {
 }
+
+.sticky-footer {
+}
 .RH-LAYOUT-HOMEPAGE-TITLEBAR-container {
   background-image: url('homepage_background.jpg');;;
 }
 
 .RH-LAYOUT-HOMEPAGE-TITLEBAR-title-bar {
+  display: block;
   color: white;
   margin-bottom: 3rem;
   padding-top: 2rem;
@@ -1774,6 +1784,7 @@ background-image: url('print.svg');;;
 }
 
 .RH-LAYOUT-FILTERS-caption {
+  font-size: 1rem;
   color: #3A4147;
 }
 
@@ -2716,6 +2727,9 @@ background-image: url('print.svg');;;
 }
 
 .RH-LAYOUT-BODY-mobile-view .RH-LAYOUT-SEARCHRESULTS-results-outer-box {
+}
+
+.RH-LAYOUT-BODY-mobile-view .rh-layout-SEARCHRESULTS-results-outer-box-static-header {
 }
 
 .RH-LAYOUT-BODY-mobile-view .RH-LAYOUT-SEARCHRESULTS-results-close {
@@ -3711,11 +3725,11 @@ input[type='text']::-ms-clear {
 }
 
  .RH-LAYOUT-HOMEPAGE-FAVORITE-close-button {
-  background-image: url('cross.svg');;;;;;;;
+  background-image: url('cross.svg');;;;;;;;;;;;;;;;
 }
 
 .RH-LAYOUT-BODY-mobile-view .RH-LAYOUT-LEFTPANEL-panel-show {
-  background-image: url('slide-left.svg');;;;;;;;;
+  background-image: url('slide-left.svg');;;;;;;;;;;;;;;;;
 }
 
 .RH-LAYOUT-LEFTPANEL-item-text {
@@ -3795,7 +3809,7 @@ input[type='text']::-ms-clear {
   background-position: center;
   width: 2.8rem;
   height: 2.8rem;
-  background-image: url('search.svg');;;;;;;;;
+  background-image: url('search.svg');;;;;;;;;;;;;;;;;
 }
 
 .rh-layout-SEARCHBOX-search-selected {
@@ -3853,7 +3867,7 @@ input[type='text']::-ms-clear {
 }
 
 .rh-layout-SEARCHBOX-search-selected .RH-LAYOUT-SEARCHBOX-search-icon {
-  background-image: url('search.svg');;;;;;;;;
+  background-image: url('search.svg');;;;;;;;;;;;;;;;;
 }
 
 .RH-LAYOUT-INDEX-container a {

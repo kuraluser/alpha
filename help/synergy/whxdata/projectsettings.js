@@ -7,7 +7,7 @@ rh._.exports(defaultTopic);
 rh.consts('DEFAULT_TOPIC', encodeURI("about-cp-dss-user-guide.htm"));
 rh.consts('HOME_FILEPATH', encodeURI('about-cp-dss-user-guide.htm'));
 rh.consts('START_FILEPATH', encodeURI('about-cp-dss-user-guide.htm'));
-rh.consts('HELP_ID', 'bfd49fa0-90a6-4859-8207-96d983c18414' || 'preview');
+rh.consts('HELP_ID', '0bb6ad08-0358-482e-8c9d-700cd3e35708' || 'preview');
 rh.consts('LNG_SUBSTR_SEARCH', 0);
 
 model.publish(rh.consts('KEY_LNG_NAME'), "en");

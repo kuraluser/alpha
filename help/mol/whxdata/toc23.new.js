@@ -1,1 +1,1 @@
-(function() {    var toc =  [{"name":"Loading","type":"book","tilePath":"","description":"","url":"loading.htm","key":"toc24"},{"name":"Discharging","type":"book","tilePath":"","description":"","url":"discharging.htm","key":"toc29"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();
+(function() {    var toc =  [{"name":"Add Tide Details","type":"item","tilePath":"","description":"","url":"add-tide-details.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();

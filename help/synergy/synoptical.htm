@@ -14,7 +14,7 @@
   <title>Synoptical</title>
   <meta name="topic-status" content="Draft"/>
   <link rel="stylesheet" type="text/css" href="assets/css/cpdss.css"/>
-<meta name="brsnext" value="edit-synoptical-table.htm"/><meta name="brsprev" value="stop-voyage.htm"/></head>
+<meta name="brsnext" value="edit-synoptical-table.htm"/><meta name="brsprev" value="confirm-discharge-plan.htm"/></head>
 
 <body class="rh-BODY-wrapper">
   <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
@@ -36,28 +36,28 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Synoptical</h1>
-  <p class="textbody">The <span style="font-weight:bold;">SYNOPTICAL </span>page, by default, displays the voyage details of the current voyage. The <span style="font-weight:bold;">Synoptical Table</span> auto-populates the planned and actual values entered by the user while generating the loadable plan for the respective voyage. The user is allowed to enter the values during the voyage and during the loading and discharging operations. This data is populated on the vessel dashboard.</p>
+  <h1 id="h">Synoptical</h1>
+  <p class="textbody">The <b>Synoptical </b>page, by default, displays the voyage details of the active voyage. The <span style="font-weight:bold;">Synoptical Table</span> auto-populates the planned and actual values entered by the user while generating the loadable plan for the respective voyage. The user is allowed to enter the values during the voyage and the loading and discharging operations. This data is populated on the vessel dashboard.</p>
   <p class="textbody"><img class="image-full" src="Images/Synoptical/SYNOPTICAL page.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128); cursor: nwse-resize;"/></p>
-  <p class="textbody">The <span style="font-weight:bold;">Synoptical Table</span> displays the following loadable study details of the current voyage :</p>
-  <table border="1" cellpadding="1" cellspacing="1" style="border-collapse: collapse;">
+  <p class="textbody">The <span style="font-weight:bold;">Synoptical Table</span> displays the following loadable study details of the active voyage:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse;">
     <colgroup>
       <col/>
       <col/>
     </colgroup>
     <thead>
-      <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato;font-size:15px">
+    </thead>
+    <tbody>
+      <tr>
         <td>Field</td>
         <td>Description</td>
       </tr>
-    </thead>
-    <tbody>
       <tr>
         <td>
           <p class="textbody">Port Name</p>
         </td>
         <td>
-          <p class="textbody">The name of the ports included in the voyage. </p>
+          <p class="textbody">Displays the name of the ports included in the voyage. </p>
         </td>
       </tr>
       <tr>
@@ -65,7 +65,7 @@
           <p class="textbody">Distance</p>
         </td>
         <td>
-          <p class="textbody">The distance between the ports included in the loadable study mapped against the voyage.</p>
+          <p class="textbody">Displays the distance between the ports included in the loadable study mapped against the voyage.</p>
         </td>
       </tr>
       <tr>
@@ -73,7 +73,7 @@
           <p class="textbody">Speed</p>
         </td>
         <td>
-          <p class="textbody">The average speed of the vessel during the voyage.</p>
+          <p class="textbody">Displays the average speed of the vessel during the voyage.</p>
         </td>
       </tr>
       <tr>
@@ -81,7 +81,7 @@
           <p class="textbody">Running Hours</p>
         </td>
         <td>
-          <p class="textbody">The time duration for the vessel to run between two ports in the port rotation.</p>
+          <p class="textbody">Displays the time duration for the vessel to run between two ports in the port rotation.</p>
         </td>
       </tr>
       <tr>
@@ -89,7 +89,7 @@
           <p class="textbody">In Port Hours</p>
         </td>
         <td>
-          <p class="textbody">The time of stay of the vessel at each port.</p>
+          <p class="textbody">Displays the time of stay of the vessel at each port.</p>
         </td>
       </tr>
       <tr>
@@ -97,7 +97,7 @@
           <p class="textbody">ETA/ETD Date</p>
         </td>
         <td>
-          <p class="textbody">The estimated date of arrival and departure of the vessel at each port.</p>
+          <p class="textbody">Displays the estimated date of arrival and departure of the vessel at each port.</p>
         </td>
       </tr>
       <tr>
@@ -105,7 +105,7 @@
           <p class="textbody">ETA/ETD Time</p>
         </td>
         <td>
-          <p class="textbody">The estimated time of arrival and departure of the vessel at each port.</p>
+          <p class="textbody">Displays the estimated time of arrival and departure of the vessel at each port.</p>
         </td>
       </tr>
       <tr>
@@ -113,7 +113,7 @@
           <p class="textbody">Sunrise Time</p>
         </td>
         <td>
-          <p class="textbody">The time of sunrise at each port.</p>
+          <p class="textbody">Displays the time of sunrise at each port.</p>
         </td>
       </tr>
       <tr>
@@ -121,7 +121,7 @@
           <p class="textbody">Sunset Time</p>
         </td>
         <td>
-          <p class="textbody">The time of sunset at each port.</p>
+          <p class="textbody">Displays the time of sunset at each port.</p>
         </td>
       </tr>
       <tr>
@@ -129,7 +129,7 @@
           <p class="textbody">Tide Level HW </p>
         </td>
         <td>
-          <p class="textbody">The From and To values of high water level during the tide at each port.</p>
+          <p class="textbody">Displays the <strong>From </strong>and <strong>To </strong>values of high water levels during the tide at each port.</p>
         </td>
       </tr>
       <tr>
@@ -137,7 +137,7 @@
           <p class="textbody">Tide Level LW</p>
         </td>
         <td>
-          <p class="textbody">The From and To values of low water level during the tide at each port. </p>
+          <p class="textbody">Displays the <strong>From </strong>and <strong>To </strong>values of low water levels during the tide at each port. </p>
         </td>
       </tr>
       <tr>
@@ -145,7 +145,7 @@
           <p class="textbody">Hog/Sag</p>
         </td>
         <td>
-          <p class="textbody">The value of hogging and sagging at each port. Hog/Sag details are hidden for the vessels that do not have Loadicator. </p>
+          <p class="textbody">Displays the value of hogging and sagging at each port. Hog/Sag details are hidden for the vessels that do not have Loadicator. </p>
         </td>
       </tr>
       <tr>
@@ -153,7 +153,7 @@
           <p class="textbody">Draft</p>
         </td>
         <td>
-          <p class="textbody">The fore draft, after draft, and mid-ship draft values of the vessel at each port. </p>
+          <p class="textbody">Displays the fore draft, after draft, and mid-ship draft values of the vessel at each port. </p>
         </td>
       </tr>
       <tr>
@@ -161,7 +161,7 @@
           <p class="textbody">Trim</p>
         </td>
         <td>
-          <p class="textbody">The trim condition of the vessel at each port.</p>
+          <p class="textbody">Displays the trim condition of the vessel at each port.</p>
         </td>
       </tr>
       <tr>
@@ -169,7 +169,7 @@
           <p class="textbody">Cargo MT</p>
         </td>
         <td>
-          <p class="textbody">The total quantity of onboard cargo at each port during the arrival and departure. </p>
+          <p class="textbody">Displays the total quantity of on board cargo at each port during the arrival and departure. </p>
         </td>
       </tr>
       <tr>
@@ -177,7 +177,7 @@
           <p class="textbody">Fuel Oil</p>
         </td>
         <td>
-          <p class="textbody">The quantity of onboard fuel oil at each port. </p>
+          <p class="textbody">Displays the quantity of on board fuel oil at each port. </p>
         </td>
       </tr>
       <tr>
@@ -185,7 +185,7 @@
           <p class="textbody">Diesel Oil</p>
         </td>
         <td>
-          <p class="textbody">The quantity of onboard diesel oil at each port.</p>
+          <p class="textbody">Displays the quantity of on board diesel oil at each port.</p>
         </td>
       </tr>
       <tr>
@@ -193,7 +193,7 @@
           <p class="textbody">Ballast </p>
         </td>
         <td>
-          <p class="textbody">The quantity of onboard ballast at each port.</p>
+          <p class="textbody">Displays the quantity of on board ballast at each port.</p>
         </td>
       </tr>
       <tr>
@@ -201,7 +201,7 @@
           <p class="textbody">Fresh Water</p>
         </td>
         <td>
-          <p class="textbody">The quantity of onboard fresh water at each port. </p>
+          <p class="textbody">Displays the quantity of on board fresh water at each port. </p>
         </td>
       </tr>
       <tr>
@@ -209,7 +209,7 @@
           <p class="textbody">Others</p>
         </td>
         <td>
-          <p class="textbody">The quantity of other remains on board including the crew, temporary fixtures, etc., at each port.</p>
+          <p class="textbody">Displays the number of other remains on board, including the crew, temporary fixtures, etc., at each port.</p>
         </td>
       </tr>
       <tr>
@@ -217,7 +217,7 @@
           <p class="textbody">Constant</p>
         </td>
         <td>
-          <p class="textbody">The constant quantity on board including permanent fixtures, machinery, etc.  </p>
+          <p class="textbody">Displays the constant quantity on board, including permanent fixtures, machinery, etc.  </p>
         </td>
       </tr>
       <tr>
@@ -225,7 +225,7 @@
           <p class="textbody">Total DWT</p>
         </td>
         <td>
-          <p class="textbody">The total deadweight of the vessel at each port. Deadweight is the maximum amount of weight the vessel can carry.</p>
+          <p class="textbody">Displays the total dead weight of the vessel at each port.  Deadweight is the maximum amount of weight the vessel can carry.</p>
         </td>
       </tr>
       <tr>
@@ -233,7 +233,7 @@
           <p class="textbody">Displacement</p>
         </td>
         <td>
-          <p class="textbody">The total weight of the vessel at each port. This value is calculated by adding the deadweight and the lightweight of the vessel. </p>
+          <p class="textbody">Displays the total weight of the vessel at each port. This value is calculated by adding the dead weight and the lightweight of the vessel. </p>
         </td>
       </tr>
       <tr>
@@ -241,17 +241,17 @@
           <p class="textbody">Seawater Specific Gravity</p>
         </td>
         <td>
-          <p class="textbody">The specific gravity of seawater at each port. The default value is 1.025. </p>
+          <p class="textbody">Displays the specific gravity of seawater at each port. The default value is 1.025. </p>
         </td>
       </tr>
     </tbody>
   </table>
-  <p class="textbody">To view the loadable study details of another voyage on the <span style="font-weight:bold;">Synoptical </span><span style="font-weight:bold;">Table</span>, select the required options from the <span style="font-weight:bold;">Voyage</span>, <span style="font-weight:bold;">Loadable </span><span style="font-weight:bold;">Study, </span>and <span style="font-weight:bold;">Loadable Pattern</span> drop-downs.</p>
-  <p class="textbody"><img class="image-full" src="Images/Synoptical/different loadable study.png"/></p>
+  <p class="textbody">To view the loadable study details of another voyage on the <span style="font-weight:bold;">Synoptical </span><span style="font-weight:bold;">Table</span>, from the <span style="font-weight:bold;">Voyage</span>, <span style="font-weight:bold;">Loadable </span><span style="font-weight:bold;">Study, </span>and <span style="font-weight:bold;">Loadable Pattern</span> drop-downs, select the required options.</p>
+  <p class="textbody"><img class="image-full" src="Images/Synoptical/different loadable study.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/></p>
   <p class="textbody">Click <span style="font-weight:bold;">Edit </span>to edit the <span style="font-weight:bold;">Synoptical Table</span>. For more information, see <a href="edit-synoptical-table.htm">Edit Synoptical Table</a>.</p>
   <p class="textbody"><img class="image-full" src="Images/Synoptical/Edit synoptical table.png"/></p>
   <p class="textbody" style="border-width: 1px;border-color: #808080;border-left-width: 1px;border-left-color: #808080;border-top-width: 1px;border-top-color: #808080;border-right-width: 1px;border-right-color: #808080;border-bottom-width: 1px;border-bottom-color: #808080">To navigate to the respective loadable study page of the voyage, click <span style="font-weight:bold;">Back to Loadable Study.</span></p>
-  <p class="textbody"><img class="image-full" src="Images/Synoptical/back to loadable study.png"/></p>
+  <p class="textbody"><img class="image-full" src="Images/Synoptical/back to loadable study.png" style="border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080"/></p>
 
 </div>
           <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>

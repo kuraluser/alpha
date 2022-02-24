@@ -36,24 +36,27 @@
         <div class="RH-LAYOUT-CENTERPANEL-container">
           <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
           <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
-  <h1>Duplicate Cargo</h1>
+  <h5 id="h">Duplicate Cargo</h5>
   <p class="textbody">Perform the following steps to duplicate an existing cargo:</p>
   <ol class="numberlist">
-    <li class="textbody">From <span style="font-weight:bold;">CARGO PLANNING,</span> click <span style="font-weight:bold;">Loadable Study</span>. <br/>
+    <li class="textbody">From the menu bar, click <span style="font-weight:bold;">CARGO PLANNING &gt;</span> <span style="font-weight:bold;">Loadable Study</span>. <br/>
       <img class="image-full" src="Images/duplicate-cargo/navigate loadable study.png"/><br/>
-      By default, the page displays the loadable studies created against the current active voyage.<br/>
-      <img class="image-full" src="Images/duplicate-cargo/loadable study page.png"/><br/>
+      By default, the page displays the loadable studies created against the active voyage.<br/>
+      <img class="image-full" src="Images/duplicate-cargo/loadable study page.png" style="border-width: 1px; border-color: rgb(128, 128, 128);"/><br/>
       To view and edit the loadable study created against another voyage, from the <span style="font-weight:bold;">Voyage No</span> drop-down, select the required option. <br/>
-      <img class="image-full" src="Images/duplicate-cargo/Voyage number.png"/>
+      <img class="image-full" src="Images/duplicate-cargo/Voyage number.png" style="border-width: 1px; border-color: rgb(128, 128, 128);"/>
     </li>
     <li class="textbody">From the <span style="font-weight:bold;">Loadable Study List</span> table, select the required loadable study. <br/>
-      <img class="image-full" src="Images/duplicate-cargo/loadable study list.png"/><br/>
-      The respective<span style="font-weight:bold;"> CARGO NOMINATION</span> tab appears. <br/>
+      <img class="image-full" src="Images/duplicate-cargo/loadable study list.png" style="border-width: 1px; border-color: rgb(128, 128, 128);"/><br/>
+      The respective<span style="font-weight:bold;"> </span><span style="font-weight:bold;">Cargo Nomination </span>tab appears. <br/>
       <img class="image-full" src="Images/duplicate-cargo/cargo nomination page.png"/>
     </li>
-    <li class="textbody">From the cargo list table, click <img src="assets/images/image30.png" style="border-width: 1px;border-color: #808080;border-left-width: 1px;border-left-color: #808080;border-top-width: 1px;border-top-color: #808080;border-right-width: 1px;border-right-color: #808080;border-bottom-width: 1px;border-bottom-color: #808080;border-style: solid;border-left-style: solid;border-top-style: solid;border-right-style: solid;border-bottom-style: solid"/> &gt; <strong>Duplicate </strong>against the cargo you want to duplicate. <img class="image-full" src="Images/duplicate-cargo/duplicate.png"/>A new row appears at the end of the cargo list table populating the details of the selected cargo. <img class="image-full" src="Images/duplicate-cargo/duplicate cargo row.png"/></li>
-    <li class="textbody">Update the fields as per the table given below if required:
-      <table border="1" cellpadding="1" cellspacing="1" class="cpdss borderonly" style="border-collapse: collapse">
+    <li class="textbody">From the cargo list table, click <img src="assets/images/image30.png" style="border-width: 1px; border-color: rgb(128, 128, 128); border-style: solid;"/> &gt; <strong>Duplicate </strong>to duplicate the cargo.<br/>
+      <img class="medium-400" src="Images/duplicate-cargo/duplicate.png" style="border-width: 1px; border-color: rgb(128, 128, 128); border-style: solid;"/> <br/>
+      A new row appears at the end of the cargo list table, populating the details of the selected cargo. <img class="image-full" src="Images/duplicate-cargo/duplicate cargo row.png"/>
+    </li>
+    <li class="textbody">The table displays the following details and the user can edit the fields if required.
+      <table border="1" cellpadding="1" cellspacing="1" class="small" style="border-collapse: collapse">
         <colgroup>
           <col/>
           <col/>
@@ -61,14 +64,14 @@
           <col/>
         </colgroup>
         <thead>
-          <tr style="background-color:#005b87;color:#ffffff;font-weight:bold;text-align:center;font-family:Lato">
-            <td>Field Name</td>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Field</td>
             <td>Type</td>
             <td>Mandatory</td>
             <td>Description</td>
           </tr>
-        </thead>
-        <tbody>
           <tr>
             <td>
               <p class="textbody">Priority </p>
@@ -80,8 +83,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the priority mapped against the existing cargo. The user can edit the priority value if required.</p>
-              <p class="textbody">The user is allowed to select from a priority range of one and seven. </p>
+              <p class="textbody">Displays the priority mapped against the existing cargo. The user can edit the priority value if required. The user can select from a priority range of one and seven. </p>
             </td>
           </tr>
           <tr>
@@ -95,8 +97,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the color of the existing cargo.</p>
-              <p class="textbody">The color of each cargo must be unique. This color is used to represent the respective cargo in the stowage plans. </p>
+              <p class="textbody">Displays the color of the existing cargo. The color of each cargo must be unique. This color is used to represent the respective cargo in the stowage plans. </p>
             </td>
           </tr>
           <tr>
@@ -110,7 +111,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the existing cargo name. </p>
+              <p class="textbody">Displays the existing cargo name. </p>
             </td>
           </tr>
           <tr>
@@ -124,8 +125,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the abbreviation for the selected cargo. </p>
-              <p class="textbody">The abbreviation for each cargo must be unique. </p>
+              <p class="textbody">Displays the abbreviation for the selected cargo. The abbreviation for each cargo must be unique. </p>
             </td>
           </tr>
           <tr>
@@ -139,8 +139,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the loading ports and the planned loadable quantity mapped against the existing cargo at each port. The user can edit the loading port details if required.</p>
-              <p class="textbody">For more details, see <a href="select-port-loadable-study.htm">Select Port</a>. </p>
+              <p class="textbody">Displays the loading ports and the planned loadable quantity mapped against the existing cargo at each port. The user can edit the loading port details if required. For more information, see <a href="select-port-loadable-study.htm">Select Port</a>. </p>
             </td>
           </tr>
           <tr>
@@ -154,7 +153,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field auto-populates the total quantity of cargo based on the data entered in the <span style="font-weight:bold;">LOADING PORT</span> field. </p>
+              <p class="textbody">Displays the total quantity of cargo based on the data entered in the <span style="font-weight:bold;">Loading Port </span>field. </p>
             </td>
           </tr>
           <tr>
@@ -168,8 +167,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the maximum tolerance limit for the selected cargo. The user can edit the data if required.</p>
-              <p class="textbody">The maximum tolerance must be less than or equal to 25. </p>
+              <p class="textbody">Displays the maximum tolerance limit for the selected cargo. The user can edit the data if required. The maximum tolerance must be less than or equal to 25. </p>
             </td>
           </tr>
           <tr>
@@ -183,8 +181,7 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the minimum tolerance limit for the selected cargo. The user can edit the data if required.</p>
-              <p class="textbody">The minimum tolerance must be less than or equal to zero. </p>
+              <p class="textbody">Displays the minimum tolerance limit for the selected cargo. The user can edit the data if required. The minimum tolerance must be less than or equal to zero. </p>
             </td>
           </tr>
           <tr>
@@ -198,12 +195,11 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the estimated API value for the cargo at the selected port. This is the standard measurement used to calculate the density of cargo. <br/>
-                The application populates the default API. </p>
-              <p class="textbody">The user can edit the data if required.</p>
+              <p class="textbody">Displays the estimated API value for the cargo at the selected port. API value is the standard measurement used to calculate the density of cargo. <br/>
+                The application populates the default API. The user can edit the data if required.</p>
               <p class="textbody">The API EST must be greater than or equal to eight.  <br/>
-                Click the History icon (<img src="assets/images/image15.png"/>) to view the API and Temperature history of the selected cargo. </p>
-              <p class="textbody">For more details, see <a href="api-and-temperature-history-loadable-study.htm">API and Temperature History</a>.</p>
+                Click <img height="24" src="assets/images/image15.png" style="border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080" width="20"/> to view the API and Temperature history of the selected cargo. </p>
+              <p class="textbody">For more information, see <a href="api-and-temperature-history-loadable-study.htm">API and Temperature History</a>.</p>
             </td>
           </tr>
           <tr>
@@ -217,12 +213,12 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the estimated temperature of the cargo. <br/>
+              <p class="textbody">Displays the estimated temperature of the cargo. <br/>
                 The application populates the default temperature. </p>
               <p class="textbody">The user can edit the data if required.</p>
               <p class="textbody">The TEMP EST must be greater than or equal to 40 degree Fahrenheit. </p>
-              <p class="textbody">Click the History icon (<img src="assets/images/image15.png"/>) to view the API and Temperature history of the selected cargo.</p>
-              <p class="textbody">For more details, see <a href="api-and-temperature-history-loadable-study.htm">API and Temperature History</a>.</p>
+              <p class="textbody">Click <img src="assets/images/image15.png" style="border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080"/> to view the API and Temperature history of the selected cargo.</p>
+              <p class="textbody">For more information, see <a href="api-and-temperature-history-loadable-study.htm">API and Temperature History</a>.</p>
             </td>
           </tr>
           <tr>
@@ -236,12 +232,12 @@
               <p class="textbody">Yes</p>
             </td>
             <td>
-              <p class="textbody">This field populates the mode of segregation marked against the selected cargo for loading and discharging operations. </p>
+              <p class="textbody">Displays the segregation mode marked against the selected cargo for loading and discharging operations. </p>
               <p class="textbody">The user can edit the data if required.</p>
               <p class="textbody">The available options are:</p>
               <ul class="bullets">
-                <li class="textbody"><span style="font-weight:bold;">Single </span>- Select this option if the loading or discharging operation is carried out using a single valve pipeline. </li>
-                <li class="textbody"><span style="font-weight:bold;">Double </span>- Select this option if the loading or discharging operation is carried out using a double valve pipeline. </li>
+                <li class="textbody"><span style="font-weight:bold;">Single </span>- Select this option if the loading or discharging operation uses a single valve pipeline. </li>
+                <li class="textbody"><span style="font-weight:bold;">Double </span>- Select this option if the loading or discharging operation uses a double valve pipeline. </li>
               </ul>
             </td>
           </tr>
@@ -249,9 +245,15 @@
       </table>
     </li>
     <li class="textbody">Click <img src="assets/images/image17.png" style="border-width: 1px;border-style: solid;border-color: #808080;border-left-width: 1px;border-left-style: solid;border-left-color: #808080;border-top-width: 1px;border-top-style: solid;border-top-color: #808080;border-right-width: 1px;border-right-style: solid;border-right-color: #808080;border-bottom-width: 1px;border-bottom-style: solid;border-bottom-color: #808080"/> to save the changes. <br/>
-      <img class="image-full" src="Images/duplicate-cargo/save.png"/>
+      <img class="medium-400" src="Images/duplicate-cargo/save.png" style="border-width: 1px; border-style: solid; border-color: rgb(128, 128, 128);"/>
     </li>
   </ol>
+  <p class="textbody"><strong>Related Topics</strong> </p>
+  <ul class="bullets">
+    <li class="textbody"><a href="add-cargo.htm">Add Cargo</a></li>
+    <li class="textbody"><a href="delete-cargo.htm">Delete Cargo</a> </li>
+    <li class="textbody"><a href="commingle.htm">Commingle</a></li>
+  </ul>
   <p class="textbody"> </p>
 
 </div>
@@ -266,7 +268,7 @@
 
     gRootRelPath = "."
     gCommonRootRelPath = "."
-    gTopicId = "3.1.2.1.1_1"
+    gTopicId = "4.1.2.1.1_1"
   
 //]]></script>
 

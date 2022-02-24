@@ -70,6 +70,9 @@
       <limitTilesCount type="boolean">false</limitTilesCount>
       <tileSelection type="boolean">false</tileSelection>
       <showHeaderLinksOnHomepage type="boolean">true</showHeaderLinksOnHomepage>
+      <stickyTopicHeader type="boolean">true</stickyTopicHeader>
+      <stickyTopicFooter type="boolean">false</stickyTopicFooter>
+      <stickyHomepageFooter type="boolean">false</stickyHomepageFooter>
       <showName type="boolean">true</showName>
       <toTop type="boolean">true</toTop>
       <fullScreen type="boolean">true</fullScreen>

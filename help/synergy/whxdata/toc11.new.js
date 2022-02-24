@@ -1,1 +1,1 @@
-(function() {    var toc =  [];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();
+(function() {    var toc =  [{"name":"View Loadable Plan","type":"item","tilePath":"","description":"","url":"view-loadable-plan.htm"},{"name":"Confirm Loadable Plan","type":"item","tilePath":"","description":"","url":"confirm-plan.htm"},{"name":"Export Loadable Plan","type":"item","tilePath":"","description":"","url":"export-loadable-plan.htm"}];    window.rh.model.publish(rh.consts('KEY_TEMP_DATA'), toc, { sync:true });    })();
